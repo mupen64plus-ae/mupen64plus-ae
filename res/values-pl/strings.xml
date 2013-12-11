@@ -49,8 +49,24 @@
   <string name="menuItem_sensitivity">Czułość</string>
   <string name="menuItem_specialVisibility_show">Pokaż funkcje specjalne</string>
   <string name="menuItem_specialVisibility_hide">Ukryj funkcje specjalne</string>
-  <string name="menuItem_axisInfo">Informacje o analogu</string>
   <string name="menuItem_unmapAll">Odmapuj wszystkie</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Graj</string>
+  <string name="menuItem_settings">Ustawienia</string>
+  <string name="menuItem_help">Pomoc</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_controllerDiagnostics">Diagnostyka kontrolera</string>
+  <string name="menuItem_reportBug">Zgłoś błąd</string>
+  <string name="menuItem_about">O aplikacji</string>
+  <string name="menuItem_changelog">Lista zmian</string>
+  <string name="menuItem_axisInfo">Informacje o analogu</string>
+  <string name="menuItem_controllerInfo">Informacje o kontrolerze</string>
+  <string name="menuItem_systemInfo">Informacje o urządzeniu</string>
+  <string name="menuItem_credits">Twórcy</string>
+  <string name="menuItem_localeOverride">Język</string>
+  <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus jest opracowany i prowadzony przez wolontariuszy.<small>\n\nAby naprawić błędy graficzne, spróbuj zmienić <i>wtyczkę obrazu</i>.\n\nAby naprawić opóźnienia, spróbuj zmienić ustawienia <i>pomijania klatek obrazu</i> lub <i>wtyczkę obrazu</i>.\n\nDla nieodtwarzalnych ROMÓW, spróbuj najpierw rozpakować ROM lub wypróbuj jego inną wersję.\n\nW przypadku problemów z kontrolerem ekranu dotykowego, spróbuj zmienić <i>skalę przycisków</i> lub <i>ułożenie klawiszy ekranowych</i>.\n\nW przypadku innych problemów, lub jeśli gdzieś nadal utkwiłeś, kliknij poniższy przycisk <i>FAQ</i>.  Dla błędów nie dotyczących gier kliknij poniższy przycisk <i>Zgłoś błąd</i>. Odpowiemy na większości postów w ciągu 24 godzin.  To gwarantujemy.\n\n</small>Dziękujemy za pomoc i za wsparcie naszej aplikacji</string>
+  <string name="popup_version">Wersja: %1$s\n Kod Wersji: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -81,10 +97,6 @@
   <string name="actionResume_summary">Działanie niestabilne przy użyciu cheatów</string>
   <string name="actionRestart_title">Restart</string>
   <string name="actionRestart_summary">Zalecane przy użyciu cheatów</string>
-  <string name="menuItem_systemInfo">Informacje o urządzeniu</string>
-  <string name="actionDeviceInfo_summary">Informacje o sprzęcie i modelu</string>
-  <string name="menuItem_controllerInfo">Informacje o kontrolerze</string>
-  <string name="menuItem_controllerDiagnostics">Diagnostyka kontrolera</string>
   <string name="actionReloadAssets_title">Załaduj ponownie zasoby aplikacji</string>
   <string name="actionReloadAssets_summary">Nie wpływa na ustawienia użytkownika, ROM\'y, zapisy stanu i inne dane osobiste</string>
   <string name="actionCrashTest_title">Test</string>
@@ -92,17 +104,7 @@
   <string name="actionResetUserPrefs_title">Reset</string>
   <string name="actionResetUserPrefs_summary">Przywróc ustawienia domyślne</string>
   <string name="actionResetUserPrefs_popupMessage">Zresetować wszystkie ustawienia do wartości domyślnych?<small>\n\nWszelkie ręczne modyfikacje dokonane w pliku konfiguracyjnym zostaną zastąpione.</small></string>
-  <string name="menuItem_help">Pomoc</string>
-  <string name="popup_faq">Mupen64Plus jest opracowany i prowadzony przez wolontariuszy.<small>\n\nAby naprawić błędy graficzne, spróbuj zmienić <i>wtyczkę obrazu</i>.\n\nAby naprawić opóźnienia, spróbuj zmienić ustawienia <i>pomijania klatek obrazu</i> lub <i>wtyczkę obrazu</i>.\n\nDla nieodtwarzalnych ROMÓW, spróbuj najpierw rozpakować ROM lub wypróbuj jego inną wersję.\n\nW przypadku problemów z kontrolerem ekranu dotykowego, spróbuj zmienić <i>skalę przycisków</i> lub <i>ułożenie klawiszy ekranowych</i>.\n\nW przypadku innych problemów, lub jeśli gdzieś nadal utkwiłeś, kliknij poniższy przycisk <i>FAQ</i>.  Dla błędów nie dotyczących gier kliknij poniższy przycisk <i>Zgłoś błąd</i>. Odpowiemy na większości postów w ciągu 24 godzin.  To gwarantujemy.\n\n</small>Dziękujemy za pomoc i za wsparcie naszej aplikacji</string>
-  <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_reportBug">Zgłoś błąd</string>
-  <string name="menuItem_about">O aplikacji</string>
-  <string name="popup_version">Wersja: %1$s\n Kod Wersji: %2$d</string>
-  <string name="menuItem_credits">Twórcy</string>
-  <string name="menuItem_changelog">Lista zmian</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Graj</string>
-  <string name="menuItem_settings">Ustawienia</string>
   <string name="screenInput_title">Urządzenie wejścia</string>
   <string name="screenInput_summary">Ustawienia kontrolera</string>
   <string name="screenTouchscreen_title">Ekran dotykowy</string>
@@ -129,7 +131,6 @@
   <string name="categoryCore_title">Rdzeń</string>
   <string name="categoryAudio_title">Dźwięk</string>
   <string name="categoryData_title">Dane</string>
-  <string name="categoryDiagnostics_title">Diagnostyka</string>
   <string name="categoryCrashReports_title">Raporty błędów</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Włącz cheat\'y</string>
@@ -164,8 +165,6 @@
   <string name="gles2RiceHiResTextures_summary">Użyj importowanej paczki tekstur</string>
   <string name="gles2RiceFog_title">Mgła</string>
   <string name="gles2RiceFog_summary">Pokaż efekty mgły</string>
-  <string name="coreUseFramelimiter_title">Użyj ograniczenia klatek</string>
-  <string name="coreUseFramelimiter_summary">Włącz by zapewnić większą płynność gier (może powodować spowolnienia w niektórych grach)</string>
   <string name="audioSwapChannels_title">Zamień kanały audio</string>
   <string name="audioSwapChannels_summary">Zamień prawy i lewy kanał audio</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -277,7 +276,7 @@
   <string name="audioPlugin_title">Wtyczka dźwięku</string>
   <string name="audioPlugin_entryNone">Brak (wyłączony dźwięk)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="menuItem_localeOverride">Język</string>
+  <string name="audioBufferSize_entry2048">Domyślne</string>
   <string name="localeOverride_entrySystemDefault">Domyślne ustawienia systemowe</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Włącz raportowanie błędów</string>

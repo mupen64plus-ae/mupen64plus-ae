@@ -49,8 +49,24 @@
   <string name="menuItem_sensitivity">Sensibilitat</string>
   <string name="menuItem_specialVisibility_show">Mostra funcions especials</string>
   <string name="menuItem_specialVisibility_hide">Amaga funcions especials</string>
-  <string name="menuItem_axisInfo">Informació analògica</string>
   <string name="menuItem_unmapAll">Desassigna-ho tot</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Juga</string>
+  <string name="menuItem_settings">Configuració</string>
+  <string name="menuItem_help">Ajuda</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_controllerDiagnostics">Diagnostic del comandament</string>
+  <string name="menuItem_reportBug">Reporta una errada</string>
+  <string name="menuItem_about">Sobre</string>
+  <string name="menuItem_changelog">Registre de canvis</string>
+  <string name="menuItem_axisInfo">Informació analògica</string>
+  <string name="menuItem_controllerInfo">Informació del comandament</string>
+  <string name="menuItem_systemInfo">Informació del terminal</string>
+  <string name="menuItem_credits">Crèdits</string>
+  <string name="menuItem_localeOverride">Idioma</string>
+  <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus és desenvolupat i mantingut per voluntaris. <small> \n\nPer solucionar errors gràfics, provi a canviar el <i>plugin de vídeo</i> .\n\nPer solucionar lag, intenti canviar el  <i>frameskip del vídeo</i> o el <i>plugin de vídeo</i> .\n\nPer ROMS no reproduïbles, intenti descomprimir el ROM primer o provar una versió diferent de la ROM.\n\nPer qüestions de control de pantalla tàctil, provi a canviar <i>l\'escalat botons</i> o <i>la disposició dels botons</i>.\n\nPer a altres problemes, o si encara està encallat, si us plau feu clic al botó de <i>FAQ</i> que hi ha a continuació. Per a errors que no es produeixen en jocs específics, feu clic al botó <i>d\'informe error </i> que hi ha sota. Responem a la gran majoria de posts en 24 hores. Honestament.\n\n</small> Gràcies per ajudar-nos a millorar l\'aplicació!</string>
+  <string name="popup_version">Versió: %1$s Codi de versió: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -81,27 +97,13 @@
   <string name="actionResume_summary">Impredictible si els cheats són utilitzats</string>
   <string name="actionRestart_title">Reinicia</string>
   <string name="actionRestart_summary">Recomanat si els cheats són utilitzats</string>
-  <string name="menuItem_systemInfo">Informació del terminal</string>
-  <string name="actionDeviceInfo_summary">Informació del maquinari i model</string>
-  <string name="menuItem_controllerInfo">Informació del comandament</string>
-  <string name="menuItem_controllerDiagnostics">Diagnostic del comandament</string>
   <string name="actionReloadAssets_title">Recarrega els recursos de l\'aplicació</string>
   <string name="actionReloadAssets_summary">NO afecta la configuració de l\'usuari, ROM, partides i altres dades personalitzades</string>
   <string name="actionCrashTest_title">Test</string>
   <string name="actionCrashTest_summary">Envia un informe de configuració als programadors</string>
   <string name="actionResetUserPrefs_title">Reinicia</string>
   <string name="actionResetUserPrefs_summary">Restaura la configuració per defecte</string>
-  <string name="menuItem_help">Ajuda</string>
-  <string name="popup_faq">Mupen64Plus és desenvolupat i mantingut per voluntaris. <small> \n\nPer solucionar errors gràfics, provi a canviar el <i>plugin de vídeo</i> .\n\nPer solucionar lag, intenti canviar el  <i>frameskip del vídeo</i> o el <i>plugin de vídeo</i> .\n\nPer ROMS no reproduïbles, intenti descomprimir el ROM primer o provar una versió diferent de la ROM.\n\nPer qüestions de control de pantalla tàctil, provi a canviar <i>l\'escalat botons</i> o <i>la disposició dels botons</i>.\n\nPer a altres problemes, o si encara està encallat, si us plau feu clic al botó de <i>FAQ</i> que hi ha a continuació. Per a errors que no es produeixen en jocs específics, feu clic al botó <i>d\'informe error </i> que hi ha sota. Responem a la gran majoria de posts en 24 hores. Honestament.\n\n</small> Gràcies per ajudar-nos a millorar l\'aplicació!</string>
-  <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_reportBug">Reporta una errada</string>
-  <string name="menuItem_about">Sobre</string>
-  <string name="popup_version">Versió: %1$s Codi de versió: %2$d</string>
-  <string name="menuItem_credits">Crèdits</string>
-  <string name="menuItem_changelog">Registre de canvis</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Juga</string>
-  <string name="menuItem_settings">Configuració</string>
   <string name="screenInput_title">Entrada</string>
   <string name="screenInput_summary">Configuració del comandament</string>
   <string name="screenTouchscreen_title">Pantalla tàctil</string>
@@ -124,7 +126,6 @@
   <string name="categoryGles2Glide64_title">Configuració de GLES2Glide64</string>
   <string name="categoryAudio_title">Àudio</string>
   <string name="categoryData_title">Dades</string>
-  <string name="categoryDiagnostics_title">\t\nDiagnòstics</string>
   <string name="categoryCrashReports_title">Informes d\'error</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">\t\nHabilita cheats</string>
@@ -159,8 +160,6 @@
   <string name="gles2RiceHiResTextures_summary">Utilitza pacs de textures millorades</string>
   <string name="gles2RiceFog_title">boira</string>
   <string name="gles2RiceFog_summary">Mostra efectes de boira</string>
-  <string name="coreUseFramelimiter_title">Utilitza framelimiter</string>
-  <string name="coreUseFramelimiter_summary">Activa aquesta opció per a una experiència de joc més fluida (alenteix alguns jocs)</string>
   <string name="audioSwapChannels_title">Intercanvia els canals d\'àudio</string>
   <string name="audioSwapChannels_summary">Intercanviar els canals d\'àudio esquerre i dret </string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -270,7 +269,7 @@
   <string name="r4300Emulator_entryDynarec">Recompilador dinàmic (dynarec)</string>
   <string name="audioPlugin_entryNone">Cap (àudio deshabilitat)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="menuItem_localeOverride">Idioma</string>
+  <string name="audioBufferSize_entry2048">Per defecte</string>
   <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Habilita l\'enviament d\'informes d\'errades</string>

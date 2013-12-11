@@ -48,7 +48,22 @@
   <string name="menuItem_sensitivity">Sensitivitet</string>
   <string name="menuItem_specialVisibility_show">Visa speciella funktioner</string>
   <string name="menuItem_specialVisibility_hide">Göm speciella funktioner</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Spela</string>
+  <string name="menuItem_settings">Inställningar</string>
+  <string name="menuItem_help">Hjälp</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_controllerDiagnostics">Kontroll diagnostik</string>
+  <string name="menuItem_reportBug">Rapportera bugg</string>
+  <string name="menuItem_about">Om</string>
+  <string name="menuItem_changelog">Ändringslogg</string>
   <string name="menuItem_axisInfo">Analog info</string>
+  <string name="menuItem_controllerInfo">Kontroll info</string>
+  <string name="menuItem_systemInfo">Enhets info</string>
+  <string name="menuItem_credits">krediter</string>
+  <string name="menuItem_localeOverride">Språk</string>
+  <!--Popup Dialogs-->
+  <string name="popup_version">Version: %1$s\nVersion kod: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -79,26 +94,13 @@
   <string name="actionResume_summary">Oförutsägbar om fusk används</string>
   <string name="actionRestart_title">Starta om</string>
   <string name="actionRestart_summary">Rekommenderad om fusk används</string>
-  <string name="menuItem_systemInfo">Enhets info</string>
-  <string name="actionDeviceInfo_summary">Enhets hårdvaru och modell information</string>
-  <string name="menuItem_controllerInfo">Kontroll info</string>
-  <string name="menuItem_controllerDiagnostics">Kontroll diagnostik</string>
   <string name="actionReloadAssets_title">Ladda om app resurser</string>
   <string name="actionReloadAssets_summary">Påverkar INTE användarinställningar, ROMs, sparfiler, eller andra egna data</string>
   <string name="actionCrashTest_title">Test</string>
   <string name="actionCrashTest_summary">Skicka en konfiguration rapport till utvecklarna</string>
   <string name="actionResetUserPrefs_title">Ladda om</string>
   <string name="actionResetUserPrefs_summary">Återställa standardinställningar</string>
-  <string name="menuItem_help">Hjälp</string>
-  <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_reportBug">Rapportera bugg</string>
-  <string name="menuItem_about">Om</string>
-  <string name="popup_version">Version: %1$s\nVersion kod: %2$d</string>
-  <string name="menuItem_credits">krediter</string>
-  <string name="menuItem_changelog">Ändringslogg</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Spela</string>
-  <string name="menuItem_settings">Inställningar</string>
   <string name="screenInput_title">ingång</string>
   <string name="screenInput_summary">Kontroll inställningar</string>
   <string name="screenTouchscreen_title">Pekskärm</string>
@@ -152,8 +154,6 @@
   <string name="gles2RiceHiResTextures_title">Högupplösta texturer</string>
   <string name="gles2RiceHiResTextures_summary">Använd importerade textur förpackningar</string>
   <string name="gles2RiceFog_title">Dimma</string>
-  <string name="coreUseFramelimiter_title">Använd framelimiter</string>
-  <string name="coreUseFramelimiter_summary">Aktivera för smidigare gameplay (saktar vissa spel)</string>
   <string name="audioSwapChannels_title">Byt ljudkanaler</string>
   <string name="audioSwapChannels_summary">Byt de vänstra och högra ljudkanalerna</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -235,7 +235,7 @@
   <string name="r4300Emulator_entryCachedInterpreter">Cachad interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamisk recompiler (dynarec)</string>
   <string name="audioPlugin_entryNone">Ingen (ljud inaktiverad)</string>
-  <string name="menuItem_localeOverride">Språk</string>
+  <string name="audioBufferSize_entry2048">Standard</string>
   <string name="localeOverride_entrySystemDefault">System standard</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Aktivera kraschrapporteringen</string>

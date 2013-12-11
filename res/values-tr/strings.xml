@@ -48,8 +48,23 @@
   <string name="menuItem_sensitivity">Hassasiyet</string>
   <string name="menuItem_specialVisibility_show">Özel işlevleri göster</string>
   <string name="menuItem_specialVisibility_hide">Özel işlevleri gizle</string>
-  <string name="menuItem_axisInfo">Analog bilgisi</string>
   <string name="menuItem_unmapAll">Tüm eşlemeleri kaldır</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Oyna</string>
+  <string name="menuItem_settings">Ayarlar</string>
+  <string name="menuItem_help">Yardım</string>
+  <string name="menuItem_faq">SSS</string>
+  <string name="menuItem_controllerDiagnostics">Kumanda tanılama</string>
+  <string name="menuItem_reportBug">Hata raporla</string>
+  <string name="menuItem_about">Hakkında</string>
+  <string name="menuItem_changelog">Değişim Kayıtları</string>
+  <string name="menuItem_axisInfo">Analog bilgisi</string>
+  <string name="menuItem_controllerInfo">Kumanda bilgisi</string>
+  <string name="menuItem_systemInfo">Aygıt bilgisi</string>
+  <string name="menuItem_credits">Katkıda Bulunanlar</string>
+  <string name="menuItem_localeOverride">Dil</string>
+  <!--Popup Dialogs-->
+  <string name="popup_version">Sürüm: %1$s\n Sürüm kodu: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -80,26 +95,13 @@
   <string name="actionResume_summary">Hileler kullanılıyorsa tahmin edilemez</string>
   <string name="actionRestart_title">Yeniden Başlat</string>
   <string name="actionRestart_summary">Hileler kullanılıyorsa tavsiye edilir</string>
-  <string name="menuItem_systemInfo">Aygıt bilgisi</string>
-  <string name="actionDeviceInfo_summary">Aygıt donanımı ve model bilgisi</string>
-  <string name="menuItem_controllerInfo">Kumanda bilgisi</string>
-  <string name="menuItem_controllerDiagnostics">Kumanda tanılama</string>
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
   <string name="actionCrashTest_title">Sına</string>
   <string name="actionCrashTest_summary">Geliştiricilere bir yapılandırma raporu gönder</string>
   <string name="actionResetUserPrefs_title">Sıfırla</string>
   <string name="actionResetUserPrefs_summary">Varsayılan ayarları geri yükle</string>
-  <string name="menuItem_help">Yardım</string>
-  <string name="menuItem_faq">SSS</string>
-  <string name="menuItem_reportBug">Hata raporla</string>
-  <string name="menuItem_about">Hakkında</string>
-  <string name="popup_version">Sürüm: %1$s\n Sürüm kodu: %2$d</string>
-  <string name="menuItem_credits">Katkıda Bulunanlar</string>
-  <string name="menuItem_changelog">Değişim Kayıtları</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Oyna</string>
-  <string name="menuItem_settings">Ayarlar</string>
   <string name="screenInput_title">Girdi</string>
   <string name="screenInput_summary">Denetim Ayarları</string>
   <string name="screenTouchscreen_title">Dokunmatik Ekran</string>
@@ -122,7 +124,6 @@
   <string name="categoryGles2Glide64_title">GLES2Glide64 ayarları</string>
   <string name="categoryAudio_title">Ses</string>
   <string name="categoryData_title">Veri</string>
-  <string name="categoryDiagnostics_title">Tanımlamalar</string>
   <string name="categoryCrashReports_title">Çökme Raporları</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Hileleri etkinleştir</string>
@@ -154,8 +155,6 @@
   <string name="gles2RiceHiResTextures_title">Yüksek çözünürlüklü dokular</string>
   <string name="gles2RiceHiResTextures_summary">İçe aktarılmış doku paketleri kullan</string>
   <string name="gles2RiceFog_title">Sis</string>
-  <string name="coreUseFramelimiter_title">Kare sabitleyici kullan</string>
-  <string name="coreUseFramelimiter_summary">Akıcı bir oynayış için etkinleştirin (bazı oyunları yavaşlatır)</string>
   <string name="audioSwapChannels_title">Ses kanallarını değiştir</string>
   <string name="audioSwapChannels_summary">Sol ve sağ ses kanallarını değiştir</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -252,7 +251,7 @@
   <string name="r4300Emulator_entryDynarec">Dinamik derleyici (dynarec)</string>
   <string name="audioPlugin_entryNone">Hiçbiri (ses devre dışı)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="menuItem_localeOverride">Dil</string>
+  <string name="audioBufferSize_entry2048">Varsayılan</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Çökme raporlamayı etkinleştir</string>

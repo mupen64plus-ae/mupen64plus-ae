@@ -49,8 +49,24 @@
   <string name="menuItem_sensitivity">Gevoeligheid</string>
   <string name="menuItem_specialVisibility_show">Laat speciale functies zien</string>
   <string name="menuItem_specialVisibility_hide">Verberg speciale functies</string>
-  <string name="menuItem_axisInfo">Analoge informatie</string>
   <string name="menuItem_unmapAll">Alle toewijzingen verwijderen</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Spelen</string>
+  <string name="menuItem_settings">Instellingen</string>
+  <string name="menuItem_help">Help</string>
+  <string name="menuItem_faq">Veelgestelde vragen</string>
+  <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
+  <string name="menuItem_reportBug">Meld bug</string>
+  <string name="menuItem_about">Over</string>
+  <string name="menuItem_changelog">Wijzigingsgeschiedenis</string>
+  <string name="menuItem_axisInfo">Analoge informatie</string>
+  <string name="menuItem_controllerInfo">Controller info</string>
+  <string name="menuItem_systemInfo">Apparaat info</string>
+  <string name="menuItem_credits">Credits</string>
+  <string name="menuItem_localeOverride">Taal</string>
+  <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus is ontwikkeld en wordt onderhouden door vrijwilligers.<small>\n\nGrafische problemen? Kies een andere <i>video plugin</i>.\n\nLast van lag? Probeer de <i>video beelden overslaan</i>-instelling of kies een andere <i>video plugin</i>.\n\nAls ROMs onspeelbaar zijn, probeer deze uit te pakken of probeer een andere versie van de ROM.\n\nProblemen met de touchscreenbediening? Probeer een andere <i>knopschaal</i> of <i>knopindeling</i>.\n\nBij andere problemen, of als u nog steeds problemen ondervindt, klik dan op de <i>Veelgestelde vragen</i> knop hieronder. In geval van fouten die niet met een bepaald spel te maken hebben, klik op de <i>Meld bug</i>-knop hieronder.  We beantwoorden de meeste berichten binnen 24 uur. Eerlijk waar.\n\n</small>Bedankt voor de hulp om de app beter te maken!</string>
+  <string name="popup_version">Versie: %1$s Code versie: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -81,27 +97,13 @@
   <string name="actionResume_summary">Onvoorspelbaar als cheats worden gebruikt</string>
   <string name="actionRestart_title">Herstart</string>
   <string name="actionRestart_summary">Aanbevolen als cheats worden gebruikt</string>
-  <string name="menuItem_systemInfo">Apparaat info</string>
-  <string name="actionDeviceInfo_summary">Apparaathardware en modelinformatie</string>
-  <string name="menuItem_controllerInfo">Controller info</string>
-  <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
   <string name="actionReloadAssets_title">Applicatiebronnen herladen</string>
   <string name="actionReloadAssets_summary">Heeft geen invloed op gebruikersinstellingen, ROM\'s, opgeslagen spellen, of andere eigen gegevens</string>
   <string name="actionCrashTest_title">Test</string>
   <string name="actionCrashTest_summary">Stuur een configuratierapport naar de ontwikkelaars</string>
   <string name="actionResetUserPrefs_title">Reset</string>
   <string name="actionResetUserPrefs_summary">Herstel standaardinstellingen</string>
-  <string name="menuItem_help">Help</string>
-  <string name="popup_faq">Mupen64Plus is ontwikkeld en wordt onderhouden door vrijwilligers.<small>\n\nGrafische problemen? Kies een andere <i>video plugin</i>.\n\nLast van lag? Probeer de <i>video beelden overslaan</i>-instelling of kies een andere <i>video plugin</i>.\n\nAls ROMs onspeelbaar zijn, probeer deze uit te pakken of probeer een andere versie van de ROM.\n\nProblemen met de touchscreenbediening? Probeer een andere <i>knopschaal</i> of <i>knopindeling</i>.\n\nBij andere problemen, of als u nog steeds problemen ondervindt, klik dan op de <i>Veelgestelde vragen</i> knop hieronder. In geval van fouten die niet met een bepaald spel te maken hebben, klik op de <i>Meld bug</i>-knop hieronder.  We beantwoorden de meeste berichten binnen 24 uur. Eerlijk waar.\n\n</small>Bedankt voor de hulp om de app beter te maken!</string>
-  <string name="menuItem_faq">Veelgestelde vragen</string>
-  <string name="menuItem_reportBug">Meld bug</string>
-  <string name="menuItem_about">Over</string>
-  <string name="popup_version">Versie: %1$s Code versie: %2$d</string>
-  <string name="menuItem_credits">Credits</string>
-  <string name="menuItem_changelog">Wijzigingsgeschiedenis</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Spelen</string>
-  <string name="menuItem_settings">Instellingen</string>
   <string name="screenInput_title">Invoer</string>
   <string name="screenInput_summary">Besturingsinstellingen</string>
   <string name="screenTouchscreen_title">Aanraakscherm</string>
@@ -124,7 +126,6 @@
   <string name="categoryGles2Glide64_title">GLES2Glide64 instellingen</string>
   <string name="categoryAudio_title">Geluid</string>
   <string name="categoryData_title">Gegevens</string>
-  <string name="categoryDiagnostics_title">Diagnose</string>
   <string name="categoryCrashReports_title">Crash rapporten</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Cheats inschakelen</string>
@@ -156,8 +157,6 @@
   <string name="gles2RiceHiResTextures_title">Hoge resolutie texturen</string>
   <string name="gles2RiceHiResTextures_summary">Gebruik geïmporteerde textuurpakketten</string>
   <string name="gles2RiceFog_title">Mist</string>
-  <string name="coreUseFramelimiter_title">Limiteer beeldverversing</string>
-  <string name="coreUseFramelimiter_summary">Schakel in voor vloeiender spelen (vertraagt sommige spellen)</string>
   <string name="audioSwapChannels_title">Verwissel geluidskanalen</string>
   <string name="audioSwapChannels_summary">Verwissel linker- en rechteraudiokanaal</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -262,7 +261,7 @@
   <string name="r4300Emulator_entryCachedInterpreter">Gecachete interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamische hercompileerder (dynarec)</string>
   <string name="audioPlugin_entryNone">Geen (geluid uitgeschakeld)</string>
-  <string name="menuItem_localeOverride">Taal</string>
+  <string name="audioBufferSize_entry2048">Standaardwaarden</string>
   <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Crashrapportage inschakelen</string>

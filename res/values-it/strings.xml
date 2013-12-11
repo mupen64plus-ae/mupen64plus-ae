@@ -48,8 +48,24 @@
   <string name="menuItem_deadzone">Zona morta</string>
   <string name="menuItem_specialVisibility_show">Mostra funzioni speciali</string>
   <string name="menuItem_specialVisibility_hide">Nascondi funzioni speciali</string>
-  <string name="menuItem_axisInfo">Info analogico</string>
   <string name="menuItem_unmapAll">Rimuovi tasti impostati da tutto</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Gioca</string>
+  <string name="menuItem_settings">Impostazioni</string>
+  <string name="menuItem_help">Aiuto</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_controllerDiagnostics">Diagnostica controller</string>
+  <string name="menuItem_reportBug">Segnala bug</string>
+  <string name="menuItem_about">Info</string>
+  <string name="menuItem_changelog">log cambiamenti</string>
+  <string name="menuItem_axisInfo">Info analogico</string>
+  <string name="menuItem_controllerInfo">Info sul controller</string>
+  <string name="menuItem_systemInfo">Info dispositivo</string>
+  <string name="menuItem_credits">Crediti</string>
+  <string name="menuItem_localeOverride">Linguaggio</string>
+  <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus è sviluppato e mantenuto da volontari.<small>\n\nPer sistemare errori grafici, prova a cambiare il <i>plugin video</i>.\n\nPer sistemare il lag, prova a cambiare l\'impostazione <i>frameskip video</i> o il <i>plugin video</i>.\n\nPer ROM ingiocabili, prova a decomprimere la ROM o prova una diversa versione della ROM.\n\nPer problemi di controlli touchscreen, prova a cambiare la <i>grandezza tasti</i> o il <i>layout tasti</i>.\n\nPer altri problemi, o se sei ancora bloccato, per favore clicca il tasto <i>FAQ</i> sotto. Per bug non specifici al gioco, clicca il tasto <i>Segnala bug</i> sotto.  Rispondiamo alla vasta maggioranza di post in 24 ore.  Onestamente.\n\n</small>Grazie per aiutarci a migliorare l\'app!</string>
+  <string name="popup_version">Versione: %1$s\nCodice versione: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -80,27 +96,13 @@
   <string name="actionResume_summary">Imprevedibile se vengono usati trucchi</string>
   <string name="actionRestart_title">Riavvia</string>
   <string name="actionRestart_summary">Raccomandato se vengono usati trucchi</string>
-  <string name="menuItem_systemInfo">Info dispositivo</string>
-  <string name="actionDeviceInfo_summary">Informazioni su hardware e modello del dispositivo</string>
-  <string name="menuItem_controllerInfo">Info sul controller</string>
-  <string name="menuItem_controllerDiagnostics">Diagnostica controller</string>
   <string name="actionReloadAssets_title">Ricarica risorse app</string>
   <string name="actionReloadAssets_summary">NON influenza impostazioni utente, ROM, salvataggi o altri dati personalizzati</string>
   <string name="actionCrashTest_title">Prova</string>
   <string name="actionCrashTest_summary">Manda un rapporto di configurazione agli sviluppatori</string>
   <string name="actionResetUserPrefs_title">Resetta</string>
   <string name="actionResetUserPrefs_summary">Ripristina impostazioni di default</string>
-  <string name="menuItem_help">Aiuto</string>
-  <string name="popup_faq">Mupen64Plus è sviluppato e mantenuto da volontari.<small>\n\nPer sistemare errori grafici, prova a cambiare il <i>plugin video</i>.\n\nPer sistemare il lag, prova a cambiare l\'impostazione <i>frameskip video</i> o il <i>plugin video</i>.\n\nPer ROM ingiocabili, prova a decomprimere la ROM o prova una diversa versione della ROM.\n\nPer problemi di controlli touchscreen, prova a cambiare la <i>grandezza tasti</i> o il <i>layout tasti</i>.\n\nPer altri problemi, o se sei ancora bloccato, per favore clicca il tasto <i>FAQ</i> sotto. Per bug non specifici al gioco, clicca il tasto <i>Segnala bug</i> sotto.  Rispondiamo alla vasta maggioranza di post in 24 ore.  Onestamente.\n\n</small>Grazie per aiutarci a migliorare l\'app!</string>
-  <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_reportBug">Segnala bug</string>
-  <string name="menuItem_about">Info</string>
-  <string name="popup_version">Versione: %1$s\nCodice versione: %2$d</string>
-  <string name="menuItem_credits">Crediti</string>
-  <string name="menuItem_changelog">log cambiamenti</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Gioca</string>
-  <string name="menuItem_settings">Impostazioni</string>
   <string name="screenInput_title">Input</string>
   <string name="screenInput_summary">Impostazioni controlli</string>
   <string name="screenTouchscreen_title">Touchscreen</string>
@@ -122,7 +124,6 @@
   <string name="categoryGles2Rice_title">Impostazioni GLES2Rice</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Dati</string>
-  <string name="categoryDiagnostics_title">Diagnostiche</string>
   <string name="categoryCrashReports_title">Segnalazioni crash</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Abilita trucchi</string>
@@ -154,8 +155,6 @@
   <string name="gles2RiceHiResTextures_title">Texture ad alta risoluzione</string>
   <string name="gles2RiceHiResTextures_summary">Usa pacchetti texture importati</string>
   <string name="gles2RiceFog_title">Nebbia</string>
-  <string name="coreUseFramelimiter_title">Usa limitatore fotogrammi</string>
-  <string name="coreUseFramelimiter_summary">Abilita per gameplay più fluido (rallenta alcuni giochi)</string>
   <string name="audioSwapChannels_title">Inverti canali audio</string>
   <string name="audioSwapChannels_summary">Inverte i canali audio sinistra e destra</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -260,7 +259,7 @@
   <string name="r4300Emulator_entryCachedInterpreter">Interprete in cache</string>
   <string name="r4300Emulator_entryDynarec">Ricompilatore dinamico (dynarec)</string>
   <string name="audioPlugin_entryNone">Nessuno (audio disabilitato)</string>
-  <string name="menuItem_localeOverride">Linguaggio</string>
+  <string name="audioBufferSize_entry2048">Default</string>
   <string name="localeOverride_entrySystemDefault">Default di sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Abilita segnalazione crash</string>

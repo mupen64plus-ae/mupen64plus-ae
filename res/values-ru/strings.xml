@@ -40,8 +40,24 @@
   <string name="menuItem_sensitivity">Чувствительность</string>
   <string name="menuItem_specialVisibility_show">Показать дополнительные возможности</string>
   <string name="menuItem_specialVisibility_hide">Скрыть дополнительные возможности</string>
-  <string name="menuItem_axisInfo">Аналоговая информация</string>
   <string name="menuItem_unmapAll">Сбросить всё</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Играть</string>
+  <string name="menuItem_settings">Настройки</string>
+  <string name="menuItem_help">Помощь</string>
+  <string name="menuItem_faq">ЧАВО</string>
+  <string name="menuItem_controllerDiagnostics">Проверка устройств ввода</string>
+  <string name="menuItem_reportBug">Сообщить об ошибке</string>
+  <string name="menuItem_about">О программе</string>
+  <string name="menuItem_changelog">Список изменений</string>
+  <string name="menuItem_axisInfo">Аналоговая информация</string>
+  <string name="menuItem_controllerInfo">Устройства ввода</string>
+  <string name="menuItem_systemInfo">Сведения об устройстве</string>
+  <string name="menuItem_credits">Благодарности</string>
+  <string name="menuItem_localeOverride">Язык</string>
+  <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus разрабатывается добровольцами.<small>\n\nДля решения проблем с графикой попробуйте другой плагин видео.\n\nДля повышения производительности измените настройки пропуска кадров.\n\nПри ошибке открытия образа игры извлеките его из архива или найдите другую версию.\n\nбла-бла-бла, короче пользуйтесь настройками, иначе зачем я столько переводил?\n\nПри появлении других проблем воспользуйтесь ЧАВО и форумом (см. ниже).\n</small>\n\nЗаранее спасибо.</string>
+  <string name="popup_version">Версия: %1$s\nКод версии: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -72,27 +88,13 @@
   <string name="actionResume_summary">Возможно использование чит-кодов</string>
   <string name="actionRestart_title">Перезапуск</string>
   <string name="actionRestart_summary">Рекомендуется при использовании читов.</string>
-  <string name="menuItem_systemInfo">Сведения об устройстве</string>
-  <string name="actionDeviceInfo_summary">Модель и аппаратные характеристики</string>
-  <string name="menuItem_controllerInfo">Устройства ввода</string>
-  <string name="menuItem_controllerDiagnostics">Проверка устройств ввода</string>
   <string name="actionReloadAssets_title">Перезагрузить ресурсы</string>
   <string name="actionReloadAssets_summary">Не влияет на настройки пользователя, ROMs, сохранения игр, или другие пользовательские данные</string>
   <string name="actionCrashTest_title">Проверка</string>
   <string name="actionCrashTest_summary">Отправить отчёт разработчикам</string>
   <string name="actionResetUserPrefs_title">Сброс</string>
   <string name="actionResetUserPrefs_summary">Восстановить настройки по умолчанию</string>
-  <string name="menuItem_help">Помощь</string>
-  <string name="popup_faq">Mupen64Plus разрабатывается добровольцами.<small>\n\nДля решения проблем с графикой попробуйте другой плагин видео.\n\nДля повышения производительности измените настройки пропуска кадров.\n\nПри ошибке открытия образа игры извлеките его из архива или найдите другую версию.\n\nбла-бла-бла, короче пользуйтесь настройками, иначе зачем я столько переводил?\n\nПри появлении других проблем воспользуйтесь ЧАВО и форумом (см. ниже).\n</small>\n\nЗаранее спасибо.</string>
-  <string name="menuItem_faq">ЧАВО</string>
-  <string name="menuItem_reportBug">Сообщить об ошибке</string>
-  <string name="menuItem_about">О программе</string>
-  <string name="popup_version">Версия: %1$s\nКод версии: %2$d</string>
-  <string name="menuItem_credits">Благодарности</string>
-  <string name="menuItem_changelog">Список изменений</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Играть</string>
-  <string name="menuItem_settings">Настройки</string>
   <string name="screenInput_title">Ввод</string>
   <string name="screenInput_summary">Настройки управления</string>
   <string name="screenTouchscreen_title">Тачскрин</string>
@@ -115,7 +117,6 @@
   <string name="categoryGles2Glide64_title">Настройки GLES2Glide64 settings</string>
   <string name="categoryAudio_title">Звук</string>
   <string name="categoryData_title">Данные</string>
-  <string name="categoryDiagnostics_title">Диагностика</string>
   <string name="categoryCrashReports_title">Сообщения об ошибках</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Включить читы</string>
@@ -147,8 +148,6 @@
   <string name="gles2RiceHiResTextures_title">Текстуры высокого разрешения</string>
   <string name="gles2RiceHiResTextures_summary">Использовать импортированные пакеты текстур</string>
   <string name="gles2RiceFog_title">Туман</string>
-  <string name="coreUseFramelimiter_title">Ограничить FPS</string>
-  <string name="coreUseFramelimiter_summary">Плавнее, но ниже FPS</string>
   <string name="audioSwapChannels_title">Поменять местами аудио каналы</string>
   <string name="audioSwapChannels_summary">Меняет местами звук слева и справа</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -235,7 +234,7 @@
   <string name="r4300Emulator_entryDynarec">Рекомпиляция</string>
   <string name="audioPlugin_entryNone">Заглушка (выключить звук)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="menuItem_localeOverride">Язык</string>
+  <string name="audioBufferSize_entry2048">Умолчание</string>
   <string name="localeOverride_entrySystemDefault">Система по умолчанию</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Разрешить отправку сообщений об ошибках</string>

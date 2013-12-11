@@ -47,8 +47,23 @@
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Speciális funkciók mutatása</string>
   <string name="menuItem_specialVisibility_hide">Speciális funkciók elrejtése</string>
-  <string name="menuItem_axisInfo">Analóg infó</string>
   <string name="menuItem_unmapAll">Kiosztás megszüntése</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Játék</string>
+  <string name="menuItem_settings">Beállítások</string>
+  <string name="menuItem_help">Segítség</string>
+  <string name="menuItem_faq">GYIK</string>
+  <string name="menuItem_controllerDiagnostics">Kontroller diagnosztika</string>
+  <string name="menuItem_reportBug">Bug jelentése</string>
+  <string name="menuItem_about">Névjegy</string>
+  <string name="menuItem_changelog">Változások</string>
+  <string name="menuItem_axisInfo">Analóg infó</string>
+  <string name="menuItem_controllerInfo">Kontroller infó</string>
+  <string name="menuItem_systemInfo">Készülék infó</string>
+  <string name="menuItem_credits">Kreditek</string>
+  <string name="menuItem_localeOverride">Nyelv</string>
+  <!--Popup Dialogs-->
+  <string name="popup_version">Verzió: %1$s\nVerzió kód: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -79,26 +94,13 @@
   <string name="actionResume_summary">Bizonytalan csalások használatánál</string>
   <string name="actionRestart_title">Újraindítás</string>
   <string name="actionRestart_summary">Ajánlott csalások használatánál</string>
-  <string name="menuItem_systemInfo">Készülék infó</string>
-  <string name="actionDeviceInfo_summary">Készülék hardver és modell infó</string>
-  <string name="menuItem_controllerInfo">Kontroller infó</string>
-  <string name="menuItem_controllerDiagnostics">Kontroller diagnosztika</string>
   <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
   <string name="actionReloadAssets_summary">Nem befolyásolja a felhasználói beállításokat, a ROMokat, vagy az egyéni adatokat</string>
   <string name="actionCrashTest_title">Teszt</string>
   <string name="actionCrashTest_summary">Küldj egy konfigurációs jelentést a küszítőknek</string>
   <string name="actionResetUserPrefs_title">Újraindítás</string>
   <string name="actionResetUserPrefs_summary">Alapértelmezett beállítások használata</string>
-  <string name="menuItem_help">Segítség</string>
-  <string name="menuItem_faq">GYIK</string>
-  <string name="menuItem_reportBug">Bug jelentése</string>
-  <string name="menuItem_about">Névjegy</string>
-  <string name="popup_version">Verzió: %1$s\nVerzió kód: %2$d</string>
-  <string name="menuItem_credits">Kreditek</string>
-  <string name="menuItem_changelog">Változások</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Játék</string>
-  <string name="menuItem_settings">Beállítások</string>
   <string name="screenInput_title">Bevitel</string>
   <string name="screenInput_summary">Irányítás beállítások</string>
   <string name="screenTouchscreen_title">Érintőpanel</string>
@@ -120,7 +122,6 @@
   <string name="categoryGles2Rice_title">GLES2Rice beállítások</string>
   <string name="categoryAudio_title">Hang</string>
   <string name="categoryData_title">Adat</string>
-  <string name="categoryDiagnostics_title">Diagnosztika</string>
   <string name="categoryCrashReports_title">Összeomlás jelentések</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Csalás engedélyezése</string>
@@ -152,8 +153,6 @@
   <string name="gles2RiceHiResTextures_title">Magas felbontású textúrák</string>
   <string name="gles2RiceHiResTextures_summary">Importált textúra csomagok használata</string>
   <string name="gles2RiceFog_title">Köd</string>
-  <string name="coreUseFramelimiter_title">Framelimiter használata</string>
-  <string name="coreUseFramelimiter_summary">Engedélyezd a simább játékmenetért (lelassít néhány játékot)</string>
   <string name="audioSwapChannels_title">Hang csatornák megcserélése</string>
   <string name="audioSwapChannels_summary">Kicseréli a bal és jobb hang csatornákat</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -233,7 +232,7 @@
   <string name="r4300Emulator_entryCachedInterpreter">Gyorsítótárazott interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dinamikus újrafordító (dynarec)</string>
   <string name="audioPlugin_entryNone">Nincs (hang kikapcsolva)</string>
-  <string name="menuItem_localeOverride">Nyelv</string>
+  <string name="audioBufferSize_entry2048">Alapértelmezett</string>
   <string name="localeOverride_entrySystemDefault">Rendszer alapértelmezett</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Összeomlás jelentés bekapcsolása</string>

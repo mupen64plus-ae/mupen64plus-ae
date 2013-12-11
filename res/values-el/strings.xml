@@ -49,8 +49,24 @@
   <string name="menuItem_sensitivity">Ευαισθησία</string>
   <string name="menuItem_specialVisibility_show">Εμφάνιση ειδικών λειτουργιών</string>
   <string name="menuItem_specialVisibility_hide">Απόκρυψη ειδικών λειτουργιών</string>
-  <string name="menuItem_axisInfo">Πληροφορίες αναλογικού</string>
   <string name="menuItem_unmapAll">Διαγρ. όλων των αντιστοιχίσεων</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Παίξιμο</string>
+  <string name="menuItem_settings">Ρυθμίσεις</string>
+  <string name="menuItem_help">Βοήθεια</string>
+  <string name="menuItem_faq">Συχνές Ερωτήσεις</string>
+  <string name="menuItem_controllerDiagnostics">Διαγνωστικά χειριστηρίου</string>
+  <string name="menuItem_reportBug">Αναφορά σφάλματος</string>
+  <string name="menuItem_about">Σχετικά</string>
+  <string name="menuItem_changelog">Αρχείο αλλαγών</string>
+  <string name="menuItem_axisInfo">Πληροφορίες αναλογικού</string>
+  <string name="menuItem_controllerInfo">Πληροφορίες χειριστηρίου</string>
+  <string name="menuItem_systemInfo">Πληροφορίες συσκευής</string>
+  <string name="menuItem_credits">Συντελεστές</string>
+  <string name="menuItem_localeOverride">Γλώσσα</string>
+  <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus αναπτύσσεται και συντηρείται από εθελοντές.<small>\n\nΓια να διορθώσετε δυσλειτουργίες σε γραφικά, δοκιμάστε να αλλάξετε το <i>πρόσθετο γραφικών</i>.\n\nΓια να διορθώσετε τις καθυστερήσεις, δοκιμάστε να αλλάξετε την <i>παράλειψη καρέ βίντεο</i> ή το <i>πρόσθετο γραφικών</i>.\n\nΓια ROMS που δεν παίζουν, δοκιμάστε να ξε-συμπιέσετε το ROM πρώτα ή να δοκιμάσετε διαφορετική έκδοση του ROM.\n\nΓια προβλήματα με τον χειρισμό μέσω οθόνης αφής, δοκιμάστε να αλλάξετε την <i>κλίμακα κουμπιών</i> ή την <i>διάταξη κουμπιών</i>.\n\nΓια άλλα θέματα, ή αν έχει κολλήσει, δοκιμάστε το κουμπί <i>FAQ</i> παρακάτω.  Για προβλήματα που δεν σχετίζονται με συγκεκριμένα παιχνίδια, πατήστε το κουμπί <i>Αναφορά σφάλματος</i> παρακάτω.  Απαντάμε στην πλειοψηφία των μηνυμάτων μέσα σε 24 ώρες. Ειλικρινά.\n\n</small>Ευχαριστούμε για την βοήθειά σας στην βελτίωση της εφαρμογής!</string>
+  <string name="popup_version">Έκδοση: %1$s\nΈκδοση κώδικα: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -81,27 +97,13 @@
   <string name="actionResume_summary">Απρόβλεπτο αν έχουν χρησιμοποιηθεί κωδικοί</string>
   <string name="actionRestart_title">Επανεκκίνηση</string>
   <string name="actionRestart_summary">Προτείνεται αν έχει γίνει χρήση κωδικών</string>
-  <string name="menuItem_systemInfo">Πληροφορίες συσκευής</string>
-  <string name="actionDeviceInfo_summary">Υλικό συσκευής και πληροφορίες μοντέλου</string>
-  <string name="menuItem_controllerInfo">Πληροφορίες χειριστηρίου</string>
-  <string name="menuItem_controllerDiagnostics">Διαγνωστικά χειριστηρίου</string>
   <string name="actionReloadAssets_title">Ανανέωση πόρων εφαρμογής</string>
   <string name="actionReloadAssets_summary">ΔΕΝ επηρεάζει ρυθμίσεις χρήστη, αρχεία ROM, αποθηκευμένα παιχνίδια, ή άλλα προσαρμοσμένα δεδομένα</string>
   <string name="actionCrashTest_title">Δοκιμή</string>
   <string name="actionCrashTest_summary">Αποστολή αναφοράς διαμόρφωσης στους προγραμματιστές</string>
   <string name="actionResetUserPrefs_title">Επανεκκίνηση</string>
   <string name="actionResetUserPrefs_summary">Επαναφορά προεπιλογών</string>
-  <string name="menuItem_help">Βοήθεια</string>
-  <string name="popup_faq">Mupen64Plus αναπτύσσεται και συντηρείται από εθελοντές.<small>\n\nΓια να διορθώσετε δυσλειτουργίες σε γραφικά, δοκιμάστε να αλλάξετε το <i>πρόσθετο γραφικών</i>.\n\nΓια να διορθώσετε τις καθυστερήσεις, δοκιμάστε να αλλάξετε την <i>παράλειψη καρέ βίντεο</i> ή το <i>πρόσθετο γραφικών</i>.\n\nΓια ROMS που δεν παίζουν, δοκιμάστε να ξε-συμπιέσετε το ROM πρώτα ή να δοκιμάσετε διαφορετική έκδοση του ROM.\n\nΓια προβλήματα με τον χειρισμό μέσω οθόνης αφής, δοκιμάστε να αλλάξετε την <i>κλίμακα κουμπιών</i> ή την <i>διάταξη κουμπιών</i>.\n\nΓια άλλα θέματα, ή αν έχει κολλήσει, δοκιμάστε το κουμπί <i>FAQ</i> παρακάτω.  Για προβλήματα που δεν σχετίζονται με συγκεκριμένα παιχνίδια, πατήστε το κουμπί <i>Αναφορά σφάλματος</i> παρακάτω.  Απαντάμε στην πλειοψηφία των μηνυμάτων μέσα σε 24 ώρες. Ειλικρινά.\n\n</small>Ευχαριστούμε για την βοήθειά σας στην βελτίωση της εφαρμογής!</string>
-  <string name="menuItem_faq">Συχνές Ερωτήσεις</string>
-  <string name="menuItem_reportBug">Αναφορά σφάλματος</string>
-  <string name="menuItem_about">Σχετικά</string>
-  <string name="popup_version">Έκδοση: %1$s\nΈκδοση κώδικα: %2$d</string>
-  <string name="menuItem_credits">Συντελεστές</string>
-  <string name="menuItem_changelog">Αρχείο αλλαγών</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Παίξιμο</string>
-  <string name="menuItem_settings">Ρυθμίσεις</string>
   <string name="screenInput_title">Εισαγωγή</string>
   <string name="screenInput_summary">Ρυθμίσεις χειρισμού</string>
   <string name="screenTouchscreen_title">Οθόνη αφής</string>
@@ -155,8 +157,6 @@
   <string name="gles2RiceHiResTextures_title">Υφές υψηλής ανάλυσης</string>
   <string name="gles2RiceHiResTextures_summary">Χρήση εισαγόμενων πακέτων υφών</string>
   <string name="gles2RiceFog_title">Ομίχλη</string>
-  <string name="coreUseFramelimiter_title">Χρήση περιοριστή καρέ</string>
-  <string name="coreUseFramelimiter_summary">Ενεργοποίηση για ομαλή εμπειρία παιχνιδιού (μπορεί να επιβραδύνει κάποια παιχνίδια)</string>
   <string name="audioSwapChannels_title">Εναλλαγή καναλιών ήχου</string>
   <string name="audioSwapChannels_summary">Εναλλαγή του αριστερού και δεξιού καναλιού ήχου</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -262,7 +262,7 @@
   <string name="r4300Emulator_entryDynarec">Δυναμικός επαναμεταγλωτιστής (dynarec)</string>
   <string name="audioPlugin_entryNone">Κανένας (ήχος απενεργοποιημένος)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="menuItem_localeOverride">Γλώσσα</string>
+  <string name="audioBufferSize_entry2048">Προεπιλεγμένο</string>
   <string name="localeOverride_entrySystemDefault">Προεπιλογή συστήματος</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Ενεργοποίηση αναφοράς σφαλμάτων</string>

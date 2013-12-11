@@ -49,8 +49,23 @@
   <string name="menuItem_sensitivity">感度</string>
   <string name="menuItem_specialVisibility_show">特別な機能を表示</string>
   <string name="menuItem_specialVisibility_hide">特別な機能を非表示</string>
-  <string name="menuItem_axisInfo">アナログ情報</string>
   <string name="menuItem_unmapAll">全てをアンマップ</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">プレー</string>
+  <string name="menuItem_settings">設定</string>
+  <string name="menuItem_help">ヘルプ</string>
+  <string name="menuItem_faq">よくある質問</string>
+  <string name="menuItem_controllerDiagnostics">コントローラ診断</string>
+  <string name="menuItem_reportBug">バグレポート</string>
+  <string name="menuItem_about">ついて</string>
+  <string name="menuItem_changelog">変更履歴</string>
+  <string name="menuItem_axisInfo">アナログ情報</string>
+  <string name="menuItem_controllerInfo">コントローラ情報</string>
+  <string name="menuItem_systemInfo">デバイス情報</string>
+  <string name="menuItem_credits">クレジット</string>
+  <string name="menuItem_localeOverride">言語</string>
+  <!--Popup Dialogs-->
+  <string name="popup_version">バージョン: %1$s\nバージョンコード: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -81,26 +96,13 @@
   <string name="actionResume_summary">チートを使用している場合は動作しない場合があります。</string>
   <string name="actionRestart_title">再起動</string>
   <string name="actionRestart_summary">チートを使用している場合にお勧め。</string>
-  <string name="menuItem_systemInfo">デバイス情報</string>
-  <string name="actionDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
-  <string name="menuItem_controllerInfo">コントローラ情報</string>
-  <string name="menuItem_controllerDiagnostics">コントローラ診断</string>
   <string name="actionReloadAssets_title">データを再ロード</string>
   <string name="actionReloadAssets_summary">アプリケーションのデータ·ファイルを再ロード</string>
   <string name="actionCrashTest_title">テスト</string>
   <string name="actionCrashTest_summary">開発者へのコンフィギュレーションレポートを送って。</string>
   <string name="actionResetUserPrefs_title">リセット</string>
   <string name="actionResetUserPrefs_summary">既定値にリセット</string>
-  <string name="menuItem_help">ヘルプ</string>
-  <string name="menuItem_faq">よくある質問</string>
-  <string name="menuItem_reportBug">バグレポート</string>
-  <string name="menuItem_about">ついて</string>
-  <string name="popup_version">バージョン: %1$s\nバージョンコード: %2$d</string>
-  <string name="menuItem_credits">クレジット</string>
-  <string name="menuItem_changelog">変更履歴</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">プレー</string>
-  <string name="menuItem_settings">設定</string>
   <string name="screenInput_title">入力</string>
   <string name="screenInput_summary">コントロール設定</string>
   <string name="screenTouchscreen_title">タッチ</string>
@@ -123,7 +125,6 @@
   <string name="categoryGles2Glide64_title">GLES2Glide64設定</string>
   <string name="categoryAudio_title">オーディオ設定</string>
   <string name="categoryData_title">データ</string>
-  <string name="categoryDiagnostics_title">診断</string>
   <string name="categoryCrashReports_title">クラッシュレポート</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">チートをイネーブル</string>
@@ -155,8 +156,6 @@
   <string name="gles2RiceHiResTextures_title">高解像度のテクスチャ</string>
   <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
   <string name="gles2RiceFog_title">霧</string>
-  <string name="coreUseFramelimiter_title">フレームリミッター</string>
-  <string name="coreUseFramelimiter_summary">スムーズなゲームプレイのためにこれを有効 （一部のゲームが遅くなる）</string>
   <string name="audioSwapChannels_title">オーディオチャンネルを交換</string>
   <string name="audioSwapChannels_summary">スワップ左右のオーディオチャンネル</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -262,7 +261,7 @@
   <string name="r4300Emulator_entryDynarec">動的リコンパイラ (DynaRec)</string>
   <string name="audioPlugin_entryNone">なし（オーディオ無効）</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="menuItem_localeOverride">言語</string>
+  <string name="audioBufferSize_entry2048">デフォルト</string>
   <string name="localeOverride_entrySystemDefault">システムのデフォルト</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">クラッシュレポートを有効</string>
