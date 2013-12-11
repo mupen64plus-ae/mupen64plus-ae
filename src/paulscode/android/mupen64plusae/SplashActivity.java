@@ -82,7 +82,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     private SharedPreferences mPrefs = null;
     
     // These constants must match the keys used in res/xml/preferences*.xml
-    private static final String PATH_SELECTED_GAME = "pathSelectedGame";
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
@@ -117,7 +116,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         // Save the path of the ROM, if it was passed to the activity
         Uri dataUri = this.getIntent().getData();
         if( dataUri != null )
-            mPrefs.edit().putString( PATH_SELECTED_GAME, dataUri.getPath() ).commit();
+            mUserPrefs.putPathSelectedGame( dataUri.getPath() );
         
         // Disable the Xperia PLAY plugin as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
@@ -131,7 +130,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         }
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
-        PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
         PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
         PreferenceManager.setDefaultValues( this, R.xml.preferences_play, false );
         PreferenceManager.setDefaultValues( this, R.xml.preferences_video, false );
@@ -221,8 +219,8 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 mAppData.putAssetVersion( ASSET_VERSION );
                 updateText( R.string.assetExtractor_finished );
                 
-                // Launch the MenuActivity
-                startActivity( new Intent( SplashActivity.this, MenuActivity.class ) );
+                // Launch the GalleryActivity
+                startActivity( new Intent( SplashActivity.this, GalleryActivity.class ) );
                 
                 // We never want to come back to this activity, so finish it
                 finish();

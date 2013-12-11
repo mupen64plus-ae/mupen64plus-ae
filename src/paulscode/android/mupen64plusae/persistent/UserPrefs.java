@@ -370,6 +370,7 @@ public class UserPrefs
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
+    private static final String KEY_PATH_SELECTED_GAME = "pathSelectedGame";
     // ... add more as needed
     
     // Shared preferences default values
@@ -381,6 +382,7 @@ public class UserPrefs
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
+    public static final String DEFAULT_PATH_SELECTED_GAME = "~roms/n64";
     // ... add more as needed
     
     private final SharedPreferences mPreferences;
@@ -430,7 +432,7 @@ public class UserPrefs
         mLocaleCodes = values;
         
         // Files
-        selectedGame = mPreferences.getString( "pathSelectedGame", "" );
+        selectedGame = mPreferences.getString( "pathSelectedGame", DEFAULT_PATH_SELECTED_GAME );
         File romfile = new File( selectedGame );
         selectedGameHeader = new RomHeader( romfile );
         gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
@@ -823,6 +825,11 @@ public class UserPrefs
     public boolean getPlayerMapReminder()
     {
         return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
+    }
+    
+    public void putPathSelectedGame( String absolutePath )
+    {
+        mPreferences.edit().putString( KEY_PATH_SELECTED_GAME, absolutePath ).commit();
     }
     
     public void putPakType( int player, int value )

@@ -352,7 +352,6 @@
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
     <string name="pathSelectedGame_title">Game</string>
-    <string name="pathSelectedGame_default">~roms/n64</string>
     <string name="pathCustomTouchscreen_title">Custom layout folder</string>
     <string name="pathCustomTouchscreen_default">~</string>
     <string name="pathHiResTextures_title">Import texture pack</string>

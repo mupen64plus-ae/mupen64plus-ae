@@ -50,9 +50,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.MenuActivity"
+            android:name="paulscode.android.mupen64plusae.GalleryActivity"
             android:exported="false"
-            android:label="@string/MenuActivity_title"
+            android:label="@string/GalleryActivity_title"
             android:launchMode="singleTask" >
         </activity>
         <activity

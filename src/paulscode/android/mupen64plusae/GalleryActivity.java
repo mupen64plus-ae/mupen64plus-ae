@@ -24,37 +24,35 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.PathPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 
-public class MenuActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
+public class GalleryActivity extends Activity implements OnClickListener
 {
-    // These constants must match the keys used in res/xml/preferences.xml
-    private static final String PATH_SELECTED_GAME = "pathSelectedGame";
-    
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-    private SharedPreferences mPrefs = null;
     private RomDetail mRomDetail = null;
     
     @Override
@@ -74,7 +72,6 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         setIntent( intent );
     }
     
-    @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -84,7 +81,6 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
-        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         int lastVer = mAppData.getLastAppVersionCode();
         int currVer = mAppData.appVersionCode;
@@ -99,8 +95,10 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
             }
         }
         
-        // Load user preference menu structure from XML and update view
-        addPreferencesFromResource( R.xml.preferences );
+        // Lay out the content
+        setContentView( R.layout.gallery_activity );
+        Button button = (Button) findViewById( R.id.button_pathSelectedGame );
+        button.setOnClickListener( this );
         
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
@@ -166,19 +164,19 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
                 popupFaq();
                 return true;
             case R.id.menuItem_helpForum:
-                Utility.launchUri( MenuActivity.this, R.string.uri_forum );
+                Utility.launchUri( GalleryActivity.this, R.string.uri_forum );
                 return true;
             case R.id.menuItem_controllerDiagnostics:
                 startActivity( new Intent( this, DiagnosticActivity.class ) );
                 return true;
             case R.id.menuItem_reportBug:
-                Utility.launchUri( MenuActivity.this, R.string.uri_bugReport );
+                Utility.launchUri( GalleryActivity.this, R.string.uri_bugReport );
                 return true;
             case R.id.menuItem_appVersion:
                 popupAppVersion();
                 return true;
             case R.id.menuItem_changelog:
-                new ChangeLog( getAssets() ).show( MenuActivity.this, 0, mAppData.appVersionCode );
+                new ChangeLog( getAssets() ).show( GalleryActivity.this, 0, mAppData.appVersionCode );
                 return true;
             case R.id.menuItem_axisInfo:
                 popupAxisInfo();
@@ -190,7 +188,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
                 popupDeviceInfo();
                 return true;
             case R.id.menuItem_credits:
-                Utility.launchUri( MenuActivity.this, R.string.uri_credits );
+                Utility.launchUri( GalleryActivity.this, R.string.uri_credits );
                 return true;
             case R.id.menuItem_localeOverride:
                 mUserPrefs.changeLocale( this );
@@ -200,6 +198,26 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         }
     }
     
+    @Override
+    public void onClick( View v )
+    {
+        File startPath = new File( mUserPrefs.selectedGame );
+        String title = startPath.getPath();
+        String message = null;
+        Prompt.promptFile( this, title, message, startPath, new PromptFileListener()
+        {
+            @Override
+            public void onDialogClosed( File file, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    mUserPrefs.putPathSelectedGame( file.getAbsolutePath() );
+                    refreshViews();
+                }
+            }
+        } );
+    }
+
     private void popupFaq()
     {
         CharSequence title = getText( R.string.menuItem_faq );
@@ -255,12 +273,12 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
             @Override
             protected void onPostExecute( RomDetail result )
             {
-                ImageView view = new ImageView( MenuActivity.this );
+                ImageView view = new ImageView( GalleryActivity.this );
                 if( art != null )
                     view.setImageBitmap( art );
                 else
                     view.setImageResource( R.drawable.default_coverart );
-                new Builder( MenuActivity.this ).setTitle( "TODO" ).setMessage( result.goodName ).setView( view )
+                new Builder( GalleryActivity.this ).setTitle( "TODO" ).setMessage( result.goodName ).setView( view )
                         .create().show();
             }
         }.execute();
@@ -272,31 +290,16 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     }
     
     @Override
-    protected void onPause()
-    {
-        super.onPause();
-        mPrefs.unregisterOnSharedPreferenceChangeListener( this );
-    }
-    
-    @Override
     protected void onResume()
     {
         super.onResume();
-        mPrefs.registerOnSharedPreferenceChangeListener( this );
-        refreshViews();
-    }
-    
-    @Override
-    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
-    {
         refreshViews();
     }
     
     @TargetApi( 11 )
-    @SuppressWarnings( "deprecation" )
     private void refreshViews()
     {
-        // Refresh the preferences object
+        // Refresh the preferences object in case another activity changed the data
         mUserPrefs = new UserPrefs( this );
         mRomDetail = RomDetail.lookupByCrc( mUserPrefs.selectedGameHeader.crc );
         
@@ -304,10 +307,9 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         if( AppData.IS_HONEYCOMB )
             invalidateOptionsMenu();
         
-        // Update the summary text for the selected game
+        // Update the button text for the selected game
         File selectedGame = new File( mUserPrefs.selectedGame );
-        PathPreference pp = (PathPreference) findPreference( PATH_SELECTED_GAME );
-        if( pp != null )
-            pp.setSummary( selectedGame.getName() );
+        Button button = (Button) findViewById( R.id.button_pathSelectedGame );
+        button.setText( selectedGame.getName() );
     }
 }
