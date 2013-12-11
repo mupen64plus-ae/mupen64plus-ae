@@ -81,10 +81,10 @@
   <string name="actionResume_summary">Unberechenbar, wenn Cheats genutzt werden</string>
   <string name="actionRestart_title">Neustart</string>
   <string name="actionRestart_summary">Empfohlen, wenn Cheats genutzt werden</string>
-  <string name="actionDeviceInfo_title">Geräteinformationen</string>
+  <string name="menuItem_deviceInfo">Geräteinformationen</string>
   <string name="actionDeviceInfo_summary">Gerätehardware- und Modellinformationen</string>
-  <string name="actionControllerInfo_title">Controllerinfo</string>
-  <string name="actionControllerDiagnostics_title">Controllerdiagnose</string>
+  <string name="menuItem_controllerInfo">Controllerinfo</string>
+  <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
   <string name="actionReloadAssets_title">App-Ressourcen erneut laden</string>
   <string name="actionReloadAssets_summary">Dies hat KEINE Auswirkungen auf benutzerdefinierte Einstellungen, ROMs, Speicherstände oder andere Benutzerdaten.</string>
   <string name="actionCrashTest_title">Test</string>
@@ -92,17 +92,17 @@
   <string name="actionResetUserPrefs_title">Zurücksetzen</string>
   <string name="actionResetUserPrefs_summary">Standardeinstellungen wiederherstellen</string>
   <string name="actionResetUserPrefs_popupMessage">Alle Einstellungen auf Standardwerte zurücksetzen?<small>\n\nAlle manuellen Änderungen, die Sie an der Konfigurationsdatei vorgenommen haben, werden überschrieben.</small></string>
-  <string name="actionHelp_title">Hilfe</string>
-  <string name="actionHelp_message">Mupen64Plus wird von Freiwilligen entwickelt und gepflegt.<small>\n\nUm grafische Glitches zu beheben, versuche das <i>Videoplugin</i> zu ändern.\n\nUm Lag zu beheben, versuche die <i>Video-Frameskip</i>-Einstellung oder das <i>Videoplugin</i> zu ändern.\n\nBei unspielbaren ROMs, versuche das ROM erst zu entpacken oder versuche eine andere Version des ROM.\n\nBei Touchscreen-Steuerungsproblemen, versuche den <i>Knopf-Maßstab</i> oder das <i>Knopf-Layout</i> zu ändern.\n\nBei anderen Problemen, oder wenn du immer noch festsitzt, drücke bitte den <i>FAQ</i>-Knopf unterhalb. Bei nicht spielspezifischen Bugs drücke den <i>Bug melden</i>-Knopf unterhalb. Wir antworten auf die überwiegende Mehrheit der Posts innerhalb von 24 Stunden. Ehrlich.\n\n</small>Danke, dass du uns hilfst, die App zu verbessern!</string>
-  <string name="actionHelp_faq">FAQ</string>
-  <string name="actionHelp_reportbug">Bug melden</string>
-  <string name="actionAbout_title">Über</string>
-  <string name="actionAbout_message">Version: %1$s\nVersionscode: %2$d</string>
-  <string name="actionAbout_credits">Credits</string>
-  <string name="actionAbout_changelog">Changelog</string>
+  <string name="menuItem_help">Hilfe</string>
+  <string name="popup_faq">Mupen64Plus wird von Freiwilligen entwickelt und gepflegt.<small>\n\nUm grafische Glitches zu beheben, versuche das <i>Videoplugin</i> zu ändern.\n\nUm Lag zu beheben, versuche die <i>Video-Frameskip</i>-Einstellung oder das <i>Videoplugin</i> zu ändern.\n\nBei unspielbaren ROMs, versuche das ROM erst zu entpacken oder versuche eine andere Version des ROM.\n\nBei Touchscreen-Steuerungsproblemen, versuche den <i>Knopf-Maßstab</i> oder das <i>Knopf-Layout</i> zu ändern.\n\nBei anderen Problemen, oder wenn du immer noch festsitzt, drücke bitte den <i>FAQ</i>-Knopf unterhalb. Bei nicht spielspezifischen Bugs drücke den <i>Bug melden</i>-Knopf unterhalb. Wir antworten auf die überwiegende Mehrheit der Posts innerhalb von 24 Stunden. Ehrlich.\n\n</small>Danke, dass du uns hilfst, die App zu verbessern!</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_submitBugReport">Bug melden</string>
+  <string name="menuItem_info">Über</string>
+  <string name="popup_version">Version: %1$s\nVersionscode: %2$d</string>
+  <string name="menuItem_credits">Credits</string>
+  <string name="menuItem_changelog">Changelog</string>
   <!--Preference Screens-->
   <string name="screenPlay_title">Spielen</string>
-  <string name="screenSettings_title">Einstellungen</string>
+  <string name="menuItem_settings">Einstellungen</string>
   <string name="screenInput_title">Eingabe</string>
   <string name="screenInput_summary">Steuerungseinstellungen</string>
   <string name="screenTouchscreen_title">Touchscreen</string>
@@ -277,7 +277,7 @@
   <string name="audioPlugin_title">Audio Plugin</string>
   <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="localeOverride_title">Sprache</string>
+  <string name="menuItem_localeOverride">Sprache</string>
   <string name="localeOverride_entrySystemDefault">Systemstandard</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Absturzberichte aktivieren</string>

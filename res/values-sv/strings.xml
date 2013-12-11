@@ -79,26 +79,26 @@
   <string name="actionResume_summary">Oförutsägbar om fusk används</string>
   <string name="actionRestart_title">Starta om</string>
   <string name="actionRestart_summary">Rekommenderad om fusk används</string>
-  <string name="actionDeviceInfo_title">Enhets info</string>
+  <string name="menuItem_deviceInfo">Enhets info</string>
   <string name="actionDeviceInfo_summary">Enhets hårdvaru och modell information</string>
-  <string name="actionControllerInfo_title">Kontroll info</string>
-  <string name="actionControllerDiagnostics_title">Kontroll diagnostik</string>
+  <string name="menuItem_controllerInfo">Kontroll info</string>
+  <string name="menuItem_controllerDiagnostics">Kontroll diagnostik</string>
   <string name="actionReloadAssets_title">Ladda om app resurser</string>
   <string name="actionReloadAssets_summary">Påverkar INTE användarinställningar, ROMs, sparfiler, eller andra egna data</string>
   <string name="actionCrashTest_title">Test</string>
   <string name="actionCrashTest_summary">Skicka en konfiguration rapport till utvecklarna</string>
   <string name="actionResetUserPrefs_title">Ladda om</string>
   <string name="actionResetUserPrefs_summary">Återställa standardinställningar</string>
-  <string name="actionHelp_title">Hjälp</string>
-  <string name="actionHelp_faq">FAQ</string>
-  <string name="actionHelp_reportbug">Rapportera bugg</string>
-  <string name="actionAbout_title">Om</string>
-  <string name="actionAbout_message">Version: %1$s\nVersion kod: %2$d</string>
-  <string name="actionAbout_credits">krediter</string>
-  <string name="actionAbout_changelog">Ändringslogg</string>
+  <string name="menuItem_help">Hjälp</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_submitBugReport">Rapportera bugg</string>
+  <string name="menuItem_info">Om</string>
+  <string name="popup_version">Version: %1$s\nVersion kod: %2$d</string>
+  <string name="menuItem_credits">krediter</string>
+  <string name="menuItem_changelog">Ändringslogg</string>
   <!--Preference Screens-->
   <string name="screenPlay_title">Spela</string>
-  <string name="screenSettings_title">Inställningar</string>
+  <string name="menuItem_settings">Inställningar</string>
   <string name="screenInput_title">ingång</string>
   <string name="screenInput_summary">Kontroll inställningar</string>
   <string name="screenTouchscreen_title">Pekskärm</string>
@@ -235,7 +235,7 @@
   <string name="r4300Emulator_entryCachedInterpreter">Cachad interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamisk recompiler (dynarec)</string>
   <string name="audioPlugin_entryNone">Ingen (ljud inaktiverad)</string>
-  <string name="localeOverride_title">Språk</string>
+  <string name="menuItem_localeOverride">Språk</string>
   <string name="localeOverride_entrySystemDefault">System standard</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Aktivera kraschrapporteringen</string>

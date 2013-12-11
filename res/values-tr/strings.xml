@@ -80,26 +80,26 @@
   <string name="actionResume_summary">Hileler kullanılıyorsa tahmin edilemez</string>
   <string name="actionRestart_title">Yeniden Başlat</string>
   <string name="actionRestart_summary">Hileler kullanılıyorsa tavsiye edilir</string>
-  <string name="actionDeviceInfo_title">Aygıt bilgisi</string>
+  <string name="menuItem_deviceInfo">Aygıt bilgisi</string>
   <string name="actionDeviceInfo_summary">Aygıt donanımı ve model bilgisi</string>
-  <string name="actionControllerInfo_title">Kumanda bilgisi</string>
-  <string name="actionControllerDiagnostics_title">Kumanda tanılama</string>
+  <string name="menuItem_controllerInfo">Kumanda bilgisi</string>
+  <string name="menuItem_controllerDiagnostics">Kumanda tanılama</string>
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
   <string name="actionCrashTest_title">Sına</string>
   <string name="actionCrashTest_summary">Geliştiricilere bir yapılandırma raporu gönder</string>
   <string name="actionResetUserPrefs_title">Sıfırla</string>
   <string name="actionResetUserPrefs_summary">Varsayılan ayarları geri yükle</string>
-  <string name="actionHelp_title">Yardım</string>
-  <string name="actionHelp_faq">SSS</string>
-  <string name="actionHelp_reportbug">Hata raporla</string>
-  <string name="actionAbout_title">Hakkında</string>
-  <string name="actionAbout_message">Sürüm: %1$s\n Sürüm kodu: %2$d</string>
-  <string name="actionAbout_credits">Katkıda Bulunanlar</string>
-  <string name="actionAbout_changelog">Değişim Kayıtları</string>
+  <string name="menuItem_help">Yardım</string>
+  <string name="menuItem_faq">SSS</string>
+  <string name="menuItem_submitBugReport">Hata raporla</string>
+  <string name="menuItem_info">Hakkında</string>
+  <string name="popup_version">Sürüm: %1$s\n Sürüm kodu: %2$d</string>
+  <string name="menuItem_credits">Katkıda Bulunanlar</string>
+  <string name="menuItem_changelog">Değişim Kayıtları</string>
   <!--Preference Screens-->
   <string name="screenPlay_title">Oyna</string>
-  <string name="screenSettings_title">Ayarlar</string>
+  <string name="menuItem_settings">Ayarlar</string>
   <string name="screenInput_title">Girdi</string>
   <string name="screenInput_summary">Denetim Ayarları</string>
   <string name="screenTouchscreen_title">Dokunmatik Ekran</string>
@@ -252,7 +252,7 @@
   <string name="r4300Emulator_entryDynarec">Dinamik derleyici (dynarec)</string>
   <string name="audioPlugin_entryNone">Hiçbiri (ses devre dışı)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="localeOverride_title">Dil</string>
+  <string name="menuItem_localeOverride">Dil</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Çökme raporlamayı etkinleştir</string>

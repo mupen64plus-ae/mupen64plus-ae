@@ -81,26 +81,26 @@
   <string name="actionResume_summary">チートを使用している場合は動作しない場合があります。</string>
   <string name="actionRestart_title">再起動</string>
   <string name="actionRestart_summary">チートを使用している場合にお勧め。</string>
-  <string name="actionDeviceInfo_title">デバイス情報</string>
+  <string name="menuItem_deviceInfo">デバイス情報</string>
   <string name="actionDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
-  <string name="actionControllerInfo_title">コントローラ情報</string>
-  <string name="actionControllerDiagnostics_title">コントローラ診断</string>
+  <string name="menuItem_controllerInfo">コントローラ情報</string>
+  <string name="menuItem_controllerDiagnostics">コントローラ診断</string>
   <string name="actionReloadAssets_title">データを再ロード</string>
   <string name="actionReloadAssets_summary">アプリケーションのデータ·ファイルを再ロード</string>
   <string name="actionCrashTest_title">テスト</string>
   <string name="actionCrashTest_summary">開発者へのコンフィギュレーションレポートを送って。</string>
   <string name="actionResetUserPrefs_title">リセット</string>
   <string name="actionResetUserPrefs_summary">既定値にリセット</string>
-  <string name="actionHelp_title">ヘルプ</string>
-  <string name="actionHelp_faq">よくある質問</string>
-  <string name="actionHelp_reportbug">バグレポート</string>
-  <string name="actionAbout_title">ついて</string>
-  <string name="actionAbout_message">バージョン: %1$s\nバージョンコード: %2$d</string>
-  <string name="actionAbout_credits">クレジット</string>
-  <string name="actionAbout_changelog">変更履歴</string>
+  <string name="menuItem_help">ヘルプ</string>
+  <string name="menuItem_faq">よくある質問</string>
+  <string name="menuItem_submitBugReport">バグレポート</string>
+  <string name="menuItem_info">ついて</string>
+  <string name="popup_version">バージョン: %1$s\nバージョンコード: %2$d</string>
+  <string name="menuItem_credits">クレジット</string>
+  <string name="menuItem_changelog">変更履歴</string>
   <!--Preference Screens-->
   <string name="screenPlay_title">プレー</string>
-  <string name="screenSettings_title">設定</string>
+  <string name="menuItem_settings">設定</string>
   <string name="screenInput_title">入力</string>
   <string name="screenInput_summary">コントロール設定</string>
   <string name="screenTouchscreen_title">タッチ</string>
@@ -262,7 +262,7 @@
   <string name="r4300Emulator_entryDynarec">動的リコンパイラ (DynaRec)</string>
   <string name="audioPlugin_entryNone">なし（オーディオ無効）</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="localeOverride_title">言語</string>
+  <string name="menuItem_localeOverride">言語</string>
   <string name="localeOverride_entrySystemDefault">システムのデフォルト</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">クラッシュレポートを有効</string>
