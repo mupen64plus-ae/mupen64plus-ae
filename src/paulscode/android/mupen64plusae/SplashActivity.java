@@ -82,6 +82,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     private SharedPreferences mPrefs = null;
     
     // These constants must match the keys used in res/xml/preferences*.xml
+    private static final String PATH_SELECTED_GAME = "pathSelectedGame";
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
@@ -116,7 +117,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         // Save the path of the ROM, if it was passed to the activity
         Uri dataUri = this.getIntent().getData();
         if( dataUri != null )
-            mPrefs.edit().putString( "pathSelectedGame", dataUri.getPath() ).commit();
+            mPrefs.edit().putString( PATH_SELECTED_GAME, dataUri.getPath() ).commit();
         
         // Disable the Xperia PLAY plugin as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
