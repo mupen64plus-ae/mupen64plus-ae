@@ -120,16 +120,19 @@ public class GalleryActivity extends Activity implements OnClickListener
     @Override
     public boolean onPrepareOptionsMenu( Menu menu )
     {
-        MenuItem item = menu.findItem( R.id.menuItem_gameSettings );
-        String romName = mRomDetail.baseName;
-        boolean isValid = romName != null;
-        String title;
-        if( !TextUtils.isEmpty( romName ) )
-            title = getString( R.string.menuItem_gameSettingsNamed, romName );
-        else
-            title = getString( R.string.menuItem_gameSettings );
-        item.setTitle( title );
-        item.setEnabled( isValid );
+        if( mRomDetail != null )
+        {
+            MenuItem item = menu.findItem( R.id.menuItem_gameSettings );
+            String romName = mRomDetail.baseName;
+            boolean isValid = romName != null;
+            String title;
+            if( !TextUtils.isEmpty( romName ) )
+                title = getString( R.string.menuItem_gameSettingsNamed, romName );
+            else
+                title = getString( R.string.menuItem_gameSettings );
+            item.setTitle( title );
+            item.setEnabled( isValid );
+        }
         return super.onPrepareOptionsMenu( menu );
     }
     
