@@ -57,7 +57,7 @@ import android.util.Log;
  */
 public class ConfigFile
 {
-    private String mFilename;  // Name of the config file.
+    private final String mFilename;  // Name of the config file.
     private final HashMap<String, ConfigSection> mConfigMap; // Sections mapped by title for easy lookup
     private final LinkedList<ConfigSection> mConfigList;     // Sections in the proper order for easy saving
 
@@ -68,10 +68,10 @@ public class ConfigFile
      */
     public ConfigFile( String filename )
     {
-        this.mFilename = filename;
+        mFilename = filename;
         mConfigMap = new HashMap<String, ConfigSection>();
         mConfigList = new LinkedList<ConfigSection>();
-        load( filename );
+        reload();
     }
 
     /**
@@ -165,16 +165,16 @@ public class ConfigFile
     }
 
     /**
-     * Reads the entire config file, and saves the data in 'configMap'.
-     * 
-     * @param filename The config file to read from.
+     * Re-loads the entire config file, overwriting any unsaved changes, and saves the data in
+     * 'configMap'.
      * 
      * @return True if successful.
+     * @see #save()
      */
-    public boolean load( String filename )
+    public boolean reload()
     {   
         // Make sure a file was actually specified
-        if( TextUtils.isEmpty( filename ) )
+        if( TextUtils.isEmpty( mFilename ) )
             return false;
         
         // Free any previously loaded data
@@ -183,7 +183,7 @@ public class ConfigFile
         FileInputStream fstream;
         try
         {
-            fstream = new FileInputStream( filename );
+            fstream = new FileInputStream( mFilename );
         }
         catch( FileNotFoundException fnfe )
         {
@@ -230,6 +230,7 @@ public class ConfigFile
      * Saves the data from 'configMap' back to the config file.
      * 
      * @return True if successful. False otherwise.
+     * @see #reload()
      */
     public boolean save()
     {
