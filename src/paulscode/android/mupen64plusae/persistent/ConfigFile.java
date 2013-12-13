@@ -58,8 +58,8 @@ import android.util.Log;
 public class ConfigFile
 {
     private String mFilename;  // Name of the config file.
-    private HashMap<String, ConfigSection> mConfigMap; // Sections mapped by title for easy lookup
-    private LinkedList<ConfigSection> mConfigList;     // Sections in the proper order for easy saving
+    private final HashMap<String, ConfigSection> mConfigMap; // Sections mapped by title for easy lookup
+    private final LinkedList<ConfigSection> mConfigList;     // Sections in the proper order for easy saving
 
     /**
      * Constructor: Reads the entire config file, and saves the data in 'configMap'.
@@ -69,6 +69,8 @@ public class ConfigFile
     public ConfigFile( String filename )
     {
         this.mFilename = filename;
+        mConfigMap = new HashMap<String, ConfigSection>();
+        mConfigList = new LinkedList<ConfigSection>();
         load( filename );
     }
 
@@ -81,10 +83,6 @@ public class ConfigFile
      */
     public ConfigSection match( String regex )
     {
-        // No configuration to look up.. quit
-        if( mConfigMap == null )
-            return null;
-        
         String sectionTitle;
         Set<String> keys = mConfigMap.keySet();
 
@@ -107,9 +105,6 @@ public class ConfigFile
      */
     public ConfigSection get( String sectionTitle )
     {
-        if( mConfigMap == null )
-            return null;  // No configuration to look up.. quit
-        
         return mConfigMap.get( sectionTitle );
     }
 
@@ -123,10 +118,6 @@ public class ConfigFile
      */
     public String get( String sectionTitle, String parameter )
     {
-        // No configuration to look up.. quit
-        if( mConfigMap == null )
-            return null;
-        
         ConfigSection section = mConfigMap.get( sectionTitle );
         
         // The specified section doesn't exist or is empty.. quit
@@ -153,10 +144,6 @@ public class ConfigFile
      */
     public void put( String sectionTitle, String parameter, String value )
     {
-        // No configuration to look up.. quit
-        if( mConfigMap == null )
-            return;
-        
         ConfigSection section = mConfigMap.get( sectionTitle );
         if( section == null )
         {  
@@ -173,11 +160,8 @@ public class ConfigFile
      */
     public void clear()
     {
-        if( mConfigMap != null )
-            mConfigMap.clear();
-        
-        if( mConfigList != null )
-            mConfigList.clear();  // Ready to start fresh
+        mConfigMap.clear();
+        mConfigList.clear();  // Ready to start fresh
     }
 
     /**
@@ -195,14 +179,6 @@ public class ConfigFile
         
         // Free any previously loaded data
         clear();
-        
-        // Create the configMap if it hasn't been already
-        if( mConfigMap == null )
-            mConfigMap = new HashMap<String, ConfigSection>();
-        
-        // Create the configList if it hasn't been already
-        if( mConfigList == null )
-            mConfigList = new LinkedList<ConfigSection>();
         
         FileInputStream fstream;
         try
@@ -261,13 +237,6 @@ public class ConfigFile
         if( TextUtils.isEmpty( mFilename ) )
         {
             Log.e( "ConfigFile", "Filename not specified in method save()" );
-            return false;   // Quit
-        }
-        
-        // No config data to save.
-        if( mConfigList == null )
-        {
-            Log.e( "ConfigFile", "No config data to save in method save()" );
             return false;   // Quit
         }
         
