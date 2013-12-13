@@ -131,9 +131,6 @@ public class UserPrefs
     /** The path of the Mupen64Plus base configuration file. */
     public final String mupen64plus_cfg;
     
-    /** The path of the error log file. */
-    public final String error_log;
-    
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
     
@@ -448,7 +445,6 @@ public class UserPrefs
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
-        error_log = coreUserConfigDir + "/error.log";
         
         // Plug-ins
         videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );
