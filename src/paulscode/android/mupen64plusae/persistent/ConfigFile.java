@@ -57,6 +57,9 @@ import android.util.Log;
  */
 public class ConfigFile
 {
+    /** The name we use for the untitled section (preamble) of the config file. */
+    public static final String SECTIONLESS_NAME = "[<sectionless!>]";
+    
     private final String mFilename;  // Name of the config file.
     private final HashMap<String, ConfigSection> mConfigMap; // Sections mapped by title for easy lookup
     private final LinkedList<ConfigSection> mConfigList;     // Sections in the proper order for easy saving
@@ -194,7 +197,7 @@ public class ConfigFile
         DataInputStream in = new DataInputStream( fstream );
         BufferedReader br = new BufferedReader( new InputStreamReader( in ) );
 
-        String sectionName = "[<sectionless!>]";
+        String sectionName = SECTIONLESS_NAME;
         ConfigSection section = new ConfigSection( sectionName, br ); // Read the 'sectionless' section
         mConfigMap.put( sectionName, section ); // Save the data to 'configMap'
         mConfigList.add( section ); // Add it to the list as well
@@ -391,7 +394,7 @@ public class ConfigFile
             parameters = new HashMap<String, ConfigParameter>();
             lines = new LinkedList<ConfigLine>();
             
-            if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( "[<sectionless!>]" ) )
+            if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( SECTIONLESS_NAME ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
             
             name = sectionName;
@@ -413,7 +416,7 @@ public class ConfigFile
             parameters = new HashMap<String, ConfigParameter>();
             lines = new LinkedList<ConfigLine>();
 
-            if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( "[<sectionless!>]" ) )
+            if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( SECTIONLESS_NAME ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
 
             name = sectionName;

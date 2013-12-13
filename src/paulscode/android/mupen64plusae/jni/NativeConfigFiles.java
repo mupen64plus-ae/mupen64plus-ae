@@ -37,14 +37,14 @@ public class NativeConfigFiles
         
         // GLES2N64 config file
         ConfigFile gles2n64_conf = new ConfigFile( appData.gles2n64_conf );
-        gles2n64_conf.put( "[<sectionless!>]", "window width", String.valueOf( user.videoRenderWidth ) );
-        gles2n64_conf.put( "[<sectionless!>]", "window height", String.valueOf( user.videoRenderHeight ) );
-        gles2n64_conf.put( "[<sectionless!>]", "auto frameskip", boolToNum( user.isGles2N64AutoFrameskipEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "max frameskip", String.valueOf( user.gles2N64MaxFrameskip ) );
-        gles2n64_conf.put( "[<sectionless!>]", "enable fog", boolToNum( user.isGles2N64FogEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", boolToNum( user.isGles2N64AlphaTestEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "force screen clear", boolToNum( user.isGles2N64ScreenClearEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "hack z", boolToNum( !user.isGles2N64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( user.videoRenderWidth ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( user.videoRenderHeight ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( user.isGles2N64AutoFrameskipEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( user.gles2N64MaxFrameskip ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable fog", boolToNum( user.isGles2N64FogEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( user.isGles2N64AlphaTestEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( user.isGles2N64ScreenClearEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( !user.isGles2N64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
         
         // GLES2GLIDE64 config file
         ConfigFile gles2glide64_conf = new ConfigFile( appData.gles2glide64_conf );

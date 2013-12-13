@@ -507,6 +507,6 @@ public class TouchMap
     private boolean isFilename( String parameter )
     {
         return parameter != null && parameter.length() > 0 && !parameter.equals( "INFO" )
-                && !parameter.equals( "MASK_COLOR" ) && !parameter.equals( "[<sectionless!>]" );
+                && !parameter.equals( "MASK_COLOR" ) && !parameter.equals( ConfigFile.SECTIONLESS_NAME );
     }
 }
