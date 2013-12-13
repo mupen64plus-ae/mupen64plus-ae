@@ -112,6 +112,18 @@ public class ConfigFile
     }
 
     /**
+     * Removes a config section by its title.  Note that the removal is not actually persisted to
+     * disk until the {@link #save()} method is called.
+     * 
+     * @param sectionTitle Title of the section containing the parameter.
+     */
+    public void remove( String sectionTitle )
+    {
+        mConfigList.remove( mConfigMap.get( sectionTitle ) );
+        mConfigMap.remove( sectionTitle );
+    }
+
+    /**
      * Looks up the specified parameter under the specified section title.
      * 
      * @param sectionTitle Title of the section containing the parameter.
@@ -382,7 +394,7 @@ public class ConfigFile
         private LinkedList<ConfigLine> lines;  // All the lines in this section, including comments
         
         // Name of the next section, or null if there are no sections left to read in the file:
-        public String nextName = null;
+        private String nextName = null;
 
         /**
          * Constructor: Creates an empty config section
