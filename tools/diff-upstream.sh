@@ -5,31 +5,31 @@ mkdir -p tmp/upstream
 cd tmp/upstream/
 
 if [ -d "mupen64plus-core" ]; then
-    echo "skipping hg clone"
+    hg pull -u mupen64plus-core
 else
     hg clone https://bitbucket.org/richard42/mupen64plus-core
 fi
 
 if [ -d "mupen64plus-ui-console" ]; then
-    echo "skipping hg clone"
+    hg pull -u mupen64plus-ui-console
 else
     hg clone https://bitbucket.org/richard42/mupen64plus-ui-console
 fi
 
 if [ -d "mupen64plus-rsp-hle" ]; then
-    echo "skipping hg clone"
+    hg pull -u mupen64plus-rsp-hle
 else
     hg clone https://bitbucket.org/richard42/mupen64plus-rsp-hle
 fi
 
 if [ -d "mupen64plus-audio-sdl" ]; then
-    echo "skipping hg clone"
+    hg pull -u mupen64plus-audio-sdl
 else
     hg clone https://bitbucket.org/richard42/mupen64plus-audio-sdl
 fi
 
 if [ -d "mupen64plus-video-rice" ]; then
-    echo "skipping hg clone"
+    hg pull -u mupen64plus-video-rice
 else
     hg clone https://bitbucket.org/richard42/mupen64plus-video-rice
 fi
