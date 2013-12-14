@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-core - osal/dynamiclib.h                                  *
+ *   Mupen64plus-video-glide64mk2 - osal_dynamiclib.h                      *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
@@ -22,13 +22,17 @@
 #if !defined(OSAL_DYNAMICLIB_H)
 #define OSAL_DYNAMICLIB_H
 
+#include "m64p_types.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "m64p_types.h"
+m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath);
 
 void *     osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName);
+
+m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle);
 
 #ifdef __cplusplus
 }

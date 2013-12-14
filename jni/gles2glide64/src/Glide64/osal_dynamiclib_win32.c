@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - osal_dynamiclib_win32.c                      *
+ *   Mupen64plus-video-glide64mk2 - osal_dynamiclib_win32.c                *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
@@ -24,6 +24,7 @@
 #include <stdio.h>
 
 #include "m64p_types.h"
+#include "m64p.h"
 #include "osal_dynamiclib.h"
 
 m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath)
@@ -39,7 +40,7 @@ m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibra
         DWORD dwErr = GetLastError(); 
         FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwErr,
                       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &pchErrMsg, 0, NULL);
-        fprintf(stderr, "LoadLibrary('%s') error: %s\n", pccLibraryPath, pchErrMsg);
+        WriteLog(M64MSG_ERROR, "LoadLibrary('%s') error: %s", pccLibraryPath, pchErrMsg);
         LocalFree(pchErrMsg);
         return M64ERR_INPUT_NOT_FOUND;
     }
@@ -65,7 +66,7 @@ m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle)
         DWORD dwErr = GetLastError(); 
         FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwErr,
                       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &pchErrMsg, 0, NULL);
-        fprintf(stderr, "FreeLibrary() error: %s\n", pchErrMsg);
+        WriteLog(M64MSG_ERROR, "FreeLibrary() error: %s", pchErrMsg);
         LocalFree(pchErrMsg);
         return M64ERR_INTERNAL;
     }

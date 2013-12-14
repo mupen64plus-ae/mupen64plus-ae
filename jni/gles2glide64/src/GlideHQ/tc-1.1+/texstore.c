@@ -22,72 +22,73 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/* Copyright (C) 2007  Hiroshi Morii <koolsmoky(at)users.sourceforge.net>
- * _mesa_upscale_teximage2d speedup
- */
-
 #include <assert.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include "types.h"
 #include "internal.h"
 
-
-void
-_mesa_upscale_teximage2d (unsigned int inWidth, unsigned int inHeight,
-			  unsigned int outWidth, unsigned int outHeight,
-			  unsigned int comps,
-			  const byte *src, int srcRowStride,
-			  byte *dest)
+void reorder_source_3(byte *tex, dword width, dword height, int srcRowStride)
 {
-    unsigned int i, j, k;
+    byte *line;
+    byte t;
+    dword i, j;
 
-    assert(outWidth >= inWidth);
-    assert(outHeight >= inHeight);
+    for (i = 0; i < height; i++) {
+        line = &tex[srcRowStride * i];
+        for (j = 0; j < width; j++) {
+            t = line[2];
+            line[2] = line[0];
+            line[0] = t;
+            line += 3;
+        }
+    }
+}
 
-#if 1 /* H.Morii - faster loops */
-  for (i = 0; i < inHeight; i++) {
-    for (j = 0; j < inWidth; j++) {
-      const int aa = (i * outWidth + j) * comps;
-      const int bb = i * srcRowStride + j * comps;
-      for (k = 0; k < comps; k++) {
-        dest[aa + k] = src[bb + k];
-      }
+void *reorder_source_3_alloc(const byte *source, dword width, dword height, int srcRowStride)
+{
+    byte *tex;
+
+    tex = malloc(height * srcRowStride);
+    if (!tex)
+        goto out;
+
+    memcpy(tex, source, height * srcRowStride);
+    reorder_source_3(tex, width, height, srcRowStride);
+
+out:
+    return tex;
+}
+
+void reorder_source_4(byte *tex, dword width, dword height, int srcRowStride)
+{
+    byte *line;
+    byte t;
+    dword i, j;
+
+    for (i = 0; i < height; i++) {
+        line = &tex[srcRowStride * i];
+        for (j = 0; j < width; j++) {
+            t = line[2];
+            line[2] = line[0];
+            line[0] = t;
+            line += 4;
+        }
     }
-    for (; j < outWidth; j++) {
-      const int aa = (i * outWidth + j) * comps;
-      const int bb = i * srcRowStride + (j - inWidth) * comps;
-      for (k = 0; k < comps; k++) {
-        dest[aa + k] = src[bb + k];
-      }
-    }
-  }
-  for (; i < outHeight; i++) {
-    for (j = 0; j < inWidth; j++) {
-      const int aa = (i * outWidth + j) * comps;
-      const int bb = (i - inHeight) * srcRowStride + j * comps;
-      for (k = 0; k < comps; k++) {
-        dest[aa + k] = src[bb + k];
-      }
-    }
-    for (; j < outWidth; j++) {
-      const int aa = (i * outWidth + j) * comps;
-      const int bb = (i - inHeight) * srcRowStride + (j - inWidth) * comps;
-      for (k = 0; k < comps; k++) {
-        dest[aa + k] = src[bb + k];
-      }
-    }
-  }
-#else
-    for (i = 0; i < outHeight; i++) {
-	const int ii = i % inHeight;
-	for (j = 0; j < outWidth; j++) {
-	    const int jj = j % inWidth;
-            const int aa = (i * outWidth + j) * comps;
-            const int bb = ii * srcRowStride + jj * comps;
-	    for (k = 0; k < comps; k++) {
-		dest[aa + k] = src[bb + k];
-	    }
-	}
-    }
-#endif
+}
+
+void *reorder_source_4_alloc(const byte *source, dword width, dword height, int srcRowStride)
+{
+    byte *tex;
+
+    tex = malloc(height * srcRowStride);
+    if (!tex)
+        goto out;
+
+    memcpy(tex, source, height * srcRowStride);
+    reorder_source_4(tex, width, height, srcRowStride);
+
+out:
+    return tex;
 }

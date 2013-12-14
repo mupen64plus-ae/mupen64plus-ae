@@ -161,26 +161,18 @@ ifeq ($(OS), LINUX)
   LDLIBS += -ldl
 endif
 ifeq ($(OS), OSX)
-  # Select the proper SDK
-  # Also, SDKs are stored in a different location since XCode 4.3
-  OSX_SDK ?= $(shell sw_vers -productVersion | cut -f1 -f2 -d .)
-  OSX_XCODEMAJ = $(shell xcodebuild -version | grep '[0-9]*\.[0-9]*' | cut -f2 -d ' ' | cut -f1 -d .)
-  OSX_XCODEMIN = $(shell xcodebuild -version | grep '[0-9]*\.[0-9]*' | cut -f2 -d ' ' | cut -f2 -d .)
-  OSX_XCODEGE43 = $(shell echo "`expr $(OSX_XCODEMAJ) \>= 4``expr $(OSX_XCODEMIN) \>= 3`")
-  ifeq ($(OSX_XCODEGE43), 11)
-    OSX_SYSROOT := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
-  else
-    OSX_SYSROOT := /Developer/SDKs
-  endif
+  #xcode-select has been around since XCode 3.0, i.e. OS X 10.5
+  OSX_SDK_ROOT = $(shell xcode-select -print-path)/Platforms/MacOSX.platform/Developer/SDKs
+  OSX_SDK_PATH = $(OSX_SDK_ROOT)/$(shell ls $(OSX_SDK_ROOT) | tail -1)
 
   CXXFLAGS += -std=c++11 -stdlib=libc++
   ifeq ($(CPU), X86)
     LDFLAGS += -bundle -L/opt/local/lib
     LDLIBS += -ldl
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
+      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
     else
-      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
+      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
     endif
   endif
 endif
@@ -218,7 +210,6 @@ ifeq ($(origin LIBPNG_CFLAGS) $(origin LIBPNG_LDLIBS), undefined undefined)
 endif
 CFLAGS += $(LIBPNG_CFLAGS)
 LDLIBS += $(LIBPNG_LDLIBS)
-
 
 # search for OpenGL libraries
 ifeq ($(OS), OSX)
@@ -370,12 +361,19 @@ SOURCE += \
 	$(SRCDIR)/GlideHQ/TxReSample.cpp \
 	$(SRCDIR)/GlideHQ/TxDbg.cpp \
 	$(SRCDIR)/GlideHQ/tc-1.1+/fxt1.c \
-	$(SRCDIR)/GlideHQ/tc-1.1+/dxtn.c \
 	$(SRCDIR)/GlideHQ/tc-1.1+/wrapper.c \
 	$(SRCDIR)/GlideHQ/tc-1.1+/texstore.c
 
-CPPFLAGS += -DTEXTURE_FILTER # -DDUMP_CACHE
+CPPFLAGS += -DTEXTURE_FILTER -DDUMP_CACHE
 LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX)
+
+  ifeq ($(TXCDXTN), 1)
+    CPPFLAGS += -DTXCDXTN_EXTERNAL
+  else 
+    SOURCE += \
+	$(SRCDIR)/GlideHQ/tc-1.1+/s2tc/s2tc_algorithm.cpp \
+	$(SRCDIR)/GlideHQ/tc-1.1+/s2tc/s2tc_libtxc_dxtn.cpp
+  endif
 endif
 
 ifeq ($(OS),MINGW)
@@ -412,6 +410,7 @@ targets:
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "    HIRES=(1|0)   == Enables/Disables support for hires textures and texture filters (default: 1)"
+	@echo "    TXCDXTN=(1|0) == Enable/Disable external txc_dxtn library (default: 0)"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
@@ -440,7 +439,7 @@ clean:
 rebuild: clean all
 
 # build dependency files
-CFLAGS += -MD
+CFLAGS += -MD -MP
 -include $(OBJECTS:.o=.d)
 
 CXXFLAGS += $(CFLAGS)

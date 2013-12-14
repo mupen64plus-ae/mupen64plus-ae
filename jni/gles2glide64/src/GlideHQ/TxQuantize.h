@@ -38,7 +38,7 @@ private:
   int _numcore;
 
   fxtCompressTexFuncExt _tx_compress_fxt1;
-  dxtCompressTexFuncExt _tx_compress_dxtn;
+  dxtCompressTexFuncExt _tx_compress_dxtn_rgba;
 
   /* fast optimized... well, sort of. */
   void ARGB1555_ARGB8888(uint32* src, uint32* dst, int width, int height);

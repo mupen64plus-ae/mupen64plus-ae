@@ -55,6 +55,9 @@
 #include <time.h>
 #define PATH_MAX MAX_PATH
 #endif
+#ifndef PATH_MAX
+  #define PATH_MAX 4096
+#endif
 #include "osal_dynamiclib.h"
 #ifdef TEXTURE_FILTER // Hiroshi Morii <koolsmoky@users.sourceforge.net>
 #include <stdarg.h>
@@ -1422,7 +1425,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     if (configDir)
     {
         SetConfigDir(configDir);
-        CoreVideo_Init();
         ReadSettings();
 		return M64ERR_SUCCESS;
     }
