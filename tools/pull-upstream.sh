@@ -6,7 +6,9 @@ set -e
 # actual script because it breaks quite easily when detecting a merge problem.
 
 # From https://github.com/git/git/blob/master/contrib/subtree/git-subtree.sh
-GITSUBTREE=/usr/share/doc/git/contrib/subtree/git-subtree.sh
+curl https://raw.github.com/git/git/master/contrib/subtree/git-subtree.sh > git-subtree.sh
+cd ..
+GITSUBTREE=./tools/git-subtree.sh
 
 sh ${GITSUBTREE} pull --prefix=jni/audio-sdl https://bitbucket.org/mupen64plus/mupen64plus-audio-sdl.git master
 sh ${GITSUBTREE} pull --prefix=jni/core https://bitbucket.org/mupen64plus/mupen64plus-core.git master
