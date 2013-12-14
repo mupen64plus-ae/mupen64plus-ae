@@ -226,7 +226,9 @@ static void normal_task_dispatching()
         case 0x2caa6: jpeg_decode_PS(); return;
 
         /* JPEG: found in Ogre Battle, Bottom of the 9th */
-        case 0x130de: jpeg_decode_OB(); return;
+        case 0x130de:
+        case 0x278b0:
+            jpeg_decode_OB(); return;
     }
 
     handle_unknown_task(sum);
