@@ -90,7 +90,9 @@ static void genupdate_count(unsigned int addr)
 #if !defined(COMPARE_CORE) && !defined(DBG)
    mov_reg32_imm32(EAX, addr);
    sub_xreg32_m32rel(EAX, (unsigned int*)(&last_addr));
-   shr_reg32_imm8(EAX, 1);
+   shr_reg32_imm8(EAX, 2);
+   mov_xreg32_m32rel(EDX, (void*)&count_per_op);
+   mul_reg32(EDX);
    add_m32rel_xreg32((unsigned int*)(&Count), EAX);
 #else
    mov_reg64_imm64(RAX, (unsigned long long) (dst+1));
