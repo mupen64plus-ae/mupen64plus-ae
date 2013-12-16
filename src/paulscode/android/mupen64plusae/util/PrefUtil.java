@@ -61,7 +61,7 @@ public final class PrefUtil
     public static void validateListPreference( Resources res, SharedPreferences prefs, String key, int defaultResId, int arrayResId )
     {
         String value = prefs.getString( key, null );
-        String defValue = res.getString( defaultResId, (String) null );
+        String defValue = res.getString( defaultResId );
         String[] validValues = res.getStringArray( arrayResId );
         if( !ArrayUtils.contains( validValues, value ) )
         {
