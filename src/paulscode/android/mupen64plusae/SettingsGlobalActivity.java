@@ -228,6 +228,8 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
                 PreferenceManager.setDefaultValues( SettingsGlobalActivity.this, R.xml.preferences_play, true );
                 PreferenceManager.setDefaultValues( SettingsGlobalActivity.this, R.xml.preferences_video, true );
                 
+                mUserPrefs.putPathSelectedGame( UserPrefs.DEFAULT_PATH_SELECTED_GAME );
+                
                 // Also reset any manual overrides the user may have made in the config file
                 File configFile = new File( mUserPrefs.mupen64plus_cfg );
                 if( configFile.exists() )

@@ -429,7 +429,7 @@ public class UserPrefs
         mLocaleCodes = values;
         
         // Files
-        selectedGame = mPreferences.getString( "pathSelectedGame", DEFAULT_PATH_SELECTED_GAME );
+        selectedGame = PathPreference.validate( mPreferences.getString( "pathSelectedGame", DEFAULT_PATH_SELECTED_GAME ) );
         File romfile = new File( selectedGame );
         selectedGameHeader = new RomHeader( romfile );
         gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
