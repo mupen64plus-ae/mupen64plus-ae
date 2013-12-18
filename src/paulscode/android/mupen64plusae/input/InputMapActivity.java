@@ -223,13 +223,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     
     private void initWidgets()
     {
-        // Hide some widgets that do not apply
-        {
-            // All other cases, hide the Xperia PLAY stuff
-            findViewById( R.id.aPadXperiaPlay ).setVisibility( View.GONE );
-            findViewById( R.id.cPadXperiaPlay ).setVisibility( View.GONE );
-        }
-        
         // Get the text view object
         mFeedbackText = (TextView) findViewById( R.id.textFeedback );
         mFeedbackText.setText( "" );

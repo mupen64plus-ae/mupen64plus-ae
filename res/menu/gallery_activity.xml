@@ -23,9 +23,6 @@
                     android:id="@+id/menuItem_touchscreenProfiles"
                     android:title="@string/menuItem_touchscreenProfiles"/>
                 <item
-                    android:id="@+id/menuItem_controllerProfiles"
-                    android:title="@string/menuItem_controllerProfiles"/>
-                <item
                     android:id="@+id/menuItem_customCheats"
                     android:title="@string/menuItem_customCheats"/>
             </group>

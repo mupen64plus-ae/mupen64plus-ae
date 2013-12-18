@@ -155,10 +155,6 @@ public class GalleryActivity extends Activity implements OnClickListener
                 // TODO
                 popupTodo();
                 return true;
-            case R.id.menuItem_controllerProfiles:
-                // TODO
-                popupTodo();
-                return true;
             case R.id.menuItem_customCheats:
                 // TODO
                 popupTodo();
