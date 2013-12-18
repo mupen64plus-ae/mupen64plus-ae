@@ -344,13 +344,13 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         // Create the name editor
         final EditText editName = new EditText( this );
         editName.setText( name );
-        editName.setHint( "Profile name" );
+        editName.setHint( R.string.hint_profileName );
         editName.setRawInputType( InputType.TYPE_CLASS_TEXT );
         
         // Create the comment editor
         final EditText editComment = new EditText( this );
         editComment.setText( comment );
-        editComment.setHint( "Description (optional)" );
+        editComment.setHint( R.string.hint_profileComment );
         editComment.setRawInputType( InputType.TYPE_CLASS_TEXT );
         
         // Put the editors in a container
