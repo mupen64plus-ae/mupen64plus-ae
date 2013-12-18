@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menuItem_new"
+        android:icon="@drawable/ic_plus"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menuItem_new"/>
+    <item
+        android:id="@+id/menuItem_toggleBuiltins"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menuItem_hideBuiltins"/>
+
+</menu>

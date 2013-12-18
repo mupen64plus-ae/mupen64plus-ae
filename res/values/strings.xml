@@ -87,9 +87,23 @@
     <string name="menuItem_controllerInfo">Controller info</string>
     <string name="menuItem_localeOverride">Language</string>
 
+    <!-- ProfileActivity -->
+    <string name="menuItem_new">New</string>
+    <string name="menuItem_hideBuiltins">Hide built-ins</string>
+    <string name="menuItem_showBuiltins">Show built-ins</string>
+
     <!-- Popup Dialogs -->
     <string name="popup_faq">Mupen64Plus is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the <i>video plugin</i>.\n\nTo fix lag, try changing the <i>video frameskip</i> setting or the <i>video plugin</i>.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the <i>button scale</i> or <i>button layout</i>.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.\n\n</small>Thank you for helping us improve the app!</string>
     <string name="popup_version">Version: %1$s\nVersion code: %2$d</string>
+
+    <!-- Lists -->
+    <string name="listItem_profileBuiltin">%1$s (built-in)</string>
+    <string name="listItem_profileCustom">%1$s</string>
+    <string name="listItem_edit">Edit</string>
+    <string name="listItem_rename">Rename</string>
+    <string name="listItem_copy">Copy</string>
+    <string name="listItem_delete">Delete</string>
+    <string name="listItem_disabled">(Disabled)</string>
 
     <!-- ************************************************************************** -->
     <!-- Toast Messages                                                             -->
@@ -383,6 +397,7 @@
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
     <string name="confirmLoadProfile_message">Load profile \"%1$s\" for %2$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
+    <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
 
     <!-- Change Log -->
     <string name="changeLog_dialogTitle">Change log</string>

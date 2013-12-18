@@ -35,6 +35,17 @@
         <item>ja</item>
     </string-array>
 
+    <!-- Profile Item Popups -->
+    <string-array name="profileClickBuiltin_entries" translatable="false">
+        <item>@string/listItem_copy</item>
+    </string-array>
+    <string-array name="profileClickCustom_entries" translatable="false">
+        <item>@string/listItem_edit</item>
+        <item>@string/listItem_copy</item>
+        <item>@string/listItem_rename</item>
+        <item>@string/listItem_delete</item>
+    </string-array>
+
     <!-- Touchscreen Refresh List -->
     <string-array name="touchscreenRefresh_entries" translatable="false">
         <item>@string/touchscreenRefresh_entryNever</item>
