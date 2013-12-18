@@ -195,16 +195,16 @@ public class UserPrefs
     public final String touchpadLayout;
     
     /** True if Player 1's controller is enabled. */
-    public final boolean isInputEnabled1;
+    public final boolean isControllerEnabled1;
     
     /** True if Player 2's controller is enabled. */
-    public final boolean isInputEnabled2;
+    public final boolean isControllerEnabled2;
     
     /** True if Player 3's controller is enabled. */
-    public final boolean isInputEnabled3;
+    public final boolean isControllerEnabled3;
     
     /** True if Player 4's controller is enabled. */
-    public final boolean isInputEnabled4;
+    public final boolean isControllerEnabled4;
     
     /** The input profile for Player 1. */
     public final ControllerProfile controllerProfile1;
@@ -463,10 +463,10 @@ public class UserPrefs
         controllerProfile4 = LoadProfile( profileName4, configCustom, configBuiltin );          
         
         // Input prefs
-        isInputEnabled1 = controllerProfile1 != null;
-        isInputEnabled2 = controllerProfile2 != null;
-        isInputEnabled3 = controllerProfile3 != null;
-        isInputEnabled4 = controllerProfile4 != null;
+        isControllerEnabled1 = controllerProfile1 != null;
+        isControllerEnabled2 = controllerProfile2 != null;
+        isControllerEnabled3 = controllerProfile3 != null;
+        isControllerEnabled4 = controllerProfile4 != null;
         
         // Multi-player prefs
         playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
@@ -596,17 +596,17 @@ public class UserPrefs
         touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         
         // Determine which players are "plugged in"
-        isPlugged1 = isInputEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;
-        isPlugged2 = isInputEnabled2;
-        isPlugged3 = isInputEnabled3;
-        isPlugged4 = isInputEnabled4;
+        isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;
+        isPlugged2 = isControllerEnabled2;
+        isPlugged3 = isControllerEnabled3;
+        isPlugged4 = isControllerEnabled4;
         
         // Determine whether controller deconfliction is needed
         int numControllers = 0;
-        numControllers += isInputEnabled1 ? 1 : 0;
-        numControllers += isInputEnabled2 ? 1 : 0;
-        numControllers += isInputEnabled3 ? 1 : 0;
-        numControllers += isInputEnabled4 ? 1 : 0;
+        numControllers += isControllerEnabled1 ? 1 : 0;
+        numControllers += isControllerEnabled2 ? 1 : 0;
+        numControllers += isControllerEnabled3 ? 1 : 0;
+        numControllers += isControllerEnabled4 ? 1 : 0;
         boolean isControllerShared = mPreferences.getBoolean( "inputShareController", false );
         playerMap.setEnabled( numControllers > 1 && !isControllerShared );
         

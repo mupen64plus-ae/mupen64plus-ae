@@ -113,10 +113,10 @@ public class PlayerMapPreference extends DialogPreference implements
         mMap.deserialize( mValue );
         
         // Initialize and refresh the widgets
-        buttonPlayer1 = setupButton( view, R.id.btnPlayer1, prefs.isInputEnabled1 );
-        buttonPlayer2 = setupButton( view, R.id.btnPlayer2, prefs.isInputEnabled2 );
-        buttonPlayer3 = setupButton( view, R.id.btnPlayer3, prefs.isInputEnabled3 );
-        buttonPlayer4 = setupButton( view, R.id.btnPlayer4, prefs.isInputEnabled4 );
+        buttonPlayer1 = setupButton( view, R.id.btnPlayer1, prefs.isControllerEnabled1 );
+        buttonPlayer2 = setupButton( view, R.id.btnPlayer2, prefs.isControllerEnabled2 );
+        buttonPlayer3 = setupButton( view, R.id.btnPlayer3, prefs.isControllerEnabled3 );
+        buttonPlayer4 = setupButton( view, R.id.btnPlayer4, prefs.isControllerEnabled4 );
         checkBoxReminder = (CheckBox) view.findViewById( R.id.checkBox );
         checkBoxReminder.setChecked( prefs.getPlayerMapReminder() );
         checkBoxReminder.setOnCheckedChangeListener( this );

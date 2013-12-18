@@ -272,10 +272,10 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( mUserPrefs.playerMap.isEnabled() && mUserPrefs.getPlayerMapReminder() )
         {
             mUserPrefs.playerMap.removeUnavailableMappings();
-            boolean needs1 = mUserPrefs.isInputEnabled1 && !mUserPrefs.playerMap.isMapped( 1 );
-            boolean needs2 = mUserPrefs.isInputEnabled2 && !mUserPrefs.playerMap.isMapped( 2 );
-            boolean needs3 = mUserPrefs.isInputEnabled3 && !mUserPrefs.playerMap.isMapped( 3 );
-            boolean needs4 = mUserPrefs.isInputEnabled4 && !mUserPrefs.playerMap.isMapped( 4 );
+            boolean needs1 = mUserPrefs.isControllerEnabled1 && !mUserPrefs.playerMap.isMapped( 1 );
+            boolean needs2 = mUserPrefs.isControllerEnabled2 && !mUserPrefs.playerMap.isMapped( 2 );
+            boolean needs3 = mUserPrefs.isControllerEnabled3 && !mUserPrefs.playerMap.isMapped( 3 );
+            boolean needs4 = mUserPrefs.isControllerEnabled4 && !mUserPrefs.playerMap.isMapped( 4 );
             
             if( needs1 || needs2 || needs3 || needs4 )
             {

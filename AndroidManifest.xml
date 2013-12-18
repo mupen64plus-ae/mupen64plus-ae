@@ -99,11 +99,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.input.InputMapActivity"
+            android:name="paulscode.android.mupen64plusae.profile.ControllerProfileEditActivity"
             android:exported="false"
-            android:label="@string/InputMapActivity_title" >
+            android:label="@string/ControllerProfileEditActivity_title" >
             <intent-filter>
-                <action android:name=".input.InputMapActivity" />
+                <action android:name=".profile.ControllerProfileEditActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

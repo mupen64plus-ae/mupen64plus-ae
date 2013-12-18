@@ -18,7 +18,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.input;
+package paulscode.android.mupen64plusae.profile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +26,7 @@ import java.util.List;
 import com.bda.controller.Controller;
 
 import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
@@ -36,7 +37,6 @@ import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
@@ -65,7 +65,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class InputMapActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
+public class ControllerProfileEditActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
 {
     public static final String EXTRA_PROFILE_NAME = "EXTRA_PROFILE_NAME";
     
@@ -396,7 +396,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                         
                         // Refresh our MOGA provider since the prompt disconnected it
                         mMogaProvider = new MogaProvider( mMogaController );
-                        mMogaProvider.registerListener( InputMapActivity.this );
+                        mMogaProvider.registerListener( ControllerProfileEditActivity.this );
                     }
                 } );
     }

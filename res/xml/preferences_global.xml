@@ -263,8 +263,8 @@
 
             <Preference
                 android:icon="@drawable/ic_sliders"
-                android:key="actionInputProfiles"
-                android:title="@string/actionInputProfiles_title" >
+                android:key="actionControllerProfiles"
+                android:title="@string/actionControllerProfiles_title" >
                 <intent android:action=".profile.ControllerProfileActivity" />
             </Preference>
 

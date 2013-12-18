@@ -134,7 +134,7 @@
     <string name="actionResetUserPrefs_title">Reset</string>
     <string name="actionResetUserPrefs_summary">Restore default settings</string>
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
-    <string name="actionInputProfiles_title">Manage controller profiles</string>
+    <string name="actionControllerProfiles_title">Manage controller profiles</string>
 
     <!-- Preference Screens -->
     <string name="screenInput_title">Input</string>

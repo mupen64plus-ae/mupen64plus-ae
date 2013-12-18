@@ -372,25 +372,25 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                 : null;
         
         // Create the peripheral controls to handle key/stick presses
-        if( mUserPrefs.isInputEnabled1 )
+        if( mUserPrefs.isControllerEnabled1 )
         {
             ControllerProfile p = mUserPrefs.controllerProfile1;
             mControllers.add( new PeripheralController( 1, mUserPrefs.playerMap, p.map, p.deadzone,
                     p.sensitivity, mKeyProvider, axisProvider, mogaProvider ) );
         }
-        if( mUserPrefs.isInputEnabled2 )
+        if( mUserPrefs.isControllerEnabled2 )
         {
             ControllerProfile p = mUserPrefs.controllerProfile2;
             mControllers.add( new PeripheralController( 2, mUserPrefs.playerMap, p.map, p.deadzone,
                     p.sensitivity, mKeyProvider, axisProvider, mogaProvider ) );
         }
-        if( mUserPrefs.isInputEnabled3 )
+        if( mUserPrefs.isControllerEnabled3 )
         {
             ControllerProfile p = mUserPrefs.controllerProfile3;
             mControllers.add( new PeripheralController( 3, mUserPrefs.playerMap, p.map, p.deadzone,
                     p.sensitivity, mKeyProvider, axisProvider, mogaProvider ) );
         }
-        if( mUserPrefs.isInputEnabled4 )
+        if( mUserPrefs.isControllerEnabled4 )
         {
             ControllerProfile p = mUserPrefs.controllerProfile4;
             mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap, p.map, p.deadzone,

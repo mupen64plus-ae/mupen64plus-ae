@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import paulscode.android.mupen64plusae.input.InputMapActivity;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,8 +63,8 @@ public class ControllerProfileActivity extends ProfileActivity<ControllerProfile
     @Override
     protected void onEditProfile( ControllerProfile profile )
     {
-        Intent intent = new Intent( this, InputMapActivity.class );
-        intent.putExtra( InputMapActivity.EXTRA_PROFILE_NAME, profile.name );
+        Intent intent = new Intent( this, ControllerProfileEditActivity.class );
+        intent.putExtra( ControllerProfileEditActivity.EXTRA_PROFILE_NAME, profile.name );
         startActivity( intent );
     }
     
