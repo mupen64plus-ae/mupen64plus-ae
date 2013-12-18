@@ -40,6 +40,7 @@ import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -373,27 +374,27 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         // Create the peripheral controls to handle key/stick presses
         if( mUserPrefs.isInputEnabled1 )
         {
-            mControllers.add( new PeripheralController( 1, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap1, mUserPrefs.inputDeadzone1, mUserPrefs.inputSensitivity1,
-                    mKeyProvider, axisProvider, mogaProvider ) );
+            ControllerProfile p = mUserPrefs.controllerProfile1;
+            mControllers.add( new PeripheralController( 1, mUserPrefs.playerMap, p.map, p.deadzone,
+                    p.sensitivity, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled2 )
         {
-            mControllers.add( new PeripheralController( 2, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap2, mUserPrefs.inputDeadzone2, mUserPrefs.inputSensitivity2,
-                    mKeyProvider, axisProvider, mogaProvider ) );
+            ControllerProfile p = mUserPrefs.controllerProfile2;
+            mControllers.add( new PeripheralController( 2, mUserPrefs.playerMap, p.map, p.deadzone,
+                    p.sensitivity, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled3 )
         {
-            mControllers.add( new PeripheralController( 3, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap3, mUserPrefs.inputDeadzone3, mUserPrefs.inputSensitivity3,
-                    mKeyProvider, axisProvider, mogaProvider ) );
+            ControllerProfile p = mUserPrefs.controllerProfile3;
+            mControllers.add( new PeripheralController( 3, mUserPrefs.playerMap, p.map, p.deadzone,
+                    p.sensitivity, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled4 )
         {
-            mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap4, mUserPrefs.inputDeadzone4, mUserPrefs.inputSensitivity4,
-                    mKeyProvider, axisProvider, mogaProvider ) );
+            ControllerProfile p = mUserPrefs.controllerProfile4;
+            mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap, p.map, p.deadzone,
+                    p.sensitivity, mKeyProvider, axisProvider, mogaProvider ) );
         }
     }
     

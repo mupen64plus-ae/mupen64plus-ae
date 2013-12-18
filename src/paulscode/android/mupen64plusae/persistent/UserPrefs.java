@@ -32,9 +32,9 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
 
 import paulscode.android.mupen64plusae.R;
-import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -113,8 +113,8 @@ public class UserPrefs
     /** The subdirectory containing auto save files. */
     public final String autoSaveDir;
     
-    /** The subdirectory containing input map profiles. */
-    public final String profileDir;
+    /** The subdirectory containing custom profiles. */
+    public final String profilesDir;
     
     /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
     public final String coreUserConfigDir;
@@ -130,6 +130,15 @@ public class UserPrefs
     
     /** The path of the Mupen64Plus base configuration file. */
     public final String mupen64plus_cfg;
+    
+    /** The path of the custom controller profiles file. */
+    public final String controllerProfiles_cfg;
+    
+    /** The path of the custom touchscreen profiles file. */
+    public final String touchscreenProfiles_cfg;
+    
+    /** The path of the custom game profiles file. */
+    public final String gameProfiles_cfg;
     
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
@@ -197,41 +206,17 @@ public class UserPrefs
     /** True if Player 4's controller is enabled. */
     public final boolean isInputEnabled4;
     
-    /** The button map for Player 1. */
-    public final InputMap inputMap1;
+    /** The input profile for Player 1. */
+    public final ControllerProfile controllerProfile1;
     
-    /** The button map for Player 2. */
-    public final InputMap inputMap2;
+    /** The input profile for Player 2. */
+    public final ControllerProfile controllerProfile2;
     
-    /** The button map for Player 3. */
-    public final InputMap inputMap3;
+    /** The input profile for Player 3. */
+    public final ControllerProfile controllerProfile3;
     
-    /** The button map for Player 4. */
-    public final InputMap inputMap4;
-    
-    /** The deadzone for Player 1, in percent. */
-    public final int inputDeadzone1;
-    
-    /** The deadzone for Player 2, in percent. */
-    public final int inputDeadzone2;
-    
-    /** The deadzone for Player 3, in percent. */
-    public final int inputDeadzone3;
-    
-    /** The deadzone for Player 4, in percent. */
-    public final int inputDeadzone4;
-    
-    /** The sensitivity for Player 1, in percent. */
-    public final int inputSensitivity1;
-    
-    /** The sensitivity for Player 2, in percent. */
-    public final int inputSensitivity2;
-    
-    /** The sensitivity for Player 3, in percent. */
-    public final int inputSensitivity3;
-    
-    /** The sensitivity for Player 4, in percent. */
-    public final int inputSensitivity4;
+    /** The input profile for Player 4. */
+    public final ControllerProfile controllerProfile4;
     
     /** The player map for multi-player gaming. */
     public final PlayerMap playerMap;
@@ -361,10 +346,6 @@ public class UserPrefs
     
     // Shared preferences keys and key templates
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
-    private static final String KEYTEMPLATE_INPUT_MAP_STRING = "inputMapString%1$d";
-    private static final String KEYTEMPLATE_INPUT_DEADZONE = "inputDeadzone%1$d";
-    private static final String KEYTEMPLATE_INPUT_SENSITIVITY = "inputSensitivity%1$d";
-    private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     private static final String KEY_PATH_SELECTED_GAME = "pathSelectedGame";
@@ -372,11 +353,6 @@ public class UserPrefs
     
     // Shared preferences default values
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
-    public static final String DEFAULT_INPUT_MAP_STRING = OUYAInterface.IS_OUYA_HARDWARE ?
-            InputMap.DEFAULT_INPUT_MAP_STRING_OUYA : InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
-    public static final int DEFAULT_INPUT_DEADZONE = 0;
-    public static final int DEFAULT_INPUT_SENSITIVITY = 100;
-    public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
     public static final String DEFAULT_PATH_SELECTED_GAME = "~roms/n64";
@@ -436,7 +412,7 @@ public class UserPrefs
         slotSaveDir = gameSaveDir + "/SlotSaves";
         sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
-        profileDir = gameSaveDir + "/InputProfiles";
+        profilesDir = gameSaveDir + "/Profiles";
         coreUserConfigDir = gameSaveDir + "/CoreConfig/UserConfig";
         coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
         coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
@@ -445,6 +421,9 @@ public class UserPrefs
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
+        controllerProfiles_cfg = profilesDir + "/controller.cfg";
+        touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
+        gameProfiles_cfg = profilesDir + "/game.cfg";
         
         // Plug-ins
         videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );
@@ -471,26 +450,26 @@ public class UserPrefs
         isTouchpadFeedbackEnabled = mPreferences.getBoolean( "touchpadFeedback", false );
         touchpadLayout = appData.touchpadLayoutsDir + mPreferences.getString( "touchpadLayout", "" );
         
-        // Input prefs
-        isInputEnabled1 = mPreferences.getBoolean( "inputEnabled1", false );
-        isInputEnabled2 = mPreferences.getBoolean( "inputEnabled2", false );
-        isInputEnabled3 = mPreferences.getBoolean( "inputEnabled3", false );
-        isInputEnabled4 = mPreferences.getBoolean( "inputEnabled4", false );
-        
         // Controller prefs
-        inputMap1 = new InputMap( getInputMapString( 1 ) );
-        inputMap2 = new InputMap( getInputMapString( 2 ) );
-        inputMap3 = new InputMap( getInputMapString( 3 ) );
-        inputMap4 = new InputMap( getInputMapString( 4 ) );
+        final ConfigFile configCustom = new ConfigFile( controllerProfiles_cfg );
+        final ConfigFile configBuiltin = new ConfigFile( appData.controllerProfiles_cfg );
+        final String profileName1 = mPreferences.getString( "controllerProfile1", "Default" );
+        final String profileName2 = mPreferences.getString( "controllerProfile2", "" );
+        final String profileName3 = mPreferences.getString( "controllerProfile3", "" );
+        final String profileName4 = mPreferences.getString( "controllerProfile4", "" );
+        controllerProfile1 = LoadProfile( profileName1, configCustom, configBuiltin );          
+        controllerProfile2 = LoadProfile( profileName2, configCustom, configBuiltin );          
+        controllerProfile3 = LoadProfile( profileName3, configCustom, configBuiltin );          
+        controllerProfile4 = LoadProfile( profileName4, configCustom, configBuiltin );          
+        
+        // Input prefs
+        isInputEnabled1 = controllerProfile1 != null;
+        isInputEnabled2 = controllerProfile2 != null;
+        isInputEnabled3 = controllerProfile3 != null;
+        isInputEnabled4 = controllerProfile4 != null;
+        
+        // Multi-player prefs
         playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
-        inputDeadzone1 = getInputDeadzone( 1 );
-        inputDeadzone2 = getInputDeadzone( 2 );
-        inputDeadzone3 = getInputDeadzone( 3 );
-        inputDeadzone4 = getInputDeadzone( 4 );
-        inputSensitivity1 = getInputSensitivity( 1 );
-        inputSensitivity2 = getInputSensitivity( 2 );
-        inputSensitivity3 = getInputSensitivity( 3 );
-        inputSensitivity4 = getInputSensitivity( 4 );
         
         // Video prefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
@@ -758,6 +737,16 @@ public class UserPrefs
         }
     }
     
+    private static ControllerProfile LoadProfile( String name, ConfigFile custom, ConfigFile builtin )
+    {
+        if( custom.keySet().contains( name ) )
+            return ControllerProfile.read( custom, name, false );
+        else if( builtin.keySet().contains( name ) )
+            return ControllerProfile.read( builtin, name, true );
+        else
+            return null;
+    }
+    
     public void enforceLocale( Activity activity )
     {
         Configuration config = activity.getBaseContext().getResources().getConfiguration();
@@ -798,26 +787,6 @@ public class UserPrefs
         return getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE );
     }
     
-    public String getInputMapString( int player )
-    {
-        return getString( KEYTEMPLATE_INPUT_MAP_STRING, player, DEFAULT_INPUT_MAP_STRING );
-    }
-    
-    public int getInputDeadzone( int player )
-    {
-        return getInt( KEYTEMPLATE_INPUT_DEADZONE, player, DEFAULT_INPUT_DEADZONE );
-    }
-    
-    public int getInputSensitivity( int player )
-    {
-        return getInt( KEYTEMPLATE_INPUT_SENSITIVITY, player, DEFAULT_INPUT_SENSITIVITY );
-    }
-    
-    public boolean getSpecialVisibility( int player )
-    {
-        return getBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, DEFAULT_SPECIAL_VISIBILITY );
-    }
-    
     public boolean getPlayerMapReminder()
     {
         return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
@@ -833,26 +802,6 @@ public class UserPrefs
         putInt( KEYTEMPLATE_PAK_TYPE, player, value );
     }
     
-    public void putInputMapString( int player, String value )
-    {
-        putString( KEYTEMPLATE_INPUT_MAP_STRING, player, value );
-    }
-    
-    public void putInputDeadzone( int player, int value )
-    {
-        putInt( KEYTEMPLATE_INPUT_DEADZONE, player, value );
-    }
-    
-    public void putInputSensitivity( int player, int value )
-    {
-        putInt( KEYTEMPLATE_INPUT_SENSITIVITY, player, value );
-    }
-    
-    public void putSpecialVisibility( int player, boolean value )
-    {
-        putBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, value );
-    }
-    
     public void putPlayerMapReminder( boolean value )
     {
         putBoolean( KEY_PLAYER_MAP_REMINDER, value );
@@ -863,22 +812,10 @@ public class UserPrefs
         return mPreferences.getBoolean( key, defaultValue );
     }
     
-    private boolean getBoolean( String keyTemplate, int index, boolean defaultValue )
-    {
-        String key = String.format( Locale.US, keyTemplate, index );
-        return getBoolean( key, defaultValue );
-    }
-    
     private int getInt( String keyTemplate, int index, int defaultValue )
     {
         String key = String.format( Locale.US, keyTemplate, index );
         return mPreferences.getInt( key, defaultValue );
-    }
-    
-    private String getString( String keyTemplate, int index, String defaultValue )
-    {
-        String key = String.format( Locale.US, keyTemplate, index );
-        return mPreferences.getString( key, defaultValue );
     }
     
     private void putBoolean( String key, boolean value )
@@ -886,22 +823,10 @@ public class UserPrefs
         mPreferences.edit().putBoolean( key, value ).commit();
     }
     
-    private void putBoolean( String keyTemplate, int index, boolean value )
-    {
-        String key = String.format( Locale.US, keyTemplate, index );
-        putBoolean( key, value );
-    }
-    
     private void putInt( String keyTemplate, int index, int value )
     {
         String key = String.format( Locale.US, keyTemplate, index );
         mPreferences.edit().putInt( key, value ).commit();
-    }
-    
-    private void putString( String keyTemplate, int index, String value )
-    {
-        String key = String.format( Locale.US, keyTemplate, index );
-        mPreferences.edit().putString( key, value ).commit();
     }
     
     private Locale createLocale( String code )

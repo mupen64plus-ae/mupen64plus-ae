@@ -20,8 +20,6 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,27 +34,22 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.util.Prompt.PromptIntegerListener;
-import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,6 +67,9 @@ import android.widget.TextView;
 
 public class InputMapActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
 {
+    public static final String EXTRA_PROFILE_NAME = "EXTRA_PROFILE_NAME";
+    
+    // Slider limits
     private static final int MIN_DEADZONE = 0;
     private static final int MAX_DEADZONE = 20;
     private static final int MIN_SENSITIVITY = 50;
@@ -84,10 +80,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     private static final int UNMAPPED_BUTTON_FILTER = 0x66FFFFFF;
     private static final int MIN_LAYOUT_WIDTH_DP = 480;
     
-    // The key name and default value for the player number, obtained from the intent extras map
-    public static final String KEYEXTRA_PLAYER = "paulscode.android.mupen64plusae.EXTRA_PLAYER";
-    private static final int DEFAULT_PLAYER = 0;
-    private int mPlayer;
+    // Controller profile objects
+    public ConfigFile mConfigFile;
+    public ControllerProfile mProfile;
     
     // User preferences wrapper
     private UserPrefs mUserPrefs;
@@ -96,8 +91,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     private String[] mCommandNames;
     private int[] mCommandIndices;
     
-    // Input mapping and listening
-    private final InputMap mMap = new InputMap();
+    // Input listening
     private KeyProvider mKeyProvider;
     private MogaProvider mMogaProvider;
     private AxisProvider mAxisProvider;
@@ -107,8 +101,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     // Widgets
     private final Button[] mN64Buttons = new Button[InputMap.NUM_MAPPABLES];
     private TextView mFeedbackText;
-    private View mSpecialFuncsView;
-    private MenuItem mMenuSpecialVisibility;
     private ListView mListView;
     
     @Override
@@ -123,9 +115,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
         
-        // Make sure the profiles directory exists
-        new File( mUserPrefs.profileDir ).mkdirs();
-        
         // Get the command info
         mCommandNames = getResources().getStringArray( R.array.inputMapActivity_entries );
         String[] indices = getResources().getStringArray( R.array.inputMapActivity_values );
@@ -135,12 +124,17 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             mCommandIndices[i] = Integer.parseInt( indices[i] );
         }
         
-        // Get the player number and get the associated preference values
+        // Load the profile; fail fast if there are any programmer usage errors
         Bundle extras = getIntent().getExtras();
-        mPlayer = extras == null ? DEFAULT_PLAYER : extras.getInt( KEYEXTRA_PLAYER, DEFAULT_PLAYER );
-        
-        // Update the member variables from the persisted values
-        mMap.deserialize( mUserPrefs.getInputMapString( mPlayer ) );
+        if( extras == null )
+            throw new Error( "Invalid usage: bundle must indicate profile name" );
+        String name = extras.getString( EXTRA_PROFILE_NAME );
+        if( TextUtils.isEmpty( name ) )
+            throw new Error( "Invalid usage: profile name cannot be null or empty" );
+        mConfigFile = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
+        mProfile = ControllerProfile.read( mConfigFile, name, false );
+        if( mProfile == null )
+            throw new Error( "Invalid usage: profile name not found in config file" );
         
         // Set up input listeners
         mUnmappableInputCodes = mUserPrefs.unmappableKeyCodes;
@@ -158,8 +152,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         }
         
         // Set the title of the activity
-        CharSequence title = getResources().getString( R.string.inputMapActivity_title, mPlayer );
-        setTitle( title );
+        if( TextUtils.isEmpty( mProfile.comment ) )
+            setTitle( mProfile.name );
+        else
+            setTitle( mProfile.name + " : " + mProfile.comment );
         
         // Initialize the layout
         if( mUserPrefs.isBigScreenMode )
@@ -183,6 +179,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         super.onPause();
         mMogaController.onPause();
+        
+        // Lazily persist the profile data; only need to do it on pause
+        ControllerProfile.write( mConfigFile, mProfile );
+        mConfigFile.save();
     }
     
     @Override
@@ -224,22 +224,11 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     private void initWidgets()
     {
         // Hide some widgets that do not apply
-        if( mUserPrefs.isTouchpadEnabled && mPlayer == 1 )
-        {
-            // First player and Xperia PLAY touchpad is enabled, hide the a- and c-pads
-            findViewById( R.id.aPadDefault ).setVisibility( View.GONE );
-            findViewById( R.id.cPadDefault ).setVisibility( View.GONE );
-        }
-        else
         {
             // All other cases, hide the Xperia PLAY stuff
             findViewById( R.id.aPadXperiaPlay ).setVisibility( View.GONE );
             findViewById( R.id.cPadXperiaPlay ).setVisibility( View.GONE );
         }
-        
-        // Get the special functions button group
-        mSpecialFuncsView = findViewById( R.id.include_all_special_keys );
-        refreshSpecialVisibility();
         
         // Get the text view object
         mFeedbackText = (TextView) findViewById( R.id.textFeedback );
@@ -291,13 +280,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.input_map_activity, menu );
-        mMenuSpecialVisibility = menu.findItem( R.id.menuItem_specialVisibility );
-        refreshSpecialVisibility();
-        
-        // Hide menu items that do not apply
-        mMenuSpecialVisibility.setVisible( !mUserPrefs.isBigScreenMode );
         menu.findItem( R.id.menuItem_exit ).setVisible( !mUserPrefs.isBigScreenMode );
-        
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -307,225 +290,72 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         switch( item.getItemId() )
         {
             case R.id.menuItem_unmapAll:
-                loadProfile( "", item.getTitle() );
-                break;
-            case R.id.menuItem_default:
-                loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING, item.getTitle() );
-                break;
-            case R.id.menuItem_ouya:
-                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_OUYA, item.getTitle() );
-                break;
-            case R.id.menuItem_n64Adapter:
-                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_N64_ADAPTER, item.getTitle() );
-                break;
-            case R.id.menuItem_ps3:
-                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_PS3, item.getTitle() );
-                break;
-            case R.id.menuItem_xbox360:
-                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_XBOX360, item.getTitle() );
-                break;
-            case R.id.menuItem_xperiaPlay:
-                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_XPERIA_PLAY, item.getTitle() );
-                break;
-            case R.id.menuItem_load:
-                loadProfile();
-                break;
-            case R.id.menuItem_save:
-                saveProfile();
-                break;
+                unmapAll();
+                return true;
             case R.id.menuItem_deadzone:
                 setDeadzone();
-                break;
+                return true;
             case R.id.menuItem_sensitivity:
                 setSensitivity();
-                break;
-            case R.id.menuItem_specialVisibility:
-                mUserPrefs.putSpecialVisibility( mPlayer,
-                        !mUserPrefs.getSpecialVisibility( mPlayer ) );
-                refreshSpecialVisibility();
-                break;
+                return true;
             case R.id.menuItem_exit:
                 finish();
-                break;
+                return true;
             default:
                 return false;
         }
-        return true;
     }
     
-    private void loadProfile( final String mapString, CharSequence profileName )
+    private void unmapAll()
     {
         CharSequence title = getString( R.string.confirm_title );
-        CharSequence message = TextUtils.isEmpty( mapString )
-                ? getString( R.string.confirmUnmapAll_message, getTitle() )
-                : getString( R.string.confirmLoadProfile_message, profileName, getTitle() );
+        CharSequence message = getString( R.string.confirmUnmapAll_message, mProfile.name );
         
         Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
             public void onConfirm()
             {
-                mMap.deserialize( mapString );
-                mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
-                mUserPrefs.putInputDeadzone( mPlayer, UserPrefs.DEFAULT_INPUT_DEADZONE );
-                mUserPrefs.putInputSensitivity( mPlayer, UserPrefs.DEFAULT_INPUT_SENSITIVITY );
+                mProfile.map.unmapAll();
                 refreshAllButtons();
             }
         } );
     }
     
-    private void loadProfile()
-    {
-        CharSequence title = getText( R.string.menuItem_fileLoad );
-        File startPath = new File( mUserPrefs.profileDir );
-        
-        Prompt.promptFile( this, title, null, startPath, new PromptFileListener()
-        {
-            @Override
-            public void onDialogClosed( File file, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                    loadProfile( file );
-            }
-        } );
-    }
-    
-    private void loadProfile( File file )
-    {
-        try
-        {
-            String[] lines = FileUtil.readStringFromFile( file ).split( "\n" );            
-            String line1 = lines.length > 0 ? lines[0] : "";
-            String line2 = lines.length > 1 ? lines[1] : Integer.toString( UserPrefs.DEFAULT_INPUT_DEADZONE );
-            String line3 = lines.length > 2 ? lines[2] : Integer.toString( UserPrefs.DEFAULT_INPUT_SENSITIVITY );
-            
-            // First line of file contains button map
-            mMap.deserialize( line1 );
-            mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
-            refreshAllButtons();
-
-            // Second line of file contains deadzone value
-            int deadzone = SafeMethods.toInt( line2, UserPrefs.DEFAULT_INPUT_DEADZONE );
-            mUserPrefs.putInputDeadzone( mPlayer, deadzone );
-
-            // Third line of file contains sensitivity value
-            int sensitivity = SafeMethods.toInt( line3, UserPrefs.DEFAULT_INPUT_SENSITIVITY );
-            mUserPrefs.putInputSensitivity( mPlayer, sensitivity );
-        }
-        catch( IOException e )
-        {
-            Log.e( "InputMapActivity", "Error loading profile: ", e );
-            Notifier.showToast( this, R.string.toast_fileReadError );
-        }
-    }
-    
-    private void saveProfile()
-    {
-        CharSequence title = getText( R.string.menuItem_fileSave );
-        CharSequence hint = getText( R.string.hintFileSave );
-        int inputType = InputType.TYPE_CLASS_TEXT;
-        
-        Prompt.promptText( this, title, null, hint, inputType, new PromptTextListener()
-        {
-            @Override
-            public void onDialogClosed( CharSequence text, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    String filename = text.toString();
-                    final File file = new File( mUserPrefs.profileDir + "/" + filename );
-                    if( file.exists() )
-                    {
-                        String title = getString( R.string.confirm_title );
-                        String message = getString( R.string.confirmOverwriteFile_message, filename );
-                        Prompt.promptConfirm( InputMapActivity.this, title, message,
-                                new PromptConfirmListener()
-                                {
-                                    @Override
-                                    public void onConfirm()
-                                    {
-                                        saveProfile( file );
-                                    }
-                                } );
-                    }
-                    else
-                    {
-                        saveProfile( file );
-                    }
-                }
-            }
-        } );
-    }
-    
-    private void saveProfile( File file )
-    {
-        try
-        {
-            Notifier.showToast( this, R.string.toast_savingFile, file.getName() );
-            String text = mMap.serialize() + "\n"
-                    + mUserPrefs.getInputDeadzone( mPlayer ) + "\n"
-                    + mUserPrefs.getInputSensitivity( mPlayer );
-            FileUtil.writeStringToFile( file, text );
-        }
-        catch( IOException e )
-        {
-            Log.e( "InputMapActivity", "Error saving profile: ", e );
-            Notifier.showToast( this, R.string.toast_fileWriteError );
-        }
-    }
-    
     private void setDeadzone()
     {
         final CharSequence title = getText( R.string.menuItem_deadzone );
-        final int deadzone = mUserPrefs.getInputDeadzone( mPlayer );
         
-        Prompt.promptInteger( this, title, "%1$d %%", deadzone, MIN_DEADZONE, MAX_DEADZONE, new PromptIntegerListener()
-        {
-            @Override
-            public void onDialogClosed( Integer value, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
+        Prompt.promptInteger( this, title, "%1$d %%", mProfile.deadzone, MIN_DEADZONE, MAX_DEADZONE, new PromptIntegerListener()
                 {
-                    mUserPrefs.putInputDeadzone( mPlayer, value );
-                }
-            }
-        } );
+                    @Override
+                    public void onDialogClosed( Integer value, int which )
+                    {
+                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        {
+                            mProfile = new ControllerProfile( mProfile.name, mProfile.comment,
+                                    false, mProfile.map, value, mProfile.sensitivity );
+                        }
+                    }
+                } );
     }
     
     private void setSensitivity()
     {
         final CharSequence title = getText( R.string.menuItem_sensitivity );
-        final int sensitivity = mUserPrefs.getInputSensitivity( mPlayer );
         
-        Prompt.promptInteger( this, title, "%1$d %%", sensitivity, MIN_SENSITIVITY, MAX_SENSITIVITY, new PromptIntegerListener()
-        {
-            @Override
-            public void onDialogClosed( Integer value, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
+        Prompt.promptInteger( this, title, "%1$d %%", mProfile.sensitivity, MIN_SENSITIVITY, MAX_SENSITIVITY, new PromptIntegerListener()
                 {
-                    mUserPrefs.putInputSensitivity( mPlayer, value );
-                }
-            }
-        } );
-    }
-    
-    private void refreshSpecialVisibility()
-    {
-        boolean specialVisibility = mUserPrefs.getSpecialVisibility( mPlayer );
-        
-        if( mSpecialFuncsView != null )
-        {
-            int specialKeyVisibility = specialVisibility ? View.VISIBLE : View.GONE;
-            mSpecialFuncsView.setVisibility( specialKeyVisibility );
-        }
-        
-        if( mMenuSpecialVisibility != null )
-        {
-            mMenuSpecialVisibility.setTitle( specialVisibility
-                    ? R.string.menuItem_specialVisibility_hide
-                    : R.string.menuItem_specialVisibility_show );
-        }
+                    @Override
+                    public void onDialogClosed( Integer value, int which )
+                    {
+                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        {
+                            mProfile = new ControllerProfile( mProfile.name, mProfile.comment,
+                                    false, mProfile.map, mProfile.deadzone, value );
+                        }
+                    }
+                } );
     }
     
     @Override
@@ -553,7 +383,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     private void popupListener( CharSequence title, final int index )
     {
         String message = getString( R.string.inputMapActivity_popupMessage,
-                mMap.getMappedCodeInfo( index ) );
+                mProfile.map.getMappedCodeInfo( index ) );
         String btnText = getString( R.string.inputMapActivity_popupUnmap );
         
         Prompt.promptInputCode( this, mMogaController, title, message, btnText,
@@ -565,10 +395,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                         if( which != DialogInterface.BUTTON_NEGATIVE )
                         {
                             if( which == DialogInterface.BUTTON_POSITIVE )
-                                mMap.map( inputCode, index );
+                                mProfile.map.map( inputCode, index );
                             else
-                                mMap.unmapCommand( index );
-                            mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
+                                mProfile.map.unmapCommand( index );
                             refreshAllButtons();
                         }
                         
@@ -651,7 +480,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     
     private void refreshButton( int inputCode, float strength )
     {
-        int command = mMap.get( inputCode );
+        int command = mProfile.map.get( inputCode );
         if( command != InputMap.UNMAPPED )
         {
             Button button = mN64Buttons[command];
@@ -691,7 +520,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         for( int i = 0; i < mN64Buttons.length; i++ )
         {
-            refreshButton( mN64Buttons[i], 0, mMap.isMapped( i ) );
+            refreshButton( mN64Buttons[i], 0, mProfile.map.isMapped( i ) );
         }
         if( mListView != null )
         {
@@ -703,7 +532,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                                 TextView text2, ImageView icon )
                         {
                             text1.setText( item );
-                            text2.setText( mMap.getMappedCodeInfo( mCommandIndices[position] ) );
+                            text2.setText( mProfile.map.getMappedCodeInfo( mCommandIndices[position] ) );
                             icon.setVisibility( View.GONE );
                         }
                     } );

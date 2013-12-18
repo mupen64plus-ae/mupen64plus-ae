@@ -49,19 +49,8 @@
     <string name="menuItem_exit">Exit</string>
 
     <!-- Input Mapping Activity -->
-    <string name="menuItem_profiles">Profiles</string>
-    <string name="menuItem_default">Default</string>
-    <string name="menuItem_load">Load…</string>
-    <string name="menuItem_save">Save…</string>
-    <string name="menuItem_ouya">OUYA</string>
-    <string name="menuItem_n64Adapter">N64 USB Adapter</string>
-    <string name="menuItem_ps3">PS3</string>
-    <string name="menuItem_xbox360">Xbox 360</string>
-    <string name="menuItem_xperiaPlay">Xperia PLAY</string>
     <string name="menuItem_deadzone">Deadzone</string>
     <string name="menuItem_sensitivity">Sensitivity</string>
-    <string name="menuItem_specialVisibility_show">Show special functions</string>
-    <string name="menuItem_specialVisibility_hide">Hide special functions</string>
     <string name="menuItem_unmapAll">Unmap all</string>
 
     <!-- Menu Activity -->
@@ -125,8 +114,6 @@
     <!-- Something happened (use '.') -->
     <string name="toast_usingSlot">Now using slot %1$d.</string>
     <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
-    <string name="toast_fileReadError">Could not read file!</string>
-    <string name="toast_fileWriteError">Could not write file!</string>
     <string name="toast_crashReportSent">Report sent.</string>
 
     <!-- ************************************************************************** -->
@@ -147,6 +134,7 @@
     <string name="actionResetUserPrefs_title">Reset</string>
     <string name="actionResetUserPrefs_summary">Restore default settings</string>
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
+    <string name="actionInputProfiles_title">Manage controller profiles</string>
 
     <!-- Preference Screens -->
     <string name="screenInput_title">Input</string>
@@ -168,8 +156,6 @@
     <string name="categoryOther_title">Other</string>
     <string name="categoryTouchscreenBehavior_title">Behavior</string>
     <string name="categoryTouchscreenAppearance_title">Appearance</string>
-    <string name="categorySinglePlayer_title">Player 1</string>
-    <string name="categoryMultiPlayer_title">Multi-player</string>
     <string name="categoryGles2N64_title">GLES2N64 settings</string>
     <string name="categoryGles2Rice_title">GLES2Rice settings</string>
     <string name="categoryGles2Glide64_title">GLES2Glide64 settings</string>
@@ -378,12 +364,11 @@
     <string name="playerMap_title">Multi-player</string>
     <string name="playerMap_summary">Define each player\'s controller(s)</string>
 
-    <!-- Input Map Preferences -->
-    <string name="inputMap1_title">Controller</string>
-    <string name="inputMap2_title">Player 2</string>
-    <string name="inputMap3_title">Player 3</string>
-    <string name="inputMap4_title">Player 4</string>
-    <string name="inputMap_summary">Button and special function mapping</string>
+    <!-- Controller Profile Preferences -->
+    <string name="controllerProfile1_title">Controller 1 profile</string>
+    <string name="controllerProfile2_title">Controller 2 profile</string>
+    <string name="controllerProfile3_title">Controller 3 profile</string>
+    <string name="controllerProfile4_title">Controller 4 profile</string>
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback                                                 -->
@@ -395,7 +380,6 @@
     <string name="confirm_title">Confirmation</string>
     <string name="confirmResetGame_message">Reset game? All progress since your last save will be lost.</string>
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
-    <string name="confirmLoadProfile_message">Load profile \"%1$s\" for %2$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
 

@@ -21,10 +21,18 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang.ArrayUtils;
 
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.CompatibleListPreference;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CrashTester;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -33,6 +41,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -50,17 +59,20 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
     
+    private static final String SCREEN_INPUT = "screenInput";
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
     private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
     private static final String SCREEN_DISPLAY = "screenDisplay";
-    
-    private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
     
     private static final String TOUCHSCREEN_AUTO_HOLDABLES = "touchscreenAutoHoldables";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
+    private static final String CONTROLLER_PROFILE1 = "controllerProfile1";
+    private static final String CONTROLLER_PROFILE2 = "controllerProfile2";
+    private static final String CONTROLLER_PROFILE3 = "controllerProfile3";
+    private static final String CONTROLLER_PROFILE4 = "controllerProfile4";
     private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
     private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
     private static final String DISPLAY_ACTION_BAR_TRANSPARENCY = "displayActionBarTransparency";
@@ -109,12 +121,12 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
             PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_ACTION_BAR_TRANSPARENCY );
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
-            PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
+            PrefUtil.removePreference( this, SCREEN_INPUT, SCREEN_TOUCHPAD );
         
         if( mUserPrefs.isBigScreenMode )
         {
-            PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
-            PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, INPUT_VOLUME_MAPPABLE );
+            PrefUtil.removePreference( this, SCREEN_INPUT, SCREEN_TOUCHSCREEN );
+            PrefUtil.removePreference( this, SCREEN_INPUT, INPUT_VOLUME_MAPPABLE );
         }
     }
     
@@ -183,6 +195,67 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
             pref.setSummary( getString( R.string.acraUserEmail_summary ) );
         else
             pref.setSummary( value );
+        
+        // Construct the controller profiles list
+        ConfigFile configBuiltin = new ConfigFile( mAppData.controllerProfiles_cfg );
+        ConfigFile configCustom = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
+        List<ControllerProfile> profiles = new ArrayList<ControllerProfile>();
+        profiles.addAll( ControllerProfile.getProfiles( configBuiltin, true ) );
+        profiles.addAll( ControllerProfile.getProfiles( configCustom, false ) );
+        Collections.sort( profiles );
+        CharSequence[] entries = new CharSequence[profiles.size() + 1];
+        String[] values = new String[profiles.size() + 1];
+        entries[0] = getText( R.string.listItem_disabled );
+        values[0] = "";
+        for( int i = 0; i < profiles.size(); i++ )
+        {
+            ControllerProfile profile = profiles.get( i );
+            int resId = profile.isBuiltin
+                    ? R.string.listItem_profileBuiltin
+                    : R.string.listItem_profileCustom;
+            entries[i + 1] = getString( resId, profile.name );
+            values[i + 1] = profile.name;
+        }
+        
+        // Populate and validate the controller profile preferences
+        populateListPreference( entries, values, CONTROLLER_PROFILE1,
+                R.string.controllerProfile1_default );
+        populateListPreference( entries, values, CONTROLLER_PROFILE2,
+                R.string.controllerProfile2_default );
+        populateListPreference( entries, values, CONTROLLER_PROFILE3,
+                R.string.controllerProfile3_default );
+        populateListPreference( entries, values, CONTROLLER_PROFILE4,
+                R.string.controllerProfile4_default );
+        
+        // Refresh the preferences object
+        mUserPrefs = new UserPrefs( this );
+    }
+    
+    private void populateListPreference( CharSequence[] entries, String[] values, String key,
+            int resIdDefault )
+    {
+        @SuppressWarnings( "deprecation" )
+        CompatibleListPreference listPref = (CompatibleListPreference) findPreference( key );
+        listPref.setEntries( entries );
+        listPref.setEntryValues( values );
+        String selectedValue = mPrefs.getString( key, null );
+        String defaultValue = getString( resIdDefault );
+        if( !ArrayUtils.contains( values, selectedValue ) )
+            mPrefs.edit().putString( key, defaultValue ).commit();
+        selectedValue = mPrefs.getString( key, null );
+        listPref.setValue( selectedValue );
+    }
+    
+    public static void validateListPreference( Resources res, SharedPreferences prefs, String key,
+            int defaultResId, int arrayResId )
+    {
+        String value = prefs.getString( key, null );
+        String defValue = res.getString( defaultResId, (String) null );
+        String[] validValues = res.getStringArray( arrayResId );
+        if( !ArrayUtils.contains( validValues, value ) )
+        {
+            prefs.edit().putString( key, defValue ).commit();
+        }
     }
     
     @Override

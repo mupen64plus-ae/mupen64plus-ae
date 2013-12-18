@@ -89,6 +89,16 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivity"
+            android:exported="false"
+            android:label="@string/ControllerProfileActivity_title" >
+            <intent-filter>
+                <action android:name=".profile.ControllerProfileActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="paulscode.android.mupen64plusae.input.InputMapActivity"
             android:exported="false"
             android:label="@string/InputMapActivity_title" >

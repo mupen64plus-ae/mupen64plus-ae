@@ -137,6 +137,9 @@ public class AppData
     /** The directory containing all fonts. Contents deleted on uninstall. */
     public final String fontsDir;
     
+    /** The directory contaiing all built-in profiles. Contents deleted on uninstall. */
+    public final String profilesDir;
+    
     /** The path of the core library. Deleted on uninstall, not accessible without root. */
     public final String coreLib;
     
@@ -157,6 +160,15 @@ public class AppData
     
     /** The path of the Mupen64Plus ini file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupen64plus_ini;
+    
+    /** The path of the built-in controller profiles file. Deleted on uninstall, sometimes overwritten on update. */
+    public final String controllerProfiles_cfg;
+    
+    /** The path of the built-in touchscreen profiles file. Deleted on uninstall, sometimes overwritten on update. */
+    public final String touchscreenProfiles_cfg;
+    
+    /** The path of the built-in game profiles file. Deleted on uninstall, sometimes overwritten on update. */
+    public final String gameProfiles_cfg;
     
     /** Whether the installation is valid. */
     public final boolean isValidInstallation;
@@ -217,6 +229,7 @@ public class AppData
         touchscreenLayoutsDir = coreSharedDataDir + "/skins/touchscreens/";
         touchpadLayoutsDir = coreSharedDataDir + "/skins/touchpads/";
         fontsDir = coreSharedDataDir + "/skins/fonts/";
+        profilesDir = coreSharedDataDir + "/profiles";
         
         // Files
         coreLib = libsDir + "/libcore.so";
@@ -226,6 +239,9 @@ public class AppData
         gles2glide64_conf = coreSharedDataDir + "/Glide64mk2.ini";
         mupen64plus_cht = coreSharedDataDir + "/mupen64plus.cht";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
+        controllerProfiles_cfg = profilesDir + "/controller.cfg";
+        touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
+        gameProfiles_cfg = profilesDir + "/game.cfg";
         
         // Installation validity
         // @formatter:off
