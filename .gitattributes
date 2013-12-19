@@ -2,18 +2,32 @@
 * text=auto
 
 # use native line ending
+*.6 text
+AUTHORS text
 *.c text
 *.cc text
 *.cfg text
+*.cht text
+*.conf text
+COPYING text
 *.cpp text
 *.def text
+*-license text
 *.h text
+*.html text
 *.in text
+INSTALL text
+*.ini text
 *.java text
+LICENSES text
 *.m text
+Makefile text
 *.md text
 *.mk text
 *.pl text
+*.py text
+README text
+RELEASE text
 *.rc text
 *.S text
 *.txt text
@@ -24,6 +38,12 @@
 # use linux line ending
 *.sh text eol=lf
 
+# windows specific text files
+*.sln text eol=crlf
+*.vcproj text eol=crlf
+*.vcxproj text eol=crlf
+*.vcxproj.filters text eol=crlf
+
 # don't modify binary files
 *.gif binary
 *.gz binary
@@ -32,8 +52,5 @@
 *.pdf binary
 *.png binary
 *.zip binary
-*dynamiclib_win32.c binary
-*files_win32.c binary
-*.vcproj binary
-*.vcxproj binary
-*.sln binary
+cursor.tex binary
+font.tex binary
