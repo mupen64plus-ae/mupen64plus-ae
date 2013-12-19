@@ -1,67 +1,35 @@
 #! /bin/sh
 
-cd ..
-mkdir -p tmp/upstream
-cd tmp/upstream/
+M64P_COMPONENTS="core ui-console rsp-hle audio-sdl video-rice video-glide64mk2"
 
-if [ -d "mupen64plus-core" ]; then
-    path="$(pwd)/mupen64plus-core/"
-    git --work-tree="${path}" --git-dir="${path}/.git" pull --ff-only
-else
-    git clone https://github.com/mupen64plus/mupen64plus-core
-fi
+for i in $M64P_COMPONENTS; do
+    git remote|grep "^m64p-${i}$" > /dev/null
+    if [ "$?" != "0" ]; then
+        git remote add --no-tags "m64p-${i}" "https://github.com/mupen64plus/mupen64plus-${i}.git"
+    fi
+done
 
-if [ -d "mupen64plus-ui-console" ]; then
-    path="$(pwd)/mupen64plus-ui-console/"
-    git --work-tree="${path}" --git-dir="${path}/.git" pull --ff-only
-else
-    git clone https://github.com/mupen64plus/mupen64plus-ui-console
-fi
+git remote update --prune
 
-if [ -d "mupen64plus-rsp-hle" ]; then
-    path="$(pwd)/mupen64plus-rsp-hle/"
-    git --work-tree="${path}" --git-dir="${path}/.git" pull --ff-only
-else
-    git clone https://github.com/mupen64plus/mupen64plus-rsp-hle
-fi
+for i in $M64P_COMPONENTS; do
 
-if [ -d "mupen64plus-audio-sdl" ]; then
-    path="$(pwd)/mupen64plus-audio-sdl/"
-    git --work-tree="${path}" --git-dir="${path}/.git" pull --ff-only
-else
-    git clone https://github.com/mupen64plus/mupen64plus-audio-sdl
-fi
+    case "$i" in
+    "ui-console")
+        ae_module="front-end"
+        ;;
+    "video-rice")
+        ae_module="gles2rice"
+        ;;
+    "video-glide64mk2")
+        ae_module="gles2glide64"
+        ;;
+    *)
+        ae_module="${i}"
+        ;;
+    esac
 
-if [ -d "mupen64plus-video-rice" ]; then
-    path="$(pwd)/mupen64plus-video-rice/"
-    git --work-tree="${path}" --git-dir="${path}/.git" pull --ff-only
-else
-    git clone https://github.com/mupen64plus/mupen64plus-video-rice
-fi
-
-cd ../../
-
-echo
-echo
-echo DIFF: mupen64plus-core
-diff -ruN ./tmp/upstream/mupen64plus-core/src/   ./jni/core/src/   | diffstat -C
-
-echo
-echo
-echo DIFF: mupen64plus-ui-console
-diff -ruN ./tmp/upstream/mupen64plus-ui-console/src/   ./jni/front-end/src/   | diffstat -C
-
-echo
-echo
-echo DIFF: mupen64plus-rsp-hle
-diff -ruN ./tmp/upstream/mupen64plus-rsp-hle/src/   ./jni/rsp-hle/src/   | diffstat -C
-
-echo
-echo
-echo DIFF: mupen64plus-audio-sdl
-diff -ruN ./tmp/upstream/mupen64plus-audio-sdl/src/   ./jni/audio-sdl/src/   | diffstat -C
-
-echo
-echo
-echo DIFF: mupen64plus-video-rice
-diff -ruN ./tmp/upstream/mupen64plus-video-rice/src/   ./jni/gles2rice/src/   | diffstat -C
+    echo
+    echo
+    echo "DIFF: mupen64plus-${i}"
+    git --no-pager diff --color=auto --stat "m64p-${i}/master:src/" "HEAD:jni/${ae_module}/src/"
+done
