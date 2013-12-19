@@ -198,7 +198,7 @@ SHADER_VARYING
 "  //}                                                                      \n"
 "                                                                           \n"
 "  float f = (fogModeEndScale[1] - fogV) * fogModeEndScale[2];              \n"
-"  f = clamp(f, 0.0, 1.0);                                                  \n"
+"  f = clamp(f, 0.0, 1.0);                                      \n"
 "  gl_TexCoord[0].b = f;                                                    \n"
 "  gl_TexCoord[2].b = aVertex.x;                                            \n" 
 "  gl_TexCoord[2].a = aVertex.y;                                            \n" 
@@ -229,7 +229,7 @@ void check_link(GLuint program)
   GLint success;
   glGetProgramiv(program,GL_LINK_STATUS,&success);
   if(!success)
-  {
+{
     char log[1024];
     glGetProgramInfoLog(program,1024,NULL,log);
     LOGINFO(log);
@@ -445,7 +445,7 @@ void update_uniforms(shader_program_key prog)
     );
 
   if(prog.fogColor_location != -1)
-  {
+    {
     glUniform3f(prog.fogColor_location,fogColor[0],fogColor[1],fogColor[2]);
   }
 
@@ -453,7 +453,7 @@ void update_uniforms(shader_program_key prog)
 
   constant_color_location = glGetUniformLocation(program_object, "constant_color");
   glUniform4f(constant_color_location, texture_env_color[0], texture_env_color[1],
-    texture_env_color[2], texture_env_color[3]);
+        texture_env_color[2], texture_env_color[3]);
 
   ccolor0_location = glGetUniformLocation(program_object, "ccolor0");
   glUniform4f(ccolor0_location, ccolor0[0], ccolor0[1], ccolor0[2], ccolor0[3]);
@@ -462,14 +462,14 @@ void update_uniforms(shader_program_key prog)
   glUniform4f(ccolor1_location, ccolor1[0], ccolor1[1], ccolor1[2], ccolor1[3]);
 
   glUniform4f(prog.chroma_color_location, chroma_color[0], chroma_color[1],
-    chroma_color[2], chroma_color[3]);
+        chroma_color[2], chroma_color[3]);
 
-  if(dither_enabled)
-  {
+      if(dither_enabled)
+      {
     glUniform1i(prog.ditherTex_location, 2);
-  }
+      }
 
-  set_lambda();
+      set_lambda();
 }
 
 void disable_textureSizes() 
