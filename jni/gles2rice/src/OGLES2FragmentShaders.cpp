@@ -30,30 +30,30 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 GLuint vertexProgram = 9999;
 const char *vertexShader =
 "#version " GLSL_VERSION "                                           \n"\
-"attribute mediump vec4  aPosition;                                  \n"\
-"attribute lowp vec4     aColor;                                     \n"\
-"attribute lowp vec2     aTexCoord0;                                 \n"\
-"attribute lowp vec2     aTexCoord1;                                 \n"\
-"attribute lowp vec2     aAtlasTransform;                            \n"\
+"attribute mediump vec4 aPosition;                          \n"\
+"attribute lowp vec4    aColor;                             \n"\
+"attribute lowp vec2    aTexCoord0;                         \n"\
+"attribute lowp vec2    aTexCoord1;                         \n"\
+"attribute lowp vec2    aAtlasTransform;                    \n"\
 "attribute mediump float aFogCoord;                                  \n"\
-"                                                                    \n"\
+"                                                           \n"\
 "uniform vec2  FogMinMax;                                            \n"\
-"                                                                    \n"\
+"                                                           \n"\
 "varying lowp float   vFog;                                          \n"\
-"varying lowp vec4    vShadeColor;                                   \n"\
-"varying mediump vec2 vTexCoord0;                                    \n"\
-"varying lowp vec2    vTexCoord1;                                    \n"\
-"                                                                    \n"\
-"void main()                                                         \n"\
-"{                                                                   \n"\
+"varying lowp vec4  vShadeColor;                            \n"\
+"varying mediump vec2 vTexCoord0;                           \n"\
+"varying lowp vec2    vTexCoord1;                           \n"\
+"                                                           \n"\
+"void main()                                                \n"\
+"{                                                          \n"\
 "gl_Position = aPosition;                                            \n"\
-"vShadeColor = aColor;                                               \n"\
-"vTexCoord0 =  aTexCoord0;                                           \n"\
-"vTexCoord1 =  aTexCoord1;                                           \n"\
+"vShadeColor = aColor;                                      \n"\
+"vTexCoord0 = aTexCoord0;                                   \n"\
+"vTexCoord1 = aTexCoord1;                                   \n"\
 "vFog = (FogMinMax[1] - aFogCoord) / (FogMinMax[1] - FogMinMax[0]);  \n"\
 "vFog = clamp(vFog, 0.0, 1.0);                                       \n"\
-"}                                                                   \n"\
-"                                                                    \n";
+"}                                                          \n"\
+"                                                           \n";
 
 const char *fragmentHeader =
 "#define saturate(x) clamp( x, 0.0, 1.0 )                   \n"\
@@ -66,41 +66,41 @@ const char *fragmentHeader =
 "uniform sampler2D uTex1;                                   \n"\
 "#endif                                                     \n"\
 "                                                           \n"\
-"uniform vec4  EnvColor;                                    \n"\
-"uniform vec4  PrimColor;                                   \n"\
-"uniform vec4  EnvFrac;                                     \n"\
-"uniform vec4  PrimFrac;                                    \n"\
+"uniform vec4 EnvColor;                                     \n"\
+"uniform vec4 PrimColor;                                    \n"\
+"uniform vec4 EnvFrac;                                      \n"\
+"uniform vec4 PrimFrac;                                     \n"\
 "uniform float AlphaRef;                                    \n"\
-"uniform vec4  FogColor;                                    \n"\
+"uniform vec4 FogColor;                                     \n"\
 "                                                           \n"\
 "varying lowp float    vFog;                                \n"\
-"varying lowp vec4     vShadeColor;                         \n"\
+"varying lowp vec4  vShadeColor;                            \n"\
 "varying mediump vec2  vTexCoord0;                          \n"\
-"varying lowp vec2     vTexCoord1;                          \n"\
+"varying lowp vec2  vTexCoord1;                             \n"\
 "                                                           \n"\
 "void main()                                                \n"\
 "{                                                          \n"\
-"   vec4 comb,comb2;                                        \n"\
+"vec4 comb,comb2;                                           \n"\
 "                                                           \n"\
-"#ifdef NEED_TEX0                                           \n"\
-"   vec4 t0 = texture2D(uTex0,vTexCoord0);                  \n"\
+"#ifdef NEED_TEX0                                              \n"\
+"vec4 t0 = texture2D(uTex0,vTexCoord0);                     \n"\
 "#endif                                                     \n"\
 "                                                           \n"\
 "#ifdef NEED_TEX1                                           \n"\
-"   vec4 t1 = texture2D(uTex1,vTexCoord1);                  \n"\
+"vec4 t1 = texture2D(uTex1,vTexCoord1);                     \n"\
 "#endif                                                     \n";
 
 const char *fragmentFooter =
 "                                                           \n"\
 "#ifdef FOG                                                 \n"\
-"   gl_FragColor.rgb = mix(FogColor.rgb, comb.rgb, vFog);   \n"\
-"   gl_FragColor.a = comb.a;                                \n"\
+"gl_FragColor.rgb = mix(FogColor.rgb, comb.rgb, vFog);   \n"\
+"gl_FragColor.a = comb.a;                                   \n"\
 "#else                                                      \n"\
-"   gl_FragColor = comb;                                    \n"\
+"gl_FragColor = comb;                                       \n"\
 "#endif                                                     \n"\
 "                                                           \n"\
 "#ifdef ALPHA_TEST                                          \n"\
-   ALPHA_TEST                                                  
+ALPHA_TEST
 "#endif                                                     \n"\
 "}                                                          \n";
 
@@ -114,7 +114,7 @@ const char *fragmentCopy =
 "void main()                                                \n"\
 "{                                                          \n"\
 "   gl_FragColor = texture2D(uTex0,vTexCoord0).bgra;        \n"\
-   ALPHA_TEST
+ALPHA_TEST
 "}";
 
 GLuint copyProgram,copyAlphaLocation;
@@ -527,104 +527,104 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
     {
         for(int fog = 0;fog < 2;fog++)
         {
-            res.fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-            
-            char* tmpShader = (char*)malloc(sizeof(char) * 4096);
-            strcpy(tmpShader,"#version " GLSL_VERSION "\n");
-            
-            if(alphaTest == 1)
-            {
-                strcat(tmpShader,"#define ALPHA_TEST\n");
-            }
-            
+        res.fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+
+        char* tmpShader = (char*)malloc(sizeof(char) * 4096);
+        strcpy(tmpShader,"#version " GLSL_VERSION "\n");
+
+        if(alphaTest == 1)
+        {
+            strcat(tmpShader,"#define ALPHA_TEST\n");
+        }
+
             if(fog == 1) 
             {
                 strcat(tmpShader,"#define FOG\n");
             }
             
             res.fogIsUsed = fog == 1;
-            res.alphaTest = alphaTest == 1;
-            strcat(tmpShader,oglNewFP);
-            
-            glShaderSource(res.fragmentShaderID, 1,(const char**) &tmpShader,NULL);
-            free(tmpShader);
-            
-            
-            OPENGL_CHECK_ERRORS;
-            glCompileShader(res.fragmentShaderID);
-            
-            glGetShaderiv(res.fragmentShaderID, GL_COMPILE_STATUS, &success);
-            if (!success)
-            {
-                char Log[1024];
-                GLint nLength;
-                glGetShaderInfoLog(res.fragmentShaderID, 1024, &nLength, Log);
-                printf("Error compiling shader!\n %s",oglNewFP);
-                printf("%s", Log);
-            }
-            
-            res.programID = glCreateProgram();
-            glAttachShader(res.programID,res.vertexShaderID);
-            glAttachShader(res.programID,res.fragmentShaderID);
-            
-            //Bind Attributes
-            glBindAttribLocation(res.programID,VS_COLOR,"aColor");
-            OPENGL_CHECK_ERRORS;
-            glBindAttribLocation(res.programID,VS_TEXCOORD0,"aTexCoord0");
-            OPENGL_CHECK_ERRORS;
-            glBindAttribLocation(res.programID,VS_TEXCOORD1,"aTexCoord1");
-            OPENGL_CHECK_ERRORS;
-            glBindAttribLocation(res.programID,VS_POSITION,"aPosition");
-            OPENGL_CHECK_ERRORS;
+        res.alphaTest = alphaTest == 1;
+        strcat(tmpShader,oglNewFP);
+
+        glShaderSource(res.fragmentShaderID, 1,(const char**) &tmpShader,NULL);
+        free(tmpShader);
+
+
+        OPENGL_CHECK_ERRORS;
+        glCompileShader(res.fragmentShaderID);
+
+        glGetShaderiv(res.fragmentShaderID, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            char Log[1024];
+            GLint nLength;
+            glGetShaderInfoLog(res.fragmentShaderID, 1024, &nLength, Log);
+            printf("Error compiling shader!\n %s",oglNewFP);
+            printf("%s", Log);
+        }
+
+        res.programID = glCreateProgram();
+        glAttachShader(res.programID,res.vertexShaderID);
+        glAttachShader(res.programID,res.fragmentShaderID);
+
+        //Bind Attributes
+        glBindAttribLocation(res.programID,VS_COLOR,"aColor");
+        OPENGL_CHECK_ERRORS;
+        glBindAttribLocation(res.programID,VS_TEXCOORD0,"aTexCoord0");
+        OPENGL_CHECK_ERRORS;
+        glBindAttribLocation(res.programID,VS_TEXCOORD1,"aTexCoord1");
+        OPENGL_CHECK_ERRORS;
+        glBindAttribLocation(res.programID,VS_POSITION,"aPosition");
+        OPENGL_CHECK_ERRORS;
             glBindAttribLocation(res.programID,VS_FOG,"aFogCoord");
             OPENGL_CHECK_ERRORS;
-            
-            glLinkProgram(res.programID);
-            OPENGL_CHECK_ERRORS;
-            
-            glGetProgramiv(res.programID, GL_LINK_STATUS, &success);
-            if (!success)
-            {
-                char Log[1024];
-                GLint nLength;
-                glGetShaderInfoLog(res.fragmentShaderID, 1024, &nLength, Log);
-                printf("Error linking program!\n");
-                printf("%s\n",Log);
-            }
-            
-            glUseProgram(res.programID);
-            OPENGL_CHECK_ERRORS;
-            
-            //Bind texture samplers
-            GLint tex0 = glGetUniformLocation(res.programID,"uTex0");
-            GLint tex1 = glGetUniformLocation(res.programID,"uTex1");
-            
-            if(tex0 != -1)
-                glUniform1i(tex0,0);
-            if(tex1 != -1)
-                glUniform1i(tex1,1);
-            
-            //Bind Uniforms
-            res.PrimColorLocation = glGetUniformLocation(res.programID,"PrimColor");
-            OPENGL_CHECK_ERRORS;
-            res.EnvColorLocation = glGetUniformLocation(res.programID,"EnvColor");
-            OPENGL_CHECK_ERRORS;
-            res.PrimFracLocation = glGetUniformLocation(res.programID,"PrimFrac");
-            OPENGL_CHECK_ERRORS;
-            res.EnvFracLocation = glGetUniformLocation(res.programID,"EnvFrac");
-            OPENGL_CHECK_ERRORS;
-            res.AlphaRefLocation = glGetUniformLocation(res.programID,"AlphaRef");
-            OPENGL_CHECK_ERRORS;
-            res.FogColorLocation = glGetUniformLocation(res.programID,"FogColor");
-            OPENGL_CHECK_ERRORS;
-            res.FogMinMaxLocation = glGetUniformLocation(res.programID,"FogMinMax");
-            OPENGL_CHECK_ERRORS;
-            
-            res.dwMux0 = m_pDecodedMux->m_dwMux0;
-            res.dwMux1 = m_pDecodedMux->m_dwMux1;
-            
-            m_vCompiledShaders.push_back(res);
+
+        glLinkProgram(res.programID);
+        OPENGL_CHECK_ERRORS;
+
+        glGetProgramiv(res.programID, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            char Log[1024];
+            GLint nLength;
+            glGetShaderInfoLog(res.fragmentShaderID, 1024, &nLength, Log);
+            printf("Error linking program!\n");
+            printf("%s\n",Log);
         }
+
+        glUseProgram(res.programID);
+        OPENGL_CHECK_ERRORS;
+
+        //Bind texture samplers
+        GLint tex0 = glGetUniformLocation(res.programID,"uTex0");
+        GLint tex1 = glGetUniformLocation(res.programID,"uTex1");
+
+        if(tex0 != -1)
+            glUniform1i(tex0,0);
+        if(tex1 != -1)
+            glUniform1i(tex1,1);
+
+        //Bind Uniforms
+        res.PrimColorLocation = glGetUniformLocation(res.programID,"PrimColor");
+        OPENGL_CHECK_ERRORS;
+        res.EnvColorLocation = glGetUniformLocation(res.programID,"EnvColor");
+        OPENGL_CHECK_ERRORS;
+        res.PrimFracLocation = glGetUniformLocation(res.programID,"PrimFrac");
+        OPENGL_CHECK_ERRORS;
+        res.EnvFracLocation = glGetUniformLocation(res.programID,"EnvFrac");
+        OPENGL_CHECK_ERRORS;
+        res.AlphaRefLocation = glGetUniformLocation(res.programID,"AlphaRef");
+        OPENGL_CHECK_ERRORS;
+        res.FogColorLocation = glGetUniformLocation(res.programID,"FogColor");
+        OPENGL_CHECK_ERRORS;
+        res.FogMinMaxLocation = glGetUniformLocation(res.programID,"FogMinMax");
+        OPENGL_CHECK_ERRORS;
+
+        res.dwMux0 = m_pDecodedMux->m_dwMux0;
+        res.dwMux1 = m_pDecodedMux->m_dwMux1;
+
+        m_vCompiledShaders.push_back(res);
+    }
     }
     m_lastIndex = m_vCompiledShaders.size()-4;
 
@@ -701,11 +701,11 @@ void COGL_FragmentProgramCombiner::GenerateCombinerSettingConstants(int index)
     if(prog.FogColorLocation != -1)
     {
         glUniform4f(prog.FogColorLocation, gRDP.fvFogColor[0],gRDP.fvFogColor[1],gRDP.fvFogColor[2], gRDP.fvFogColor[3]);
-        OPENGL_CHECK_ERRORS;
-    }
+    OPENGL_CHECK_ERRORS;
+}
 
     if(prog.FogMinMaxLocation != -1)
-    {
+{
         glUniform2f(prog.FogMinMaxLocation,gRSPfFogMin,gRSPfFogMax);
         OPENGL_CHECK_ERRORS;
     }
