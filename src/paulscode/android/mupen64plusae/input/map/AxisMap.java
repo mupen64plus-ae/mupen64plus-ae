@@ -23,7 +23,6 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_XBOX360 = 449832952;
     private static final int SIGNATURE_HASH_XBOX360_WIRELESS = -412618953;
     private static final int SIGNATURE_HASH_PS3 = -528816963;
-    private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
     private static final int SIGNATURE_HASH_MOGA_PRO = -1933523749;
     private static final int SIGNATURE_HASH_OUYA = 699487739;
@@ -94,32 +93,6 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_GENERIC_7, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_8, AXIS_CLASS_IGNORED );
                 signatureName = "PS3 compatible";
-                break;
-            
-            case SIGNATURE_HASH_NYKO_PLAYPAD:
-                if( !deviceName.contains( "NYKO PLAYPAD" ) &&
-                    !deviceName.contains( "Mad Catz" ) &&
-                    !deviceName.contains( "ipega" ) )
-                {
-                    // The first batch of Nyko Playpad controllers have a quirk in the firmware
-                    // where AXIS_HAT_X/Y are sent with (and overpower) AXIS_X/Y, and do not
-                    // provide a recognizable name for the controller.  Newer batches of this
-                    // controller fix the quirk, making it a vanilla controller.  However the
-                    // AXIS_HAT_X/Y channels are now used for the d-pad, so we can't apply a
-                    // universal solution for all versions of this controller.  Fortunately, the
-                    // new version also returns a good name that we can use to differentiate
-                    // controller firmware versions.
-                    // 
-                    // The Mad Catz C.T.R.L.R. and IPEGA PG-9025 controller have the same axis
-                    // signature as the Nyko Playpad, but without the Nyko defect, so we have to
-                    // check that as well.
-                    //
-                    // For original firmware, ignore AXIS_HAT_X/Y because they are sent with (and
-                    // overpower) AXIS_X/Y
-                    setClass( MotionEvent.AXIS_HAT_X, AXIS_CLASS_IGNORED );
-                    setClass( MotionEvent.AXIS_HAT_Y, AXIS_CLASS_IGNORED );
-                    signatureName = "Nyko PlayPad series (original firmware)";
-                }
                 break;
             
             case SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD:
