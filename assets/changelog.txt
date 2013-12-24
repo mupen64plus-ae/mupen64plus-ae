@@ -1,3 +1,6 @@
+[35:2.4.3]
+- Fixed bug where IPEGA d-pad was being ignored
+- Allow app to be seen in Google Play for touchscreen-less devices (e.g. M.O.J.O)
 [34:2.4.2]
 - Doom 64 is now playable, thanks to ptitSeb of OpenPandora fame
 - Fixed audio latency on most devices (see Audio menu)
