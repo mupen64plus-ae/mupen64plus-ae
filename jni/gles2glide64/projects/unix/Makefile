@@ -122,7 +122,7 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
-OPTFLAGS ?= -O3 -flto
+OPTFLAGS ?= -O2 -flto
 WARNFLAGS ?= -Wall
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -I../../src/Glitch64/inc -DGCC
 CXXFLAGS += -fvisibility-inlines-hidden -std=gnu++0x
