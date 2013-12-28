@@ -240,12 +240,22 @@ public class CheatFile
         try
         {
             FileWriter fw = new FileWriter( mFilename );  // For writing to the cheat file
-
+            CheatLine line;
             // Loop through the sections
             for ( CheatSection section : mCheatList )
             {
                 if( section != null )
+                {
                     section.save( fw );
+                    if( !TextUtils.isEmpty( section.crc ) && !section.crc.equals( "[<sectionless!>]" ) )
+                    {
+                        // Insert blank line between sections
+                        line = new CheatLine( CheatLine.LINE_GARBAGE, "\n", null );
+                        line.save( fw );
+                        // TODO: This saves an extra blank line at the end of the file.
+                        // Make sure that doesn't cause problems during load or in the core.
+                    }
+                }
             }
 
             fw.flush();
@@ -703,11 +713,8 @@ public class CheatFile
                     else if( strLine.substring( 0, 3 ).equals( "crc" ) )
                     {
                         if( strLine.length() > 4 )
-                        nextCrc = strLine.substring( 4, strLine.length() ).trim();
-                        
-                        // Done reading section. Insert blank line between sections (gets dropped in CheatBlock constructor)
-                        if( !crc.equals( "[<sectionless!>]" ) )
-                            lines.add( new CheatLine( CheatLine.LINE_GARBAGE, "\n", null ) );
+                            nextCrc = strLine.substring( 4, strLine.length() ).trim();
+                        // Done reading section.
                         return;
                     }
                     else
@@ -841,7 +848,7 @@ public class CheatFile
          */
         private void save( FileWriter fw ) throws IOException
         {
-            for (CheatLine line : lines)
+            for( CheatLine line : lines )
             {
                 if( line != null )
                     line.save( fw );
