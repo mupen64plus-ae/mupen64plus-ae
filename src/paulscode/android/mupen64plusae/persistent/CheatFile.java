@@ -29,6 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -551,6 +552,15 @@ public class CheatFile
         }
         
         /**
+         * Removes all codes.
+         * 
+         */
+        public void clear()
+        {
+            codes.clear();
+        }
+        
+        /**
          * Saves the CheatBlock.
          * 
          * @param fw The file to save the CheatBlock to.
@@ -837,6 +847,24 @@ public class CheatFile
                 return false;
             }
             return true;
+        }
+        
+        /**
+         * Removes all cheats.
+         */
+        public void clear()
+        {
+            cheats.clear();
+            Iterator<CheatLine> iterator = lines.iterator();
+            CheatLine line;
+            while( iterator.hasNext() )
+            {
+                line = iterator.next();
+                if( line.lineType == CheatLine.CHEAT_BLOCK )
+                {
+                    iterator.remove();
+                }
+            }
         }
         
         /**
