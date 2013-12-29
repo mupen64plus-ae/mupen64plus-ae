@@ -119,7 +119,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+				<activity
+            android:name="paulscode.android.mupen64plusae.CheatEditorActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/CheatEditorActivity_title" >
+           	<intent-filter>
+                <action android:name=".SettingsVideoActivity" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <!--
         For the GameActivities, do not restart the activity when the phone's slider
         opens or closes, or when the orientation (and thereby screen size) changes.
@@ -140,7 +149,6 @@
                 android:name="android.app.lib_name"
                 android:value="xperia-touchpad" />
         </activity>
-
         <meta-data
             android:name="xperiaplayoptimized_content"
             android:resource="@drawable/hireslogo" />

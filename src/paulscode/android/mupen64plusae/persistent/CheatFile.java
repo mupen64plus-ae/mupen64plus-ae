@@ -106,7 +106,11 @@ public class CheatFile
         
         return null;
     }
-
+    public void add( CheatSection cheatSection )
+    {
+    	mCheatMap.put(cheatSection.crc, cheatSection);
+    	mCheatList.add(cheatSection);
+    }
     /**
      * Looks up a cheat section by CRC.
      * 
@@ -646,22 +650,23 @@ public class CheatFile
         
         // The next cheat section, or null if there are no sections left to read in the file:
         public String nextCrc = null;
-
         /**
          * Constructor: Creates an empty cheat section
          * 
          * @param crc The ROM CRC.
          */
-        public CheatSection( String crc )
+        public CheatSection( String crc, String name, String countryCode )
         {
             cheats = new LinkedList<CheatBlock>();
             lines = new LinkedList<CheatLine>();
             
             if( !TextUtils.isEmpty( crc ) && !crc.equals( "[<sectionless!>]" ) )
             {
-                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "\n", null ) );
+                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "-C:"+countryCode+"\n", null ) );
+                lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, "gn "+ name +"\n", null ) );
             }
             this.crc = crc;
+            this.goodName = name;
         }
 
         // TODO: Clean this method up a bit?

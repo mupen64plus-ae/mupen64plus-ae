@@ -26,6 +26,7 @@
     <string name="ControllerProfileEditActivity_title" translatable="false">@string/app_name</string>
     <string name="DiagnosticActivity_title" translatable="false">@string/menuItem_controllerDiagnostics</string>
     <string name="GameActivity_title" translatable="false">@string/app_name</string>
+    <string name="CheatEditorActivity_title" translatable="false">@string/menuItem_cheatEditor</string>
     
     <!-- Aliases to other strings -->
     <string name="selectedValue" translatable="false">%1$s</string>

@@ -157,7 +157,7 @@ public class GalleryActivity extends Activity implements OnClickListener
                 return true;
             case R.id.menuItem_customCheats:
                 // TODO
-                popupTodo();
+                startActivity( new Intent( this, CheatEditorActivity.class) );
                 return true;
             case R.id.menuItem_faq:
                 popupFaq();

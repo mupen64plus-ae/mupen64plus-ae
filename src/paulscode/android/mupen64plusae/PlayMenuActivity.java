@@ -21,11 +21,15 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.LinkedList;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.CheatFile;
+import paulscode.android.mupen64plusae.persistent.CheatFile.CheatBlock;
+import paulscode.android.mupen64plusae.persistent.CheatFile.CheatCode;
+import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
+import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.CheatPreference;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -42,7 +46,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.bda.controller.Controller;
@@ -193,10 +196,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             return;
         
         // Get the appropriate section of the config file, using CRC as the key
-        ConfigFile mupen64plus_cht = new ConfigFile( mAppData.mupen64plus_cht );
-        ConfigSection configSection = mupen64plus_cht.match( "^" + crc.replace( ' ', '.' ) + ".*" );
-        
-        if( configSection == null )
+        CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
+        CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
+        if( cheatSection == null )
         {
             Log.w( "PlayMenuActivity", "No cheat section found for '" + crc + "'" );
             return;
@@ -209,51 +211,66 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Layout the menu, populating it with appropriate cheat options
         PreferenceCategory cheatsCategory = (PreferenceCategory) findPreference( CATEGORY_CHEATS );
-        String cheat = " ";
-        for( int i = 0; !TextUtils.isEmpty( cheat ); i++ )
+        CheatBlock cheat;
+        for( int i = 0; i<cheatSection.size(); i++ )
         {
-            cheat = configSection.get( "Cheat" + i );
-            if( !TextUtils.isEmpty( cheat ) )
+            cheat = cheatSection.get( i );
+            if( cheat!=null )
             {
                 // Get the short title of the cheat (shown in the menu)
-                int x = cheat.indexOf( "," );
                 String title;
-                if( x < 3 || x >= cheat.length() )
+                if( cheat.name==null )
                 {
                     // Title not available, just use a default string for the menu
                     title = getString( R.string.cheats_defaultName, i );
                 }
+                
                 else
                 {
                     // Title available, remove the leading/trailing quotation marks
-                    title = cheat.substring( 1, x - 1 );
+                    title = cheat.name;
                 }
                 
                 // Get the descriptive note for this cheat (shown on long-click)
-                final String notes = configSection.get( "Cheat" + i + "_N" );
+                final String notes = cheat.description;
                 
                 // Get the options for this cheat
-                final String val_O = configSection.get( "Cheat" + i + "_O" );
-                String[] optionStrings = null;
-                
-                if( !TextUtils.isEmpty( val_O ) )
+                LinkedList<CheatCode> codes = new LinkedList<CheatCode>();
+                LinkedList<CheatOption> options = new LinkedList<CheatOption>();
+                for(int o=0; o<cheat.size(); o++)
                 {
+                	codes.add(cheat.get(o));
+                }
+                /* There shouldn't be more than one set of options per cheat 
+                 * so why do we need to recurse individual codes?
+                 */
+                for(int o=0; o<codes.size(); o++)
+                {
+                	if(codes.get(o).options!=null)
+                	{
+                		options=codes.get(o).options;
+                	}
+                	
+                }
+                String[] optionStrings = null;
+                if( options!=null )
+                {
+                	if(!options.isEmpty())
+                	{
                     // This is a multi-choice cheat
-                    // Parse the comma-delimited string to get the map elements
-                    String[] uOpts = val_O.split( "," );
-                    optionStrings = new String[uOpts.length];
+
+                    optionStrings = new String[options.size()];
                     
                     // Each element is a key-value pair
-                    for( int z = 0; z < uOpts.length; z++ )
+                    for( int z = 0; z < options.size(); z++ )
                     {
                         // The first non-leading space character is the pair delimiter
-                        optionStrings[z] = uOpts[z].trim();
-                        int c = optionStrings[z].indexOf( " " );
-                        if( c > -1 && c < optionStrings[z].length() - 1 )
-                            optionStrings[z] = optionStrings[z].substring( c + 1 );
-                        else
-                            optionStrings[z] = getString( R.string.cheats_longPress );
+                        optionStrings[z] = options.get(z).name;
+                        if( optionStrings[z].isEmpty() || optionStrings[z] == null )
+                        	optionStrings[z] = getString( R.string.cheats_longPress );
+                            
                     }
+                	}
                 }
                 
                 // Create the menu item associated with this cheat

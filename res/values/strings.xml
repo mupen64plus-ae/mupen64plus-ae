@@ -411,6 +411,44 @@
     <string name="cheatNotes_title">Notes</string>
     <string name="cheatNotes_none">(no notes available for this cheat)</string>
 
+    <!-- Cheat Editor -->
+    <string name="menuItem_cheatEditor">Cheat editor</string>
+    <string name="cheatEditor_empty">Empty cheat</string>
+    <string name="cheatEditor_added">Empty cheat added at bottom of list</string>
+    <string name="cheatEditor_edit">Edit cheats</string>
+    <string name="cheatEditor_edit_desc">Long press a cheat to edit it</string>
+    <string name="cheatEditor_help">Help</string>
+    <string name="cheatEditor_readme1">Welcome to the Mupen64plus AE Cheat editor</string>
+    <string name="cheatEditor_readme2">Please adhere to the following guidelines when adding or editing cheats:</string>
+    <string name="cheatEditor_readme3">1. Titles and descriptions should NOT contain line breaks (the enter button). Any line breaks will be replaced with spaces.</string>
+    <string name="cheatEditor_readme4">2. Hexadecimal numbers must be used in place of the X\'s in the examples given below.</string>
+    <string name="cheatEditor_readme5">3. Cheats must only have one code per line in the format \"XXXXXXXX XXXX\" without quotes or \"XXXXXXXX ????\" without quotes if the cheat code has options. Cheats can have multiple lines.</string>
+    <string name="cheatEditor_readme6">4. Options codes must only have one option per line in the format \"Option Description XXXX\" without quotes. Option codes can also have multiple lines.</string>
+    <string name="cheatEditor_config">Cheat config</string>
+    <string name="cheatEditor_config_desc">Edit cheat configuration</string>
+    <string name="cheatEditor_title">Cheat title</string>
+    <string name="cheatEditor_title_desc">Edit cheat title</string>
+    <string name="cheatEditor_ok">OK</string>
+    <string name="cheatEditor_cancel">Cancel</string>
+    <string name="cheatEditor_notes">Cheat notes</string>
+    <string name="cheatEditor_notes_desc">Edit cheat notes</string>
+    <string name="cheatEditor_code">Cheat code</string>
+    <string name="cheatEditor_code_desc">Edit cheat code</string>
+    <string name="cheatEditor_badCode">Bad code(s), reverting...</string>
+    <string name="cheatEditor_option">Cheat options</string>
+    <string name="cheatEditor_option_desc">Edit cheat options</string>
+    <string name="cheatEditor_badOption">Bad option(s), reverting...</string>
+    <string name="cheatEditor_delete">Delete cheat</string>
+    <string name="cheatEditor_confirm">Are you sure?</string>
+    <string name="cheatEditor_yes">Yes</string>
+    <string name="cheatEditor_no">No</string>
+    <string name="cheatEditor_info">Cheat information</string>
+    <string name="cheatEditor_title2">Title:</string>
+    <string name="cheatEditor_notes2">Notes:</string>
+    <string name="cheatEditor_code2">Code(s):</string>
+    <string name="cheatEditor_option2">Option(s):</string>
+    <string name="cheatEditor_saveConfirm">Save cheat file?</string>
+    
     <!-- Hi-Res Texture Unpacking -->
     <string name="pathHiResTexturesTask_title">Unpacking textures</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
@@ -470,5 +508,6 @@
     <!-- Controller Diagnostics -->
     <string name="diagnosticActivity_textKey_text">Press button or key…</string>
     <string name="diagnosticActivity_textMotion_text">Touch screen or joystick…</string>
+
 
 </resources>

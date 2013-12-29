@@ -155,14 +155,6 @@ public class AppData
     /** The path of the gles2glide64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String gles2glide64_conf;
     
-    /**
-     * The path of the deprecated Mupen64Plus cheats file. Deleted on uninstall, sometimes
-     * overwritten on update.
-     * 
-     * @deprecated
-     */
-    public final String mupen64plus_cht;
-    
     /** The path of the Mupen64Plus cheats file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupencheat_txt;
     
@@ -245,7 +237,6 @@ public class AppData
         inputLib = libsDir + "/libinput-android.so";
         gles2n64_conf = coreSharedDataDir + "/gles2n64.conf";
         gles2glide64_conf = coreSharedDataDir + "/Glide64mk2.ini";
-        mupen64plus_cht = coreSharedDataDir + "/mupen64plus.cht";
         mupencheat_txt = coreSharedDataDir + "/mupencheat.txt";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";

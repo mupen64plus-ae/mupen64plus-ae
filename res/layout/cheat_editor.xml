@@ -15,10 +15,20 @@
 	        android:layout_height="50dp"
 	        android:src="@drawable/ic_plus" />
 	    <ImageButton
-	        android:id="@+id/imgBtnChtAdd"
+	        android:id="@+id/imgBtnChtEdit"
 	        android:layout_width="50dp"
 	        android:layout_height="50dp"
 	        android:src="@drawable/ic_pencil" />
+	    <ImageButton
+	        android:id="@+id/imgBtnChtSave"
+	        android:layout_width="50dp"
+	        android:layout_height="50dp"
+	        android:src="@drawable/ic_save" />
+	   	<ImageButton
+	        android:id="@+id/imgBtnChtInfo"
+	        android:layout_width="50dp"
+	        android:layout_height="50dp"
+	        android:src="@drawable/ic_help" />
 	</LinearLayout>
 	<ListView
 	    android:id="@android:id/list"
