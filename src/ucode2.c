@@ -124,11 +124,10 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)
     }
 
     if (!(Flags & 0x1)) {
-        if (Flags & 0x2) {
+        if (Flags & 0x2)
             memcpy(out, &rsp.RDRAM[loopval], 32);
-        } else {
+        else
             memcpy(out, &rsp.RDRAM[Address], 32);
-        }
     }
 
     l1 = out[14 ^ S];
@@ -152,21 +151,25 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)
 
             /* this will in effect be signed */
             inp1[j] = (int16_t)((icode & mask1) << 8);
-            if (code < srange) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
+            if (code < srange)
+                inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
             j++;
 
             inp1[j] = (int16_t)((icode & mask2) << shifter);
-            if (code < srange) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
+            if (code < srange)
+                inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
             j++;
 
             if (Flags & 4) {
                 /* this will in effect be signed */
                 inp1[j] = (int16_t)((icode & 0xC) << 12);
-                if (code < 0xE) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
+                if (code < 0xE)
+                    inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
                 j++;
 
                 inp1[j] = (int16_t)((icode & 0x3) << 14);
-                if (code < 0xE) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
+                if (code < 0xE)
+                    inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
                 j++;
             }
         }
@@ -179,20 +182,24 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)
             inPtr++;
 
             inp2[j] = (int16_t)((icode & mask1) << 8);
-            if (code < srange) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
+            if (code < srange)
+                inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
             j++;
 
             inp2[j] = (int16_t)((icode & mask2) << shifter);
-            if (code < srange) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
+            if (code < srange)
+                inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
             j++;
 
             if (Flags & 4) {
                 inp2[j] = (int16_t)((icode & 0xC) << 12);
-                if (code < 0xE) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
+                if (code < 0xE)
+                    inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
                 j++;
 
                 inp2[j] = (int16_t)((icode & 0x3) << 14);
-                if (code < 0xE) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
+                if (code < 0xE)
+                    inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
                 j++;
             }
         }

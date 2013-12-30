@@ -664,23 +664,42 @@ static void InnerLoop(void)
     for (i = 0; i < 8; i++) {
         /* v0 */
         vt = (*(int16_t *)(mp3data + ((tmp - 0x40)^S16)) * hi0);
-        if (vt > 32767) vt = 32767;
-        else if (vt < -32767) vt = -32767;
+        if (vt > 32767) {
+            vt = 32767;
+        } else {
+            if (vt < -32767)
+                vt = -32767;
+        }
         *(int16_t *)((uint8_t *)mp3data + ((tmp - 0x40)^S16)) = (int16_t)vt;
+
         /* v17 */
         vt = (*(int16_t *)(mp3data + ((tmp - 0x30)^S16)) * hi0);
-        if (vt > 32767) vt = 32767;
-        else if (vt < -32767) vt = -32767;
+        if (vt > 32767) {
+            vt = 32767;
+        } else {
+            if (vt < -32767)
+                vt = -32767;
+        }
         *(int16_t *)((uint8_t *)mp3data + ((tmp - 0x30)^S16)) = vt;
+
         /* v2 */
         vt = (*(int16_t *)(mp3data + ((tmp - 0x1E)^S16)) * hi1);
-        if (vt > 32767) vt = 32767;
-        else if (vt < -32767) vt = -32767;
+        if (vt > 32767) {
+            vt = 32767;
+        } else {
+            if (vt < -32767)
+                vt = -32767;
+        }
         *(int16_t *)((uint8_t *)mp3data + ((tmp - 0x1E)^S16)) = vt;
+
         /* v4 */
         vt = (*(int16_t *)(mp3data + ((tmp - 0xE)^S16)) * hi1);
-        if (vt > 32767) vt = 32767;
-        else if (vt < -32767) vt = -32767;
+        if (vt > 32767) {
+            vt = 32767;
+        } else {
+            if (vt < -32767)
+                vt = -32767;
+        }
         *(int16_t *)((uint8_t *)mp3data + ((tmp - 0xE)^S16)) = vt;
         tmp += 2;
     }

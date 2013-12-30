@@ -403,12 +403,11 @@ static void SETVOL(uint32_t inst1, uint32_t inst2)
 
     /* Set the Source(start) Volumes */
     if (flags & A_VOL) {
-        if (flags & A_LEFT) {
+        if (flags & A_LEFT)
             Vol_Left = (int16_t)vol;
-        } else {
+        else
             /* A_RIGHT */
             Vol_Right = (int16_t)vol;
-        }
         return;
     }
 
