@@ -1,9 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - cicx105.c                                       *
+ *   Mupen64plus-rsp-hle - musyx.h                                         *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2012 Bobby Smiles                                       *
- *   Copyright (C) 2009 Richard Goedeken                                   *
- *   Copyright (C) 2002 Hacktarux                                          *
+ *   Copyright (C) 2013 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,34 +19,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
+#ifndef MUSYX_H
+#define MUSYX_H
 
-#include "hle.h"
+void musyx_task();
 
-/**
- * During IPL3 stage of CIC x105 games, the RSP performs some checks and transactions
- * necessary for booting the game.
- *
- * We only implement the needed DMA transactions for booting.
- *
- * Found in Banjo-Tooie, Zelda, Perfect Dark, ...)
- **/
-void cicx105_ucode()
-{
-    // memcpy is okay to use because access constrains are met (alignment, size)
-    unsigned int i;
-    unsigned char *dst = rsp.RDRAM + 0x2fb1f0;
-    unsigned char *src = rsp.IMEM + 0x120;
-
-    /* dma_read(0x1120, 0x1e8, 0x1e8) */
-    memcpy(rsp.IMEM + 0x120, rsp.RDRAM + 0x1e8, 0x1f0);
-
-    /* dma_write(0x1120, 0x2fb1f0, 0xfe817000) */
-    for (i = 0; i < 24; ++i) {
-        memcpy(dst, src, 8);
-        dst += 0xff0;
-        src += 0x8;
-
-    }
-}
-
+#endif

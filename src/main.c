@@ -33,6 +33,7 @@
 #include "alist.h"
 #include "cicx105.h"
 #include "jpeg.h"
+#include "musyx.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
@@ -51,9 +52,9 @@
 
 /* helper functions prototypes */
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
-static void dump_binary(const char * const filename, const unsigned char * const bytes,
+static void dump_binary(const char *const filename, const unsigned char *const bytes,
                         unsigned int size);
-static void dump_task(const char * const filename, const OSTask_t * const task);
+static void dump_task(const char *const filename, const OSTask_t *const task);
 
 static void handle_unknown_task(unsigned int sum);
 static void handle_unknown_non_task(unsigned int sum);
@@ -89,8 +90,7 @@ static void rsp_break(unsigned int setbits)
 {
     *rsp.SP_STATUS_REG |= setbits | RSP_STATUS_BROKE | RSP_STATUS_HALT;
 
-    if ((*rsp.SP_STATUS_REG & RSP_STATUS_INTR_ON_BREAK))
-    {
+    if ((*rsp.SP_STATUS_REG & RSP_STATUS_INTR_ON_BREAK)) {
         *rsp.MI_INTR_REG |= MI_INTR_SP;
         rsp.CheckInterrupts();
     }
@@ -98,8 +98,7 @@ static void rsp_break(unsigned int setbits)
 
 static void forward_gfx_task()
 {
-    if (rsp.ProcessDlistList != NULL)
-    {
+    if (rsp.ProcessDlistList != NULL) {
         rsp.ProcessDlistList();
         *rsp.DPC_STATUS_REG &= ~DP_STATUS_FREEZE;
     }
@@ -108,37 +107,30 @@ static void forward_gfx_task()
 static void forward_audio_task()
 {
     if (rsp.ProcessAlistList != NULL)
-    {
         rsp.ProcessAlistList();
-    }
 }
 
 static void show_cfb()
 {
     if (rsp.ShowCFB != NULL)
-    {
         rsp.ShowCFB();
-    }
 }
 
 static int try_fast_audio_dispatching()
 {
     /* identify audio ucode by using the content of ucode_data */
-    const OSTask_t * const task = get_task();
-    const unsigned char * const udata_ptr = rsp.RDRAM + task->ucode_data;
+    const OSTask_t *const task = get_task();
+    const unsigned char *const udata_ptr = rsp.RDRAM + task->ucode_data;
 
-    if (*(unsigned int*)(udata_ptr + 0) == 0x00000001)
-    {
-        if (*(unsigned int*)(udata_ptr + 0x30) == 0xf0000f00)
-        {
+    if (*(unsigned int *)(udata_ptr + 0) == 0x00000001) {
+        if (*(unsigned int *)(udata_ptr + 0x30) == 0xf0000f00) {
             /**
             * Many games including:
             * Super Mario 64, Diddy Kong Racing, BlastCorp, GoldenEye, ... (most common)
             **/
-            alist_process_ABI1(); return 1;
-        }
-        else
-        {
+            alist_process_ABI1();
+            return 1;
+        } else {
             /**
             * Mario Kart / Wave Race,
             * LylatWars,
@@ -152,13 +144,11 @@ static int try_fast_audio_dispatching()
             * FIXME: in fact, all these games do not share the same ABI.
             * That's the reason of the workaround in ucode2.cpp with isZeldaABI and isMKABI
             **/
-            alist_process_ABI2(); return 1;
+            alist_process_ABI2();
+            return 1;
         }
-    }
-    else
-    {
-        if (*(unsigned int*)(udata_ptr + 0x10) == 0x00000001)
-        {
+    } else {
+        if (*(unsigned int *)(udata_ptr + 0x10) == 0x00000001) {
             /**
              * Musyx ucode found in following games:
              * RogueSquadron, ResidentEvil2, SnowCrossPolaris, TheWorldIsNotEnough,
@@ -166,38 +156,46 @@ static int try_fast_audio_dispatching()
              * GauntletLegend, Rush2049, IndianaJones, BattleForNaboo
              * TODO: implement ucode
              **/
-            DebugMessage(M64MSG_WARNING, "MusyX ucode not implemented.");
-            /* return 1; */
-        }
-        else
-        {
+            musyx_task();
+            return 1;
+        } else {
             /**
              * Many games including:
              * Pokemon Stadium, Banjo Kazooie, Donkey Kong, Banjo Tooie, Jet Force Gemini,
              * Mickey SpeedWay USA, Perfect Dark, Conker Bad Fur Day ...
              **/
-            alist_process_ABI3(); return 1;
+            alist_process_ABI3();
+            return 1;
         }
     }
-    
+
     return 0;
 }
 
 static int try_fast_task_dispatching()
 {
     /* identify task ucode by its type */
-    const OSTask_t * const task = get_task();
+    const OSTask_t *const task = get_task();
 
-    switch (task->type)
-    {
-        case 1: if (FORWARD_GFX) { forward_gfx_task(); return 1; } break;
+    switch (task->type) {
+    case 1:
+        if (FORWARD_GFX) {
+            forward_gfx_task();
+            return 1;
+        }
+        break;
 
-        case 2:
-            if (FORWARD_AUDIO) { forward_audio_task(); return 1; }
-            else if (try_fast_audio_dispatching()) { return 1; }
-            break;
+    case 2:
+        if (FORWARD_AUDIO) {
+            forward_audio_task();
+            return 1;
+        } else if (try_fast_audio_dispatching())
+            return 1;
+        break;
 
-        case 7: show_cfb(); return 1;
+    case 7:
+        show_cfb();
+        return 1;
     }
 
     return 0;
@@ -205,30 +203,38 @@ static int try_fast_task_dispatching()
 
 static void normal_task_dispatching()
 {
-    const OSTask_t * const task = get_task();
+    const OSTask_t *const task = get_task();
     const unsigned int sum =
         sum_bytes(rsp.RDRAM + task->ucode, min(task->ucode_size, 0xf80) >> 1);
 
-    switch (sum)
-    {
-        /* StoreVe12: found in Zelda Ocarina of Time [misleading task->type == 4] */
-        case 0x278: /* Nothing to emulate */ return;
+    switch (sum) {
+    /* StoreVe12: found in Zelda Ocarina of Time [misleading task->type == 4] */
+    case 0x278: /* Nothing to emulate */
+        return;
 
-        /* GFX: Twintris [misleading task->type == 0] */                                         
-        case 0x212ee:
-            if (FORWARD_GFX) { forward_gfx_task(); return; }
-            break;
+    /* GFX: Twintris [misleading task->type == 0] */
+    case 0x212ee:
+        if (FORWARD_GFX) {
+            forward_gfx_task();
+            return;
+        }
+        break;
 
-        /* JPEG: found in Pokemon Stadium J */ 
-        case 0x2c85a: jpeg_decode_PS0(); return;
+    /* JPEG: found in Pokemon Stadium J */
+    case 0x2c85a:
+        jpeg_decode_PS0();
+        return;
 
-        /* JPEG: found in Zelda Ocarina of Time, Pokemon Stadium 1, Pokemon Stadium 2 */
-        case 0x2caa6: jpeg_decode_PS(); return;
+    /* JPEG: found in Zelda Ocarina of Time, Pokemon Stadium 1, Pokemon Stadium 2 */
+    case 0x2caa6:
+        jpeg_decode_PS();
+        return;
 
-        /* JPEG: found in Ogre Battle, Bottom of the 9th */
-        case 0x130de:
-        case 0x278b0:
-            jpeg_decode_OB(); return;
+    /* JPEG: found in Ogre Battle, Bottom of the 9th */
+    case 0x130de:
+    case 0x278b0:
+        jpeg_decode_OB();
+        return;
     }
 
     handle_unknown_task(sum);
@@ -238,12 +244,12 @@ static void non_task_dispatching()
 {
     const unsigned int sum = sum_bytes(rsp.IMEM, 0x1000 >> 1);
 
-    switch(sum)
-    {
-        /* CIC x105 ucode (used during boot of CIC x105 games) */
-        case 0x9e2: /* CIC 6105 */
-        case 0x9f2: /* CIC 7105 */
-            cicx105_ucode(); return;
+    switch (sum) {
+    /* CIC x105 ucode (used during boot of CIC x105 games) */
+    case 0x9e2: /* CIC 6105 */
+    case 0x9f2: /* CIC 7105 */
+        cicx105_ucode();
+        return;
     }
 
     handle_unknown_non_task(sum);
@@ -252,34 +258,31 @@ static void non_task_dispatching()
 static void handle_unknown_task(unsigned int sum)
 {
     char filename[256];
-    const OSTask_t * const task = get_task();
+    const OSTask_t *const task = get_task();
 
     DebugMessage(M64MSG_WARNING, "unknown OSTask: sum %x PC:%x", sum, *rsp.SP_PC_REG);
 
     sprintf(&filename[0], "task_%x.log", sum);
     dump_task(filename, task);
-    
+
     // dump ucode_boot
     sprintf(&filename[0], "ucode_boot_%x.bin", sum);
     dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
 
     // dump ucode
-    if (task->ucode != 0)
-    {
+    if (task->ucode != 0) {
         sprintf(&filename[0], "ucode_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
     }
 
     // dump ucode_data
-    if (task->ucode_data != 0)
-    {
+    if (task->ucode_data != 0) {
         sprintf(&filename[0], "ucode_data_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
     }
 
     // dump data
-    if (task->data_ptr != 0)
-    {
+    if (task->data_ptr != 0) {
         sprintf(&filename[0], "data_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
     }
@@ -319,7 +322,7 @@ void DebugMessage(int level, const char *message, ...)
 
 /* DLL-exported functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
-                                   void (*DebugCallback)(void *, int, const char *))
+                                     void (*DebugCallback)(void *, int, const char *))
 {
     if (l_PluginInit)
         return M64ERR_ALREADY_INIT;
@@ -358,27 +361,23 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
 
     if (APIVersion != NULL)
         *APIVersion = RSP_PLUGIN_API_VERSION;
-    
+
     if (PluginNamePtr != NULL)
         *PluginNamePtr = "Hacktarux/Azimer High-Level Emulation RSP Plugin";
 
     if (Capabilities != NULL)
-    {
         *Capabilities = 0;
-    }
-                    
+
     return M64ERR_SUCCESS;
 }
 
 EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 {
-    if (is_task())
-    {
-        if (!try_fast_task_dispatching()) { normal_task_dispatching(); }
+    if (is_task()) {
+        if (!try_fast_task_dispatching())
+            normal_task_dispatching();
         rsp_break(RSP_STATUS_TASKDONE);
-    }
-    else
-    {
+    } else {
         non_task_dispatching();
         rsp_break(0);
     }
@@ -404,7 +403,7 @@ EXPORT void CALL RomClosed(void)
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size)
 {
     unsigned int sum = 0;
-    const unsigned char * const bytes_end = bytes + size;
+    const unsigned char *const bytes_end = bytes + size;
 
     while (bytes != bytes_end)
         sum += *bytes++;
@@ -413,66 +412,53 @@ static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size)
 }
 
 
-static void dump_binary(const char * const filename, const unsigned char * const bytes,
+static void dump_binary(const char *const filename, const unsigned char *const bytes,
                         unsigned int size)
 {
     FILE *f;
 
     // if file already exists, do nothing
     f = fopen(filename, "r");
-    if (f == NULL)
-    {
+    if (f == NULL) {
         // else we write bytes to the file
-        f= fopen(filename, "wb");
+        f = fopen(filename, "wb");
         if (f != NULL) {
             if (fwrite(bytes, 1, size, f) != size)
-            {
                 DebugMessage(M64MSG_ERROR, "Writing error on %s", filename);
-            }
             fclose(f);
-        }
-        else
-        {
+        } else
             DebugMessage(M64MSG_ERROR, "Couldn't open %s for writing !", filename);
-        }
-    }
-    else
-    {
+    } else
         fclose(f);
-    }
 }
 
-static void dump_task(const char * const filename, const OSTask_t * const task)
+static void dump_task(const char *const filename, const OSTask_t *const task)
 {
     FILE *f;
 
     f = fopen(filename, "r");
-    if (f == NULL)
-    {
+    if (f == NULL) {
         f = fopen(filename, "w");
         fprintf(f,
-            "type = %d\n"
-            "flags = %d\n"
-            "ucode_boot  = %#08x size  = %#x\n"
-            "ucode       = %#08x size  = %#x\n"
-            "ucode_data  = %#08x size  = %#x\n"
-            "dram_stack  = %#08x size  = %#x\n"
-            "output_buff = %#08x *size = %#x\n"
-            "data        = %#08x size  = %#x\n"
-            "yield_data  = %#08x size  = %#x\n",
-            task->type, task->flags,
-            task->ucode_boot, task->ucode_boot_size,
-            task->ucode, task->ucode_size,
-            task->ucode_data, task->ucode_data_size,
-            task->dram_stack, task->dram_stack_size,
-            task->output_buff, task->output_buff_size,
-            task->data_ptr, task->data_size,
-            task->yield_data_ptr, task->yield_data_size);
+                "type = %d\n"
+                "flags = %d\n"
+                "ucode_boot  = %#08x size  = %#x\n"
+                "ucode       = %#08x size  = %#x\n"
+                "ucode_data  = %#08x size  = %#x\n"
+                "dram_stack  = %#08x size  = %#x\n"
+                "output_buff = %#08x *size = %#x\n"
+                "data        = %#08x size  = %#x\n"
+                "yield_data  = %#08x size  = %#x\n",
+                task->type, task->flags,
+                task->ucode_boot, task->ucode_boot_size,
+                task->ucode, task->ucode_size,
+                task->ucode_data, task->ucode_data_size,
+                task->dram_stack, task->dram_stack_size,
+                task->output_buff, task->output_buff_size,
+                task->data_ptr, task->data_size,
+                task->yield_data_ptr, task->yield_data_size);
         fclose(f);
-    }
-    else
-    {
+    } else
         fclose(f);
-    }
 }
 

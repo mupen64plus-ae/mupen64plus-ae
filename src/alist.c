@@ -40,26 +40,21 @@ static void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
 {
     u32 inst1, inst2;
     unsigned int acmd;
-    const OSTask_t * const task = get_task();
+    const OSTask_t *const task = get_task();
 
-    const unsigned int *alist = (unsigned int*)(rsp.RDRAM + task->data_ptr);
-    const unsigned int * const alist_end = alist + (task->data_size >> 2);
+    const unsigned int *alist = (unsigned int *)(rsp.RDRAM + task->data_ptr);
+    const unsigned int *const alist_end = alist + (task->data_size >> 2);
 
-    while (alist != alist_end)
-    {
+    while (alist != alist_end) {
         inst1 = *(alist++);
         inst2 = *(alist++);
 
         acmd = inst1 >> 24;
 
         if (acmd < abi_size)
-        {
             (*abi[acmd])(inst1, inst2);
-        }
         else
-        {
             DebugMessage(M64MSG_WARNING, "Invalid ABI command %u", acmd);
-        }
     }
 }
 
