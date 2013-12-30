@@ -137,7 +137,7 @@ static void adpcm_decode_frames(int16_t *dst, const uint8_t *src,
                                 uint8_t skip_samples);
 
 static int16_t adpcm_get_predicted_sample(uint8_t byte, uint8_t mask,
-        unsigned lshift, unsigned rshift);
+                                          unsigned lshift, unsigned rshift);
 static void adpcm_get_predicted_frame(int16_t *dst, const uint8_t *src,
                                       const uint8_t *nibbles,
                                       unsigned int rshift);

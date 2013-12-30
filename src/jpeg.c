@@ -66,10 +66,11 @@ static void EmitRGBATileLine(const int16_t *y, const int16_t *u, uint32_t addres
 
 /* macroblocks operations */
 static void decode_macroblock_ob(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc, int32_t *v_dc, const int16_t *qtable);
-static void decode_macroblock_std(
-    const subblock_transform_t transform_luma,
-    const subblock_transform_t transform_chroma,
-    int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
+static void decode_macroblock_std(const subblock_transform_t transform_luma,
+                                  const subblock_transform_t transform_chroma,
+                                  int16_t *macroblock,
+                                  unsigned int subblock_count,
+                                  const int16_t qtables[3][SUBBLOCK_SIZE]);
 static void EmitTilesMode0(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 static void EmitTilesMode2(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 
@@ -437,10 +438,11 @@ static void decode_macroblock_ob(int16_t *macroblock, int32_t *y_dc, int32_t *u_
     }
 }
 
-static void decode_macroblock_std(
-    const subblock_transform_t transform_luma,
-    const subblock_transform_t transform_chroma,
-    int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE])
+static void decode_macroblock_std(const subblock_transform_t transform_luma,
+                                  const subblock_transform_t transform_chroma,
+                                  int16_t *macroblock,
+                                  unsigned int subblock_count,
+                                  const int16_t qtables[3][SUBBLOCK_SIZE])
 {
     unsigned int sb;
     unsigned int q = 0;
