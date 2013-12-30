@@ -292,11 +292,8 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
             o1 += ((i1 * MainR) + 0x4000) >> 15;
             a1 += ((i1 * MainL) + 0x4000) >> 15;
 
-            if (o1 > 32767) o1 = 32767;
-            else if (o1 < -32768) o1 = -32768;
-
-            if (a1 > 32767) a1 = 32767;
-            else if (a1 < -32768) a1 = -32768;
+            o1 = clamp_s16(o1);
+            a1 = clamp_s16(a1);
 
             out[ptr ^ S] = o1;
             aux1[ptr ^ S] = a1;
@@ -304,11 +301,8 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
                 a2 += ((i1 * AuxR) + 0x4000) >> 15;
                 a3 += ((i1 * AuxL) + 0x4000) >> 15;
 
-                if (a2 > 32767) a2 = 32767;
-                else if (a2 < -32768) a2 = -32768;
-
-                if (a3 > 32767) a3 = 32767;
-                else if (a3 < -32768) a3 = -32768;
+                a2 = clamp_s16(a2);
+                a3 = clamp_s16(a3);
 
                 aux2[ptr ^ S] = a2;
                 aux3[ptr ^ S] = a3;
@@ -374,8 +368,7 @@ static void RESAMPLE(uint32_t inst1, uint32_t inst2)
         temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 3)^S)) * ((int32_t)((int16_t)lut[3])));
         accum += (int32_t)(temp >> 15);
 
-        if (accum > 32767) accum = 32767;
-        if (accum < -32768) accum = -32768;
+        accum = clamp_s16(accum);
 
         dst[dstPtr ^ S] = (accum);
         dstPtr++;
@@ -588,8 +581,7 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
 
         for (j = 0; j < 8; j++) {
             a[j ^ S] >>= 11;
-            if (a[j ^ S] > 32767) a[j ^ S] = 32767;
-            else if (a[j ^ S] < -32768) a[j ^ S] = -32768;
+            a[j ^ S] = clamp_s16(a[j ^ S]);
             *(out++) = a[j ^ S];
         }
         l1 = a[6];
@@ -657,10 +649,7 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
 
         for (j = 0; j < 8; j++) {
             a[j ^ S] >>= 11;
-            if (a[j ^ S] > 32767)
-                a[j ^ S] = 32767;
-            else if (a[j ^ S] < -32768)
-                a[j ^ S] = -32768;
+            a[j ^ S] = clamp_s16(a[j ^ S]);
             *(out++) = a[j ^ S];
         }
         l1 = a[6];
@@ -799,10 +788,7 @@ static void MIXER(uint32_t inst1, uint32_t inst2)
         temp = (*(int16_t *)(BufferSpace + dmemin + x) * gain) >> 15;
         temp += *(int16_t *)(BufferSpace + dmemout + x);
 
-        if ((int32_t)temp > 32767)
-            temp = 32767;
-        if ((int32_t)temp < -32768)
-            temp = -32768;
+        temp = clamp_s16((int32_t)temp);
 
         *(uint16_t *)(BufferSpace + dmemout + x) = (uint16_t)(temp & 0xFFFF);
     }

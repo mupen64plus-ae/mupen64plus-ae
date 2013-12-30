@@ -39,6 +39,14 @@
 #define S8 3
 #endif
 
+static inline int16_t clamp_s16(int_fast32_t x)
+{
+    x = (x < INT16_MIN) ? INT16_MIN: x;
+    x = (x > INT16_MAX) ? INT16_MAX: x;
+
+    return x;
+}
+
 extern RSP_INFO rsp;
 
 typedef struct {

@@ -165,16 +165,6 @@ static void load_u32(uint32_t *dst, uint32_t address, size_t count);
 
 static void store_u16(const uint16_t *src, uint32_t address, size_t count);
 
-static inline int16_t clamp_s16(int32_t x)
-{
-    if (x > 32767)
-        x = 32767;
-    else if (x < -32768)
-        x = -32768;
-
-    return x;
-}
-
 static inline unsigned int align(unsigned int x, unsigned amount)
 {
     --amount;

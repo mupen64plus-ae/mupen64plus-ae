@@ -266,8 +266,7 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)
 
         for (j = 0; j < 8; j++) {
             a[j ^ S] >>= 11;
-            if (a[j ^ S] > 32767) a[j ^ S] = 32767;
-            else if (a[j ^ S] < -32768) a[j ^ S] = -32768;
+            a[j ^ S] = clamp_s16(a[j ^ S]);
             *(out++) = a[j ^ S];
         }
         l1 = a[6];
@@ -335,8 +334,7 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)
 
         for (j = 0; j < 8; j++) {
             a[j ^ S] >>= 11;
-            if (a[j ^ S] > 32767) a[j ^ S] = 32767;
-            else if (a[j ^ S] < -32768) a[j ^ S] = -32768;
+            a[j ^ S] = clamp_s16(a[j ^ S]);
             *(out++) = a[j ^ S];
         }
         l1 = a[6];
@@ -389,10 +387,7 @@ static void MIXER2(uint32_t inst1, uint32_t inst2)
         temp = (*(int16_t *)(BufferSpace + dmemin + x) * gain) >> 15;
         temp += *(int16_t *)(BufferSpace + dmemout + x);
 
-        if ((int32_t)temp > 32767)
-            temp = 32767;
-        if ((int32_t)temp < -32768)
-            temp = -32768;
+        temp = clamp_s16((int32_t)temp);
 
         *(uint16_t *)(BufferSpace + dmemout + x) = (uint16_t)(temp & 0xFFFF);
     }
@@ -448,8 +443,7 @@ static void RESAMPLE2(uint32_t inst1, uint32_t inst2)
         temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 3)^S)) * ((int32_t)((int16_t)lut[3])));
         accum += (int32_t)(temp >> 15);
 
-        if (accum > 32767) accum = 32767;
-        if (accum < -32768) accum = -32768;
+        accum = clamp_s16(accum);
 
         dst[dstPtr ^ S] = (int16_t)(accum);
         dstPtr++;
@@ -550,32 +544,26 @@ static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
             vec9  = (int16_t)(((int32_t)buffs3[x ^ S] * (uint32_t)env[0]) >> 0x10) ^ v2[0];
             vec10 = (int16_t)(((int32_t)buffs3[x ^ S] * (uint32_t)env[2]) >> 0x10) ^ v2[1];
             temp = bufft6[x ^ S] + vec9;
-            if (temp > 32767)  temp = 32767;
-            if (temp < -32768) temp = -32768;
+            temp = clamp_s16(temp);
             bufft6[x ^ S] = temp;
             temp = bufft7[x ^ S] + vec10;
-            if (temp > 32767)  temp = 32767;
-            if (temp < -32768) temp = -32768;
+            temp = clamp_s16(temp);
             bufft7[x ^ S] = temp;
             vec9  = (int16_t)(((int32_t)vec9  * (uint32_t)env[4]) >> 0x10) ^ v2[2];
             vec10 = (int16_t)(((int32_t)vec10 * (uint32_t)env[4]) >> 0x10) ^ v2[3];
             if (inst1 & 0x10) {
                 temp = buffs0[x ^ S] + vec10;
-                if (temp > 32767)  temp = 32767;
-                if (temp < -32768) temp = -32768;
+                temp = clamp_s16(temp);
                 buffs0[x ^ S] = temp;
                 temp = buffs1[x ^ S] + vec9;
-                if (temp > 32767)  temp = 32767;
-                if (temp < -32768) temp = -32768;
+                temp = clamp_s16(temp);
                 buffs1[x ^ S] = temp;
             } else {
                 temp = buffs0[x ^ S] + vec9;
-                if (temp > 32767)  temp = 32767;
-                if (temp < -32768) temp = -32768;
+                temp = clamp_s16(temp);
                 buffs0[x ^ S] = temp;
                 temp = buffs1[x ^ S] + vec10;
-                if (temp > 32767)  temp = 32767;
-                if (temp < -32768) temp = -32768;
+                temp = clamp_s16(temp);
                 buffs1[x ^ S] = temp;
             }
         }
@@ -585,32 +573,26 @@ static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
                 vec9  = (int16_t)(((int32_t)buffs3[x ^ S] * (uint32_t)env[1]) >> 0x10) ^ v2[0];
                 vec10 = (int16_t)(((int32_t)buffs3[x ^ S] * (uint32_t)env[3]) >> 0x10) ^ v2[1];
                 temp = bufft6[x ^ S] + vec9;
-                if (temp > 32767)  temp = 32767;
-                if (temp < -32768) temp = -32768;
+                temp = clamp_s16(temp);
                 bufft6[x ^ S] = temp;
                 temp = bufft7[x ^ S] + vec10;
-                if (temp > 32767)  temp = 32767;
-                if (temp < -32768) temp = -32768;
+                temp = clamp_s16(temp);
                 bufft7[x ^ S] = temp;
                 vec9  = (int16_t)(((int32_t)vec9  * (uint32_t)env[5]) >> 0x10) ^ v2[2];
                 vec10 = (int16_t)(((int32_t)vec10 * (uint32_t)env[5]) >> 0x10) ^ v2[3];
                 if (inst1 & 0x10) {
                     temp = buffs0[x ^ S] + vec10;
-                    if (temp > 32767)  temp = 32767;
-                    if (temp < -32768) temp = -32768;
+                    temp = clamp_s16(temp);
                     buffs0[x ^ S] = temp;
                     temp = buffs1[x ^ S] + vec9;
-                    if (temp > 32767)  temp = 32767;
-                    if (temp < -32768) temp = -32768;
+                    temp = clamp_s16(temp);
                     buffs1[x ^ S] = temp;
                 } else {
                     temp = buffs0[x ^ S] + vec9;
-                    if (temp > 32767)  temp = 32767;
-                    if (temp < -32768) temp = -32768;
+                    temp = clamp_s16(temp);
                     buffs0[x ^ S] = temp;
                     temp = buffs1[x ^ S] + vec10;
-                    if (temp > 32767)  temp = 32767;
-                    if (temp < -32768) temp = -32768;
+                    temp = clamp_s16(temp);
                     buffs1[x ^ S] = temp;
                 }
             }
@@ -720,8 +702,7 @@ static void ADDMIXER(uint32_t inst1, uint32_t inst2)
     outp = (int16_t *)(BufferSpace + OutBuffer);
     for (cntr = 0; cntr < Count; cntr += 2) {
         temp = *outp + *inp;
-        if (temp > 32767)  temp = 32767;
-        if (temp < -32768) temp = -32768;
+        temp = clamp_s16(temp);
         *(outp++) = temp;
         inp++;
     }
@@ -739,8 +720,7 @@ static void HILOGAIN(uint32_t inst1, uint32_t inst2)
     while (cnt) {
         val = (int32_t) * src;
         tmp = ((val * (int32_t)hi) >> 16) + (uint32_t)(val * lo);
-        if ((int32_t)tmp > 32767) tmp = 32767;
-        else if ((int32_t)tmp < -32768) tmp = -32768;
+        tmp = clamp_s16(tmp);
         *src = tmp;
         src++;
         cnt -= 2;
