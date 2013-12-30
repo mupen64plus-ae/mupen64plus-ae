@@ -285,7 +285,7 @@ void musyx_task(void)
              4);
 
     for (;;) {
-        /* parse SFD structre */
+        /* parse SFD structure */
         uint16_t sfx_index   = *dram_u16(sfd_ptr + SFD_SFX_INDEX);
         uint32_t voice_mask  = *dram_u32(sfd_ptr + SFD_VOICE_BITMASK);
         uint32_t sfx_ptr     = *dram_u32(sfd_ptr + SFD_SFX_PTR);
@@ -405,9 +405,8 @@ static uint32_t voice_stage(musyx_t *musyx, uint32_t voice_ptr,
     if (*dram_u16(voice_ptr + VOICE_CATSRC_0 + CATSRC_SIZE1) == 0) {
         DebugMessage(M64MSG_VERBOSE, "Skipping Voice stage");
         output_ptr = *dram_u32(voice_ptr + VOICE_INTERLEAVED_PTR);
-    }
-    /* otherwise process voices until a non null output_ptr is encountered */
-    else {
+    } else {
+        /* otherwise process voices until a non null output_ptr is encountered */
         for (;;) {
             /* load voice samples (PCM16 or APDCM) */
             int16_t samples[SAMPLE_BUFFER_SIZE];

@@ -217,17 +217,21 @@ void MP3(uint32_t inst1, uint32_t inst2)
     uint32_t tmp;
     int cnt, cnt2;
 
-    t6 = 0x08A0; /* I think these are temporary storage buffers */
+    /* I think these are temporary storage buffers */
+    t6 = 0x08A0;
     t5 = 0x0AC0;
     t4 = (inst1 & 0x1E);
 
     writePtr = inst2 & 0xFFFFFF;
     readPtr  = writePtr;
-    memcpy(mp3data + 0xCE8, rsp.RDRAM + readPtr, 8);  /* Just do that for efficiency... may remove and use directly later anyway */
-    readPtr += 8; /* This must be a header byte or whatnot */
+    /* Just do that for efficiency... may remove and use directly later anyway */
+    memcpy(mp3data + 0xCE8, rsp.RDRAM + readPtr, 8);
+    /* This must be a header byte or whatnot */
+    readPtr += 8;
 
     for (cnt = 0; cnt < 0x480; cnt += 0x180) {
-        memcpy(mp3data + 0xCF0, rsp.RDRAM + readPtr, 0x180);  /* DMA: 0xCF0 <- RDRAM[s5] : 0x180 */
+        /* DMA: 0xCF0 <- RDRAM[s5] : 0x180 */
+        memcpy(mp3data + 0xCF0, rsp.RDRAM + readPtr, 0x180);
         inPtr  = 0xCF0; /* s7 */
         outPtr = 0xE70; /* s3 */
 /* --------------- Inner Loop Start -------------------- */

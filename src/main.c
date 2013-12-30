@@ -209,7 +209,8 @@ static void normal_task_dispatching(void)
 
     switch (sum) {
     /* StoreVe12: found in Zelda Ocarina of Time [misleading task->type == 4] */
-    case 0x278: /* Nothing to emulate */
+    case 0x278:
+        /* Nothing to emulate */
         return;
 
     /* GFX: Twintris [misleading task->type == 0] */

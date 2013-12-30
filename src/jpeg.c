@@ -219,7 +219,8 @@ static void jpeg_decode_std(const char *const version,
     uint32_t qtableV_ptr;
     unsigned int subblock_count;
     unsigned int macroblock_size;
-    int16_t macroblock[6 * SUBBLOCK_SIZE]; /* macroblock contains at most 6 subblobcks */
+    /* macroblock contains at most 6 subblocks */
+    int16_t macroblock[6 * SUBBLOCK_SIZE];
     const OSTask_t *const task = get_task();
 
     if (task->flags & 0x1) {
@@ -303,10 +304,10 @@ static uint16_t clamp_RGBA_component(int16_t x)
 
 static uint32_t GetUYVY(int16_t y1, int16_t y2, int16_t u, int16_t v)
 {
-    return (uint32_t)clamp_u8(u)  << 24
-           | (uint32_t)clamp_u8(y1) << 16
-           | (uint32_t)clamp_u8(v)  << 8
-           | (uint32_t)clamp_u8(y2);
+    return (uint32_t)clamp_u8(u)  << 24 |
+           (uint32_t)clamp_u8(y1) << 16 |
+           (uint32_t)clamp_u8(v)  << 8 |
+           (uint32_t)clamp_u8(y2);
 }
 
 static uint16_t GetRGBA(int16_t y, int16_t u, int16_t v)
