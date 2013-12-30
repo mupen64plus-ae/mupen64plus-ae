@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - ucode2.cpp                                      *
+ *   Mupen64plus-rsp-hle - ucode2.c                                        *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
@@ -20,14 +20,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-# include <string.h>
-# include <stdio.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdbool.h>
 
-extern "C" {
 #include "m64p_types.h"
 #include "hle.h"
 #include "alist_internal.h"
-}
 
 extern u8 BufferSpace[0x10000];
 
@@ -48,18 +47,18 @@ extern const u16 ResampleLUT [0x200];
 bool isMKABI = false;
 bool isZeldaABI = false;
 
-extern "C" void init_ucode2()
+void init_ucode2()
 {
     isMKABI = isZeldaABI = false;
 }
 
 static void LOADADPCM2(u32 inst1, u32 inst2)    // Loads an ADPCM table - Works 100% Now 03-13-01
 {
-    u32 v0;
+    u32 v0, x;
     v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
     u16 *table = (u16 *)(rsp.RDRAM + v0); // Zelda2 Specific...
 
-    for (u32 x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
+    for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
         adpcmtable[(0x0 + (x << 3))^S] = table[0];
         adpcmtable[(0x1 + (x << 3))^S] = table[1];
 
@@ -82,9 +81,9 @@ static void SETLOOP2(u32 inst1, u32 inst2)
 
 static void SETBUFF2(u32 inst1, u32 inst2)
 {
-    AudioInBuffer   = u16(inst1);            // 0x00
-    AudioOutBuffer  = u16((inst2 >> 0x10)); // 0x02
-    AudioCount      = u16(inst2);            // 0x04
+    AudioInBuffer   = (u16)(inst1);            // 0x00
+    AudioOutBuffer  = (u16)((inst2 >> 0x10)); // 0x02
+    AudioCount      = (u16)(inst2);            // 0x04
 }
 
 static void ADPCM2(u32 inst1, u32 inst2)    // Verified to be 100% Accurate...
@@ -392,8 +391,9 @@ static void MIXER2(u32 inst1, u32 inst2)    // Needs accuracy verification...
     u32 count   = ((inst1 >> 12) & 0xFF0);
     s32 gain    = (s16)(inst1 & 0xFFFF);
     s32 temp;
+    unsigned int x;
 
-    for (unsigned int x = 0; x < count; x += 2) { // I think I can do this a lot easier
+    for (x = 0; x < count; x += 2) { // I think I can do this a lot easier
 
         temp = (*(s16 *)(BufferSpace + dmemin + x) * gain) >> 15;
         temp += *(s16 *)(BufferSpace + dmemout + x);
@@ -424,6 +424,7 @@ static void RESAMPLE2(u32 inst1, u32 inst2)
     u32 dstPtr = (AudioOutBuffer / 2);
     s32 temp;
     s32 accum;
+    int x, i;
 
     if (addy > (1024 * 1024 * 8))
         addy = (inst2 & 0xffffff);
@@ -431,15 +432,15 @@ static void RESAMPLE2(u32 inst1, u32 inst2)
     srcPtr -= 4;
 
     if ((Flags & 0x1) == 0) {
-        for (int x = 0; x < 4; x++) //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
+        for (x = 0; x < 4; x++) //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
             src[(srcPtr + x)^S] = ((u16 *)rsp.RDRAM)[((addy / 2) + x)^S];
         Accum = *(u16 *)(rsp.RDRAM + addy + 10);
     } else {
-        for (int x = 0; x < 4; x++)
+        for (x = 0; x < 4; x++)
             src[(srcPtr + x)^S] = 0; //*(u16 *)(rsp.RDRAM+((addy+x)^2));
     }
 
-    for (int i = 0; i < ((AudioCount + 0xf) & 0xFFF0) / 2; i++)    {
+    for (i = 0; i < ((AudioCount + 0xf) & 0xFFF0) / 2; i++)    {
         location = (((Accum * 0x40) >> 0x10) * 8);
         //location = (Accum >> 0xa) << 0x3;
         lut = (s16 *)(((u8 *)ResampleLUT) + location);
@@ -465,7 +466,7 @@ static void RESAMPLE2(u32 inst1, u32 inst2)
         srcPtr += (Accum >> 16);
         Accum &= 0xffff;
     }
-    for (int x = 0; x < 4; x++)
+    for (x = 0; x < 4; x++)
         ((u16 *)rsp.RDRAM)[((addy / 2) + x)^S] = src[(srcPtr + x)^S];
     *(u16 *)(rsp.RDRAM + addy + 10) = (u16)Accum;
     //memcpy (RSWORK, src+srcPtr, 0x8);
@@ -721,6 +722,8 @@ static void INTERLEAVE2(u32 inst1, u32 inst2)    // Needs accuracy verification.
     u16 *inSrcL;
     u16 Left, Right, Left2, Right2;
     u32 count;
+    u32 x;
+
     count   = ((inst1 >> 12) & 0xFF0);
     if (count == 0) {
         outbuff = (u16 *)(AudioOutBuffer + BufferSpace);
@@ -734,7 +737,7 @@ static void INTERLEAVE2(u32 inst1, u32 inst2)    // Needs accuracy verification.
     inSrcR = (u16 *)(BufferSpace + inR);
     inSrcL = (u16 *)(BufferSpace + inL);
 
-    for (u32 x = 0; x < (count / 4); x++) {
+    for (x = 0; x < (count / 4); x++) {
         Left = *(inSrcL++);
         Right = *(inSrcR++);
         Left2 = *(inSrcL++);
@@ -759,12 +762,13 @@ static void ADDMIXER(u32 inst1, u32 inst2)
     short Count   = (inst1 >> 12) & 0x00ff0;
     u16 InBuffer  = (inst2 >> 16);
     u16 OutBuffer = inst2 & 0xffff;
+    int cntr;
 
     s16 *inp, *outp;
     s32 temp;
     inp  = (s16 *)(BufferSpace + InBuffer);
     outp = (s16 *)(BufferSpace + OutBuffer);
-    for (int cntr = 0; cntr < Count; cntr += 2) {
+    for (cntr = 0; cntr < Count; cntr += 2) {
         temp = *outp + *inp;
         if (temp > 32767)  temp = 32767;
         if (temp < -32768) temp = -32768;
@@ -949,7 +953,7 @@ void (*ABI2[0x20])(void) = {
     SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP
 };*/
 
-extern "C" const acmd_callback_t ABI2[0x20] = {
+const acmd_callback_t ABI2[0x20] = {
     SPNOOP , ADPCM2, CLEARBUFF2, UNKNOWN, ADDMIXER, RESAMPLE2, UNKNOWN, SEGMENT2,
     SETBUFF2 , DUPLICATE2, DMEMMOVE2, LOADADPCM2, MIXER2, INTERLEAVE2, HILOGAIN, SETLOOP2,
     SPNOOP, INTERL2 , ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,

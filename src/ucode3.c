@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - ucode3.cpp                                      *
+ *   Mupen64plus-rsp-hle - ucode3.c                                        *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
@@ -23,11 +23,9 @@
 # include <string.h>
 # include <stdio.h>
 
-extern "C" {
 #include "m64p_types.h"
 #include "hle.h"
 #include "alist_internal.h"
-}
 
 /*
 static void SPNOOP (u32 inst1, u32 inst2) {
@@ -110,6 +108,7 @@ static void ENVMIXER3(u32 inst1, u32 inst2)
     int i1, o1, a1, a2, a3;
     //unsigned short AuxIncRate=1;
     short zero[8];
+    int y;
     memset(zero, 0, 16);
 
     s32 LAdder, LAcc, LVol;
@@ -159,7 +158,7 @@ static void ENVMIXER3(u32 inst1, u32 inst2)
     //  aux2=aux3=zero;
     //}
 
-    for (int y = 0; y < (0x170 / 2); y++) {
+    for (y = 0; y < (0x170 / 2); y++) {
 
         // Left
         LAcc += LAdder;
@@ -264,8 +263,9 @@ static void MIXER3(u32 inst1, u32 inst2)    // Needs accuracy verification...
     //u8  flags   = (u8)((inst1 >> 16) & 0xff);
     s32 gain    = (s16)(inst1 & 0xFFFF);
     s32 temp;
+    int x;
 
-    for (int x = 0; x < 0x170; x += 2) { // I think I can do this a lot easier
+    for (x = 0; x < 0x170; x += 2) { // I think I can do this a lot easier
         temp = (*(s16 *)(BufferSpace + dmemin + x) * gain) >> 15;
         temp += *(s16 *)(BufferSpace + dmemout + x);
 
@@ -299,11 +299,13 @@ static void SAVEBUFF3(u32 inst1, u32 inst2)
 static void LOADADPCM3(u32 inst1, u32 inst2)    // Loads an ADPCM table - Works 100% Now 03-13-01
 {
     u32 v0;
+    u32 x;
+
     v0 = (inst2 & 0xffffff);
     //memcpy (dmem+0x3f0, rsp.RDRAM+v0, inst1&0xffff);
     //assert ((inst1&0xffff) <= 0x80);
     u16 *table = (u16 *)(rsp.RDRAM + v0);
-    for (u32 x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
+    for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
         adpcmtable[(0x0 + (x << 3))^S] = table[0];
         adpcmtable[(0x1 + (x << 3))^S] = table[1];
 
@@ -604,6 +606,7 @@ static void RESAMPLE3(u32 inst1, u32 inst2)
     u32 dstPtr;//=(AudioOutBuffer/2);
     s32 temp;
     s32 accum;
+    int x, i;
 
     //if (addy > (1024*1024*8))
     //  addy = (inst2 & 0xffffff);
@@ -616,15 +619,15 @@ static void RESAMPLE3(u32 inst1, u32 inst2)
         dstPtr = 0x4f0 / 2;
 
     if ((Flags & 0x1) == 0) {
-        for (int x = 0; x < 4; x++) //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
+        for (x = 0; x < 4; x++) //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
             src[(srcPtr + x)^S] = ((u16 *)rsp.RDRAM)[((addy / 2) + x)^S];
         Accum = *(u16 *)(rsp.RDRAM + addy + 10);
     } else {
-        for (int x = 0; x < 4; x++)
+        for (x = 0; x < 4; x++)
             src[(srcPtr + x)^S] = 0; //*(u16 *)(rsp.RDRAM+((addy+x)^2));
     }
 
-    for (int i = 0; i < 0x170 / 2; i++)    {
+    for (i = 0; i < 0x170 / 2; i++)    {
         location = (((Accum * 0x40) >> 0x10) * 8);
         //location = (Accum >> 0xa) << 0x3;
         lut = (s16 *)(((u8 *)ResampleLUT) + location);
@@ -681,7 +684,7 @@ static void RESAMPLE3(u32 inst1, u32 inst2)
         srcPtr += (Accum >> 16);
         Accum &= 0xffff;
     }
-    for (int x = 0; x < 4; x++)
+    for (x = 0; x < 4; x++)
         ((u16 *)rsp.RDRAM)[((addy / 2) + x)^S] = src[(srcPtr + x)^S];
     *(u16 *)(rsp.RDRAM + addy + 10) = Accum;
 }
@@ -693,6 +696,7 @@ static void INTERLEAVE3(u32 inst1, u32 inst2)    // Needs accuracy verification.
     u16 *inSrcR;
     u16 *inSrcL;
     u16 Left, Right, Left2, Right2;
+    int x;
 
     //inR = inst2 & 0xFFFF;
     //inL = (inst2 >> 16) & 0xFFFF;
@@ -700,7 +704,7 @@ static void INTERLEAVE3(u32 inst1, u32 inst2)    // Needs accuracy verification.
     inSrcR = (u16 *)(BufferSpace + 0xb40);
     inSrcL = (u16 *)(BufferSpace + 0x9d0);
 
-    for (int x = 0; x < (0x170 / 4); x++) {
+    for (x = 0; x < (0x170 / 4); x++) {
         Left = *(inSrcL++);
         Right = *(inSrcR++);
         Left2 = *(inSrcL++);
@@ -766,15 +770,11 @@ static void MP3ADDY(u32 inst1, u32 inst2)
     setaddr = (inst2 & 0xffffff);
 }
 
-extern "C" {
-    void rsp_run(void);
-    void mp3setup(unsigned int inst1, unsigned int inst2, unsigned int t8);
-}
+void rsp_run(void);
+void mp3setup(unsigned int inst1, unsigned int inst2, unsigned int t8);
 
 extern u32 base, dmembase;
-extern "C" {
-    extern char *pDMEM;
-}
+extern char *pDMEM;
 void MP3(u32 inst1, u32 inst2);
 /*
  {
@@ -831,9 +831,7 @@ static void DISABLE(u32 inst1, u32 inst2)
 }
 
 
-extern "C" const acmd_callback_t ABI3[0x10] = {
+const acmd_callback_t ABI3[0x10] = {
     DISABLE , ADPCM3 , CLEARBUFF3,  ENVMIXER3  , LOADBUFF3, RESAMPLE3  , SAVEBUFF3, MP3,
     MP3ADDY, SETVOL3, DMEMMOVE3 , LOADADPCM3 , MIXER3   , INTERLEAVE3, WHATISTHIS   , SETLOOP3
 };
-
-

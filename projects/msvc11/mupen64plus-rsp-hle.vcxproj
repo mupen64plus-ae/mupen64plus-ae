@@ -97,10 +97,10 @@
     <ClCompile Include="..\..\src\jpeg.c" />
     <ClCompile Include="..\..\src\main.c" />
     <ClCompile Include="..\..\src\musyx.c" />
-    <ClCompile Include="..\..\src\ucode1.cpp" />
-    <ClCompile Include="..\..\src\ucode2.cpp" />
-    <ClCompile Include="..\..\src\ucode3.cpp" />
-    <ClCompile Include="..\..\src\ucode3mp3.cpp" />
+    <ClCompile Include="..\..\src\ucode1.c" />
+    <ClCompile Include="..\..\src\ucode2.c" />
+    <ClCompile Include="..\..\src\ucode3.c" />
+    <ClCompile Include="..\..\src\ucode3mp3.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\alist.h" />

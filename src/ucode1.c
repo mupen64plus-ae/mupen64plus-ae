@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - ucode1.cpp                                      *
+ *   Mupen64plus-rsp-hle - ucode1.c                                        *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
@@ -22,10 +22,8 @@
 
 # include <string.h>
 
-extern "C" {
 #include "hle.h"
 #include "alist_internal.h"
-}
 
 //#include "rsp.h"
 //#define SAFE_MEMORY
@@ -124,7 +122,7 @@ u8 BufferSpace[0x10000];
 short hleMixerWorkArea[256];
 u16 adpcmtable[0x88];
 
-extern const u16 ResampleLUT [0x200] = {
+const u16 ResampleLUT [0x200] = {
     0x0C39, 0x66AD, 0x0D46, 0xFFDF, 0x0B39, 0x6696, 0x0E5F, 0xFFD8,
     0x0A44, 0x6669, 0x0F83, 0xFFD0, 0x095A, 0x6626, 0x10B4, 0xFFC8,
     0x087D, 0x65CD, 0x11F0, 0xFFBF, 0x07AB, 0x655E, 0x1338, 0xFFB6,
@@ -201,6 +199,7 @@ static void ENVMIXER(u32 inst1, u32 inst2)
     s32 RRamp, LRamp;
     s32 LAdderStart, RAdderStart, LAdderEnd, RAdderEnd;
     s32 oMainR, oMainL, oAuxR, oAuxL;
+    int x, y;
 
     //envmixcnt++;
 
@@ -244,7 +243,7 @@ static void ENVMIXER(u32 inst1, u32 inst2)
     oMainR = (Dry * (RTrg >> 16) + 0x4000) >> 15;
     oAuxR  = (Wet * (RTrg >> 16) + 0x4000)  >> 15;
 
-    for (int y = 0; y < AudioCount; y += 0x10) {
+    for (y = 0; y < AudioCount; y += 0x10) {
 
         if (LAdderStart != LTrg) {
             LAcc = LAdderStart;
@@ -266,7 +265,7 @@ static void ENVMIXER(u32 inst1, u32 inst2)
             RVol = 0;
         }
 
-        for (int x = 0; x < 8; x++) {
+        for (x = 0; x < 8; x++) {
             i1 = (int)inp[ptr ^ S];
             o1 = (int)out[ptr ^ S];
             a1 = (int)aux1[ptr ^ S];
@@ -413,6 +412,7 @@ static void RESAMPLE(u32 inst1, u32 inst2)
     u32 dstPtr = (AudioOutBuffer / 2);
     s32 temp;
     s32 accum;
+    int x, i;
     /*
         if (addy > (1024*1024*8))
             addy = (inst2 & 0xffffff);
@@ -421,15 +421,15 @@ static void RESAMPLE(u32 inst1, u32 inst2)
 
     if ((Flags & 0x1) == 0) {
         //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
-        for (int x = 0; x < 4; x++)
+        for (x = 0; x < 4; x++)
             src[(srcPtr + x)^S] = ((u16 *)rsp.RDRAM)[((addy / 2) + x)^S];
         Accum = *(u16 *)(rsp.RDRAM + addy + 10);
     } else {
-        for (int x = 0; x < 4; x++)
+        for (x = 0; x < 4; x++)
             src[(srcPtr + x)^S] = 0; //*(u16 *)(rsp.RDRAM+((addy+x)^2));
     }
 
-    for (int i = 0; i < ((AudioCount + 0xf) & 0xFFF0) / 2; i++)    {
+    for (i = 0; i < ((AudioCount + 0xf) & 0xFFF0) / 2; i++)    {
         //location = (((Accum * 0x40) >> 0x10) * 8);
         // location is the fractional position between two samples
         location = (Accum >> 0xa) * 4;
@@ -468,7 +468,7 @@ static void RESAMPLE(u32 inst1, u32 inst2)
         srcPtr += (Accum >> 16);
         Accum &= 0xffff;
     }
-    for (int x = 0; x < 4; x++)
+    for (x = 0; x < 4; x++)
         ((u16 *)rsp.RDRAM)[((addy / 2) + x)^S] = src[(srcPtr + x)^S];
     //memcpy (RSWORK, src+srcPtr, 0x8);
     *(u16 *)(rsp.RDRAM + addy + 10) = Accum;
@@ -794,13 +794,13 @@ static void SAVEBUFF(u32 inst1, u32 inst2)    // memcpy causes static... endiane
 static void SETBUFF(u32 inst1, u32 inst2)    // Should work ;-)
 {
     if ((inst1 >> 0x10) & 0x8) { // A_AUX - Auxillary Sound Buffer Settings
-        AudioAuxA       = u16(inst1);
-        AudioAuxC       = u16((inst2 >> 0x10));
-        AudioAuxE       = u16(inst2);
+        AudioAuxA       = (u16)(inst1);
+        AudioAuxC       = (u16)((inst2 >> 0x10));
+        AudioAuxE       = (u16)(inst2);
     } else {        // A_MAIN - Main Sound Buffer Settings
-        AudioInBuffer   = u16(inst1); // 0x00
-        AudioOutBuffer  = u16((inst2 >> 0x10)); // 0x02
-        AudioCount      = u16(inst2); // 0x04
+        AudioInBuffer   = (u16)(inst1); // 0x00
+        AudioOutBuffer  = (u16)((inst2 >> 0x10)); // 0x02
+        AudioCount      = (u16)(inst2); // 0x04
     }
 }
 
@@ -826,13 +826,15 @@ static void DMEMMOVE(u32 inst1, u32 inst2)    // Doesn't sound just right?... wi
 static void LOADADPCM(u32 inst1, u32 inst2)    // Loads an ADPCM table - Works 100% Now 03-13-01
 {
     u32 v0;
+    u32 x;
+
     v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
     /*  if (v0 > (1024*1024*8))
             v0 = (inst2 & 0xffffff);*/
     //memcpy (dmem+0x4c0, rsp.RDRAM+v0, inst1&0xffff); // Could prolly get away with not putting this in dmem
     //assert ((inst1&0xffff) <= 0x80);
     u16 *table = (u16 *)(rsp.RDRAM + v0);
-    for (u32 x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
+    for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
         adpcmtable[(0x0 + (x << 3))^S] = table[0];
         adpcmtable[(0x1 + (x << 3))^S] = table[1];
 
@@ -856,6 +858,7 @@ static void INTERLEAVE(u32 inst1, u32 inst2)    // Works... - 3-11-01
     u16 *inSrcR;
     u16 *inSrcL;
     u16 Left, Right, Left2, Right2;
+    int x;
 
     inL = inst2 & 0xFFFF;
     inR = (inst2 >> 16) & 0xFFFF;
@@ -863,7 +866,7 @@ static void INTERLEAVE(u32 inst1, u32 inst2)    // Works... - 3-11-01
     inSrcR = (u16 *)(BufferSpace + inR);
     inSrcL = (u16 *)(BufferSpace + inL);
 
-    for (int x = 0; x < (AudioCount / 4); x++) {
+    for (x = 0; x < (AudioCount / 4); x++) {
         Left = *(inSrcL++);
         Right = *(inSrcR++);
         Left2 = *(inSrcL++);
@@ -891,11 +894,12 @@ static void MIXER(u32 inst1, u32 inst2)    // Fixed a sign issue... 03-14-01
     //u8  flags   = (u8)((inst1 >> 16) & 0xff);
     s32 gain    = (s16)(inst1 & 0xFFFF);
     s32 temp;
+    int x;
 
     if (AudioCount == 0)
         return;
 
-    for (int x = 0; x < AudioCount; x += 2) { // I think I can do this a lot easier
+    for (x = 0; x < AudioCount; x += 2) { // I think I can do this a lot easier
         temp = (*(s16 *)(BufferSpace + dmemin + x) * gain) >> 15;
         temp += *(s16 *)(BufferSpace + dmemout + x);
 
@@ -920,7 +924,7 @@ static void MIXER(u32 inst1, u32 inst2)    // Fixed a sign issue... 03-14-01
 //Command: RESAMPLE - Calls:  48 - Total Time: 276354 - Avg Time:  5757.38 - Percent: 22.95%
 
 
-extern "C" const acmd_callback_t ABI1[0x10] = { // TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER
+const acmd_callback_t ABI1[0x10] = { // TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER
     SPNOOP , ADPCM , CLEARBUFF, ENVMIXER  , LOADBUFF, RESAMPLE  , SAVEBUFF, UNKNOWN,
     SETBUFF, SETVOL, DMEMMOVE , LOADADPCM , MIXER   , INTERLEAVE, UNKNOWN , SETLOOP
 };

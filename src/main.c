@@ -142,7 +142,7 @@ static int try_fast_audio_dispatching()
             * Animal Crossing
             *
             * FIXME: in fact, all these games do not share the same ABI.
-            * That's the reason of the workaround in ucode2.cpp with isZeldaABI and isMKABI
+            * That's the reason of the workaround in ucode2.c with isZeldaABI and isMKABI
             **/
             alist_process_ABI2();
             return 1;
