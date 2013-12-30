@@ -161,8 +161,6 @@ static const uint16_t DeWindowLUT [0x420] = {
     0x0B37, 0xF736, 0x037A, 0xFF38, 0x005D, 0xFFF3, 0x0000, 0x0000
 };
 
-//static uint16_t myVector[32][8];
-
 static uint8_t mp3data[0x1000];
 
 static int32_t v[32];
@@ -216,9 +214,7 @@ void MP3(uint32_t inst1, uint32_t inst2)
     // Initialization Code
     uint32_t readPtr; // s5
     uint32_t writePtr; // s6
-    //uint32_t Count = 0x0480; // s4
     uint32_t tmp;
-    //uint32_t inPtr, outPtr;
     int cnt, cnt2;
 
     t6 = 0x08A0; // I think these are temporary storage buffers
@@ -346,14 +342,6 @@ static void InnerLoop(void)
     t1 = t6 + 0x200;
     t2 = t5 + 0x100;
     t3 = t5 + 0x200;
-    /*RSP_GPR[0x8].W = t0;
-    RSP_GPR[0x9].W = t1;
-    RSP_GPR[0xA].W = t2;
-    RSP_GPR[0xB].W = t3;
-
-    RSP_Vect[0].DW[1] = 0xB504A57E00016A09;
-    RSP_Vect[0].DW[0] = 0x0002D4130005A827;
-    */
 
     // 0x13A8
     v[1] = 0;
@@ -575,7 +563,6 @@ static void InnerLoop(void)
     v[13] = v[13] + v[2];
     // Store v[13] -> (T0 + 0xFFE0)
     *(int16_t *)(mp3data + ((t0 + (short)0xFFE0))) = (short)v[13];
-    //v[2] = ;
     v[2] = (v[5] - v[2]) - v[9];
     // Store v[2] -> (T0 + 0xFFA0)
     *(int16_t *)(mp3data + ((t0 + (short)0xFFA0))) = (short)v[2];
@@ -583,19 +570,13 @@ static void InnerLoop(void)
 
     // Step 8 - Dewindowing
 
-    //uint64_t *DW = (uint64_t *)&DeWindowLUT[0x10-(t4>>1)];
-
     addptr = t6 & 0xFFE0;
 
-    //int32_t z2=0, z4=0, z6=0, z8=0;
-
-    offset = 0x10 - (t4 >> 1); // + x*0x40;
+    offset = 0x10 - (t4 >> 1);
     for (x = 0; x < 8; x++) {
         int32_t v0;
         int32_t v18;
         v2 = v4 = v6 = v8 = 0;
-
-        //addptr = t1;
 
         for (i = 7; i >= 0; i--) {
             v2 += ((int) * (int16_t *)(mp3data + (addptr) + 0x00) * (short)DeWindowLUT[offset + 0x00] + 0x4000) >> 0xF;

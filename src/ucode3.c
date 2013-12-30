@@ -27,30 +27,6 @@
 #include "hle.h"
 #include "alist_internal.h"
 
-/*
-static void SPNOOP (uint32_t inst1, uint32_t inst2) {
-    DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 3", (int)(inst1 >> 24));
-}
-*/
-
-/*
-static void SETVOL3 (uint32_t inst1, uint32_t inst2) { // Swapped Rate_Left and Vol
-    uint8_t Flags = (uint8_t)(inst1 >> 0x10);
-    if (Flags & 0x4) { // 288
-        if (Flags & 0x2) { // 290
-            VolTrg_Left  = *(int16_t*)&inst1;
-            VolRamp_Left = *(int32_t*)&inst2;
-        } else {
-            VolTrg_Right  = *(int16_t*)&inst1;
-            VolRamp_Right = *(int32_t*)&inst2;
-        }
-    } else {
-        Vol_Left    = *(int16_t*)&inst1;
-        Env_Dry     = (int16_t)(*(int32_t*)&inst2 >> 0x10);
-        Env_Wet     = *(int16_t*)&inst2;
-    }
-}
-*/
 static void SETVOL3(uint32_t inst1, uint32_t inst2)
 {
     uint8_t Flags = (uint8_t)(inst1 >> 0x10);
@@ -61,7 +37,6 @@ static void SETVOL3(uint32_t inst1, uint32_t inst2)
             Env_Wet   = (int16_t)inst2; // 0x4C
         } else {
             VolTrg_Right  = (int16_t)inst1; // 0x46
-            //VolRamp_Right = (uint16_t)(inst2 >> 0x10) | (int32_t)(int16_t)(inst2 << 0x10);
             VolRamp_Right = (int32_t)inst2; // 0x48/0x4A
         }
     } else {
@@ -85,7 +60,6 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
     int32_t AuxR;
     int32_t AuxL;
     int i1, o1, a1, a2, a3;
-    //unsigned short AuxIncRate=1;
     short zero[8];
     int y;
 
@@ -128,15 +102,7 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
         RVol   = *(int32_t *)(hleMixerWorkArea + 18); // 18-19
         LSig   = *(int16_t *)(hleMixerWorkArea + 20); // 20-21
         RSig   = *(int16_t *)(hleMixerWorkArea + 22); // 22-23
-        //uint32_t test  = *(int32_t *)(hleMixerWorkArea + 24); // 22-23
-        //if (test != 0x13371337)
     }
-
-
-    //if(!(flags&A_AUX)) {
-    //  AuxIncRate=0;
-    //  aux2=aux3=zero;
-    //}
 
     for (y = 0; y < (0x170 / 2); y++) {
 
@@ -211,7 +177,6 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
         aux2[y ^ S] = a2;
         aux3[y ^ S] = a3;
     }
-    //}
 
     *(int16_t *)(hleMixerWorkArea +  0) = Wet; // 0-1
     *(int16_t *)(hleMixerWorkArea +  2) = Dry; // 2-3
@@ -225,7 +190,6 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
     *(int32_t *)(hleMixerWorkArea + 18) = RVol; // 18-19
     *(int16_t *)(hleMixerWorkArea + 20) = LSig; // 20-21
     *(int16_t *)(hleMixerWorkArea + 22) = RSig; // 22-23
-    //*(uint32_t *)(hleMixerWorkArea + 24) = 0x13371337; // 22-23
     memcpy(rsp.RDRAM + addy, (uint8_t *)hleMixerWorkArea, 80);
 }
 
@@ -240,7 +204,6 @@ static void MIXER3(uint32_t inst1, uint32_t inst2)    // Needs accuracy verifica
 {
     uint16_t dmemin  = (uint16_t)(inst2 >> 0x10)  + 0x4f0;
     uint16_t dmemout = (uint16_t)(inst2 & 0xFFFF) + 0x4f0;
-    //uint8_t  flags   = (uint8_t)((inst1 >> 16) & 0xff);
     int32_t gain    = (int16_t)(inst1 & 0xFFFF);
     int32_t temp;
     int x;
@@ -279,8 +242,6 @@ static void LOADADPCM3(uint32_t inst1, uint32_t inst2)    // Loads an ADPCM tabl
     uint32_t v0 = (inst2 & 0xffffff);
     uint32_t x;
 
-    //memcpy (dmem+0x3f0, rsp.RDRAM+v0, inst1&0xffff);
-    //assert ((inst1&0xffff) <= 0x80);
     uint16_t *table = (uint16_t *)(rsp.RDRAM + v0);
     for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
         adpcmtable[(0x0 + (x << 3))^S] = table[0];
@@ -305,7 +266,6 @@ static void DMEMMOVE3(uint32_t inst1, uint32_t inst2)    // Needs accuracy verif
     uint32_t v1 = (inst2 >> 0x10) + 0x4f0;
     uint32_t count = ((inst2 + 3) & 0xfffc);
 
-    //memcpy (dmem+v1, dmem+v0, count-1);
     for (cnt = 0; cnt < count; cnt++)
         *(uint8_t *)(BufferSpace + ((cnt + v1)^S8)) = *(uint8_t *)(BufferSpace + ((cnt + v0)^S8));
 }
@@ -318,12 +278,9 @@ static void SETLOOP3(uint32_t inst1, uint32_t inst2)
 static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Accurate...
 {
     unsigned char Flags = (uint8_t)(inst2 >> 0x1c) & 0xff;
-    //unsigned short Gain=(uint16_t)(inst1&0xffff);
-    unsigned int Address = (inst1 & 0xffffff); // + SEGMENTS[(inst2>>24)&0xf];
+    unsigned int Address = (inst1 & 0xffffff);
     unsigned short inPtr = (inst2 >> 12) & 0xf;
-    //short *out=(int16_t *)(testbuff+(AudioOutBuffer>>2));
     short *out = (short *)(BufferSpace + (inst2 & 0xfff) + 0x4f0);
-    //unsigned char *in=(unsigned char *)(BufferSpace+((inst2>>12)&0xf)+0x4f0);
     short count = (short)((inst2 >> 16) & 0xfff);
     unsigned char icode;
     unsigned char code;
@@ -340,21 +297,10 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
     memset(out, 0, 32);
 
     if (!(Flags & 0x1)) {
-        if (Flags & 0x2) {
-            /*
-               for(int i=0;i<16;i++)
-               {
-                   out[i]=*(short *)&rsp.RDRAM[(loopval+i*2)^2];
-               }*/
+        if (Flags & 0x2)
             memcpy(out, &rsp.RDRAM[loopval], 32);
-        } else {
-            /*
-               for(int i=0;i<16;i++)
-               {
-                   out[i]=*(short *)&rsp.RDRAM[(Address+i*2)^2];
-               }*/
+        else
             memcpy(out, &rsp.RDRAM[Address], 32);
-        }
     }
 
     l1 = out[14 ^ S];
@@ -390,15 +336,11 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
             inp1[j] = (int16_t)((icode & 0xf0) << 8);   // this will in effect be signed
             if (code < 12)
                 inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-            /*else
-                int catchme=1;*/
             j++;
 
             inp1[j] = (int16_t)((icode & 0xf) << 12);
             if (code < 12)
                 inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-            /*else
-                int catchme=1;*/
             j++;
         }
         j = 0;
@@ -409,15 +351,11 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
             inp2[j] = (short)((icode & 0xf0) << 8);     // this will in effect be signed
             if (code < 12)
                 inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-            /*else
-                int catchme=1;*/
             j++;
 
             inp2[j] = (short)((icode & 0xf) << 12);
             if (code < 12)
                 inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-            /*else
-                int catchme=1;*/
             j++;
         }
 
@@ -486,9 +424,7 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
             if (a[j ^ S] > 32767) a[j ^ S] = 32767;
             else if (a[j ^ S] < -32768) a[j ^ S] = -32768;
             *(out++) = a[j ^ S];
-            //*(out+j)=a[j^S];
         }
-        //out += 0x10;
         l1 = a[6];
         l2 = a[7];
 
@@ -557,7 +493,6 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
             if (a[j ^ S] > 32767) a[j ^ S] = 32767;
             else if (a[j ^ S] < -32768) a[j ^ S] = -32768;
             *(out++) = a[j ^ S];
-            //*(out+j+0x1f8)=a[j^S];
         }
         l1 = a[6];
         l2 = a[7];
@@ -579,16 +514,13 @@ static void RESAMPLE3(uint32_t inst1, uint32_t inst2)
     short *dst;
     int16_t *src;
     uint32_t srcPtr = ((((inst2 >> 2) & 0xfff) + 0x4f0) / 2);
-    uint32_t dstPtr;//=(AudioOutBuffer/2);
+    uint32_t dstPtr;
     int32_t temp;
     int32_t accum;
     int x, i;
 
     dst = (short *)(BufferSpace);
     src = (int16_t *)(BufferSpace);
-
-    //if (addy > (1024*1024*8))
-    //  addy = (inst2 & 0xffffff);
 
     srcPtr -= 4;
 
@@ -598,17 +530,16 @@ static void RESAMPLE3(uint32_t inst1, uint32_t inst2)
         dstPtr = 0x4f0 / 2;
 
     if ((Flags & 0x1) == 0) {
-        for (x = 0; x < 4; x++) //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
+        for (x = 0; x < 4; x++)
             src[(srcPtr + x)^S] = ((uint16_t *)rsp.RDRAM)[((addy / 2) + x)^S];
         Accum = *(uint16_t *)(rsp.RDRAM + addy + 10);
     } else {
         for (x = 0; x < 4; x++)
-            src[(srcPtr + x)^S] = 0; //*(uint16_t *)(rsp.RDRAM+((addy+x)^2));
+            src[(srcPtr + x)^S] = 0;
     }
 
     for (i = 0; i < 0x170 / 2; i++)    {
         location = (((Accum * 0x40) >> 0x10) * 8);
-        //location = (Accum >> 0xa) << 0x3;
         lut = (int16_t *)(((uint8_t *)ResampleLUT) + location);
 
         temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 0)^S)) * ((int32_t)((int16_t)lut[0])));
@@ -622,37 +553,6 @@ static void RESAMPLE3(uint32_t inst1, uint32_t inst2)
 
         temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 3)^S)) * ((int32_t)((int16_t)lut[3])));
         accum += (int32_t)(temp >> 15);
-        /*      temp =  ((int64_t)*(int16_t*)(src+((srcPtr+0)^S))*((int64_t)((int16_t)lut[0]<<1)));
-                if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-                else temp = (temp^0x8000);
-                temp = (int32_t)(temp >> 16);
-                if ((int32_t)temp > 32767) temp = 32767;
-                if ((int32_t)temp < -32768) temp = -32768;
-                accum = (int32_t)(int16_t)temp;
-
-                temp = ((int64_t)*(int16_t*)(src+((srcPtr+1)^S))*((int64_t)((int16_t)lut[1]<<1)));
-                if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-                else temp = (temp^0x8000);
-                temp = (int32_t)(temp >> 16);
-                if ((int32_t)temp > 32767) temp = 32767;
-                if ((int32_t)temp < -32768) temp = -32768;
-                accum += (int32_t)(int16_t)temp;
-
-                temp = ((int64_t)*(int16_t*)(src+((srcPtr+2)^S))*((int64_t)((int16_t)lut[2]<<1)));
-                if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-                else temp = (temp^0x8000);
-                temp = (int32_t)(temp >> 16);
-                if ((int32_t)temp > 32767) temp = 32767;
-                if ((int32_t)temp < -32768) temp = -32768;
-                accum += (int32_t)(int16_t)temp;
-
-                temp = ((int64_t)*(int16_t*)(src+((srcPtr+3)^S))*((int64_t)((int16_t)lut[3]<<1)));
-                if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-                else temp = (temp^0x8000);
-                temp = (int32_t)(temp >> 16);
-                if ((int32_t)temp > 32767) temp = 32767;
-                if ((int32_t)temp < -32768) temp = -32768;
-                accum += (int32_t)(int16_t)temp;*/
 
         if (accum > 32767) accum = 32767;
         if (accum < -32768) accum = -32768;
@@ -670,15 +570,11 @@ static void RESAMPLE3(uint32_t inst1, uint32_t inst2)
 
 static void INTERLEAVE3(uint32_t inst1, uint32_t inst2)    // Needs accuracy verification...
 {
-    //uint32_t inL, inR;
-    uint16_t *outbuff = (uint16_t *)(BufferSpace + 0x4f0);//(uint16_t *)(AudioOutBuffer+dmem);
+    uint16_t *outbuff = (uint16_t *)(BufferSpace + 0x4f0);
     uint16_t *inSrcR;
     uint16_t *inSrcL;
     uint16_t Left, Right, Left2, Right2;
     int x;
-
-    //inR = inst2 & 0xFFFF;
-    //inL = (inst2 >> 16) & 0xFFFF;
 
     inSrcR = (uint16_t *)(BufferSpace + 0xb40);
     inSrcL = (uint16_t *)(BufferSpace + 0x9d0);
@@ -700,81 +596,19 @@ static void INTERLEAVE3(uint32_t inst1, uint32_t inst2)    // Needs accuracy ver
         *(outbuff++) = Right;
         *(outbuff++) = Left;
 #endif
-        /*
-                Left=*(inSrcL++);
-                Right=*(inSrcR++);
-                *(outbuff++)=(uint16_t)Left;
-                Left >>= 16;
-                *(outbuff++)=(uint16_t)Right;
-                Right >>= 16;
-                *(outbuff++)=(uint16_t)Left;
-                *(outbuff++)=(uint16_t)Right;*/
     }
 }
-
-//static void UNKNOWN (uint32_t inst1, uint32_t inst2);
-/*
-typedef struct {
-    unsigned char sync;
-
-    unsigned char error_protection   : 1;    //  0=yes, 1=no
-    unsigned char lay                : 2;    // 4-lay = layerI, II or III
-    unsigned char version            : 1;    // 3=mpeg 1.0, 2=mpeg 2.5 0=mpeg 2.0
-    unsigned char sync2              : 4;
-
-    unsigned char extension          : 1;    // Unknown
-    unsigned char padding            : 1;    // padding
-    unsigned char sampling_freq      : 2;    // see table below
-    unsigned char bitrate_index      : 4;    //     see table below
-
-    unsigned char emphasis           : 2;    //see table below
-    unsigned char original           : 1;    // 0=no 1=yes
-    unsigned char copyright          : 1;    // 0=no 1=yes
-    unsigned char mode_ext           : 2;    // used with "joint stereo" mode
-    unsigned char mode               : 2;    // Channel Mode
-} mp3struct;
-
-mp3struct mp3;
-FILE *mp3dat;
-*/
 
 static void WHATISTHIS(uint32_t inst1, uint32_t inst2)
 {
 }
 
-//static FILE *fp = fopen ("d:\\mp3info.txt", "wt");
 static uint32_t setaddr;
 static void MP3ADDY(uint32_t inst1, uint32_t inst2)
 {
     setaddr = (inst2 & 0xffffff);
 }
 
-/*
- {
-//  return;
-    // Setup Registers...
-    mp3setup (inst1, inst2, 0xFA0);
-
-    // Setup Memory Locations...
-    //uint32_t base = ((uint32_t *)dmem)[0xFD0/4]; // Should be 000291A0
-    memcpy (BufferSpace, dmembase+rsp.RDRAM, 0x10);
-    ((uint32_t *)BufferSpace)[0x0] = base;
-    ((uint32_t *)BufferSpace)[0x008/4] += base;
-    ((uint32_t *)BufferSpace)[0xFFC/4] = loopval;
-    ((uint32_t *)BufferSpace)[0xFF8/4] = dmembase;
-
-    memcpy (imem+0x238, rsp.RDRAM+((uint32_t *)BufferSpace)[0x008/4], 0x9C0);
-    ((uint32_t *)BufferSpace)[0xFF4/4] = setaddr;
-    pDMEM = (char *)BufferSpace;
-    rsp_run (void);
-    dmembase = ((uint32_t *)BufferSpace)[0xFF8/4];
-    loopval  = ((uint32_t *)BufferSpace)[0xFFC/4];
-//0x1A98  SW       S1, 0x0FF4 (R0)
-//0x1A9C  SW       S0, 0x0FF8 (R0)
-//0x1AA0  SW       T7, 0x0FFC (R0)
-//0x1AA4  SW       T3, 0x0FF0 (R0)
-    //fprintf (fp, "mp3: inst1: %08X, inst2: %08X\n", inst1, inst2);
-}*/
 /*
 FFT = Fast Fourier Transform
 DCT = Discrete Cosine Transform
@@ -799,8 +633,6 @@ achieve near-CD quality, an important specification to enable dual-channel ISDN
 */
 static void DISABLE(uint32_t inst1, uint32_t inst2)
 {
-    //MessageBox (NULL, "Help", "ABI 3 Command 0", MB_OK);
-    //ChangeABI (5);
 }
 
 

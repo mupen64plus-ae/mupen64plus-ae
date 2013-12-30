@@ -46,7 +46,7 @@ void init_ucode2(void)
 
 static void LOADADPCM2(uint32_t inst1, uint32_t inst2)    // Loads an ADPCM table - Works 100% Now 03-13-01
 {
-    uint32_t v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
+    uint32_t v0 = (inst2 & 0xffffff);
     uint32_t x;
     uint16_t *table = (uint16_t *)(rsp.RDRAM + v0); // Zelda2 Specific...
 
@@ -81,12 +81,9 @@ static void SETBUFF2(uint32_t inst1, uint32_t inst2)
 static void ADPCM2(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Accurate...
 {
     unsigned char Flags = (uint8_t)(inst1 >> 16) & 0xff;
-    //unsigned short Gain=(uint16_t)(inst1&0xffff);
-    unsigned int Address = (inst2 & 0xffffff); // + SEGMENTS[(inst2>>24)&0xf];
+    unsigned int Address = (inst2 & 0xffffff);
     unsigned short inPtr = 0;
-    //short *out=(int16_t *)(testbuff+(AudioOutBuffer>>2));
     short *out = (short *)(BufferSpace + AudioOutBuffer);
-    //unsigned char *in=(unsigned char *)(BufferSpace+AudioInBuffer);
     short count = (short)AudioCount;
     unsigned char icode;
     unsigned char code;
@@ -122,18 +119,8 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
 
     if (!(Flags & 0x1)) {
         if (Flags & 0x2) {
-            /*
-               for(int i=0;i<16;i++)
-               {
-                   out[i]=*(short *)&rsp.RDRAM[(loopval+i*2)^2];
-               }*/
             memcpy(out, &rsp.RDRAM[loopval], 32);
         } else {
-            /*
-               for(int i=0;i<16;i++)
-               {
-                   out[i]=*(short *)&rsp.RDRAM[(Address+i*2)^2];
-               }*/
             memcpy(out, &rsp.RDRAM[Address], 32);
         }
     }
@@ -159,26 +146,22 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
 
             inp1[j] = (int16_t)((icode & mask1) << 8);      // this will in effect be signed
             if (code < srange) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-            //else int catchme=1;
             j++;
 
             inp1[j] = (int16_t)((icode & mask2) << shifter);
             if (code < srange) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-            //else int catchme=1;
             j++;
 
             if (Flags & 4) {
                 inp1[j] = (int16_t)((icode & 0xC) << 12);       // this will in effect be signed
                 if (code < 0xE) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-                //else int catchme=1;
                 j++;
 
                 inp1[j] = (int16_t)((icode & 0x3) << 14);
                 if (code < 0xE) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-                //else int catchme=1;
                 j++;
-            } // end flags
-        } // end while
+            }
+        }
 
 
 
@@ -189,25 +172,21 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
 
             inp2[j] = (int16_t)((icode & mask1) << 8);
             if (code < srange) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-            //else int catchme=1;
             j++;
 
             inp2[j] = (int16_t)((icode & mask2) << shifter);
             if (code < srange) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-            //else int catchme=1;
             j++;
 
             if (Flags & 4) {
                 inp2[j] = (int16_t)((icode & 0xC) << 12);
                 if (code < 0xE) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-                //else int catchme=1;
                 j++;
 
                 inp2[j] = (int16_t)((icode & 0x3) << 14);
                 if (code < 0xE) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-                //else int catchme=1;
                 j++;
-            } // end flags
+            }
         }
 
         a[0] = (int)book1[0] * (int)l1;
@@ -366,7 +345,7 @@ static void LOADBUFF2(uint32_t inst1, uint32_t inst2)    // Needs accuracy verif
 {
     uint32_t v0;
     uint32_t cnt = (((inst1 >> 0xC) + 3) & 0xFFC);
-    v0 = (inst2 & 0xfffffc);// + SEGMENTS[(inst2>>24)&0xf];
+    v0 = (inst2 & 0xfffffc);
     memcpy(BufferSpace + (inst1 & 0xfffc), rsp.RDRAM + v0, (cnt + 3) & 0xFFFC);
 }
 
@@ -374,7 +353,7 @@ static void SAVEBUFF2(uint32_t inst1, uint32_t inst2)    // Needs accuracy verif
 {
     uint32_t v0;
     uint32_t cnt = (((inst1 >> 0xC) + 3) & 0xFFC);
-    v0 = (inst2 & 0xfffffc);// + SEGMENTS[(inst2>>24)&0xf];
+    v0 = (inst2 & 0xfffffc);
     memcpy(rsp.RDRAM + v0, BufferSpace + (inst1 & 0xfffc), (cnt + 3) & 0xFFFC);
 }
 
@@ -407,7 +386,7 @@ static void RESAMPLE2(uint32_t inst1, uint32_t inst2)
 {
     unsigned char Flags = (uint8_t)((inst1 >> 16) & 0xff);
     unsigned int Pitch = ((inst1 & 0xffff)) << 1;
-    uint32_t addy = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
+    uint32_t addy = (inst2 & 0xffffff);
     unsigned int Accum = 0;
     unsigned int location;
     int16_t *lut;
@@ -428,17 +407,16 @@ static void RESAMPLE2(uint32_t inst1, uint32_t inst2)
     srcPtr -= 4;
 
     if ((Flags & 0x1) == 0) {
-        for (x = 0; x < 4; x++) //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
+        for (x = 0; x < 4; x++)
             src[(srcPtr + x)^S] = ((uint16_t *)rsp.RDRAM)[((addy / 2) + x)^S];
         Accum = *(uint16_t *)(rsp.RDRAM + addy + 10);
     } else {
         for (x = 0; x < 4; x++)
-            src[(srcPtr + x)^S] = 0; //*(uint16_t *)(rsp.RDRAM+((addy+x)^2));
+            src[(srcPtr + x)^S] = 0;
     }
 
     for (i = 0; i < ((AudioCount + 0xf) & 0xFFF0) / 2; i++)    {
         location = (((Accum * 0x40) >> 0x10) * 8);
-        //location = (Accum >> 0xa) << 0x3;
         lut = (int16_t *)(((uint8_t *)ResampleLUT) + location);
 
         temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 0)^S)) * ((int32_t)((int16_t)lut[0])));
@@ -465,7 +443,6 @@ static void RESAMPLE2(uint32_t inst1, uint32_t inst2)
     for (x = 0; x < 4; x++)
         ((uint16_t *)rsp.RDRAM)[((addy / 2) + x)^S] = src[(srcPtr + x)^S];
     *(uint16_t *)(rsp.RDRAM + addy + 10) = (uint16_t)Accum;
-    //memcpy (RSWORK, src+srcPtr, 0x8);
 }
 
 static void DMEMMOVE2(uint32_t inst1, uint32_t inst2)    // Needs accuracy verification...
@@ -473,16 +450,11 @@ static void DMEMMOVE2(uint32_t inst1, uint32_t inst2)    // Needs accuracy verif
     uint32_t cnt;
     uint32_t v0 = (inst1 & 0xFFFF);
     uint32_t v1 = (inst2 >> 0x10);
-    //assert ((v1 & 0x3) == 0);
-    //assert ((v0 & 0x3) == 0);
     uint32_t count = ((inst2 + 3) & 0xfffc);
-    //v0 = (v0) & 0xfffc;
-    //v1 = (v1) & 0xfffc;
 
     if ((inst2 & 0xffff) == 0)
         return;
 
-    //memcpy (dmem+v1, dmem+v0, count-1);
     for (cnt = 0; cnt < count; cnt++)
         *(uint8_t *)(BufferSpace + ((cnt + v1)^S8)) = *(uint8_t *)(BufferSpace + ((cnt + v0)^S8));
 }
@@ -494,7 +466,6 @@ static void ENVSETUP1(uint32_t inst1, uint32_t inst2)
 {
     uint32_t tmp;
 
-    //fprintf (dfile, "ENVSETUP1: inst1 = %08X, inst2 = %08X\n", inst1, inst2);
     t3 = inst1 & 0xFFFF;
     tmp = (inst1 >> 0x8) & 0xFF00;
     env[4] = (uint16_t)tmp;
@@ -502,14 +473,12 @@ static void ENVSETUP1(uint32_t inst1, uint32_t inst2)
     env[5] = (uint16_t)tmp;
     s5 = inst2 >> 0x10;
     s6 = inst2 & 0xFFFF;
-    //fprintf (dfile, " t3 = %X / s5 = %X / s6 = %X / env[4] = %X / env[5] = %X\n", t3, s5, s6, env[4], env[5]);
 }
 
 static void ENVSETUP2(uint32_t inst1, uint32_t inst2)
 {
     uint32_t tmp;
 
-    //fprintf (dfile, "ENVSETUP2: inst1 = %08X, inst2 = %08X\n", inst1, inst2);
     tmp = (inst2 >> 0x10);
     env[0] = (uint16_t)tmp;
     tmp += s5;
@@ -518,13 +487,10 @@ static void ENVSETUP2(uint32_t inst1, uint32_t inst2)
     env[2] = (uint16_t)tmp;
     tmp += s6;
     env[3] = (uint16_t)tmp;
-    //fprintf (dfile, " env[0] = %X / env[1] = %X / env[2] = %X / env[3] = %X\n", env[0], env[1], env[2], env[3]);
 }
 
 static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
 {
-    //fprintf (dfile, "ENVMIXER: inst1 = %08X, inst2 = %08X\n", inst1, inst2);
-
     int16_t *bufft6, *bufft7, *buffs0, *buffs1;
     int16_t *buffs3;
     int32_t count;
@@ -661,37 +627,6 @@ static void DUPLICATE2(uint32_t inst1, uint32_t inst2)
         Count--;
     }
 }
-/*
-static void INTERL2 (uint32_t inst1, uint32_t inst2) { // Make your own...
-    short Count = inst1 & 0xffff;
-    unsigned short  Out   = inst2 & 0xffff;
-    unsigned short In     = (inst2 >> 16);
-
-    short *src,*dst,tmp;
-    src=(short *)&BufferSpace[In];
-    dst=(short *)&BufferSpace[Out];
-    while(Count)
-    {
-        *(dst++)=*(src++);
-        src++;
-        *(dst++)=*(src++);
-        src++;
-        *(dst++)=*(src++);
-        src++;
-        *(dst++)=*(src++);
-        src++;
-        *(dst++)=*(src++);
-        src++;
-        *(dst++)=*(src++);
-        src++;
-        *(dst++)=*(src++);
-        src++;
-        *(dst++)=*(src++);
-        src++;
-        Count-=8;
-    }
-}
-*/
 
 static void INTERL2(uint32_t inst1, uint32_t inst2)
 {
@@ -699,7 +634,7 @@ static void INTERL2(uint32_t inst1, uint32_t inst2)
     unsigned short  Out   = inst2 & 0xffff;
     unsigned short In     = (inst2 >> 16);
 
-    unsigned char *src, *dst/*,tmp*/;
+    unsigned char *src, *dst;
     src = (unsigned char *)(BufferSpace); //[In];
     dst = (unsigned char *)(BufferSpace); //[Out];
     while (Count) {
@@ -784,7 +719,6 @@ static void HILOGAIN(uint32_t inst1, uint32_t inst2)
 
     while (cnt) {
         val = (int32_t) * src;
-        //tmp = ((val * (int32_t)hi) + ((uint64_t)(val * lo) << 16) >> 16);
         tmp = ((val * (int32_t)hi) >> 16) + (uint32_t)(val * lo);
         if ((int32_t)tmp > 32767) tmp = 32767;
         else if ((int32_t)tmp < -32768) tmp = -32768;
@@ -810,19 +744,14 @@ static void FILTER2(uint32_t inst1, uint32_t inst2)
     if (t4 > 1) { // Then set the cnt variable
         cnt = (inst1 & 0xFFFF);
         lutt6 = (int16_t *)save;
-//              memcpy (dmem+0xFE0, rsp.RDRAM+(inst2&0xFFFFFF), 0x10);
         return;
     }
 
-    if (t4 == 0) {
-//              memcpy (dmem+0xFB0, rsp.RDRAM+(inst2&0xFFFFFF), 0x20);
+    if (t4 == 0)
         lutt5 = (short *)(save + 0x10);
-    }
 
     lutt5 = (short *)(save + 0x10);
 
-//          lutt5 = (short *)(dmem + 0xFC0);
-//          lutt6 = (short *)(dmem + 0xFE0);
     for (x = 0; x < 8; x++) {
         int32_t a;
         a = (lutt5[x] + lutt6[x]) >> 1;
@@ -916,7 +845,6 @@ static void FILTER2(uint32_t inst1, uint32_t inst2)
         inp2 += 8;
         outp += 8;
     }
-//          memcpy (rsp.RDRAM+(inst2&0xFFFFFF), dmem+0xFB0, 0x20);
     memcpy(save, inp2 - 8, 0x10);
     memcpy(BufferSpace + (inst1 & 0xffff), outbuff, cnt);
 }
@@ -929,7 +857,6 @@ static void SEGMENT2(uint32_t inst1, uint32_t inst2)
     }
     if ((inst1 & 0xffffff) == 0) {
         isMKABI = true;
-        //SEGMENTS[(inst2>>24)&0xf] = (inst2 & 0xffffff);
     } else {
         isMKABI = false;
         isZeldaABI = true;
@@ -940,13 +867,6 @@ static void SEGMENT2(uint32_t inst1, uint32_t inst2)
 static void UNKNOWN(uint32_t inst1, uint32_t inst2)
 {
 }
-/*
-void (*ABI2[0x20])(void) = {
-    SPNOOP, ADPCM2, CLEARBUFF2, SPNOOP, SPNOOP, RESAMPLE2, SPNOOP, SEGMENT2,
-    SETBUFF2, SPNOOP, DMEMMOVE2, LOADADPCM2, MIXER2, INTERLEAVE2, HILOGAIN, SETLOOP2,
-    SPNOOP, INTERL2, ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,
-    SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP
-};*/
 
 const acmd_callback_t ABI2[0x20] = {
     SPNOOP , ADPCM2, CLEARBUFF2, UNKNOWN, ADDMIXER, RESAMPLE2, UNKNOWN, SEGMENT2,
@@ -954,13 +874,6 @@ const acmd_callback_t ABI2[0x20] = {
     SPNOOP, INTERL2 , ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,
     HILOGAIN , SPNOOP, DUPLICATE2 , UNKNOWN    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP
 };
-/*
-void (*ABI2[0x20])(void) = {
-    SPNOOP , ADPCM2, CLEARBUFF2, SPNOOP, SPNOOP, RESAMPLE2  , SPNOOP  , SEGMENT2,
-    SETBUFF2 , DUPLICATE2, DMEMMOVE2, LOADADPCM2, MIXER2, INTERLEAVE2, SPNOOP, SETLOOP2,
-    SPNOOP, INTERL2 , ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,
-    SPNOOP , SPNOOP, SPNOOP , SPNOOP    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP
-};*/
 /* NOTES:
 
   FILTER/SEGMENT - Still needs to be finished up... add FILTER?

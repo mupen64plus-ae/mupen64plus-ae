@@ -286,7 +286,6 @@ void musyx_task(void)
 
     for (;;) {
         /* parse SFD structre */
-        /*uint16_t voice_count = *dram_u16(sfd_ptr + SFD_VOICE_COUNT);*/
         uint16_t sfx_index   = *dram_u16(sfd_ptr + SFD_SFX_INDEX);
         uint32_t voice_mask  = *dram_u32(sfd_ptr + SFD_VOICE_BITMASK);
         uint32_t sfx_ptr     = *dram_u32(sfd_ptr + SFD_SFX_PTR);
