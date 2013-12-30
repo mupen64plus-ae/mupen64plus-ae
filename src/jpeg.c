@@ -560,7 +560,6 @@ static void InverseDCT1D(const float *const x, float *dst, unsigned int stride)
     *dst = f[1] + f[3] - e[1];
     dst += stride;
     *dst = f[0] + f[2] - e[0];
-    dst += stride;
 }
 
 static void InverseDCTSubBlock(int16_t *dst, const int16_t *src)

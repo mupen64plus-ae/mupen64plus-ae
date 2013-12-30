@@ -562,10 +562,10 @@ static void adpcm_decode_frames(int16_t *dst, const uint8_t *src,
     }
 
     for (i = 0; i < count; ++i) {
-        uint8_t code = nibbles[0];
+        uint8_t c2 = nibbles[0];
 
-        const int16_t *book = (code & 0xf0) + table;
-        unsigned int rshift = (code & 0x0f);
+        const int16_t *book = (c2 & 0xf0) + table;
+        unsigned int rshift = (c2 & 0x0f);
 
         adpcm_get_predicted_frame(frame, src, nibbles, rshift);
 

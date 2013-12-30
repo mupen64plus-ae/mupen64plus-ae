@@ -584,10 +584,8 @@ static void InnerLoop(void)
     // Step 8 - Dewindowing
 
     //uint64_t *DW = (uint64_t *)&DeWindowLUT[0x10-(t4>>1)];
-    offset = 0x10 - (t4 >> 1);
 
     addptr = t6 & 0xFFE0;
-    offset = 0x10 - (t4 >> 1);
 
     //int32_t z2=0, z4=0, z6=0, z8=0;
 
