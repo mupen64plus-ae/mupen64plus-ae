@@ -195,6 +195,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\musyx.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\ucode1.cpp"
 				>
 			</File>
@@ -234,6 +238,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\jpeg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\musyx.h"
 				>
 			</File>
 		</Filter>

@@ -234,6 +234,7 @@ SOURCE = \
 	$(SRCDIR)/alist.c \
 	$(SRCDIR)/cicx105.c \
 	$(SRCDIR)/jpeg.c \
+	$(SRCDIR)/musyx.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \
 	$(SRCDIR)/ucode1.cpp \

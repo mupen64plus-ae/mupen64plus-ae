@@ -33,6 +33,7 @@
 #include "alist.h"
 #include "cicx105.h"
 #include "jpeg.h"
+#include "musyx.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
@@ -155,8 +156,8 @@ static int try_fast_audio_dispatching()
              * GauntletLegend, Rush2049, IndianaJones, BattleForNaboo
              * TODO: implement ucode
              **/
-            DebugMessage(M64MSG_WARNING, "MusyX ucode not implemented.");
-            /* return 1; */
+            musyx_task();
+            return 1;
         } else {
             /**
              * Many games including:
