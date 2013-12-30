@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.CheatFile;
@@ -224,7 +225,7 @@ public class CheatEditorActivity extends ListActivity {
 			    	        	}
 			    	        	if(!bad)
 			    	        	{
-			    	        		cheats_code.set(pos, i.getText().toString().toUpperCase());
+			    	        		cheats_code.set(pos, i.getText().toString().toUpperCase(Locale.US));
 			    	        	}else{
 			    	        		Toast t = Toast.makeText(CheatEditorActivity.this, getString(R.string.cheatEditor_badCode), Toast.LENGTH_SHORT);
 			    	        		t.show();
@@ -284,7 +285,7 @@ public class CheatEditorActivity extends ListActivity {
 			    	        			bad=true;
 			    	        			break;
 			    	        		}
-			    	        		split[o]=split[o].substring(0,split[o].length()-5)+" "+split[o].substring(split[o].length()-4).toUpperCase();
+			    	        		split[o]=split[o].substring(0,split[o].length()-5)+" "+split[o].substring(split[o].length()-4).toUpperCase(Locale.US);
 			    	        		String y="";
 			    	        		if(o!=split.length-1)
 			    	        		{
