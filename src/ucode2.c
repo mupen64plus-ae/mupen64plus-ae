@@ -21,9 +21,10 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <string.h>
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
 
+#include "m64p_plugin.h"
 #include "m64p_types.h"
 #include "hle.h"
 #include "alist_internal.h"

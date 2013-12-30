@@ -23,6 +23,7 @@
 
 #include <string.h>
 
+#include "m64p_plugin.h"
 #include "hle.h"
 #include "cicx105.h"
 

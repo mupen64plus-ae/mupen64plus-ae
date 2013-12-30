@@ -22,7 +22,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <stddef.h>
 
+#include "m64p_plugin.h"
 #include "m64p_types.h"
 #include "hle.h"
 #include "musyx.h"

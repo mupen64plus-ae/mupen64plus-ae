@@ -21,9 +21,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 # include <string.h>
-# include <stdio.h>
+#include <stdint.h>
 
-#include "m64p_types.h"
+#include "m64p_plugin.h"
 #include "hle.h"
 #include "alist_internal.h"
 
