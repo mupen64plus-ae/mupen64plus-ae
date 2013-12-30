@@ -51,8 +51,7 @@ typedef signed long long    s64;
 
 extern RSP_INFO rsp;
 
-typedef struct
-{
+typedef struct {
     unsigned int type;
     unsigned int flags;
 
@@ -78,9 +77,9 @@ typedef struct
     unsigned int yield_data_size;
 } OSTask_t;
 
-static inline const OSTask_t * const get_task()
+static inline const OSTask_t *const get_task()
 {
-    return (OSTask_t*)(rsp.DMEM + 0xfc0);
+    return (OSTask_t *)(rsp.DMEM + 0xfc0);
 }
 
 void DebugMessage(int level, const char *message, ...);
