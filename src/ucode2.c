@@ -27,6 +27,7 @@
 #include "m64p_types.h"
 #include "hle.h"
 #include "alist_internal.h"
+#include "alist.h"
 
 extern u8 BufferSpace[0x10000];
 
