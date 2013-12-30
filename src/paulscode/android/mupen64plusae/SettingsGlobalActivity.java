@@ -68,7 +68,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
-    private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String CONTROLLER_PROFILE1 = "controllerProfile1";
     private static final String CONTROLLER_PROFILE2 = "controllerProfile2";
     private static final String CONTROLLER_PROFILE3 = "controllerProfile3";
@@ -107,9 +106,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_USER_PREFS, this );
-        
-        // Handle crash tests in a particular way (see CrashTester for more info)
-        findPreference( ACTION_CRASH_TEST ).setOnPreferenceClickListener( new CrashTester( this ) );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_CRASH_TEST, new CrashTester( this ) );
         
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
@@ -148,13 +145,10 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        if( key.equals( TOUCHPAD_ENABLED ) || key.equals( NAVIGATION_MODE ) )
+        if( key.equals( NAVIGATION_MODE ) )
         {
             // Sometimes one preference change affects the hierarchy or layout of the views. In this
             // case it's easier just to restart the activity than try to figure out what to fix.
-            // Examples:
-            // * Restore the preference categories that were removed in refreshViews(...)
-            // * Change the input mapping layout when Xperia Play touchpad en/disabled
             finish();
             startActivity( getIntent() );
         }
