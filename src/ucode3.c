@@ -749,10 +749,6 @@ static void MP3ADDY(u32 inst1, u32 inst2)
     setaddr = (inst2 & 0xffffff);
 }
 
-void rsp_run(void);
-void mp3setup(unsigned int inst1, unsigned int inst2, unsigned int t8);
-
-void MP3(u32 inst1, u32 inst2);
 /*
  {
 //  return;

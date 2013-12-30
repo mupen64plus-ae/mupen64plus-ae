@@ -107,5 +107,7 @@ extern short hleMixerWorkArea[256];
 extern u32 base, dmembase;
 extern char *pDMEM;
 
+void MP3(u32 inst1, u32 inst2);
+
 #endif
 
