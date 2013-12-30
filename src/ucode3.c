@@ -764,7 +764,7 @@ static void WHATISTHIS(u32 inst1, u32 inst2)
 }
 
 //static FILE *fp = fopen ("d:\\mp3info.txt", "wt");
-u32 setaddr;
+static u32 setaddr;
 static void MP3ADDY(u32 inst1, u32 inst2)
 {
     setaddr = (inst2 & 0xffffff);

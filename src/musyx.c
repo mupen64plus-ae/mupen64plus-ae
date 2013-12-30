@@ -210,22 +210,22 @@ static int32_t dot4(const int16_t *x, const int16_t *y)
 /* Fast and dirty way of reading dram memory
  * Assume properly aligned access
  */
-uint8_t *dram_u8(uint32_t address)
+static uint8_t *dram_u8(uint32_t address)
 {
     return (uint8_t *)&rsp.RDRAM[(address & 0xffffff) ^ S8];
 }
 
-uint16_t *dram_u16(uint32_t address)
+static uint16_t *dram_u16(uint32_t address)
 {
     return (uint16_t *)&rsp.RDRAM[(address & 0xffffff) ^ S16];
 }
 
-uint32_t *dram_u32(uint32_t address)
+static uint32_t *dram_u32(uint32_t address)
 {
     return (uint32_t *)&rsp.RDRAM[address & 0xffffff];
 }
 
-void load_u8(uint8_t *dst, uint32_t address, size_t count)
+static void load_u8(uint8_t *dst, uint32_t address, size_t count)
 {
     while (count != 0) {
         *(dst++) = *dram_u8(address);
@@ -234,7 +234,7 @@ void load_u8(uint8_t *dst, uint32_t address, size_t count)
     }
 }
 
-void load_u16(uint16_t *dst, uint32_t address, size_t count)
+static void load_u16(uint16_t *dst, uint32_t address, size_t count)
 {
     while (count != 0) {
         *(dst++) = *dram_u16(address);
@@ -243,7 +243,7 @@ void load_u16(uint16_t *dst, uint32_t address, size_t count)
     }
 }
 
-void load_u32(uint32_t *dst, uint32_t address, size_t count)
+static void load_u32(uint32_t *dst, uint32_t address, size_t count)
 {
     /* Optimization for uint32_t */
     const uint32_t *src = dram_u32(address);
@@ -251,7 +251,7 @@ void load_u32(uint32_t *dst, uint32_t address, size_t count)
     memcpy(dst, src, count * sizeof(uint32_t));
 }
 
-void store_u16(const uint16_t *src, uint32_t address, size_t count)
+static void store_u16(const uint16_t *src, uint32_t address, size_t count)
 {
     while (count != 0) {
         *dram_u16(address) = *(src++);
@@ -322,7 +322,7 @@ void musyx_task(void)
               4);
 }
 
-void load_base_vol(int32_t *base_vol, uint32_t address)
+static void load_base_vol(int32_t *base_vol, uint32_t address)
 {
     base_vol[0] = ((uint32_t)(*dram_u16(address))     << 16) | (*dram_u16(address +  8));
     base_vol[1] = ((uint32_t)(*dram_u16(address + 2)) << 16) | (*dram_u16(address + 10));
@@ -330,7 +330,7 @@ void load_base_vol(int32_t *base_vol, uint32_t address)
     base_vol[3] = ((uint32_t)(*dram_u16(address + 6)) << 16) | (*dram_u16(address + 14));
 }
 
-void save_base_vol(const int32_t *base_vol, uint32_t address)
+static void save_base_vol(const int32_t *base_vol, uint32_t address)
 {
     unsigned k;
 
@@ -345,8 +345,8 @@ void save_base_vol(const int32_t *base_vol, uint32_t address)
     }
 }
 
-void update_base_vol(int32_t *base_vol, uint32_t voice_mask,
-                     uint32_t last_sample_ptr)
+static void update_base_vol(int32_t *base_vol, uint32_t voice_mask,
+                            uint32_t last_sample_ptr)
 {
     unsigned i, k;
     uint32_t mask;
@@ -375,7 +375,7 @@ void update_base_vol(int32_t *base_vol, uint32_t voice_mask,
                  base_vol[0], base_vol[1], base_vol[2], base_vol[3]);
 }
 
-void init_subframes(musyx_t *musyx)
+static void init_subframes(musyx_t *musyx)
 {
     unsigned i;
 
@@ -396,8 +396,8 @@ void init_subframes(musyx_t *musyx)
 }
 
 /* Process voices, and returns interleaved subframe destination address */
-uint32_t voice_stage(musyx_t *musyx, uint32_t voice_ptr,
-                     uint32_t last_sample_ptr)
+static uint32_t voice_stage(musyx_t *musyx, uint32_t voice_ptr,
+                            uint32_t last_sample_ptr)
 {
     uint32_t output_ptr;
     int i = 0;
@@ -440,7 +440,7 @@ uint32_t voice_stage(musyx_t *musyx, uint32_t voice_ptr,
     return output_ptr;
 }
 
-void dma_cat8(uint8_t *dst, uint32_t catsrc_ptr)
+static void dma_cat8(uint8_t *dst, uint32_t catsrc_ptr)
 {
     uint32_t ptr1  = *dram_u32(catsrc_ptr + CATSRC_PTR1);
     uint32_t ptr2  = *dram_u32(catsrc_ptr + CATSRC_PTR2);
@@ -464,7 +464,7 @@ void dma_cat8(uint8_t *dst, uint32_t catsrc_ptr)
     load_u8(dst + count1, ptr2, count2);
 }
 
-void dma_cat16(uint16_t *dst, uint32_t catsrc_ptr)
+static void dma_cat16(uint16_t *dst, uint32_t catsrc_ptr)
 {
     uint32_t ptr1  = *dram_u32(catsrc_ptr + CATSRC_PTR1);
     uint32_t ptr2  = *dram_u32(catsrc_ptr + CATSRC_PTR2);
@@ -488,8 +488,8 @@ void dma_cat16(uint16_t *dst, uint32_t catsrc_ptr)
     load_u16(dst + count1, ptr2, count2);
 }
 
-void load_samples_PCM16(uint32_t voice_ptr, int16_t *samples, unsigned *segbase,
-                        unsigned *offset)
+static void load_samples_PCM16(uint32_t voice_ptr, int16_t *samples,
+                               unsigned *segbase, unsigned *offset)
 {
 
     uint8_t  u8_3e  = *dram_u8(voice_ptr + VOICE_SKIP_SAMPLES);
@@ -509,8 +509,8 @@ void load_samples_PCM16(uint32_t voice_ptr, int16_t *samples, unsigned *segbase,
         dma_cat16((uint16_t *)samples, voice_ptr + VOICE_CATSRC_1);
 }
 
-void load_samples_ADPCM(uint32_t voice_ptr, int16_t *samples, unsigned *segbase,
-                        unsigned *offset)
+static void load_samples_ADPCM(uint32_t voice_ptr, int16_t *samples,
+                               unsigned *segbase, unsigned *offset)
 {
     /* decompressed samples cannot exceed 0x400 bytes;
      * ADPCM has a compression ratio of 5/16 */
@@ -543,8 +543,9 @@ void load_samples_ADPCM(uint32_t voice_ptr, int16_t *samples, unsigned *segbase,
     }
 }
 
-void adpcm_decode_frames(int16_t *dst, const uint8_t *src, const int16_t *table,
-                         uint8_t count, uint8_t skip_samples)
+static void adpcm_decode_frames(int16_t *dst, const uint8_t *src,
+                                const int16_t *table, uint8_t count,
+                                uint8_t skip_samples)
 {
     int16_t frame[32];
     const uint8_t *nibbles = src + 8;
@@ -586,16 +587,17 @@ void adpcm_decode_frames(int16_t *dst, const uint8_t *src, const int16_t *table,
     }
 }
 
-int16_t adpcm_get_predicted_sample(uint8_t byte, uint8_t mask, unsigned lshift,
-                                   unsigned rshift)
+static int16_t adpcm_get_predicted_sample(uint8_t byte, uint8_t mask,
+                                          unsigned lshift, unsigned rshift)
 {
     int16_t sample = ((uint16_t)byte & (uint16_t)mask) << lshift;
     sample >>= rshift; /* signed */
     return sample;
 }
 
-void adpcm_get_predicted_frame(int16_t *dst, const uint8_t *src,
-                               const uint8_t *nibbles, unsigned int rshift)
+static void adpcm_get_predicted_frame(int16_t *dst, const uint8_t *src,
+                                      const uint8_t *nibbles,
+                                      unsigned int rshift)
 {
     unsigned int i;
 
@@ -610,9 +612,10 @@ void adpcm_get_predicted_frame(int16_t *dst, const uint8_t *src,
     }
 }
 
-void adpcm_decode_upto_8_samples(int16_t *dst, const int16_t *src,
-                                 const int16_t *cb_entry,
-                                 const int16_t *last_samples, size_t size)
+static void adpcm_decode_upto_8_samples(int16_t *dst, const int16_t *src,
+                                        const int16_t *cb_entry,
+                                        const int16_t *last_samples,
+                                        size_t size)
 {
     const int16_t *const book1 = cb_entry;
     const int16_t *const book2 = cb_entry + 8;
@@ -630,9 +633,9 @@ void adpcm_decode_upto_8_samples(int16_t *dst, const int16_t *src,
     }
 }
 
-void mix_voice_samples(musyx_t *musyx, uint32_t voice_ptr,
-                       const int16_t *samples, unsigned segbase,
-                       unsigned offset, uint32_t last_sample_ptr)
+static void mix_voice_samples(musyx_t *musyx, uint32_t voice_ptr,
+                              const int16_t *samples, unsigned segbase,
+                              unsigned offset, uint32_t last_sample_ptr)
 {
     int i, k;
 
@@ -720,7 +723,7 @@ void mix_voice_samples(musyx_t *musyx, uint32_t voice_ptr,
 }
 
 
-void sfx_stage(musyx_t *musyx, uint32_t sfx_ptr, uint16_t idx)
+static void sfx_stage(musyx_t *musyx, uint32_t sfx_ptr, uint16_t idx)
 {
     uint32_t tap_delays[8];
     uint16_t tap_gains[8];
@@ -758,7 +761,7 @@ void sfx_stage(musyx_t *musyx, uint32_t sfx_ptr, uint16_t idx)
     // TODO:
 }
 
-void interleave_stage(musyx_t *musyx, uint32_t output_ptr)
+static void interleave_stage(musyx_t *musyx, uint32_t output_ptr)
 {
     size_t i;
 
