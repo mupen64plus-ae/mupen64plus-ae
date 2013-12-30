@@ -28,7 +28,7 @@
 /* local functions */
 static void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
 {
-    u32 inst1, inst2;
+    uint32_t inst1, inst2;
     unsigned int acmd;
     const OSTask_t *const task = get_task();
 
