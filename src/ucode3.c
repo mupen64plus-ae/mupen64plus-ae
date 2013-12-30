@@ -33,27 +33,6 @@ static void SPNOOP (u32 inst1, u32 inst2) {
 }
 */
 
-extern const u16 ResampleLUT [0x200];
-
-extern u32 loopval;
-
-extern s16 Env_Dry;
-extern s16 Env_Wet;
-extern s16 Vol_Left;
-extern s16 Vol_Right;
-extern s16 VolTrg_Left;
-extern s32 VolRamp_Left;
-//extern u16 VolRate_Left;
-extern s16 VolTrg_Right;
-extern s32 VolRamp_Right;
-//extern u16 VolRate_Right;
-
-
-extern short hleMixerWorkArea[256];
-extern u16 adpcmtable[0x88];
-
-extern u8 BufferSpace[0x10000];
-
 /*
 static void SETVOL3 (u32 inst1, u32 inst2) { // Swapped Rate_Left and Vol
     u8 Flags = (u8)(inst1 >> 0x10);
@@ -773,8 +752,6 @@ static void MP3ADDY(u32 inst1, u32 inst2)
 void rsp_run(void);
 void mp3setup(unsigned int inst1, unsigned int inst2, unsigned int t8);
 
-extern u32 base, dmembase;
-extern char *pDMEM;
 void MP3(u32 inst1, u32 inst2);
 /*
  {

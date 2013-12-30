@@ -84,5 +84,28 @@ static inline const OSTask_t *const get_task(void)
 
 void DebugMessage(int level, const char *message, ...);
 
+extern u8 BufferSpace[0x10000];
+
+extern u32 SEGMENTS[0x10];
+extern u16 AudioInBuffer;   // 0x0000(T8)
+extern u16 AudioOutBuffer;  // 0x0002(T8)
+extern u16 AudioCount;      // 0x0004(T8)
+extern u32 loopval;         // 0x0010(T8)
+extern s16 Env_Dry;
+extern s16 Env_Wet;
+extern s16 Vol_Left;
+extern s16 Vol_Right;
+extern s16 VolTrg_Left;
+extern s32 VolRamp_Left;
+extern s16 VolTrg_Right;
+extern s32 VolRamp_Right;
+
+extern u16 adpcmtable[0x88];
+extern const u16 ResampleLUT [0x200];
+extern short hleMixerWorkArea[256];
+
+extern u32 base, dmembase;
+extern char *pDMEM;
+
 #endif
 

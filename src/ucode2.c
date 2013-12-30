@@ -29,21 +29,11 @@
 #include "alist_internal.h"
 #include "alist.h"
 
-extern u8 BufferSpace[0x10000];
-
 static void SPNOOP(u32 inst1, u32 inst2)
 {
     DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 2", (int)(inst1 >> 24));
 }
-extern u16 AudioInBuffer;       // 0x0000(T8)
-extern u16 AudioOutBuffer;      // 0x0002(T8)
-extern u16 AudioCount;          // 0x0004(T8)
-extern u32 loopval;         // 0x0010(T8)
-extern u32 SEGMENTS[0x10];
 
-extern u16 adpcmtable[0x88];
-
-extern const u16 ResampleLUT [0x200];
 
 static bool isMKABI = false;
 static bool isZeldaABI = false;

@@ -23,8 +23,6 @@
 #include <stdint.h>
 #include <string.h>
 
-extern const uint16_t ResampleLUT[0x200];
-
 #include "m64p_types.h"
 #include "hle.h"
 #include "musyx.h"
