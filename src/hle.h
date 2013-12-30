@@ -76,10 +76,10 @@ void DebugMessage(int level, const char *message, ...);
 
 extern uint8_t BufferSpace[0x10000];
 
-extern uint16_t AudioInBuffer;   // 0x0000(T8)
-extern uint16_t AudioOutBuffer;  // 0x0002(T8)
-extern uint16_t AudioCount;      // 0x0004(T8)
-extern uint32_t loopval;         // 0x0010(T8)
+extern uint16_t AudioInBuffer;   /* 0x0000(T8) */
+extern uint16_t AudioOutBuffer;  /* 0x0002(T8) */
+extern uint16_t AudioCount;      /* 0x0004(T8) */
+extern uint32_t loopval;         /* 0x0010(T8) */
 extern int16_t Env_Dry;
 extern int16_t Env_Wet;
 extern int16_t Vol_Left;

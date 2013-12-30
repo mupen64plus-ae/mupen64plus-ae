@@ -26,7 +26,7 @@ void alist_process_ABI1(void);
 void alist_process_ABI2(void);
 void alist_process_ABI3(void);
 
-// FIXME: to remove when isZeldaABI/isMKABI workaround is gone
+/* FIXME: to remove when isZeldaABI/isMKABI workaround is gone */
 void init_ucode2(void);
 
 #endif

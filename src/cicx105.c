@@ -37,7 +37,7 @@
  **/
 void cicx105_ucode(void)
 {
-    // memcpy is okay to use because access constrains are met (alignment, size)
+    /* memcpy is okay to use because access constrains are met (alignment, size) */
     unsigned int i;
     unsigned char *dst = rsp.RDRAM + 0x2fb1f0;
     unsigned char *src = rsp.IMEM + 0x120;

@@ -93,7 +93,7 @@ enum {
     SFX_FIR4_HGAIN      = 0x0a,
     SFX_TAP_DELAYS      = 0x0c,
     SFX_TAP_GAINS       = 0x2c,
-    // padding          = 0x3c
+    /* padding          = 0x3c */
     SFX_FIR4_HCOEFFS    = 0x40
 };
 
@@ -640,7 +640,7 @@ static void mix_voice_samples(musyx_t *musyx, uint32_t voice_ptr,
 
     /* parse VOICE structure */
     const uint16_t pitch_q16   = *dram_u16(voice_ptr + VOICE_PITCH_Q16);
-    const uint16_t pitch_shift = *dram_u16(voice_ptr + VOICE_PITCH_SHIFT); // Q4.12
+    const uint16_t pitch_shift = *dram_u16(voice_ptr + VOICE_PITCH_SHIFT); /* Q4.12 */
 
     const uint16_t end_point     = *dram_u16(voice_ptr + VOICE_END_POINT);
     const uint16_t restart_point = *dram_u16(voice_ptr + VOICE_RESTART_POINT);
@@ -757,7 +757,7 @@ static void sfx_stage(musyx_t *musyx, uint32_t sfx_ptr, uint16_t idx)
                  fir4_hcoeffs[3]);
 
     DebugMessage(M64MSG_VERBOSE, "tap count=%d", tap_count);
-    // TODO:
+    /* TODO: */
 }
 
 static void interleave_stage(musyx_t *musyx, uint32_t output_ptr)

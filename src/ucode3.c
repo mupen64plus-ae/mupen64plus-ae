@@ -30,18 +30,18 @@
 static void SETVOL3(uint32_t inst1, uint32_t inst2)
 {
     uint8_t Flags = (uint8_t)(inst1 >> 0x10);
-    if (Flags & 0x4) { // 288
-        if (Flags & 0x2) { // 290
-            Vol_Left  = (int16_t)inst1; // 0x50
-            Env_Dry   = (int16_t)(inst2 >> 0x10); // 0x4E
-            Env_Wet   = (int16_t)inst2; // 0x4C
+    if (Flags & 0x4) { /* 288 */
+        if (Flags & 0x2) { /* 290 */
+            Vol_Left  = (int16_t)inst1; /* 0x50 */
+            Env_Dry   = (int16_t)(inst2 >> 0x10); /* 0x4E */
+            Env_Wet   = (int16_t)inst2; /* 0x4C */
         } else {
-            VolTrg_Right  = (int16_t)inst1; // 0x46
-            VolRamp_Right = (int32_t)inst2; // 0x48/0x4A
+            VolTrg_Right  = (int16_t)inst1; /* 0x46 */
+            VolRamp_Right = (int32_t)inst2; /* 0x48/0x4A */
         }
     } else {
-        VolTrg_Left  = (int16_t)inst1; // 0x40
-        VolRamp_Left = (int32_t)inst2; // 0x42/0x44
+        VolTrg_Left  = (int16_t)inst1; /* 0x40 */
+        VolRamp_Left = (int32_t)inst2; /* 0x42/0x44 */
     }
 }
 
@@ -65,7 +65,7 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
 
     int32_t LAdder, LAcc, LVol;
     int32_t RAdder, RAcc, RVol;
-    int16_t RSig, LSig; // Most significant part of the Ramp Value
+    int16_t RSig, LSig; /* Most significant part of the Ramp Value */
     int16_t Wet, Dry;
     int16_t LTrg, RTrg;
 
@@ -85,55 +85,55 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
         RSig = (int16_t)(VolRamp_Right >> 16);
 
         Wet = (int16_t)Env_Wet;
-        Dry = (int16_t)Env_Dry; // Save Wet/Dry values
+        Dry = (int16_t)Env_Dry; /* Save Wet/Dry values */
         LTrg = VolTrg_Left;
-        RTrg = VolTrg_Right; // Save Current Left/Right Targets
+        RTrg = VolTrg_Right; /* Save Current Left/Right Targets */
     } else {
         memcpy((uint8_t *)hleMixerWorkArea, rsp.RDRAM + addy, 80);
-        Wet    = *(int16_t *)(hleMixerWorkArea +  0); // 0-1
-        Dry    = *(int16_t *)(hleMixerWorkArea +  2); // 2-3
-        LTrg   = *(int16_t *)(hleMixerWorkArea +  4); // 4-5
-        RTrg   = *(int16_t *)(hleMixerWorkArea +  6); // 6-7
-        LAdder = *(int32_t *)(hleMixerWorkArea +  8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
-        RAdder = *(int32_t *)(hleMixerWorkArea + 10); // 10-11
-        LAcc   = *(int32_t *)(hleMixerWorkArea + 12); // 12-13
-        RAcc   = *(int32_t *)(hleMixerWorkArea + 14); // 14-15
-        LVol   = *(int32_t *)(hleMixerWorkArea + 16); // 16-17
-        RVol   = *(int32_t *)(hleMixerWorkArea + 18); // 18-19
-        LSig   = *(int16_t *)(hleMixerWorkArea + 20); // 20-21
-        RSig   = *(int16_t *)(hleMixerWorkArea + 22); // 22-23
+        Wet    = *(int16_t *)(hleMixerWorkArea +  0); /* 0-1 */
+        Dry    = *(int16_t *)(hleMixerWorkArea +  2); /* 2-3 */
+        LTrg   = *(int16_t *)(hleMixerWorkArea +  4); /* 4-5 */
+        RTrg   = *(int16_t *)(hleMixerWorkArea +  6); /* 6-7 */
+        LAdder = *(int32_t *)(hleMixerWorkArea +  8); /* 8-9 (hleMixerWorkArea is a 16bit pointer) */
+        RAdder = *(int32_t *)(hleMixerWorkArea + 10); /* 10-11 */
+        LAcc   = *(int32_t *)(hleMixerWorkArea + 12); /* 12-13 */
+        RAcc   = *(int32_t *)(hleMixerWorkArea + 14); /* 14-15 */
+        LVol   = *(int32_t *)(hleMixerWorkArea + 16); /* 16-17 */
+        RVol   = *(int32_t *)(hleMixerWorkArea + 18); /* 18-19 */
+        LSig   = *(int16_t *)(hleMixerWorkArea + 20); /* 20-21 */
+        RSig   = *(int16_t *)(hleMixerWorkArea + 22); /* 22-23 */
     }
 
     for (y = 0; y < (0x170 / 2); y++) {
 
-        // Left
+        /* Left */
         LAcc += LAdder;
         LVol += (LAcc >> 16);
         LAcc &= 0xFFFF;
 
-        // Right
+        /* Right */
         RAcc += RAdder;
         RVol += (RAcc >> 16);
         RAcc &= 0xFFFF;
-// ****************************************************************
-        // Clamp Left
-        if (LSig >= 0) { // VLT
+/****************************************************************/
+        /* Clamp Left */
+        if (LSig >= 0) { /* VLT */
             if (LVol > LTrg)
                 LVol = LTrg;
-        } else { // VGE
+        } else { /* VGE */
             if (LVol < LTrg)
                 LVol = LTrg;
         }
 
-        // Clamp Right
-        if (RSig >= 0) { // VLT
+        /* Clamp Right */
+        if (RSig >= 0) { /* VLT */
             if (RVol > RTrg)
                 RVol = RTrg;
-        } else { // VGE
+        } else { /* VGE */
             if (RVol < RTrg)
                 RVol = RTrg;
         }
-// ****************************************************************
+/****************************************************************/
         MainL = ((Dry * LVol) + 0x4000) >> 15;
         MainR = ((Dry * RVol) + 0x4000) >> 15;
 
@@ -144,7 +144,7 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
         o1 += ((i1 * MainL) + 0x4000) >> 15;
         a1 += ((i1 * MainR) + 0x4000) >> 15;
 
-// ****************************************************************
+/****************************************************************/
 
         if (o1 > 32767) o1 = 32767;
         else if (o1 < -32768) o1 = -32768;
@@ -152,13 +152,12 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
         if (a1 > 32767) a1 = 32767;
         else if (a1 < -32768) a1 = -32768;
 
-// ****************************************************************
+/****************************************************************/
 
         out[y ^ S] = o1;
         aux1[y ^ S] = a1;
 
-// ****************************************************************
-        //if (!(flags&A_AUX)) {
+/****************************************************************/
         a2 = aux2[y ^ S];
         a3 = aux3[y ^ S];
 
@@ -178,18 +177,18 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
         aux3[y ^ S] = a3;
     }
 
-    *(int16_t *)(hleMixerWorkArea +  0) = Wet; // 0-1
-    *(int16_t *)(hleMixerWorkArea +  2) = Dry; // 2-3
-    *(int16_t *)(hleMixerWorkArea +  4) = LTrg; // 4-5
-    *(int16_t *)(hleMixerWorkArea +  6) = RTrg; // 6-7
-    *(int32_t *)(hleMixerWorkArea +  8) = LAdder; // 8-9 (hleMixerWorkArea is a 16bit pointer)
-    *(int32_t *)(hleMixerWorkArea + 10) = RAdder; // 10-11
-    *(int32_t *)(hleMixerWorkArea + 12) = LAcc; // 12-13
-    *(int32_t *)(hleMixerWorkArea + 14) = RAcc; // 14-15
-    *(int32_t *)(hleMixerWorkArea + 16) = LVol; // 16-17
-    *(int32_t *)(hleMixerWorkArea + 18) = RVol; // 18-19
-    *(int16_t *)(hleMixerWorkArea + 20) = LSig; // 20-21
-    *(int16_t *)(hleMixerWorkArea + 22) = RSig; // 22-23
+    *(int16_t *)(hleMixerWorkArea +  0) = Wet; /* 0-1 */
+    *(int16_t *)(hleMixerWorkArea +  2) = Dry; /* 2-3 */
+    *(int16_t *)(hleMixerWorkArea +  4) = LTrg; /* 4-5 */
+    *(int16_t *)(hleMixerWorkArea +  6) = RTrg; /* 6-7 */
+    *(int32_t *)(hleMixerWorkArea +  8) = LAdder; /* 8-9 (hleMixerWorkArea is a 16bit pointer) */
+    *(int32_t *)(hleMixerWorkArea + 10) = RAdder; /* 10-11 */
+    *(int32_t *)(hleMixerWorkArea + 12) = LAcc; /* 12-13 */
+    *(int32_t *)(hleMixerWorkArea + 14) = RAcc; /* 14-15 */
+    *(int32_t *)(hleMixerWorkArea + 16) = LVol; /* 16-17 */
+    *(int32_t *)(hleMixerWorkArea + 18) = RVol; /* 18-19 */
+    *(int16_t *)(hleMixerWorkArea + 20) = LSig; /* 20-21 */
+    *(int16_t *)(hleMixerWorkArea + 22) = RSig; /* 22-23 */
     memcpy(rsp.RDRAM + addy, (uint8_t *)hleMixerWorkArea, 80);
 }
 
@@ -200,7 +199,7 @@ static void CLEARBUFF3(uint32_t inst1, uint32_t inst2)
     memset(BufferSpace + addr + 0x4f0, 0, count);
 }
 
-static void MIXER3(uint32_t inst1, uint32_t inst2)    // Needs accuracy verification...
+static void MIXER3(uint32_t inst1, uint32_t inst2)    /* Needs accuracy verification... */
 {
     uint16_t dmemin  = (uint16_t)(inst2 >> 0x10)  + 0x4f0;
     uint16_t dmemout = (uint16_t)(inst2 & 0xFFFF) + 0x4f0;
@@ -208,7 +207,7 @@ static void MIXER3(uint32_t inst1, uint32_t inst2)    // Needs accuracy verifica
     int32_t temp;
     int x;
 
-    for (x = 0; x < 0x170; x += 2) { // I think I can do this a lot easier
+    for (x = 0; x < 0x170; x += 2) { /* I think I can do this a lot easier */
         temp = (*(int16_t *)(BufferSpace + dmemin + x) * gain) >> 15;
         temp += *(int16_t *)(BufferSpace + dmemout + x);
 
@@ -237,7 +236,7 @@ static void SAVEBUFF3(uint32_t inst1, uint32_t inst2)
     memcpy(rsp.RDRAM + v0, BufferSpace + src, cnt);
 }
 
-static void LOADADPCM3(uint32_t inst1, uint32_t inst2)    // Loads an ADPCM table - Works 100% Now 03-13-01
+static void LOADADPCM3(uint32_t inst1, uint32_t inst2)    /* Loads an ADPCM table - Works 100% Now 03-13-01 */
 {
     uint32_t v0 = (inst2 & 0xffffff);
     uint32_t x;
@@ -259,7 +258,7 @@ static void LOADADPCM3(uint32_t inst1, uint32_t inst2)    // Loads an ADPCM tabl
     }
 }
 
-static void DMEMMOVE3(uint32_t inst1, uint32_t inst2)    // Needs accuracy verification...
+static void DMEMMOVE3(uint32_t inst1, uint32_t inst2)    /* Needs accuracy verification... */
 {
     uint32_t cnt;
     uint32_t v0 = (inst1 & 0xFFFF) + 0x4f0;
@@ -275,7 +274,7 @@ static void SETLOOP3(uint32_t inst1, uint32_t inst2)
     loopval = (inst2 & 0xffffff);
 }
 
-static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Accurate...
+static void ADPCM3(uint32_t inst1, uint32_t inst2)    /* Verified to be 100% Accurate... */
 {
     unsigned char Flags = (uint8_t)(inst2 >> 0x1c) & 0xff;
     unsigned int Address = (inst1 & 0xffffff);
@@ -307,33 +306,37 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
     l2 = out[15 ^ S];
     out += 16;
     while (count > 0) {
-        // the first interation through, these values are
-        // either 0 in the case of A_INIT, from a special
-        // area of memory in the case of A_LOOP or just
-        // the values we calculated the last time
+        /* the first interation through, these values are
+         * either 0 in the case of A_INIT, from a special
+         * area of memory in the case of A_LOOP or just
+         * the values we calculated the last time
+         */
 
         code = BufferSpace[(0x4f0 + inPtr)^S8];
         index = code & 0xf;
-        index <<= 4;                                // index into the adpcm code table
+        index <<= 4;                                /* index into the adpcm code table */
         book1 = (short *)&adpcmtable[index];
         book2 = book1 + 8;
-        code >>= 4;                                 // upper nibble is scale
-        vscale = (0x8000 >> ((12 - code) - 1)); // very strange. 0x8000 would be .5 in 16:16 format
-        // so this appears to be a fractional scale based
-        // on the 12 based inverse of the scale value.  note
-        // that this could be negative, in which case we do
-        // not use the calculated vscale value... see the
-        // if(code>12) check below
+        code >>= 4;                                 /* upper nibble is scale */
+        /* very strange. 0x8000 would be .5 in 16:16 format
+         * so this appears to be a fractional scale based
+         * on the 12 based inverse of the scale value.  note
+         * that this could be negative, in which case we do
+         * not use the calculated vscale value... see the
+         * if(code>12) check below
+         */
+        vscale = (0x8000 >> ((12 - code) - 1));
 
-        inPtr++;                                    // coded adpcm data lies next
+        inPtr++;                                    /* coded adpcm data lies next */
         j = 0;
-        while (j < 8)                               // loop of 8, for 8 coded nibbles from 4 bytes
-            // which yields 8 short pcm values
-        {
+        /* loop of 8, for 8 coded nibbles from 4 bytes
+         * which yields 8 short pcm values
+         */
+        while (j < 8) {
             icode = BufferSpace[(0x4f0 + inPtr)^S8];
             inPtr++;
 
-            inp1[j] = (int16_t)((icode & 0xf0) << 8);   // this will in effect be signed
+            inp1[j] = (int16_t)((icode & 0xf0) << 8);   /* this will in effect be signed */
             if (code < 12)
                 inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
             j++;
@@ -348,7 +351,7 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)    // Verified to be 100% Acc
             icode = BufferSpace[(0x4f0 + inPtr)^S8];
             inPtr++;
 
-            inp2[j] = (short)((icode & 0xf0) << 8);     // this will in effect be signed
+            inp2[j] = (short)((icode & 0xf0) << 8);     /* this will in effect be signed */
             if (code < 12)
                 inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
             j++;
@@ -568,7 +571,7 @@ static void RESAMPLE3(uint32_t inst1, uint32_t inst2)
     *(uint16_t *)(rsp.RDRAM + addy + 10) = Accum;
 }
 
-static void INTERLEAVE3(uint32_t inst1, uint32_t inst2)    // Needs accuracy verification...
+static void INTERLEAVE3(uint32_t inst1, uint32_t inst2)    /* Needs accuracy verification... */
 {
     uint16_t *outbuff = (uint16_t *)(BufferSpace + 0x4f0);
     uint16_t *inSrcR;

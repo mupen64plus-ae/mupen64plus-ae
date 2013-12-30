@@ -265,23 +265,23 @@ static void handle_unknown_task(unsigned int sum)
     sprintf(&filename[0], "task_%x.log", sum);
     dump_task(filename, task);
 
-    // dump ucode_boot
+    /* dump ucode_boot */
     sprintf(&filename[0], "ucode_boot_%x.bin", sum);
     dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
 
-    // dump ucode
+    /* dump ucode */
     if (task->ucode != 0) {
         sprintf(&filename[0], "ucode_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
     }
 
-    // dump ucode_data
+    /* dump ucode_data */
     if (task->ucode_data != 0) {
         sprintf(&filename[0], "ucode_data_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
     }
 
-    // dump data
+    /* dump data */
     if (task->data_ptr != 0) {
         sprintf(&filename[0], "data_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
@@ -294,7 +294,7 @@ static void handle_unknown_non_task(unsigned int sum)
 
     DebugMessage(M64MSG_WARNING, "unknown RSP code: sum: %x PC:%x", sum, *rsp.SP_PC_REG);
 
-    // dump IMEM & DMEM for further analysis
+    /* dump IMEM & DMEM for further analysis */
     sprintf(&filename[0], "imem_%x.bin", sum);
     dump_binary(filename, rsp.IMEM, 0x1000);
 
@@ -417,10 +417,10 @@ static void dump_binary(const char *const filename, const unsigned char *const b
 {
     FILE *f;
 
-    // if file already exists, do nothing
+    /* if file already exists, do nothing */
     f = fopen(filename, "r");
     if (f == NULL) {
-        // else we write bytes to the file
+        /* else we write bytes to the file */
         f = fopen(filename, "wb");
         if (f != NULL) {
             if (fwrite(bytes, 1, size, f) != size)

@@ -36,8 +36,9 @@
 typedef void (*tile_line_emitter_t)(const int16_t *y, const int16_t *u, uint32_t address);
 typedef void (*subblock_transform_t)(int16_t *dst, const int16_t *src);
 
-/* rdram operations */
-// FIXME: these functions deserve their own module
+/* rdram operations
+ * FIXME: these functions deserve their own module
+ */
 static void rdram_read_many_u16(uint16_t *dst, uint32_t address, unsigned int count);
 static void rdram_write_many_u16(const uint16_t *src, uint32_t address, unsigned int count);
 static uint32_t rdram_read_u32(uint32_t address);
