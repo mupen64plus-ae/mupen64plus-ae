@@ -205,27 +205,21 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             return;
         }
         
-        // Set the title of the menu to the game name, if available
-        // String ROM_name = configSection.get( "Name" );
-        // if( !TextUtils.isEmpty( ROM_name ) )
-        // setTitle( ROM_name );
-        
         // Layout the menu, populating it with appropriate cheat options
         PreferenceCategory cheatsCategory = (PreferenceCategory) findPreference( CATEGORY_CHEATS );
         CheatBlock cheat;
-        for( int i = 0; i<cheatSection.size(); i++ )
+        for( int i = 0; i < cheatSection.size(); i++ )
         {
             cheat = cheatSection.get( i );
-            if( cheat!=null )
+            if( cheat != null )
             {
                 // Get the short title of the cheat (shown in the menu)
                 String title;
-                if( cheat.name==null )
+                if( cheat.name == null )
                 {
                     // Title not available, just use a default string for the menu
                     title = getString( R.string.cheats_defaultName, i );
                 }
-                
                 else
                 {
                     // Title available, remove the leading/trailing quotation marks
@@ -238,40 +232,35 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 // Get the options for this cheat
                 LinkedList<CheatCode> codes = new LinkedList<CheatCode>();
                 LinkedList<CheatOption> options = new LinkedList<CheatOption>();
-                for(int o=0; o<cheat.size(); o++)
+                for( int o = 0; o < cheat.size(); o++ )
                 {
-                	codes.add(cheat.get(o));
+                    codes.add( cheat.get( o ) );
                 }
-                /* There shouldn't be more than one set of options per cheat 
-                 * so why do we need to recurse individual codes?
+                /*
+                 * There shouldn't be more than one set of options per cheat so why do we need to
+                 * recurse individual codes?
                  */
-                for(int o=0; o<codes.size(); o++)
+                for( int o = 0; o < codes.size(); o++ )
                 {
-                	if(codes.get(o).options!=null)
-                	{
-                		options=codes.get(o).options;
-                	}
-                	
+                    if( codes.get( o ).options != null )
+                    {
+                        options = codes.get( o ).options;
+                    }
                 }
                 String[] optionStrings = null;
-                if( options!=null )
+                if( options != null && !options.isEmpty() )
                 {
-                	if(!options.isEmpty())
-                	{
                     // This is a multi-choice cheat
-
                     optionStrings = new String[options.size()];
                     
                     // Each element is a key-value pair
                     for( int z = 0; z < options.size(); z++ )
                     {
                         // The first non-leading space character is the pair delimiter
-                        optionStrings[z] = options.get(z).name;
+                        optionStrings[z] = options.get( z ).name;
                         if( TextUtils.isEmpty( optionStrings[z] ) )
-                        	optionStrings[z] = getString( R.string.cheats_longPress );
-                            
+                            optionStrings[z] = getString( R.string.cheats_longPress );
                     }
-                	}
                 }
                 
                 // Create the menu item associated with this cheat
