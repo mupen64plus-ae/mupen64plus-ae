@@ -76,7 +76,6 @@ void DebugMessage(int level, const char *message, ...);
 
 extern uint8_t BufferSpace[0x10000];
 
-extern uint32_t SEGMENTS[0x10];
 extern uint16_t AudioInBuffer;   // 0x0000(T8)
 extern uint16_t AudioOutBuffer;  // 0x0002(T8)
 extern uint16_t AudioCount;      // 0x0004(T8)
@@ -93,9 +92,6 @@ extern int32_t VolRamp_Right;
 extern uint16_t adpcmtable[0x88];
 extern const uint16_t ResampleLUT [0x200];
 extern short hleMixerWorkArea[256];
-
-extern uint32_t base, dmembase;
-extern char *pDMEM;
 
 void MP3(uint32_t inst1, uint32_t inst2);
 

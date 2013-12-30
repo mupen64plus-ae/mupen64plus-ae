@@ -99,25 +99,24 @@ static void SPNOOP(uint32_t inst1, uint32_t inst2)
     //MessageBox (NULL, "Unknown Audio Command in ABI 1", "Audio HLE Error", MB_OK);
 }
 
-uint32_t SEGMENTS[0x10]; // 0x0320
 // T8 = 0x360
-uint16_t AudioInBuffer;  // 0x0000(T8)
-uint16_t AudioOutBuffer; // 0x0002(T8)
-uint16_t AudioCount;     // 0x0004(T8)
-int16_t Vol_Left;        // 0x0006(T8)
-int16_t Vol_Right;       // 0x0008(T8)
-uint16_t AudioAuxA;      // 0x000A(T8)
-uint16_t AudioAuxC;      // 0x000C(T8)
-uint16_t AudioAuxE;      // 0x000E(T8)
-uint32_t loopval;        // 0x0010(T8) // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
-int16_t VolTrg_Left;     // 0x0010(T8)
-int32_t VolRamp_Left;    // m_LeftVolTarget
-//uint16_t VolRate_Left; // m_LeftVolRate
-int16_t VolTrg_Right;    // m_RightVol
-int32_t VolRamp_Right;   // m_RightVolTarget
-//uint16_t VolRate_Right;// m_RightVolRate
-int16_t Env_Dry;         // 0x001C(T8)
-int16_t Env_Wet;         // 0x001E(T8)
+uint16_t AudioInBuffer;    // 0x0000(T8)
+uint16_t AudioOutBuffer;   // 0x0002(T8)
+uint16_t AudioCount;       // 0x0004(T8)
+int16_t Vol_Left;          // 0x0006(T8)
+int16_t Vol_Right;         // 0x0008(T8)
+static uint16_t AudioAuxA; // 0x000A(T8)
+static uint16_t AudioAuxC; // 0x000C(T8)
+static uint16_t AudioAuxE; // 0x000E(T8)
+uint32_t loopval;          // 0x0010(T8) // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
+int16_t VolTrg_Left;       // 0x0010(T8)
+int32_t VolRamp_Left;      // m_LeftVolTarget
+//uint16_t VolRate_Left;   // m_LeftVolRate
+int16_t VolTrg_Right;      // m_RightVol
+int32_t VolRamp_Right;     // m_RightVolTarget
+//uint16_t VolRate_Right;  // m_RightVolRate
+int16_t Env_Dry;           // 0x001C(T8)
+int16_t Env_Wet;           // 0x001E(T8)
 
 uint8_t BufferSpace[0x10000];
 
