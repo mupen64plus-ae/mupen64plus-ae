@@ -109,13 +109,14 @@ static void ENVMIXER3(u32 inst1, u32 inst2)
     //unsigned short AuxIncRate=1;
     short zero[8];
     int y;
-    memset(zero, 0, 16);
 
     s32 LAdder, LAcc, LVol;
     s32 RAdder, RAcc, RVol;
     s16 RSig, LSig; // Most significant part of the Ramp Value
     s16 Wet, Dry;
     s16 LTrg, RTrg;
+
+    memset(zero, 0, sizeof(zero));
 
     Vol_Right = (s16)inst1;
 
@@ -280,28 +281,25 @@ static void MIXER3(u32 inst1, u32 inst2)    // Needs accuracy verification...
 
 static void LOADBUFF3(u32 inst1, u32 inst2)
 {
-    u32 v0;
+    u32 v0 = (inst2 & 0xfffffc);
     u32 cnt = (((inst1 >> 0xC) + 3) & 0xFFC);
-    v0 = (inst2 & 0xfffffc);
     u32 src = (inst1 & 0xffc) + 0x4f0;
     memcpy(BufferSpace + src, rsp.RDRAM + v0, cnt);
 }
 
 static void SAVEBUFF3(u32 inst1, u32 inst2)
 {
-    u32 v0;
+    u32 v0 = (inst2 & 0xfffffc);
     u32 cnt = (((inst1 >> 0xC) + 3) & 0xFFC);
-    v0 = (inst2 & 0xfffffc);
     u32 src = (inst1 & 0xffc) + 0x4f0;
     memcpy(rsp.RDRAM + v0, BufferSpace + src, cnt);
 }
 
 static void LOADADPCM3(u32 inst1, u32 inst2)    // Loads an ADPCM table - Works 100% Now 03-13-01
 {
-    u32 v0;
+    u32 v0 = (inst2 & 0xffffff);
     u32 x;
 
-    v0 = (inst2 & 0xffffff);
     //memcpy (dmem+0x3f0, rsp.RDRAM+v0, inst1&0xffff);
     //assert ((inst1&0xffff) <= 0x80);
     u16 *table = (u16 *)(rsp.RDRAM + v0);
@@ -323,10 +321,9 @@ static void LOADADPCM3(u32 inst1, u32 inst2)    // Loads an ADPCM table - Works 
 
 static void DMEMMOVE3(u32 inst1, u32 inst2)    // Needs accuracy verification...
 {
-    u32 v0, v1;
     u32 cnt;
-    v0 = (inst1 & 0xFFFF) + 0x4f0;
-    v1 = (inst2 >> 0x10) + 0x4f0;
+    u32 v0 = (inst1 & 0xFFFF) + 0x4f0;
+    u32 v1 = (inst2 >> 0x10) + 0x4f0;
     u32 count = ((inst2 + 3) & 0xfffc);
 
     //memcpy (dmem+v1, dmem+v0, count-1);
@@ -356,6 +353,10 @@ static void ADPCM3(u32 inst1, u32 inst2)    // Verified to be 100% Accurate...
     unsigned short j;
     int a[8];
     short *book1, *book2;
+    int l1;
+    int l2;
+    int inp1[8];
+    int inp2[8];
 
     memset(out, 0, 32);
 
@@ -377,10 +378,8 @@ static void ADPCM3(u32 inst1, u32 inst2)    // Verified to be 100% Accurate...
         }
     }
 
-    int l1 = out[14 ^ S];
-    int l2 = out[15 ^ S];
-    int inp1[8];
-    int inp2[8];
+    l1 = out[14 ^ S];
+    l2 = out[15 ^ S];
     out += 16;
     while (count > 0) {
         // the first interation through, these values are
@@ -600,13 +599,14 @@ static void RESAMPLE3(u32 inst1, u32 inst2)
     s16 *lut;
     short *dst;
     s16 *src;
-    dst = (short *)(BufferSpace);
-    src = (s16 *)(BufferSpace);
     u32 srcPtr = ((((inst2 >> 2) & 0xfff) + 0x4f0) / 2);
     u32 dstPtr;//=(AudioOutBuffer/2);
     s32 temp;
     s32 accum;
     int x, i;
+
+    dst = (short *)(BufferSpace);
+    src = (s16 *)(BufferSpace);
 
     //if (addy > (1024*1024*8))
     //  addy = (inst2 & 0xffffff);

@@ -190,7 +190,6 @@ static void ENVMIXER(u32 inst1, u32 inst2)
     int i1, o1, a1, a2 = 0, a3 = 0;
     unsigned short AuxIncRate = 1;
     short zero[8];
-    memset(zero, 0, 16);
     s32 LVol, RVol;
     s32 LAcc, RAcc;
     s32 LTrg, RTrg;
@@ -200,6 +199,8 @@ static void ENVMIXER(u32 inst1, u32 inst2)
     s32 LAdderStart, RAdderStart, LAdderEnd, RAdderEnd;
     s32 oMainR, oMainL, oAuxR, oAuxL;
     int x, y;
+
+    memset(zero, 0, sizeof(zero));
 
     //envmixcnt++;
 
@@ -404,10 +405,8 @@ static void RESAMPLE(u32 inst1, u32 inst2)
     unsigned int Accum = 0;
     unsigned int location;
     s16 *lut/*, *lut2*/;
-    short *dst;
-    s16 *src;
-    dst = (short *)(BufferSpace);
-    src = (s16 *)(BufferSpace);
+    short *dst = (short *)(BufferSpace);
+    s16 *src = (s16 *)(BufferSpace);
     u32 srcPtr = (AudioInBuffer / 2);
     u32 dstPtr = (AudioOutBuffer / 2);
     s32 temp;
@@ -546,6 +545,10 @@ static void ADPCM(u32 inst1, u32 inst2)    // Work in progress! :)
     unsigned short j;
     int a[8];
     short *book1, *book2;
+    int l1;
+    int l2;
+    int inp1[8];
+    int inp2[8];
     /*
         if (Address > (1024*1024*8))
             Address = (inst2 & 0xffffff);
@@ -559,10 +562,8 @@ static void ADPCM(u32 inst1, u32 inst2)    // Work in progress! :)
             memcpy(out, &rsp.RDRAM[Address], 32);
     }
 
-    int l1 = out[14 ^ S];
-    int l2 = out[15 ^ S];
-    int inp1[8];
-    int inp2[8];
+    l1 = out[14 ^ S];
+    l2 = out[15 ^ S];
     out += 16;
     while (count > 0) {
         // the first interation through, these values are
@@ -806,17 +807,17 @@ static void SETBUFF(u32 inst1, u32 inst2)    // Should work ;-)
 
 static void DMEMMOVE(u32 inst1, u32 inst2)    // Doesn't sound just right?... will fix when HLE is ready - 03-11-01
 {
-    u32 v0, v1;
     u32 cnt;
-    if ((inst2 & 0xffff) == 0)
-        return;
-    v0 = (inst1 & 0xFFFF);
-    v1 = (inst2 >> 0x10);
+    u32 v0 = (inst1 & 0xFFFF);
+    u32 v1 = (inst2 >> 0x10);
     //assert ((v1 & 0x3) == 0);
     //assert ((v0 & 0x3) == 0);
     u32 count = ((inst2 + 3) & 0xfffc);
     //v0 = (v0) & 0xfffc;
     //v1 = (v1) & 0xfffc;
+
+    if ((inst2 & 0xffff) == 0)
+        return;
 
     //memcpy (BufferSpace+v1, BufferSpace+v0, count-1);
     for (cnt = 0; cnt < count; cnt++)
@@ -825,10 +826,9 @@ static void DMEMMOVE(u32 inst1, u32 inst2)    // Doesn't sound just right?... wi
 
 static void LOADADPCM(u32 inst1, u32 inst2)    // Loads an ADPCM table - Works 100% Now 03-13-01
 {
-    u32 v0;
+    u32 v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
     u32 x;
 
-    v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
     /*  if (v0 > (1024*1024*8))
             v0 = (inst2 & 0xffffff);*/
     //memcpy (dmem+0x4c0, rsp.RDRAM+v0, inst1&0xffff); // Could prolly get away with not putting this in dmem

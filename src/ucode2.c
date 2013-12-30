@@ -54,8 +54,8 @@ void init_ucode2()
 
 static void LOADADPCM2(u32 inst1, u32 inst2)    // Loads an ADPCM table - Works 100% Now 03-13-01
 {
-    u32 v0, x;
-    v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
+    u32 v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
+    u32 x;
     u16 *table = (u16 *)(rsp.RDRAM + v0); // Zelda2 Specific...
 
     for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
@@ -109,6 +109,11 @@ static void ADPCM2(u32 inst1, u32 inst2)    // Verified to be 100% Accurate...
     u8 mask2;
     u8 shifter;
 
+    int l1;
+    int l2;
+    int inp1[8];
+    int inp2[8];
+
     memset(out, 0, 32);
 
     if (Flags & 0x4) { // Tricky lil Zelda MM and ABI2!!! hahaha I know your secrets! :DDD
@@ -141,10 +146,8 @@ static void ADPCM2(u32 inst1, u32 inst2)    // Verified to be 100% Accurate...
         }
     }
 
-    int l1 = out[14 ^ S];
-    int l2 = out[15 ^ S];
-    int inp1[8];
-    int inp2[8];
+    l1 = out[14 ^ S];
+    l2 = out[15 ^ S];
     out += 16;
     while (count > 0) {
         code = BufferSpace[(AudioInBuffer + inPtr)^S8];
@@ -418,13 +421,14 @@ static void RESAMPLE2(u32 inst1, u32 inst2)
     s16 *lut;
     short *dst;
     s16 *src;
-    dst = (short *)(BufferSpace);
-    src = (s16 *)(BufferSpace);
     u32 srcPtr = (AudioInBuffer / 2);
     u32 dstPtr = (AudioOutBuffer / 2);
     s32 temp;
     s32 accum;
     int x, i;
+
+    dst = (short *)(BufferSpace);
+    src = (s16 *)(BufferSpace);
 
     if (addy > (1024 * 1024 * 8))
         addy = (inst2 & 0xffffff);
@@ -474,17 +478,17 @@ static void RESAMPLE2(u32 inst1, u32 inst2)
 
 static void DMEMMOVE2(u32 inst1, u32 inst2)    // Needs accuracy verification...
 {
-    u32 v0, v1;
     u32 cnt;
-    if ((inst2 & 0xffff) == 0)
-        return;
-    v0 = (inst1 & 0xFFFF);
-    v1 = (inst2 >> 0x10);
+    u32 v0 = (inst1 & 0xFFFF);
+    u32 v1 = (inst2 >> 0x10);
     //assert ((v1 & 0x3) == 0);
     //assert ((v0 & 0x3) == 0);
     u32 count = ((inst2 + 3) & 0xfffc);
     //v0 = (v0) & 0xfffc;
     //v1 = (v1) & 0xfffc;
+
+    if ((inst2 & 0xffff) == 0)
+        return;
 
     //memcpy (dmem+v1, dmem+v0, count-1);
     for (cnt = 0; cnt < count; cnt++)
@@ -783,9 +787,7 @@ static void HILOGAIN(u32 inst1, u32 inst2)
     u16 out = (inst2 >> 16) & 0xffff;
     s16 hi  = (s16)((inst1 >> 4) & 0xf000);
     u16 lo  = (inst1 >> 20) & 0xf;
-    s16 *src;
-
-    src = (s16 *)(BufferSpace + out);
+    s16 *src = (s16 *)(BufferSpace + out);
     s32 tmp, val;
 
     while (cnt) {
@@ -808,6 +810,10 @@ static void FILTER2(u32 inst1, u32 inst2)
     u8 *save = (rsp.RDRAM + (inst2 & 0xFFFFFF));
     u8 t4 = (u8)((inst1 >> 0x10) & 0xFF);
     int x;
+    short *inp1, *inp2;
+    s32 out1[8];
+    s16 outbuff[0x3c0], *outp;
+    u32 inPtr;
 
     if (t4 > 1) { // Then set the cnt variable
         cnt = (inst1 & 0xFFFF);
@@ -830,10 +836,7 @@ static void FILTER2(u32 inst1, u32 inst2)
         a = (lutt5[x] + lutt6[x]) >> 1;
         lutt5[x] = lutt6[x] = (short)a;
     }
-    short *inp1, *inp2;
-    s32 out1[8];
-    s16 outbuff[0x3c0], *outp;
-    u32 inPtr = (u32)(inst1 & 0xffff);
+    inPtr = (u32)(inst1 & 0xffff);
     inp1 = (short *)(save);
     outp = outbuff;
     inp2 = (short *)(BufferSpace + inPtr);
