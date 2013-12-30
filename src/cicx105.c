@@ -33,7 +33,7 @@
  *
  * Found in Banjo-Tooie, Zelda, Perfect Dark, ...)
  **/
-void cicx105_ucode()
+void cicx105_ucode(void)
 {
     // memcpy is okay to use because access constrains are met (alignment, size)
     unsigned int i;

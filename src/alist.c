@@ -59,17 +59,17 @@ static void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
 }
 
 /* global functions */
-void alist_process_ABI1()
+void alist_process_ABI1(void)
 {
     alist_process(ABI1, 0x10);
 }
 
-void alist_process_ABI2()
+void alist_process_ABI2(void)
 {
     alist_process(ABI2, 0x20);
 }
 
-void alist_process_ABI3()
+void alist_process_ABI3(void)
 {
     alist_process(ABI3, 0x10);
 }

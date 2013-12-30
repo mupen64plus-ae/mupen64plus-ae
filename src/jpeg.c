@@ -144,7 +144,7 @@ static const float IDCT_K[10] = {
 /***************************************************************************
  * JPEG decoding ucode found in Japanese exclusive version of Pokemon Stadium.
  **************************************************************************/
-void jpeg_decode_PS0()
+void jpeg_decode_PS0(void)
 {
     jpeg_decode_std("PS0", RescaleYSubBlock, RescaleUVSubBlock, EmitYUVTileLine);
 }
@@ -153,7 +153,7 @@ void jpeg_decode_PS0()
  * JPEG decoding ucode found in Ocarina of Time, Pokemon Stadium 1 and
  * Pokemon Stadium 2.
  **************************************************************************/
-void jpeg_decode_PS()
+void jpeg_decode_PS(void)
 {
     jpeg_decode_std("PS", NULL, NULL, EmitRGBATileLine);
 }
@@ -161,7 +161,7 @@ void jpeg_decode_PS()
 /***************************************************************************
  * JPEG decoding ucode found in Ogre Battle and Bottom of the 9th.
  **************************************************************************/
-void jpeg_decode_OB()
+void jpeg_decode_OB(void)
 {
     int16_t qtable[SUBBLOCK_SIZE];
     unsigned int mb;

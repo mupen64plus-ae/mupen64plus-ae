@@ -47,7 +47,7 @@ extern const u16 ResampleLUT [0x200];
 bool isMKABI = false;
 bool isZeldaABI = false;
 
-void init_ucode2()
+void init_ucode2(void)
 {
     isMKABI = isZeldaABI = false;
 }

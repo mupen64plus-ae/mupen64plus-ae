@@ -167,7 +167,7 @@ static u8 mp3data[0x1000];
 
 static s32 v[32];
 
-static void MP3AB0()
+static void MP3AB0(void)
 {
     // Part 2 - 100% Accurate
     const u16 LUT2[8] = { 0xFEC4, 0xF4FA, 0xC5E4, 0xE1C4,
@@ -256,7 +256,7 @@ void MP3(u32 inst1, u32 inst2)
 
 
 
-static void InnerLoop()
+static void InnerLoop(void)
 {
     // Part 1: 100% Accurate
 

@@ -81,7 +81,7 @@ static int l_PluginInit = 0;
  *
  * Using ucode_boot_size should be more robust in this regard.
  **/
-static int is_task()
+static int is_task(void)
 {
     return (get_task()->ucode_boot_size <= 0x1000);
 }
@@ -96,7 +96,7 @@ static void rsp_break(unsigned int setbits)
     }
 }
 
-static void forward_gfx_task()
+static void forward_gfx_task(void)
 {
     if (rsp.ProcessDlistList != NULL) {
         rsp.ProcessDlistList();
@@ -104,19 +104,19 @@ static void forward_gfx_task()
     }
 }
 
-static void forward_audio_task()
+static void forward_audio_task(void)
 {
     if (rsp.ProcessAlistList != NULL)
         rsp.ProcessAlistList();
 }
 
-static void show_cfb()
+static void show_cfb(void)
 {
     if (rsp.ShowCFB != NULL)
         rsp.ShowCFB();
 }
 
-static int try_fast_audio_dispatching()
+static int try_fast_audio_dispatching(void)
 {
     /* identify audio ucode by using the content of ucode_data */
     const OSTask_t *const task = get_task();
@@ -172,7 +172,7 @@ static int try_fast_audio_dispatching()
     return 0;
 }
 
-static int try_fast_task_dispatching()
+static int try_fast_task_dispatching(void)
 {
     /* identify task ucode by its type */
     const OSTask_t *const task = get_task();
@@ -201,7 +201,7 @@ static int try_fast_task_dispatching()
     return 0;
 }
 
-static void normal_task_dispatching()
+static void normal_task_dispatching(void)
 {
     const OSTask_t *const task = get_task();
     const unsigned int sum =
@@ -240,7 +240,7 @@ static void normal_task_dispatching()
     handle_unknown_task(sum);
 }
 
-static void non_task_dispatching()
+static void non_task_dispatching(void)
 {
     const unsigned int sum = sum_bytes(rsp.IMEM, 0x1000 >> 1);
 

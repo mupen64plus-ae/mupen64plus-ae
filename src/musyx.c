@@ -262,7 +262,7 @@ void store_u16(const uint16_t *src, uint32_t address, size_t count)
 /**************************************************************************
  * MusyX audio ucode
  **************************************************************************/
-void musyx_task()
+void musyx_task(void)
 {
     const OSTask_t *const task = get_task();
 
