@@ -10,11 +10,11 @@ import paulscode.android.mupen64plusae.persistent.CheatFile.CheatBlock;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatCode;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -144,7 +144,7 @@ public class CheatEditorActivity extends ListActivity {
 					    alertDialog.setTitle(getString(R.string.cheatEditor_notes));
 					    alertDialog.setMessage(getString(R.string.cheatEditor_notes_desc));
 					    final EditText i = new EditText(CheatEditorActivity.this);
-					    if(cheats_desc.get(pos).equals(getString(R.string.cheatNotes_none))||cheats_desc.get(pos).isEmpty())
+					    if(cheats_desc.get(pos).equals(getString(R.string.cheatNotes_none))||TextUtils.isEmpty(cheats_desc.get(pos)))
 					    		{
 					    			i.setText("");
 					    		}else{
@@ -157,7 +157,7 @@ public class CheatEditorActivity extends ListActivity {
 			    	        public void onClick(DialogInterface dialog, int which) {
 			    	            // Clicked
 			    	        	i.setText(i.getText().toString().replace('\n', ' '));
-			    	        	if(i.getText().toString().isEmpty())
+			    	        	if( TextUtils.isEmpty(i.getText()) )
 			    	        	{
 			    	        		i.setText(getString(R.string.cheatNotes_none));
 			    	        	}
@@ -479,7 +479,7 @@ public class CheatEditorActivity extends ListActivity {
                     {
                         // The first non-leading space character is the pair delimiter
                         optionStrings[z] = options.get(z).name;
-                        if( optionStrings[z].isEmpty() || optionStrings[z] == null )
+                        if( TextUtils.isEmpty(optionStrings[z]) )
                         	optionStrings[z] = getString( R.string.cheats_longPress );
                             
                     }
@@ -507,7 +507,7 @@ public class CheatEditorActivity extends ListActivity {
 			{
 				String desc = cheats_desc.get(i);
 				CheatBlock b = null;
-				if(desc.equals(getString(R.string.cheatNotes_none))||desc.isEmpty())
+				if(desc.equals(getString(R.string.cheatNotes_none))||TextUtils.isEmpty(desc))
 				{
 					b = new CheatBlock(cheats_name.get(i),null);
 				}else{
@@ -516,7 +516,7 @@ public class CheatEditorActivity extends ListActivity {
 				LinkedList<CheatOption> ops = new LinkedList<CheatOption>();
 				if(cheats_option.get(i)!=null)
 				{
-					if(!cheats_option.get(i).isEmpty())
+					if(!TextUtils.isEmpty(cheats_option.get(i)))
 					{
 						String[] tmp_ops = cheats_option.get(i).split("\n");
 						for(int o = 0; o<tmp_ops.length; o++)
@@ -561,7 +561,7 @@ public class CheatEditorActivity extends ListActivity {
 		AlertDialog alertDialog = new AlertDialog.Builder(CheatEditorActivity.this).create();
 	    alertDialog.setTitle(getString(R.string.cheatEditor_info));
 	    String msg=getString(R.string.cheatEditor_title2)+"\n"+cheats_name.get(position)+"\n"+getString(R.string.cheatEditor_notes2)+"\n"+cheats_desc.get(position)+"\n"+getString(R.string.cheatEditor_code2)+"\n"+cheats_code.get(position);
-	    if(cheats_option.get(position)!=null&&!cheats_option.get(position).isEmpty()&&cheats_code.get(position).contains("?"))
+	    if(!TextUtils.isEmpty(cheats_option.get(position))&&cheats_code.get(position).contains("?"))
 	    {
 	    	msg+="\n"+getString(R.string.cheatEditor_option2)+"\n";
 	    	msg+=cheats_option.get(position);

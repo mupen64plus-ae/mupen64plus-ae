@@ -46,6 +46,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.bda.controller.Controller;
@@ -266,7 +267,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                     {
                         // The first non-leading space character is the pair delimiter
                         optionStrings[z] = options.get(z).name;
-                        if( optionStrings[z].isEmpty() || optionStrings[z] == null )
+                        if( TextUtils.isEmpty( optionStrings[z] ) )
                         	optionStrings[z] = getString( R.string.cheats_longPress );
                             
                     }
