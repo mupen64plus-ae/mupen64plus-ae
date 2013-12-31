@@ -32,20 +32,21 @@ import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -345,79 +346,57 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     @Override
     public boolean onItemLongClick( AdapterView<?> av, View v, final int pos, long id )
     {
-        final AlertDialog parentDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-        parentDialog.setTitle( getString( R.string.cheatEditor_config ) );
-        parentDialog.setMessage( getString( R.string.cheatEditor_config_desc ) );
-        LinearLayout ll = new LinearLayout( CheatEditorActivity.this );
-        ll.setOrientation( LinearLayout.VERTICAL );
-        Button en = new Button( CheatEditorActivity.this );
-        en.setText( getString( R.string.cheatEditor_title_desc ) );
-        en.setOnClickListener( new View.OnClickListener()
+        // Inflate the long-click dialog
+        LayoutInflater inflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        View ll = inflater.inflate( R.layout.cheat_editor_longclick_dialog, null );
+        
+        // Build the alert dialog
+        Builder builder = new Builder( this );
+        builder.setTitle( R.string.cheatEditor_config  );
+        builder.setMessage( R.string.cheatEditor_config_desc );
+        builder.setView( ll );
+        final AlertDialog parentDialog = builder.create();
+        
+        // Define the handler for button clicks
+        final View.OnClickListener listener = new View.OnClickListener()
         {
             @Override
             public void onClick( View v )
             {
                 parentDialog.dismiss();
-                promptTitle( pos );
+                switch( v.getId() )
+                {
+                    case R.id.btnEditTitle:
+                        promptTitle( pos );
+                        break;
+                    case R.id.btnEditNotes:
+                        promptNotes( pos );
+                        break;
+                    case R.id.btnEditCode:
+                        promptCode( pos );
+                        break;
+                    case R.id.btnEditOption:
+                        promptOption( pos );
+                        break;
+                    case R.id.btnDelete:
+                        promptDelete( pos );
+                        break;
+                }
             }
-            
-        } );
-        Button ed = new Button( CheatEditorActivity.this );
-        ed.setText( getString( R.string.cheatEditor_notes_desc ) );
-        ed.setOnClickListener( new View.OnClickListener()
-        {
-            @Override
-            public void onClick( View v )
-            {
-                parentDialog.dismiss();
-                promptNotes( pos );
-            }
-            
-        } );
-        Button ec = new Button( CheatEditorActivity.this );
-        ec.setText( getString( R.string.cheatEditor_code_desc ) );
-        ec.setOnClickListener( new View.OnClickListener()
-        {
-            @Override
-            public void onClick( View v )
-            {
-                parentDialog.dismiss();
-                promptCode( pos );
-            }
-            
-        } );
-        Button eo = new Button( CheatEditorActivity.this );
-        eo.setText( getString( R.string.cheatEditor_option_desc ) );
-        eo.setOnClickListener( new View.OnClickListener()
-        {
-            @Override
-            public void onClick( View v )
-            {
-                parentDialog.dismiss();
-                promptOption( pos );
-            }
-            
-        } );
-        Button de = new Button( CheatEditorActivity.this );
-        de.setText( getString( R.string.cheatEditor_delete ) );
-        de.setOnClickListener( new View.OnClickListener()
-        {
-            @Override
-            public void onClick( View v )
-            {
-                parentDialog.dismiss();
-                promptDelete( pos );
-            }
-        } );
-        ll.addView( en );
-        ll.addView( ed );
-        ll.addView( ec );
-        if( cheats_code.get( pos ).contains( "?" ) )
-        {
-            ll.addView( eo );
-        }
-        ll.addView( de );
-        parentDialog.setView( ll );
+        };
+        
+        // Assign the button click handler
+        ll.findViewById( R.id.btnEditTitle ).setOnClickListener( listener );
+        ll.findViewById( R.id.btnEditNotes ).setOnClickListener( listener );
+        ll.findViewById( R.id.btnEditCode ).setOnClickListener( listener );
+        ll.findViewById( R.id.btnEditOption ).setOnClickListener( listener );
+        ll.findViewById( R.id.btnDelete ).setOnClickListener( listener );
+        
+        // Hide the edit option button if not applicable
+        if( !cheats_code.get( pos ).contains( "?" ) )
+            ll.findViewById( R.id.btnEditOption ).setVisibility( View.GONE );
+        
+        // Show the long-click dialog
         parentDialog.show();
         return true;
     }
