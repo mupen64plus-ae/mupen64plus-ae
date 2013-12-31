@@ -31,6 +31,8 @@ import paulscode.android.mupen64plusae.persistent.CheatFile.CheatCode;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
@@ -38,6 +40,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -46,7 +49,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -407,30 +409,23 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     {
         if( KeyCode == KeyEvent.KEYCODE_BACK )
         {
-            AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-            alertDialog.setTitle( getString( R.string.cheatEditor_saveConfirm ) );
-            alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_yes ), new OnClickListener()
+            final OnClickListener listener = new OnClickListener()
             {
-                
+                @Override
                 public void onClick( DialogInterface dialog, int which )
                 {
-                    // Clicked
-                    save( mUserPrefs.selectedGameHeader.crc );
+                    if( which == DialogInterface.BUTTON_POSITIVE )
+                    {
+                        save( mUserPrefs.selectedGameHeader.crc );
+                    }
                     CheatEditorActivity.this.finish();
                 }
-                
-            } );
-            alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_no ), new OnClickListener()
-            {
-                
-                public void onClick( DialogInterface dialog, int which )
-                {
-                    // Clicked
-                    CheatEditorActivity.this.finish();
-                }
-                
-            } );
-            alertDialog.show();
+            };            
+            Builder builder = new Builder( this );
+            builder.setTitle( R.string.cheatEditor_saveConfirm );
+            builder.setPositiveButton( android.R.string.yes, listener );
+            builder.setNegativeButton( android.R.string.no, listener );
+            builder.create().show();
             return true;
         }
         return super.onKeyDown( KeyCode, event );
@@ -438,248 +433,194 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
 
     private void promptTitle( final int pos )
     {
-        AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-        alertDialog.setTitle( getString( R.string.cheatEditor_title ) );
-        alertDialog.setMessage( getString( R.string.cheatEditor_title_desc ) );
-        final EditText i = new EditText( CheatEditorActivity.this );
-        i.setText( cheats_name.get( pos ) );
-        alertDialog.setView( i );
-        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new OnClickListener()
+        CharSequence title = getText( R.string.cheatEditor_title );
+        CharSequence message = getText( R.string.cheatEditor_title_desc );
+        CharSequence text = cheats_name.get( pos );
+        int inputType = InputType.TYPE_CLASS_TEXT;
+        Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
         {
-            
-            public void onClick( DialogInterface dialog, int which )
+            @Override
+            public void onDialogClosed( CharSequence text, int which )
             {
-                // Clicked
-                i.setText( i.getText().toString().replace( '\n', ' ' ) );
-                cheats_name.set( pos, i.getText().toString() );
-                cheatList = new ArrayAdapter<String>( CheatEditorActivity.this, R.layout.cheat_row, cheats_name );
-                setListAdapter( cheatList );
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    String str = text.toString().replace( '\n', ' ' );
+                    cheats_name.set( pos, str );
+                    cheatList = new ArrayAdapter<String>( CheatEditorActivity.this, R.layout.cheat_row, cheats_name );
+                    setListAdapter( cheatList );
+                }
             }
-            
         } );
-        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new OnClickListener()
-        {
-            
-            public void onClick( DialogInterface dialog, int which )
-            {
-                // Clicked
-                
-            }
-            
-        } );
-        alertDialog.show();
     }
 
     private void promptNotes( final int pos )
     {
-        AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-        alertDialog.setTitle( getString( R.string.cheatEditor_notes ) );
-        alertDialog.setMessage( getString( R.string.cheatEditor_notes_desc ) );
-        final EditText i = new EditText( CheatEditorActivity.this );
-        if( cheats_desc.get( pos ).equals( getString( R.string.cheatNotes_none ) ) || TextUtils.isEmpty( cheats_desc.get( pos ) ) )
+        final String desc = cheats_desc.get( pos );
+        CharSequence title = getText( R.string.cheatEditor_notes );
+        CharSequence message = getText( R.string.cheatEditor_notes_desc );
+        CharSequence text;
+        if( desc.equals( getString( R.string.cheatNotes_none ) ) || TextUtils.isEmpty( desc ) )
         {
-            i.setText( "" );
+            text = "";
         }
         else
         {
-            i.setText( cheats_desc.get( pos ) );
+            text = desc;
         }
-        
-        alertDialog.setView( i );
-        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new OnClickListener()
+        int inputType = InputType.TYPE_CLASS_TEXT;
+        Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
         {
-            
-            public void onClick( DialogInterface dialog, int which )
+            @Override
+            public void onDialogClosed( CharSequence text, int which )
             {
-                // Clicked
-                i.setText( i.getText().toString().replace( '\n', ' ' ) );
-                if( TextUtils.isEmpty( i.getText() ) )
+                if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    i.setText( getString( R.string.cheatNotes_none ) );
+                    String str = text.toString().replace( '\n', ' ' );
+                    if( TextUtils.isEmpty( str ) )
+                    {
+                        str = getString( R.string.cheatNotes_none );
+                    }
+                    cheats_desc.set( pos, str );
                 }
-                cheats_desc.set( pos, i.getText().toString() );
             }
-            
         } );
-        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new OnClickListener()
-        {
-            
-            public void onClick( DialogInterface dialog, int which )
-            {
-                // Clicked
-                
-            }
-            
-        } );
-        alertDialog.show();
     }
 
     private void promptCode( final int pos )
     {
-        AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-        alertDialog.setTitle( getString( R.string.cheatEditor_code ) );
-        alertDialog.setMessage( getString( R.string.cheatEditor_code_desc ) );
-        final EditText i = new EditText( CheatEditorActivity.this );
-        i.setText( cheats_code.get( pos ) );
-        alertDialog.setView( i );
-        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new OnClickListener()
+        CharSequence title = getText( R.string.cheatEditor_code );
+        CharSequence message = getText( R.string.cheatEditor_code_desc );
+        CharSequence text = cheats_code.get( pos );
+        int inputType = InputType.TYPE_CLASS_TEXT;
+        Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
         {
-            
-            public void onClick( DialogInterface dialog, int which )
+            @Override
+            public void onDialogClosed( CharSequence text, int which )
             {
-                // Clicked
-                String verify = i.getText().toString();
-                String[] split = verify.split( "\n" );
-                boolean bad = false;
-                for( int o = 0; o < split.length; o++ )
+                if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    if( split[o].length() != 13 )
+                    String verify = text.toString();
+                    String[] split = verify.split( "\n" );
+                    boolean bad = false;
+                    for( int o = 0; o < split.length; o++ )
                     {
-                        bad = true;
-                        break;
+                        if( split[o].length() != 13 )
+                        {
+                            bad = true;
+                            break;
+                        }
+                        if( split[o].indexOf( ' ' ) != -1 )
+                        {
+                            if( !isHexNumber( split[o].substring( 0, split[o].indexOf( ' ' ) ) ) )
+                            {
+                                bad = true;
+                                break;
+                            }
+                            if( !isHexNumber( split[o].substring( split[o].indexOf( ' ' ) + 1 ) ) && !split[o].substring( split[o].indexOf( ' ' ) + 1 ).equals( "????" ) )
+                            {
+                                bad = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            bad = true;
+                            break;
+                        }
                     }
-                    if( split[o].indexOf( ' ' ) != -1 )
+                    if( !bad )
                     {
-                        if( !isHexNumber( split[o].substring( 0, split[o].indexOf( ' ' ) ) ) )
-                        {
-                            bad = true;
-                            break;
-                        }
-                        if( !isHexNumber( split[o].substring( split[o].indexOf( ' ' ) + 1 ) ) && !split[o].substring( split[o].indexOf( ' ' ) + 1 ).equals( "????" ) )
-                        {
-                            bad = true;
-                            break;
-                        }
+                        cheats_code.set( pos, text.toString().toUpperCase( Locale.US ) );
                     }
                     else
                     {
-                        bad = true;
-                        break;
+                        Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_badCode ), Toast.LENGTH_SHORT );
+                        t.show();
                     }
                 }
-                if( !bad )
-                {
-                    cheats_code.set( pos, i.getText().toString().toUpperCase( Locale.US ) );
-                }
-                else
-                {
-                    Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_badCode ), Toast.LENGTH_SHORT );
-                    t.show();
-                }
-                
             }
-            
         } );
-        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new OnClickListener()
-        {
-            
-            public void onClick( DialogInterface dialog, int which )
-            {
-                // Clicked
-            }
-            
-        } );
-        alertDialog.show();
     }
 
     private void promptOption( final int pos )
     {
-        AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-        alertDialog.setTitle( getString( R.string.cheatEditor_option ) );
-        alertDialog.setMessage( getString( R.string.cheatEditor_option_desc ) );
-        final EditText i = new EditText( CheatEditorActivity.this );
-        i.setText( cheats_option.get( pos ) );
-        alertDialog.setView( i );
-        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new OnClickListener()
+        CharSequence title = getText( R.string.cheatEditor_option );
+        CharSequence message = getText( R.string.cheatEditor_option_desc );
+        CharSequence text = cheats_option.get( pos );
+        int inputType = InputType.TYPE_CLASS_TEXT;
+        Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
         {
-            
-            public void onClick( DialogInterface dialog, int which )
+            @Override
+            public void onDialogClosed( CharSequence text, int which )
             {
-                // Clicked
-                String verify = i.getText().toString();
-                String[] split = verify.split( "\n" );
-                boolean bad = false;
-                verify = "";
-                for( int o = 0; o < split.length; o++ )
+                if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    if( split[o].length() <= 5 )
+                    String verify = text.toString();
+                    String[] split = verify.split( "\n" );
+                    boolean bad = false;
+                    verify = "";
+                    for( int o = 0; o < split.length; o++ )
                     {
-                        bad = true;
-                        break;
+                        if( split[o].length() <= 5 )
+                        {
+                            bad = true;
+                            break;
+                        }
+                        if( !isHexNumber( split[o].substring( split[o].length() - 4 ) ) )
+                        {
+                            bad = true;
+                            break;
+                        }
+                        if( split[o].lastIndexOf( ' ' ) != split[o].length() - 5 )
+                        {
+                            bad = true;
+                            break;
+                        }
+                        split[o] = split[o].substring( 0, split[o].length() - 5 ) + " " + split[o].substring( split[o].length() - 4 ).toUpperCase( Locale.US );
+                        String y = "";
+                        if( o != split.length - 1 )
+                        {
+                            y = "\n";
+                        }
+                        verify += split[o] + y;
                     }
-                    if( !isHexNumber( split[o].substring( split[o].length() - 4 ) ) )
+                    if( !bad )
                     {
-                        bad = true;
-                        break;
+                        cheats_option.set( pos, verify );
                     }
-                    if( split[o].lastIndexOf( ' ' ) != split[o].length() - 5 )
+                    else
                     {
-                        bad = true;
-                        break;
+                        Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_badOption ), Toast.LENGTH_SHORT );
+                        t.show();
                     }
-                    split[o] = split[o].substring( 0, split[o].length() - 5 ) + " " + split[o].substring( split[o].length() - 4 ).toUpperCase( Locale.US );
-                    String y = "";
-                    if( o != split.length - 1 )
-                    {
-                        y = "\n";
-                    }
-                    verify += split[o] + y;
-                }
-                if( !bad )
-                {
-                    i.setText( verify );
-                    cheats_option.set( pos, i.getText().toString() );
-                }
-                else
-                {
-                    Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_badOption ), Toast.LENGTH_SHORT );
-                    t.show();
                 }
             }
-            
         } );
-        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new OnClickListener()
-        {
-            
-            public void onClick( DialogInterface dialog, int which )
-            {
-                // Clicked
-            }
-            
-        } );
-        alertDialog.show();
     }
 
     private void promptDelete( final int pos )
     {
-        AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-        alertDialog.setTitle( getString( R.string.cheatEditor_delete ) );
-        alertDialog.setMessage( getString( R.string.cheatEditor_confirm ) );
-        
-        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_yes ), new OnClickListener()
+        final OnClickListener listener = new OnClickListener()
         {
-            
+            @Override
             public void onClick( DialogInterface dialog, int which )
             {
-                // Clicked
-                cheats_name.remove( pos );
-                cheats_desc.remove( pos );
-                cheats_code.remove( pos );
-                cheats_option.remove( pos );
-                cheatList = new ArrayAdapter<String>( CheatEditorActivity.this, R.layout.cheat_row, cheats_name );
-                setListAdapter( cheatList );
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    cheats_name.remove( pos );
+                    cheats_desc.remove( pos );
+                    cheats_code.remove( pos );
+                    cheats_option.remove( pos );
+                    cheatList = new ArrayAdapter<String>( CheatEditorActivity.this, R.layout.cheat_row, cheats_name );
+                    setListAdapter( cheatList );
+                }
             }
-            
-        } );
-        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_no ), new OnClickListener()
-        {
-            
-            public void onClick( DialogInterface dialog, int which )
-            {
-                // Clicked
-            }
-            
-        } );
-        alertDialog.show();
+        };            
+        Builder builder = new Builder( this );
+        builder.setTitle( R.string.cheatEditor_delete );
+        builder.setMessage( R.string.cheatEditor_confirm );
+        builder.setPositiveButton( android.R.string.yes, listener );
+        builder.setNegativeButton( android.R.string.no, listener );
+        builder.create().show();
     }    
 }
