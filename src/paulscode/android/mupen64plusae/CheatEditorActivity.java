@@ -284,18 +284,25 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     @Override
     protected void onListItemClick( ListView l, View v, final int position, long id )
     {
-        AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-        alertDialog.setTitle( getString( R.string.cheatEditor_info ) );
-        String msg = getString( R.string.cheatEditor_title2 ) + "\n" + cheats_name.get( position ) + "\n" + getString( R.string.cheatEditor_notes2 ) + "\n" + cheats_desc.get( position ) + "\n"
-                + getString( R.string.cheatEditor_code2 ) + "\n" + cheats_code.get( position );
+        StringBuilder message = new StringBuilder();
+        message.append( getString( R.string.cheatEditor_title2 ) + "\n" );
+        message.append( cheats_name.get( position ) + "\n" );
+        message.append( getString( R.string.cheatEditor_notes2 ) + "\n" );
+        message.append( cheats_desc.get( position ) + "\n" );
+        message.append( getString( R.string.cheatEditor_code2 ) + "\n" );
+        message.append( cheats_code.get( position ) );
         if( !TextUtils.isEmpty( cheats_option.get( position ) ) && cheats_code.get( position ).contains( "?" ) )
         {
-            msg += "\n" + getString( R.string.cheatEditor_option2 ) + "\n";
-            msg += cheats_option.get( position );
+            message.append( "\n" + getString( R.string.cheatEditor_option2 ) );
+            message.append( "\n" + cheats_option.get( position ) );
         }
-        alertDialog.setMessage( msg );
-        alertDialog.show();
         
+        Builder builder = new Builder( this );
+        builder.setTitle( R.string.cheatEditor_info );
+        builder.setMessage( message.toString() );
+        builder.create().show();
+        AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
+        alertDialog.setTitle( getString( R.string.cheatEditor_info ) );
     }
     
     @Override
