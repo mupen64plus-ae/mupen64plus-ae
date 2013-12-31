@@ -377,15 +377,17 @@ public final class Prompt
      * @param context   The activity context.
      * @param title     The title of the dialog.
      * @param message   The message to be shown inside the dialog.
+     * @param text      The initial text to be shown in the text edit widget.
      * @param hint      The hint to be shown inside the text edit widget.
      * @param inputType The type of input expected, e.g. InputType.TYPE_CLASS_NUMBER.
      * @param listener  The listener to process the text, when provided.
      */
     public static void promptText( Context context, CharSequence title, CharSequence message,
-            CharSequence hint, int inputType, final PromptTextListener listener )
+            CharSequence text, CharSequence hint, int inputType, final PromptTextListener listener )
     {
         // Create an edit-text widget, and add the hint text
         final EditText editText = new EditText( context );
+        editText.setText( text );
         editText.setHint( hint );
         editText.setRawInputType( inputType );
         

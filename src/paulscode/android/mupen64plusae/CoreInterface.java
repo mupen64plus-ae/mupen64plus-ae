@@ -325,7 +325,7 @@ public class CoreInterface
         CharSequence title = sActivity.getText( R.string.menuItem_fileSave );
         CharSequence hint = sActivity.getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( sActivity, title, null, hint, inputType, new PromptTextListener()
+        Prompt.promptText( sActivity, title, null, null, hint, inputType, new PromptTextListener()
         {
             @Override
             public void onDialogClosed( CharSequence text, int which )
