@@ -54,14 +54,24 @@ import android.widget.Toast;
 
 public class CheatEditorActivity extends ListActivity implements View.OnClickListener, OnItemLongClickListener
 {
-    
-    private ArrayList<String> cheats_name = new ArrayList<String>();
-    private ArrayList<String> cheats_desc = new ArrayList<String>();
-    private ArrayList<String> cheats_code = new ArrayList<String>();
-    private ArrayList<String> cheats_option = new ArrayList<String>();
+    private static class Cheat
+    {
+        public String name;
+        public String desc;
+        public String code;
+        public String option;
+        
+        @Override
+        public String toString()
+        {
+            // This is what is shown in the main list
+            return name;
+        }
+    }
+    private final ArrayList<Cheat> cheats = new ArrayList<Cheat>();
+    private ArrayAdapter<Cheat> cheatListAdapter = null;
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-    private ArrayAdapter<String> cheatList = null;
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -102,85 +112,78 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         // setTitle( ROM_name );
         
         // Layout the menu, populating it with appropriate cheat options
-        CheatBlock cheat;
+        cheats.clear();
         for( int i = 0; i < cheatSection.size(); i++ )
         {
-            cheat = cheatSection.get( i );
-            if( cheat != null )
+            CheatBlock cheatBlock = cheatSection.get( i );
+            if( cheatBlock != null )
             {
+                Cheat cheat = new Cheat();
+                
                 // Get the short title of the cheat (shown in the menu)
-                String title;
-                if( cheat.name == null )
+                if( cheatBlock.name == null )
                 {
                     // Title not available, just use a default string for the menu
-                    title = getString( R.string.cheats_defaultName, i );
-                }
-                
+                    cheat.name = getString( R.string.cheats_defaultName, i );
+                }                
                 else
                 {
                     // Title available, remove the leading/trailing quotation marks
-                    title = cheat.name;
+                    cheat.name = cheatBlock.name;
                 }
-                cheats_name.add( title );
+                
                 // Get the descriptive note for this cheat (shown on long-click)
-                final String notes = cheat.description;
-                if( notes == null )
+                if( cheatBlock.description == null )
                 {
-                    cheats_desc.add( getString( R.string.cheatNotes_none ) );
+                    cheat.desc = getString( R.string.cheatNotes_none );
                 }
                 else
                 {
-                    cheats_desc.add( notes );
+                    cheat.desc = cheatBlock.description;
                 }
+                
                 // Get the options for this cheat
                 LinkedList<CheatCode> codes = new LinkedList<CheatCode>();
                 LinkedList<CheatOption> options = new LinkedList<CheatOption>();
-                for( int o = 0; o < cheat.size(); o++ )
+                for( int o = 0; o < cheatBlock.size(); o++ )
                 {
-                    codes.add( cheat.get( o ) );
+                    codes.add( cheatBlock.get( o ) );
                 }
                 for( int o = 0; o < codes.size(); o++ )
                 {
                     if( codes.get( o ).options != null )
                     {
                         options = codes.get( o ).options;
-                    }
-                    
+                    }                    
                 }
                 String codesAsString = "";
-                if( codes != null )
+                if( codes != null && !codes.isEmpty() )
                 {
-                    if( !codes.isEmpty() )
+                    for( int o = 0; o < codes.size(); o++ )
                     {
-                        for( int o = 0; o < codes.size(); o++ )
+                        String y = "";
+                        if( o != codes.size() - 1 )
                         {
-                            String y = "";
-                            if( o != codes.size() - 1 )
-                            {
-                                y = "\n";
-                            }
-                            codesAsString += codes.get( o ).address + " " + codes.get( o ).code + y;
+                            y = "\n";
                         }
+                        codesAsString += codes.get( o ).address + " " + codes.get( o ).code + y;
                     }
                 }
-                cheats_code.add( codesAsString );
+                cheat.code = codesAsString;
                 String optionsAsString = "";
-                if( options != null )
+                if( options != null && !options.isEmpty() )
                 {
-                    if( !options.isEmpty() )
+                    for( int o = 0; o < options.size(); o++ )
                     {
-                        for( int o = 0; o < options.size(); o++ )
+                        String y = "";
+                        if( o != options.size() - 1 )
                         {
-                            String y = "";
-                            if( o != options.size() - 1 )
-                            {
-                                y = "\n";
-                            }
-                            optionsAsString += options.get( o ).name + " " + options.get( o ).code + y;
+                            y = "\n";
                         }
+                        optionsAsString += options.get( o ).name + " " + options.get( o ).code + y;
                     }
                 }
-                cheats_option.add( optionsAsString );
+                cheat.option = optionsAsString;
                 String[] optionStrings = null;
                 if( options != null )
                 {
@@ -201,8 +204,10 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                         }
                     }
                 }
-                cheatList = new ArrayAdapter<String>( this, R.layout.cheat_row, cheats_name );
-                setListAdapter( cheatList );
+                
+                cheats.add( cheat );
+                cheatListAdapter = new ArrayAdapter<Cheat>( this, R.layout.cheat_row, cheats );
+                setListAdapter( cheatListAdapter );
             }
         }
     }
@@ -217,34 +222,33 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
             c = new CheatSection( crc.replace( ' ', '-' ), mUserPrefs.selectedGameHeader.name, Integer.toHexString( ( mUserPrefs.selectedGameHeader.countryCode ) ).substring( 0, 2 ) );
             mupencheat_txt.add( c );
         }
-        if( cheats_name.size() == cheats_desc.size() && cheats_desc.size() == cheats_code.size() && cheats_code.size() == cheats_option.size() )
         {
             c.clear();
-            for( int i = 0; i < cheats_name.size(); i++ )
+            for( int i = 0; i < cheats.size(); i++ )
             {
-                String desc = cheats_desc.get( i );
+                Cheat cheat = cheats.get( i );
                 CheatBlock b = null;
-                if( desc.equals( getString( R.string.cheatNotes_none ) ) || TextUtils.isEmpty( desc ) )
+                if( TextUtils.isEmpty( cheat.desc ) || cheat.desc.equals( getString( R.string.cheatNotes_none ) ) )
                 {
-                    b = new CheatBlock( cheats_name.get( i ), null );
+                    b = new CheatBlock( cheat.name, null );
                 }
                 else
                 {
-                    b = new CheatBlock( cheats_name.get( i ), desc );
+                    b = new CheatBlock( cheat.name, cheat.desc );
                 }
                 LinkedList<CheatOption> ops = new LinkedList<CheatOption>();
-                if( cheats_option.get( i ) != null )
+                if( cheat.option != null )
                 {
-                    if( !TextUtils.isEmpty( cheats_option.get( i ) ) )
+                    if( !TextUtils.isEmpty( cheat.option ) )
                     {
-                        String[] tmp_ops = cheats_option.get( i ).split( "\n" );
+                        String[] tmp_ops = cheat.option.split( "\n" );
                         for( int o = 0; o < tmp_ops.length; o++ )
                         {
                             ops.add( new CheatOption( tmp_ops[o].substring( tmp_ops[o].lastIndexOf( ' ' ) + 1 ), tmp_ops[o].substring( 0, tmp_ops[o].lastIndexOf( ' ' ) ) ) );
                         }
                     }
                 }
-                String[] tmp_lines = cheats_code.get( i ).split( "\n" );
+                String[] tmp_lines = cheat.code.split( "\n" );
                 if( tmp_lines.length > 0 )
                 {
                     for( int o = 0; o < tmp_lines.length; o++ )
@@ -284,17 +288,18 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     @Override
     protected void onListItemClick( ListView l, View v, final int position, long id )
     {
+        Cheat cheat = cheats.get( position );
         StringBuilder message = new StringBuilder();
         message.append( getString( R.string.cheatEditor_title2 ) + "\n" );
-        message.append( cheats_name.get( position ) + "\n" );
+        message.append( cheat.name + "\n" );
         message.append( getString( R.string.cheatEditor_notes2 ) + "\n" );
-        message.append( cheats_desc.get( position ) + "\n" );
+        message.append( cheat.desc + "\n" );
         message.append( getString( R.string.cheatEditor_code2 ) + "\n" );
-        message.append( cheats_code.get( position ) );
-        if( !TextUtils.isEmpty( cheats_option.get( position ) ) && cheats_code.get( position ).contains( "?" ) )
+        message.append( cheat.code );
+        if( !TextUtils.isEmpty( cheat.option ) && cheat.code.contains( "?" ) )
         {
             message.append( "\n" + getString( R.string.cheatEditor_option2 ) );
-            message.append( "\n" + cheats_option.get( position ) );
+            message.append( "\n" + cheat.option );
         }
         
         Builder builder = new Builder( this );
@@ -313,12 +318,14 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         switch( v.getId() )
         {
             case R.id.imgBtnChtAdd:
-                cheats_name.add( getString( R.string.cheatEditor_empty ) );
-                cheats_desc.add( getString( R.string.cheatNotes_none ) );
-                cheats_code.add( "" );
-                cheats_option.add( "" );
-                cheatList = new ArrayAdapter<String>( CheatEditorActivity.this, R.layout.cheat_row, cheats_name );
-                setListAdapter( cheatList );
+                Cheat cheat = new Cheat();
+                cheat.name = getString( R.string.cheatEditor_empty );
+                cheat.desc = getString( R.string.cheatNotes_none );
+                cheat.code = "";
+                cheat.option = "";
+                cheats.add( cheat );
+                cheatListAdapter = new ArrayAdapter<Cheat>( CheatEditorActivity.this, R.layout.cheat_row, cheats );
+                setListAdapter( cheatListAdapter );
                 Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_added ), Toast.LENGTH_SHORT );
                 t.show();
                 break;
@@ -355,6 +362,8 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     @Override
     public boolean onItemLongClick( AdapterView<?> av, View v, final int pos, long id )
     {
+        final Cheat cheat = cheats.get( pos );
+        
         // Inflate the long-click dialog
         LayoutInflater inflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         View ll = inflater.inflate( R.layout.cheat_editor_longclick_dialog, null );
@@ -376,16 +385,16 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                 switch( v.getId() )
                 {
                     case R.id.btnEditTitle:
-                        promptTitle( pos );
+                        promptTitle( cheat );
                         break;
                     case R.id.btnEditNotes:
-                        promptNotes( pos );
+                        promptNotes( cheat );
                         break;
                     case R.id.btnEditCode:
-                        promptCode( pos );
+                        promptCode( cheat );
                         break;
                     case R.id.btnEditOption:
-                        promptOption( pos );
+                        promptOption( cheat );
                         break;
                     case R.id.btnDelete:
                         promptDelete( pos );
@@ -402,7 +411,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         ll.findViewById( R.id.btnDelete ).setOnClickListener( listener );
         
         // Hide the edit option button if not applicable
-        if( !cheats_code.get( pos ).contains( "?" ) )
+        if( !cheats.get( pos ).code.contains( "?" ) )
             ll.findViewById( R.id.btnEditOption ).setVisibility( View.GONE );
         
         // Show the long-click dialog
@@ -438,13 +447,12 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         return super.onKeyDown( KeyCode, event );
     }
 
-    private void promptTitle( final int pos )
+    private void promptTitle( final Cheat cheat )
     {
         CharSequence title = getText( R.string.cheatEditor_title );
         CharSequence message = getText( R.string.cheatEditor_title_desc );
-        CharSequence text = cheats_name.get( pos );
         int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
+        Prompt.promptText( this, title, message, cheat.name, null, inputType, new PromptTextListener()
         {
             @Override
             public void onDialogClosed( CharSequence text, int which )
@@ -452,27 +460,26 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
                     String str = text.toString().replace( '\n', ' ' );
-                    cheats_name.set( pos, str );
-                    cheatList = new ArrayAdapter<String>( CheatEditorActivity.this, R.layout.cheat_row, cheats_name );
-                    setListAdapter( cheatList );
+                    cheat.name = str;
+                    cheatListAdapter = new ArrayAdapter<Cheat>( CheatEditorActivity.this, R.layout.cheat_row, cheats );
+                    setListAdapter( cheatListAdapter );
                 }
             }
         } );
     }
 
-    private void promptNotes( final int pos )
+    private void promptNotes( final Cheat cheat )
     {
-        final String desc = cheats_desc.get( pos );
         CharSequence title = getText( R.string.cheatEditor_notes );
         CharSequence message = getText( R.string.cheatEditor_notes_desc );
         CharSequence text;
-        if( desc.equals( getString( R.string.cheatNotes_none ) ) || TextUtils.isEmpty( desc ) )
+        if( TextUtils.isEmpty( cheat.desc ) || cheat.desc.equals( getString( R.string.cheatNotes_none ) ) )
         {
             text = "";
         }
         else
         {
-            text = desc;
+            text = cheat.desc;
         }
         int inputType = InputType.TYPE_CLASS_TEXT;
         Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
@@ -487,19 +494,18 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                     {
                         str = getString( R.string.cheatNotes_none );
                     }
-                    cheats_desc.set( pos, str );
+                    cheat.desc = str;
                 }
             }
         } );
     }
 
-    private void promptCode( final int pos )
+    private void promptCode( final Cheat cheat )
     {
         CharSequence title = getText( R.string.cheatEditor_code );
         CharSequence message = getText( R.string.cheatEditor_code_desc );
-        CharSequence text = cheats_code.get( pos );
         int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
+        Prompt.promptText( this, title, message, cheat.code, null, inputType, new PromptTextListener()
         {
             @Override
             public void onDialogClosed( CharSequence text, int which )
@@ -537,7 +543,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                     }
                     if( !bad )
                     {
-                        cheats_code.set( pos, text.toString().toUpperCase( Locale.US ) );
+                        cheat.code = text.toString().toUpperCase( Locale.US );
                     }
                     else
                     {
@@ -549,13 +555,12 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         } );
     }
 
-    private void promptOption( final int pos )
+    private void promptOption( final Cheat cheat )
     {
         CharSequence title = getText( R.string.cheatEditor_option );
         CharSequence message = getText( R.string.cheatEditor_option_desc );
-        CharSequence text = cheats_option.get( pos );
         int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
+        Prompt.promptText( this, title, message, cheat.option, null, inputType, new PromptTextListener()
         {
             @Override
             public void onDialogClosed( CharSequence text, int which )
@@ -593,7 +598,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                     }
                     if( !bad )
                     {
-                        cheats_option.set( pos, verify );
+                        cheat.option = verify;
                     }
                     else
                     {
@@ -614,12 +619,9 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    cheats_name.remove( pos );
-                    cheats_desc.remove( pos );
-                    cheats_code.remove( pos );
-                    cheats_option.remove( pos );
-                    cheatList = new ArrayAdapter<String>( CheatEditorActivity.this, R.layout.cheat_row, cheats_name );
-                    setListAdapter( cheatList );
+                    cheats.remove( pos );
+                    cheatListAdapter = new ArrayAdapter<Cheat>( CheatEditorActivity.this, R.layout.cheat_row, cheats );
+                    setListAdapter( cheatListAdapter );
                 }
             }
         };            
