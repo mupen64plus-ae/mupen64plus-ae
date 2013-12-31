@@ -26,20 +26,20 @@ import java.util.Locale;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.CheatFile;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatBlock;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatCode;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -109,10 +109,17 @@ public class CheatEditorActivity extends ListActivity
         {
             public void onClick( View v )
             {
+                StringBuilder message = new StringBuilder();
+                message.append( getString( R.string.cheatEditor_readme1 ) + "\n\n" );
+                message.append( getString( R.string.cheatEditor_readme2 ) + "\n\n" );
+                message.append( getString( R.string.cheatEditor_readme3 ) + "\n\n" );
+                message.append( getString( R.string.cheatEditor_readme4 ) + "\n\n" );
+                message.append( getString( R.string.cheatEditor_readme5 ) + "\n\n" );
+                message.append( getString( R.string.cheatEditor_readme6 ) );
+                
                 AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
                 alertDialog.setTitle( getString( R.string.cheatEditor_help ) );
-                alertDialog.setMessage( getString( R.string.cheatEditor_readme1 ) + "\n\n" + getString( R.string.cheatEditor_readme2 ) + "\n\n" + getString( R.string.cheatEditor_readme3 ) + "\n\n"
-                        + getString( R.string.cheatEditor_readme4 ) + "\n\n" + getString( R.string.cheatEditor_readme5 ) + "\n\n" + getString( R.string.cheatEditor_readme6 ) );
+                alertDialog.setMessage( message.toString() );
                 alertDialog.show();
             }
         } );
@@ -129,7 +136,7 @@ public class CheatEditorActivity extends ListActivity
                 ll.setOrientation( LinearLayout.VERTICAL );
                 Button en = new Button( CheatEditorActivity.this );
                 en.setText( getString( R.string.cheatEditor_title_desc ) );
-                en.setOnClickListener( new OnClickListener()
+                en.setOnClickListener( new View.OnClickListener()
                 {
                     
                     @Override
@@ -142,7 +149,7 @@ public class CheatEditorActivity extends ListActivity
                         final EditText i = new EditText( CheatEditorActivity.this );
                         i.setText( cheats_name.get( pos ) );
                         alertDialog.setView( i );
-                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -155,7 +162,7 @@ public class CheatEditorActivity extends ListActivity
                             }
                             
                         } );
-                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -171,7 +178,7 @@ public class CheatEditorActivity extends ListActivity
                 } );
                 Button ed = new Button( CheatEditorActivity.this );
                 ed.setText( getString( R.string.cheatEditor_notes_desc ) );
-                ed.setOnClickListener( new OnClickListener()
+                ed.setOnClickListener( new View.OnClickListener()
                 {
                     
                     @Override
@@ -192,7 +199,7 @@ public class CheatEditorActivity extends ListActivity
                         }
                         
                         alertDialog.setView( i );
-                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -207,7 +214,7 @@ public class CheatEditorActivity extends ListActivity
                             }
                             
                         } );
-                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -223,7 +230,7 @@ public class CheatEditorActivity extends ListActivity
                 } );
                 Button ec = new Button( CheatEditorActivity.this );
                 ec.setText( getString( R.string.cheatEditor_code_desc ) );
-                ec.setOnClickListener( new OnClickListener()
+                ec.setOnClickListener( new View.OnClickListener()
                 {
                     
                     @Override
@@ -236,7 +243,7 @@ public class CheatEditorActivity extends ListActivity
                         final EditText i = new EditText( CheatEditorActivity.this );
                         i.setText( cheats_code.get( pos ) );
                         alertDialog.setView( i );
-                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -284,7 +291,7 @@ public class CheatEditorActivity extends ListActivity
                             }
                             
                         } );
-                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -299,7 +306,7 @@ public class CheatEditorActivity extends ListActivity
                 } );
                 Button eo = new Button( CheatEditorActivity.this );
                 eo.setText( getString( R.string.cheatEditor_option_desc ) );
-                eo.setOnClickListener( new OnClickListener()
+                eo.setOnClickListener( new View.OnClickListener()
                 {
                     
                     @Override
@@ -312,7 +319,7 @@ public class CheatEditorActivity extends ListActivity
                         final EditText i = new EditText( CheatEditorActivity.this );
                         i.setText( cheats_option.get( pos ) );
                         alertDialog.setView( i );
-                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_ok ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -360,7 +367,7 @@ public class CheatEditorActivity extends ListActivity
                             }
                             
                         } );
-                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_cancel ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -375,7 +382,7 @@ public class CheatEditorActivity extends ListActivity
                 } );
                 Button de = new Button( CheatEditorActivity.this );
                 de.setText( getString( R.string.cheatEditor_delete ) );
-                de.setOnClickListener( new OnClickListener()
+                de.setOnClickListener( new View.OnClickListener()
                 {
                     
                     @Override
@@ -386,7 +393,7 @@ public class CheatEditorActivity extends ListActivity
                         alertDialog.setTitle( getString( R.string.cheatEditor_delete ) );
                         alertDialog.setMessage( getString( R.string.cheatEditor_confirm ) );
                         
-                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_yes ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_yes ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -401,7 +408,7 @@ public class CheatEditorActivity extends ListActivity
                             }
                             
                         } );
-                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_no ), new DialogInterface.OnClickListener()
+                        alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_no ), new OnClickListener()
                         {
                             
                             public void onClick( DialogInterface dialog, int which )
@@ -655,7 +662,7 @@ public class CheatEditorActivity extends ListActivity
         {
             AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
             alertDialog.setTitle( getString( R.string.cheatEditor_saveConfirm ) );
-            alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_yes ), new DialogInterface.OnClickListener()
+            alertDialog.setButton( AlertDialog.BUTTON_POSITIVE, getString( R.string.cheatEditor_yes ), new OnClickListener()
             {
                 
                 public void onClick( DialogInterface dialog, int which )
@@ -666,7 +673,7 @@ public class CheatEditorActivity extends ListActivity
                 }
                 
             } );
-            alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_no ), new DialogInterface.OnClickListener()
+            alertDialog.setButton( AlertDialog.BUTTON_NEGATIVE, getString( R.string.cheatEditor_no ), new OnClickListener()
             {
                 
                 public void onClick( DialogInterface dialog, int which )
