@@ -137,8 +137,8 @@ public class UserPrefs
     /** The path of the custom touchscreen profiles file. */
     public final String touchscreenProfiles_cfg;
     
-    /** The path of the custom game profiles file. */
-    public final String gameProfiles_cfg;
+    /** The path of the custom emulation profiles file. */
+    public final String emulationProfiles_cfg;
     
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
@@ -423,7 +423,7 @@ public class UserPrefs
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
-        gameProfiles_cfg = profilesDir + "/game.cfg";
+        emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         
         // Plug-ins
         videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );

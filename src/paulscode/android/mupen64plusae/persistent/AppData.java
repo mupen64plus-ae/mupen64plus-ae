@@ -167,8 +167,8 @@ public class AppData
     /** The path of the built-in touchscreen profiles file. Deleted on uninstall, sometimes overwritten on update. */
     public final String touchscreenProfiles_cfg;
     
-    /** The path of the built-in game profiles file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String gameProfiles_cfg;
+    /** The path of the built-in emulation profiles file. Deleted on uninstall, sometimes overwritten on update. */
+    public final String emulationProfiles_cfg;
     
     /** Whether the installation is valid. */
     public final boolean isValidInstallation;
@@ -241,7 +241,7 @@ public class AppData
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
-        gameProfiles_cfg = profilesDir + "/game.cfg";
+        emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         
         // Installation validity
         // @formatter:off
