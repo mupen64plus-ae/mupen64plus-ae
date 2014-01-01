@@ -12,20 +12,12 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/menuItem_settings">
         <menu>
-            <group>
-                <item
-                    android:id="@+id/menuItem_gameSettings"
-                    android:title="@string/menuItem_gameSettings"/>
-                <item
-                    android:id="@+id/menuItem_globalSettings"
-                    android:title="@string/menuItem_globalSettings"/>
-                <item
-                    android:id="@+id/menuItem_touchscreenProfiles"
-                    android:title="@string/menuItem_touchscreenProfiles"/>
-                <item
-                    android:id="@+id/menuItem_customCheats"
-                    android:title="@string/menuItem_customCheats"/>
-            </group>
+            <item
+                android:id="@+id/menuItem_globalSettings"
+                android:title="@string/menuItem_globalSettings"/>
+            <item
+                android:id="@+id/menuItem_touchscreenProfiles"
+                android:title="@string/menuItem_touchscreenProfiles"/>
         </menu>
     </item>
     <item
@@ -34,20 +26,18 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/menuItem_help">
         <menu>
-            <group>
-                <item
-                    android:id="@+id/menuItem_faq"
-                    android:title="@string/menuItem_faq"/>
-                <item
-                    android:id="@+id/menuItem_helpForum"
-                    android:title="@string/menuItem_helpForum"/>
-                <item
-                    android:id="@+id/menuItem_controllerDiagnostics"
-                    android:title="@string/menuItem_controllerDiagnostics"/>
-                <item
-                    android:id="@+id/menuItem_reportBug"
-                    android:title="@string/menuItem_reportBug"/>
-            </group>
+            <item
+                android:id="@+id/menuItem_faq"
+                android:title="@string/menuItem_faq"/>
+            <item
+                android:id="@+id/menuItem_helpForum"
+                android:title="@string/menuItem_helpForum"/>
+            <item
+                android:id="@+id/menuItem_controllerDiagnostics"
+                android:title="@string/menuItem_controllerDiagnostics"/>
+            <item
+                android:id="@+id/menuItem_reportBug"
+                android:title="@string/menuItem_reportBug"/>
         </menu>
     </item>
     <item
@@ -56,26 +46,24 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/menuItem_about">
         <menu>
-            <group>
-                <item
-                    android:id="@+id/menuItem_appVersion"
-                    android:title="@string/menuItem_appVersion"/>
-                <item
-                    android:id="@+id/menuItem_changelog"
-                    android:title="@string/menuItem_changelog"/>
-                <item
-                    android:id="@+id/menuItem_axisInfo"
-                    android:title="@string/menuItem_axisInfo"/>
-                <item
-                    android:id="@+id/menuItem_controllerInfo"
-                    android:title="@string/menuItem_controllerInfo"/>
-                <item
-                    android:id="@+id/menuItem_systemInfo"
-                    android:title="@string/menuItem_systemInfo"/>
-                <item
-                    android:id="@+id/menuItem_credits"
-                    android:title="@string/menuItem_credits"/>
-            </group>
+            <item
+                android:id="@+id/menuItem_appVersion"
+                android:title="@string/menuItem_appVersion"/>
+            <item
+                android:id="@+id/menuItem_changelog"
+                android:title="@string/menuItem_changelog"/>
+            <item
+                android:id="@+id/menuItem_axisInfo"
+                android:title="@string/menuItem_axisInfo"/>
+            <item
+                android:id="@+id/menuItem_controllerInfo"
+                android:title="@string/menuItem_controllerInfo"/>
+            <item
+                android:id="@+id/menuItem_systemInfo"
+                android:title="@string/menuItem_systemInfo"/>
+            <item
+                android:id="@+id/menuItem_credits"
+                android:title="@string/menuItem_credits"/>
         </menu>
     </item>
     <item

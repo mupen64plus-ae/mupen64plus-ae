@@ -37,7 +37,6 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -46,7 +45,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 
 public class GalleryActivity extends Activity implements OnClickListener
 {
@@ -118,25 +116,6 @@ public class GalleryActivity extends Activity implements OnClickListener
     }
     
     @Override
-    public boolean onPrepareOptionsMenu( Menu menu )
-    {
-        if( mRomDetail != null )
-        {
-            MenuItem item = menu.findItem( R.id.menuItem_gameSettings );
-            String romName = mRomDetail.baseName;
-            boolean isValid = romName != null;
-            String title;
-            if( !TextUtils.isEmpty( romName ) )
-                title = getString( R.string.menuItem_gameSettingsNamed, romName );
-            else
-                title = getString( R.string.menuItem_gameSettings );
-            item.setTitle( title );
-            item.setEnabled( isValid );
-        }
-        return super.onPrepareOptionsMenu( menu );
-    }
-    
-    @Override
     public boolean onMenuItemSelected( int featureId, MenuItem item )
     {
         switch( item.getItemId() )
@@ -144,20 +123,12 @@ public class GalleryActivity extends Activity implements OnClickListener
             case R.id.menuItem_play:
                 startActivity( new Intent( this, PlayMenuActivity.class ) );
                 return true;
-            case R.id.menuItem_gameSettings:
-                // TODO startActivity( new Intent( this, SettingsGameActivity.class ) );
-                popupGameSettingsTodo();
-                return true;
             case R.id.menuItem_globalSettings:
                 startActivity( new Intent( this, SettingsGlobalActivity.class ) );
                 return true;
             case R.id.menuItem_touchscreenProfiles:
                 // TODO
                 popupTodo();
-                return true;
-            case R.id.menuItem_customCheats:
-                // TODO
-                startActivity( new Intent( this, CheatEditorActivity.class) );
                 return true;
             case R.id.menuItem_faq:
                 popupFaq();
@@ -261,37 +232,6 @@ public class GalleryActivity extends Activity implements OnClickListener
         String title = getString( R.string.menuItem_appVersion );
         String message = getString( R.string.popup_version, mAppData.appVersion, mAppData.appVersionCode );
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void popupGameSettingsTodo()
-    {
-        Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameSettings ), mRomDetail.baseName ) );
-        
-        new AsyncTask<Void, Void, RomDetail>()
-        {
-            private Bitmap art;
-            
-            @Override
-            protected RomDetail doInBackground( Void... params )
-            {
-                String md5 = RomDetail.computeMd5( new File( mUserPrefs.selectedGame ) );
-                RomDetail result = RomDetail.lookupByMd5( md5 );
-                art = result.getCoverArt( true );
-                return result;
-            }
-            
-            @Override
-            protected void onPostExecute( RomDetail result )
-            {
-                ImageView view = new ImageView( GalleryActivity.this );
-                if( art != null )
-                    view.setImageBitmap( art );
-                else
-                    view.setImageResource( R.drawable.default_coverart );
-                new Builder( GalleryActivity.this ).setTitle( "TODO" ).setMessage( result.goodName ).setView( view )
-                        .create().show();
-            }
-        }.execute();
     }
     
     private void popupTodo()
