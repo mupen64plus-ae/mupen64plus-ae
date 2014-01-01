@@ -370,7 +370,10 @@
     <string name="playerMap_title">Multi-player</string>
     <string name="playerMap_summary">Define each player\'s controller(s)</string>
 
-    <!-- Controller Profile Preferences -->
+    <!-- Profile Preferences -->
+    <string name="emulationProfile_title">Emulation profile</string>
+    <string name="touchscreenProfile_title">Touchscreen profile</string>
+    <string name="controllerProfile_title">Controller profile</string>
     <string name="controllerProfile1_title">Controller 1 profile</string>
     <string name="controllerProfile2_title">Controller 2 profile</string>
     <string name="controllerProfile3_title">Controller 3 profile</string>

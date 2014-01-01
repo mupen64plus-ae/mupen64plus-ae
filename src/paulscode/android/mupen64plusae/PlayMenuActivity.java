@@ -21,7 +21,12 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang.ArrayUtils;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.CheatFile;
@@ -30,8 +35,11 @@ import paulscode.android.mupen64plusae.persistent.CheatFile.CheatCode;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.CheatPreference;
+import paulscode.android.mupen64plusae.persistent.CompatibleListPreference;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -64,6 +72,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private static final String ACTION_RESUME = "actionResume";
     private static final String ACTION_RESTART = "actionRestart";
+    
+    private static final String CONTROLLER_PROFILE1 = "controllerProfile1";
+    private static final String CONTROLLER_PROFILE2 = "controllerProfile2";
+    private static final String CONTROLLER_PROFILE3 = "controllerProfile3";
+    private static final String CONTROLLER_PROFILE4 = "controllerProfile4";
     private static final String PLAYER_MAP = "playerMap";
     private static final String PLAY_SHOW_CHEATS = "playShowCheats";
     
@@ -110,15 +123,29 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESUME, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESTART, this );
         
-        // Hide the multi-player menu if not needed
-        if( !mUserPrefs.playerMap.isEnabled() )
+        // Setup controller profiles settings based on ROM's number of players
+        if( mRomDetail.players == 1 )
         {
+            // Simplify name of "controller 1" to just "controller" to eliminate confusion
+            findPreference(CONTROLLER_PROFILE1).setTitle( R.string.controllerProfile_title );
+            
+            // Remove unneeded preference items
+            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE2 );
+            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE3 );
+            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE4 );
             PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, PLAYER_MAP );
         }
         else
         {
-            PlayerMapPreference preference = (PlayerMapPreference) findPreference( PLAYER_MAP );
-            preference.setMogaController( mMogaController );
+            // Remove unneeded preference items
+            if( mRomDetail.players < 4 )
+                PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE4 );
+            if( mRomDetail.players < 3 )
+                PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE3 );
+            
+            // Configure the player map preference
+            PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( PLAYER_MAP );
+            playerPref.setMogaController( mMogaController );
         }
         
         // Hide or populate the cheats category depending on user preference
@@ -140,6 +167,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         super.onResume();
         mPrefs.registerOnSharedPreferenceChangeListener( this );
         mMogaController.onResume();
+        refreshViews();
     }
     
     @Override
@@ -174,7 +202,68 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             startActivity( getIntent() );
             finish();
         }
+        refreshViews();
+    }
+    
+    private void refreshViews()
+    {
+        // Refresh the preferences object
         mUserPrefs = new UserPrefs( this );
+        
+        // Enable/disable player map item as necessary
+        PrefUtil.enablePreference( this, PLAYER_MAP, mUserPrefs.playerMap.isEnabled() );
+        
+        // Construct the controller profiles list
+        ConfigFile configBuiltin = new ConfigFile( mAppData.controllerProfiles_cfg );
+        ConfigFile configCustom = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
+        List<ControllerProfile> profiles = new ArrayList<ControllerProfile>();
+        profiles.addAll( ControllerProfile.getProfiles( configBuiltin, true ) );
+        profiles.addAll( ControllerProfile.getProfiles( configCustom, false ) );
+        Collections.sort( profiles );
+        CharSequence[] entries = new CharSequence[profiles.size() + 1];
+        String[] values = new String[profiles.size() + 1];
+        entries[0] = getText( R.string.listItem_disabled );
+        values[0] = "";
+        for( int i = 0; i < profiles.size(); i++ )
+        {
+            ControllerProfile profile = profiles.get( i );
+            int resId = profile.isBuiltin
+                    ? R.string.listItem_profileBuiltin
+                    : R.string.listItem_profileCustom;
+            entries[i + 1] = getString( resId, profile.name );
+            values[i + 1] = profile.name;
+        }
+        
+        // Populate and validate the controller profile preferences
+        populateListPreference( entries, values, CONTROLLER_PROFILE1,
+                R.string.controllerProfile_default );
+        populateListPreference( entries, values, CONTROLLER_PROFILE2,
+                R.string.controllerProfile_default );
+        populateListPreference( entries, values, CONTROLLER_PROFILE3,
+                R.string.controllerProfile_default );
+        populateListPreference( entries, values, CONTROLLER_PROFILE4,
+                R.string.controllerProfile_default );
+        
+        // Refresh the preferences object in case populate* changed a value
+        mUserPrefs = new UserPrefs( this );
+    }
+    
+    private void populateListPreference( CharSequence[] entries, String[] values, String key,
+            int resIdDefault )
+    {
+        @SuppressWarnings( "deprecation" )
+        CompatibleListPreference listPref = (CompatibleListPreference) findPreference( key );
+        if( listPref != null )
+        {
+            listPref.setEntries( entries );
+            listPref.setEntryValues( values );
+            String selectedValue = mPrefs.getString( key, null );
+            String defaultValue = getString( resIdDefault );
+            if( !ArrayUtils.contains( values, selectedValue ) )
+                mPrefs.edit().putString( key, defaultValue ).commit();
+            selectedValue = mPrefs.getString( key, null );
+            listPref.setValue( selectedValue );
+        }
     }
     
     @Override
@@ -290,14 +379,15 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private void launchGame( boolean isRestarting )
     {
-        // Popup the multi-player dialog and abort if any players don't have a controller assigned
-        if( mUserPrefs.playerMap.isEnabled() && mUserPrefs.getPlayerMapReminder() )
+        // Popup the multi-player dialog if necessary and abort if any players don't have a controller assigned
+        if( mRomDetail.players > 1 && mUserPrefs.playerMap.isEnabled()
+                && mUserPrefs.getPlayerMapReminder() )
         {
             mUserPrefs.playerMap.removeUnavailableMappings();
             boolean needs1 = mUserPrefs.isControllerEnabled1 && !mUserPrefs.playerMap.isMapped( 1 );
             boolean needs2 = mUserPrefs.isControllerEnabled2 && !mUserPrefs.playerMap.isMapped( 2 );
-            boolean needs3 = mUserPrefs.isControllerEnabled3 && !mUserPrefs.playerMap.isMapped( 3 );
-            boolean needs4 = mUserPrefs.isControllerEnabled4 && !mUserPrefs.playerMap.isMapped( 4 );
+            boolean needs3 = mUserPrefs.isControllerEnabled3 && !mUserPrefs.playerMap.isMapped( 3 ) && mRomDetail.players > 2;
+            boolean needs4 = mUserPrefs.isControllerEnabled4 && !mUserPrefs.playerMap.isMapped( 4 ) && mRomDetail.players > 3;
             
             if( needs1 || needs2 || needs3 || needs4 )
             {
