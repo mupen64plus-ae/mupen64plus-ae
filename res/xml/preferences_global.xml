@@ -109,7 +109,7 @@
             android:title="@string/videoHardwareType_title" />
 
         <EditTextPreference
-            android:defaultValue="-0.2"
+            android:defaultValue="-1.5"
             android:inputType="numberDecimal|numberSigned"
             android:key="videoPolygonOffset"
             android:summary="@string/videoPolygonOffset_summary"

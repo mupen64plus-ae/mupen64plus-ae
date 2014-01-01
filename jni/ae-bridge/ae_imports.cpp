@@ -29,8 +29,9 @@
 
 static pthread_key_t mThreadKey;
 static JavaVM* mJavaVM;
+
 // Store custom polygon offset natively to reduce JNI calls
-static float videoPolygonOffset = -0.2f;
+static float videoPolygonOffset = -1.5f;
 
 // Imported java class reference
 static jclass mActivityClass;
@@ -232,7 +233,7 @@ extern DECLSPEC void Android_JNI_GetPolygonOffset(const int hardwareType, const 
     }
     else // HARDWARE_TYPE_UNKNOWN
     {
-        *f1 = bias > 0 ? -0.2f : 0.0f;
-        *f2 = bias > 0 ? -0.2f : 0.0f;
+        *f1 = bias > 0 ? -1.5f : 0.0f;
+        *f2 = bias > 0 ? -1.5f : 0.0f;
     }
 }
