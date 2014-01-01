@@ -236,31 +236,6 @@
                     android:title="@string/touchpadLayout_title" />
             </PreferenceScreen>
 
-            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                android:defaultValue="@string/controllerProfile1_default"
-                android:icon="@drawable/ic_gamepad"
-                android:key="controllerProfile1"
-                android:summary="@string/selectedValue"
-                android:title="@string/controllerProfile1_title" />
-            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                android:defaultValue="@string/controllerProfile2_default"
-                android:icon="@drawable/ic_gamepad"
-                android:key="controllerProfile2"
-                android:summary="@string/selectedValue"
-                android:title="@string/controllerProfile2_title" />
-            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                android:defaultValue="@string/controllerProfile3_default"
-                android:icon="@drawable/ic_gamepad"
-                android:key="controllerProfile3"
-                android:summary="@string/selectedValue"
-                android:title="@string/controllerProfile3_title" />
-            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                android:defaultValue="@string/controllerProfile4_default"
-                android:icon="@drawable/ic_gamepad"
-                android:key="controllerProfile4"
-                android:summary="@string/selectedValue"
-                android:title="@string/controllerProfile4_title" />
-
             <Preference
                 android:icon="@drawable/ic_sliders"
                 android:key="actionControllerProfiles"
