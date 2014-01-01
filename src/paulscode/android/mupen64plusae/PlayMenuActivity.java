@@ -36,7 +36,6 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -65,9 +64,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-    
-    // Handle to the thread populating the cheat options
-    private Thread crcThread = null;
     
     // MOGA controller interface
     private Controller mMogaController = Controller.getInstance( this );
@@ -292,9 +288,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 return;
             }
         }
-        
-        // Wait for the CRC calculation thread to finish
-        SafeMethods.join( crcThread, 0 );
         
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
