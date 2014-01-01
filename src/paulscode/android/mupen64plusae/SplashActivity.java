@@ -86,7 +86,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
     private static final String TOUCHSCREEN_LAYOUT = "touchscreenLayout";
-    private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
     private static final String DISPLAY_POSITION = "displayPosition";
@@ -117,10 +116,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         Uri dataUri = this.getIntent().getData();
         if( dataUri != null )
             mUserPrefs.putPathSelectedGame( dataUri.getPath() );
-        
-        // Disable the Xperia PLAY plugin as necessary
-        if( !mAppData.hardwareInfo.isXperiaPlay )
-            mPrefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
         
         // Set some prefs when running in big-screen mode
         if( mUserPrefs.isBigScreenMode )

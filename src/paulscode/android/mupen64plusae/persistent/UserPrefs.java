@@ -446,7 +446,7 @@ public class UserPrefs
         isTouchscreenHidden = transparencyPercent == 0;
         
         // Xperia PLAY touchpad prefs
-        isTouchpadEnabled = mPreferences.getBoolean( "touchpadEnabled", false );
+        isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );
         isTouchpadFeedbackEnabled = mPreferences.getBoolean( "touchpadFeedback", false );
         touchpadLayout = appData.touchpadLayoutsDir + mPreferences.getString( "touchpadLayout", "" );
         
