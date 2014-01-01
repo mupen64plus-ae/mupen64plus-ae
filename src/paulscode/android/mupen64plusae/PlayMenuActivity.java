@@ -119,12 +119,19 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Get the detailed info about the ROM
         mRomDetail = RomDetail.lookupByMd5( md5 );
-        setTitle( mRomDetail.goodName );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_play );
         mScreenCheats = (PreferenceGroup) findPreference( SCREEN_CHEATS );
         mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
+        
+        // Set some game-specific strings
+        setTitle( mRomDetail.goodName );
+        if( !TextUtils.isEmpty( mRomDetail.baseName ) )
+        {
+            String title = getString( R.string.categoryGameSettings_titleNamed, mRomDetail.baseName );
+            findPreference( CATEGORY_GAME_SETTINGS ).setTitle( title );
+        }
         
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESUME, this );
@@ -208,6 +215,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Enable/disable player map item as necessary
         PrefUtil.enablePreference( this, PLAYER_MAP, mUserPrefs.playerMap.isEnabled() );
+        
+        // Set cheats screen summary text
+        mScreenCheats.setSummary( mUserPrefs.isCheatOptionsShown
+                ? R.string.screenCheats_summaryEnabled
+                : R.string.screenCheats_summaryDisabled );
         
         // Construct the controller profiles list
         ConfigFile configBuiltin = new ConfigFile( mAppData.controllerProfiles_cfg );
