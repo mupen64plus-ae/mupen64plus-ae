@@ -236,13 +236,6 @@
                     android:title="@string/touchpadLayout_title" />
             </PreferenceScreen>
 
-            <Preference
-                android:icon="@drawable/ic_sliders"
-                android:key="actionControllerProfiles"
-                android:title="@string/actionControllerProfiles_title" >
-                <intent android:action=".profile.ControllerProfileActivity" />
-            </Preference>
-
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="inputVolumeMappable"
