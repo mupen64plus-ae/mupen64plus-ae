@@ -16,8 +16,14 @@
                 android:id="@+id/menuItem_globalSettings"
                 android:title="@string/menuItem_globalSettings"/>
             <item
+                android:id="@+id/menuItem_emulationProfiles"
+                android:title="@string/menuItem_emulationProfiles"/>
+            <item
                 android:id="@+id/menuItem_touchscreenProfiles"
                 android:title="@string/menuItem_touchscreenProfiles"/>
+            <item
+                android:id="@+id/menuItem_controllerProfiles"
+                android:title="@string/menuItem_controllerProfiles"/>
         </menu>
     </item>
     <item
