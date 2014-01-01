@@ -37,9 +37,6 @@
     <string name="gles2Glide64Frameskip_title" translatable="false">@string/gles2N64Frameskip_title</string>
 
     <!-- Non-translatable defaults -->
-    <string name="controllerProfile1_default" translatable="false">Default</string>
-    <string name="controllerProfile2_default" translatable="false"></string>
-    <string name="controllerProfile3_default" translatable="false"></string>
-    <string name="controllerProfile4_default" translatable="false"></string>
+    <string name="controllerProfile_default" translatable="false"></string>
 
 </resources>

@@ -453,7 +453,7 @@ public class UserPrefs
         // Controller prefs
         final ConfigFile configCustom = new ConfigFile( controllerProfiles_cfg );
         final ConfigFile configBuiltin = new ConfigFile( appData.controllerProfiles_cfg );
-        final String profileName1 = mPreferences.getString( "controllerProfile1", "Default" );
+        final String profileName1 = mPreferences.getString( "controllerProfile1", "" );
         final String profileName2 = mPreferences.getString( "controllerProfile2", "" );
         final String profileName3 = mPreferences.getString( "controllerProfile3", "" );
         final String profileName4 = mPreferences.getString( "controllerProfile4", "" );
