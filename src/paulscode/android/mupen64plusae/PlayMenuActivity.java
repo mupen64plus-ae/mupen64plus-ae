@@ -431,20 +431,19 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
         
         // Make sure that the game save subdirectories exist so that we can write to them
-        UserPrefs userPrefs = new UserPrefs( this );
-        new File( userPrefs.manualSaveDir ).mkdirs();
-        new File( userPrefs.slotSaveDir ).mkdirs();
-        new File( userPrefs.sramSaveDir ).mkdirs();
-        new File( userPrefs.autoSaveDir ).mkdirs();
-        new File( userPrefs.coreUserConfigDir ).mkdirs();
-        new File( userPrefs.coreUserDataDir ).mkdirs();
-        new File( userPrefs.coreUserCacheDir ).mkdirs();
+        new File( mUserPrefs.manualSaveDir ).mkdirs();
+        new File( mUserPrefs.slotSaveDir ).mkdirs();
+        new File( mUserPrefs.sramSaveDir ).mkdirs();
+        new File( mUserPrefs.autoSaveDir ).mkdirs();
+        new File( mUserPrefs.coreUserConfigDir ).mkdirs();
+        new File( mUserPrefs.coreUserDataDir ).mkdirs();
+        new File( mUserPrefs.coreUserCacheDir ).mkdirs();
         
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_launchingEmulator );
         
         // Launch the appropriate game activity
-        Intent intent = userPrefs.isTouchpadEnabled ? new Intent( this,
+        Intent intent = mUserPrefs.isTouchpadEnabled ? new Intent( this,
                 GameActivityXperiaPlay.class ) : new Intent( this, GameActivity.class );
         
         // Pass the startup info via the intent
