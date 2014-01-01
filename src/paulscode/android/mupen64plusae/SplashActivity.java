@@ -82,12 +82,10 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     private SharedPreferences mPrefs = null;
     
     // These constants must match the keys used in res/xml/preferences*.xml
-    private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
     private static final String TOUCHSCREEN_LAYOUT = "touchscreenLayout";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
-    private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
     private static final String DISPLAY_POSITION = "displayPosition";
     private static final String DISPLAY_RESOLUTION = "displayResolution";
     private static final String DISPLAY_SCALING = "displayScaling";
@@ -116,13 +114,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         Uri dataUri = this.getIntent().getData();
         if( dataUri != null )
             mUserPrefs.putPathSelectedGame( dataUri.getPath() );
-        
-        // Set some prefs when running in big-screen mode
-        if( mUserPrefs.isBigScreenMode )
-        {
-            mPrefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
-            mPrefs.edit().putBoolean( INPUT_VOLUME_MAPPABLE, true ).commit();
-        }
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
