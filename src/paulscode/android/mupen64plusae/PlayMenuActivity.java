@@ -53,6 +53,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -65,7 +66,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     public static final String EXTRA_MD5 = "EXTRA_MD5";
     
     // These constants must match the keys used in res/xml/preferences_play.xml
-    private static final String SCREEN_PLAY_MENU_ACTIVITY = "screenPlayMenuActivity";
+    private static final String SCREEN_CHEATS = "screenCheats";
     
     private static final String CATEGORY_GAME_SETTINGS = "categoryGameSettings";
     private static final String CATEGORY_CHEATS = "categoryCheats";
@@ -87,6 +88,10 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // ROM info
     private RomDetail mRomDetail = null;
+    
+    // Preference menu items
+    PreferenceGroup mScreenCheats = null;
+    PreferenceGroup mCategoryCheats = null;
     
     // MOGA controller interface
     private Controller mMogaController = Controller.getInstance( this );
@@ -118,6 +123,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_play );
+        mScreenCheats = (PreferenceGroup) findPreference( SCREEN_CHEATS );
+        mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
         
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESUME, this );
@@ -148,17 +155,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             playerPref.setMogaController( mMogaController );
         }
         
-        // Hide or populate the cheats category depending on user preference
-        if( mUserPrefs.isCheatOptionsShown )
-        {
-            // Populate cheats category with menu items
-            build( mRomDetail.crc );
-        }
-        else
-        {
-            // Hide the cheats category
-            PrefUtil.removePreference( this, SCREEN_PLAY_MENU_ACTIVITY, CATEGORY_CHEATS );
-        }
+        // Build the cheats category as needed
+        refreshCheatsCategory();
     }
     
     @Override
@@ -196,13 +194,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
+        refreshViews();
         if( key.equals( PLAY_SHOW_CHEATS ) )
         {
-            // Rebuild the menu; the easiest way is to simply restart the activity
-            startActivity( getIntent() );
-            finish();
+            refreshCheatsCategory();
         }
-        refreshViews();
     }
     
     private void refreshViews()
@@ -266,6 +262,23 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
     }
     
+    private void refreshCheatsCategory()
+    {
+        if( mUserPrefs.isCheatOptionsShown )
+        {
+            // Populate menu items
+            buildCheatsCategory( mRomDetail.crc );
+            
+            // Show the cheats category
+            mScreenCheats.addPreference( mCategoryCheats );
+        }
+        else
+        {
+            // Hide the cheats category
+            mScreenCheats.removePreference( mCategoryCheats );
+        }
+    }
+    
     @Override
     public boolean onPreferenceClick( Preference preference )
     {
@@ -292,11 +305,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         return false;
     }
     
-    @SuppressWarnings( "deprecation" )
-    private void build( final String crc )
+    private void buildCheatsCategory( final String crc )
     {
-        Log.v( "PlayMenuActivity", "building from CRC = " + crc );
+        mCategoryCheats.removeAll();
         
+        Log.v( "PlayMenuActivity", "building from CRC = " + crc );
         if( crc == null )
             return;
         
@@ -310,7 +323,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
         
         // Layout the menu, populating it with appropriate cheat options
-        PreferenceCategory cheatsCategory = (PreferenceCategory) findPreference( CATEGORY_CHEATS );
         CheatBlock cheat;
         for( int i = 0; i < cheatSection.size(); i++ )
         {
@@ -372,7 +384,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 pref.setKey( crc + " Cheat" + i );
                 
                 // Add the preference menu item to the cheats category
-                cheatsCategory.addPreference( pref );
+                mCategoryCheats.addPreference( pref );
             }
         }
     }

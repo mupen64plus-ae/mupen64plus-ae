@@ -137,6 +137,8 @@
     <string name="actionResetUserPrefs_summary">Restore default settings</string>
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
     <string name="actionControllerProfiles_title">Manage controller profiles</string>
+    <string name="actionCheatEditor_title">Manage cheat codes</string>
+    <string name="actionCheatEditor_summary">Add, modify, and delete custom cheats</string>
 
     <!-- Preference Screens -->
     <string name="screenInput_title">Input</string>
@@ -153,6 +155,9 @@
     <string name="screenAdvanced_summary">Core, storage, and debug settings</string>
     <string name="screenGlobalSettings_title">Global settings</string>
     <string name="screenGlobalSettings_summary">Display, audio, storage, and debug settings</string>
+    <string name="screenCheats_title">Cheats</string>
+    <string name="screenCheats_summaryEnabled">Enabled</string>
+    <string name="screenCheats_summaryDisabled">Disabled</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Cheat options (long-press for notes)</string>

@@ -64,17 +64,28 @@
             android:key="playerMap"
             android:summary="@string/playerMap_summary"
             android:title="@string/playerMap_title" />
+
+        <PreferenceScreen
+            android:icon="@drawable/ic_key"
+            android:key="screenCheats"
+            android:title="@string/screenCheats_title" >
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="playShowCheats"
+                android:summary="@string/playShowCheats_summary"
+                android:title="@string/playShowCheats_title" />
+
+            <Preference
+                android:key="actionCheatEditor"
+                android:summary="@string/actionCheatEditor_summary"
+                android:title="@string/actionCheatEditor_title" >
+                <intent android:action=".CheatEditorActivity" />
+            </Preference>
+
+            <PreferenceCategory
+                android:key="categoryCheats"
+                android:title="@string/categoryCheats_title" />
+        </PreferenceScreen>
     </PreferenceCategory>
-
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:icon="@drawable/ic_key"
-        android:key="playShowCheats"
-        android:summary="@string/playShowCheats_summary"
-        android:title="@string/playShowCheats_title" />
-
-    <PreferenceCategory
-        android:key="categoryCheats"
-        android:title="@string/categoryCheats_title" />
 
 </PreferenceScreen>
