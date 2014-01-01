@@ -100,6 +100,20 @@
             android:key="displayFpsRefresh"
             android:summary="@string/selectedValue"
             android:title="@string/displayFpsRefresh_title" />
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/videoHardwareType_default"
+            android:entries="@array/videoHardwareType_entries"
+            android:entryValues="@array/videoHardwareType_values"
+            android:key="videoHardwareType"
+            android:summary="@string/selectedValue"
+            android:title="@string/videoHardwareType_title" />
+
+        <EditTextPreference
+            android:defaultValue="-0.2"
+            android:inputType="numberDecimal|numberSigned"
+            android:key="videoPolygonOffset"
+            android:summary="@string/videoPolygonOffset_summary"
+            android:title="@string/videoPolygonOffset_title" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="screenInput"
