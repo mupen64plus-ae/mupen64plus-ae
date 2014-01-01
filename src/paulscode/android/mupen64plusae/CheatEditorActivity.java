@@ -306,8 +306,6 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         builder.setTitle( R.string.cheatEditor_info );
         builder.setMessage( message.toString() );
         builder.create().show();
-        AlertDialog alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-        alertDialog.setTitle( getString( R.string.cheatEditor_info ) );
     }
     
     @Override
