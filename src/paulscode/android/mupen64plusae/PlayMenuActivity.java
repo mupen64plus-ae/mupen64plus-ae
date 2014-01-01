@@ -36,6 +36,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.util.RomDetail;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -53,6 +54,8 @@ import com.bda.controller.Controller;
 public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
+    public static final String EXTRA_MD5 = "EXTRA_MD5";
+    
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_PLAY_MENU_ACTIVITY = "screenPlayMenuActivity";
     private static final String ACTION_RESUME = "actionResume";
@@ -64,6 +67,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
+    
+    // ROM info
+    private RomDetail mRomDetail = null;
     
     // MOGA controller interface
     private Controller mMogaController = Controller.getInstance( this );
@@ -81,6 +87,16 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        
+        // Get the ROM's MD5 that was passed to the activity
+        Bundle extras = getIntent().getExtras();
+        String md5 = null;
+        if( extras == null || TextUtils.isEmpty( md5 = extras.getString( EXTRA_MD5 ) ) )
+            throw new Error( "MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
+        
+        // Get the detailed info about the ROM
+        mRomDetail = RomDetail.lookupByMd5( md5 );
+        setTitle( mRomDetail.goodName );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_play );
@@ -104,7 +120,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( mUserPrefs.isCheatOptionsShown )
         {
             // Populate cheats category with menu items
-            build( mUserPrefs.selectedGameHeader.crc );
+            build( mRomDetail.crc );
         }
         else
         {

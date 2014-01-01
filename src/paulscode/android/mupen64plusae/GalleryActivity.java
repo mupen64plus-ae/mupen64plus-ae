@@ -121,7 +121,7 @@ public class GalleryActivity extends Activity implements OnClickListener
         switch( item.getItemId() )
         {
             case R.id.menuItem_play:
-                startActivity( new Intent( this, PlayMenuActivity.class ) );
+                launchPlayMenuActivity( mUserPrefs.selectedGame );
                 return true;
             case R.id.menuItem_globalSettings:
                 startActivity( new Intent( this, SettingsGlobalActivity.class ) );
@@ -172,6 +172,31 @@ public class GalleryActivity extends Activity implements OnClickListener
     public void onClick( View v )
     {
         promptFile( new File( mUserPrefs.selectedGame ) );
+    }
+    
+    private void launchPlayMenuActivity( final String romPath )
+    {
+        // Asynchronously compute MD5 and launch play menu when finished
+        Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameSettings ), mRomDetail.baseName ) );
+        new AsyncTask<Void, Void, String>()
+        {
+            @Override
+            protected String doInBackground( Void... params )
+            {
+                return RomDetail.computeMd5( new File( romPath ) );
+            }
+            
+            @Override
+            protected void onPostExecute( String result )
+            {
+                if( !TextUtils.isEmpty( result ) )
+                {
+                    Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
+                    intent.putExtra( PlayMenuActivity.EXTRA_MD5, result );
+                    startActivity( intent );
+                }
+            }
+        }.execute();
     }
     
     private void promptFile( File startPath )
