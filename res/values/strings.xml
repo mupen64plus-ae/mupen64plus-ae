@@ -56,8 +56,6 @@
     <!-- Menu Activity -->
     <string name="menuItem_play">Play</string>
     <string name="menuItem_settings">Settings</string>
-    <string name="menuItem_gameSettings">Game-specific settings</string>
-    <string name="menuItem_gameSettingsNamed">%1$s settings</string>
     <string name="menuItem_globalSettings">Global settings</string>
     <string name="menuItem_touchscreenProfiles">Touchscreen profiles</string>
     <string name="menuItem_controllerProfiles">Controller profiles</string>
@@ -153,6 +151,8 @@
     <string name="screenVideo_summary">Graphics settings</string>
     <string name="screenAdvanced_title">Advanced</string>
     <string name="screenAdvanced_summary">Core, storage, and debug settings</string>
+    <string name="screenGlobalSettings_title">Global settings</string>
+    <string name="screenGlobalSettings_summary">Display, audio, storage, and debug settings</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Cheat options (long-press for notes)</string>
@@ -167,6 +167,8 @@
     <string name="categoryAudio_title">Audio</string>
     <string name="categoryData_title">Data</string>
     <string name="categoryCrashReports_title">Crash reports</string>
+    <string name="categoryGameSettings_title">Game-specific settings</string>
+    <string name="categoryGameSettings_titleNamed">%1$s settings</string>
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
