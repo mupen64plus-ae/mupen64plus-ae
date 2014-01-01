@@ -70,6 +70,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
+    private SharedPreferences mPrefs = null;
     
     // ROM info
     private RomDetail mRomDetail = null;
@@ -90,6 +91,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         // Get the ROM's MD5 that was passed to the activity
         Bundle extras = getIntent().getExtras();
@@ -136,8 +138,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     protected void onResume()
     {
         super.onResume();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+        mPrefs.registerOnSharedPreferenceChangeListener( this );
         mMogaController.onResume();
     }
     
@@ -145,8 +146,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     protected void onPause()
     {
         super.onPause();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+        mPrefs.unregisterOnSharedPreferenceChangeListener( this );
         mMogaController.onPause();
     }
     
