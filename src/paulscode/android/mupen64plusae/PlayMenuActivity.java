@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -439,15 +438,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             Notifier.showToast( this, R.string.toast_sdInaccessible );
             return;
         }
-        
-        // Make sure that the game save subdirectories exist so that we can write to them
-        new File( mUserPrefs.manualSaveDir ).mkdirs();
-        new File( mUserPrefs.slotSaveDir ).mkdirs();
-        new File( mUserPrefs.sramSaveDir ).mkdirs();
-        new File( mUserPrefs.autoSaveDir ).mkdirs();
-        new File( mUserPrefs.coreUserConfigDir ).mkdirs();
-        new File( mUserPrefs.coreUserDataDir ).mkdirs();
-        new File( mUserPrefs.coreUserCacheDir ).mkdirs();
         
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_launchingEmulator );

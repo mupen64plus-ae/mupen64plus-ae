@@ -141,6 +141,15 @@ public class CoreInterface
         
         File romFile = new File( romPath );
         sAutoSavePath = sUserPrefs.autoSaveDir + "/" + romFile.getName() + ".sav";
+        
+        // Make sure various directories exist so that we can write to them
+        new File( sUserPrefs.sramSaveDir ).mkdirs();
+        new File( sUserPrefs.slotSaveDir ).mkdirs();
+        new File( sUserPrefs.autoSaveDir ).mkdirs();
+        new File( sUserPrefs.manualSaveDir ).mkdirs();
+        new File( sUserPrefs.coreUserConfigDir ).mkdirs();
+        new File( sUserPrefs.coreUserDataDir ).mkdirs();
+        new File( sUserPrefs.coreUserCacheDir ).mkdirs();
     }
     
     @TargetApi( 11 )
