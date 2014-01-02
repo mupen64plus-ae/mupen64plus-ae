@@ -94,6 +94,16 @@ public class GalleryActivity extends Activity implements OnClickListener
             }
         }
         
+        // Get the ROM path if it was passed from another activity/app
+        String givenRomPath = null;
+        Bundle extras = getIntent().getExtras();
+        if( extras != null )
+        {
+            givenRomPath = extras.getString( Keys.Extras.ROM_PATH );
+            if( !TextUtils.isEmpty( givenRomPath ) )
+                mUserPrefs.putPathSelectedGame( givenRomPath );
+        }
+        
         // Lay out the content
         setContentView( R.layout.gallery_activity );
         findViewById( R.id.button_pathSelectedGame ).setOnClickListener( this );

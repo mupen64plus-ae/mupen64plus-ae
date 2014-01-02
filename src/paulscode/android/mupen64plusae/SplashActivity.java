@@ -110,11 +110,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         mUserPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
-        // Save the path of the ROM, if it was passed to the activity
-        Uri dataUri = this.getIntent().getData();
-        if( dataUri != null )
-            mUserPrefs.putPathSelectedGame( dataUri.getPath() );
-        
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
         PreferenceManager.setDefaultValues( this, R.xml.preferences_play, false );
@@ -205,8 +200,12 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 mAppData.putAssetVersion( ASSET_VERSION );
                 updateText( R.string.assetExtractor_finished );
                 
-                // Launch the GalleryActivity
-                startActivity( new Intent( SplashActivity.this, GalleryActivity.class ) );
+                // Launch the GalleryActivity, passing ROM path if it was provided externally
+                Intent intent = new Intent( SplashActivity.this, GalleryActivity.class );
+                Uri dataUri = SplashActivity.this.getIntent().getData();
+                if( dataUri != null )
+                    intent.putExtra( Keys.Extras.ROM_PATH, dataUri.getPath() );
+                startActivity( intent );
                 
                 // We never want to come back to this activity, so finish it
                 finish();
