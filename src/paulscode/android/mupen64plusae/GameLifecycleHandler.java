@@ -50,6 +50,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
@@ -178,9 +179,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // Initialize the objects and data files interfacing to the emulator core
         Bundle extras = mActivity.getIntent().getExtras();
-        String cheatArgs = extras.getString( GameActivity.EXTRA_CHEAT_ARGS );
-        boolean doRestart = extras.getBoolean( GameActivity.EXTRA_DO_RESTART, false );
-        CoreInterface.initialize( mActivity, mSurface, cheatArgs, doRestart );
+        if( extras == null )
+            throw new Error( "ROM path must be passed via the extras bundle when starting GameActivity" );
+        String romPath = extras.getString( Keys.Extras.ROM_PATH );
+        String cheatArgs = extras.getString( Keys.Extras.CHEAT_ARGS );
+        boolean doRestart = extras.getBoolean( Keys.Extras.DO_RESTART, false );
+        if( TextUtils.isEmpty( romPath ) )
+            throw new Error( "ROM path must be passed via the extras bundle when starting GameActivity" );
+        CoreInterface.initialize( mActivity, mSurface, romPath, cheatArgs, doRestart );
         
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );

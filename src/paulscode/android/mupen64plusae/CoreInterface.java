@@ -108,8 +108,9 @@ public class CoreInterface
     private static Thread sCoreThread;
     
     // Startup info - used internally
-    protected static boolean sIsRestarting = false;
+    protected static String sRomPath = null;
     protected static String sCheatOptions = null;
+    protected static boolean sIsRestarting = false;
     
     // Speed info - used internally
     private static final int BASELINE_SPEED = 100;
@@ -123,8 +124,9 @@ public class CoreInterface
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
-    public static void initialize( Activity activity, GameSurface surface, String cheatArgs, boolean isRestarting )
+    public static void initialize( Activity activity, GameSurface surface, String romPath, String cheatArgs, boolean isRestarting )
     {
+        sRomPath = romPath;
         sCheatOptions = cheatArgs;
         sIsRestarting = isRestarting;
         
@@ -205,7 +207,7 @@ public class CoreInterface
                         arglist.add( "--cheats" );
                         arglist.add( sCheatOptions );
                     }
-                    arglist.add( sUserPrefs.selectedGame );
+                    arglist.add( sRomPath );
                     NativeExports.emuStart( sUserPrefs.coreUserDataDir, sUserPrefs.coreUserCacheDir, arglist.toArray() );
                 }
             }, "CoreThread" );

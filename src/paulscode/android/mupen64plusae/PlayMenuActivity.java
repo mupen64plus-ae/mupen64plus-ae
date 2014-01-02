@@ -63,8 +63,6 @@ import com.bda.controller.Controller;
 public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
-    public static final String EXTRA_MD5 = "EXTRA_MD5";
-    
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_CHEATS = "screenCheats";
     
@@ -87,6 +85,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private SharedPreferences mPrefs = null;
     
     // ROM info
+    private String mRomPath = null;
     private RomDetail mRomDetail = null;
     
     // Preference menu items
@@ -111,11 +110,14 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mUserPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
-        // Get the ROM's MD5 that was passed to the activity
+        // Get the ROM path and MD5 that was passed to the activity
         Bundle extras = getIntent().getExtras();
-        String md5 = null;
-        if( extras == null || TextUtils.isEmpty( md5 = extras.getString( EXTRA_MD5 ) ) )
-            throw new Error( "MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
+        if( extras == null )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
+        mRomPath = extras.getString( Keys.Extras.ROM_PATH );
+        final String md5 = extras.getString( Keys.Extras.ROM_MD5 );
+        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( md5 ) )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
         
         // Get the detailed info about the ROM
         mRomDetail = RomDetail.lookupByMd5( md5 );
@@ -447,8 +449,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 GameActivityXperiaPlay.class ) : new Intent( this, GameActivity.class );
         
         // Pass the startup info via the intent
-        intent.putExtra( GameActivity.EXTRA_CHEAT_ARGS, getCheatArgs() );
-        intent.putExtra( GameActivity.EXTRA_DO_RESTART, isRestarting );
+        intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
+        intent.putExtra( Keys.Extras.CHEAT_ARGS, getCheatArgs() );
+        intent.putExtra( Keys.Extras.DO_RESTART, isRestarting );
         
         startActivity( intent );
     }

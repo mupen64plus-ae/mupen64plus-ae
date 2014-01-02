@@ -200,12 +200,13 @@ public class GalleryActivity extends Activity implements OnClickListener
             }
             
             @Override
-            protected void onPostExecute( String result )
+            protected void onPostExecute( String md5 )
             {
-                if( !TextUtils.isEmpty( result ) )
+                if( !TextUtils.isEmpty( md5 ) )
                 {
                     Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
-                    intent.putExtra( PlayMenuActivity.EXTRA_MD5, result );
+                    intent.putExtra( Keys.Extras.ROM_PATH, romPath );
+                    intent.putExtra( Keys.Extras.ROM_MD5, md5 );
                     startActivity( intent );
                 }
             }

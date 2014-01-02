@@ -27,9 +27,6 @@ import android.view.MenuItem;
 
 public class GameActivity extends Activity
 {
-    public static final String EXTRA_CHEAT_ARGS = "EXTRA_CHEAT_ARGS";
-    public static final String EXTRA_DO_RESTART = "EXTRA_DO_RESTART";
-    
     private final GameLifecycleHandler mLifecycleHandler;
     private GameMenuHandler mMenuHandler;
     
