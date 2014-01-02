@@ -120,11 +120,11 @@
             </intent-filter>
         </activity>
 				<activity
-            android:name="paulscode.android.mupen64plusae.CheatEditorActivity"
+            android:name="paulscode.android.mupen64plusae.cheat.CheatEditorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/CheatEditorActivity_title" >
            	<intent-filter>
-                <action android:name=".CheatEditorActivity" />
+                <action android:name=".cheat.CheatEditorActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

@@ -18,7 +18,7 @@
  * 
  * Authors: Paul Lamb
  */
-package paulscode.android.mupen64plusae.persistent;
+package paulscode.android.mupen64plusae.cheat;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;

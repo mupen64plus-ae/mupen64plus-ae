@@ -27,13 +27,14 @@ import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
+import paulscode.android.mupen64plusae.cheat.CheatFile;
+import paulscode.android.mupen64plusae.cheat.CheatPreference;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatBlock;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatCode;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatOption;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.CheatFile;
-import paulscode.android.mupen64plusae.persistent.CheatFile.CheatBlock;
-import paulscode.android.mupen64plusae.persistent.CheatFile.CheatCode;
-import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
-import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
-import paulscode.android.mupen64plusae.persistent.CheatPreference;
 import paulscode.android.mupen64plusae.persistent.CompatibleListPreference;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;

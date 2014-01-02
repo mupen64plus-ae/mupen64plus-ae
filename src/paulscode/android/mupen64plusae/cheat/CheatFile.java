@@ -18,7 +18,7 @@
  * 
  * Authors: Paul Lamb, lioncash
  */
-package paulscode.android.mupen64plusae.persistent;
+package paulscode.android.mupen64plusae.cheat;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;

@@ -18,23 +18,24 @@
  * 
  * Authors: xperia64
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.cheat;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
 
+import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatBlock;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatCode;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatOption;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.CheatFile;
-import paulscode.android.mupen64plusae.persistent.CheatFile.CheatBlock;
-import paulscode.android.mupen64plusae.persistent.CheatFile.CheatCode;
-import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
-import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
