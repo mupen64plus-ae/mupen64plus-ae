@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.profile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -49,6 +50,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * The Class ProfileActivity.
@@ -355,9 +357,16 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         editComment.setHint( R.string.hint_profileComment );
         editComment.setRawInputType( InputType.TYPE_CLASS_TEXT );
         
+        // Create the warning label
+        final TextView textWarning = new TextView( this );
+        int dp = 10;
+        int px = Math.round( dp * getResources().getDisplayMetrics().density );
+        textWarning.setPadding( px, 0, px, 0 );
+        
         // Put the editors in a container
         final LinearLayout layout = new LinearLayout( this );
         layout.setOrientation( LinearLayout.VERTICAL );
+        layout.addView( textWarning );
         layout.addView( editName );
         layout.addView( editComment );
         
@@ -389,7 +398,9 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         
         // Dynamically disable the OK button if the name is not unique
         final Button okButton = dialog.getButton( DialogInterface.BUTTON_POSITIVE );
-        okButton.setEnabled( isValidName( name, name, allowSameName ) );
+        String warning = isValidName( name, name, allowSameName );
+        textWarning.setText( warning );
+        okButton.setEnabled( TextUtils.isEmpty( warning ) );
         editName.addTextChangedListener( new TextWatcher()
         {
             @Override
@@ -405,25 +416,37 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
             @Override
             public void afterTextChanged( Editable s )
             {
-                okButton.setEnabled( isValidName( name, s.toString(), allowSameName ) );
+                String warning = isValidName( name, s.toString(), allowSameName );
+                textWarning.setText( warning );
+                okButton.setEnabled( TextUtils.isEmpty( warning ) );
             }
         } );
     }
     
     /**
-     * Checks whether a candidate name is safe to use. Profile names must be unique and non-empty.
+     * Checks whether a candidate name is unique, non-empty, and contains only safe characters.
+     * Unsafe characters are: '[', ']'.
      * 
      * @param oldName the old name
      * @param newName the new name
      * @param allowSameName set true to permit old and new names to be the same
-     * @return true, if the profile name is safe to use
+     * @return empty string if the profile name is safe to use, otherwise a warning message
      */
-    private boolean isValidName( String oldName, String newName, boolean allowSameName )
+    private String isValidName( String oldName, String newName, boolean allowSameName )
     {
         boolean isNotEmpty = !TextUtils.isEmpty( newName );
-        boolean isUnique = !mProfileNames.contains( newName );
+        boolean isLegal = !Pattern.matches( ".*[\\[\\]].*", newName );
         boolean isSameName = oldName.equals( newName );
-        return isNotEmpty && ( isUnique || ( isSameName && allowSameName ) );
+        boolean isUnique = !mProfileNames.contains( newName ) || ( isSameName && allowSameName );
+        
+        if( !isNotEmpty )
+            return getString( R.string.profile_name_cannot_be_empty );
+        else if( !isLegal )
+            return getString( R.string.profile_name_cannot_contain_brackets );
+        else if( !isUnique )
+            return getString( R.string.profile_name_must_be_unique );
+        else
+            return "";
     }
     
     private void setBuiltinVisibility( boolean visible )
