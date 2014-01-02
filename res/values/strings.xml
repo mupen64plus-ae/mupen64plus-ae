@@ -444,10 +444,10 @@
     <string name="cheatEditor_notes_desc">Edit cheat notes</string>
     <string name="cheatEditor_code">Cheat code</string>
     <string name="cheatEditor_code_desc">Edit cheat code</string>
-    <string name="cheatEditor_badCode">Bad code(s), reverting...</string>
+    <string name="cheatEditor_badCode">Bad code(s), reverting…</string>
     <string name="cheatEditor_option">Cheat options</string>
     <string name="cheatEditor_option_desc">Edit cheat options</string>
-    <string name="cheatEditor_badOption">Bad option(s), reverting...</string>
+    <string name="cheatEditor_badOption">Bad option(s), reverting…</string>
     <string name="cheatEditor_delete">Delete cheat</string>
     <string name="cheatEditor_confirm">Are you sure?</string>
     <string name="cheatEditor_yes">Yes</string>
