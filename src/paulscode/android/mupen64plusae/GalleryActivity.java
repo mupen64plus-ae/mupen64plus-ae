@@ -30,6 +30,7 @@ import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -300,7 +301,8 @@ public class GalleryActivity extends Activity implements OnClickListener
     {
         // Refresh the preferences object in case another activity changed the data
         mUserPrefs = new UserPrefs( this );
-        mRomDetail = RomDetail.lookupByCrc( mUserPrefs.selectedGameHeader.crc );
+        RomHeader romHeader = new RomHeader( new File( mUserPrefs.selectedGame ) );
+        mRomDetail = RomDetail.lookupByCrc( romHeader.crc );
         
         // Refresh the action bar
         if( AppData.IS_HONEYCOMB )

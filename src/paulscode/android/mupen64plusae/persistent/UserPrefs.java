@@ -36,7 +36,6 @@ import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
@@ -91,9 +90,6 @@ public class UserPrefs
 {
     /** The filename of the ROM selected by the user. */
     public final String selectedGame;
-    
-    /** The header of the selected ROM. */
-    public final RomHeader selectedGameHeader;
     
     /** The filename of the auto-saved session of the ROM selected by the user. */
     public final String selectedGameAutoSavefile;
@@ -406,8 +402,6 @@ public class UserPrefs
         
         // Files
         selectedGame = PathPreference.validate( mPreferences.getString( "pathSelectedGame", DEFAULT_PATH_SELECTED_GAME ) );
-        File romfile = new File( selectedGame );
-        selectedGameHeader = new RomHeader( romfile );
         gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
         slotSaveDir = gameSaveDir + "/SlotSaves";
         sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
