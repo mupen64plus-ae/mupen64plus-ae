@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.cheat;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.Keys;
@@ -49,10 +50,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class CheatEditorActivity extends ListActivity implements View.OnClickListener, OnItemLongClickListener
@@ -63,16 +67,44 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         public String desc;
         public String code;
         public String option;
+    }
+    
+    private static class CheatListAdapter extends ArrayAdapter<Cheat>
+    {
+        private static final int RESID = R.layout.list_item_two_text_icon;
+        
+        public CheatListAdapter( Context context, List<Cheat> cheats )
+        {
+            super( context, RESID, cheats );
+        }
         
         @Override
-        public String toString()
+        public View getView( int position, View convertView, ViewGroup parent )
         {
-            // This is what is shown in the main list
-            return name;
+            Context context = getContext();
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+            View view = convertView;
+            if( view == null )
+                view = inflater.inflate( RESID, null );
+            
+            Cheat item = getItem( position );
+            if( item != null )
+            {
+                TextView text1 = (TextView) view.findViewById( R.id.text1 );
+                TextView text2 = (TextView) view.findViewById( R.id.text2 );
+                ImageView icon = (ImageView) view.findViewById( R.id.icon );
+                
+                text1.setText( item.name );
+                text2.setText( item.desc );
+                icon.setImageResource( R.drawable.ic_key );
+            }
+            return view;
         }
     }
+    
     private final ArrayList<Cheat> cheats = new ArrayList<Cheat>();
-    private ArrayAdapter<Cheat> cheatListAdapter = null;
+    private CheatListAdapter cheatListAdapter = null;
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
     private RomHeader mRomHeader = null;
@@ -219,7 +251,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                 }
                 
                 cheats.add( cheat );
-                cheatListAdapter = new ArrayAdapter<Cheat>( this, R.layout.cheat_row, cheats );
+                cheatListAdapter = new CheatListAdapter( this, cheats );
                 setListAdapter( cheatListAdapter );
             }
         }
@@ -335,7 +367,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                 cheat.code = "";
                 cheat.option = "";
                 cheats.add( cheat );
-                cheatListAdapter = new ArrayAdapter<Cheat>( CheatEditorActivity.this, R.layout.cheat_row, cheats );
+                cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, cheats );
                 setListAdapter( cheatListAdapter );
                 Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_added ), Toast.LENGTH_SHORT );
                 t.show();
@@ -472,7 +504,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                 {
                     String str = text.toString().replace( '\n', ' ' );
                     cheat.name = str;
-                    cheatListAdapter = new ArrayAdapter<Cheat>( CheatEditorActivity.this, R.layout.cheat_row, cheats );
+                    cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, cheats );
                     setListAdapter( cheatListAdapter );
                 }
             }
@@ -631,7 +663,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
                     cheats.remove( pos );
-                    cheatListAdapter = new ArrayAdapter<Cheat>( CheatEditorActivity.this, R.layout.cheat_row, cheats );
+                    cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, cheats );
                     setListAdapter( cheatListAdapter );
                 }
             }
