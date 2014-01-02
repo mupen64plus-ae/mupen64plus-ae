@@ -19,6 +19,9 @@
             <item
                 android:id="@+id/menuItem_controllerProfiles"
                 android:title="@string/menuItem_controllerProfiles"/>
+            <item
+                android:id="@+id/menuItem_localeOverride"
+                android:title="@string/menuItem_localeOverride"/>
         </menu>
     </item>
     <item
@@ -67,10 +70,5 @@
                 android:title="@string/menuItem_credits"/>
         </menu>
     </item>
-    <item
-        android:id="@+id/menuItem_localeOverride"
-        android:icon="@drawable/ic_location"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_localeOverride"/>
 
 </menu>
