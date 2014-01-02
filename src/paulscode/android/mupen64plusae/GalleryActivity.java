@@ -30,7 +30,6 @@ import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -54,7 +53,6 @@ public class GalleryActivity extends Activity implements OnClickListener
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-    private RomDetail mRomDetail = null;
     private String mRomPath = null;
     
     @Override
@@ -203,7 +201,7 @@ public class GalleryActivity extends Activity implements OnClickListener
     private void launchPlayMenuActivity( final String romPath )
     {
         // Asynchronously compute MD5 and launch play menu when finished
-        Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameSettings ), mRomDetail.baseName ) );
+        Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
         new AsyncTask<Void, Void, String>()
         {
             @Override
@@ -303,8 +301,6 @@ public class GalleryActivity extends Activity implements OnClickListener
     {
         // Refresh the preferences object in case another activity changed the data
         mUserPrefs = new UserPrefs( this );
-        RomHeader romHeader = new RomHeader( new File( mRomPath ) );
-        mRomDetail = RomDetail.lookupByCrc( romHeader.crc );
         
         // Refresh the action bar
         if( AppData.IS_HONEYCOMB )
