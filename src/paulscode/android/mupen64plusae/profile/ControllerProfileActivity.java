@@ -69,20 +69,24 @@ public class ControllerProfileActivity extends ProfileActivity<ControllerProfile
     }
     
     @Override
-    protected void onAddProfile( String name, String comment )
+    protected ControllerProfile onAddProfile( String name, String comment )
     {
         assert ( !mConfigCustom.keySet().contains( name ) );
-        ControllerProfile.write( mConfigCustom, new ControllerProfile( name, comment, false ) );
+        ControllerProfile profile = new ControllerProfile( name, comment, false );
+        ControllerProfile.write( mConfigCustom, profile );
         mConfigCustom.save();
+        return profile;
     }
     
     @Override
-    protected void onCopyProfile( ControllerProfile profile, String newName, String newComment )
+    protected ControllerProfile onCopyProfile( ControllerProfile profile, String newName, String newComment )
     {
         assert ( !mConfigCustom.keySet().contains( newName ) );
-        ControllerProfile.write( mConfigCustom, new ControllerProfile( newName, newComment, false,
-                profile.map, profile.deadzone, profile.sensitivity ) );
+        ControllerProfile newProfile = new ControllerProfile( newName, newComment, false,
+                profile.map, profile.deadzone, profile.sensitivity );
+        ControllerProfile.write( mConfigCustom, newProfile );
         mConfigCustom.save();
+        return newProfile;
     }
     
     @Override

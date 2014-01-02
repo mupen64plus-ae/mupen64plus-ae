@@ -84,8 +84,9 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
      * 
      * @param name the unique name of the new profile
      * @param comment an optional brief description of the new profile
+     * @return the newly created profile
      */
-    abstract protected void onAddProfile( String name, String comment );
+    abstract protected T onAddProfile( String name, String comment );
     
     /**
      * Copies a profile using a subclass-specific persistence mechanism. Subclasses should implement
@@ -95,8 +96,9 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
      * @param profile the profile to be copied
      * @param newName the unique name of the cloned profile
      * @param newComment an optional brief description of the cloned profile
+     * @param the newly created profile
      */
-    abstract protected void onCopyProfile( T profile, String newName, String newComment );
+    abstract protected T onCopyProfile( T profile, String newName, String newComment );
     
     /**
      * Renames a profile using a subclass-specific persistence mechanism. Subclasses should
@@ -282,7 +284,7 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
             @Override
             public void onAccept( String name, String comment )
             {
-                onAddProfile( name, comment );
+                editProfile( onAddProfile( name, comment ) );
                 refreshList();
             }
         } );
@@ -296,7 +298,7 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
                     @Override
                     public void onAccept( String name, String comment )
                     {
-                        onCopyProfile( profile, name, comment );
+                        editProfile( onCopyProfile( profile, name, comment ) );
                         refreshList();
                     }
                 } );
