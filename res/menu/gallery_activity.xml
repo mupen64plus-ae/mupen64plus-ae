@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menuItem_play"
-        android:icon="@drawable/ic_play"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_play"/>
-    <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"
         android:showAsAction="ifRoom|withText"

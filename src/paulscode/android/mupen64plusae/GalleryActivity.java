@@ -96,8 +96,8 @@ public class GalleryActivity extends Activity implements OnClickListener
         
         // Lay out the content
         setContentView( R.layout.gallery_activity );
-        Button button = (Button) findViewById( R.id.button_pathSelectedGame );
-        button.setOnClickListener( this );
+        findViewById( R.id.button_pathSelectedGame ).setOnClickListener( this );
+        findViewById( R.id.button_play ).setOnClickListener( this );
         
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
@@ -121,9 +121,6 @@ public class GalleryActivity extends Activity implements OnClickListener
     {
         switch( item.getItemId() )
         {
-            case R.id.menuItem_play:
-                launchPlayMenuActivity( mUserPrefs.selectedGame );
-                return true;
             case R.id.menuItem_globalSettings:
                 startActivity( new Intent( this, SettingsGlobalActivity.class ) );
                 return true;
@@ -179,7 +176,15 @@ public class GalleryActivity extends Activity implements OnClickListener
     @Override
     public void onClick( View v )
     {
-        promptFile( new File( mUserPrefs.selectedGame ) );
+        switch( v.getId() )
+        {
+            case R.id.button_pathSelectedGame:
+                promptFile( new File( mUserPrefs.selectedGame ) );
+                break;
+            case R.id.button_play:
+                launchPlayMenuActivity( mUserPrefs.selectedGame );
+                break;
+        }
     }
     
     private void launchPlayMenuActivity( final String romPath )
