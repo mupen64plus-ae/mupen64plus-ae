@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -93,9 +92,6 @@ public class UserPrefs
     
     /** The parent directory containing all save files. */
     public final String gameSaveDir;
-    
-    /** The subdirectory containing manual save files. */
-    public final String manualSaveDir;
     
     /** The subdirectory containing slot save files. */
     public final String slotSaveDir;
@@ -408,8 +404,6 @@ public class UserPrefs
         coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
         coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what gles2rice assumes natively
-        File game = new File( selectedGame );
-        manualSaveDir = gameSaveDir + "/" + game.getName();
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";

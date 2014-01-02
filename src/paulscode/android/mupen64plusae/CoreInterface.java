@@ -124,8 +124,9 @@ public class CoreInterface
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
-    // Autosave info - used internally
+    // Save paths - used internally
     private static String sAutoSavePath = null;
+    private static String sManualSaveDir = null;
     
     public static void initialize( Activity activity, GameSurface surface, String romPath, String cheatArgs, boolean isRestarting )
     {
@@ -141,12 +142,13 @@ public class CoreInterface
         
         File romFile = new File( romPath );
         sAutoSavePath = sUserPrefs.autoSaveDir + "/" + romFile.getName() + ".sav";
+        sManualSaveDir = sUserPrefs.gameSaveDir + "/" + romFile.getName();
         
         // Make sure various directories exist so that we can write to them
         new File( sUserPrefs.sramSaveDir ).mkdirs();
         new File( sUserPrefs.slotSaveDir ).mkdirs();
         new File( sUserPrefs.autoSaveDir ).mkdirs();
-        new File( sUserPrefs.manualSaveDir ).mkdirs();
+        new File( sManualSaveDir ).mkdirs();
         new File( sUserPrefs.coreUserConfigDir ).mkdirs();
         new File( sUserPrefs.coreUserDataDir ).mkdirs();
         new File( sUserPrefs.coreUserCacheDir ).mkdirs();
@@ -358,7 +360,7 @@ public class CoreInterface
     {
         CoreInterface.pauseEmulator( false );
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
-        File startPath = new File( sUserPrefs.manualSaveDir );
+        File startPath = new File( sManualSaveDir );
         Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
         {
             @Override
@@ -373,7 +375,7 @@ public class CoreInterface
     
     public static void saveState( final String filename )
     {
-        final File file = new File( sUserPrefs.manualSaveDir + "/" + filename );
+        final File file = new File( sManualSaveDir + "/" + filename );
         if( file.exists() )
         {
             String title = sActivity.getString( R.string.confirm_title );
