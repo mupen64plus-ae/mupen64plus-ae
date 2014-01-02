@@ -124,6 +124,9 @@ public class CoreInterface
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
+    // Autosave info - used internally
+    private static String sAutoSavePath = null;
+    
     public static void initialize( Activity activity, GameSurface surface, String romPath, String cheatArgs, boolean isRestarting )
     {
         sRomPath = romPath;
@@ -135,6 +138,9 @@ public class CoreInterface
         sAppData = new AppData( sActivity );
         sUserPrefs = new UserPrefs( sActivity );
         NativeConfigFiles.syncConfigFiles( sUserPrefs, sAppData );
+        
+        File romFile = new File( romPath );
+        sAutoSavePath = sUserPrefs.autoSaveDir + "/" + romFile.getName() + ".sav";
     }
     
     @TargetApi( 11 )
@@ -225,7 +231,7 @@ public class CoreInterface
                                 && newValue == NativeConstants.EMULATOR_STATE_RUNNING )
                         {
                             removeOnStateCallbackListener( this );
-                            NativeExports.emuLoadFile( sUserPrefs.selectedGameAutoSavefile );
+                            NativeExports.emuLoadFile( sAutoSavePath );
                         }
                     }
                 } );
@@ -280,7 +286,7 @@ public class CoreInterface
             if( autoSave )
             {
                 Notifier.showToast( sActivity, R.string.toast_savingSession );
-                NativeExports.emuSaveFile( sUserPrefs.selectedGameAutoSavefile );
+                NativeExports.emuSaveFile( sAutoSavePath );
             }
         }
     }

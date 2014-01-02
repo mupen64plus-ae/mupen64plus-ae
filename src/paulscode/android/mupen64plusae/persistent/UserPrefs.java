@@ -91,9 +91,6 @@ public class UserPrefs
     /** The filename of the ROM selected by the user. */
     public final String selectedGame;
     
-    /** The filename of the auto-saved session of the ROM selected by the user. */
-    public final String selectedGameAutoSavefile;
-    
     /** The parent directory containing all save files. */
     public final String gameSaveDir;
     
@@ -413,7 +410,6 @@ public class UserPrefs
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what gles2rice assumes natively
         File game = new File( selectedGame );
         manualSaveDir = gameSaveDir + "/" + game.getName();
-        selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
