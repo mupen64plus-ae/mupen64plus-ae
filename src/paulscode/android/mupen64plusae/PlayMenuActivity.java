@@ -71,6 +71,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private static final String ACTION_RESUME = "actionResume";
     private static final String ACTION_RESTART = "actionRestart";
+    private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     
     private static final String CONTROLLER_PROFILE1 = "controllerProfile1";
     private static final String CONTROLLER_PROFILE2 = "controllerProfile2";
@@ -138,6 +139,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESUME, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESTART, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_CHEAT_EDITOR, this );
         
         // Setup controller profiles settings based on ROM's number of players
         if( mRomDetail.players == 1 )
@@ -315,6 +317,12 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 }
             } );
             return true;
+        }
+        else if( key.equals( ACTION_CHEAT_EDITOR ) )
+        {
+            Intent intent = new Intent( this, CheatEditorActivity.class );
+            intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
+            startActivity( intent );
         }
         return false;
     }

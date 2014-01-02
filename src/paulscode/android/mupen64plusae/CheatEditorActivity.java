@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -32,6 +33,7 @@ import paulscode.android.mupen64plusae.persistent.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.persistent.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -72,6 +74,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     private ArrayAdapter<Cheat> cheatListAdapter = null;
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
+    private RomHeader mRomHeader = null;
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -81,8 +84,17 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
         
+        // Get the ROM header info
+        Bundle extras = getIntent().getExtras();
+        if( extras == null )
+            throw new Error( "ROM path must be passed via the extras bundle when starting CheatEditorActivity" );
+        String romPath = extras.getString( Keys.Extras.ROM_PATH );
+        if( TextUtils.isEmpty( romPath ) )
+            throw new Error( "ROM path must be passed via the extras bundle when starting CheatEditorActivity" );
+        mRomHeader = new RomHeader( new File( romPath ) );
+        
         setContentView( R.layout.cheat_editor );
-        reload( mUserPrefs.selectedGameHeader.crc );
+        reload( mRomHeader.crc );
         findViewById( R.id.imgBtnChtAdd ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtEdit ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtSave ).setOnClickListener( this );
@@ -219,7 +231,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         if( c == null )
         {
             // Game name and country code from header
-            c = new CheatSection( crc.replace( ' ', '-' ), mUserPrefs.selectedGameHeader.name, Integer.toHexString( ( mUserPrefs.selectedGameHeader.countryCode ) ).substring( 0, 2 ) );
+            c = new CheatSection( crc.replace( ' ', '-' ), mRomHeader.name, Integer.toHexString( ( mRomHeader.countryCode ) ).substring( 0, 2 ) );
             mupencheat_txt.add( c );
         }
         {
@@ -336,7 +348,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                 break;
             
             case R.id.imgBtnChtSave:
-                save( mUserPrefs.selectedGameHeader.crc );
+                save( mRomHeader.crc );
                 CheatEditorActivity.this.finish();
                 break;
                 
@@ -430,7 +442,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                 {
                     if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        save( mUserPrefs.selectedGameHeader.crc );
+                        save( mRomHeader.crc );
                     }
                     CheatEditorActivity.this.finish();
                 }

@@ -79,7 +79,6 @@
                 android:key="actionCheatEditor"
                 android:summary="@string/actionCheatEditor_summary"
                 android:title="@string/actionCheatEditor_title" >
-                <intent android:action=".CheatEditorActivity" />
             </Preference>
 
             <PreferenceCategory
