@@ -87,9 +87,6 @@ import android.view.WindowManager;
  */
 public class UserPrefs
 {
-    /** The filename of the ROM selected by the user. */
-    public final String selectedGame;
-    
     /** The parent directory containing all save files. */
     public final String gameSaveDir;
     
@@ -337,7 +334,6 @@ public class UserPrefs
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
-    private static final String KEY_PATH_SELECTED_GAME = "pathSelectedGame";
     // ... add more as needed
     
     // Shared preferences default values
@@ -394,7 +390,6 @@ public class UserPrefs
         mLocaleCodes = values;
         
         // Files
-        selectedGame = PathPreference.validate( mPreferences.getString( "pathSelectedGame", DEFAULT_PATH_SELECTED_GAME ) );
         gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
         slotSaveDir = gameSaveDir + "/SlotSaves";
         sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
@@ -774,11 +769,6 @@ public class UserPrefs
     public boolean getPlayerMapReminder()
     {
         return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
-    }
-    
-    public void putPathSelectedGame( String absolutePath )
-    {
-        mPreferences.edit().putString( KEY_PATH_SELECTED_GAME, absolutePath ).commit();
     }
     
     public void putPakType( int player, int value )

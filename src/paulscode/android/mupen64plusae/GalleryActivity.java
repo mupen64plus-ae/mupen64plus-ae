@@ -41,6 +41,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +55,7 @@ public class GalleryActivity extends Activity implements OnClickListener
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
     private RomDetail mRomDetail = null;
+    private String mRomPath = null;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -81,6 +83,7 @@ public class GalleryActivity extends Activity implements OnClickListener
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        mRomPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         
         int lastVer = mAppData.getLastAppVersionCode();
         int currVer = mAppData.appVersionCode;
@@ -96,13 +99,12 @@ public class GalleryActivity extends Activity implements OnClickListener
         }
         
         // Get the ROM path if it was passed from another activity/app
-        String givenRomPath = null;
         Bundle extras = getIntent().getExtras();
         if( extras != null )
         {
-            givenRomPath = extras.getString( Keys.Extras.ROM_PATH );
+            String givenRomPath = extras.getString( Keys.Extras.ROM_PATH );
             if( !TextUtils.isEmpty( givenRomPath ) )
-                mUserPrefs.putPathSelectedGame( givenRomPath );
+                mRomPath = givenRomPath;
         }
         
         // Lay out the content
@@ -190,10 +192,10 @@ public class GalleryActivity extends Activity implements OnClickListener
         switch( v.getId() )
         {
             case R.id.button_pathSelectedGame:
-                promptFile( new File( mUserPrefs.selectedGame ) );
+                promptFile( new File( mRomPath ) );
                 break;
             case R.id.button_play:
-                launchPlayMenuActivity( mUserPrefs.selectedGame );
+                launchPlayMenuActivity( mRomPath );
                 break;
         }
     }
@@ -237,7 +239,7 @@ public class GalleryActivity extends Activity implements OnClickListener
                 {
                     if( file.isFile() )
                     {
-                        mUserPrefs.putPathSelectedGame( file.getAbsolutePath() );
+                        mRomPath = file.getAbsolutePath();
                         refreshViews();
                     }
                     else
@@ -301,7 +303,7 @@ public class GalleryActivity extends Activity implements OnClickListener
     {
         // Refresh the preferences object in case another activity changed the data
         mUserPrefs = new UserPrefs( this );
-        RomHeader romHeader = new RomHeader( new File( mUserPrefs.selectedGame ) );
+        RomHeader romHeader = new RomHeader( new File( mRomPath ) );
         mRomDetail = RomDetail.lookupByCrc( romHeader.crc );
         
         // Refresh the action bar
@@ -309,7 +311,7 @@ public class GalleryActivity extends Activity implements OnClickListener
             invalidateOptionsMenu();
         
         // Update the button text for the selected game
-        File selectedGame = new File( mUserPrefs.selectedGame );
+        File selectedGame = new File( mRomPath );
         Button button = (Button) findViewById( R.id.button_pathSelectedGame );
         button.setText( selectedGame.getName() );
     }

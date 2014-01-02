@@ -282,7 +282,7 @@ public class PathPreference extends DialogPreference
         FileUtil.populate( startPath, true, true, isFilesIncluded, mNames, mPaths );
     }
 
-    public static String validate( String value )
+    private static String validate( String value )
     {
         if( TextUtils.isEmpty( value ) )
         {
