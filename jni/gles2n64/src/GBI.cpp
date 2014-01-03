@@ -42,7 +42,7 @@ SpecialMicrocodeInfo specialMicrocodes[] =
     {F3DPD, FALSE, 0x1c4f7869, "Perfect Dark"},
     {F3DEX, FALSE, 0x0ace4c3f, "Mario Kart"},
     //{F3DEX, FALSE, 0xda51ccdb, "Rogue Squadron"},
-    //{F3DCBFD, FALSE, 0x1b4ace88, "RSP Gfx ucode F3DEXBG.NoN fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo."},
+    {F3DCBFD, FALSE, 0x1b4ace88, "RSP Gfx ucode F3DEXBG.NoN fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo."},
 };
 
 u32 G_RDPHALF_1, G_RDPHALF_2, G_RDPHALF_CONT;
