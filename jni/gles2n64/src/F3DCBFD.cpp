@@ -37,14 +37,14 @@ void F3DCBFD_Vtx(u32 w0, u32 w1)
     gSPFlushTriangles();
 
     Vertex* vertex = (Vertex*)&RDRAM[address];
+	u32 v;
 
 	for (s32 i=0; i < n; i++)
 	{
-        u32 v;
 #ifdef __TRIBUFFER_OPT
-        v = __indexmap_getnew(i, 1);
+        v = __indexmap_getnew(v0 + i, 1);
 #else
-        v = i;
+        v = v0 + i;
 #endif
 
 		OGL.triangles.vertices[v].x = vertex->x;
@@ -101,7 +101,7 @@ void F3DCBFD_MoveWord(u32 w0, u32 w1)
             break;
 
         case G_MW_SEGMENT:
-            gSPSegment(_SHIFTR(offset, 2, 4), w1);
+            gSPSegment(_SHIFTR(offset, 2, 4), w1 & 0x00FFFFFF);
             break;
 
         case G_MW_FOG:
@@ -151,7 +151,7 @@ void F3DCBFD_MoveMem(u32 w0, u32 w1)
 void F3DCBFD_Tri4(u32 w0, u32 w1)
 {
     gSP4Triangles( _SHIFTR(w0, 23, 5), _SHIFTR(w0, 18, 5), (_SHIFTR(w0, 15, 3 ) << 2) | _SHIFTR(w1, 30, 2),
-                   _SHIFTR(w0, 10, 5), _SHIFTR(w0, 5, 5), _SHIFTR(w1, 0, 5),
+                   _SHIFTR(w0, 10, 5), _SHIFTR(w0, 5, 5), _SHIFTR(w0, 0, 5),
                    _SHIFTR(w1, 25, 5), _SHIFTR(w1, 20, 5), _SHIFTR(w1, 15, 5),
                    _SHIFTR(w1, 10, 5), _SHIFTR(w1, 5, 5), _SHIFTR(w1, 0, 5));
 }
