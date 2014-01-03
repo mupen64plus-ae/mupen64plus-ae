@@ -74,12 +74,28 @@ public class AxisMap extends SerializableMap
         switch( mSignature.hashCode() )
         {
             case SIGNATURE_HASH_XBOX360:
+                // Resting value is -1 on the analog triggers; fix that
+                if( deviceName.contains( "Sony Computer Entertainment Wireless Controller" ) )
+                {
+                    // Note that the PS4 controller uses the same axes but uses different ones for
+                    // the triggers, so we have to differentiate them.
+                    setClass( MotionEvent.AXIS_RX, AXIS_CLASS_TRIGGER );
+                    setClass( MotionEvent.AXIS_RY, AXIS_CLASS_TRIGGER );
+                    signatureName = "PS4 compatible";
+                }
+                else
+                {
+                    setClass( MotionEvent.AXIS_Z, AXIS_CLASS_TRIGGER );
+                    setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_TRIGGER );
+                    signatureName = "Xbox 360 compatible";
+                }
+                break;
+            
             case SIGNATURE_HASH_XBOX360_WIRELESS:
                 // Resting value is -1 on the analog triggers; fix that
                 setClass( MotionEvent.AXIS_Z, AXIS_CLASS_TRIGGER );
                 setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_TRIGGER );
-                signatureName = mSignature.hashCode() == SIGNATURE_HASH_XBOX360_WIRELESS ?
-                    "Xbox 360 wireless" : "Xbox 360 compatible";
+                signatureName = "Xbox 360 wireless";
                 break;
             
             case SIGNATURE_HASH_PS3:
