@@ -137,38 +137,41 @@ public final class DeviceUtil
                 InputDevice device = InputDevice.getDevice( ids[i] );
                 if( device != null )
                 {
-                    builder.append( "Device: " + device.getName() + "\n" );
-                    builder.append( "Id: " + device.getId() + "\n" );
-                    if( AppData.IS_JELLY_BEAN )
+                    if( 0 < ( device.getSources() & ( InputDevice.SOURCE_CLASS_BUTTON | InputDevice.SOURCE_CLASS_JOYSTICK ) ) )
                     {
-                        builder.append( "Descriptor: " + device.getDescriptor() + "\n" );
-                        if( device.getVibrator().hasVibrator() )
-                            builder.append( "Vibrator: true\n" );
-                    }
-                    builder.append( "Class: " + getSourceClassesString( device.getSources() )
-                            + "\n" );
-                    
-                    List<MotionRange> ranges = getPeripheralMotionRanges( device );
-                    if( ranges.size() > 0 )
-                    {
-                        builder.append( "Axes: " + ranges.size() + "\n" );
-                        for( MotionRange range : ranges )
+                        builder.append( "Device: " + device.getName() + "\n" );
+                        builder.append( "Id: " + device.getId() + "\n" );
+                        if( AppData.IS_JELLY_BEAN )
                         {
-                            if( AppData.IS_HONEYCOMB_MR1 )
-                            {
-                                String axisName = MotionEvent.axisToString( range.getAxis() );
-                                String source = getSourceName( range.getSource() );
-                                builder.append( "  " + axisName + " (" + source + ")" );
-                            }
-                            else
-                            {
-                                builder.append( "  Axis" );
-                            }
-                            builder.append( ": ( " + range.getMin() + " , " + range.getMax()
-                                    + " )\n" );
+                            builder.append( "Descriptor: " + device.getDescriptor() + "\n" );
+                            if( device.getVibrator().hasVibrator() )
+                                builder.append( "Vibrator: true\n" );
                         }
+                        builder.append( "Class: " + getSourceClassesString( device.getSources() )
+                                + "\n" );
+                        
+                        List<MotionRange> ranges = getPeripheralMotionRanges( device );
+                        if( ranges.size() > 0 )
+                        {
+                            builder.append( "Axes: " + ranges.size() + "\n" );
+                            for( MotionRange range : ranges )
+                            {
+                                if( AppData.IS_HONEYCOMB_MR1 )
+                                {
+                                    String axisName = MotionEvent.axisToString( range.getAxis() );
+                                    String source = getSourceName( range.getSource() );
+                                    builder.append( "  " + axisName + " (" + source + ")" );
+                                }
+                                else
+                                {
+                                    builder.append( "  Axis" );
+                                }
+                                builder.append( ": ( " + range.getMin() + " , " + range.getMax()
+                                        + " )\n" );
+                            }
+                        }
+                        builder.append( "\n" );
                     }
-                    builder.append( "\n" );
                 }
             }
         }
