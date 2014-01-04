@@ -42,6 +42,7 @@ public class NativeConfigFiles
         gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( user.isGles2N64AutoFrameskipEnabled ) );
         gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( user.gles2N64MaxFrameskip ) );
         gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable fog", boolToNum( user.isGles2N64FogEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "texture 2xSAI", boolToNum( user.isGles2N64SaiEnabled ) );
         gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( user.isGles2N64AlphaTestEnabled ) );
         gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( user.isGles2N64ScreenClearEnabled ) );
         gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( !user.isGles2N64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled

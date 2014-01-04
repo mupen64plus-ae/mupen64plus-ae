@@ -1,5 +1,6 @@
 [36:2.4.4]
 - Fixed analog mappings for PS4 controller
+- Fixed broken 2xSAI setting for gles2n64 video plugin
 [35:2.4.3]
 - Fixed bug where IPEGA d-pad was being ignored
 - Allow app to be seen in Google Play for touchscreen-less devices (e.g. M.O.J.O)
