@@ -140,6 +140,7 @@
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
     <string name="actionCheatEditor_title">Manage cheat codes</string>
     <string name="actionCheatEditor_summary">Add, modify, and delete custom cheats</string>
+    <string name="actionShare_title">Share</string>
 
     <!-- Preference Screens -->
     <string name="screenInput_title">Input</string>

@@ -252,9 +252,30 @@ public class GalleryActivity extends Activity implements OnClickListener
     private void popupHardwareInfo()
     {
         String title = getString( R.string.menuItem_hardwareInfo );
-        String message = DeviceUtil.getAxisInfo() + "\n\n" + DeviceUtil.getPeripheralInfo()
-                + "\n\n" + DeviceUtil.getCpuInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+        String axisInfo = DeviceUtil.getAxisInfo();
+        String peripheralInfo = DeviceUtil.getPeripheralInfo();
+        String cpuInfo = DeviceUtil.getCpuInfo();
+        final String message = axisInfo + peripheralInfo + cpuInfo;
+        
+        // Set up click handler to share text with a user-selected app (email, clipboard, etc.)
+        DialogInterface.OnClickListener shareHandler = new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                // See http://android-developers.blogspot.com/2012/02/share-with-intents.html
+                Intent intent = new Intent( android.content.Intent.ACTION_SEND );
+                intent.setType( "text/plain" );
+                intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET );
+                intent.putExtra( Intent.EXTRA_TEXT, message );
+                // intent.putExtra( Intent.EXTRA_SUBJECT, subject );
+                // intent.putExtra( Intent.EXTRA_EMAIL, new String[] { emailTo } );
+                startActivity( Intent.createChooser( intent, getText( R.string.actionShare_title ) ) );
+            }
+        };
+        
+        new Builder( this ).setTitle( title ).setMessage( message.toString() )
+                .setNeutralButton( R.string.actionShare_title, shareHandler ).create().show();
     }
     
     private void popupAppVersion()
