@@ -34,6 +34,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
@@ -43,11 +44,15 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -481,5 +486,42 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         mProfileNames.clear();
         for( T profile : profiles )
             mProfileNames.add( profile.name );
+    }
+    
+    private static class ProfileListAdapter<T extends Profile> extends ArrayAdapter<T>
+    {
+        private static final int RESID = R.layout.list_item_two_text_icon;
+        
+        public ProfileListAdapter( Context context, List<T> profiles )
+        {
+            super( context, RESID, profiles );
+        }
+        
+        @Override
+        public View getView( int position, View convertView, ViewGroup parent )
+        {
+            Context context = getContext();
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+            View view = convertView;
+            if( view == null )
+                view = inflater.inflate( RESID, null );
+            
+            Profile item = getItem( position );
+            if( item != null )
+            {
+                TextView text1 = (TextView) view.findViewById( R.id.text1 );
+                TextView text2 = (TextView) view.findViewById( R.id.text2 );
+                ImageView icon = (ImageView) view.findViewById( R.id.icon );
+                
+                int stringId = item.isBuiltin
+                        ? R.string.listItem_profileBuiltin
+                        : R.string.listItem_profileCustom;
+                text1.setText( context.getString( stringId, item.name ) );
+                text2.setText( item.comment );
+                icon.setImageResource( R.drawable.ic_sliders );
+            }
+            return view;
+        }
     }
 }
