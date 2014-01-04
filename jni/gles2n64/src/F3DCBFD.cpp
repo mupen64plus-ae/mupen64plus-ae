@@ -57,8 +57,8 @@ void F3DCBFD_Vtx(u32 w0, u32 w1)
 
         if (config.enableLighting && gSP.geometryMode & G_LIGHTING)
 		{
-			OGL.triangles.vertices[v].nx = ((s8*)RDRAM)[(normal_address + (i<<2) + (v0<<1) + 0)^3];
-			OGL.triangles.vertices[v].ny = ((s8*)RDRAM)[(normal_address + (i<<2) + (v0<<1) + 1)^3];
+			OGL.triangles.vertices[v].nx = ((s8*)RDRAM)[(normal_address + (i<<1) + (v0<<1) + 0)^3];
+			OGL.triangles.vertices[v].ny = ((s8*)RDRAM)[(normal_address + (i<<1) + (v0<<1) + 1)^3];
 			OGL.triangles.vertices[v].nz = (s8)(vertex->flag&0xff);
 		}
 
