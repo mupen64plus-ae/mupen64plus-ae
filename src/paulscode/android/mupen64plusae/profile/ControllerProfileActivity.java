@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,7 +65,7 @@ public class ControllerProfileActivity extends ProfileActivity<ControllerProfile
     protected void onEditProfile( ControllerProfile profile )
     {
         Intent intent = new Intent( this, ControllerProfileEditActivity.class );
-        intent.putExtra( ControllerProfileEditActivity.EXTRA_PROFILE_NAME, profile.name );
+        intent.putExtra( Keys.Extras.PROFILE_NAME, profile.name );
         startActivity( intent );
     }
     

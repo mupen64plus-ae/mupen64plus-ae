@@ -25,6 +25,7 @@ import java.util.List;
 
 import com.bda.controller.Controller;
 
+import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.InputMap;
@@ -67,8 +68,6 @@ import android.widget.TextView;
 
 public class ControllerProfileEditActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
 {
-    public static final String EXTRA_PROFILE_NAME = "EXTRA_PROFILE_NAME";
-    
     // Slider limits
     private static final int MIN_DEADZONE = 0;
     private static final int MAX_DEADZONE = 20;
@@ -128,7 +127,7 @@ public class ControllerProfileEditActivity extends Activity implements OnInputLi
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "Invalid usage: bundle must indicate profile name" );
-        String name = extras.getString( EXTRA_PROFILE_NAME );
+        String name = extras.getString( Keys.Extras.PROFILE_NAME );
         if( TextUtils.isEmpty( name ) )
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
         mConfigFile = new ConfigFile( mUserPrefs.controllerProfiles_cfg );

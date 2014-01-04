@@ -41,6 +41,7 @@ public class Keys
         public static final String ROM_MD5      = NAMESPACE + "ROM_MD5";
         public static final String CHEAT_ARGS   = NAMESPACE + "CHEAT_ARGS";
         public static final String DO_RESTART   = NAMESPACE + "DO_RESTART";
+        public static final String PROFILE_NAME = NAMESPACE + "PROFILE_NAME";
         //@formatter:on
     }
     
