@@ -123,7 +123,6 @@ public class GalleryActivity extends Activity implements OnClickListener
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.gallery_activity, menu );
-        menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -164,14 +163,8 @@ public class GalleryActivity extends Activity implements OnClickListener
             case R.id.menuItem_changelog:
                 new ChangeLog( getAssets() ).show( GalleryActivity.this, 0, mAppData.appVersionCode );
                 return true;
-            case R.id.menuItem_axisInfo:
-                popupAxisInfo();
-                return true;
-            case R.id.menuItem_controllerInfo:
-                popupControllerInfo();
-                return true;
-            case R.id.menuItem_systemInfo:
-                popupDeviceInfo();
+            case R.id.menuItem_hardwareInfo:
+                popupHardwareInfo();
                 return true;
             case R.id.menuItem_credits:
                 Utility.launchUri( GalleryActivity.this, R.string.uri_credits );
@@ -256,24 +249,11 @@ public class GalleryActivity extends Activity implements OnClickListener
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
-    private void popupAxisInfo()
+    private void popupHardwareInfo()
     {
-        String title = getString( R.string.menuItem_axisInfo );
-        String message = DeviceUtil.getAxisInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void popupControllerInfo()
-    {
-        String title = getString( R.string.menuItem_controllerInfo );
-        String message = DeviceUtil.getPeripheralInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void popupDeviceInfo()
-    {
-        String title = getString( R.string.menuItem_systemInfo );
-        String message = DeviceUtil.getCpuInfo();
+        String title = getString( R.string.menuItem_hardwareInfo );
+        String message = DeviceUtil.getAxisInfo() + "\n\n" + DeviceUtil.getPeripheralInfo()
+                + "\n\n" + DeviceUtil.getCpuInfo();
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     

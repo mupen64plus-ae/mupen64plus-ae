@@ -70,9 +70,7 @@
     <string name="menuItem_credits">Credits</string>
     <string name="menuItem_appVersion">App version</string>
     <string name="menuItem_changelog">Changelog</string>
-    <string name="menuItem_systemInfo">System info</string>
-    <string name="menuItem_axisInfo">Analog info</string>
-    <string name="menuItem_controllerInfo">Controller info</string>
+    <string name="menuItem_hardwareInfo">Hardware info</string>
     <string name="menuItem_localeOverride">Language</string>
 
     <!-- ProfileActivity -->

@@ -57,14 +57,8 @@
                 android:id="@+id/menuItem_changelog"
                 android:title="@string/menuItem_changelog"/>
             <item
-                android:id="@+id/menuItem_axisInfo"
-                android:title="@string/menuItem_axisInfo"/>
-            <item
-                android:id="@+id/menuItem_controllerInfo"
-                android:title="@string/menuItem_controllerInfo"/>
-            <item
-                android:id="@+id/menuItem_systemInfo"
-                android:title="@string/menuItem_systemInfo"/>
+                android:id="@+id/menuItem_hardwareInfo"
+                android:title="@string/menuItem_hardwareInfo"/>
             <item
                 android:id="@+id/menuItem_credits"
                 android:title="@string/menuItem_credits"/>
