@@ -354,6 +354,7 @@ public class CoreInterface
         gles2n64_conf.put( "[<sectionless!>]", "auto frameskip", boolToNum( user.isGles2N64AutoFrameskipEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "max frameskip", String.valueOf( user.gles2N64MaxFrameskip ) );
         gles2n64_conf.put( "[<sectionless!>]", "enable fog", boolToNum( user.isGles2N64FogEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "texture 2xSAI", boolToNum( user.isGles2N64SaiEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", boolToNum( user.isGles2N64AlphaTestEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "force screen clear", boolToNum( user.isGles2N64ScreenClearEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "hack z", boolToNum( !user.isGles2N64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
