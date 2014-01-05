@@ -24,7 +24,7 @@ void F3DCBFD_Vtx(u32 w0, u32 w1)
 {
 
 	s32 v0, n;
-    	u32 address;
+	u32 address;
 	n = (w0 >> 12)&0xFF;
 	v0 = ((w0 >> 1)&0x7F) - n;
 	address = RSP_SegmentToPhysical(w1);
@@ -34,9 +34,9 @@ void F3DCBFD_Vtx(u32 w0, u32 w1)
 		return;
 	}
 
-    	gSPFlushTriangles();
+	gSPFlushTriangles();
 
-    	Vertex* vertex = (Vertex*)&RDRAM[address];
+	Vertex* vertex = (Vertex*)&RDRAM[address];
 	u32 v;
 
 	for (s32 i=0; i < n; i++)
@@ -134,11 +134,11 @@ void F3DCBFD_MoveMem(u32 w0, u32 w1)
 	case F3DCBFD_MV_VIEWPORT:
             	gSPViewport(w1);
             	
-        	break;
+		break;
 
         case F3DCBFD_MV_LIGHT:
         {
-            	//OBS: Broken, need some work
+		//OBS: Broken, need some work
 		u32 address = RSP_SegmentToPhysical(w1);
 		u32 offset = (w0 >> 5) & 0x3FFF;
 		u32 n = offset / 48;
@@ -150,13 +150,13 @@ void F3DCBFD_MoveMem(u32 w0, u32 w1)
 				
 		gSPLight(w1, n);
 		
-            	break;
+		break;
         }
 
 	case F3DCBFD_MV_NORMAL:
 		normal_address = RSP_SegmentToPhysical(w1);
 		
-        	break;
+		break;
     }
 }
 
