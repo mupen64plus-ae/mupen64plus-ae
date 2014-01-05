@@ -90,7 +90,9 @@ void F3DCBFD_MoveWord(u32 w0, u32 w1)
 	switch (index)
 	{
         case G_MW_NUMLIGHT:
-            gSPNumLights(w1 / 48);
+            if (config.enableLighting) {
+				gSPNumLights(w1 / 48);
+			}
             break;
 
         case G_MW_CLIP:
@@ -133,11 +135,19 @@ void F3DCBFD_MoveMem(u32 w0, u32 w1)
 
         case F3DCBFD_MV_LIGHT:
         {
-            u32 offset = _SHIFTR( w0, 8, 8 ) << 3;
-            if (offset >= 48)
-            {
-                gSPLight( w1, (offset - 24) / 24);
-            }
+            if (config.enableLighting) {
+            			//OBS: Broken, need some work
+				u32 address = RSP_SegmentToPhysical(w1);
+				u32 offset = (w0 >> 5) & 0x3FFF;
+				u32 n = offset / 48;
+				if (n < 2) {
+					//MV_LOOKAT
+					return;
+				}
+				n -= 2;
+				
+				gSPLight(w1, n);
+			}
             break;
         }
 
