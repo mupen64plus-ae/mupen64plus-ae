@@ -21,22 +21,24 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdint.h>
 #include <assert.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_types.h"
 #include "m64p_plugin.h"
 #include "hle.h"
+#include "jpeg.h"
 
 #define SUBBLOCK_SIZE 64
 
 typedef void (*tile_line_emitter_t)(const int16_t *y, const int16_t *u, uint32_t address);
 typedef void (*subblock_transform_t)(int16_t *dst, const int16_t *src);
 
-/* rdram operations */
-// FIXME: these functions deserve their own module
+/* rdram operations
+ * FIXME: these functions deserve their own module
+ */
 static void rdram_read_many_u16(uint16_t *dst, uint32_t address, unsigned int count);
 static void rdram_write_many_u16(const uint16_t *src, uint32_t address, unsigned int count);
 static uint32_t rdram_read_u32(uint32_t address);
@@ -51,7 +53,6 @@ static void jpeg_decode_std(const char *const version,
 /* helper functions */
 static uint8_t clamp_u8(int16_t x);
 static int16_t clamp_s12(int16_t x);
-static int16_t clamp_s16(int32_t x);
 static uint16_t clamp_RGBA_component(int16_t x);
 
 /* pixel conversion & foratting */
@@ -64,10 +65,11 @@ static void EmitRGBATileLine(const int16_t *y, const int16_t *u, uint32_t addres
 
 /* macroblocks operations */
 static void decode_macroblock_ob(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc, int32_t *v_dc, const int16_t *qtable);
-static void decode_macroblock_std(
-    const subblock_transform_t transform_luma,
-    const subblock_transform_t transform_chroma,
-    int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
+static void decode_macroblock_std(const subblock_transform_t transform_luma,
+                                  const subblock_transform_t transform_chroma,
+                                  int16_t *macroblock,
+                                  unsigned int subblock_count,
+                                  const int16_t qtables[3][SUBBLOCK_SIZE]);
 static void EmitTilesMode0(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 static void EmitTilesMode2(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 
@@ -144,7 +146,7 @@ static const float IDCT_K[10] = {
 /***************************************************************************
  * JPEG decoding ucode found in Japanese exclusive version of Pokemon Stadium.
  **************************************************************************/
-void jpeg_decode_PS0()
+void jpeg_decode_PS0(void)
 {
     jpeg_decode_std("PS0", RescaleYSubBlock, RescaleUVSubBlock, EmitYUVTileLine);
 }
@@ -153,7 +155,7 @@ void jpeg_decode_PS0()
  * JPEG decoding ucode found in Ocarina of Time, Pokemon Stadium 1 and
  * Pokemon Stadium 2.
  **************************************************************************/
-void jpeg_decode_PS()
+void jpeg_decode_PS(void)
 {
     jpeg_decode_std("PS", NULL, NULL, EmitRGBATileLine);
 }
@@ -161,7 +163,7 @@ void jpeg_decode_PS()
 /***************************************************************************
  * JPEG decoding ucode found in Ogre Battle and Bottom of the 9th.
  **************************************************************************/
-void jpeg_decode_OB()
+void jpeg_decode_OB(void)
 {
     int16_t qtable[SUBBLOCK_SIZE];
     unsigned int mb;
@@ -216,7 +218,8 @@ static void jpeg_decode_std(const char *const version,
     uint32_t qtableV_ptr;
     unsigned int subblock_count;
     unsigned int macroblock_size;
-    int16_t macroblock[6 * SUBBLOCK_SIZE]; /* macroblock contains at most 6 subblobcks */
+    /* macroblock contains at most 6 subblocks */
+    int16_t macroblock[6 * SUBBLOCK_SIZE];
     const OSTask_t *const task = get_task();
 
     if (task->flags & 0x1) {
@@ -280,15 +283,6 @@ static int16_t clamp_s12(int16_t x)
     return x;
 }
 
-static int16_t clamp_s16(int32_t x)
-{
-    if (x > 32767)
-        x = 32767;
-    else if (x < -32768)
-        x = -32768;
-    return x;
-}
-
 static uint16_t clamp_RGBA_component(int16_t x)
 {
     if (x > 0xff0)
@@ -300,10 +294,10 @@ static uint16_t clamp_RGBA_component(int16_t x)
 
 static uint32_t GetUYVY(int16_t y1, int16_t y2, int16_t u, int16_t v)
 {
-    return (uint32_t)clamp_u8(u)  << 24
-           | (uint32_t)clamp_u8(y1) << 16
-           | (uint32_t)clamp_u8(v)  << 8
-           | (uint32_t)clamp_u8(y2);
+    return (uint32_t)clamp_u8(u)  << 24 |
+           (uint32_t)clamp_u8(y1) << 16 |
+           (uint32_t)clamp_u8(v)  << 8 |
+           (uint32_t)clamp_u8(y2);
 }
 
 static uint16_t GetRGBA(int16_t y, int16_t u, int16_t v)
@@ -435,10 +429,11 @@ static void decode_macroblock_ob(int16_t *macroblock, int32_t *y_dc, int32_t *u_
     }
 }
 
-static void decode_macroblock_std(
-    const subblock_transform_t transform_luma,
-    const subblock_transform_t transform_chroma,
-    int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE])
+static void decode_macroblock_std(const subblock_transform_t transform_luma,
+                                  const subblock_transform_t transform_chroma,
+                                  int16_t *macroblock,
+                                  unsigned int subblock_count,
+                                  const int16_t qtables[3][SUBBLOCK_SIZE])
 {
     unsigned int sb;
     unsigned int q = 0;
@@ -559,7 +554,6 @@ static void InverseDCT1D(const float *const x, float *dst, unsigned int stride)
     *dst = f[1] + f[3] - e[1];
     dst += stride;
     *dst = f[0] + f[2] - e[0];
-    dst += stride;
 }
 
 static void InverseDCTSubBlock(int16_t *dst, const int16_t *src)

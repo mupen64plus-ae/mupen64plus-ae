@@ -22,6 +22,6 @@
 #ifndef MUSYX_H
 #define MUSYX_H
 
-void musyx_task();
+void musyx_task(void);
 
 #endif

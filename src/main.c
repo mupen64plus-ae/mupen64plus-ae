@@ -81,7 +81,7 @@ static int l_PluginInit = 0;
  *
  * Using ucode_boot_size should be more robust in this regard.
  **/
-static int is_task()
+static int is_task(void)
 {
     return (get_task()->ucode_boot_size <= 0x1000);
 }
@@ -96,7 +96,7 @@ static void rsp_break(unsigned int setbits)
     }
 }
 
-static void forward_gfx_task()
+static void forward_gfx_task(void)
 {
     if (rsp.ProcessDlistList != NULL) {
         rsp.ProcessDlistList();
@@ -104,19 +104,19 @@ static void forward_gfx_task()
     }
 }
 
-static void forward_audio_task()
+static void forward_audio_task(void)
 {
     if (rsp.ProcessAlistList != NULL)
         rsp.ProcessAlistList();
 }
 
-static void show_cfb()
+static void show_cfb(void)
 {
     if (rsp.ShowCFB != NULL)
         rsp.ShowCFB();
 }
 
-static int try_fast_audio_dispatching()
+static int try_fast_audio_dispatching(void)
 {
     /* identify audio ucode by using the content of ucode_data */
     const OSTask_t *const task = get_task();
@@ -142,7 +142,7 @@ static int try_fast_audio_dispatching()
             * Animal Crossing
             *
             * FIXME: in fact, all these games do not share the same ABI.
-            * That's the reason of the workaround in ucode2.cpp with isZeldaABI and isMKABI
+            * That's the reason of the workaround in ucode2.c with isZeldaABI and isMKABI
             **/
             alist_process_ABI2();
             return 1;
@@ -172,7 +172,7 @@ static int try_fast_audio_dispatching()
     return 0;
 }
 
-static int try_fast_task_dispatching()
+static int try_fast_task_dispatching(void)
 {
     /* identify task ucode by its type */
     const OSTask_t *const task = get_task();
@@ -201,7 +201,7 @@ static int try_fast_task_dispatching()
     return 0;
 }
 
-static void normal_task_dispatching()
+static void normal_task_dispatching(void)
 {
     const OSTask_t *const task = get_task();
     const unsigned int sum =
@@ -209,7 +209,8 @@ static void normal_task_dispatching()
 
     switch (sum) {
     /* StoreVe12: found in Zelda Ocarina of Time [misleading task->type == 4] */
-    case 0x278: /* Nothing to emulate */
+    case 0x278:
+        /* Nothing to emulate */
         return;
 
     /* GFX: Twintris [misleading task->type == 0] */
@@ -240,7 +241,7 @@ static void normal_task_dispatching()
     handle_unknown_task(sum);
 }
 
-static void non_task_dispatching()
+static void non_task_dispatching(void)
 {
     const unsigned int sum = sum_bytes(rsp.IMEM, 0x1000 >> 1);
 
@@ -265,23 +266,23 @@ static void handle_unknown_task(unsigned int sum)
     sprintf(&filename[0], "task_%x.log", sum);
     dump_task(filename, task);
 
-    // dump ucode_boot
+    /* dump ucode_boot */
     sprintf(&filename[0], "ucode_boot_%x.bin", sum);
     dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
 
-    // dump ucode
+    /* dump ucode */
     if (task->ucode != 0) {
         sprintf(&filename[0], "ucode_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
     }
 
-    // dump ucode_data
+    /* dump ucode_data */
     if (task->ucode_data != 0) {
         sprintf(&filename[0], "ucode_data_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
     }
 
-    // dump data
+    /* dump data */
     if (task->data_ptr != 0) {
         sprintf(&filename[0], "data_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
@@ -294,7 +295,7 @@ static void handle_unknown_non_task(unsigned int sum)
 
     DebugMessage(M64MSG_WARNING, "unknown RSP code: sum: %x PC:%x", sum, *rsp.SP_PC_REG);
 
-    // dump IMEM & DMEM for further analysis
+    /* dump IMEM & DMEM for further analysis */
     sprintf(&filename[0], "imem_%x.bin", sum);
     dump_binary(filename, rsp.IMEM, 0x1000);
 
@@ -417,10 +418,10 @@ static void dump_binary(const char *const filename, const unsigned char *const b
 {
     FILE *f;
 
-    // if file already exists, do nothing
+    /* if file already exists, do nothing */
     f = fopen(filename, "r");
     if (f == NULL) {
-        // else we write bytes to the file
+        /* else we write bytes to the file */
         f = fopen(filename, "wb");
         if (f != NULL) {
             if (fwrite(bytes, 1, size, f) != size)

@@ -22,7 +22,7 @@
 #ifndef CICX105_H
 #define CICX105_H
 
-void cicx105_ucode();
+void cicx105_ucode(void);
 
 #endif
 

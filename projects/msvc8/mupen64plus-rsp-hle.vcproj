@@ -199,19 +199,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode1.cpp"
+				RelativePath="..\..\src\ucode1.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode2.cpp"
+				RelativePath="..\..\src\ucode2.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode3.cpp"
+				RelativePath="..\..\src\ucode3.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode3mp3.cpp"
+				RelativePath="..\..\src\ucode3mp3.c"
 				>
 			</File>
 		</Filter>

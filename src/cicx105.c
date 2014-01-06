@@ -23,7 +23,9 @@
 
 #include <string.h>
 
+#include "m64p_plugin.h"
 #include "hle.h"
+#include "cicx105.h"
 
 /**
  * During IPL3 stage of CIC x105 games, the RSP performs some checks and transactions
@@ -33,9 +35,9 @@
  *
  * Found in Banjo-Tooie, Zelda, Perfect Dark, ...)
  **/
-void cicx105_ucode()
+void cicx105_ucode(void)
 {
-    // memcpy is okay to use because access constrains are met (alignment, size)
+    /* memcpy is okay to use because access constrains are met (alignment, size) */
     unsigned int i;
     unsigned char *dst = rsp.RDRAM + 0x2fb1f0;
     unsigned char *src = rsp.IMEM + 0x120;
