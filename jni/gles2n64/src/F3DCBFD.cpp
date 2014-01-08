@@ -63,12 +63,16 @@ void F3DCBFD_Vtx(u32 w0, u32 w1)
 	
 		gSPProcessVertex(v);
 	
-		if (config.enableLighting && gSP.geometryMode & G_LIGHTING)
+		u32 nonblack;
+		nonblack += OGL.triangles.vertices[v].r;
+		nonblack += OGL.triangles.vertices[v].g;
+		nonblack += OGL.triangles.vertices[v].b;
+		if (config.enableLighting && (gSP.geometryMode & G_LIGHTING) && (nonblack != 0))
 		{
 			OGL.triangles.vertices[v].r = OGL.triangles.vertices[v].r * vertex->color.r * 0.0039215689f;
 			OGL.triangles.vertices[v].g = OGL.triangles.vertices[v].g * vertex->color.g * 0.0039215689f;
 			OGL.triangles.vertices[v].b = OGL.triangles.vertices[v].b * vertex->color.b * 0.0039215689f;
-			OGL.triangles.vertices[v].a = OGL.triangles.vertices[v].a * vertex->color.a * 0.0039215689f;
+			OGL.triangles.vertices[v].a = vertex->color.a * 0.0039215689f;
 		}
 		else
 		{
@@ -131,16 +135,13 @@ void F3DCBFD_MoveMem(u32 w0, u32 w1)
 		case F3DCBFD_MV_LIGHT:
 		{
 			u32 offset = (w0 >> 5) & 0x3FFF;
-			u32 n = 0xFF;
-			if (offset >= 48)
-			{
-				n = (offset - 48) / 48;
-				gSPLight(w1, n);
+			u32 n = offset / 48;
+			if (n < 2) {
+				//LookAt
+				return;
 			}
-			else
-			{
-				// fix me
-			}
+			n--;
+			gSPLight(w1, n);
 			break;
 		}
 	
