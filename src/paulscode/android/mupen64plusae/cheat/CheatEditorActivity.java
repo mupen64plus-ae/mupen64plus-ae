@@ -264,7 +264,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         if( c == null )
         {
             // Game name and country code from header
-            c = new CheatSection( crc.replace( ' ', '-' ), mRomHeader.name, Integer.toHexString( ( mRomHeader.countryCode ) ).substring( 0, 2 ) );
+            c = new CheatSection( crc.replace( ' ', '-' ), mRomHeader.name, String.format( "%02x", mRomHeader.countryCode ).substring( 0, 2 ) );
             mupencheat_txt.add( c );
         }
         {
