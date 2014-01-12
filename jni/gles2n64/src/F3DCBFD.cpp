@@ -63,7 +63,7 @@ void F3DCBFD_Vtx(u32 w0, u32 w1)
 	
 		gSPProcessVertex(v);
 	
-		u32 nonblack;
+		u32 nonblack = 0;
 		nonblack += OGL.triangles.vertices[v].r;
 		nonblack += OGL.triangles.vertices[v].g;
 		nonblack += OGL.triangles.vertices[v].b;
