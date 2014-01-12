@@ -299,7 +299,7 @@
         <item>5</item>
     </string-array>
 
-    <string name="gles2N64Frameskip_default" translatable="false">-2</string>
+    <string name="gles2N64Frameskip_default" translatable="false">-5</string>
 
     <!-- GLES2Glide64 Frameskip List (re-use gles2n64 strings)-->
     <string-array name="gles2Glide64Frameskip_entries" translatable="false">
