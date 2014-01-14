@@ -24,6 +24,8 @@
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
+#include <assert.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define RSP_HLE_VERSION        0x020000
@@ -81,6 +83,56 @@ static inline const OSTask_t *const get_task(void)
 }
 
 void DebugMessage(int level, const char *message, ...);
+
+
+static inline uint8_t* const dmem_u8(uint16_t address)
+{
+    return (uint8_t*)(&rsp.DMEM[(address & 0xfff) ^ S8]);
+}
+
+static inline uint16_t* const dmem_u16(uint16_t address)
+{
+    assert((address & 1) == 0);
+    return (uint16_t*)(&rsp.DMEM[(address & 0xfff) ^ S16]);
+}
+
+static inline uint32_t* const dmem_u32(uint16_t address)
+{
+    assert((address & 3) == 0);
+    return (uint32_t*)(&rsp.DMEM[(address & 0xfff)]);
+}
+
+static inline uint8_t* const dram_u8(uint32_t address)
+{
+    return (uint8_t*)&rsp.RDRAM[(address & 0xffffff) ^ S8];
+}
+
+static inline uint16_t* const dram_u16(uint32_t address)
+{
+    assert((address & 1) == 0);
+    return (uint16_t*)&rsp.RDRAM[(address & 0xffffff) ^ S16];
+}
+
+static inline uint32_t* const dram_u32(uint32_t address)
+{
+    assert((address & 3) == 0);
+    return (uint32_t*)&rsp.RDRAM[address & 0xffffff];
+}
+
+void dmem_load_u8 (uint8_t*  dst, uint16_t address, size_t count);
+void dmem_load_u16(uint16_t* dst, uint16_t address, size_t count);
+void dmem_load_u32(uint32_t* dst, uint16_t address, size_t count);
+void dmem_store_u8 (const uint8_t*  src, uint16_t address, size_t count);
+void dmem_store_u16(const uint16_t* src, uint16_t address, size_t count);
+void dmem_store_u32(const uint32_t* src, uint16_t address, size_t count);
+
+void dram_load_u8 (uint8_t*  dst, uint32_t address, size_t count);
+void dram_load_u16(uint16_t* dst, uint32_t address, size_t count);
+void dram_load_u32(uint32_t* dst, uint32_t address, size_t count);
+void dram_store_u8 (const uint8_t*  src, uint32_t address, size_t count);
+void dram_store_u16(const uint16_t* src, uint32_t address, size_t count);
+void dram_store_u32(const uint32_t* src, uint32_t address, size_t count);
+
 
 extern uint8_t BufferSpace[0x10000];
 

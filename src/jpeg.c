@@ -36,14 +36,6 @@
 typedef void (*tile_line_emitter_t)(const int16_t *y, const int16_t *u, uint32_t address);
 typedef void (*subblock_transform_t)(int16_t *dst, const int16_t *src);
 
-/* rdram operations
- * FIXME: these functions deserve their own module
- */
-static void rdram_read_many_u16(uint16_t *dst, uint32_t address, unsigned int count);
-static void rdram_write_many_u16(const uint16_t *src, uint32_t address, unsigned int count);
-static uint32_t rdram_read_u32(uint32_t address);
-static void rdram_write_many_u32(const uint32_t *src, uint32_t address, unsigned int count);
-
 /* standard jpeg ucode decoder */
 static void jpeg_decode_std(const char *const version,
                             const subblock_transform_t transform_luma,
@@ -55,7 +47,7 @@ static uint8_t clamp_u8(int16_t x);
 static int16_t clamp_s12(int16_t x);
 static uint16_t clamp_RGBA_component(int16_t x);
 
-/* pixel conversion & foratting */
+/* pixel conversion & formatting */
 static uint32_t GetUYVY(int16_t y1, int16_t y2, int16_t u, int16_t v);
 static uint16_t GetRGBA(int16_t y, int16_t u, int16_t v);
 
@@ -193,7 +185,7 @@ void jpeg_decode_OB(void)
     for (mb = 0; mb < macroblock_count; ++mb) {
         int16_t macroblock[6 * SUBBLOCK_SIZE];
 
-        rdram_read_many_u16((uint16_t *)macroblock, address, 6 * SUBBLOCK_SIZE);
+        dram_load_u16((uint16_t *)macroblock, address, 6 * SUBBLOCK_SIZE);
         decode_macroblock_ob(macroblock, &y_dc, &u_dc, &v_dc, (qscale != 0) ? qtable : NULL);
         EmitTilesMode2(EmitYUVTileLine, macroblock, address);
 
@@ -227,12 +219,12 @@ static void jpeg_decode_std(const char *const version,
         return;
     }
 
-    address          = rdram_read_u32(task->data_ptr);
-    macroblock_count = rdram_read_u32(task->data_ptr + 4);
-    mode             = rdram_read_u32(task->data_ptr + 8);
-    qtableY_ptr      = rdram_read_u32(task->data_ptr + 12);
-    qtableU_ptr      = rdram_read_u32(task->data_ptr + 16);
-    qtableV_ptr      = rdram_read_u32(task->data_ptr + 20);
+    address          = *dram_u32(task->data_ptr);
+    macroblock_count = *dram_u32(task->data_ptr + 4);
+    mode             = *dram_u32(task->data_ptr + 8);
+    qtableY_ptr      = *dram_u32(task->data_ptr + 12);
+    qtableU_ptr      = *dram_u32(task->data_ptr + 16);
+    qtableV_ptr      = *dram_u32(task->data_ptr + 20);
 
     DebugMessage(M64MSG_VERBOSE, "jpeg_decode_%s: *buffer=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, *Qv=%x",
                  version,
@@ -251,12 +243,12 @@ static void jpeg_decode_std(const char *const version,
     subblock_count = mode + 4;
     macroblock_size = subblock_count * SUBBLOCK_SIZE;
 
-    rdram_read_many_u16((uint16_t *)qtables[0], qtableY_ptr, SUBBLOCK_SIZE);
-    rdram_read_many_u16((uint16_t *)qtables[1], qtableU_ptr, SUBBLOCK_SIZE);
-    rdram_read_many_u16((uint16_t *)qtables[2], qtableV_ptr, SUBBLOCK_SIZE);
+    dram_load_u16((uint16_t *)qtables[0], qtableY_ptr, SUBBLOCK_SIZE);
+    dram_load_u16((uint16_t *)qtables[1], qtableU_ptr, SUBBLOCK_SIZE);
+    dram_load_u16((uint16_t *)qtables[2], qtableV_ptr, SUBBLOCK_SIZE);
 
     for (mb = 0; mb < macroblock_count; ++mb) {
-        rdram_read_many_u16((uint16_t *)macroblock, address, macroblock_size);
+        dram_load_u16((uint16_t *)macroblock, address, macroblock_size);
         decode_macroblock_std(transform_luma, transform_chroma,
                               macroblock, subblock_count, (const int16_t (*)[SUBBLOCK_SIZE])qtables);
 
@@ -329,7 +321,7 @@ static void EmitYUVTileLine(const int16_t *y, const int16_t *u, uint32_t address
     uyvy[6] = GetUYVY(y2[4], y2[5], u[6], v[6]);
     uyvy[7] = GetUYVY(y2[6], y2[7], u[7], v[7]);
 
-    rdram_write_many_u32(uyvy, address, 8);
+    dram_store_u32(uyvy, address, 8);
 }
 
 static void EmitRGBATileLine(const int16_t *y, const int16_t *u, uint32_t address)
@@ -356,7 +348,7 @@ static void EmitRGBATileLine(const int16_t *y, const int16_t *u, uint32_t addres
     rgba[14] = GetRGBA(y2[6], u[7], v[7]);
     rgba[15] = GetRGBA(y2[7], u[7], v[7]);
 
-    rdram_write_many_u16(rgba, address, 16);
+    dram_store_u16(rgba, address, 16);
 }
 
 static void EmitTilesMode0(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address)
@@ -594,58 +586,5 @@ static void RescaleUVSubBlock(int16_t *dst, const int16_t *src)
 
     for (i = 0; i < SUBBLOCK_SIZE; ++i)
         dst[i] = (((int)clamp_s12(src[i]) * 0xe00) >> 16) + 0x80;
-}
-
-
-
-/* FIXME: assume presence of expansion pack */
-#define MEMMASK 0x7fffff
-
-static void rdram_read_many_u16(uint16_t *dst, uint32_t address, unsigned int count)
-{
-    while (count != 0) {
-        uint16_t s = rsp.RDRAM[((address++)^S8) & MEMMASK];
-        s <<= 8;
-        s |= rsp.RDRAM[((address++)^S8) & MEMMASK];
-
-        *(dst++) = s;
-
-        --count;
-    }
-}
-
-static void rdram_write_many_u16(const uint16_t *src, uint32_t address, unsigned int count)
-{
-    while (count != 0) {
-        rsp.RDRAM[((address++)^S8) & MEMMASK] = (uint8_t)(*src >> 8);
-        rsp.RDRAM[((address++)^S8) & MEMMASK] = (uint8_t)(*(src++) & 0xff);
-
-        --count;
-    }
-}
-
-static uint32_t rdram_read_u32(uint32_t address)
-{
-    uint32_t r = rsp.RDRAM[((address++) ^ S8) & MEMMASK];
-    r <<= 8;
-    r |= rsp.RDRAM[((address++) ^ S8) & MEMMASK];
-    r <<= 8;
-    r |= rsp.RDRAM[((address++) ^ S8) & MEMMASK];
-    r <<= 8;
-    r |= rsp.RDRAM[((address++) ^ S8) & MEMMASK];
-
-    return r;
-}
-
-static void rdram_write_many_u32(const uint32_t *src, uint32_t address, unsigned int count)
-{
-    while (count != 0) {
-        rsp.RDRAM[((address++)^S8) & MEMMASK] = (uint8_t)(*src >> 24);
-        rsp.RDRAM[((address++)^S8) & MEMMASK] = (uint8_t)(*src >> 16);
-        rsp.RDRAM[((address++)^S8) & MEMMASK] = (uint8_t)(*src >> 8);
-        rsp.RDRAM[((address++)^S8) & MEMMASK] = (uint8_t)(*(src++) & 0xff);
-
-        --count;
-    }
 }
 
