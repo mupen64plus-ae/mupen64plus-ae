@@ -41,45 +41,33 @@
 #define S8 3
 #endif
 
+extern RSP_INFO rsp;
+
+enum {
+    TASK_TYPE               = 0xfc0,
+    TASK_FLAGS              = 0xfc4,
+    TASK_UCODE_BOOT         = 0xfc8,
+    TASK_UCODE_BOOT_SIZE    = 0xfcc,
+    TASK_UCODE              = 0xfd0,
+    TASK_UCODE_SIZE         = 0xfd4,
+    TASK_UCODE_DATA         = 0xfd8,
+    TASK_UCODE_DATA_SIZE    = 0xfdc,
+    TASK_DRAM_STACK         = 0xfe0,
+    TASK_DRAM_STACK_SIZE    = 0xfe4,
+    TASK_OUTPUT_BUFF        = 0xfe8,
+    TASK_OUTPUT_BUFF_SIZE   = 0xfec,
+    TASK_DATA_PTR           = 0xff0,
+    TASK_DATA_SIZE          = 0xff4,
+    TASK_YIELD_DATA_PTR     = 0xff8,
+    TASK_YIELD_DATA_SIZE    = 0xffc
+};
+
 static inline int16_t clamp_s16(int_fast32_t x)
 {
     x = (x < INT16_MIN) ? INT16_MIN: x;
     x = (x > INT16_MAX) ? INT16_MAX: x;
 
     return x;
-}
-
-extern RSP_INFO rsp;
-
-typedef struct {
-    unsigned int type;
-    unsigned int flags;
-
-    unsigned int ucode_boot;
-    unsigned int ucode_boot_size;
-
-    unsigned int ucode;
-    unsigned int ucode_size;
-
-    unsigned int ucode_data;
-    unsigned int ucode_data_size;
-
-    unsigned int dram_stack;
-    unsigned int dram_stack_size;
-
-    unsigned int output_buff;
-    unsigned int output_buff_size;
-
-    unsigned int data_ptr;
-    unsigned int data_size;
-
-    unsigned int yield_data_ptr;
-    unsigned int yield_data_size;
-} OSTask_t;
-
-static inline const OSTask_t *const get_task(void)
-{
-    return (OSTask_t *)(rsp.DMEM + 0xfc0);
 }
 
 void DebugMessage(int level, const char *message, ...);

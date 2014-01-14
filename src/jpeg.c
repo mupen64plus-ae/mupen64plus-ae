@@ -164,11 +164,9 @@ void jpeg_decode_OB(void)
     int32_t u_dc = 0;
     int32_t v_dc = 0;
 
-    const OSTask_t *const task = get_task();
-
-    uint32_t           address          = task->data_ptr;
-    const unsigned int macroblock_count = task->data_size;
-    const int          qscale           = task->yield_data_size;
+    uint32_t           address          = *dmem_u32(TASK_DATA_PTR);
+    const unsigned int macroblock_count = *dmem_u32(TASK_DATA_SIZE);
+    const int          qscale           = *dmem_u32(TASK_YIELD_DATA_SIZE);
 
     DebugMessage(M64MSG_VERBOSE, "jpeg_decode_OB: *buffer=%x, #MB=%d, qscale=%d",
                  address,
@@ -212,19 +210,20 @@ static void jpeg_decode_std(const char *const version,
     unsigned int macroblock_size;
     /* macroblock contains at most 6 subblocks */
     int16_t macroblock[6 * SUBBLOCK_SIZE];
-    const OSTask_t *const task = get_task();
+    uint32_t data_ptr;
 
-    if (task->flags & 0x1) {
+    if (*dmem_u32(TASK_FLAGS) & 0x1) {
         DebugMessage(M64MSG_WARNING, "jpeg_decode_%s: task yielding not implemented", version);
         return;
     }
 
-    address          = *dram_u32(task->data_ptr);
-    macroblock_count = *dram_u32(task->data_ptr + 4);
-    mode             = *dram_u32(task->data_ptr + 8);
-    qtableY_ptr      = *dram_u32(task->data_ptr + 12);
-    qtableU_ptr      = *dram_u32(task->data_ptr + 16);
-    qtableV_ptr      = *dram_u32(task->data_ptr + 20);
+    data_ptr = *dmem_u32(TASK_DATA_PTR);
+    address          = *dram_u32(data_ptr);
+    macroblock_count = *dram_u32(data_ptr + 4);
+    mode             = *dram_u32(data_ptr + 8);
+    qtableY_ptr      = *dram_u32(data_ptr + 12);
+    qtableU_ptr      = *dram_u32(data_ptr + 16);
+    qtableV_ptr      = *dram_u32(data_ptr + 20);
 
     DebugMessage(M64MSG_VERBOSE, "jpeg_decode_%s: *buffer=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, *Qv=%x",
                  version,
