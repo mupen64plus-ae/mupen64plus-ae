@@ -119,11 +119,10 @@ static void show_cfb(void)
 static int try_fast_audio_dispatching(void)
 {
     /* identify audio ucode by using the content of ucode_data */
-    const OSTask_t *const task = get_task();
-    const unsigned char *const udata_ptr = rsp.RDRAM + task->ucode_data;
+    uint32_t ucode_data = get_task()->ucode_data;
 
-    if (*(unsigned int *)(udata_ptr + 0) == 0x00000001) {
-        if (*(unsigned int *)(udata_ptr + 0x30) == 0xf0000f00) {
+    if (*dram_u32(ucode_data) == 0x00000001) {
+        if (*dram_u32(ucode_data + 0x30) == 0xf0000f00) {
             /**
             * Many games including:
             * Super Mario 64, Diddy Kong Racing, BlastCorp, GoldenEye, ... (most common)
@@ -148,7 +147,7 @@ static int try_fast_audio_dispatching(void)
             return 1;
         }
     } else {
-        if (*(unsigned int *)(udata_ptr + 0x10) == 0x00000001) {
+        if (*dram_u32(ucode_data + 0x10) == 0x00000001) {
             /**
              * Musyx ucode found in following games:
              * RogueSquadron, ResidentEvil2, SnowCrossPolaris, TheWorldIsNotEnough,
