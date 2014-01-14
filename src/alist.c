@@ -36,8 +36,8 @@ static void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
     unsigned int acmd;
     const OSTask_t *const task = get_task();
 
-    const unsigned int *alist = (unsigned int *)(rsp.RDRAM + task->data_ptr);
-    const unsigned int *const alist_end = alist + (task->data_size >> 2);
+    const uint32_t *alist = dram_u32(task->data_ptr);
+    const uint32_t *const alist_end = alist + (task->data_size >> 2);
 
     while (alist != alist_end) {
         inst1 = *(alist++);
