@@ -13,10 +13,11 @@ LOCAL_SRC_FILES :=          \
     $(SRCDIR)/cicx105.c     \
     $(SRCDIR)/jpeg.c        \
     $(SRCDIR)/main.c        \
-    $(SRCDIR)/ucode1.cpp    \
-    $(SRCDIR)/ucode2.cpp    \
-    $(SRCDIR)/ucode3.cpp    \
-    $(SRCDIR)/ucode3mp3.cpp \
+    $(SRCDIR)/musyx.c       \
+    $(SRCDIR)/ucode1.c      \
+    $(SRCDIR)/ucode2.c      \
+    $(SRCDIR)/ucode3.c      \
+    $(SRCDIR)/ucode3mp3.c   \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 

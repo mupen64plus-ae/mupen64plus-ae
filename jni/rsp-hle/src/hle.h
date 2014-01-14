@@ -24,6 +24,7 @@
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
+#include <stdint.h>
 
 #define RSP_HLE_VERSION        0x020000
 #define RSP_PLUGIN_API_VERSION 0x020000
@@ -38,21 +39,17 @@
 #define S8 3
 #endif
 
-// types
-typedef unsigned char       u8;
-typedef unsigned short      u16;
-typedef unsigned int        u32;
-typedef unsigned long long  u64;
+static inline int16_t clamp_s16(int_fast32_t x)
+{
+    x = (x < INT16_MIN) ? INT16_MIN: x;
+    x = (x > INT16_MAX) ? INT16_MAX: x;
 
-typedef signed char         s8;
-typedef signed short        s16;
-typedef signed int          s32;
-typedef signed long long    s64;
+    return x;
+}
 
 extern RSP_INFO rsp;
 
-typedef struct
-{
+typedef struct {
     unsigned int type;
     unsigned int flags;
 
@@ -78,12 +75,33 @@ typedef struct
     unsigned int yield_data_size;
 } OSTask_t;
 
-static inline const OSTask_t * const get_task()
+static inline const OSTask_t *const get_task(void)
 {
-    return (OSTask_t*)(rsp.DMEM + 0xfc0);
+    return (OSTask_t *)(rsp.DMEM + 0xfc0);
 }
 
 void DebugMessage(int level, const char *message, ...);
+
+extern uint8_t BufferSpace[0x10000];
+
+extern uint16_t AudioInBuffer;   /* 0x0000(T8) */
+extern uint16_t AudioOutBuffer;  /* 0x0002(T8) */
+extern uint16_t AudioCount;      /* 0x0004(T8) */
+extern uint32_t loopval;         /* 0x0010(T8) */
+extern int16_t Env_Dry;
+extern int16_t Env_Wet;
+extern int16_t Vol_Left;
+extern int16_t Vol_Right;
+extern int16_t VolTrg_Left;
+extern int32_t VolRamp_Left;
+extern int16_t VolTrg_Right;
+extern int32_t VolRamp_Right;
+
+extern uint16_t adpcmtable[0x88];
+extern const uint16_t ResampleLUT [0x200];
+extern short hleMixerWorkArea[256];
+
+void MP3(uint32_t inst1, uint32_t inst2);
 
 #endif
 

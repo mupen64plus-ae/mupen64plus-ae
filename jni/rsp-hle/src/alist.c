@@ -21,60 +21,49 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdint.h>
+#include "m64p_plugin.h"
+#include "m64p_types.h"
+
 #include "hle.h"
 #include "alist_internal.h"
-
-// FIXME: this decomposition into 3 ABI is not accurate,
-// there are a least 9 or 10 different ABI, each with one or a few revisions
-// for a total of almost 16 differents audio ucode.
-//
-// ABI2 in fact is a mix of at least 7 differents ABI which are mostly compatible
-// but not totally, that's why there is a isZeldaABI/isMKABI workaround.
-//
-extern const acmd_callback_t ABI1[0x10];
-extern const acmd_callback_t ABI2[0x20];
-extern const acmd_callback_t ABI3[0x10];
+#include "alist.h"
 
 /* local functions */
 static void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
 {
-    u32 inst1, inst2;
+    uint32_t inst1, inst2;
     unsigned int acmd;
-    const OSTask_t * const task = get_task();
+    const OSTask_t *const task = get_task();
 
-    const unsigned int *alist = (unsigned int*)(rsp.RDRAM + task->data_ptr);
-    const unsigned int * const alist_end = alist + (task->data_size >> 2);
+    const unsigned int *alist = (unsigned int *)(rsp.RDRAM + task->data_ptr);
+    const unsigned int *const alist_end = alist + (task->data_size >> 2);
 
-    while (alist != alist_end)
-    {
+    while (alist != alist_end) {
         inst1 = *(alist++);
         inst2 = *(alist++);
 
         acmd = inst1 >> 24;
 
         if (acmd < abi_size)
-        {
             (*abi[acmd])(inst1, inst2);
-        }
         else
-        {
             DebugMessage(M64MSG_WARNING, "Invalid ABI command %u", acmd);
-        }
     }
 }
 
 /* global functions */
-void alist_process_ABI1()
+void alist_process_ABI1(void)
 {
     alist_process(ABI1, 0x10);
 }
 
-void alist_process_ABI2()
+void alist_process_ABI2(void)
 {
     alist_process(ABI2, 0x20);
 }
 
-void alist_process_ABI3()
+void alist_process_ABI3(void)
 {
     alist_process(ABI3, 0x10);
 }

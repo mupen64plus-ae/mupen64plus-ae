@@ -119,7 +119,6 @@ endif
 OPTFLAGS ?= -O3 -flto
 WARNFLAGS ?= -Wall
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
-CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
 
 # Since we are building a shared library, we must compile with -fPIC on some architectures
@@ -189,20 +188,17 @@ endif
 ifneq ($(findstring $(MAKEFLAGS),s),s)
 ifndef V
 	Q_CC  = @echo '    CC  '$@;
-	Q_CXX = @echo '    CXX '$@;
 	Q_LD  = @echo '    LD  '$@;
 endif
 endif
 
 # set base program pointers and flags
 CC        = $(CROSS_COMPILE)gcc
-CXX       = $(CROSS_COMPILE)g++
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
 COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
-COMPILE.cc = $(Q_CXX)$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
-LINK.o = $(Q_LD)$(CXX) $(CXXFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+LINK.o = $(Q_LD)$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 # set special flags for given Makefile parameters
 ifeq ($(DEBUG),1)
@@ -234,14 +230,14 @@ SOURCE = \
 	$(SRCDIR)/alist.c \
 	$(SRCDIR)/cicx105.c \
 	$(SRCDIR)/jpeg.c \
-	$(SRCDIR)/ucode3.cpp \
-	$(SRCDIR)/ucode2.cpp \
-	$(SRCDIR)/ucode1.cpp \
-	$(SRCDIR)/ucode3mp3.cpp
+	$(SRCDIR)/musyx.c \
+	$(SRCDIR)/ucode3.c \
+	$(SRCDIR)/ucode2.c \
+	$(SRCDIR)/ucode1.c \
+	$(SRCDIR)/ucode3mp3.c
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
-OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
@@ -290,14 +286,9 @@ rebuild: clean all
 CFLAGS += -MD -MP
 -include $(OBJECTS:.o=.d)
 
-CXXFLAGS += $(CFLAGS)
-
 # standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(COMPILE.c) -o $@ $<
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(COMPILE.cc) -o $@ $<
 
 $(TARGET): $(OBJECTS)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@

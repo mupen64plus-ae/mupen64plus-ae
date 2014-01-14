@@ -96,10 +96,11 @@
     <ClCompile Include="..\..\src\cicx105.c" />
     <ClCompile Include="..\..\src\jpeg.c" />
     <ClCompile Include="..\..\src\main.c" />
-    <ClCompile Include="..\..\src\ucode1.cpp" />
-    <ClCompile Include="..\..\src\ucode2.cpp" />
-    <ClCompile Include="..\..\src\ucode3.cpp" />
-    <ClCompile Include="..\..\src\ucode3mp3.cpp" />
+    <ClCompile Include="..\..\src\musyx.c" />
+    <ClCompile Include="..\..\src\ucode1.c" />
+    <ClCompile Include="..\..\src\ucode2.c" />
+    <ClCompile Include="..\..\src\ucode3.c" />
+    <ClCompile Include="..\..\src\ucode3mp3.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\alist.h" />
@@ -107,6 +108,7 @@
     <ClInclude Include="..\..\src\cicx105.h" />
     <ClInclude Include="..\..\src\hle.h" />
     <ClInclude Include="..\..\src\jpeg.h" />
+    <ClInclude Include="..\..\src\musyx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
