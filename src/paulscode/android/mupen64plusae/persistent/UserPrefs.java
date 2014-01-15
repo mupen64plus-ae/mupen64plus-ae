@@ -35,6 +35,7 @@ import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
+import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
@@ -865,34 +866,5 @@ public class UserPrefs
             }
         }
         return Collections.unmodifiableSet( mutableSet );
-    }
-    
-    /**
-     * A tiny class containing inter-dependent plug-in information.
-     */
-    public static class Plugin
-    {
-        /** The name of the plug-in, with extension, without parent directory. */
-        public final String name;
-        
-        /** The full absolute path name of the plug-in. */
-        public final String path;
-        
-        /** True if the plug-in is enabled. */
-        public final boolean enabled;
-        
-        /**
-         * Instantiates a new plug-in meta-info object.
-         * 
-         * @param prefs   The shared preferences containing plug-in information.
-         * @param libsDir The directory containing the plug-in file.
-         * @param key     The shared preference key for the plug-in.
-         */
-        public Plugin( SharedPreferences prefs, String libsDir, String key )
-        {
-            name = prefs.getString( key, "" );
-            enabled = name.endsWith( ".so" );
-            path = enabled ? libsDir + name : "dummy";
-        }
     }
 }
