@@ -124,9 +124,6 @@ public class UserPrefs
     /** The selected audio plug-in. */
     public final Plugin audioPlugin;
     
-    /** True if the cheats category should be shown in the menu. */
-    public final boolean isCheatOptionsShown;
-    
     /** True if Xperia Play touchpad is enabled. */
     public final boolean isTouchpadEnabled;
     
@@ -269,9 +266,6 @@ public class UserPrefs
         
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
-        
-        // Play menu
-        isCheatOptionsShown = mPreferences.getBoolean( "playShowCheats", false );
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );

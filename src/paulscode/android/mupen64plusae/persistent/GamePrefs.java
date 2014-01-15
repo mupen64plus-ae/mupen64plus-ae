@@ -41,6 +41,9 @@ public class GamePrefs
     /** The player map for multi-player gaming. */
     public final PlayerMap playerMap;
     
+    /** True if the cheats category should be shown in the menu. */
+    public final boolean isCheatOptionsShown;
+    
     /** The selected R4300 emulator. */
     public final String r4300Emulator;
     
@@ -197,6 +200,9 @@ public class GamePrefs
         
         // Player map
         playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
+        
+        // Cheats menu
+        isCheatOptionsShown = mPreferences.getBoolean( "playShowCheats", false );
         
         // Emulation prefs
         r4300Emulator = emulationProfile.get( "r4300Emulator", "2" );

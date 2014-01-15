@@ -242,7 +242,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mGamePrefs = new GamePrefs( this, mRomDetail.md5 );
         
         // Set cheats screen summary text
-        mScreenCheats.setSummary( mUserPrefs.isCheatOptionsShown
+        mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
                 ? R.string.screenCheats_summaryEnabled
                 : R.string.screenCheats_summaryDisabled );
         
@@ -314,7 +314,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private void refreshCheatsCategory()
     {
-        if( mUserPrefs.isCheatOptionsShown )
+        if( mGamePrefs.isCheatOptionsShown )
         {
             // Populate menu items
             buildCheatsCategory( mRomDetail.crc );
