@@ -21,11 +21,12 @@
     <string name="SettingsGameActivity_title" translatable="false">@string/menuItem_gameSettings</string>
     <string name="SettingsGameActivity_titleNamed" translatable="false">@string/menuItem_gameSettingsNamed</string>
     <string name="SettingsVideoActivity_title" translatable="false">@string/screenVideo_title</string>
-    <string name="ManageTouchscreenProfilesActivity_title" translatable="false">@string/menuItem_touchscreenProfiles</string>
     <string name="ManageControllerProfilesActivity_title" translatable="false">@string/menuItem_controllerProfiles</string>
     <string name="ManageEmulationProfilesActivity_title" translatable="false">@string/menuItem_emulationProfiles</string>
+    <string name="ManageTouchscreenProfilesActivity_title" translatable="false">@string/menuItem_touchscreenProfiles</string>
     <string name="ControllerProfileActivity_title" translatable="false">@string/app_name</string>
     <string name="EmulationProfileActivity_title" translatable="false">@string/app_name</string>
+    <string name="TouchscreenProfileActivity_title" translatable="false">@string/app_name</string>
     <string name="DiagnosticActivity_title" translatable="false">@string/menuItem_controllerDiagnostics</string>
     <string name="GameActivity_title" translatable="false">@string/app_name</string>
     <string name="CheatEditorActivity_title" translatable="false">@string/menuItem_cheatEditor</string>
@@ -41,5 +42,6 @@
     <!-- Non-translatable defaults -->
     <string name="controllerProfile_default" translatable="false"></string>
     <string name="emulationProfile_default" translatable="false">N</string>
+    <string name="touchscreenProfile_default" translatable="false"></string>
 
 </resources>

@@ -29,12 +29,12 @@
             android:key="emulationProfile"
             android:summary="@string/selectedValue"
             android:title="@string/emulationProfile_title" />
-        <Preference
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/touchscreenProfile_default"
             android:icon="@drawable/ic_phone"
             android:key="touchscreenProfile"
             android:summary="@string/selectedValue"
             android:title="@string/touchscreenProfile_title" />
-
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"

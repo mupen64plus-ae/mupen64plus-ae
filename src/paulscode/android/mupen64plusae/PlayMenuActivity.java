@@ -74,6 +74,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     
     private static final String EMULATION_PROFILE = "emulationProfile";
+    private static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
     private static final String CONTROLLER_PROFILE1 = "controllerProfile1";
     private static final String CONTROLLER_PROFILE2 = "controllerProfile2";
     private static final String CONTROLLER_PROFILE3 = "controllerProfile3";
@@ -229,6 +230,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Populate the list preferences for profiles
         populateProfiles( mAppData.emulationProfiles_cfg, mUserPrefs.emulationProfiles_cfg,
                 EMULATION_PROFILE, R.string.emulationProfile_default );
+        populateProfiles( mAppData.touchscreenProfiles_cfg, mUserPrefs.touchscreenProfiles_cfg,
+                TOUCHSCREEN_PROFILE, R.string.touchscreenProfile_default );
         populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
                 CONTROLLER_PROFILE1, R.string.controllerProfile_default );
         populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
