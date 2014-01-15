@@ -52,14 +52,12 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     
     private static final String SCREEN_INPUT = "screenInput";
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
-    private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
     private static final String SCREEN_DISPLAY = "screenDisplay";
     
     private static final String TOUCHSCREEN_AUTO_HOLDABLES = "touchscreenAutoHoldables";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
-    private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
     private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
     private static final String DISPLAY_ACTION_BAR_TRANSPARENCY = "displayActionBarTransparency";
     private static final String NAVIGATION_MODE = "navigationMode";
@@ -106,12 +104,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
             PrefUtil.removePreference( this, SCREEN_INPUT, SCREEN_TOUCHPAD );
-        
-        if( mUserPrefs.isBigScreenMode )
-        {
-            PrefUtil.removePreference( this, SCREEN_INPUT, SCREEN_TOUCHSCREEN );
-            PrefUtil.removePreference( this, SCREEN_INPUT, INPUT_VOLUME_MAPPABLE );
-        }
     }
     
     @Override
