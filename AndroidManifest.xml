@@ -6,7 +6,9 @@
     android:versionName="2.4.3 (debug)" >
 
     <uses-feature android:glEsVersion="0x00020000" />
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
 
     <uses-sdk
         android:minSdkVersion="5"
@@ -146,11 +148,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-				<activity
+        <activity
             android:name="paulscode.android.mupen64plusae.cheat.CheatEditorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/CheatEditorActivity_title" >
-           	<intent-filter>
+            <intent-filter>
                 <action android:name=".cheat.CheatEditorActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -176,6 +178,7 @@
                 android:name="android.app.lib_name"
                 android:value="xperia-touchpad" />
         </activity>
+
         <meta-data
             android:name="xperiaplayoptimized_content"
             android:resource="@drawable/hireslogo" />
