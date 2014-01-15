@@ -181,6 +181,9 @@ public class UserPrefs
     /** The filename of the selected Xperia Play layout. */
     public final String touchpadLayout;
     
+    /** True if a single peripheral device can control multiple players concurrently. */
+    public final boolean isControllerShared;
+    
     /** True if Player 1's controller is enabled. */
     public final boolean isControllerEnabled1;
     
@@ -587,7 +590,7 @@ public class UserPrefs
         numControllers += isControllerEnabled2 ? 1 : 0;
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
-        boolean isControllerShared = mPreferences.getBoolean( "inputShareController", false );
+        isControllerShared = mPreferences.getBoolean( "inputShareController", false );
         playerMap.setEnabled( numControllers > 1 && !isControllerShared );
         
         // Determine the key codes that should not be mapped to controls
