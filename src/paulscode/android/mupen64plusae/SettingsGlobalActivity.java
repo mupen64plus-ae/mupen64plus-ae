@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.CrashTester;
@@ -54,10 +53,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
     private static final String SCREEN_DISPLAY = "screenDisplay";
     
-    private static final String TOUCHSCREEN_AUTO_HOLDABLES = "touchscreenAutoHoldables";
-    private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
-    private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
-    private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
     private static final String DISPLAY_ACTION_BAR_TRANSPARENCY = "displayActionBarTransparency";
     private static final String NAVIGATION_MODE = "navigationMode";
@@ -144,18 +139,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     {
         // Refresh the preferences object
         mUserPrefs = new UserPrefs( this );
-        
-        // Enable the auto-holdables pref if auto-hold is not disabled
-        PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, mUserPrefs.isTouchscreenEnabled
-                && mUserPrefs.touchscreenAutoHold != TouchController.AUTOHOLD_METHOD_DISABLED );
-        
-        // Enable the custom touchscreen prefs under certain conditions
-        PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, mUserPrefs.isTouchscreenEnabled
-                && mUserPrefs.isTouchscreenCustom );
-        PrefUtil.enablePreference( this, TOUCHSCREEN_STYLE, mUserPrefs.isTouchscreenEnabled
-                && !mUserPrefs.isTouchscreenCustom );
-        PrefUtil.enablePreference( this, TOUCHSCREEN_HEIGHT, mUserPrefs.isTouchscreenEnabled
-                && !mUserPrefs.isTouchscreenCustom );
         
         // Enable audio prefs if audio is enabled
         PrefUtil.enablePreference( this, AUDIO_BUFFER_SIZE, mUserPrefs.audioPlugin.enabled );

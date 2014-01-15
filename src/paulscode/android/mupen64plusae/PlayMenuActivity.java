@@ -37,6 +37,7 @@ import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.CompatibleListPreference;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.profile.Profile;
@@ -85,6 +86,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
+    private GamePrefs mGamePrefs = null;
     private SharedPreferences mPrefs = null;
     
     // ROM info
@@ -119,6 +121,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Get app data and user preferences
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
+        mGamePrefs = new GamePrefs( this, romMd5 );
         mUserPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
@@ -216,16 +219,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private void refreshViews()
     {
-        // Refresh the preferences object
+        // Refresh the preferences objects
         mUserPrefs = new UserPrefs( this );
-        
-        // Enable/disable player map item as necessary
-        PrefUtil.enablePreference( this, PLAYER_MAP, mUserPrefs.playerMap.isEnabled() );
-        
-        // Set cheats screen summary text
-        mScreenCheats.setSummary( mUserPrefs.isCheatOptionsShown
-                ? R.string.screenCheats_summaryEnabled
-                : R.string.screenCheats_summaryDisabled );
+        mGamePrefs = new GamePrefs( this, mRomDetail.md5 );
         
         // Populate the list preferences for profiles
         populateProfiles( mAppData.emulationProfiles_cfg, mUserPrefs.emulationProfiles_cfg,
@@ -241,8 +237,30 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
                 CONTROLLER_PROFILE4, R.string.controllerProfile_default );
         
-        // Refresh the preferences object in case populate* changed a value
+        // Refresh the preferences objects in case populate* changed a value
         mUserPrefs = new UserPrefs( this );
+        mGamePrefs = new GamePrefs( this, mRomDetail.md5 );
+        
+        // Set cheats screen summary text
+        mScreenCheats.setSummary( mUserPrefs.isCheatOptionsShown
+                ? R.string.screenCheats_summaryEnabled
+                : R.string.screenCheats_summaryDisabled );
+        
+        // Enable/disable player map item as necessary
+        PrefUtil.enablePreference( this, PLAYER_MAP, mGamePrefs.playerMap.isEnabled() );
+        
+        // Define which buttons to show in player map dialog
+        @SuppressWarnings( "deprecation" )
+        PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( PLAYER_MAP );
+        if( playerPref != null )
+        {
+            // Check null in case preference has been removed
+            boolean enable1 = mGamePrefs.isControllerEnabled1;
+            boolean enable2 = mGamePrefs.isControllerEnabled2 && mRomDetail.players > 1;
+            boolean enable3 = mGamePrefs.isControllerEnabled3 && mRomDetail.players > 2;
+            boolean enable4 = mGamePrefs.isControllerEnabled4 && mRomDetail.players > 3;
+            playerPref.setControllersEnabled( enable1, enable2, enable3, enable4 );
+        }
     }
     
     private void populateProfiles( String builtinPath, String customPath, String key, int resIdDefault )
@@ -424,14 +442,14 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private void launchGame( boolean isRestarting )
     {
         // Popup the multi-player dialog if necessary and abort if any players don't have a controller assigned
-        if( mRomDetail.players > 1 && mUserPrefs.playerMap.isEnabled()
+        if( mRomDetail.players > 1 && mGamePrefs.playerMap.isEnabled()
                 && mUserPrefs.getPlayerMapReminder() )
         {
-            mUserPrefs.playerMap.removeUnavailableMappings();
-            boolean needs1 = mUserPrefs.isControllerEnabled1 && !mUserPrefs.playerMap.isMapped( 1 );
-            boolean needs2 = mUserPrefs.isControllerEnabled2 && !mUserPrefs.playerMap.isMapped( 2 );
-            boolean needs3 = mUserPrefs.isControllerEnabled3 && !mUserPrefs.playerMap.isMapped( 3 ) && mRomDetail.players > 2;
-            boolean needs4 = mUserPrefs.isControllerEnabled4 && !mUserPrefs.playerMap.isMapped( 4 ) && mRomDetail.players > 3;
+            mGamePrefs.playerMap.removeUnavailableMappings();
+            boolean needs1 = mGamePrefs.isControllerEnabled1 && !mGamePrefs.playerMap.isMapped( 1 );
+            boolean needs2 = mGamePrefs.isControllerEnabled2 && !mGamePrefs.playerMap.isMapped( 2 );
+            boolean needs3 = mGamePrefs.isControllerEnabled3 && !mGamePrefs.playerMap.isMapped( 3 ) && mRomDetail.players > 2;
+            boolean needs4 = mGamePrefs.isControllerEnabled4 && !mGamePrefs.playerMap.isMapped( 4 ) && mRomDetail.players > 3;
             
             if( needs1 || needs2 || needs3 || needs4 )
             {

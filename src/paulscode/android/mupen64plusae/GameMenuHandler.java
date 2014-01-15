@@ -25,6 +25,7 @@ import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.annotation.TargetApi;
@@ -43,6 +44,7 @@ public class GameMenuHandler implements OnStateCallbackListener
     private final String mRomMd5;
     
     private UserPrefs mUserPrefs;
+    private GamePrefs mGamePrefs;
     
     public GameMenuHandler( Activity activity )
     {
@@ -78,12 +80,13 @@ public class GameMenuHandler implements OnStateCallbackListener
         
         // Get the app data and user prefs after the activity has been created
         mUserPrefs = new UserPrefs( mActivity );
+        mGamePrefs = new GamePrefs( mActivity, mRomMd5 );
         
         // Initialize the pak menus (reverse order since some get hidden)
-        initializePakMenu( menu, 4, mUserPrefs.isPlugged4, mUserPrefs.getPakType( 4 ) );
-        initializePakMenu( menu, 3, mUserPrefs.isPlugged3, mUserPrefs.getPakType( 3 ) );
-        initializePakMenu( menu, 2, mUserPrefs.isPlugged2, mUserPrefs.getPakType( 2 ) );
-        initializePakMenu( menu, 1, mUserPrefs.isPlugged1, mUserPrefs.getPakType( 1 ) );
+        initializePakMenu( menu, 4, mGamePrefs.isPlugged4, mUserPrefs.getPakType( 4 ) );
+        initializePakMenu( menu, 3, mGamePrefs.isPlugged3, mUserPrefs.getPakType( 3 ) );
+        initializePakMenu( menu, 2, mGamePrefs.isPlugged2, mUserPrefs.getPakType( 2 ) );
+        initializePakMenu( menu, 1, mGamePrefs.isPlugged1, mUserPrefs.getPakType( 1 ) );
     }
     
     public void onPrepareOptionsMenu( Menu menu )

@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.jni;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 
 public class NativeConfigFiles
@@ -31,7 +32,7 @@ public class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    public static void syncConfigFiles( UserPrefs user, AppData appData )
+    public static void syncConfigFiles( GamePrefs game, UserPrefs user, AppData appData )
     {
         //@formatter:off
         
@@ -39,19 +40,19 @@ public class NativeConfigFiles
         ConfigFile gles2n64_conf = new ConfigFile( appData.gles2n64_conf );
         gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( user.videoRenderWidth ) );
         gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( user.videoRenderHeight ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( user.isGles2N64AutoFrameskipEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( user.gles2N64MaxFrameskip ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable fog", boolToNum( user.isGles2N64FogEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "texture 2xSAI", boolToNum( user.isGles2N64SaiEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( user.isGles2N64AlphaTestEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( user.isGles2N64ScreenClearEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( !user.isGles2N64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( game.isGles2N64AutoFrameskipEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( game.gles2N64MaxFrameskip ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable fog", boolToNum( game.isGles2N64FogEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "texture 2xSAI", boolToNum( game.isGles2N64SaiEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( game.isGles2N64AlphaTestEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( game.isGles2N64ScreenClearEnabled ) );
+        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( !game.isGles2N64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
         
         // GLES2GLIDE64 config file
         ConfigFile gles2glide64_conf = new ConfigFile( appData.gles2glide64_conf );
         gles2glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                  // Stretch to GameSurface, Java will manage aspect ratio
-        gles2glide64_conf.put( "DEFAULT", "autoframeskip", boolToNum( user.isGles2Glide64AutoFrameskipEnabled ) );
-        gles2glide64_conf.put( "DEFAULT", "maxframeskip", String.valueOf( user.gles2Glide64MaxFrameskip ) );
+        gles2glide64_conf.put( "DEFAULT", "autoframeskip", boolToNum( game.isGles2Glide64AutoFrameskipEnabled ) );
+        gles2glide64_conf.put( "DEFAULT", "maxframeskip", String.valueOf( game.gles2Glide64MaxFrameskip ) );
         
         // Core and GLES2RICE config file
         ConfigFile mupen64plus_cfg = new ConfigFile( user.mupen64plus_cfg );
@@ -62,7 +63,7 @@ public class NativeConfigFiles
         
         mupen64plus_cfg.put( "Core", "Version", "1.010000" );                                                               // Mupen64Plus Core config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );                                                          // Draw on-screen display if True, otherwise don't draw OSD
-        mupen64plus_cfg.put( "Core", "R4300Emulator", user.r4300Emulator );                                                 // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
+        mupen64plus_cfg.put( "Core", "R4300Emulator", game.r4300Emulator );                                                 // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
         mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );                                                   // Increment the save state slot after each save operation
         mupen64plus_cfg.put( "Core", "ScreenshotPath", EMPTY );                                                             // Path to directory where screenshots are saved. If this is blank, the default value of ${UserConfigPath}/screenshot will be used
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + user.slotSaveDir + '"' );                                       // Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserConfigPath}/save will be used
@@ -101,7 +102,7 @@ public class NativeConfigFiles
         
         mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );                                                         // Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );                                      // Directory in which to search for plugins
-        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + user.videoPlugin.path + '"' );                              // Filename of video plugin
+        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + game.videoPlugin.path + '"' );                              // Filename of video plugin
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + user.audioPlugin.path + '"' );                              // Filename of audio plugin
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + appData.rspLib + '"' );                                       // Filename of RSP plugin
@@ -111,17 +112,17 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( user.videoRenderHeight ) );                   // Height of output window or fullscreen height
         mupen64plus_cfg.put( "Video-General", "VerticalSync", "False" );                                                    // If true, activate the SDL_GL_SWAP_CONTROL attribute
         
-        mupen64plus_cfg.put( "Video-Rice", "ScreenUpdateSetting", user.gles2RiceScreenUpdateType );                         // Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
-        mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", boolToTF( user.isGles2RiceFastTextureLoadingEnabled ) );   // Use a faster algorithm to speed up texture loading and CRC computation
-        mupen64plus_cfg.put( "Video-Rice", "SkipFrame", boolToTF( user.isGles2RiceAutoFrameskipEnabled ) );                 // If this option is enabled, the plugin will skip every other frame
-        mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", boolToTF( user.isGles2RiceHiResTexturesEnabled ) );         // Enable hi-resolution texture file loading
-        if( user.isGles2RiceForceTextureFilterEnabled )                                                                     // Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)
+        mupen64plus_cfg.put( "Video-Rice", "ScreenUpdateSetting", game.gles2RiceScreenUpdateType );                         // Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
+        mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", boolToTF( game.isGles2RiceFastTextureLoadingEnabled ) );   // Use a faster algorithm to speed up texture loading and CRC computation
+        mupen64plus_cfg.put( "Video-Rice", "SkipFrame", boolToTF( game.isGles2RiceAutoFrameskipEnabled ) );                 // If this option is enabled, the plugin will skip every other frame
+        mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", boolToTF( game.isGles2RiceHiResTexturesEnabled ) );         // Enable hi-resolution texture file loading
+        if( game.isGles2RiceForceTextureFilterEnabled )                                                                     // Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "2");
         else
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
-        mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", user.gles2RiceTextureEnhancement );                        // Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)
+        mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", game.gles2RiceTextureEnhancement );                        // Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );                                              // Secondary texture enhancement filter (0 = none, 1-4 = filtered)
-        mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( user.isGles2RiceFogEnabled ) );                          // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
+        mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isGles2RiceFogEnabled ) );                          // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
         
         gles2n64_conf.save();
         gles2glide64_conf.save();

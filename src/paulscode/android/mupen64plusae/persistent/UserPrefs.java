@@ -22,22 +22,17 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
 
 import paulscode.android.mupen64plusae.R;
-import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
-import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -45,7 +40,6 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -127,50 +121,11 @@ public class UserPrefs
     /** The path of the custom emulation profiles file. */
     public final String emulationProfiles_cfg;
     
-    /** The selected video plug-in. */
-    public final Plugin videoPlugin;
-    
     /** The selected audio plug-in. */
     public final Plugin audioPlugin;
     
-    /** The selected R4300 emulator. */
-    public final String r4300Emulator;
-    
     /** True if the cheats category should be shown in the menu. */
     public final boolean isCheatOptionsShown;
-    
-    /** True if the touchscreen is enabled. */
-    public final boolean isTouchscreenEnabled;
-    
-    /** True if the touchscreen feedback is enabled. */
-    public final boolean isTouchscreenFeedbackEnabled;
-    
-    /** The number of frames over which touchscreen is redrawn (0 = disabled). */
-    public final int touchscreenRefresh;
-    
-    /** The method used for auto holding buttons. */
-    public final int touchscreenAutoHold;
-    
-    /** The set of auto-holdable button commands. */
-    public final Set<Integer> touchscreenAutoHoldables;
-    
-    /** The touchscreen transparency value. */
-    public final int touchscreenTransparency;
-    
-    /** True if the touchscreen overlay is hidden. */
-    public final boolean isTouchscreenHidden;
-    
-    /** Factor applied to the final calculated visible touchmap scale. */
-    public final float touchscreenScale;
-    
-    /** The folder name of the selected touchscreen style. */
-    public final String touchscreenStyle;
-    
-    /** The folder name of the selected touchscreen layout. */
-    public final String touchscreenLayout;
-    
-    /** True if a custom touchscreen is provided. */
-    public final boolean isTouchscreenCustom;
     
     /** True if Xperia Play touchpad is enabled. */
     public final boolean isTouchpadEnabled;
@@ -183,45 +138,6 @@ public class UserPrefs
     
     /** True if a single peripheral device can control multiple players concurrently. */
     public final boolean isControllerShared;
-    
-    /** True if Player 1's controller is enabled. */
-    public final boolean isControllerEnabled1;
-    
-    /** True if Player 2's controller is enabled. */
-    public final boolean isControllerEnabled2;
-    
-    /** True if Player 3's controller is enabled. */
-    public final boolean isControllerEnabled3;
-    
-    /** True if Player 4's controller is enabled. */
-    public final boolean isControllerEnabled4;
-    
-    /** The input profile for Player 1. */
-    public final ControllerProfile controllerProfile1;
-    
-    /** The input profile for Player 2. */
-    public final ControllerProfile controllerProfile2;
-    
-    /** The input profile for Player 3. */
-    public final ControllerProfile controllerProfile3;
-    
-    /** The input profile for Player 4. */
-    public final ControllerProfile controllerProfile4;
-    
-    /** The player map for multi-player gaming. */
-    public final PlayerMap playerMap;
-    
-    /** True if any type of AbstractController is enabled for Player 1. */
-    public final boolean isPlugged1;
-    
-    /** True if any type of AbstractController is enabled for Player 2. */
-    public final boolean isPlugged2;
-    
-    /** True if any type of AbstractController is enabled for Player 3. */
-    public final boolean isPlugged3;
-    
-    /** True if any type of AbstractController is enabled for Player 4. */
-    public final boolean isPlugged4;
     
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
@@ -264,63 +180,6 @@ public class UserPrefs
     
     /** The polygon offset to use if hardware type is 'custom'. */
     public final float videoPolygonOffset;
-    
-    /** True if gles2n64 video plug-in is enabled. */
-    public final boolean isGles2N64Enabled;
-    
-    /** The maximum frameskip in the gles2n64 library. */
-    public final int gles2N64MaxFrameskip;
-    
-    /** True if auto-frameskip is enabled in the gles2n64 library. */
-    public final boolean isGles2N64AutoFrameskipEnabled;
-    
-    /** True if fog is enabled in the gles2n64 library. */
-    public final boolean isGles2N64FogEnabled;
-    
-    /** True if SaI texture filtering is enabled in the gles2n64 library. */
-    public final boolean isGles2N64SaiEnabled;
-    
-    /** True if force screen clear is enabled in the gles2n64 library. */
-    public final boolean isGles2N64ScreenClearEnabled;
-    
-    /** True if alpha test is enabled in the gles2n64 library. */
-    public final boolean isGles2N64AlphaTestEnabled;
-    
-    /** True if depth test is enabled in the gles2n64 library. */
-    public final boolean isGles2N64DepthTestEnabled;
-    
-    /** True if gles2rice video plug-in is enabled. */
-    public final boolean isGles2RiceEnabled;
-    
-    /** True if auto-frameskip is enabled in the gles2rice library. */
-    public final boolean isGles2RiceAutoFrameskipEnabled;
-    
-    /** True if fast texture loading is enabled in the gles2rice library. */
-    public final boolean isGles2RiceFastTextureLoadingEnabled;
-    
-    /** True if force texture filter is enabled in the gles2rice library. */
-    public final boolean isGles2RiceForceTextureFilterEnabled;
-    
-    /** The screen update setting to use in gles2rice */
-    public final String gles2RiceScreenUpdateType;
-    
-    /** The texture enhancement algorithm to be used in the gles2rice library */
-    public final String gles2RiceTextureEnhancement;
-    
-    /** True if hi-resolution textures are enabled in the gles2rice library. */
-    public final boolean isGles2RiceHiResTexturesEnabled;
-    
-    /** True if fog is enabled in the gles2rice library. */
-    public final boolean isGles2RiceFogEnabled;
-
-    /** True if gles2glide64 video plug-in is enabled. */
-    public final boolean isGles2Glide64Enabled;
-    
-    /** The maximum frameskip in the gles2glide64 library. */
-    public final int gles2Glide64MaxFrameskip;
-    
-    /** True if auto-frameskip is enabled in the gles2glide64 library. */
-    public final boolean isGles2Glide64AutoFrameskipEnabled;
     
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
@@ -409,88 +268,26 @@ public class UserPrefs
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         
         // Plug-ins
-        videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
-        
-        // R4300 emulator
-        r4300Emulator = mPreferences.getString( "r4300Emulator", "2" );
         
         // Play menu
         isCheatOptionsShown = mPreferences.getBoolean( "playShowCheats", false );
-        
-        // Touchscreen prefs
-        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
-        isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
-        touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
-        touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
-        touchscreenAutoHoldables = getSafeIntSet( mPreferences, "touchscreenAutoHoldables" );
-        int transparencyPercent = mPreferences.getInt( "touchscreenTransparency", 100 );
-        touchscreenTransparency = ( 255 * transparencyPercent ) / 100;
-        isTouchscreenHidden = transparencyPercent == 0;
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );
         isTouchpadFeedbackEnabled = mPreferences.getBoolean( "touchpadFeedback", false );
         touchpadLayout = appData.touchpadLayoutsDir + mPreferences.getString( "touchpadLayout", "" );
         
-        // Controller prefs
-        final ConfigFile configCustom = new ConfigFile( controllerProfiles_cfg );
-        final ConfigFile configBuiltin = new ConfigFile( appData.controllerProfiles_cfg );
-        final String profileName1 = mPreferences.getString( "controllerProfile1", "" );
-        final String profileName2 = mPreferences.getString( "controllerProfile2", "" );
-        final String profileName3 = mPreferences.getString( "controllerProfile3", "" );
-        final String profileName4 = mPreferences.getString( "controllerProfile4", "" );
-        controllerProfile1 = loadControllerProfile( profileName1, configCustom, configBuiltin );          
-        controllerProfile2 = loadControllerProfile( profileName2, configCustom, configBuiltin );          
-        controllerProfile3 = loadControllerProfile( profileName3, configCustom, configBuiltin );          
-        controllerProfile4 = loadControllerProfile( profileName4, configCustom, configBuiltin );          
-        
-        // Input prefs
-        isControllerEnabled1 = controllerProfile1 != null;
-        isControllerEnabled2 = controllerProfile2 != null;
-        isControllerEnabled3 = controllerProfile3 != null;
-        isControllerEnabled4 = controllerProfile4 != null;
-        
-        // Multi-player prefs
-        playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
-        
         // Video prefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         displayPosition = getSafeInt( mPreferences, "displayPosition", Gravity.CENTER_VERTICAL );
-        transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
+        int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
         displayFpsRefresh = getSafeInt( mPreferences, "displayFpsRefresh", 0 );
         isFpsEnabled = displayFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
         videoPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "videoPolygonOffset", "-0.2" ), -0.2f );
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
-        
-        // Video prefs - gles2n64
-        isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
-        int maxFrameskip = getSafeInt( mPreferences, "gles2N64Frameskip", 0 );
-        isGles2N64AutoFrameskipEnabled = maxFrameskip < 0;
-        gles2N64MaxFrameskip = Math.abs( maxFrameskip );
-        isGles2N64FogEnabled = mPreferences.getBoolean( "gles2N64Fog", false );
-        isGles2N64SaiEnabled = mPreferences.getBoolean( "gles2N64Sai", false );
-        isGles2N64ScreenClearEnabled = mPreferences.getBoolean( "gles2N64ScreenClear", true );
-        isGles2N64AlphaTestEnabled = mPreferences.getBoolean( "gles2N64AlphaTest", true );
-        isGles2N64DepthTestEnabled = mPreferences.getBoolean( "gles2N64DepthTest", true );
-        
-        // Video prefs - gles2rice
-        isGles2RiceEnabled = videoPlugin.name.equals( "libgles2rice.so" );
-        isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
-        isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
-        isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
-        gles2RiceScreenUpdateType = mPreferences.getString( "gles2RiceScreenUpdate", "4" );
-        gles2RiceTextureEnhancement = mPreferences.getString( "gles2RiceTextureEnhancement", "0" );
-        isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
-        isGles2RiceFogEnabled = mPreferences.getBoolean( "gles2RiceFog", false );
-        
-        // Video prefs - gles2glide64
-        isGles2Glide64Enabled = videoPlugin.name.equals( "libgles2glide64.so" );
-        maxFrameskip = getSafeInt( mPreferences, "gles2Glide64Frameskip", 0 );
-        isGles2Glide64AutoFrameskipEnabled = maxFrameskip < 0;
-        gles2Glide64MaxFrameskip = Math.abs( maxFrameskip );
         
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
@@ -507,91 +304,8 @@ public class UserPrefs
             isBigScreenMode = OUYAInterface.IS_OUYA_HARDWARE; // TODO: Add other systems as they enter market
         isActionBarAvailable = AppData.IS_HONEYCOMB && !isBigScreenMode;
         
-        // Determine the touchscreen layout
-        boolean isCustom = false;
-        String folder = "";
-        if( isTouchscreenEnabled )
-        {
-            String layout = mPreferences.getString( "touchscreenLayout", "" );
-            if( layout.equals( "Custom" ) )
-            {
-                isCustom = true;
-                folder = mPreferences.getString( "pathCustomTouchscreen", "" );
-            }
-            else
-            {
-                // Use the "No-stick" skin if analog input is shown but stick ("hat") is not animated
-                if( layout.equals( "Mupen64Plus-AE-Analog" ) || layout.equals( "Mupen64Plus-AE-All" ) )
-                {
-                    if( touchscreenRefresh == 0 )
-                        layout += "-Nostick";
-                    else
-                        layout += "-Stick";
-                }
-                
-                String height = mPreferences.getString( "touchscreenHeight", "" );
-                if( TextUtils.isEmpty( height ) )
-                {
-                    // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
-                    if( context instanceof Activity )
-                    {
-                        DisplayMetrics metrics = new DisplayMetrics();
-                        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
-                        float screenWidthInches = (float) metrics.widthPixels / (float) metrics.xdpi;
-                        float screenHeightInches = (float) metrics.heightPixels / (float) metrics.ydpi;
-                        float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
-                        if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE ||
-                            displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
-                            displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
-                        {
-                            layout += "-Half-Height";
-                        }
-                        else
-                        {
-                            layout += "-Full-Height";
-                        }
-                    }
-                }
-                else
-                {
-                    layout += height;
-                }
-                
-                folder = appData.touchscreenLayoutsDir + layout;
-            }
-        }
-        else if( isFpsEnabled )
-        {
-            folder = appData.touchscreenLayoutsDir
-                    + context.getString( R.string.touchscreenLayout_fpsOnly );
-        }
-        isTouchscreenCustom = isCustom;
-        touchscreenLayout = folder;
-        
-        // Determine the touchscreen style
-        folder = "";
-        if( isTouchscreenEnabled && !isCustom )
-        {
-            folder = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
-        }
-        touchscreenStyle = folder;
-        
-        touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
-        
-        // Determine which players are "plugged in"
-        isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;
-        isPlugged2 = isControllerEnabled2;
-        isPlugged3 = isControllerEnabled3;
-        isPlugged4 = isControllerEnabled4;
-        
-        // Determine whether controller deconfliction is needed
-        int numControllers = 0;
-        numControllers += isControllerEnabled1 ? 1 : 0;
-        numControllers += isControllerEnabled2 ? 1 : 0;
-        numControllers += isControllerEnabled3 ? 1 : 0;
-        numControllers += isControllerEnabled4 ? 1 : 0;
+        // Peripheral share mode
         isControllerShared = mPreferences.getBoolean( "inputShareController", false );
-        playerMap.setEnabled( numControllers > 1 && !isControllerShared );
         
         // Determine the key codes that should not be mapped to controls
         boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
@@ -720,16 +434,6 @@ public class UserPrefs
         }
     }
     
-    private static ControllerProfile loadControllerProfile( String name, ConfigFile custom, ConfigFile builtin )
-    {
-        if( custom.keySet().contains( name ) )
-            return new ControllerProfile( false, custom.get( name ) );
-        else if( builtin.keySet().contains( name ) )
-            return new ControllerProfile( true, builtin.get( name ) );
-        else
-            return null;
-    }
-    
     public void enforceLocale( Activity activity )
     {
         Configuration config = activity.getBaseContext().getResources().getConfiguration();
@@ -842,32 +546,5 @@ public class UserPrefs
         {
             return defaultValue;
         }
-    }
-    
-    /**
-     * Gets the selected values of a MultiSelectListPreference, as an integer set.
-     * 
-     * @param preferences The object containing the MultiSelectListPreference.
-     * @param key         The key of the MultiSelectListPreference.
-     * 
-     * @return The values, as an integer set.
-     */
-    private static Set<Integer> getSafeIntSet( SharedPreferences preferences, String key )
-    {
-        Set<Integer> mutableSet = new HashSet<Integer>();
-        {
-            String holdables = preferences.getString( key, "" );
-            for( String s : MultiSelectListPreference.deserialize( holdables ) )
-            {
-                try
-                {
-                    mutableSet.add( Integer.valueOf( s ) );
-                }
-                catch( NumberFormatException ignored )
-                {
-                }
-            }
-        }
-        return Collections.unmodifiableSet( mutableSet );
     }
 }

@@ -54,6 +54,10 @@ public class PlayerMapPreference extends DialogPreference implements
     
     private String mValue = "";
     private Controller mMogaController;
+    private boolean isControllerEnabled1 = true;
+    private boolean isControllerEnabled2 = true;
+    private boolean isControllerEnabled3 = true;
+    private boolean isControllerEnabled4 = true;
     
     public PlayerMapPreference( Context context, AttributeSet attrs )
     {
@@ -77,6 +81,14 @@ public class PlayerMapPreference extends DialogPreference implements
     public void show()
     {
         showDialog( null );
+    }
+    
+    public void setControllersEnabled( boolean player1, boolean player2, boolean player3, boolean player4 )
+    {
+        isControllerEnabled1 = player1;
+        isControllerEnabled2 = player2;
+        isControllerEnabled3 = player3;
+        isControllerEnabled4 = player4;
     }
     
     public void setMogaController( Controller mogaController )
@@ -113,10 +125,10 @@ public class PlayerMapPreference extends DialogPreference implements
         mMap.deserialize( mValue );
         
         // Initialize and refresh the widgets
-        buttonPlayer1 = setupButton( view, R.id.btnPlayer1, prefs.isControllerEnabled1 );
-        buttonPlayer2 = setupButton( view, R.id.btnPlayer2, prefs.isControllerEnabled2 );
-        buttonPlayer3 = setupButton( view, R.id.btnPlayer3, prefs.isControllerEnabled3 );
-        buttonPlayer4 = setupButton( view, R.id.btnPlayer4, prefs.isControllerEnabled4 );
+        buttonPlayer1 = setupButton( view, R.id.btnPlayer1, isControllerEnabled1 );
+        buttonPlayer2 = setupButton( view, R.id.btnPlayer2, isControllerEnabled2 );
+        buttonPlayer3 = setupButton( view, R.id.btnPlayer3, isControllerEnabled3 );
+        buttonPlayer4 = setupButton( view, R.id.btnPlayer4, isControllerEnabled4 );
         checkBoxReminder = (CheckBox) view.findViewById( R.id.checkBox );
         checkBoxReminder.setChecked( prefs.getPlayerMapReminder() );
         checkBoxReminder.setOnCheckedChangeListener( this );

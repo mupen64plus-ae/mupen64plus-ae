@@ -41,13 +41,6 @@ public class SettingsVideoActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
-    
-    private static final String SCREEN_SETTINGS_VIDEO_ACTIVITY = "screenSettingsVideoActivity";
-    
-    private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
-    private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
-    private static final String CATEGORY_GLES2_GLIDE64 = "categoryGles2Glide64";
-    
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
@@ -81,18 +74,6 @@ public class SettingsVideoActivity extends PreferenceActivity implements
         
         // Refresh the preference data wrapper
         mUserPrefs = new UserPrefs( this );
-        
-        // Hide certain categories altogether if they're not applicable. Normally we just rely on
-        // the built-in dependency disabler, but here the categories are so large that hiding them
-        // provides a better user experience.
-        if( !mUserPrefs.isGles2N64Enabled )
-            PrefUtil.removePreference( this, SCREEN_SETTINGS_VIDEO_ACTIVITY, CATEGORY_GLES2_N64 );
-        
-        if( !mUserPrefs.isGles2RiceEnabled )
-            PrefUtil.removePreference( this, SCREEN_SETTINGS_VIDEO_ACTIVITY, CATEGORY_GLES2_RICE );
-        
-        if( !mUserPrefs.isGles2Glide64Enabled )
-            PrefUtil.removePreference( this, SCREEN_SETTINGS_VIDEO_ACTIVITY, CATEGORY_GLES2_GLIDE64 );
     }
     
     @Override

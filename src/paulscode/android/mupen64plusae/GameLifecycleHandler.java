@@ -39,6 +39,7 @@ import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import android.annotation.SuppressLint;
@@ -128,6 +129,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     // App data and user preferences
     private AppData mAppData;
     private UserPrefs mUserPrefs;
+    private GamePrefs mGamePrefs;
     
     public GameLifecycleHandler( Activity activity )
     {
@@ -159,6 +161,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         // Get app data and user preferences
         mAppData = new AppData( mActivity );
         mUserPrefs = new UserPrefs( mActivity );
+        mGamePrefs = new GamePrefs( mActivity, mRomMd5 );
         mUserPrefs.enforceLocale( mActivity );
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
@@ -195,7 +198,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
         // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( mActivity, mSurface, mRomPath, mCheatArgs, mDoRestart );
+        CoreInterface.initialize( mActivity, mSurface, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
         
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );
@@ -218,14 +221,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         }
         
         // Initialize the screen elements
-        if( mUserPrefs.isTouchscreenEnabled || mUserPrefs.isFpsEnabled )
+        if( mGamePrefs.isTouchscreenEnabled || mUserPrefs.isFpsEnabled )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenStyle, mUserPrefs.touchscreenTransparency );
-            mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden, mUserPrefs.touchscreenScale,
-                    mUserPrefs.displayFpsRefresh, mUserPrefs.touchscreenRefresh );
+                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mGamePrefs.touchscreenStyle, mGamePrefs.touchscreenTransparency );
+            mTouchscreenMap.load( mGamePrefs.touchscreenLayout );
+            mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGamePrefs.touchscreenScale,
+                    mUserPrefs.displayFpsRefresh, mGamePrefs.touchscreenRefresh );
         }
         
         // Initialize user interface devices
@@ -356,12 +359,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         }
         
         // Create the touchscreen controls
-        if( mUserPrefs.isTouchscreenEnabled )
+        if( mGamePrefs.isTouchscreenEnabled )
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, vibrator, mUserPrefs.touchscreenAutoHold,
-                    mUserPrefs.isTouchscreenFeedbackEnabled, mUserPrefs.touchscreenAutoHoldables );
+                    inputSource, mOverlay, vibrator, mGamePrefs.touchscreenAutoHold,
+                    mGamePrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...
@@ -387,28 +390,28 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                 : null;
         
         // Create the peripheral controls to handle key/stick presses
-        if( mUserPrefs.isControllerEnabled1 )
+        if( mGamePrefs.isControllerEnabled1 )
         {
-            ControllerProfile p = mUserPrefs.controllerProfile1;
-            mControllers.add( new PeripheralController( 1, mUserPrefs.playerMap, p.getMap(), p.getDeadzone(),
+            ControllerProfile p = mGamePrefs.controllerProfile1;
+            mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
         }
-        if( mUserPrefs.isControllerEnabled2 )
+        if( mGamePrefs.isControllerEnabled2 )
         {
-            ControllerProfile p = mUserPrefs.controllerProfile2;
-            mControllers.add( new PeripheralController( 2, mUserPrefs.playerMap, p.getMap(), p.getDeadzone(),
+            ControllerProfile p = mGamePrefs.controllerProfile2;
+            mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
         }
-        if( mUserPrefs.isControllerEnabled3 )
+        if( mGamePrefs.isControllerEnabled3 )
         {
-            ControllerProfile p = mUserPrefs.controllerProfile3;
-            mControllers.add( new PeripheralController( 3, mUserPrefs.playerMap, p.getMap(), p.getDeadzone(),
+            ControllerProfile p = mGamePrefs.controllerProfile3;
+            mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
         }
-        if( mUserPrefs.isControllerEnabled4 )
+        if( mGamePrefs.isControllerEnabled4 )
         {
-            ControllerProfile p = mUserPrefs.controllerProfile4;
-            mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap, p.getMap(), p.getDeadzone(),
+            ControllerProfile p = mGamePrefs.controllerProfile4;
+            mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
         }
     }

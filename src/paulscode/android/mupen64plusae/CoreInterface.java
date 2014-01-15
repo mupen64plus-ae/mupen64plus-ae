@@ -30,6 +30,7 @@ import paulscode.android.mupen64plusae.jni.NativeImports;
 import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.jni.NativeSDL;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -92,6 +93,7 @@ public class CoreInterface
     // User/app data - used by NativeImports, NativeSDL
     protected static AppData sAppData = null;
     protected static UserPrefs sUserPrefs = null;
+    protected static GamePrefs sGamePrefs = null;
     
     // Audio/video objects - used by NativeSDL
     protected static AudioTrack sAudioTrack = null;
@@ -128,7 +130,7 @@ public class CoreInterface
     private static String sAutoSavePath = null;
     private static String sManualSaveDir = null;
     
-    public static void initialize( Activity activity, GameSurface surface, String romPath, String cheatArgs, boolean isRestarting )
+    public static void initialize( Activity activity, GameSurface surface, String romPath, String romMd5, String cheatArgs, boolean isRestarting )
     {
         sRomPath = romPath;
         sCheatOptions = cheatArgs;
@@ -138,7 +140,8 @@ public class CoreInterface
         sSurface = surface;
         sAppData = new AppData( sActivity );
         sUserPrefs = new UserPrefs( sActivity );
-        NativeConfigFiles.syncConfigFiles( sUserPrefs, sAppData );
+        sGamePrefs = new GamePrefs( sActivity, romMd5 );
+        NativeConfigFiles.syncConfigFiles( sGamePrefs, sUserPrefs, sAppData );
         
         File romFile = new File( romPath );
         sAutoSavePath = sUserPrefs.autoSaveDir + "/" + romFile.getName() + ".sav";
@@ -204,10 +207,10 @@ public class CoreInterface
                 {
                     // Initialize input-android plugin (even if we aren't going to use it)
                     NativeInput.init();
-                    NativeInput.setConfig( 0, sUserPrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
-                    NativeInput.setConfig( 1, sUserPrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
-                    NativeInput.setConfig( 2, sUserPrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
-                    NativeInput.setConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
+                    NativeInput.setConfig( 0, sGamePrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
+                    NativeInput.setConfig( 1, sGamePrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
+                    NativeInput.setConfig( 2, sGamePrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
+                    NativeInput.setConfig( 3, sGamePrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
                     
                     ArrayList<String> arglist = new ArrayList<String>();
                     arglist.add( "mupen64plus" );
