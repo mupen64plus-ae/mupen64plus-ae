@@ -14,12 +14,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 public class GamePrefs
 {
+    /** The name of the game-specific {@link SharedPreferences} object.*/
+    public final String sharedPrefsName;
+    
     /** The emulation profile. */
     public final Profile emulationProfile;
     
@@ -171,8 +173,8 @@ public class GamePrefs
         final AppData appData = new AppData( context );
         final UserPrefs userPrefs = new UserPrefs( context );
         
-        // mPreferences = getSharedPreferences( PREFS_NAME, Context.MODE_PRIVATE );
-        mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
+        mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
         
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, "emulationProfile",

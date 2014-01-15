@@ -55,7 +55,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -123,12 +122,13 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mUserPrefs = new UserPrefs( this );
         mGamePrefs = new GamePrefs( this, romMd5 );
         mUserPrefs.enforceLocale( this );
-        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
+        mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
         // Get the detailed info about the ROM
         mRomDetail = RomDetail.lookupByMd5( romMd5 );
         
         // Load user preference menu structure from XML and update view
+        getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );
         addPreferencesFromResource( R.xml.preferences_game );
         mScreenCheats = (PreferenceGroup) findPreference( SCREEN_CHEATS );
         mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
