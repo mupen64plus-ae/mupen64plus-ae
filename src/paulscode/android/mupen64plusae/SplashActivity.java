@@ -132,9 +132,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         // Refresh the preference data wrapper
         mUserPrefs = new UserPrefs( this );
         
-        // Initialize ROM database
-        RomDetail.initializeDatabase( mAppData.mupen64plus_ini );
-        
         // Initialize the OUYA interface if running on OUYA
         if( OUYAInterface.IS_OUYA_HARDWARE )
             OUYAInterface.init( this );
@@ -195,6 +192,10 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
             // Launch menu activity if successful; post failure notice otherwise
             if( failures == null || failures.size() == 0 )
             {
+                // Initialize ROM database after the assets have been extracted
+                RomDetail.initializeDatabase( mAppData.mupen64plus_ini );
+                
+                // Remember what asset version is installed
                 mAppData.putAssetVersion( ASSET_VERSION );
                 updateText( R.string.assetExtractor_finished );
                 
