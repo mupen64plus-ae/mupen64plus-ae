@@ -23,8 +23,6 @@ package paulscode.android.mupen64plusae.profile;
 import java.util.Arrays;
 import java.util.List;
 
-import com.bda.controller.Controller;
-
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -66,7 +64,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ControllerProfileActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
+import com.bda.controller.Controller;
+
+public class ControllerProfileActivity extends Activity implements OnInputListener,
+        OnClickListener, OnItemClickListener
 {
     // Slider limits
     private static final int MIN_DEADZONE = 0;
@@ -80,8 +81,8 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     private static final int MIN_LAYOUT_WIDTH_DP = 480;
     
     // Controller profile objects
-    public ConfigFile mConfigFile;
-    public ControllerProfile mProfile;
+    private ConfigFile mConfigFile;
+    private ControllerProfile mProfile;
     
     // User preferences wrapper
     private UserPrefs mUserPrefs;
@@ -131,7 +132,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
         if( TextUtils.isEmpty( name ) )
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
         mConfigFile = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
-        mProfile = ControllerProfile.read( mConfigFile, name, false );
+        mProfile = new ControllerProfile( false, mConfigFile.get( name ) );
         if( mProfile == null )
             throw new Error( "Invalid usage: profile name not found in config file" );
         
@@ -180,7 +181,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
         mMogaController.onPause();
         
         // Lazily persist the profile data; only need to do it on pause
-        ControllerProfile.write( mConfigFile, mProfile );
+        mProfile.writeTo( mConfigFile );
         mConfigFile.save();
     }
     
@@ -308,7 +309,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
             @Override
             public void onConfirm()
             {
-                mProfile.map.unmapAll();
+                mProfile.putMap( new InputMap() );
                 refreshAllButtons();
             }
         } );
@@ -318,15 +319,15 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     {
         final CharSequence title = getText( R.string.menuItem_deadzone );
         
-        Prompt.promptInteger( this, title, "%1$d %%", mProfile.deadzone, MIN_DEADZONE, MAX_DEADZONE, new PromptIntegerListener()
+        Prompt.promptInteger( this, title, "%1$d %%", mProfile.getDeadzone(), MIN_DEADZONE,
+                MAX_DEADZONE, new PromptIntegerListener()
                 {
                     @Override
                     public void onDialogClosed( Integer value, int which )
                     {
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
-                            mProfile = new ControllerProfile( mProfile.name, mProfile.comment,
-                                    false, mProfile.map, value, mProfile.sensitivity );
+                            mProfile.putDeadzone( value );
                         }
                     }
                 } );
@@ -336,15 +337,15 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     {
         final CharSequence title = getText( R.string.menuItem_sensitivity );
         
-        Prompt.promptInteger( this, title, "%1$d %%", mProfile.sensitivity, MIN_SENSITIVITY, MAX_SENSITIVITY, new PromptIntegerListener()
+        Prompt.promptInteger( this, title, "%1$d %%", mProfile.getSensitivity(), MIN_SENSITIVITY,
+                MAX_SENSITIVITY, new PromptIntegerListener()
                 {
                     @Override
                     public void onDialogClosed( Integer value, int which )
                     {
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
-                            mProfile = new ControllerProfile( mProfile.name, mProfile.comment,
-                                    false, mProfile.map, mProfile.deadzone, value );
+                            mProfile.putSensitivity( value );
                         }
                     }
                 } );
@@ -374,8 +375,9 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     
     private void popupListener( CharSequence title, final int index )
     {
+        final InputMap map = mProfile.getMap();
         String message = getString( R.string.inputMapActivity_popupMessage,
-                mProfile.map.getMappedCodeInfo( index ) );
+                map.getMappedCodeInfo( index ) );
         String btnText = getString( R.string.inputMapActivity_popupUnmap );
         
         Prompt.promptInputCode( this, mMogaController, title, message, btnText,
@@ -387,9 +389,10 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
                         if( which != DialogInterface.BUTTON_NEGATIVE )
                         {
                             if( which == DialogInterface.BUTTON_POSITIVE )
-                                mProfile.map.map( inputCode, index );
+                                map.map( inputCode, index );
                             else
-                                mProfile.map.unmapCommand( index );
+                                map.unmapCommand( index );
+                            mProfile.putMap( map );
                             refreshAllButtons();
                         }
                         
@@ -472,7 +475,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     
     private void refreshButton( int inputCode, float strength )
     {
-        int command = mProfile.map.get( inputCode );
+        int command = mProfile.getMap().get( inputCode );
         if( command != InputMap.UNMAPPED )
         {
             Button button = mN64Buttons[command];
@@ -510,21 +513,22 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     
     private void refreshAllButtons()
     {
+        final InputMap map = mProfile.getMap();
         for( int i = 0; i < mN64Buttons.length; i++ )
         {
-            refreshButton( mN64Buttons[i], 0, mProfile.map.isMapped( i ) );
+            refreshButton( mN64Buttons[i], 0, map.isMapped( i ) );
         }
         if( mListView != null )
         {
-            ArrayAdapter<String> adapter = Prompt.createAdapter( this, Arrays.asList( mCommandNames ),
-                    new ListItemTwoTextIconPopulator<String>()
+            ArrayAdapter<String> adapter = Prompt.createAdapter( this,
+                    Arrays.asList( mCommandNames ), new ListItemTwoTextIconPopulator<String>()
                     {
                         @Override
                         public void onPopulateListItem( String item, int position, TextView text1,
                                 TextView text2, ImageView icon )
                         {
                             text1.setText( item );
-                            text2.setText( mProfile.map.getMappedCodeInfo( mCommandIndices[position] ) );
+                            text2.setText( map.getMappedCodeInfo( mCommandIndices[position] ) );
                             icon.setVisibility( View.GONE );
                         }
                     } );

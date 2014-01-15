@@ -436,10 +436,10 @@ public class UserPrefs
         final String profileName2 = mPreferences.getString( "controllerProfile2", "" );
         final String profileName3 = mPreferences.getString( "controllerProfile3", "" );
         final String profileName4 = mPreferences.getString( "controllerProfile4", "" );
-        controllerProfile1 = LoadProfile( profileName1, configCustom, configBuiltin );          
-        controllerProfile2 = LoadProfile( profileName2, configCustom, configBuiltin );          
-        controllerProfile3 = LoadProfile( profileName3, configCustom, configBuiltin );          
-        controllerProfile4 = LoadProfile( profileName4, configCustom, configBuiltin );          
+        controllerProfile1 = loadControllerProfile( profileName1, configCustom, configBuiltin );          
+        controllerProfile2 = loadControllerProfile( profileName2, configCustom, configBuiltin );          
+        controllerProfile3 = loadControllerProfile( profileName3, configCustom, configBuiltin );          
+        controllerProfile4 = loadControllerProfile( profileName4, configCustom, configBuiltin );          
         
         // Input prefs
         isControllerEnabled1 = controllerProfile1 != null;
@@ -716,12 +716,12 @@ public class UserPrefs
         }
     }
     
-    private static ControllerProfile LoadProfile( String name, ConfigFile custom, ConfigFile builtin )
+    private static ControllerProfile loadControllerProfile( String name, ConfigFile custom, ConfigFile builtin )
     {
         if( custom.keySet().contains( name ) )
-            return ControllerProfile.read( custom, name, false );
+            return new ControllerProfile( false, custom.get( name ) );
         else if( builtin.keySet().contains( name ) )
-            return ControllerProfile.read( builtin, name, true );
+            return new ControllerProfile( true, builtin.get( name ) );
         else
             return null;
     }
