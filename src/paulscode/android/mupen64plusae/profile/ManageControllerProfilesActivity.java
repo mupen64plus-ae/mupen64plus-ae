@@ -23,7 +23,7 @@ package paulscode.android.mupen64plusae.profile;
 import paulscode.android.mupen64plusae.Keys;
 import android.content.Intent;
 
-public class ControllerProfileActivity extends ProfileActivity
+public class ManageControllerProfilesActivity extends ManageProfilesActivity
 {
     @Override
     protected String getConfigFilePath( boolean isBuiltin )

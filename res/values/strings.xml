@@ -73,7 +73,7 @@
     <string name="menuItem_hardwareInfo">Hardware info</string>
     <string name="menuItem_localeOverride">Language</string>
 
-    <!-- ProfileActivity -->
+    <!-- ManageProfilesActivity -->
     <string name="menuItem_new">New</string>
     <string name="menuItem_hideBuiltins">Hide built-ins</string>
     <string name="menuItem_showBuiltins">Show built-ins</string>
@@ -94,7 +94,7 @@
     <string name="listItem_delete">Delete</string>
     <string name="listItem_disabled">(Disabled)</string>
 
-    <!-- ProfileActivity Name/Comment Dialog -->
+    <!-- ManageProfilesActivity Name/Comment Dialog -->
     <string name="hint_profileName">Profile name</string>
     <string name="hint_profileComment">Description (optional)</string>
 

@@ -59,7 +59,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-abstract public class ProfileActivity extends ListActivity
+abstract public class ManageProfilesActivity extends ListActivity
 {
     /**
      * Gets the absolute path of the {@link ConfigFile} that backs this profile. Subclasses should

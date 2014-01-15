@@ -90,11 +90,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivity"
+            android:name="paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity"
             android:exported="false"
-            android:label="@string/ControllerProfileActivity_title" >
+            android:label="@string/ManageControllerProfilesActivity_title" >
             <intent-filter>
-                <action android:name=".profile.ControllerProfileActivity" />
+                <action android:name=".profile.ManageControllerProfilesActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
