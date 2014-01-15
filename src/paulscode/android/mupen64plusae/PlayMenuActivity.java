@@ -225,17 +225,17 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Populate the list preferences for profiles
         populateProfiles( mAppData.emulationProfiles_cfg, mUserPrefs.emulationProfiles_cfg,
-                EMULATION_PROFILE, R.string.emulationProfile_default );
+                EMULATION_PROFILE, R.string.emulationProfile_default, false );
         populateProfiles( mAppData.touchscreenProfiles_cfg, mUserPrefs.touchscreenProfiles_cfg,
-                TOUCHSCREEN_PROFILE, R.string.touchscreenProfile_default );
+                TOUCHSCREEN_PROFILE, R.string.touchscreenProfile_default, true );
         populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
-                CONTROLLER_PROFILE1, R.string.controllerProfile_default );
+                CONTROLLER_PROFILE1, R.string.controllerProfile_default, true );
         populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
-                CONTROLLER_PROFILE2, R.string.controllerProfile_default );
+                CONTROLLER_PROFILE2, R.string.controllerProfile_default, true );
         populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
-                CONTROLLER_PROFILE3, R.string.controllerProfile_default );
+                CONTROLLER_PROFILE3, R.string.controllerProfile_default, true );
         populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
-                CONTROLLER_PROFILE4, R.string.controllerProfile_default );
+                CONTROLLER_PROFILE4, R.string.controllerProfile_default, true );
         
         // Refresh the preferences objects in case populate* changed a value
         mUserPrefs = new UserPrefs( this );
@@ -263,7 +263,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
     }
     
-    private void populateProfiles( String builtinPath, String customPath, String key, int resIdDefault )
+    private void populateProfiles( String builtinPath, String customPath, String key, int resIdDefault, boolean allowDisable )
     {
         ConfigFile configBuiltin = new ConfigFile( builtinPath );
         ConfigFile configCustom = new ConfigFile( customPath );
@@ -271,18 +271,24 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
         profiles.addAll( Profile.getProfiles( configCustom, false ) );
         Collections.sort( profiles );
-        CharSequence[] entries = new CharSequence[profiles.size() + 1];
-        String[] values = new String[profiles.size() + 1];
-        entries[0] = getText( R.string.listItem_disabled );
-        values[0] = "";
+        
+        int offset = allowDisable ? 1 : 0;
+        int numEntries = profiles.size() + offset;
+        CharSequence[] entries = new CharSequence[numEntries];
+        String[] values = new String[numEntries];
+        if( allowDisable )
+        {
+            entries[0] = getText( R.string.listItem_disabled );
+            values[0] = "";
+        }
         for( int i = 0; i < profiles.size(); i++ )
         {
             Profile profile = profiles.get( i );
             int resId = profile.isBuiltin
                     ? R.string.listItem_profileBuiltin
                     : R.string.listItem_profileCustom;
-            entries[i + 1] = getString( resId, profile.name );
-            values[i + 1] = profile.name;
+            entries[i + offset] = getString( resId, profile.name );
+            values[i + offset] = profile.name;
         }
         
         populateListPreference( entries, values, key, resIdDefault );
