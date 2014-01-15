@@ -59,8 +59,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.PlayMenuActivity"
             android:exported="false"
-            android:label="@string/PlayMenuActivity_title"
-            android:theme="@style/appTheme.NoTransition" >
+            android:label="@string/PlayMenuActivity_title" >
             <intent-filter>
                 <action android:name=".PlayMenuActivity" />
 
@@ -70,8 +69,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.SettingsGlobalActivity"
             android:exported="false"
-            android:label="@string/SettingsGlobalActivity_title"
-            android:theme="@style/appTheme.NoTransition" >
+            android:label="@string/SettingsGlobalActivity_title" >
             <intent-filter>
                 <action android:name=".SettingsGlobalActivity" />
 
