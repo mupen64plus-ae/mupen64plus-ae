@@ -27,13 +27,8 @@ import android.view.MenuItem;
 
 public class GameActivity extends Activity
 {
-    private final GameLifecycleHandler mLifecycleHandler;
+    private GameLifecycleHandler mLifecycleHandler;
     private GameMenuHandler mMenuHandler;
-    
-    public GameActivity()
-    {
-        mLifecycleHandler = new GameLifecycleHandler( this );
-    }
     
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
@@ -69,6 +64,7 @@ public class GameActivity extends Activity
         mMenuHandler = new GameMenuHandler( this );
         CoreInterface.addOnStateCallbackListener( mMenuHandler  );
         
+        mLifecycleHandler = new GameLifecycleHandler( this );
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
         mLifecycleHandler.onCreateEnd( savedInstanceState );

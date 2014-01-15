@@ -104,6 +104,15 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     {
         super.onCreate( savedInstanceState );
         
+        // Get the ROM path and MD5 that was passed to the activity
+        Bundle extras = getIntent().getExtras();
+        if( extras == null )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
+        mRomPath = extras.getString( Keys.Extras.ROM_PATH );
+        String romMd5 = extras.getString( Keys.Extras.ROM_MD5 );
+        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( romMd5 ) )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
+        
         // Initialize MOGA controller API
         mMogaController.init();
         
@@ -113,17 +122,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mUserPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
-        // Get the ROM path and MD5 that was passed to the activity
-        Bundle extras = getIntent().getExtras();
-        if( extras == null )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
-        mRomPath = extras.getString( Keys.Extras.ROM_PATH );
-        final String md5 = extras.getString( Keys.Extras.ROM_MD5 );
-        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( md5 ) )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
-        
         // Get the detailed info about the ROM
-        mRomDetail = RomDetail.lookupByMd5( md5 );
+        mRomDetail = RomDetail.lookupByMd5( romMd5 );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_play );
@@ -459,6 +459,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Pass the startup info via the intent
         intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
+        intent.putExtra( Keys.Extras.ROM_MD5, mRomDetail.md5 );
         intent.putExtra( Keys.Extras.CHEAT_ARGS, getCheatArgs() );
         intent.putExtra( Keys.Extras.DO_RESTART, isRestarting );
         

@@ -30,7 +30,9 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Vibrator;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
@@ -38,12 +40,21 @@ import android.view.inputmethod.InputMethodManager;
 public class GameMenuHandler implements OnStateCallbackListener
 {
     private final Activity mActivity;
+    private final String mRomMd5;
     
     private UserPrefs mUserPrefs;
     
     public GameMenuHandler( Activity activity )
     {
         mActivity = activity;
+        
+        // Get the ROM's MD5 that was passed to the activity
+        Bundle extras = mActivity.getIntent().getExtras();
+        if( extras == null )
+            throw new Error( "ROM MD5 must be passed via the extras bundle when starting GameActivity" );
+        mRomMd5 = extras.getString( Keys.Extras.ROM_MD5 );
+        if( TextUtils.isEmpty( mRomMd5 ) )
+            throw new Error( "ROM MD5 must be passed via the extras bundle when starting GameActivity" );
     }
     
     @TargetApi( 11 )

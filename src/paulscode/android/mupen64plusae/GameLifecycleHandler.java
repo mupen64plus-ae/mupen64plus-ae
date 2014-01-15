@@ -114,6 +114,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     // Internal flags
     private final boolean mIsXperiaPlay;
     
+    // Intent data
+    private final String mRomPath;
+    private final String mRomMd5;
+    private final String mCheatArgs;
+    private final boolean mDoRestart;
+    
     // Lifecycle state tracking
     private boolean mIsFocused = false;     // true if the window is focused
     private boolean mIsResumed = false;     // true if the activity is resumed
@@ -129,6 +135,17 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mControllers = new ArrayList<AbstractController>();
         mIsXperiaPlay = !( activity instanceof GameActivity );
         mMogaController = Controller.getInstance( mActivity );
+        
+        // Get the intent data
+        Bundle extras = mActivity.getIntent().getExtras();
+        if( extras == null )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
+        mRomPath = extras.getString( Keys.Extras.ROM_PATH );
+        mRomMd5 = extras.getString( Keys.Extras.ROM_MD5 );
+        mCheatArgs = extras.getString( Keys.Extras.CHEAT_ARGS );
+        mDoRestart = extras.getBoolean( Keys.Extras.DO_RESTART, false );
+        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
     }
     
     @TargetApi( 11 )
@@ -178,15 +195,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
         // Initialize the objects and data files interfacing to the emulator core
-        Bundle extras = mActivity.getIntent().getExtras();
-        if( extras == null )
-            throw new Error( "ROM path must be passed via the extras bundle when starting GameActivity" );
-        String romPath = extras.getString( Keys.Extras.ROM_PATH );
-        String cheatArgs = extras.getString( Keys.Extras.CHEAT_ARGS );
-        boolean doRestart = extras.getBoolean( Keys.Extras.DO_RESTART, false );
-        if( TextUtils.isEmpty( romPath ) )
-            throw new Error( "ROM path must be passed via the extras bundle when starting GameActivity" );
-        CoreInterface.initialize( mActivity, mSurface, romPath, cheatArgs, doRestart );
+        CoreInterface.initialize( mActivity, mSurface, mRomPath, mCheatArgs, mDoRestart );
         
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );

@@ -29,13 +29,12 @@ import android.view.MenuItem;
 @TargetApi( 9 )
 public class GameActivityXperiaPlay extends NativeActivity
 {
-    private final GameLifecycleHandler mLifecycleHandler;
+    private GameLifecycleHandler mLifecycleHandler;
     private GameMenuHandler mMenuHandler;
     
     public GameActivityXperiaPlay()
     {
         System.loadLibrary( "xperia-touchpad" );
-        mLifecycleHandler = new GameLifecycleHandler( this );
     }
     
     @Override
@@ -72,6 +71,7 @@ public class GameActivityXperiaPlay extends NativeActivity
         mMenuHandler = new GameMenuHandler( this );
         CoreInterface.addOnStateCallbackListener( mMenuHandler  );
         
+        mLifecycleHandler = new GameLifecycleHandler( this );
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
         mLifecycleHandler.onCreateEnd( savedInstanceState );
