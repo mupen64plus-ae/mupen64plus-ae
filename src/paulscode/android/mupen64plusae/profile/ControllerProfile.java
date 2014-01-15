@@ -20,9 +20,6 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -45,7 +42,7 @@ public class ControllerProfile extends Profile
     public ControllerProfile( String name, String comment, boolean isBuiltin, InputMap map,
             int deadzone, int sensitivity )
     {
-        super( name, comment, isBuiltin );
+        super( isBuiltin, name, comment );
         this.map = map;
         this.deadzone = deadzone;
         this.sensitivity = sensitivity;
@@ -79,14 +76,5 @@ public class ControllerProfile extends Profile
         config.put( profile.name, KEY_DEADZONE, String.valueOf( profile.deadzone ) );
         config.put( profile.name, KEY_SENSITIVITY, String.valueOf( profile.sensitivity ) );
         return true;
-    }
-
-    public static List<ControllerProfile> getProfiles( ConfigFile config, boolean isBuiltin )
-    {
-        ArrayList<ControllerProfile> profiles = new ArrayList<ControllerProfile>();
-        for( String key : config.keySet() )
-            if( !ConfigFile.SECTIONLESS_NAME.equals( key ) )
-                profiles.add( read( config, key, isBuiltin ) );
-        return profiles;
     }
 }

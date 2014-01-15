@@ -20,90 +20,22 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import paulscode.android.mupen64plusae.Keys;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import android.content.Intent;
-import android.os.Bundle;
 
-public class ControllerProfileActivity extends ProfileActivity<ControllerProfile>
+public class ControllerProfileActivity extends ProfileActivity
 {
-    private ConfigFile mConfigBuiltin;
-    private ConfigFile mConfigCustom;
-    
     @Override
-    protected void onCreate( Bundle savedInstanceState )
+    protected String getConfigFilePath( boolean isBuiltin )
     {
-        super.onCreate( savedInstanceState );
-        new File( mUserPrefs.controllerProfiles_cfg ).mkdirs();
-        mConfigBuiltin = new ConfigFile( mAppData.controllerProfiles_cfg );
-        mConfigCustom = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
+        return isBuiltin ? mAppData.controllerProfiles_cfg : mUserPrefs.controllerProfiles_cfg;
     }
     
     @Override
-    protected void onResume()
-    {
-        // Reload in case we're returning from the map editor
-        mConfigCustom.reload();
-        super.onResume();
-    }
-    
-    @Override
-    protected List<ControllerProfile> getProfiles( boolean showBuiltins )
-    {
-        List<ControllerProfile> list = new ArrayList<ControllerProfile>();
-        list.addAll( ControllerProfile.getProfiles( mConfigCustom, false ) );
-        if( showBuiltins )
-            list.addAll( ControllerProfile.getProfiles( mConfigBuiltin, true ) );
-        return list;
-    }
-    
-    @Override
-    protected void onEditProfile( ControllerProfile profile )
+    protected void onEditProfile( Profile profile )
     {
         Intent intent = new Intent( this, ControllerProfileEditActivity.class );
         intent.putExtra( Keys.Extras.PROFILE_NAME, profile.name );
         startActivity( intent );
-    }
-    
-    @Override
-    protected ControllerProfile onAddProfile( String name, String comment )
-    {
-        assert ( !mConfigCustom.keySet().contains( name ) );
-        ControllerProfile profile = new ControllerProfile( name, comment, false );
-        ControllerProfile.write( mConfigCustom, profile );
-        mConfigCustom.save();
-        return profile;
-    }
-    
-    @Override
-    protected ControllerProfile onCopyProfile( ControllerProfile profile, String newName, String newComment )
-    {
-        assert ( !mConfigCustom.keySet().contains( newName ) );
-        ControllerProfile newProfile = new ControllerProfile( newName, newComment, false,
-                profile.map, profile.deadzone, profile.sensitivity );
-        ControllerProfile.write( mConfigCustom, newProfile );
-        mConfigCustom.save();
-        return newProfile;
-    }
-    
-    @Override
-    protected void onRenameProfile( ControllerProfile profile, String newName, String newComment )
-    {
-        mConfigCustom.remove( profile.name );
-        ControllerProfile.write( mConfigCustom, new ControllerProfile( newName, newComment, false,
-                profile.map, profile.deadzone, profile.sensitivity ) );
-        mConfigCustom.save();
-    }
-    
-    @Override
-    protected void onDeleteProfile( ControllerProfile profile )
-    {
-        assert ( mConfigCustom.keySet().contains( profile.name ) );
-        mConfigCustom.remove( profile.name );
-        mConfigCustom.save();
     }
 }

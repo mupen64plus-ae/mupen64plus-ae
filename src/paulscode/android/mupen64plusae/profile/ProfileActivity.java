@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
@@ -57,23 +59,18 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-/**
- * The Class ProfileActivity.
- * 
- * @param <T> the generic type
- */
-abstract public class ProfileActivity<T extends Profile> extends ListActivity
+abstract public class ProfileActivity extends ListActivity
 {
-    
     /**
-     * Gets the list of available profiles. Subclasses should implement this method to search for
-     * and load the profiles from disk. Subclasses need not sort the list; this is handled by the
-     * base class.
+     * Gets the absolute path of the {@link ConfigFile} that backs this profile. Subclasses should
+     * implement this method to define the locations of the subclass-specific built-in or custom
+     * config files.
      * 
-     * @param includeBuiltins true to include built-in profiles in the result, false to omit
-     * @return the list of available profiles
+     * @param isBuiltin true to return the built-in config file path; false to return the custom
+     *            config file path
+     * @return the absolute path of the requested config file
      */
-    abstract protected List<T> getProfiles( boolean includeBuiltins );
+    abstract protected String getConfigFilePath( boolean isBuiltin );
     
     /**
      * Edits a profile using a subclass-specific UI. Subclasses should implement this method to
@@ -82,51 +79,13 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
      * 
      * @param profile the profile to be edited
      */
-    abstract protected void onEditProfile( T profile );
+    abstract protected void onEditProfile( Profile profile );
     
-    /**
-     * Adds a profile using a subclass-specific persistence mechanism. Subclasses should implement
-     * this method to persist a new (default or empty) profile immediately to disk. This method
-     * should be used simply to create and persist the profile; it should not launch any editor UI.
-     * 
-     * @param name the unique name of the new profile
-     * @param comment an optional brief description of the new profile
-     * @return the newly created profile
-     */
-    abstract protected T onAddProfile( String name, String comment );
+    /** The back-end store for the built-in profiles, which subclasses should read from. */
+    protected ConfigFile mConfigBuiltin;
     
-    /**
-     * Copies a profile using a subclass-specific persistence mechanism. Subclasses should implement
-     * this method to persist a new (cloned) profile immediately to disk. This method should be used
-     * simply to clone and persist the profile; it should not launch any editor UI.
-     * 
-     * @param profile the profile to be copied
-     * @param newName the unique name of the cloned profile
-     * @param newComment an optional brief description of the cloned profile
-     * @param the newly created profile
-     */
-    abstract protected T onCopyProfile( T profile, String newName, String newComment );
-    
-    /**
-     * Renames a profile using a subclass-specific persistence mechanism. Subclasses should
-     * implement this method to persist the revised name and/or comment immediately to disk. This
-     * method should be used simply to persist the revisions; it should not launch any editor UI.
-     * 
-     * @param profile the profile to rename
-     * @param newName the new (unique) name of the profile
-     * @param newComment a new (optional) brief description of the profile
-     */
-    abstract protected void onRenameProfile( T profile, String newName, String newComment );
-    
-    /**
-     * Deletes a profile using a subclass-specific persistence mechanism. Subclasses should
-     * implement this method to remove the profile from persistent storage. This method should be
-     * used simply to un-persist the profile; a basic confirmation UI capability is already provided
-     * by the base class.
-     * 
-     * @param profile the profile
-     */
-    abstract protected void onDeleteProfile( T profile );
+    /** The back-end store for the custom profiles, which subclasses should read from and write to. */
+    protected ConfigFile mConfigCustom;
     
     /** The application data wrapper, available as a convenience to subclasses. */
     protected AppData mAppData;
@@ -136,11 +95,6 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
     
     private final List<String> mProfileNames = new ArrayList<String>();
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onCreate(android.os.Bundle)
-     */
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -148,25 +102,25 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        
+        // Get the config files from the subclass-specified paths
+        String customPath = getConfigFilePath( false );
+        String builtinPath = getConfigFilePath( true );
+        new File( customPath ).mkdirs();
+        mConfigBuiltin = new ConfigFile( builtinPath );
+        mConfigCustom = new ConfigFile( customPath );
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onResume()
-     */
     @Override
     protected void onResume()
     {
         super.onResume();
+        
+        // Reload in case we're returning from an editor
+        mConfigCustom.reload();
         refreshList();
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-     */
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
     {
@@ -174,11 +128,6 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         return super.onCreateOptionsMenu( menu );
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
-     */
     @Override
     public boolean onPrepareOptionsMenu( Menu menu )
     {
@@ -189,11 +138,6 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         return super.onPrepareOptionsMenu( menu );
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
-     */
     @TargetApi( 11 )
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
@@ -214,18 +158,11 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         }
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.ListActivity#onListItemClick(android.widget.ListView, android.view.View,
-     * int, long)
-     */
     @Override
     protected void onListItemClick( ListView l, View v, int position, long id )
     {
         // Popup a dialog with a context-sensitive list of options for the profile
-        @SuppressWarnings( "unchecked" )
-        final T profile = (T) getListView().getItemAtPosition( position );
+        final Profile profile = (Profile) getListView().getItemAtPosition( position );
         if( profile != null )
         {
             int resId = profile.isBuiltin
@@ -278,7 +215,7 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
         super.onListItemClick( l, v, position, id );
     }
     
-    private void editProfile( T profile )
+    private void editProfile( Profile profile )
     {
         assert ( !profile.isBuiltin );
         onEditProfile( profile );
@@ -291,13 +228,17 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
             @Override
             public void onAccept( String name, String comment )
             {
-                editProfile( onAddProfile( name, comment ) );
+                assert ( !mConfigCustom.keySet().contains( name ) );
+                Profile profile = new Profile( false, name, comment );
+                profile.writeTo( mConfigCustom );
+                mConfigCustom.save();
                 refreshList();
+                editProfile( profile );
             }
         } );
     }
     
-    private void copyProfile( final T profile )
+    private void copyProfile( final Profile profile )
     {
         promptNameComment( R.string.listItem_copy, profile.name, profile.comment, false,
                 new NameCommentListener()
@@ -305,13 +246,17 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
                     @Override
                     public void onAccept( String name, String comment )
                     {
-                        editProfile( onCopyProfile( profile, name, comment ) );
+                        assert ( !mConfigCustom.keySet().contains( name ) );
+                        Profile newProfile = profile.copy( name, comment );
+                        newProfile.writeTo( mConfigCustom );
+                        mConfigCustom.save();
                         refreshList();
+                        editProfile( newProfile );
                     }
                 } );
     }
     
-    private void renameProfile( final T profile )
+    private void renameProfile( final Profile profile )
     {
         assert ( !profile.isBuiltin );
         promptNameComment( R.string.listItem_rename, profile.name, profile.comment, true,
@@ -320,13 +265,16 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
                     @Override
                     public void onAccept( String name, String comment )
                     {
-                        onRenameProfile( profile, name, comment );
+                        mConfigCustom.remove( profile.name );
+                        Profile newProfile = profile.copy( name, comment );
+                        newProfile.writeTo( mConfigCustom );
+                        mConfigCustom.save();
                         refreshList();
                     }
                 } );
     }
     
-    private void deleteProfile( final T profile )
+    private void deleteProfile( final Profile profile )
     {
         assert ( !profile.isBuiltin );
         String title = getString( R.string.confirm_title );
@@ -336,7 +284,9 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
             @Override
             public void onConfirm()
             {
-                onDeleteProfile( profile );
+                assert ( mConfigCustom.keySet().contains( profile.name ) );
+                mConfigCustom.remove( profile.name );
+                mConfigCustom.save();
                 refreshList();
             }
         } );
@@ -477,22 +427,25 @@ abstract public class ProfileActivity<T extends Profile> extends ListActivity
     private void refreshList()
     {
         // Get the profiles to be shown to the user
-        List<T> profiles = getProfiles( getBuiltinVisibility() );
-        Collections.sort( profiles );
-        setListAdapter( new ProfileListAdapter<T>( this, profiles ) );
+        List<Profile> profiles1 = Profile.getProfiles( mConfigCustom, false );
+        if( getBuiltinVisibility() )
+            profiles1.addAll( Profile.getProfiles( mConfigBuiltin, true ) );
+        Collections.sort( profiles1 );
+        setListAdapter( new ProfileListAdapter( this, profiles1 ) );
         
         // Get all profiles, for validating unique names
-        profiles = getProfiles( true );
+        List<Profile> profiles2 = Profile.getProfiles( mConfigCustom, false );
+        profiles2.addAll( Profile.getProfiles( mConfigBuiltin, true ) );
         mProfileNames.clear();
-        for( T profile : profiles )
+        for( Profile profile : profiles2 )
             mProfileNames.add( profile.name );
     }
     
-    private static class ProfileListAdapter<T extends Profile> extends ArrayAdapter<T>
+    private static class ProfileListAdapter extends ArrayAdapter<Profile>
     {
         private static final int RESID = R.layout.list_item_two_text_icon;
         
-        public ProfileListAdapter( Context context, List<T> profiles )
+        public ProfileListAdapter( Context context, List<Profile> profiles )
         {
             super( context, RESID, profiles );
         }

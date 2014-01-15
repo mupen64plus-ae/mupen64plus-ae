@@ -39,7 +39,7 @@ import paulscode.android.mupen64plusae.persistent.CompatibleListPreference;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.profile.ControllerProfile;
+import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -228,9 +228,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Construct the controller profiles list
         ConfigFile configBuiltin = new ConfigFile( mAppData.controllerProfiles_cfg );
         ConfigFile configCustom = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
-        List<ControllerProfile> profiles = new ArrayList<ControllerProfile>();
-        profiles.addAll( ControllerProfile.getProfiles( configBuiltin, true ) );
-        profiles.addAll( ControllerProfile.getProfiles( configCustom, false ) );
+        List<Profile> profiles = new ArrayList<Profile>();
+        profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
+        profiles.addAll( Profile.getProfiles( configCustom, false ) );
         Collections.sort( profiles );
         CharSequence[] entries = new CharSequence[profiles.size() + 1];
         String[] values = new String[profiles.size() + 1];
@@ -238,7 +238,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         values[0] = "";
         for( int i = 0; i < profiles.size(); i++ )
         {
-            ControllerProfile profile = profiles.get( i );
+            Profile profile = profiles.get( i );
             int resId = profile.isBuiltin
                     ? R.string.listItem_profileBuiltin
                     : R.string.listItem_profileCustom;
