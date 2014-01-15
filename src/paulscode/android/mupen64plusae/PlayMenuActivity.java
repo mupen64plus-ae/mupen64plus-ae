@@ -225,9 +225,24 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 ? R.string.screenCheats_summaryEnabled
                 : R.string.screenCheats_summaryDisabled );
         
-        // Construct the controller profiles list
-        ConfigFile configBuiltin = new ConfigFile( mAppData.controllerProfiles_cfg );
-        ConfigFile configCustom = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
+        // Populate the list preferences for profiles
+        populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
+                CONTROLLER_PROFILE1, R.string.controllerProfile_default );
+        populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
+                CONTROLLER_PROFILE2, R.string.controllerProfile_default );
+        populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
+                CONTROLLER_PROFILE3, R.string.controllerProfile_default );
+        populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
+                CONTROLLER_PROFILE4, R.string.controllerProfile_default );
+        
+        // Refresh the preferences object in case populate* changed a value
+        mUserPrefs = new UserPrefs( this );
+    }
+    
+    private void populateProfiles( String builtinPath, String customPath, String key, int resIdDefault )
+    {
+        ConfigFile configBuiltin = new ConfigFile( builtinPath );
+        ConfigFile configCustom = new ConfigFile( customPath );
         List<Profile> profiles = new ArrayList<Profile>();
         profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
         profiles.addAll( Profile.getProfiles( configCustom, false ) );
@@ -246,18 +261,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             values[i + 1] = profile.name;
         }
         
-        // Populate and validate the controller profile preferences
-        populateListPreference( entries, values, CONTROLLER_PROFILE1,
-                R.string.controllerProfile_default );
-        populateListPreference( entries, values, CONTROLLER_PROFILE2,
-                R.string.controllerProfile_default );
-        populateListPreference( entries, values, CONTROLLER_PROFILE3,
-                R.string.controllerProfile_default );
-        populateListPreference( entries, values, CONTROLLER_PROFILE4,
-                R.string.controllerProfile_default );
-        
-        // Refresh the preferences object in case populate* changed a value
-        mUserPrefs = new UserPrefs( this );
+        populateListPreference( entries, values, key, resIdDefault );
     }
     
     private void populateListPreference( CharSequence[] entries, String[] values, String key,
