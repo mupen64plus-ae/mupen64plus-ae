@@ -23,7 +23,8 @@
     <PreferenceCategory
         android:key="categoryGameSettings"
         android:title="@string/categoryGameSettings_title" >
-        <Preference
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/emulationProfile_default"
             android:icon="@drawable/ic_circuit"
             android:key="emulationProfile"
             android:summary="@string/selectedValue"

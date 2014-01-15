@@ -26,6 +26,7 @@ import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
+import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -135,8 +136,7 @@ public class GalleryActivity extends Activity implements OnClickListener
                 startActivity( new Intent( this, SettingsGlobalActivity.class ) );
                 return true;
             case R.id.menuItem_emulationProfiles:
-                // TODO
-                popupTodo();
+                startActivity( new Intent( this, ManageEmulationProfilesActivity.class ) );
                 return true;
             case R.id.menuItem_touchscreenProfiles:
                 // TODO

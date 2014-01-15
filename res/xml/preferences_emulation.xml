@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
+    android:key="screenRoot" >
+
+    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        android:defaultValue="@string/r4300Emulator_default"
+        android:entries="@array/r4300Emulator_entries"
+        android:entryValues="@array/r4300Emulator_values"
+        android:key="r4300Emulator"
+        android:summary="@string/selectedValue"
+        android:title="@string/r4300Emulator_title" />
+    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        android:defaultValue="@string/videoPlugin_default"
+        android:entries="@array/videoPlugin_entries"
+        android:entryValues="@array/videoPlugin_values"
+        android:key="videoPlugin"
+        android:summary="@string/selectedValue"
+        android:title="@string/videoPlugin_title" />
+
+    <PreferenceCategory
+        android:key="categoryGles2N64"
+        android:title="@string/categoryGles2N64_title" >
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/gles2N64Frameskip_default"
+            android:entries="@array/gles2N64Frameskip_entries"
+            android:entryValues="@array/gles2N64Frameskip_values"
+            android:key="gles2N64Frameskip"
+            android:summary="@string/selectedValue"
+            android:title="@string/gles2N64Frameskip_title" />
+
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="gles2N64Fog"
+            android:summary="@string/gles2N64Fog_summary"
+            android:title="@string/gles2N64Fog_title"
+            mupen64:falseString="0"
+            mupen64:trueString="1" />
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="gles2N64Sai"
+            android:summary="@string/gles2N64Sai_summary"
+            android:title="@string/gles2N64Sai_title"
+            mupen64:falseString="0"
+            mupen64:trueString="1" />
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="gles2N64ScreenClear"
+            android:summary="@string/gles2N64ScreenClear_summary"
+            android:title="@string/gles2N64ScreenClear_title" />
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="gles2N64AlphaTest"
+            android:summary="@string/gles2N64AlphaTest_summary"
+            android:title="@string/gles2N64AlphaTest_title"
+            mupen64:falseString="0"
+            mupen64:trueString="1" />
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="gles2N64DepthTest"
+            android:summary="@string/gles2N64DepthTest_summary"
+            android:title="@string/gles2N64DepthTest_title"
+            mupen64:falseString="0"
+            mupen64:trueString="1" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="categoryGles2Rice"
+        android:title="@string/categoryGles2Rice_title" >
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="gles2RiceAutoFrameskip"
+            android:summary="@string/gles2RiceAutoFrameskip_summary"
+            android:title="@string/gles2RiceAutoFrameskip_title" />
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="gles2RiceFog"
+            android:summary="@string/gles2RiceFog_summary"
+            android:title="@string/gles2RiceFog_title" />
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="gles2RiceFastTexture"
+            android:summary="@string/gles2RiceFastTexture_summary"
+            android:title="@string/gles2RiceFastTexture_title" />
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="gles2RiceForceTextureFilter"
+            android:summary="@string/gles2RiceForceTextureFilter_summary"
+            android:title="@string/gles2RiceForceTextureFilter_title" />
+
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/gles2RiceScreenUpdate_default"
+            android:entries="@array/gles2RiceScreenUpdate_entries"
+            android:entryValues="@array/gles2RiceScreenUpdate_values"
+            android:key="gles2RiceScreenUpdate"
+            android:summary="@string/selectedValue"
+            android:title="@string/gles2RiceScreenUpdate_title" />
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/gles2RiceTextureEnhancement_default"
+            android:entries="@array/gles2RiceTextureEnhancement_entries"
+            android:entryValues="@array/gles2RiceTextureEnhancement_values"
+            android:key="gles2RiceTextureEnhancement"
+            android:summary="@string/selectedValue"
+            android:title="@string/gles2RiceTextureEnhancement_title" />
+
+        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="gles2RiceHiResTextures"
+            android:summary="@string/gles2RiceHiResTextures_summary"
+            android:title="@string/gles2RiceHiResTextures_title" />
+
+        <paulscode.android.mupen64plusae.persistent.PathPreference
+            android:defaultValue="@string/pathHiResTextures_default"
+            android:dependency="gles2RiceHiResTextures"
+            android:key="pathHiResTextures"
+            android:summary="@string/pathHiResTextures_summary"
+            android:title="@string/pathHiResTextures_title"
+            mupen64:selectionMode="1" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="categoryGles2Glide64"
+        android:title="@string/categoryGles2Glide64_title" >
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/gles2Glide64Frameskip_default"
+            android:entries="@array/gles2Glide64Frameskip_entries"
+            android:entryValues="@array/gles2Glide64Frameskip_values"
+            android:key="gles2Glide64Frameskip"
+            android:summary="@string/selectedValue"
+            android:title="@string/gles2Glide64Frameskip_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

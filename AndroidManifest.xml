@@ -110,6 +110,26 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity"
+            android:exported="false"
+            android:label="@string/ManageEmulationProfilesActivity_title" >
+            <intent-filter>
+                <action android:name=".profile.ManageEmulationProfilesActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="paulscode.android.mupen64plusae.profile.EmulationProfileActivity"
+            android:exported="false"
+            android:label="@string/EmulationProfileActivity_title" >
+            <intent-filter>
+                <action android:name=".profile.EmulationProfileActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="paulscode.android.mupen64plusae.input.DiagnosticActivity"
             android:exported="false"
             android:label="@string/DiagnosticActivity_title" >
