@@ -23,7 +23,7 @@
     <string name="SettingsVideoActivity_title" translatable="false">@string/screenVideo_title</string>
     <string name="ManageTouchscreenProfilesActivity_title" translatable="false">@string/menuItem_touchscreenProfiles</string>
     <string name="ManageControllerProfilesActivity_title" translatable="false">@string/menuItem_controllerProfiles</string>
-    <string name="ControllerProfileEditActivity_title" translatable="false">@string/app_name</string>
+    <string name="ControllerProfileActivity_title" translatable="false">@string/app_name</string>
     <string name="DiagnosticActivity_title" translatable="false">@string/menuItem_controllerDiagnostics</string>
     <string name="GameActivity_title" translatable="false">@string/app_name</string>
     <string name="CheatEditorActivity_title" translatable="false">@string/menuItem_cheatEditor</string>

@@ -66,7 +66,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ControllerProfileEditActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
+public class ControllerProfileActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
 {
     // Slider limits
     private static final int MIN_DEADZONE = 0;
@@ -395,7 +395,7 @@ public class ControllerProfileEditActivity extends Activity implements OnInputLi
                         
                         // Refresh our MOGA provider since the prompt disconnected it
                         mMogaProvider = new MogaProvider( mMogaController );
-                        mMogaProvider.registerListener( ControllerProfileEditActivity.this );
+                        mMogaProvider.registerListener( ControllerProfileActivity.this );
                     }
                 } );
     }

@@ -100,11 +100,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.profile.ControllerProfileEditActivity"
+            android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivity"
             android:exported="false"
-            android:label="@string/ControllerProfileEditActivity_title" >
+            android:label="@string/ControllerProfileActivity_title" >
             <intent-filter>
-                <action android:name=".profile.ControllerProfileEditActivity" />
+                <action android:name=".profile.ControllerProfileActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

@@ -34,7 +34,7 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     @Override
     protected void onEditProfile( Profile profile )
     {
-        Intent intent = new Intent( this, ControllerProfileEditActivity.class );
+        Intent intent = new Intent( this, ControllerProfileActivity.class );
         intent.putExtra( Keys.Extras.PROFILE_NAME, profile.name );
         startActivity( intent );
     }

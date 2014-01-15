@@ -29,7 +29,7 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
  * 
  * @see AbstractProvider
  * @see PeripheralController
- * @see ControllerProfileEditActivity
+ * @see ControllerProfileActivity
  */
 public class InputMap extends SerializableMap
 {
