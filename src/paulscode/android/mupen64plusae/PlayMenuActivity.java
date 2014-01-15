@@ -129,7 +129,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mRomDetail = RomDetail.lookupByMd5( romMd5 );
         
         // Load user preference menu structure from XML and update view
-        addPreferencesFromResource( R.xml.preferences_play );
+        addPreferencesFromResource( R.xml.preferences_game );
         mScreenCheats = (PreferenceGroup) findPreference( SCREEN_CHEATS );
         mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
         

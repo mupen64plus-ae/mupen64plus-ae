@@ -64,7 +64,7 @@ public class EmulationProfileActivity extends ProfileActivity
     @Override
     protected int getPrefsResId()
     {
-        return R.xml.preferences_emulation;
+        return R.xml.profile_emulation;
     }
     
     @Override

@@ -193,7 +193,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
                 mPrefs.unregisterOnSharedPreferenceChangeListener( SettingsGlobalActivity.this );
                 mPrefs.edit().clear().commit();
                 PreferenceManager.setDefaultValues( SettingsGlobalActivity.this, R.xml.preferences_global, true );
-                PreferenceManager.setDefaultValues( SettingsGlobalActivity.this, R.xml.preferences_play, true );
+                PreferenceManager.setDefaultValues( SettingsGlobalActivity.this, R.xml.preferences_game, true );
                 
                 // Also reset any manual overrides the user may have made in the config file
                 File configFile = new File( mUserPrefs.mupen64plus_cfg );

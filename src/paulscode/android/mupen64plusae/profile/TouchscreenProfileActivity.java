@@ -42,7 +42,7 @@ public class TouchscreenProfileActivity extends ProfileActivity
     @Override
     protected int getPrefsResId()
     {
-        return R.xml.preferences_touchscreen;
+        return R.xml.profile_touchscreen;
     }
     
     @Override
