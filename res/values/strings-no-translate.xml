@@ -20,7 +20,6 @@
     <string name="SettingsGlobalActivity_title" translatable="false">@string/menuItem_globalSettings</string>
     <string name="SettingsGameActivity_title" translatable="false">@string/menuItem_gameSettings</string>
     <string name="SettingsGameActivity_titleNamed" translatable="false">@string/menuItem_gameSettingsNamed</string>
-    <string name="SettingsVideoActivity_title" translatable="false">@string/screenVideo_title</string>
     <string name="ManageControllerProfilesActivity_title" translatable="false">@string/menuItem_controllerProfiles</string>
     <string name="ManageEmulationProfilesActivity_title" translatable="false">@string/menuItem_emulationProfiles</string>
     <string name="ManageTouchscreenProfilesActivity_title" translatable="false">@string/menuItem_touchscreenProfiles</string>

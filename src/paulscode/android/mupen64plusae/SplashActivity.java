@@ -113,7 +113,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
         PreferenceManager.setDefaultValues( this, R.xml.preferences_play, false );
-        PreferenceManager.setDefaultValues( this, R.xml.preferences_video, false );
         
         // Ensure that selected plugin names and other list preferences are valid
         // @formatter:off

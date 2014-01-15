@@ -151,7 +151,7 @@
             android:key="navigationMode"
             android:summary="@string/navigationMode_summary"
             android:title="@string/navigationMode_title" />
-        
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="inputVolumeMappable"
@@ -228,114 +228,5 @@
         android:key="actionResetUserPrefs"
         android:summary="@string/actionResetUserPrefs_summary"
         android:title="@string/actionResetUserPrefs_title" />
-
-    <PreferenceCategory
-        android:key="categoryEmulationProfiles"
-        android:title="(will be superseded by emulation profiles)" >
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/r4300Emulator_default"
-            android:entries="@array/r4300Emulator_entries"
-            android:entryValues="@array/r4300Emulator_values"
-            android:key="r4300Emulator"
-            android:summary="@string/selectedValue"
-            android:title="@string/r4300Emulator_title" />
-
-        <Preference
-            android:icon="@drawable/ic_picture"
-            android:key="screenVideo"
-            android:summary="@string/screenVideo_summary"
-            android:title="@string/screenVideo_title" >
-            <intent android:action=".SettingsVideoActivity" />
-        </Preference>
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:key="categoryTouchscreenProfiles"
-        android:title="(will be superseded by touchscreen profiles)" >
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="touchscreenEnabled"
-            android:title="@string/touchscreenEnabled_title" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:dependency="touchscreenEnabled"
-            android:key="touchscreenFeedback"
-            android:summary="@string/touchscreenFeedback_summary"
-            android:title="@string/touchscreenFeedback_title" />
-
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/touchscreenRefresh_default"
-            android:dependency="touchscreenEnabled"
-            android:entries="@array/touchscreenRefresh_entries"
-            android:entryValues="@array/touchscreenRefresh_values"
-            android:key="touchscreenRefresh"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenRefresh_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/touchscreenAutoHold_default"
-            android:dependency="touchscreenEnabled"
-            android:entries="@array/touchscreenAutoHold_entries"
-            android:entryValues="@array/touchscreenAutoHold_values"
-            android:key="touchscreenAutoHold"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenAutoHold_title" />
-
-        <paulscode.android.mupen64plusae.persistent.MultiSelectListPreference
-            android:defaultValue="@string/touchscreenAutoHoldables_default"
-            android:dependency="touchscreenEnabled"
-            android:entries="@array/touchscreenAutoHoldables_entries"
-            android:entryValues="@array/touchscreenAutoHoldables_values"
-            android:key="touchscreenAutoHoldables"
-            android:title="@string/touchscreenAutoHoldables_title" />
-
-        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
-            android:defaultValue="100"
-            android:dependency="touchscreenEnabled"
-            android:key="touchscreenTransparency"
-            android:title="@string/touchscreenTransparency_title"
-            mupen64:maximumValue="100"
-            mupen64:stepSize="10"
-            mupen64:units="%" />
-        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
-            android:defaultValue="100"
-            android:dependency="touchscreenEnabled"
-            android:key="touchscreenScale"
-            android:title="@string/touchscreenScale_title"
-            mupen64:maximumValue="400"
-            mupen64:minimumValue="50"
-            mupen64:stepSize="1"
-            mupen64:units="%" />
-
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/touchscreenStyle_default"
-            android:dependency="touchscreenEnabled"
-            android:entries="@array/touchscreenStyle_entries"
-            android:entryValues="@array/touchscreenStyle_values"
-            android:key="touchscreenStyle"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenStyle_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/touchscreenHeight_default"
-            android:dependency="touchscreenEnabled"
-            android:entries="@array/touchscreenHeight_entries"
-            android:entryValues="@array/touchscreenHeight_values"
-            android:key="touchscreenHeight"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenHeight_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/touchscreenLayout_default"
-            android:dependency="touchscreenEnabled"
-            android:entries="@array/touchscreenLayout_entries"
-            android:entryValues="@array/touchscreenLayout_values"
-            android:key="touchscreenLayout"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenLayout_title" />
-
-        <paulscode.android.mupen64plusae.persistent.PathPreference
-            android:defaultValue="@string/pathCustomTouchscreen_default"
-            android:dependency="touchscreenEnabled"
-            android:key="pathCustomTouchscreen"
-            android:title="@string/pathCustomTouchscreen_title"
-            mupen64:selectionMode="0" />
-    </PreferenceCategory>
 
 </PreferenceScreen>
