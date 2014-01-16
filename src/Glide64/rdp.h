@@ -213,6 +213,7 @@ typedef struct {
   int lodmode;
   int aspectmode;
   int use_hotkeys;
+  int read_always;
 
   //Frame buffer emulation options
   #define  fb_emulation            (1<<0)   //frame buffer emulation

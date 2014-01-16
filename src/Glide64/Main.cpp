@@ -377,6 +377,7 @@ void ReadSettings ()
   settings.res_data = 0;
   settings.scr_res_x = settings.res_x = Config_ReadScreenInt("ScreenWidth");
   settings.scr_res_y = settings.res_y = Config_ReadScreenInt("ScreenHeight");
+  settings.aspectmode = (BYTE)Config_ReadInt("aspectmode","Aspect ratio: 0=Force 4:3, 1=Force 16:9, 2=Stretch, 3=Original", 0, TRUE, FALSE);
 
   settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 0);
   settings.ssformat = (BOOL)Config_ReadInt("ssformat", "TODO:ssformat", 0);
@@ -392,6 +393,7 @@ void ReadSettings ()
   settings.wrpResolution = (BYTE)Config_ReadInt ("wrpResolution", "Wrapper resolution", 0, TRUE, FALSE);
   settings.wrpVRAM = (BYTE)Config_ReadInt ("wrpVRAM", "Wrapper VRAM", 0, TRUE, FALSE);
   settings.wrpFBO = (BOOL)Config_ReadInt ("wrpFBO", "Wrapper FBO", 1, TRUE, TRUE);
+  settings.read_always = (BOOL)Config_ReadInt("fb_read_always","Read framebuffer every frame (may be slow use only for effects that need it e.g. Banjo Kazooie, DK64 transitions", 0, TRUE, TRUE);
   settings.wrpAnisotropic = (BOOL)Config_ReadInt ("wrpAnisotropic", "Wrapper Anisotropic Filtering", 0, TRUE, TRUE);
 
 #ifndef _ENDUSER_RELEASE_
@@ -592,7 +594,8 @@ void ReadSpecialSettings (const char * name)
     ini->Read(_T("fog"), &(settings.fog));
     ini->Read(_T("buff_clear"), &(settings.buff_clear));
     ini->Read(_T("swapmode"), &(settings.swapmode));
-    ini->Read(_T("aspect"), &(settings.aspectmode));
+    int tmp_aspect = ini->Read(_T("aspect"), -1);
+    if (tmp_aspect != 0) settings.aspectmode = tmp_aspect;
     ini->Read(_T("lodmode"), &(settings.lodmode));
     /*
     TODO-port: fix resolutions
@@ -614,7 +617,6 @@ void ReadSpecialSettings (const char * name)
     //frame buffer
     int smart_read = ini->Read(_T("fb_smart"), -1);
     int hires = ini->Read(_T("fb_hires"), -1);
-    int read_always = ini->Read(_T("fb_read_always"), -1);
     int read_back_to_screen = ini->Read(_T("read_back_to_screen"), -1);
     int cpu_write_hack = ini->Read(_T("detect_cpu_write"), -1);
     int get_fbinfo = ini->Read(_T("fb_get_info"), -1);
@@ -624,8 +626,8 @@ void ReadSpecialSettings (const char * name)
     else if (smart_read == 0) settings.frame_buffer &= ~fb_emulation;
     if (hires > 0) settings.frame_buffer |= fb_hwfbe;
     else if (hires == 0) settings.frame_buffer &= ~fb_hwfbe;
-    if (read_always > 0) settings.frame_buffer |= fb_ref;
-    else if (read_always == 0) settings.frame_buffer &= ~fb_ref;
+    if (settings.read_always > 0) settings.frame_buffer |= fb_ref;
+    else if (settings.read_always == 0) settings.frame_buffer &= ~fb_ref;
     if (read_back_to_screen == 1) settings.frame_buffer |= fb_read_back_to_screen;
     else if (read_back_to_screen == 2) settings.frame_buffer |= fb_read_back_to_screen2;
     else if (read_back_to_screen == 0) settings.frame_buffer &= ~(fb_read_back_to_screen|fb_read_back_to_screen2);
