@@ -23,37 +23,37 @@
     <PreferenceCategory
         android:key="categoryGameSettings"
         android:title="@string/categoryGameSettings_title" >
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/emulationProfile_default"
             android:icon="@drawable/ic_circuit"
             android:key="emulationProfile"
             android:summary="@string/selectedValue"
             android:title="@string/emulationProfile_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/touchscreenProfile_default"
             android:icon="@drawable/ic_phone"
             android:key="touchscreenProfile"
             android:summary="@string/selectedValue"
             android:title="@string/touchscreenProfile_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile1"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile1_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile2"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile2_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile3"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile3_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile4"

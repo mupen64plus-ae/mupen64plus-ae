@@ -20,27 +20,20 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang.ArrayUtils;
 
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
-import paulscode.android.mupen64plusae.cheat.CheatPreference;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatBlock;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatCode;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
+import paulscode.android.mupen64plusae.cheat.CheatPreference;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.CompatibleListPreference;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
+import paulscode.android.mupen64plusae.persistent.ProfilePreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -55,7 +48,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -94,6 +86,12 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private RomDetail mRomDetail = null;
     
     // Preference menu items
+    ProfilePreference mEmulationProfile = null;
+    ProfilePreference mTouchscreenProfile = null;
+    ProfilePreference mControllerProfile1 = null;
+    ProfilePreference mControllerProfile2 = null;
+    ProfilePreference mControllerProfile3 = null;
+    ProfilePreference mControllerProfile4 = null;
     PreferenceGroup mScreenCheats = null;
     PreferenceGroup mCategoryCheats = null;
     
@@ -131,6 +129,12 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );
         addPreferencesFromResource( R.xml.preferences_game );
+        mEmulationProfile = (ProfilePreference) findPreference( EMULATION_PROFILE );
+        mTouchscreenProfile = (ProfilePreference) findPreference( TOUCHSCREEN_PROFILE );
+        mControllerProfile1 = (ProfilePreference) findPreference( CONTROLLER_PROFILE1 );
+        mControllerProfile2 = (ProfilePreference) findPreference( CONTROLLER_PROFILE2 );
+        mControllerProfile3 = (ProfilePreference) findPreference( CONTROLLER_PROFILE3 );
+        mControllerProfile4 = (ProfilePreference) findPreference( CONTROLLER_PROFILE4 );
         mScreenCheats = (PreferenceGroup) findPreference( SCREEN_CHEATS );
         mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
         
@@ -216,19 +220,19 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mUserPrefs = new UserPrefs( this );
         mGamePrefs = new GamePrefs( this, mRomDetail.md5 );
         
-        // Populate the list preferences for profiles
-        populateProfiles( mAppData.emulationProfiles_cfg, mUserPrefs.emulationProfiles_cfg,
-                EMULATION_PROFILE, R.string.emulationProfile_default, false );
-        populateProfiles( mAppData.touchscreenProfiles_cfg, mUserPrefs.touchscreenProfiles_cfg,
-                TOUCHSCREEN_PROFILE, R.string.touchscreenProfile_default, true );
-        populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
-                CONTROLLER_PROFILE1, R.string.controllerProfile_default, true );
-        populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
-                CONTROLLER_PROFILE2, R.string.controllerProfile_default, true );
-        populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
-                CONTROLLER_PROFILE3, R.string.controllerProfile_default, true );
-        populateProfiles( mAppData.controllerProfiles_cfg, mUserPrefs.controllerProfiles_cfg,
-                CONTROLLER_PROFILE4, R.string.controllerProfile_default, true );
+        // Populate the profile preferences
+        mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
+                mUserPrefs.emulationProfiles_cfg, false );
+        mTouchscreenProfile.populateProfiles( mAppData.touchscreenProfiles_cfg,
+                mUserPrefs.touchscreenProfiles_cfg, true );
+        mControllerProfile1.populateProfiles( mAppData.controllerProfiles_cfg,
+                mUserPrefs.controllerProfiles_cfg, true );
+        mControllerProfile2.populateProfiles( mAppData.controllerProfiles_cfg,
+                mUserPrefs.controllerProfiles_cfg, true );
+        mControllerProfile3.populateProfiles( mAppData.controllerProfiles_cfg,
+                mUserPrefs.controllerProfiles_cfg, true );
+        mControllerProfile4.populateProfiles( mAppData.controllerProfiles_cfg,
+                mUserPrefs.controllerProfiles_cfg, true );
         
         // Refresh the preferences objects in case populate* changed a value
         mUserPrefs = new UserPrefs( this );
@@ -253,58 +257,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             boolean enable3 = mGamePrefs.isControllerEnabled3 && mRomDetail.players > 2;
             boolean enable4 = mGamePrefs.isControllerEnabled4 && mRomDetail.players > 3;
             playerPref.setControllersEnabled( enable1, enable2, enable3, enable4 );
-        }
-    }
-    
-    private void populateProfiles( String builtinPath, String customPath, String key, int resIdDefault, boolean allowDisable )
-    {
-        ConfigFile configBuiltin = new ConfigFile( builtinPath );
-        ConfigFile configCustom = new ConfigFile( customPath );
-        List<Profile> profiles = new ArrayList<Profile>();
-        profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
-        profiles.addAll( Profile.getProfiles( configCustom, false ) );
-        Collections.sort( profiles );
-        
-        int offset = allowDisable ? 1 : 0;
-        int numEntries = profiles.size() + offset;
-        CharSequence[] entries = new CharSequence[numEntries];
-        String[] values = new String[numEntries];
-        if( allowDisable )
-        {
-            entries[0] = getText( R.string.listItem_disabled );
-            values[0] = "";
-        }
-        for( int i = 0; i < profiles.size(); i++ )
-        {
-            Profile profile = profiles.get( i );
-            int resId = profile.isBuiltin
-                    ? R.string.listItem_profileBuiltin
-                    : R.string.listItem_profileCustom;
-            String entryHtml = getString( resId, profile.name );
-            if( !TextUtils.isEmpty( profile.comment ) )
-                entryHtml += "<br><small>" + profile.comment + "</small>";
-            entries[i + offset] = Html.fromHtml( entryHtml );
-            values[i + offset] = profile.name;
-        }
-        
-        populateListPreference( entries, values, key, resIdDefault );
-    }
-    
-    private void populateListPreference( CharSequence[] entries, String[] values, String key,
-            int resIdDefault )
-    {
-        @SuppressWarnings( "deprecation" )
-        CompatibleListPreference listPref = (CompatibleListPreference) findPreference( key );
-        if( listPref != null )
-        {
-            listPref.setEntries( entries );
-            listPref.setEntryValues( values );
-            String selectedValue = mPrefs.getString( key, null );
-            String defaultValue = getString( resIdDefault );
-            if( !ArrayUtils.contains( values, selectedValue ) )
-                mPrefs.edit().putString( key, defaultValue ).commit();
-            selectedValue = mPrefs.getString( key, null );
-            listPref.setValue( selectedValue );
         }
     }
     
