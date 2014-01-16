@@ -55,6 +55,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -279,7 +280,10 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             int resId = profile.isBuiltin
                     ? R.string.listItem_profileBuiltin
                     : R.string.listItem_profileCustom;
-            entries[i + offset] = getString( resId, profile.name );
+            String entryHtml = getString( resId, profile.name );
+            if( !TextUtils.isEmpty( profile.comment ) )
+                entryHtml += "<br><small>" + profile.comment + "</small>";
+            entries[i + offset] = Html.fromHtml( entryHtml );
             values[i + offset] = profile.name;
         }
         
