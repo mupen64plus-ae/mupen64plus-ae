@@ -93,6 +93,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         mValue = validate( value );
         if( shouldPersist() )
             persistInt( mValue );
+        notifyChanged();
     }
 
     /**
