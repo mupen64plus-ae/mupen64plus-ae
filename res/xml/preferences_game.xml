@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
     android:key="screenPlayMenuActivity" >
 
     <Preference
@@ -28,37 +29,49 @@
             android:icon="@drawable/ic_circuit"
             android:key="emulationProfile"
             android:summary="@string/selectedValue"
-            android:title="@string/emulationProfile_title" />
+            android:title="@string/emulationProfile_title"
+            mupen64:allowDisable="false"
+            mupen64:managerAction=".profile.ManageEmulationProfilesActivity" />
         <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/touchscreenProfile_default"
             android:icon="@drawable/ic_phone"
             android:key="touchscreenProfile"
             android:summary="@string/selectedValue"
-            android:title="@string/touchscreenProfile_title" />
+            android:title="@string/touchscreenProfile_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageTouchscreenProfilesActivity" />
         <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile1"
             android:summary="@string/selectedValue"
-            android:title="@string/controllerProfile1_title" />
+            android:title="@string/controllerProfile1_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
         <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile2"
             android:summary="@string/selectedValue"
-            android:title="@string/controllerProfile2_title" />
+            android:title="@string/controllerProfile2_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
         <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile3"
             android:summary="@string/selectedValue"
-            android:title="@string/controllerProfile3_title" />
+            android:title="@string/controllerProfile3_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
         <paulscode.android.mupen64plusae.persistent.ProfilePreference
             android:defaultValue="@string/controllerProfile_default"
             android:icon="@drawable/ic_gamepad"
             android:key="controllerProfile4"
             android:summary="@string/selectedValue"
-            android:title="@string/controllerProfile4_title" />
+            android:title="@string/controllerProfile4_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
 
         <paulscode.android.mupen64plusae.persistent.PlayerMapPreference
             android:icon="@drawable/ic_users"

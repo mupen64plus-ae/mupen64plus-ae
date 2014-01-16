@@ -222,17 +222,17 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Populate the profile preferences
         mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
-                mUserPrefs.emulationProfiles_cfg, false );
+                mUserPrefs.emulationProfiles_cfg );
         mTouchscreenProfile.populateProfiles( mAppData.touchscreenProfiles_cfg,
-                mUserPrefs.touchscreenProfiles_cfg, true );
+                mUserPrefs.touchscreenProfiles_cfg );
         mControllerProfile1.populateProfiles( mAppData.controllerProfiles_cfg,
-                mUserPrefs.controllerProfiles_cfg, true );
+                mUserPrefs.controllerProfiles_cfg );
         mControllerProfile2.populateProfiles( mAppData.controllerProfiles_cfg,
-                mUserPrefs.controllerProfiles_cfg, true );
+                mUserPrefs.controllerProfiles_cfg );
         mControllerProfile3.populateProfiles( mAppData.controllerProfiles_cfg,
-                mUserPrefs.controllerProfiles_cfg, true );
+                mUserPrefs.controllerProfiles_cfg );
         mControllerProfile4.populateProfiles( mAppData.controllerProfiles_cfg,
-                mUserPrefs.controllerProfiles_cfg, true );
+                mUserPrefs.controllerProfiles_cfg );
         
         // Refresh the preferences objects in case populate* changed a value
         mUserPrefs = new UserPrefs( this );

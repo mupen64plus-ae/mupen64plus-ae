@@ -27,23 +27,39 @@ import org.apache.commons.lang.ArrayUtils;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.profile.Profile;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.content.res.TypedArray;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
 public class ProfilePreference extends CompatibleListPreference
 {
+    private static final boolean DEFAULT_ALLOW_DISABLE = false;
+    
+    private final boolean mAllowDisable;
+    private final String mManagerAction;
     private String mDefaultValue = null;
     
     public ProfilePreference( Context context )
     {
         super( context );
+        mAllowDisable = DEFAULT_ALLOW_DISABLE;
+        mManagerAction = null;
     }
     
     public ProfilePreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
+        TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.ProfilePreference );
+        mAllowDisable = a.getBoolean( R.styleable.ProfilePreference_allowDisable,
+                DEFAULT_ALLOW_DISABLE );
+        mManagerAction = a.getString( R.styleable.ProfilePreference_managerAction );
+        a.recycle();
     }
     
     @Override
@@ -53,7 +69,25 @@ public class ProfilePreference extends CompatibleListPreference
         mDefaultValue = (String) defaultValue;
     }
     
-    public void populateProfiles( String builtinPath, String customPath, boolean allowDisable )
+    @Override
+    protected void onPrepareDialogBuilder( Builder builder )
+    {
+        super.onPrepareDialogBuilder( builder );
+        if( !TextUtils.isEmpty( mManagerAction ) )
+        {
+            builder.setNeutralButton( R.string.profile_manage_profiles, new OnClickListener()
+            {
+                @Override
+                public void onClick( DialogInterface dialog, int which )
+                {
+                    Context context = ProfilePreference.this.getContext();
+                    context.startActivity( new Intent( mManagerAction ) );
+                }
+            } );
+        }
+    }
+    
+    public void populateProfiles( String builtinPath, String customPath )
     {
         ConfigFile configBuiltin = new ConfigFile( builtinPath );
         ConfigFile configCustom = new ConfigFile( customPath );
@@ -62,11 +96,11 @@ public class ProfilePreference extends CompatibleListPreference
         profiles.addAll( Profile.getProfiles( configCustom, false ) );
         Collections.sort( profiles );
         
-        int offset = allowDisable ? 1 : 0;
+        int offset = mAllowDisable ? 1 : 0;
         int numEntries = profiles.size() + offset;
         CharSequence[] entries = new CharSequence[numEntries];
         String[] values = new String[numEntries];
-        if( allowDisable )
+        if( mAllowDisable )
         {
             entries[0] = getContext().getText( R.string.listItem_disabled );
             values[0] = "";
@@ -84,11 +118,7 @@ public class ProfilePreference extends CompatibleListPreference
             values[i + offset] = profile.name;
         }
         
-        populateListPreference( entries, values );
-    }
-    
-    private void populateListPreference( CharSequence[] entries, String[] values )
-    {
+        // Set the list entries and values; select default if persisted selection no longer exists
         setEntries( entries );
         setEntryValues( values );
         String selectedValue = getPersistedString( null );

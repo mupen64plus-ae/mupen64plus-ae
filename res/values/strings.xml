@@ -80,6 +80,7 @@
     <string name="profile_name_cannot_be_empty">Name cannot be empty</string>
     <string name="profile_name_cannot_contain_brackets">Name cannot contain brackets</string>
     <string name="profile_name_must_be_unique">Name must be unique</string>
+    <string name="profile_manage_profiles">Manage profiles</string>
 
     <!-- Popup Dialogs -->
     <string name="popup_faq">Mupen64Plus is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the <i>video plugin</i>.\n\nTo fix lag, try changing the <i>video frameskip</i> setting or the <i>video plugin</i>.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the <i>button scale</i> or <i>button layout</i>.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.\n\n</small>Thank you for helping us improve the app!</string>

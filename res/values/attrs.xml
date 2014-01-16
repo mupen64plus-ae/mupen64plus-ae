@@ -18,5 +18,9 @@
         <attr name="trueString" format="string" />
         <attr name="falseString" format="string" />
     </declare-styleable>
+    <declare-styleable name="ProfilePreference">
+        <attr name="allowDisable" format="boolean" />
+        <attr name="managerAction" format="string" />
+    </declare-styleable>
 
 </resources>
