@@ -37,7 +37,7 @@
 
     <!-- Profile Item Popups -->
     <string-array name="profileClickBuiltin_entries" translatable="false">
-        <item>@string/listItem_copy</item>
+        <item>@string/listItem_editCopy</item>
     </string-array>
     <string-array name="profileClickCustom_entries" translatable="false">
         <item>@string/listItem_edit</item>
