@@ -121,20 +121,6 @@ void dram_store_u8 (const uint8_t*  src, uint32_t address, size_t count);
 void dram_store_u16(const uint16_t* src, uint32_t address, size_t count);
 void dram_store_u32(const uint32_t* src, uint32_t address, size_t count);
 
-extern uint16_t AudioInBuffer;   /* 0x0000(T8) */
-extern uint16_t AudioOutBuffer;  /* 0x0002(T8) */
-extern uint16_t AudioCount;      /* 0x0004(T8) */
-extern uint32_t loopval;         /* 0x0010(T8) */
-extern int16_t Env_Dry;
-extern int16_t Env_Wet;
-extern int16_t Vol_Left;
-extern int16_t Vol_Right;
-extern int16_t VolTrg_Left;
-extern int32_t VolRamp_Left;
-extern int16_t VolTrg_Right;
-extern int32_t VolRamp_Right;
-
-extern uint16_t adpcmtable[0x88];
 extern const uint16_t ResampleLUT [0x200];
 
 void MP3(uint32_t inst1, uint32_t inst2);

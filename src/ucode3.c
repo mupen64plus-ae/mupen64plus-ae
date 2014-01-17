@@ -27,21 +27,39 @@
 #include "hle.h"
 #include "alist_internal.h"
 
+/* alist naudio state */
+static struct {
+    /* gains */
+    int16_t dry;
+    int16_t wet;
+
+    /* envelopes (0:left, 1:right) */
+    int16_t vol[2];
+    int16_t target[2];
+    int32_t rate[2];
+
+    /* ADPCM loop point address */
+    uint32_t loop;
+
+    /* storage for ADPCM table and polef coefficients */
+    uint16_t table[16 * 8];
+} l_alist;
+
 static void SETVOL3(uint32_t inst1, uint32_t inst2)
 {
     uint8_t Flags = (uint8_t)(inst1 >> 0x10);
     if (Flags & 0x4) { /* 288 */
         if (Flags & 0x2) { /* 290 */
-            Vol_Left  = (int16_t)inst1; /* 0x50 */
-            Env_Dry   = (int16_t)(inst2 >> 0x10); /* 0x4E */
-            Env_Wet   = (int16_t)inst2; /* 0x4C */
+            l_alist.vol[0]  = (int16_t)inst1; /* 0x50 */
+            l_alist.dry   = (int16_t)(inst2 >> 0x10); /* 0x4E */
+            l_alist.wet   = (int16_t)inst2; /* 0x4C */
         } else {
-            VolTrg_Right  = (int16_t)inst1; /* 0x46 */
-            VolRamp_Right = (int32_t)inst2; /* 0x48/0x4A */
+            l_alist.target[1]  = (int16_t)inst1; /* 0x46 */
+            l_alist.rate[1] = (int32_t)inst2; /* 0x48/0x4A */
         }
     } else {
-        VolTrg_Left  = (int16_t)inst1; /* 0x40 */
-        VolRamp_Left = (int32_t)inst2; /* 0x42/0x44 */
+        l_alist.target[0]  = (int16_t)inst1; /* 0x40 */
+        l_alist.rate[0] = (int32_t)inst2; /* 0x42/0x44 */
     }
 }
 
@@ -73,25 +91,25 @@ static void ENVMIXER3(uint32_t inst1, uint32_t inst2)
 
     memset(zero, 0, sizeof(zero));
 
-    Vol_Right = (int16_t)inst1;
+    l_alist.vol[1] = (int16_t)inst1;
 
     if (flags & A_INIT) {
-        LAdder = VolRamp_Left / 8;
+        LAdder = l_alist.rate[0] / 8;
         LAcc  = 0;
-        LVol  = Vol_Left;
-        LSig = (int16_t)(VolRamp_Left >> 16);
+        LVol  = l_alist.vol[0];
+        LSig = (int16_t)(l_alist.rate[0] >> 16);
 
-        RAdder = VolRamp_Right / 8;
+        RAdder = l_alist.rate[1] / 8;
         RAcc  = 0;
-        RVol  = Vol_Right;
-        RSig = (int16_t)(VolRamp_Right >> 16);
+        RVol  = l_alist.vol[1];
+        RSig = (int16_t)(l_alist.rate[1] >> 16);
 
         /* Save Wet/Dry values */
-        Wet = (int16_t)Env_Wet;
-        Dry = (int16_t)Env_Dry;
+        Wet = (int16_t)l_alist.wet;
+        Dry = (int16_t)l_alist.dry;
         /* Save Current Left/Right Targets */
-        LTrg = VolTrg_Left;
-        RTrg = VolTrg_Right;
+        LTrg = l_alist.target[0];
+        RTrg = l_alist.target[1];
     } else {
         memcpy((uint8_t *)save_buffer, rsp.RDRAM + addy, 80);
         Wet    = *(int16_t *)(save_buffer +  0); /* 0-1 */
@@ -242,17 +260,17 @@ static void LOADADPCM3(uint32_t inst1, uint32_t inst2)
 
     uint16_t *table = (uint16_t *)(rsp.RDRAM + v0);
     for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
-        adpcmtable[(0x0 + (x << 3))^S] = table[0];
-        adpcmtable[(0x1 + (x << 3))^S] = table[1];
+        l_alist.table[(0x0 + (x << 3))^S] = table[0];
+        l_alist.table[(0x1 + (x << 3))^S] = table[1];
 
-        adpcmtable[(0x2 + (x << 3))^S] = table[2];
-        adpcmtable[(0x3 + (x << 3))^S] = table[3];
+        l_alist.table[(0x2 + (x << 3))^S] = table[2];
+        l_alist.table[(0x3 + (x << 3))^S] = table[3];
 
-        adpcmtable[(0x4 + (x << 3))^S] = table[4];
-        adpcmtable[(0x5 + (x << 3))^S] = table[5];
+        l_alist.table[(0x4 + (x << 3))^S] = table[4];
+        l_alist.table[(0x5 + (x << 3))^S] = table[5];
 
-        adpcmtable[(0x6 + (x << 3))^S] = table[6];
-        adpcmtable[(0x7 + (x << 3))^S] = table[7];
+        l_alist.table[(0x6 + (x << 3))^S] = table[6];
+        l_alist.table[(0x7 + (x << 3))^S] = table[7];
         table += 8;
     }
 }
@@ -271,7 +289,7 @@ static void DMEMMOVE3(uint32_t inst1, uint32_t inst2)
 
 static void SETLOOP3(uint32_t inst1, uint32_t inst2)
 {
-    loopval = (inst2 & 0xffffff);
+    l_alist.loop = (inst2 & 0xffffff);
 }
 
 /* TODO Verified to be 100% Accurate... */
@@ -298,7 +316,7 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)
 
     if (!(Flags & 0x1)) {
         if (Flags & 0x2)
-            memcpy(out, &rsp.RDRAM[loopval], 32);
+            memcpy(out, &rsp.RDRAM[l_alist.loop], 32);
         else
             memcpy(out, &rsp.RDRAM[Address], 32);
     }
@@ -317,7 +335,7 @@ static void ADPCM3(uint32_t inst1, uint32_t inst2)
         index = code & 0xf;
         /* index into the adpcm code table */
         index <<= 4;
-        book1 = (short *)&adpcmtable[index];
+        book1 = (short *)&l_alist.table[index];
         book2 = book1 + 8;
         /* upper nibble is scale */
         code >>= 4;

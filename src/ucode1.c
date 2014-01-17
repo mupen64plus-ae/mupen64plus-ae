@@ -67,27 +67,33 @@ Address/Range       Description
 #define MEMMASK 0x3FFFFF
 #endif
 
-static void SPNOOP(uint32_t inst1, uint32_t inst2)
-{
-}
+/* alist audio state */
+static struct {
+    /* main buffers */
+    uint16_t in;
+    uint16_t out;
+    uint16_t count;
 
-uint16_t AudioInBuffer;    /* 0x0000(T8) */
-uint16_t AudioOutBuffer;   /* 0x0002(T8) */
-uint16_t AudioCount;       /* 0x0004(T8) */
-int16_t Vol_Left;          /* 0x0006(T8) */
-int16_t Vol_Right;         /* 0x0008(T8) */
-static uint16_t AudioAuxA; /* 0x000A(T8) */
-static uint16_t AudioAuxC; /* 0x000C(T8) */
-static uint16_t AudioAuxE; /* 0x000E(T8) */
-uint32_t loopval;          /* 0x0010(T8) - Value set by A_SETLOOP : Possible conflict with SETVOLUME???  */
-int16_t VolTrg_Left;       /* 0x0010(T8) */
-int32_t VolRamp_Left;      /* m_LeftVolTarget */
-int16_t VolTrg_Right;      /* m_RightVol */
-int32_t VolRamp_Right;     /* m_RightVolTarget */
-int16_t Env_Dry;           /* 0x001C(T8) */
-int16_t Env_Wet;           /* 0x001E(T8) */
+    /* auxiliary buffers */
+    uint16_t dry_right;
+    uint16_t wet_left;
+    uint16_t wet_right;
 
-uint16_t adpcmtable[0x88];
+    /* gains */
+    int16_t dry;
+    int16_t wet;
+
+    /* envelopes (0:left, 1:right) */
+    int16_t vol[2];
+    int16_t target[2];
+    int32_t rate[2];
+
+    /* ADPCM loop point address */
+    uint32_t loop;
+
+    /* storage for ADPCM table and polef coefficients */
+    uint16_t table[16 * 8];
+} l_alist;
 
 const uint16_t ResampleLUT [0x200] = {
     0x0C39, 0x66AD, 0x0D46, 0xFFDF, 0x0B39, 0x6696, 0x0E5F, 0xFFD8,
@@ -124,6 +130,10 @@ const uint16_t ResampleLUT [0x200] = {
     0xFFD8, 0x0E5F, 0x6696, 0x0B39, 0xFFDF, 0x0D46, 0x66AD, 0x0C39
 };
 
+static void SPNOOP(uint32_t inst1, uint32_t inst2)
+{
+}
+
 static void CLEARBUFF(uint32_t inst1, uint32_t inst2)
 {
     uint32_t addr = (uint32_t)(inst1 & 0xffff);
@@ -136,11 +146,11 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
 {
     uint8_t flags = (uint8_t)((inst1 >> 16) & 0xff);
     uint32_t addy = (inst2 & 0xFFFFFF);
-    short *inp = (short *)(BufferSpace + AudioInBuffer);
-    short *out = (short *)(BufferSpace + AudioOutBuffer);
-    short *aux1 = (short *)(BufferSpace + AudioAuxA);
-    short *aux2 = (short *)(BufferSpace + AudioAuxC);
-    short *aux3 = (short *)(BufferSpace + AudioAuxE);
+    short *inp = (short *)(BufferSpace + l_alist.in);
+    short *out = (short *)(BufferSpace + l_alist.out);
+    short *aux1 = (short *)(BufferSpace + l_alist.dry_right);
+    short *aux2 = (short *)(BufferSpace + l_alist.wet_left);
+    short *aux3 = (short *)(BufferSpace + l_alist.wet_right);
     int32_t MainR;
     int32_t MainL;
     int32_t AuxR;
@@ -162,20 +172,20 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
     memset(zero, 0, sizeof(zero));
 
     if (flags & A_INIT) {
-        LVol = ((Vol_Left * (int32_t)VolRamp_Left));
-        RVol = ((Vol_Right * (int32_t)VolRamp_Right));
-        Wet = (int16_t)Env_Wet;
+        LVol = ((l_alist.vol[0] * (int32_t)l_alist.rate[0]));
+        RVol = ((l_alist.vol[1] * (int32_t)l_alist.rate[1]));
+        Wet = (int16_t)l_alist.wet;
         /* Save Wet/Dry values */
-        Dry = (int16_t)Env_Dry;
+        Dry = (int16_t)l_alist.dry;
         /* Save Current Left/Right Targets */
-        LTrg = (VolTrg_Left << 16);
-        RTrg = (VolTrg_Right << 16);
-        LAdderStart = Vol_Left << 16;
-        RAdderStart = Vol_Right << 16;
+        LTrg = (l_alist.target[0] << 16);
+        RTrg = (l_alist.target[1] << 16);
+        LAdderStart = l_alist.vol[0] << 16;
+        RAdderStart = l_alist.vol[1] << 16;
         LAdderEnd = LVol;
         RAdderEnd = RVol;
-        RRamp = VolRamp_Right;
-        LRamp = VolRamp_Left;
+        RRamp = l_alist.rate[1];
+        LRamp = l_alist.rate[0];
     } else {
         /* Load LVol, RVol, LAcc, and RAcc (all 32bit)
          * Load Wet, Dry, LTrg, RTrg
@@ -203,7 +213,7 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
     oMainR = (Dry * (RTrg >> 16) + 0x4000) >> 15;
     oAuxR  = (Wet * (RTrg >> 16) + 0x4000)  >> 15;
 
-    for (y = 0; y < AudioCount; y += 0x10) {
+    for (y = 0; y < l_alist.count; y += 0x10) {
 
         if (LAdderStart != LTrg) {
             LAcc = LAdderStart;
@@ -332,8 +342,8 @@ static void RESAMPLE(uint32_t inst1, uint32_t inst2)
     int16_t *lut;
     short *dst = (short *)(BufferSpace);
     int16_t *src = (int16_t *)(BufferSpace);
-    uint32_t srcPtr = (AudioInBuffer / 2);
-    uint32_t dstPtr = (AudioOutBuffer / 2);
+    uint32_t srcPtr = (l_alist.in / 2);
+    uint32_t dstPtr = (l_alist.out / 2);
     int32_t temp;
     int32_t accum;
     int x, i;
@@ -348,7 +358,7 @@ static void RESAMPLE(uint32_t inst1, uint32_t inst2)
             src[(srcPtr + x)^S] = 0;
     }
 
-    for (i = 0; i < ((AudioCount + 0xf) & 0xFFF0) / 2; i++)    {
+    for (i = 0; i < ((l_alist.count + 0xf) & 0xFFF0) / 2; i++)    {
         /* location is the fractional position between two samples */
         location = (Accum >> 0xa) * 4;
         lut = (int16_t *)ResampleLUT + location;
@@ -387,18 +397,18 @@ static void SETVOL(uint32_t inst1, uint32_t inst2)
     uint16_t volrate = (uint16_t)((inst2 & 0xffff));
 
     if (flags & A_AUX) {
-        Env_Dry = (int16_t)vol;         /* m_MainVol */
-        Env_Wet = (int16_t)volrate;     /* m_AuxVol */
+        l_alist.dry = (int16_t)vol;         /* m_MainVol */
+        l_alist.wet = (int16_t)volrate;     /* m_AuxVol */
         return;
     }
 
     /* Set the Source(start) Volumes */
     if (flags & A_VOL) {
         if (flags & A_LEFT)
-            Vol_Left = (int16_t)vol;
+            l_alist.vol[0] = (int16_t)vol;
         else
             /* A_RIGHT */
-            Vol_Right = (int16_t)vol;
+            l_alist.vol[1] = (int16_t)vol;
         return;
     }
 
@@ -408,11 +418,11 @@ static void SETVOL(uint32_t inst1, uint32_t inst2)
 
     /* Set the Ramping values Target, Ramp */
     if (flags & A_LEFT) {
-        VolTrg_Left  = (int16_t)inst1;
-        VolRamp_Left = (int32_t)inst2;
+        l_alist.target[0]  = (int16_t)inst1;
+        l_alist.rate[0] = (int32_t)inst2;
     } else { /* A_RIGHT */
-        VolTrg_Right  = (int16_t)inst1;
-        VolRamp_Right = (int32_t)inst2;
+        l_alist.target[1]  = (int16_t)inst1;
+        l_alist.rate[1] = (int32_t)inst2;
     }
 }
 
@@ -420,7 +430,7 @@ static void UNKNOWN(uint32_t inst1, uint32_t inst2) {}
 
 static void SETLOOP(uint32_t inst1, uint32_t inst2)
 {
-    loopval = (inst2 & 0xffffff);
+    l_alist.loop = (inst2 & 0xffffff);
 }
 
 /* TODO Work in progress! :) */
@@ -429,8 +439,8 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
     unsigned char Flags = (uint8_t)(inst1 >> 16) & 0xff;
     unsigned int Address = (inst2 & 0xffffff);
     unsigned short inPtr = 0;
-    short *out = (short *)(BufferSpace + AudioOutBuffer);
-    short count = (short)AudioCount;
+    short *out = (short *)(BufferSpace + l_alist.out);
+    short count = (short)l_alist.count;
     unsigned char icode;
     unsigned char code;
     int vscale;
@@ -447,7 +457,7 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
 
     if (!(Flags & 0x1)) {
         if (Flags & 0x2)
-            memcpy(out, &rsp.RDRAM[loopval & MEMMASK], 32);
+            memcpy(out, &rsp.RDRAM[l_alist.loop & MEMMASK], 32);
         else
             memcpy(out, &rsp.RDRAM[Address], 32);
     }
@@ -462,11 +472,11 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
          * the values we calculated the last time
          */
 
-        code = BufferSpace[(AudioInBuffer + inPtr)^S8];
+        code = BufferSpace[(l_alist.in + inPtr)^S8];
         index = code & 0xf;
         /* index into the adpcm code table */
         index <<= 4;
-        book1 = (short *)&adpcmtable[index];
+        book1 = (short *)&l_alist.table[index];
         book2 = book1 + 8;
         /* upper nibble is scale */
         code >>= 4;
@@ -486,7 +496,7 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
          * which yields 8 short pcm values
          */
         while (j < 8) {
-            icode = BufferSpace[(AudioInBuffer + inPtr)^S8];
+            icode = BufferSpace[(l_alist.in + inPtr)^S8];
             inPtr++;
 
             /* this will in effect be signed */
@@ -502,7 +512,7 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
         }
         j = 0;
         while (j < 8) {
-            icode = BufferSpace[(AudioInBuffer + inPtr)^S8];
+            icode = BufferSpace[(l_alist.in + inPtr)^S8];
             inPtr++;
 
             /* this will in effect be signed */
@@ -663,20 +673,20 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
 static void LOADBUFF(uint32_t inst1, uint32_t inst2)
 {
     uint32_t v0;
-    if (AudioCount == 0)
+    if (l_alist.count == 0)
         return;
     v0 = (inst2 & 0xfffffc);
-    memcpy(BufferSpace + (AudioInBuffer & 0xFFFC), rsp.RDRAM + v0, (AudioCount + 3) & 0xFFFC);
+    memcpy(BufferSpace + (l_alist.in & 0xFFFC), rsp.RDRAM + v0, (l_alist.count + 3) & 0xFFFC);
 }
 
 /* TODO memcpy causes static... endianess issue :( */
 static void SAVEBUFF(uint32_t inst1, uint32_t inst2)
 {
     uint32_t v0;
-    if (AudioCount == 0)
+    if (l_alist.count == 0)
         return;
     v0 = (inst2 & 0xfffffc);
-    memcpy(rsp.RDRAM + v0, BufferSpace + (AudioOutBuffer & 0xFFFC), (AudioCount + 3) & 0xFFFC);
+    memcpy(rsp.RDRAM + v0, BufferSpace + (l_alist.out & 0xFFFC), (l_alist.count + 3) & 0xFFFC);
 }
 
 /* NOTE Should work ;-) */
@@ -684,14 +694,14 @@ static void SETBUFF(uint32_t inst1, uint32_t inst2)
 {
     if ((inst1 >> 0x10) & 0x8) {
         /* A_AUX - Auxillary Sound Buffer Settings */
-        AudioAuxA       = (uint16_t)(inst1);
-        AudioAuxC       = (uint16_t)((inst2 >> 0x10));
-        AudioAuxE       = (uint16_t)(inst2);
+        l_alist.dry_right       = (uint16_t)(inst1);
+        l_alist.wet_left       = (uint16_t)((inst2 >> 0x10));
+        l_alist.wet_right       = (uint16_t)(inst2);
     } else {
         /* A_MAIN - Main Sound Buffer Settings */
-        AudioInBuffer   = (uint16_t)(inst1); /* 0x00 */
-        AudioOutBuffer  = (uint16_t)((inst2 >> 0x10)); /* 0x02 */
-        AudioCount      = (uint16_t)(inst2); /* 0x04 */
+        l_alist.in   = (uint16_t)(inst1); /* 0x00 */
+        l_alist.out  = (uint16_t)((inst2 >> 0x10)); /* 0x02 */
+        l_alist.count      = (uint16_t)(inst2); /* 0x04 */
     }
 }
 
@@ -718,17 +728,17 @@ static void LOADADPCM(uint32_t inst1, uint32_t inst2)
 
     uint16_t *table = (uint16_t *)(rsp.RDRAM + v0);
     for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
-        adpcmtable[(0x0 + (x << 3))^S] = table[0];
-        adpcmtable[(0x1 + (x << 3))^S] = table[1];
+        l_alist.table[(0x0 + (x << 3))^S] = table[0];
+        l_alist.table[(0x1 + (x << 3))^S] = table[1];
 
-        adpcmtable[(0x2 + (x << 3))^S] = table[2];
-        adpcmtable[(0x3 + (x << 3))^S] = table[3];
+        l_alist.table[(0x2 + (x << 3))^S] = table[2];
+        l_alist.table[(0x3 + (x << 3))^S] = table[3];
 
-        adpcmtable[(0x4 + (x << 3))^S] = table[4];
-        adpcmtable[(0x5 + (x << 3))^S] = table[5];
+        l_alist.table[(0x4 + (x << 3))^S] = table[4];
+        l_alist.table[(0x5 + (x << 3))^S] = table[5];
 
-        adpcmtable[(0x6 + (x << 3))^S] = table[6];
-        adpcmtable[(0x7 + (x << 3))^S] = table[7];
+        l_alist.table[(0x6 + (x << 3))^S] = table[6];
+        l_alist.table[(0x7 + (x << 3))^S] = table[7];
         table += 8;
     }
 }
@@ -738,7 +748,7 @@ static void LOADADPCM(uint32_t inst1, uint32_t inst2)
 static void INTERLEAVE(uint32_t inst1, uint32_t inst2)
 {
     uint32_t inL, inR;
-    uint16_t *outbuff = (uint16_t *)(AudioOutBuffer + BufferSpace);
+    uint16_t *outbuff = (uint16_t *)(l_alist.out + BufferSpace);
     uint16_t *inSrcR;
     uint16_t *inSrcL;
     uint16_t Left, Right, Left2, Right2;
@@ -750,7 +760,7 @@ static void INTERLEAVE(uint32_t inst1, uint32_t inst2)
     inSrcR = (uint16_t *)(BufferSpace + inR);
     inSrcL = (uint16_t *)(BufferSpace + inL);
 
-    for (x = 0; x < (AudioCount / 4); x++) {
+    for (x = 0; x < (l_alist.count / 4); x++) {
         Left = *(inSrcL++);
         Right = *(inSrcR++);
         Left2 = *(inSrcL++);
@@ -779,10 +789,10 @@ static void MIXER(uint32_t inst1, uint32_t inst2)
     int32_t temp;
     int x;
 
-    if (AudioCount == 0)
+    if (l_alist.count == 0)
         return;
 
-    for (x = 0; x < AudioCount; x += 2) { /* I think I can do this a lot easier */
+    for (x = 0; x < l_alist.count; x += 2) { /* I think I can do this a lot easier */
         temp = (*(int16_t *)(BufferSpace + dmemin + x) * gain) >> 15;
         temp += *(int16_t *)(BufferSpace + dmemout + x);
 
