@@ -27,6 +27,8 @@
 #include "hle.h"
 #include "alist_internal.h"
 
+void MP3(uint32_t inst1, uint32_t inst2);
+
 /* alist naudio state */
 static struct {
     /* gains */

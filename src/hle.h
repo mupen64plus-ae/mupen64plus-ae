@@ -123,7 +123,5 @@ void dram_store_u32(const uint32_t* src, uint32_t address, size_t count);
 
 extern const uint16_t ResampleLUT [0x200];
 
-void MP3(uint32_t inst1, uint32_t inst2);
-
 #endif
 
