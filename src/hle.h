@@ -24,6 +24,8 @@
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
+#include <assert.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define RSP_HLE_VERSION        0x020000
@@ -39,6 +41,27 @@
 #define S8 3
 #endif
 
+extern RSP_INFO rsp;
+
+enum {
+    TASK_TYPE               = 0xfc0,
+    TASK_FLAGS              = 0xfc4,
+    TASK_UCODE_BOOT         = 0xfc8,
+    TASK_UCODE_BOOT_SIZE    = 0xfcc,
+    TASK_UCODE              = 0xfd0,
+    TASK_UCODE_SIZE         = 0xfd4,
+    TASK_UCODE_DATA         = 0xfd8,
+    TASK_UCODE_DATA_SIZE    = 0xfdc,
+    TASK_DRAM_STACK         = 0xfe0,
+    TASK_DRAM_STACK_SIZE    = 0xfe4,
+    TASK_OUTPUT_BUFF        = 0xfe8,
+    TASK_OUTPUT_BUFF_SIZE   = 0xfec,
+    TASK_DATA_PTR           = 0xff0,
+    TASK_DATA_SIZE          = 0xff4,
+    TASK_YIELD_DATA_PTR     = 0xff8,
+    TASK_YIELD_DATA_SIZE    = 0xffc
+};
+
 static inline int16_t clamp_s16(int_fast32_t x)
 {
     x = (x < INT16_MIN) ? INT16_MIN: x;
@@ -47,40 +70,57 @@ static inline int16_t clamp_s16(int_fast32_t x)
     return x;
 }
 
-extern RSP_INFO rsp;
+void DebugMessage(int level, const char *message, ...);
 
-typedef struct {
-    unsigned int type;
-    unsigned int flags;
 
-    unsigned int ucode_boot;
-    unsigned int ucode_boot_size;
-
-    unsigned int ucode;
-    unsigned int ucode_size;
-
-    unsigned int ucode_data;
-    unsigned int ucode_data_size;
-
-    unsigned int dram_stack;
-    unsigned int dram_stack_size;
-
-    unsigned int output_buff;
-    unsigned int output_buff_size;
-
-    unsigned int data_ptr;
-    unsigned int data_size;
-
-    unsigned int yield_data_ptr;
-    unsigned int yield_data_size;
-} OSTask_t;
-
-static inline const OSTask_t *const get_task(void)
+static inline uint8_t* const dmem_u8(uint16_t address)
 {
-    return (OSTask_t *)(rsp.DMEM + 0xfc0);
+    return (uint8_t*)(&rsp.DMEM[(address & 0xfff) ^ S8]);
 }
 
-void DebugMessage(int level, const char *message, ...);
+static inline uint16_t* const dmem_u16(uint16_t address)
+{
+    assert((address & 1) == 0);
+    return (uint16_t*)(&rsp.DMEM[(address & 0xfff) ^ S16]);
+}
+
+static inline uint32_t* const dmem_u32(uint16_t address)
+{
+    assert((address & 3) == 0);
+    return (uint32_t*)(&rsp.DMEM[(address & 0xfff)]);
+}
+
+static inline uint8_t* const dram_u8(uint32_t address)
+{
+    return (uint8_t*)&rsp.RDRAM[(address & 0xffffff) ^ S8];
+}
+
+static inline uint16_t* const dram_u16(uint32_t address)
+{
+    assert((address & 1) == 0);
+    return (uint16_t*)&rsp.RDRAM[(address & 0xffffff) ^ S16];
+}
+
+static inline uint32_t* const dram_u32(uint32_t address)
+{
+    assert((address & 3) == 0);
+    return (uint32_t*)&rsp.RDRAM[address & 0xffffff];
+}
+
+void dmem_load_u8 (uint8_t*  dst, uint16_t address, size_t count);
+void dmem_load_u16(uint16_t* dst, uint16_t address, size_t count);
+void dmem_load_u32(uint32_t* dst, uint16_t address, size_t count);
+void dmem_store_u8 (const uint8_t*  src, uint16_t address, size_t count);
+void dmem_store_u16(const uint16_t* src, uint16_t address, size_t count);
+void dmem_store_u32(const uint32_t* src, uint16_t address, size_t count);
+
+void dram_load_u8 (uint8_t*  dst, uint32_t address, size_t count);
+void dram_load_u16(uint16_t* dst, uint32_t address, size_t count);
+void dram_load_u32(uint32_t* dst, uint32_t address, size_t count);
+void dram_store_u8 (const uint8_t*  src, uint32_t address, size_t count);
+void dram_store_u16(const uint16_t* src, uint32_t address, size_t count);
+void dram_store_u32(const uint32_t* src, uint32_t address, size_t count);
+
 
 extern uint8_t BufferSpace[0x10000];
 

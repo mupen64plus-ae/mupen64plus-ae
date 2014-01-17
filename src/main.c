@@ -54,7 +54,7 @@
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
 static void dump_binary(const char *const filename, const unsigned char *const bytes,
                         unsigned int size);
-static void dump_task(const char *const filename, const OSTask_t *const task);
+static void dump_task(const char *const filename);
 
 static void handle_unknown_task(unsigned int sum);
 static void handle_unknown_non_task(unsigned int sum);
@@ -83,7 +83,7 @@ static int l_PluginInit = 0;
  **/
 static int is_task(void)
 {
-    return (get_task()->ucode_boot_size <= 0x1000);
+    return (*dmem_u32(TASK_UCODE_BOOT_SIZE) <= 0x1000);
 }
 
 static void rsp_break(unsigned int setbits)
@@ -119,11 +119,10 @@ static void show_cfb(void)
 static int try_fast_audio_dispatching(void)
 {
     /* identify audio ucode by using the content of ucode_data */
-    const OSTask_t *const task = get_task();
-    const unsigned char *const udata_ptr = rsp.RDRAM + task->ucode_data;
+    uint32_t ucode_data = *dmem_u32(TASK_UCODE_DATA);
 
-    if (*(unsigned int *)(udata_ptr + 0) == 0x00000001) {
-        if (*(unsigned int *)(udata_ptr + 0x30) == 0xf0000f00) {
+    if (*dram_u32(ucode_data) == 0x00000001) {
+        if (*dram_u32(ucode_data + 0x30) == 0xf0000f00) {
             /**
             * Many games including:
             * Super Mario 64, Diddy Kong Racing, BlastCorp, GoldenEye, ... (most common)
@@ -148,7 +147,7 @@ static int try_fast_audio_dispatching(void)
             return 1;
         }
     } else {
-        if (*(unsigned int *)(udata_ptr + 0x10) == 0x00000001) {
+        if (*dram_u32(ucode_data + 0x10) == 0x00000001) {
             /**
              * Musyx ucode found in following games:
              * RogueSquadron, ResidentEvil2, SnowCrossPolaris, TheWorldIsNotEnough,
@@ -175,9 +174,7 @@ static int try_fast_audio_dispatching(void)
 static int try_fast_task_dispatching(void)
 {
     /* identify task ucode by its type */
-    const OSTask_t *const task = get_task();
-
-    switch (task->type) {
+    switch (*dmem_u32(TASK_TYPE)) {
     case 1:
         if (FORWARD_GFX) {
             forward_gfx_task();
@@ -203,9 +200,8 @@ static int try_fast_task_dispatching(void)
 
 static void normal_task_dispatching(void)
 {
-    const OSTask_t *const task = get_task();
     const unsigned int sum =
-        sum_bytes(rsp.RDRAM + task->ucode, min(task->ucode_size, 0xf80) >> 1);
+        sum_bytes(dram_u8(*dmem_u32(TASK_UCODE)), min(*dmem_u32(TASK_UCODE_SIZE), 0xf80) >> 1);
 
     switch (sum) {
     /* StoreVe12: found in Zelda Ocarina of Time [misleading task->type == 4] */
@@ -259,33 +255,35 @@ static void non_task_dispatching(void)
 static void handle_unknown_task(unsigned int sum)
 {
     char filename[256];
-    const OSTask_t *const task = get_task();
+    uint32_t ucode = *dmem_u32(TASK_UCODE);
+    uint32_t ucode_data = *dmem_u32(TASK_UCODE_DATA);
+    uint32_t data_ptr = *dmem_u32(TASK_DATA_PTR);
 
     DebugMessage(M64MSG_WARNING, "unknown OSTask: sum %x PC:%x", sum, *rsp.SP_PC_REG);
 
     sprintf(&filename[0], "task_%x.log", sum);
-    dump_task(filename, task);
+    dump_task(filename);
 
     /* dump ucode_boot */
     sprintf(&filename[0], "ucode_boot_%x.bin", sum);
-    dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
+    dump_binary(filename, dram_u8(*dmem_u32(TASK_UCODE_BOOT)), *dmem_u32(TASK_UCODE_BOOT_SIZE));
 
     /* dump ucode */
-    if (task->ucode != 0) {
+    if (ucode != 0) {
         sprintf(&filename[0], "ucode_%x.bin", sum);
-        dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
+        dump_binary(filename, dram_u8(ucode), 0xf80);
     }
 
     /* dump ucode_data */
-    if (task->ucode_data != 0) {
+    if (ucode_data != 0) {
         sprintf(&filename[0], "ucode_data_%x.bin", sum);
-        dump_binary(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
+        dump_binary(filename, dram_u8(ucode_data), *dmem_u32(TASK_UCODE_DATA_SIZE));
     }
 
     /* dump data */
-    if (task->data_ptr != 0) {
+    if (data_ptr != 0) {
         sprintf(&filename[0], "data_%x.bin", sum);
-        dump_binary(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
+        dump_binary(filename, dram_u8(data_ptr), *dmem_u32(TASK_DATA_SIZE));
     }
 }
 
@@ -433,7 +431,7 @@ static void dump_binary(const char *const filename, const unsigned char *const b
         fclose(f);
 }
 
-static void dump_task(const char *const filename, const OSTask_t *const task)
+static void dump_task(const char *const filename)
 {
     FILE *f;
 
@@ -450,16 +448,116 @@ static void dump_task(const char *const filename, const OSTask_t *const task)
                 "output_buff = %#08x *size = %#x\n"
                 "data        = %#08x size  = %#x\n"
                 "yield_data  = %#08x size  = %#x\n",
-                task->type, task->flags,
-                task->ucode_boot, task->ucode_boot_size,
-                task->ucode, task->ucode_size,
-                task->ucode_data, task->ucode_data_size,
-                task->dram_stack, task->dram_stack_size,
-                task->output_buff, task->output_buff_size,
-                task->data_ptr, task->data_size,
-                task->yield_data_ptr, task->yield_data_size);
+                *dmem_u32(TASK_TYPE),
+                *dmem_u32(TASK_FLAGS),
+                *dmem_u32(TASK_UCODE_BOOT),     *dmem_u32(TASK_UCODE_BOOT_SIZE),
+                *dmem_u32(TASK_UCODE),          *dmem_u32(TASK_UCODE_SIZE),
+                *dmem_u32(TASK_UCODE_DATA),     *dmem_u32(TASK_UCODE_DATA_SIZE),
+                *dmem_u32(TASK_DRAM_STACK),     *dmem_u32(TASK_DRAM_STACK_SIZE),
+                *dmem_u32(TASK_OUTPUT_BUFF),    *dmem_u32(TASK_OUTPUT_BUFF_SIZE),
+                *dmem_u32(TASK_DATA_PTR),       *dmem_u32(TASK_DATA_SIZE),
+                *dmem_u32(TASK_YIELD_DATA_PTR), *dmem_u32(TASK_YIELD_DATA_SIZE));
         fclose(f);
     } else
         fclose(f);
+}
+
+
+/* memory access helper functions */
+void dmem_load_u8 (uint8_t*  dst, uint16_t address, size_t count)
+{
+    while (count != 0) {
+        *(dst++) = *dmem_u8(address);
+        address += 1;
+        --count;
+    }
+}
+
+void dmem_load_u16(uint16_t* dst, uint16_t address, size_t count)
+{
+    while (count != 0) {
+        *(dst++) = *dmem_u16(address);
+        address += 2;
+        --count;
+    }
+}
+
+void dmem_load_u32(uint32_t* dst, uint16_t address, size_t count)
+{
+    /* Optimization for uint32_t */
+    memcpy(dst, dmem_u32(address), count * sizeof(uint32_t));
+}
+
+void dmem_store_u8 (const uint8_t*  src, uint16_t address, size_t count)
+{
+    while (count != 0) {
+        *dmem_u8(address) = *(src++);
+        address += 1;
+        --count;
+    }
+}
+
+void dmem_store_u16(const uint16_t* src, uint16_t address, size_t count)
+{
+    while (count != 0) {
+        *dmem_u16(address) = *(src++);
+        address += 2;
+        --count;
+    }
+}
+
+void dmem_store_u32(const uint32_t* src, uint16_t address, size_t count)
+{
+    /* Optimization for uint32_t */
+    memcpy(dmem_u32(address), src, count * sizeof(uint32_t));
+}
+
+
+void dram_load_u8 (uint8_t*  dst, uint32_t address, size_t count)
+{
+    while (count != 0) {
+        *(dst++) = *dram_u8(address);
+        address += 1;
+        --count;
+    }
+}
+
+void dram_load_u16(uint16_t* dst, uint32_t address, size_t count)
+{
+    while (count != 0) {
+        *(dst++) = *dram_u16(address);
+        address += 2;
+        --count;
+    }
+}
+
+void dram_load_u32(uint32_t* dst, uint32_t address, size_t count)
+{
+    /* Optimization for uint32_t */
+    memcpy(dst, dram_u32(address), count * sizeof(uint32_t));
+}
+
+void dram_store_u8 (const uint8_t*  src, uint32_t address, size_t count)
+{
+    while (count != 0) {
+        *dram_u8(address) = *(src++);
+        address += 1;
+        --count;
+    }
+}
+
+void dram_store_u16(const uint16_t* src, uint32_t address, size_t count)
+{
+    while (count != 0) {
+        *dram_u16(address) = *(src++);
+        address += 2;
+        --count;
+    }
+}
+
+void dram_store_u32(const uint32_t* src, uint32_t address, size_t count)
+{
+    /* Optimization for uint32_t */
+    memcpy(dram_u32(address), src, count * sizeof(uint32_t));
 }
 
