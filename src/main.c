@@ -201,7 +201,7 @@ static int try_fast_task_dispatching(void)
 static void normal_task_dispatching(void)
 {
     const unsigned int sum =
-        sum_bytes(dram_u8(*dmem_u32(TASK_UCODE)), min(*dmem_u32(TASK_UCODE_SIZE), 0xf80) >> 1);
+        sum_bytes((void*)dram_u32(*dmem_u32(TASK_UCODE)), min(*dmem_u32(TASK_UCODE_SIZE), 0xf80) >> 1);
 
     switch (sum) {
     /* StoreVe12: found in Zelda Ocarina of Time [misleading task->type == 4] */
@@ -266,24 +266,24 @@ static void handle_unknown_task(unsigned int sum)
 
     /* dump ucode_boot */
     sprintf(&filename[0], "ucode_boot_%x.bin", sum);
-    dump_binary(filename, dram_u8(*dmem_u32(TASK_UCODE_BOOT)), *dmem_u32(TASK_UCODE_BOOT_SIZE));
+    dump_binary(filename, (void*)dram_u32(*dmem_u32(TASK_UCODE_BOOT)), *dmem_u32(TASK_UCODE_BOOT_SIZE));
 
     /* dump ucode */
     if (ucode != 0) {
         sprintf(&filename[0], "ucode_%x.bin", sum);
-        dump_binary(filename, dram_u8(ucode), 0xf80);
+        dump_binary(filename, (void*)dram_u32(ucode), 0xf80);
     }
 
     /* dump ucode_data */
     if (ucode_data != 0) {
         sprintf(&filename[0], "ucode_data_%x.bin", sum);
-        dump_binary(filename, dram_u8(ucode_data), *dmem_u32(TASK_UCODE_DATA_SIZE));
+        dump_binary(filename, (void*)dram_u32(ucode_data), *dmem_u32(TASK_UCODE_DATA_SIZE));
     }
 
     /* dump data */
     if (data_ptr != 0) {
         sprintf(&filename[0], "data_%x.bin", sum);
-        dump_binary(filename, dram_u8(data_ptr), *dmem_u32(TASK_DATA_SIZE));
+        dump_binary(filename, (void*)dram_u32(data_ptr), *dmem_u32(TASK_DATA_SIZE));
     }
 }
 
