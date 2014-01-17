@@ -87,8 +87,6 @@ int32_t VolRamp_Right;     /* m_RightVolTarget */
 int16_t Env_Dry;           /* 0x001C(T8) */
 int16_t Env_Wet;           /* 0x001E(T8) */
 
-uint8_t BufferSpace[0x10000];
-
 short hleMixerWorkArea[256];
 uint16_t adpcmtable[0x88];
 

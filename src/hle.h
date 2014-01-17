@@ -121,9 +121,6 @@ void dram_store_u8 (const uint8_t*  src, uint32_t address, size_t count);
 void dram_store_u16(const uint16_t* src, uint32_t address, size_t count);
 void dram_store_u32(const uint32_t* src, uint32_t address, size_t count);
 
-
-extern uint8_t BufferSpace[0x10000];
-
 extern uint16_t AudioInBuffer;   /* 0x0000(T8) */
 extern uint16_t AudioOutBuffer;  /* 0x0002(T8) */
 extern uint16_t AudioCount;      /* 0x0004(T8) */

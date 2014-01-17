@@ -54,4 +54,5 @@ extern const acmd_callback_t ABI1[0x10];
 extern const acmd_callback_t ABI2[0x20];
 extern const acmd_callback_t ABI3[0x10];
 
+extern uint8_t BufferSpace[0x10000];
 #endif
