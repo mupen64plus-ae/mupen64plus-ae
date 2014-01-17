@@ -307,11 +307,12 @@ public final class Prompt
      * @param includeParent True to include the parent directory in list
      * @param includeDirs   True to include child directories in list
      * @param includeFiles  True to include child files in list
+     * @param dirsSelectable True if directories can be selected
      * @param listener  The listener to process the file, when selected.
      */
     public static void promptFile( Context context, CharSequence title, CharSequence message,
-            File startPath, boolean includeParent, boolean includeDirs, boolean includeFiles,
-            final PromptFileListener listener )
+            final File startPath, boolean includeParent, boolean includeDirs, boolean includeFiles,
+            boolean dirsSelectable, final PromptFileListener listener )
     {
         // Don't even open the dialog if the path doesn't exist
         if( !startPath.exists() )
@@ -329,16 +330,18 @@ public final class Prompt
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which >= 0 && which < names.size() )
-                    listener.onDialogClosed( new File( paths.get( which ) ),
-                            DialogInterface.BUTTON_POSITIVE );
+                    listener.onDialogClosed( new File( paths.get( which ) ), which );
+                else if( which == DialogInterface.BUTTON_POSITIVE )
+                    listener.onDialogClosed( startPath, which );
                 else
                     listener.onDialogClosed( null, which );
             }
         };
         
         // Create the dialog builder, removing Ok button and populating list in the process
-        Builder builder = prefillBuilder( context, title, message, internalListener )
-                .setPositiveButton( null, null );
+        Builder builder = prefillBuilder( context, title, message, internalListener );
+        if( !dirsSelectable )
+            builder.setPositiveButton( null, null );
         if( AppData.IS_HONEYCOMB )
         {
             // Holo theme has folder icons and "Parent folder" text
@@ -368,7 +371,7 @@ public final class Prompt
     public static void promptFile( Context context, CharSequence title, CharSequence message,
             File startPath, final PromptFileListener listener )
     {
-        promptFile( context, title, message, startPath, false, false, true, listener );
+        promptFile( context, title, message, startPath, false, false, true, false, listener );
     }
     
     /**

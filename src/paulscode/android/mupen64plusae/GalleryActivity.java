@@ -221,12 +221,12 @@ public class GalleryActivity extends Activity implements OnClickListener
     {
         String title = startPath.getPath();
         String message = null;
-        Prompt.promptFile( this, title, message, startPath, true, true, true, new PromptFileListener()
+        Prompt.promptFile( this, title, message, startPath, true, true, true, false, new PromptFileListener()
         {
             @Override
             public void onDialogClosed( File file, int which )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
+                if( which >= 0 )
                 {
                     if( file.isFile() )
                     {
