@@ -32,20 +32,20 @@ uint8_t BufferSpace[0x10000];
 /* global functions */
 void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
 {
-    uint32_t inst1, inst2;
+    uint32_t w1, w2;
     unsigned int acmd;
 
     const uint32_t *alist = dram_u32(*dmem_u32(TASK_DATA_PTR));
     const uint32_t *const alist_end = alist + (*dmem_u32(TASK_DATA_SIZE) >> 2);
 
     while (alist != alist_end) {
-        inst1 = *(alist++);
-        inst2 = *(alist++);
+        w1 = *(alist++);
+        w2 = *(alist++);
 
-        acmd = inst1 >> 24;
+        acmd = w1 >> 24;
 
         if (acmd < abi_size)
-            (*abi[acmd])(inst1, inst2);
+            (*abi[acmd])(w1, w2);
         else
             DebugMessage(M64MSG_WARNING, "Invalid ABI command %u", acmd);
     }

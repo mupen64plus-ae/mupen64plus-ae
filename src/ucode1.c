@@ -129,22 +129,22 @@ const uint16_t ResampleLUT [0x200] = {
     0xFFD8, 0x0E5F, 0x6696, 0x0B39, 0xFFDF, 0x0D46, 0x66AD, 0x0C39
 };
 
-static void SPNOOP(uint32_t inst1, uint32_t inst2)
+static void SPNOOP(uint32_t w1, uint32_t w2)
 {
 }
 
-static void CLEARBUFF(uint32_t inst1, uint32_t inst2)
+static void CLEARBUFF(uint32_t w1, uint32_t w2)
 {
-    uint32_t addr = (uint32_t)(inst1 & 0xffff);
-    uint32_t count = (uint32_t)(inst2 & 0xffff);
+    uint32_t addr = (uint32_t)(w1 & 0xffff);
+    uint32_t count = (uint32_t)(w2 & 0xffff);
     addr &= 0xFFFC;
     memset(BufferSpace + addr, 0, (count + 3) & 0xFFFC);
 }
 
-static void ENVMIXER(uint32_t inst1, uint32_t inst2)
+static void ENVMIXER(uint32_t w1, uint32_t w2)
 {
-    uint8_t flags = (uint8_t)((inst1 >> 16) & 0xff);
-    uint32_t addy = (inst2 & 0xFFFFFF);
+    uint8_t flags = (uint8_t)((w1 >> 16) & 0xff);
+    uint32_t addy = (w2 & 0xFFFFFF);
     short *inp = (short *)(BufferSpace + l_alist.in);
     short *out = (short *)(BufferSpace + l_alist.out);
     short *aux1 = (short *)(BufferSpace + l_alist.dry_right);
@@ -331,11 +331,11 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
     memcpy(rsp.RDRAM + addy, (uint8_t *)save_buffer, 80);
 }
 
-static void RESAMPLE(uint32_t inst1, uint32_t inst2)
+static void RESAMPLE(uint32_t w1, uint32_t w2)
 {
-    unsigned char Flags = (uint8_t)((inst1 >> 16) & 0xff);
-    unsigned int Pitch = ((inst1 & 0xffff)) << 1;
-    uint32_t addy = (inst2 & 0xffffff);
+    unsigned char Flags = (uint8_t)((w1 >> 16) & 0xff);
+    unsigned int Pitch = ((w1 & 0xffff)) << 1;
+    uint32_t addy = (w2 & 0xffffff);
     unsigned int Accum = 0;
     unsigned int location;
     int16_t *lut;
@@ -388,12 +388,12 @@ static void RESAMPLE(uint32_t inst1, uint32_t inst2)
     *(uint16_t *)(rsp.RDRAM + addy + 10) = Accum;
 }
 
-static void SETVOL(uint32_t inst1, uint32_t inst2)
+static void SETVOL(uint32_t w1, uint32_t w2)
 {
     /* Might be better to unpack these depending on the flags... */
-    uint8_t flags = (uint8_t)((inst1 >> 16) & 0xff);
-    uint16_t vol = (int16_t)(inst1 & 0xffff);
-    uint16_t volrate = (uint16_t)((inst2 & 0xffff));
+    uint8_t flags = (uint8_t)((w1 >> 16) & 0xff);
+    uint16_t vol = (int16_t)(w1 & 0xffff);
+    uint16_t volrate = (uint16_t)((w2 & 0xffff));
 
     if (flags & A_AUX) {
         l_alist.dry = (int16_t)vol;         /* m_MainVol */
@@ -417,26 +417,26 @@ static void SETVOL(uint32_t inst1, uint32_t inst2)
 
     /* Set the Ramping values Target, Ramp */
     if (flags & A_LEFT) {
-        l_alist.target[0]  = (int16_t)inst1;
-        l_alist.rate[0] = (int32_t)inst2;
+        l_alist.target[0]  = (int16_t)w1;
+        l_alist.rate[0] = (int32_t)w2;
     } else { /* A_RIGHT */
-        l_alist.target[1]  = (int16_t)inst1;
-        l_alist.rate[1] = (int32_t)inst2;
+        l_alist.target[1]  = (int16_t)w1;
+        l_alist.rate[1] = (int32_t)w2;
     }
 }
 
-static void UNKNOWN(uint32_t inst1, uint32_t inst2) {}
+static void UNKNOWN(uint32_t w1, uint32_t w2) {}
 
-static void SETLOOP(uint32_t inst1, uint32_t inst2)
+static void SETLOOP(uint32_t w1, uint32_t w2)
 {
-    l_alist.loop = (inst2 & 0xffffff);
+    l_alist.loop = (w2 & 0xffffff);
 }
 
 /* TODO Work in progress! :) */
-static void ADPCM(uint32_t inst1, uint32_t inst2)
+static void ADPCM(uint32_t w1, uint32_t w2)
 {
-    unsigned char Flags = (uint8_t)(inst1 >> 16) & 0xff;
-    unsigned int Address = (inst2 & 0xffffff);
+    unsigned char Flags = (uint8_t)(w1 >> 16) & 0xff;
+    unsigned int Address = (w2 & 0xffffff);
     unsigned short inPtr = 0;
     short *out = (short *)(BufferSpace + l_alist.out);
     short count = (short)l_alist.count;
@@ -669,50 +669,50 @@ static void ADPCM(uint32_t inst1, uint32_t inst2)
 }
 
 /* TODO memcpy causes static... endianess issue :( */
-static void LOADBUFF(uint32_t inst1, uint32_t inst2)
+static void LOADBUFF(uint32_t w1, uint32_t w2)
 {
     uint32_t v0;
     if (l_alist.count == 0)
         return;
-    v0 = (inst2 & 0xfffffc);
+    v0 = (w2 & 0xfffffc);
     memcpy(BufferSpace + (l_alist.in & 0xFFFC), rsp.RDRAM + v0, (l_alist.count + 3) & 0xFFFC);
 }
 
 /* TODO memcpy causes static... endianess issue :( */
-static void SAVEBUFF(uint32_t inst1, uint32_t inst2)
+static void SAVEBUFF(uint32_t w1, uint32_t w2)
 {
     uint32_t v0;
     if (l_alist.count == 0)
         return;
-    v0 = (inst2 & 0xfffffc);
+    v0 = (w2 & 0xfffffc);
     memcpy(rsp.RDRAM + v0, BufferSpace + (l_alist.out & 0xFFFC), (l_alist.count + 3) & 0xFFFC);
 }
 
 /* NOTE Should work ;-) */
-static void SETBUFF(uint32_t inst1, uint32_t inst2)
+static void SETBUFF(uint32_t w1, uint32_t w2)
 {
-    if ((inst1 >> 0x10) & 0x8) {
+    if ((w1 >> 0x10) & 0x8) {
         /* A_AUX - Auxillary Sound Buffer Settings */
-        l_alist.dry_right       = (uint16_t)(inst1);
-        l_alist.wet_left       = (uint16_t)((inst2 >> 0x10));
-        l_alist.wet_right       = (uint16_t)(inst2);
+        l_alist.dry_right       = (uint16_t)(w1);
+        l_alist.wet_left       = (uint16_t)((w2 >> 0x10));
+        l_alist.wet_right       = (uint16_t)(w2);
     } else {
         /* A_MAIN - Main Sound Buffer Settings */
-        l_alist.in   = (uint16_t)(inst1); /* 0x00 */
-        l_alist.out  = (uint16_t)((inst2 >> 0x10)); /* 0x02 */
-        l_alist.count      = (uint16_t)(inst2); /* 0x04 */
+        l_alist.in   = (uint16_t)(w1); /* 0x00 */
+        l_alist.out  = (uint16_t)((w2 >> 0x10)); /* 0x02 */
+        l_alist.count      = (uint16_t)(w2); /* 0x04 */
     }
 }
 
 /* TODO Doesn't sound just right?... will fix when HLE is ready - 03-11-01 */
-static void DMEMMOVE(uint32_t inst1, uint32_t inst2)
+static void DMEMMOVE(uint32_t w1, uint32_t w2)
 {
     uint32_t cnt;
-    uint32_t v0 = (inst1 & 0xFFFF);
-    uint32_t v1 = (inst2 >> 0x10);
-    uint32_t count = ((inst2 + 3) & 0xfffc);
+    uint32_t v0 = (w1 & 0xFFFF);
+    uint32_t v1 = (w2 >> 0x10);
+    uint32_t count = ((w2 + 3) & 0xfffc);
 
-    if ((inst2 & 0xffff) == 0)
+    if ((w2 & 0xffff) == 0)
         return;
 
     for (cnt = 0; cnt < count; cnt++)
@@ -720,13 +720,13 @@ static void DMEMMOVE(uint32_t inst1, uint32_t inst2)
 }
 
 /* NOTE Loads an ADPCM table - Works 100% Now 03-13-01 */
-static void LOADADPCM(uint32_t inst1, uint32_t inst2)
+static void LOADADPCM(uint32_t w1, uint32_t w2)
 {
-    uint32_t v0 = (inst2 & 0xffffff);
+    uint32_t v0 = (w2 & 0xffffff);
     uint32_t x;
 
     uint16_t *table = (uint16_t *)(rsp.RDRAM + v0);
-    for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
+    for (x = 0; x < ((w1 & 0xffff) >> 0x4); x++) {
         l_alist.table[(0x0 + (x << 3))^S] = table[0];
         l_alist.table[(0x1 + (x << 3))^S] = table[1];
 
@@ -744,7 +744,7 @@ static void LOADADPCM(uint32_t inst1, uint32_t inst2)
 
 
 /* NOTE Works... - 3-11-01 */
-static void INTERLEAVE(uint32_t inst1, uint32_t inst2)
+static void INTERLEAVE(uint32_t w1, uint32_t w2)
 {
     uint32_t inL, inR;
     uint16_t *outbuff = (uint16_t *)(l_alist.out + BufferSpace);
@@ -753,8 +753,8 @@ static void INTERLEAVE(uint32_t inst1, uint32_t inst2)
     uint16_t Left, Right, Left2, Right2;
     int x;
 
-    inL = inst2 & 0xFFFF;
-    inR = (inst2 >> 16) & 0xFFFF;
+    inL = w2 & 0xFFFF;
+    inR = (w2 >> 16) & 0xFFFF;
 
     inSrcR = (uint16_t *)(BufferSpace + inR);
     inSrcL = (uint16_t *)(BufferSpace + inL);
@@ -780,11 +780,11 @@ static void INTERLEAVE(uint32_t inst1, uint32_t inst2)
 }
 
 /* NOTE Fixed a sign issue... 03-14-01 */
-static void MIXER(uint32_t inst1, uint32_t inst2)
+static void MIXER(uint32_t w1, uint32_t w2)
 {
-    uint32_t dmemin  = (uint16_t)(inst2 >> 0x10);
-    uint32_t dmemout = (uint16_t)(inst2 & 0xFFFF);
-    int32_t gain    = (int16_t)(inst1 & 0xFFFF);
+    uint32_t dmemin  = (uint16_t)(w2 >> 0x10);
+    uint32_t dmemout = (uint16_t)(w2 & 0xFFFF);
+    int32_t gain    = (int16_t)(w1 & 0xFFFF);
     int32_t temp;
     int x;
 

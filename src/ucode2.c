@@ -42,9 +42,9 @@ static struct {
 } l_alist;
 
 
-static void SPNOOP(uint32_t inst1, uint32_t inst2)
+static void SPNOOP(uint32_t w1, uint32_t w2)
 {
-    DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 2", (int)(inst1 >> 24));
+    DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 2", (int)(w1 >> 24));
 }
 
 
@@ -59,14 +59,14 @@ void init_ucode2(void)
 /* Loads an ADPCM table
  * NOTE Works 100% Now 03-13-01
  */
-static void LOADADPCM2(uint32_t inst1, uint32_t inst2)
+static void LOADADPCM2(uint32_t w1, uint32_t w2)
 {
-    uint32_t v0 = (inst2 & 0xffffff);
+    uint32_t v0 = (w2 & 0xffffff);
     uint32_t x;
     /* Zelda2 Specific... */
     uint16_t *table = (uint16_t *)(rsp.RDRAM + v0);
 
-    for (x = 0; x < ((inst1 & 0xffff) >> 0x4); x++) {
+    for (x = 0; x < ((w1 & 0xffff) >> 0x4); x++) {
         l_alist.table[(0x0 + (x << 3))^S] = table[0];
         l_alist.table[(0x1 + (x << 3))^S] = table[1];
 
@@ -82,23 +82,23 @@ static void LOADADPCM2(uint32_t inst1, uint32_t inst2)
     }
 }
 
-static void SETLOOP2(uint32_t inst1, uint32_t inst2)
+static void SETLOOP2(uint32_t w1, uint32_t w2)
 {
-    l_alist.loop = inst2 & 0xffffff; /* No segment? */
+    l_alist.loop = w2 & 0xffffff; /* No segment? */
 }
 
-static void SETBUFF2(uint32_t inst1, uint32_t inst2)
+static void SETBUFF2(uint32_t w1, uint32_t w2)
 {
-    l_alist.in   = (uint16_t)(inst1);            /* 0x00 */
-    l_alist.out  = (uint16_t)((inst2 >> 0x10)); /* 0x02 */
-    l_alist.count      = (uint16_t)(inst2);            /* 0x04 */
+    l_alist.in   = (uint16_t)(w1);            /* 0x00 */
+    l_alist.out  = (uint16_t)((w2 >> 0x10)); /* 0x02 */
+    l_alist.count      = (uint16_t)(w2);            /* 0x04 */
 }
 
 /* NOTE Verified to be 100% Accurate... */
-static void ADPCM2(uint32_t inst1, uint32_t inst2)
+static void ADPCM2(uint32_t w1, uint32_t w2)
 {
-    unsigned char Flags = (uint8_t)(inst1 >> 16) & 0xff;
-    unsigned int Address = (inst2 & 0xffffff);
+    unsigned char Flags = (uint8_t)(w1 >> 16) & 0xff;
+    unsigned int Address = (w2 & 0xffffff);
     unsigned short inPtr = 0;
     short *out = (short *)(BufferSpace + l_alist.out);
     short count = (short)l_alist.count;
@@ -358,39 +358,39 @@ static void ADPCM2(uint32_t inst1, uint32_t inst2)
     memcpy(&rsp.RDRAM[Address], out, 32);
 }
 
-static void CLEARBUFF2(uint32_t inst1, uint32_t inst2)
+static void CLEARBUFF2(uint32_t w1, uint32_t w2)
 {
-    uint16_t addr = (uint16_t)(inst1 & 0xffff);
-    uint16_t count = (uint16_t)(inst2 & 0xffff);
+    uint16_t addr = (uint16_t)(w1 & 0xffff);
+    uint16_t count = (uint16_t)(w2 & 0xffff);
     if (count > 0)
         memset(BufferSpace + addr, 0, count);
 }
 
 /* TODO Needs accuracy verification... */
-static void LOADBUFF2(uint32_t inst1, uint32_t inst2)
+static void LOADBUFF2(uint32_t w1, uint32_t w2)
 {
     uint32_t v0;
-    uint32_t cnt = (((inst1 >> 0xC) + 3) & 0xFFC);
-    v0 = (inst2 & 0xfffffc);
-    memcpy(BufferSpace + (inst1 & 0xfffc), rsp.RDRAM + v0, (cnt + 3) & 0xFFFC);
+    uint32_t cnt = (((w1 >> 0xC) + 3) & 0xFFC);
+    v0 = (w2 & 0xfffffc);
+    memcpy(BufferSpace + (w1 & 0xfffc), rsp.RDRAM + v0, (cnt + 3) & 0xFFFC);
 }
 
 /* TODO Needs accuracy verification... */
-static void SAVEBUFF2(uint32_t inst1, uint32_t inst2)
+static void SAVEBUFF2(uint32_t w1, uint32_t w2)
 {
     uint32_t v0;
-    uint32_t cnt = (((inst1 >> 0xC) + 3) & 0xFFC);
-    v0 = (inst2 & 0xfffffc);
-    memcpy(rsp.RDRAM + v0, BufferSpace + (inst1 & 0xfffc), (cnt + 3) & 0xFFFC);
+    uint32_t cnt = (((w1 >> 0xC) + 3) & 0xFFC);
+    v0 = (w2 & 0xfffffc);
+    memcpy(rsp.RDRAM + v0, BufferSpace + (w1 & 0xfffc), (cnt + 3) & 0xFFFC);
 }
 
 /* TODO Needs accuracy verification... */
-static void MIXER2(uint32_t inst1, uint32_t inst2)
+static void MIXER2(uint32_t w1, uint32_t w2)
 {
-    uint16_t dmemin  = (uint16_t)(inst2 >> 0x10);
-    uint16_t dmemout = (uint16_t)(inst2 & 0xFFFF);
-    uint32_t count   = ((inst1 >> 12) & 0xFF0);
-    int32_t gain    = (int16_t)(inst1 & 0xFFFF);
+    uint16_t dmemin  = (uint16_t)(w2 >> 0x10);
+    uint16_t dmemout = (uint16_t)(w2 & 0xFFFF);
+    uint32_t count   = ((w1 >> 12) & 0xFF0);
+    int32_t gain    = (int16_t)(w1 & 0xFFFF);
     int32_t temp;
     unsigned int x;
 
@@ -406,11 +406,11 @@ static void MIXER2(uint32_t inst1, uint32_t inst2)
 }
 
 
-static void RESAMPLE2(uint32_t inst1, uint32_t inst2)
+static void RESAMPLE2(uint32_t w1, uint32_t w2)
 {
-    unsigned char Flags = (uint8_t)((inst1 >> 16) & 0xff);
-    unsigned int Pitch = ((inst1 & 0xffff)) << 1;
-    uint32_t addy = (inst2 & 0xffffff);
+    unsigned char Flags = (uint8_t)((w1 >> 16) & 0xff);
+    unsigned int Pitch = ((w1 & 0xffff)) << 1;
+    uint32_t addy = (w2 & 0xffffff);
     unsigned int Accum = 0;
     unsigned int location;
     int16_t *lut;
@@ -426,7 +426,7 @@ static void RESAMPLE2(uint32_t inst1, uint32_t inst2)
     src = (int16_t *)(BufferSpace);
 
     if (addy > (1024 * 1024 * 8))
-        addy = (inst2 & 0xffffff);
+        addy = (w2 & 0xffffff);
 
     srcPtr -= 4;
 
@@ -469,14 +469,14 @@ static void RESAMPLE2(uint32_t inst1, uint32_t inst2)
 }
 
 /* TODO Needs accuracy verification... */
-static void DMEMMOVE2(uint32_t inst1, uint32_t inst2)
+static void DMEMMOVE2(uint32_t w1, uint32_t w2)
 {
     uint32_t cnt;
-    uint32_t v0 = (inst1 & 0xFFFF);
-    uint32_t v1 = (inst2 >> 0x10);
-    uint32_t count = ((inst2 + 3) & 0xfffc);
+    uint32_t v0 = (w1 & 0xFFFF);
+    uint32_t v1 = (w2 >> 0x10);
+    uint32_t count = ((w2 + 3) & 0xfffc);
 
-    if ((inst2 & 0xffff) == 0)
+    if ((w2 & 0xffff) == 0)
         return;
 
     for (cnt = 0; cnt < count; cnt++)
@@ -486,34 +486,34 @@ static void DMEMMOVE2(uint32_t inst1, uint32_t inst2)
 static uint32_t t3, s5, s6;
 static uint16_t env[8];
 
-static void ENVSETUP1(uint32_t inst1, uint32_t inst2)
+static void ENVSETUP1(uint32_t w1, uint32_t w2)
 {
     uint32_t tmp;
 
-    t3 = inst1 & 0xFFFF;
-    tmp = (inst1 >> 0x8) & 0xFF00;
+    t3 = w1 & 0xFFFF;
+    tmp = (w1 >> 0x8) & 0xFF00;
     env[4] = (uint16_t)tmp;
     tmp += t3;
     env[5] = (uint16_t)tmp;
-    s5 = inst2 >> 0x10;
-    s6 = inst2 & 0xFFFF;
+    s5 = w2 >> 0x10;
+    s6 = w2 & 0xFFFF;
 }
 
-static void ENVSETUP2(uint32_t inst1, uint32_t inst2)
+static void ENVSETUP2(uint32_t w1, uint32_t w2)
 {
     uint32_t tmp;
 
-    tmp = (inst2 >> 0x10);
+    tmp = (w2 >> 0x10);
     env[0] = (uint16_t)tmp;
     tmp += s5;
     env[1] = (uint16_t)tmp;
-    tmp = inst2 & 0xffff;
+    tmp = w2 & 0xffff;
     env[2] = (uint16_t)tmp;
     tmp += s6;
     env[3] = (uint16_t)tmp;
 }
 
-static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
+static void ENVMIXER2(uint32_t w1, uint32_t w2)
 {
     int16_t *bufft6, *bufft7, *buffs0, *buffs1;
     int16_t *buffs3;
@@ -524,19 +524,19 @@ static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
 
     int16_t v2[8];
 
-    buffs3 = (int16_t *)(BufferSpace + ((inst1 >> 0x0c) & 0x0ff0));
-    bufft6 = (int16_t *)(BufferSpace + ((inst2 >> 0x14) & 0x0ff0));
-    bufft7 = (int16_t *)(BufferSpace + ((inst2 >> 0x0c) & 0x0ff0));
-    buffs0 = (int16_t *)(BufferSpace + ((inst2 >> 0x04) & 0x0ff0));
-    buffs1 = (int16_t *)(BufferSpace + ((inst2 << 0x04) & 0x0ff0));
+    buffs3 = (int16_t *)(BufferSpace + ((w1 >> 0x0c) & 0x0ff0));
+    bufft6 = (int16_t *)(BufferSpace + ((w2 >> 0x14) & 0x0ff0));
+    bufft7 = (int16_t *)(BufferSpace + ((w2 >> 0x0c) & 0x0ff0));
+    buffs0 = (int16_t *)(BufferSpace + ((w2 >> 0x04) & 0x0ff0));
+    buffs1 = (int16_t *)(BufferSpace + ((w2 << 0x04) & 0x0ff0));
 
 
-    v2[0] = 0 - (int16_t)((inst1 & 0x2) >> 1);
-    v2[1] = 0 - (int16_t)((inst1 & 0x1));
-    v2[2] = 0 - (int16_t)((inst1 & 0x8) >> 1);
-    v2[3] = 0 - (int16_t)((inst1 & 0x4) >> 1);
+    v2[0] = 0 - (int16_t)((w1 & 0x2) >> 1);
+    v2[1] = 0 - (int16_t)((w1 & 0x1));
+    v2[2] = 0 - (int16_t)((w1 & 0x8) >> 1);
+    v2[3] = 0 - (int16_t)((w1 & 0x4) >> 1);
 
-    count = (inst1 >> 8) & 0xff;
+    count = (w1 >> 8) & 0xff;
 
     if (!isMKABI) {
         s5 *= 2;
@@ -544,7 +544,7 @@ static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
         t3 *= 2;
         adder = 0x10;
     } else {
-        inst1 = 0;
+        w1 = 0;
         adder = 0x8;
         t3 = 0;
     }
@@ -563,7 +563,7 @@ static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
             bufft7[x ^ S] = temp;
             vec9  = (int16_t)(((int32_t)vec9  * (uint32_t)env[4]) >> 0x10) ^ v2[2];
             vec10 = (int16_t)(((int32_t)vec10 * (uint32_t)env[4]) >> 0x10) ^ v2[3];
-            if (inst1 & 0x10) {
+            if (w1 & 0x10) {
                 temp = buffs0[x ^ S] + vec10;
                 temp = clamp_s16(temp);
                 buffs0[x ^ S] = temp;
@@ -592,7 +592,7 @@ static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
                 bufft7[x ^ S] = temp;
                 vec9  = (int16_t)(((int32_t)vec9  * (uint32_t)env[5]) >> 0x10) ^ v2[2];
                 vec10 = (int16_t)(((int32_t)vec10 * (uint32_t)env[5]) >> 0x10) ^ v2[3];
-                if (inst1 & 0x10) {
+                if (w1 & 0x10) {
                     temp = buffs0[x ^ S] + vec10;
                     temp = clamp_s16(temp);
                     buffs0[x ^ S] = temp;
@@ -623,11 +623,11 @@ static void ENVMIXER2(uint32_t inst1, uint32_t inst2)
     }
 }
 
-static void DUPLICATE2(uint32_t inst1, uint32_t inst2)
+static void DUPLICATE2(uint32_t w1, uint32_t w2)
 {
-    unsigned short Count = (inst1 >> 16) & 0xff;
-    unsigned short In  = inst1 & 0xffff;
-    unsigned short Out = (inst2 >> 16);
+    unsigned short Count = (w1 >> 16) & 0xff;
+    unsigned short In  = w1 & 0xffff;
+    unsigned short Out = (w2 >> 16);
 
     unsigned short buff[64];
 
@@ -640,11 +640,11 @@ static void DUPLICATE2(uint32_t inst1, uint32_t inst2)
     }
 }
 
-static void INTERL2(uint32_t inst1, uint32_t inst2)
+static void INTERL2(uint32_t w1, uint32_t w2)
 {
-    short Count = inst1 & 0xffff;
-    unsigned short  Out   = inst2 & 0xffff;
-    unsigned short In     = (inst2 >> 16);
+    short Count = w1 & 0xffff;
+    unsigned short  Out   = w2 & 0xffff;
+    unsigned short In     = (w2 >> 16);
 
     unsigned char *src, *dst;
     src = (unsigned char *)(BufferSpace); /* [In]; */
@@ -658,7 +658,7 @@ static void INTERL2(uint32_t inst1, uint32_t inst2)
 }
 
 /* TODO Needs accuracy verification... */
-static void INTERLEAVE2(uint32_t inst1, uint32_t inst2)
+static void INTERLEAVE2(uint32_t w1, uint32_t w2)
 {
     uint32_t inL, inR;
     uint16_t *outbuff;
@@ -668,15 +668,15 @@ static void INTERLEAVE2(uint32_t inst1, uint32_t inst2)
     uint32_t count;
     uint32_t x;
 
-    count   = ((inst1 >> 12) & 0xFF0);
+    count   = ((w1 >> 12) & 0xFF0);
     if (count == 0) {
         outbuff = (uint16_t *)(l_alist.out + BufferSpace);
         count = l_alist.count;
     } else
-        outbuff = (uint16_t *)((inst1 & 0xFFFF) + BufferSpace);
+        outbuff = (uint16_t *)((w1 & 0xFFFF) + BufferSpace);
 
-    inR = inst2 & 0xFFFF;
-    inL = (inst2 >> 16) & 0xFFFF;
+    inR = w2 & 0xFFFF;
+    inL = (w2 >> 16) & 0xFFFF;
 
     inSrcR = (uint16_t *)(BufferSpace + inR);
     inSrcL = (uint16_t *)(BufferSpace + inL);
@@ -701,11 +701,11 @@ static void INTERLEAVE2(uint32_t inst1, uint32_t inst2)
     }
 }
 
-static void ADDMIXER(uint32_t inst1, uint32_t inst2)
+static void ADDMIXER(uint32_t w1, uint32_t w2)
 {
-    short Count   = (inst1 >> 12) & 0x00ff0;
-    uint16_t InBuffer  = (inst2 >> 16);
-    uint16_t OutBuffer = inst2 & 0xffff;
+    short Count   = (w1 >> 12) & 0x00ff0;
+    uint16_t InBuffer  = (w2 >> 16);
+    uint16_t OutBuffer = w2 & 0xffff;
     int cntr;
 
     int16_t *inp, *outp;
@@ -720,12 +720,12 @@ static void ADDMIXER(uint32_t inst1, uint32_t inst2)
     }
 }
 
-static void HILOGAIN(uint32_t inst1, uint32_t inst2)
+static void HILOGAIN(uint32_t w1, uint32_t w2)
 {
-    uint16_t cnt = inst1 & 0xffff;
-    uint16_t out = (inst2 >> 16) & 0xffff;
-    int16_t hi  = (int16_t)((inst1 >> 4) & 0xf000);
-    uint16_t lo  = (inst1 >> 20) & 0xf;
+    uint16_t cnt = w1 & 0xffff;
+    uint16_t out = (w2 >> 16) & 0xffff;
+    int16_t hi  = (int16_t)((w1 >> 4) & 0xf000);
+    uint16_t lo  = (w1 >> 20) & 0xf;
     int16_t *src = (int16_t *)(BufferSpace + out);
     int32_t tmp, val;
 
@@ -739,13 +739,13 @@ static void HILOGAIN(uint32_t inst1, uint32_t inst2)
     }
 }
 
-static void FILTER2(uint32_t inst1, uint32_t inst2)
+static void FILTER2(uint32_t w1, uint32_t w2)
 {
     static int cnt = 0;
     static int16_t *lutt6;
     static int16_t *lutt5;
-    uint8_t *save = (rsp.RDRAM + (inst2 & 0xFFFFFF));
-    uint8_t t4 = (uint8_t)((inst1 >> 0x10) & 0xFF);
+    uint8_t *save = (rsp.RDRAM + (w2 & 0xFFFFFF));
+    uint8_t t4 = (uint8_t)((w1 >> 0x10) & 0xFF);
     int x;
     short *inp1, *inp2;
     int32_t out1[8];
@@ -754,7 +754,7 @@ static void FILTER2(uint32_t inst1, uint32_t inst2)
 
     if (t4 > 1) {
         /* Then set the cnt variable */
-        cnt = (inst1 & 0xFFFF);
+        cnt = (w1 & 0xFFFF);
         lutt6 = (int16_t *)save;
         return;
     }
@@ -769,7 +769,7 @@ static void FILTER2(uint32_t inst1, uint32_t inst2)
         a = (lutt5[x] + lutt6[x]) >> 1;
         lutt5[x] = lutt6[x] = (short)a;
     }
-    inPtr = (uint32_t)(inst1 & 0xffff);
+    inPtr = (uint32_t)(w1 & 0xffff);
     inp1 = (short *)(save);
     outp = outbuff;
     inp2 = (short *)(BufferSpace + inPtr);
@@ -858,25 +858,25 @@ static void FILTER2(uint32_t inst1, uint32_t inst2)
         outp += 8;
     }
     memcpy(save, inp2 - 8, 0x10);
-    memcpy(BufferSpace + (inst1 & 0xffff), outbuff, cnt);
+    memcpy(BufferSpace + (w1 & 0xffff), outbuff, cnt);
 }
 
-static void SEGMENT2(uint32_t inst1, uint32_t inst2)
+static void SEGMENT2(uint32_t w1, uint32_t w2)
 {
     if (isZeldaABI) {
-        FILTER2(inst1, inst2);
+        FILTER2(w1, w2);
         return;
     }
-    if ((inst1 & 0xffffff) == 0) {
+    if ((w1 & 0xffffff) == 0) {
         isMKABI = true;
     } else {
         isMKABI = false;
         isZeldaABI = true;
-        FILTER2(inst1, inst2);
+        FILTER2(w1, w2);
     }
 }
 
-static void UNKNOWN(uint32_t inst1, uint32_t inst2)
+static void UNKNOWN(uint32_t w1, uint32_t w2)
 {
 }
 

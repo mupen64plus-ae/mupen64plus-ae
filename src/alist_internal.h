@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 
-typedef void (*acmd_callback_t)(uint32_t inst1, uint32_t inst2);
+typedef void (*acmd_callback_t)(uint32_t w1, uint32_t w2);
 
 void alist_process(const acmd_callback_t abi[], unsigned int abi_size);
 
