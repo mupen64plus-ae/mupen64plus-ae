@@ -87,7 +87,6 @@ int32_t VolRamp_Right;     /* m_RightVolTarget */
 int16_t Env_Dry;           /* 0x001C(T8) */
 int16_t Env_Wet;           /* 0x001E(T8) */
 
-short hleMixerWorkArea[256];
 uint16_t adpcmtable[0x88];
 
 const uint16_t ResampleLUT [0x200] = {
@@ -158,6 +157,7 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
     int32_t LAdderStart, RAdderStart, LAdderEnd, RAdderEnd;
     int32_t oMainR, oMainL, oAuxR, oAuxL;
     int x, y;
+    short save_buffer[40];
 
     memset(zero, 0, sizeof(zero));
 
@@ -180,17 +180,17 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
         /* Load LVol, RVol, LAcc, and RAcc (all 32bit)
          * Load Wet, Dry, LTrg, RTrg
          */
-        memcpy((uint8_t *)hleMixerWorkArea, (rsp.RDRAM + addy), 80);
-        Wet  = *(int16_t *)(hleMixerWorkArea +  0); /* 0-1 */
-        Dry  = *(int16_t *)(hleMixerWorkArea +  2); /* 2-3 */
-        LTrg = *(int32_t *)(hleMixerWorkArea +  4); /* 4-5 */
-        RTrg = *(int32_t *)(hleMixerWorkArea +  6); /* 6-7 */
-        LRamp = *(int32_t *)(hleMixerWorkArea +  8); /* 8-9 (hleMixerWorkArea is a 16bit pointer) */
-        RRamp = *(int32_t *)(hleMixerWorkArea + 10); /* 10-11 */
-        LAdderEnd = *(int32_t *)(hleMixerWorkArea + 12); /* 12-13 */
-        RAdderEnd = *(int32_t *)(hleMixerWorkArea + 14); /* 14-15 */
-        LAdderStart = *(int32_t *)(hleMixerWorkArea + 16); /* 12-13 */
-        RAdderStart = *(int32_t *)(hleMixerWorkArea + 18); /* 14-15 */
+        memcpy((uint8_t *)save_buffer, (rsp.RDRAM + addy), 80);
+        Wet  = *(int16_t *)(save_buffer +  0); /* 0-1 */
+        Dry  = *(int16_t *)(save_buffer +  2); /* 2-3 */
+        LTrg = *(int32_t *)(save_buffer +  4); /* 4-5 */
+        RTrg = *(int32_t *)(save_buffer +  6); /* 6-7 */
+        LRamp = *(int32_t *)(save_buffer +  8); /* 8-9 (save_buffer is a 16bit pointer) */
+        RRamp = *(int32_t *)(save_buffer + 10); /* 10-11 */
+        LAdderEnd = *(int32_t *)(save_buffer + 12); /* 12-13 */
+        RAdderEnd = *(int32_t *)(save_buffer + 14); /* 14-15 */
+        LAdderStart = *(int32_t *)(save_buffer + 16); /* 12-13 */
+        RAdderStart = *(int32_t *)(save_buffer + 18); /* 14-15 */
     }
 
     if (!(flags & A_AUX)) {
@@ -309,17 +309,17 @@ static void ENVMIXER(uint32_t inst1, uint32_t inst2)
         }
     }
 
-    *(int16_t *)(hleMixerWorkArea +  0) = Wet; /* 0-1 */
-    *(int16_t *)(hleMixerWorkArea +  2) = Dry; /* 2-3 */
-    *(int32_t *)(hleMixerWorkArea +  4) = LTrg; /* 4-5 */
-    *(int32_t *)(hleMixerWorkArea +  6) = RTrg; /* 6-7 */
-    *(int32_t *)(hleMixerWorkArea +  8) = LRamp; /* 8-9 (hleMixerWorkArea is a 16bit pointer) */
-    *(int32_t *)(hleMixerWorkArea + 10) = RRamp; /* 10-11 */
-    *(int32_t *)(hleMixerWorkArea + 12) = LAdderEnd; /* 12-13 */
-    *(int32_t *)(hleMixerWorkArea + 14) = RAdderEnd; /* 14-15 */
-    *(int32_t *)(hleMixerWorkArea + 16) = LAdderStart; /* 12-13 */
-    *(int32_t *)(hleMixerWorkArea + 18) = RAdderStart; /* 14-15 */
-    memcpy(rsp.RDRAM + addy, (uint8_t *)hleMixerWorkArea, 80);
+    *(int16_t *)(save_buffer +  0) = Wet; /* 0-1 */
+    *(int16_t *)(save_buffer +  2) = Dry; /* 2-3 */
+    *(int32_t *)(save_buffer +  4) = LTrg; /* 4-5 */
+    *(int32_t *)(save_buffer +  6) = RTrg; /* 6-7 */
+    *(int32_t *)(save_buffer +  8) = LRamp; /* 8-9 (save_buffer is a 16bit pointer) */
+    *(int32_t *)(save_buffer + 10) = RRamp; /* 10-11 */
+    *(int32_t *)(save_buffer + 12) = LAdderEnd; /* 12-13 */
+    *(int32_t *)(save_buffer + 14) = RAdderEnd; /* 14-15 */
+    *(int32_t *)(save_buffer + 16) = LAdderStart; /* 12-13 */
+    *(int32_t *)(save_buffer + 18) = RAdderStart; /* 14-15 */
+    memcpy(rsp.RDRAM + addy, (uint8_t *)save_buffer, 80);
 }
 
 static void RESAMPLE(uint32_t inst1, uint32_t inst2)

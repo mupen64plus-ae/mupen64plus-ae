@@ -136,7 +136,6 @@ extern int32_t VolRamp_Right;
 
 extern uint16_t adpcmtable[0x88];
 extern const uint16_t ResampleLUT [0x200];
-extern short hleMixerWorkArea[256];
 
 void MP3(uint32_t inst1, uint32_t inst2);
 
