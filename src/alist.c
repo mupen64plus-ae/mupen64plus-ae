@@ -32,8 +32,8 @@
 /* FIXME: use DMEM instead */
 uint8_t BufferSpace[0x10000];
 
-/* local functions */
-static void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
+/* global functions */
+void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
 {
     uint32_t inst1, inst2;
     unsigned int acmd;
@@ -52,103 +52,5 @@ static void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
         else
             DebugMessage(M64MSG_WARNING, "Invalid ABI command %u", acmd);
     }
-}
-
-/* global functions */
-void alist_process_audio(void)
-{
-    alist_process(ABI1, 0x10);
-}
-
-void alist_process_audio_ge(void)
-{
-    alist_process(ABI1, 0x10);
-}
-
-void alist_process_audio_bc(void)
-{
-    alist_process(ABI1, 0x10);
-}
-
-
-void alist_process_mk(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_sfj(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_wrjb(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_sf(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_fz(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_ys(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_1080(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_oot(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_mm(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_mmb(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-void alist_process_ac(void)
-{
-    alist_process(ABI2, 0x20);
-}
-
-
-void alist_process_naudio(void)
-{
-    alist_process(ABI3, 0x10);
-}
-
-void alist_process_naudio_bk(void)
-{
-    alist_process(ABI3, 0x10);
-}
-
-void alist_process_naudio_dk(void)
-{
-    alist_process(ABI3, 0x10);
-}
-
-void alist_process_naudio_mp3(void)
-{
-    alist_process(ABI3, 0x10);
-}
-
-void alist_process_naudio_cbfd(void)
-{
-    alist_process(ABI3, 0x10);
 }
 

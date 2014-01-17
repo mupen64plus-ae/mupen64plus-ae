@@ -661,7 +661,33 @@ static void DISABLE(uint32_t inst1, uint32_t inst2)
 }
 
 
-const acmd_callback_t ABI3[0x10] = {
+static const acmd_callback_t ABI3[0x10] = {
     DISABLE , ADPCM3 , CLEARBUFF3,  ENVMIXER3  , LOADBUFF3, RESAMPLE3  , SAVEBUFF3, MP3,
     MP3ADDY, SETVOL3, DMEMMOVE3 , LOADADPCM3 , MIXER3   , INTERLEAVE3, WHATISTHIS   , SETLOOP3
 };
+
+
+void alist_process_naudio(void)
+{
+    alist_process(ABI3, 0x10);
+}
+
+void alist_process_naudio_bk(void)
+{
+    alist_process(ABI3, 0x10);
+}
+
+void alist_process_naudio_dk(void)
+{
+    alist_process(ABI3, 0x10);
+}
+
+void alist_process_naudio_mp3(void)
+{
+    alist_process(ABI3, 0x10);
+}
+
+void alist_process_naudio_cbfd(void)
+{
+    alist_process(ABI3, 0x10);
+}

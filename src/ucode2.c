@@ -883,7 +883,7 @@ static void UNKNOWN(uint32_t inst1, uint32_t inst2)
 {
 }
 
-const acmd_callback_t ABI2[0x20] = {
+static const acmd_callback_t ABI2[0x20] = {
     SPNOOP , ADPCM2, CLEARBUFF2, UNKNOWN, ADDMIXER, RESAMPLE2, UNKNOWN, SEGMENT2,
     SETBUFF2 , DUPLICATE2, DMEMMOVE2, LOADADPCM2, MIXER2, INTERLEAVE2, HILOGAIN, SETLOOP2,
     SPNOOP, INTERL2 , ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,
@@ -895,3 +895,58 @@ const acmd_callback_t ABI2[0x20] = {
  * UNKNOWWN #27   - Is this worth doing?  Looks like a pain in the ass just for WaveRace64
  */
 
+
+void alist_process_mk(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_sfj(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_wrjb(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_sf(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_fz(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_ys(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_1080(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_oot(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_mm(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_mmb(void)
+{
+    alist_process(ABI2, 0x20);
+}
+
+void alist_process_ac(void)
+{
+    alist_process(ABI2, 0x20);
+}

@@ -815,7 +815,22 @@ static void MIXER(uint32_t inst1, uint32_t inst2)
  */
 
 /* NOTE TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER */
-const acmd_callback_t ABI1[0x10] = {
+static const acmd_callback_t ABI1[0x10] = {
     SPNOOP , ADPCM , CLEARBUFF, ENVMIXER  , LOADBUFF, RESAMPLE  , SAVEBUFF, UNKNOWN,
     SETBUFF, SETVOL, DMEMMOVE , LOADADPCM , MIXER   , INTERLEAVE, UNKNOWN , SETLOOP
 };
+
+void alist_process_audio(void)
+{
+    alist_process(ABI1, 0x10);
+}
+
+void alist_process_audio_ge(void)
+{
+    alist_process(ABI1, 0x10);
+}
+
+void alist_process_audio_bc(void)
+{
+    alist_process(ABI1, 0x10);
+}

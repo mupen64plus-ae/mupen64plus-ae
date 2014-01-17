@@ -26,6 +26,8 @@
 
 typedef void (*acmd_callback_t)(uint32_t inst1, uint32_t inst2);
 
+void alist_process(const acmd_callback_t abi[], unsigned int abi_size);
+
 /*
  * Audio flags
  */
@@ -43,16 +45,6 @@ typedef void (*acmd_callback_t)(uint32_t inst1, uint32_t inst2);
 #define A_MAIN          0x00
 #define A_MIX           0x10
 
-/* FIXME: this decomposition into 3 ABI is not accurate,
- * there are a least 9 or 10 different ABI, each with one or a few revisions
- * for a total of almost 16 differents audio ucode.
- *
- * ABI2 in fact is a mix of at least 7 differents ABI which are mostly compatible
- * but not totally, that's why there is a isZeldaABI/isMKABI workaround.
- */
-extern const acmd_callback_t ABI1[0x10];
-extern const acmd_callback_t ABI2[0x20];
-extern const acmd_callback_t ABI3[0x10];
-
 extern uint8_t BufferSpace[0x10000];
+
 #endif
