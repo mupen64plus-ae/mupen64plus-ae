@@ -219,7 +219,6 @@ static void CLEARBUFF3(uint32_t w1, uint32_t w2)
     alist_clear(dmem, count);
 }
 
-/* TODO Needs accuracy verification... */
 static void MIXER3(uint32_t w1, uint32_t w2)
 {
     int16_t  gain  = w1;
@@ -255,7 +254,6 @@ static void LOADADPCM3(uint32_t w1, uint32_t w2)
     dram_load_u16((uint16_t*)l_alist.table, address, count >> 1);
 }
 
-/* TODO Needs accuracy verification... */
 static void DMEMMOVE3(uint32_t w1, uint32_t w2)
 {
     uint16_t dmemi = w1 + 0x4f0;
@@ -307,7 +305,6 @@ static void RESAMPLE3(uint32_t w1, uint32_t w2)
             address);
 }
 
-/* TODO Needs accuracy verification... */
 static void INTERLEAVE3(uint32_t w1, uint32_t w2)
 {
     alist_interleave(0x4f0, 0x9d0, 0xb40, 0x170);
@@ -323,28 +320,6 @@ static void MP3ADDY(uint32_t w1, uint32_t w2)
     setaddr = (w2 & 0xffffff);
 }
 
-/*
-FFT = Fast Fourier Transform
-DCT = Discrete Cosine Transform
-MPEG-1 Layer 3 retains Layer 2's 1152-sample window, as well as the FFT polyphase filter for
-backward compatibility, but adds a modified DCT filter. DCT's advantages over DFTs (discrete
-Fourier transforms) include half as many multiply-accumulate operations and half the
-generated coefficients because the sinusoidal portion of the calculation is absent, and DCT
-generally involves simpler math. The finite lengths of a conventional DCTs' bandpass impulse
-responses, however, may result in block-boundary effects. MDCTs overlap the analysis blocks
-and lowpass-filter the decoded audio to remove aliases, eliminating these effects. MDCTs also
-have a higher transform coding gain than the standard DCT, and their basic functions
-correspond to better bandpass response.
-
-MPEG-1 Layer 3's DCT sub-bands are unequally sized, and correspond to the human auditory
-system's critical bands. In Layer 3 decoders must support both constant- and variable-bit-rate
-bit streams. (However, many Layer 1 and 2 decoders also handle variable bit rates). Finally,
-Layer 3 encoders Huffman-code the quantized coefficients before archiving or transmission for
-additional lossless compression. Bit streams range from 32 to 320 kbps, and 128-kbps rates
-achieve near-CD quality, an important specification to enable dual-channel ISDN
-(integrated-services-digital-network) to be the future high-bandwidth pipe to the home.
-
-*/
 static void DISABLE(uint32_t w1, uint32_t w2)
 {
 }

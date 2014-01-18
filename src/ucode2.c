@@ -66,7 +66,7 @@ static void LOADADPCM2(uint32_t w1, uint32_t w2)
 
 static void SETLOOP2(uint32_t w1, uint32_t w2)
 {
-    l_alist.loop = w2 & 0xffffff; /* No segment? */
+    l_alist.loop = w2 & 0xffffff;
 }
 
 static void SETBUFF2(uint32_t w1, uint32_t w2)
@@ -104,7 +104,6 @@ static void CLEARBUFF2(uint32_t w1, uint32_t w2)
     alist_clear(dmem, count);
 }
 
-/* TODO Needs accuracy verification... */
 static void LOADBUFF2(uint32_t w1, uint32_t w2)
 {
     uint16_t count   = (w1 >> 12) & 0xfff;
@@ -114,7 +113,6 @@ static void LOADBUFF2(uint32_t w1, uint32_t w2)
     alist_load(dmem & ~3, address & ~3, (count + 3) & ~3);
 }
 
-/* TODO Needs accuracy verification... */
 static void SAVEBUFF2(uint32_t w1, uint32_t w2)
 {
     uint16_t count   = (w1 >> 12) & 0xfff;
@@ -124,7 +122,6 @@ static void SAVEBUFF2(uint32_t w1, uint32_t w2)
     alist_save(dmem & ~3, address & ~3, (count + 3) & ~3);
 }
 
-/* TODO Needs accuracy verification... */
 static void MIXER2(uint32_t w1, uint32_t w2)
 {
     uint16_t count = (w1 >> 12) & 0xff0;
@@ -151,7 +148,6 @@ static void RESAMPLE2(uint32_t w1, uint32_t w2)
             address);
 }
 
-/* TODO Needs accuracy verification... */
 static void DMEMMOVE2(uint32_t w1, uint32_t w2)
 {
     uint16_t dmemi = w1;
@@ -328,8 +324,8 @@ static void INTERL2(uint32_t w1, uint32_t w2)
     unsigned short In     = (w2 >> 16);
 
     unsigned char *src, *dst;
-    src = (unsigned char *)(BufferSpace); /* [In]; */
-    dst = (unsigned char *)(BufferSpace); /* [Out]; */
+    src = (unsigned char *)(BufferSpace);
+    dst = (unsigned char *)(BufferSpace);
     while (Count) {
         *(short *)(dst + (Out ^ S8)) = *(short *)(src + (In ^ S8));
         Out += 2;
@@ -338,7 +334,6 @@ static void INTERL2(uint32_t w1, uint32_t w2)
     }
 }
 
-/* TODO Needs accuracy verification... */
 static void INTERLEAVE2(uint32_t w1, uint32_t w2)
 {
     uint16_t dmemo;
@@ -542,11 +537,6 @@ static const acmd_callback_t ABI2[0x20] = {
     SPNOOP, INTERL2 , ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,
     HILOGAIN , SPNOOP, DUPLICATE2 , UNKNOWN    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP
 };
-/* NOTES:
- *
- * FILTER/SEGMENT - Still needs to be finished up... add FILTER?
- * UNKNOWWN #27   - Is this worth doing?  Looks like a pain in the ass just for WaveRace64
- */
 
 
 void alist_process_mk(void)
