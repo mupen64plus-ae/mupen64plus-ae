@@ -320,19 +320,11 @@ static void DUPLICATE2(uint32_t w1, uint32_t w2)
 
 static void INTERL2(uint32_t w1, uint32_t w2)
 {
-    short Count = w1 & 0xffff;
-    unsigned short  Out   = w2 & 0xffff;
-    unsigned short In     = (w2 >> 16);
+    uint16_t count = w1;
+    uint16_t dmemi = (w2 >> 16);
+    uint16_t dmemo = w2;
 
-    unsigned char *src, *dst;
-    src = (unsigned char *)(BufferSpace);
-    dst = (unsigned char *)(BufferSpace);
-    while (Count) {
-        *(short *)(dst + (Out ^ S8)) = *(short *)(src + (In ^ S8));
-        Out += 2;
-        In  += 4;
-        Count--;
-    }
+    alist_copy_every_other_sample(dmemo, dmemi, count);
 }
 
 static void INTERLEAVE2(uint32_t w1, uint32_t w2)
