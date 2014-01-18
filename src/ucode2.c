@@ -461,16 +461,14 @@ static void RESAMPLE2(uint32_t w1, uint32_t w2)
 /* TODO Needs accuracy verification... */
 static void DMEMMOVE2(uint32_t w1, uint32_t w2)
 {
-    uint32_t cnt;
-    uint32_t v0 = (w1 & 0xFFFF);
-    uint32_t v1 = (w2 >> 0x10);
-    uint32_t count = ((w2 + 3) & 0xfffc);
+    uint16_t dmemi = w1;
+    uint16_t dmemo = (w2 >> 16);
+    uint16_t count = w2;
 
-    if ((w2 & 0xffff) == 0)
+    if (count == 0)
         return;
 
-    for (cnt = 0; cnt < count; cnt++)
-        *(uint8_t *)(BufferSpace + ((cnt + v1)^S8)) = *(uint8_t *)(BufferSpace + ((cnt + v0)^S8));
+    alist_move(dmemo, dmemi, (count + 3) & ~3);
 }
 
 static uint32_t t3, s5, s6;

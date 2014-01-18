@@ -51,6 +51,13 @@ void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
     }
 }
 
+void alist_move(uint16_t dmemo, uint16_t dmemi, uint16_t count)
+{
+    while (count != 0) {
+        BufferSpace[(dmemo++)^S8] = BufferSpace[(dmemi++)^S8];
+        --count;
+    }
+}
 
 void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count)
 {
