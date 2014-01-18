@@ -43,13 +43,14 @@ public class RomDetail
     public final String crc;
     public final String goodName;
     public final String baseName;
+    public final String artName;
     public final String artUrl;
     public final String saveType;
     public final int status;
     public final int players;
     public final boolean rumble;
     
-    private static final String URL_TEMPLATE = "https://dl.dropboxusercontent.com/u/3899306/CoverArt/%s.png";
+    private static final String URL_TEMPLATE = "https://dl.dropboxusercontent.com/u/3899306/CoverArt/%s";
     
     private static ConfigFile sConfigFile = null;
     private static final HashMap<String, ConfigSection> sCrcMap = new HashMap<String, ConfigSection>();
@@ -142,6 +143,7 @@ public class RomDetail
         String _crc = null;
         String _goodName = null;
         String _baseName = null;
+        String _artName = null;
         String _artUrl = null;
         String _saveType = null;
         int _status = 0;
@@ -164,8 +166,8 @@ public class RomDetail
             _baseName = _goodName == null ? null : _goodName.split( " \\(" )[0].trim();
             
             // Generate the cover art URL string
-            _artUrl = _baseName == null ? null : String.format( URL_TEMPLATE,
-                    _baseName.replace( ' ', '_' ).replace( "'", "" ).replace( '-', '_' ) );
+            _artName = _baseName.replaceAll("['\\.]", "").replaceAll( "\\W+", "_" ) + ".png";
+            _artUrl = _baseName == null ? null : String.format( URL_TEMPLATE, _artName );
             
             // Some ROMs have multiple entries. Instead of duplicating common data, the ini file
             // just references another entry.
@@ -188,6 +190,7 @@ public class RomDetail
         md5 = _md5;
         goodName = _md5 == null ? null : _goodName;
         baseName = _baseName;
+        artName = _artName;
         artUrl = _artUrl;
         crc = _crc;
         saveType = _saveType;
