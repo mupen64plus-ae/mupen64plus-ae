@@ -22,6 +22,7 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 extern const int16_t RESAMPLE_LUT[64 * 4];
