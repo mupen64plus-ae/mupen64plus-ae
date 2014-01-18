@@ -86,7 +86,7 @@ static struct {
     uint32_t loop;
 
     /* storage for ADPCM table and polef coefficients */
-    uint16_t table[16 * 8];
+    int16_t table[16 * 8];
 } l_alist;
 
 const uint16_t ResampleLUT [0x200] = {
@@ -397,7 +397,7 @@ static void ADPCM(uint32_t w1, uint32_t w2)
             l_alist.out,
             l_alist.in,
             (l_alist.count + 0x1f) & ~0x1f,
-            (int16_t*)l_alist.table,
+            l_alist.table,
             l_alist.loop,
             address);
 }
@@ -450,27 +450,12 @@ static void DMEMMOVE(uint32_t w1, uint32_t w2)
     alist_move(dmemo, dmemi, (count + 3) & ~3);
 }
 
-/* NOTE Loads an ADPCM table - Works 100% Now 03-13-01 */
 static void LOADADPCM(uint32_t w1, uint32_t w2)
 {
-    uint32_t v0 = (w2 & 0xffffff);
-    uint32_t x;
+    uint16_t count   = (w1 & 0xffff);
+    uint32_t address = (w2 & 0xffffff);
 
-    uint16_t *table = (uint16_t *)(rsp.RDRAM + v0);
-    for (x = 0; x < ((w1 & 0xffff) >> 0x4); x++) {
-        l_alist.table[(0x0 + (x << 3))^S] = table[0];
-        l_alist.table[(0x1 + (x << 3))^S] = table[1];
-
-        l_alist.table[(0x2 + (x << 3))^S] = table[2];
-        l_alist.table[(0x3 + (x << 3))^S] = table[3];
-
-        l_alist.table[(0x4 + (x << 3))^S] = table[4];
-        l_alist.table[(0x5 + (x << 3))^S] = table[5];
-
-        l_alist.table[(0x6 + (x << 3))^S] = table[6];
-        l_alist.table[(0x7 + (x << 3))^S] = table[7];
-        table += 8;
-    }
+    dram_load_u16((uint16_t*)l_alist.table, address, count >> 1);
 }
 
 static void INTERLEAVE(uint32_t w1, uint32_t w2)
