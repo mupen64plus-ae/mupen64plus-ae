@@ -35,6 +35,7 @@ void alist_move(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count);
 void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain);
 void alist_multQ44(uint16_t dmem, uint16_t count, int8_t gain);
+void alist_add(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 
 void alist_adpcm(
         bool init,

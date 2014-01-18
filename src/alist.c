@@ -143,6 +143,23 @@ void alist_multQ44(uint16_t dmem, uint16_t count, int8_t gain)
     }
 }
 
+void alist_add(uint16_t dmemo, uint16_t dmemi, uint16_t count)
+{
+    int16_t       *dst = (int16_t*)(BufferSpace + dmemo);
+    const int16_t *src = (int16_t*)(BufferSpace + dmemi);
+
+    count >>= 1;
+
+    while(count != 0) {
+        *dst = clamp_s16(*dst + *src);
+
+        ++dst;
+        ++src;
+        --count;
+    }
+}
+
+
 
 static void alist_resample_reset(uint16_t pos, uint32_t* pitch_accu)
 {

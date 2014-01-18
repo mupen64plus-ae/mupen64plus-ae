@@ -355,21 +355,11 @@ static void INTERLEAVE2(uint32_t w1, uint32_t w2)
 
 static void ADDMIXER(uint32_t w1, uint32_t w2)
 {
-    short Count   = (w1 >> 12) & 0x00ff0;
-    uint16_t InBuffer  = (w2 >> 16);
-    uint16_t OutBuffer = w2 & 0xffff;
-    int cntr;
+    uint16_t count = (w1 >> 12) & 0xff0;
+    uint16_t dmemi = (w2 >> 16);
+    uint16_t dmemo = w2;
 
-    int16_t *inp, *outp;
-    int32_t temp;
-    inp  = (int16_t *)(BufferSpace + InBuffer);
-    outp = (int16_t *)(BufferSpace + OutBuffer);
-    for (cntr = 0; cntr < Count; cntr += 2) {
-        temp = *outp + *inp;
-        temp = clamp_s16(temp);
-        *(outp++) = temp;
-        inp++;
-    }
+    alist_add(dmemo, dmemi, count);
 }
 
 static void HILOGAIN(uint32_t w1, uint32_t w2)
