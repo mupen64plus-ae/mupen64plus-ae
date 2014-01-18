@@ -70,6 +70,12 @@ static inline int16_t clamp_s16(int_fast32_t x)
     return x;
 }
 
+static inline unsigned int align(unsigned int x, unsigned amount)
+{
+    --amount;
+    return (x + amount) & ~amount;
+}
+
 void DebugMessage(int level, const char *message, ...);
 
 

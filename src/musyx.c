@@ -153,12 +153,6 @@ static void mix_fir4(int16_t *y, const int16_t *x, int16_t hgain, const int16_t 
 static void interleave_stage(musyx_t *musyx, uint32_t output_ptr);
 
 
-static inline unsigned int align(unsigned int x, unsigned amount)
-{
-    --amount;
-    return (x + amount) & ~amount;
-}
-
 static int32_t dot4(const int16_t *x, const int16_t *y)
 {
     size_t i;
