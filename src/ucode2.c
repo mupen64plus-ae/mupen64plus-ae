@@ -374,21 +374,11 @@ static void ADDMIXER(uint32_t w1, uint32_t w2)
 
 static void HILOGAIN(uint32_t w1, uint32_t w2)
 {
-    uint16_t cnt = w1 & 0xffff;
-    uint16_t out = (w2 >> 16) & 0xffff;
-    int16_t hi  = (int16_t)((w1 >> 4) & 0xf000);
-    uint16_t lo  = (w1 >> 20) & 0xf;
-    int16_t *src = (int16_t *)(BufferSpace + out);
-    int32_t tmp, val;
+    int8_t   gain  = (w1 >> 16); /* Q4.4 signed */
+    uint16_t count = w1;
+    uint16_t dmem  = (w2 >> 16);
 
-    while (cnt) {
-        val = (int32_t) * src;
-        tmp = ((val * (int32_t)hi) >> 16) + (uint32_t)(val * lo);
-        tmp = clamp_s16(tmp);
-        *src = tmp;
-        src++;
-        cnt -= 2;
-    }
+    alist_multQ44(dmem, count, gain);
 }
 
 static void FILTER2(uint32_t w1, uint32_t w2)

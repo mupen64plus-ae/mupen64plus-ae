@@ -129,6 +129,19 @@ void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain)
     }
 }
 
+void alist_multQ44(uint16_t dmem, uint16_t count, int8_t gain)
+{
+    int16_t *dst = (int16_t*)(BufferSpace + dmem);
+
+    count >>= 1;
+
+    while(count != 0) {
+        *dst = clamp_s16(*dst * gain >> 4);
+
+        ++dst;
+        --count;
+    }
+}
 
 
 static void alist_resample_reset(uint16_t pos, uint32_t* pitch_accu)
