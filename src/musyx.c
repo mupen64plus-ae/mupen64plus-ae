@@ -28,6 +28,7 @@
 #include "m64p_types.h"
 #include "hle.h"
 #include "musyx.h"
+#include "audio.h"
 
 /* various constants */
 enum { SUBFRAME_SIZE = 192 };
@@ -612,8 +613,8 @@ static void mix_voice_samples(musyx_t *musyx, uint32_t voice_ptr,
                  v4_env_step[0], v4_env_step[1], v4_env_step[2], v4_env_step[3]);
 
     for (i = 0; i < SUBFRAME_SIZE; ++i) {
-        /* update sample and resample_lut pointers and then pitch_accu */
-        const int16_t *lut = (int16_t *)(ResampleLUT + ((pitch_accu & 0xfc00) >> 8));
+        /* update sample and lut pointers and then pitch_accu */
+        const int16_t *lut = (RESAMPLE_LUT + ((pitch_accu & 0xfc00) >> 8));
         int dist;
         int16_t v;
 

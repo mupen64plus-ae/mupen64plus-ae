@@ -27,6 +27,7 @@
 
 #include "hle.h"
 #include "alist_internal.h"
+#include "audio.h"
 
 /* FIXME: use DMEM instead */
 uint8_t BufferSpace[0x10000];
@@ -181,7 +182,7 @@ void alist_resample(
         alist_resample_load(address, ipos, &pitch_accu);
 
     while (count != 0) {
-        const int16_t* lut = (int16_t *)ResampleLUT + ((pitch_accu & 0xfc00) >> 8);
+        const int16_t* lut = RESAMPLE_LUT + ((pitch_accu & 0xfc00) >> 8);
 
         *sample(opos++) = clamp_s16(
                 ((*sample(ipos    ) * lut[0]) >> 15) +
