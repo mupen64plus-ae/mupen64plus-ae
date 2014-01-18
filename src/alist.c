@@ -21,6 +21,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -29,6 +30,13 @@
 
 /* FIXME: use DMEM instead */
 uint8_t BufferSpace[0x10000];
+
+/* local functions */
+static int16_t* sample(unsigned pos)
+{
+    return (int16_t*)BufferSpace + (pos ^ S);
+}
+
 
 /* global functions */
 void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
@@ -118,4 +126,74 @@ void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain)
         ++src;
         --count;
     }
+}
+
+
+
+static void alist_resample_reset(uint16_t pos, uint32_t* pitch_accu)
+{
+    unsigned k;
+
+    for(k = 0; k < 4; ++k)
+        *sample(pos + k) = 0;
+
+    *pitch_accu = 0;
+}
+
+static void alist_resample_load(uint32_t address, uint16_t pos, uint32_t* pitch_accu)
+{
+    *sample(pos + 0) = *dram_u16(address + 0);
+    *sample(pos + 1) = *dram_u16(address + 2);
+    *sample(pos + 2) = *dram_u16(address + 4);
+    *sample(pos + 3) = *dram_u16(address + 6);
+
+    *pitch_accu = *dram_u16(address + 8);
+}
+
+static void alist_resample_save(uint32_t address, uint16_t pos, uint32_t pitch_accu)
+{
+    *dram_u16(address + 0) = *sample(pos + 0);
+    *dram_u16(address + 2) = *sample(pos + 1);
+    *dram_u16(address + 4) = *sample(pos + 2);
+    *dram_u16(address + 6) = *sample(pos + 3);
+
+    *dram_u16(address + 8) = pitch_accu;
+}
+
+void alist_resample(
+        bool init,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint32_t pitch,     /* Q16.16 */
+        uint32_t address)
+{
+    uint32_t pitch_accu;
+
+    uint16_t ipos = dmemi >> 1;
+    uint16_t opos = dmemo >> 1;
+    count >>= 1;
+    ipos -= 4;
+
+    if (init)
+        alist_resample_reset(ipos, &pitch_accu);
+    else
+        alist_resample_load(address, ipos, &pitch_accu);
+
+    while (count != 0) {
+        const int16_t* lut = (int16_t *)ResampleLUT + ((pitch_accu & 0xfc00) >> 8);
+
+        *sample(opos++) = clamp_s16(
+                ((*sample(ipos    ) * lut[0]) >> 15) +
+                ((*sample(ipos + 1) * lut[1]) >> 15) +
+                ((*sample(ipos + 2) * lut[2]) >> 15) +
+                ((*sample(ipos + 3) * lut[3]) >> 15));
+
+        pitch_accu += pitch;
+        ipos += (pitch_accu >> 16);
+        pitch_accu &= 0xffff;
+        --count;
+    }
+
+    alist_resample_save(address, ipos, pitch_accu);
 }

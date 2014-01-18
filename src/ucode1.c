@@ -333,59 +333,17 @@ static void ENVMIXER(uint32_t w1, uint32_t w2)
 
 static void RESAMPLE(uint32_t w1, uint32_t w2)
 {
-    unsigned char Flags = (uint8_t)((w1 >> 16) & 0xff);
-    unsigned int Pitch = ((w1 & 0xffff)) << 1;
-    uint32_t addy = (w2 & 0xffffff);
-    unsigned int Accum = 0;
-    unsigned int location;
-    int16_t *lut;
-    short *dst = (short *)(BufferSpace);
-    int16_t *src = (int16_t *)(BufferSpace);
-    uint32_t srcPtr = (l_alist.in / 2);
-    uint32_t dstPtr = (l_alist.out / 2);
-    int32_t temp;
-    int32_t accum;
-    int x, i;
-    srcPtr -= 4;
+    uint8_t  flags   = (w1 >> 16);
+    uint16_t pitch   = w1;
+    uint32_t address = (w2 & 0xffffff);
 
-    if ((Flags & 0x1) == 0) {
-        for (x = 0; x < 4; x++)
-            src[(srcPtr + x)^S] = ((uint16_t *)rsp.RDRAM)[((addy / 2) + x)^S];
-        Accum = *(uint16_t *)(rsp.RDRAM + addy + 10);
-    } else {
-        for (x = 0; x < 4; x++)
-            src[(srcPtr + x)^S] = 0;
-    }
-
-    for (i = 0; i < ((l_alist.count + 0xf) & 0xFFF0) / 2; i++)    {
-        /* location is the fractional position between two samples */
-        location = (Accum >> 0xa) * 4;
-        lut = (int16_t *)ResampleLUT + location;
-
-        /* imul */
-        temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 0)^S)) * ((int32_t)((int16_t)lut[0])));
-        accum = (int32_t)(temp >> 15);
-
-        temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 1)^S)) * ((int32_t)((int16_t)lut[1])));
-        accum += (int32_t)(temp >> 15);
-
-        temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 2)^S)) * ((int32_t)((int16_t)lut[2])));
-        accum += (int32_t)(temp >> 15);
-
-        temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 3)^S)) * ((int32_t)((int16_t)lut[3])));
-        accum += (int32_t)(temp >> 15);
-
-        accum = clamp_s16(accum);
-
-        dst[dstPtr ^ S] = (accum);
-        dstPtr++;
-        Accum += Pitch;
-        srcPtr += (Accum >> 16);
-        Accum &= 0xffff;
-    }
-    for (x = 0; x < 4; x++)
-        ((uint16_t *)rsp.RDRAM)[((addy / 2) + x)^S] = src[(srcPtr + x)^S];
-    *(uint16_t *)(rsp.RDRAM + addy + 10) = Accum;
+    alist_resample(
+            flags & 0x1,
+            l_alist.out,
+            l_alist.in,
+            (l_alist.count + 0xf) & ~0xf,
+            pitch << 1,
+            address);
 }
 
 static void SETVOL(uint32_t w1, uint32_t w2)

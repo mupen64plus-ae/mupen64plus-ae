@@ -403,64 +403,17 @@ static void MIXER2(uint32_t w1, uint32_t w2)
 
 static void RESAMPLE2(uint32_t w1, uint32_t w2)
 {
-    unsigned char Flags = (uint8_t)((w1 >> 16) & 0xff);
-    unsigned int Pitch = ((w1 & 0xffff)) << 1;
-    uint32_t addy = (w2 & 0xffffff);
-    unsigned int Accum = 0;
-    unsigned int location;
-    int16_t *lut;
-    short *dst;
-    int16_t *src;
-    uint32_t srcPtr = (l_alist.in / 2);
-    uint32_t dstPtr = (l_alist.out / 2);
-    int32_t temp;
-    int32_t accum;
-    int x, i;
+    uint8_t  flags   = (w1 >> 16);
+    uint16_t pitch   = w1;
+    uint32_t address = (w2 & 0xffffff);
 
-    dst = (short *)(BufferSpace);
-    src = (int16_t *)(BufferSpace);
-
-    if (addy > (1024 * 1024 * 8))
-        addy = (w2 & 0xffffff);
-
-    srcPtr -= 4;
-
-    if ((Flags & 0x1) == 0) {
-        for (x = 0; x < 4; x++)
-            src[(srcPtr + x)^S] = ((uint16_t *)rsp.RDRAM)[((addy / 2) + x)^S];
-        Accum = *(uint16_t *)(rsp.RDRAM + addy + 10);
-    } else {
-        for (x = 0; x < 4; x++)
-            src[(srcPtr + x)^S] = 0;
-    }
-
-    for (i = 0; i < ((l_alist.count + 0xf) & 0xFFF0) / 2; i++)    {
-        location = (((Accum * 0x40) >> 0x10) * 8);
-        lut = (int16_t *)(((uint8_t *)ResampleLUT) + location);
-
-        temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 0)^S)) * ((int32_t)((int16_t)lut[0])));
-        accum = (int32_t)(temp >> 15);
-
-        temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 1)^S)) * ((int32_t)((int16_t)lut[1])));
-        accum += (int32_t)(temp >> 15);
-
-        temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 2)^S)) * ((int32_t)((int16_t)lut[2])));
-        accum += (int32_t)(temp >> 15);
-
-        temp = ((int32_t) * (int16_t *)(src + ((srcPtr + 3)^S)) * ((int32_t)((int16_t)lut[3])));
-        accum += (int32_t)(temp >> 15);
-
-        accum = clamp_s16(accum);
-
-        dst[dstPtr ^ S] = (int16_t)(accum);
-        dstPtr++;
-        Accum += Pitch;
-        srcPtr += (Accum >> 16);
-        Accum &= 0xffff;
-    }
-    for (x = 0; x < 4; x++)
-        ((uint16_t *)rsp.RDRAM)[((addy / 2) + x)^S] = src[(srcPtr + x)^S];
-    *(uint16_t *)(rsp.RDRAM + addy + 10) = (uint16_t)Accum;
+    alist_resample(
+            flags & 0x1,
+            l_alist.out,
+            l_alist.in,
+            (l_alist.count + 0xf) & ~0xf,
+            pitch << 1,
+            address);
 }
 
 /* TODO Needs accuracy verification... */
