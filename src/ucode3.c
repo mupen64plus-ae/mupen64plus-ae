@@ -227,18 +227,20 @@ static void MIXER3(uint32_t w1, uint32_t w2)
 
 static void LOADBUFF3(uint32_t w1, uint32_t w2)
 {
-    uint32_t v0 = (w2 & 0xfffffc);
-    uint32_t cnt = (((w1 >> 0xC) + 3) & 0xFFC);
-    uint32_t src = (w1 & 0xffc) + 0x4f0;
-    memcpy(BufferSpace + src, rsp.RDRAM + v0, cnt);
+    uint16_t count   = (w1 >> 12) & 0xfff;
+    uint16_t dmem    = (w1 & 0xfff) + 0x4f0;
+    uint32_t address = (w2 & 0xffffff);
+
+    alist_load(dmem & ~3, address & ~3, (count + 3) & ~3);
 }
 
 static void SAVEBUFF3(uint32_t w1, uint32_t w2)
 {
-    uint32_t v0 = (w2 & 0xfffffc);
-    uint32_t cnt = (((w1 >> 0xC) + 3) & 0xFFC);
-    uint32_t src = (w1 & 0xffc) + 0x4f0;
-    memcpy(rsp.RDRAM + v0, BufferSpace + src, cnt);
+    uint16_t count   = (w1 >> 12) & 0xfff;
+    uint16_t dmem    = (w1 & 0xfff) + 0x4f0;
+    uint32_t address = (w2 & 0xffffff);
+
+    alist_save(dmem & ~3, address & ~3, (count + 3) & ~3);
 }
 
 /* Loads an ADPCM table
