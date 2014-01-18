@@ -50,7 +50,7 @@ public class RomDetail
     public final int players;
     public final boolean rumble;
     
-    private static final String URL_TEMPLATE = "https://dl.dropboxusercontent.com/u/3899306/CoverArt/%s";
+    private static final String URL_TEMPLATE = "http://paulscode.com/downloads/Mupen64Plus-AE/CoverArt/%s";
     
     private static ConfigFile sConfigFile = null;
     private static final HashMap<String, ConfigSection> sCrcMap = new HashMap<String, ConfigSection>();
