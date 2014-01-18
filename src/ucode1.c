@@ -135,10 +135,10 @@ static void SPNOOP(uint32_t w1, uint32_t w2)
 
 static void CLEARBUFF(uint32_t w1, uint32_t w2)
 {
-    uint32_t addr = (uint32_t)(w1 & 0xffff);
-    uint32_t count = (uint32_t)(w2 & 0xffff);
-    addr &= 0xFFFC;
-    memset(BufferSpace + addr, 0, (count + 3) & 0xFFFC);
+    uint16_t dmem  = w1;
+    uint16_t count = w2;
+
+    alist_clear(dmem & ~3, (count + 3) & ~3);
 }
 
 static void ENVMIXER(uint32_t w1, uint32_t w2)

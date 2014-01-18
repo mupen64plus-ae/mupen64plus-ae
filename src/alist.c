@@ -52,6 +52,11 @@ void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
     }
 }
 
+void alist_clear(uint16_t dmem, uint16_t count)
+{
+    memset(BufferSpace + dmem, 0, count);
+}
+
 void alist_load(uint16_t dmem, uint32_t address, uint16_t count)
 {
     memcpy(BufferSpace + dmem, rsp.RDRAM + address, count);

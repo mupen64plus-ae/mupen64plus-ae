@@ -210,9 +210,10 @@ static void ENVMIXER3(uint32_t w1, uint32_t w2)
 
 static void CLEARBUFF3(uint32_t w1, uint32_t w2)
 {
-    uint16_t addr = (uint16_t)(w1 & 0xffff);
-    uint16_t count = (uint16_t)(w2 & 0xffff);
-    memset(BufferSpace + addr + 0x4f0, 0, count);
+    uint16_t dmem  = w1 + 0x4f0;
+    uint16_t count = w2;
+
+    alist_clear(dmem, count);
 }
 
 /* TODO Needs accuracy verification... */

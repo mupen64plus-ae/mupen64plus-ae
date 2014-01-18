@@ -360,10 +360,13 @@ static void ADPCM2(uint32_t w1, uint32_t w2)
 
 static void CLEARBUFF2(uint32_t w1, uint32_t w2)
 {
-    uint16_t addr = (uint16_t)(w1 & 0xffff);
-    uint16_t count = (uint16_t)(w2 & 0xffff);
-    if (count > 0)
-        memset(BufferSpace + addr, 0, count);
+    uint16_t dmem  = w1;
+    uint16_t count = w2;
+
+    if (count == 0)
+        return;
+
+    alist_clear(dmem, count);
 }
 
 /* TODO Needs accuracy verification... */
