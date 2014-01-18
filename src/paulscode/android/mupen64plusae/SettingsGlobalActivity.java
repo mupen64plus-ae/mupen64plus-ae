@@ -49,7 +49,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
     
-    private static final String SCREEN_INPUT = "screenInput";
+    private static final String SCREEN_ROOT = "screenRoot";
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
     private static final String SCREEN_DISPLAY = "screenDisplay";
     
@@ -98,7 +98,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
             PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_ACTION_BAR_TRANSPARENCY );
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
-            PrefUtil.removePreference( this, SCREEN_INPUT, SCREEN_TOUCHPAD );
+            PrefUtil.removePreference( this, SCREEN_ROOT, SCREEN_TOUCHPAD );
     }
     
     @Override

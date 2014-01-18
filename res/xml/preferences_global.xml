@@ -45,9 +45,10 @@
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
-    android:key="screenSettingsGlobalActivity" >
+    android:key="screenRoot" >
 
-    <PreferenceCategory
+    <PreferenceScreen
+        android:icon="@drawable/ic_display"
         android:key="screenDisplay"
         android:title="@string/screenDisplay_title" >
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
@@ -114,56 +115,9 @@
             android:key="videoPolygonOffset"
             android:summary="@string/videoPolygonOffset_summary"
             android:title="@string/videoPolygonOffset_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:key="screenInput"
-        android:title="@string/screenInput_title" >
-        <PreferenceScreen
-            android:icon="@drawable/ic_xperia"
-            android:key="screenTouchpad"
-            android:summary="@string/screenTouchpad_summary"
-            android:title="@string/screenTouchpad_title" >
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="touchpadEnabled"
-                android:title="@string/touchpadEnabled_title" />
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:dependency="touchpadEnabled"
-                android:key="touchpadFeedback"
-                android:summary="@string/touchpadFeedback_summary"
-                android:title="@string/touchpadFeedback_title" />
-
-            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                android:defaultValue="@string/touchpadLayout_default"
-                android:dependency="touchpadEnabled"
-                android:entries="@array/touchpadLayout_entries"
-                android:entryValues="@array/touchpadLayout_values"
-                android:key="touchpadLayout"
-                android:summary="@string/selectedValue"
-                android:title="@string/touchpadLayout_title" />
-        </PreferenceScreen>
-
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/navigationMode_default"
-            android:entries="@array/navigationMode_entries"
-            android:entryValues="@array/navigationMode_values"
-            android:key="navigationMode"
-            android:summary="@string/navigationMode_summary"
-            android:title="@string/navigationMode_title" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="inputVolumeMappable"
-            android:summary="@string/inputVolumeMappable_summary"
-            android:title="@string/inputVolumeMappable_title" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="inputShareController"
-            android:summary="@string/inputShareController_summary"
-            android:title="@string/inputShareController_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:icon="@drawable/ic_speaker"
         android:key="categoryAudio"
         android:title="@string/categoryAudio_title" >
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
@@ -186,8 +140,57 @@
             android:key="audioSwapChannels"
             android:summary="@string/audioSwapChannels_summary"
             android:title="@string/audioSwapChannels_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:icon="@drawable/ic_xperia"
+        android:key="screenTouchpad"
+        android:summary="@string/screenTouchpad_summary"
+        android:title="@string/screenTouchpad_title" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="touchpadEnabled"
+            android:title="@string/touchpadEnabled_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="touchpadEnabled"
+            android:key="touchpadFeedback"
+            android:summary="@string/touchpadFeedback_summary"
+            android:title="@string/touchpadFeedback_title" />
+
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/touchpadLayout_default"
+            android:dependency="touchpadEnabled"
+            android:entries="@array/touchpadLayout_entries"
+            android:entryValues="@array/touchpadLayout_values"
+            android:key="touchpadLayout"
+            android:summary="@string/selectedValue"
+            android:title="@string/touchpadLayout_title" />
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:icon="@drawable/ic_controller"
+        android:key="screenInput"
+        android:title="@string/screenInput_title" >
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/navigationMode_default"
+            android:entries="@array/navigationMode_entries"
+            android:entryValues="@array/navigationMode_values"
+            android:key="navigationMode"
+            android:summary="@string/navigationMode_summary"
+            android:title="@string/navigationMode_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="inputVolumeMappable"
+            android:summary="@string/inputVolumeMappable_summary"
+            android:title="@string/inputVolumeMappable_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="inputShareController"
+            android:summary="@string/inputShareController_summary"
+            android:title="@string/inputShareController_title" />
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:icon="@drawable/ic_storage"
         android:key="categoryData"
         android:title="@string/categoryData_title" >
         <paulscode.android.mupen64plusae.persistent.PathPreference
@@ -200,8 +203,9 @@
             android:key="actionReloadAssets"
             android:summary="@string/actionReloadAssets_summary"
             android:title="@string/actionReloadAssets_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:icon="@drawable/ic_debug"
         android:key="categoryCrashReports"
         android:title="@string/categoryCrashReports_title" >
         <CheckBoxPreference
@@ -221,7 +225,7 @@
             android:key="actionCrashTest"
             android:summary="@string/actionCrashTest_summary"
             android:title="@string/actionCrashTest_title" />
-    </PreferenceCategory>
+    </PreferenceScreen>
 
     <Preference
         android:icon="@drawable/ic_undo"
