@@ -197,3 +197,127 @@ void alist_resample(
 
     alist_resample_save(address, ipos, pitch_accu);
 }
+
+
+typedef unsigned int (*adpcm_predict_frame_t)(int16_t* dst, uint16_t dmemi, unsigned char scale);
+
+static int16_t adpcm_predict_sample(uint8_t byte, uint8_t mask,
+        unsigned lshift, unsigned rshift)
+{
+    int16_t sample = (uint16_t)(byte & mask) << lshift;
+    sample >>= rshift; /* signed */
+    return sample;
+}
+
+
+static unsigned int adpcm_predict_frame_4bits(int16_t* dst, uint16_t dmemi, unsigned char scale)
+{
+    unsigned int i;
+    unsigned int rshift = (scale < 12) ? 12 - scale : 0;
+
+    for(i = 0; i < 8; ++i) {
+        uint8_t byte = BufferSpace[(dmemi++)^S8];
+
+        *(dst++) = adpcm_predict_sample(byte, 0xf0,  8, rshift);
+        *(dst++) = adpcm_predict_sample(byte, 0x0f, 12, rshift);
+    }
+
+    return 8;
+}
+
+static unsigned int adpcm_predict_frame_2bits(int16_t* dst, uint16_t dmemi, unsigned char scale)
+{
+    unsigned int i;
+    unsigned int rshift = (scale < 14) ? 14 - scale : 0;
+
+    for(i = 0; i < 4; ++i) {
+        uint8_t byte = BufferSpace[(dmemi++)^S8];
+
+        *(dst++) = adpcm_predict_sample(byte, 0xc0,  8, rshift);
+        *(dst++) = adpcm_predict_sample(byte, 0x30, 10, rshift);
+        *(dst++) = adpcm_predict_sample(byte, 0x0c, 12, rshift);
+        *(dst++) = adpcm_predict_sample(byte, 0x03, 14, rshift);
+    }
+
+    return 4;
+}
+
+static int32_t rdot(size_t n, const int16_t *x, const int16_t *y)
+{
+    int32_t accu = 0;
+
+    y += n;
+
+    while (n != 0) {
+        accu += *(x++) * *(--y);
+        --n;
+    }
+
+    return accu;
+}
+
+static void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
+        const int16_t* cb_entry, const int16_t* last_samples)
+{
+    const int16_t* const book1 = cb_entry;
+    const int16_t* const book2 = cb_entry + 8;
+
+    const int16_t l1 = last_samples[0];
+    const int16_t l2 = last_samples[1];
+
+    size_t i;
+
+    for(i = 0; i < 8; ++i) {
+        int32_t accu = (int32_t)src[i] << 11;
+        accu += book1[i]*l1 + book2[i]*l2 + rdot(i, book2, src);
+        dst[i] = clamp_s16(accu >> 11);
+   }
+}
+
+void alist_adpcm(
+        bool init,
+        bool loop,
+        bool two_bit_per_sample,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        const int16_t* codebook,
+        uint32_t loop_address,
+        uint32_t last_frame_address)
+{
+    assert((count & 0x1f) == 0);
+
+    int16_t last_frame[16];
+    size_t i;
+
+    if (init)
+        memset(last_frame, 0, 16*sizeof(last_frame[0]));
+    else
+        dram_load_u16((uint16_t*)last_frame, (loop) ? loop_address : last_frame_address, 16);
+
+    for(i = 0; i < 16; ++i, dmemo += 2)
+        *(int16_t*)(BufferSpace + (dmemo ^ S16)) = last_frame[i];
+
+    adpcm_predict_frame_t predict_frame = (two_bit_per_sample)
+        ? adpcm_predict_frame_2bits
+        : adpcm_predict_frame_4bits;
+
+    while (count != 0) {
+        int16_t frame[16];
+        uint8_t code = BufferSpace[(dmemi++)^S8];
+        unsigned char scale = (code & 0xf0) >> 4;
+        const int16_t* const cb_entry = codebook + ((code & 0xf) << 4);
+
+        dmemi += predict_frame(frame, dmemi, scale);
+
+        adpcm_compute_residuals(last_frame    , frame    , cb_entry, last_frame + 14);
+        adpcm_compute_residuals(last_frame + 8, frame + 8, cb_entry, last_frame + 6 );
+
+        for(i = 0; i < 16; ++i, dmemo += 2)
+            *(int16_t*)(BufferSpace + (dmemo ^ S16)) = last_frame[i];
+
+        count -= 32;
+    }
+
+    dram_store_u16((uint16_t*)last_frame, last_frame_address, 16);
+}

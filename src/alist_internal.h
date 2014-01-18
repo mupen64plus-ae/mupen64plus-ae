@@ -35,6 +35,17 @@ void alist_move(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count);
 void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain);
 
+void alist_adpcm(
+        bool init,
+        bool loop,
+        bool two_bit_per_sample,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        const int16_t* codebook,
+        uint32_t loop_address,
+        uint32_t last_frame_address);
+
 void alist_resample(bool init,
         uint16_t dmemo, uint16_t dmemi, uint16_t count,
         uint32_t pitch, uint32_t address);
