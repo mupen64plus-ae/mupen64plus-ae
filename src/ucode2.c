@@ -303,19 +303,11 @@ static void ENVMIXER2(uint32_t w1, uint32_t w2)
 
 static void DUPLICATE2(uint32_t w1, uint32_t w2)
 {
-    unsigned short Count = (w1 >> 16) & 0xff;
-    unsigned short In  = w1 & 0xffff;
-    unsigned short Out = (w2 >> 16);
+    uint8_t  count = (w1 >> 16);
+    uint16_t dmemi = w1;
+    uint16_t dmemo = (w2 >> 16);
 
-    unsigned short buff[64];
-
-    memcpy(buff, BufferSpace + In, 128);
-
-    while (Count) {
-        memcpy(BufferSpace + Out, buff, 128);
-        Out += 128;
-        Count--;
-    }
+    alist_repeat64(dmemo, dmemi, count);
 }
 
 static void INTERL2(uint32_t w1, uint32_t w2)
