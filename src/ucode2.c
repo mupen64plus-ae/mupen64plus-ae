@@ -71,9 +71,9 @@ static void SETLOOP2(uint32_t w1, uint32_t w2)
 
 static void SETBUFF2(uint32_t w1, uint32_t w2)
 {
-    l_alist.in   = (uint16_t)(w1);            /* 0x00 */
-    l_alist.out  = (uint16_t)((w2 >> 0x10)); /* 0x02 */
-    l_alist.count      = (uint16_t)(w2);            /* 0x04 */
+    l_alist.in    = w1;
+    l_alist.out   = (w2 >> 16);
+    l_alist.count = w2;
 }
 
 static void ADPCM2(uint32_t w1, uint32_t w2)

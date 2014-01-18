@@ -407,19 +407,18 @@ static void SAVEBUFF(uint32_t w1, uint32_t w2)
     alist_save(l_alist.out & ~3, address & ~3, (l_alist.count + 3) & ~3);
 }
 
-/* NOTE Should work ;-) */
 static void SETBUFF(uint32_t w1, uint32_t w2)
 {
-    if ((w1 >> 0x10) & 0x8) {
-        /* A_AUX - Auxillary Sound Buffer Settings */
-        l_alist.dry_right       = (uint16_t)(w1);
-        l_alist.wet_left       = (uint16_t)((w2 >> 0x10));
-        l_alist.wet_right       = (uint16_t)(w2);
+    uint8_t flags = (w1 >> 16);
+
+    if (flags & A_AUX) {
+        l_alist.dry_right = w1;
+        l_alist.wet_left  = (w2 >> 16);
+        l_alist.wet_right = w2;
     } else {
-        /* A_MAIN - Main Sound Buffer Settings */
-        l_alist.in   = (uint16_t)(w1); /* 0x00 */
-        l_alist.out  = (uint16_t)((w2 >> 0x10)); /* 0x02 */
-        l_alist.count      = (uint16_t)(w2); /* 0x04 */
+        l_alist.in    = w1;
+        l_alist.out   = (w2 >> 16);
+        l_alist.count = w2;
     }
 }
 
