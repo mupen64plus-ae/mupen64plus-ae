@@ -60,11 +60,6 @@ Address/Range       Description
 0x5C0..0xF7F        Buffers...
 0xF80..0xFFF        <Unknown>
 ***************************************************/
-#ifdef USE_EXPANSION
-#define MEMMASK 0x7FFFFF
-#else
-#define MEMMASK 0x3FFFFF
-#endif
 
 /* alist audio state */
 static struct {
