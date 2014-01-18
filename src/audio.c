@@ -19,7 +19,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <assert.h>
+#include <stddef.h>
 #include <stdint.h>
+
+#include "hle.h"
 
 const int16_t RESAMPLE_LUT[64 * 4] = {
     0x0c39, 0x66ad, 0x0d46, 0xffdf, 0x0b39, 0x6696, 0x0e5f, 0xffd8,
@@ -55,4 +59,38 @@ const int16_t RESAMPLE_LUT[64 * 4] = {
     0xffc8, 0x10b4, 0x6626, 0x095a, 0xffd0, 0x0f83, 0x6669, 0x0a44,
     0xffd8, 0x0e5f, 0x6696, 0x0b39, 0xffdf, 0x0d46, 0x66ad, 0x0c39
 };
+
+static int32_t rdot(size_t n, const int16_t *x, const int16_t *y)
+{
+    int32_t accu = 0;
+
+    y += n;
+
+    while (n != 0) {
+        accu += *(x++) * *(--y);
+        --n;
+    }
+
+    return accu;
+}
+
+void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
+        const int16_t* cb_entry, const int16_t* last_samples, size_t count)
+{
+    assert(count <= 8);
+
+    const int16_t* const book1 = cb_entry;
+    const int16_t* const book2 = cb_entry + 8;
+
+    const int16_t l1 = last_samples[0];
+    const int16_t l2 = last_samples[1];
+
+    size_t i;
+
+    for(i = 0; i < 8; ++i) {
+        int32_t accu = (int32_t)src[i] << 11;
+        accu += book1[i]*l1 + book2[i]*l2 + rdot(i, book2, src);
+        dst[i] = clamp_s16(accu >> 11);
+   }
+}
 

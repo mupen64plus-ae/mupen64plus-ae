@@ -202,15 +202,6 @@ void alist_resample(
 
 typedef unsigned int (*adpcm_predict_frame_t)(int16_t* dst, uint16_t dmemi, unsigned char scale);
 
-static int16_t adpcm_predict_sample(uint8_t byte, uint8_t mask,
-        unsigned lshift, unsigned rshift)
-{
-    int16_t sample = (uint16_t)(byte & mask) << lshift;
-    sample >>= rshift; /* signed */
-    return sample;
-}
-
-
 static unsigned int adpcm_predict_frame_4bits(int16_t* dst, uint16_t dmemi, unsigned char scale)
 {
     unsigned int i;
@@ -241,38 +232,6 @@ static unsigned int adpcm_predict_frame_2bits(int16_t* dst, uint16_t dmemi, unsi
     }
 
     return 4;
-}
-
-static int32_t rdot(size_t n, const int16_t *x, const int16_t *y)
-{
-    int32_t accu = 0;
-
-    y += n;
-
-    while (n != 0) {
-        accu += *(x++) * *(--y);
-        --n;
-    }
-
-    return accu;
-}
-
-static void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
-        const int16_t* cb_entry, const int16_t* last_samples)
-{
-    const int16_t* const book1 = cb_entry;
-    const int16_t* const book2 = cb_entry + 8;
-
-    const int16_t l1 = last_samples[0];
-    const int16_t l2 = last_samples[1];
-
-    size_t i;
-
-    for(i = 0; i < 8; ++i) {
-        int32_t accu = (int32_t)src[i] << 11;
-        accu += book1[i]*l1 + book2[i]*l2 + rdot(i, book2, src);
-        dst[i] = clamp_s16(accu >> 11);
-   }
 }
 
 void alist_adpcm(
@@ -311,8 +270,8 @@ void alist_adpcm(
 
         dmemi += predict_frame(frame, dmemi, scale);
 
-        adpcm_compute_residuals(last_frame    , frame    , cb_entry, last_frame + 14);
-        adpcm_compute_residuals(last_frame + 8, frame + 8, cb_entry, last_frame + 6 );
+        adpcm_compute_residuals(last_frame    , frame    , cb_entry, last_frame + 14, 8);
+        adpcm_compute_residuals(last_frame + 8, frame + 8, cb_entry, last_frame + 6 , 8);
 
         for(i = 0; i < 16; ++i, dmemo += 2)
             *(int16_t*)(BufferSpace + (dmemo ^ S16)) = last_frame[i];

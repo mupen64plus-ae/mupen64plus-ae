@@ -137,15 +137,9 @@ static void adpcm_decode_frames(int16_t *dst, const uint8_t *src,
                                 const int16_t *table, uint8_t count,
                                 uint8_t skip_samples);
 
-static int16_t adpcm_get_predicted_sample(uint8_t byte, uint8_t mask,
-                                          unsigned lshift, unsigned rshift);
-static void adpcm_get_predicted_frame(int16_t *dst, const uint8_t *src,
-                                      const uint8_t *nibbles,
-                                      unsigned int rshift);
-static void adpcm_decode_upto_8_samples(int16_t *dst, const int16_t *src,
-                                        const int16_t *cb_entry,
-                                        const int16_t *last_samples,
-                                        size_t size);
+static void adpcm_predict_frame(int16_t *dst, const uint8_t *src,
+                                const uint8_t *nibbles,
+                                unsigned int rshift);
 
 static void mix_voice_samples(musyx_t *musyx, uint32_t voice_ptr,
                               const int16_t *samples, unsigned segbase,
@@ -164,21 +158,6 @@ static inline unsigned int align(unsigned int x, unsigned amount)
     --amount;
     return (x + amount) & ~amount;
 }
-
-static int32_t rdot(size_t n, const int16_t *x, const int16_t *y)
-{
-    int32_t accu = 0;
-
-    y += n;
-
-    while (n != 0) {
-        accu += ((int32_t)*(x++) * (int32_t)*(--y));
-        --n;
-    }
-
-    return accu;
-}
-
 
 static int32_t dot4(const int16_t *x, const int16_t *y)
 {
@@ -494,13 +473,13 @@ static void adpcm_decode_frames(int16_t *dst, const uint8_t *src,
         const int16_t *book = (c2 & 0xf0) + table;
         unsigned int rshift = (c2 & 0x0f);
 
-        adpcm_get_predicted_frame(frame, src, nibbles, rshift);
+        adpcm_predict_frame(frame, src, nibbles, rshift);
 
         memcpy(dst, frame, 2 * sizeof(frame[0]));
-        adpcm_decode_upto_8_samples(dst +  2, frame +  2, book, dst     , 6);
-        adpcm_decode_upto_8_samples(dst +  8, frame +  8, book, dst +  6, 8);
-        adpcm_decode_upto_8_samples(dst + 16, frame + 16, book, dst + 14, 8);
-        adpcm_decode_upto_8_samples(dst + 24, frame + 24, book, dst + 22, 8);
+        adpcm_compute_residuals(dst +  2, frame +  2, book, dst     , 6);
+        adpcm_compute_residuals(dst +  8, frame +  8, book, dst +  6, 8);
+        adpcm_compute_residuals(dst + 16, frame + 16, book, dst + 14, 8);
+        adpcm_compute_residuals(dst + 24, frame + 24, book, dst + 22, 8);
 
         if (jump_gap) {
             nibbles += 8;
@@ -514,17 +493,9 @@ static void adpcm_decode_frames(int16_t *dst, const uint8_t *src,
     }
 }
 
-static int16_t adpcm_get_predicted_sample(uint8_t byte, uint8_t mask,
-                                          unsigned lshift, unsigned rshift)
-{
-    int16_t sample = ((uint16_t)byte & (uint16_t)mask) << lshift;
-    sample >>= rshift; /* signed */
-    return sample;
-}
-
-static void adpcm_get_predicted_frame(int16_t *dst, const uint8_t *src,
-                                      const uint8_t *nibbles,
-                                      unsigned int rshift)
+static void adpcm_predict_frame(int16_t *dst, const uint8_t *src,
+                                const uint8_t *nibbles,
+                                unsigned int rshift)
 {
     unsigned int i;
 
@@ -534,29 +505,8 @@ static void adpcm_get_predicted_frame(int16_t *dst, const uint8_t *src,
     for (i = 1; i < 16; ++i) {
         uint8_t byte = nibbles[i];
 
-        *(dst++) = adpcm_get_predicted_sample(byte, 0xf0,  8, rshift);
-        *(dst++) = adpcm_get_predicted_sample(byte, 0x0f, 12, rshift);
-    }
-}
-
-static void adpcm_decode_upto_8_samples(int16_t *dst, const int16_t *src,
-                                        const int16_t *cb_entry,
-                                        const int16_t *last_samples,
-                                        size_t size)
-{
-    const int16_t *const book1 = cb_entry;
-    const int16_t *const book2 = cb_entry + 8;
-
-    const int16_t l1 = last_samples[0];
-    const int16_t l2 = last_samples[1];
-
-    size_t i;
-    int32_t accu;
-
-    for (i = 0; i < size; ++i) {
-        accu = (int32_t)src[i] << 11;
-        accu += book1[i] * l1 + book2[i] * l2 + rdot(i, book2, src);
-        dst[i] = clamp_s16(accu >> 11);
+        *(dst++) = adpcm_predict_sample(byte, 0xf0,  8, rshift);
+        *(dst++) = adpcm_predict_sample(byte, 0x0f, 12, rshift);
     }
 }
 
