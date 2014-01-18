@@ -343,38 +343,23 @@ static void RESAMPLE(uint32_t w1, uint32_t w2)
 
 static void SETVOL(uint32_t w1, uint32_t w2)
 {
-    /* Might be better to unpack these depending on the flags... */
-    uint8_t flags = (uint8_t)((w1 >> 16) & 0xff);
-    uint16_t vol = (int16_t)(w1 & 0xffff);
-    uint16_t volrate = (uint16_t)((w2 & 0xffff));
+    uint8_t flags = (w1 >> 16);
 
     if (flags & A_AUX) {
-        l_alist.dry = (int16_t)vol;         /* m_MainVol */
-        l_alist.wet = (int16_t)volrate;     /* m_AuxVol */
-        return;
+        l_alist.dry = w1;
+        l_alist.wet = w2;
     }
+    else {
+        unsigned lr = (flags & A_LEFT) ? 0 : 1;
 
-    /* Set the Source(start) Volumes */
-    if (flags & A_VOL) {
-        if (flags & A_LEFT)
-            l_alist.vol[0] = (int16_t)vol;
-        else
-            /* A_RIGHT */
-            l_alist.vol[1] = (int16_t)vol;
-        return;
-    }
-
-    /* 0x370             Loop Value (shared location)
-     * 0x370             Target Volume (Left)
-     */
-
-    /* Set the Ramping values Target, Ramp */
-    if (flags & A_LEFT) {
-        l_alist.target[0]  = (int16_t)w1;
-        l_alist.rate[0] = (int32_t)w2;
-    } else { /* A_RIGHT */
-        l_alist.target[1]  = (int16_t)w1;
-        l_alist.rate[1] = (int32_t)w2;
+        if (flags & A_VOL) {
+            l_alist.vol[lr] = w1;
+            l_alist.vol[lr] = w2;
+        }
+        else {
+            l_alist.target[lr] = w1;
+            l_alist.rate[lr]   = w2;
+        }
     }
 }
 
