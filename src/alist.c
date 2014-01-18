@@ -51,3 +51,33 @@ void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
     }
 }
 
+
+void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count)
+{
+    uint16_t       *dst  = (uint16_t*)(BufferSpace + dmemo);
+    const uint16_t *srcL = (uint16_t*)(BufferSpace + left);
+    const uint16_t *srcR = (uint16_t*)(BufferSpace + right);
+
+    count >>= 2;
+
+    while(count != 0)
+    {
+        uint16_t l1 = *(srcL++);
+        uint16_t l2 = *(srcL++);
+        uint16_t r1 = *(srcR++);
+        uint16_t r2 = *(srcR++);
+
+#if M64P_BIG_ENDIAN
+        *(dst++) = l1;
+        *(dst++) = r1;
+        *(dst++) = l2;
+        *(dst++) = r2;
+#else
+        *(dst++) = r2;
+        *(dst++) = l2;
+        *(dst++) = r1;
+        *(dst++) = l1;
+#endif
+        --count;
+    }
+}

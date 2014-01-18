@@ -596,33 +596,7 @@ static void RESAMPLE3(uint32_t w1, uint32_t w2)
 /* TODO Needs accuracy verification... */
 static void INTERLEAVE3(uint32_t w1, uint32_t w2)
 {
-    uint16_t *outbuff = (uint16_t *)(BufferSpace + 0x4f0);
-    uint16_t *inSrcR;
-    uint16_t *inSrcL;
-    uint16_t Left, Right, Left2, Right2;
-    int x;
-
-    inSrcR = (uint16_t *)(BufferSpace + 0xb40);
-    inSrcL = (uint16_t *)(BufferSpace + 0x9d0);
-
-    for (x = 0; x < (0x170 / 4); x++) {
-        Left = *(inSrcL++);
-        Right = *(inSrcR++);
-        Left2 = *(inSrcL++);
-        Right2 = *(inSrcR++);
-
-#ifdef M64P_BIG_ENDIAN
-        *(outbuff++) = Right;
-        *(outbuff++) = Left;
-        *(outbuff++) = Right2;
-        *(outbuff++) = Left2;
-#else
-        *(outbuff++) = Right2;
-        *(outbuff++) = Left2;
-        *(outbuff++) = Right;
-        *(outbuff++) = Left;
-#endif
-    }
+    alist_interleave(0x4f0, 0x9d0, 0xb40, 0x170);
 }
 
 static void WHATISTHIS(uint32_t w1, uint32_t w2)

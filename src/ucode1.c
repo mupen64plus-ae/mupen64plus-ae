@@ -742,41 +742,15 @@ static void LOADADPCM(uint32_t w1, uint32_t w2)
     }
 }
 
-
-/* NOTE Works... - 3-11-01 */
 static void INTERLEAVE(uint32_t w1, uint32_t w2)
 {
-    uint32_t inL, inR;
-    uint16_t *outbuff = (uint16_t *)(l_alist.out + BufferSpace);
-    uint16_t *inSrcR;
-    uint16_t *inSrcL;
-    uint16_t Left, Right, Left2, Right2;
-    int x;
+    uint16_t left  = (w2 >> 16);
+    uint16_t right = w2;
 
-    inL = w2 & 0xFFFF;
-    inR = (w2 >> 16) & 0xFFFF;
+    if (l_alist.count == 0)
+        return;
 
-    inSrcR = (uint16_t *)(BufferSpace + inR);
-    inSrcL = (uint16_t *)(BufferSpace + inL);
-
-    for (x = 0; x < (l_alist.count / 4); x++) {
-        Left = *(inSrcL++);
-        Right = *(inSrcR++);
-        Left2 = *(inSrcL++);
-        Right2 = *(inSrcR++);
-
-#ifdef M64P_BIG_ENDIAN
-        *(outbuff++) = Right;
-        *(outbuff++) = Left;
-        *(outbuff++) = Right2;
-        *(outbuff++) = Left2;
-#else
-        *(outbuff++) = Right2;
-        *(outbuff++) = Left2;
-        *(outbuff++) = Right;
-        *(outbuff++) = Left;
-#endif
-    }
+    alist_interleave(l_alist.out, left, right, l_alist.count);
 }
 
 /* NOTE Fixed a sign issue... 03-14-01 */
