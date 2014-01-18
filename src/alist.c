@@ -60,8 +60,7 @@ void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t co
 
     count >>= 2;
 
-    while(count != 0)
-    {
+    while(count != 0) {
         uint16_t l1 = *(srcL++);
         uint16_t l2 = *(srcL++);
         uint16_t r1 = *(srcR++);
@@ -78,6 +77,22 @@ void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t co
         *(dst++) = r1;
         *(dst++) = l1;
 #endif
+        --count;
+    }
+}
+
+void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain)
+{
+    int16_t       *dst = (int16_t*)(BufferSpace + dmemo);
+    const int16_t *src = (int16_t*)(BufferSpace + dmemi);
+
+    count >>= 1;
+
+    while(count != 0) {
+        *dst = clamp_s16(*dst + ((*src * gain) >> 15));
+
+        ++dst;
+        ++src;
         --count;
     }
 }
