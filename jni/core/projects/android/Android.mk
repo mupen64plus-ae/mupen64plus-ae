@@ -11,8 +11,6 @@ LOCAL_C_INCLUDES :=         \
     $(LOCAL_PATH)/$(SRCDIR) \
     $(SDL_INCLUDES)         \
     $(AE_BRIDGE_INCLUDES)   \
-    $(SYSROOT)/usr/include/ \
-#   ^ Workaround for some reason 4.6 gcc doesnt include the usr/include directory
 
 LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/api/callbacks.c                   \
