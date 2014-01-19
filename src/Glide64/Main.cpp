@@ -463,6 +463,46 @@ void ReadSettings ()
   settings.ghq_hirs_let_texartists_fly = Config_ReadInt ("ghq_hirs_let_texartists_fly", "Use full alpha channel -- could cause issues for some tex packs", 0, TRUE, TRUE);
   settings.ghq_hirs_dump = Config_ReadInt ("ghq_hirs_dump", "Dump textures", 0, FALSE, TRUE);
 #endif
+
+  settings.special_alt_tex_size = Config_ReadInt("alt_tex_size", "Alternate texture size method: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_use_sts1_only = Config_ReadInt("use_sts1_only", "Use first SETTILESIZE only: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_force_calc_sphere = Config_ReadInt("force_calc_sphere", "Use spheric mapping only: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_correct_viewport = Config_ReadInt("correct_viewport", "Force positive viewport: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_increase_texrect_edge = Config_ReadInt("increase_texrect_edge", "Force texrect size to integral value: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_decrease_fillrect_edge = Config_ReadInt("decrease_fillrect_edge", "Reduce fillrect size by 1: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_texture_correction = Config_ReadInt("texture_correction", "Enable perspective texture correction emulation: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_pal230 = Config_ReadInt("pal230", "Set special scale for PAL games: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_stipple_mode = Config_ReadInt("stipple_mode", "3DFX Dithered alpha emulation mode: -1=Game default, >=0=dithered alpha emulation mode", -1, TRUE, FALSE);
+  settings.special_stipple_pattern = Config_ReadInt("stipple_pattern", "3DFX Dithered alpha pattern: -1=Game default, >=0=pattern used for dithered alpha emulation", -1, TRUE, FALSE);
+  settings.special_force_microcheck = Config_ReadInt("force_microcheck", "Check microcode each frame: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_force_quad3d = Config_ReadInt("force_quad3d", "Force 0xb5 command to be quad, not line 3D: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_clip_zmin = Config_ReadInt("clip_zmin", "Enable near z clipping: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_clip_zmax = Config_ReadInt("clip_zmax", "Enable far plane clipping: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_fast_crc = Config_ReadInt("fast_crc", "Use fast CRC algorithm: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_adjust_aspect = Config_ReadInt("adjust_aspect", "Adjust screen aspect for wide screen mode: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_zmode_compare_less = Config_ReadInt("zmode_compare_less", "Force strict check in Depth buffer test: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_old_style_adither = Config_ReadInt("old_style_adither", "Apply alpha dither regardless of alpha_dither_mode: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_n64_z_scale = Config_ReadInt("n64_z_scale", "Scale vertex z value before writing to depth buffer: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_optimize_texrect = Config_ReadInt("optimize_texrect", "Fast texrect rendering with hwfbe: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_ignore_aux_copy = Config_ReadInt("ignore_aux_copy", "Do not copy auxiliary frame buffers: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_hires_buf_clear = Config_ReadInt("hires_buf_clear", "Clear auxiliary texture frame buffers: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_fb_read_alpha = Config_ReadInt("fb_read_alpha", "Read alpha from framebuffer: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_useless_is_useless = Config_ReadInt("useless_is_useless", "Handle unchanged fb: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_fb_crc_mode = Config_ReadInt("fb_crc_mode", "Set frambuffer CRC mode: -1=Game default, 0=disable CRC, 1=fast CRC, 2=safe CRC", -1, TRUE, FALSE);
+  settings.special_filtering = Config_ReadInt("filtering", "Filtering mode: -1=Game default, 0=automatic, 1=force bilinear, 2=force point sampled", -1, TRUE, FALSE);
+  settings.special_fog = Config_ReadInt("fog", "Fog: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_buff_clear = Config_ReadInt("buff_clear", "Buffer clear on every frame: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_swapmode = Config_ReadInt("swapmode", "Buffer swapping method: -1=Game default, 0=swap buffers when vertical interrupt has occurred, 1=swap buffers when set of conditions is satisfied. Prevents flicker on some games, 2=mix of first two methods", -1, TRUE, FALSE);
+  settings.special_aspect = Config_ReadInt("aspect", "Aspect ratio: -1=Game default, 0=Force 4:3, 1=Force 16:9, 2=Stretch, 3=Original", -1, TRUE, FALSE);
+  settings.special_lodmode = Config_ReadInt("lodmode", "LOD calculation: -1=Game default, 0=disable. 1=fast, 2=precise", -1, TRUE, FALSE);
+  settings.special_fb_smart = Config_ReadInt("fb_smart", "Smart framebuffer: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_fb_hires = Config_ReadInt("fb_hires", "Hardware frame buffer emulation: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_fb_read_always = Config_ReadInt("fb_read_always", "Read framebuffer every frame (may be slow use only for effects that need it e.g. Banjo Kazooie, DK64 transitions): -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_read_back_to_screen = Config_ReadInt("read_back_to_screen", "Render N64 frame buffer as texture: -1=Game default, 0=disable, 1=mode1, 2=mode2", -1, TRUE, FALSE);
+  settings.special_detect_cpu_write = Config_ReadInt("detect_cpu_write", "Show images written directly by CPU: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_fb_get_info = Config_ReadInt("fb_get_info", "Get frame buffer info: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+  settings.special_fb_render = Config_ReadInt("fb_render", "Enable software depth render: -1=Game default, 0=disable. 1=enable", -1, TRUE, FALSE);
+
   //TODO-PORT: remove?
   ConfigWrapper();
 }
@@ -542,37 +582,112 @@ void ReadSpecialSettings (const char * name)
   ini->SetPath(name);
 
   ini->Read(_T("alt_tex_size"), &(settings.alt_tex_size));
+  if (settings.special_alt_tex_size >= 0)
+    settings.alt_tex_size = settings.special_alt_tex_size;
+
   ini->Read(_T("use_sts1_only"), &(settings.use_sts1_only));
+  if (settings.special_use_sts1_only >= 0)
+    settings.use_sts1_only = settings.special_use_sts1_only;
+
   ini->Read(_T("force_calc_sphere"), &(settings.force_calc_sphere));
+  if (settings.special_force_calc_sphere >= 0)
+    settings.force_calc_sphere = settings.special_force_calc_sphere;
+
   ini->Read(_T("correct_viewport"), &(settings.correct_viewport));
+  if (settings.special_correct_viewport >= 0)
+    settings.correct_viewport = settings.special_correct_viewport;
+
   ini->Read(_T("increase_texrect_edge"), &(settings.increase_texrect_edge));
+  if (settings.special_increase_texrect_edge >= 0)
+    settings.increase_texrect_edge = settings.special_increase_texrect_edge;
+
   ini->Read(_T("decrease_fillrect_edge"), &(settings.decrease_fillrect_edge));
+  if (settings.special_decrease_fillrect_edge >= 0)
+    settings.decrease_fillrect_edge = settings.special_decrease_fillrect_edge;
+
   if (ini->Read(_T("texture_correction"), -1) == 0) settings.texture_correction = 0;
   else settings.texture_correction = 1;
+  if (settings.special_texture_correction >= 0)
+    settings.texture_correction = settings.special_texture_correction;
+
   if (ini->Read(_T("pal230"), -1) == 1) settings.pal230 = 1;
   else settings.pal230 = 0;
+  if (settings.special_pal230 >= 0)
+    settings.pal230 = settings.special_pal230;
+
   ini->Read(_T("stipple_mode"), &(settings.stipple_mode));
+  if (settings.special_stipple_mode >= 0)
+    settings.stipple_mode = settings.special_stipple_mode;
+
   int stipple_pattern = ini->Read(_T("stipple_pattern"), -1);
   if (stipple_pattern > 0) settings.stipple_pattern = (wxUint32)stipple_pattern;
+  if (settings.special_stipple_pattern >= 0)
+    stipple_pattern = settings.special_stipple_pattern;
+
   ini->Read(_T("force_microcheck"), &(settings.force_microcheck));
+  if (settings.special_force_microcheck >= 0)
+    settings.force_microcheck = settings.special_force_microcheck;
+
   ini->Read(_T("force_quad3d"), &(settings.force_quad3d));
+  if (settings.special_force_quad3d >= 0)
+    settings.force_quad3d = settings.special_force_quad3d;
+
   ini->Read(_T("clip_zmin"), &(settings.clip_zmin));
+  if (settings.special_clip_zmin >= 0)
+    settings.clip_zmin = settings.special_clip_zmin;
+
   ini->Read(_T("clip_zmax"), &(settings.clip_zmax));
+  if (settings.special_clip_zmax >= 0)
+    settings.clip_zmax = settings.special_clip_zmax;
+
   ini->Read(_T("fast_crc"), &(settings.fast_crc));
+  if (settings.special_fast_crc >= 0)
+    settings.fast_crc = settings.special_fast_crc;
+
   ini->Read(_T("adjust_aspect"), &(settings.adjust_aspect), 1);
+  if (settings.special_adjust_aspect >= 0)
+    settings.adjust_aspect = settings.special_adjust_aspect;
+
   ini->Read(_T("zmode_compare_less"), &(settings.zmode_compare_less));
+  if (settings.special_zmode_compare_less >= 0)
+    settings.zmode_compare_less = settings.special_zmode_compare_less;
+
   ini->Read(_T("old_style_adither"), &(settings.old_style_adither));
+  if (settings.special_old_style_adither >= 0)
+    settings.old_style_adither = settings.special_old_style_adither;
+
   ini->Read(_T("n64_z_scale"), &(settings.n64_z_scale));
+  if (settings.special_n64_z_scale >= 0)
+    settings.n64_z_scale = settings.special_n64_z_scale;
+
   if (settings.n64_z_scale)
     ZLUT_init();
 
   //frame buffer
   int optimize_texrect = ini->Read(_T("optimize_texrect"), -1);
+  if (settings.special_optimize_texrect >= 0)
+    optimize_texrect = settings.special_optimize_texrect;
+
   int ignore_aux_copy = ini->Read(_T("ignore_aux_copy"), -1);
+  if (settings.special_ignore_aux_copy >= 0)
+    ignore_aux_copy = settings.special_ignore_aux_copy;
+
   int hires_buf_clear = ini->Read(_T("hires_buf_clear"), -1);
+  if (settings.special_hires_buf_clear >= 0)
+    hires_buf_clear = settings.special_hires_buf_clear;
+
   int read_alpha = ini->Read(_T("fb_read_alpha"), -1);
+  if (settings.special_fb_read_alpha >= 0)
+    read_alpha = settings.special_fb_read_alpha;
+
   int useless_is_useless = ini->Read(_T("useless_is_useless"), -1);
+  if (settings.special_useless_is_useless >= 0)
+    useless_is_useless = settings.special_useless_is_useless;
+
   int fb_crc_mode = ini->Read(_T("fb_crc_mode"), -1);
+  if (settings.special_fb_crc_mode >= 0)
+    fb_crc_mode = settings.special_fb_crc_mode;
+
 
   if (optimize_texrect > 0) settings.frame_buffer |= fb_optimize_texrect;
   else if (optimize_texrect == 0) settings.frame_buffer &= ~fb_optimize_texrect;
@@ -589,11 +704,29 @@ void ReadSpecialSettings (const char * name)
   //  if (settings.custom_ini)
   {
     ini->Read(_T("filtering"), &(settings.filtering));
+    if (settings.special_filtering >= 0)
+      settings.filtering = settings.special_filtering;
+
     ini->Read(_T("fog"), &(settings.fog));
+    if (settings.special_fog >= 0)
+      settings.fog = settings.special_fog;
+
     ini->Read(_T("buff_clear"), &(settings.buff_clear));
+    if (settings.special_buff_clear >= 0)
+      settings.buff_clear = settings.special_buff_clear;
+
     ini->Read(_T("swapmode"), &(settings.swapmode));
+    if (settings.special_swapmode >= 0)
+      settings.swapmode = settings.special_swapmode;
+
     ini->Read(_T("aspect"), &(settings.aspectmode));
+    if (settings.special_aspect >= 0)
+      settings.aspectmode = settings.special_aspect;
+
     ini->Read(_T("lodmode"), &(settings.lodmode));
+    if (settings.special_lodmode >= 0)
+      settings.lodmode = settings.special_lodmode;
+
     /*
     TODO-port: fix resolutions
     int resolution;
@@ -613,12 +746,32 @@ void ReadSpecialSettings (const char * name)
 
     //frame buffer
     int smart_read = ini->Read(_T("fb_smart"), -1);
+    if (settings.special_fb_smart >= 0)
+      smart_read = settings.special_fb_smart;
+
     int hires = ini->Read(_T("fb_hires"), -1);
+    if (settings.special_fb_hires >= 0)
+      hires = settings.special_fb_hires;
+
     int read_always = ini->Read(_T("fb_read_always"), -1);
+    if (settings.special_fb_read_always >= 0)
+      read_always = settings.special_fb_read_always;
+
     int read_back_to_screen = ini->Read(_T("read_back_to_screen"), -1);
+    if (settings.special_read_back_to_screen >= 0)
+      read_back_to_screen = settings.special_read_back_to_screen;
+
     int cpu_write_hack = ini->Read(_T("detect_cpu_write"), -1);
+    if (settings.special_detect_cpu_write >= 0)
+      cpu_write_hack = settings.special_detect_cpu_write;
+
     int get_fbinfo = ini->Read(_T("fb_get_info"), -1);
+    if (settings.special_fb_get_info >= 0)
+      get_fbinfo = settings.special_fb_get_info;
+
     int depth_render = ini->Read(_T("fb_render"), -1);
+    if (settings.special_fb_render >= 0)
+      depth_render = settings.special_fb_render;
 
     if (smart_read > 0) settings.frame_buffer |= fb_emulation;
     else if (smart_read == 0) settings.frame_buffer &= ~fb_emulation;
