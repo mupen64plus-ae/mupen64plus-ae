@@ -93,6 +93,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\alist.c" />
+    <ClCompile Include="..\..\src\audio.c" />
     <ClCompile Include="..\..\src\cicx105.c" />
     <ClCompile Include="..\..\src\jpeg.c" />
     <ClCompile Include="..\..\src\main.c" />
@@ -105,6 +106,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\alist.h" />
     <ClInclude Include="..\..\src\alist_internal.h" />
+    <ClInclude Include="..\..\src\audio.h" />
     <ClInclude Include="..\..\src\cicx105.h" />
     <ClInclude Include="..\..\src\hle.h" />
     <ClInclude Include="..\..\src\jpeg.h" />
