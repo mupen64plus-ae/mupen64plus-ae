@@ -136,6 +136,147 @@ void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t co
     }
 }
 
+
+struct ramp_t
+{
+    int32_t value;
+    int32_t step;
+    int32_t target;
+};
+
+static void ramp_step(struct ramp_t* ramp)
+{
+    ramp->value += ramp->step;
+
+    bool target_reached = (ramp->step <= 0)
+        ? (ramp->value <= ramp->target)
+        : (ramp->value >= ramp->target);
+
+    if (target_reached)
+    {
+        ramp->value = ramp->target;
+        ramp->step  = 0;
+    }
+}
+
+static void alist_envmix_mix(size_t n, int16_t** dst, const int32_t* gains, int16_t src)
+{
+    size_t i;
+
+    for(i = 0; i < n; ++i) {
+        *dst[i] = clamp_s16(*dst[i] + (((src * gains[i]) + 0x4000) >> 15));
+    }
+}
+
+void alist_envmix_exp(
+        bool init,
+        bool aux,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address)
+{
+    size_t n = (aux) ? 4 : 2;
+
+    const int16_t* const in = (int16_t*)(BufferSpace + dmemi);
+    int16_t* const dl = (int16_t*)(BufferSpace + dmem_dl);
+    int16_t* const dr = (int16_t*)(BufferSpace + dmem_dr);
+    int16_t* const wl = (int16_t*)(BufferSpace + dmem_wl);
+    int16_t* const wr = (int16_t*)(BufferSpace + dmem_wr);
+
+    struct ramp_t ramps[2];
+    int32_t exp_seq[2];
+    int32_t exp_rates[2];
+
+    uint32_t ptr = 0;
+    int x, y;
+    short save_buffer[40];
+
+    if (init) {
+        ramps[0].value  = (vol[0] << 16);
+        ramps[1].value  = (vol[1] << 16);
+        ramps[0].target = (target[0] << 16);
+        ramps[1].target = (target[1] << 16);
+        exp_rates[0]    = rate[0];
+        exp_rates[1]    = rate[1];
+        exp_seq[0]      = (vol[0] * rate[0]);
+        exp_seq[1]      = (vol[1] * rate[1]);
+    } else {
+        memcpy((uint8_t *)save_buffer, (rsp.RDRAM + address), 80);
+        wet             = *(int16_t *)(save_buffer +  0); /* 0-1 */
+        dry             = *(int16_t *)(save_buffer +  2); /* 2-3 */
+        ramps[0].target = *(int32_t *)(save_buffer +  4); /* 4-5 */
+        ramps[1].target = *(int32_t *)(save_buffer +  6); /* 6-7 */
+        exp_rates[0]    = *(int32_t *)(save_buffer +  8); /* 8-9 (save_buffer is a 16bit pointer) */
+        exp_rates[1]    = *(int32_t *)(save_buffer + 10); /* 10-11 */
+        exp_seq[0]      = *(int32_t *)(save_buffer + 12); /* 12-13 */
+        exp_seq[1]      = *(int32_t *)(save_buffer + 14); /* 14-15 */
+        ramps[0].value  = *(int32_t *)(save_buffer + 16); /* 12-13 */
+        ramps[1].value  = *(int32_t *)(save_buffer + 18); /* 14-15 */
+    }
+
+    /* init which ensure ramp.step != 0 iff ramp.value == ramp.target */
+    ramps[0].step = ramps[0].target - ramps[0].value;
+    ramps[1].step = ramps[1].target - ramps[1].value;
+
+    for (y = 0; y < count; y += 16) {
+
+        if (ramps[0].step != 0)
+        {
+            exp_seq[0] = ((int64_t)exp_seq[0]*(int64_t)exp_rates[0]) >> 16;
+            ramps[0].step = (exp_seq[0] - ramps[0].value) >> 3;
+        }
+
+        if (ramps[1].step != 0)
+        {
+            exp_seq[1] = ((int64_t)exp_seq[1]*(int64_t)exp_rates[1]) >> 16;
+            ramps[1].step = (exp_seq[1] - ramps[1].value) >> 3;
+        }
+
+        for (x = 0; x < 8; ++x) {
+            int32_t gains[4];
+            int16_t* buffers[4];
+
+            ramp_step(&ramps[0]);
+            ramp_step(&ramps[1]);
+
+            buffers[0] = dl + (ptr^S);
+            buffers[1] = dr + (ptr^S);
+            buffers[2] = wl + (ptr^S);
+            buffers[3] = wr + (ptr^S);
+
+            gains[0] = ((dry * (ramps[0].value >> 16) + 0x4000) >> 15);
+            gains[1] = ((dry * (ramps[1].value >> 16) + 0x4000) >> 15);
+            gains[2] = ((wet * (ramps[0].value >> 16) + 0x4000) >> 15);
+            gains[3] = ((wet * (ramps[1].value >> 16) + 0x4000) >> 15);
+
+            alist_envmix_mix(n, buffers, gains, in[ptr^S]);
+            ++ptr;
+        }
+    }
+
+    *(int16_t *)(save_buffer +  0) = wet;               /* 0-1 */
+    *(int16_t *)(save_buffer +  2) = dry;               /* 2-3 */
+    *(int32_t *)(save_buffer +  4) = ramps[0].target;   /* 4-5 */
+    *(int32_t *)(save_buffer +  6) = ramps[1].target;   /* 6-7 */
+    *(int32_t *)(save_buffer +  8) = exp_rates[0];      /* 8-9 (save_buffer is a 16bit pointer) */
+    *(int32_t *)(save_buffer + 10) = exp_rates[1];      /* 10-11 */
+    *(int32_t *)(save_buffer + 12) = exp_seq[0];        /* 12-13 */
+    *(int32_t *)(save_buffer + 14) = exp_seq[1];        /* 14-15 */
+    *(int32_t *)(save_buffer + 16) = ramps[0].value;    /* 12-13 */
+    *(int32_t *)(save_buffer + 18) = ramps[1].value;    /* 14-15 */
+    memcpy(rsp.RDRAM + address, (uint8_t *)save_buffer, 80);
+
+}
+
+
+
+
+
 void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain)
 {
     int16_t       *dst = (int16_t*)(BufferSpace + dmemo);

@@ -35,6 +35,19 @@ void alist_move(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 void alist_copy_every_other_sample(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 void alist_repeat64(uint16_t dmemo, uint16_t dmemi, uint8_t count);
 void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count);
+
+void alist_envmix_exp(
+        bool init,
+        bool aux,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address);
+
 void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain);
 void alist_multQ44(uint16_t dmem, uint16_t count, int8_t gain);
 void alist_add(uint16_t dmemo, uint16_t dmemi, uint16_t count);
