@@ -35,6 +35,10 @@ static struct {
     uint16_t out;
     uint16_t count;
 
+    /* envmixer ramps */
+    uint16_t env_values[3];
+    uint16_t env_steps[3];
+
     /* ADPCM loop point address */
     uint32_t loop;
 
@@ -161,144 +165,56 @@ static void DMEMMOVE2(uint32_t w1, uint32_t w2)
     alist_move(dmemo, dmemi, (count + 3) & ~3);
 }
 
-static uint32_t t3, s5, s6;
-static uint16_t env[8];
-
 static void ENVSETUP1(uint32_t w1, uint32_t w2)
 {
-    uint32_t tmp;
+    l_alist.env_values[2] = (w1 >> 8) & 0xff00;
+    l_alist.env_steps[2]  = w1;
+    l_alist.env_steps[0]  = (w2 >> 16);
+    l_alist.env_steps[1]  = w2;
 
-    t3 = w1 & 0xFFFF;
-    tmp = (w1 >> 0x8) & 0xFF00;
-    env[4] = (uint16_t)tmp;
-    tmp += t3;
-    env[5] = (uint16_t)tmp;
-    s5 = w2 >> 0x10;
-    s6 = w2 & 0xFFFF;
+    /* FIXME: MKABI needs its own ABI */
+    if (isMKABI)
+        l_alist.env_steps[2] = 0;
 }
 
 static void ENVSETUP2(uint32_t w1, uint32_t w2)
 {
-    uint32_t tmp;
-
-    tmp = (w2 >> 0x10);
-    env[0] = (uint16_t)tmp;
-    tmp += s5;
-    env[1] = (uint16_t)tmp;
-    tmp = w2 & 0xffff;
-    env[2] = (uint16_t)tmp;
-    tmp += s6;
-    env[3] = (uint16_t)tmp;
+    l_alist.env_values[0] = (w2 >> 16);
+    l_alist.env_values[1] = w2;
 }
 
 static void ENVMIXER2(uint32_t w1, uint32_t w2)
 {
-    int16_t *bufft6, *bufft7, *buffs0, *buffs1;
-    int16_t *buffs3;
-    int32_t count;
-    uint32_t adder;
+    int16_t xors[4];
 
-    int16_t vec9, vec10;
+    uint16_t dmemi = (w1 >> 12) & 0xff0;
+    uint8_t  count = (w1 >>  8) & 0xff;
+    bool     swap_wet_LR = (w1 >> 4) & 0x1;
+    xors[2] = 0 - (int16_t)((w1 & 0x8) >> 1);
+    xors[3] = 0 - (int16_t)((w1 & 0x4) >> 1);
+    xors[0] = 0 - (int16_t)((w1 & 0x2) >> 1);
+    xors[1] = 0 - (int16_t)((w1 & 0x1)     );
+    uint16_t dmem_dl = (w2 >> 20) & 0xff0;
+    uint16_t dmem_dr = (w2 >> 12) & 0xff0;
+    uint16_t dmem_wl = (w2 >>  4) & 0xff0;
+    uint16_t dmem_wr = (w2 <<  4) & 0xff0;
 
-    int16_t v2[8];
-
-    buffs3 = (int16_t *)(BufferSpace + ((w1 >> 0x0c) & 0x0ff0));
-    bufft6 = (int16_t *)(BufferSpace + ((w2 >> 0x14) & 0x0ff0));
-    bufft7 = (int16_t *)(BufferSpace + ((w2 >> 0x0c) & 0x0ff0));
-    buffs0 = (int16_t *)(BufferSpace + ((w2 >> 0x04) & 0x0ff0));
-    buffs1 = (int16_t *)(BufferSpace + ((w2 << 0x04) & 0x0ff0));
-
-
-    v2[0] = 0 - (int16_t)((w1 & 0x2) >> 1);
-    v2[1] = 0 - (int16_t)((w1 & 0x1));
-    v2[2] = 0 - (int16_t)((w1 & 0x8) >> 1);
-    v2[3] = 0 - (int16_t)((w1 & 0x4) >> 1);
-
-    count = (w1 >> 8) & 0xff;
-
-    if (!isMKABI) {
-        s5 *= 2;
-        s6 *= 2;
-        t3 *= 2;
-        adder = 0x10;
-    } else {
-        w1 = 0;
-        adder = 0x8;
-        t3 = 0;
+    /* FIXME: MKABI needs its own ABI */
+    if (isMKABI)
+    {
+        swap_wet_LR = 0;
+        xors[2] = 0;
+        xors[3] = 0;
     }
 
-
-    while (count > 0) {
-        int temp, x;
-        for (x = 0; x < 0x8; x++) {
-            vec9  = (int16_t)(((int32_t)buffs3[x ^ S] * (uint32_t)env[0]) >> 0x10) ^ v2[0];
-            vec10 = (int16_t)(((int32_t)buffs3[x ^ S] * (uint32_t)env[2]) >> 0x10) ^ v2[1];
-            temp = bufft6[x ^ S] + vec9;
-            temp = clamp_s16(temp);
-            bufft6[x ^ S] = temp;
-            temp = bufft7[x ^ S] + vec10;
-            temp = clamp_s16(temp);
-            bufft7[x ^ S] = temp;
-            vec9  = (int16_t)(((int32_t)vec9  * (uint32_t)env[4]) >> 0x10) ^ v2[2];
-            vec10 = (int16_t)(((int32_t)vec10 * (uint32_t)env[4]) >> 0x10) ^ v2[3];
-            if (w1 & 0x10) {
-                temp = buffs0[x ^ S] + vec10;
-                temp = clamp_s16(temp);
-                buffs0[x ^ S] = temp;
-                temp = buffs1[x ^ S] + vec9;
-                temp = clamp_s16(temp);
-                buffs1[x ^ S] = temp;
-            } else {
-                temp = buffs0[x ^ S] + vec9;
-                temp = clamp_s16(temp);
-                buffs0[x ^ S] = temp;
-                temp = buffs1[x ^ S] + vec10;
-                temp = clamp_s16(temp);
-                buffs1[x ^ S] = temp;
-            }
-        }
-
-        if (!isMKABI)
-            for (x = 0x8; x < 0x10; x++) {
-                vec9  = (int16_t)(((int32_t)buffs3[x ^ S] * (uint32_t)env[1]) >> 0x10) ^ v2[0];
-                vec10 = (int16_t)(((int32_t)buffs3[x ^ S] * (uint32_t)env[3]) >> 0x10) ^ v2[1];
-                temp = bufft6[x ^ S] + vec9;
-                temp = clamp_s16(temp);
-                bufft6[x ^ S] = temp;
-                temp = bufft7[x ^ S] + vec10;
-                temp = clamp_s16(temp);
-                bufft7[x ^ S] = temp;
-                vec9  = (int16_t)(((int32_t)vec9  * (uint32_t)env[5]) >> 0x10) ^ v2[2];
-                vec10 = (int16_t)(((int32_t)vec10 * (uint32_t)env[5]) >> 0x10) ^ v2[3];
-                if (w1 & 0x10) {
-                    temp = buffs0[x ^ S] + vec10;
-                    temp = clamp_s16(temp);
-                    buffs0[x ^ S] = temp;
-                    temp = buffs1[x ^ S] + vec9;
-                    temp = clamp_s16(temp);
-                    buffs1[x ^ S] = temp;
-                } else {
-                    temp = buffs0[x ^ S] + vec9;
-                    temp = clamp_s16(temp);
-                    buffs0[x ^ S] = temp;
-                    temp = buffs1[x ^ S] + vec10;
-                    temp = clamp_s16(temp);
-                    buffs1[x ^ S] = temp;
-                }
-            }
-        bufft6 += adder;
-        bufft7 += adder;
-        buffs0 += adder;
-        buffs1 += adder;
-        buffs3 += adder;
-        count  -= adder;
-        env[0] += (uint16_t)s5;
-        env[1] += (uint16_t)s5;
-        env[2] += (uint16_t)s6;
-        env[3] += (uint16_t)s6;
-        env[4] += (uint16_t)t3;
-        env[5] += (uint16_t)t3;
-    }
+    alist_envmix_nead(
+            swap_wet_LR,
+            dmem_dl, dmem_dr,
+            dmem_wl, dmem_wr,
+            dmemi, count,
+            l_alist.env_values,
+            l_alist.env_steps,
+            xors);
 }
 
 static void DUPLICATE2(uint32_t w1, uint32_t w2)

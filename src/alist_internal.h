@@ -48,6 +48,18 @@ void alist_envmix_exp(
         const int32_t *rate,
         uint32_t address);
 
+void alist_envmix_nead(
+        bool swap_wet_LR,
+        uint16_t dmem_dl,
+        uint16_t dmem_dr,
+        uint16_t dmem_wl,
+        uint16_t dmem_wr,
+        uint16_t dmemi,
+        unsigned count,
+        uint16_t *env_values,
+        uint16_t *env_steps,
+        const int16_t *xors);
+
 void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain);
 void alist_multQ44(uint16_t dmem, uint16_t count, int8_t gain);
 void alist_add(uint16_t dmemo, uint16_t dmemi, uint16_t count);

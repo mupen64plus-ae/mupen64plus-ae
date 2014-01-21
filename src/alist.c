@@ -38,6 +38,12 @@ static int16_t* sample(unsigned pos)
     return (int16_t*)BufferSpace + (pos ^ S);
 }
 
+static void swap(int16_t **a, int16_t **b)
+{
+    int16_t* tmp = *b;
+    *b = *a;
+    *a = tmp;
+}
 
 /* global functions */
 void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
@@ -273,8 +279,56 @@ void alist_envmix_exp(
 
 }
 
+void alist_envmix_nead(
+        bool swap_wet_LR,
+        uint16_t dmem_dl,
+        uint16_t dmem_dr,
+        uint16_t dmem_wl,
+        uint16_t dmem_wr,
+        uint16_t dmemi,
+        unsigned count,
+        uint16_t *env_values,
+        uint16_t *env_steps,
+        const int16_t *xors)
+{
+    /* make sure count is a multiple of 8 */
+    count = align(count, 8);
 
+    int16_t *in = (int16_t*)(BufferSpace + dmemi);
+    int16_t *dl = (int16_t*)(BufferSpace + dmem_dl);
+    int16_t *dr = (int16_t*)(BufferSpace + dmem_dr);
+    int16_t *wl = (int16_t*)(BufferSpace + dmem_wl);
+    int16_t *wr = (int16_t*)(BufferSpace + dmem_wr);
 
+    if (swap_wet_LR)
+        swap(&wl, &wr);
+
+    while (count != 0) {
+        size_t i;
+        for(i = 0; i < 8; ++i) {
+            int16_t l  = (((int32_t)in[i^S] * (uint32_t)env_values[0]) >> 16) ^ xors[0];
+            int16_t r  = (((int32_t)in[i^S] * (uint32_t)env_values[1]) >> 16) ^ xors[1];
+            int16_t l2 = (((int32_t)l * (uint32_t)env_values[2]) >> 16) ^ xors[2];
+            int16_t r2 = (((int32_t)r * (uint32_t)env_values[2]) >> 16) ^ xors[3];
+
+            dl[i^S] = clamp_s16(dl[i^S] + l);
+            dr[i^S] = clamp_s16(dr[i^S] + r);
+            wl[i^S] = clamp_s16(wl[i^S] + l2);
+            wr[i^S] = clamp_s16(wr[i^S] + r2);
+        }
+
+        env_values[0] += env_steps[0];
+        env_values[1] += env_steps[1];
+        env_values[2] += env_steps[2];
+
+        dl += 8;
+        dr += 8;
+        wl += 8;
+        wr += 8;
+        in += 8;
+        count -= 8;
+    }
+}
 
 
 void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain)
