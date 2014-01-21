@@ -284,10 +284,8 @@ static void SETVOL(uint32_t w1, uint32_t w2)
     else {
         unsigned lr = (flags & A_LEFT) ? 0 : 1;
 
-        if (flags & A_VOL) {
+        if (flags & A_VOL)
             l_alist.vol[lr] = w1;
-            l_alist.vol[lr] = w2;
-        }
         else {
             l_alist.target[lr] = w1;
             l_alist.rate[lr]   = w2;
