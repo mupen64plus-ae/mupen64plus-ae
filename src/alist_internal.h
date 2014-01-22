@@ -48,6 +48,17 @@ void alist_envmix_exp(
         const int32_t *rate,
         uint32_t address);
 
+void alist_envmix_lin(
+        bool init,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address);
+
 void alist_envmix_nead(
         bool swap_wet_LR,
         uint16_t dmem_dl,

@@ -70,146 +70,25 @@ static void SETVOL3(uint32_t w1, uint32_t w2)
 
 static void ENVMIXER3(uint32_t w1, uint32_t w2)
 {
-    uint8_t flags = (uint8_t)((w1 >> 16) & 0xff);
-    uint32_t addy = (w2 & 0xFFFFFF);
+    uint8_t  flags   = (w1 >> 16);
+    uint32_t address = (w2 & 0xffffff);
 
-    short *inp = (short *)(BufferSpace + 0x4F0);
-    short *out = (short *)(BufferSpace + 0x9D0);
-    short *aux1 = (short *)(BufferSpace + 0xB40);
-    short *aux2 = (short *)(BufferSpace + 0xCB0);
-    short *aux3 = (short *)(BufferSpace + 0xE20);
-    int32_t MainR;
-    int32_t MainL;
-    int32_t AuxR;
-    int32_t AuxL;
-    int i1, o1, a1, a2, a3;
-    short zero[8];
-    int y;
+    l_alist.vol[1] = w1;
 
-    int32_t LAdder, LAcc, LVol;
-    int32_t RAdder, RAcc, RVol;
-    /* Most significant part of the Ramp Value */
-    int16_t RSig, LSig;
-    int16_t Wet, Dry;
-    int16_t LTrg, RTrg;
-    short save_buffer[40];
-
-    memset(zero, 0, sizeof(zero));
-
-    l_alist.vol[1] = (int16_t)w1;
-
-    if (flags & A_INIT) {
-        LAdder = l_alist.rate[0] / 8;
-        LAcc  = 0;
-        LVol  = l_alist.vol[0];
-        LSig = (int16_t)(l_alist.rate[0] >> 16);
-
-        RAdder = l_alist.rate[1] / 8;
-        RAcc  = 0;
-        RVol  = l_alist.vol[1];
-        RSig = (int16_t)(l_alist.rate[1] >> 16);
-
-        /* Save Wet/Dry values */
-        Wet = (int16_t)l_alist.wet;
-        Dry = (int16_t)l_alist.dry;
-        /* Save Current Left/Right Targets */
-        LTrg = l_alist.target[0];
-        RTrg = l_alist.target[1];
-    } else {
-        memcpy((uint8_t *)save_buffer, rsp.RDRAM + addy, 80);
-        Wet    = *(int16_t *)(save_buffer +  0); /* 0-1 */
-        Dry    = *(int16_t *)(save_buffer +  2); /* 2-3 */
-        LTrg   = *(int16_t *)(save_buffer +  4); /* 4-5 */
-        RTrg   = *(int16_t *)(save_buffer +  6); /* 6-7 */
-        LAdder = *(int32_t *)(save_buffer +  8); /* 8-9 (save_buffer is a 16bit pointer) */
-        RAdder = *(int32_t *)(save_buffer + 10); /* 10-11 */
-        LAcc   = *(int32_t *)(save_buffer + 12); /* 12-13 */
-        RAcc   = *(int32_t *)(save_buffer + 14); /* 14-15 */
-        LVol   = *(int32_t *)(save_buffer + 16); /* 16-17 */
-        RVol   = *(int32_t *)(save_buffer + 18); /* 18-19 */
-        LSig   = *(int16_t *)(save_buffer + 20); /* 20-21 */
-        RSig   = *(int16_t *)(save_buffer + 22); /* 22-23 */
-    }
-
-    for (y = 0; y < (0x170 / 2); y++) {
-
-        /* Left */
-        LAcc += LAdder;
-        LVol += (LAcc >> 16);
-        LAcc &= 0xFFFF;
-
-        /* Right */
-        RAcc += RAdder;
-        RVol += (RAcc >> 16);
-        RAcc &= 0xFFFF;
-/****************************************************************/
-        /* Clamp Left */
-        if (LSig >= 0) { /* VLT */
-            if (LVol > LTrg)
-                LVol = LTrg;
-        } else { /* VGE */
-            if (LVol < LTrg)
-                LVol = LTrg;
-        }
-
-        /* Clamp Right */
-        if (RSig >= 0) { /* VLT */
-            if (RVol > RTrg)
-                RVol = RTrg;
-        } else { /* VGE */
-            if (RVol < RTrg)
-                RVol = RTrg;
-        }
-/****************************************************************/
-        MainL = ((Dry * LVol) + 0x4000) >> 15;
-        MainR = ((Dry * RVol) + 0x4000) >> 15;
-
-        o1 = out [y ^ S];
-        a1 = aux1[y ^ S];
-        i1 = inp [y ^ S];
-
-        o1 += ((i1 * MainL) + 0x4000) >> 15;
-        a1 += ((i1 * MainR) + 0x4000) >> 15;
-
-/****************************************************************/
-        o1 = clamp_s16(o1);
-        a1 = clamp_s16(a1);
-
-/****************************************************************/
-
-        out[y ^ S] = o1;
-        aux1[y ^ S] = a1;
-
-/****************************************************************/
-        a2 = aux2[y ^ S];
-        a3 = aux3[y ^ S];
-
-        AuxL  = ((Wet * LVol) + 0x4000) >> 15;
-        AuxR  = ((Wet * RVol) + 0x4000) >> 15;
-
-        a2 += ((i1 * AuxL) + 0x4000) >> 15;
-        a3 += ((i1 * AuxR) + 0x4000) >> 15;
-
-        a2 = clamp_s16(a2);
-        a3 = clamp_s16(a3);
-
-        aux2[y ^ S] = a2;
-        aux3[y ^ S] = a3;
-    }
-
-    *(int16_t *)(save_buffer +  0) = Wet; /* 0-1 */
-    *(int16_t *)(save_buffer +  2) = Dry; /* 2-3 */
-    *(int16_t *)(save_buffer +  4) = LTrg; /* 4-5 */
-    *(int16_t *)(save_buffer +  6) = RTrg; /* 6-7 */
-    *(int32_t *)(save_buffer +  8) = LAdder; /* 8-9 (save_buffer is a 16bit pointer) */
-    *(int32_t *)(save_buffer + 10) = RAdder; /* 10-11 */
-    *(int32_t *)(save_buffer + 12) = LAcc; /* 12-13 */
-    *(int32_t *)(save_buffer + 14) = RAcc; /* 14-15 */
-    *(int32_t *)(save_buffer + 16) = LVol; /* 16-17 */
-    *(int32_t *)(save_buffer + 18) = RVol; /* 18-19 */
-    *(int16_t *)(save_buffer + 20) = LSig; /* 20-21 */
-    *(int16_t *)(save_buffer + 22) = RSig; /* 22-23 */
-    memcpy(rsp.RDRAM + addy, (uint8_t *)save_buffer, 80);
+    alist_envmix_lin(
+            flags & 0x1,
+            0x9d0,
+            0xb40,
+            0xcb0,
+            0xe20,
+            0x4f0,
+            0x170,
+            l_alist.dry,
+            l_alist.wet,
+            l_alist.vol,
+            l_alist.target,
+            l_alist.rate,
+            address);
 }
 
 static void CLEARBUFF3(uint32_t w1, uint32_t w2)
