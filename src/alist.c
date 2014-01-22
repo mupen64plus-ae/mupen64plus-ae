@@ -599,3 +599,114 @@ void alist_adpcm(
 
     dram_store_u16((uint16_t*)last_frame, last_frame_address, 16);
 }
+
+
+void alist_filter(uint16_t dmem, uint16_t count, uint32_t address, const uint32_t* lut_address)
+{
+    int x;
+    int16_t outbuff[0x3c0];
+    int16_t *outp = outbuff;
+
+    int16_t* const lutt6 = (int16_t*)(rsp.RDRAM + lut_address[0]);
+    int16_t* const lutt5 = (int16_t*)(rsp.RDRAM + lut_address[1]);
+
+    int16_t* in1 = (int16_t*)(rsp.RDRAM + address);
+    int16_t* in2 = (int16_t*)(BufferSpace + dmem);
+
+
+    for (x = 0; x < 8; ++x) {
+        int32_t v = (lutt5[x] + lutt6[x]) >> 1;
+        lutt5[x] = lutt6[x] = v;
+    }
+
+    for (x = 0; x < count; x += 16) {
+        int32_t v[8];
+
+        v[1] =  in1[0] * lutt6[6];
+        v[1] += in1[3] * lutt6[7];
+        v[1] += in1[2] * lutt6[4];
+        v[1] += in1[5] * lutt6[5];
+        v[1] += in1[4] * lutt6[2];
+        v[1] += in1[7] * lutt6[3];
+        v[1] += in1[6] * lutt6[0];
+        v[1] += in2[1] * lutt6[1]; /* 1 */
+
+        v[0] =  in1[3] * lutt6[6];
+        v[0] += in1[2] * lutt6[7];
+        v[0] += in1[5] * lutt6[4];
+        v[0] += in1[4] * lutt6[5];
+        v[0] += in1[7] * lutt6[2];
+        v[0] += in1[6] * lutt6[3];
+        v[0] += in2[1] * lutt6[0];
+        v[0] += in2[0] * lutt6[1];
+
+        v[3] =  in1[2] * lutt6[6];
+        v[3] += in1[5] * lutt6[7];
+        v[3] += in1[4] * lutt6[4];
+        v[3] += in1[7] * lutt6[5];
+        v[3] += in1[6] * lutt6[2];
+        v[3] += in2[1] * lutt6[3];
+        v[3] += in2[0] * lutt6[0];
+        v[3] += in2[3] * lutt6[1];
+
+        v[2] =  in1[5] * lutt6[6];
+        v[2] += in1[4] * lutt6[7];
+        v[2] += in1[7] * lutt6[4];
+        v[2] += in1[6] * lutt6[5];
+        v[2] += in2[1] * lutt6[2];
+        v[2] += in2[0] * lutt6[3];
+        v[2] += in2[3] * lutt6[0];
+        v[2] += in2[2] * lutt6[1];
+
+        v[5] =  in1[4] * lutt6[6];
+        v[5] += in1[7] * lutt6[7];
+        v[5] += in1[6] * lutt6[4];
+        v[5] += in2[1] * lutt6[5];
+        v[5] += in2[0] * lutt6[2];
+        v[5] += in2[3] * lutt6[3];
+        v[5] += in2[2] * lutt6[0];
+        v[5] += in2[5] * lutt6[1];
+
+        v[4] =  in1[7] * lutt6[6];
+        v[4] += in1[6] * lutt6[7];
+        v[4] += in2[1] * lutt6[4];
+        v[4] += in2[0] * lutt6[5];
+        v[4] += in2[3] * lutt6[2];
+        v[4] += in2[2] * lutt6[3];
+        v[4] += in2[5] * lutt6[0];
+        v[4] += in2[4] * lutt6[1];
+
+        v[7] =  in1[6] * lutt6[6];
+        v[7] += in2[1] * lutt6[7];
+        v[7] += in2[0] * lutt6[4];
+        v[7] += in2[3] * lutt6[5];
+        v[7] += in2[2] * lutt6[2];
+        v[7] += in2[5] * lutt6[3];
+        v[7] += in2[4] * lutt6[0];
+        v[7] += in2[7] * lutt6[1];
+
+        v[6] =  in2[1] * lutt6[6];
+        v[6] += in2[0] * lutt6[7];
+        v[6] += in2[3] * lutt6[4];
+        v[6] += in2[2] * lutt6[5];
+        v[6] += in2[5] * lutt6[2];
+        v[6] += in2[4] * lutt6[3];
+        v[6] += in2[7] * lutt6[0];
+        v[6] += in2[6] * lutt6[1];
+
+        outp[1] = ((v[1] + 0x4000) >> 15);
+        outp[0] = ((v[0] + 0x4000) >> 15);
+        outp[3] = ((v[3] + 0x4000) >> 15);
+        outp[2] = ((v[2] + 0x4000) >> 15);
+        outp[5] = ((v[5] + 0x4000) >> 15);
+        outp[4] = ((v[4] + 0x4000) >> 15);
+        outp[7] = ((v[7] + 0x4000) >> 15);
+        outp[6] = ((v[6] + 0x4000) >> 15);
+        in1 = in2;
+        in2 += 8;
+        outp += 8;
+    }
+
+    memcpy(rsp.RDRAM + address, in2 - 8, 16);
+    memcpy(BufferSpace + dmem, outbuff, count);
+}
