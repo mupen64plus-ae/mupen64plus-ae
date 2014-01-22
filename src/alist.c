@@ -29,8 +29,7 @@
 #include "alist_internal.h"
 #include "audio.h"
 
-/* FIXME: make it local */
-uint8_t BufferSpace[0x10000];
+static uint8_t BufferSpace[0x10000];
 
 /* local functions */
 static int16_t* sample(unsigned pos)

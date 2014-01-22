@@ -112,6 +112,4 @@ void alist_filter(
 #define A_MAIN          0x00
 #define A_MIX           0x10
 
-extern uint8_t BufferSpace[0x10000];
-
 #endif
