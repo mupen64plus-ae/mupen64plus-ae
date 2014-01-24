@@ -320,12 +320,12 @@ static void FILTER(uint32_t w1, uint32_t w2)
 
     if (flags > 1) {
         l_alist.filter_count          = w1;
-        l_alist.filter_lut_address[0] = address;    // t6
+        l_alist.filter_lut_address[0] = address; /* t6 */
     }
     else {
         uint16_t dmem = w1;
 
-        l_alist.filter_lut_address[1] = address + 0x10; // t5
+        l_alist.filter_lut_address[1] = address + 0x10; /* t5 */
         alist_filter(dmem, l_alist.filter_count, address, l_alist.filter_lut_address);
     }
 }
