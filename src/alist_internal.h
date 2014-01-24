@@ -35,6 +35,42 @@ void alist_move(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 void alist_copy_every_other_sample(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 void alist_repeat64(uint16_t dmemo, uint16_t dmemi, uint8_t count);
 void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count);
+
+void alist_envmix_exp(
+        bool init,
+        bool aux,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address);
+
+void alist_envmix_lin(
+        bool init,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address);
+
+void alist_envmix_nead(
+        bool swap_wet_LR,
+        uint16_t dmem_dl,
+        uint16_t dmem_dr,
+        uint16_t dmem_wl,
+        uint16_t dmem_wr,
+        uint16_t dmemi,
+        unsigned count,
+        uint16_t *env_values,
+        uint16_t *env_steps,
+        const int16_t *xors);
+
 void alist_mix(uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain);
 void alist_multQ44(uint16_t dmem, uint16_t count, int8_t gain);
 void alist_add(uint16_t dmemo, uint16_t dmemi, uint16_t count);
@@ -53,6 +89,12 @@ void alist_adpcm(
 void alist_resample(bool init,
         uint16_t dmemo, uint16_t dmemi, uint16_t count,
         uint32_t pitch, uint32_t address);
+
+void alist_filter(
+        uint16_t dmem,
+        uint16_t count,
+        uint32_t address,
+        const uint32_t* lut_address);
 /*
  * Audio flags
  */
@@ -69,7 +111,5 @@ void alist_resample(bool init,
 #define A_NOAUX         0x00
 #define A_MAIN          0x00
 #define A_MIX           0x10
-
-extern uint8_t BufferSpace[0x10000];
 
 #endif
