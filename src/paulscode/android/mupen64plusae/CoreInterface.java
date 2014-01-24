@@ -369,7 +369,7 @@ public class CoreInterface
             @Override
             public void onDialogClosed( File file, int which )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
+                if( which >= 0 )
                     loadState( file );
                 CoreInterface.resumeEmulator();
             }
