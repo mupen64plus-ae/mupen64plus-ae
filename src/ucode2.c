@@ -323,6 +323,12 @@ static void SEGMENT(uint32_t w1, uint32_t w2)
 
 static void NEAD_16(uint32_t w1, uint32_t w2)
 {
+    uint8_t  count      = (w1 >> 16);
+    uint16_t dmemi      = w1;
+    uint16_t dmemo      = (w2 >> 16);
+    uint16_t block_size = w2;
+
+    alist_copy_blocks(dmemo, dmemi, block_size, count);
 }
 
 static void POLEF(uint32_t w1, uint32_t w2)

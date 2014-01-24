@@ -112,6 +112,28 @@ void alist_repeat64(uint16_t dmemo, uint16_t dmemi, uint8_t count)
     }
 }
 
+void alist_copy_blocks(uint16_t dmemo, uint16_t dmemi, uint16_t block_size, uint8_t count)
+{
+    int block_left = count;
+
+    do
+    {
+        int bytes_left = block_size;
+
+        do
+        {
+            memcpy(BufferSpace + dmemo, BufferSpace + dmemi, 0x20);
+            bytes_left -= 0x20;
+
+            dmemi += 0x20;
+            dmemo += 0x20;
+
+        } while(bytes_left > 0);
+
+        --block_left;
+    } while(block_left > 0);
+}
+
 void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count)
 {
     uint16_t       *dst  = (uint16_t*)(BufferSpace + dmemo);
