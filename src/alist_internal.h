@@ -91,6 +91,13 @@ void alist_resample(bool init,
         uint16_t dmemo, uint16_t dmemi, uint16_t count,
         uint32_t pitch, uint32_t address);
 
+void alist_resample_zoh(
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint32_t pitch,
+        uint32_t pitch_accu);
+
 void alist_filter(
         uint16_t dmem,
         uint16_t count,

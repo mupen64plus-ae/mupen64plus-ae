@@ -538,6 +538,27 @@ void alist_resample(
     alist_resample_save(address, ipos, pitch_accu);
 }
 
+void alist_resample_zoh(
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint32_t pitch,
+        uint32_t pitch_accu)
+{
+    uint16_t ipos = dmemi >> 1;
+    uint16_t opos = dmemo >> 1;
+    count >>= 1;
+
+    while(count != 0) {
+
+        *sample(opos++) = *sample(ipos);
+
+        pitch_accu += pitch;
+        ipos += (pitch_accu >> 16);
+        pitch_accu &= 0xffff;
+        --count;
+    }
+}
 
 typedef unsigned int (*adpcm_predict_frame_t)(int16_t* dst, uint16_t dmemi, unsigned char scale);
 
