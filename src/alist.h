@@ -27,9 +27,9 @@ void alist_process_audio_ge(void);
 void alist_process_audio_bc(void);
 void alist_process_mk(void);
 void alist_process_sfj(void);
-void alist_process_wrjb(void);
 void alist_process_sf(void);
 void alist_process_fz(void);
+void alist_process_wrjb(void);
 void alist_process_ys(void);
 void alist_process_1080(void);
 void alist_process_oot(void);
@@ -41,9 +41,6 @@ void alist_process_naudio_bk(void);
 void alist_process_naudio_dk(void);
 void alist_process_naudio_mp3(void);
 void alist_process_naudio_cbfd(void);
-
-/* FIXME: to remove when isZeldaABI/isMKABI workaround is gone */
-void init_ucode2(void);
 
 #endif
 
