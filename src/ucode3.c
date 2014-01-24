@@ -29,6 +29,17 @@
 
 void MP3(uint32_t w1, uint32_t w2);
 
+enum { NAUDIO_COUNT = 0x170 }; /* ie 184 samples */
+enum {
+    NAUDIO_MAIN      = 0x4f0,
+    NAUDIO_MAIN2     = 0x660,
+    NAUDIO_DRY_LEFT  = 0x9d0,
+    NAUDIO_DRY_RIGHT = 0xb40,
+    NAUDIO_WET_LEFT  = 0xcb0,
+    NAUDIO_WET_RIGHT = 0xe20
+};
+
+
 /* alist naudio state */
 static struct {
     /* gains */
@@ -84,13 +95,13 @@ static void NAUDIO_14(uint32_t w1, uint32_t w2)
         uint8_t  select_main = (w2 >> 24);
         uint32_t address     = (w2 & 0xffffff);
 
-        uint16_t dmem = (select_main == 0) ? 0x4f0 : 0x660;
+        uint16_t dmem = (select_main == 0) ? NAUDIO_MAIN : NAUDIO_MAIN2;
 
         alist_polef(
                 flags & A_INIT,
                 dmem,
                 dmem,
-                0x170,
+                NAUDIO_COUNT,
                 gain,
                 l_alist.table,
                 address);
@@ -129,12 +140,12 @@ static void ENVMIXER(uint32_t w1, uint32_t w2)
 
     alist_envmix_lin(
             flags & 0x1,
-            0x9d0,
-            0xb40,
-            0xcb0,
-            0xe20,
-            0x4f0,
-            0x170,
+            NAUDIO_DRY_LEFT,
+            NAUDIO_DRY_RIGHT,
+            NAUDIO_WET_LEFT,
+            NAUDIO_WET_RIGHT,
+            NAUDIO_MAIN,
+            NAUDIO_COUNT,
             l_alist.dry,
             l_alist.wet,
             l_alist.vol,
@@ -145,7 +156,7 @@ static void ENVMIXER(uint32_t w1, uint32_t w2)
 
 static void CLEARBUFF(uint32_t w1, uint32_t w2)
 {
-    uint16_t dmem  = w1 + 0x4f0;
+    uint16_t dmem  = w1 + NAUDIO_MAIN;
     uint16_t count = w2;
 
     alist_clear(dmem, count);
@@ -154,16 +165,16 @@ static void CLEARBUFF(uint32_t w1, uint32_t w2)
 static void MIXER(uint32_t w1, uint32_t w2)
 {
     int16_t  gain  = w1;
-    uint16_t dmemi = (w2 >> 16) + 0x4f0;
-    uint16_t dmemo = w2 + 0x4f0;
+    uint16_t dmemi = (w2 >> 16) + NAUDIO_MAIN;
+    uint16_t dmemo = w2 + NAUDIO_MAIN;
 
-    alist_mix(dmemo, dmemi, 0x170, gain);
+    alist_mix(dmemo, dmemi, NAUDIO_COUNT, gain);
 }
 
 static void LOADBUFF(uint32_t w1, uint32_t w2)
 {
     uint16_t count   = (w1 >> 12) & 0xfff;
-    uint16_t dmem    = (w1 & 0xfff) + 0x4f0;
+    uint16_t dmem    = (w1 & 0xfff) + NAUDIO_MAIN;
     uint32_t address = (w2 & 0xffffff);
 
     alist_load(dmem & ~3, address & ~3, (count + 3) & ~3);
@@ -172,7 +183,7 @@ static void LOADBUFF(uint32_t w1, uint32_t w2)
 static void SAVEBUFF(uint32_t w1, uint32_t w2)
 {
     uint16_t count   = (w1 >> 12) & 0xfff;
-    uint16_t dmem    = (w1 & 0xfff) + 0x4f0;
+    uint16_t dmem    = (w1 & 0xfff) + NAUDIO_MAIN;
     uint32_t address = (w2 & 0xffffff);
 
     alist_save(dmem & ~3, address & ~3, (count + 3) & ~3);
@@ -188,8 +199,8 @@ static void LOADADPCM(uint32_t w1, uint32_t w2)
 
 static void DMEMMOVE(uint32_t w1, uint32_t w2)
 {
-    uint16_t dmemi = w1 + 0x4f0;
-    uint16_t dmemo = (w2 >> 16) + 0x4f0;
+    uint16_t dmemi = w1 + NAUDIO_MAIN;
+    uint16_t dmemo = (w2 >> 16) + NAUDIO_MAIN;
     uint16_t count = w2;
 
     alist_move(dmemo, dmemi, (count + 3) & ~3);
@@ -205,8 +216,8 @@ static void ADPCM(uint32_t w1, uint32_t w2)
     uint32_t address = (w1 & 0xffffff);
     uint8_t  flags   = (w2 >> 28);
     uint16_t count   = (w2 >> 16) & 0xfff;
-    uint16_t dmemi   = ((w2 >> 12) & 0xf) + 0x4f0;
-    uint16_t dmemo   = (w2 & 0xfff) + 0x4f0;
+    uint16_t dmemi   = ((w2 >> 12) & 0xf) + NAUDIO_MAIN;
+    uint16_t dmemo   = (w2 & 0xfff) + NAUDIO_MAIN;
 
     alist_adpcm(
             flags & 0x1,
@@ -225,21 +236,21 @@ static void RESAMPLE(uint32_t w1, uint32_t w2)
     uint32_t address = (w1 & 0xffffff);
     uint8_t  flags   = (w2 >> 30);
     uint16_t pitch   = (w2 >> 14);
-    uint16_t dmemi   = ((w2 >> 2) & 0xfff) + 0x4f0;
-    uint16_t dmemo   = (w2 & 0x3) ? 0x660 : 0x4f0;
+    uint16_t dmemi   = ((w2 >> 2) & 0xfff) + NAUDIO_MAIN;
+    uint16_t dmemo   = (w2 & 0x3) ? NAUDIO_MAIN2 : NAUDIO_MAIN;
 
     alist_resample(
             flags & 0x1,
             dmemo,
             dmemi,
-            0x170,
+            NAUDIO_COUNT,
             pitch << 1,
             address);
 }
 
 static void INTERLEAVE(uint32_t w1, uint32_t w2)
 {
-    alist_interleave(0x4f0, 0x9d0, 0xb40, 0x170);
+    alist_interleave(NAUDIO_MAIN, NAUDIO_DRY_LEFT, NAUDIO_DRY_RIGHT, NAUDIO_COUNT);
 }
 
 static void MP3ADDY(uint32_t w1, uint32_t w2)
