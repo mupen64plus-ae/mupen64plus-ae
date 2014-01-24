@@ -77,7 +77,26 @@ static void NAUDIO_02B0(uint32_t w1, uint32_t w2)
 
 static void NAUDIO_14(uint32_t w1, uint32_t w2)
 {
-    /* TODO */
+    if (l_alist.table[0] == 0 && l_alist.table[1] == 0) {
+
+        uint8_t  flags       = (w1 >> 16);
+        uint16_t gain        = w1;
+        uint8_t  select_main = (w2 >> 24);
+        uint32_t address     = (w2 & 0xffffff);
+
+        uint16_t dmem = (select_main == 0) ? 0x4f0 : 0x660;
+
+        alist_polef(
+                flags & A_INIT,
+                dmem,
+                dmem,
+                0x170,
+                gain,
+                l_alist.table,
+                address);
+    }
+    else
+        DebugMessage(M64MSG_VERBOSE, "NAUDIO_14: non null codebook[0-3] case not implemented.");
 }
 
 static void SETVOL(uint32_t w1, uint32_t w2)

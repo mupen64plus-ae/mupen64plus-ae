@@ -731,3 +731,61 @@ void alist_filter(uint16_t dmem, uint16_t count, uint32_t address, const uint32_
     memcpy(rsp.RDRAM + address, in2 - 8, 16);
     memcpy(BufferSpace + dmem, outbuff, count);
 }
+
+void alist_polef(
+        bool init,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint16_t gain,
+        int16_t* table,
+        uint32_t address)
+{
+    int16_t *dst = (int16_t*)(BufferSpace + dmemo);
+
+    const int16_t* const h1 = table;
+          int16_t* const h2 = table + 8;
+
+    unsigned i;
+    int16_t l1, l2;
+    int16_t h2_before[8];
+
+    count = align(count, 16);
+
+    if (init) {
+        l1 = 0;
+        l2 = 0;
+    }
+    else {
+        l1 = *dram_u16(address + 4);
+        l2 = *dram_u16(address + 6);
+    }
+
+    for(i = 0; i < 8; ++i) {
+        h2_before[i] = h2[i];
+        h2[i] = (((int32_t)h2[i] * gain) >> 14);
+    }
+
+    do
+    {
+        int16_t frame[8];
+
+        for(i = 0; i < 8; ++i, dmemi += 2) {
+            frame[i] = *(int16_t*)(BufferSpace + (dmemi ^ S16));
+        }
+
+        for(i = 0; i < 8; ++i) {
+            int32_t accu = frame[i] * gain;
+            accu += h1[i]*l1 + h2_before[i]*l2 + rdot(i, h2, frame);
+            dst[i^S] = clamp_s16(accu >> 14);
+        }
+
+        l1 = dst[6^S];
+        l2 = dst[7^S];
+
+        dst += 8;
+        count -= 16;
+    } while (count != 0);
+
+    dram_store_u16((uint16_t*)(dst - 4), address, 4);
+}

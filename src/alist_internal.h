@@ -96,6 +96,15 @@ void alist_filter(
         uint16_t count,
         uint32_t address,
         const uint32_t* lut_address);
+
+void alist_polef(
+        bool init,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint16_t gain,
+        int16_t* table,
+        uint32_t address);
 /*
  * Audio flags
  */

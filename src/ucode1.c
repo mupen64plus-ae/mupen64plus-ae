@@ -229,7 +229,21 @@ static void SEGMENT(uint32_t w1, uint32_t w2)
 
 static void POLEF(uint32_t w1, uint32_t w2)
 {
-    /* TODO */
+    uint8_t  flags   = (w1 >> 16);
+    uint16_t gain    = w1;
+    uint32_t address = (w2 & 0xffffff);
+
+    if (l_alist.count == 0)
+        return;
+
+    alist_polef(
+            flags & A_INIT,
+            l_alist.out,
+            l_alist.in,
+            l_alist.count,
+            gain,
+            l_alist.table,
+            address);
 }
 
 /* global functions */
