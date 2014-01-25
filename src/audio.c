@@ -60,7 +60,7 @@ const int16_t RESAMPLE_LUT[64 * 4] = {
     0xffd8, 0x0e5f, 0x6696, 0x0b39, 0xffdf, 0x0d46, 0x66ad, 0x0c39
 };
 
-static int32_t rdot(size_t n, const int16_t *x, const int16_t *y)
+int32_t rdot(size_t n, const int16_t *x, const int16_t *y)
 {
     int32_t accu = 0;
 

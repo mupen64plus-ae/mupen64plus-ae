@@ -29,6 +29,17 @@
 
 void MP3(uint32_t w1, uint32_t w2);
 
+enum { NAUDIO_COUNT = 0x170 }; /* ie 184 samples */
+enum {
+    NAUDIO_MAIN      = 0x4f0,
+    NAUDIO_MAIN2     = 0x660,
+    NAUDIO_DRY_LEFT  = 0x9d0,
+    NAUDIO_DRY_RIGHT = 0xb40,
+    NAUDIO_WET_LEFT  = 0xcb0,
+    NAUDIO_WET_RIGHT = 0xe20
+};
+
+
 /* alist naudio state */
 static struct {
     /* gains */
@@ -47,7 +58,59 @@ static struct {
     int16_t table[16 * 8];
 } l_alist;
 
-static void SETVOL3(uint32_t w1, uint32_t w2)
+
+/* audio commands definition */
+static void UNKNOWN(uint32_t w1, uint32_t w2)
+{
+    uint8_t acmd = (w1 >> 24);
+
+    DebugMessage(M64MSG_WARNING,
+            "Unknown audio comand %d: %08x %08x",
+            acmd, w1, w2);
+}
+
+
+static void SPNOOP(uint32_t w1, uint32_t w2)
+{
+}
+
+static void NAUDIO_0000(uint32_t w1, uint32_t w2)
+{
+    /* ??? */
+    UNKNOWN(w1, w2);
+}
+
+static void NAUDIO_02B0(uint32_t w1, uint32_t w2)
+{
+    /* ??? */
+    /* UNKNOWN(w1, w2); commented to avoid constant spamming during gameplay */
+}
+
+static void NAUDIO_14(uint32_t w1, uint32_t w2)
+{
+    if (l_alist.table[0] == 0 && l_alist.table[1] == 0) {
+
+        uint8_t  flags       = (w1 >> 16);
+        uint16_t gain        = w1;
+        uint8_t  select_main = (w2 >> 24);
+        uint32_t address     = (w2 & 0xffffff);
+
+        uint16_t dmem = (select_main == 0) ? NAUDIO_MAIN : NAUDIO_MAIN2;
+
+        alist_polef(
+                flags & A_INIT,
+                dmem,
+                dmem,
+                NAUDIO_COUNT,
+                gain,
+                l_alist.table,
+                address);
+    }
+    else
+        DebugMessage(M64MSG_VERBOSE, "NAUDIO_14: non null codebook[0-3] case not implemented.");
+}
+
+static void SETVOL(uint32_t w1, uint32_t w2)
 {
     uint8_t flags = (w1 >> 16);
 
@@ -68,7 +131,7 @@ static void SETVOL3(uint32_t w1, uint32_t w2)
     }
 }
 
-static void ENVMIXER3(uint32_t w1, uint32_t w2)
+static void ENVMIXER(uint32_t w1, uint32_t w2)
 {
     uint8_t  flags   = (w1 >> 16);
     uint32_t address = (w2 & 0xffffff);
@@ -77,12 +140,12 @@ static void ENVMIXER3(uint32_t w1, uint32_t w2)
 
     alist_envmix_lin(
             flags & 0x1,
-            0x9d0,
-            0xb40,
-            0xcb0,
-            0xe20,
-            0x4f0,
-            0x170,
+            NAUDIO_DRY_LEFT,
+            NAUDIO_DRY_RIGHT,
+            NAUDIO_WET_LEFT,
+            NAUDIO_WET_RIGHT,
+            NAUDIO_MAIN,
+            NAUDIO_COUNT,
             l_alist.dry,
             l_alist.wet,
             l_alist.vol,
@@ -91,42 +154,42 @@ static void ENVMIXER3(uint32_t w1, uint32_t w2)
             address);
 }
 
-static void CLEARBUFF3(uint32_t w1, uint32_t w2)
+static void CLEARBUFF(uint32_t w1, uint32_t w2)
 {
-    uint16_t dmem  = w1 + 0x4f0;
+    uint16_t dmem  = w1 + NAUDIO_MAIN;
     uint16_t count = w2;
 
     alist_clear(dmem, count);
 }
 
-static void MIXER3(uint32_t w1, uint32_t w2)
+static void MIXER(uint32_t w1, uint32_t w2)
 {
     int16_t  gain  = w1;
-    uint16_t dmemi = (w2 >> 16) + 0x4f0;
-    uint16_t dmemo = w2 + 0x4f0;
+    uint16_t dmemi = (w2 >> 16) + NAUDIO_MAIN;
+    uint16_t dmemo = w2 + NAUDIO_MAIN;
 
-    alist_mix(dmemo, dmemi, 0x170, gain);
+    alist_mix(dmemo, dmemi, NAUDIO_COUNT, gain);
 }
 
-static void LOADBUFF3(uint32_t w1, uint32_t w2)
+static void LOADBUFF(uint32_t w1, uint32_t w2)
 {
     uint16_t count   = (w1 >> 12) & 0xfff;
-    uint16_t dmem    = (w1 & 0xfff) + 0x4f0;
+    uint16_t dmem    = (w1 & 0xfff) + NAUDIO_MAIN;
     uint32_t address = (w2 & 0xffffff);
 
     alist_load(dmem & ~3, address & ~3, (count + 3) & ~3);
 }
 
-static void SAVEBUFF3(uint32_t w1, uint32_t w2)
+static void SAVEBUFF(uint32_t w1, uint32_t w2)
 {
     uint16_t count   = (w1 >> 12) & 0xfff;
-    uint16_t dmem    = (w1 & 0xfff) + 0x4f0;
+    uint16_t dmem    = (w1 & 0xfff) + NAUDIO_MAIN;
     uint32_t address = (w2 & 0xffffff);
 
     alist_save(dmem & ~3, address & ~3, (count + 3) & ~3);
 }
 
-static void LOADADPCM3(uint32_t w1, uint32_t w2)
+static void LOADADPCM(uint32_t w1, uint32_t w2)
 {
     uint16_t count   = (w1 & 0xffff);
     uint32_t address = (w2 & 0xffffff);
@@ -134,27 +197,27 @@ static void LOADADPCM3(uint32_t w1, uint32_t w2)
     dram_load_u16((uint16_t*)l_alist.table, address, count >> 1);
 }
 
-static void DMEMMOVE3(uint32_t w1, uint32_t w2)
+static void DMEMMOVE(uint32_t w1, uint32_t w2)
 {
-    uint16_t dmemi = w1 + 0x4f0;
-    uint16_t dmemo = (w2 >> 16) + 0x4f0;
+    uint16_t dmemi = w1 + NAUDIO_MAIN;
+    uint16_t dmemo = (w2 >> 16) + NAUDIO_MAIN;
     uint16_t count = w2;
 
     alist_move(dmemo, dmemi, (count + 3) & ~3);
 }
 
-static void SETLOOP3(uint32_t w1, uint32_t w2)
+static void SETLOOP(uint32_t w1, uint32_t w2)
 {
     l_alist.loop = (w2 & 0xffffff);
 }
 
-static void ADPCM3(uint32_t w1, uint32_t w2)
+static void ADPCM(uint32_t w1, uint32_t w2)
 {
     uint32_t address = (w1 & 0xffffff);
     uint8_t  flags   = (w2 >> 28);
     uint16_t count   = (w2 >> 16) & 0xfff;
-    uint16_t dmemi   = ((w2 >> 12) & 0xf) + 0x4f0;
-    uint16_t dmemo   = (w2 & 0xfff) + 0x4f0;
+    uint16_t dmemi   = ((w2 >> 12) & 0xf) + NAUDIO_MAIN;
+    uint16_t dmemo   = (w2 & 0xfff) + NAUDIO_MAIN;
 
     alist_adpcm(
             flags & 0x1,
@@ -168,68 +231,92 @@ static void ADPCM3(uint32_t w1, uint32_t w2)
             address);
 }
 
-static void RESAMPLE3(uint32_t w1, uint32_t w2)
+static void RESAMPLE(uint32_t w1, uint32_t w2)
 {
     uint32_t address = (w1 & 0xffffff);
     uint8_t  flags   = (w2 >> 30);
     uint16_t pitch   = (w2 >> 14);
-    uint16_t dmemi   = ((w2 >> 2) & 0xfff) + 0x4f0;
-    uint16_t dmemo   = (w2 & 0x3) ? 0x660 : 0x4f0;
+    uint16_t dmemi   = ((w2 >> 2) & 0xfff) + NAUDIO_MAIN;
+    uint16_t dmemo   = (w2 & 0x3) ? NAUDIO_MAIN2 : NAUDIO_MAIN;
 
     alist_resample(
             flags & 0x1,
             dmemo,
             dmemi,
-            0x170,
+            NAUDIO_COUNT,
             pitch << 1,
             address);
 }
 
-static void INTERLEAVE3(uint32_t w1, uint32_t w2)
+static void INTERLEAVE(uint32_t w1, uint32_t w2)
 {
-    alist_interleave(0x4f0, 0x9d0, 0xb40, 0x170);
-}
-
-static void WHATISTHIS(uint32_t w1, uint32_t w2)
-{
+    alist_interleave(NAUDIO_MAIN, NAUDIO_DRY_LEFT, NAUDIO_DRY_RIGHT, NAUDIO_COUNT);
 }
 
 static void MP3ADDY(uint32_t w1, uint32_t w2)
 {
 }
 
-static void DISABLE(uint32_t w1, uint32_t w2)
-{
-}
-
-
-static const acmd_callback_t ABI3[0x10] = {
-    DISABLE , ADPCM3 , CLEARBUFF3,  ENVMIXER3  , LOADBUFF3, RESAMPLE3  , SAVEBUFF3, MP3,
-    MP3ADDY, SETVOL3, DMEMMOVE3 , LOADADPCM3 , MIXER3   , INTERLEAVE3, WHATISTHIS   , SETLOOP3
-};
-
-
+/* global functions */
 void alist_process_naudio(void)
 {
-    alist_process(ABI3, 0x10);
+    static const acmd_callback_t ABI[0x10] = {
+        SPNOOP,         ADPCM,          CLEARBUFF,      ENVMIXER,
+        LOADBUFF,       RESAMPLE,       SAVEBUFF,       NAUDIO_0000,
+        NAUDIO_0000,    SETVOL,         DMEMMOVE,       LOADADPCM,
+        MIXER,          INTERLEAVE,     NAUDIO_02B0,    SETLOOP
+    };
+
+    alist_process(ABI, 0x10);
 }
 
 void alist_process_naudio_bk(void)
 {
-    alist_process(ABI3, 0x10);
+    /* TODO: see what differs from alist_process_naudio */
+    static const acmd_callback_t ABI[0x10] = {
+        SPNOOP,         ADPCM,          CLEARBUFF,      ENVMIXER,
+        LOADBUFF,       RESAMPLE,       SAVEBUFF,       NAUDIO_0000,
+        NAUDIO_0000,    SETVOL,         DMEMMOVE,       LOADADPCM,
+        MIXER,          INTERLEAVE,     NAUDIO_02B0,    SETLOOP
+    };
+
+    alist_process(ABI, 0x10);
 }
 
 void alist_process_naudio_dk(void)
 {
-    alist_process(ABI3, 0x10);
+    /* TODO: see what differs from alist_process_naudio */
+    static const acmd_callback_t ABI[0x10] = {
+        SPNOOP,         ADPCM,          CLEARBUFF,      ENVMIXER,
+        LOADBUFF,       RESAMPLE,       SAVEBUFF,       MIXER,
+        MIXER,          SETVOL,         DMEMMOVE,       LOADADPCM,
+        MIXER,          INTERLEAVE,     NAUDIO_02B0,    SETLOOP
+    };
+
+    alist_process(ABI, 0x10);
 }
 
 void alist_process_naudio_mp3(void)
 {
-    alist_process(ABI3, 0x10);
+    static const acmd_callback_t ABI[0x10] = {
+        UNKNOWN,        ADPCM,          CLEARBUFF,      ENVMIXER,
+        LOADBUFF,       RESAMPLE,       SAVEBUFF,       MP3,
+        MP3ADDY,        SETVOL,         DMEMMOVE,       LOADADPCM,
+        MIXER,          INTERLEAVE,     NAUDIO_14,      SETLOOP
+    };
+
+    alist_process(ABI, 0x10);
 }
 
 void alist_process_naudio_cbfd(void)
 {
-    alist_process(ABI3, 0x10);
+    /* TODO: see what differs from alist_process_naudio_mp3 */
+    static const acmd_callback_t ABI[0x10] = {
+        UNKNOWN,        ADPCM,          CLEARBUFF,      ENVMIXER,
+        LOADBUFF,       RESAMPLE,       SAVEBUFF,       MP3,
+        MP3ADDY,        SETVOL,         DMEMMOVE,       LOADADPCM,
+        MIXER,          INTERLEAVE,     NAUDIO_14,      SETLOOP
+    };
+
+    alist_process(ABI, 0x10);
 }

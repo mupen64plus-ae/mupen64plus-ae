@@ -56,6 +56,7 @@ static struct {
 } l_alist;
 
 
+/* audio commands definition */
 static void SPNOOP(uint32_t w1, uint32_t w2)
 {
 }
@@ -120,8 +121,6 @@ static void SETVOL(uint32_t w1, uint32_t w2)
         }
     }
 }
-
-static void UNKNOWN(uint32_t w1, uint32_t w2) {}
 
 static void SETLOOP(uint32_t w1, uint32_t w2)
 {
@@ -223,22 +222,65 @@ static void MIXER(uint32_t w1, uint32_t w2)
     alist_mix(dmemo, dmemi, l_alist.count, gain);
 }
 
-static const acmd_callback_t ABI1[0x10] = {
-    SPNOOP , ADPCM , CLEARBUFF, ENVMIXER  , LOADBUFF, RESAMPLE  , SAVEBUFF, UNKNOWN,
-    SETBUFF, SETVOL, DMEMMOVE , LOADADPCM , MIXER   , INTERLEAVE, UNKNOWN , SETLOOP
-};
+static void SEGMENT(uint32_t w1, uint32_t w2)
+{
+    /* TODO */
+}
 
+static void POLEF(uint32_t w1, uint32_t w2)
+{
+    uint8_t  flags   = (w1 >> 16);
+    uint16_t gain    = w1;
+    uint32_t address = (w2 & 0xffffff);
+
+    if (l_alist.count == 0)
+        return;
+
+    alist_polef(
+            flags & A_INIT,
+            l_alist.out,
+            l_alist.in,
+            l_alist.count,
+            gain,
+            l_alist.table,
+            address);
+}
+
+/* global functions */
 void alist_process_audio(void)
 {
-    alist_process(ABI1, 0x10);
+    static const acmd_callback_t ABI[0x10] = {
+        SPNOOP,         ADPCM ,         CLEARBUFF,      ENVMIXER,
+        LOADBUFF,       RESAMPLE,       SAVEBUFF,       SEGMENT,
+        SETBUFF,        SETVOL,         DMEMMOVE,       LOADADPCM,
+        MIXER,          INTERLEAVE,     POLEF,          SETLOOP
+    };
+
+    alist_process(ABI, 0x10);
 }
 
 void alist_process_audio_ge(void)
 {
-    alist_process(ABI1, 0x10);
+    /* TODO: see what differs from alist_process_audio */
+    static const acmd_callback_t ABI[0x10] = {
+        SPNOOP,         ADPCM ,         CLEARBUFF,      ENVMIXER,
+        LOADBUFF,       RESAMPLE,       SAVEBUFF,       SEGMENT,
+        SETBUFF,        SETVOL,         DMEMMOVE,       LOADADPCM,
+        MIXER,          INTERLEAVE,     POLEF,          SETLOOP
+    };
+
+    alist_process(ABI, 0x10);
 }
 
 void alist_process_audio_bc(void)
 {
-    alist_process(ABI1, 0x10);
+    /* TODO: see what differs from alist_process_audio */
+    static const acmd_callback_t ABI[0x10] = {
+        SPNOOP,         ADPCM ,         CLEARBUFF,      ENVMIXER,
+        LOADBUFF,       RESAMPLE,       SAVEBUFF,       SEGMENT,
+        SETBUFF,        SETVOL,         DMEMMOVE,       LOADADPCM,
+        MIXER,          INTERLEAVE,     POLEF,          SETLOOP
+    };
+
+    alist_process(ABI, 0x10);
 }

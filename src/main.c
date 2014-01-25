@@ -420,8 +420,6 @@ EXPORT void CALL RomClosed(void)
 {
     memset(rsp.DMEM, 0, 0x1000);
     memset(rsp.IMEM, 0, 0x1000);
-
-    init_ucode2();
 }
 
 

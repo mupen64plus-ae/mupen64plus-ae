@@ -34,6 +34,7 @@ void alist_save(uint16_t dmem, uint32_t address, uint16_t count);
 void alist_move(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 void alist_copy_every_other_sample(uint16_t dmemo, uint16_t dmemi, uint16_t count);
 void alist_repeat64(uint16_t dmemo, uint16_t dmemi, uint8_t count);
+void alist_copy_blocks(uint16_t dmemo, uint16_t dmemi, uint16_t block_size, uint8_t count);
 void alist_interleave(uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count);
 
 void alist_envmix_exp(
@@ -90,11 +91,27 @@ void alist_resample(bool init,
         uint16_t dmemo, uint16_t dmemi, uint16_t count,
         uint32_t pitch, uint32_t address);
 
+void alist_resample_zoh(
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint32_t pitch,
+        uint32_t pitch_accu);
+
 void alist_filter(
         uint16_t dmem,
         uint16_t count,
         uint32_t address,
         const uint32_t* lut_address);
+
+void alist_polef(
+        bool init,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint16_t gain,
+        int16_t* table,
+        uint32_t address);
 /*
  * Audio flags
  */
