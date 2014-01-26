@@ -597,7 +597,7 @@ static void my_audio_callback(void *userdata, unsigned char *stream, int len)
         else
 #endif
         {
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
             input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, stream, len, newsamplerate);
 #else
             input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, mixBuffer, len, newsamplerate);
