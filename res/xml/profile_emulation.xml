@@ -64,53 +64,53 @@
             mupen64:trueString="1" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="categoryGles2Rice"
-        android:title="@string/categoryGles2Rice_title" >
+        android:key="categoryRice"
+        android:title="@string/categoryRice_title" >
         <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
             android:defaultValue="true"
-            android:key="gles2RiceAutoFrameskip"
-            android:summary="@string/gles2RiceAutoFrameskip_summary"
-            android:title="@string/gles2RiceAutoFrameskip_title" />
+            android:key="riceAutoFrameskip"
+            android:summary="@string/riceAutoFrameskip_summary"
+            android:title="@string/riceAutoFrameskip_title" />
         <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
             android:defaultValue="true"
-            android:key="gles2RiceFog"
-            android:summary="@string/gles2RiceFog_summary"
-            android:title="@string/gles2RiceFog_title" />
+            android:key="riceFog"
+            android:summary="@string/riceFog_summary"
+            android:title="@string/riceFog_title" />
         <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
             android:defaultValue="false"
-            android:key="gles2RiceFastTexture"
-            android:summary="@string/gles2RiceFastTexture_summary"
-            android:title="@string/gles2RiceFastTexture_title" />
+            android:key="riceFastTexture"
+            android:summary="@string/riceFastTexture_summary"
+            android:title="@string/riceFastTexture_title" />
         <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
             android:defaultValue="false"
-            android:key="gles2RiceForceTextureFilter"
-            android:summary="@string/gles2RiceForceTextureFilter_summary"
-            android:title="@string/gles2RiceForceTextureFilter_title" />
+            android:key="riceForceTextureFilter"
+            android:summary="@string/riceForceTextureFilter_summary"
+            android:title="@string/riceForceTextureFilter_title" />
 
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/gles2RiceScreenUpdate_default"
-            android:entries="@array/gles2RiceScreenUpdate_entries"
-            android:entryValues="@array/gles2RiceScreenUpdate_values"
-            android:key="gles2RiceScreenUpdate"
+            android:defaultValue="@string/riceScreenUpdate_default"
+            android:entries="@array/riceScreenUpdate_entries"
+            android:entryValues="@array/riceScreenUpdate_values"
+            android:key="riceScreenUpdate"
             android:summary="@string/selectedValue"
-            android:title="@string/gles2RiceScreenUpdate_title" />
+            android:title="@string/riceScreenUpdate_title" />
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/gles2RiceTextureEnhancement_default"
-            android:entries="@array/gles2RiceTextureEnhancement_entries"
-            android:entryValues="@array/gles2RiceTextureEnhancement_values"
-            android:key="gles2RiceTextureEnhancement"
+            android:defaultValue="@string/riceTextureEnhancement_default"
+            android:entries="@array/riceTextureEnhancement_entries"
+            android:entryValues="@array/riceTextureEnhancement_values"
+            android:key="riceTextureEnhancement"
             android:summary="@string/selectedValue"
-            android:title="@string/gles2RiceTextureEnhancement_title" />
+            android:title="@string/riceTextureEnhancement_title" />
 
         <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
             android:defaultValue="true"
-            android:key="gles2RiceHiResTextures"
-            android:summary="@string/gles2RiceHiResTextures_summary"
-            android:title="@string/gles2RiceHiResTextures_title" />
+            android:key="riceHiResTextures"
+            android:summary="@string/riceHiResTextures_summary"
+            android:title="@string/riceHiResTextures_title" />
 
         <paulscode.android.mupen64plusae.persistent.PathPreference
             android:defaultValue="@string/pathHiResTextures_default"
-            android:dependency="gles2RiceHiResTextures"
+            android:dependency="riceHiResTextures"
             android:key="pathHiResTextures"
             android:summary="@string/pathHiResTextures_summary"
             android:title="@string/pathHiResTextures_title"

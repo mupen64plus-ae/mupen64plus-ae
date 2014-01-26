@@ -170,7 +170,7 @@
     <string name="categoryTouchscreenBehavior_title">Behavior</string>
     <string name="categoryTouchscreenAppearance_title">Appearance</string>
     <string name="categoryGln64_title">Gln64 settings</string>
-    <string name="categoryGles2Rice_title">GLES2Rice settings</string>
+    <string name="categoryRice_title">Rice settings</string>
     <string name="categoryGlide64_title">Glide64 settings</string>
     <string name="categoryCore_title">Core</string>
     <string name="categoryAudio_title">Audio</string>
@@ -202,16 +202,16 @@
     <string name="gln64AlphaTest_summary">Disable for speed (causes black textures)</string>
     <string name="gln64DepthTest_title">Depth test</string>
     <string name="gln64DepthTest_summary">Disable for speed (causes flashing background)</string>
-    <string name="gles2RiceAutoFrameskip_title">Auto frameskip</string>
-    <string name="gles2RiceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
-    <string name="gles2RiceFastTexture_title">Fast texture loading</string>
-    <string name="gles2RiceFastTexture_summary">Fixes circle transitions</string>
-    <string name="gles2RiceForceTextureFilter_title">Texture filtering</string>
-    <string name="gles2RiceForceTextureFilter_summary">Fixes texture shimmering and blur on distant objects</string>
-    <string name="gles2RiceHiResTextures_title">High resolution textures</string>
-    <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
-    <string name="gles2RiceFog_title">Fog</string>
-    <string name="gles2RiceFog_summary">Show fog effects</string>
+    <string name="riceAutoFrameskip_title">Auto frameskip</string>
+    <string name="riceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
+    <string name="riceFastTexture_title">Fast texture loading</string>
+    <string name="riceFastTexture_summary">Fixes circle transitions</string>
+    <string name="riceForceTextureFilter_title">Texture filtering</string>
+    <string name="riceForceTextureFilter_summary">Fixes texture shimmering and blur on distant objects</string>
+    <string name="riceHiResTextures_title">High resolution textures</string>
+    <string name="riceHiResTextures_summary">Use imported texture packs</string>
+    <string name="riceFog_title">Fog</string>
+    <string name="riceFog_summary">Show fog effects</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
 
@@ -280,7 +280,7 @@
     <string name="videoPlugin_title">Video plugin</string>
     <string name="videoPlugin_entryNone">None (video disabled)</string>
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
-    <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
+    <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
     <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
 
     <string name="videoHardwareType_title">Flicker reduction</string>
@@ -308,25 +308,25 @@
     <string name="gln64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gln64Frameskip_entryExactly5">Exactly 5 frames</string>
 
-    <string name="gles2RiceScreenUpdate_title">Screen update method</string>
-    <string name="gles2RiceScreenUpdate_entryRomDefault">ROM default</string>
-    <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
-    <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI origin change</string>
-    <string name="gles2RiceScreenUpdate_entryCIChange">CI change</string>
-    <string name="gles2RiceScreenUpdate_entryFirstCIChange">First CI change</string>
-    <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">First primitive draw</string>
-    <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Before screen clear</string>
-    <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">After screen drawn</string>
+    <string name="riceScreenUpdate_title">Screen update method</string>
+    <string name="riceScreenUpdate_entryRomDefault">ROM default</string>
+    <string name="riceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
+    <string name="riceScreenUpdate_entryVIOriginChange">VI origin change</string>
+    <string name="riceScreenUpdate_entryCIChange">CI change</string>
+    <string name="riceScreenUpdate_entryFirstCIChange">First CI change</string>
+    <string name="riceScreenUpdate_entryFirstPrimDraw">First primitive draw</string>
+    <string name="riceScreenUpdate_entryBeforeScreenClear">Before screen clear</string>
+    <string name="riceScreenUpdate_entryAfterScreenDrawn">After screen drawn</string>
 
-    <string name="gles2RiceTextureEnhancement_title">Texture upscaling/enhancement</string>
-    <string name="gles2RiceTextureEnhancement_entryNone">None</string>
-    <string name="gles2RiceTextureEnhancement_entryScale2x">Scale 2x</string>
-    <string name="gles2RiceTextureEnhancement_entry2xsai">2x SaI</string>
-    <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
-    <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
-    <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
-    <string name="gles2RiceTextureEnhancement_entrySharpen">Sharpen</string>
-    <string name="gles2RiceTextureEnhancement_entrySharpen_more">Sharpen more</string>
+    <string name="riceTextureEnhancement_title">Texture upscaling/enhancement</string>
+    <string name="riceTextureEnhancement_entryNone">None</string>
+    <string name="riceTextureEnhancement_entryScale2x">Scale 2x</string>
+    <string name="riceTextureEnhancement_entry2xsai">2x SaI</string>
+    <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+    <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+    <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+    <string name="riceTextureEnhancement_entrySharpen">Sharpen</string>
+    <string name="riceTextureEnhancement_entrySharpen_more">Sharpen more</string>
 
     <string name="navigationMode_title">Accessibility</string>
     <string name="navigationMode_summary">Menu navigation mode: %1$s</string>

@@ -332,17 +332,17 @@
     <string name="glide64Frameskip_default" translatable="false">-5</string>
 
     <!-- Rice Screen Update List -->
-    <string-array name="gles2RiceScreenUpdate_entries">
-        <item>@string/gles2RiceScreenUpdate_entryRomDefault</item>
-        <item>@string/gles2RiceScreenUpdate_entryVIOriginUpdate</item>
-        <item>@string/gles2RiceScreenUpdate_entryVIOriginChange</item>
-        <item>@string/gles2RiceScreenUpdate_entryCIChange</item>
-        <item>@string/gles2RiceScreenUpdate_entryFirstCIChange</item>
-        <item>@string/gles2RiceScreenUpdate_entryFirstPrimDraw</item>
-        <item>@string/gles2RiceScreenUpdate_entryBeforeScreenClear</item>
-        <item>@string/gles2RiceScreenUpdate_entryAfterScreenDrawn</item>
+    <string-array name="riceScreenUpdate_entries">
+        <item>@string/riceScreenUpdate_entryRomDefault</item>
+        <item>@string/riceScreenUpdate_entryVIOriginUpdate</item>
+        <item>@string/riceScreenUpdate_entryVIOriginChange</item>
+        <item>@string/riceScreenUpdate_entryCIChange</item>
+        <item>@string/riceScreenUpdate_entryFirstCIChange</item>
+        <item>@string/riceScreenUpdate_entryFirstPrimDraw</item>
+        <item>@string/riceScreenUpdate_entryBeforeScreenClear</item>
+        <item>@string/riceScreenUpdate_entryAfterScreenDrawn</item>
     </string-array>
-    <string-array name="gles2RiceScreenUpdate_values" translatable="false">
+    <string-array name="riceScreenUpdate_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -353,20 +353,20 @@
         <item>7</item>
     </string-array>
 
-    <string name="gles2RiceScreenUpdate_default" translatable="false">4</string>
+    <string name="riceScreenUpdate_default" translatable="false">4</string>
     
     <!-- Rice Texture Enhancement Algorithm List -->
-    <string-array name="gles2RiceTextureEnhancement_entries">
-        <item>@string/gles2RiceTextureEnhancement_entryNone</item>
-        <item>@string/gles2RiceTextureEnhancement_entryScale2x</item>
-        <item>@string/gles2RiceTextureEnhancement_entry2xsai</item>
-        <item>@string/gles2RiceTextureEnhancement_entryHq2x</item>
-        <item>@string/gles2RiceTextureEnhancement_entryLq2x</item>
-        <item>@string/gles2RiceTextureEnhancement_entryHq4x</item>
-        <item>@string/gles2RiceTextureEnhancement_entrySharpen</item>
-        <item>@string/gles2RiceTextureEnhancement_entrySharpen_more</item>
+    <string-array name="riceTextureEnhancement_entries">
+        <item>@string/riceTextureEnhancement_entryNone</item>
+        <item>@string/riceTextureEnhancement_entryScale2x</item>
+        <item>@string/riceTextureEnhancement_entry2xsai</item>
+        <item>@string/riceTextureEnhancement_entryHq2x</item>
+        <item>@string/riceTextureEnhancement_entryLq2x</item>
+        <item>@string/riceTextureEnhancement_entryHq4x</item>
+        <item>@string/riceTextureEnhancement_entrySharpen</item>
+        <item>@string/riceTextureEnhancement_entrySharpen_more</item>
     </string-array>
-    <string-array name="gles2RiceTextureEnhancement_values" translatable="false">
+    <string-array name="riceTextureEnhancement_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -377,13 +377,13 @@
         <item>7</item>
     </string-array>
 
-    <string name="gles2RiceTextureEnhancement_default" translatable="false">0</string>
+    <string name="riceTextureEnhancement_default" translatable="false">0</string>
 
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries" translatable="false">
         <item>@string/videoPlugin_entryNone</item>
         <item>@string/videoPlugin_entryGln64</item>
-        <item>@string/videoPlugin_entryGles2Rice</item>
+        <item>@string/videoPlugin_entryRice</item>
         <item>@string/videoPlugin_entryGlide64</item>
     </string-array>
     <string-array name="videoPlugin_values" translatable="false">

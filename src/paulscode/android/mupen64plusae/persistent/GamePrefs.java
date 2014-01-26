@@ -223,13 +223,13 @@ public class GamePrefs
         
         // Video prefs - rice
         isRiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );
-        isRiceAutoFrameskipEnabled = emulationProfile.get( "gles2RiceAutoFrameskip", "False" ).equals( "True" );
-        isRiceFastTextureLoadingEnabled = emulationProfile.get( "gles2RiceFastTexture", "False" ).equals( "True" );
-        isRiceForceTextureFilterEnabled = emulationProfile.get( "gles2RiceForceTextureFilter", "False" ).equals( "True" );
-        riceScreenUpdateType = emulationProfile.get( "gles2RiceScreenUpdate", "4" );
-        riceTextureEnhancement = emulationProfile.get( "gles2RiceTextureEnhancement", "0" );
-        isRiceHiResTexturesEnabled = emulationProfile.get( "gles2RiceHiResTextures", "True" ).equals( "True" );
-        isRiceFogEnabled = emulationProfile.get( "gles2RiceFog", "False" ).equals( "True" );
+        isRiceAutoFrameskipEnabled = emulationProfile.get( "riceAutoFrameskip", "False" ).equals( "True" );
+        isRiceFastTextureLoadingEnabled = emulationProfile.get( "riceFastTexture", "False" ).equals( "True" );
+        isRiceForceTextureFilterEnabled = emulationProfile.get( "riceForceTextureFilter", "False" ).equals( "True" );
+        riceScreenUpdateType = emulationProfile.get( "riceScreenUpdate", "4" );
+        riceTextureEnhancement = emulationProfile.get( "riceTextureEnhancement", "0" );
+        isRiceHiResTexturesEnabled = emulationProfile.get( "riceHiResTextures", "True" ).equals( "True" );
+        isRiceFogEnabled = emulationProfile.get( "riceFog", "False" ).equals( "True" );
         
         // Video prefs - glide64
         isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
