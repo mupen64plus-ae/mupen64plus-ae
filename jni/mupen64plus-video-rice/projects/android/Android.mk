@@ -62,8 +62,8 @@ LOCAL_SRC_FILES :=                      \
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DANDROID           \
+    -DANDROID_EDITION   \
     -DNO_ASM            \
-    -DPAULSCODE         \
     -fsigned-char       \
     #-DBGR_SHADER        \
     #-DSDL_NO_COMPAT     \

@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLTexture.h"
 #include "TextureManager.h"
 
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
 #include "ae_imports.h"
 static int hardwareType = HARDWARE_TYPE_UNKNOWN;
 #endif
@@ -207,7 +207,7 @@ void OGLRender::Initialize(void)
     OPENGL_CHECK_ERRORS;
 #endif
 
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
     hardwareType = Android_JNI_GetHardwareType();
 #endif
 }
@@ -351,7 +351,7 @@ void OGLRender::ApplyZBias(int bias)
     float f1 = bias > 0 ? -3.0f : 0.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
     float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
 
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
     Android_JNI_GetPolygonOffset(hardwareType, bias, &f1, &f2);
 #endif
 
