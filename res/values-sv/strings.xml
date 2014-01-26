@@ -107,6 +107,7 @@
   <string name="screenTouchscreen_summary">On-screen kontroll inställningar</string>
   <string name="screenTouchpad_title">Pekplatta</string>
   <string name="screenTouchpad_summary">Xperia PLAY inställningar</string>
+  <string name="screenDisplay_title">Visa</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik inställningar</string>
   <string name="screenAdvanced_title">Avancerat</string>
@@ -121,6 +122,7 @@
   <string name="categoryGles2N64_title">GLES2N64 inställningar</string>
   <string name="categoryGles2Rice_title">GLES2Rice inställningar</string>
   <string name="categoryGles2Glide64_title">GLES2Glide64 inställningar</string>
+  <string name="categoryCore_title">Kärna</string>
   <string name="categoryAudio_title">Ljud</string>
   <string name="categoryData_title">Data</string>
   <string name="categoryCrashReports_title">Felrapporter</string>
@@ -154,10 +156,15 @@
   <string name="gles2RiceHiResTextures_title">Högupplösta texturer</string>
   <string name="gles2RiceHiResTextures_summary">Använd importerade textur förpackningar</string>
   <string name="gles2RiceFog_title">Dimma</string>
+  <string name="gles2RiceFog_summary">Visa dim effekter.</string>
   <string name="audioSwapChannels_title">Byt ljudkanaler</string>
   <string name="audioSwapChannels_summary">Byt de vänstra och högra ljudkanalerna</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Auto-hållning av knapp</string>
   <string name="touchscreenAutoHold_entryDisabled">Inaktiverad</string>
+  <string name="touchscreenAutoHold_entryLongPress">vid långt-tryck</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Vid slide-off</string>
+  <string name="touchscreenAutoHoldables_title">Hållbara knappar</string>
   <string name="touchscreenRefresh_title">Styrspak animation</string>
   <string name="touchscreenRefresh_entryNever">Aldrig</string>
   <string name="touchscreenRefresh_entryOccasionally">Ibland</string>
@@ -165,8 +172,10 @@
   <string name="touchscreenStyle_title">Knapp stil</string>
   <string name="touchscreenStyle_entryOutline">Konturer</string>
   <string name="touchscreenStyle_entryShaded">Skuggad</string>
+  <string name="touchscreenHeight_title">Vertikalt knapp mellanrum</string>
   <string name="touchscreenHeight_entryAuto">Auto</string>
-  <string name="touchscreenHeight_entryFullHeight">Full höjd</string>
+  <string name="touchscreenHeight_entryFullHeight">Full-höjd</string>
+  <string name="touchscreenHeight_entryHalfHeight">Halv-höjd</string>
   <string name="touchscreenLayout_title">Knapp layout</string>
   <string name="touchscreenLayout_entryAnalog">Analog (av roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">digital (av roymustang16)</string>
@@ -203,6 +212,7 @@
   <string name="videoHardwareType_entryO2">O-2 profil</string>
   <string name="videoHardwareType_entryQ">Q profil</string>
   <string name="videoHardwareType_entryT">T profil</string>
+  <string name="videoHardwareType_entryCustom">Personlig profil</string>
   <string name="gles2N64Frameskip_title">Frameskip</string>
   <string name="gles2N64Frameskip_entryNever">Aldrig hoppa ramar</string>
   <string name="gles2N64Frameskip_entryUpTo1">Inte mer än 1 ram</string>
@@ -217,6 +227,10 @@
   <string name="gles2N64Frameskip_entryExactly5">Precis 5 ramar</string>
   <string name="gles2RiceScreenUpdate_title">Skärm uppdateringsmetod</string>
   <string name="gles2RiceScreenUpdate_entryRomDefault">ROM standard</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI ursprungs uppdatering</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI ursprungs förändring</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">CI förändring</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Första CI förändringen</string>
   <string name="gles2RiceTextureEnhancement_title">Textur uppskalning/förbättring</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Inga</string>
   <string name="gles2RiceTextureEnhancement_entryScale2x">Skala 2x</string>
@@ -278,6 +292,7 @@
   <string name="confirmResetGame_message">Återställ spelet? Alla framsteg har sparats kommer att förloras.</string>
   <string name="confirmOverwriteFile_message">Skriva över %1$s?</string>
   <string name="confirmLoadProfile_message">Ladda profil \"%1$s\" för %2$s?</string>
+  <string name="confirmUnmapAll_message">Avtilldela alla kommandon för %1$s?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Ändringar</string>
   <!--Corrupt Installation Warning-->
@@ -291,7 +306,7 @@
   <string name="assetExtractor_finished">Färdig</string>
   <string name="assetExtractor_failed">Error under extraktionen av app data.\nVar vänlig koppla ur USB kabeln, starta om enheten och starta om applikationen.\nFör hjälp, vänligen besök %1$s.</string>
   <!--Cheats Configuration-->
-  <string name="cheats_defaultName">Fuska %1$d</string>
+  <string name="cheats_defaultName">Fusk %1$d</string>
   <string name="cheats_longPress">(lång-tryck för full text)</string>
   <string name="cheat_disabled">(inaktiverad)</string>
   <string name="cheatOption_title">Full text</string>
@@ -300,10 +315,11 @@
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Uppackning texturer</string>
   <string name="pathHiResTexturesTask_message">Var god och vänta. Denna process kan ta lite tid.</string>
-  <string name="pathHiResTexturesTask_errorMessage">Problem uppackning texturer!</string>
+  <string name="pathHiResTexturesTask_errorMessage">Problem med uppackning av texturer!</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Grund mapp</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Enhet %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Enhet %1$d</string>
@@ -311,8 +327,9 @@
   <string name="playerMapPreference_popupMessage">Spelare %1$d, tryck på en knapp eller stick på handkontrollen…\n\nAktuella enheter:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Unmap</string>
   <string name="playerMapPreference_button">Spelare %1$d\n%2$s</string>
-  <string name="playerMapPreference_reminder">Påminn mig när spelarna inte mappas</string>
+  <string name="playerMapPreference_reminder">Påminn mig när spelarna inte är mappade</string>
   <!--Input Mapping-->
+  <string name="inputMapActivity_popupMessage">Tryck på en knapp, tangent, eller joystick för att mappa/tilldela...\n\nNuvarande mappningar/tilldelningar:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Unmap</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analog spak kontrollerad med pekplatta</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad styrs med pekplatta</string>
@@ -335,9 +352,11 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
+  <string name="inputMapActivity_incrementSlot">Inkrementera slot</string>
   <string name="inputMapActivity_reset">Ladda om</string>
   <string name="inputMapActivity_pause">Paus</string>
   <string name="inputMapActivity_stop">Stopp</string>
+  <string name="inputMapActivity_frameAdvance">Frame avancering</string>
   <string name="inputMapActivity_fastForward">Snabbspolning</string>
   <string name="inputMapActivity_speedDown">Sakta ner</string>
   <string name="inputMapActivity_speedUp">Snabba up</string>

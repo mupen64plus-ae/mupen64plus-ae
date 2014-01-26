@@ -53,11 +53,19 @@
   <!--Menu Activity-->
   <string name="menuItem_play">Iniciar emulación</string>
   <string name="menuItem_settings">Opciones</string>
+  <string name="menuItem_gameSettings">Ajustes específicos del juego</string>
+  <string name="menuItem_gameSettingsNamed">Opciones %1$s</string>
+  <string name="menuItem_globalSettings">Configuración global</string>
+  <string name="menuItem_touchscreenProfiles">Perfiles de pantalla táctil</string>
+  <string name="menuItem_controllerProfiles">Perfiles del controlador</string>
+  <string name="menuItem_customCheats">Trucos personalizados</string>
   <string name="menuItem_help">Ayuda</string>
   <string name="menuItem_faq">Preguntas frecuentes</string>
+  <string name="menuItem_helpForum">Foro de ayuda</string>
   <string name="menuItem_controllerDiagnostics">Diagnósticos del mando</string>
   <string name="menuItem_reportBug">Reportar bug</string>
   <string name="menuItem_about">Acerca de</string>
+  <string name="menuItem_appVersion">Versión de la aplicación</string>
   <string name="menuItem_changelog">Registro de cambios</string>
   <string name="menuItem_axisInfo">Información analógica</string>
   <string name="menuItem_controllerInfo">Información del mando</string>
@@ -81,6 +89,7 @@
   <string name="toast_loadingFile">Cargando %1$s…</string>
   <string name="toast_savingFile">Guardando %1$s…</string>
   <string name="toast_overwritingFile">Sobrescribiendo %1$s…</string>
+  <string name="toast_loadingGameSettings">Cargando %1$s ajustes...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Usando ahora el slot %1$d.</string>
   <string name="toast_sdInaccessible">Tarjeta SD no accesible (desconecta el cable USB e intenta de nuevo).</string>
@@ -103,6 +112,7 @@
   <string name="actionCrashTest_summary">Enviar un reporte de configuración a los desarrolladores</string>
   <string name="actionResetUserPrefs_title">Reiniciar</string>
   <string name="actionResetUserPrefs_summary">Restaurar configuración por defecto</string>
+  <string name="actionResetUserPrefs_popupMessage">¿Restaurar todas las preferencias a sus valores predeterminados? <small>\n\nTodas las modificaciones manuales que haya realizado en el archivo de configuración se sobrescribirán. </small></string>
   <!--Preference Screens-->
   <string name="screenInput_title">Entrada</string>
   <string name="screenInput_summary">Configuración del mando</string>
@@ -110,6 +120,7 @@
   <string name="screenTouchscreen_summary">Ajustes del mando en pantalla</string>
   <string name="screenTouchpad_title">Touchpad</string>
   <string name="screenTouchpad_summary">Opciones de Xperia PLAY</string>
+  <string name="screenDisplay_title">Pantalla</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Configuración de gráficos</string>
   <string name="screenAdvanced_title">Avanzadas</string>
@@ -124,6 +135,7 @@
   <string name="categoryGles2N64_title">Opciones del plugin GLES2N64</string>
   <string name="categoryGles2Rice_title">Opciones del plugin GLES2Rice</string>
   <string name="categoryGles2Glide64_title">Opciones del plugin GLES2Glide64</string>
+  <string name="categoryCore_title">Núcleo</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Datos</string>
   <string name="categoryCrashReports_title">Informes de fallos</string>
@@ -138,6 +150,8 @@
   <string name="inputVolumeMappable_summary">Permitir que las teclas de volumen sean asignadas a controles</string>
   <string name="inputShareController_title">Compartir mando</string>
   <string name="inputShareController_summary">Permite que un único dispositivo de entrada controle a varios jugadores al mismo tiempo</string>
+  <string name="displayImmersiveMode_title">Modo de inmersivo</string>
+  <string name="displayImmersiveMode_summary">Ocultar completamente barras de navegación y de estado</string>
   <string name="gles2N64Fog_title">Niebla</string>
   <string name="gles2N64Fog_summary">(todavía en desarrollo)</string>
   <string name="gles2N64Sai_title">Filtro de texturas 2xSaI</string>
@@ -157,6 +171,7 @@
   <string name="gles2RiceHiResTextures_title">Texturas de alta resolución</string>
   <string name="gles2RiceHiResTextures_summary">Usar paquetes de texturas importados</string>
   <string name="gles2RiceFog_title">Niebla</string>
+  <string name="gles2RiceFog_summary">Mostrar efectos de niebla</string>
   <string name="audioSwapChannels_title">Intercambiar canales de audio</string>
   <string name="audioSwapChannels_summary">Intercambia los canales de audio izquierdo y derecho</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -221,6 +236,8 @@
   <string name="videoHardwareType_entryO2">Perfil O-2</string>
   <string name="videoHardwareType_entryQ">Perfil Q</string>
   <string name="videoHardwareType_entryT">Perfil T</string>
+  <string name="videoHardwareType_entryCustom">Perfil personalizado</string>
+  <string name="videoPolygonOffset_summary">Reducción de parpadeo parcial personalizada</string>
   <string name="gles2N64Frameskip_title">Salto de cuadros</string>
   <string name="gles2N64Frameskip_entryNever">Nunca saltar cuadros</string>
   <string name="gles2N64Frameskip_entryUpTo1">No más de 1 cuadro</string>
@@ -262,7 +279,10 @@
   <string name="r4300Emulator_entryDynarec">Recompilador dinámico (dynarec)</string>
   <string name="audioPlugin_entryNone">Ninguno (audio deshabilitado)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="audioBufferSize_title">Tamaño del búfer de audio</string>
   <string name="audioBufferSize_entry2048">Por defecto</string>
+  <string name="audioBufferSize_entry128">Baja latencia (experimental)</string>
+  <string name="audioBufferSize_entry8">Ultra-baja latencia (experimental)</string>
   <string name="localeOverride_entrySystemDefault">Predeterminado del sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Activar informes de fallos</string>

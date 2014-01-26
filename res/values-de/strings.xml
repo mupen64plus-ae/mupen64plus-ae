@@ -53,11 +53,19 @@
   <!--Menu Activity-->
   <string name="menuItem_play">Spielen</string>
   <string name="menuItem_settings">Einstellungen</string>
+  <string name="menuItem_gameSettings">Spiel-spezifische Einstellungen</string>
+  <string name="menuItem_gameSettingsNamed">%1$s Einstellungen</string>
+  <string name="menuItem_globalSettings">Allgemeine Einstellungen</string>
+  <string name="menuItem_touchscreenProfiles">Touchscreen-Profile</string>
+  <string name="menuItem_controllerProfiles">Controller-Profile</string>
+  <string name="menuItem_customCheats">Benutzerdefinierte Cheats</string>
   <string name="menuItem_help">Hilfe</string>
   <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_helpForum">Hilfeforum</string>
   <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
   <string name="menuItem_reportBug">Bug melden</string>
   <string name="menuItem_about">Über</string>
+  <string name="menuItem_appVersion">App-Version</string>
   <string name="menuItem_changelog">Changelog</string>
   <string name="menuItem_axisInfo">Analog-Info</string>
   <string name="menuItem_controllerInfo">Controllerinfo</string>
@@ -81,6 +89,7 @@
   <string name="toast_loadingFile">%1$s wird geladen…</string>
   <string name="toast_savingFile">%1$s wird gespeichert…</string>
   <string name="toast_overwritingFile">%1$s wird überschrieben…</string>
+  <string name="toast_loadingGameSettings">%1$s Einstellungen werden geladen…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Slot %1$d wird nun genutzt.</string>
   <string name="toast_sdInaccessible">SD-Karte nicht zugänglich (trenne das USB-Kabel und versuche es erneut).</string>
@@ -275,8 +284,12 @@
   <string name="r4300Emulator_entryDynarec">Dynamischer Recompiler (dynarec)</string>
   <string name="audioPlugin_title">Audio Plugin</string>
   <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
+  <string name="audioPlugin_entryNoneNoSpeedLimit">Kein Debug (Audio ist deaktiviert, keine Geschwindigkeitsbegrenzung)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="audioBufferSize_title">Audio-Puffergröße</string>
   <string name="audioBufferSize_entry2048">Standard</string>
+  <string name="audioBufferSize_entry128">Geringe Latenzzeit (experimentell)</string>
+  <string name="audioBufferSize_entry8">Sehr geringe Latenzzeit (experimentell)</string>
   <string name="localeOverride_entrySystemDefault">Systemstandard</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Absturzberichte aktivieren</string>

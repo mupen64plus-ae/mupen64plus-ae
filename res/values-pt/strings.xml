@@ -53,11 +53,19 @@
   <!--Menu Activity-->
   <string name="menuItem_play">Jogar</string>
   <string name="menuItem_settings">Configurações</string>
+  <string name="menuItem_gameSettings">Configurações específicas do jogo</string>
+  <string name="menuItem_gameSettingsNamed">Configurações de %1$s</string>
+  <string name="menuItem_globalSettings">Configurações globais</string>
+  <string name="menuItem_touchscreenProfiles">Perfil do controle de toque</string>
+  <string name="menuItem_controllerProfiles">Perfil do controle</string>
+  <string name="menuItem_customCheats">Cheats custumizados</string>
   <string name="menuItem_help">Ajuda</string>
   <string name="menuItem_faq">Dúvidas frequentes</string>
+  <string name="menuItem_helpForum">Fórum de ajuda</string>
   <string name="menuItem_controllerDiagnostics">Diagnóstico do Controle</string>
   <string name="menuItem_reportBug">Relatar bug</string>
   <string name="menuItem_about">Sobre</string>
+  <string name="menuItem_appVersion">Versão do aplicativo</string>
   <string name="menuItem_changelog">Melhorias do emulador</string>
   <string name="menuItem_axisInfo">Informações do Analógico</string>
   <string name="menuItem_controllerInfo">Informação do Controle</string>
@@ -81,6 +89,7 @@
   <string name="toast_loadingFile">Carregando %1$s…</string>
   <string name="toast_savingFile">Salvando %1$s…</string>
   <string name="toast_overwritingFile">Sobrescrevendo %1$s…</string>
+  <string name="toast_loadingGameSettings">Carregando configurações de %1$s…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessível (desconecte o cabo USB e tente novamente).</string>
@@ -275,8 +284,12 @@
   <string name="r4300Emulator_entryDynarec">Recompilador dinâmico (dynarec)</string>
   <string name="audioPlugin_title">Plugin de áudio</string>
   <string name="audioPlugin_entryNone">Nenhum (áudio desabilitado)</string>
+  <string name="audioPlugin_entryNoneNoSpeedLimit">Nenhum-depuração (áudio desabilitado, sem limite de velocidade)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="audioBufferSize_title">Tamanho do buffer de áudio</string>
   <string name="audioBufferSize_entry2048">Padrão</string>
+  <string name="audioBufferSize_entry128">Baixa latência (experimental)</string>
+  <string name="audioBufferSize_entry8">Latência ultra baixa (experimental)</string>
   <string name="localeOverride_entrySystemDefault">Padrão</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Habilitar relatório de erros</string>
@@ -329,7 +342,7 @@
   <string name="hintFileSave">nome do arquivo</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Inicializando</string>
-  <string name="assetExtractor_progress">%1$.0f%% feito: %2$s</string>
+  <string name="assetExtractor_progress">%1$.0f%% concluído: %2$s</string>
   <string name="assetExtractor_finished">Finalizado</string>
   <string name="assetExtractor_failed">Erro extraindo os dados do aplicativo. Por favor, desconecte o cabo USB, reinicie seu dispositivo e abra o emulador. Para ajuda, visite %1$s.</string>
   <!--Cheats Configuration-->

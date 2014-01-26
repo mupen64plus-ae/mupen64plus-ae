@@ -53,11 +53,19 @@
   <!--Menu Activity-->
   <string name="menuItem_play">Graj</string>
   <string name="menuItem_settings">Ustawienia</string>
+  <string name="menuItem_gameSettings">Specyficzne ustawienia gry</string>
+  <string name="menuItem_gameSettingsNamed">Ustawienia %1$s</string>
+  <string name="menuItem_globalSettings">Globalne ustawienia</string>
+  <string name="menuItem_touchscreenProfiles">Profile ekranu dotykowego</string>
+  <string name="menuItem_controllerProfiles">Profile kontrolera</string>
+  <string name="menuItem_customCheats">Własne cheaty</string>
   <string name="menuItem_help">Pomoc</string>
   <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_helpForum">Forum pomocy</string>
   <string name="menuItem_controllerDiagnostics">Diagnostyka kontrolera</string>
   <string name="menuItem_reportBug">Zgłoś błąd</string>
   <string name="menuItem_about">O aplikacji</string>
+  <string name="menuItem_appVersion">Wersja aplikacji</string>
   <string name="menuItem_changelog">Lista zmian</string>
   <string name="menuItem_axisInfo">Informacje o analogu</string>
   <string name="menuItem_controllerInfo">Informacje o kontrolerze</string>
@@ -81,6 +89,7 @@
   <string name="toast_loadingFile">Ładuję %1$s…</string>
   <string name="toast_savingFile">Zapisuję %1$s…</string>
   <string name="toast_overwritingFile">Nadpisuję %1$s…</string>
+  <string name="toast_loadingGameSettings">Ładuje ustawienia %1$s...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Obecnie używam slota %1$d…</string>
   <string name="toast_sdInaccessible">Nie można uzyskać dostępu do karty SD (odłącz kabel USB i spróbuj ponownie).</string>
@@ -275,8 +284,12 @@
   <string name="r4300Emulator_entryDynarec">Dynamiczny rekompilator (dynarec)</string>
   <string name="audioPlugin_title">Wtyczka dźwięku</string>
   <string name="audioPlugin_entryNone">Brak (wyłączony dźwięk)</string>
+  <string name="audioPlugin_entryNoneNoSpeedLimit">Brak debugowania (dźwięk wyłączony, nie ma ograniczenia prędkości)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="audioBufferSize_title">Wielkość bufora dźwięku</string>
   <string name="audioBufferSize_entry2048">Domyślne</string>
+  <string name="audioBufferSize_entry128">Niska latencja (eksperymentalne)</string>
+  <string name="audioBufferSize_entry8">Bardzo niska latencja (eksperymentalne)</string>
   <string name="localeOverride_entrySystemDefault">Domyślne ustawienia systemowe</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Włącz raportowanie błędów</string>

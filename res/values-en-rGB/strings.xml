@@ -53,11 +53,19 @@
   <!--Menu Activity-->
   <string name="menuItem_play">Play</string>
   <string name="menuItem_settings">Settings</string>
+  <string name="menuItem_gameSettings">Game-specific settings</string>
+  <string name="menuItem_gameSettingsNamed">%1$s settings</string>
+  <string name="menuItem_globalSettings">Global settings</string>
+  <string name="menuItem_touchscreenProfiles">Touchscreen profiles</string>
+  <string name="menuItem_controllerProfiles">Controller profiles</string>
+  <string name="menuItem_customCheats">Custom cheats</string>
   <string name="menuItem_help">Help</string>
   <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_helpForum">Help forum</string>
   <string name="menuItem_controllerDiagnostics">Controller diagnostics</string>
   <string name="menuItem_reportBug">Report bug</string>
   <string name="menuItem_about">About</string>
+  <string name="menuItem_appVersion">App version</string>
   <string name="menuItem_changelog">Changelog</string>
   <string name="menuItem_axisInfo">Analogue info</string>
   <string name="menuItem_controllerInfo">Controller info</string>
@@ -81,6 +89,7 @@
   <string name="toast_loadingFile">Loading %1$s…</string>
   <string name="toast_savingFile">Saving %1$s…</string>
   <string name="toast_overwritingFile">Overwriting %1$s…</string>
+  <string name="toast_loadingGameSettings">Loading %1$s settings…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Now using slot %1$d.</string>
   <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
@@ -103,6 +112,7 @@
   <string name="actionCrashTest_summary">Send a configuration report to the developers</string>
   <string name="actionResetUserPrefs_title">Reset</string>
   <string name="actionResetUserPrefs_summary">Restore default settings</string>
+  <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
   <!--Preference Screens-->
   <string name="screenInput_title">Input</string>
   <string name="screenInput_summary">Control settings</string>
@@ -110,9 +120,12 @@
   <string name="screenTouchscreen_summary">On-screen controller settings</string>
   <string name="screenTouchpad_title">Touchpad</string>
   <string name="screenTouchpad_summary">Xperia PLAY settings</string>
+  <string name="screenDisplay_title">Display</string>
+  <string name="screenDisplay_summary">Layout settings</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Graphics settings</string>
   <string name="screenAdvanced_title">Advanced</string>
+  <string name="screenAdvanced_summary">Core, storage, and debug settings</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheat options (long-press for notes)</string>
   <string name="categoryHardware_title">Hardware</string>
@@ -124,6 +137,7 @@
   <string name="categoryGles2N64_title">GLES2N64 settings</string>
   <string name="categoryGles2Rice_title">GLES2Rice settings</string>
   <string name="categoryGles2Glide64_title">GLES2Glide64 settings</string>
+  <string name="categoryCore_title">Core</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Data</string>
   <string name="categoryCrashReports_title">Crash reports</string>
@@ -138,6 +152,8 @@
   <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
   <string name="inputShareController_title">Share controller</string>
   <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
+  <string name="displayImmersiveMode_title">Immersive mode</string>
+  <string name="displayImmersiveMode_summary">Completely hide navigation and status bars</string>
   <string name="gles2N64Fog_title">Fog</string>
   <string name="gles2N64Fog_summary">(needs work)</string>
   <string name="gles2N64Sai_title">2xSaI texture filter</string>
@@ -157,6 +173,7 @@
   <string name="gles2RiceHiResTextures_title">High resolution textures</string>
   <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
   <string name="gles2RiceFog_title">Fog</string>
+  <string name="gles2RiceFog_summary">Show fog effects</string>
   <string name="audioSwapChannels_title">Swap audio channels</string>
   <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -204,11 +221,13 @@
   <string name="displayScaling_title">Screen scaling</string>
   <string name="displayScaling_entryNone">None\n<small>Use exact resolution selected above</small></string>
   <string name="displayScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
+  <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
   <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
   <string name="displayFpsRefresh_title">Display framerate</string>
   <string name="displayFpsRefresh_entryNever">Never</string>
   <string name="displayFpsRefresh_entryOccasionally">Occasionally</string>
   <string name="displayFpsRefresh_entryFrequently">Frequently</string>
+  <string name="videoPlugin_title">Video plugin</string>
   <string name="videoPlugin_entryNone">None (video disabled)</string>
   <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
@@ -221,6 +240,9 @@
   <string name="videoHardwareType_entryO2">O-2 profile</string>
   <string name="videoHardwareType_entryQ">Q profile</string>
   <string name="videoHardwareType_entryT">T profile</string>
+  <string name="videoHardwareType_entryCustom">Custom profile</string>
+  <string name="videoPolygonOffset_title">Polygon offset</string>
+  <string name="videoPolygonOffset_summary">Custom flicker reduction bias</string>
   <string name="gles2N64Frameskip_title">Frameskip</string>
   <string name="gles2N64Frameskip_entryNever">Never skip frames</string>
   <string name="gles2N64Frameskip_entryUpTo1">No more than 1 frame</string>
@@ -260,9 +282,14 @@
   <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
+  <string name="audioPlugin_title">Audio plugin</string>
   <string name="audioPlugin_entryNone">None (audio disabled)</string>
+  <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="audioBufferSize_title">Audio buffer size</string>
   <string name="audioBufferSize_entry2048">Default</string>
+  <string name="audioBufferSize_entry128">Low-latency (experimental)</string>
+  <string name="audioBufferSize_entry8">Ultra-low latency (experimental)</string>
   <string name="localeOverride_entrySystemDefault">System default</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Enable crash reporting</string>

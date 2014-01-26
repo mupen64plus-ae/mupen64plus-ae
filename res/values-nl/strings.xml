@@ -53,11 +53,19 @@
   <!--Menu Activity-->
   <string name="menuItem_play">Spelen</string>
   <string name="menuItem_settings">Instellingen</string>
+  <string name="menuItem_gameSettings">Spelspecifieke instellingen</string>
+  <string name="menuItem_gameSettingsNamed">%1$s instellingen</string>
+  <string name="menuItem_globalSettings">Globale instellingen</string>
+  <string name="menuItem_touchscreenProfiles">Touchscreenprofielen</string>
+  <string name="menuItem_controllerProfiles">Controllerprofielen</string>
+  <string name="menuItem_customCheats">Eigen cheats</string>
   <string name="menuItem_help">Help</string>
   <string name="menuItem_faq">Veelgestelde vragen</string>
+  <string name="menuItem_helpForum">Helpforum</string>
   <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
   <string name="menuItem_reportBug">Meld bug</string>
   <string name="menuItem_about">Over</string>
+  <string name="menuItem_appVersion">Appversie</string>
   <string name="menuItem_changelog">Wijzigingsgeschiedenis</string>
   <string name="menuItem_axisInfo">Analoge informatie</string>
   <string name="menuItem_controllerInfo">Controller info</string>
@@ -66,7 +74,7 @@
   <string name="menuItem_localeOverride">Taal</string>
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plus is ontwikkeld en wordt onderhouden door vrijwilligers.<small>\n\nGrafische problemen? Kies een andere <i>video plugin</i>.\n\nLast van lag? Probeer de <i>video beelden overslaan</i>-instelling of kies een andere <i>video plugin</i>.\n\nAls ROMs onspeelbaar zijn, probeer deze uit te pakken of probeer een andere versie van de ROM.\n\nProblemen met de touchscreenbediening? Probeer een andere <i>knopschaal</i> of <i>knopindeling</i>.\n\nBij andere problemen, of als u nog steeds problemen ondervindt, klik dan op de <i>Veelgestelde vragen</i> knop hieronder. In geval van fouten die niet met een bepaald spel te maken hebben, klik op de <i>Meld bug</i>-knop hieronder.  We beantwoorden de meeste berichten binnen 24 uur. Eerlijk waar.\n\n</small>Bedankt voor de hulp om de app beter te maken!</string>
-  <string name="popup_version">Versie: %1$s Code versie: %2$d</string>
+  <string name="popup_version">Versie: %1$s\nCode versie: %2$d</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -81,6 +89,7 @@
   <string name="toast_loadingFile">%1$s laden…</string>
   <string name="toast_savingFile">%1$s opslaan…</string>
   <string name="toast_overwritingFile">%1$s wordt overschreven…</string>
+  <string name="toast_loadingGameSettings">Laden van %1$s instellingen…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Huidig slot %1$d.</string>
   <string name="toast_sdInaccessible">SD-kaart niet beschikbaar (verwijder de USB-kabel en probeer opnieuw).</string>
@@ -103,6 +112,7 @@
   <string name="actionCrashTest_summary">Stuur een configuratierapport naar de ontwikkelaars</string>
   <string name="actionResetUserPrefs_title">Reset</string>
   <string name="actionResetUserPrefs_summary">Herstel standaardinstellingen</string>
+  <string name="actionResetUserPrefs_popupMessage">Reset alle voorkeuren naar standaardwaarden?<small>\n\nAlle handmatige wijzigingen aan de config file gaan verloren.</small></string>
   <!--Preference Screens-->
   <string name="screenInput_title">Invoer</string>
   <string name="screenInput_summary">Besturingsinstellingen</string>
@@ -110,9 +120,12 @@
   <string name="screenTouchscreen_summary">On-screen controllerinstellingen</string>
   <string name="screenTouchpad_title">Touchpad</string>
   <string name="screenTouchpad_summary">Xperia PLAY instellingen</string>
+  <string name="screenDisplay_title">Scherm</string>
+  <string name="screenDisplay_summary">Layout instellingen</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafische instellingen</string>
   <string name="screenAdvanced_title">Geavanceerd</string>
+  <string name="screenAdvanced_summary">Kern-, opslag- en foutopsporingsinstellingen</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheat opties (lang indrukken voor opmerkingen)</string>
   <string name="categoryHardware_title">Hardware</string>
@@ -124,6 +137,7 @@
   <string name="categoryGles2N64_title">GLES2N64 instellingen</string>
   <string name="categoryGles2Rice_title">GLES2Rice instellingen</string>
   <string name="categoryGles2Glide64_title">GLES2Glide64 instellingen</string>
+  <string name="categoryCore_title">Kern</string>
   <string name="categoryAudio_title">Geluid</string>
   <string name="categoryData_title">Gegevens</string>
   <string name="categoryCrashReports_title">Crash rapporten</string>
@@ -138,6 +152,8 @@
   <string name="inputVolumeMappable_summary">Sta het toe om volumeknoppen toe te wijzen</string>
   <string name="inputShareController_title">Deel controller</string>
   <string name="inputShareController_summary">Laat meerdere spelers besturen met 1 invoerapparaat</string>
+  <string name="displayImmersiveMode_title">Meeslepende modus</string>
+  <string name="displayImmersiveMode_summary">Navigatie- en statusbalk volledig verbergen</string>
   <string name="gles2N64Fog_title">Mist</string>
   <string name="gles2N64Fog_summary">(moet aan gewerkt worden)</string>
   <string name="gles2N64Sai_title">2xSal textuurfilter</string>
@@ -157,6 +173,7 @@
   <string name="gles2RiceHiResTextures_title">Hoge resolutie texturen</string>
   <string name="gles2RiceHiResTextures_summary">Gebruik geïmporteerde textuurpakketten</string>
   <string name="gles2RiceFog_title">Mist</string>
+  <string name="gles2RiceFog_summary">Misteffect tonen</string>
   <string name="audioSwapChannels_title">Verwissel geluidskanalen</string>
   <string name="audioSwapChannels_summary">Verwissel linker- en rechteraudiokanaal</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -204,11 +221,13 @@
   <string name="displayScaling_title">Schermschaling</string>
   <string name="displayScaling_entryNone">Geen\n<small>Gebruik precies de geselecteerde resolutie</small></string>
   <string name="displayScaling_entryZoom">Zoom\n<small>Scherm vullen zonder vervorming (voegt zwarte balken toe)</small></string>
+  <string name="displayScaling_entryCrop">Crop\n<small>Schermvullend, geen vervorming (beeld wordt afgesneden)</small></string>
   <string name="displayScaling_entryStretch">Uitrekken\n<small>Schermvullend zonder zwarte balken (geeft vervorming)</small></string>
   <string name="displayFpsRefresh_title">Framesnelheid weergeven</string>
   <string name="displayFpsRefresh_entryNever">Nooit</string>
   <string name="displayFpsRefresh_entryOccasionally">Soms</string>
   <string name="displayFpsRefresh_entryFrequently">Vaak</string>
+  <string name="videoPlugin_title">Videoplugin</string>
   <string name="videoPlugin_entryNone">Geen (video uitgeschakeld)</string>
   <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(aangepaste versie van GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(aangepaste versie van Rice Video v6.1.0(b))</small></string>
@@ -221,6 +240,9 @@
   <string name="videoHardwareType_entryO2">O-2 profiel</string>
   <string name="videoHardwareType_entryQ">Q profiel</string>
   <string name="videoHardwareType_entryT">T profiel</string>
+  <string name="videoHardwareType_entryCustom">Gebruikersprofiel</string>
+  <string name="videoPolygonOffset_title">Polygoon offset</string>
+  <string name="videoPolygonOffset_summary">Eigen knipperreductie bias</string>
   <string name="gles2N64Frameskip_title">Beelden overslaan</string>
   <string name="gles2N64Frameskip_entryNever">Sla nooit beelden over</string>
   <string name="gles2N64Frameskip_entryUpTo1">Niet meer dan 1 beeld</string>
@@ -260,8 +282,14 @@
   <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Gecachete interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamische hercompileerder (dynarec)</string>
+  <string name="audioPlugin_title">Audioplugin</string>
   <string name="audioPlugin_entryNone">Geen (geluid uitgeschakeld)</string>
+  <string name="audioPlugin_entryNoneNoSpeedLimit">Geen-debug (audio uitgeschakeld, geen snelheidslimiet)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="audioBufferSize_title">Audiobuffergrootte</string>
   <string name="audioBufferSize_entry2048">Standaardwaarden</string>
+  <string name="audioBufferSize_entry128">Lage latency (experimenteel)</string>
+  <string name="audioBufferSize_entry8">Ultralage latency (experimenteel)</string>
   <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Crashrapportage inschakelen</string>
