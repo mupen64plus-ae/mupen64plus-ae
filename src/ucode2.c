@@ -28,6 +28,11 @@
 #include "hle.h"
 #include "alist_internal.h"
 
+/* remove windows define to 0x06 */
+#ifdef DUPLICATE
+#undef DUPLICATE
+#endif
+
 /* alist state */
 static struct {
     /* main buffers */
