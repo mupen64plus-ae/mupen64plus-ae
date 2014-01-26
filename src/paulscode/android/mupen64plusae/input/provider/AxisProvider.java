@@ -187,9 +187,9 @@ public class AxisProvider extends AbstractProvider
                                 // multiplying by 127/80 (dividing by 0.63).
                                 // http://naesten.dyndns.org:8080/psyq/man/os/osContGetReadData.html
                                 // http://raphnet-tech.com/products/gc_n64_usb_adapters/
-                                // https://github.com/paulscode/mupen64plus-ae/issues/89
-                                // https://github.com/paulscode/mupen64plus-ae/issues/99
-                                // https://github.com/paulscode/mupen64plus-ae/issues/188
+                                // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/89
+                                // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/99
+                                // https://github.com/mupen64plus-ae/mupen64plus-ae/issues/188
                                 // http://www.paulscode.com/forum/index.php?topic=1076
                                 strength = strength / 0.63f;
                                 break;
