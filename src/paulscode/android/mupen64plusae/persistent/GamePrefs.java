@@ -58,8 +58,8 @@ public class GamePrefs
     /** True if gles2rice video plug-in is enabled. */
     public final boolean isGles2RiceEnabled;
     
-    /** True if gles2glide64 video plug-in is enabled. */
-    public final boolean isGles2Glide64Enabled;
+    /** True if glide64 video plug-in is enabled. */
+    public final boolean isGlide64Enabled;
     
     /** The maximum frameskip in the gln64 library. */
     public final int gln64MaxFrameskip;
@@ -103,11 +103,11 @@ public class GamePrefs
     /** True if fog is enabled in the gles2rice library. */
     public final boolean isGles2RiceFogEnabled;
     
-    /** The maximum frameskip in the gles2glide64 library. */
-    public final int gles2Glide64MaxFrameskip;
+    /** The maximum frameskip in the glide64 library. */
+    public final int glide64MaxFrameskip;
     
-    /** True if auto-frameskip is enabled in the gles2glide64 library. */
-    public final boolean isGles2Glide64AutoFrameskipEnabled;
+    /** True if auto-frameskip is enabled in the glide64 library. */
+    public final boolean isGlide64AutoFrameskipEnabled;
     
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
@@ -231,11 +231,11 @@ public class GamePrefs
         isGles2RiceHiResTexturesEnabled = emulationProfile.get( "gles2RiceHiResTextures", "True" ).equals( "True" );
         isGles2RiceFogEnabled = emulationProfile.get( "gles2RiceFog", "False" ).equals( "True" );
         
-        // Video prefs - gles2glide64
-        isGles2Glide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
+        // Video prefs - glide64
+        isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
         maxFrameskip = getSafeInt( emulationProfile, "gles2Glide64Frameskip", 0 );
-        isGles2Glide64AutoFrameskipEnabled = maxFrameskip < 0;
-        gles2Glide64MaxFrameskip = Math.abs( maxFrameskip );
+        isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
+        glide64MaxFrameskip = Math.abs( maxFrameskip );
         
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null;

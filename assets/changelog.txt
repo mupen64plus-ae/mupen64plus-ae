@@ -37,7 +37,7 @@
 - Removed OUYA controller deadzone hack (improves analog precision on retail controllers)
 - Game ROMS can be launched directly from file manager apps
 [28:2.3.2]
-- Added auto-frameskip feature to gles2glide64
+- Added auto-frameskip feature to glide64
 - Fixed file extraction failure on Android 2.2 and below
 - Added sensitivity preference for controller analog sticks
 - Fixed analog scaling for Mayflash N64/USB adapter
@@ -55,7 +55,7 @@
 - Added Swedish (Svenska) translation
 - Updated ACRA crash reporting system to 4.5.0-stable
 [26:2.3.0]
-- Added gles2glide64 video plugin (fixes broken graphics in many games)
+- Added glide64 video plugin (fixes broken graphics in many games)
 - Fixed extreme lag on Galaxy S3/S4 (US), HTC One, Xperia Z, and others
 - Added controller deadzone preference (see button mapping screen)
 - Fixed unmappable d-pad on newer batches of Nyko Playpad controller

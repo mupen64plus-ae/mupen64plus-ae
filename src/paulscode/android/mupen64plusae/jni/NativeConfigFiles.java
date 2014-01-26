@@ -48,11 +48,11 @@ public class NativeConfigFiles
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( game.isGln64ScreenClearEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( !game.isGln64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
         
-        // GLES2GLIDE64 config file
-        ConfigFile gles2glide64_conf = new ConfigFile( appData.gles2glide64_conf );
-        gles2glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                  // Stretch to GameSurface, Java will manage aspect ratio
-        gles2glide64_conf.put( "DEFAULT", "autoframeskip", boolToNum( game.isGles2Glide64AutoFrameskipEnabled ) );
-        gles2glide64_conf.put( "DEFAULT", "maxframeskip", String.valueOf( game.gles2Glide64MaxFrameskip ) );
+        // glide64 config file
+        ConfigFile glide64_conf = new ConfigFile( appData.glide64mk2_ini );
+        glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                    // Stretch to GameSurface, Java will manage aspect ratio
+        glide64_conf.put( "DEFAULT", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
+        glide64_conf.put( "DEFAULT", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
         
         // Core and GLES2RICE config file
         ConfigFile mupen64plus_cfg = new ConfigFile( user.mupen64plus_cfg );
@@ -125,7 +125,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isGles2RiceFogEnabled ) );                          // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
         
         gln64_conf.save();
-        gles2glide64_conf.save();
+        glide64_conf.save();
         mupen64plus_cfg.save();
         
         //@formatter:on

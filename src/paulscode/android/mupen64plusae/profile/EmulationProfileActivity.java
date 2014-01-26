@@ -50,7 +50,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     
     // These constants must match the entry-values found in arrays.xml
-    private static final String LIBGLES2GLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
+    private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
     private static final String LIBGLES2RICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
     private static final String VIDEO_HARDWARE_TYPE_CUSTOM = "999";
@@ -124,7 +124,7 @@ public class EmulationProfileActivity extends ProfileActivity
         else
             mScreenRoot.removePreference( mCategoryRice );
         
-        if( LIBGLES2GLIDE64_SO.equals( videoPlugin ) )
+        if( LIBGLIDE64_SO.equals( videoPlugin ) )
             mScreenRoot.addPreference( mCategoryGlide64 );
         else
             mScreenRoot.removePreference( mCategoryGlide64 );

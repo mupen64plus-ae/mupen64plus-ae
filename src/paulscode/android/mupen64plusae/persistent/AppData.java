@@ -153,7 +153,7 @@ public class AppData
     public final String gln64_conf;
     
     /** The path of the glide configuration file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String gles2glide64_conf;
+    public final String glide64mk2_ini;
     
     /** The path of the Mupen64Plus cheats file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupencheat_txt;
@@ -236,7 +236,7 @@ public class AppData
         rspLib = libsDir + "/libmupen64plus-rsp-hle.so";
         inputLib = libsDir + "/libmupen64plus-input-android.so";
         gln64_conf = coreSharedDataDir + "/gln64.conf";
-        gles2glide64_conf = coreSharedDataDir + "/Glide64mk2.ini";
+        glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
         mupencheat_txt = coreSharedDataDir + "/mupencheat.txt";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
