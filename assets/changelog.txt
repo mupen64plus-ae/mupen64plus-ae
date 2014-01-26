@@ -1,6 +1,6 @@
 [36:2.4.4]
 - Fixed analog mappings for PS4 controller
-- Fixed broken 2xSAI setting for gles2n64 video plugin
+- Fixed broken 2xSAI setting for gln64 video plugin
 [35:2.4.3]
 - Fixed bug where IPEGA d-pad was being ignored
 - Allow app to be seen in Google Play for touchscreen-less devices (e.g. M.O.J.O)
@@ -23,15 +23,15 @@
 - Fixed some messed up textures in gles2rice (for example the horse in Zelda)
 - A HUGE THANK YOU to Squarepusher (aka twinaphex) of RetroArch fame for all of the other fixes in this revision!
 - Fixed crashes in Perfect Dark, completely playable now
-- Fixed green rooms in Zelda OOT when using gles2n64 video plugin
-- Fixed gles2n64 black screens (Turok series, Banjo Kazooie HUD, Waverace intermissions, and more)
+- Fixed green rooms in Zelda OOT when using gln64 video plugin
+- Fixed gln64 black screens (Turok series, Banjo Kazooie HUD, Waverace intermissions, and more)
 [31:2.3.5]
 - Added 'crop' setting for video scaling (useful for widescreen games)
 - Added Greek translation
 - Devs and expert users can modify the config files directly (not generally useful for most users)
 - Updated SDL to version 2.0.0-release
 [30:2.3.4]
-- Fixed auto-frameskip regression in gles2n64 video plugin
+- Fixed auto-frameskip regression in gln64 video plugin
 [29:2.3.3]
 - Fixed input/player mapping with the OUYA controller (broken by last OUYA firmware update)
 - Removed OUYA controller deadzone hack (improves analog precision on retail controllers)
@@ -105,7 +105,7 @@
 - Fixed crash with haptic feedback on d-pad diagonal
 - Fixed missing touch controls on ASUS Transformer
 - Fixed crash on some Android 4.0.4 devices
-- Fixed some gles2N64 graphical issues (Star Wars Ep. 1 Racer and others)
+- Fixed some glN64 graphical issues (Star Wars Ep. 1 Racer and others)
 - Fixed bug where stale auto-save is loaded when device sleeps & wakes
 - Added mipmapping option for gles2rice video plugin
 - Added texture filter option for gles2rice video plugin
@@ -190,12 +190,12 @@
 [6:1.5]
 - Galaxy S: Zelda crash fixed
 - Mario Kart: backwards drivers fixed (gles2rice)
-- gles2n64, gles2rice: separated settings (see below for specific bug-fixes/ optimizations)
+- gln64, gles2rice: separated settings (see below for specific bug-fixes/ optimizations)
 [5:1.4]
 - Improved GUI usability
 - Added Reset Default Settings
 - Added work-around for black-squares (Bionic, Razer). Settings->Video->Configure->Alpha Test (NOT a complete fix)
-- Fixed crash to home on some devices (Apollo). Zelda gles2n64 crash NOT fixed (S2, Yinlips). Recommend gles2rice until fixed
+- Fixed crash to home on some devices (Apollo). Zelda gln64 crash NOT fixed (S2, Yinlips). Recommend gles2rice until fixed
 - Fixed corrupt data causes (no controllers, crash) requiring "Restore App Data"
 - Fixed crash on Resume causes
 [4:1.3]
@@ -215,7 +215,7 @@
 - Fixed a potential crash on devices with SD Card not mounted at /mnt/sdcard
 - Fixed a potential menu crash due to a NullPointerException
 - Fixed a potential crash when input plugin is disabled
-- Improved hardware profiling logic used in gles2n64 initialization code
+- Improved hardware profiling logic used in gln64 initialization code
 - Made auto-save optional
 - (Xperia Play version) Possibly fixed problem where the C buttons were mapped to the wrong side of the touchpad (please report if you still experience this problem)
 [1:1.0]

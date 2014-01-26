@@ -149,10 +149,10 @@ public class AppData
     /** The path of the input library. Deleted on uninstall, not accessible without root. */
     public final String inputLib;
     
-    /** The path of the gles2n64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String gles2n64_conf;
+    /** The path of the gln64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
+    public final String gln64_conf;
     
-    /** The path of the gles2glide64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
+    /** The path of the glide configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String gles2glide64_conf;
     
     /** The path of the Mupen64Plus cheats file. Deleted on uninstall, sometimes overwritten on update. */
@@ -235,7 +235,7 @@ public class AppData
         coreLib = libsDir + "/libmupen64plus-core.so";
         rspLib = libsDir + "/libmupen64plus-rsp-hle.so";
         inputLib = libsDir + "/libmupen64plus-input-android.so";
-        gles2n64_conf = coreSharedDataDir + "/gles2n64.conf";
+        gln64_conf = coreSharedDataDir + "/gln64.conf";
         gles2glide64_conf = coreSharedDataDir + "/Glide64mk2.ini";
         mupencheat_txt = coreSharedDataDir + "/mupencheat.txt";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";

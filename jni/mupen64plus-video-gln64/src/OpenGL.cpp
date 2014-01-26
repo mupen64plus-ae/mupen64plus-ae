@@ -381,7 +381,7 @@ bool OGL_Start()
 
     //Print some info
     LOG(LOG_VERBOSE, "Width: %i Height:%i \n", config.framebuffer.width, config.framebuffer.height);
-    LOG(LOG_VERBOSE, "[gles2n64]: Enable Runfast... \n");
+    LOG(LOG_VERBOSE, "[gln64]: Enable Runfast... \n");
 
     OGL_EnableRunfast();
     OGL_UpdateScale();

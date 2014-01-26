@@ -26,7 +26,7 @@
 #define LOG(A, ...) \
     if (A <= LOG_LEVEL) \
     { \
-        __android_log_print(ANDROID_LOG_DEBUG, "gles2n64", __VA_ARGS__); \
+        __android_log_print(ANDROID_LOG_DEBUG, "gln64", __VA_ARGS__); \
     }
 
 #else

@@ -11,7 +11,7 @@
 
 //#define DEBUG
 
-#define PLUGIN_NAME     "gles2n64"
+#define PLUGIN_NAME     "gln64"
 #define PLUGIN_VERSION  0x000005
 #define PLUGIN_API_VERSION 0x020200
 

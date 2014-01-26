@@ -52,8 +52,8 @@ public class GamePrefs
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
     
-    /** True if gles2n64 video plug-in is enabled. */
-    public final boolean isGles2N64Enabled;
+    /** True if gln64 video plug-in is enabled. */
+    public final boolean isGln64Enabled;
     
     /** True if gles2rice video plug-in is enabled. */
     public final boolean isGles2RiceEnabled;
@@ -61,26 +61,26 @@ public class GamePrefs
     /** True if gles2glide64 video plug-in is enabled. */
     public final boolean isGles2Glide64Enabled;
     
-    /** The maximum frameskip in the gles2n64 library. */
-    public final int gles2N64MaxFrameskip;
+    /** The maximum frameskip in the gln64 library. */
+    public final int gln64MaxFrameskip;
     
-    /** True if auto-frameskip is enabled in the gles2n64 library. */
-    public final boolean isGles2N64AutoFrameskipEnabled;
+    /** True if auto-frameskip is enabled in the gln64 library. */
+    public final boolean isGln64AutoFrameskipEnabled;
     
-    /** True if fog is enabled in the gles2n64 library. */
-    public final boolean isGles2N64FogEnabled;
+    /** True if fog is enabled in the gln64 library. */
+    public final boolean isGln64FogEnabled;
     
-    /** True if SaI texture filtering is enabled in the gles2n64 library. */
-    public final boolean isGles2N64SaiEnabled;
+    /** True if SaI texture filtering is enabled in the gln64 library. */
+    public final boolean isGln64SaiEnabled;
     
-    /** True if force screen clear is enabled in the gles2n64 library. */
-    public final boolean isGles2N64ScreenClearEnabled;
+    /** True if force screen clear is enabled in the gln64 library. */
+    public final boolean isGln64ScreenClearEnabled;
     
-    /** True if alpha test is enabled in the gles2n64 library. */
-    public final boolean isGles2N64AlphaTestEnabled;
+    /** True if alpha test is enabled in the gln64 library. */
+    public final boolean isGln64AlphaTestEnabled;
     
-    /** True if depth test is enabled in the gles2n64 library. */
-    public final boolean isGles2N64DepthTestEnabled;
+    /** True if depth test is enabled in the gln64 library. */
+    public final boolean isGln64DepthTestEnabled;
     
     /** True if auto-frameskip is enabled in the gles2rice library. */
     public final boolean isGles2RiceAutoFrameskipEnabled;
@@ -210,16 +210,16 @@ public class GamePrefs
         r4300Emulator = emulationProfile.get( "r4300Emulator", "2" );
         videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
         
-        // Video prefs - gles2n64
-        isGles2N64Enabled = videoPlugin.name.equals( "libmupen64plus-video-gln64.so" );
+        // Video prefs - gln64
+        isGln64Enabled = videoPlugin.name.equals( "libmupen64plus-video-gln64.so" );
         int maxFrameskip = getSafeInt( emulationProfile, "gles2N64Frameskip", 0 );
-        isGles2N64AutoFrameskipEnabled = maxFrameskip < 0;
-        gles2N64MaxFrameskip = Math.abs( maxFrameskip );
-        isGles2N64FogEnabled = emulationProfile.get( "gles2N64Fog", "0" ).equals( "1" );
-        isGles2N64SaiEnabled = emulationProfile.get( "gles2N64Sai", "0" ).equals( "1" );
-        isGles2N64ScreenClearEnabled = emulationProfile.get( "gles2N64ScreenClear", "1" ).equals( "1" );
-        isGles2N64AlphaTestEnabled = emulationProfile.get( "gles2N64AlphaTest", "1" ).equals( "1" );
-        isGles2N64DepthTestEnabled = emulationProfile.get( "gles2N64DepthTest", "1" ).equals( "1" );
+        isGln64AutoFrameskipEnabled = maxFrameskip < 0;
+        gln64MaxFrameskip = Math.abs( maxFrameskip );
+        isGln64FogEnabled = emulationProfile.get( "gles2N64Fog", "0" ).equals( "1" );
+        isGln64SaiEnabled = emulationProfile.get( "gles2N64Sai", "0" ).equals( "1" );
+        isGln64ScreenClearEnabled = emulationProfile.get( "gles2N64ScreenClear", "1" ).equals( "1" );
+        isGln64AlphaTestEnabled = emulationProfile.get( "gles2N64AlphaTest", "1" ).equals( "1" );
+        isGln64DepthTestEnabled = emulationProfile.get( "gles2N64DepthTest", "1" ).equals( "1" );
         
         // Video prefs - gles2rice
         isGles2RiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );

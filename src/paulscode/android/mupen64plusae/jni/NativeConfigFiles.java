@@ -36,17 +36,17 @@ public class NativeConfigFiles
     {
         //@formatter:off
         
-        // GLES2N64 config file
-        ConfigFile gles2n64_conf = new ConfigFile( appData.gles2n64_conf );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( user.videoRenderWidth ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( user.videoRenderHeight ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( game.isGles2N64AutoFrameskipEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( game.gles2N64MaxFrameskip ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable fog", boolToNum( game.isGles2N64FogEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "texture 2xSAI", boolToNum( game.isGles2N64SaiEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( game.isGles2N64AlphaTestEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( game.isGles2N64ScreenClearEnabled ) );
-        gles2n64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( !game.isGles2N64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
+        // gln64 config file
+        ConfigFile gln64_conf = new ConfigFile( appData.gln64_conf );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( user.videoRenderWidth ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( user.videoRenderHeight ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( game.isGln64AutoFrameskipEnabled ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( game.gln64MaxFrameskip ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable fog", boolToNum( game.isGln64FogEnabled ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "texture 2xSAI", boolToNum( game.isGln64SaiEnabled ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( game.isGln64AlphaTestEnabled ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( game.isGln64ScreenClearEnabled ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( !game.isGln64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
         
         // GLES2GLIDE64 config file
         ConfigFile gles2glide64_conf = new ConfigFile( appData.gles2glide64_conf );
@@ -124,7 +124,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );                                              // Secondary texture enhancement filter (0 = none, 1-4 = filtered)
         mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isGles2RiceFogEnabled ) );                          // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
         
-        gles2n64_conf.save();
+        gln64_conf.save();
         gles2glide64_conf.save();
         mupen64plus_cfg.save();
         

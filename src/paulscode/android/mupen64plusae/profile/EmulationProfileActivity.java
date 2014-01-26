@@ -52,7 +52,7 @@ public class EmulationProfileActivity extends ProfileActivity
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLES2GLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
     private static final String LIBGLES2RICE_SO = "libmupen64plus-video-rice.so";
-    private static final String LIBGLES2N64_SO = "libmupen64plus-video-gln64.so";
+    private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
     private static final String VIDEO_HARDWARE_TYPE_CUSTOM = "999";
     
     // Preference menu items
@@ -114,7 +114,7 @@ public class EmulationProfileActivity extends ProfileActivity
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
         
-        if( LIBGLES2N64_SO.equals( videoPlugin ) )
+        if( LIBGLN64_SO.equals( videoPlugin ) )
             mScreenRoot.addPreference( mCategoryN64 );
         else
             mScreenRoot.removePreference( mCategoryN64 );

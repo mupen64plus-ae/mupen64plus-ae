@@ -912,7 +912,7 @@ MicrocodeInfo *GBI_DetectMicrocode( u32 uc_start, u32 uc_dstart, u16 uc_dsize )
     }
 
     // Let the user choose the microcode
-    LOG(LOG_ERROR, "[gles2n64]: Warning - unknown ucode!!!\n");
+    LOG(LOG_ERROR, "[gln64]: Warning - unknown ucode!!!\n");
     if(last_good_ucode != (u32)-1)
     {
         current->type=last_good_ucode;

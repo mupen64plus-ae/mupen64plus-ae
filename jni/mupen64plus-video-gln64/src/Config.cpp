@@ -48,7 +48,7 @@ struct Option
 
 Option configOptions[] =
 {
-    {"#gles2n64 Graphics Plugin for N64", NULL, 0},
+    {"#gln64 Graphics Plugin for N64", NULL, 0},
     {"#by Orkin / glN64 developers and Adventus.", NULL, 0},
 
     {"config version", &config.version, 0},
@@ -215,7 +215,7 @@ void Config_LoadRomConfig(unsigned char* header)
 
     LOG(LOG_MINIMAL, "Rom is %s\n", config.romPAL ? "PAL" : "NTSC");
 
-    const char *filename = ConfigGetSharedDataFilepath("gles2n64rom.conf");
+    const char *filename = ConfigGetSharedDataFilepath("gln64rom.conf");
     FILE *f = fopen(filename,"r");
     if (!f)
     {
@@ -224,7 +224,7 @@ void Config_LoadRomConfig(unsigned char* header)
     }
     else
     {
-        LOG(LOG_MINIMAL, "[gles2N64]: Searching %s Database for \"%s\" ROM\n", filename, config.romName);
+        LOG(LOG_MINIMAL, "[gln64]: Searching %s Database for \"%s\" ROM\n", filename, config.romName);
         bool isRom = false;
         while (!feof(f))
         {
@@ -266,17 +266,17 @@ void Config_LoadConfig()
     Config_SetDefault();
 
     // read configuration
-    const char *filename = ConfigGetSharedDataFilepath("gles2n64.conf");
+    const char *filename = ConfigGetSharedDataFilepath("gln64.conf");
     f = fopen(filename, "r");
     if (!f)
     {
-        LOG(LOG_MINIMAL, "[gles2N64]: Couldn't open config file '%s' for reading: %s\n", filename, strerror( errno ) );
-        LOG(LOG_MINIMAL, "[gles2N64]: Attempting to write new Config \n");
+        LOG(LOG_MINIMAL, "[gln64]: Couldn't open config file '%s' for reading: %s\n", filename, strerror( errno ) );
+        LOG(LOG_MINIMAL, "[gln64]: Attempting to write new Config \n");
         Config_WriteConfig(filename);
     }
     else
     {
-        LOG(LOG_MINIMAL, "[gles2n64]: Loading Config from %s \n", filename);
+        LOG(LOG_MINIMAL, "[gln64]: Loading Config from %s \n", filename);
 
         while (!feof( f ))
         {
@@ -296,7 +296,7 @@ void Config_LoadConfig()
 
         if (config.version < CONFIG_VERSION)
         {
-            LOG(LOG_WARNING, "[gles2N64]: Wrong config version, rewriting config with defaults\n");
+            LOG(LOG_WARNING, "[gln64]: Wrong config version, rewriting config with defaults\n");
             Config_SetDefault();
             Config_WriteConfig(filename);
         }
