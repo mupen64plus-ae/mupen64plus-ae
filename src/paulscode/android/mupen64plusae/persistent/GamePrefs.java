@@ -212,14 +212,14 @@ public class GamePrefs
         
         // Video prefs - gln64
         isGln64Enabled = videoPlugin.name.equals( "libmupen64plus-video-gln64.so" );
-        int maxFrameskip = getSafeInt( emulationProfile, "gles2N64Frameskip", 0 );
+        int maxFrameskip = getSafeInt( emulationProfile, "gln64Frameskip", 0 );
         isGln64AutoFrameskipEnabled = maxFrameskip < 0;
         gln64MaxFrameskip = Math.abs( maxFrameskip );
-        isGln64FogEnabled = emulationProfile.get( "gles2N64Fog", "0" ).equals( "1" );
-        isGln64SaiEnabled = emulationProfile.get( "gles2N64Sai", "0" ).equals( "1" );
-        isGln64ScreenClearEnabled = emulationProfile.get( "gles2N64ScreenClear", "1" ).equals( "1" );
-        isGln64AlphaTestEnabled = emulationProfile.get( "gles2N64AlphaTest", "1" ).equals( "1" );
-        isGln64DepthTestEnabled = emulationProfile.get( "gles2N64DepthTest", "1" ).equals( "1" );
+        isGln64FogEnabled = emulationProfile.get( "gln64Fog", "0" ).equals( "1" );
+        isGln64SaiEnabled = emulationProfile.get( "gln64Sai", "0" ).equals( "1" );
+        isGln64ScreenClearEnabled = emulationProfile.get( "gln64ScreenClear", "1" ).equals( "1" );
+        isGln64AlphaTestEnabled = emulationProfile.get( "gln64AlphaTest", "1" ).equals( "1" );
+        isGln64DepthTestEnabled = emulationProfile.get( "gln64DepthTest", "1" ).equals( "1" );
         
         // Video prefs - rice
         isRiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );

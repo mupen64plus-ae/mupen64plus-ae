@@ -271,21 +271,21 @@
 
     <string name="videoHardwareType_default" translatable="false">-1</string>
 
-    <!-- GLES2N64 Frameskip List -->
-    <string-array name="gles2N64Frameskip_entries" translatable="false">
-        <item>@string/gles2N64Frameskip_entryNever</item>
-        <item>@string/gles2N64Frameskip_entryUpTo1</item>
-        <item>@string/gles2N64Frameskip_entryUpTo2</item>
-        <item>@string/gles2N64Frameskip_entryUpTo3</item>
-        <item>@string/gles2N64Frameskip_entryUpTo4</item>
-        <item>@string/gles2N64Frameskip_entryUpTo5</item>
-        <item>@string/gles2N64Frameskip_entryExactly1</item>
-        <item>@string/gles2N64Frameskip_entryExactly2</item>
-        <item>@string/gles2N64Frameskip_entryExactly3</item>
-        <item>@string/gles2N64Frameskip_entryExactly4</item>
-        <item>@string/gles2N64Frameskip_entryExactly5</item>
+    <!-- Gln64 Frameskip List -->
+    <string-array name="gln64Frameskip_entries" translatable="false">
+        <item>@string/gln64Frameskip_entryNever</item>
+        <item>@string/gln64Frameskip_entryUpTo1</item>
+        <item>@string/gln64Frameskip_entryUpTo2</item>
+        <item>@string/gln64Frameskip_entryUpTo3</item>
+        <item>@string/gln64Frameskip_entryUpTo4</item>
+        <item>@string/gln64Frameskip_entryUpTo5</item>
+        <item>@string/gln64Frameskip_entryExactly1</item>
+        <item>@string/gln64Frameskip_entryExactly2</item>
+        <item>@string/gln64Frameskip_entryExactly3</item>
+        <item>@string/gln64Frameskip_entryExactly4</item>
+        <item>@string/gln64Frameskip_entryExactly5</item>
     </string-array>
-    <string-array name="gles2N64Frameskip_values" translatable="false">
+    <string-array name="gln64Frameskip_values" translatable="false">
         <item>0</item>
         <item>-1</item>
         <item>-2</item>
@@ -299,21 +299,21 @@
         <item>5</item>
     </string-array>
 
-    <string name="gles2N64Frameskip_default" translatable="false">-5</string>
+    <string name="gln64Frameskip_default" translatable="false">-5</string>
 
-    <!-- GLES2Glide64 Frameskip List (re-use gles2n64 strings)-->
+    <!-- Glide64 Frameskip List (re-use gln64 strings)-->
     <string-array name="gles2Glide64Frameskip_entries" translatable="false">
-        <item>@string/gles2N64Frameskip_entryNever</item>
-        <item>@string/gles2N64Frameskip_entryUpTo1</item>
-        <item>@string/gles2N64Frameskip_entryUpTo2</item>
-        <item>@string/gles2N64Frameskip_entryUpTo3</item>
-        <item>@string/gles2N64Frameskip_entryUpTo4</item>
-        <item>@string/gles2N64Frameskip_entryUpTo5</item>
-        <item>@string/gles2N64Frameskip_entryExactly1</item>
-        <item>@string/gles2N64Frameskip_entryExactly2</item>
-        <item>@string/gles2N64Frameskip_entryExactly3</item>
-        <item>@string/gles2N64Frameskip_entryExactly4</item>
-        <item>@string/gles2N64Frameskip_entryExactly5</item>
+        <item>@string/gln64Frameskip_entryNever</item>
+        <item>@string/gln64Frameskip_entryUpTo1</item>
+        <item>@string/gln64Frameskip_entryUpTo2</item>
+        <item>@string/gln64Frameskip_entryUpTo3</item>
+        <item>@string/gln64Frameskip_entryUpTo4</item>
+        <item>@string/gln64Frameskip_entryUpTo5</item>
+        <item>@string/gln64Frameskip_entryExactly1</item>
+        <item>@string/gln64Frameskip_entryExactly2</item>
+        <item>@string/gln64Frameskip_entryExactly3</item>
+        <item>@string/gln64Frameskip_entryExactly4</item>
+        <item>@string/gln64Frameskip_entryExactly5</item>
     </string-array>
     <string-array name="gles2Glide64Frameskip_values" translatable="false">
         <item>0</item>
@@ -331,7 +331,7 @@
 
     <string name="gles2Glide64Frameskip_default" translatable="false">-5</string>
 
-    <!-- GLES2Rice Screen Update List -->
+    <!-- Rice Screen Update List -->
     <string-array name="gles2RiceScreenUpdate_entries">
         <item>@string/gles2RiceScreenUpdate_entryRomDefault</item>
         <item>@string/gles2RiceScreenUpdate_entryVIOriginUpdate</item>
@@ -355,7 +355,7 @@
 
     <string name="gles2RiceScreenUpdate_default" translatable="false">4</string>
     
-    <!-- GLES2Rice Texture Enhancement Algorithm List -->
+    <!-- Rice Texture Enhancement Algorithm List -->
     <string-array name="gles2RiceTextureEnhancement_entries">
         <item>@string/gles2RiceTextureEnhancement_entryNone</item>
         <item>@string/gles2RiceTextureEnhancement_entryScale2x</item>
@@ -382,7 +382,7 @@
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries" translatable="false">
         <item>@string/videoPlugin_entryNone</item>
-        <item>@string/videoPlugin_entryGles2N64</item>
+        <item>@string/videoPlugin_entryGln64</item>
         <item>@string/videoPlugin_entryGles2Rice</item>
         <item>@string/videoPlugin_entryGles2Glide64</item>
     </string-array>

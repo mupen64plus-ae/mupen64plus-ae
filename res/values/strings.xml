@@ -169,7 +169,7 @@
     <string name="categoryOther_title">Other</string>
     <string name="categoryTouchscreenBehavior_title">Behavior</string>
     <string name="categoryTouchscreenAppearance_title">Appearance</string>
-    <string name="categoryGles2N64_title">GLES2N64 settings</string>
+    <string name="categoryGln64_title">Gln64 settings</string>
     <string name="categoryGles2Rice_title">GLES2Rice settings</string>
     <string name="categoryGles2Glide64_title">GLES2Glide64 settings</string>
     <string name="categoryCore_title">Core</string>
@@ -192,16 +192,16 @@
     <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
     <string name="displayImmersiveMode_title">Immersive mode</string>
     <string name="displayImmersiveMode_summary">Completely hide navigation and status bars</string>
-    <string name="gles2N64Fog_title">Fog</string>
-    <string name="gles2N64Fog_summary">(needs work)</string>
-    <string name="gles2N64Sai_title">2xSaI texture filter</string>
-    <string name="gles2N64Sai_summary">Reduces texture pixellation</string>
-    <string name="gles2N64ScreenClear_title">Force screen clear</string>
-    <string name="gles2N64ScreenClear_summary">Disable for speed (might cause video glitches)</string>
-    <string name="gles2N64AlphaTest_title">Alpha test</string>
-    <string name="gles2N64AlphaTest_summary">Disable for speed (causes black textures)</string>
-    <string name="gles2N64DepthTest_title">Depth test</string>
-    <string name="gles2N64DepthTest_summary">Disable for speed (causes flashing background)</string>
+    <string name="gln64Fog_title">Fog</string>
+    <string name="gln64Fog_summary">(needs work)</string>
+    <string name="gln64Sai_title">2xSaI texture filter</string>
+    <string name="gln64Sai_summary">Reduces texture pixellation</string>
+    <string name="gln64ScreenClear_title">Force screen clear</string>
+    <string name="gln64ScreenClear_summary">Disable for speed (might cause video glitches)</string>
+    <string name="gln64AlphaTest_title">Alpha test</string>
+    <string name="gln64AlphaTest_summary">Disable for speed (causes black textures)</string>
+    <string name="gln64DepthTest_title">Depth test</string>
+    <string name="gln64DepthTest_summary">Disable for speed (causes flashing background)</string>
     <string name="gles2RiceAutoFrameskip_title">Auto frameskip</string>
     <string name="gles2RiceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
     <string name="gles2RiceFastTexture_title">Fast texture loading</string>
@@ -279,7 +279,7 @@
 
     <string name="videoPlugin_title">Video plugin</string>
     <string name="videoPlugin_entryNone">None (video disabled)</string>
-    <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
+    <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
     <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
 
@@ -295,18 +295,18 @@
     <string name="videoPolygonOffset_title">Polygon offset</string>
     <string name="videoPolygonOffset_summary">Custom flicker reduction bias</string>
 
-    <string name="gles2N64Frameskip_title">Frameskip</string>
-    <string name="gles2N64Frameskip_entryNever">Never skip frames</string>
-    <string name="gles2N64Frameskip_entryUpTo1">No more than 1 frame</string>
-    <string name="gles2N64Frameskip_entryUpTo2">No more than 2 frames</string>
-    <string name="gles2N64Frameskip_entryUpTo3">No more than 3 frames</string>
-    <string name="gles2N64Frameskip_entryUpTo4">No more than 4 frames</string>
-    <string name="gles2N64Frameskip_entryUpTo5">No more than 5 frames</string>
-    <string name="gles2N64Frameskip_entryExactly1">Exactly 1 frame</string>
-    <string name="gles2N64Frameskip_entryExactly2">Exactly 2 frames</string>
-    <string name="gles2N64Frameskip_entryExactly3">Exactly 3 frames</string>
-    <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
-    <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
+    <string name="gln64Frameskip_title">Frameskip</string>
+    <string name="gln64Frameskip_entryNever">Never skip frames</string>
+    <string name="gln64Frameskip_entryUpTo1">No more than 1 frame</string>
+    <string name="gln64Frameskip_entryUpTo2">No more than 2 frames</string>
+    <string name="gln64Frameskip_entryUpTo3">No more than 3 frames</string>
+    <string name="gln64Frameskip_entryUpTo4">No more than 4 frames</string>
+    <string name="gln64Frameskip_entryUpTo5">No more than 5 frames</string>
+    <string name="gln64Frameskip_entryExactly1">Exactly 1 frame</string>
+    <string name="gln64Frameskip_entryExactly2">Exactly 2 frames</string>
+    <string name="gln64Frameskip_entryExactly3">Exactly 3 frames</string>
+    <string name="gln64Frameskip_entryExactly4">Exactly 4 frames</string>
+    <string name="gln64Frameskip_entryExactly5">Exactly 5 frames</string>
 
     <string name="gles2RiceScreenUpdate_title">Screen update method</string>
     <string name="gles2RiceScreenUpdate_entryRomDefault">ROM default</string>
