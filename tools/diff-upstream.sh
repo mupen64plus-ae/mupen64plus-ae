@@ -12,24 +12,8 @@ done
 git remote update --prune
 
 for i in $M64P_COMPONENTS; do
-
-    case "$i" in
-    "ui-console")
-        ae_module="front-end"
-        ;;
-    "video-rice")
-        ae_module="gles2rice"
-        ;;
-    "video-glide64mk2")
-        ae_module="gles2glide64"
-        ;;
-    *)
-        ae_module="${i}"
-        ;;
-    esac
-
     echo
     echo
     echo "DIFF: mupen64plus-${i}"
-    git --no-pager diff --color=auto --stat "m64p-${i}/master:src/" "HEAD:jni/${ae_module}/src/"
+    git --no-pager diff --color=auto --stat "m64p-${i}/master:src/" "HEAD:jni/mupen64plus-${i}/src/"
 done

@@ -26,7 +26,7 @@ import paulscode.android.mupen64plusae.CoreInterface;
  * Calls made between the native input-android library and Java. Any function names changed here
  * should also be changed in the corresponding C code, and vice versa.
  * 
- * @see jni/input-android/plugin.c
+ * @see jni/mupen64plus-input-android/plugin.c
  * @see CoreInterface
  */
 public class NativeInput extends CoreInterface

@@ -28,7 +28,7 @@ import android.text.TextUtils;
 /**
  * Utility class that encapsulates meta-info about a hi-res texture file.
  * 
- * @see gles2rice/src/TextureFilters.cpp
+ * @see mupen64plus-video-rice/src/TextureFilters.cpp
  * @see FindAllTexturesFromFolder(...)
  */
 public class TextureInfo
