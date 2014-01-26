@@ -136,7 +136,7 @@
   <string name="categoryMultiPlayer_title">Meerdere spelers</string>
   <string name="categoryGln64_title">Gln64 instellingen</string>
   <string name="categoryGles2Rice_title">GLES2Rice instellingen</string>
-  <string name="categoryGles2Glide64_title">GLES2Glide64 instellingen</string>
+  <string name="categoryGlide64_title">Glide64 instellingen</string>
   <string name="categoryCore_title">Kern</string>
   <string name="categoryAudio_title">Geluid</string>
   <string name="categoryData_title">Gegevens</string>
@@ -231,7 +231,7 @@
   <string name="videoPlugin_entryNone">Geen (video uitgeschakeld)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(aangepaste versie van GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(aangepaste versie van Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(aangepaste versie van Glide64 Final (10e Jubileum))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(aangepaste versie van Glide64 Final (10e Jubileum))</small></string>
   <string name="videoHardwareType_title">Knipperonderdrukking</string>
   <string name="videoHardwareType_entryAuto">Automatische herkenning van telefoon-/tabletmodel</string>
   <string name="videoHardwareType_entryStandard">Standaardprofiel</string>

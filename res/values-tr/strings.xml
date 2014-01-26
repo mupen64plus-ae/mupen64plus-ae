@@ -121,7 +121,7 @@
   <string name="categoryMultiPlayer_title">Çoklu Oyuncu</string>
   <string name="categoryGln64_title">Gln64 Ayarları</string>
   <string name="categoryGles2Rice_title">GLES2Rice Ayarları</string>
-  <string name="categoryGles2Glide64_title">GLES2Glide64 ayarları</string>
+  <string name="categoryGlide64_title">Glide64 ayarları</string>
   <string name="categoryAudio_title">Ses</string>
   <string name="categoryData_title">Veri</string>
   <string name="categoryCrashReports_title">Çökme Raporları</string>

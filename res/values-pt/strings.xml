@@ -136,7 +136,7 @@
   <string name="categoryMultiPlayer_title">Multi-jogador</string>
   <string name="categoryGln64_title">Configurações do Gln64</string>
   <string name="categoryGles2Rice_title">Configurações do GLES2Rice</string>
-  <string name="categoryGles2Glide64_title">Configurações do GLES2Glide64</string>
+  <string name="categoryGlide64_title">Configurações do Glide64</string>
   <string name="categoryCore_title">Núcleo</string>
   <string name="categoryAudio_title">Áudio</string>
   <string name="categoryData_title">Dados</string>
@@ -231,7 +231,7 @@
   <string name="videoPlugin_entryNone">Nenhum (vídeo desabilitado)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(adaptação do GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptação do Rice Vídeo v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adaptação do Glide64 Final (Aniversário de 10 anos))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptação do Glide64 Final (Aniversário de 10 anos))</small></string>
   <string name="videoHardwareType_title">Redução de Flicker</string>
   <string name="videoHardwareType_entryAuto">Auto detectar pelo modelo do celular/tablet</string>
   <string name="videoHardwareType_entryStandard">Perfil padrão</string>

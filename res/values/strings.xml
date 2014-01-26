@@ -171,7 +171,7 @@
     <string name="categoryTouchscreenAppearance_title">Appearance</string>
     <string name="categoryGln64_title">Gln64 settings</string>
     <string name="categoryGles2Rice_title">GLES2Rice settings</string>
-    <string name="categoryGles2Glide64_title">GLES2Glide64 settings</string>
+    <string name="categoryGlide64_title">Glide64 settings</string>
     <string name="categoryCore_title">Core</string>
     <string name="categoryAudio_title">Audio</string>
     <string name="categoryData_title">Data</string>
@@ -281,7 +281,7 @@
     <string name="videoPlugin_entryNone">None (video disabled)</string>
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
-    <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
+    <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
 
     <string name="videoHardwareType_title">Flicker reduction</string>
     <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>

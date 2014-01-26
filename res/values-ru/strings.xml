@@ -114,7 +114,7 @@
   <string name="categoryMultiPlayer_title">Мультиплеер</string>
   <string name="categoryGln64_title">Настройки Gln64</string>
   <string name="categoryGles2Rice_title">Настройки GLES2Rice</string>
-  <string name="categoryGles2Glide64_title">Настройки GLES2Glide64 settings</string>
+  <string name="categoryGlide64_title">Настройки Glide64 settings</string>
   <string name="categoryAudio_title">Звук</string>
   <string name="categoryData_title">Данные</string>
   <string name="categoryCrashReports_title">Сообщения об ошибках</string>
@@ -194,7 +194,7 @@
   <string name="videoPlugin_entryNone">Заглушка (выключить изображение)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(порт GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(порт Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(порт Glide64 Final (10th Anniversary))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(порт Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Уменьшение мерцания</string>
   <string name="videoHardwareType_entryAuto">Автоматическое определение модели телефона/планшета </string>
   <string name="videoHardwareType_entryStandard">Стандартный профиль</string>

@@ -123,7 +123,7 @@
   <string name="categoryMultiPlayer_title">Πολλαπλών παικτών</string>
   <string name="categoryGln64_title">Ρυθμίσεις Gln64</string>
   <string name="categoryGles2Rice_title">Ρυθμίσεις GLES2Rice</string>
-  <string name="categoryGles2Glide64_title">Ρυθμίσεις GLES2Glide64</string>
+  <string name="categoryGlide64_title">Ρυθμίσεις Glide64</string>
   <string name="categoryAudio_title">Ήχος</string>
   <string name="categoryData_title">Δεδομένα</string>
   <string name="categoryCrashReports_title">Αναφορές σφαλμάτων</string>
@@ -212,7 +212,7 @@
   <string name="videoPlugin_entryNone">Κανένα (βίντεο απενεργοποιημένο)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(προσαρμογή του GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(προσαρμογή του Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(προσαρμογή του Glide64 Final (10th Anniversary))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(προσαρμογή του Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Μείωση τρεμοπαίγματος</string>
   <string name="videoHardwareType_entryAuto">Αυτόμ. ανίχνευση από το μοντέλου του τηλεφώνου/τάμπλετ</string>
   <string name="videoHardwareType_entryStandard">Κανονικό προφίλ</string>

@@ -302,7 +302,7 @@
     <string name="gln64Frameskip_default" translatable="false">-5</string>
 
     <!-- Glide64 Frameskip List (re-use gln64 strings)-->
-    <string-array name="gles2Glide64Frameskip_entries" translatable="false">
+    <string-array name="glide64Frameskip_entries" translatable="false">
         <item>@string/gln64Frameskip_entryNever</item>
         <item>@string/gln64Frameskip_entryUpTo1</item>
         <item>@string/gln64Frameskip_entryUpTo2</item>
@@ -315,7 +315,7 @@
         <item>@string/gln64Frameskip_entryExactly4</item>
         <item>@string/gln64Frameskip_entryExactly5</item>
     </string-array>
-    <string-array name="gles2Glide64Frameskip_values" translatable="false">
+    <string-array name="glide64Frameskip_values" translatable="false">
         <item>0</item>
         <item>-1</item>
         <item>-2</item>
@@ -329,7 +329,7 @@
         <item>5</item>
     </string-array>
 
-    <string name="gles2Glide64Frameskip_default" translatable="false">-5</string>
+    <string name="glide64Frameskip_default" translatable="false">-5</string>
 
     <!-- Rice Screen Update List -->
     <string-array name="gles2RiceScreenUpdate_entries">
@@ -384,7 +384,7 @@
         <item>@string/videoPlugin_entryNone</item>
         <item>@string/videoPlugin_entryGln64</item>
         <item>@string/videoPlugin_entryGles2Rice</item>
-        <item>@string/videoPlugin_entryGles2Glide64</item>
+        <item>@string/videoPlugin_entryGlide64</item>
     </string-array>
     <string-array name="videoPlugin_values" translatable="false">
         <item></item>

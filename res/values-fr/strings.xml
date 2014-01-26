@@ -136,7 +136,7 @@
   <string name="categoryMultiPlayer_title">Multijoueur</string>
   <string name="categoryGln64_title">Paramètres Gln64</string>
   <string name="categoryGles2Rice_title">Paramètres GLES2Rice</string>
-  <string name="categoryGles2Glide64_title">Paramètres GLES2Glide64</string>
+  <string name="categoryGlide64_title">Paramètres Glide64</string>
   <string name="categoryCore_title">Noyau</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Données</string>
@@ -231,7 +231,7 @@
   <string name="videoPlugin_entryNone">Sans (vidéo désactivée)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation de GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptation de Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adaptation de Glide64 Final (10ème Anniversaire))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation de Glide64 Final (10ème Anniversaire))</small></string>
   <string name="videoHardwareType_title">Réduction du tremblement</string>
   <string name="videoHardwareType_entryAuto">Détection automatique du mode : téléphone/tablette</string>
   <string name="videoHardwareType_entryStandard">Profile standard</string>

@@ -43,7 +43,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String SCREEN_ROOT = "screenRoot";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLN64 = "categoryGln64";
-    private static final String CATEGORY_GLES2_GLIDE64 = "categoryGles2Glide64";
+    private static final String CATEGORY_GLIDE64 = "categoryGlide64";
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
@@ -88,7 +88,7 @@ public class EmulationProfileActivity extends ProfileActivity
         mScreenRoot = (PreferenceGroup) findPreference( SCREEN_ROOT );
         mCategoryN64 = findPreference( CATEGORY_GLN64 );
         mCategoryRice = findPreference( CATEGORY_GLES2_RICE );
-        mCategoryGlide64 = findPreference( CATEGORY_GLES2_GLIDE64 );
+        mCategoryGlide64 = findPreference( CATEGORY_GLIDE64 );
     }
     
     @Override

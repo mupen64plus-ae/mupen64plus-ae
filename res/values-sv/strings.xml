@@ -121,7 +121,7 @@
   <string name="categoryMultiPlayer_title">Multi-player</string>
   <string name="categoryGln64_title">Gln64 inställningar</string>
   <string name="categoryGles2Rice_title">GLES2Rice inställningar</string>
-  <string name="categoryGles2Glide64_title">GLES2Glide64 inställningar</string>
+  <string name="categoryGlide64_title">Glide64 inställningar</string>
   <string name="categoryCore_title">Kärna</string>
   <string name="categoryAudio_title">Ljud</string>
   <string name="categoryData_title">Data</string>

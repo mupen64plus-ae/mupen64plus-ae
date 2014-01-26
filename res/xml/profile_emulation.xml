@@ -117,15 +117,15 @@
             mupen64:selectionMode="1" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="categoryGles2Glide64"
-        android:title="@string/categoryGles2Glide64_title" >
+        android:key="categoryGlide64"
+        android:title="@string/categoryGlide64_title" >
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-            android:defaultValue="@string/gles2Glide64Frameskip_default"
-            android:entries="@array/gles2Glide64Frameskip_entries"
-            android:entryValues="@array/gles2Glide64Frameskip_values"
-            android:key="gles2Glide64Frameskip"
+            android:defaultValue="@string/glide64Frameskip_default"
+            android:entries="@array/glide64Frameskip_entries"
+            android:entryValues="@array/glide64Frameskip_values"
+            android:key="glide64Frameskip"
             android:summary="@string/selectedValue"
-            android:title="@string/gles2Glide64Frameskip_title" />
+            android:title="@string/glide64Frameskip_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

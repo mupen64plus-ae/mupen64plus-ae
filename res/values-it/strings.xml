@@ -210,7 +210,7 @@
   <string name="videoPlugin_entryNone">Nessuno (video disabilitato)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(adattamento di GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adattamento di Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adattamento di Glide64 Finale (10° Aniversario))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(adattamento di Glide64 Finale (10° Aniversario))</small></string>
   <string name="videoHardwareType_title">Riduzione tremolamento</string>
   <string name="videoHardwareType_entryAuto">Individua automaticamente dal modello del telefono/tablet</string>
   <string name="videoHardwareType_entryStandard">Profilo standard</string>

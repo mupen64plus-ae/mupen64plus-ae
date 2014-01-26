@@ -36,7 +36,7 @@
     <string name="touchpadFeedback_summary" translatable="false">@string/touchscreenFeedback_summary</string>
     <string name="inputMapActivity_saveSlot" translatable="false">@string/menuItem_slotSave</string>
     <string name="inputMapActivity_loadSlot" translatable="false">@string/menuItem_slotLoad</string>
-    <string name="gles2Glide64Frameskip_title" translatable="false">@string/gln64Frameskip_title</string>
+    <string name="glide64Frameskip_title" translatable="false">@string/gln64Frameskip_title</string>
 
     <!-- Non-translatable defaults -->
     <string name="controllerProfile_default" translatable="false"></string>

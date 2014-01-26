@@ -233,7 +233,7 @@ public class GamePrefs
         
         // Video prefs - glide64
         isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
-        maxFrameskip = getSafeInt( emulationProfile, "gles2Glide64Frameskip", 0 );
+        maxFrameskip = getSafeInt( emulationProfile, "glide64Frameskip", 0 );
         isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
         glide64MaxFrameskip = Math.abs( maxFrameskip );
         

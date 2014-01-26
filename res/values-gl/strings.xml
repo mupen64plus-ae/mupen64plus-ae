@@ -123,7 +123,7 @@
   <string name="categoryMultiPlayer_title">Multixogador</string>
   <string name="categoryGln64_title">Axustes do Gln64</string>
   <string name="categoryGles2Rice_title">Axustes do GLES2Rice</string>
-  <string name="categoryGles2Glide64_title">Axustes do GLES2Glide64</string>
+  <string name="categoryGlide64_title">Axustes do Glide64</string>
   <string name="categoryAudio_title">Son</string>
   <string name="categoryData_title">Datos</string>
   <string name="categoryCrashReports_title">Informes de erros</string>
@@ -212,7 +212,7 @@
   <string name="videoPlugin_entryNone">Nada (vídeo desactivado)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(adaptación do GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptación do Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adaptación do Glide64 Final (10º aniversario))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptación do Glide64 Final (10º aniversario))</small></string>
   <string name="videoHardwareType_title">Redución de escintileo</string>
   <string name="videoHardwareType_entryAuto">Detención auto. segundo modelo de teléfono ou tablet</string>
   <string name="videoHardwareType_entryStandard">Perfil estándar</string>

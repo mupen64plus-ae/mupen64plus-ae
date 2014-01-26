@@ -123,7 +123,7 @@
   <string name="categoryMultiPlayer_title">Više igrača</string>
   <string name="categoryGln64_title">Gln64 postavke</string>
   <string name="categoryGles2Rice_title">GLES2Rice postavke</string>
-  <string name="categoryGles2Glide64_title">GLES2Glide64 postavke</string>
+  <string name="categoryGlide64_title">Glide64 postavke</string>
   <string name="categoryAudio_title">Zvuk</string>
   <string name="categoryData_title">Podaci</string>
   <string name="categoryCrashReports_title">Izvještaji rušenja</string>
@@ -212,7 +212,7 @@
   <string name="videoPlugin_entryNone">Nema (grafika isključena)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(adaptacija: GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptatcija: Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adaptacija: Glide64 Final (10. godišnjica))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptacija: Glide64 Final (10. godišnjica))</small></string>
   <string name="videoHardwareType_title">Smanjenje treperenja</string>
   <string name="videoHardwareType_entryAuto">Automatski detektiraj profil prepoznavanjem uređaja</string>
   <string name="videoHardwareType_entryStandard">Standardni profil</string>
