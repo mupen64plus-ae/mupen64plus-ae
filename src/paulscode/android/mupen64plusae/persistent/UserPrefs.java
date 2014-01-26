@@ -258,7 +258,7 @@ public class UserPrefs
         coreUserConfigDir = gameSaveDir + "/CoreConfig/UserConfig";
         coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
         coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
-        hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what gles2rice assumes natively
+        hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";

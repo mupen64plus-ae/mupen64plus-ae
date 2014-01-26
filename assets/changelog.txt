@@ -7,20 +7,20 @@
 [34:2.4.2]
 - Doom 64 is now playable, thanks to ptitSeb of OpenPandora fame
 - Fixed audio latency on most devices (see Audio menu)
-- Fixed gles2rice missing heart bug for Zelda games
+- Fixed rice video plugin missing heart bug for Zelda games
 - Fixed cheat menu regression
 - Fixed controller buttons not staying pressed (you MUST reset button mappings)
 - Fixed help popup bug
 - Devs and expert users can modify more settings in the config files (not generally useful for most users)
 [33:2.4.1]
-- Fixed hi-res texture regression with gles2rice
+- Fixed hi-res texture regression with rice video plugin
 - Added customizable flicker-reduction profile (for fixing shadow glitches)
 [32:2.4.0]
-- Major fixes to gles2rice by Gillou68310
-- Fixed black textures with gles2rice
-- Fixed multitexturing issues with gles2rice (for example, logo on shield in Zelda OOT)
-- Fixed bug with gles2rice where fences in Zelda MM are rendered without transparency
-- Fixed some messed up textures in gles2rice (for example the horse in Zelda)
+- Major fixes to rice video plugin by Gillou68310
+- Fixed black textures with rice video plugin
+- Fixed multitexturing issues with rice video plugin (for example, logo on shield in Zelda OOT)
+- Fixed bug with rice video plugin where fences in Zelda MM are rendered without transparency
+- Fixed some messed up textures in rice video plugin (for example the horse in Zelda)
 - A HUGE THANK YOU to Squarepusher (aka twinaphex) of RetroArch fame for all of the other fixes in this revision!
 - Fixed crashes in Perfect Dark, completely playable now
 - Fixed green rooms in Zelda OOT when using gln64 video plugin
@@ -45,7 +45,7 @@
 - Updated core and plugins to version 2.0
 [27:2.3.1]
 - Added support for MOGA Pocket/Pro via MOGA Pivot app (no menu navigation in mode A)
-- Fixed junk graphics in the margins for gles2rice video plugin
+- Fixed junk graphics in the margins for rice video plugin
 - Added video resolution/scaling preferences
 - Added support for Mad Catz C.T.R.L.R. controller
 - Added flicker reduction profile for Iconia B1 A71
@@ -99,7 +99,7 @@
 - Added Catalan translation
 - Fixed crash when audio enabled on some devices
 - Fixed crash when FPS enabled on some devices
-- Fixed regressions in gles2rice
+- Fixed regressions in rice video plugin
 - Compensated for analog bias in OUYA controllers
 [21:2.1.1]
 - Fixed crash with haptic feedback on d-pad diagonal
@@ -107,12 +107,12 @@
 - Fixed crash on some Android 4.0.4 devices
 - Fixed some glN64 graphical issues (Star Wars Ep. 1 Racer and others)
 - Fixed bug where stale auto-save is loaded when device sleeps & wakes
-- Added mipmapping option for gles2rice video plugin
-- Added texture filter option for gles2rice video plugin
+- Added mipmapping option for rice video plugin
+- Added texture filter option for rice video plugin
 - Added option to change action bar transparency
 - Utilized new core features to fix some internal state-related bugs
 [20:2.1.0]
-- Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)
+- Fixed stretch-screen bug in rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)
 - Added screen position option for portrait mode
 - Added vibration feedback for touchscreen/pad buttons
 - Added auto-hold feature for touchscreen buttons
@@ -189,13 +189,13 @@
 - Updated graphics by Artwork Competition winner shuy3n!
 [6:1.5]
 - Galaxy S: Zelda crash fixed
-- Mario Kart: backwards drivers fixed (gles2rice)
-- gln64, gles2rice: separated settings (see below for specific bug-fixes/ optimizations)
+- Mario Kart: backwards drivers fixed (rice video plugin)
+- gln64, rice video plugins: separated settings (see below for specific bug-fixes/ optimizations)
 [5:1.4]
 - Improved GUI usability
 - Added Reset Default Settings
 - Added work-around for black-squares (Bionic, Razer). Settings->Video->Configure->Alpha Test (NOT a complete fix)
-- Fixed crash to home on some devices (Apollo). Zelda gln64 crash NOT fixed (S2, Yinlips). Recommend gles2rice until fixed
+- Fixed crash to home on some devices (Apollo). Zelda gln64 crash NOT fixed (S2, Yinlips). Recommend rice video plugin until fixed
 - Fixed corrupt data causes (no controllers, crash) requiring "Restore App Data"
 - Fixed crash on Resume causes
 [4:1.3]

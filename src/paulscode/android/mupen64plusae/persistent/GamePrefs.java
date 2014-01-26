@@ -55,8 +55,8 @@ public class GamePrefs
     /** True if gln64 video plug-in is enabled. */
     public final boolean isGln64Enabled;
     
-    /** True if gles2rice video plug-in is enabled. */
-    public final boolean isGles2RiceEnabled;
+    /** True if rice video plug-in is enabled. */
+    public final boolean isRiceEnabled;
     
     /** True if glide64 video plug-in is enabled. */
     public final boolean isGlide64Enabled;
@@ -82,26 +82,26 @@ public class GamePrefs
     /** True if depth test is enabled in the gln64 library. */
     public final boolean isGln64DepthTestEnabled;
     
-    /** True if auto-frameskip is enabled in the gles2rice library. */
-    public final boolean isGles2RiceAutoFrameskipEnabled;
+    /** True if auto-frameskip is enabled in the rice library. */
+    public final boolean isRiceAutoFrameskipEnabled;
     
-    /** True if fast texture loading is enabled in the gles2rice library. */
-    public final boolean isGles2RiceFastTextureLoadingEnabled;
+    /** True if fast texture loading is enabled in the rice library. */
+    public final boolean isRiceFastTextureLoadingEnabled;
     
-    /** True if force texture filter is enabled in the gles2rice library. */
-    public final boolean isGles2RiceForceTextureFilterEnabled;
+    /** True if force texture filter is enabled in the rice library. */
+    public final boolean isRiceForceTextureFilterEnabled;
     
-    /** The screen update setting to use in gles2rice */
-    public final String gles2RiceScreenUpdateType;
+    /** The screen update setting to use in rice */
+    public final String riceScreenUpdateType;
     
-    /** The texture enhancement algorithm to be used in the gles2rice library */
-    public final String gles2RiceTextureEnhancement;
+    /** The texture enhancement algorithm to be used in the rice library */
+    public final String riceTextureEnhancement;
     
-    /** True if hi-resolution textures are enabled in the gles2rice library. */
-    public final boolean isGles2RiceHiResTexturesEnabled;
+    /** True if hi-resolution textures are enabled in the rice library. */
+    public final boolean isRiceHiResTexturesEnabled;
     
-    /** True if fog is enabled in the gles2rice library. */
-    public final boolean isGles2RiceFogEnabled;
+    /** True if fog is enabled in the rice library. */
+    public final boolean isRiceFogEnabled;
     
     /** The maximum frameskip in the glide64 library. */
     public final int glide64MaxFrameskip;
@@ -221,15 +221,15 @@ public class GamePrefs
         isGln64AlphaTestEnabled = emulationProfile.get( "gles2N64AlphaTest", "1" ).equals( "1" );
         isGln64DepthTestEnabled = emulationProfile.get( "gles2N64DepthTest", "1" ).equals( "1" );
         
-        // Video prefs - gles2rice
-        isGles2RiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );
-        isGles2RiceAutoFrameskipEnabled = emulationProfile.get( "gles2RiceAutoFrameskip", "False" ).equals( "True" );
-        isGles2RiceFastTextureLoadingEnabled = emulationProfile.get( "gles2RiceFastTexture", "False" ).equals( "True" );
-        isGles2RiceForceTextureFilterEnabled = emulationProfile.get( "gles2RiceForceTextureFilter", "False" ).equals( "True" );
-        gles2RiceScreenUpdateType = emulationProfile.get( "gles2RiceScreenUpdate", "4" );
-        gles2RiceTextureEnhancement = emulationProfile.get( "gles2RiceTextureEnhancement", "0" );
-        isGles2RiceHiResTexturesEnabled = emulationProfile.get( "gles2RiceHiResTextures", "True" ).equals( "True" );
-        isGles2RiceFogEnabled = emulationProfile.get( "gles2RiceFog", "False" ).equals( "True" );
+        // Video prefs - rice
+        isRiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );
+        isRiceAutoFrameskipEnabled = emulationProfile.get( "gles2RiceAutoFrameskip", "False" ).equals( "True" );
+        isRiceFastTextureLoadingEnabled = emulationProfile.get( "gles2RiceFastTexture", "False" ).equals( "True" );
+        isRiceForceTextureFilterEnabled = emulationProfile.get( "gles2RiceForceTextureFilter", "False" ).equals( "True" );
+        riceScreenUpdateType = emulationProfile.get( "gles2RiceScreenUpdate", "4" );
+        riceTextureEnhancement = emulationProfile.get( "gles2RiceTextureEnhancement", "0" );
+        isRiceHiResTexturesEnabled = emulationProfile.get( "gles2RiceHiResTextures", "True" ).equals( "True" );
+        isRiceFogEnabled = emulationProfile.get( "gles2RiceFog", "False" ).equals( "True" );
         
         // Video prefs - glide64
         isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
