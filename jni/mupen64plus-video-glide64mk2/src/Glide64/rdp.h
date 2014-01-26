@@ -211,7 +211,7 @@ typedef struct {
   int buff_clear;
   int swapmode;
   int lodmode;
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
   int autoframeskip;
   int maxframeskip;
 #endif

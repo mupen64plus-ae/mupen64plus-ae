@@ -172,7 +172,7 @@ float      pal_percent = 0.0f;
 // ref rate
 // 60=0x0, 70=0x1, 72=0x2, 75=0x3, 80=0x4, 90=0x5, 100=0x6, 85=0x7, 120=0x8, none=0xff
 
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
 #include "ae_imports.h"
 #include "FrameSkipper.h"
 FrameSkipper frameSkipper;
@@ -600,7 +600,7 @@ void ReadSpecialSettings (const char * name)
     ini->Read(_T("swapmode"), &(settings.swapmode));
     ini->Read(_T("aspect"), &(settings.aspectmode));
     ini->Read(_T("lodmode"), &(settings.lodmode));
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
     ini->Read(_T("autoframeskip"), &(settings.autoframeskip));
     ini->Read(_T("maxframeskip"), &(settings.maxframeskip));
     if( settings.autoframeskip )
@@ -1824,7 +1824,7 @@ EXPORT int CALL RomOpen (void)
   if (code == 0x5000) region = 1; // Europe (PAL)
   if (code == 0x5500) region = 0; // Australia (NTSC)
 
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
   frameSkipper.setTargetFPS(region == 1 ? 50 : 60);
 #endif
 
@@ -1883,7 +1883,7 @@ EXPORT int CALL RomOpen (void)
 
 EXPORT void CALL RomResumed(void)
 {
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
   frameSkipper.start();
 #endif
 }
@@ -1975,7 +1975,7 @@ output:   none
 wxUint32 update_screen_count = 0;
 EXPORT void CALL UpdateScreen (void)
 {
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
   frameSkipper.update();
 #endif
 #ifdef LOG_KEY

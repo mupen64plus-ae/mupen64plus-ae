@@ -51,7 +51,7 @@
 #include "FBtoScreen.h"
 #include "CRC.h"
 
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
 #include "FrameSkipper.h"
 extern FrameSkipper frameSkipper;
 #endif
@@ -634,7 +634,7 @@ extern "C" {
 EXPORT void CALL ProcessDList(void)
 {
   SoftLocker lock(mutexProcessDList);
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
   if (frameSkipper.willSkipNext() || !lock.IsOk()) //mutex is busy
 #else
   if (!lock.IsOk()) //mutex is busy
