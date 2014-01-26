@@ -388,12 +388,12 @@
     </string-array>
     <string-array name="videoPlugin_values" translatable="false">
         <item></item>
-        <item>libgles2n64.so</item>
-        <item>libgles2rice.so</item>
-        <item>libgles2glide64.so</item>
+        <item>libmupen64plus-video-gln64.so</item>
+        <item>libmupen64plus-video-rice.so</item>
+        <item>libmupen64plus-video-glide64mk2.so</item>
     </string-array>
 
-    <string name="videoPlugin_default" translatable="false">libgles2n64.so</string>
+    <string name="videoPlugin_default" translatable="false">libmupen64plus-video-gln64.so</string>
 
     <!-- Audio Plugins -->
     <string-array name="audioPlugin_entries" translatable="false">
@@ -404,10 +404,10 @@
     <string-array name="audioPlugin_values" translatable="false">
         <item></item>
         <item>nospeedlimit</item>
-        <item>libaudio-sdl.so</item>
+        <item>libmupen64plus-audio-sdl.so</item>
     </string-array>
 
-    <string name="audioPlugin_default" translatable="false">libaudio-sdl.so</string>
+    <string name="audioPlugin_default" translatable="false">libmupen64plus-audio-sdl.so</string>
 
     <!-- Audio Buffer Size -->
     <string-array name="audioBufferSize_entries" translatable="false">

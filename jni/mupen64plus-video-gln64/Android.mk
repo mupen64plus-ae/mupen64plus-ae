@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 SRCDIR := src
 
-LOCAL_MODULE := gles2n64
+LOCAL_MODULE := mupen64plus-video-gln64
 LOCAL_SHARED_LIBRARIES := ae-imports SDL2
 LOCAL_STATIC_LIBRARIES := cpufeatures
 LOCAL_ARM_MODE := arm

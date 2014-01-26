@@ -232,9 +232,9 @@ public class AppData
         profilesDir = coreSharedDataDir + "/profiles";
         
         // Files
-        coreLib = libsDir + "/libcore.so";
-        rspLib = libsDir + "/librsp-hle.so";
-        inputLib = libsDir + "/libinput-android.so";
+        coreLib = libsDir + "/libmupen64plus-core.so";
+        rspLib = libsDir + "/libmupen64plus-rsp-hle.so";
+        inputLib = libsDir + "/libmupen64plus-input-android.so";
         gles2n64_conf = coreSharedDataDir + "/gles2n64.conf";
         gles2glide64_conf = coreSharedDataDir + "/Glide64mk2.ini";
         mupencheat_txt = coreSharedDataDir + "/mupencheat.txt";
@@ -246,17 +246,17 @@ public class AppData
         // Installation validity
         // @formatter:off
         isValidInstallation =
-                libraryExists( "ae-exports" )       &&
-                libraryExists( "ae-imports" )       &&
-                libraryExists( "audio-sdl" )        &&
-                libraryExists( "core" )             &&
-                libraryExists( "front-end" )        &&
-                libraryExists( "gles2n64" )         &&
-                libraryExists( "gles2rice" )        &&
-                libraryExists( "gles2glide64" )     &&
-                libraryExists( "input-android" )    &&
-                libraryExists( "rsp-hle" )          &&
-                libraryExists( "SDL2" )             &&
+                libraryExists( "ae-exports" )                   &&
+                libraryExists( "ae-imports" )                   &&
+                libraryExists( "mupen64plus-audio-sdl" )        &&
+                libraryExists( "mupen64plus-core" )             &&
+                libraryExists( "mupen64plus-input-android" )    &&
+                libraryExists( "mupen64plus-rsp-hle" )          &&
+                libraryExists( "mupen64plus-ui-console" )       &&
+                libraryExists( "mupen64plus-video-glide64mk2" ) &&
+                libraryExists( "mupen64plus-video-gln64" )      &&
+                libraryExists( "mupen64plus-video-rice" )       &&
+                libraryExists( "SDL2" )                         &&
                 libraryExists( "xperia-touchpad" );
         // @formatter:on
         

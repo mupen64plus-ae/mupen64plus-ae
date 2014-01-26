@@ -211,7 +211,7 @@ public class GamePrefs
         videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
         
         // Video prefs - gles2n64
-        isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
+        isGles2N64Enabled = videoPlugin.name.equals( "libmupen64plus-video-gln64.so" );
         int maxFrameskip = getSafeInt( emulationProfile, "gles2N64Frameskip", 0 );
         isGles2N64AutoFrameskipEnabled = maxFrameskip < 0;
         gles2N64MaxFrameskip = Math.abs( maxFrameskip );
@@ -222,7 +222,7 @@ public class GamePrefs
         isGles2N64DepthTestEnabled = emulationProfile.get( "gles2N64DepthTest", "1" ).equals( "1" );
         
         // Video prefs - gles2rice
-        isGles2RiceEnabled = videoPlugin.name.equals( "libgles2rice.so" );
+        isGles2RiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );
         isGles2RiceAutoFrameskipEnabled = emulationProfile.get( "gles2RiceAutoFrameskip", "False" ).equals( "True" );
         isGles2RiceFastTextureLoadingEnabled = emulationProfile.get( "gles2RiceFastTexture", "False" ).equals( "True" );
         isGles2RiceForceTextureFilterEnabled = emulationProfile.get( "gles2RiceForceTextureFilter", "False" ).equals( "True" );
@@ -232,7 +232,7 @@ public class GamePrefs
         isGles2RiceFogEnabled = emulationProfile.get( "gles2RiceFog", "False" ).equals( "True" );
         
         // Video prefs - gles2glide64
-        isGles2Glide64Enabled = videoPlugin.name.equals( "libgles2glide64.so" );
+        isGles2Glide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
         maxFrameskip = getSafeInt( emulationProfile, "gles2Glide64Frameskip", 0 );
         isGles2Glide64AutoFrameskipEnabled = maxFrameskip < 0;
         gles2Glide64MaxFrameskip = Math.abs( maxFrameskip );

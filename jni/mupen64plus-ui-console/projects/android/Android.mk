@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 SRCDIR := ../../src
 
-LOCAL_MODULE := front-end
+LOCAL_MODULE := mupen64plus-ui-console
 LOCAL_SHARED_LIBRARIES := ae-imports
 #LOCAL_ARM_MODE := arm
 

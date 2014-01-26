@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := input-android
+LOCAL_MODULE := mupen64plus-input-android
 
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 

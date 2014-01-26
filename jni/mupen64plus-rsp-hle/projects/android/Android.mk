@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 SRCDIR := ../../src
 
-LOCAL_MODULE := rsp-hle
+LOCAL_MODULE := mupen64plus-rsp-hle
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)

@@ -43,8 +43,8 @@ static void* mReserved;
 // Library handles
 static void *handleAEI;         // libae-imports.so
 static void *handleSDL;         // libSDL2.so
-static void *handleCore;        // libcore.so
-static void *handleFront;       // libfront-end.so
+static void *handleCore;        // libmupen64plus-core.so
+static void *handleFront;       // libmupen64plus-ui-console.so
 
 // Function types
 typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
@@ -88,10 +88,10 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     char pathSDL[256];
     char pathCore[256];
     char pathFront[256];
-    sprintf(pathAEI,    "%s/libae-imports.so",  libPath);
-    sprintf(pathSDL,    "%s/libSDL2.so",        libPath);
-    sprintf(pathCore,   "%s/libcore.so",        libPath);
-    sprintf(pathFront,  "%s/libfront-end.so",   libPath);
+    sprintf(pathAEI,    "%s/libae-imports.so",              libPath);
+    sprintf(pathSDL,    "%s/libSDL2.so",                    libPath);
+    sprintf(pathCore,   "%s/libmupen64plus-core.so",        libPath);
+    sprintf(pathFront,  "%s/libmupen64plus-ui-console.so",	libPath);
     env->ReleaseStringUTFChars(jlibPath, libPath);
 
     // Open shared libraries

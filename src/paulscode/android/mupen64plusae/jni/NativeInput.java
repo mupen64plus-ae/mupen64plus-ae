@@ -36,7 +36,7 @@ public class NativeInput extends CoreInterface
     
     static
     {
-        System.loadLibrary( "input-android" );
+        System.loadLibrary( "mupen64plus-input-android" );
     }
     
     /**

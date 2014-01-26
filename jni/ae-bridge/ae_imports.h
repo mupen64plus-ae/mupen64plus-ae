@@ -60,14 +60,14 @@ extern "C" {
 // Called by ae-exports
 extern void         Android_JNI_InitImports(JNIEnv* env, jclass cls);
 
-// Called by front-end
+// Called by mupen64plus-ui-console
 extern void         Android_JNI_StateCallback(void* context, m64p_core_param paramChanged, int newValue);
 
-// Called by video plugins
+// Called by mupen64plus-video-*
 extern int          Android_JNI_GetHardwareType();
 extern void         Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2);
 
-// Called by gles2n64
+// Called by mupen64plus-video-gln64
 extern void         Android_JNI_SwapWindow();
 
 #ifdef __cplusplus

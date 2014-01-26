@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 SRCDIR := ../../src
 
-LOCAL_MODULE := core
+LOCAL_MODULE := mupen64plus-core
 LOCAL_SHARED_LIBRARIES := SDL2
 LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
