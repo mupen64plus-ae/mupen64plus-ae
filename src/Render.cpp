@@ -214,6 +214,20 @@ void CRender::SetWorldView(const Matrix & mat, bool bPush, bool bReplace)
         {
             // Load projection matrix
             gRSP.modelviewMtxs[gRSP.modelViewMtxTop] = mat;
+
+            // Hack needed to show flashing last heart and map arrows in Zelda OoT & MM
+            // It renders at Z cordinate = 0.0f that gets clipped away
+            // So we translate them a bit along Z to make them stick
+            if( options.enableHackForGames == HACK_FOR_ZELDA || options.enableHackForGames == HACK_FOR_ZELDA_MM) 
+            {
+                if(gRSP.modelviewMtxs[gRSP.modelViewMtxTop]._43 == 0.0f
+                    && gRSP.modelviewMtxs[gRSP.modelViewMtxTop]._42 != 0.0f
+                    && gRSP.modelviewMtxs[gRSP.modelViewMtxTop]._42 <= 94.5f
+                    && gRSP.modelviewMtxs[gRSP.modelViewMtxTop]._42 >= -94.5f)
+                {
+                    gRSP.modelviewMtxs[gRSP.modelViewMtxTop]._43 -= 10.1f;
+                }
+            }
         }
         else
         {
