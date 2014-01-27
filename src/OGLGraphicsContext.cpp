@@ -292,7 +292,7 @@ void COGLGraphicsContext::InitOGLExtension(void)
 {
     // important extension features, it is very bad not to have these feature
 #if SDL_VIDEO_OPENGL
-    m_bSupportMultiTexture = IsExtensionSupported(OSAL_GL_ARB_MULTITEXTURE);
+    m_bSupportMultiTexture = IsExtensionSupported("GL_ARB_multitexture");
 #elif SDL_VIDEO_OPENGL_ES2
     m_bSupportMultiTexture = true;
 #endif
