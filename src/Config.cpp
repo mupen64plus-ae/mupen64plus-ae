@@ -459,11 +459,7 @@ static void ReadConfiguration(void)
     options.bDumpTexturesToFiles = ConfigGetParamBool(l_ConfigVideoRice, "DumpTexturesToFiles");
     options.bShowFPS = ConfigGetParamBool(l_ConfigVideoRice, "ShowFPS");
 
-#if SDL_VIDEO_OPENGL
     options.mipmapping = ConfigGetParamInt(l_ConfigVideoRice, "Mipmapping");
-#elif SDL_VIDEO_OPENGL_ES2
-    options.mipmapping = TEXTURE_NO_MIPMAP;
-#endif
     options.fogMethod = ConfigGetParamInt(l_ConfigVideoRice, "FogMethod");
     options.forceTextureFilter = ConfigGetParamInt(l_ConfigVideoRice, "ForceTextureFilter");
     options.textureEnhancement = ConfigGetParamInt(l_ConfigVideoRice, "TextureEnhancement");
