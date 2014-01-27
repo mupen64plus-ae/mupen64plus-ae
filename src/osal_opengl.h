@@ -47,6 +47,7 @@
 #define VS_COLOR                            1
 #define VS_TEXCOORD0                        2
 #define VS_TEXCOORD1                        3
+#define VS_FOG                              4
 
 // Constant substitutions
 #define GL_CLAMP                            GL_CLAMP_TO_EDGE

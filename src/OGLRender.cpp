@@ -192,6 +192,12 @@ void OGLRender::Initialize(void)
         OPENGL_CHECK_ERRORS;
     }
 
+    if (m_bSupportFogCoordExt)
+    {
+        glVertexAttribPointer(VS_FOG,1,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][4]));
+        OPENGL_CHECK_ERRORS;
+    }
+
     glVertexAttribPointer(VS_COLOR, 4, GL_UNSIGNED_BYTE,GL_TRUE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
     OPENGL_CHECK_ERRORS;
 #endif
@@ -1027,25 +1033,17 @@ void OGLRender::RenderReset()
 
 void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
 {
-#ifdef DEBUGGER
-    if( bAlphaTestEnable && debuggerEnableAlphaTest )
-#else
-    if( bAlphaTestEnable )
-#endif
 #if SDL_VIDEO_OPENGL
+  #ifdef DEBUGGER
+    if( bAlphaTestEnable && debuggerEnableAlphaTest )
+  #else
+    if( bAlphaTestEnable )
+  #endif
         glEnable(GL_ALPHA_TEST);
     else
         glDisable(GL_ALPHA_TEST);
 #elif SDL_VIDEO_OPENGL_ES2
-    {
-        COGL_FragmentProgramCombiner* frag = (COGL_FragmentProgramCombiner*)m_pColorCombiner;
-        frag->m_AlphaRef = m_dwAlpha / 255.0f;
-    }
-    else
-    {
-        COGL_FragmentProgramCombiner* frag = (COGL_FragmentProgramCombiner*)m_pColorCombiner;
-        frag->m_AlphaRef = 0.0f;
-    }
+    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetAlphaTestState(bAlphaTestEnable);
 #endif
     OPENGL_CHECK_ERRORS;
 }
@@ -1164,9 +1162,6 @@ void OGLRender::SetFogMinMax(float fMin, float fMax)
     OPENGL_CHECK_ERRORS;
     glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
     OPENGL_CHECK_ERRORS;
-#elif SDL_VIDEO_OPENGL_ES2
-    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(gRSP.bFogEnabled);
-    OPENGL_CHECK_ERRORS;
 #endif
 }
 
@@ -1179,7 +1174,7 @@ void OGLRender::TurnFogOnOff(bool flag)
         glDisable(GL_FOG);
     OPENGL_CHECK_ERRORS;
 #elif SDL_VIDEO_OPENGL_ES2
-    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(flag);
+    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetFogState(flag);
     OPENGL_CHECK_ERRORS;
 #endif
 }
@@ -1215,7 +1210,7 @@ void OGLRender::SetFogEnable(bool bEnable)
         OPENGL_CHECK_ERRORS;
     }
 #elif SDL_VIDEO_OPENGL_ES2
-    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(gRSP.bFogEnabled);
+    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetFogState(gRSP.bFogEnabled);
     OPENGL_CHECK_ERRORS;
 #endif
 }

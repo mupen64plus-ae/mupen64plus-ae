@@ -300,7 +300,11 @@ void COGLGraphicsContext::InitOGLExtension(void)
     
     m_bSupportSeparateSpecularColor = IsExtensionSupported("GL_EXT_separate_specular_color");
     m_bSupportSecondColor = IsExtensionSupported("GL_EXT_secondary_color");
+#if SDL_VIDEO_OPENGL
     m_bSupportFogCoord = IsExtensionSupported("GL_EXT_fog_coord");
+#elif SDL_VIDEO_OPENGL_ES2
+    m_bSupportFogCoord = true;
+#endif
     m_bSupportTextureObject = IsExtensionSupported("GL_EXT_texture_object");
 
     // Optional extension features
