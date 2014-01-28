@@ -595,6 +595,11 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 /*********************************************************************************************************
 * main function
 */
+#ifdef ANDROID_EDITION
+// Declare state callback and allow main to be called dynamically from external library
+#include "ae_imports.h"
+EXPORT
+#endif
 int main(int argc, char *argv[])
 {
     int i;
@@ -616,7 +621,11 @@ int main(int argc, char *argv[])
         return 2;
 
     /* start the Mupen64Plus core library, load the configuration file */
+    #ifdef ANDROID_EDITION
+    m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, Android_JNI_StateCallback);
+    #else
     m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, NULL);
+    #endif
     if (rval != M64ERR_SUCCESS)
     {
         DebugMessage(M64MSG_ERROR, "couldn't start Mupen64Plus core library.");
