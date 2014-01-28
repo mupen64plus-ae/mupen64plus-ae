@@ -36,25 +36,12 @@
   <string name="menuItem_setIme">IME wechseln</string>
   <string name="menuItem_exit">Verlassen</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Profile</string>
-  <string name="menuItem_default">Standard</string>
-  <string name="menuItem_load">Laden…</string>
-  <string name="menuItem_save">Speichern…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">N64-USB-Adapter</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia Play</string>
   <string name="menuItem_deadzone">Nullzone</string>
   <string name="menuItem_sensitivity">Empfindlichkeit</string>
-  <string name="menuItem_specialVisibility_show">Spezialfunktionen anzeigen</string>
-  <string name="menuItem_specialVisibility_hide">Spezialfunktionen verbergen</string>
   <string name="menuItem_unmapAll">Alle Tastenbelegungen entfernen</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Spielen</string>
   <string name="menuItem_settings">Einstellungen</string>
-  <string name="menuItem_gameSettings">Spiel-spezifische Einstellungen</string>
-  <string name="menuItem_gameSettingsNamed">%1$s Einstellungen</string>
   <string name="menuItem_globalSettings">Allgemeine Einstellungen</string>
   <string name="menuItem_touchscreenProfiles">Touchscreen-Profile</string>
   <string name="menuItem_controllerProfiles">Controller-Profile</string>
@@ -65,16 +52,16 @@
   <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
   <string name="menuItem_reportBug">Bug melden</string>
   <string name="menuItem_about">Über</string>
+  <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">App-Version</string>
   <string name="menuItem_changelog">Changelog</string>
-  <string name="menuItem_axisInfo">Analog-Info</string>
-  <string name="menuItem_controllerInfo">Controllerinfo</string>
-  <string name="menuItem_systemInfo">Geräteinformationen</string>
-  <string name="menuItem_credits">Credits</string>
   <string name="menuItem_localeOverride">Sprache</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plus wird von Freiwilligen entwickelt und gepflegt.<small>\n\nUm grafische Glitches zu beheben, versuche das <i>Videoplugin</i> zu ändern.\n\nUm Lag zu beheben, versuche die <i>Video-Frameskip</i>-Einstellung oder das <i>Videoplugin</i> zu ändern.\n\nBei unspielbaren ROMs, versuche das ROM erst zu entpacken oder versuche eine andere Version des ROM.\n\nBei Touchscreen-Steuerungsproblemen, versuche den <i>Knopf-Maßstab</i> oder das <i>Knopf-Layout</i> zu ändern.\n\nBei anderen Problemen, oder wenn du immer noch festsitzt, drücke bitte den <i>FAQ</i>-Knopf unterhalb. Bei nicht spielspezifischen Bugs drücke den <i>Bug melden</i>-Knopf unterhalb. Wir antworten auf die überwiegende Mehrheit der Posts innerhalb von 24 Stunden. Ehrlich.\n\n</small>Danke, dass du uns hilfst, die App zu verbessern!</string>
   <string name="popup_version">Version: %1$s\nVersionscode: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -89,12 +76,9 @@
   <string name="toast_loadingFile">%1$s wird geladen…</string>
   <string name="toast_savingFile">%1$s wird gespeichert…</string>
   <string name="toast_overwritingFile">%1$s wird überschrieben…</string>
-  <string name="toast_loadingGameSettings">%1$s Einstellungen werden geladen…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Slot %1$d wird nun genutzt.</string>
   <string name="toast_sdInaccessible">SD-Karte nicht zugänglich (trenne das USB-Kabel und versuche es erneut).</string>
-  <string name="toast_fileReadError">Datei konnte nicht gelesen werden!</string>
-  <string name="toast_fileWriteError">Datei konnte nicht geschrieben werden!</string>
   <string name="toast_crashReportSent">Bericht gesendet.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -126,14 +110,14 @@
   <string name="screenVideo_summary">Grafikeinstellungen</string>
   <string name="screenAdvanced_title">Erweitert</string>
   <string name="screenAdvanced_summary">Kern-, Speicher- und Debug-Einstellungen</string>
+  <string name="screenGlobalSettings_title">Allgemeine Einstellungen</string>
+  <string name="screenCheats_summaryDisabled">Deaktiviert</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheatoptionen (lange drücken für Anmerkungen)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Andere</string>
   <string name="categoryTouchscreenBehavior_title">Verhalten</string>
   <string name="categoryTouchscreenAppearance_title">Aussehen</string>
-  <string name="categorySinglePlayer_title">Spieler 1</string>
-  <string name="categoryMultiPlayer_title">Multiplayer</string>
   <string name="categoryGln64_title">Gln64-Einstellungen</string>
   <string name="categoryRice_title">Rice-Einstellungen</string>
   <string name="categoryGlide64_title">Glide64-Einstellungen</string>
@@ -141,6 +125,8 @@
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Daten</string>
   <string name="categoryCrashReports_title">Absturzberichte</string>
+  <string name="categoryGameSettings_title">Spiel-spezifische Einstellungen</string>
+  <string name="categoryGameSettings_titleNamed">%1$s Einstellungen</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Cheats aktivieren</string>
   <string name="playShowCheats_summary">Menü lädt langsamer, wenn aktiviert</string>
@@ -305,7 +291,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Ausgewählter Ordner: %1$s</string>
   <string name="pathSelectedGame_title">Spiel</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Benutzerdefinierter Layout-Ordner</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Texturenpaket importieren</string>
@@ -316,12 +301,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multiplayer</string>
   <string name="playerMap_summary">Controller jedes Spielers festlegen</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Controller</string>
-  <string name="inputMap2_title">Spieler 2</string>
-  <string name="inputMap3_title">Spieler 3</string>
-  <string name="inputMap4_title">Spieler 4</string>
-  <string name="inputMap_summary">Knopf- und Spezialfunktion-Belegung</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -331,7 +311,6 @@
   <string name="confirm_title">Bestätigung</string>
   <string name="confirmResetGame_message">Spiel zurücksetzen? Ungespeicherter Fortschritt geht dabei verloren.</string>
   <string name="confirmOverwriteFile_message">%1$s überschreiben?</string>
-  <string name="confirmLoadProfile_message">Profil \"%1$s\" für %2$s laden?</string>
   <string name="confirmUnmapAll_message">Alle Tastenbelegungen für %1$s entfernen?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Changelog</string>
@@ -352,6 +331,8 @@
   <string name="cheatOption_title">Vollständiger Text</string>
   <string name="cheatNotes_title">Anmerkungen</string>
   <string name="cheatNotes_none">(für diesen Cheat sind keine Anmerkungen vorhanden)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Hilfe</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Texturen werden entpackt</string>
   <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>

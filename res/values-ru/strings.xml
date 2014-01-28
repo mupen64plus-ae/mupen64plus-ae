@@ -27,19 +27,8 @@
   <string name="menuItem_setIme">Выбор метода ввода</string>
   <string name="menuItem_exit">Выход</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Профили</string>
-  <string name="menuItem_default">Умолчание</string>
-  <string name="menuItem_load">Загрузка…</string>
-  <string name="menuItem_save">Сохранение…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">N64 USB Адаптер</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Мертвая зона</string>
   <string name="menuItem_sensitivity">Чувствительность</string>
-  <string name="menuItem_specialVisibility_show">Показать дополнительные возможности</string>
-  <string name="menuItem_specialVisibility_hide">Скрыть дополнительные возможности</string>
   <string name="menuItem_unmapAll">Сбросить всё</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Играть</string>
@@ -49,15 +38,15 @@
   <string name="menuItem_controllerDiagnostics">Проверка устройств ввода</string>
   <string name="menuItem_reportBug">Сообщить об ошибке</string>
   <string name="menuItem_about">О программе</string>
-  <string name="menuItem_changelog">Список изменений</string>
-  <string name="menuItem_axisInfo">Аналоговая информация</string>
-  <string name="menuItem_controllerInfo">Устройства ввода</string>
-  <string name="menuItem_systemInfo">Сведения об устройстве</string>
   <string name="menuItem_credits">Благодарности</string>
+  <string name="menuItem_changelog">Список изменений</string>
   <string name="menuItem_localeOverride">Язык</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plus разрабатывается добровольцами.<small>\n\nДля решения проблем с графикой попробуйте другой плагин видео.\n\nДля повышения производительности измените настройки пропуска кадров.\n\nПри ошибке открытия образа игры извлеките его из архива или найдите другую версию.\n\nбла-бла-бла, короче пользуйтесь настройками, иначе зачем я столько переводил?\n\nПри появлении других проблем воспользуйтесь ЧАВО и форумом (см. ниже).\n</small>\n\nЗаранее спасибо.</string>
   <string name="popup_version">Версия: %1$s\nКод версии: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -75,8 +64,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Сейчас используется слот %1$d.</string>
   <string name="toast_sdInaccessible">Карта недоступна</string>
-  <string name="toast_fileReadError">Не удалось прочитать файл!</string>
-  <string name="toast_fileWriteError">Не удалось записать файл!</string>
   <string name="toast_crashReportSent">Отчёт отправлен.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -104,14 +91,14 @@
   <string name="screenVideo_title">Видео</string>
   <string name="screenVideo_summary">Настройки графики</string>
   <string name="screenAdvanced_title">Другое</string>
+  <string name="screenCheats_title">Чит-коды</string>
+  <string name="screenCheats_summaryDisabled">Отключить</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Чит-коды (нажмите и удерживайте для показа справки)</string>
   <string name="categoryHardware_title">Оборудование</string>
   <string name="categoryOther_title">Остальные</string>
   <string name="categoryTouchscreenBehavior_title">Поведение</string>
   <string name="categoryTouchscreenAppearance_title">Внешний вид</string>
-  <string name="categorySinglePlayer_title">Игрок 1</string>
-  <string name="categoryMultiPlayer_title">Мультиплеер</string>
   <string name="categoryGln64_title">Настройки Gln64</string>
   <string name="categoryRice_title">Настройки Rice</string>
   <string name="categoryGlide64_title">Настройки Glide64 settings</string>
@@ -250,7 +237,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Выбранная папка: %1$s</string>
   <string name="pathSelectedGame_title">Игра</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Стандартное расположение папки</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Указать путь к архиву с текстурами</string>
@@ -261,12 +247,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Многопользовательская игра</string>
   <string name="playerMap_summary">Определить контроллер каждого игрока</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Контроллер</string>
-  <string name="inputMap2_title">Игрок 2</string>
-  <string name="inputMap3_title">Игрок 3</string>
-  <string name="inputMap4_title">Игрок 4</string>
-  <string name="inputMap_summary">Настройка кнопок</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -276,7 +257,6 @@
   <string name="confirm_title">Подтверждение</string>
   <string name="confirmResetGame_message">Сбросить игру? Прогресс с момента последнего сохранения будет потерян.</string>
   <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
-  <string name="confirmLoadProfile_message">Загрузить профиль \"%1$s\" для %2$s?</string>
   <string name="confirmUnmapAll_message">Сбросить все ассоциации для %1$s?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Список изменений</string>
@@ -297,6 +277,8 @@
   <string name="cheatOption_title">Полный текст</string>
   <string name="cheatNotes_title">Примечания</string>
   <string name="cheatNotes_none">(для этого чит-кода нет примечаний)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Помощь</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Извлечение текстур</string>
   <string name="pathHiResTexturesTask_message">Подождите немного.</string>

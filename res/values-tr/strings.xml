@@ -36,18 +36,7 @@
   <string name="menuItem_setIme">IME\'yi değiştir</string>
   <string name="menuItem_exit">Çıkış</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Profiller</string>
-  <string name="menuItem_default">Varsayılan</string>
-  <string name="menuItem_load">Yükle…</string>
-  <string name="menuItem_save">Kaydet…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">N64 USB Adaptörü</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_sensitivity">Hassasiyet</string>
-  <string name="menuItem_specialVisibility_show">Özel işlevleri göster</string>
-  <string name="menuItem_specialVisibility_hide">Özel işlevleri gizle</string>
   <string name="menuItem_unmapAll">Tüm eşlemeleri kaldır</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Oyna</string>
@@ -57,14 +46,14 @@
   <string name="menuItem_controllerDiagnostics">Kumanda tanılama</string>
   <string name="menuItem_reportBug">Hata raporla</string>
   <string name="menuItem_about">Hakkında</string>
-  <string name="menuItem_changelog">Değişim Kayıtları</string>
-  <string name="menuItem_axisInfo">Analog bilgisi</string>
-  <string name="menuItem_controllerInfo">Kumanda bilgisi</string>
-  <string name="menuItem_systemInfo">Aygıt bilgisi</string>
   <string name="menuItem_credits">Katkıda Bulunanlar</string>
+  <string name="menuItem_changelog">Değişim Kayıtları</string>
   <string name="menuItem_localeOverride">Dil</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_version">Sürüm: %1$s\n Sürüm kodu: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -82,8 +71,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Şimdi %1$d soltu kullanılıyor</string>
   <string name="toast_sdInaccessible">SD kart erişilemez (USB kablosunu çıkartıp tekrar deneyin)</string>
-  <string name="toast_fileReadError">Dosya okunamadı!</string>
-  <string name="toast_fileWriteError">Dosyaya yazılamadı!</string>
   <string name="toast_crashReportSent">Rapor gönderildi.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -111,14 +98,13 @@
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik ayarları</string>
   <string name="screenAdvanced_title">Gelişmiş</string>
+  <string name="screenCheats_summaryDisabled">Devre dışı</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Hile seçenekleri (notlar için uzun basın)</string>
   <string name="categoryHardware_title">Donanım</string>
   <string name="categoryOther_title">Diğer</string>
   <string name="categoryTouchscreenBehavior_title">Davranış</string>
   <string name="categoryTouchscreenAppearance_title">Görünüm</string>
-  <string name="categorySinglePlayer_title">Oyuncu 1</string>
-  <string name="categoryMultiPlayer_title">Çoklu Oyuncu</string>
   <string name="categoryGln64_title">Gln64 Ayarları</string>
   <string name="categoryRice_title">Rice Ayarları</string>
   <string name="categoryGlide64_title">Glide64 ayarları</string>
@@ -267,7 +253,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Seçilen klasör: %1$s</string>
   <string name="pathSelectedGame_title">Oyun</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Özel düzen klasörü</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">İçe doku paketi aktar</string>
@@ -278,12 +263,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Çoklu Oyuncu</string>
   <string name="playerMap_summary">Her oyuncunun kumandasını tanımla</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Kumanda</string>
-  <string name="inputMap2_title">Oyuncu 2</string>
-  <string name="inputMap3_title">Oyuncu 3</string>
-  <string name="inputMap4_title">Oyuncu 4</string>
-  <string name="inputMap_summary">Düğme ve özel fonksiyon eşleme</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -293,7 +273,6 @@
   <string name="confirm_title">Onaylama</string>
   <string name="confirmResetGame_message">Oyunu sıfırla? Son kaydınızdan bu yana tüm işlemler kaybedilecek.</string>
   <string name="confirmOverwriteFile_message">Üzerine yazılsınmı %1$s? </string>
-  <string name="confirmLoadProfile_message">%2$s için \"%1$s\" profilini yükle?</string>
   <string name="confirmUnmapAll_message">%1$s için tüm girdilerin eşlemelerini kaldır?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Değişiklik kaydı</string>
@@ -314,6 +293,8 @@
   <string name="cheatOption_title">Tüm metin</string>
   <string name="cheatNotes_title">Notlar</string>
   <string name="cheatNotes_none">(bu hile için notlar mevcut değil)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Yardım</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>

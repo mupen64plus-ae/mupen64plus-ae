@@ -36,18 +36,7 @@
   <string name="menuItem_setIme">Byt IME</string>
   <string name="menuItem_exit">Avsluta</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Profiler</string>
-  <string name="menuItem_default">Standard</string>
-  <string name="menuItem_load">Ladda…</string>
-  <string name="menuItem_save">Spara…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">N64 USB Adapter</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_sensitivity">Sensitivitet</string>
-  <string name="menuItem_specialVisibility_show">Visa speciella funktioner</string>
-  <string name="menuItem_specialVisibility_hide">Göm speciella funktioner</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Spela</string>
   <string name="menuItem_settings">Inställningar</string>
@@ -56,14 +45,14 @@
   <string name="menuItem_controllerDiagnostics">Kontroll diagnostik</string>
   <string name="menuItem_reportBug">Rapportera bugg</string>
   <string name="menuItem_about">Om</string>
-  <string name="menuItem_changelog">Ändringslogg</string>
-  <string name="menuItem_axisInfo">Analog info</string>
-  <string name="menuItem_controllerInfo">Kontroll info</string>
-  <string name="menuItem_systemInfo">Enhets info</string>
   <string name="menuItem_credits">krediter</string>
+  <string name="menuItem_changelog">Ändringslogg</string>
   <string name="menuItem_localeOverride">Språk</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_version">Version: %1$s\nVersion kod: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -81,8 +70,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Använder nu slot %1$d.</string>
   <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
-  <string name="toast_fileReadError">Kunde ej läsa fil!</string>
-  <string name="toast_fileWriteError">Kunde ej läsa fil!</string>
   <string name="toast_crashReportSent">Rapport skickad.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -111,14 +98,13 @@
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik inställningar</string>
   <string name="screenAdvanced_title">Avancerat</string>
+  <string name="screenCheats_summaryDisabled">Inaktiverad</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Fusk alternativ (håll in för beskrivning)</string>
   <string name="categoryHardware_title">Hårdvara</string>
   <string name="categoryOther_title">Andra</string>
   <string name="categoryTouchscreenBehavior_title">Beteende</string>
   <string name="categoryTouchscreenAppearance_title">Utseende</string>
-  <string name="categorySinglePlayer_title">Spelare 1</string>
-  <string name="categoryMultiPlayer_title">Multi-player</string>
   <string name="categoryGln64_title">Gln64 inställningar</string>
   <string name="categoryRice_title">Rice inställningar</string>
   <string name="categoryGlide64_title">Glide64 inställningar</string>
@@ -265,7 +251,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Vald mapp: %1$s</string>
   <string name="pathSelectedGame_title">Spel</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Anpassad layout mapp</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Import textur pack</string>
@@ -276,12 +261,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multi-player</string>
   <string name="playerMap_summary">Definera varje spelares kontroll(er)</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Kontroller</string>
-  <string name="inputMap2_title">Spelare 2</string>
-  <string name="inputMap3_title">Spelare 3</string>
-  <string name="inputMap4_title">Spelare 4</string>
-  <string name="inputMap_summary">Knapp och speciell funktion mapning</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -291,7 +271,6 @@
   <string name="confirm_title">Konfirmation</string>
   <string name="confirmResetGame_message">Återställ spelet? Alla framsteg har sparats kommer att förloras.</string>
   <string name="confirmOverwriteFile_message">Skriva över %1$s?</string>
-  <string name="confirmLoadProfile_message">Ladda profil \"%1$s\" för %2$s?</string>
   <string name="confirmUnmapAll_message">Avtilldela alla kommandon för %1$s?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Ändringar</string>
@@ -312,6 +291,8 @@
   <string name="cheatOption_title">Full text</string>
   <string name="cheatNotes_title">Anteckningar</string>
   <string name="cheatNotes_none">(inga anteckningar tillgängliga för detta fusk)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Hjälp</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Uppackning texturer</string>
   <string name="pathHiResTexturesTask_message">Var god och vänta. Denna process kan ta lite tid.</string>

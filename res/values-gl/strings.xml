@@ -36,19 +36,8 @@
   <string name="menuItem_setIme">Cambiar IME</string>
   <string name="menuItem_exit">Saír</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Perfiles</string>
-  <string name="menuItem_default">Predefinido</string>
-  <string name="menuItem_load">Cargar…</string>
-  <string name="menuItem_save">Gardar…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">Adaptador USB N64</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Zona morta</string>
   <string name="menuItem_sensitivity">Sensibilidade</string>
-  <string name="menuItem_specialVisibility_show">Amosar funcións especiais</string>
-  <string name="menuItem_specialVisibility_hide">Agochar funcións especiais</string>
   <string name="menuItem_unmapAll">Desasignar todo</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Xogar</string>
@@ -58,15 +47,15 @@
   <string name="menuItem_controllerDiagnostics">Diagnose do mando</string>
   <string name="menuItem_reportBug">Informar de bug</string>
   <string name="menuItem_about">Acerca de</string>
-  <string name="menuItem_changelog">Rexistro de modificacións</string>
-  <string name="menuItem_axisInfo">Info. analóxica</string>
-  <string name="menuItem_controllerInfo">Info. do mando</string>
-  <string name="menuItem_systemInfo">Info. do dispositivo</string>
   <string name="menuItem_credits">Créditos</string>
+  <string name="menuItem_changelog">Rexistro de modificacións</string>
   <string name="menuItem_localeOverride">Idioma</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plus desenvólvese e mantense por voluntarios.<small>\n\nPara corrixir erros gráficos, proba a mudar o <i>complemento de vídeo</i>.\n\nPara corrixir o atraso, proba a mudar o axuste da <i>taxa de refresco do vídeo</i> ou o <i>complemento de vídeo</i>.\n\nPara ROMS non reproducibles, proba a descomprimir primeiro a ROM ou proba unha versión distinta da mesma.\n\nPara problemas de control da pantalla táctil, proba a mudar a <i>escala de botón</i> ou a <i>disposición de botón</i>.\n\nPara outros problemas ou se segues atoado, por favor, preme o seguinte botón das <i>Preguntas habituais</i>.  Para erros non específicos dun xogo, preme o seguinte botón de <i>Informar erro</i>.  Respondemos á maioría de mensaxes en 24 horas.  Honestamente.\n\n</small>Grazas por axudarnos a mellorar a aplicación!</string>
   <string name="popup_version">Versión: %1$s\nCódigo de versión: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -84,8 +73,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Usando a rañura %1$d.</string>
   <string name="toast_sdInaccessible">Non se pode acceder á SD (desconecte o cable USB e probe de novo)</string>
-  <string name="toast_fileReadError">Non se puido ler o arquivo!</string>
-  <string name="toast_fileWriteError">Non se puido escribir o arquivo!</string>
   <string name="toast_crashReportSent">Informe enviado.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -113,14 +100,13 @@
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Axustes dos gráficos</string>
   <string name="screenAdvanced_title">Avanzado</string>
+  <string name="screenCheats_summaryDisabled">Desactivado</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opcións de trucos (presión longa para notas)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Outro</string>
   <string name="categoryTouchscreenBehavior_title">Comportamento</string>
   <string name="categoryTouchscreenAppearance_title">Aparencia</string>
-  <string name="categorySinglePlayer_title">Xogador 1</string>
-  <string name="categoryMultiPlayer_title">Multixogador</string>
   <string name="categoryGln64_title">Axustes do Gln64</string>
   <string name="categoryRice_title">Axustes do Rice</string>
   <string name="categoryGlide64_title">Axustes do Glide64</string>
@@ -278,7 +264,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Cartafol elixido: %1$s</string>
   <string name="pathSelectedGame_title">Xogo</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Cartafol de disposicións personalizadas</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importar paquete de textura</string>
@@ -289,12 +274,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multixogador</string>
   <string name="playerMap_summary">Definir os mandos de cada xogador</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Mando</string>
-  <string name="inputMap2_title">Xogador 2</string>
-  <string name="inputMap3_title">Xogador 3</string>
-  <string name="inputMap4_title">Xogador 4</string>
-  <string name="inputMap_summary">Asignar botón e función especial</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -304,7 +284,6 @@
   <string name="confirm_title">Confirmación</string>
   <string name="confirmResetGame_message">Restablecer xogo? Perderanse todos os progresos dende o último gardado.</string>
   <string name="confirmOverwriteFile_message">Sobrescribir %1$s?</string>
-  <string name="confirmLoadProfile_message">Cargar perfil \"%1$s\" para %2$s?</string>
   <string name="confirmUnmapAll_message">Desasignar todas as entradas para %1$s?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Rexistro de modificacións</string>
@@ -325,6 +304,8 @@
   <string name="cheatOption_title">Texto completo</string>
   <string name="cheatNotes_title">Notas</string>
   <string name="cheatNotes_none">(non hai notas para este truco)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Axuda</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Desempaquetando texturas</string>
   <string name="pathHiResTexturesTask_message">Teña paciencia. Este proceso pode levar un tempo.</string>

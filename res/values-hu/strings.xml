@@ -36,17 +36,6 @@
   <string name="menuItem_setIme">IME változtatása</string>
   <string name="menuItem_exit">Kilépés</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Profilok</string>
-  <string name="menuItem_default">Alapértelmezett</string>
-  <string name="menuItem_load">Betöltés…</string>
-  <string name="menuItem_save">Mentés…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">N64 USB adapter</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
-  <string name="menuItem_specialVisibility_show">Speciális funkciók mutatása</string>
-  <string name="menuItem_specialVisibility_hide">Speciális funkciók elrejtése</string>
   <string name="menuItem_unmapAll">Kiosztás megszüntése</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Játék</string>
@@ -56,14 +45,14 @@
   <string name="menuItem_controllerDiagnostics">Kontroller diagnosztika</string>
   <string name="menuItem_reportBug">Bug jelentése</string>
   <string name="menuItem_about">Névjegy</string>
-  <string name="menuItem_changelog">Változások</string>
-  <string name="menuItem_axisInfo">Analóg infó</string>
-  <string name="menuItem_controllerInfo">Kontroller infó</string>
-  <string name="menuItem_systemInfo">Készülék infó</string>
   <string name="menuItem_credits">Kreditek</string>
+  <string name="menuItem_changelog">Változások</string>
   <string name="menuItem_localeOverride">Nyelv</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_version">Verzió: %1$s\nVerzió kód: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -81,8 +70,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot"> %1$d hely használata</string>
   <string name="toast_sdInaccessible">SD kártya nem elérhető (USB-t csatlakoztasd le majd próbáld újra)</string>
-  <string name="toast_fileReadError">Nem lehet olvasni a fájlt!</string>
-  <string name="toast_fileWriteError">Nem lehet írni a fájlt!</string>
   <string name="toast_crashReportSent">Jelentése elküldve.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -110,14 +97,13 @@
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafikai beállítások</string>
   <string name="screenAdvanced_title">Haladó</string>
+  <string name="screenCheats_summaryDisabled">Kikapcsolva</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Csalás beállítások (hosszan nyomd a jegyzetekért)</string>
   <string name="categoryHardware_title">Hardver</string>
   <string name="categoryOther_title">Egyéb</string>
   <string name="categoryTouchscreenBehavior_title">Viselkedés</string>
   <string name="categoryTouchscreenAppearance_title">Megjelenés</string>
-  <string name="categorySinglePlayer_title">Játékos 1</string>
-  <string name="categoryMultiPlayer_title">Többjátékos</string>
   <string name="categoryGln64_title">Gln64 beállítások</string>
   <string name="categoryRice_title">Rice beállítások</string>
   <string name="categoryAudio_title">Hang</string>
@@ -247,7 +233,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Kiválasztott mappa: %1$s</string>
   <string name="pathSelectedGame_title">Játék</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Egyéni kiosztású mappa</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Textúra csomag importálása</string>
@@ -258,12 +243,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Többjátékos</string>
   <string name="playerMap_summary">Minden játékos kontrollerének a definiálása</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Kontroller</string>
-  <string name="inputMap2_title">Játékos 2</string>
-  <string name="inputMap3_title">Játékos 3</string>
-  <string name="inputMap4_title">Játékos 4</string>
-  <string name="inputMap_summary">Gomb, és speciális funkció kiosztás</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -273,7 +253,6 @@
   <string name="confirm_title">Megerősítés</string>
   <string name="confirmResetGame_message">Biztos újraindítod? Az összes eddigi mentett állás el fog veszni.</string>
   <string name="confirmOverwriteFile_message">Felülírod %1$s ?</string>
-  <string name="confirmLoadProfile_message">\"%1$s\" for %2$s profil betöltése?</string>
   <string name="confirmUnmapAll_message"> %1$s beviteli eszköz kiosztásának megszüntetése?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Változások</string>
@@ -292,6 +271,8 @@
   <string name="cheatOption_title">Teljes szöveg</string>
   <string name="cheatNotes_title">Jegyzetek</string>
   <string name="cheatNotes_none">(nincsenek jegyzetek ehhez a csaláshoz)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Segítség</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Textúrák kicsomagolása</string>
   <string name="pathHiResTexturesTask_message">Légy türelemmel. Ez időbe telik.</string>

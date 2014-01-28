@@ -36,18 +36,7 @@
   <string name="menuItem_setIme">Cambia Metodo di input</string>
   <string name="menuItem_exit">Esci</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Profili</string>
-  <string name="menuItem_default">Default</string>
-  <string name="menuItem_load">Carica…</string>
-  <string name="menuItem_save">Salva…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">Adattatore USB N64</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Zona morta</string>
-  <string name="menuItem_specialVisibility_show">Mostra funzioni speciali</string>
-  <string name="menuItem_specialVisibility_hide">Nascondi funzioni speciali</string>
   <string name="menuItem_unmapAll">Rimuovi tasti impostati da tutto</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Gioca</string>
@@ -57,15 +46,15 @@
   <string name="menuItem_controllerDiagnostics">Diagnostica controller</string>
   <string name="menuItem_reportBug">Segnala bug</string>
   <string name="menuItem_about">Info</string>
-  <string name="menuItem_changelog">log cambiamenti</string>
-  <string name="menuItem_axisInfo">Info analogico</string>
-  <string name="menuItem_controllerInfo">Info sul controller</string>
-  <string name="menuItem_systemInfo">Info dispositivo</string>
   <string name="menuItem_credits">Crediti</string>
+  <string name="menuItem_changelog">log cambiamenti</string>
   <string name="menuItem_localeOverride">Linguaggio</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plus è sviluppato e mantenuto da volontari.<small>\n\nPer sistemare errori grafici, prova a cambiare il <i>plugin video</i>.\n\nPer sistemare il lag, prova a cambiare l\'impostazione <i>frameskip video</i> o il <i>plugin video</i>.\n\nPer ROM ingiocabili, prova a decomprimere la ROM o prova una diversa versione della ROM.\n\nPer problemi di controlli touchscreen, prova a cambiare la <i>grandezza tasti</i> o il <i>layout tasti</i>.\n\nPer altri problemi, o se sei ancora bloccato, per favore clicca il tasto <i>FAQ</i> sotto. Per bug non specifici al gioco, clicca il tasto <i>Segnala bug</i> sotto.  Rispondiamo alla vasta maggioranza di post in 24 ore.  Onestamente.\n\n</small>Grazie per aiutarci a migliorare l\'app!</string>
   <string name="popup_version">Versione: %1$s\nCodice versione: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -83,8 +72,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Usando slot %1$d.</string>
   <string name="toast_sdInaccessible">Scheda SD non accessibile (disconnetti cavo USB e riprova)</string>
-  <string name="toast_fileReadError">Errore leggendo il file!</string>
-  <string name="toast_fileWriteError">Errore scrivendo il file</string>
   <string name="toast_crashReportSent">Segnalazione inviata.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -112,14 +99,13 @@
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Impostazioni grafiche</string>
   <string name="screenAdvanced_title">Avanzate</string>
+  <string name="screenCheats_summaryDisabled">Disabilitato</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opzioni trucchi (lascia premuto per le note)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Altro</string>
   <string name="categoryTouchscreenBehavior_title">Comportamento</string>
   <string name="categoryTouchscreenAppearance_title">Aspetto</string>
-  <string name="categorySinglePlayer_title">Giocatore 1</string>
-  <string name="categoryMultiPlayer_title">Multigiocatore</string>
   <string name="categoryGln64_title">Impostazioni Gln64</string>
   <string name="categoryRice_title">Impostazioni Rice</string>
   <string name="categoryAudio_title">Audio</string>
@@ -275,7 +261,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Cartella selezionata: %1$s</string>
   <string name="pathSelectedGame_title">Seleziona gioco</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Layout della cartella personalizzato</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importa pacchetti texture</string>
@@ -286,12 +271,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multigiocatore</string>
   <string name="playerMap_summary">Definisci il controller di ogni giocatore</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Controller</string>
-  <string name="inputMap2_title">Giocatore 2</string>
-  <string name="inputMap3_title">Giocatore 3</string>
-  <string name="inputMap4_title">Giocatore 4</string>
-  <string name="inputMap_summary">Assegnazione di tasti e funzioni speciali</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -301,7 +281,6 @@
   <string name="confirm_title">Conferma</string>
   <string name="confirmResetGame_message">Resettare il gioco? Tutto il progresso dopo il tuo ultimo salvataggio verrà perso.</string>
   <string name="confirmOverwriteFile_message">Sovrascrivere %1$s?</string>
-  <string name="confirmLoadProfile_message">Caricare il profilo \"%1$s\" per %2$s?</string>
   <string name="confirmUnmapAll_message">Rimuovere tasti impostati da tutti gli input per %1$s?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Cambiamenti recenti</string>
@@ -322,6 +301,8 @@
   <string name="cheatOption_title">Testo completo</string>
   <string name="cheatNotes_title">Note</string>
   <string name="cheatNotes_none">(Niente note disponibili per questi trucchi)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Aiuto</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Spacchettando texture</string>
   <string name="pathHiResTexturesTask_message">Per favore.  Questo processo potrebbe durare un po\' di tempo.</string>

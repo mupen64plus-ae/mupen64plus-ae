@@ -36,25 +36,12 @@
   <string name="menuItem_setIme">IMEを変更</string>
   <string name="menuItem_exit">終了</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">プロファイル</string>
-  <string name="menuItem_default">デフォルト</string>
-  <string name="menuItem_load">ロード…</string>
-  <string name="menuItem_save">保存…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">N64のUSBアダプタ</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">デッドゾーン</string>
   <string name="menuItem_sensitivity">感度</string>
-  <string name="menuItem_specialVisibility_show">特別な機能を表示</string>
-  <string name="menuItem_specialVisibility_hide">特別な機能を非表示</string>
   <string name="menuItem_unmapAll">全てをアンマップ</string>
   <!--Menu Activity-->
   <string name="menuItem_play">プレー</string>
   <string name="menuItem_settings">設定</string>
-  <string name="menuItem_gameSettings">ゲーム毎の設定</string>
-  <string name="menuItem_gameSettingsNamed">%1$sの設定</string>
   <string name="menuItem_globalSettings">標準設定</string>
   <string name="menuItem_touchscreenProfiles">タッチスクリーンプロファイル</string>
   <string name="menuItem_controllerProfiles">コントローラープロファイル</string>
@@ -65,16 +52,24 @@
   <string name="menuItem_controllerDiagnostics">コントローラ診断</string>
   <string name="menuItem_reportBug">バグレポート</string>
   <string name="menuItem_about">Mupen64Plus AEについて</string>
+  <string name="menuItem_credits">クレジット</string>
   <string name="menuItem_appVersion">アプリバージョン</string>
   <string name="menuItem_changelog">変更履歴</string>
-  <string name="menuItem_axisInfo">アナログ情報</string>
-  <string name="menuItem_controllerInfo">コントローラ情報</string>
-  <string name="menuItem_systemInfo">システム情報</string>
-  <string name="menuItem_credits">クレジット</string>
+  <string name="menuItem_hardwareInfo">ハードウェア情報</string>
   <string name="menuItem_localeOverride">言語</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plusはボランティアによって開発、維持されています。<small>\n\nグラフィックに不具合がある場合は、<i>ビデオプラグイン</i>を変更してください。\n\nラグを修正するには、<i>ビデオのフレームスキップ</i>の設定や<i>ビデオプラグイン</i>を変更してください。\n\nロムがうまく動作しない場合は、まずファイルを解凍するか別バージョンのロムを試してください。\n\nタッチ画面の操作に問題がある場合は、<i>ボタンの大きさ</i>や<i>ボタンのレイアウト</i>を変更してください。\n\nその他の問題について行き詰まってしまった場合は<i>FAQ</i>を確認してください。ゲーム固有ではない不具合は<i>バグ報告</i>をお願いします。我々は大半の報告に対し24時間以内に対応するよう努力しています。\n\n</small>アプリの改善にご協力いただきありがとうございます!</string>
   <string name="popup_version">バージョン: %1$s\nバージョンコード: %2$d</string>
+  <!--Lists-->
+  <string name="listItem_edit">編集</string>
+  <string name="listItem_rename">名前の変更</string>
+  <string name="listItem_copy">コピー</string>
+  <string name="listItem_delete">削除</string>
+  <string name="listItem_editCopy">コピーの編集</string>
+  <string name="listItem_disabled">(無効)</string>
+  <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileComment">説明(オプション)</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -89,12 +84,10 @@
   <string name="toast_loadingFile">%1$s 読み込こみ中</string>
   <string name="toast_savingFile">%1$s 保存中…</string>
   <string name="toast_overwritingFile">%1$sへ上書き中...</string>
-  <string name="toast_loadingGameSettings">%1$sの設定を読み込み中...</string>
+  <string name="toast_loadingGameInfo">ゲーム情報の読み込み...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">スロット%1$dを使用中</string>
   <string name="toast_sdInaccessible">SDカードににアクセスできません。 （USBケーブルを外してください）</string>
-  <string name="toast_fileReadError">ファイルを読み取れませんでした！</string>
-  <string name="toast_fileWriteError">ファイルを書き込めませんでした！</string>
   <string name="toast_crashReportSent">エラーレポートを送信しました。</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -113,6 +106,7 @@
   <string name="actionResetUserPrefs_title">リセット</string>
   <string name="actionResetUserPrefs_summary">設定を既定値にリセット</string>
   <string name="actionResetUserPrefs_popupMessage">すべての設定をデフォルトにリセットしますか?<small>\n\n設定ファイルへの直接の変更も上書きされます。</small></string>
+  <string name="actionShare_title">共有</string>
   <!--Preference Screens-->
   <string name="screenInput_title">入力</string>
   <string name="screenInput_summary">コントローラーの設定</string>
@@ -126,14 +120,16 @@
   <string name="screenVideo_summary">グラフィックの設定</string>
   <string name="screenAdvanced_title">高度な設定</string>
   <string name="screenAdvanced_summary">コア、ストレージ、デバッグ設定</string>
+  <string name="screenGlobalSettings_title">標準設定</string>
+  <string name="screenCheats_title">チート</string>
+  <string name="screenCheats_summaryEnabled">有効</string>
+  <string name="screenCheats_summaryDisabled">使用禁止</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">チートの設定 (長押しで詳細を表示)</string>
   <string name="categoryHardware_title">ハードウェア設定</string>
   <string name="categoryOther_title">その他の設定</string>
   <string name="categoryTouchscreenBehavior_title">行動</string>
   <string name="categoryTouchscreenAppearance_title">外観</string>
-  <string name="categorySinglePlayer_title">プレイヤー1</string>
-  <string name="categoryMultiPlayer_title">マルチプレイ</string>
   <string name="categoryGln64_title">Gln64の設定</string>
   <string name="categoryRice_title">Riceの設定</string>
   <string name="categoryGlide64_title">Glide64設定</string>
@@ -141,6 +137,8 @@
   <string name="categoryAudio_title">オーディオ</string>
   <string name="categoryData_title">データ</string>
   <string name="categoryCrashReports_title">クラッシュレポート</string>
+  <string name="categoryGameSettings_title">ゲーム毎の設定</string>
+  <string name="categoryGameSettings_titleNamed">%1$sの設定</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">チートを有効化</string>
   <string name="playShowCheats_summary">有効中は、メニューのロ読み込みが遅くなります。</string>
@@ -305,7 +303,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">選択したフォルダ： %1$s</string>
   <string name="pathSelectedGame_title">ゲーム</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">カスタムレイアウトフォルダ</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">インポートテクスチャパック</string>
@@ -316,12 +313,10 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">マルチプレイ</string>
   <string name="playerMap_summary">各プレイヤーのコントローラーを定義</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">コントローラー</string>
-  <string name="inputMap2_title">プレイヤー2</string>
-  <string name="inputMap3_title">プレイヤー3</string>
-  <string name="inputMap4_title">プレイヤー4</string>
-  <string name="inputMap_summary">ボタンのマッピングと特殊機能のマッピング</string>
+  <!--Profile Preferences-->
+  <string name="emulationProfile_title">エミュレーションプロファイル</string>
+  <string name="touchscreenProfile_title">タッチスクリーンプロファイル</string>
+  <string name="controllerProfile_title">コントローラープロファイル</string>
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -331,8 +326,8 @@
   <string name="confirm_title">確認</string>
   <string name="confirmResetGame_message"> 前回の保存以降のすべての進行状況が失われますが、ゲームをリセットしますか？</string>
   <string name="confirmOverwriteFile_message">%1$sに上書きしますか?</string>
-  <string name="confirmLoadProfile_message">%2$sのプロファイル%1$sを読み込む？</string>
   <string name="confirmUnmapAll_message">%1$sに対するすべての入力をアンマップ？</string>
+  <string name="confirmDeleteProfile_message">プロファイル \"%1$s\"? を削除しますか?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">変更履歴</string>
   <!--Corrupt Installation Warning-->
@@ -352,6 +347,24 @@
   <string name="cheatOption_title">全文</string>
   <string name="cheatNotes_title">情報</string>
   <string name="cheatNotes_none">（このチートの詳細情報はありません）</string>
+  <!--Cheat Editor-->
+  <string name="menuItem_cheatEditor">チート編集</string>
+  <string name="cheatEditor_edit">チートの編集</string>
+  <string name="cheatEditor_edit_desc">長押しでチートの編集</string>
+  <string name="cheatEditor_help">ヘルプ</string>
+  <string name="cheatEditor_readme2">チートを追加、編集する場合は、次のガイドラインに従ってください:</string>
+  <string name="cheatEditor_readme3">1. タイトルと説明は改行を含めることはできません。改行はスペースに置き換えられます。</string>
+  <string name="cheatEditor_config">チートの設定</string>
+  <string name="cheatEditor_config_desc">チート設定の編集</string>
+  <string name="cheatEditor_title">チートタイトル</string>
+  <string name="cheatEditor_title_desc">チートタイトルの編集</string>
+  <string name="cheatEditor_cancel">キャンセル</string>
+  <string name="cheatEditor_confirm">よろしいですか?</string>
+  <string name="cheatEditor_yes">はい</string>
+  <string name="cheatEditor_no">いいえ</string>
+  <string name="cheatEditor_info">チート情報</string>
+  <string name="cheatEditor_title2">タイトル:</string>
+  <string name="cheatEditor_saveConfirm">チートファイルを保存しますか?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">テクスチャの展開中</string>
   <string name="pathHiResTexturesTask_message">しばらくお待ちください。このプロセスには多少時間がかかる場合があります。</string>

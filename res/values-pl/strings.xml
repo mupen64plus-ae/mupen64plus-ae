@@ -36,25 +36,12 @@
   <string name="menuItem_setIme">Zmień IME</string>
   <string name="menuItem_exit">Wyjście</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Profile</string>
-  <string name="menuItem_default">Domyślne</string>
-  <string name="menuItem_load">Ładuję…</string>
-  <string name="menuItem_save">Zapisuję…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">Adapter USB dla kontrolera N64</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Martwa strefa</string>
   <string name="menuItem_sensitivity">Czułość</string>
-  <string name="menuItem_specialVisibility_show">Pokaż funkcje specjalne</string>
-  <string name="menuItem_specialVisibility_hide">Ukryj funkcje specjalne</string>
   <string name="menuItem_unmapAll">Odmapuj wszystkie</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Graj</string>
   <string name="menuItem_settings">Ustawienia</string>
-  <string name="menuItem_gameSettings">Specyficzne ustawienia gry</string>
-  <string name="menuItem_gameSettingsNamed">Ustawienia %1$s</string>
   <string name="menuItem_globalSettings">Globalne ustawienia</string>
   <string name="menuItem_touchscreenProfiles">Profile ekranu dotykowego</string>
   <string name="menuItem_controllerProfiles">Profile kontrolera</string>
@@ -65,16 +52,16 @@
   <string name="menuItem_controllerDiagnostics">Diagnostyka kontrolera</string>
   <string name="menuItem_reportBug">Zgłoś błąd</string>
   <string name="menuItem_about">O aplikacji</string>
+  <string name="menuItem_credits">Twórcy</string>
   <string name="menuItem_appVersion">Wersja aplikacji</string>
   <string name="menuItem_changelog">Lista zmian</string>
-  <string name="menuItem_axisInfo">Informacje o analogu</string>
-  <string name="menuItem_controllerInfo">Informacje o kontrolerze</string>
-  <string name="menuItem_systemInfo">Informacje o urządzeniu</string>
-  <string name="menuItem_credits">Twórcy</string>
   <string name="menuItem_localeOverride">Język</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plus jest opracowany i prowadzony przez wolontariuszy.<small>\n\nAby naprawić błędy graficzne, spróbuj zmienić <i>wtyczkę obrazu</i>.\n\nAby naprawić opóźnienia, spróbuj zmienić ustawienia <i>pomijania klatek obrazu</i> lub <i>wtyczkę obrazu</i>.\n\nDla nieodtwarzalnych ROMÓW, spróbuj najpierw rozpakować ROM lub wypróbuj jego inną wersję.\n\nW przypadku problemów z kontrolerem ekranu dotykowego, spróbuj zmienić <i>skalę przycisków</i> lub <i>ułożenie klawiszy ekranowych</i>.\n\nW przypadku innych problemów, lub jeśli gdzieś nadal utkwiłeś, kliknij poniższy przycisk <i>FAQ</i>.  Dla błędów nie dotyczących gier kliknij poniższy przycisk <i>Zgłoś błąd</i>. Odpowiemy na większości postów w ciągu 24 godzin.  To gwarantujemy.\n\n</small>Dziękujemy za pomoc i za wsparcie naszej aplikacji</string>
   <string name="popup_version">Wersja: %1$s\n Kod Wersji: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -89,12 +76,9 @@
   <string name="toast_loadingFile">Ładuję %1$s…</string>
   <string name="toast_savingFile">Zapisuję %1$s…</string>
   <string name="toast_overwritingFile">Nadpisuję %1$s…</string>
-  <string name="toast_loadingGameSettings">Ładuje ustawienia %1$s...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Obecnie używam slota %1$d…</string>
   <string name="toast_sdInaccessible">Nie można uzyskać dostępu do karty SD (odłącz kabel USB i spróbuj ponownie).</string>
-  <string name="toast_fileReadError">Nie można odczytać pliku!</string>
-  <string name="toast_fileWriteError">Nie można zapisać pliku!</string>
   <string name="toast_crashReportSent">Raport wysłany.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -126,14 +110,14 @@
   <string name="screenVideo_summary">Ustawienia graficzne</string>
   <string name="screenAdvanced_title">Ustawienia zaawansowane</string>
   <string name="screenAdvanced_summary">Ustawienia rdzeni, miejsca zapisu i debugowania</string>
+  <string name="screenGlobalSettings_title">Globalne ustawienia</string>
+  <string name="screenCheats_summaryDisabled">Wyłączone</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opcje cheatów (przytrzymaj by zobaczyć opis)</string>
   <string name="categoryHardware_title">Sprzęt</string>
   <string name="categoryOther_title">Pozostałe</string>
   <string name="categoryTouchscreenBehavior_title">Zachowanie</string>
   <string name="categoryTouchscreenAppearance_title">Wygląd</string>
-  <string name="categorySinglePlayer_title">Gracz nr. 1</string>
-  <string name="categoryMultiPlayer_title">Gra wieloosobowa</string>
   <string name="categoryGln64_title">Ustawienia Gln64</string>
   <string name="categoryRice_title">Ustawienia Rice</string>
   <string name="categoryGlide64_title">Ustawienia Glide64</string>
@@ -141,6 +125,8 @@
   <string name="categoryAudio_title">Dźwięk</string>
   <string name="categoryData_title">Dane</string>
   <string name="categoryCrashReports_title">Raporty błędów</string>
+  <string name="categoryGameSettings_title">Specyficzne ustawienia gry</string>
+  <string name="categoryGameSettings_titleNamed">Ustawienia %1$s</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Włącz cheat\'y</string>
   <string name="playShowCheats_summary">Ładowanie Menu potrwa dłużej, gdy ta opcja jest włączona</string>
@@ -305,7 +291,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Wybrany folder: %1$s</string>
   <string name="pathSelectedGame_title">Gra</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Własny układ folderów</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importuj pakiet tekstur</string>
@@ -316,12 +301,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Gra wieloosobowa</string>
   <string name="playerMap_summary">Określ kontrolery dla każdego gracza</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Kontroler</string>
-  <string name="inputMap2_title">Gracz 2</string>
-  <string name="inputMap3_title">Gracz 3</string>
-  <string name="inputMap4_title">Gracz 4</string>
-  <string name="inputMap_summary">Mapowanie przycisków i funkcji specjalnych</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -331,7 +311,6 @@
   <string name="confirm_title">Potwierdzenie</string>
   <string name="confirmResetGame_message">Reset gry? Cały postęp gry od ostatniego zapisu zostanie utracony.</string>
   <string name="confirmOverwriteFile_message">Nadpisać %1$s?</string>
-  <string name="confirmLoadProfile_message">Załaduj profil \"%1$s\" dla %2$s?</string>
   <string name="confirmUnmapAll_message">Odmapuj ustawienia dla %1$s?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Lista zmian</string>
@@ -352,6 +331,8 @@
   <string name="cheatOption_title">Pełny tekst</string>
   <string name="cheatNotes_title">Notatki</string>
   <string name="cheatNotes_none">(brak dostępnych notatek dla tego cheat\'a)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Pomoc</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Rozpakowywanie tekstur</string>
   <string name="pathHiResTexturesTask_message">Prosimy o cierpliwość. Może to potrwać kilka minut.</string>

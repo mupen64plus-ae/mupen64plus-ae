@@ -36,25 +36,12 @@
   <string name="menuItem_setIme">Verander Invoermethode</string>
   <string name="menuItem_exit">Einde</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Profielen</string>
-  <string name="menuItem_default">Standaardwaarden</string>
-  <string name="menuItem_load">Laden…</string>
-  <string name="menuItem_save">Opslaan…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">N64 USB-adapter</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Deadzone</string>
   <string name="menuItem_sensitivity">Gevoeligheid</string>
-  <string name="menuItem_specialVisibility_show">Laat speciale functies zien</string>
-  <string name="menuItem_specialVisibility_hide">Verberg speciale functies</string>
   <string name="menuItem_unmapAll">Alle toewijzingen verwijderen</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Spelen</string>
   <string name="menuItem_settings">Instellingen</string>
-  <string name="menuItem_gameSettings">Spelspecifieke instellingen</string>
-  <string name="menuItem_gameSettingsNamed">%1$s instellingen</string>
   <string name="menuItem_globalSettings">Globale instellingen</string>
   <string name="menuItem_touchscreenProfiles">Touchscreenprofielen</string>
   <string name="menuItem_controllerProfiles">Controllerprofielen</string>
@@ -65,16 +52,16 @@
   <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
   <string name="menuItem_reportBug">Meld bug</string>
   <string name="menuItem_about">Over</string>
+  <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">Appversie</string>
   <string name="menuItem_changelog">Wijzigingsgeschiedenis</string>
-  <string name="menuItem_axisInfo">Analoge informatie</string>
-  <string name="menuItem_controllerInfo">Controller info</string>
-  <string name="menuItem_systemInfo">Apparaat info</string>
-  <string name="menuItem_credits">Credits</string>
   <string name="menuItem_localeOverride">Taal</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plus is ontwikkeld en wordt onderhouden door vrijwilligers.<small>\n\nGrafische problemen? Kies een andere <i>video plugin</i>.\n\nLast van lag? Probeer de <i>video beelden overslaan</i>-instelling of kies een andere <i>video plugin</i>.\n\nAls ROMs onspeelbaar zijn, probeer deze uit te pakken of probeer een andere versie van de ROM.\n\nProblemen met de touchscreenbediening? Probeer een andere <i>knopschaal</i> of <i>knopindeling</i>.\n\nBij andere problemen, of als u nog steeds problemen ondervindt, klik dan op de <i>Veelgestelde vragen</i> knop hieronder. In geval van fouten die niet met een bepaald spel te maken hebben, klik op de <i>Meld bug</i>-knop hieronder.  We beantwoorden de meeste berichten binnen 24 uur. Eerlijk waar.\n\n</small>Bedankt voor de hulp om de app beter te maken!</string>
   <string name="popup_version">Versie: %1$s\nCode versie: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -89,12 +76,9 @@
   <string name="toast_loadingFile">%1$s laden…</string>
   <string name="toast_savingFile">%1$s opslaan…</string>
   <string name="toast_overwritingFile">%1$s wordt overschreven…</string>
-  <string name="toast_loadingGameSettings">Laden van %1$s instellingen…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Huidig slot %1$d.</string>
   <string name="toast_sdInaccessible">SD-kaart niet beschikbaar (verwijder de USB-kabel en probeer opnieuw).</string>
-  <string name="toast_fileReadError">Kon bestand niet lezen!</string>
-  <string name="toast_fileWriteError">Kon bestand niet schrijven!</string>
   <string name="toast_crashReportSent">Rapport verzonden.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -126,14 +110,15 @@
   <string name="screenVideo_summary">Grafische instellingen</string>
   <string name="screenAdvanced_title">Geavanceerd</string>
   <string name="screenAdvanced_summary">Kern-, opslag- en foutopsporingsinstellingen</string>
+  <string name="screenGlobalSettings_title">Globale instellingen</string>
+  <string name="screenCheats_title">Cheats</string>
+  <string name="screenCheats_summaryDisabled">Uitgeschakeld</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheat opties (lang indrukken voor opmerkingen)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Overige</string>
   <string name="categoryTouchscreenBehavior_title">Gedrag</string>
   <string name="categoryTouchscreenAppearance_title">Uiterlijk</string>
-  <string name="categorySinglePlayer_title">Speler 1</string>
-  <string name="categoryMultiPlayer_title">Meerdere spelers</string>
   <string name="categoryGln64_title">Gln64 instellingen</string>
   <string name="categoryRice_title">Rice instellingen</string>
   <string name="categoryGlide64_title">Glide64 instellingen</string>
@@ -141,6 +126,8 @@
   <string name="categoryAudio_title">Geluid</string>
   <string name="categoryData_title">Gegevens</string>
   <string name="categoryCrashReports_title">Crash rapporten</string>
+  <string name="categoryGameSettings_title">Spelspecifieke instellingen</string>
+  <string name="categoryGameSettings_titleNamed">%1$s instellingen</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Cheats inschakelen</string>
   <string name="playShowCheats_summary">Menu laadt langzamer indien ingeschakeld</string>
@@ -305,7 +292,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Geselecteerde map: %1$s</string>
   <string name="pathSelectedGame_title">Spel</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Map voor eigen lay-outs</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importeer textuurpakket</string>
@@ -316,12 +302,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Meerdere spelers</string>
   <string name="playerMap_summary">Controller voor elke speler instellen</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Controller</string>
-  <string name="inputMap2_title">Speler 2</string>
-  <string name="inputMap3_title">Speler 3</string>
-  <string name="inputMap4_title">Speler 4</string>
-  <string name="inputMap_summary">Knop- en speciale functie-toewijzing</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -331,7 +312,6 @@
   <string name="confirm_title">Bevestiging</string>
   <string name="confirmResetGame_message">Spel resetten? Alle voortgang sinds de laatste keer opslaan gaat verloren.</string>
   <string name="confirmOverwriteFile_message">%1$s overschrijven?</string>
-  <string name="confirmLoadProfile_message">Profiel \"%1$s\" laden voor %2$s?</string>
   <string name="confirmUnmapAll_message">Alle invoertoewijzigingen verwijderen voor %1$s?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Wijzigingsgeschiedenis</string>
@@ -352,6 +332,8 @@
   <string name="cheatOption_title">Volledige tekst</string>
   <string name="cheatNotes_title">Opmerkingen</string>
   <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Help</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Texturen uitpakken</string>
   <string name="pathHiResTexturesTask_message">Wees geduldig. Dit proces kan enige tijd duren.</string>

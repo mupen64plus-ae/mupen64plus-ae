@@ -36,25 +36,12 @@
   <string name="menuItem_setIme">Change IME</string>
   <string name="menuItem_exit">Exit</string>
   <!--Input Mapping Activity-->
-  <string name="menuItem_profiles">Profiles</string>
-  <string name="menuItem_default">Default</string>
-  <string name="menuItem_load">Load…</string>
-  <string name="menuItem_save">Save…</string>
-  <string name="menuItem_ouya">OUYA</string>
-  <string name="menuItem_n64Adapter">N64 USB Adapter</string>
-  <string name="menuItem_ps3">PS3</string>
-  <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Deadzone</string>
   <string name="menuItem_sensitivity">Sensitivity</string>
-  <string name="menuItem_specialVisibility_show">Show special functions</string>
-  <string name="menuItem_specialVisibility_hide">Hide special functions</string>
   <string name="menuItem_unmapAll">Unmap all</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Play</string>
   <string name="menuItem_settings">Settings</string>
-  <string name="menuItem_gameSettings">Game-specific settings</string>
-  <string name="menuItem_gameSettingsNamed">%1$s settings</string>
   <string name="menuItem_globalSettings">Global settings</string>
   <string name="menuItem_touchscreenProfiles">Touchscreen profiles</string>
   <string name="menuItem_controllerProfiles">Controller profiles</string>
@@ -65,16 +52,16 @@
   <string name="menuItem_controllerDiagnostics">Controller diagnostics</string>
   <string name="menuItem_reportBug">Report bug</string>
   <string name="menuItem_about">About</string>
+  <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">App version</string>
   <string name="menuItem_changelog">Changelog</string>
-  <string name="menuItem_axisInfo">Analogue info</string>
-  <string name="menuItem_controllerInfo">Controller info</string>
-  <string name="menuItem_systemInfo">Device info</string>
-  <string name="menuItem_credits">Credits</string>
   <string name="menuItem_localeOverride">Language</string>
+  <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
   <string name="popup_faq">Mupen64Plus is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the <i>video plugin</i>.\n\nTo fix lag, try changing the <i>video frameskip</i> setting or the <i>video plugin</i>.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the <i>button scale</i> or <i>button layout</i>.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.\n\n</small>Thank you for helping us improve the app!</string>
   <string name="popup_version">Version: %1$s\nVersion code: %2$d</string>
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -89,12 +76,9 @@
   <string name="toast_loadingFile">Loading %1$s…</string>
   <string name="toast_savingFile">Saving %1$s…</string>
   <string name="toast_overwritingFile">Overwriting %1$s…</string>
-  <string name="toast_loadingGameSettings">Loading %1$s settings…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Now using slot %1$d.</string>
   <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
-  <string name="toast_fileReadError">Could not read file!</string>
-  <string name="toast_fileWriteError">Could not write file!</string>
   <string name="toast_crashReportSent">Report sent.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -126,14 +110,14 @@
   <string name="screenVideo_summary">Graphics settings</string>
   <string name="screenAdvanced_title">Advanced</string>
   <string name="screenAdvanced_summary">Core, storage, and debug settings</string>
+  <string name="screenGlobalSettings_title">Global settings</string>
+  <string name="screenCheats_summaryDisabled">Disabled</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheat options (long-press for notes)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Other</string>
   <string name="categoryTouchscreenBehavior_title">Behaviour</string>
   <string name="categoryTouchscreenAppearance_title">Appearance</string>
-  <string name="categorySinglePlayer_title">Player 1</string>
-  <string name="categoryMultiPlayer_title">Multi-player</string>
   <string name="categoryGln64_title">Gln64 settings</string>
   <string name="categoryRice_title">Rice settings</string>
   <string name="categoryGlide64_title">Glide64 settings</string>
@@ -141,6 +125,8 @@
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Data</string>
   <string name="categoryCrashReports_title">Crash reports</string>
+  <string name="categoryGameSettings_title">Game-specific settings</string>
+  <string name="categoryGameSettings_titleNamed">%1$s settings</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Enable cheats</string>
   <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
@@ -305,7 +291,6 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
   <string name="pathSelectedGame_title">Game</string>
-  <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Custom layout folder</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Import texture pack</string>
@@ -316,12 +301,7 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multi-player</string>
   <string name="playerMap_summary">Define each player\'s controller(s)</string>
-  <!--Input Map Preferences-->
-  <string name="inputMap1_title">Controller</string>
-  <string name="inputMap2_title">Player 2</string>
-  <string name="inputMap3_title">Player 3</string>
-  <string name="inputMap4_title">Player 4</string>
-  <string name="inputMap_summary">Button and special function mapping</string>
+  <!--Profile Preferences-->
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -331,7 +311,6 @@
   <string name="confirm_title">Confirmation</string>
   <string name="confirmResetGame_message">Reset game? All progress since your last save will be lost.</string>
   <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
-  <string name="confirmLoadProfile_message">Load profile \"%1$s\" for %2$s?</string>
   <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Change log</string>
@@ -352,6 +331,8 @@
   <string name="cheatOption_title">Full text</string>
   <string name="cheatNotes_title">Notes</string>
   <string name="cheatNotes_none">(no notes available for this cheat)</string>
+  <!--Cheat Editor-->
+  <string name="cheatEditor_help">Help</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Unpacking textures</string>
   <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
