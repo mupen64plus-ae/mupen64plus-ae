@@ -54,7 +54,7 @@
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
 static void dump_binary(const char *const filename, const unsigned char *const bytes,
                         unsigned int size);
-static void dump_task(const char *const filename, const OSTask_t *const task);
+static void dump_task(const char *const filename);
 
 static void handle_unknown_task(unsigned int sum);
 static void handle_unknown_non_task(unsigned int sum);
@@ -83,7 +83,7 @@ static int l_PluginInit = 0;
  **/
 static int is_task(void)
 {
-    return (get_task()->ucode_boot_size <= 0x1000);
+    return (*dmem_u32(TASK_UCODE_BOOT_SIZE) <= 0x1000);
 }
 
 static void rsp_break(unsigned int setbits)
@@ -119,53 +119,79 @@ static void show_cfb(void)
 static int try_fast_audio_dispatching(void)
 {
     /* identify audio ucode by using the content of ucode_data */
-    const OSTask_t *const task = get_task();
-    const unsigned char *const udata_ptr = rsp.RDRAM + task->ucode_data;
+    uint32_t ucode_data = *dmem_u32(TASK_UCODE_DATA);
+    uint32_t v;
 
-    if (*(unsigned int *)(udata_ptr + 0) == 0x00000001) {
-        if (*(unsigned int *)(udata_ptr + 0x30) == 0xf0000f00) {
-            /**
-            * Many games including:
-            * Super Mario 64, Diddy Kong Racing, BlastCorp, GoldenEye, ... (most common)
-            **/
-            alist_process_ABI1();
-            return 1;
+    if (*dram_u32(ucode_data) == 0x00000001) {
+        if (*dram_u32(ucode_data + 0x30) == 0xf0000f00) {
+            v = *dram_u32(ucode_data + 0x28);
+            switch(v)
+            {
+            case 0x1e24138c: /* audio ABI (most common) */
+                alist_process_audio(); return 1;
+            case 0x1dc8138c: /* GoldenEye */
+                alist_process_audio_ge(); return 1;
+            case 0x1e3c1390: /* BlastCorp, DiddyKongRacing */
+                alist_process_audio_bc(); return 1;
+            default:
+                DebugMessage(M64MSG_WARNING, "ABI1 identification regression: v=%08x", v);
+            }
         } else {
-            /**
-            * Mario Kart / Wave Race,
-            * LylatWars,
-            * FZeroX,
-            * Yoshi Story,
-            * 1080 Snowboarding,
-            * Zelda Ocarina of Time,
-            * Zelda Majoras Mask / Pokemon Stadium 2,
-            * Animal Crossing
-            *
-            * FIXME: in fact, all these games do not share the same ABI.
-            * That's the reason of the workaround in ucode2.c with isZeldaABI and isMKABI
-            **/
-            alist_process_ABI2();
-            return 1;
+            v = *dram_u32(ucode_data + 0x10);
+            switch(v)
+            {
+            case 0x11181350: /* MarioKart, WaveRace (E) */
+                alist_process_mk(); return 1;
+            case 0x111812e0: /* StarFox (J) */
+                alist_process_sfj(); return 1;
+            case 0x110412ac: /* WaveRace (J RevB) */
+                alist_process_wrjb(); return 1;
+            case 0x110412cc: /* StarFox/LylatWars (except J) */
+                alist_process_sf(); return 1;
+            case 0x1cd01250: /* FZeroX */
+                alist_process_fz(); return 1;
+            case 0x1f08122c: /* YoshisStory */
+                alist_process_ys(); return 1;
+            case 0x1f38122c: /* 1080° Snowboarding */
+                alist_process_1080(); return 1;
+            case 0x1f681230: /* Zelda OoT / Zelda MM (J, J RevA) */
+                alist_process_oot(); return 1;
+            case 0x1f801250: /* Zelda MM (except J, J RevA, E Beta), PokemonStadium 2 */
+                alist_process_mm(); return 1;
+            case 0x109411f8: /* Zelda MM (E Beta) */
+                alist_process_mmb(); return 1;
+            case 0x1eac11b8: /* AnimalCrossing */
+                alist_process_ac(); return 1;
+
+            case 0x00010010: /* MusyX (IndianaJones, BattleForNaboo) */
+                musyx_task(); return 1;
+
+            default:
+                DebugMessage(M64MSG_WARNING, "ABI2 identification regression: v=%08x", v);
+            }
         }
     } else {
-        if (*(unsigned int *)(udata_ptr + 0x10) == 0x00000001) {
-            /**
-             * Musyx ucode found in following games:
-             * RogueSquadron, ResidentEvil2, SnowCrossPolaris, TheWorldIsNotEnough,
-             * RugratsInParis, NBAShowTime, HydroThunder, Tarzan,
-             * GauntletLegend, Rush2049, IndianaJones, BattleForNaboo
-             * TODO: implement ucode
-             **/
-            musyx_task();
-            return 1;
-        } else {
-            /**
-             * Many games including:
-             * Pokemon Stadium, Banjo Kazooie, Donkey Kong, Banjo Tooie, Jet Force Gemini,
-             * Mickey SpeedWay USA, Perfect Dark, Conker Bad Fur Day ...
-             **/
-            alist_process_ABI3();
-            return 1;
+        v = *dram_u32(ucode_data + 0x10);
+        switch(v)
+        {
+        case 0x00000001: /* MusyX:
+            RogueSquadron, ResidentEvil2, PolarisSnoCross,
+            TheWorldIsNotEnough, RugratsInParis, NBAShowTime,
+            HydroThunder, Tarzan, GauntletLegend, Rush2049 */
+            musyx_task(); return 1;
+        case 0x0000127c: /* naudio (many games) */
+            alist_process_naudio(); return 1;
+        case 0x00001280: /* BanjoKazooie */
+            alist_process_naudio_bk(); return 1;
+        case 0x1c58126c: /* DonkeyKong */
+            alist_process_naudio_dk(); return 1;
+        case 0x1ae8143c: /* BanjoTooie, JetForceGemini, MickeySpeedWayUSA, PerfectDark */
+            alist_process_naudio_mp3(); return 1;
+        case 0x1ab0140c: /* ConkerBadFurDay */
+            alist_process_naudio_cbfd(); return 1;
+
+        default:
+            DebugMessage(M64MSG_WARNING, "ABI3 identification regression: v=%08x", v);
         }
     }
 
@@ -175,9 +201,7 @@ static int try_fast_audio_dispatching(void)
 static int try_fast_task_dispatching(void)
 {
     /* identify task ucode by its type */
-    const OSTask_t *const task = get_task();
-
-    switch (task->type) {
+    switch (*dmem_u32(TASK_TYPE)) {
     case 1:
         if (FORWARD_GFX) {
             forward_gfx_task();
@@ -203,9 +227,8 @@ static int try_fast_task_dispatching(void)
 
 static void normal_task_dispatching(void)
 {
-    const OSTask_t *const task = get_task();
     const unsigned int sum =
-        sum_bytes(rsp.RDRAM + task->ucode, min(task->ucode_size, 0xf80) >> 1);
+        sum_bytes((void*)dram_u32(*dmem_u32(TASK_UCODE)), min(*dmem_u32(TASK_UCODE_SIZE), 0xf80) >> 1);
 
     switch (sum) {
     /* StoreVe12: found in Zelda Ocarina of Time [misleading task->type == 4] */
@@ -259,33 +282,35 @@ static void non_task_dispatching(void)
 static void handle_unknown_task(unsigned int sum)
 {
     char filename[256];
-    const OSTask_t *const task = get_task();
+    uint32_t ucode = *dmem_u32(TASK_UCODE);
+    uint32_t ucode_data = *dmem_u32(TASK_UCODE_DATA);
+    uint32_t data_ptr = *dmem_u32(TASK_DATA_PTR);
 
     DebugMessage(M64MSG_WARNING, "unknown OSTask: sum %x PC:%x", sum, *rsp.SP_PC_REG);
 
     sprintf(&filename[0], "task_%x.log", sum);
-    dump_task(filename, task);
+    dump_task(filename);
 
     /* dump ucode_boot */
     sprintf(&filename[0], "ucode_boot_%x.bin", sum);
-    dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
+    dump_binary(filename, (void*)dram_u32(*dmem_u32(TASK_UCODE_BOOT)), *dmem_u32(TASK_UCODE_BOOT_SIZE));
 
     /* dump ucode */
-    if (task->ucode != 0) {
+    if (ucode != 0) {
         sprintf(&filename[0], "ucode_%x.bin", sum);
-        dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
+        dump_binary(filename, (void*)dram_u32(ucode), 0xf80);
     }
 
     /* dump ucode_data */
-    if (task->ucode_data != 0) {
+    if (ucode_data != 0) {
         sprintf(&filename[0], "ucode_data_%x.bin", sum);
-        dump_binary(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
+        dump_binary(filename, (void*)dram_u32(ucode_data), *dmem_u32(TASK_UCODE_DATA_SIZE));
     }
 
     /* dump data */
-    if (task->data_ptr != 0) {
+    if (data_ptr != 0) {
         sprintf(&filename[0], "data_%x.bin", sum);
-        dump_binary(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
+        dump_binary(filename, (void*)dram_u32(data_ptr), *dmem_u32(TASK_DATA_SIZE));
     }
 }
 
@@ -395,8 +420,6 @@ EXPORT void CALL RomClosed(void)
 {
     memset(rsp.DMEM, 0, 0x1000);
     memset(rsp.IMEM, 0, 0x1000);
-
-    init_ucode2();
 }
 
 
@@ -433,7 +456,7 @@ static void dump_binary(const char *const filename, const unsigned char *const b
         fclose(f);
 }
 
-static void dump_task(const char *const filename, const OSTask_t *const task)
+static void dump_task(const char *const filename)
 {
     FILE *f;
 
@@ -450,16 +473,116 @@ static void dump_task(const char *const filename, const OSTask_t *const task)
                 "output_buff = %#08x *size = %#x\n"
                 "data        = %#08x size  = %#x\n"
                 "yield_data  = %#08x size  = %#x\n",
-                task->type, task->flags,
-                task->ucode_boot, task->ucode_boot_size,
-                task->ucode, task->ucode_size,
-                task->ucode_data, task->ucode_data_size,
-                task->dram_stack, task->dram_stack_size,
-                task->output_buff, task->output_buff_size,
-                task->data_ptr, task->data_size,
-                task->yield_data_ptr, task->yield_data_size);
+                *dmem_u32(TASK_TYPE),
+                *dmem_u32(TASK_FLAGS),
+                *dmem_u32(TASK_UCODE_BOOT),     *dmem_u32(TASK_UCODE_BOOT_SIZE),
+                *dmem_u32(TASK_UCODE),          *dmem_u32(TASK_UCODE_SIZE),
+                *dmem_u32(TASK_UCODE_DATA),     *dmem_u32(TASK_UCODE_DATA_SIZE),
+                *dmem_u32(TASK_DRAM_STACK),     *dmem_u32(TASK_DRAM_STACK_SIZE),
+                *dmem_u32(TASK_OUTPUT_BUFF),    *dmem_u32(TASK_OUTPUT_BUFF_SIZE),
+                *dmem_u32(TASK_DATA_PTR),       *dmem_u32(TASK_DATA_SIZE),
+                *dmem_u32(TASK_YIELD_DATA_PTR), *dmem_u32(TASK_YIELD_DATA_SIZE));
         fclose(f);
     } else
         fclose(f);
+}
+
+
+/* memory access helper functions */
+void dmem_load_u8 (uint8_t*  dst, uint16_t address, size_t count)
+{
+    while (count != 0) {
+        *(dst++) = *dmem_u8(address);
+        address += 1;
+        --count;
+    }
+}
+
+void dmem_load_u16(uint16_t* dst, uint16_t address, size_t count)
+{
+    while (count != 0) {
+        *(dst++) = *dmem_u16(address);
+        address += 2;
+        --count;
+    }
+}
+
+void dmem_load_u32(uint32_t* dst, uint16_t address, size_t count)
+{
+    /* Optimization for uint32_t */
+    memcpy(dst, dmem_u32(address), count * sizeof(uint32_t));
+}
+
+void dmem_store_u8 (const uint8_t*  src, uint16_t address, size_t count)
+{
+    while (count != 0) {
+        *dmem_u8(address) = *(src++);
+        address += 1;
+        --count;
+    }
+}
+
+void dmem_store_u16(const uint16_t* src, uint16_t address, size_t count)
+{
+    while (count != 0) {
+        *dmem_u16(address) = *(src++);
+        address += 2;
+        --count;
+    }
+}
+
+void dmem_store_u32(const uint32_t* src, uint16_t address, size_t count)
+{
+    /* Optimization for uint32_t */
+    memcpy(dmem_u32(address), src, count * sizeof(uint32_t));
+}
+
+
+void dram_load_u8 (uint8_t*  dst, uint32_t address, size_t count)
+{
+    while (count != 0) {
+        *(dst++) = *dram_u8(address);
+        address += 1;
+        --count;
+    }
+}
+
+void dram_load_u16(uint16_t* dst, uint32_t address, size_t count)
+{
+    while (count != 0) {
+        *(dst++) = *dram_u16(address);
+        address += 2;
+        --count;
+    }
+}
+
+void dram_load_u32(uint32_t* dst, uint32_t address, size_t count)
+{
+    /* Optimization for uint32_t */
+    memcpy(dst, dram_u32(address), count * sizeof(uint32_t));
+}
+
+void dram_store_u8 (const uint8_t*  src, uint32_t address, size_t count)
+{
+    while (count != 0) {
+        *dram_u8(address) = *(src++);
+        address += 1;
+        --count;
+    }
+}
+
+void dram_store_u16(const uint16_t* src, uint32_t address, size_t count)
+{
+    while (count != 0) {
+        *dram_u16(address) = *(src++);
+        address += 2;
+        --count;
+    }
+}
+
+void dram_store_u32(const uint32_t* src, uint32_t address, size_t count)
+{
+    /* Optimization for uint32_t */
+    memcpy(dram_u32(address), src, count * sizeof(uint32_t));
 }
 

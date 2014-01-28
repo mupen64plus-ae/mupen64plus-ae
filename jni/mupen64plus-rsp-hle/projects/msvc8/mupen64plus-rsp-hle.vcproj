@@ -183,6 +183,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\audio.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\cicx105.c"
 				>
 			</File>
@@ -226,6 +230,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\alist_internal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\audio.h"
 				>
 			</File>
 			<File

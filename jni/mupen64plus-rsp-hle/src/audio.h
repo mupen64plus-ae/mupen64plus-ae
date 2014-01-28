@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - alist.h                                         *
+ *   Mupen64plus-rsp-hle - audio.h                                         *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2002 Hacktarux                                          *
+ *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,28 +19,25 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef ALIST_H
-#define ALIST_H
+#ifndef AUDIO_H
+#define AUDIO_H
 
-void alist_process_audio(void);
-void alist_process_audio_ge(void);
-void alist_process_audio_bc(void);
-void alist_process_mk(void);
-void alist_process_sfj(void);
-void alist_process_sf(void);
-void alist_process_fz(void);
-void alist_process_wrjb(void);
-void alist_process_ys(void);
-void alist_process_1080(void);
-void alist_process_oot(void);
-void alist_process_mm(void);
-void alist_process_mmb(void);
-void alist_process_ac(void);
-void alist_process_naudio(void);
-void alist_process_naudio_bk(void);
-void alist_process_naudio_dk(void);
-void alist_process_naudio_mp3(void);
-void alist_process_naudio_cbfd(void);
+#include <stddef.h>
+#include <stdint.h>
+
+extern const int16_t RESAMPLE_LUT[64 * 4];
+
+int32_t rdot(size_t n, const int16_t *x, const int16_t *y);
+
+static inline int16_t adpcm_predict_sample(uint8_t byte, uint8_t mask,
+        unsigned lshift, unsigned rshift)
+{
+    int16_t sample = (uint16_t)(byte & mask) << lshift;
+    sample >>= rshift; /* signed */
+    return sample;
+}
+
+void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
+        const int16_t* cb_entry, const int16_t* last_samples, size_t count);
 
 #endif
-

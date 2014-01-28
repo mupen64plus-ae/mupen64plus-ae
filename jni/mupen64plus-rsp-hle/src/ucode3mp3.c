@@ -20,10 +20,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-# include <string.h>
+#include <string.h>
 #include <stdint.h>
 
-#include "m64p_plugin.h"
 #include "hle.h"
 
 static const uint16_t DeWindowLUT [0x420] = {
@@ -207,9 +206,9 @@ static uint32_t inPtr, outPtr;
 
 static uint32_t t6;/* = 0x08A0; - I think these are temporary storage buffers */
 static uint32_t t5;/* = 0x0AC0; */
-static uint32_t t4;/* = (inst1 & 0x1E); */
+static uint32_t t4;/* = (w1 & 0x1E); */
 
-void MP3(uint32_t inst1, uint32_t inst2)
+void MP3(uint32_t w1, uint32_t w2)
 {
     /* Initialization Code */
     uint32_t readPtr; /* s5 */
@@ -220,9 +219,9 @@ void MP3(uint32_t inst1, uint32_t inst2)
     /* I think these are temporary storage buffers */
     t6 = 0x08A0;
     t5 = 0x0AC0;
-    t4 = (inst1 & 0x1E);
+    t4 = (w1 & 0x1E);
 
-    writePtr = inst2 & 0xFFFFFF;
+    writePtr = w2 & 0xFFFFFF;
     readPtr  = writePtr;
     /* Just do that for efficiency... may remove and use directly later anyway */
     memcpy(mp3data + 0xCE8, rsp.RDRAM + readPtr, 8);

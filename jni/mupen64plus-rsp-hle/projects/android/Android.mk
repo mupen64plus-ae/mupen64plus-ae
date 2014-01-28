@@ -30,6 +30,7 @@ LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
 LOCAL_SRC_FILES :=          \
     $(SRCDIR)/alist.c       \
+    $(SRCDIR)/audio.c       \
     $(SRCDIR)/cicx105.c     \
     $(SRCDIR)/jpeg.c        \
     $(SRCDIR)/main.c        \
