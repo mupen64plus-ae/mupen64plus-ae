@@ -488,7 +488,6 @@ void COGL_FragmentProgramCombiner::GenerateProgramStr()
         strcat(oglNewFP, "#define NEED_TEX0\n");
     if (bNeedT1)
         strcat(oglNewFP, "#define NEED_TEX1\n");
-
     strcat(oglNewFP, fragmentHeader);
     strcat(oglNewFP, newFPBody);
     strcat(oglNewFP, fragmentFooter);
@@ -534,12 +533,12 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
             strcat(tmpShader,"#define ALPHA_TEST\n");
         }
 
-            if(fog == 1) 
-            {
-                strcat(tmpShader,"#define FOG\n");
-            }
-            
-            res.fogIsUsed = fog == 1;
+        if (fog == 1)
+        {
+            strcat(tmpShader,"#define FOG\n");
+        }
+
+        res.fogIsUsed = fog == 1;
         res.alphaTest = alphaTest == 1;
         strcat(tmpShader,oglNewFP);
 
@@ -573,8 +572,8 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
         OPENGL_CHECK_ERRORS;
         glBindAttribLocation(res.programID,VS_POSITION,"aPosition");
         OPENGL_CHECK_ERRORS;
-            glBindAttribLocation(res.programID,VS_FOG,"aFogCoord");
-            OPENGL_CHECK_ERRORS;
+        glBindAttribLocation(res.programID,VS_FOG,"aFogCoord");
+        OPENGL_CHECK_ERRORS;
 
         glLinkProgram(res.programID);
         OPENGL_CHECK_ERRORS;
@@ -698,11 +697,11 @@ void COGL_FragmentProgramCombiner::GenerateCombinerSettingConstants(int index)
     if(prog.FogColorLocation != -1)
     {
         glUniform4f(prog.FogColorLocation, gRDP.fvFogColor[0],gRDP.fvFogColor[1],gRDP.fvFogColor[2], gRDP.fvFogColor[3]);
-    OPENGL_CHECK_ERRORS;
-}
+        OPENGL_CHECK_ERRORS;
+    }
 
     if(prog.FogMinMaxLocation != -1)
-{
+    {
         glUniform2f(prog.FogMinMaxLocation,gRSPfFogMin,gRSPfFogMax);
         OPENGL_CHECK_ERRORS;
     }
@@ -760,7 +759,6 @@ void COGL_FragmentProgramCombiner::InitCombinerCycle12(void)
     m_pOGLRender->EnableMultiTexture();
 
     bool combinerIsChanged = false;
-
 
     if( m_pDecodedMux->m_dwMux0 != m_dwLastMux0 || m_pDecodedMux->m_dwMux1 != m_dwLastMux1 || bAlphaTestState != bAlphaTestPreviousState || bFogState != bFogPreviousState || m_lastIndex < 0 )
     {
