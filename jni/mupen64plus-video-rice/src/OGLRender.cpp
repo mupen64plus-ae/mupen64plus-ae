@@ -1049,22 +1049,19 @@ void OGLRender::RenderReset()
 
 void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
 {
-#ifdef DEBUGGER
-    if( bAlphaTestEnable && debuggerEnableAlphaTest )
-#else
-
 #if SDL_VIDEO_OPENGL
+  #ifdef DEBUGGER
+    if( bAlphaTestEnable && debuggerEnableAlphaTest )
+  #else
     if( bAlphaTestEnable )
+  #endif
         glEnable(GL_ALPHA_TEST);
     else
         glDisable(GL_ALPHA_TEST);
-
-    OPENGL_CHECK_ERRORS;
 #elif SDL_VIDEO_OPENGL_ES2
-        COGL_FragmentProgramCombiner* frag = (COGL_FragmentProgramCombiner*)m_pColorCombiner;
-    frag->SetAlphaTestState(bAlphaTestEnable);
+    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetAlphaTestState(bAlphaTestEnable);
 #endif
-#endif
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::BindTexture(GLuint texture, int unitno)
