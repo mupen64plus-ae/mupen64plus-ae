@@ -45,7 +45,7 @@
 
 unsigned int r4300emu = 0;
 int no_compiled_jump = 0;
-unsigned int count_per_op = 2;
+unsigned int count_per_op = COUNT_PER_OP_DEFAULT;
 int llbit, rompause;
 #if NEW_DYNAREC != NEW_DYNAREC_ARM
 int stop;
@@ -530,16 +530,10 @@ cpu_instruction_table current_instruction_table;
 
 static unsigned int update_invalid_addr(unsigned int addr)
 {
-   if (addr >= 0x80000000 && addr < 0xa0000000)
+   if (addr >= 0x80000000 && addr < 0xc0000000)
      {
-    if (invalid_code[addr>>12]) invalid_code[(addr+0x20000000)>>12] = 1;
-    if (invalid_code[(addr+0x20000000)>>12]) invalid_code[addr>>12] = 1;
-    return addr;
-     }
-   else if (addr >= 0xa0000000 && addr < 0xc0000000)
-     {
-    if (invalid_code[addr>>12]) invalid_code[(addr-0x20000000)>>12] = 1;
-    if (invalid_code[(addr-0x20000000)>>12]) invalid_code[addr>>12] = 1;
+    if (invalid_code[addr>>12]) invalid_code[(addr^0x20000000)>>12] = 1;
+    if (invalid_code[(addr^0x20000000)>>12]) invalid_code[addr>>12] = 1;
     return addr;
      }
    else
