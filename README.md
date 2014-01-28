@@ -23,7 +23,7 @@ Downloading the source:
    (for Eclipse users, this should be ~/workspace/)
 
 2. Clone the git repository
-   (example: "git clone https://github.com/paulscode/mupen64plus-ae.git")
+   (example: "git clone https://github.com/mupen64plus-ae/mupen64plus-ae.git")
 
 
 
