@@ -22,8 +22,7 @@ La version à 0.74€/0.99$ ne sert qu'à rémunérer l'équipe et soutenir le d
 -Merci de considérer la version de support si vous appréciez cette application.
 -Les dons permettent de soutenir de nombreux projets open-source et de rémunérer leurs développeurs.
 
-Mupen64Plus Android Edition (AE) est un émulateur Nintendo 64 pour Android. Cette application est actuellement en phase de beta-test, ce qui signifie qu'elle est continuellement améliorée. Toutefois de nombreux problèmes subsistent en termes de visuels, lag ou audio et ce, même sur des appareil Android modernes.
-Veuillez visiter wwww.paulscode.com pour intégrer l'équipe de développement ou de test ainsi que pour avoir accès aux listes de correction des bugs et aux questions fréquemment posées.
+Mupen64Plus Android Edition (AE) est un émulateur Nintendo 64 pour Android. Cette application est actuellement en phase de beta-test, ce qui signifie qu'elle est continuellement améliorée. Toutefois de nombreux problèmes subsistent en termes de visuels, lag ou audio et ce, même sur des appareil Android modernes. Veuillez visiter wwww.paulscode.com pour intégrer l'équipe de développement ou de test ainsi que pour avoir accès aux listes de correction des bugs et aux questions fréquemment posées.
 
 Pour éviter toute violation de copyright, nous avons décidé de n'utiliser que des captures d'écran basées sur des jeux et démos tombés dans le domaine publique. Si l'application venait à être retirée de Google Play pour une raison ou une autre, vous pourrez toujours obtenir la dernière mise à jour gratuitement sur paulscode.com.
 
@@ -34,8 +33,7 @@ APPLICATION OPTIMISÉE POUR LE XPERIA PLAY
 
 AUTORISATIONS
 Accès à internet - L'accès à internet est utilisé pour envoyé les rapports de plantage. Aucun virus, spyware ou publicité d'aucune sorte ne sera téléchargé. Aucune donnée personnelle ne sera collectée. Assurez vous d'avoir un abonnement autorisant l'accès à internet.
-Modifier ou sauvegarder sur périphérique de stockage - 
-Permet à l'application d'enregistrer les sauvegardes et profils personnalisés sur le périphérique de stockage.
+Modifier ou sauvegarder sur périphérique de stockage - Permet à l'application d'enregistrer les sauvegardes et profils personnalisés sur le périphérique de stockage.
 Vibrations - Si votre appareil le supporte, les vibrations seront utilisées pour émuler le Rumble Pak et offrir un retour haptique.
 
 GUIDE D'UTILISATION
