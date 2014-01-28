@@ -1191,7 +1191,7 @@ void OGLRender::TurnFogOnOff(bool flag)
         glDisable(GL_FOG);
     OPENGL_CHECK_ERRORS;
 #elif SDL_VIDEO_OPENGL_ES2
-    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetFogState((BOOL)flag);
+    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetFogState(flag);
     OPENGL_CHECK_ERRORS;
 #endif
 }
@@ -1227,7 +1227,7 @@ void OGLRender::SetFogEnable(bool bEnable)
         OPENGL_CHECK_ERRORS;
     }
 #elif SDL_VIDEO_OPENGL_ES2
-    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetFogState((BOOL)gRSP.bFogEnabled);
+    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetFogState(gRSP.bFogEnabled);
     OPENGL_CHECK_ERRORS;
 #endif
 }

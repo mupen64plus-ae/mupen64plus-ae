@@ -22,9 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLGraphicsContext.h"
 #include "OGLTexture.h"
 
-#define ENABLE  1
-#define DISABLE  0
-
 #define ALPHA_TEST "    if(gl_FragColor.a < AlphaRef) discard;       \n"
 
 GLuint vertexProgram = 9999;
@@ -192,10 +189,10 @@ COGL_FragmentProgramCombiner::COGL_FragmentProgramCombiner(CRender *pRender)
     m_pDecodedMux = new DecodedMuxForPixelShader;
     m_bFragmentProgramIsSupported = true;
     m_AlphaRef = 0.0f;
-    bAlphaTestState = DISABLE;
-    bAlphaTestPreviousState = DISABLE;
-    bFogState = DISABLE;
-    bFogPreviousState = DISABLE;
+    bAlphaTestState = false;
+    bAlphaTestPreviousState = false;
+    bFogState = false;
+    bFogPreviousState = false;
 
     //Create shaders for fill and copy
     GLint success;
