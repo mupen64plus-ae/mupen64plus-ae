@@ -18,8 +18,6 @@
     <string name="GalleryActivity_title" translatable="false">@string/app_name</string>
     <string name="PlayMenuActivity_title" translatable="false">@string/menuItem_play</string>
     <string name="SettingsGlobalActivity_title" translatable="false">@string/menuItem_globalSettings</string>
-    <string name="SettingsGameActivity_title" translatable="false">@string/menuItem_gameSettings</string>
-    <string name="SettingsGameActivity_titleNamed" translatable="false">@string/menuItem_gameSettingsNamed</string>
     <string name="ManageControllerProfilesActivity_title" translatable="false">@string/menuItem_controllerProfiles</string>
     <string name="ManageEmulationProfilesActivity_title" translatable="false">@string/menuItem_emulationProfiles</string>
     <string name="ManageTouchscreenProfilesActivity_title" translatable="false">@string/menuItem_touchscreenProfiles</string>
