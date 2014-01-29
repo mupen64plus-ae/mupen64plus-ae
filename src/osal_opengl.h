@@ -29,7 +29,6 @@
 #define GLSL_VERSION "120"
 
 // Extension names
-#define OSAL_GL_ARB_MULTITEXTURE            "GL_ARB_multitexture"
 #define OSAL_GL_ARB_TEXTURE_ENV_ADD         "GL_ARB_texture_env_add"
 
 
@@ -39,7 +38,6 @@
 #define GLSL_VERSION "100"
 
 // Extension names
-#define OSAL_GL_ARB_MULTITEXTURE            "GL_multitexture"
 #define OSAL_GL_ARB_TEXTURE_ENV_ADD         "GL_texture_env_add"
 
 // Vertex shader params
@@ -47,6 +45,7 @@
 #define VS_COLOR                            1
 #define VS_TEXCOORD0                        2
 #define VS_TEXCOORD1                        3
+#define VS_FOG                              4
 
 // Constant substitutions
 #define GL_CLAMP                            GL_CLAMP_TO_EDGE

@@ -291,12 +291,20 @@ void COGLGraphicsContext::InitState(void)
 void COGLGraphicsContext::InitOGLExtension(void)
 {
     // important extension features, it is very bad not to have these feature
-    m_bSupportMultiTexture = IsExtensionSupported(OSAL_GL_ARB_MULTITEXTURE);
+#if SDL_VIDEO_OPENGL
+    m_bSupportMultiTexture = IsExtensionSupported("GL_ARB_multitexture");
+#elif SDL_VIDEO_OPENGL_ES2
+    m_bSupportMultiTexture = true;
+#endif
     m_bSupportTextureEnvCombine = IsExtensionSupported("GL_EXT_texture_env_combine");
     
     m_bSupportSeparateSpecularColor = IsExtensionSupported("GL_EXT_separate_specular_color");
     m_bSupportSecondColor = IsExtensionSupported("GL_EXT_secondary_color");
+#if SDL_VIDEO_OPENGL
     m_bSupportFogCoord = IsExtensionSupported("GL_EXT_fog_coord");
+#elif SDL_VIDEO_OPENGL_ES2
+    m_bSupportFogCoord = true;
+#endif
     m_bSupportTextureObject = IsExtensionSupported("GL_EXT_texture_object");
 
     // Optional extension features
@@ -331,7 +339,11 @@ void COGLGraphicsContext::InitOGLExtension(void)
     // Nvidia only extension features (optional)
     m_bSupportNVRegisterCombiner = IsExtensionSupported("GL_NV_register_combiners");
     m_bSupportTextureMirrorRepeat = IsExtensionSupported("GL_IBM_texture_mirrored_repeat") || IsExtensionSupported("ARB_texture_mirrored_repeat");
+#if SDL_VIDEO_OPENGL
     m_supportTextureMirror = m_bSupportTextureMirrorRepeat;
+#elif SDL_VIDEO_OPENGL_ES2
+    m_supportTextureMirror = true;
+#endif
     m_bSupportTextureLOD = IsExtensionSupported("GL_EXT_texture_lod");
     m_bSupportBlendColor = IsExtensionSupported("GL_EXT_blend_color");
     m_bSupportBlendSubtract = IsExtensionSupported("GL_EXT_blend_subtract");
