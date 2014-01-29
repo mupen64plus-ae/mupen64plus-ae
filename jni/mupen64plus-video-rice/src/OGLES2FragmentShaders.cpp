@@ -26,29 +26,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 GLuint vertexProgram = 9999;
 const char *vertexShader =
-"#version " GLSL_VERSION "                                           \n"\
+"#version " GLSL_VERSION                                   "\n"\
 "attribute mediump vec4 aPosition;                          \n"\
 "attribute lowp vec4    aColor;                             \n"\
 "attribute lowp vec2    aTexCoord0;                         \n"\
 "attribute lowp vec2    aTexCoord1;                         \n"\
 "attribute lowp vec2    aAtlasTransform;                    \n"\
-"attribute mediump float aFogCoord;                                  \n"\
+"attribute mediump float aFogCoord;                         \n"\
 "                                                           \n"\
-"uniform vec2  FogMinMax;                                            \n"\
+"uniform vec2 FogMinMax;                                    \n"\
 "                                                           \n"\
-"varying lowp float   vFog;                                          \n"\
 "varying lowp vec4  vShadeColor;                            \n"\
 "varying mediump vec2 vTexCoord0;                           \n"\
 "varying lowp vec2    vTexCoord1;                           \n"\
+"varying lowp float   vFog;                                 \n"\
 "                                                           \n"\
 "void main()                                                \n"\
 "{                                                          \n"\
-"gl_Position = aPosition;                                            \n"\
+"gl_Position = aPosition;                                   \n"\
 "vShadeColor = aColor;                                      \n"\
 "vTexCoord0 = aTexCoord0;                                   \n"\
 "vTexCoord1 = aTexCoord1;                                   \n"\
 "vFog = (FogMinMax[1] - aFogCoord) / (FogMinMax[1] - FogMinMax[0]);  \n"\
-"vFog = clamp(vFog, 0.0, 1.0);                                       \n"\
+"vFog = clamp(vFog, 0.0, 1.0);                              \n"\
 "}                                                          \n"\
 "                                                           \n";
 
@@ -70,16 +70,16 @@ const char *fragmentHeader =
 "uniform float AlphaRef;                                    \n"\
 "uniform vec4 FogColor;                                     \n"\
 "                                                           \n"\
-"varying lowp float    vFog;                                \n"\
 "varying lowp vec4  vShadeColor;                            \n"\
 "varying mediump vec2  vTexCoord0;                          \n"\
 "varying lowp vec2  vTexCoord1;                             \n"\
+"varying lowp float vFog;                                   \n"\
 "                                                           \n"\
 "void main()                                                \n"\
 "{                                                          \n"\
 "vec4 comb,comb2;                                           \n"\
 "                                                           \n"\
-"#ifdef NEED_TEX0                                              \n"\
+"#ifdef NEED_TEX0                                           \n"\
 "vec4 t0 = texture2D(uTex0,vTexCoord0);                     \n"\
 "#endif                                                     \n"\
 "                                                           \n"\
@@ -90,7 +90,7 @@ const char *fragmentHeader =
 const char *fragmentFooter =
 "                                                           \n"\
 "#ifdef FOG                                                 \n"\
-"gl_FragColor.rgb = mix(FogColor.rgb, comb.rgb, vFog);   \n"\
+"gl_FragColor.rgb = mix(FogColor.rgb,comb.rgb,vFog);        \n"\
 "gl_FragColor.a = comb.a;                                   \n"\
 "#else                                                      \n"\
 "gl_FragColor = comb;                                       \n"\
