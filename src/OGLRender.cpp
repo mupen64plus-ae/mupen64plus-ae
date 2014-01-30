@@ -29,6 +29,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLTexture.h"
 #include "TextureManager.h"
 
+#ifdef ANDROID_EDITION
+#include "ae_imports.h"
+static int hardwareType = HARDWARE_TYPE_UNKNOWN;
+#endif
+
 // FIXME: Use OGL internal L/T and matrix stack
 // FIXME: Use OGL lookupAt function
 // FIXME: Use OGL DisplayList
@@ -201,6 +206,10 @@ void OGLRender::Initialize(void)
     glVertexAttribPointer(VS_COLOR, 4, GL_UNSIGNED_BYTE,GL_TRUE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
     OPENGL_CHECK_ERRORS;
 #endif
+
+#ifdef ANDROID_EDITION
+    hardwareType = Android_JNI_GetHardwareType();
+#endif
 }
 //===================================================================
 TextureFilterMap OglTexFilterMap[2]=
@@ -341,6 +350,11 @@ void OGLRender::ApplyZBias(int bias)
 {
     float f1 = bias > 0 ? -3.0f : 0.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
     float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
+
+#ifdef ANDROID_EDITION
+    Android_JNI_GetPolygonOffset(hardwareType, bias, &f1, &f2);
+#endif
+
     if (bias > 0)
     {
         glEnable(GL_POLYGON_OFFSET_FILL);  // enable z offsets
