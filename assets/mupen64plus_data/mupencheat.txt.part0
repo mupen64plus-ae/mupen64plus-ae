@@ -1757,9 +1757,9 @@ gn Super Mario 64 (J)
   cd Press L to levitate & Let go to land
   D0339C31 0020
   81339E4C 4220
-  D0339E4D 0020
+  D0339C31 0020
   81339E0C 0300
-  D0339E4D 0020
+  D0339C31 0020
   81339E0E 0880
  cn Have All\175 Stars
   cd I have Managed to put a Have 175 Stars Option in for you,once the Code is activated, you will see it as a new option in Save Slot A.

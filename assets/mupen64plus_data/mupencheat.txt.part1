@@ -764,9 +764,9 @@ gn SUPER MARIO 64
   cd Press L to levitate & Let go to land
   D033AFA1 0020
   8133B1BC 4220
-  D033B1BD 0020
+  D033AFA1 0020
   8133B17C 0300
-  D033B1BD 0020
+  D033AFA1 0020
   8133B17E 0880
  cn [Slot A Codes]\Have All 120 Stars
   cd Have 120 Stars,once the Code is activated, you will see it as a new option in Save Slot A.This will have the Cannon open already to get upto Yoshi on the Roof. but make sure to save the game after collecting Red Coins and turn this code off before saving. you will now have it all saved to mempak
@@ -11428,9 +11428,9 @@ gn SUPER MARIO 64
   cd Press L to levitate & Let go to land
   D0309261 0020
   8130947C 4220
-  D030947D 0020
+  D0309261 0020
   8130943C 0300
-  D030947D 0020
+  D0309261 0020
   8130943E 0880
  cn [Slot A Codes]\Have All 120 Stars
   cd Have 120 Stars,once the Code is activated, you will see it as a new option in Save Slot A.This will have the Cannon open already to get upto Yoshi on the Roof. but make sure to save the game after collecting Red Coins and turn this code off before saving. you will now have it all saved to mempak
