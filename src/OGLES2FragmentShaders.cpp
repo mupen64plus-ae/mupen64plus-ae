@@ -22,21 +22,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLGraphicsContext.h"
 #include "OGLTexture.h"
 
-#define ALPHA_TEST "    if(gl_FragColor.a < AlphaRef) discard;                        \n"
-//#define ALPHA_TEST
-
+#define ALPHA_TEST "    if(gl_FragColor.a < AlphaRef) discard;       \n"
 
 GLuint vertexProgram = 9999;
 const char *vertexShader =
-"#version " GLSL_VERSION "\n"
+"#version " GLSL_VERSION                                   "\n"\
 "attribute mediump vec4 aPosition;                          \n"\
 "attribute lowp vec4    aColor;                             \n"\
 "attribute lowp vec2    aTexCoord0;                         \n"\
 "attribute lowp vec2    aTexCoord1;                         \n"\
 "attribute lowp vec2    aAtlasTransform;                    \n"\
-"attribute mediump float aFogCoord;                                  \n"\
+"attribute mediump float aFogCoord;                         \n"\
 "                                                           \n"\
-"uniform vec2 FogMinMax;                               \n"\
+"uniform vec2 FogMinMax;                                    \n"\
 "                                                           \n"\
 "varying lowp vec4  vShadeColor;                            \n"\
 "varying mediump vec2 vTexCoord0;                           \n"\
@@ -45,12 +43,12 @@ const char *vertexShader =
 "                                                           \n"\
 "void main()                                                \n"\
 "{                                                          \n"\
-"gl_Position = aPosition; //gl_Position.z = max(0.0,gl_Position.z);                                  \n"\
+"gl_Position = aPosition;                                   \n"\
 "vShadeColor = aColor;                                      \n"\
 "vTexCoord0 = aTexCoord0;                                   \n"\
 "vTexCoord1 = aTexCoord1;                                   \n"\
-"vFog = clamp((FogMinMax[1] - aFogCoord)/(FogMinMax[1]-FogMinMax[0]),0.0,1.0);                                   \n"\
-"                                                           \n"\
+"vFog = (FogMinMax[1] - aFogCoord) / (FogMinMax[1] - FogMinMax[0]);  \n"\
+"vFog = clamp(vFog, 0.0, 1.0);                              \n"\
 "}                                                          \n"\
 "                                                           \n";
 
@@ -81,7 +79,7 @@ const char *fragmentHeader =
 "{                                                          \n"\
 "vec4 comb,comb2;                                           \n"\
 "                                                           \n"\
-"#ifdef NEED_TEX0                                              \n"\
+"#ifdef NEED_TEX0                                           \n"\
 "vec4 t0 = texture2D(uTex0,vTexCoord0);                     \n"\
 "#endif                                                     \n"\
 "                                                           \n"\
@@ -101,10 +99,6 @@ const char *fragmentFooter =
 "#ifdef ALPHA_TEST                                          \n"\
 ALPHA_TEST
 "#endif                                                     \n"\
-"                                                           \n"\
-"                                                           \n"\
-"                                                           \n"\
-"                                                           \n"\
 "}                                                          \n";
 
 //Fragment shader for InitCycleCopy
