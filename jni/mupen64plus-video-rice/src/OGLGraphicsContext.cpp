@@ -310,11 +310,7 @@ void COGLGraphicsContext::InitOGLExtension(void)
     // Optional extension features
     m_bSupportRescaleNormal = IsExtensionSupported("GL_EXT_rescale_normal");
     m_bSupportLODBias = IsExtensionSupported("GL_EXT_texture_lod_bias");
-#if SDL_VIDEO_OPENGL
     m_bSupportAnisotropicFiltering = IsExtensionSupported("GL_EXT_texture_filter_anisotropic");
-#elif SDL_VIDEO_OPENGL_ES2
-    m_bSupportAnisotropicFiltering = true;
-#endif
 
     // Compute maxAnisotropicFiltering
     m_maxAnisotropicFiltering = 0;
