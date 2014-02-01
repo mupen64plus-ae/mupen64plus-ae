@@ -218,6 +218,46 @@ typedef struct {
   int aspectmode;
   int use_hotkeys;
 
+  /* game specific settings */
+  int special_alt_tex_size;
+  int special_use_sts1_only;
+  int special_force_calc_sphere;
+  int special_correct_viewport;
+  int special_increase_texrect_edge;
+  int special_decrease_fillrect_edge;
+  int special_texture_correction;
+  int special_pal230;
+  int special_stipple_mode;
+  int special_stipple_pattern;
+  int special_force_microcheck;
+  int special_force_quad3d;
+  int special_clip_zmin;
+  int special_clip_zmax;
+  int special_fast_crc;
+  int special_adjust_aspect;
+  int special_zmode_compare_less;
+  int special_old_style_adither;
+  int special_n64_z_scale;
+  int special_optimize_texrect;
+  int special_ignore_aux_copy;
+  int special_hires_buf_clear;
+  int special_fb_read_alpha;
+  int special_useless_is_useless;
+  int special_fb_crc_mode;
+  int special_filtering;
+  int special_fog;
+  int special_buff_clear;
+  int special_swapmode;
+  int special_aspect;
+  int special_lodmode;
+  int special_fb_smart;
+  int special_fb_hires;
+  int special_fb_read_always;
+  int special_read_back_to_screen;
+  int special_detect_cpu_write;
+  int special_fb_get_info;
+  int special_fb_render;
+
   //Frame buffer emulation options
   #define  fb_emulation            (1<<0)   //frame buffer emulation
   #define  fb_hwfbe                (1<<1)   //hardware frame buffer emualtion
