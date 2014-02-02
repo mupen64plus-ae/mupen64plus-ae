@@ -20,15 +20,15 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.util.LinkedList;
+import java.io.File;
+import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatBlock;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatCode;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatOption;
+import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
+import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
@@ -39,6 +39,7 @@ import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -83,6 +84,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // ROM info
     private String mRomPath = null;
+    private RomHeader mRomHeader = null;
     private RomDetail mRomDetail = null;
     
     // Preference menu items
@@ -125,6 +127,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Get the detailed info about the ROM
         mRomDetail = RomDetail.lookupByMd5( romMd5 );
+        mRomHeader = new RomHeader( new File( mRomPath ) );
         
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );
@@ -316,6 +319,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         Log.v( "PlayMenuActivity", "building from CRC = " + crc );
         if( crc == null )
             return;
+        ArrayList<Cheat> cheats = new ArrayList<Cheat>();
+        cheats.addAll( CheatUtils.populate( crc, new CheatFile( mAppData.mupencheat_default ), true, this ) );
+        cheats.addAll( CheatUtils.populate( crc, new CheatFile( mUserPrefs.usrcheat_txt ), false, this ) );
+        CheatUtils.save( crc, new CheatFile( mAppData.mupencheat_txt ), cheats, mRomHeader, this, true );
+        CheatUtils.reset();
         
         // Get the appropriate section of the config file, using CRC as the key
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
@@ -327,69 +335,34 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
         
         // Layout the menu, populating it with appropriate cheat options
-        CheatBlock cheat;
-        for( int i = 0; i < cheatSection.size(); i++ )
+        for( int i = 0; i < cheats.size(); i++ )
         {
-            cheat = cheatSection.get( i );
-            if( cheat != null )
+            // Get the short title of the cheat (shown in the menu)
+            String title;
+            if( cheats.get( i ).name == null )
             {
-                // Get the short title of the cheat (shown in the menu)
-                String title;
-                if( cheat.name == null )
-                {
-                    // Title not available, just use a default string for the menu
-                    title = getString( R.string.cheats_defaultName, i );
-                }
-                else
-                {
-                    // Title available, remove the leading/trailing quotation marks
-                    title = cheat.name;
-                }
-                
-                // Get the descriptive note for this cheat (shown on long-click)
-                final String notes = cheat.description;
-                
-                // Get the options for this cheat
-                LinkedList<CheatCode> codes = new LinkedList<CheatCode>();
-                LinkedList<CheatOption> options = new LinkedList<CheatOption>();
-                for( int o = 0; o < cheat.size(); o++ )
-                {
-                    codes.add( cheat.get( o ) );
-                }
-                /*
-                 * There shouldn't be more than one set of options per cheat so why do we need to
-                 * recurse individual codes?
-                 */
-                for( int o = 0; o < codes.size(); o++ )
-                {
-                    if( codes.get( o ).options != null )
-                    {
-                        options = codes.get( o ).options;
-                    }
-                }
-                String[] optionStrings = null;
-                if( options != null && !options.isEmpty() )
-                {
-                    // This is a multi-choice cheat
-                    optionStrings = new String[options.size()];
-                    
-                    // Each element is a key-value pair
-                    for( int z = 0; z < options.size(); z++ )
-                    {
-                        // The first non-leading space character is the pair delimiter
-                        optionStrings[z] = options.get( z ).name;
-                        if( TextUtils.isEmpty( optionStrings[z] ) )
-                            optionStrings[z] = getString( R.string.cheats_longPress );
-                    }
-                }
-                
-                // Create the menu item associated with this cheat
-                CheatPreference pref = new CheatPreference( this, title, notes, optionStrings );
-                pref.setKey( crc + " Cheat" + i );
-                
-                // Add the preference menu item to the cheats category
-                mCategoryCheats.addPreference( pref );
+                // Title not available, just use a default string for the menu
+                title = getString( R.string.cheats_defaultName, i );
             }
+            else
+            {
+                // Title available, remove the leading/trailing quotation marks
+                title = cheats.get( i ).name;
+            }
+            String notes = cheats.get( i ).desc;
+            String options = cheats.get( i ).option;
+            String[] optionStrings = null;
+            if( !TextUtils.isEmpty( options ) )
+            {
+                optionStrings = options.split( "\n" );
+            }
+            
+            // Create the menu item associated with this cheat
+            CheatPreference pref = new CheatPreference( this, title, notes, optionStrings );
+            pref.setKey( crc + " Cheat" + i );
+            
+            // Add the preference menu item to the cheats category
+            mCategoryCheats.addPreference( pref );
         }
     }
     

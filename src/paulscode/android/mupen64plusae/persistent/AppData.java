@@ -156,6 +156,9 @@ public class AppData
     public final String glide64mk2_ini;
     
     /** The path of the Mupen64Plus cheats file. Deleted on uninstall, sometimes overwritten on update. */
+    public final String mupencheat_default;
+    
+    /** The path of the Mupen64Plus cheats file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupencheat_txt;
     
     /** The path of the Mupen64Plus ini file. Deleted on uninstall, sometimes overwritten on update. */
@@ -237,6 +240,7 @@ public class AppData
         inputLib = libsDir + "/libmupen64plus-input-android.so";
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";
+        mupencheat_default = coreSharedDataDir + "/mupencheat.default";
         mupencheat_txt = coreSharedDataDir + "/mupencheat.txt";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";

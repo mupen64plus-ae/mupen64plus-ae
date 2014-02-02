@@ -56,7 +56,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 36;
+    private static final int ASSET_VERSION = 37;
     
     /** The total number of assets to be extracted (for computing progress %). */
     private static final int TOTAL_ASSETS = 124;
@@ -190,6 +190,13 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 // Remember what asset version is installed
                 mAppData.putAssetVersion( ASSET_VERSION );
                 updateText( R.string.assetExtractor_finished );
+                
+                // Copy the default cheats to the volatile location if necessary
+                File cheat_volatile = new File( mAppData.mupencheat_txt );
+                if( !cheat_volatile.exists() )
+                {
+                    FileUtil.copyFile( new File( mAppData.mupencheat_default ), cheat_volatile );
+                }
                 
                 // Launch the GalleryActivity, passing ROM path if it was provided externally
                 Intent intent = new Intent( SplashActivity.this, GalleryActivity.class );

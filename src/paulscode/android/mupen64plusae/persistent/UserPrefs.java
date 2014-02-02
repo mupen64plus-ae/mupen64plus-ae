@@ -121,6 +121,9 @@ public class UserPrefs
     /** The path of the custom emulation profiles file. */
     public final String emulationProfiles_cfg;
     
+    /** The path of the user's custom cheat files. */
+    public final String usrcheat_txt;
+    
     /** The selected audio plug-in. */
     public final Plugin audioPlugin;
     
@@ -263,6 +266,7 @@ public class UserPrefs
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
+        usrcheat_txt = profilesDir + "/usrcheat.txt";
         
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );

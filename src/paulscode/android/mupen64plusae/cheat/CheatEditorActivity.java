@@ -22,16 +22,12 @@ package paulscode.android.mupen64plusae.cheat;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.R;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatBlock;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatCode;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatOption;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
+import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -61,14 +57,6 @@ import android.widget.Toast;
 
 public class CheatEditorActivity extends ListActivity implements View.OnClickListener, OnItemLongClickListener
 {
-    private static class Cheat
-    {
-        public String name;
-        public String desc;
-        public String code;
-        public String option;
-    }
-    
     private static class CheatListAdapter extends ArrayAdapter<Cheat>
     {
         private static final int RESID = R.layout.list_item_two_text_icon;
@@ -143,178 +131,20 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
             return;
         
         // Get the appropriate section of the config file, using CRC as the key
-        CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
-        CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
-        if( cheatSection == null )
-        {
-            Log.w( "CheatEditorActivity", "No cheat section found for '" + crc + "'" );
-            return;
-        }
-        
-        // Set the title of the menu to the game name, if available
-        // String ROM_name = configSection.get( "Name" );
-        // if( !TextUtils.isEmpty( ROM_name ) )
-        // setTitle( ROM_name );
-        
-        // Layout the menu, populating it with appropriate cheat options
-        cheats.clear();
-        for( int i = 0; i < cheatSection.size(); i++ )
-        {
-            CheatBlock cheatBlock = cheatSection.get( i );
-            if( cheatBlock != null )
-            {
-                Cheat cheat = new Cheat();
-                
-                // Get the short title of the cheat (shown in the menu)
-                if( cheatBlock.name == null )
-                {
-                    // Title not available, just use a default string for the menu
-                    cheat.name = getString( R.string.cheats_defaultName, i );
-                }                
-                else
-                {
-                    // Title available, remove the leading/trailing quotation marks
-                    cheat.name = cheatBlock.name;
-                }
-                
-                // Get the descriptive note for this cheat (shown on long-click)
-                if( cheatBlock.description == null )
-                {
-                    cheat.desc = getString( R.string.cheatNotes_none );
-                }
-                else
-                {
-                    cheat.desc = cheatBlock.description;
-                }
-                
-                // Get the options for this cheat
-                LinkedList<CheatCode> codes = new LinkedList<CheatCode>();
-                LinkedList<CheatOption> options = new LinkedList<CheatOption>();
-                for( int o = 0; o < cheatBlock.size(); o++ )
-                {
-                    codes.add( cheatBlock.get( o ) );
-                }
-                for( int o = 0; o < codes.size(); o++ )
-                {
-                    if( codes.get( o ).options != null )
-                    {
-                        options = codes.get( o ).options;
-                    }                    
-                }
-                String codesAsString = "";
-                if( codes != null && !codes.isEmpty() )
-                {
-                    for( int o = 0; o < codes.size(); o++ )
-                    {
-                        String y = "";
-                        if( o != codes.size() - 1 )
-                        {
-                            y = "\n";
-                        }
-                        codesAsString += codes.get( o ).address + " " + codes.get( o ).code + y;
-                    }
-                }
-                cheat.code = codesAsString;
-                String optionsAsString = "";
-                if( options != null && !options.isEmpty() )
-                {
-                    for( int o = 0; o < options.size(); o++ )
-                    {
-                        String y = "";
-                        if( o != options.size() - 1 )
-                        {
-                            y = "\n";
-                        }
-                        optionsAsString += options.get( o ).name + " " + options.get( o ).code + y;
-                    }
-                }
-                cheat.option = optionsAsString;
-                String[] optionStrings = null;
-                if( options != null )
-                {
-                    if( !options.isEmpty() )
-                    {
-                        // This is a multi-choice cheat
-                        
-                        optionStrings = new String[options.size()];
-                        
-                        // Each element is a key-value pair
-                        for( int z = 0; z < options.size(); z++ )
-                        {
-                            // The first non-leading space character is the pair delimiter
-                            optionStrings[z] = options.get( z ).name;
-                            if( TextUtils.isEmpty( optionStrings[z] ) )
-                                optionStrings[z] = getString( R.string.cheats_longPress );
-                            
-                        }
-                    }
-                }
-                
-                cheats.add( cheat );
-                cheatListAdapter = new CheatListAdapter( this, cheats );
-                setListAdapter( cheatListAdapter );
-            }
-        }
+        CheatFile mupencheat_default = new CheatFile( mAppData.mupencheat_default );
+        CheatFile usrcheat_txt = new CheatFile( mUserPrefs.usrcheat_txt );
+        cheats.addAll( CheatUtils.populate( crc, mupencheat_default, true, this ) );
+        cheats.addAll( CheatUtils.populate( crc, usrcheat_txt, false, this ) );
+        cheatListAdapter = new CheatListAdapter( this, cheats );
+        setListAdapter( cheatListAdapter );
     }
     
     private void save( String crc )
     {
+        CheatFile usrcheat_txt = new CheatFile( mUserPrefs.usrcheat_txt );
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
-        CheatSection c = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
-        if( c == null )
-        {
-            // Game name and country code from header
-            c = new CheatSection( crc.replace( ' ', '-' ), mRomHeader.name, String.format( "%02x", mRomHeader.countryCode ).substring( 0, 2 ) );
-            mupencheat_txt.add( c );
-        }
-        {
-            c.clear();
-            for( int i = 0; i < cheats.size(); i++ )
-            {
-                Cheat cheat = cheats.get( i );
-                CheatBlock b = null;
-                if( TextUtils.isEmpty( cheat.desc ) || cheat.desc.equals( getString( R.string.cheatNotes_none ) ) )
-                {
-                    b = new CheatBlock( cheat.name, null );
-                }
-                else
-                {
-                    b = new CheatBlock( cheat.name, cheat.desc );
-                }
-                LinkedList<CheatOption> ops = new LinkedList<CheatOption>();
-                if( cheat.option != null )
-                {
-                    if( !TextUtils.isEmpty( cheat.option ) )
-                    {
-                        String[] tmp_ops = cheat.option.split( "\n" );
-                        for( int o = 0; o < tmp_ops.length; o++ )
-                        {
-                            ops.add( new CheatOption( tmp_ops[o].substring( tmp_ops[o].lastIndexOf( ' ' ) + 1 ), tmp_ops[o].substring( 0, tmp_ops[o].lastIndexOf( ' ' ) ) ) );
-                        }
-                    }
-                }
-                String[] tmp_lines = cheat.code.split( "\n" );
-                if( tmp_lines.length > 0 )
-                {
-                    for( int o = 0; o < tmp_lines.length; o++ )
-                    {
-                        if( tmp_lines[o].indexOf( ' ' ) != -1 )
-                        {
-                            if( tmp_lines[o].contains( "?" ) )
-                            {
-                                b.add( new CheatCode( tmp_lines[o].substring( 0, tmp_lines[o].lastIndexOf( ' ' ) ), tmp_lines[o].substring( tmp_lines[o].lastIndexOf( ' ' ) + 1 ), ops ) );
-                            }
-                            else
-                            {
-                                b.add( new CheatCode( tmp_lines[o].substring( 0, tmp_lines[o].lastIndexOf( ' ' ) ), tmp_lines[o].substring( tmp_lines[o].lastIndexOf( ' ' ) + 1 ), null ) );
-                            }
-                        }
-                    }
-                }
-                c.add( b );
-            }
-            mupencheat_txt.save();
-        }
+        CheatUtils.save( crc, usrcheat_txt, cheats, mRomHeader, this, false );
+        CheatUtils.save( crc, mupencheat_txt, cheats, mRomHeader, this, true );
     }
     
     private boolean isHexNumber( String num )
@@ -382,6 +212,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
             
             case R.id.imgBtnChtSave:
                 save( mRomHeader.crc );
+                CheatUtils.reset();
                 CheatEditorActivity.this.finish();
                 break;
                 
@@ -452,6 +283,10 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         ll.findViewById( R.id.btnEditCode ).setOnClickListener( listener );
         ll.findViewById( R.id.btnEditOption ).setOnClickListener( listener );
         ll.findViewById( R.id.btnDelete ).setOnClickListener( listener );
+        if( pos < CheatUtils.numberOfSystemCheats )
+        {
+            ll.findViewById( R.id.btnDelete ).setEnabled( false );
+        }
         
         // Hide the edit option button if not applicable
         if( !cheats.get( pos ).code.contains( "?" ) )
@@ -477,6 +312,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
                     {
                         save( mRomHeader.crc );
                     }
+                    CheatUtils.reset();
                     CheatEditorActivity.this.finish();
                 }
             };            
