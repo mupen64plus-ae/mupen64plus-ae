@@ -1,4 +1,4 @@
-[Promotional Text]
+[Text Promocional]
 
 
 Emulador de Nintendo64 per Android. Mupen64Plus AE està encara en fase de proves.Beta testing.
@@ -10,7 +10,7 @@ Emulador de Nintendo64 per Android. Mupen64Plus AE està encara en fase de prove
 
 
 
-[App Description]
+[Descripció de l'App]
 
 
 AQUESTA APLICACIÓ NO INCORPORA ROMS
@@ -24,17 +24,17 @@ ELS 99¢ CORRESPONEN ÚNICAMENT A DONACIONS
 
 Mupen64Plus, Android Edition (AE) és un emulador de N64 per Android. Actualment es troba en fase de proves, el que significa que encara està en desenvolupament. Encara hi ha molts problemes gràfics, de velocitat i d'àudio, fins i tot en dispositius moderns. Visita www.paulscode.com per involucrar-te en el desenvolupament i en la fase de proves, a més d'obtenir correccions d'errors i respostes a preguntes freqüents.
 
-In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
+Per tal d'evitar possibles problemes de drets d'autor relacionats amb les captures del joc, he decidit utilitzar només els jocs de domini públic i demostracions per a captures de pantalla. No obstant això, si l'aplicació es retirada un altre cop del market, sempre podràs d'adquirir noves actualitzacions de forma gratuïta a paulscode.com.
 
-This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
+Aquesta aplicació té llicència GNU GPL v3, i el codi font complet està disponible a través del repositori GIT públic a https://github.com/mupen64plus-ae/mupen64plus-ae Si algun desenvolupador volgues accés d'escriptura al repositori, si us plau posat en contacte amb mi (Paul) al fòrum de suport. Per obtenir ajuda per ramificar el projecte, només fes-m'ho saber, i t'ajudaré a posar-lo en marxa.
 
 OPTIMITZAT PER XPERIA PLAY!
 - Entrada analògica utilitzant el ratolí tàctil!
 
-PERMISSIONS
-Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
-Write External Storage - The device storage is used for writing savegames and custom input profiles.
-Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
+PERMISOS
+Internet - L'Internet s'utilitza per enviar informes d'error. No per descarregar virus, spyware, o anuncis de qualsevol tipus, i no recull cap informació privada. S'apliquen les tarifes normals de dades.
+Escriptura a Emmagatzematge Extern - L'emmagatzematge del dispositiu s'utilitza per escriure partides guardades i perfils d'entrades personalitzades.
+Vibració - Si el dispositiu ho admet, s'utilitza per a l'emulació del Rumble Pak i el feedback hàptic
 
 PRIMERS PASSOS
 - Transfereix ROMs des de qualsevol lloc al teu emmagatzematge intern/SD

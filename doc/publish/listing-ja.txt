@@ -1,7 +1,7 @@
 [広告テキスト]
 
 
-Android用N64エミュレータ。 現在ベータテスト中。
+Android用N64エミュレータ。 Mupen64Plus AEは現在ベータテスト中です。
 
 
 
@@ -18,17 +18,17 @@ Android用N64エミュレータ。 現在ベータテスト中。
 - A number of public domain games/demos are available at www.pdroms.de
 
 99¢のバージョンはあなたが寄付したい場合のためのものです。
-- This app is free to download on my website (NO ADS!)
+- このアプリは作者のウェブサイトから無料でダウンロードできます (広告なし!)
 - 寄付をご検討ください。
-- Donations support MANY open-source projects and developers
+- 寄付は多くのオープンソースプロジェクトと開発者たちをサポートします
 
-Mupen64Plus, Android Edition (AE) is an N64 emulator for Android. It is currently in Beta testing, which means it is a work in progress. There are still many graphical, lag, and audio problems, even on modern devices. Visit www.paulscode.com to get involved in development and testing, as well as bug-fixes and FAQs.
+Mupen64Plus、Android Edition (AE)はAndroid用N64エミュレーターです。現在ベータテスト中、すなわち開発段階であることを意味し、数多くのグラフィック、ラグやオーディオの不具合が残っています。www.paulscode.comを訪れてバグ修正やFAQはもちろん、開発とテストに参加してください。
 
 In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
 
-This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
+This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/mupen64plus-ae/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
 
-Xperia PLAY最適化された
+Xperia PLAYに最適化
 - アナログ入力は、タッチパッドを介して可能です！
 
 パーミッション

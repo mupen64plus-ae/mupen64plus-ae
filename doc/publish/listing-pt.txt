@@ -26,7 +26,7 @@ O Mupen64Plus, Android Edition (AE), é um emulador de N64 para Android. No mome
 
 Para evitar problemas de Copyryght com as imagens de jogos, eu decidi colocar apenas jogos de dominio público e demos nas imagens. No entanto, se o emulador for removido da Play Store novamente, você ainda pode adquirir futuras atualizações de graça no site paulscode.com.
 
-Este aplicativo está licensiado sob a GNU GPL v3, e o código completo está disponivel no repositório GIT público em https://github.com/paulscode/mupen64plus-ae, se algum desenvolvedor quiser ter acesso a escrever no repositório, entre em contato comigo (Paul) no fórum. Se você tiver problemas fazendo modificações no projeto, fale comigo, e eu posso te ajudar.
+Este aplicativo está licensiado sob a GNU GPL v3, e o código completo está disponivel no repositório GIT público em https://github.com/mupen64plus-ae/mupen64plus-ae, se algum desenvolvedor quiser ter acesso a escrever no repositório, entre em contato comigo (Paul) no fórum. Se você tiver problemas fazendo modificações no projeto, fale comigo, e eu posso te ajudar.
 
 OTIMIZADO PARA O XPERIA PLAY
 - Suporte de controle analógico pelo touchpad!
