@@ -31,8 +31,8 @@ typedef struct {
     uint32  dwMux0;
     uint32  dwMux1;
 
-    BOOL    fogIsUsed;
-    BOOL    alphaTest;
+    bool    fogIsUsed;
+    bool    alphaTest;
     GLuint  fragmentShaderID;
     GLuint  vertexShaderID;
     GLuint  programID;
@@ -53,11 +53,11 @@ class COGL_FragmentProgramCombiner : public COGLColorCombiner4
 public:
     bool Initialize(void);
 
-    void SetFogState(BOOL bEnable)
+    void SetFogState(bool bEnable)
     {
         bFogState = bEnable;
     }
-    void SetAlphaTestState(BOOL bEnable)
+    void SetAlphaTestState(bool bEnable)
     {
         bAlphaTestState = bEnable;
     }
@@ -83,10 +83,10 @@ private:
     virtual void GenerateCombinerSetting(int index);
     virtual void GenerateCombinerSettingConstants(int index);
     float m_AlphaRef;
-    BOOL bAlphaTestState;
-    BOOL bAlphaTestPreviousState;
-    BOOL bFogState;
-    BOOL bFogPreviousState;
+    bool bAlphaTestState;
+    bool bAlphaTestPreviousState;
+    bool bFogState;
+    bool bFogPreviousState;
 
 #ifdef DEBUGGER
     void DisplaySimpleMuxString(void);

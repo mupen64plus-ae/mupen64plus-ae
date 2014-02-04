@@ -76,6 +76,7 @@ int CNvTNTCombiner::ParseDecodedMux()
             comb.arg1 = MUX_1;
             comb.arg2 = MUX_0;
             comb.arg3 = MUX_1;
+            break;
         case CM_FMT_TYPE_D:             // = A
             comb.arg0 = m.d;
             comb.arg1 = MUX_1;

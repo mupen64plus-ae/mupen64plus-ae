@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #ifdef _BMG_LIBPNG_STANDALONE
 #include "BMGLibPNG.h"
 #else

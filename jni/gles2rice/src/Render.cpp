@@ -215,9 +215,9 @@ void CRender::SetWorldView(const Matrix & mat, bool bPush, bool bReplace)
             // Load projection matrix
             gRSP.modelviewMtxs[gRSP.modelViewMtxTop] = mat;
 
-            //GSI: Hack needed to show heart in OOT & MM
-            //it renders at Z cordinate = 0.0f that gets clipped away.
-            //so we translate them a bit along Z to make them stick
+            // Hack needed to show flashing last heart and map arrows in Zelda OoT & MM
+            // It renders at Z cordinate = 0.0f that gets clipped away
+            // So we translate them a bit along Z to make them stick
             if( options.enableHackForGames == HACK_FOR_ZELDA || options.enableHackForGames == HACK_FOR_ZELDA_MM) 
             {
                 if(gRSP.modelviewMtxs[gRSP.modelViewMtxTop]._43 == 0.0f

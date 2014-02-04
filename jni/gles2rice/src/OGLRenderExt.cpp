@@ -111,7 +111,6 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,0,&vertices);
     glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, 0, &tex);
     glVertexAttribPointer(VS_TEXCOORD1,2,GL_FLOAT,GL_FALSE, 0, &tex2);
-
     //OPENGL_CHECK_ERRORS;
     glDrawArrays(GL_TRIANGLES,0,6);
     //OPENGL_CHECK_ERRORS;
@@ -121,6 +120,7 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][0]));
     glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u));
     glVertexAttribPointer(VS_TEXCOORD1,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u));
+
 #endif
 
     if( cullface ) glEnable(GL_CULL_FACE);
