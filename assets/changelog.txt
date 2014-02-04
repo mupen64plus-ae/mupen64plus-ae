@@ -1,3 +1,6 @@
+[37:2.4.5]
+- Fixed cheats in WWF No Mercy (thanks Sven Eckelmann)
+- Added non-proprietary libraries for compatibility with F-Droid
 [36:2.4.4]
 - Fixed analog mappings for PS4 controller
 - Fixed broken 2xSAI setting for gles2n64 video plugin
