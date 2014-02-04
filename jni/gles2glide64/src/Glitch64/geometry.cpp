@@ -33,7 +33,7 @@
 #define Z_MAX (65536.0f)
 #define VERTEX_SIZE sizeof(VERTEX) //Size of vertex struct
 
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
 #include "ae_bridge.h"
 static float polygonOffsetFactor;
 static float polygonOffsetUnits;
@@ -337,7 +337,7 @@ grDepthMask( FxBool mask )
 float biasFactor = 0;
 void FindBestDepthBias()
 {
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
   int hardwareType = Android_JNI_GetHardwareType();
   Android_JNI_GetPolygonOffset(hardwareType, 1, &polygonOffsetFactor, &polygonOffsetUnits);
 #else
@@ -385,7 +385,7 @@ grDepthBiasLevel( FxI32 level )
   LOG("grDepthBiasLevel(%d)\r\n", level);
   if (level)
   {
-    #ifdef PAULSCODE
+    #ifdef ANDROID_EDITION
     glPolygonOffset(polygonOffsetFactor, polygonOffsetUnits);
     #else
     if(w_buffer_mode)
@@ -408,7 +408,7 @@ FX_ENTRY void FX_CALL
 grDrawTriangle( const void *a, const void *b, const void *c )
 {
   LOG("grDrawTriangle()\r\n\t");
-  
+
   if(nvidia_viewport_hack && !render_to_texture)
   {
     glViewport(0, viewport_offset, viewport_width, viewport_height);

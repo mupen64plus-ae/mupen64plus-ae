@@ -38,7 +38,13 @@
 #define CONFIG_API_VERSION          0x020000
 #define VIDEXT_API_VERSION          0x030000
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 void WriteLog(m64p_msg_level level, const char *msg, ...);
+#ifdef __cplusplus
+}
+#endif
 
 //The Glide API originally used an integer to pick an enumerated resolution.
 //To accomodate arbitrary resolutions, pack it into a 32-bit struct

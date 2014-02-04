@@ -51,7 +51,7 @@
 #include "FBtoScreen.h"
 #include "CRC.h"
 
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
 #include "FrameSkipper.h"
 extern FrameSkipper frameSkipper;
 #endif
@@ -634,7 +634,7 @@ extern "C" {
 EXPORT void CALL ProcessDList(void)
 {
   SoftLocker lock(mutexProcessDList);
-#ifdef PAULSCODE
+#ifdef ANDROID_EDITION
   if (frameSkipper.willSkipNext() || !lock.IsOk()) //mutex is busy
 #else
   if (!lock.IsOk()) //mutex is busy
@@ -769,6 +769,10 @@ EXPORT void CALL ProcessDList(void)
   wxUint32 dlist_length = *(wxUint32*)(gfx.DMEM+0xFF4);
   FRDP("--- NEW DLIST --- crc: %08lx, ucode: %d, fbuf: %08lx, fbuf_width: %d, dlist start: %08lx, dlist_length: %d, x_scale: %f, y_scale: %f\n", uc_crc, settings.ucode, *gfx.VI_ORIGIN_REG, *gfx.VI_WIDTH_REG, dlist_start, dlist_length, (*gfx.VI_X_SCALE_REG & 0xFFF)/1024.0f, (*gfx.VI_Y_SCALE_REG & 0xFFF)/1024.0f);
   FRDP_E("--- NEW DLIST --- crc: %08lx, ucode: %d, fbuf: %08lx\n", uc_crc, settings.ucode, *gfx.VI_ORIGIN_REG);
+
+  // Do nothing if dlist is empty
+  if (dlist_start == 0)
+      return;
 
   if (cpu_fb_write == TRUE)
     DrawPartFrameBufferToScreen();
@@ -3405,6 +3409,10 @@ void DetectFrameBufferUsage ()
 
   wxUint32 dlist_start = *(wxUint32*)(gfx.DMEM+0xFF0);
   wxUint32 a;
+
+  // Do nothing if dlist is empty
+  if (dlist_start == 0)
+      return;
 
   int tidal = FALSE;
   if ((settings.hacks&hack_PMario) && (rdp.copy_ci_index || rdp.frame_buffers[rdp.copy_ci_index].status == ci_copy_self))

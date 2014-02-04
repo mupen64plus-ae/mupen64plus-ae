@@ -503,7 +503,7 @@ grSstWinOpen(
   // ZIGGY viewport_offset is WIN32 specific, with SDL just set it to zero
   viewport_offset = 0; //-10 //-20;
 
-  // ZIGGY not sure, but it might be better to let the system choose
+  CoreVideo_Init();
   CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
   CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, vsync);
   CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 16);
@@ -809,6 +809,9 @@ grSstWinClose( GrContext_t context )
   //SDL_QuitSubSystem(SDL_INIT_VIDEO);
   //sleep(2);
 #endif
+
+  CoreVideo_Quit();
+
   return FXTRUE;
 }
 
@@ -1718,11 +1721,18 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
 {
+//   GLuint program;
+
   vbo_draw();
 //	glFinish();
 //  printf("rendercallback is %p\n", renderCallback);
-  if(renderCallback)
+  if(renderCallback) {
+//      glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*) &program);
+//      glUseProgramObjectARB(0);
       (*renderCallback)(1);
+//      if (program)
+//         glUseProgramObjectARB(program);
+  }
   int i;
   LOG("grBufferSwap(%d)\r\n", swap_interval);
   //printf("swap\n");

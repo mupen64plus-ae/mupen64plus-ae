@@ -21,87 +21,88 @@
 
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "types.h"
 #include "internal.h"
-#include "dxtn.h"
+#include <SDL_opengl.h>
+#include "../../Glide64/m64p.h"
 
+typedef void (*dxtCompressTexFuncExt)(GLint srccomps, GLint width, GLint height,
+		                      const GLubyte *srcPixData, GLenum destformat,
+                                      GLubyte *dest, GLint dstRowStride);
+static dxtCompressTexFuncExt _tx_compress_dxtn = NULL;
 
-#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT   0x83F0
-#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT  0x83F1
-#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT  0x83F2
-#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT  0x83F3
+#ifdef TXCDXTN_EXTERNAL
 
+#include "../../Glide64/osal_dynamiclib.h"
 
-TAPI void TAPIENTRY
-fetch_2d_texel_rgb_dxt1 (int texImage_RowStride,
-			 const byte *texImage_Data,
-			 int i, int j,
-			 byte *texel)
+#if defined(_WIN32) || defined(WIN32)
+#define DXTN_LIBNAME "dxtn.dll"
+#elif defined(__DJGPP__)
+#define DXTN_LIBNAME "dxtn.dxe"
+#else
+#define DXTN_LIBNAME "libtxc_dxtn.so"
+#endif
+
+static m64p_dynlib_handle dxtn_lib_handle;
+
+static void tx_compress_dxtn_init()
 {
-    dxt1_rgb_decode_1(texImage_Data, texImage_RowStride, i, j, texel);
+    m64p_error rval;
+
+    if (_tx_compress_dxtn)
+        return;
+
+    rval = osal_dynlib_open(&dxtn_lib_handle, DXTN_LIBNAME);
+    if (rval != M64ERR_SUCCESS) {
+        WriteLog(M64MSG_WARNING, "Failed to open %s", DXTN_LIBNAME);
+        return;
+    }
+
+    _tx_compress_dxtn = osal_dynlib_getproc(dxtn_lib_handle, "tx_compress_dxtn");
+    if (!_tx_compress_dxtn) {
+        WriteLog(M64MSG_WARNING, "Shared library '%s' invalid; no PluginGetVersion() function found.", DXTN_LIBNAME, "tx_compress_dxtn");
+	osal_dynlib_close(dxtn_lib_handle);
+        return;
+    }
 }
 
+#else
 
-TAPI void TAPIENTRY
-fetch_2d_texel_rgba_dxt1 (int texImage_RowStride,
-			  const byte *texImage_Data,
-			  int i, int j,
-			  byte *texel)
+#include "s2tc/txc_dxtn.h"
+
+static void tx_compress_dxtn_init()
 {
-    dxt1_rgba_decode_1(texImage_Data, texImage_RowStride, i, j, texel);
+	_tx_compress_dxtn = tx_compress_dxtn;
 }
 
-
-TAPI void TAPIENTRY
-fetch_2d_texel_rgba_dxt3 (int texImage_RowStride,
-			  const byte *texImage_Data,
-			  int i, int j,
-			  byte *texel)
-{
-    dxt3_rgba_decode_1(texImage_Data, texImage_RowStride, i, j, texel);
-}
+#endif
 
 
 TAPI void TAPIENTRY
-fetch_2d_texel_rgba_dxt5 (int texImage_RowStride,
-			  const byte *texImage_Data,
-			  int i, int j,
-			  byte *texel)
-{
-    dxt5_rgba_decode_1(texImage_Data, texImage_RowStride, i, j, texel);
-}
-
-
-TAPI void TAPIENTRY
-tx_compress_dxtn (int srccomps, int width, int height,
-		  const byte *source, int destformat, byte *dest,
-		  int destRowStride)
+tx_compress_dxtn_rgba(int srccomps, int width, int height,
+                      const byte *source, int destformat, byte *dest,
+                      int destRowStride)
 {
     int srcRowStride = width * srccomps;
+    void *newSource = NULL;
 
-    switch (destformat) {
-	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-	    dxt1_rgb_encode(width, height, srccomps,
-			    source, srcRowStride,
-			    dest, destRowStride);
-	    break;
-	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-	    dxt1_rgba_encode(width, height, srccomps,
-			     source, srcRowStride,
-			     dest, destRowStride);
-	    break;
-	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-	    dxt3_rgba_encode(width, height, srccomps,
-			     source, srcRowStride,
-			     dest, destRowStride);
-	    break;
-	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-	    dxt5_rgba_encode(width, height, srccomps,
-			     source, srcRowStride,
-			     dest, destRowStride);
-	    break;
-	default:
-	    assert(0);
+    tx_compress_dxtn_init();
+    if (!_tx_compress_dxtn) {
+        WriteLog(M64MSG_ERROR, "Failed to initialize S3TC compressor");
+        return;
     }
+
+    assert(srccomps == 3 || srccomps == 4);
+
+    if (srccomps == 3)
+        newSource = reorder_source_3_alloc(source, width, height, srcRowStride);
+    if (srccomps == 4)
+        newSource = reorder_source_4_alloc(source, width, height, srcRowStride);
+
+    _tx_compress_dxtn(srccomps, width, height, newSource, destformat, dest,
+                      destRowStride);
+
+    free(newSource);
 }
