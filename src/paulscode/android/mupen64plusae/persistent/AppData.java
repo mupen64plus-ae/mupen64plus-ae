@@ -247,7 +247,6 @@ public class AppData
                 libraryExists( "gles2rice" )        &&
                 libraryExists( "gles2glide64" )     &&
                 libraryExists( "input-android" )    &&
-                libraryExists( "rsp-hle-nosound" )  &&
                 libraryExists( "rsp-hle" )          &&
                 libraryExists( "SDL2" )             &&
                 libraryExists( "xperia-touchpad" );
