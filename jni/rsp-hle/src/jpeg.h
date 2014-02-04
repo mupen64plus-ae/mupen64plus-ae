@@ -22,9 +22,9 @@
 #ifndef JPEG_H
 #define JPEG_H
 
-void jpeg_decode_PS0();
-void jpeg_decode_PS();
-void jpeg_decode_OB();
+void jpeg_decode_PS0(void);
+void jpeg_decode_PS(void);
+void jpeg_decode_OB(void);
 
 #endif
 

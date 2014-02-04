@@ -1,60 +1,49 @@
+# Mupen64PlusAE, an N64 emulator for the Android platform
+#
+# Copyright (C) 2013 Paul Lamb
+#
+# This file is part of Mupen64PlusAE.
+#
+# Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
+# not, see <http://www.gnu.org/licenses/>.
+
+# See mupen64plus-ae/jni/Android.mk for build variable definitions
+# https://github.com/mupen64plus-ae/mupen64plus-ae/blob/master/jni/Android.mk
+
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 SRCDIR := ../../src
 
-MY_LOCAL_MODULE := rsp-hle
-MY_LOCAL_SHARED_LIBRARIES := core
-MY_LOCAL_ARM_MODE := arm
+LOCAL_MODULE := rsp-hle
+LOCAL_ARM_MODE := arm
 
-MY_LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
+LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
-MY_LOCAL_SRC_FILES :=       \
+LOCAL_SRC_FILES :=          \
     $(SRCDIR)/alist.c       \
+    $(SRCDIR)/audio.c       \
     $(SRCDIR)/cicx105.c     \
     $(SRCDIR)/jpeg.c        \
     $(SRCDIR)/main.c        \
-    $(SRCDIR)/ucode1.cpp    \
-    $(SRCDIR)/ucode2.cpp    \
-    $(SRCDIR)/ucode3.cpp    \
-    $(SRCDIR)/ucode3mp3.cpp \
+    $(SRCDIR)/musyx.c       \
+    $(SRCDIR)/ucode1.c      \
+    $(SRCDIR)/ucode2.c      \
+    $(SRCDIR)/ucode3.c      \
+    $(SRCDIR)/ucode3mp3.c   \
 
-MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -DPAULSCODE
+LOCAL_CFLAGS := $(COMMON_CFLAGS)
 
-MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
+LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
-MY_LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/rsp_api_export.ver
-
-######### Standard RSP Module #################################################
-
-include $(CLEAR_VARS)
-
-LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
-LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
-LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES)
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES)
-LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS)
-LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
-LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
-
-LOCAL_MODULE := $(MY_LOCAL_MODULE)
-
-include $(BUILD_SHARED_LIBRARY)
-
-######### Same Module, No Sound ###############################################
-
-include $(CLEAR_VARS)
-
-LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
-LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
-LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES)
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES)
-LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS)
-LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
-LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
-
-# Only difference is the module name and a flag
-LOCAL_MODULE := $(MY_LOCAL_MODULE)-nosound
-LOCAL_CFLAGS += -DM64P_NO_AUDIO
+LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/rsp_api_export.ver
 
 include $(BUILD_SHARED_LIBRARY)

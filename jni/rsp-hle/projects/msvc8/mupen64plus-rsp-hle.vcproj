@@ -183,6 +183,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\audio.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\cicx105.c"
 				>
 			</File>
@@ -195,19 +199,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode1.cpp"
+				RelativePath="..\..\src\musyx.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode2.cpp"
+				RelativePath="..\..\src\ucode1.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode3.cpp"
+				RelativePath="..\..\src\ucode2.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode3mp3.cpp"
+				RelativePath="..\..\src\ucode3.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ucode3mp3.c"
 				>
 			</File>
 		</Filter>
@@ -225,6 +233,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\audio.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\cicx105.h"
 				>
 			</File>
@@ -234,6 +246,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\jpeg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\musyx.h"
 				>
 			</File>
 		</Filter>
