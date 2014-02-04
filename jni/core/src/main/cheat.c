@@ -201,29 +201,90 @@ void cheat_apply_cheats(int entry)
 {
     cheat_t *cheat;
     cheat_code_t *code;
-    int skip;
-    int execute_next;
+    int cond_failed;
 
     // If game is Zelda OOT, apply subscreen delay fix
-    if (strncmp((char *)ROM_HEADER.Name, "THE LEGEND OF ZELDA", 19) == 0 && entry == ENTRY_VI) {
+    if (entry == ENTRY_VI && strncmp((char *)ROM_HEADER.Name, "THE LEGEND OF ZELDA", 19) == 0) {
+        uint32_t subscreen_address = 0;
+        uint32_t credits_address[4];
+        credits_address[0] = 0;
         if (sl(ROM_HEADER.CRC1) == 0xEC7011B7 && sl(ROM_HEADER.CRC2) == 0x7616D72B) {
             // Legend of Zelda, The - Ocarina of Time (U) + (J) (V1.0)
-            execute_cheat(0x801DA5CB, 0x0002, NULL);
+            subscreen_address = 0x801DA5CB;
         } else if (sl(ROM_HEADER.CRC1) == 0xD43DA81F && sl(ROM_HEADER.CRC2) == 0x021E1E19) {
             // Legend of Zelda, The - Ocarina of Time (U) + (J) (V1.1)
-            execute_cheat(0x801DA78B, 0x0002, NULL);
+            subscreen_address = 0x801DA78B;
         } else if (sl(ROM_HEADER.CRC1) == 0x693BA2AE && sl(ROM_HEADER.CRC2) == 0xB7F14E9F) {
             // Legend of Zelda, The - Ocarina of Time (U) + (J) (V1.2)
-            execute_cheat(0x801DAE8B, 0x0002, NULL);
+            subscreen_address = 0x801DAE8B;
         } else if (sl(ROM_HEADER.CRC1) == 0xB044B569 && sl(ROM_HEADER.CRC2) == 0x373C1985) {
             // Legend of Zelda, The - Ocarina of Time (E) (V1.0)
-            execute_cheat(0x801D860B, 0x0002, NULL);
+            subscreen_address = 0x801D860B;
         } else if (sl(ROM_HEADER.CRC1) == 0xB2055FBD && sl(ROM_HEADER.CRC2) == 0x0BAB4E0C) {
             // Legend of Zelda, The - Ocarina of Time (E) (V1.1)
-            execute_cheat(0x801D864B, 0x0002, NULL);
+            subscreen_address = 0x801D864B;
+        // GC Versions such as Master Quest also require the End Credits Fix.
+        } else if (sl(ROM_HEADER.CRC1) == 0x1D4136F3 && sl(ROM_HEADER.CRC2) == 0xAF63EEA9) {
+            // Legend of Zelda, The - Ocarina of Time - Master Quest (E) (GC Version)
+            subscreen_address = 0x801D8F4B;
+            credits_address[0] = 0xD109A8C4;
+            credits_address[1] = 0x8109A8C4;
+            credits_address[2] = 0xD109A8C6;
+            credits_address[3] = 0x8109A8C6;
+        } else if (sl(ROM_HEADER.CRC1) == 0x09465AC3 && sl(ROM_HEADER.CRC2) == 0xF8CB501B) {
+            // Legend of Zelda, The - Ocarina of Time (E) (GC Version)
+            subscreen_address = 0x801D8F8B;
+            credits_address[0] = 0xD109A8E4;
+            credits_address[1] = 0x8109A8E4;
+            credits_address[2] = 0xD109A8E6;
+            credits_address[3] = 0x8109A8E6;
+        } else if (sl(ROM_HEADER.CRC1) == 0xF3DD35BA && sl(ROM_HEADER.CRC2) == 0x4152E075) {
+            // Legend of Zelda, The - Ocarina of Time (U) (GC Version)
+            subscreen_address = 0x801DB78B;
+            credits_address[0] = 0xD109A814;
+            credits_address[1] = 0x8109A814;
+            credits_address[2] = 0xD109A816;
+            credits_address[3] = 0x8109A816;
+        } else if (sl(ROM_HEADER.CRC1) == 0xF034001A && sl(ROM_HEADER.CRC2) == 0xAE47ED06) {
+            // Legend of Zelda, The - Ocarina of Time - Master Quest (U) (GC Version)
+            subscreen_address = 0x801DB74B;
+            credits_address[0] = 0xD109A7F4;
+            credits_address[1] = 0x8109A7F4;
+            credits_address[2] = 0xD109A7F6;
+            credits_address[3] = 0x8109A7F6;
+        } else if (sl(ROM_HEADER.CRC1) == 0xF7F52DB8 && sl(ROM_HEADER.CRC2) == 0x2195E636) {
+            // Zelda no Densetsu - Toki no Ocarina - Zelda Collection Version (J) (GC Version)
+            subscreen_address = 0x801DB78B;
+            credits_address[0] = 0xD109A814;
+            credits_address[1] = 0x8109A814;
+            credits_address[2] = 0xD109A816;
+            credits_address[3] = 0x8109A816;
+        } else if (sl(ROM_HEADER.CRC1) == 0xF611F4BA && sl(ROM_HEADER.CRC2) == 0xC584135C) {
+            // Zelda no Densetsu - Toki no Ocarina GC (J) (GC Version)
+            subscreen_address = 0x801DB78B;
+            credits_address[0] = 0xD109A834;
+            credits_address[1] = 0x8109A834;
+            credits_address[2] = 0xD109A836;
+            credits_address[3] = 0x8109A836;
+        } else if (sl(ROM_HEADER.CRC1) == 0xF43B45BA && sl(ROM_HEADER.CRC2) == 0x2F0E9B6F) {
+            // Zelda no Densetsu - Toki no Ocarina GC Ura (J) (GC Version)
+            subscreen_address = 0x801DB78B;
+            credits_address[0] = 0xD109A814;
+            credits_address[1] = 0x8109A814;
+            credits_address[2] = 0xD109A816;
+            credits_address[3] = 0x8109A816;
         } else {
-            // Legend of Zelda, The - Ocarina of Time Master Quest
-            execute_cheat(0x801D8F4B, 0x0002, NULL);
+            // UNKNOWN VERSION
+            DebugMessage(M64MSG_WARNING, "Warning: Ocarina of Time version could not be determined.  No fixes applied.");
+        }
+        if (subscreen_address) {
+            execute_cheat(subscreen_address, 0x0002, NULL);
+            if (credits_address[0]){
+                if (execute_cheat(credits_address[0], 0x0320, NULL))
+                    execute_cheat(credits_address[1], 0x0000, NULL);
+                if (execute_cheat(credits_address[2], 0xF809, NULL))
+                    execute_cheat(credits_address[3], 0x0000, NULL);
+            }
         }
     }
     
@@ -250,66 +311,51 @@ void cheat_apply_cheats(int entry)
                     }
                     break;
                 case ENTRY_VI:
-                    skip = 0;
-                    execute_next = 0;
+                    /* a cheat starts without failed preconditions */
+                    cond_failed = 0;
+
                     list_for_each_entry(code, &cheat->cheat_codes, cheat_code_t, list) {
-                        if (skip) {
-                            skip = 0;
-                            continue;
-                        }
-                        if (execute_next) {
-                            execute_next = 0;
-
-                            // if code needs GS button pressed, don't save old value
-                            if(((code->address & 0xFF000000) == 0xD8000000 ||
-                                (code->address & 0xFF000000) == 0xD9000000 ||
-                                (code->address & 0xFF000000) == 0xDA000000 ||
-                                (code->address & 0xFF000000) == 0xDB000000))
-                               execute_cheat(code->address, code->value, NULL);
-                            else
-                               execute_cheat(code->address, code->value, &code->old_value);
-
-                            continue;
-                        }
-                        // conditional cheat codes
+                        /* conditional cheat codes */
                         if((code->address & 0xF0000000) == 0xD0000000)
                         {
-                            // if code needs GS button pressed and it's not, skip it
+                            /* if code needs GS button pressed and it's not, skip it */
                             if(((code->address & 0xFF000000) == 0xD8000000 ||
                                 (code->address & 0xFF000000) == 0xD9000000 ||
                                 (code->address & 0xFF000000) == 0xDA000000 ||
                                 (code->address & 0xFF000000) == 0xDB000000) &&
                                !event_gameshark_active())
-                            {
-                                // skip next code
-                                skip = 1;
+                                /* if condition false, skip next code non-test code */
+                                cond_failed = 1;
+
+                            /* if condition false, skip next code non-test code */
+                            if (!execute_cheat(code->address, code->value, NULL))
+                                cond_failed = 1;
+                        }
+                        else {
+                            /* preconditions were false for this non-test code
+                             * reset the condition state and skip the cheat
+                             */
+                            if (cond_failed) {
+                                cond_failed = 0;
                                 continue;
                             }
 
-                            if (execute_cheat(code->address, code->value, NULL)) {
-                                // if condition true, execute next cheat code
-                                execute_next = 1;
-                            } else {
-                                // if condition false, skip next code
-                                skip = 1;
-                                continue;
+                            switch (code->address & 0xFF000000) {
+                            /* GS button triggers cheat code */
+                            case 0x88000000:
+                            case 0x89000000:
+                            case 0xA8000000:
+                            case 0xA9000000:
+                                if(event_gameshark_active())
+                                    execute_cheat(code->address, code->value, NULL);
+                                break;
+                            /* normal cheat code */
+                            default:
+                                /* exclude boot-time cheat codes */
+                                if((code->address & 0xF0000000) != 0xF0000000)
+                                    execute_cheat(code->address, code->value, &code->old_value);
+                                break;
                             }
-                        }
-                        // GS button triggers cheat code
-                        else if((code->address & 0xFF000000) == 0x88000000 ||
-                                (code->address & 0xFF000000) == 0x89000000 ||
-                                (code->address & 0xFF000000) == 0xA8000000 ||
-                                (code->address & 0xFF000000) == 0xA9000000)
-                        {
-                            if(event_gameshark_active())
-                                execute_cheat(code->address, code->value, NULL);
-                        }
-                        // normal cheat code
-                        else
-                        {
-                            // exclude boot-time cheat codes
-                            if((code->address & 0xF0000000) != 0xF0000000)
-                                execute_cheat(code->address, code->value, &code->old_value);
                         }
                     }
                     break;
