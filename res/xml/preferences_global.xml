@@ -136,6 +136,11 @@
             android:title="@string/audioBufferSize_title" />
 
         <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="audioSynchronize"
+            android:summary="@string/audioSynchronize_summary"
+            android:title="@string/audioSynchronize_title" />
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="audioSwapChannels"
             android:summary="@string/audioSwapChannels_summary"

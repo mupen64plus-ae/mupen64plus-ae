@@ -212,6 +212,8 @@
     <string name="riceHiResTextures_summary">Use imported texture packs</string>
     <string name="riceFog_title">Fog</string>
     <string name="riceFog_summary">Show fog effects</string>
+    <string name="audioSynchronize_title">Synchronize audio and video</string>
+    <string name="audioSynchronize_summary">Minimizes latency, but may cause crackling in some games/devices</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
 

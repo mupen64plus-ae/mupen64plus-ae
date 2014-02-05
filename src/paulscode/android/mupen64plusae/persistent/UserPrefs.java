@@ -290,7 +290,10 @@ public class UserPrefs
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         audioSecondaryBufferSize = getSafeInt( mPreferences, "audioBufferSize", 2048 );
-        isFramelimiterEnabled = !mPreferences.getString( "audioPlugin", "" ).equals( "nospeedlimit" );
+        if( audioPlugin.enabled )
+            isFramelimiterEnabled = mPreferences.getBoolean( "audioSynchronize", true );
+        else
+            isFramelimiterEnabled = !mPreferences.getString( "audioPlugin", "" ).equals( "nospeedlimit" );
         
         // User interface modes
         String navMode = mPreferences.getString( "navigationMode", "auto" );
