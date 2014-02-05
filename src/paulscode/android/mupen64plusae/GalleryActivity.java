@@ -285,11 +285,6 @@ public class GalleryActivity extends Activity implements OnClickListener
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
-    private void popupTodo()
-    {
-        new Builder( this ).setMessage( "TODO" ).create().show();
-    }
-    
     @Override
     protected void onResume()
     {
