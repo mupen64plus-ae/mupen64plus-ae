@@ -1,4 +1,5 @@
 [37:2.4.5]
+- Added option to desynchronize audio to reduce crackling (see Audio menu)
 - Fixed cheats in WWF No Mercy (thanks Sven Eckelmann)
 - Added non-proprietary libraries for compatibility with F-Droid
 [36:2.4.4]
