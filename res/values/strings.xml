@@ -93,7 +93,6 @@
     <string name="listItem_rename">Rename</string>
     <string name="listItem_copy">Copy</string>
     <string name="listItem_delete">Delete</string>
-    <string name="listItem_editCopy">Edit copy</string>
     <string name="listItem_disabled">(Disabled)</string>
 
     <!-- ManageProfilesActivity Name/Comment Dialog -->
