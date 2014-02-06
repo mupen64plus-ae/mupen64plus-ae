@@ -38,7 +38,7 @@
 
     <!-- Non-translatable defaults -->
     <string name="controllerProfile_default" translatable="false"></string>
-    <string name="emulationProfile_default" translatable="false">N</string>
+    <string name="emulationProfile_default" translatable="false">Speed-gln64</string>
     <string name="touchscreenProfile_default" translatable="false"></string>
 
 </resources>
