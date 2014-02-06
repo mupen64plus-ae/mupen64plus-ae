@@ -169,7 +169,10 @@ abstract public class ManageProfilesActivity extends ListActivity
                     ? R.array.profileClickBuiltin_entries
                     : R.array.profileClickCustom_entries;
             Builder builder = new Builder( this );
-            builder.setTitle( profile.name );
+            int stringId = profile.isBuiltin
+                    ? R.string.popup_titleBuiltin
+                    : R.string.popup_titleCustom;
+            builder.setTitle( getString( stringId, profile.name ) );
             builder.setItems( getResources().getTextArray( resId ),
                     new DialogInterface.OnClickListener()
                     {
@@ -467,10 +470,7 @@ abstract public class ManageProfilesActivity extends ListActivity
                 TextView text2 = (TextView) view.findViewById( R.id.text2 );
                 ImageView icon = (ImageView) view.findViewById( R.id.icon );
                 
-                int stringId = item.isBuiltin
-                        ? R.string.listItem_profileBuiltin
-                        : R.string.listItem_profileCustom;
-                text1.setText( context.getString( stringId, item.name ) );
+                text1.setText( item.name );
                 text2.setText( item.comment );
                 icon.setImageResource( R.drawable.ic_sliders );
             }

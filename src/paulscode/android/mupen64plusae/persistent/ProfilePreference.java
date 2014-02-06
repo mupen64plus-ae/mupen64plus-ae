@@ -108,10 +108,7 @@ public class ProfilePreference extends CompatibleListPreference
         for( int i = 0; i < profiles.size(); i++ )
         {
             Profile profile = profiles.get( i );
-            int resId = profile.isBuiltin
-                    ? R.string.listItem_profileBuiltin
-                    : R.string.listItem_profileCustom;
-            String entryHtml = getContext().getString( resId, profile.name );
+            String entryHtml = profile.name;
             if( !TextUtils.isEmpty( profile.comment ) )
                 entryHtml += "<br><small>" + profile.comment + "</small>";
             entries[i + offset] = Html.fromHtml( entryHtml );

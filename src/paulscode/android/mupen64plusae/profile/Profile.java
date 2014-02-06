@@ -183,15 +183,6 @@ public class Profile implements Comparable<Profile>
     @Override
     public int compareTo( Profile another )
     {
-        // User-defined profiles are always ahead of (higher precedence) built-ins. Otherwise
-        // profiles are ordered alphabetically by name.
-        if( this.isBuiltin == another.isBuiltin )
-        {
-            return this.name.compareToIgnoreCase( another.name );
-        }
-        else
-        {
-            return this.isBuiltin ? 1 : -1;
-        }
+        return this.name.compareToIgnoreCase( another.name );
     }
 }
