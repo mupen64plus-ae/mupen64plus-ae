@@ -194,12 +194,18 @@ public class UserPrefs
     public final boolean isActionBarAvailable;
     
     // Shared preferences keys and key templates
+    private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
+    private static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
+    private static final String KEY_CONTROLLER_PROFILE_DEFAULT = "controllerProfileDefault";
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     // ... add more as needed
     
     // Shared preferences default values
+    public static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Speed-gln64";
+    public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "";
+    public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "";
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
@@ -470,6 +476,21 @@ public class UserPrefs
         builder.create().show();
     }
 
+    public String getEmulationProfileDefault()
+    {
+        return getString( KEY_EMULATION_PROFILE_DEFAULT, DEFAULT_EMULATION_PROFILE_DEFAULT );
+    }
+    
+    public String getTouchscreenProfileDefault()
+    {
+        return getString( KEY_TOUCHSCREEN_PROFILE_DEFAULT, DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT );
+    }
+    
+    public String getControllerProfileDefault()
+    {
+        return getString( KEY_CONTROLLER_PROFILE_DEFAULT, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+    }
+    
     public int getPakType( int player )
     {
         return getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE );
@@ -478,6 +499,21 @@ public class UserPrefs
     public boolean getPlayerMapReminder()
     {
         return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
+    }
+    
+    public void putEmulationProfileDefault( String value )
+    {
+        putString( KEY_EMULATION_PROFILE_DEFAULT, value );
+    }
+    
+    public void putTouchscreenProfileDefault( String value )
+    {
+        putString( KEY_TOUCHSCREEN_PROFILE_DEFAULT, value );
+    }
+    
+    public void putControllerProfileDefault( String value )
+    {
+        putString( KEY_CONTROLLER_PROFILE_DEFAULT, value );
     }
     
     public void putPakType( int player, int value )
@@ -501,6 +537,11 @@ public class UserPrefs
         return mPreferences.getInt( key, defaultValue );
     }
     
+    private String getString( String key, String defaultValue )
+    {
+        return mPreferences.getString( key, defaultValue );
+    }
+    
     private void putBoolean( String key, boolean value )
     {
         mPreferences.edit().putBoolean( key, value ).commit();
@@ -510,6 +551,11 @@ public class UserPrefs
     {
         String key = String.format( Locale.US, keyTemplate, index );
         mPreferences.edit().putInt( key, value ).commit();
+    }
+    
+    private void putString( String key, String value )
+    {
+        mPreferences.edit().putString( key, value ).commit();
     }
     
     private Locale createLocale( String code )
