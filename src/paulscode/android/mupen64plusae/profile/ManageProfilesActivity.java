@@ -218,6 +218,7 @@ abstract public class ManageProfilesActivity extends ListActivity
                                             putDefaultProfile( isDefault
                                                     ? getDefaultDefaultProfile()
                                                     : profile.name );
+                                            refreshList();
                                             break;
                                         case 1:
                                             editProfile( profile );
@@ -242,6 +243,7 @@ abstract public class ManageProfilesActivity extends ListActivity
                                             putDefaultProfile( isDefault
                                                     ? getDefaultDefaultProfile()
                                                     : profile.name );
+                                            refreshList();
                                             break;
                                         case 1:
                                             copyProfile( profile );
@@ -482,7 +484,7 @@ abstract public class ManageProfilesActivity extends ListActivity
             mProfileNames.add( profile.name );
     }
     
-    private static class ProfileListAdapter extends ArrayAdapter<Profile>
+    private class ProfileListAdapter extends ArrayAdapter<Profile>
     {
         private static final int RESID = R.layout.list_item_two_text_icon;
         
@@ -510,7 +512,10 @@ abstract public class ManageProfilesActivity extends ListActivity
                 
                 text1.setText( item.name );
                 text2.setText( item.comment );
-                icon.setImageResource( R.drawable.ic_sliders );
+                if( item.name.equals( getDefaultProfile() ) )
+                    icon.setImageResource( R.drawable.ic_sliders2 );
+                else
+                    icon.setImageResource( R.drawable.ic_sliders );
             }
             return view;
         }
