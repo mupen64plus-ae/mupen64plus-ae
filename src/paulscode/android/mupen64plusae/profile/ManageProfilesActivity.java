@@ -73,6 +73,30 @@ abstract public class ManageProfilesActivity extends ListActivity
     abstract protected String getConfigFilePath( boolean isBuiltin );
     
     /**
+     * Gets the default name of the default profile. Subclasses should implement this method to
+     * provide the fall-back name for the default profile
+     * 
+     * @return the default name of the default profile
+     */
+    abstract protected String getDefaultDefaultProfile();
+    
+    /**
+     * Gets the name of the default profile. Subclasses should implement this method to retrieve the
+     * persisted subclass-specific profile specified by the user.
+     * 
+     * @return the name of the default profile
+     */
+    abstract protected String getDefaultProfile();
+    
+    /**
+     * Sets the name of the default profile. Subclasses should implement this method to persist the
+     * subclass-specific profile specified by the user.
+     * 
+     * @param name the name of the new default profile
+     */
+    abstract protected void putDefaultProfile( String name );
+    
+    /**
      * Edits a profile using a subclass-specific UI. Subclasses should implement this method to
      * launch a dialog or activity, to allow the user to modify the given profile. Subclasses are
      * responsible for persisting the profile data to disk when the dialog or activity finishes.
@@ -165,16 +189,20 @@ abstract public class ManageProfilesActivity extends ListActivity
         final Profile profile = (Profile) getListView().getItemAtPosition( position );
         if( profile != null )
         {
+            final boolean isDefault = profile.name.equals( getDefaultProfile() );
             int resId = profile.isBuiltin
                     ? R.array.profileClickBuiltin_entries
                     : R.array.profileClickCustom_entries;
+            CharSequence[] items = getResources().getTextArray( resId );
+            if( isDefault )
+                items[0] = getString( R.string.listItem_unsetDefault );
+            
             Builder builder = new Builder( this );
             int stringId = profile.isBuiltin
                     ? R.string.popup_titleBuiltin
                     : R.string.popup_titleCustom;
             builder.setTitle( getString( stringId, profile.name ) );
-            builder.setItems( getResources().getTextArray( resId ),
-                    new DialogInterface.OnClickListener()
+            builder.setItems( items, new DialogInterface.OnClickListener()
                     {
                         @Override
                         public void onClick( DialogInterface dialog, int which )
@@ -187,15 +215,20 @@ abstract public class ManageProfilesActivity extends ListActivity
                                     switch( which )
                                     {
                                         case 0:
-                                            editProfile( profile );
+                                            putDefaultProfile( isDefault
+                                                    ? getDefaultDefaultProfile()
+                                                    : profile.name );
                                             break;
                                         case 1:
-                                            copyProfile( profile );
+                                            editProfile( profile );
                                             break;
                                         case 2:
-                                            renameProfile( profile );
+                                            copyProfile( profile );
                                             break;
                                         case 3:
+                                            renameProfile( profile );
+                                            break;
+                                        case 4:
                                             deleteProfile( profile );
                                             break;
                                     }
@@ -206,6 +239,11 @@ abstract public class ManageProfilesActivity extends ListActivity
                                     switch( which )
                                     {
                                         case 0:
+                                            putDefaultProfile( isDefault
+                                                    ? getDefaultDefaultProfile()
+                                                    : profile.name );
+                                            break;
+                                        case 1:
                                             copyProfile( profile );
                                             break;
                                     }

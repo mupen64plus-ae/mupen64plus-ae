@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.content.Intent;
 
 public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
@@ -29,6 +30,24 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     protected String getConfigFilePath( boolean isBuiltin )
     {
         return isBuiltin ? mAppData.touchscreenProfiles_cfg : mUserPrefs.touchscreenProfiles_cfg;
+    }
+    
+    @Override
+    protected String getDefaultDefaultProfile()
+    {
+        return UserPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT;
+    }
+    
+    @Override
+    protected String getDefaultProfile()
+    {
+        return mUserPrefs.getTouchscreenProfileDefault();
+    }
+    
+    @Override
+    protected void putDefaultProfile( String name )
+    {
+        mUserPrefs.putTouchscreenProfileDefault( name );
     }
     
     @Override

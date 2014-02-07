@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.content.Intent;
 
 public class ManageEmulationProfilesActivity extends ManageProfilesActivity
@@ -29,6 +30,24 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     protected String getConfigFilePath( boolean isBuiltin )
     {
         return isBuiltin ? mAppData.emulationProfiles_cfg : mUserPrefs.emulationProfiles_cfg;
+    }
+    
+    @Override
+    protected String getDefaultDefaultProfile()
+    {
+        return UserPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT;
+    }
+    
+    @Override
+    protected String getDefaultProfile()
+    {
+        return mUserPrefs.getEmulationProfileDefault();
+    }
+    
+    @Override
+    protected void putDefaultProfile( String name )
+    {
+        mUserPrefs.putEmulationProfileDefault( name );
     }
     
     @Override

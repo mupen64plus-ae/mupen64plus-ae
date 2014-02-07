@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.content.Intent;
 
 public class ManageControllerProfilesActivity extends ManageProfilesActivity
@@ -29,6 +30,24 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     protected String getConfigFilePath( boolean isBuiltin )
     {
         return isBuiltin ? mAppData.controllerProfiles_cfg : mUserPrefs.controllerProfiles_cfg;
+    }
+    
+    @Override
+    protected String getDefaultDefaultProfile()
+    {
+        return UserPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT;
+    }
+    
+    @Override
+    protected String getDefaultProfile()
+    {
+        return mUserPrefs.getControllerProfileDefault();
+    }
+    
+    @Override
+    protected void putDefaultProfile( String name )
+    {
+        mUserPrefs.putControllerProfileDefault( name );
     }
     
     @Override
