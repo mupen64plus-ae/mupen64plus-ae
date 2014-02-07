@@ -29,6 +29,7 @@ import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import tv.ouya.console.api.OuyaFacade;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -97,6 +98,9 @@ public class AppData
     
     /** True if device is running KitKat or later (19 - Android 4.4.x) */
     public static final boolean IS_KITKAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    
+    /** True if device is an OUYA. */
+    public static final boolean IS_OUYA_HARDWARE = OuyaFacade.getInstance().isRunningOnOUYAHardware();
     
     /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;

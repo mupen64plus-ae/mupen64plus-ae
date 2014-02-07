@@ -30,7 +30,6 @@ import org.apache.commons.lang.WordUtils;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.SuppressLint;
@@ -207,8 +206,8 @@ public class UserPrefs
     
     // Shared preferences default values
     public static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Balanced-glide64";
-    public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = OUYAInterface.IS_OUYA_HARDWARE ? "" : "Analog";
-    public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = OUYAInterface.IS_OUYA_HARDWARE ? "OUYA" : "";
+    public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = AppData.IS_OUYA_HARDWARE ? "" : "Analog";
+    public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = AppData.IS_OUYA_HARDWARE ? "OUYA" : "";
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
@@ -312,7 +311,7 @@ public class UserPrefs
         else if( navMode.equals( "standard" ) )
             isBigScreenMode = false;
         else
-            isBigScreenMode = OUYAInterface.IS_OUYA_HARDWARE; // TODO: Add other systems as they enter market
+            isBigScreenMode = AppData.IS_OUYA_HARDWARE; // TODO: Add other systems as they enter market
         isActionBarAvailable = AppData.IS_HONEYCOMB && !isBigScreenMode;
         
         // Peripheral share mode

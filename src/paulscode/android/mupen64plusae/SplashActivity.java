@@ -30,9 +30,9 @@ import paulscode.android.mupen64plusae.util.AssetExtractor.ExtractionFailure;
 import paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.RomDetail;
+import tv.ouya.console.api.OuyaFacade;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,6 +63,9 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
+    
+    /** PaulsCode OUYA developer UUID */
+    private static final String DEVELOPER_ID = "68d84579-c1e2-4418-8976-cda2692133f1";
     
     /**
      * The subdirectory within the assets directory to extract. A subdirectory is necessary to avoid
@@ -125,8 +128,8 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         mUserPrefs = new UserPrefs( this );
         
         // Initialize the OUYA interface if running on OUYA
-        if( OUYAInterface.IS_OUYA_HARDWARE )
-            OUYAInterface.init( this );
+        if( AppData.IS_OUYA_HARDWARE )
+            OuyaFacade.getInstance().init( this, DEVELOPER_ID );
         
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
