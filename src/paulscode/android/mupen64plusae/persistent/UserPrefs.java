@@ -206,8 +206,8 @@ public class UserPrefs
     // ... add more as needed
     
     // Shared preferences default values
-    public static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Speed-gln64";
-    public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "";
+    public static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Balanced-glide64";
+    public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "Analog";
     public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "";
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
