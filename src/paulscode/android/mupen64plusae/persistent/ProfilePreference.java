@@ -43,7 +43,6 @@ public class ProfilePreference extends CompatibleListPreference
     
     private final boolean mAllowDisable;
     private final String mManagerAction;
-    private String mDefaultValue = null;
     
     public ProfilePreference( Context context )
     {
@@ -60,13 +59,6 @@ public class ProfilePreference extends CompatibleListPreference
                 DEFAULT_ALLOW_DISABLE );
         mManagerAction = a.getString( R.styleable.ProfilePreference_managerAction );
         a.recycle();
-    }
-    
-    @Override
-    protected void onSetInitialValue( boolean restoreValue, Object defaultValue )
-    {
-        super.onSetInitialValue( restoreValue, defaultValue );
-        mDefaultValue = (String) defaultValue;
     }
     
     @Override
@@ -87,7 +79,7 @@ public class ProfilePreference extends CompatibleListPreference
         }
     }
     
-    public void populateProfiles( String builtinPath, String customPath )
+    public void populateProfiles( String builtinPath, String customPath, String defaultValue )
     {
         ConfigFile configBuiltin = new ConfigFile( builtinPath );
         ConfigFile configCustom = new ConfigFile( customPath );
@@ -120,7 +112,7 @@ public class ProfilePreference extends CompatibleListPreference
         setEntryValues( values );
         String selectedValue = getPersistedString( null );
         if( !ArrayUtils.contains( values, selectedValue ) )
-            persistString( mDefaultValue );
+            persistString( defaultValue );
         selectedValue = getPersistedString( null );
         setValue( selectedValue );
     }

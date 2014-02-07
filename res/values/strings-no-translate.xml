@@ -36,9 +36,4 @@
     <string name="inputMapActivity_loadSlot" translatable="false">@string/menuItem_slotLoad</string>
     <string name="glide64Frameskip_title" translatable="false">@string/gln64Frameskip_title</string>
 
-    <!-- Non-translatable defaults -->
-    <string name="controllerProfile_default" translatable="false"></string>
-    <string name="emulationProfile_default" translatable="false">Speed-gln64</string>
-    <string name="touchscreenProfile_default" translatable="false"></string>
-
 </resources>

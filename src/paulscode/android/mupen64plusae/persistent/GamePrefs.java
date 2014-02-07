@@ -178,26 +178,26 @@ public class GamePrefs
         
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, "emulationProfile",
-                context.getString( R.string.emulationProfile_default ),
+                UserPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
                 userPrefs.emulationProfiles_cfg, appData.emulationProfiles_cfg );
         
         // Touchscreen profile
         touchscreenProfile = loadProfile( mPreferences, "touchscreenProfile",
-                context.getString( R.string.touchscreenProfile_default ),
+                UserPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT,
                 userPrefs.touchscreenProfiles_cfg, appData.touchscreenProfiles_cfg );
         
         // Controller profiles
         controllerProfile1 = loadControllerProfile( mPreferences, "controllerProfile1",
-                context.getString( R.string.controllerProfile_default ),
+                UserPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 userPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         controllerProfile2 = loadControllerProfile( mPreferences, "controllerProfile2",
-                context.getString( R.string.controllerProfile_default ),
+                "",
                 userPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         controllerProfile3 = loadControllerProfile( mPreferences, "controllerProfile3",
-                context.getString( R.string.controllerProfile_default ),
+                "",
                 userPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         controllerProfile4 = loadControllerProfile( mPreferences, "controllerProfile4",
-                context.getString( R.string.controllerProfile_default ),
+                "",
                 userPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         
         // Player map
