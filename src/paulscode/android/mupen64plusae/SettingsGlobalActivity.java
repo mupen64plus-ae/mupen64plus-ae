@@ -57,6 +57,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     private static final String DISPLAY_ACTION_BAR_TRANSPARENCY = "displayActionBarTransparency";
     private static final String NAVIGATION_MODE = "navigationMode";
     private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
+    private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     
@@ -142,6 +143,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         
         // Enable audio prefs if audio is enabled
         PrefUtil.enablePreference( this, AUDIO_BUFFER_SIZE, mUserPrefs.audioPlugin.enabled );
+        PrefUtil.enablePreference( this, AUDIO_SYNCHRONIZE, mUserPrefs.audioPlugin.enabled );
         PrefUtil.enablePreference( this, AUDIO_SWAP_CHANNELS, mUserPrefs.audioPlugin.enabled );
         
         // Update the summary text in a particular way for ACRA user info
