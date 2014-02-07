@@ -109,6 +109,9 @@ public class UserPrefs
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
     
+    /** The path of the rom info cache for the gallery. */
+    public final String romInfoCache_ini;
+    
     /** The path of the Mupen64Plus base configuration file. */
     public final String mupen64plus_cfg;
     
@@ -268,6 +271,7 @@ public class UserPrefs
         coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
         coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
+        romInfoCache_ini = coreUserCacheDir + "/romInfoCache.ini";
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";

@@ -21,21 +21,14 @@ package paulscode.android.mupen64plusae.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class RomDetail
 {
@@ -197,46 +190,5 @@ public class RomDetail
         status = _status;
         players = _players;
         rumble = _rumble;
-    }
-    
-    public Bitmap getCoverArt( boolean redownload )
-    {
-        // TODO Use cached value when redownload == false
-        if( TextUtils.isEmpty( artUrl ) )
-            return null;
-        
-        URL url = null;
-        URLConnection connection = null;
-        InputStream stream = null;
-        Bitmap bitmap = null;
-        try
-        {
-            url = new URL( artUrl );
-            connection = url.openConnection();
-            stream = connection.getInputStream();
-            bitmap = BitmapFactory.decodeStream( stream );
-        }
-        catch( MalformedURLException e )
-        {
-            Log.w( "RomItem", "MalformedURLException: ", e );
-        }
-        catch( IOException e )
-        {
-            Log.w( "RomItem", "IOException: ", e );
-        }
-        finally
-        {
-            try
-            {
-                if( stream != null )
-                    stream.close();
-            }
-            catch( IOException e )
-            {
-                Log.w( "RomItem", "IOException on close: ", e );
-            }
-        }
-        
-        return bitmap;
     }
 }
