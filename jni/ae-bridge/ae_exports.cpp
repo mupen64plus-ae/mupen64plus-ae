@@ -214,6 +214,12 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
     if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &speed_factor);
 }
 
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuSetFramelimiter(JNIEnv* env, jclass cls, jboolean enabled)
+{
+    int e = enabled == JNI_TRUE ? 1 : 0;
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_LIMITER, &e);
+}
+
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuSetSlot(JNIEnv* env, jclass cls, jint slotID)
 {
     if (coreDoCommand) coreDoCommand(M64CMD_STATE_SET_SLOT, (int) slotID, NULL);
@@ -273,6 +279,13 @@ extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_
     int speed = 100;
     if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SPEED_FACTOR, &speed);
     return (jint) speed;
+}
+
+extern "C" DECLSPEC jboolean Java_paulscode_android_mupen64plusae_jni_NativeExports_emuGetFramelimiter(JNIEnv* env, jclass cls)
+{
+    int e = 1;
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SPEED_LIMITER, &e);
+    return (jboolean) (e ? JNI_TRUE : JNI_FALSE);
 }
 
 extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_emuGetSlot(JNIEnv* env, jclass cls)

@@ -54,6 +54,8 @@ public class NativeExports
     
     public static native void emuSetSpeed( int percent );
     
+    public static native void emuSetFramelimiter( boolean enabled );
+    
     public static native void emuSetSlot( int slotID );
     
     public static native void emuLoadSlot();
@@ -71,6 +73,8 @@ public class NativeExports
     public static native int emuGetState();
     
     public static native int emuGetSpeed();
+    
+    public static native boolean emuGetFramelimiter();
     
     public static native int emuGetSlot();
 }
