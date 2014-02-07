@@ -32,6 +32,8 @@
     <string name="menuItem_fileSave">Save to file…</string>
     <string name="menuItem_fileLoad">Load from file…</string>
     <string name="menuItem_setSpeed">Game speed</string>
+    <string name="menuItem_enableFramelimiter">Sync audio</string>
+    <string name="menuItem_disableFramelimiter">Desync audio</string>
     <string name="menuItem_paks">Controller Paks</string> <!-- capitalize since trademark -->
     <string name="menuItem_pak1_empty">Player 1: Empty</string>
     <string name="menuItem_pak1_mem">Player 1: Memory Pak</string> <!-- capitalize since trademark -->

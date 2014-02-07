@@ -66,6 +66,7 @@ public class GameMenuHandler implements OnStateCallbackListener
         if( AppData.IS_HONEYCOMB )
         {
             if( paramChanged == NativeConstants.M64CORE_SPEED_FACTOR
+                    || paramChanged == NativeConstants.M64CORE_SPEED_LIMITER
                     || paramChanged == NativeConstants.M64CORE_SAVESTATE_SLOT )
             {
                 mActivity.invalidateOptionsMenu();
@@ -97,6 +98,16 @@ public class GameMenuHandler implements OnStateCallbackListener
         {
             int speed = NativeExports.emuGetSpeed();
             speedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, speed ) );
+        }
+        
+        // Refresh the framelimiter item in the top-level options menu
+        MenuItem framelimiterItem = menu.findItem( R.id.menuItem_toggleFramelimiter );
+        if( framelimiterItem != null )
+        {
+            int resId = NativeExports.emuGetFramelimiter()
+                    ? R.string.menuItem_disableFramelimiter
+                    : R.string.menuItem_enableFramelimiter;
+            framelimiterItem.setTitle( resId );
         }
         
         // Refresh the slot item in the top-level options menu
@@ -236,6 +247,9 @@ public class GameMenuHandler implements OnStateCallbackListener
                 break;
             case R.id.menuItem_toggleSpeed:
                 CoreInterface.toggleSpeed();
+                break;
+            case R.id.menuItem_toggleFramelimiter:
+                CoreInterface.toggleFramelimiter();
                 break;
             case R.id.menuItem_slotSave:
                 CoreInterface.saveSlot();

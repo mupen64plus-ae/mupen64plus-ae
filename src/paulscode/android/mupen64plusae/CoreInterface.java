@@ -314,6 +314,12 @@ public class CoreInterface
             NativeExports.emuPause();
     }
     
+    public static void toggleFramelimiter()
+    {
+        boolean state = NativeExports.emuGetFramelimiter();
+        NativeExports.emuSetFramelimiter( !state );
+    }
+    
     public static void setSlot( int value )
     {
         int slot = value % NUM_SLOTS;

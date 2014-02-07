@@ -67,6 +67,9 @@
         android:id="@+id/menuItem_setSpeed"
         android:title="@string/menuItem_setSpeed"/>
     <item
+        android:id="@+id/menuItem_toggleFramelimiter"
+        android:title="@string/menuItem_disableFramelimiter"/>
+    <item
         android:id="@+id/menuItem_paks"
         android:title="@string/menuItem_paks">
         <menu>
