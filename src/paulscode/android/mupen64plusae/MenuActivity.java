@@ -31,12 +31,12 @@ import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
+import tv.ouya.console.api.OuyaFacade;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -106,6 +106,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     private static final String LOCALE_OVERRIDE = "localeOverride";
+    
+    private static final String DEVELOPER_ID = "68d84579-c1e2-4418-8976-cda2692133f1";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -228,8 +230,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
         
         // Initialize the OUYA interface if running on OUYA
-        if( OUYAInterface.IS_OUYA_HARDWARE )
-            OUYAInterface.init( this );
+        if( AppData.IS_OUYA_HARDWARE )
+            OuyaFacade.getInstance().init( this, DEVELOPER_ID );
         
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )

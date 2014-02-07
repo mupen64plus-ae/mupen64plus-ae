@@ -22,8 +22,8 @@ package paulscode.android.mupen64plusae.input.provider;
 
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
+import tv.ouya.console.api.OuyaController;
 import android.annotation.TargetApi;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -222,6 +222,7 @@ public abstract class AbstractProvider
      * 
      * @return The name of the input.
      */
+    @SuppressWarnings( "deprecation" )
     @TargetApi( 12 )
     public static String getInputName( int inputCode )
     {
@@ -230,37 +231,37 @@ public abstract class AbstractProvider
             if( AppData.IS_HONEYCOMB_MR1 )
             {
                 String name = null;
-                if( inputCode != -1 && OUYAInterface.IS_OUYA_HARDWARE )
+                if( inputCode != -1 && AppData.IS_OUYA_HARDWARE )
                 {
-                    if( inputCode == OUYAInterface.BUTTON_A )
+                    if( inputCode == OuyaController.BUTTON_A )
                         name = "OUYA BUTTON_A";
-                    else if( inputCode == OUYAInterface.BUTTON_DPAD_DOWN )
+                    else if( inputCode == OuyaController.BUTTON_DPAD_DOWN )
                         name = "OUYA BUTTON_DPAD_DOWN";
-                    else if( inputCode == OUYAInterface.BUTTON_DPAD_LEFT )
+                    else if( inputCode == OuyaController.BUTTON_DPAD_LEFT )
                         name = "OUYA BUTTON_DPAD_LEFT";
-                    else if( inputCode == OUYAInterface.BUTTON_DPAD_RIGHT )
+                    else if( inputCode == OuyaController.BUTTON_DPAD_RIGHT )
                         name = "OUYA BUTTON_DPAD_RIGHT";
-                    else if( inputCode == OUYAInterface.BUTTON_DPAD_UP )
+                    else if( inputCode == OuyaController.BUTTON_DPAD_UP )
                         name = "OUYA BUTTON_DPAD_UP";
-                    else if( inputCode == OUYAInterface.BUTTON_L1 )
+                    else if( inputCode == OuyaController.BUTTON_L1 )
                         name = "OUYA BUTTON_L1";
-                    else if( inputCode == OUYAInterface.BUTTON_L2 )
+                    else if( inputCode == OuyaController.BUTTON_L2 )
                         name = "OUYA BUTTON_L2";
-                    else if( inputCode == OUYAInterface.BUTTON_L3 )
+                    else if( inputCode == OuyaController.BUTTON_L3 )
                         name = "OUYA BUTTON_L3";
-                    else if( inputCode == OUYAInterface.BUTTON_MENU )
+                    else if( inputCode == OuyaController.BUTTON_MENU )
                         name = "OUYA BUTTON_MENU";
-                    else if( inputCode == OUYAInterface.BUTTON_O )
+                    else if( inputCode == OuyaController.BUTTON_O )
                         name = "OUYA BUTTON_O";
-                    else if( inputCode == OUYAInterface.BUTTON_R1 )
+                    else if( inputCode == OuyaController.BUTTON_R1 )
                         name = "OUYA BUTTON_R1";
-                    else if( inputCode == OUYAInterface.BUTTON_R2 )
+                    else if( inputCode == OuyaController.BUTTON_R2 )
                         name = "OUYA BUTTON_R2";
-                    else if( inputCode == OUYAInterface.BUTTON_R3 )
+                    else if( inputCode == OuyaController.BUTTON_R3 )
                         name = "OUYA BUTTON_R3";
-                    else if( inputCode == OUYAInterface.BUTTON_U )
+                    else if( inputCode == OuyaController.BUTTON_U )
                         name = "OUYA BUTTON_U";
-                    else if( inputCode == OUYAInterface.BUTTON_Y )
+                    else if( inputCode == OuyaController.BUTTON_Y )
                         name = "OUYA BUTTON_Y";
                 }
                 if( name == null )
@@ -278,19 +279,19 @@ public abstract class AbstractProvider
             if( AppData.IS_HONEYCOMB_MR1 )
             {
                 String name = null;
-                if( axis != -1 && OUYAInterface.IS_OUYA_HARDWARE )
+                if( axis != -1 && AppData.IS_OUYA_HARDWARE )
                 {
-                    if( axis == OUYAInterface.AXIS_L2 )
+                    if( axis == OuyaController.AXIS_L2 )
                         name = "OUYA AXIS_L2";
-                    else if( axis == OUYAInterface.AXIS_LS_X )
+                    else if( axis == OuyaController.AXIS_LS_X )
                         name = "OUYA AXIS_LS_X";
-                    else if( axis == OUYAInterface.AXIS_LS_Y )
+                    else if( axis == OuyaController.AXIS_LS_Y )
                         name = "OUYA AXIS_LS_Y";
-                    else if( axis == OUYAInterface.AXIS_R2 )
+                    else if( axis == OuyaController.AXIS_R2 )
                         name = "OUYA AXIS_R2";
-                    else if( axis == OUYAInterface.AXIS_RS_X )
+                    else if( axis == OuyaController.AXIS_RS_X )
                         name = "OUYA AXIS_RS_X";
-                    else if( axis == OUYAInterface.AXIS_RS_Y )
+                    else if( axis == OuyaController.AXIS_RS_Y )
                         name = "OUYA AXIS_RS_Y";
                 }
                 if( name == null )

@@ -35,7 +35,6 @@ import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
@@ -369,7 +368,7 @@ public class UserPrefs
     
     // Shared preferences default values
     public static final int DEFAULT_PAK_TYPE = CoreInterface.PAK_TYPE_MEMORY;
-    public static final String DEFAULT_INPUT_MAP_STRING = OUYAInterface.IS_OUYA_HARDWARE ?
+    public static final String DEFAULT_INPUT_MAP_STRING = AppData.IS_OUYA_HARDWARE ?
             InputMap.DEFAULT_INPUT_MAP_STRING_OUYA : InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
     public static final int DEFAULT_INPUT_DEADZONE = 0;
     public static final int DEFAULT_INPUT_SENSITIVITY = 100;
@@ -534,7 +533,7 @@ public class UserPrefs
         else if( navMode.equals( "standard" ) )
             isBigScreenMode = false;
         else
-            isBigScreenMode = OUYAInterface.IS_OUYA_HARDWARE; // TODO: Add other systems as they enter market
+            isBigScreenMode = AppData.IS_OUYA_HARDWARE; // TODO: Add other systems as they enter market
         isActionBarAvailable = AppData.IS_HONEYCOMB && !isBigScreenMode;
         
         // Determine the touchscreen layout
