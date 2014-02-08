@@ -147,6 +147,49 @@
             android:title="@string/audioSwapChannels_title" />
     </PreferenceScreen>
     <PreferenceScreen
+        android:icon="@drawable/ic_phone"
+        android:key="screenTouchscreen"
+        android:summary="@string/screenTouchscreen_summary"
+        android:title="@string/screenTouchscreen_title" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="touchscreenFeedback"
+            android:summary="@string/touchscreenFeedback_summary"
+            android:title="@string/touchscreenFeedback_title" />
+
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/touchscreenRefresh_default"
+            android:entries="@array/touchscreenRefresh_entries"
+            android:entryValues="@array/touchscreenRefresh_values"
+            android:key="touchscreenRefresh"
+            android:summary="@string/selectedValue"
+            android:title="@string/touchscreenRefresh_title" />
+
+        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+            android:defaultValue="100"
+            android:key="touchscreenTransparency"
+            android:title="@string/touchscreenTransparency_title"
+            mupen64:maximumValue="100"
+            mupen64:stepSize="10"
+            mupen64:units="%" />
+        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+            android:defaultValue="100"
+            android:key="touchscreenScale"
+            android:title="@string/touchscreenScale_title"
+            mupen64:maximumValue="400"
+            mupen64:minimumValue="50"
+            mupen64:stepSize="1"
+            mupen64:units="%" />
+
+        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+            android:defaultValue="@string/touchscreenStyle_default"
+            android:entries="@array/touchscreenStyle_entries"
+            android:entryValues="@array/touchscreenStyle_values"
+            android:key="touchscreenStyle"
+            android:summary="@string/selectedValue"
+            android:title="@string/touchscreenStyle_title" />
+    </PreferenceScreen>
+    <PreferenceScreen
         android:icon="@drawable/ic_xperia"
         android:key="screenTouchpad"
         android:summary="@string/screenTouchpad_summary"

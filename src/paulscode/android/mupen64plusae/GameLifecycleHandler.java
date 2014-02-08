@@ -224,11 +224,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         if( mGamePrefs.isTouchscreenEnabled || mUserPrefs.isFpsEnabled )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
+            String style = mGamePrefs.isTouchscreenCustom ? "" : mUserPrefs.touchscreenStyle;
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mGamePrefs.touchscreenStyle, mGamePrefs.touchscreenTransparency );
+                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, style, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mGamePrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGamePrefs.touchscreenScale,
-                    mUserPrefs.displayFpsRefresh, mGamePrefs.touchscreenRefresh );
+            mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mUserPrefs.touchscreenScale,
+                    mUserPrefs.displayFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
         
         // Initialize user interface devices
@@ -364,7 +365,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
                     inputSource, mOverlay, vibrator, mGamePrefs.touchscreenAutoHold,
-                    mGamePrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables );
+                    mUserPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...

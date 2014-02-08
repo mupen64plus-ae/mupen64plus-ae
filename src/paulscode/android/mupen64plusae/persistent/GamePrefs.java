@@ -112,29 +112,14 @@ public class GamePrefs
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
     
-    /** True if the touchscreen feedback is enabled. */
-    public final boolean isTouchscreenFeedbackEnabled;
-    
-    /** The number of frames over which touchscreen is redrawn (0 = disabled). */
-    public final int touchscreenRefresh;
-    
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
     
     /** The set of auto-holdable button commands. */
     public final Set<Integer> touchscreenAutoHoldables;
     
-    /** The touchscreen transparency value. */
-    public final int touchscreenTransparency;
-    
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
-    
-    /** Factor applied to the final calculated visible touchmap scale. */
-    public final float touchscreenScale;
-    
-    /** The folder name of the selected touchscreen style. */
-    public final String touchscreenStyle;
     
     /** The folder name of the selected touchscreen layout. */
     public final String touchscreenLayout;
@@ -243,17 +228,11 @@ public class GamePrefs
         // Determine the touchscreen layout
         boolean isCustom = false;
         String folder = "";
-        int transparencyPercent;
         if( isTouchscreenEnabled )
         {
-            isTouchscreenFeedbackEnabled = touchscreenProfile.get( "touchscreenFeedback", "False" )
-                    .equals( "True" );
-            touchscreenRefresh = getSafeInt( touchscreenProfile, "touchscreenRefresh", 0 );
             touchscreenAutoHold = getSafeInt( touchscreenProfile, "touchscreenAutoHold", 0 );
             touchscreenAutoHoldables = getSafeIntSet( touchscreenProfile,
                     "touchscreenAutoHoldables" );
-            transparencyPercent = getSafeInt( touchscreenProfile, "touchscreenTransparency", 100 );
-            touchscreenScale = ( (float) getSafeInt( touchscreenProfile, "touchscreenScale", 100 ) ) / 100.0f;
             
             String layout = touchscreenProfile.get( "touchscreenLayout", "" );
             if( layout.equals( "Custom" ) )
@@ -268,7 +247,7 @@ public class GamePrefs
                 if( layout.equals( "Mupen64Plus-AE-Analog" )
                         || layout.equals( "Mupen64Plus-AE-All" ) )
                 {
-                    if( touchscreenRefresh == 0 )
+                    if( userPrefs.touchscreenRefresh == 0 )
                         layout += "-Nostick";
                     else
                         layout += "-Stick";
@@ -318,25 +297,12 @@ public class GamePrefs
                 folder = appData.touchscreenLayoutsDir
                         + context.getString( R.string.touchscreenLayout_fpsOnly );
             }
-            isTouchscreenFeedbackEnabled = false;
-            touchscreenRefresh = 0;
             touchscreenAutoHold = 0;
             touchscreenAutoHoldables = null;
-            transparencyPercent = 100;
-            touchscreenScale = 1;
         }
-        touchscreenTransparency = ( 255 * transparencyPercent ) / 100;
-        isTouchscreenHidden = transparencyPercent == 0;
+        isTouchscreenHidden = !isTouchscreenEnabled || userPrefs.touchscreenTransparency == 0;
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
-        
-        // Determine the touchscreen style
-        folder = "";
-        if( isTouchscreenEnabled && !isCustom )
-        {
-            folder = touchscreenProfile.get( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
-        }
-        touchscreenStyle = folder;
         
         // Determine which peripheral controllers are enabled
         isControllerEnabled1 = controllerProfile1 != null;

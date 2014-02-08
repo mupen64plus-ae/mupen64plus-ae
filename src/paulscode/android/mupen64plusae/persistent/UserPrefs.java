@@ -129,6 +129,21 @@ public class UserPrefs
     /** The selected audio plug-in. */
     public final Plugin audioPlugin;
     
+    /** True if the touchscreen feedback is enabled. */
+    public final boolean isTouchscreenFeedbackEnabled;
+    
+    /** The number of frames over which touchscreen is redrawn (0 = disabled). */
+    public final int touchscreenRefresh;
+    
+    /** The touchscreen transparency value. */
+    public final int touchscreenTransparency;
+    
+    /** Factor applied to the final calculated visible touchmap scale. */
+    public final float touchscreenScale;
+    
+    /** The folder name of the selected touchscreen style. */
+    public final String touchscreenStyle;
+    
     /** True if Xperia Play touchpad is enabled. */
     public final boolean isTouchpadEnabled;
     
@@ -279,6 +294,13 @@ public class UserPrefs
         
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
+        
+        // Touchscreen prefs
+        isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
+        touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
+        touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
+        touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
+        touchscreenStyle = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );
