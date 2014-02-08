@@ -151,7 +151,17 @@ public final class Utility
      */
     public static void launchUri( Context context, int resId )
     {
-        String uri = context.getString( resId );
+        launchUri( context, context.getString( resId ) );
+    }
+    
+    /**
+     * Launches a URI from a string in a given context.
+     * 
+     * @param context The context to launch a URI from.
+     * @param uri     The URI to launch. 
+     */
+    public static void launchUri( Context context, String uri )
+    {
         Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
         context.startActivity( intent );
     }
