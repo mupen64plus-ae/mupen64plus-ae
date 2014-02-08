@@ -93,6 +93,12 @@
                 android:key="categoryCheats"
                 android:title="@string/categoryCheats_title" />
         </PreferenceScreen>
+
+        <Preference
+            android:icon="@drawable/ic_help"
+            android:key="actionWiki"
+            android:summary="@string/actionWiki_summary"
+            android:title="@string/actionWiki_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

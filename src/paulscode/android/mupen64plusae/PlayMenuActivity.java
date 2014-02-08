@@ -37,6 +37,7 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -66,6 +67,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String ACTION_RESUME = "actionResume";
     private static final String ACTION_RESTART = "actionRestart";
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
+    private static final String ACTION_WIKI = "actionWiki";
     
     private static final String EMULATION_PROFILE = "emulationProfile";
     private static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
@@ -153,6 +155,13 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESUME, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESTART, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_CHEAT_EDITOR, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
+        
+        // Remove wiki menu item if not applicable
+        if( TextUtils.isEmpty( mRomDetail.wikiUrl ) )
+        {
+            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, ACTION_WIKI );
+        }
         
         // Setup controller profiles settings based on ROM's number of players
         if( mRomDetail.players == 1 )
@@ -308,6 +317,10 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             Intent intent = new Intent( this, CheatEditorActivity.class );
             intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
             startActivity( intent );
+        }
+        else if( key.equals( ACTION_WIKI ) )
+        {
+            Utility.launchUri( this, mRomDetail.wikiUrl );
         }
         return false;
     }

@@ -136,6 +136,8 @@
     <string name="actionResume_summary">Unpredictable if cheats are used</string>
     <string name="actionRestart_title">Restart</string>
     <string name="actionRestart_summary">Recommended if cheats are used</string>
+    <string name="actionWiki_title">Wiki</string>
+    <string name="actionWiki_summary">Community help for this game</string>
     <string name="actionReloadAssets_title">Reload app resources</string>
     <string name="actionReloadAssets_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
     <string name="actionCrashTest_title">Test</string>
