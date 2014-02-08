@@ -46,7 +46,7 @@ public class NativeConfigFiles
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "texture 2xSAI", boolToNum( game.isGln64SaiEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( game.isGln64AlphaTestEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( game.isGln64ScreenClearEnabled ) );
-        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( !game.isGln64DepthTestEnabled ) );                   // Hack z enabled means that depth test is disabled
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( game.isGln64HackDepthEnabled ) );
         
         // glide64 config file
         ConfigFile glide64_conf = new ConfigFile( appData.glide64mk2_ini );

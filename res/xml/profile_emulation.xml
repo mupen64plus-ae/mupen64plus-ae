@@ -56,10 +56,10 @@
             mupen64:falseString="0"
             mupen64:trueString="1" />
         <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
-            android:defaultValue="true"
-            android:key="gln64DepthTest"
-            android:summary="@string/gln64DepthTest_summary"
-            android:title="@string/gln64DepthTest_title"
+            android:defaultValue="false"
+            android:key="gln64HackDepth"
+            android:summary="@string/gln64HackDepth_summary"
+            android:title="@string/gln64HackDepth_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
     </PreferenceCategory>

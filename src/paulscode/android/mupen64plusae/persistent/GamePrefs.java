@@ -79,8 +79,8 @@ public class GamePrefs
     /** True if alpha test is enabled in the gln64 library. */
     public final boolean isGln64AlphaTestEnabled;
     
-    /** True if depth test is enabled in the gln64 library. */
-    public final boolean isGln64DepthTestEnabled;
+    /** True if depth coordinates hack is enabled in the gln64 library. */
+    public final boolean isGln64HackDepthEnabled;
     
     /** True if auto-frameskip is enabled in the rice library. */
     public final boolean isRiceAutoFrameskipEnabled;
@@ -219,7 +219,7 @@ public class GamePrefs
         isGln64SaiEnabled = emulationProfile.get( "gln64Sai", "0" ).equals( "1" );
         isGln64ScreenClearEnabled = emulationProfile.get( "gln64ScreenClear", "1" ).equals( "1" );
         isGln64AlphaTestEnabled = emulationProfile.get( "gln64AlphaTest", "1" ).equals( "1" );
-        isGln64DepthTestEnabled = emulationProfile.get( "gln64DepthTest", "1" ).equals( "1" );
+        isGln64HackDepthEnabled = emulationProfile.get( "gln64HackDepth", "1" ).equals( "1" );
         
         // Video prefs - rice
         isRiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );

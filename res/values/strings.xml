@@ -203,8 +203,8 @@
     <string name="gln64ScreenClear_summary">Disable for speed (might cause video glitches)</string>
     <string name="gln64AlphaTest_title">Alpha test</string>
     <string name="gln64AlphaTest_summary">Disable for speed (causes black textures)</string>
-    <string name="gln64DepthTest_title">Depth test</string>
-    <string name="gln64DepthTest_summary">Disable for speed (causes flashing background)</string>
+    <string name="gln64HackDepth_title">Hack depth coordinates</string>
+    <string name="gln64HackDepth_summary">May fix flashing textures in some games</string>
     <string name="riceAutoFrameskip_title">Auto frameskip</string>
     <string name="riceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
     <string name="riceFastTexture_title">Fast texture loading</string>
