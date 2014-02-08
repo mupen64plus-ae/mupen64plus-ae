@@ -38,12 +38,14 @@ public class RomDetail
     public final String baseName;
     public final String artName;
     public final String artUrl;
+    public final String wikiUrl;
     public final String saveType;
     public final int status;
     public final int players;
     public final boolean rumble;
     
-    private static final String URL_TEMPLATE = "http://paulscode.com/downloads/Mupen64Plus-AE/CoverArt/%s";
+    private static final String ART_URL_TEMPLATE = "http://paulscode.com/downloads/Mupen64Plus-AE/CoverArt/%s";
+    private static final String WIKI_URL_TEMPLATE = "http://littleguy77.wikia.com/wiki/%s";
     
     private static ConfigFile sConfigFile = null;
     private static final HashMap<String, ConfigSection> sCrcMap = new HashMap<String, ConfigSection>();
@@ -138,6 +140,7 @@ public class RomDetail
         String _baseName = null;
         String _artName = null;
         String _artUrl = null;
+        String _wikiUrl = null;
         String _saveType = null;
         int _status = 0;
         int _players = 0;
@@ -155,12 +158,20 @@ public class RomDetail
             else
                 _goodName = section.get( "GoodName" );
             
-            // Extract basename (goodname without the extra parenthetical tags)
-            _baseName = _goodName == null ? null : _goodName.split( " \\(" )[0].trim();
-            
-            // Generate the cover art URL string
-            _artName = _baseName == null ? null : _baseName.replaceAll("['\\.]", "").replaceAll( "\\W+", "_" ) + ".png";
-            _artUrl = _artName == null ? null : String.format( URL_TEMPLATE, _artName );
+            if( _goodName != null )
+            {
+                // Extract basename (goodname without the extra parenthetical tags)
+                _baseName = _goodName.split( " \\(" )[0].trim();
+                
+                // Generate the cover art URL string
+                _artName = _baseName.replaceAll( "['\\.]", "" ).replaceAll( "\\W+", "_" ) + ".png";
+                _artUrl = String.format( ART_URL_TEMPLATE, _artName );
+                
+                // Generate wiki page URL string
+                _wikiUrl = String.format( WIKI_URL_TEMPLATE, _baseName.replaceAll( " ", "_" ) );
+                if( _goodName.contains( "(Kiosk" ) )
+                    _wikiUrl += "_(Kiosk_Demo)";
+            }
             
             // Some ROMs have multiple entries. Instead of duplicating common data, the ini file
             // just references another entry.
@@ -185,6 +196,7 @@ public class RomDetail
         baseName = _baseName;
         artName = _artName;
         artUrl = _artUrl;
+        wikiUrl = _wikiUrl;
         crc = _crc;
         saveType = _saveType;
         status = _status;
