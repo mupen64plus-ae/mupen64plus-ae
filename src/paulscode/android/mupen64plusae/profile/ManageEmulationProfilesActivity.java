@@ -33,7 +33,7 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     }
     
     @Override
-    protected String getDefaultDefaultProfile()
+    protected String getNoDefaultProfile()
     {
         return UserPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT;
     }

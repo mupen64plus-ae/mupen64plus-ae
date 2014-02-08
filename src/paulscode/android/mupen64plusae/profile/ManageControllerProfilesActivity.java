@@ -21,7 +21,6 @@
 package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.Keys;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.content.Intent;
 
 public class ManageControllerProfilesActivity extends ManageProfilesActivity
@@ -33,9 +32,9 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     }
     
     @Override
-    protected String getDefaultDefaultProfile()
+    protected String getNoDefaultProfile()
     {
-        return UserPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT;
+        return "";
     }
     
     @Override

@@ -73,12 +73,14 @@ abstract public class ManageProfilesActivity extends ListActivity
     abstract protected String getConfigFilePath( boolean isBuiltin );
     
     /**
-     * Gets the default name of the default profile. Subclasses should implement this method to
-     * provide the fall-back name for the default profile
+     * Gets the name of the profile to use if the user unsets the default. If a profile can be
+     * "disabled", subclasses should return an empty string. Otherwise, subclasses should return the
+     * name of a builtin profile that is guaranteed to exist (typically the default profile at
+     * installation).
      * 
      * @return the default name of the default profile
      */
-    abstract protected String getDefaultDefaultProfile();
+    abstract protected String getNoDefaultProfile();
     
     /**
      * Gets the name of the default profile. Subclasses should implement this method to retrieve the
@@ -216,7 +218,7 @@ abstract public class ManageProfilesActivity extends ListActivity
                                     {
                                         case 0:
                                             putDefaultProfile( isDefault
-                                                    ? getDefaultDefaultProfile()
+                                                    ? getNoDefaultProfile()
                                                     : profile.name );
                                             refreshList();
                                             break;
@@ -241,7 +243,7 @@ abstract public class ManageProfilesActivity extends ListActivity
                                     {
                                         case 0:
                                             putDefaultProfile( isDefault
-                                                    ? getDefaultDefaultProfile()
+                                                    ? getNoDefaultProfile()
                                                     : profile.name );
                                             refreshList();
                                             break;
