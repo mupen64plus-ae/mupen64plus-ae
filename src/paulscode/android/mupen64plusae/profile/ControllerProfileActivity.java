@@ -36,6 +36,7 @@ import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
@@ -132,9 +133,10 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
         if( TextUtils.isEmpty( name ) )
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
         mConfigFile = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
-        mProfile = new ControllerProfile( false, mConfigFile.get( name ) );
-        if( mProfile == null )
+        ConfigSection section = mConfigFile.get( name );
+        if( section == null )
             throw new Error( "Invalid usage: profile name not found in config file" );
+        mProfile = new ControllerProfile( false, section );
         
         // Set up input listeners
         mUnmappableInputCodes = mUserPrefs.unmappableKeyCodes;

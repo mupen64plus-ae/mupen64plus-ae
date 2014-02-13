@@ -166,12 +166,15 @@ public abstract class ProfileActivity extends PreferenceActivity implements
     private static void transcribe( ConfigFile source, SharedPreferences target, String sectionName )
     {
         // Copy key-value data from config section to shared prefs object
-        Editor editor = target.edit();
-        editor.clear();
         ConfigSection section = source.get( sectionName );
-        for( String key : section.keySet() )
-            editor.putString( key, section.get( key ) );
-        editor.commit();
+        if( section != null )
+        {
+            Editor editor = target.edit();
+            editor.clear();
+            for( String key : section.keySet() )
+                editor.putString( key, section.get( key ) );
+            editor.commit();
+        }
     }
     
     private static void transcribe( SharedPreferences source, ConfigFile target, String sectionName )

@@ -191,6 +191,9 @@ public class Profile implements Comparable<Profile>
             return false;
         
         ConfigSection source = config.get( name );
+        if( source == null )
+            return false;
+        
         for( String key : source.keySet() )
             data.put( key, source.get( key ) );
         return true;
