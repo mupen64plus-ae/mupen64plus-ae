@@ -23,6 +23,8 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 import java.util.List;
 
+import paulscode.android.mupen64plusae.cheat.CheatFile;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.AssetExtractor;
@@ -156,6 +158,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
     private final Runnable nonUiThreadLauncher = new Runnable()
     {
+    	
         @Override
         public void run()
         {
@@ -199,6 +202,51 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 if( !cheat_volatile.exists() )
                 {
                     FileUtil.copyFile( new File( mAppData.mupencheat_default ), cheat_volatile );
+                    if(new File(mUserPrefs.usrcheat_txt).exists())
+                    {
+                    CheatFile cheat_v = new CheatFile(mAppData.mupencheat_txt);
+                    CheatFile cheat_d = new CheatFile(mAppData.mupencheat_default);
+                    CheatFile cheat_u = new CheatFile(mUserPrefs.usrcheat_txt);
+                    String[] keys = cheat_u.keySet().toArray(new String[0]);
+                    for(int i = 0; i<keys.length; i++)
+                    {
+                    	if(!keys[i].equals("[<sectionless!>]"))
+                    	{
+                    	CheatSection cheat_section_v = cheat_v.match(keys[i]);
+                    	CheatSection cheat_section_d = cheat_d.match(keys[i]);
+                    	CheatSection cheat_section_u = cheat_u.match(keys[i]);
+                    	if((cheat_section_u!=null)) // Nothing to update if null
+                    	{
+                    		if(cheat_section_v == null)
+                    		{
+                    			String name="";
+                    			if(cheat_section_d!=null)
+                    			{
+                    				name=cheat_section_d.goodName;
+                    			}else{
+                    				name=cheat_section_u.goodName;
+                    			}
+                    			cheat_section_v = new CheatSection(keys[i].substring(0,17), name,keys[i].substring(20));
+                    			cheat_v.add(cheat_section_v);
+                    		}
+                    		cheat_section_v.clear();
+                			if(cheat_section_d!=null)
+                			{
+                				for(int o = 0; o<cheat_section_d.size(); o++)
+                				{
+                					cheat_section_v.add(cheat_section_d.get(o));
+                				}
+                			}
+                				for(int o = 0; o<cheat_section_u.size(); o++)
+                				{
+                					cheat_section_v.add(cheat_section_u.get(o));
+                				}
+                			cheat_v.save();
+                    	}
+                    	}
+                    }
+                    }
+                    
                 }
                 
                 // Launch the GalleryActivity, passing ROM path if it was provided externally

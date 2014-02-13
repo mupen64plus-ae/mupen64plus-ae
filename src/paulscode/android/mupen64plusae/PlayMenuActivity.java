@@ -316,7 +316,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         {
             Intent intent = new Intent( this, CheatEditorActivity.class );
             intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
-            startActivity( intent );
+            startActivityForResult( intent, 111 );
         }
         else if( key.equals( ACTION_WIKI ) )
         {
@@ -332,11 +332,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         Log.v( "PlayMenuActivity", "building from CRC = " + crc );
         if( crc == null )
             return;
-        ArrayList<Cheat> cheats = new ArrayList<Cheat>();
-        cheats.addAll( CheatUtils.populate( crc, new CheatFile( mAppData.mupencheat_default ), true, this ) );
-        cheats.addAll( CheatUtils.populate( crc, new CheatFile( mUserPrefs.usrcheat_txt ), false, this ) );
-        CheatUtils.save( crc, new CheatFile( mAppData.mupencheat_txt ), cheats, mRomHeader, this, true );
-        CheatUtils.reset();
         
         // Get the appropriate section of the config file, using CRC as the key
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
@@ -346,7 +341,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             Log.w( "PlayMenuActivity", "No cheat section found for '" + crc + "'" );
             return;
         }
-        
+        ArrayList<Cheat> cheats = new ArrayList<Cheat>();
+        cheats.addAll(CheatUtils.populate(crc, mupencheat_txt, true, this));
+        CheatUtils.reset();
         // Layout the menu, populating it with appropriate cheat options
         for( int i = 0; i < cheats.size(); i++ )
         {
@@ -449,4 +446,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         return cheatArgs;
     }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	if(requestCode==111)
+    		refreshCheatsCategory();
+  	}
 }
+
