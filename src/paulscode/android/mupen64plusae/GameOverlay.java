@@ -35,7 +35,6 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     private boolean mFpsEnabled = false;
     private int mHatRefreshPeriod = 0;
     private int mHatRefreshCount = 0;
-    private float mScalingFactor = 1.0f;
     
     public GameOverlay( Context context, AttributeSet attribs )
     {
@@ -43,13 +42,12 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         requestFocus();
     }
     
-    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, float scalingFactor, int fpsRefreshPeriod, int hatRefreshPeriod )
+    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, int fpsRefreshPeriod, int hatRefreshPeriod )
     {
         mTouchMap = touchMap;
         mDrawingEnabled = drawingEnabled;
         mFpsEnabled = fpsRefreshPeriod > 0;
         mHatRefreshPeriod = hatRefreshPeriod;
-        mScalingFactor = scalingFactor;
         
         CoreInterface.setOnFpsChangedListener( this, fpsRefreshPeriod );
     }
@@ -98,7 +96,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     {
         // Recompute skin layout geometry
         if( mTouchMap != null )
-            mTouchMap.resize( w, h, Utility.getDisplayMetrics( this ), mScalingFactor );
+            mTouchMap.resize( w, h, Utility.getDisplayMetrics( this ) );
         super.onSizeChanged( w, h, oldw, oldh );
     }
     

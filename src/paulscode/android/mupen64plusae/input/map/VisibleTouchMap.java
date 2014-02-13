@@ -66,6 +66,9 @@ public class VisibleTouchMap extends TouchMap
     /** True if the FPS indicator should be drawn. */
     private final boolean mFpsEnabled;
     
+    /** The factor to scale images by. */
+    private final float mScalingFactor;
+    
     /** Touchscreen opacity. */
     private final int mTouchscreenTransparency;
     
@@ -94,9 +97,10 @@ public class VisibleTouchMap extends TouchMap
      * @param fpsEnabled True to display the FPS indicator.
      * @param fontsDir   The directory containing the FPS font resources.
      * @param imageDir   The directory containing the button images.
+     * @param scale      The factor to scale images by.
      * @param alpha      The opacity of the visible elements.
      */
-    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, String imageDir, int alpha )
+    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, String imageDir, float scale, int alpha )
     {
         super( resources );
         mFpsEnabled = fpsEnabled;
@@ -107,6 +111,7 @@ public class VisibleTouchMap extends TouchMap
         autoHoldImages = new Image[NUM_N64_PSEUDOBUTTONS];
         autoHoldX = new int[NUM_N64_PSEUDOBUTTONS];
         autoHoldY = new int[NUM_N64_PSEUDOBUTTONS];
+        mScalingFactor = scale;
         mTouchscreenTransparency = alpha;
     }
     
@@ -141,9 +146,8 @@ public class VisibleTouchMap extends TouchMap
      * @param w The width of the digitizer, in pixels.
      * @param h The height of the digitizer, in pixels.
      * @param metrics Metrics about the display (for use in scaling).
-     * @param scalingFactor Factor applied to the final calculated scale.
      */
-    public void resize( int w, int h, DisplayMetrics metrics, float scalingFactor )
+    public void resize( int w, int h, DisplayMetrics metrics )
     {
         scale = 1.0f;
         
@@ -185,7 +189,7 @@ public class VisibleTouchMap extends TouchMap
             }
         }
         // Apply the scaling factor (derived from user prefs)
-        scale *= scalingFactor;
+        scale *= mScalingFactor;
         
         resize( w, h );
     }
