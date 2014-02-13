@@ -42,7 +42,7 @@ public final class Image
     public float scale = 1.0f;
     public int x = 0;
     public int y = 0;
-    public Rect drawRect = null;
+    public final Rect drawRect = new Rect();
     
     /**
      * Constructor: Loads an image file and sets the initial properties.
@@ -70,8 +70,6 @@ public final class Image
         
         hWidth  = (int) ( width  / 2.0f ); 
         hHeight = (int) ( height / 2.0f );
-        
-        drawRect = new Rect();
     }
     
     /**
@@ -103,7 +101,6 @@ public final class Image
             hHeight = clone.hHeight;
             scale = clone.scale;
         }
-        drawRect = new Rect();
     }
     
     /**
@@ -130,9 +127,7 @@ public final class Image
     {
         this.x = x;
         this.y = y;
-        
-        if( drawRect != null )
-            drawRect.set( x, y, x + (int) ( width * scale ), y + (int) ( height * scale ) );
+        drawRect.set( x, y, x + (int) ( width * scale ), y + (int) ( height * scale ) );
         if( drawable != null )
             drawable.setBounds( drawRect );
     }
@@ -164,15 +159,9 @@ public final class Image
         if( cy + ( hHeight * scale ) > screenH )
             cy = screenH - ( hHeight * scale );
         
-        x = (int) ( cx - ( hWidth * scale ) );
-        y = (int) ( cy - ( hHeight * scale ) );
-        
-        if( drawRect != null )
-        {
-            drawRect.set( x, y, x + (int) ( width * scale ), y + (int) ( height * scale ) );
-            if( drawable != null )
-                drawable.setBounds( drawRect );
-        }
+        int px = (int) ( cx - ( hWidth * scale ) );
+        int py = (int) ( cy - ( hHeight * scale ) );
+        setPos( px, py );
     }
     
     /**
@@ -206,15 +195,9 @@ public final class Image
         if( cy + ( hHeight * scale ) > rectY + rectH )
             cy = rectY + rectH - ( hHeight * scale );
         
-        x = (int) ( cx - ( hWidth * scale ) );
-        y = (int) ( cy - ( hHeight * scale ) );
-        
-        if( drawRect != null )
-        {
-            drawRect.set( x, y, x + (int) ( width * scale ), y + (int) ( height * scale ) );
-            if( drawable != null )
-                drawable.setBounds( drawRect );
-        }
+        int px = (int) ( cx - ( hWidth * scale ) );
+        int py = (int) ( cy - ( hHeight * scale ) );
+        setPos( px, py );
     }
     
     /**
