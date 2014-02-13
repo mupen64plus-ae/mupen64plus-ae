@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 
 public class ControllerProfile extends Profile
 {
@@ -40,12 +39,12 @@ public class ControllerProfile extends Profile
     
     public int getDeadzone()
     {
-        return SafeMethods.toInt( get( KEY_DEADZONE ), DEFAULT_DEADZONE );
+        return getInt( KEY_DEADZONE, DEFAULT_DEADZONE );
     }
     
     public int getSensitivity()
     {
-        return SafeMethods.toInt( get( KEY_SENSITIVITY ), DEFAULT_SENSITIVITY );
+        return getInt( KEY_SENSITIVITY, DEFAULT_SENSITIVITY );
     }
     
     public void putMap( InputMap map )
@@ -55,12 +54,12 @@ public class ControllerProfile extends Profile
     
     public void putDeadzone( int deadzone )
     {
-        put( KEY_DEADZONE, String.valueOf( deadzone ) );
+        putInt( KEY_DEADZONE, deadzone );
     }
     
     public void putSensitivity( int sensitivity )
     {
-        put( KEY_SENSITIVITY, String.valueOf( sensitivity ) );
+        putInt( KEY_SENSITIVITY, sensitivity );
     }
     
     public ControllerProfile( boolean isBuiltin, String name, String comment )
