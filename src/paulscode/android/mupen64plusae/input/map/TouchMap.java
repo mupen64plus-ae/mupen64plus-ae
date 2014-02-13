@@ -265,9 +265,23 @@ public class TouchMap
         // Find the closest match among the N64 buttons
         int closestMatch = UNMAPPED;
         int matchDif = Integer.MAX_VALUE;
+        
+        // Get the RGB values of the given color
+        int r = ( color & 0xFF0000 ) >> 16;
+        int g = ( color & 0x00FF00 ) >> 8;
+        int b = ( color & 0x0000FF );
+        
+        // Find the mask color with the smallest squared error
         for( int i = 0; i < mN64ToColor.length; i++ )
         {
-            int dif = Math.abs( mN64ToColor[i] - color );
+            int color2 = mN64ToColor[i];
+            
+            // Compute squared error in RGB space
+            int difR = r - ( ( color2 & 0xFF0000 ) >> 16 );
+            int difG = g - ( ( color2 & 0x00FF00 ) >> 8 );
+            int difB = b - ( ( color2 & 0x0000FF ) );
+            int dif = difR * difR + difG * difG + difB * difB;
+            
             if( dif < matchDif )
             {
                 closestMatch = i;
