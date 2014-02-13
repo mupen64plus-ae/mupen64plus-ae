@@ -26,6 +26,7 @@ import java.util.List;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.text.TextUtils;
 
 /**
@@ -116,6 +117,33 @@ public class Profile implements Comparable<Profile>
     }
     
     /**
+     * @see #get(String, String)
+     */
+    public boolean getBoolean( String key, boolean defaultValue )
+    {
+        String value = data.get( key );
+        return SafeMethods.toBoolean( value, defaultValue );
+    }
+    
+    /**
+     * @see #get(String, String)
+     */
+    public int getInt( String key, int defaultValue )
+    {
+        String value = data.get( key );
+        return SafeMethods.toInt( value, defaultValue );
+    }
+    
+    /**
+     * @see #get(String, String)
+     */
+    public float getFloat( String key, int defaultValue )
+    {
+        String value = data.get( key );
+        return SafeMethods.toFloat( value, defaultValue );
+    }
+    
+    /**
      * Maps the specified value to the specified key.
      * 
      * @param key the data key
@@ -124,6 +152,30 @@ public class Profile implements Comparable<Profile>
     public void put( String key, String value )
     {
         data.put( key, value );
+    }
+    
+    /**
+     * @see #put(String, String)
+     */
+    public void putBoolean( String key, boolean value )
+    {
+        put( key, String.valueOf( value ) );
+    }
+    
+    /**
+     * @see #put(String, String)
+     */
+    public void putInt( String key, int value )
+    {
+        put( key, String.valueOf( value ) );
+    }
+    
+    /**
+     * @see #put(String, String)
+     */
+    public void putFloat( String key, float value )
+    {
+        put( key, String.valueOf( value ) );
     }
     
     /**
