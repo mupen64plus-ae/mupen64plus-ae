@@ -194,7 +194,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     
     private void initLayoutBigScreenMode()
     {
-        setContentView( R.layout.input_map_activity_bigscreen );
+        setContentView( R.layout.controller_profile_activity_bigscreen );
         mListView = (ListView) findViewById( R.id.input_map_activity_bigscreen );
         mListView.setOnItemClickListener( this );
     }
@@ -213,9 +213,9 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
         
         // For narrow screens, use an alternate layout
         if( widthDp < MIN_LAYOUT_WIDTH_DP )
-            setContentView( R.layout.input_map_activity_port );
+            setContentView( R.layout.controller_profile_activity_port );
         else
-            setContentView( R.layout.input_map_activity );
+            setContentView( R.layout.controller_profile_activity );
         
         // Initialize and refresh the widgets
         initWidgets();
@@ -272,7 +272,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
     {
-        getMenuInflater().inflate( R.menu.input_map_activity, menu );
+        getMenuInflater().inflate( R.menu.controller_profile_activity, menu );
         menu.findItem( R.id.menuItem_exit ).setVisible( !mUserPrefs.isBigScreenMode );
         return super.onCreateOptionsMenu( menu );
     }
