@@ -38,7 +38,7 @@ import android.util.Log;
  * The ConfigFile class is used to load the parameters from a config file.
  * </p>
  * The file must follow a specific syntax:
- * </p>
+ * <ul>
  * <li>Parameters are assigned to values with the equal sign (ex: param=value  ).
  * <li>Parameters are allowed to have empty assignments (ex: param=  ).
  * <li>Each parameter=value pair must be on a single line.
@@ -48,20 +48,23 @@ import android.util.Log;
  * <li>Comments consist of single lines, and begin with # or ; or // (ex:  ;comment  ).
  * <li>Leading and trailing whitespace in lines, param names, and values is discarded.
  * <li>Whitespace inside brackets or double-quotes is not discarded.
- *
+ * </ul>
+ * 
  * @author Paul Lamb
- * 
- * http://www.paulscode.com
- * 
  */
 public class ConfigFile
 {
     /** The name we use for the untitled section (preamble) of the config file. */
     public static final String SECTIONLESS_NAME = "[<sectionless!>]";
     
-    private final String mFilename;  // Name of the config file.
-    private final HashMap<String, ConfigSection> mConfigMap; // Sections mapped by title for easy lookup
-    private final LinkedList<ConfigSection> mConfigList;     // Sections in the proper order for easy saving
+    /** Name of the config file. */
+    private final String mFilename;
+    
+    /** Sections mapped by title for easy lookup. */
+    private final HashMap<String, ConfigSection> mConfigMap;
+    
+    /** Sections in proper order for easy saving. */
+    private final LinkedList<ConfigSection> mConfigList;
 
     /**
      * Constructor: Reads the entire config file, and saves the data in 'configMap'.
@@ -301,85 +304,6 @@ public class ConfigFile
     }
     
     /**
-     * The ConfigParameter class associates a parameter with its value.
-     */
-    private static class ConfigParameter
-    {
-        @SuppressWarnings( "unused" )
-        public String parameter;
-        public String value;
-        
-        /**
-         * Constructor: Associate the parameter and value
-         * 
-         * @param parameter The name of the parameter.
-         * @param value     The value of the parameter.
-         */
-        public ConfigParameter( String parameter, String value )
-        {
-            this.parameter = parameter;
-            this.value = value;
-        }
-    }
-    
-    /**
-     * The ConfigLine class stores each line of the config file (including comments).
-     */
-    private static class ConfigLine
-    {
-        public static final int LINE_GARBAGE = 0;  // Comment, whitespace, or blank line
-        public static final int LINE_SECTION = 1;  // Section title
-        public static final int LINE_PARAM = 2;    // Parameter=value pair
-
-        public int lineType = 0;                 // LINE_GARBAGE, LINE_SECTION, or LINE_PARAM.
-        public String strLine = "";              // Actual line from the config file.
-        public ConfigParameter confParam = null; // Null unless this line has a parameter.
-        
-        /**
-         * Constructor: Saves the relevant information about the line.
-         * 
-         * @param type   The type of line.
-         * @param line   The line itself.
-         * @param param  Config parameters pertaining to the line.
-         */
-        public ConfigLine( int type, String line, ConfigParameter param )
-        {
-            lineType = type;
-            strLine = line;
-            confParam = param;
-        }
-        
-        /**
-         * Saves the ConfigLine.
-         * 
-         * @param fw The file to save the ConfigLine to.
-         * 
-         * @throws IOException If a writing error occurs.
-         */
-        public void save( FileWriter fw ) throws IOException
-        {
-            int x;
-            if( lineType == LINE_PARAM )
-            {
-                if( !strLine.contains( "=" ) || confParam == null )
-                    return;  // This shouldn't happen
-                
-                x = strLine.indexOf( '=' );
-                
-                if( x < 1 )
-                    return;  // This shouldn't happen either
-                
-                if( x < strLine.length() )
-                    fw.write( strLine.substring( 0, x + 1 ) + confParam.value + "\n" );
-            }
-            else
-            {
-                fw.write( strLine );
-            }
-        }
-    }
-
-    /**
      * The ConfigSection class reads all the parameters in the next section of the config file.
      * Saves the name of the next section (or null if end of file or error).
      * Can also be used to add a new section to an existing configuration.
@@ -392,7 +316,7 @@ public class ConfigFile
         
         // Name of the next section, or null if there are no sections left to read in the file:
         private String nextName = null;
-
+    
         /**
          * Constructor: Creates an empty config section
          * 
@@ -408,7 +332,7 @@ public class ConfigFile
             
             name = sectionName;
         }
-
+    
         // TODO: Clean this method up a bit?
         /**
          * Constructor: Reads the next section of the config file, and saves it in 'parameters'.
@@ -424,16 +348,16 @@ public class ConfigFile
             
             parameters = new HashMap<String, ConfigParameter>();
             lines = new LinkedList<ConfigLine>();
-
+    
             if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( SECTIONLESS_NAME ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
-
+    
             name = sectionName;
             
             // No file to read from. Quit.
             if( br == null )
                 return;
-
+    
             try
             {
                 while( ( fullLine = br.readLine() ) != null )
@@ -574,7 +498,7 @@ public class ConfigFile
                 confParam.value = value;
             }
         }
-
+    
         /**
          * Writes the entire section to file.
          * 
@@ -589,6 +513,85 @@ public class ConfigFile
                 if( line != null )
                     line.save( fw );
             }
+        }
+    }
+    
+    /**
+     * The ConfigLine class stores each line of the config file (including comments).
+     */
+    private static class ConfigLine
+    {
+        public static final int LINE_GARBAGE = 0;  // Comment, whitespace, or blank line
+        public static final int LINE_SECTION = 1;  // Section title
+        public static final int LINE_PARAM = 2;    // Parameter=value pair
+    
+        public int lineType = 0;                 // LINE_GARBAGE, LINE_SECTION, or LINE_PARAM.
+        public String strLine = "";              // Actual line from the config file.
+        public ConfigParameter confParam = null; // Null unless this line has a parameter.
+        
+        /**
+         * Constructor: Saves the relevant information about the line.
+         * 
+         * @param type   The type of line.
+         * @param line   The line itself.
+         * @param param  Config parameters pertaining to the line.
+         */
+        public ConfigLine( int type, String line, ConfigParameter param )
+        {
+            lineType = type;
+            strLine = line;
+            confParam = param;
+        }
+        
+        /**
+         * Saves the ConfigLine.
+         * 
+         * @param fw The file to save the ConfigLine to.
+         * 
+         * @throws IOException If a writing error occurs.
+         */
+        public void save( FileWriter fw ) throws IOException
+        {
+            int x;
+            if( lineType == LINE_PARAM )
+            {
+                if( !strLine.contains( "=" ) || confParam == null )
+                    return;  // This shouldn't happen
+                
+                x = strLine.indexOf( '=' );
+                
+                if( x < 1 )
+                    return;  // This shouldn't happen either
+                
+                if( x < strLine.length() )
+                    fw.write( strLine.substring( 0, x + 1 ) + confParam.value + "\n" );
+            }
+            else
+            {
+                fw.write( strLine );
+            }
+        }
+    }
+    
+    /**
+     * The ConfigParameter class associates a parameter with its value.
+     */
+    private static class ConfigParameter
+    {
+        @SuppressWarnings( "unused" )
+        public String parameter;
+        public String value;
+        
+        /**
+         * Constructor: Associate the parameter and value
+         * 
+         * @param parameter The name of the parameter.
+         * @param value     The value of the parameter.
+         */
+        public ConfigParameter( String parameter, String value )
+        {
+            this.parameter = parameter;
+            this.value = value;
         }
     }
 }
