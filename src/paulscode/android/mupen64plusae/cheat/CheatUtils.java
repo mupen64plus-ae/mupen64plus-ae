@@ -49,7 +49,7 @@ public class CheatUtils
     
     public static void mergeCheatFiles( String defaultpath, String userpath, String volatilepath )
     {
-        // Copy the default cheat data to the volatile location
+        // Reset the volatile cheatfile to the default data
         File cheat_volatile = new File( volatilepath );
         File cheat_default = new File( defaultpath );
         FileUtil.copyFile( cheat_default, cheat_volatile );
@@ -59,50 +59,34 @@ public class CheatUtils
         if( cheat_user.exists() )
         {
             CheatFile cheat_v = new CheatFile( volatilepath );
-            CheatFile cheat_d = new CheatFile( defaultpath );
             CheatFile cheat_u = new CheatFile( userpath );
             
-            String[] keys = cheat_u.keySet().toArray( new String[0] );
-            for( int i = 0; i < keys.length; i++ )
+            for( String key : cheat_u.keySet() )
             {
-                if( !keys[i].equals( CheatFile.NO_CRC ) )
+                if( !CheatFile.NO_CRC.equals( key ) )
                 {
-                    CheatSection cheat_section_v = cheat_v.match( keys[i] );
-                    CheatSection cheat_section_d = cheat_d.match( keys[i] );
-                    CheatSection cheat_section_u = cheat_u.match( keys[i] );
-                    if( ( cheat_section_u != null ) ) // Nothing to update if null
+                    CheatSection cheat_section_v = cheat_v.get( key );
+                    CheatSection cheat_section_u = cheat_u.get( key );
+                    assert( cheat_section_u != null );
+                    
+                    // Create the cheat section in the destination if necessary (i.e. this ROM
+                    // is not present in the default cheat file)
+                    if( cheat_section_v == null )
                     {
-                        if( cheat_section_v == null )
-                        {
-                            String name = "";
-                            if( cheat_section_d != null )
-                            {
-                                name = cheat_section_d.goodName;
-                            }
-                            else
-                            {
-                                name = cheat_section_u.goodName;
-                            }
-                            cheat_section_v = new CheatSection( keys[i].substring( 0, 17 ), name,
-                                    keys[i].substring( 20 ) );
-                            cheat_v.add( cheat_section_v );
-                        }
-                        cheat_section_v.clear();
-                        if( cheat_section_d != null )
-                        {
-                            for( int o = 0; o < cheat_section_d.size(); o++ )
-                            {
-                                cheat_section_v.add( cheat_section_d.get( o ) );
-                            }
-                        }
-                        for( int o = 0; o < cheat_section_u.size(); o++ )
-                        {
-                            cheat_section_v.add( cheat_section_u.get( o ) );
-                        }
-                        cheat_v.save();
+                        String name = cheat_section_u.goodName;
+                        String crc = key.substring( 0, 17 );
+                        String country = key.substring( 20 );
+                        cheat_v.add( new CheatSection( crc, name, country ) );
+                    }
+                    
+                    // Append the user cheats to the volatile cheatfile
+                    for( int o = 0; o < cheat_section_u.size(); o++ )
+                    {
+                        cheat_section_v.add( cheat_section_u.get( o ) );
                     }
                 }
             }
+            cheat_v.save();
         }
     }
     
