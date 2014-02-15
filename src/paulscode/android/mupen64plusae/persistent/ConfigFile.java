@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -256,22 +255,10 @@ public class ConfigFile
             return false;   // Quit
         }
         
-        File f = new File( mFilename );
-        
-        // Delete it if it already exists.
-        if( f.exists() )
-        {
-            // Some problem deleting the file.
-            if( !f.delete() )
-            {
-                Log.e( "ConfigFile", "Error deleting file " + mFilename );
-                return false;   // Quit
-            }
-        }
-        
+        FileWriter fw = null;
         try
         {
-            FileWriter fw = new FileWriter( mFilename );  // For writing to the config file
+            fw = new FileWriter( mFilename );
 
             // Loop through the sections
             for ( ConfigSection section : mConfigList )
@@ -279,14 +266,24 @@ public class ConfigFile
                 if( section != null )
                     section.save( fw );
             }
-
-            fw.flush();
-            fw.close();
         }
         catch( IOException ioe )
         {
             Log.e( "ConfigFile", "IOException creating file " + mFilename + ", error message: " + ioe.getMessage() );
             return false;  // Some problem creating the file.. quit
+        }
+        finally
+        {
+            if( fw != null )
+            {
+                try
+                {
+                    fw.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+            }
         }
         
         // Success
