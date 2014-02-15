@@ -118,6 +118,9 @@ public class TouchMap
     /** The map from strings in the .ini file to N64 button indices. */
     protected static final HashMap<String, Integer> BUTTON_STRING_MAP;
     
+    /** The error in RGB (256x256x256) space that we tolerate when matching mask colors. */
+    private static final int MATCH_TOLERANCE = 10;
+    
     static
     {
         // Define the map from strings in the .ini file to N64 button indices
@@ -261,10 +264,10 @@ public class TouchMap
      */
     private int getButtonFromColor( int color )
     {
-        // TODO: Android is not precise: the color is different than it should be!
-        // Find the closest match among the N64 buttons
+        // Find the N64 button whose mask matches the given color. Because we scale the mask images,
+        // the mask boundaries can get softened. Therefore we tolerate a bit of error in the match.
         int closestMatch = UNMAPPED;
-        int matchDif = Integer.MAX_VALUE;
+        int matchDif = MATCH_TOLERANCE * MATCH_TOLERANCE;
         
         // Get the RGB values of the given color
         int r = ( color & 0xFF0000 ) >> 16;
