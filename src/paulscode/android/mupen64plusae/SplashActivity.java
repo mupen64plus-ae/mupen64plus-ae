@@ -176,7 +176,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
             // extraction process
             List<ExtractionFailure> failures = null;
             
-            // Extract the assets if they are out of date
+            // Extract and merge the assets if they are out of date
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
                 FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
@@ -184,6 +184,12 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 
                 failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR,
                         mAppData.coreSharedDataDir, SplashActivity.this );
+                
+                if( failures == null || failures.size() == 0 )
+                {
+                    CheatUtils.mergeCheatFiles( mAppData.mupencheat_default,
+                            mUserPrefs.usrcheat_txt, mAppData.mupencheat_txt );
+                }
             }
             
             // Launch menu activity if successful; post failure notice otherwise
@@ -195,14 +201,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 // Remember what asset version is installed
                 mAppData.putAssetVersion( ASSET_VERSION );
                 updateText( R.string.assetExtractor_finished );
-                
-                // Copy the default cheats to the volatile location if necessary
-                File cheat_volatile = new File( mAppData.mupencheat_txt );
-                if( !cheat_volatile.exists() )
-                {
-                    CheatUtils.mergeCheatFiles( mAppData.mupencheat_default,
-                            mUserPrefs.usrcheat_txt, mAppData.mupencheat_txt );
-                }
                 
                 // Launch the GalleryActivity, passing ROM path if it was provided externally
                 Intent intent = new Intent( SplashActivity.this, GalleryActivity.class );
