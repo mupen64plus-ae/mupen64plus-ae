@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.cheat;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -28,6 +29,7 @@ import paulscode.android.mupen64plusae.cheat.CheatFile.CheatBlock;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatCode;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.content.Context;
 import android.text.TextUtils;
@@ -44,6 +46,65 @@ public class CheatUtils
     }
     
     public static int numberOfSystemCheats = 0;
+    
+    public static void mergeCheatFiles( String defaultpath, String userpath, String volatilepath )
+    {
+        // Copy the default cheat data to the volatile location
+        File cheat_volatile = new File( volatilepath );
+        File cheat_default = new File( defaultpath );
+        FileUtil.copyFile( cheat_default, cheat_volatile );
+        
+        // Merge user cheats if they exist
+        File cheat_user = new File( userpath );
+        if( cheat_user.exists() )
+        {
+            CheatFile cheat_v = new CheatFile( volatilepath );
+            CheatFile cheat_d = new CheatFile( defaultpath );
+            CheatFile cheat_u = new CheatFile( userpath );
+            
+            String[] keys = cheat_u.keySet().toArray( new String[0] );
+            for( int i = 0; i < keys.length; i++ )
+            {
+                if( !keys[i].equals( "[<sectionless!>]" ) )
+                {
+                    CheatSection cheat_section_v = cheat_v.match( keys[i] );
+                    CheatSection cheat_section_d = cheat_d.match( keys[i] );
+                    CheatSection cheat_section_u = cheat_u.match( keys[i] );
+                    if( ( cheat_section_u != null ) ) // Nothing to update if null
+                    {
+                        if( cheat_section_v == null )
+                        {
+                            String name = "";
+                            if( cheat_section_d != null )
+                            {
+                                name = cheat_section_d.goodName;
+                            }
+                            else
+                            {
+                                name = cheat_section_u.goodName;
+                            }
+                            cheat_section_v = new CheatSection( keys[i].substring( 0, 17 ), name,
+                                    keys[i].substring( 20 ) );
+                            cheat_v.add( cheat_section_v );
+                        }
+                        cheat_section_v.clear();
+                        if( cheat_section_d != null )
+                        {
+                            for( int o = 0; o < cheat_section_d.size(); o++ )
+                            {
+                                cheat_section_v.add( cheat_section_d.get( o ) );
+                            }
+                        }
+                        for( int o = 0; o < cheat_section_u.size(); o++ )
+                        {
+                            cheat_section_v.add( cheat_section_u.get( o ) );
+                        }
+                        cheat_v.save();
+                    }
+                }
+            }
+        }
+    }
     
     public static ArrayList<Cheat> populate( String crc, CheatFile mupencheat_txt,
             boolean isSystemDefault, Context con )
