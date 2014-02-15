@@ -69,7 +69,7 @@ public class CheatFile
     /** The name we use for the untitled section (preamble) of the cheat file. */
     public static final String NO_CRC = "[<sectionless!>]";
     
-    private String mFilename;  // Name of the cheat file.
+    private final String mFilename;  // Name of the cheat file.
     private final HashMap<String, CheatSection> mCheatMap; // Sections mapped by CRC for easy lookup
     private final LinkedList<CheatSection> mCheatList;     // Sections in the proper order for easy saving
 
@@ -80,10 +80,10 @@ public class CheatFile
      */
     public CheatFile( String filename )
     {
-        this.mFilename = filename;
+        mFilename = filename;
         mCheatMap = new HashMap<String, CheatFile.CheatSection>();
         mCheatList = new LinkedList<CheatFile.CheatSection>();
-        load( filename );
+        reload();
     }
 
     /**
@@ -134,16 +134,16 @@ public class CheatFile
     }
 
     /**
-     * Reads the entire cheat file, and saves the data in 'mCheatMap' and 'mCheatList'.
-     * 
-     * @param filename The cheat file to read from.
+     * Re-loads the entire cheat file, overwriting any unsaved changes, and saves the data in
+     * 'mCheatMap' and 'mCheatList'.
      * 
      * @return True if successful.
+     * @see #save()
      */
-    public boolean load( String filename )
+    public boolean reload()
     {   
         // Make sure a file was actually specified
-        if( TextUtils.isEmpty( filename ) )
+        if( TextUtils.isEmpty( mFilename ) )
             return false;
         
         // Free any previously loaded data
@@ -152,7 +152,7 @@ public class CheatFile
         FileInputStream fstream;
         try
         {
-            fstream = new FileInputStream( filename );
+            fstream = new FileInputStream( mFilename );
         }
         catch( FileNotFoundException fnfe )
         {
@@ -199,6 +199,7 @@ public class CheatFile
      * Saves the data from 'mCheatList' back to the cheat file.
      * 
      * @return True if successful. False otherwise.
+     * @see #reload()
      */
     public boolean save()
     {
