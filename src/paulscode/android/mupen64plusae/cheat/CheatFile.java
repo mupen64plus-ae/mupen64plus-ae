@@ -66,6 +66,9 @@ import android.util.Log;
  */
 public class CheatFile
 {
+    /** The name we use for the untitled section (preamble) of the cheat file. */
+    public static final String NO_CRC = "[<sectionless!>]";
+    
     private String mFilename;  // Name of the cheat file.
     private HashMap<String, CheatSection> mCheatMap; // Sections mapped by CRC for easy lookup
     private LinkedList<CheatSection> mCheatList;     // Sections in the proper order for easy saving
@@ -176,7 +179,7 @@ public class CheatFile
         DataInputStream in = new DataInputStream( fstream );
         BufferedReader br = new BufferedReader( new InputStreamReader( in ) );
 
-        String crc = "[<sectionless!>]";
+        String crc = NO_CRC;
         CheatSection section = new CheatSection( crc, br ); // Read the 'sectionless' section
         mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
         mCheatList.add( section ); // Add it to the list as well
@@ -252,7 +255,7 @@ public class CheatFile
                 if( section != null )
                 {
                     section.save( fw );
-                    if( !TextUtils.isEmpty( section.crc ) && !section.crc.equals( "[<sectionless!>]" ) )
+                    if( !TextUtils.isEmpty( section.crc ) && !section.crc.equals( NO_CRC ) )
                     {
                         // Insert blank line between sections
                         line = new CheatLine( CheatLine.LINE_GARBAGE, "\n", null );
@@ -660,7 +663,7 @@ public class CheatFile
             cheats = new LinkedList<CheatBlock>();
             lines = new LinkedList<CheatLine>();
             
-            if( !TextUtils.isEmpty( crc ) && !crc.equals( "[<sectionless!>]" ) )
+            if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
             {
                 lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "-C:"+countryCode+"\n", null ) );
                 lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, "gn "+ name +"\n", null ) );
@@ -684,7 +687,7 @@ public class CheatFile
             cheats = new LinkedList<CheatBlock>();
             lines = new LinkedList<CheatLine>();
 
-            if( !TextUtils.isEmpty( crc ) && !crc.equals( "[<sectionless!>]" ) )
+            if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
             {
                 lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "\n", null ) );
             }

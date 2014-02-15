@@ -65,7 +65,7 @@ public class CheatUtils
             String[] keys = cheat_u.keySet().toArray( new String[0] );
             for( int i = 0; i < keys.length; i++ )
             {
-                if( !keys[i].equals( "[<sectionless!>]" ) )
+                if( !keys[i].equals( CheatFile.NO_CRC ) )
                 {
                     CheatSection cheat_section_v = cheat_v.match( keys[i] );
                     CheatSection cheat_section_d = cheat_d.match( keys[i] );
