@@ -292,7 +292,7 @@ public class CheatFile
         private LinkedList<CheatLine> lines;
         
         // The next cheat section, or null if there are no sections left to read in the file:
-        public String nextCrc = null;
+        private String nextCrc = null;
         
         /**
          * Constructor: Creates an empty cheat section
