@@ -20,14 +20,13 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
-import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
+import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -37,10 +36,9 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.RomDetail;
-import paulscode.android.mupen64plusae.util.RomHeader;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -86,7 +84,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // ROM info
     private String mRomPath = null;
-    private RomHeader mRomHeader = null;
     private RomDetail mRomDetail = null;
     
     // Preference menu items
@@ -129,7 +126,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Get the detailed info about the ROM
         mRomDetail = RomDetail.lookupByMd5( romMd5 );
-        mRomHeader = new RomHeader( new File( mRomPath ) );
         
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );
