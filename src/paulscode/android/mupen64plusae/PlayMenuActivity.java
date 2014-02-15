@@ -108,11 +108,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Get the ROM path and MD5 that was passed to the activity
         Bundle extras = getIntent().getExtras();
         if( extras == null )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         mRomPath = extras.getString( Keys.Extras.ROM_PATH );
         String romMd5 = extras.getString( Keys.Extras.ROM_MD5 );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( romMd5 ) )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting PlayMenuActivity" );
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         
         // Initialize MOGA controller API
         mMogaController.init();
@@ -163,7 +163,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( mRomDetail.players == 1 )
         {
             // Simplify name of "controller 1" to just "controller" to eliminate confusion
-            findPreference(CONTROLLER_PROFILE1).setTitle( R.string.controllerProfile_title );
+            findPreference( CONTROLLER_PROFILE1 ).setTitle( R.string.controllerProfile_title );
             
             // Remove unneeded preference items
             PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE2 );
@@ -220,6 +220,13 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         {
             refreshCheatsCategory();
         }
+    }
+    
+    @Override
+    protected void onActivityResult( int requestCode, int resultCode, Intent data )
+    {
+        if( requestCode == 111 )
+            refreshCheatsCategory();
     }
     
     private void refreshViews()
@@ -338,8 +345,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             return;
         }
         ArrayList<Cheat> cheats = new ArrayList<Cheat>();
-        cheats.addAll(CheatUtils.populate(crc, mupencheat_txt, true, this));
+        cheats.addAll( CheatUtils.populate( crc, mupencheat_txt, true, this ) );
         CheatUtils.reset();
+        
         // Layout the menu, populating it with appropriate cheat options
         for( int i = 0; i < cheats.size(); i++ )
         {
@@ -374,15 +382,17 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private void launchGame( boolean isRestarting )
     {
-        // Popup the multi-player dialog if necessary and abort if any players don't have a controller assigned
+        // Popup the multi-player dialog if necessary and abort if any players are unassigned
         if( mRomDetail.players > 1 && mGamePrefs.playerMap.isEnabled()
                 && mUserPrefs.getPlayerMapReminder() )
         {
             mGamePrefs.playerMap.removeUnavailableMappings();
             boolean needs1 = mGamePrefs.isControllerEnabled1 && !mGamePrefs.playerMap.isMapped( 1 );
             boolean needs2 = mGamePrefs.isControllerEnabled2 && !mGamePrefs.playerMap.isMapped( 2 );
-            boolean needs3 = mGamePrefs.isControllerEnabled3 && !mGamePrefs.playerMap.isMapped( 3 ) && mRomDetail.players > 2;
-            boolean needs4 = mGamePrefs.isControllerEnabled4 && !mGamePrefs.playerMap.isMapped( 4 ) && mRomDetail.players > 3;
+            boolean needs3 = mGamePrefs.isControllerEnabled3 && !mGamePrefs.playerMap.isMapped( 3 )
+                    && mRomDetail.players > 2;
+            boolean needs4 = mGamePrefs.isControllerEnabled4 && !mGamePrefs.playerMap.isMapped( 4 )
+                    && mRomDetail.players > 3;
             
             if( needs1 || needs2 || needs3 || needs4 )
             {
@@ -442,9 +452,4 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         return cheatArgs;
     }
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	if(requestCode==111)
-    		refreshCheatsCategory();
-  	}
 }
-

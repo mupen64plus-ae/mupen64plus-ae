@@ -111,7 +111,8 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         mUserPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
-        // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
+        // Ensure that any missing preferences are populated with defaults (e.g. preference added to
+        // new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
         
         // Ensure that selected plugin names and other list preferences are valid
@@ -158,7 +159,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
     private final Runnable nonUiThreadLauncher = new Runnable()
     {
-    	
+        
         @Override
         public void run()
         {
@@ -183,8 +184,8 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
                 mAssetsExtracted = 0;
                 
-                failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir,
-                        SplashActivity.this );
+                failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR,
+                        mAppData.coreSharedDataDir, SplashActivity.this );
             }
             
             // Launch menu activity if successful; post failure notice otherwise
@@ -202,51 +203,53 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 if( !cheat_volatile.exists() )
                 {
                     FileUtil.copyFile( new File( mAppData.mupencheat_default ), cheat_volatile );
-                    if(new File(mUserPrefs.usrcheat_txt).exists())
+                    if( new File( mUserPrefs.usrcheat_txt ).exists() )
                     {
-                    CheatFile cheat_v = new CheatFile(mAppData.mupencheat_txt);
-                    CheatFile cheat_d = new CheatFile(mAppData.mupencheat_default);
-                    CheatFile cheat_u = new CheatFile(mUserPrefs.usrcheat_txt);
-                    String[] keys = cheat_u.keySet().toArray(new String[0]);
-                    for(int i = 0; i<keys.length; i++)
-                    {
-                    	if(!keys[i].equals("[<sectionless!>]"))
-                    	{
-                    	CheatSection cheat_section_v = cheat_v.match(keys[i]);
-                    	CheatSection cheat_section_d = cheat_d.match(keys[i]);
-                    	CheatSection cheat_section_u = cheat_u.match(keys[i]);
-                    	if((cheat_section_u!=null)) // Nothing to update if null
-                    	{
-                    		if(cheat_section_v == null)
-                    		{
-                    			String name="";
-                    			if(cheat_section_d!=null)
-                    			{
-                    				name=cheat_section_d.goodName;
-                    			}else{
-                    				name=cheat_section_u.goodName;
-                    			}
-                    			cheat_section_v = new CheatSection(keys[i].substring(0,17), name,keys[i].substring(20));
-                    			cheat_v.add(cheat_section_v);
-                    		}
-                    		cheat_section_v.clear();
-                			if(cheat_section_d!=null)
-                			{
-                				for(int o = 0; o<cheat_section_d.size(); o++)
-                				{
-                					cheat_section_v.add(cheat_section_d.get(o));
-                				}
-                			}
-                				for(int o = 0; o<cheat_section_u.size(); o++)
-                				{
-                					cheat_section_v.add(cheat_section_u.get(o));
-                				}
-                			cheat_v.save();
-                    	}
-                    	}
+                        CheatFile cheat_v = new CheatFile( mAppData.mupencheat_txt );
+                        CheatFile cheat_d = new CheatFile( mAppData.mupencheat_default );
+                        CheatFile cheat_u = new CheatFile( mUserPrefs.usrcheat_txt );
+                        String[] keys = cheat_u.keySet().toArray( new String[0] );
+                        for( int i = 0; i < keys.length; i++ )
+                        {
+                            if( !keys[i].equals( "[<sectionless!>]" ) )
+                            {
+                                CheatSection cheat_section_v = cheat_v.match( keys[i] );
+                                CheatSection cheat_section_d = cheat_d.match( keys[i] );
+                                CheatSection cheat_section_u = cheat_u.match( keys[i] );
+                                if( ( cheat_section_u != null ) ) // Nothing to update if null
+                                {
+                                    if( cheat_section_v == null )
+                                    {
+                                        String name = "";
+                                        if( cheat_section_d != null )
+                                        {
+                                            name = cheat_section_d.goodName;
+                                        }
+                                        else
+                                        {
+                                            name = cheat_section_u.goodName;
+                                        }
+                                        cheat_section_v = new CheatSection( keys[i].substring( 0,
+                                                17 ), name, keys[i].substring( 20 ) );
+                                        cheat_v.add( cheat_section_v );
+                                    }
+                                    cheat_section_v.clear();
+                                    if( cheat_section_d != null )
+                                    {
+                                        for( int o = 0; o < cheat_section_d.size(); o++ )
+                                        {
+                                            cheat_section_v.add( cheat_section_d.get( o ) );
+                                        }
+                                    }
+                                    for( int o = 0; o < cheat_section_u.size(); o++ )
+                                    {
+                                        cheat_section_v.add( cheat_section_u.get( o ) );
+                                    }
+                                    cheat_v.save();
+                                }
+                            }
+                        }
                     }
-                    }
-                    
                 }
                 
                 // Launch the GalleryActivity, passing ROM path if it was provided externally
@@ -264,7 +267,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
                 // There was an error, update the on-screen text and don't start next activity
                 String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
                 String message = getString( R.string.assetExtractor_failed, weblink );
-                String textHtml =  message.replace( "\n", "<br/>" )+ "<p><small>";
+                String textHtml = message.replace( "\n", "<br/>" ) + "<p><small>";
                 for( ExtractionFailure failure : failures )
                 {
                     textHtml += failure.toString() + "<br/>";
@@ -292,7 +295,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     /**
      * Update the status text from the UI thread.
      * 
-     * @param resId      The resource ID for the format string.
+     * @param resId The resource ID for the format string.
      * @param formatArgs The format arguments that will be used for substitution.
      */
     private void updateText( int resId, Object... formatArgs )
@@ -300,7 +303,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         final String text = getString( resId, formatArgs );
         updateText( text );
     }
-
+    
     /**
      * Update the status text from the UI thread.
      * 
