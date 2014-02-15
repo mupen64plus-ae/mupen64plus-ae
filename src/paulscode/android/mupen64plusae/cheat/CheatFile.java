@@ -70,8 +70,8 @@ public class CheatFile
     public static final String NO_CRC = "[<sectionless!>]";
     
     private String mFilename;  // Name of the cheat file.
-    private HashMap<String, CheatSection> mCheatMap; // Sections mapped by CRC for easy lookup
-    private LinkedList<CheatSection> mCheatList;     // Sections in the proper order for easy saving
+    private final HashMap<String, CheatSection> mCheatMap; // Sections mapped by CRC for easy lookup
+    private final LinkedList<CheatSection> mCheatList;     // Sections in the proper order for easy saving
 
     /**
      * Constructor: Reads the entire cheat file, and saves the data in 'mCheatMap'.
@@ -81,6 +81,8 @@ public class CheatFile
     public CheatFile( String filename )
     {
         this.mFilename = filename;
+        mCheatMap = new HashMap<String, CheatFile.CheatSection>();
+        mCheatList = new LinkedList<CheatFile.CheatSection>();
         load( filename );
     }
 
@@ -93,10 +95,6 @@ public class CheatFile
      */
     public CheatSection match( String regex )
     {
-        // No cheats to look up.. quit
-        if( mCheatMap == null )
-            return null;
-        
         String crc;
         Set<String> keys = mCheatMap.keySet();
 
@@ -123,9 +121,6 @@ public class CheatFile
      */
     public CheatSection get( String crc )
     {
-        if( mCheatMap == null )
-            return null;  // No cheats to look up.. quit
-        
         return mCheatMap.get( crc );
     }
 
@@ -134,11 +129,8 @@ public class CheatFile
      */
     public void clear()
     {
-        if( mCheatMap != null )
-            mCheatMap.clear();
-        
-        if( mCheatList != null )
-            mCheatList.clear();  // Ready to start fresh
+        mCheatMap.clear();
+        mCheatList.clear();  // Ready to start fresh
     }
 
     /**
@@ -156,14 +148,6 @@ public class CheatFile
         
         // Free any previously loaded data
         clear();
-        
-        // Create the mCheatMap if it hasn't been already
-        if( mCheatMap == null )
-            mCheatMap = new HashMap<String, CheatSection>();
-        
-        // Create the mCheatList if it hasn't been already
-        if( mCheatList == null )
-            mCheatList = new LinkedList<CheatSection>();
         
         FileInputStream fstream;
         try
@@ -222,13 +206,6 @@ public class CheatFile
         if( TextUtils.isEmpty( mFilename ) )
         {
             Log.e( "CheatFile", "Filename not specified in method save()" );
-            return false;   // Quit
-        }
-        
-        // No cheats to save.
-        if( mCheatList == null )
-        {
-            Log.e( "CheatFile", "No cheats to save in method save()" );
             return false;   // Quit
         }
         
