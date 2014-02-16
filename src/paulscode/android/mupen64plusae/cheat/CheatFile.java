@@ -21,12 +21,14 @@
 package paulscode.android.mupen64plusae.cheat;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -207,10 +209,10 @@ public class CheatFile
             return false; // Quit
         }
         
-        FileWriter fw = null;
+        Writer fw = null;
         try
         {
-            fw = new FileWriter( mFilename );
+            fw = new BufferedWriter( new FileWriter( mFilename ) );
             CheatLine line;
             
             // Loop through the sections
@@ -515,7 +517,7 @@ public class CheatFile
          * 
          * @throws IOException if a writing error occurs.
          */
-        private void save( FileWriter fw ) throws IOException
+        private void save( Writer fw ) throws IOException
         {
             for( CheatLine line : lines )
             {
@@ -561,7 +563,7 @@ public class CheatFile
          * 
          * @throws IOException If a writing error occurs.
          */
-        public void save( FileWriter fw ) throws IOException
+        public void save( Writer fw ) throws IOException
         {
             if( lineType == CHEAT_BLOCK )
             {
@@ -570,7 +572,7 @@ public class CheatFile
             }
             else
             {
-                fw.write( strLine );
+                fw.append( strLine );
             }
         }
     }
@@ -785,12 +787,12 @@ public class CheatFile
          * 
          * @throws IOException If a writing error occurs.
          */
-        public void save( FileWriter fw ) throws IOException
+        public void save( Writer fw ) throws IOException
         {
-            fw.write( " cn " + name + "\n" );
+            fw.append( " cn " ).append( name ).append( '\n' );
             if( description != null )
             {
-                fw.write( "  cd " + description + "\n" );
+                fw.append( "  cd " ).append( description ).append( '\n' );
             }
             // Loop through the codes and save them
             for( CheatCode code : codes )
@@ -831,27 +833,20 @@ public class CheatFile
          * 
          * @throws IOException If a writing error occurs.
          */
-        private void save( FileWriter fw ) throws IOException
+        private void save( Writer fw ) throws IOException
         {
-            String line = "  " + address + " " + code;
+            fw.append( "  " ).append( address ).append( ' ' ).append( code );
             if( options != null )
             {
-                boolean firstOption = true;
+                char delimiter = ' ';
                 for( CheatOption option : options )
                 {
-                    if( firstOption )
-                    {
-                        firstOption = false;
-                        line += " ";
-                    }
-                    else
-                    {
-                        line += ",";
-                    }
-                    line += option.code + ":\"" + option.name + "\"";
+                    fw.append( delimiter ).append( option.code ).append( ':' );
+                    fw.append( '"' ).append( option.name ).append('"');
+                    delimiter = ',';
                 }
             }
-            fw.write( line + "\n" );
+            fw.append( '\n' );
         }
     }
     
