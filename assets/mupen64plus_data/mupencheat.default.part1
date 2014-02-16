@@ -982,8 +982,6 @@ gn RAINBOW SIX
   8103A180 2400
 
 crc 204EC022-B119D185-C:45
-
-crc 204EC022-B119D185-C:45
 gn Tony Hawk's Pro Skater (U)
  cn Officer Dick\Have All\Tapes
   50000901 0000
@@ -1136,7 +1134,7 @@ gn Tony Hawk's Pro Skater (U)
  cn Player 2\Super Max\Turning
   800D5625 FFFF
  cn Player 1\Play As
-  800D03D4 ????  00 :"ony Hawk", 01 :"ob Burnquist", 02 :"eoff Rowley", 03 :"ucky Lasek", 04 :"had Muska", 05 :"areem Campbell", 06 :"ndrew Reynolds", 07 :"une Glifberg", 08 :"amie Thomas", 09 :"lissa Steamer", 0A :"fficer Dick"
+  800D03D4 ???? 0000:"Tony Hawk",0001:"Bob Burnquist",0002:"Geoff Rowley",0003:"Bucky Lasek",0004:"Chad Muska",0005:"Kareem Campbell",0006:"Andrew Reynolds",0007:"Rune Glifberg",0008:"Jamie Thomas",0009:"Elissa Steamer",000A:"Officer Dick"
  cn Player 2\Play As
   800D03D5 ???? 0000:"Tony Hawk",0001:"Bob Burnquist",0002:"Geoff Rowley",0003:"Bucky Lasek",0004:"Chad Muska",0005:"Kareem Campbell",0006:"Andrew Reynolds",0007:"Rune Glifberg",0008:"Jamie Thomas",0009:"Elissa Steamer",000A:"Officer Dick"
  cn Player 1\Have Perfect Balance
@@ -4034,7 +4032,7 @@ gn WWF No Mercy (U)
   D116C550 0000
   8116C552 0018
  cn Tables\Sabu Table
-  cd  Breakable/Fixable/Rebreakable/Refixable press Z to break, C-right + Cdown to fix
+  cd Breakable/Fixable/Rebreakable/Refixable press Z to break, C-right + Cdown to fix
   8116C49A 000C
   8116C49E 000C
   8116C4DC 43CC
@@ -4855,7 +4853,7 @@ gn GOLDENEYE
   80024337 001F
  cn All 64 Characters In Multi Player
   800266E7 0040
- cn Replace Cradle with Citadell hidden level 
+ cn Replace Cradle with Citadell hidden level
   80025E47 0029
   8103DB6A D9B4
   8103DB70 3F44
@@ -6265,7 +6263,7 @@ gn CONKER BFD
  cn Infinite\Bags In Heist
   800E1004 00FF
  cn Access All\Characters & Weapons In Multi Race
-  810EA122 ??FF00FF:"All Characters & Baseball bat",00FB:"All Characters & Frying Pan",00F3:"All Characters & Bones"
+  810EA122 ???? 00FF:"All Characters & Baseball bat",00FB:"All Characters & Frying Pan",00F3:"All Characters & Bones"
  cn Infinite\Bombs
   802059EA 0030
  cn Infinite\Max Kills Player 1
@@ -7350,7 +7348,7 @@ gn Glover
   812912A8 03E8
  cn Have Spell\Sticky Fingers Spell
   812912B2 03E8
- cn All levels unlocked 
+ cn All levels unlocked
   cd At the main menu, where it says:  Start, practice, options, &  time trial,  hold  D-pad up,   then the glove,  playing-with-the-ball icon, will  jump down into the lower left corner of the screen, then press the A button, and a level select screen will be available with all ordinary and boss levels, etc. available
   80298CFD 00A0
  cn Cheat Modifier\1
@@ -7690,7 +7688,7 @@ gn JET FORCE GEMINI
   80208B8C 00FF
   80208B8D 00FF
  cn All Single Player Levels Unlocked
-  cd  All Charcters
+  cd All Charcters
   80208AA0 00FF
   80208AA1 00FF
   80208B16 00FF
@@ -11030,7 +11028,7 @@ crc 20B53662-7B61899F-C:50
 gn South Park (E)
  cn Have Cheats Menu
   800D77D6 01FF
- cn Infinite Energy 
+ cn Infinite Energy
   802FD209 0064
  cn Infinite Credits
   802FD215 0064
@@ -11038,9 +11036,9 @@ gn South Park (E)
   802FD223 0064
  cn Infinite Suckers
   802FD222 0064
- cn Infinite Balls 
+ cn Infinite Balls
   802FD21F 0064
- cn Start with 9999 Monster Score 
+ cn Start with 9999 Monster Score
   812FD20E 270F
 
 crc 4F8AFC3A-F7912DF2-C:50
@@ -11590,7 +11588,7 @@ gn Superman (E)
   8122CDDC 42C8
  cn Infinite Options\X-Ray Vision
   8122CDE0 42C8
- cn For More Time Press D-pad up 
+ cn For More Time Press D-pad up
   D00EA380 0008
   8115F0D2 1724
   D00EA380 0008
@@ -13595,7 +13593,7 @@ gn WWF No Mercy (E)
   D116C550 0000
   8116C552 0018
  cn Tables\Sabu Table
-  cd  Breakable/Fixable/Rebreakable/Refixable press Z to break, C-right + Cdown to fix
+  cd Breakable/Fixable/Rebreakable/Refixable press Z to break, C-right + Cdown to fix
   8116C49A 000C
   8116C49E 000C
   8116C4DC 43CC
@@ -14199,7 +14197,7 @@ gn Disney's Tarzan (F)
   cd On the main menu Scroll down to make CHEATS visible to go into Level Select.For in-Game Cheats,Pause gameplay.
   810DD50C 8001
  cn Infinite\Lives
-  800DD542 ???? 0003:"3 Lives",0063:"99 Lives"0003:"3 Lives",0063:"99 Lives"
+  800DD542 ???? 0003:"3 Lives",0063:"99 Lives"
  cn Have\All TARZAN Letters
   800DD515 00FF
  cn Have\Full Portrait
@@ -14472,7 +14470,7 @@ gn Disney's Tarzan (G)
   cd On the main menu Scroll down to make CHEATS visible to go into Level Select.For in-Game Cheats,Pause gameplay.
   810DD50C 8001
  cn Infinite\Lives
-  800DD542 ???? 0003:"3 Lives",0063:"99 Lives"0003:"3 Lives",0063:"99 Lives"
+  800DD542 ???? 0003:"3 Lives",0063:"99 Lives"
  cn Have\All TARZAN Letters
   800DD515 00FF
  cn Have\Full Portrait
@@ -14542,7 +14540,7 @@ gn South Park
  cn Have Cheats Menu
   cd Go into the Cheats From the main Menu & put on the Ones you want
   810CF716 01FF
- cn Infinite Energy 
+ cn Infinite Energy
   802FD209 0064
  cn Infinite Credits
   802FD215 0064
@@ -14550,9 +14548,9 @@ gn South Park
   802FD223 0064
  cn Infinite Suckers
   802FD222 0064
- cn Infinite Balls 
+ cn Infinite Balls
   802FD21F 0064
- cn Start with 9999 Monster Score 
+ cn Start with 9999 Monster Score
   812FD20E 270F
 
 crc 782A9075-E552631D-C:44
