@@ -27,8 +27,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -69,11 +69,8 @@ public class CheatFile
     /** Name of the cheat file. */
     private final String mFilename;
     
-    /** Sections mapped by CRC for easy lookup. */
-    private final HashMap<String, CheatSection> mCheatMap;
-    
-    /** Sections in the proper order for easy saving. */
-    private final LinkedList<CheatSection> mCheatList;
+    /** Sections mapped by CRC for easy lookup, with insertion order retained. */
+    private final LinkedHashMap<String, CheatSection> mCheatMap;
     
     /**
      * Constructor: Reads the entire cheat file, and saves the data in 'mCheatMap'.
@@ -83,8 +80,7 @@ public class CheatFile
     public CheatFile( String filename )
     {
         mFilename = filename;
-        mCheatMap = new HashMap<String, CheatFile.CheatSection>();
-        mCheatList = new LinkedList<CheatFile.CheatSection>();
+        mCheatMap = new LinkedHashMap<String, CheatFile.CheatSection>();
         reload();
     }
     
@@ -114,7 +110,6 @@ public class CheatFile
     public void add( CheatSection cheatSection )
     {
         mCheatMap.put( cheatSection.crc, cheatSection );
-        mCheatList.add( cheatSection );
     }
     
     /**
@@ -135,7 +130,6 @@ public class CheatFile
     public void clear()
     {
         mCheatMap.clear();
-        mCheatList.clear(); // Ready to start fresh
     }
     
     /**
@@ -171,7 +165,6 @@ public class CheatFile
         String crc = NO_CRC;
         CheatSection section = new CheatSection( crc, br ); // Read the 'sectionless' section
         mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
-        mCheatList.add( section ); // Add it to the list as well
         
         // Loop through reading the remaining sections
         while( !TextUtils.isEmpty( section.nextCrc ) )
@@ -182,7 +175,6 @@ public class CheatFile
             // Load the next section
             section = new CheatSection( crc, br );
             mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
-            mCheatList.add( section ); // Add it to the list as well
         }
         
         try
@@ -222,7 +214,7 @@ public class CheatFile
             CheatLine line;
             
             // Loop through the sections
-            for( CheatSection section : mCheatList )
+            for( CheatSection section : mCheatMap.values() )
             {
                 if( section != null )
                 {

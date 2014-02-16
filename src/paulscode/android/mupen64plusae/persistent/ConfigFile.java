@@ -28,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -60,11 +61,8 @@ public class ConfigFile
     /** Name of the config file. */
     private final String mFilename;
     
-    /** Sections mapped by title for easy lookup. */
-    private final HashMap<String, ConfigSection> mConfigMap;
-    
-    /** Sections in proper order for easy saving. */
-    private final LinkedList<ConfigSection> mConfigList;
+    /** Sections mapped by title for easy lookup, with insertion order retained. */
+    private final LinkedHashMap<String, ConfigSection> mConfigMap;
     
     /**
      * Reads the entire config file, and saves the data to internal collections for manipulation.
@@ -74,8 +72,7 @@ public class ConfigFile
     public ConfigFile( String filename )
     {
         mFilename = filename;
-        mConfigMap = new HashMap<String, ConfigSection>();
-        mConfigList = new LinkedList<ConfigSection>();
+        mConfigMap = new LinkedHashMap<String, ConfigSection>();
         reload();
     }
     
@@ -99,7 +96,6 @@ public class ConfigFile
      */
     public void remove( String sectionTitle )
     {
-        mConfigList.remove( mConfigMap.get( sectionTitle ) );
         mConfigMap.remove( sectionTitle );
     }
     
@@ -144,7 +140,6 @@ public class ConfigFile
             // Add a new section
             section = new ConfigSection( sectionTitle );
             mConfigMap.put( sectionTitle, section );
-            mConfigList.add( section );
         }
         section.put( parameter, value );
     }
@@ -155,7 +150,6 @@ public class ConfigFile
     public void clear()
     {
         mConfigMap.clear();
-        mConfigList.clear(); // Ready to start fresh
     }
     
     /**
@@ -192,7 +186,6 @@ public class ConfigFile
         ConfigSection section = new ConfigSection( sectionName, br ); // Read the 'sectionless'
                                                                       // section
         mConfigMap.put( sectionName, section ); // Save the data to 'configMap'
-        mConfigList.add( section ); // Add it to the list as well
         
         // Loop through reading the remaining sections
         while( !TextUtils.isEmpty( section.nextName ) )
@@ -203,7 +196,6 @@ public class ConfigFile
             // Load the next section
             section = new ConfigSection( sectionName, br );
             mConfigMap.put( sectionName, section ); // Save the data to 'configMap'
-            mConfigList.add( section ); // Add it to the list as well
         }
         
         try
@@ -242,7 +234,7 @@ public class ConfigFile
             fw = new FileWriter( mFilename );
             
             // Loop through the sections
-            for( ConfigSection section : mConfigList )
+            for( ConfigSection section : mConfigMap.values() )
             {
                 if( section != null )
                     section.save( fw );
