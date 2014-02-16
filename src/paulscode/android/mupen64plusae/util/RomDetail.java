@@ -85,17 +85,14 @@ public class RomDetail
         try
         {
             inputStream = new FileInputStream( file );
-            byte[] buffer = new byte[1024];
-            MessageDigest digest = MessageDigest.getInstance( "MD5" );
-            int numRead = 0;
-            while( numRead != -1 )
+            MessageDigest digester = MessageDigest.getInstance( "MD5" );
+            byte[] bytes = new byte[8192];
+            int byteCount;
+            while( ( byteCount = inputStream.read( bytes ) ) > 0 )
             {
-                numRead = inputStream.read( buffer );
-                if( numRead > 0 )
-                    digest.update( buffer, 0, numRead );
+                digester.update( bytes, 0, byteCount );
             }
-            byte[] md5Bytes = digest.digest();
-            return convertHashToString( md5Bytes );
+            return convertHashToString( digester.digest() );
         }
         catch( Exception e )
         {
