@@ -844,6 +844,82 @@ public class CheatFile
             }
             writer.append( '\n' );
         }
+        
+        /**
+         * Returns the cheat option at the specified index in this cheat block.
+         * 
+         * @param index zero-based index
+         * @return null if index is invalid
+         */
+        public CheatOption get( int index )
+        {
+            try
+            {
+                return options.get( index );
+            }
+            catch( IndexOutOfBoundsException e )
+            {
+                return null;
+            }
+        }
+        
+        /**
+         * Adds a new cheat option to the end of this cheat block.
+         * 
+         * @param option the cheat option to add
+         * @return false if there was a problem
+         */
+        public boolean add( CheatOption option )
+        {
+            return options.add( option );
+        }
+        
+        /**
+         * Adds a new cheat option at the specified index in this cheat block.
+         * 
+         * @param index zero-based index
+         * @param option the cheat option to add
+         * @return false if index is invalid
+         */
+        public boolean add( int index, CheatOption option )
+        {
+            try
+            {
+                options.add( index, option );
+            }
+            catch( IndexOutOfBoundsException e )
+            {
+                return false;
+            }
+            return true;
+        }
+        
+        /**
+         * Removes the cheat option at the specified index in this cheat block.
+         * 
+         * @param index zero-based index
+         * @return false if index is invalid
+         */
+        public boolean remove( int index )
+        {
+            try
+            {
+                options.remove( index );
+            }
+            catch( IndexOutOfBoundsException e )
+            {
+                return false;
+            }
+            return true;
+        }
+        
+        /**
+         * Removes all cheat options from this cheat block.
+         */
+        public void clear()
+        {
+            options.clear();
+        }
     }
     
     /**
