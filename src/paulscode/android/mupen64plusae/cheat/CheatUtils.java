@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.cheat;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 import paulscode.android.mupen64plusae.R;
@@ -49,16 +50,23 @@ public class CheatUtils
     
     public static void mergeCheatFiles( String defaultpath, String userpath, String volatilepath )
     {
+        long start = new Date().getTime();
+        
         // Reset the volatile cheatfile to the default data
         File cheat_volatile = new File( volatilepath );
         File cheat_default = new File( defaultpath );
         FileUtil.copyFile( cheat_default, cheat_volatile );
+        
+        long step1 = new Date().getTime();
+        long step2 = 0;
+        long step3 = 0;
         
         // Merge user cheats if they exist
         File cheat_user = new File( userpath );
         if( cheat_user.exists() )
         {
             CheatFile cheat_v = new CheatFile( volatilepath );
+            step2 = new Date().getTime();
             CheatFile cheat_u = new CheatFile( userpath );
             
             for( String key : cheat_u.keySet() )
@@ -86,8 +94,15 @@ public class CheatUtils
                     }
                 }
             }
+            step3 = new Date().getTime();
             cheat_v.save();
         }
+        long end = new Date().getTime();
+        Log.v( "CheatUtils", "Copy time: " + ( step1 - start ) + "ms" );
+        Log.v( "CheatUtils", "Load time: " + ( step2 - step1 ) + "ms" );
+        Log.v( "CheatUtils", "Fill time: " + ( step3 - step2 ) + "ms" );
+        Log.v( "CheatUtils", "Save time: " + ( end - step3 ) + "ms" );
+        Log.v( "CheatUtils", "Total time: " + ( end - start ) + "ms" );
     }
     
     public static ArrayList<Cheat> populate( String crc, CheatFile mupencheat_txt,
