@@ -38,27 +38,37 @@ import android.text.TextUtils;
 import android.util.Log;
 
 /**
- * The CheatFile class is used to read and write in the unique syntax of mupencheat.txt
- * (Replaces previous process of using the ConfigFile class to read from mupen64plus.cht)
- * </p>
+ * The CheatFile class is used to read and write in the unique syntax of mupencheat.txt.
+ * <p>
  * The file must follow a specific syntax:
  * <ul>
- * <li>There is a space between each parameter and value.  Value is not quoted and may contain spaces (ex: cn Epic Win).  EXCEPTION: cheat options.
- * <li>ROM sections are not indented, beginning with "crc" followed by the CRC (ex: crc 01A23456-789012B3-C:4A).  
+ * <li>There is a space between each parameter and value. Value is not quoted and may contain spaces
+ * (ex: cn Epic Win). EXCEPTION: cheat options.
+ * <li>ROM sections are not indented, beginning with "crc" followed by the CRC (ex: crc
+ * 01A23456-789012B3-C:4A).
  * <li>The crc line is immediately followed by the ROM "good name" line.
- * <li>ROM "good name" lines are not indented, beginning with "gn" followed by the name (ex: gn Cool Game (U) (V1.0)). 
- * <li>Code names are indented one space.  They begin with "cn" followed by the code name (ex: cn Kill everything).
- * <li>Code description lines are optional.  When present, they immediately follow the code name line.
- * <li>Code description lines are indented two spaces, and begin with "cd" followed by the description. (ex: cd This cheat is for wimps).
- * <li>Code lines immediately follow the code description line (or code name line if description not present).
- * <li>Code lines are indented two spaces, and begin with a memory address followed by a value. (ex: 12345678 9012).
- * <li>Codes that contain options use four question marks for the value, followed by the cheat options (ex: 12345678 ???? 9012:"Do this",ABFE:"Do that").
- * <li>Cheat options are comma-separated.  They consist of the value, a colon, then the option string in quotes (ex: 12345678 ???? 9012:"Do this",ABFE:"Do that").
+ * <li>ROM "good name" lines are not indented, beginning with "gn" followed by the name (ex: gn Cool
+ * Game (U) (V1.0)).
+ * <li>Code names are indented one space. They begin with "cn" followed by the code name (ex: cn
+ * Kill everything).
+ * <li>Code description lines are optional. When present, they immediately follow the code name
+ * line.
+ * <li>Code description lines are indented two spaces, and begin with "cd" followed by the
+ * description. (ex: cd This cheat is for wimps).
+ * <li>Code lines immediately follow the code description line (or code name line if description not
+ * present).
+ * <li>Code lines are indented two spaces, and begin with a memory address followed by a value. (ex:
+ * 12345678 9012).
+ * <li>Codes that contain options use four question marks for the value, followed by the cheat
+ * options (ex: 12345678 ???? 9012:"Do this",ABFE:"Do that").
+ * <li>Cheat options are comma-separated. They consist of the value, a colon, then the option string
+ * in quotes (ex: 12345678 ???? 9012:"Do this",ABFE:"Do that").
  * <li>There is a blank line between ROM sections.
  * <li>Leading and trailing whitespace in lines, param names, and values is discarded.
- * <li>Whitespace between words in a value or inside double-quoted cheat option strings is not discarded.
+ * <li>Whitespace between words in a value or inside double-quoted cheat option strings is not
+ * discarded.
  * </ul>
- *
+ * 
  * @author Paul Lamb
  */
 public class CheatFile
@@ -66,106 +76,112 @@ public class CheatFile
     /** The name we use for the untitled section (preamble) of the cheat file. */
     public static final String NO_CRC = "[<sectionless!>]";
     
-    /** Name of the cheat file. */
+    /** The regular expression pattern for parsing a cheat option from disk. */
+    private static final String PATTERN_CHEAT_OPTION = "[0-9a-fA-F]{4}:\"([^\\\\\"]*(\\\\\")*)*\\\"";
+    
+    /** Path of the cheat file. */
     private final String mFilename;
     
-    /** Sections mapped by CRC for easy lookup, with insertion order retained. */
-    private final LinkedHashMap<String, CheatSection> mCheatMap;
+    /** Cheat sections mapped by CRC for easy lookup, with insertion order retained. */
+    private final LinkedHashMap<String, CheatSection> mSections;
     
     /**
-     * Constructor: Reads the entire cheat file, and saves the data in 'mCheatMap'.
+     * Constructs a {@link CheatFile} object and reads the data from disk into memory.
      * 
-     * @param filename The cheat file to read from.
+     * @param filename the path of the file to load
      */
     public CheatFile( String filename )
     {
         mFilename = filename;
-        mCheatMap = new LinkedHashMap<String, CheatFile.CheatSection>();
+        mSections = new LinkedHashMap<String, CheatFile.CheatSection>();
         reload();
     }
     
     /**
-     * Looks up a cheat section that matches the specified regex (not necessarily the only match).
+     * Returns the first cheat section whose CRC matches the specified regular expression (not
+     * necessarily the only match).
      * 
-     * @param regex A regular expression to match a section title from.
+     * @param pattern a regular expression to match the CRC to
      * 
-     * @return CheatSection containing parameters for a cheat section that matches, or null if no
-     *         matches were found.
+     * @return cheat section whose CRC matches the given regex, or null if no match was found
      */
-    public CheatSection match( String regex )
+    public CheatSection match( String pattern )
     {
-        String crc;
-        Set<String> keys = mCheatMap.keySet();
-        
-        for( String key : keys )
+        for( String crc : mSections.keySet() )
         {
-            crc = key;
-            if( crc.matches( regex ) )
-                return mCheatMap.get( crc );
+            if( crc.matches( pattern ) )
+                return mSections.get( crc );
         }
-        
         return null;
     }
     
-    public void add( CheatSection cheatSection )
+    /**
+     * Adds a cheat section to memory. If a cheat section with that CRC already exists in memory, it
+     * will be overwritten. Note that the operation is not actually persisted to disk until the
+     * {@link #save()} method is called.
+     * 
+     * @param section the cheat section to add/replace in memory
+     */
+    public void add( CheatSection section )
     {
-        mCheatMap.put( cheatSection.crc, cheatSection );
+        mSections.put( section.crc, section );
     }
     
     /**
-     * Looks up a cheat section by CRC.
+     * Returns the cheat section with the specified CRC.
      * 
-     * @param crc ROM CRC.
+     * @param crc the CRC of the cheat section to get
      * 
-     * @return A CheatSection containing cheat codes, or null if not found.
+     * @return the cheat section with the given CRC, or null if not found
      */
     public CheatSection get( String crc )
     {
-        return mCheatMap.get( crc );
+        return mSections.get( crc );
     }
     
     /**
-     * Erases any previously loaded data.
+     * Removes all cheat sections from memory. Note that the operation is not actually persisted to
+     * disk until the {@link #save()} method is called.
      */
     public void clear()
     {
-        mCheatMap.clear();
+        mSections.clear();
     }
     
     /**
-     * Re-loads the entire cheat file, overwriting any unsaved changes, and saves the data in
-     * 'mCheatMap' and 'mCheatList'.
+     * Reloads the entire cheat file from disk into memory, overwriting any unsaved changes.
      * 
-     * @return True if successful.
+     * @return true if successful
      * @see #save()
      */
     public boolean reload()
     {
-        // Make sure a file was actually specified
+        // Make sure a file was specified in the constructor
         if( TextUtils.isEmpty( mFilename ) )
+        {
+            Log.e( "CheatFile", "Filename not specified in method reload()" );
             return false;
+        }
         
         // Free any previously loaded data
         clear();
         
-        BufferedReader br = null;
+        BufferedReader reader = null;
         try
         {
-            br = new BufferedReader( new FileReader( mFilename ) );
+            reader = new BufferedReader( new FileReader( mFilename ) );
             
+            // Read the 'sectionless' preamble section from disk
             String crc = NO_CRC;
-            CheatSection section = new CheatSection( crc, br ); // Read the 'sectionless' section
-            mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
+            CheatSection section = new CheatSection( crc, reader );
+            mSections.put( crc, section );
             
-            // Loop through reading the remaining sections
+            // Read the remaining sections from disk
             while( !TextUtils.isEmpty( section.nextCrc ) )
             {
-                // Get the next section name
                 crc = section.nextCrc;
-            
-                // Load the next section
-                section = new CheatSection( crc, br );
-                mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
+                section = new CheatSection( crc, reader );
+                mSections.put( crc, section );
             }
         }
         catch( FileNotFoundException e )
@@ -175,267 +191,263 @@ public class CheatFile
         }
         finally
         {
-            if( br != null )
+            if( reader != null )
             {
                 try
                 {
-                    br.close();
+                    reader.close();
                 }
                 catch( IOException ignored )
                 {
                 }
             }
         }
-        
-        // Success
         return true;
     }
     
     /**
-     * Saves the data from 'mCheatList' back to the cheat file.
+     * Writes the cheat data from memory back to disk.
      * 
-     * @return True if successful. False otherwise.
+     * @return true if successful
      * @see #reload()
      */
     public boolean save()
     {
-        // No filename was specified.
+        // Make sure a filename was specified in the constructor
         if( TextUtils.isEmpty( mFilename ) )
         {
             Log.e( "CheatFile", "Filename not specified in method save()" );
-            return false; // Quit
+            return false;
         }
         
-        Writer fw = null;
+        Writer writer = null;
         try
         {
-            fw = new BufferedWriter( new FileWriter( mFilename ) );
-            CheatLine line;
+            writer = new BufferedWriter( new FileWriter( mFilename ) );
             
-            // Loop through the sections
-            for( CheatSection section : mCheatMap.values() )
+            // Write each section to disk
+            for( CheatSection section : mSections.values() )
             {
                 if( section != null )
                 {
-                    section.save( fw );
+                    section.save( writer );
                     if( !TextUtils.isEmpty( section.crc ) && !section.crc.equals( NO_CRC ) )
                     {
                         // Insert blank line between sections
-                        line = new CheatLine( CheatLine.LINE_GARBAGE, "\n", null );
-                        line.save( fw );
                         // TODO: This saves an extra blank line at the end of the file.
                         // Make sure that doesn't cause problems during load or in the core.
+                        new CheatLine( CheatLine.LINE_GARBAGE, "\n", null ).save( writer );
                     }
                 }
             }
         }
-        catch( IOException ioe )
+        catch( IOException e )
         {
-            Log.e( "CheatFile", "IOException creating file " + mFilename + ", error message: "
-                    + ioe.getMessage() );
-            return false; // Some problem creating the file.. quit
+            Log.e( "CheatFile", "Error saving to " + mFilename + ": " + e.getMessage() );
+            return false;
         }
         finally
         {
-            if( fw != null )
+            if( writer != null )
             {
                 try
                 {
-                    fw.close();
+                    writer.close();
                 }
                 catch( IOException ignored )
                 {
                 }
             }
         }
-        
-        // Success
         return true;
     }
     
     /**
-     * Returns a handle to the mCheatMap keyset.
+     * Returns the set of keys (cheat section CRC's) contained in this cheat file.
      * 
-     * @return keyset containing all the cheat section CRCs.
+     * @return keyset containing all the cheat section CRCs
      */
     public Set<String> keySet()
     {
-        return mCheatMap.keySet();
+        return mSections.keySet();
     }
     
     /**
-     * The CheatSection class reads all the parameters in the next section of the cheat file. Saves
-     * the name of the next section (or null if end of file or error). Can also be used to add a new
-     * section to an existing cheat file.
+     * The CheatSection class encapsulates all cheat data for a given CRC.
      */
     public static class CheatSection
     {
-        // ROM crc
-        public String crc;
+        /** The CRC of the ROM this section pertains to. */
+        public final String crc;
         
-        // ROM "good name"
+        // TODO: Make this final
+        /** The "good name" of the ROM this section pertains to. */
         public String goodName = "";
         
-        // All the cheats in this section
-        private LinkedList<CheatBlock> cheats;
+        /** All cheat blocks in this section. */
+        private final LinkedList<CheatBlock> blocks;
         
-        // All the lines in the cheat section (including comments)
-        private LinkedList<CheatLine> lines;
+        /** All the raw lines of text in this section (including comments). */
+        private final LinkedList<CheatLine> lines;
         
-        // The next cheat section, or null if there are no sections left to read in the file:
+        // TODO: Make this final
+        /** The crc of the next cheat section, or null if no more sections are left. */
         private String nextCrc = null;
         
         /**
-         * Constructor: Creates an empty cheat section
+         * Constructs an empty {@link CheatSection} object.
          * 
-         * @param crc The ROM CRC.
+         * @param crc the CRC of the ROM this section pertains to
+         * @param name the "good name" of the ROM this section pertains to
+         * @param country the country code of the ROM this section pertains to
          */
-        public CheatSection( String crc, String name, String countryCode )
+        public CheatSection( String crc, String name, String country )
         {
-            cheats = new LinkedList<CheatBlock>();
-            lines = new LinkedList<CheatLine>();
-            
-            if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
-            {
-                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "-C:" + countryCode
-                        + "\n", null ) );
-                lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, "gn " + name + "\n", null ) );
-            }
             this.crc = crc;
             this.goodName = name;
+            this.blocks = new LinkedList<CheatBlock>();
+            this.lines = new LinkedList<CheatLine>();
+            
+            // Generate the header lines for this section
+            if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
+            {
+                lines.add( new CheatLine( CheatLine.LINE_CRC,
+                        "crc " + crc + "-C:" + country + "\n", null ) );
+                lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, "gn " + name + "\n", null ) );
+            }
         }
         
         // TODO: Clean this method up a bit?
         /**
-         * Constructor: Reads the next section of the cheat file, and saves it in 'cheats'.
+         * Constructs a {@link CheatSection} object, populating its fields by reading from disk.
          * 
-         * @param crc The ROM CRC.
-         * @param br The cheat file to read from.
+         * @param crc the CRC of the ROM this section pertains to
+         * @param reader the object providing disk read access
          */
-        public CheatSection( String crc, BufferedReader br )
+        private CheatSection( String crc, BufferedReader reader )
         {
-            String fullLine, strLine, cheatName;
-            CheatBlock cheatBlock;
-            
-            cheats = new LinkedList<CheatBlock>();
-            lines = new LinkedList<CheatLine>();
+            this.crc = crc;
+            this.blocks = new LinkedList<CheatBlock>();
+            this.lines = new LinkedList<CheatLine>();
             
             if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
             {
                 lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "\n", null ) );
             }
-            this.crc = crc;
             
-            // No file to read from. Quit.
-            if( br == null )
+            // No file to read from, quit
+            if( reader == null )
                 return;
             
             try
             {
-                while( ( fullLine = br.readLine() ) != null )
+                String fullLine;
+                while( ( fullLine = reader.readLine() ) != null )
                 {
-                    strLine = fullLine.trim();
-                    if( ( strLine.length() < 3 ) || ( strLine.substring( 0, 2 ).equals( "//" ) ) )
-                    { // A comment or blank line.
+                    String trimLine = fullLine.trim();
+                    if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
+                    {
+                        // A comment or blank line
                         lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine + "\n", null ) );
                     }
-                    else if( strLine.substring( 0, 2 ).equals( "gn" ) )
+                    else if( trimLine.substring( 0, 2 ).equals( "gn" ) )
                     {
-                        if( strLine.length() > 3 )
-                            goodName = strLine.substring( 3, strLine.length() ).trim();
+                        // ROM "good name"
+                        if( trimLine.length() > 3 )
+                            goodName = trimLine.substring( 3, trimLine.length() ).trim();
                         lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, fullLine + "\n", null ) );
                     }
-                    else if( strLine.substring( 0, 2 ).equals( "cn" ) )
+                    else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
                     {
-                        if( strLine.length() > 3 )
-                            cheatName = strLine.substring( 3, strLine.length() ).trim();
+                        // Cheat name
+                        String name;
+                        if( trimLine.length() > 3 )
+                            name = trimLine.substring( 3, trimLine.length() ).trim();
                         else
-                            cheatName = "";
+                            name = "";
                         
-                        while( !TextUtils.isEmpty( cheatName ) )
+                        while( !TextUtils.isEmpty( name ) )
                         {
-                            cheatBlock = new CheatBlock( cheatName, br, lines );
-                            lines.add( new CheatLine( CheatLine.CHEAT_BLOCK, "", cheatBlock ) );
-                            cheats.add( cheatBlock );
-                            cheatName = cheatBlock.nextName;
+                            CheatBlock block = new CheatBlock( name, reader, lines );
+                            lines.add( new CheatLine( CheatLine.CHEAT_BLOCK, "", block ) );
+                            blocks.add( block );
+                            name = block.nextName;
                         }
                     }
-                    else if( strLine.substring( 0, 3 ).equals( "crc" ) )
+                    else if( trimLine.substring( 0, 3 ).equals( "crc" ) )
                     {
-                        if( strLine.length() > 4 )
-                            nextCrc = strLine.substring( 4, strLine.length() ).trim();
-                        // Done reading section.
+                        // Start of the next cheat section, quit
+                        if( trimLine.length() > 4 )
+                            nextCrc = trimLine.substring( 4, trimLine.length() ).trim();
                         return;
                     }
                     else
                     {
-                        // This shouldn't happen (bad syntax). Quit.
+                        // This shouldn't happen (bad syntax), quit
+                        Log.w( "CheatSection", "Unknown syntax: " + fullLine );
                         return;
                     }
                 }
             }
-            catch( IOException ioe )
+            catch( IOException ignored )
             {
-                // (Don't care)
             }
-            
-            // Reached end of file or error.. either way, just quit
-            return;
         }
         
         /**
-         * Returns the number of cheats in this section.
+         * Returns the number of cheat blocks in this cheat section.
          * 
-         * @return Cheats count.
+         * @return the number of cheat blocks
          */
         public int size()
         {
-            return cheats.size();
+            return blocks.size();
         }
         
         /**
-         * Returns the cheat at the specified index.
+         * Returns the cheat block at the specified index in this cheat section.
          * 
-         * @param index Zero-based index.
-         * @return null if index is invalid.
+         * @param index zero-based index
+         * @return null if index is invalid
          */
         public CheatBlock get( int index )
         {
             try
             {
-                return cheats.get( index );
+                return blocks.get( index );
             }
-            catch( IndexOutOfBoundsException iobe )
+            catch( IndexOutOfBoundsException e )
             {
                 return null;
             }
         }
         
         /**
-         * Adds a new cheat to the end of this section.
+         * Adds a new cheat block to the end of this cheat section.
          * 
-         * @param cheatBlock The cheat to add.
-         * @return false if there was a problem.
+         * @param block the cheat block to add
+         * @return false if there was a problem
          */
-        public boolean add( CheatBlock cheatBlock )
+        public boolean add( CheatBlock block )
         {
-            boolean success = cheats.add( cheatBlock );
-            success = success && lines.add( new CheatLine( CheatLine.CHEAT_BLOCK, "", cheatBlock ) );
+            boolean success = blocks.add( block );
+            success &= lines.add( new CheatLine( CheatLine.CHEAT_BLOCK, "", block ) );
             return success;
         }
         
         /**
-         * Adds a new cheat to the specified index in this section.
+         * Adds a new cheat block at the specified index in this cheat section.
          * 
-         * @param cheatBlock The cheat to add.
-         * @return false if there was a problem.
+         * @param index zero-based index
+         * @param block the cheat block to add
+         * @return false if index is invalid
          */
-        public boolean add( int index, CheatBlock cheatBlock )
+        public boolean add( int index, CheatBlock block )
         {
-            CheatLine cheatLine = new CheatLine( CheatLine.CHEAT_BLOCK, "", cheatBlock );
+            CheatLine cheatLine = new CheatLine( CheatLine.CHEAT_BLOCK, "", block );
             try
             {
-                cheats.add( index, cheatBlock );
+                blocks.add( index, block );
                 int i = 0;
                 for( CheatLine line : lines )
                 {
@@ -450,7 +462,7 @@ public class CheatFile
                     }
                 }
             }
-            catch( IndexOutOfBoundsException iobe )
+            catch( IndexOutOfBoundsException e )
             {
                 return false;
             }
@@ -458,16 +470,16 @@ public class CheatFile
         }
         
         /**
-         * Removes the cheat at the specified index.
+         * Removes the cheat block at the specified index in this cheat section.
          * 
-         * @param index Zero-based index.
-         * @return false if there was a problem.
+         * @param index zero-based index
+         * @return false if index is invalid
          */
         public boolean remove( int index )
         {
             try
             {
-                cheats.remove( index );
+                blocks.remove( index );
                 int i = 0;
                 for( CheatLine line : lines )
                 {
@@ -482,7 +494,7 @@ public class CheatFile
                     }
                 }
             }
-            catch( IndexOutOfBoundsException iobe )
+            catch( IndexOutOfBoundsException e )
             {
                 return false;
             }
@@ -490,11 +502,12 @@ public class CheatFile
         }
         
         /**
-         * Removes all cheats.
+         * Removes all cheat blocks from this cheat section. Comments and other non-cheat lines are
+         * not removed.
          */
         public void clear()
         {
-            cheats.clear();
+            blocks.clear();
             Iterator<CheatLine> iterator = lines.iterator();
             CheatLine line;
             while( iterator.hasNext() )
@@ -508,18 +521,18 @@ public class CheatFile
         }
         
         /**
-         * Writes the entire section to file.
+         * Writes the entire cheat section to disk.
          * 
-         * @param fw File to write to.
+         * @param writer the object providing disk write access
          * 
-         * @throws IOException if a writing error occurs.
+         * @throws IOException if a write error occurs
          */
-        private void save( Writer fw ) throws IOException
+        private void save( Writer writer ) throws IOException
         {
             for( CheatLine line : lines )
             {
                 if( line != null )
-                    line.save( fw );
+                    line.save( writer );
             }
         }
     }
@@ -529,47 +542,58 @@ public class CheatFile
      */
     private static class CheatLine
     {
-        public static final int LINE_GARBAGE = 0; // Comment, whitespace, or blank line
-        public static final int LINE_CRC = 1; // CRC section
-        public static final int LINE_GOOD_NAME = 2; // ROM "good name"
-        public static final int CHEAT_BLOCK = 3; // Encapsulated cheat block (strLine will be empty)
+        /** Comment, whitespace, or blank line. */
+        private static final int LINE_GARBAGE = 0;
         
-        public int lineType = 0; // LINE_GARBAGE, LINE_SECTION, or LINE_PARAM.
-        public String strLine = ""; // Actual line from cheat file (or empty if this is a cheat
-                                    // block).
-        public CheatBlock cheatBlock = null; // Null unless this is a cheat block.
+        /** ROM CRC line. */
+        private static final int LINE_CRC = 1;
+        
+        /** ROM "good name" line. */
+        private static final int LINE_GOOD_NAME = 2;
+        
+        /** Encapsulated cheat block ({@link #rawText} will be empty). */
+        private static final int CHEAT_BLOCK = 3;
+        
+        /** The classification of this line (LINE_GARBAGE, LINE_CRC, LINE_GOOD_NAME, CHEAT_BLOCK). */
+        private final int lineType;
+        
+        /** The actual raw line of text from the cheat file (or empty if this is a cheat block). */
+        private final String rawText;
+        
+        /** The associated cheat block object, if this line encapsulates a cheat block. */
+        private final CheatBlock block;
         
         /**
-         * Constructor: Saves the relevant information about the line.
+         * Constructs a {@link CheatLine} object.
          * 
-         * @param type The type of line.
-         * @param line The line itself (empty if cheat block).
-         * @param param CheatBlock, if relevant.
+         * @param type the type of line (LINE_GARBAGE, LINE_CRC, LINE_GOOD_NAME, or CHEAT_BLOCK)
+         * @param rawText the raw line of text (empty if cheat block)
+         * @param param the associated cheat block object, if this line encapsulates a cheat block
          */
-        public CheatLine( int type, String line, CheatBlock block )
+        private CheatLine( int type, String rawText, CheatBlock block )
         {
-            lineType = type;
-            strLine = line;
-            cheatBlock = block;
+            this.lineType = type;
+            this.rawText = rawText;
+            this.block = block;
         }
         
         /**
-         * Saves the CheatLine.
+         * Writes the cheat line to disk.
          * 
-         * @param fw The file to save the CheatLine to.
+         * @param writer the object providing disk write access
          * 
-         * @throws IOException If a writing error occurs.
+         * @throws IOException if a write error occurs
          */
-        public void save( Writer fw ) throws IOException
+        private void save( Writer writer ) throws IOException
         {
             if( lineType == CHEAT_BLOCK )
             {
-                if( cheatBlock != null )
-                    cheatBlock.save( fw );
+                if( block != null )
+                    block.save( writer );
             }
             else
             {
-                fw.append( strLine );
+                writer.append( rawText );
             }
         }
     }
@@ -579,122 +603,125 @@ public class CheatFile
      */
     public static class CheatBlock
     {
-        public String name = null;
-        public String nextName = null;
+        /** The human-readable name of the cheat. */
+        public final String name;
+        
+        // TODO: Make this final
+        /** The human-readable description of the cheat. */
         public String description = null;
         
-        private LinkedList<CheatCode> codes;
+        // TODO: Make this final
+        /** The name of the next cheat. */
+        private String nextName = null;
+        
+        /** The cheat codes in this cheat block. */
+        private final LinkedList<CheatCode> codes;
         
         /**
-         * Constructor: Creates an empty cheat
+         * Constructs an empty {@CheatBlock} object.
          * 
-         * @param name The name of the cheat (required).
-         * @param description Description for the cheat (null for none).
+         * @param name the name of the cheat (required)
+         * @param description the description for the cheat (null for none).
          */
         public CheatBlock( String name, String description )
         {
             this.name = name;
             this.description = description;
-            codes = new LinkedList<CheatCode>();
+            this.codes = new LinkedList<CheatCode>();
         }
         
         /**
-         * Constructor: associates name, description, and codes recursively for every cheat in a
-         * section
+         * Constructs a {@CheatBlock} object, populating its fields by reading from
+         * disk.
          * 
-         * @param name The name of the cheat.
-         * @param br The cheat file to read from.
-         * @param lines Handle to the CheatSection lines list (to allow recursion in the
-         *            constructor).
-         * @param cheats Handle to the CheatSection cheats list (to allow recursion in the
-         *            constructor).
+         * @param name the name of the cheat (required)
+         * @param reader the object providing disk read access
+         * @param lines reference to the list of cheat lines in the cheat section (to allow
+         *            recursion)
          */
-        public CheatBlock( String name, BufferedReader br, LinkedList<CheatLine> lines )
+        private CheatBlock( String name, BufferedReader reader, LinkedList<CheatLine> lines )
         {
-            String fullLine, strLine, cheatName, address, code, options, option;
-            CheatCode cheatCode = null;
-            LinkedList<CheatOption> cheatOptions;
-            Pattern pattern;
-            Matcher matcher;
-            int x;
             this.name = name;
-            codes = new LinkedList<CheatCode>();
+            this.codes = new LinkedList<CheatCode>();
             
             try
             {
-                while( ( fullLine = br.readLine() ) != null )
+                String fullLine;
+                while( ( fullLine = reader.readLine() ) != null )
                 {
-                    strLine = fullLine.trim();
-                    if( strLine.length() == 0 )
+                    String trimLine = fullLine.trim();
+                    if( trimLine.length() == 0 )
                     {
                         // End of the cheat section, return
                         return;
                     }
-                    if( ( strLine.length() < 3 ) || ( strLine.substring( 0, 2 ).equals( "//" ) ) )
-                    { // A comment or blank line.
+                    if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
+                    {
+                        // A comment or blank line
                         lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine + "\n", null ) );
                     }
-                    else if( strLine.substring( 0, 2 ).equals( "cd" ) )
-                    { // Cheat code description
-                        if( strLine.length() > 3 )
-                            description = strLine.substring( 3, strLine.length() ).trim();
+                    else if( trimLine.substring( 0, 2 ).equals( "cd" ) )
+                    {
+                        // Cheat code description
+                        if( trimLine.length() > 3 )
+                            description = trimLine.substring( 3, trimLine.length() ).trim();
                     }
-                    else if( strLine.substring( 0, 2 ).equals( "cn" ) )
-                    { // End of this cheat block, save the name of the next block, and return
-                        if( strLine.length() > 3 )
-                            cheatName = strLine.substring( 3, strLine.length() ).trim();
+                    else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
+                    {
+                        // End of this cheat block, save the name of the next block, and return
+                        if( trimLine.length() > 3 )
+                            nextName = trimLine.substring( 3, trimLine.length() ).trim();
                         else
-                            cheatName = "";
-                        nextName = cheatName;
+                            nextName = "";
                         return;
                     }
                     else
                     {
                         // Cheat code line
-                        x = strLine.indexOf( ' ' );
-                        if( x >= 0 && x < strLine.length() )
+                        int x = trimLine.indexOf( ' ' );
+                        if( x >= 0 && x < trimLine.length() )
                         {
-                            address = strLine.substring( 0, x ).trim();
-                            code = strLine.substring( x + 1, strLine.length() ).trim();
+                            String address = trimLine.substring( 0, x ).trim();
+                            String code = trimLine.substring( x + 1, trimLine.length() ).trim();
+                            
                             // Check if this cheat has options
                             x = code.indexOf( ' ' );
                             if( x >= 0 && x < code.length() )
                             {
                                 // Cheat contains options
-                                cheatOptions = new LinkedList<CheatOption>();
-                                options = code.substring( x + 1, code.length() ).trim();
+                                LinkedList<CheatOption> cheatOptions = new LinkedList<CheatOption>();
+                                String options = code.substring( x + 1, code.length() ).trim();
                                 code = code.substring( 0, x ).trim();
                                 
-                                pattern = Pattern
-                                        .compile( "[0-9a-fA-F]{4}:\"([^\\\\\"]*(\\\\\")*)*\\\"" );
-                                matcher = pattern.matcher( options );
+                                Pattern pattern = Pattern.compile( CheatFile.PATTERN_CHEAT_OPTION );
+                                Matcher matcher = pattern.matcher( options );
                                 while( matcher.find() )
                                 {
-                                    option = options.substring( matcher.start(), matcher.end() );
+                                    String option = options.substring( matcher.start(),
+                                            matcher.end() );
                                     cheatOptions.add( new CheatOption( option.substring( 0, 4 ),
                                             option.substring( 6, option.length() - 1 ) ) );
                                 }
-                                cheatCode = new CheatCode( address, code, cheatOptions );
+                                codes.add( new CheatCode( address, code, cheatOptions ) );
                             }
                             else
-                            { // Code doesn't have any options
-                                cheatCode = new CheatCode( address, code, null );
+                            {
+                                // Code doesn't have any options
+                                codes.add( new CheatCode( address, code, null ) );
                             }
-                            codes.add( cheatCode );
                         }
                     }
                 }
             }
-            catch( IOException ioe )
+            catch( IOException ignored )
             {
-                // (Don't care)
             }
         }
         
         /**
-         * Returns the number of codes in this cheat.
+         * Returns the number of cheat codes in this cheat block.
          * 
-         * @return integer.
+         * @return the number of cheat codes
          */
         public int size()
         {
@@ -702,10 +729,10 @@ public class CheatFile
         }
         
         /**
-         * Returns the code at the specified index.
+         * Returns the cheat code at the specified index in this cheat block.
          * 
-         * @param index Zero-based index.
-         * @return null if index is invalid.
+         * @param index zero-based index
+         * @return null if index is invalid
          */
         public CheatCode get( int index )
         {
@@ -713,36 +740,37 @@ public class CheatFile
             {
                 return codes.get( index );
             }
-            catch( IndexOutOfBoundsException iobe )
+            catch( IndexOutOfBoundsException e )
             {
                 return null;
             }
         }
         
         /**
-         * Adds a new code to the end of this cheat.
+         * Adds a new cheat code to the end of this cheat block.
          * 
-         * @param cheatCode The code to add.
-         * @return false if there was a problem.
+         * @param code the cheat code to add
+         * @return false if there was a problem
          */
-        public boolean add( CheatCode cheatCode )
+        public boolean add( CheatCode code )
         {
-            return codes.add( cheatCode );
+            return codes.add( code );
         }
         
         /**
-         * Adds a new code to the specified index in this cheat.
+         * Adds a new cheat code at the specified index in this cheat block.
          * 
-         * @param cheatCode The code to add.
-         * @return false if there was a problem.
+         * @param index zero-based index
+         * @param code the cheat code to add
+         * @return false if index is invalid
          */
-        public boolean add( int index, CheatCode cheatCode )
+        public boolean add( int index, CheatCode code )
         {
             try
             {
-                codes.add( index, cheatCode );
+                codes.add( index, code );
             }
-            catch( IndexOutOfBoundsException iobe )
+            catch( IndexOutOfBoundsException e )
             {
                 return false;
             }
@@ -750,10 +778,10 @@ public class CheatFile
         }
         
         /**
-         * Removes the code at the specified index.
+         * Removes the cheat code at the specified index in this cheat block.
          * 
-         * @param index Zero-based index.
-         * @return false if there was a problem.
+         * @param index zero-based index
+         * @return false if index is invalid
          */
         public boolean remove( int index )
         {
@@ -761,7 +789,7 @@ public class CheatFile
             {
                 codes.remove( index );
             }
-            catch( IndexOutOfBoundsException iobe )
+            catch( IndexOutOfBoundsException e )
             {
                 return false;
             }
@@ -769,8 +797,7 @@ public class CheatFile
         }
         
         /**
-         * Removes all codes.
-         * 
+         * Removes all cheat codes from this cheat block.
          */
         public void clear()
         {
@@ -778,24 +805,24 @@ public class CheatFile
         }
         
         /**
-         * Saves the CheatBlock.
+         * Writes the entire cheat block to disk.
          * 
-         * @param fw The file to save the CheatBlock to.
+         * @param writer the object providing disk write access
          * 
-         * @throws IOException If a writing error occurs.
+         * @throws IOException if a write error occurs
          */
-        public void save( Writer fw ) throws IOException
+        private void save( Writer writer ) throws IOException
         {
-            fw.append( " cn " ).append( name ).append( '\n' );
+            writer.append( " cn " ).append( name ).append( '\n' );
             if( description != null )
             {
-                fw.append( "  cd " ).append( description ).append( '\n' );
+                writer.append( "  cd " ).append( description ).append( '\n' );
             }
             // Loop through the codes and save them
             for( CheatCode code : codes )
             {
                 if( code != null )
-                    code.save( fw );
+                    code.save( writer );
             }
         }
     }
@@ -805,16 +832,22 @@ public class CheatFile
      */
     public static class CheatCode
     {
-        public String address;
-        public String code;
-        public LinkedList<CheatOption> options;
+        /** ROM address where cheat is applied. */
+        public final String address;
+        
+        /** Code to apply. */
+        public final String code;
+        
+        // TODO: Make this private
+        /** Options associated with this cheat code (may be empty). */
+        public final LinkedList<CheatOption> options;
         
         /**
-         * Constructor: associate the name, description, and codes
+         * Constructs a {@link CheatCode} object.
          * 
-         * @param address The memory address.
-         * @param code The code (or "????" if there are options).
-         * @param options The cheat options (or null if none).
+         * @param address the ROM address where cheat is to be applied
+         * @param code the code to apply (or "????" if there are options)
+         * @param options the options associated with this cheat (or null if none)
          */
         public CheatCode( String address, String code, LinkedList<CheatOption> options )
         {
@@ -824,26 +857,26 @@ public class CheatFile
         }
         
         /**
-         * Saves the CheatCode.
+         * Writes the cheat code to disk.
          * 
-         * @param fw The file to save the CheatCode to.
+         * @param writer the object providing disk write access
          * 
-         * @throws IOException If a writing error occurs.
+         * @throws IOException if a write error occurs
          */
-        private void save( Writer fw ) throws IOException
+        private void save( Writer writer ) throws IOException
         {
-            fw.append( "  " ).append( address ).append( ' ' ).append( code );
+            writer.append( "  " ).append( address ).append( ' ' ).append( code );
             if( options != null )
             {
                 char delimiter = ' ';
                 for( CheatOption option : options )
                 {
-                    fw.append( delimiter ).append( option.code ).append( ':' );
-                    fw.append( '"' ).append( option.name ).append('"');
+                    writer.append( delimiter ).append( option.code ).append( ':' );
+                    writer.append( '"' ).append( option.name ).append( '"' );
                     delimiter = ',';
                 }
             }
-            fw.append( '\n' );
+            writer.append( '\n' );
         }
     }
     
@@ -852,14 +885,17 @@ public class CheatFile
      */
     public static class CheatOption
     {
-        public String code;
-        public String name;
+        /** The code to apply if this cheat option is selected. */
+        public final String code;
+        
+        /** The human-readable name of this cheat option. */
+        public final String name;
         
         /**
-         * Constructor: associate the code and description
+         * Constructs a {@link CheatOption} object.
          * 
-         * @param code Code for the option.
-         * @param name Human-readable name for the option.
+         * @param code the code to apply if this cheat option is selected
+         * @param name the human-readable name for the option
          */
         public CheatOption( String code, String name )
         {
