@@ -185,7 +185,7 @@ public class CheatFile
                         // Insert blank line between sections
                         // TODO: This saves an extra blank line at the end of the file.
                         // Make sure that doesn't cause problems during load or in the core.
-                        new CheatLine( CheatLine.LINE_GARBAGE, "\n", null ).save( writer );
+                        new CheatLine( CheatLine.LINE_GARBAGE, "\n" ).save( writer );
                     }
                 }
             }
@@ -311,9 +311,8 @@ public class CheatFile
             // Generate the header lines for this section
             if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
             {
-                lines.add( new CheatLine( CheatLine.LINE_CRC,
-                        "crc " + crc + "-C:" + country + "\n", null ) );
-                lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, "gn " + name + "\n", null ) );
+                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "-C:" + country + "\n" ) );
+                lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, "gn " + name + "\n" ) );
             }
         }
         
@@ -332,7 +331,7 @@ public class CheatFile
             
             if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
             {
-                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "\n", null ) );
+                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "\n" ) );
             }
             
             // No file to read from, quit
@@ -348,14 +347,14 @@ public class CheatFile
                     if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
                     {
                         // A comment or blank line
-                        lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine + "\n", null ) );
+                        lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine + "\n" ) );
                     }
                     else if( trimLine.substring( 0, 2 ).equals( "gn" ) )
                     {
                         // ROM "good name"
                         if( trimLine.length() > 3 )
                             goodName = trimLine.substring( 3, trimLine.length() ).trim();
-                        lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, fullLine + "\n", null ) );
+                        lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, fullLine + "\n" ) );
                     }
                     else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
                     {
@@ -369,7 +368,7 @@ public class CheatFile
                         while( !TextUtils.isEmpty( name ) )
                         {
                             CheatBlock block = new CheatBlock( name, reader, lines );
-                            lines.add( new CheatLine( CheatLine.CHEAT_BLOCK, "", block ) );
+                            lines.add( new CheatLine( block ) );
                             blocks.add( block );
                             name = block.nextName;
                         }
@@ -447,7 +446,7 @@ public class CheatFile
         public boolean add( CheatBlock block )
         {
             boolean success = blocks.add( block );
-            success &= lines.add( new CheatLine( CheatLine.CHEAT_BLOCK, "", block ) );
+            success &= lines.add( new CheatLine( block ) );
             return success;
         }
         
@@ -460,7 +459,7 @@ public class CheatFile
          */
         public boolean add( int index, CheatBlock block )
         {
-            CheatLine cheatLine = new CheatLine( CheatLine.CHEAT_BLOCK, "", block );
+            CheatLine cheatLine = new CheatLine( block );
             try
             {
                 blocks.add( index, block );
@@ -564,16 +563,27 @@ public class CheatFile
         private final CheatBlock block;
         
         /**
-         * Constructs a {@link CheatLine} object.
+         * Constructs a {@link CheatLine} object that does not reference a {@link CheatBlock}.
          * 
          * @param type the type of line (LINE_GARBAGE, LINE_CRC, LINE_GOOD_NAME, or CHEAT_BLOCK)
-         * @param rawText the raw line of text (empty if cheat block)
-         * @param param the associated cheat block object, if this line encapsulates a cheat block
+         * @param rawText the raw line of text
          */
-        private CheatLine( int type, String rawText, CheatBlock block )
+        private CheatLine( int type, String rawText )
         {
             this.lineType = type;
             this.rawText = rawText;
+            this.block = null;
+        }
+        
+        /**
+         * Constructs a {@link CheatLine} object that references a {@link CheatBlock}.
+         * 
+         * @param block the associated cheat block object
+         */
+        private CheatLine( CheatBlock block )
+        {
+            this.lineType = CHEAT_BLOCK;
+            this.rawText = "";
             this.block = block;
         }
         
@@ -658,7 +668,7 @@ public class CheatFile
                     if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
                     {
                         // A comment or blank line
-                        lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine + "\n", null ) );
+                        lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine + "\n" ) );
                     }
                     else if( trimLine.substring( 0, 2 ).equals( "cd" ) )
                     {
