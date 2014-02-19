@@ -98,57 +98,6 @@ public class CheatFile
     }
     
     /**
-     * Returns the first cheat section whose CRC matches the specified regular expression (not
-     * necessarily the only match).
-     * 
-     * @param pattern a regular expression to match the CRC to
-     * 
-     * @return cheat section whose CRC matches the given regex, or null if no match was found
-     */
-    public CheatSection match( String pattern )
-    {
-        for( String crc : mSections.keySet() )
-        {
-            if( crc.matches( pattern ) )
-                return mSections.get( crc );
-        }
-        return null;
-    }
-    
-    /**
-     * Adds a cheat section to memory. If a cheat section with that CRC already exists in memory, it
-     * will be overwritten. Note that the operation is not actually persisted to disk until the
-     * {@link #save()} method is called.
-     * 
-     * @param section the cheat section to add/replace in memory
-     */
-    public void add( CheatSection section )
-    {
-        mSections.put( section.crc, section );
-    }
-    
-    /**
-     * Returns the cheat section with the specified CRC.
-     * 
-     * @param crc the CRC of the cheat section to get
-     * 
-     * @return the cheat section with the given CRC, or null if not found
-     */
-    public CheatSection get( String crc )
-    {
-        return mSections.get( crc );
-    }
-    
-    /**
-     * Removes all cheat sections from memory. Note that the operation is not actually persisted to
-     * disk until the {@link #save()} method is called.
-     */
-    public void clear()
-    {
-        mSections.clear();
-    }
-    
-    /**
      * Reloads the entire cheat file from disk into memory, overwriting any unsaved changes.
      * 
      * @return true if successful
@@ -273,6 +222,57 @@ public class CheatFile
     }
     
     /**
+     * Returns the cheat section with the specified CRC.
+     * 
+     * @param crc the CRC of the cheat section to get
+     * 
+     * @return the cheat section with the given CRC, or null if not found
+     */
+    public CheatSection get( String crc )
+    {
+        return mSections.get( crc );
+    }
+    
+    /**
+     * Returns the first cheat section whose CRC matches the specified regular expression (not
+     * necessarily the only match).
+     * 
+     * @param pattern a regular expression to match the CRC to
+     * 
+     * @return cheat section whose CRC matches the given regex, or null if no match was found
+     */
+    public CheatSection match( String pattern )
+    {
+        for( String crc : mSections.keySet() )
+        {
+            if( crc.matches( pattern ) )
+                return mSections.get( crc );
+        }
+        return null;
+    }
+    
+    /**
+     * Adds a cheat section to memory. If a cheat section with that CRC already exists in memory, it
+     * will be overwritten. Note that the operation is not actually persisted to disk until the
+     * {@link #save()} method is called.
+     * 
+     * @param section the cheat section to add/replace in memory
+     */
+    public void add( CheatSection section )
+    {
+        mSections.put( section.crc, section );
+    }
+    
+    /**
+     * Removes all cheat sections from memory. Note that the operation is not actually persisted to
+     * disk until the {@link #save()} method is called.
+     */
+    public void clear()
+    {
+        mSections.clear();
+    }
+    
+    /**
      * The CheatSection class encapsulates all cheat data for a given CRC.
      */
     public static class CheatSection
@@ -391,6 +391,22 @@ public class CheatFile
             }
             catch( IOException ignored )
             {
+            }
+        }
+        
+        /**
+         * Writes the entire cheat section to disk.
+         * 
+         * @param writer the object providing disk write access
+         * 
+         * @throws IOException if a write error occurs
+         */
+        private void save( Writer writer ) throws IOException
+        {
+            for( CheatLine line : lines )
+            {
+                if( line != null )
+                    line.save( writer );
             }
         }
         
@@ -517,22 +533,6 @@ public class CheatFile
                 {
                     iterator.remove();
                 }
-            }
-        }
-        
-        /**
-         * Writes the entire cheat section to disk.
-         * 
-         * @param writer the object providing disk write access
-         * 
-         * @throws IOException if a write error occurs
-         */
-        private void save( Writer writer ) throws IOException
-        {
-            for( CheatLine line : lines )
-            {
-                if( line != null )
-                    line.save( writer );
             }
         }
     }
@@ -719,6 +719,28 @@ public class CheatFile
         }
         
         /**
+         * Writes the entire cheat block to disk.
+         * 
+         * @param writer the object providing disk write access
+         * 
+         * @throws IOException if a write error occurs
+         */
+        private void save( Writer writer ) throws IOException
+        {
+            writer.append( " cn " ).append( name ).append( '\n' );
+            if( description != null )
+            {
+                writer.append( "  cd " ).append( description ).append( '\n' );
+            }
+            // Loop through the codes and save them
+            for( CheatCode code : codes )
+            {
+                if( code != null )
+                    code.save( writer );
+            }
+        }
+        
+        /**
          * Returns the number of cheat codes in this cheat block.
          * 
          * @return the number of cheat codes
@@ -802,28 +824,6 @@ public class CheatFile
         public void clear()
         {
             codes.clear();
-        }
-        
-        /**
-         * Writes the entire cheat block to disk.
-         * 
-         * @param writer the object providing disk write access
-         * 
-         * @throws IOException if a write error occurs
-         */
-        private void save( Writer writer ) throws IOException
-        {
-            writer.append( " cn " ).append( name ).append( '\n' );
-            if( description != null )
-            {
-                writer.append( "  cd " ).append( description ).append( '\n' );
-            }
-            // Loop through the codes and save them
-            for( CheatCode code : codes )
-            {
-                if( code != null )
-                    code.save( writer );
-            }
         }
     }
     
