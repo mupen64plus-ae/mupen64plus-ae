@@ -308,7 +308,7 @@ public class CheatFile
          */
         public CheatSection( String crc, String name, String country )
         {
-            this.key = crc;
+            this.key = crc + "-C:" + country;
             this.goodName = name;
             this.blocks = new LinkedList<CheatBlock>();
             this.elements = new LinkedList<CheatElement>();
@@ -316,7 +316,7 @@ public class CheatFile
             // Generate the header lines for this section
             if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_KEY ) )
             {
-                elements.add( new CheatLine( "crc " + crc + "-C:" + country ) );
+                elements.add( new CheatLine( "crc " + key ) );
                 elements.add( new CheatLine( "gn " + name ) );
             }
         }
