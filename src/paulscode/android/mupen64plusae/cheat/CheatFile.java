@@ -185,7 +185,7 @@ public class CheatFile
                         // Insert blank line between sections
                         // TODO: This saves an extra blank line at the end of the file.
                         // Make sure that doesn't cause problems during load or in the core.
-                        new CheatLine( CheatLine.LINE_GARBAGE, "\n" ).save( writer );
+                        writer.append( '\n' );
                     }
                 }
             }
@@ -311,8 +311,8 @@ public class CheatFile
             // Generate the header lines for this section
             if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
             {
-                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "-C:" + country + "\n" ) );
-                lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, "gn " + name + "\n" ) );
+                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "-C:" + country ) );
+                lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, "gn " + name ) );
             }
         }
         
@@ -331,7 +331,7 @@ public class CheatFile
             
             if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
             {
-                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc + "\n" ) );
+                lines.add( new CheatLine( CheatLine.LINE_CRC, "crc " + crc ) );
             }
             
             // No file to read from, quit
@@ -347,14 +347,14 @@ public class CheatFile
                     if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
                     {
                         // A comment or blank line
-                        lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine + "\n" ) );
+                        lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine ) );
                     }
                     else if( trimLine.substring( 0, 2 ).equals( "gn" ) )
                     {
                         // ROM "good name"
                         if( trimLine.length() > 3 )
                             goodName = trimLine.substring( 3, trimLine.length() ).trim();
-                        lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, fullLine + "\n" ) );
+                        lines.add( new CheatLine( CheatLine.LINE_GOOD_NAME, fullLine ) );
                     }
                     else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
                     {
@@ -603,7 +603,7 @@ public class CheatFile
             }
             else
             {
-                writer.append( rawText );
+                writer.append( rawText ).append( '\n' );
             }
         }
     }
@@ -668,7 +668,7 @@ public class CheatFile
                     if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
                     {
                         // A comment or blank line
-                        lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine + "\n" ) );
+                        lines.add( new CheatLine( CheatLine.LINE_GARBAGE, fullLine ) );
                     }
                     else if( trimLine.substring( 0, 2 ).equals( "cd" ) )
                     {
