@@ -340,10 +340,6 @@ public class CheatFile
                 elements.add( new CheatLine( "crc " + crc ) );
             }
             
-            // No file to read from, quit
-            if( reader == null )
-                return;
-            
             String fullLine;
             while( ( fullLine = reader.readLine() ) != null )
             {
