@@ -697,7 +697,20 @@ public class CheatFile
             for( CheatCode code : codes )
             {
                 if( code != null )
-                    code.save( writer );
+                {
+                    writer.append( "  " ).append( code.address ).append( ' ' ).append( code.code );
+                    if( code.options != null )
+                    {
+                        char delimiter = ' ';
+                        for( CheatOption option : code.options )
+                        {
+                            writer.append( delimiter ).append( option.code ).append( ':' );
+                            writer.append( '"' ).append( option.name ).append( '"' );
+                            delimiter = ',';
+                        }
+                    }
+                    writer.append( '\n' );
+                }
             }
         }
         
@@ -815,29 +828,6 @@ public class CheatFile
             this.address = address;
             this.code = code;
             this.options = options;
-        }
-        
-        /**
-         * Writes the cheat code to disk.
-         * 
-         * @param writer the object providing disk write access
-         * 
-         * @throws IOException if a write error occurs
-         */
-        private void save( Writer writer ) throws IOException
-        {
-            writer.append( "  " ).append( address ).append( ' ' ).append( code );
-            if( options != null )
-            {
-                char delimiter = ' ';
-                for( CheatOption option : options )
-                {
-                    writer.append( delimiter ).append( option.code ).append( ':' );
-                    writer.append( '"' ).append( option.name ).append( '"' );
-                    delimiter = ',';
-                }
-            }
-            writer.append( '\n' );
         }
         
         /**
