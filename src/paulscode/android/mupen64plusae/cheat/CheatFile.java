@@ -343,28 +343,21 @@ public class CheatFile
             String fullLine;
             while( ( fullLine = reader.readLine() ) != null )
             {
-                String trimLine = fullLine.trim();
-                if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
+                if( fullLine.length() == 0 || fullLine.startsWith( "//" ) )
                 {
                     // A comment or blank line
                     elements.add( new CheatLine( fullLine ) );
                 }
-                else if( trimLine.substring( 0, 2 ).equals( "gn" ) )
+                else if( fullLine.startsWith( "gn " ) )
                 {
                     // ROM "good name"
-                    if( trimLine.length() > 3 )
-                        goodName = trimLine.substring( 3, trimLine.length() ).trim();
+                    goodName = fullLine.substring( 3 );
                     elements.add( new CheatLine( fullLine ) );
                 }
-                else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
+                else if( fullLine.startsWith( " cn " ) )
                 {
-                    // Cheat name
-                    String name;
-                    if( trimLine.length() > 3 )
-                        name = trimLine.substring( 3, trimLine.length() ).trim();
-                    else
-                        name = "";
-                    
+                    // Cheat block
+                    String name = fullLine.substring( 4 );
                     while( !TextUtils.isEmpty( name ) )
                     {
                         CheatBlock block = new CheatBlock( name, reader, elements );
@@ -373,16 +366,15 @@ public class CheatFile
                         name = block.nextName;
                     }
                 }
-                else if( trimLine.substring( 0, 3 ).equals( "crc" ) )
+                else if( fullLine.startsWith( "crc " ) )
                 {
-                    // Start of the next cheat section, quit
-                    if( trimLine.length() > 4 )
-                        nextKey = trimLine.substring( 4, trimLine.length() ).trim();
+                    // Start of the next cheat section, return
+                    nextKey = fullLine.substring( 4 );
                     return;
                 }
                 else
                 {
-                    // This shouldn't happen (bad syntax), quit
+                    // This shouldn't happen (bad syntax), return
                     Log.w( "CheatSection", "Unknown syntax: " + fullLine );
                     return;
                 }
@@ -615,35 +607,31 @@ public class CheatFile
             String fullLine;
             while( ( fullLine = reader.readLine() ) != null )
             {
-                String trimLine = fullLine.trim();
-                if( trimLine.length() == 0 )
+                if( fullLine.length() == 0 )
                 {
                     // End of the cheat section, return
                     return;
                 }
-                if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
+                else if( fullLine.startsWith( "//" ) )
                 {
-                    // A comment or blank line
+                    // Comment
                     elements.add( new CheatLine( fullLine ) );
                 }
-                else if( trimLine.substring( 0, 2 ).equals( "cd" ) )
+                else if( fullLine.startsWith( "  cd " ) )
                 {
-                    // Cheat code description
-                    if( trimLine.length() > 3 )
-                        description = trimLine.substring( 3, trimLine.length() ).trim();
+                    // Cheat block description
+                    description = fullLine.substring( 5 );
                 }
-                else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
+                else if( fullLine.startsWith( " cn " ) )
                 {
                     // End of this cheat block, save the name of the next block, and return
-                    if( trimLine.length() > 3 )
-                        nextName = trimLine.substring( 3, trimLine.length() ).trim();
-                    else
-                        nextName = "";
+                    nextName = fullLine.substring( 4 );
                     return;
                 }
                 else
                 {
                     // Cheat code line
+                    String trimLine = fullLine.trim();
                     int x = trimLine.indexOf( ' ' );
                     if( x >= 0 && x < trimLine.length() )
                     {
