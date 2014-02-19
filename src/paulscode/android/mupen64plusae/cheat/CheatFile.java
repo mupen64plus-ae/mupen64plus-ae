@@ -76,8 +76,13 @@ public class CheatFile
     /** The name we use for the untitled section (preamble) of the cheat file. */
     public static final String NO_KEY = "[<sectionless!>]";
     
-    /** The regular expression pattern for parsing a cheat option from disk. */
-    private static final String PATTERN_CHEAT_OPTION = "[0-9a-fA-F]{4}:\"([^\\\\\"]*(\\\\\")*)*\\\"";
+    /** The regular expression matcher for a cheat code. */
+    private static final Matcher CODE_MATCHER = Pattern.compile(
+            "^  ([0-9a-fA-F]{8}) ([0-9a-fA-F]{4}|[\\?]{4})(.*)" ).matcher( "" );
+    
+    /** The regular expression matcher for a single cheat option. */
+    private static final Matcher OPTION_MATCHER = Pattern.compile(
+            "([0-9a-fA-F]{4}):\"((?:[^\\\\\"]*(?:\\\\\")*)*)\"" ).matcher( "" );
     
     /** Path of the cheat file. */
     private final String mFilename;
@@ -321,7 +326,6 @@ public class CheatFile
             }
         }
         
-        // TODO: Clean this method up a bit?
         /**
          * Constructs a {@link CheatSection} object, populating its fields by reading from disk.
          * 
@@ -628,41 +632,33 @@ public class CheatFile
                     nextName = fullLine.substring( 4 );
                     return;
                 }
-                else
+                else if( CODE_MATCHER.reset( fullLine ).matches() )
                 {
-                    // Cheat code line
-                    String trimLine = fullLine.trim();
-                    int x = trimLine.indexOf( ' ' );
-                    if( x >= 0 && x < trimLine.length() )
+                    // Cheat code
+                    String address = CODE_MATCHER.group( 1 );
+                    String value = CODE_MATCHER.group( 2 );
+                    
+                    // Cheat options
+                    LinkedList<CheatOption> options = null;
+                    if( "????".equals( value ) )
                     {
-                        String address = trimLine.substring( 0, x ).trim();
-                        String code = trimLine.substring( x + 1, trimLine.length() ).trim();
-                        
-                        // Check if this cheat has options
-                        x = code.indexOf( ' ' );
-                        if( x >= 0 && x < code.length() )
+                        // Cheat options
+                        options = new LinkedList<CheatOption>();
+                        OPTION_MATCHER.reset( CODE_MATCHER.group( 3 ) );
+                        while( OPTION_MATCHER.find() )
                         {
-                            // Cheat contains options
-                            LinkedList<CheatOption> cheatOptions = new LinkedList<CheatOption>();
-                            String options = code.substring( x + 1, code.length() ).trim();
-                            code = code.substring( 0, x ).trim();
-                            
-                            Pattern pattern = Pattern.compile( CheatFile.PATTERN_CHEAT_OPTION );
-                            Matcher matcher = pattern.matcher( options );
-                            while( matcher.find() )
-                            {
-                                String option = options.substring( matcher.start(), matcher.end() );
-                                cheatOptions.add( new CheatOption( option.substring( 0, 4 ), option
-                                        .substring( 6, option.length() - 1 ) ) );
-                            }
-                            codes.add( new CheatCode( address, code, cheatOptions ) );
-                        }
-                        else
-                        {
-                            // Code doesn't have any options
-                            codes.add( new CheatCode( address, code, null ) );
+                            options.add( new CheatOption( OPTION_MATCHER.group( 1 ), OPTION_MATCHER
+                                    .group( 2 ) ) );
                         }
                     }
+                    CheatCode code = new CheatCode( address, value, options );
+                    codes.add( code );
+                }
+                else
+                {
+                    // This shouldn't happen (bad syntax), quit
+                    Log.w( "CheatBlock", "Unknown syntax: " + fullLine );
+                    return;
                 }
             }
         }
