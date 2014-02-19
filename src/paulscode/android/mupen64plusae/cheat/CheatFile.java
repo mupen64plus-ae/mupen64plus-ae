@@ -78,7 +78,7 @@ public class CheatFile
     
     /** The regular expression matcher for a cheat code. */
     private static final Matcher CODE_MATCHER = Pattern.compile(
-            "^  ([0-9a-fA-F]{8}) ([0-9a-fA-F]{4}|[\\?]{4})(.*)" ).matcher( "" );
+            "^  ([0-9a-fA-F]{8}) ([0-9a-fA-F]{4}|[\\?]{4} )(.*)" ).matcher( "" );
     
     /** The regular expression matcher for a single cheat option. */
     private static final Matcher OPTION_MATCHER = Pattern.compile(
@@ -640,7 +640,7 @@ public class CheatFile
                     
                     // Cheat options
                     LinkedList<CheatOption> options = null;
-                    if( "????".equals( value ) )
+                    if( value.startsWith( "????" ) )
                     {
                         // Cheat options
                         options = new LinkedList<CheatOption>();
@@ -684,12 +684,12 @@ public class CheatFile
                 writer.append( "  " ).append( code.address ).append( ' ' ).append( code.code );
                 if( code.options != null )
                 {
-                    char delimiter = ' ';
+                    String delimiter = "";
                     for( CheatOption option : code.options )
                     {
                         writer.append( delimiter ).append( option.code ).append( ':' );
                         writer.append( '"' ).append( option.name ).append( '"' );
-                        delimiter = ',';
+                        delimiter = ",";
                     }
                 }
                 writer.append( '\n' );
