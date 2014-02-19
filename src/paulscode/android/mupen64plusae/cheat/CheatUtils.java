@@ -71,7 +71,7 @@ public class CheatUtils
             
             for( String key : cheat_u.keySet() )
             {
-                if( !CheatFile.NO_CRC.equals( key ) )
+                if( !CheatFile.NO_KEY.equals( key ) )
                 {
                     CheatSection cheat_section_v = cheat_v.get( key );
                     CheatSection cheat_section_u = cheat_u.get( key );

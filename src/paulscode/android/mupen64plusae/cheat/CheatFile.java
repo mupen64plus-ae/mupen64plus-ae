@@ -44,8 +44,8 @@ import android.util.Log;
  * <ul>
  * <li>There is a space between each parameter and value. Value is not quoted and may contain spaces
  * (ex: cn Epic Win). EXCEPTION: cheat options.
- * <li>ROM sections are not indented, beginning with "crc" followed by the CRC (ex: crc
- * 01A23456-789012B3-C:4A).
+ * <li>ROM sections are not indented, beginning with "crc" followed by the CRC and country code (ex:
+ * crc 01A23456-789012B3-C:4A).
  * <li>The crc line is immediately followed by the ROM "good name" line.
  * <li>ROM "good name" lines are not indented, beginning with "gn" followed by the name (ex: gn Cool
  * Game (U) (V1.0)).
@@ -74,7 +74,7 @@ import android.util.Log;
 public class CheatFile
 {
     /** The name we use for the untitled section (preamble) of the cheat file. */
-    public static final String NO_CRC = "[<sectionless!>]";
+    public static final String NO_KEY = "[<sectionless!>]";
     
     /** The regular expression pattern for parsing a cheat option from disk. */
     private static final String PATTERN_CHEAT_OPTION = "[0-9a-fA-F]{4}:\"([^\\\\\"]*(\\\\\")*)*\\\"";
@@ -82,7 +82,7 @@ public class CheatFile
     /** Path of the cheat file. */
     private final String mFilename;
     
-    /** Cheat sections mapped by CRC for easy lookup, with insertion order retained. */
+    /** All cheat sections in this cheat file, in correct order. */
     private final LinkedHashMap<String, CheatSection> mSections;
     
     /**
@@ -121,16 +121,16 @@ public class CheatFile
             reader = new BufferedReader( new FileReader( mFilename ) );
             
             // Read the 'sectionless' preamble section from disk
-            String crc = NO_CRC;
-            CheatSection section = new CheatSection( crc, reader );
-            mSections.put( crc, section );
+            String key = NO_KEY;
+            CheatSection section = new CheatSection( key, reader );
+            mSections.put( key, section );
             
             // Read the remaining sections from disk
-            while( !TextUtils.isEmpty( section.nextCrc ) )
+            while( !TextUtils.isEmpty( section.nextKey ) )
             {
-                crc = section.nextCrc;
-                section = new CheatSection( crc, reader );
-                mSections.put( crc, section );
+                key = section.nextKey;
+                section = new CheatSection( key, reader );
+                mSections.put( key, section );
             }
         }
         catch( FileNotFoundException e )
@@ -183,7 +183,7 @@ public class CheatFile
             for( CheatSection section : mSections.values() )
             {
                 section.save( writer );
-                if( !TextUtils.isEmpty( section.crc ) && !section.crc.equals( NO_CRC ) )
+                if( !TextUtils.isEmpty( section.key ) && !section.key.equals( NO_KEY ) )
                 {
                     // Insert blank line between sections
                     // TODO: This saves an extra blank line at the end of the file.
@@ -214,7 +214,7 @@ public class CheatFile
     }
     
     /**
-     * Returns the set of keys (cheat section CRC's) contained in this cheat file.
+     * Returns the set of keys contained in this cheat file.
      * 
      * @return keyset containing all the cheat section CRCs
      */
@@ -224,37 +224,37 @@ public class CheatFile
     }
     
     /**
-     * Returns the cheat section with the specified CRC.
+     * Returns the cheat section with the specified key.
      * 
-     * @param crc the CRC of the cheat section to get
+     * @param key the key of the cheat section to get
      * 
-     * @return the cheat section with the given CRC, or null if not found
+     * @return the cheat section with the given key, or null if not found
      */
-    public CheatSection get( String crc )
+    public CheatSection get( String key )
     {
-        return mSections.get( crc );
+        return mSections.get( key );
     }
     
     /**
-     * Returns the first cheat section whose CRC matches the specified regular expression (not
+     * Returns the first cheat section whose key matches the specified regular expression (not
      * necessarily the only match).
      * 
-     * @param pattern a regular expression to match the CRC to
+     * @param pattern a regular expression to match the key to
      * 
-     * @return cheat section whose CRC matches the given regex, or null if no match was found
+     * @return cheat section whose key matches the given regex, or null if no match was found
      */
     public CheatSection match( String pattern )
     {
-        for( String crc : mSections.keySet() )
+        for( String key : mSections.keySet() )
         {
-            if( crc.matches( pattern ) )
-                return mSections.get( crc );
+            if( key.matches( pattern ) )
+                return mSections.get( key );
         }
         return null;
     }
     
     /**
-     * Adds a cheat section to memory. If a cheat section with that CRC already exists in memory, it
+     * Adds a cheat section to memory. If a cheat section with that key already exists in memory, it
      * will be overwritten. Note that the operation is not actually persisted to disk until the
      * {@link #save()} method is called.
      * 
@@ -264,7 +264,7 @@ public class CheatFile
     {
         if( section != null )
         {
-            mSections.put( section.crc, section );
+            mSections.put( section.key, section );
         }
     }
     
@@ -278,12 +278,12 @@ public class CheatFile
     }
     
     /**
-     * The CheatSection class encapsulates all cheat data for a given CRC.
+     * The CheatSection class encapsulates all cheat data for a given ROM CRC and country code.
      */
     public static class CheatSection
     {
-        /** The CRC of the ROM this section pertains to. */
-        public final String crc;
+        /** The CRC and country code of the ROM this section pertains to. */
+        public final String key;
         
         // TODO: Make this final
         /** The "good name" of the ROM this section pertains to. */
@@ -296,8 +296,8 @@ public class CheatFile
         private final LinkedList<CheatElement> elements;
         
         // TODO: Make this final
-        /** The crc of the next cheat section, or null if no more sections are left. */
-        private String nextCrc = null;
+        /** The key of the next cheat section, or null if no more sections are left. */
+        private String nextKey = null;
         
         /**
          * Constructs an empty {@link CheatSection} object.
@@ -308,13 +308,13 @@ public class CheatFile
          */
         public CheatSection( String crc, String name, String country )
         {
-            this.crc = crc;
+            this.key = crc;
             this.goodName = name;
             this.blocks = new LinkedList<CheatBlock>();
             this.elements = new LinkedList<CheatElement>();
             
             // Generate the header lines for this section
-            if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
+            if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_KEY ) )
             {
                 elements.add( new CheatLine( "crc " + crc + "-C:" + country ) );
                 elements.add( new CheatLine( "gn " + name ) );
@@ -325,19 +325,19 @@ public class CheatFile
         /**
          * Constructs a {@link CheatSection} object, populating its fields by reading from disk.
          * 
-         * @param crc the CRC of the ROM this section pertains to
+         * @param key the key (ROM CRC and country code) for this ROM section
          * @param reader the object providing disk read access
          * @throws IOException if a read error occurs
          */
-        private CheatSection( String crc, BufferedReader reader ) throws IOException
+        private CheatSection( String key, BufferedReader reader ) throws IOException
         {
-            this.crc = crc;
+            this.key = key;
             this.blocks = new LinkedList<CheatBlock>();
             this.elements = new LinkedList<CheatElement>();
             
-            if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_CRC ) )
+            if( !key.equals( NO_KEY ) )
             {
-                elements.add( new CheatLine( "crc " + crc ) );
+                elements.add( new CheatLine( "crc " + key ) );
             }
             
             String fullLine;
@@ -377,7 +377,7 @@ public class CheatFile
                 {
                     // Start of the next cheat section, quit
                     if( trimLine.length() > 4 )
-                        nextCrc = trimLine.substring( 4, trimLine.length() ).trim();
+                        nextKey = trimLine.substring( 4, trimLine.length() ).trim();
                     return;
                 }
                 else
@@ -546,7 +546,7 @@ public class CheatFile
     
     /**
      * The CheatLine class encapsulates any line of text that is not associated with a cheat block
-     * (i.e. comments and the lines containing CRC and good name).
+     * (i.e. comments and the lines containing key and good name).
      */
     private static class CheatLine extends CheatElement
     {
