@@ -22,12 +22,10 @@ package paulscode.android.mupen64plusae.cheat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -150,44 +148,43 @@ public class CheatFile
         // Free any previously loaded data
         clear();
         
-        FileInputStream fstream;
+        BufferedReader br = null;
         try
         {
-            fstream = new FileInputStream( mFilename );
+            br = new BufferedReader( new FileReader( mFilename ) );
+            
+            String crc = NO_CRC;
+            CheatSection section = new CheatSection( crc, br ); // Read the 'sectionless' section
+            mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
+            
+            // Loop through reading the remaining sections
+            while( !TextUtils.isEmpty( section.nextCrc ) )
+            {
+                // Get the next section name
+                crc = section.nextCrc;
+            
+                // Load the next section
+                section = new CheatSection( crc, br );
+                mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
+            }
         }
-        catch( FileNotFoundException fnfe )
+        catch( FileNotFoundException e )
         {
-            // File not found... we can't continue
+            Log.e( "CheatFile", "Could not open " + mFilename );
             return false;
         }
-        
-        DataInputStream in = new DataInputStream( fstream );
-        BufferedReader br = new BufferedReader( new InputStreamReader( in ) );
-        
-        String crc = NO_CRC;
-        CheatSection section = new CheatSection( crc, br ); // Read the 'sectionless' section
-        mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
-        
-        // Loop through reading the remaining sections
-        while( !TextUtils.isEmpty( section.nextCrc ) )
+        finally
         {
-            // Get the next section name
-            crc = section.nextCrc;
-            
-            // Load the next section
-            section = new CheatSection( crc, br );
-            mCheatMap.put( crc, section ); // Save the data to 'mCheatMap'
-        }
-        
-        try
-        {
-            // Finished. Close the file.
-            in.close();
-            br.close();
-        }
-        catch( IOException ioe )
-        {
-            // (Don't care)
+            if( br != null )
+            {
+                try
+                {
+                    br.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+            }
         }
         
         // Success
