@@ -182,16 +182,13 @@ public class CheatFile
             // Write each section to disk
             for( CheatSection section : mSections.values() )
             {
-                if( section != null )
+                section.save( writer );
+                if( !TextUtils.isEmpty( section.crc ) && !section.crc.equals( NO_CRC ) )
                 {
-                    section.save( writer );
-                    if( !TextUtils.isEmpty( section.crc ) && !section.crc.equals( NO_CRC ) )
-                    {
-                        // Insert blank line between sections
-                        // TODO: This saves an extra blank line at the end of the file.
-                        // Make sure that doesn't cause problems during load or in the core.
-                        writer.append( '\n' );
-                    }
+                    // Insert blank line between sections
+                    // TODO: This saves an extra blank line at the end of the file.
+                    // Make sure that doesn't cause problems during load or in the core.
+                    writer.append( '\n' );
                 }
             }
         }
@@ -265,7 +262,10 @@ public class CheatFile
      */
     public void add( CheatSection section )
     {
-        mSections.put( section.crc, section );
+        if( section != null )
+        {
+            mSections.put( section.crc, section );
+        }
     }
     
     /**
@@ -404,8 +404,7 @@ public class CheatFile
         {
             for( CheatElement element : elements )
             {
-                if( element != null )
-                    element.save( writer );
+                element.save( writer );
             }
         }
         
@@ -441,10 +440,13 @@ public class CheatFile
          * Adds a new cheat block to the end of this cheat section.
          * 
          * @param block the cheat block to add
-         * @return false if there was a problem
+         * @return false if block is null
          */
         public boolean add( CheatBlock block )
         {
+            if( block == null )
+                return false;
+            
             boolean success = blocks.add( block );
             success &= elements.add( block );
             return success;
@@ -455,10 +457,13 @@ public class CheatFile
          * 
          * @param index zero-based index
          * @param block the cheat block to add
-         * @return false if index is invalid
+         * @return false if index is invalid or block is null
          */
         public boolean add( int index, CheatBlock block )
         {
+            if( block == null )
+                return false;
+            
             try
             {
                 blocks.add( index, block );
@@ -696,21 +701,18 @@ public class CheatFile
             // Loop through the codes and save them
             for( CheatCode code : codes )
             {
-                if( code != null )
+                writer.append( "  " ).append( code.address ).append( ' ' ).append( code.code );
+                if( code.options != null )
                 {
-                    writer.append( "  " ).append( code.address ).append( ' ' ).append( code.code );
-                    if( code.options != null )
+                    char delimiter = ' ';
+                    for( CheatOption option : code.options )
                     {
-                        char delimiter = ' ';
-                        for( CheatOption option : code.options )
-                        {
-                            writer.append( delimiter ).append( option.code ).append( ':' );
-                            writer.append( '"' ).append( option.name ).append( '"' );
-                            delimiter = ',';
-                        }
+                        writer.append( delimiter ).append( option.code ).append( ':' );
+                        writer.append( '"' ).append( option.name ).append( '"' );
+                        delimiter = ',';
                     }
-                    writer.append( '\n' );
                 }
+                writer.append( '\n' );
             }
         }
         
@@ -746,10 +748,13 @@ public class CheatFile
          * Adds a new cheat code to the end of this cheat block.
          * 
          * @param code the cheat code to add
-         * @return false if there was a problem
+         * @return false if code is null
          */
         public boolean add( CheatCode code )
         {
+            if( code == null )
+                return false;
+            
             return codes.add( code );
         }
         
@@ -758,10 +763,13 @@ public class CheatFile
          * 
          * @param index zero-based index
          * @param code the cheat code to add
-         * @return false if index is invalid
+         * @return false if index is invalid or code is null
          */
         public boolean add( int index, CheatCode code )
         {
+            if( code == null )
+                return false;
+            
             try
             {
                 codes.add( index, code );
@@ -852,10 +860,13 @@ public class CheatFile
          * Adds a new cheat option to the end of this cheat block.
          * 
          * @param option the cheat option to add
-         * @return false if there was a problem
+         * @return false if option is null
          */
         public boolean add( CheatOption option )
         {
+            if( option == null )
+                return false;
+            
             return options.add( option );
         }
         
@@ -864,10 +875,13 @@ public class CheatFile
          * 
          * @param index zero-based index
          * @param option the cheat option to add
-         * @return false if index is invalid
+         * @return false if index is invalid or option is null
          */
         public boolean add( int index, CheatOption option )
         {
+            if( option == null )
+                return false;
+            
             try
             {
                 options.add( index, option );
