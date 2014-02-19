@@ -138,6 +138,11 @@ public class CheatFile
             Log.e( "CheatFile", "Could not open " + mFilename );
             return false;
         }
+        catch( IOException e )
+        {
+            Log.e( "CheatFile", "Could not read " + mFilename );
+            return false;
+        }
         finally
         {
             if( reader != null )
@@ -322,8 +327,9 @@ public class CheatFile
          * 
          * @param crc the CRC of the ROM this section pertains to
          * @param reader the object providing disk read access
+         * @throws IOException if a read error occurs
          */
-        private CheatSection( String crc, BufferedReader reader )
+        private CheatSection( String crc, BufferedReader reader ) throws IOException
         {
             this.crc = crc;
             this.blocks = new LinkedList<CheatBlock>();
@@ -338,58 +344,52 @@ public class CheatFile
             if( reader == null )
                 return;
             
-            try
+            String fullLine;
+            while( ( fullLine = reader.readLine() ) != null )
             {
-                String fullLine;
-                while( ( fullLine = reader.readLine() ) != null )
+                String trimLine = fullLine.trim();
+                if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
                 {
-                    String trimLine = fullLine.trim();
-                    if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
-                    {
-                        // A comment or blank line
-                        elements.add( new CheatLine( fullLine ) );
-                    }
-                    else if( trimLine.substring( 0, 2 ).equals( "gn" ) )
-                    {
-                        // ROM "good name"
-                        if( trimLine.length() > 3 )
-                            goodName = trimLine.substring( 3, trimLine.length() ).trim();
-                        elements.add( new CheatLine( fullLine ) );
-                    }
-                    else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
-                    {
-                        // Cheat name
-                        String name;
-                        if( trimLine.length() > 3 )
-                            name = trimLine.substring( 3, trimLine.length() ).trim();
-                        else
-                            name = "";
-                        
-                        while( !TextUtils.isEmpty( name ) )
-                        {
-                            CheatBlock block = new CheatBlock( name, reader, elements );
-                            elements.add( block );
-                            blocks.add( block );
-                            name = block.nextName;
-                        }
-                    }
-                    else if( trimLine.substring( 0, 3 ).equals( "crc" ) )
-                    {
-                        // Start of the next cheat section, quit
-                        if( trimLine.length() > 4 )
-                            nextCrc = trimLine.substring( 4, trimLine.length() ).trim();
-                        return;
-                    }
+                    // A comment or blank line
+                    elements.add( new CheatLine( fullLine ) );
+                }
+                else if( trimLine.substring( 0, 2 ).equals( "gn" ) )
+                {
+                    // ROM "good name"
+                    if( trimLine.length() > 3 )
+                        goodName = trimLine.substring( 3, trimLine.length() ).trim();
+                    elements.add( new CheatLine( fullLine ) );
+                }
+                else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
+                {
+                    // Cheat name
+                    String name;
+                    if( trimLine.length() > 3 )
+                        name = trimLine.substring( 3, trimLine.length() ).trim();
                     else
+                        name = "";
+                    
+                    while( !TextUtils.isEmpty( name ) )
                     {
-                        // This shouldn't happen (bad syntax), quit
-                        Log.w( "CheatSection", "Unknown syntax: " + fullLine );
-                        return;
+                        CheatBlock block = new CheatBlock( name, reader, elements );
+                        elements.add( block );
+                        blocks.add( block );
+                        name = block.nextName;
                     }
                 }
-            }
-            catch( IOException ignored )
-            {
+                else if( trimLine.substring( 0, 3 ).equals( "crc" ) )
+                {
+                    // Start of the next cheat section, quit
+                    if( trimLine.length() > 4 )
+                        nextCrc = trimLine.substring( 4, trimLine.length() ).trim();
+                    return;
+                }
+                else
+                {
+                    // This shouldn't happen (bad syntax), quit
+                    Log.w( "CheatSection", "Unknown syntax: " + fullLine );
+                    return;
+                }
             }
         }
         
@@ -603,83 +603,78 @@ public class CheatFile
          * @param reader the object providing disk read access
          * @param elements reference to the list of cheat lines in the cheat section (to allow
          *            recursion)
+         * @throws IOException if a read error occurs
          */
         private CheatBlock( String name, BufferedReader reader, LinkedList<CheatElement> elements )
+                throws IOException
         {
             this.name = name;
             this.codes = new LinkedList<CheatCode>();
             
-            try
+            String fullLine;
+            while( ( fullLine = reader.readLine() ) != null )
             {
-                String fullLine;
-                while( ( fullLine = reader.readLine() ) != null )
+                String trimLine = fullLine.trim();
+                if( trimLine.length() == 0 )
                 {
-                    String trimLine = fullLine.trim();
-                    if( trimLine.length() == 0 )
-                    {
-                        // End of the cheat section, return
-                        return;
-                    }
-                    if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
-                    {
-                        // A comment or blank line
-                        elements.add( new CheatLine( fullLine ) );
-                    }
-                    else if( trimLine.substring( 0, 2 ).equals( "cd" ) )
-                    {
-                        // Cheat code description
-                        if( trimLine.length() > 3 )
-                            description = trimLine.substring( 3, trimLine.length() ).trim();
-                    }
-                    else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
-                    {
-                        // End of this cheat block, save the name of the next block, and return
-                        if( trimLine.length() > 3 )
-                            nextName = trimLine.substring( 3, trimLine.length() ).trim();
-                        else
-                            nextName = "";
-                        return;
-                    }
+                    // End of the cheat section, return
+                    return;
+                }
+                if( ( trimLine.length() < 3 ) || ( trimLine.substring( 0, 2 ).equals( "//" ) ) )
+                {
+                    // A comment or blank line
+                    elements.add( new CheatLine( fullLine ) );
+                }
+                else if( trimLine.substring( 0, 2 ).equals( "cd" ) )
+                {
+                    // Cheat code description
+                    if( trimLine.length() > 3 )
+                        description = trimLine.substring( 3, trimLine.length() ).trim();
+                }
+                else if( trimLine.substring( 0, 2 ).equals( "cn" ) )
+                {
+                    // End of this cheat block, save the name of the next block, and return
+                    if( trimLine.length() > 3 )
+                        nextName = trimLine.substring( 3, trimLine.length() ).trim();
                     else
+                        nextName = "";
+                    return;
+                }
+                else
+                {
+                    // Cheat code line
+                    int x = trimLine.indexOf( ' ' );
+                    if( x >= 0 && x < trimLine.length() )
                     {
-                        // Cheat code line
-                        int x = trimLine.indexOf( ' ' );
-                        if( x >= 0 && x < trimLine.length() )
+                        String address = trimLine.substring( 0, x ).trim();
+                        String code = trimLine.substring( x + 1, trimLine.length() ).trim();
+                        
+                        // Check if this cheat has options
+                        x = code.indexOf( ' ' );
+                        if( x >= 0 && x < code.length() )
                         {
-                            String address = trimLine.substring( 0, x ).trim();
-                            String code = trimLine.substring( x + 1, trimLine.length() ).trim();
+                            // Cheat contains options
+                            LinkedList<CheatOption> cheatOptions = new LinkedList<CheatOption>();
+                            String options = code.substring( x + 1, code.length() ).trim();
+                            code = code.substring( 0, x ).trim();
                             
-                            // Check if this cheat has options
-                            x = code.indexOf( ' ' );
-                            if( x >= 0 && x < code.length() )
+                            Pattern pattern = Pattern.compile( CheatFile.PATTERN_CHEAT_OPTION );
+                            Matcher matcher = pattern.matcher( options );
+                            while( matcher.find() )
                             {
-                                // Cheat contains options
-                                LinkedList<CheatOption> cheatOptions = new LinkedList<CheatOption>();
-                                String options = code.substring( x + 1, code.length() ).trim();
-                                code = code.substring( 0, x ).trim();
-                                
-                                Pattern pattern = Pattern.compile( CheatFile.PATTERN_CHEAT_OPTION );
-                                Matcher matcher = pattern.matcher( options );
-                                while( matcher.find() )
-                                {
-                                    String option = options.substring( matcher.start(),
-                                            matcher.end() );
-                                    cheatOptions.add( new CheatOption( option.substring( 0, 4 ),
-                                            option.substring( 6, option.length() - 1 ) ) );
-                                }
-                                codes.add( new CheatCode( address, code, cheatOptions ) );
+                                String option = options.substring( matcher.start(), matcher.end() );
+                                cheatOptions.add( new CheatOption( option.substring( 0, 4 ), option
+                                        .substring( 6, option.length() - 1 ) ) );
                             }
-                            else
-                            {
-                                // Code doesn't have any options
-                                codes.add( new CheatCode( address, code, null ) );
-                            }
+                            codes.add( new CheatCode( address, code, cheatOptions ) );
+                        }
+                        else
+                        {
+                            // Code doesn't have any options
+                            codes.add( new CheatCode( address, code, null ) );
                         }
                     }
                 }
-            }
-            catch( IOException ignored )
-            {
             }
         }
         
