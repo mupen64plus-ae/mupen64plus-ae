@@ -188,13 +188,6 @@ public class CheatFile
             for( CheatSection section : mSections.values() )
             {
                 section.save( writer );
-                if( !TextUtils.isEmpty( section.key ) && !section.key.equals( NO_KEY ) )
-                {
-                    // Insert blank line between sections
-                    // TODO: This saves an extra blank line at the end of the file.
-                    // Make sure that doesn't cause problems during load or in the core.
-                    writer.append( '\n' );
-                }
             }
         }
         catch( IOException e )
@@ -300,6 +293,9 @@ public class CheatFile
         /** All elements in this section (cheat blocks and cheat lines). */
         private final LinkedList<CheatElement> elements;
         
+        /** The raw lines of text associated with this section, emptied after {@link #lazyLoad()}. */
+        private final LinkedList<String> fullLines;
+        
         // TODO: Make this final
         /** The key of the next cheat section, or null if no more sections are left. */
         private String nextKey = null;
@@ -317,6 +313,7 @@ public class CheatFile
             this.goodName = name;
             this.blocks = new LinkedList<CheatBlock>();
             this.elements = new LinkedList<CheatElement>();
+            this.fullLines = new LinkedList<String>();
             
             // Generate the header lines for this section
             if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_KEY ) )
@@ -338,6 +335,7 @@ public class CheatFile
             this.key = key;
             this.blocks = new LinkedList<CheatBlock>();
             this.elements = new LinkedList<CheatElement>();
+            this.fullLines = new LinkedList<String>();
             
             if( !key.equals( NO_KEY ) )
             {
@@ -347,6 +345,28 @@ public class CheatFile
             String fullLine;
             while( ( fullLine = reader.readLine() ) != null )
             {
+                if( fullLine.startsWith( "crc " ) )
+                {
+                    // Start of the next cheat section, return
+                    nextKey = fullLine.substring( 4 );
+                    return;
+                }
+                else
+                {
+                    fullLines.add( fullLine );
+                }
+            }
+        }
+        
+        /**
+         * Populates the cheat section fields using the disk data cached in the constructor.
+         */
+        private void lazyLoad()
+        {
+            Iterator<String> iterator = fullLines.iterator();
+            while( iterator.hasNext() )
+            {
+                String fullLine = iterator.next();
                 if( fullLine.length() == 0 || fullLine.startsWith( "//" ) )
                 {
                     // A comment or blank line
@@ -364,25 +384,20 @@ public class CheatFile
                     String name = fullLine.substring( 4 );
                     while( !TextUtils.isEmpty( name ) )
                     {
-                        CheatBlock block = new CheatBlock( name, reader, elements );
+                        CheatBlock block = new CheatBlock( name, iterator, elements );
                         elements.add( block );
                         blocks.add( block );
                         name = block.nextName;
                     }
                 }
-                else if( fullLine.startsWith( "crc " ) )
-                {
-                    // Start of the next cheat section, return
-                    nextKey = fullLine.substring( 4 );
-                    return;
-                }
                 else
                 {
-                    // This shouldn't happen (bad syntax), return
+                    // This shouldn't happen (bad syntax), finish
                     Log.w( "CheatSection", "Unknown syntax: " + fullLine );
-                    return;
+                    break;
                 }
             }
+            fullLines.clear();
         }
         
         /**
@@ -398,6 +413,15 @@ public class CheatFile
             {
                 element.save( writer );
             }
+            if( fullLines.size() == 0 && !TextUtils.isEmpty( key ) && !key.equals( NO_KEY ) )
+            {
+                // Insert blank line between sections
+                writer.append( '\n' );
+            }
+            for( String fullLine : fullLines )
+            {
+                writer.append( fullLine ).append( '\n' );
+            }
         }
         
         /**
@@ -407,6 +431,7 @@ public class CheatFile
          */
         public int size()
         {
+            lazyLoad();
             return blocks.size();
         }
         
@@ -418,6 +443,7 @@ public class CheatFile
          */
         public CheatBlock get( int index )
         {
+            lazyLoad();
             try
             {
                 return blocks.get( index );
@@ -439,6 +465,7 @@ public class CheatFile
             if( block == null )
                 return false;
             
+            lazyLoad();
             boolean success = blocks.add( block );
             success &= elements.add( block );
             return success;
@@ -456,6 +483,7 @@ public class CheatFile
             if( block == null )
                 return false;
             
+            lazyLoad();
             try
             {
                 blocks.add( index, block );
@@ -488,6 +516,7 @@ public class CheatFile
          */
         public boolean remove( int index )
         {
+            lazyLoad();
             try
             {
                 blocks.remove( index );
@@ -518,6 +547,7 @@ public class CheatFile
          */
         public void clear()
         {
+            lazyLoad();
             blocks.clear();
             Iterator<CheatElement> iterator = elements.iterator();
             CheatElement element;
@@ -597,20 +627,19 @@ public class CheatFile
          * disk.
          * 
          * @param name the name of the cheat (required)
-         * @param reader the object providing disk read access
+         * @param iterator iterator for the raw lines of text in this cheat block
          * @param elements reference to the list of cheat lines in the cheat section (to allow
          *            recursion)
-         * @throws IOException if a read error occurs
          */
-        private CheatBlock( String name, BufferedReader reader, LinkedList<CheatElement> elements )
-                throws IOException
+        private CheatBlock( String name, Iterator<String> iterator,
+                LinkedList<CheatElement> elements )
         {
             this.name = name;
             this.codes = new LinkedList<CheatCode>();
             
-            String fullLine;
-            while( ( fullLine = reader.readLine() ) != null )
+            while( iterator.hasNext() )
             {
+                String fullLine = iterator.next();
                 if( fullLine.length() == 0 )
                 {
                     // End of the cheat section, return
