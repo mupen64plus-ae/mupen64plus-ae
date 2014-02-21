@@ -80,9 +80,12 @@ public class CheatFile
     private static final Matcher CODE_MATCHER = Pattern.compile(
             "^  ([0-9a-fA-F]{8}) ([0-9a-fA-F]{4}|[\\?]{4} )(.*)" ).matcher( "" );
     
-    /** The regular expression matcher for a single cheat option. */
+    /**
+     * The regular expression matcher for a single cheat option. Inspired by
+     * http://stackoverflow.com/a/5696141/254218
+     */
     private static final Matcher OPTION_MATCHER = Pattern.compile(
-            "([0-9a-fA-F]{4}):\"((?:[^\\\\\"]*(?:\\\\\")*)*)\"" ).matcher( "" );
+            "([0-9a-fA-F]{4}):\"([^\\\\\"]*+(?:\\\\\"[^\\\\\"]*+)*+)\"" ).matcher( "" );
     
     /** Path of the cheat file. */
     private final String mFilename;
