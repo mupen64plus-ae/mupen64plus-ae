@@ -232,7 +232,7 @@ public class AppData
             coreSharedDataDir = storageDir;
         }
         tempDir = coreSharedDataDir + "/tmp";
-        libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
+        libsDir = context.getApplicationInfo().nativeLibraryDir;
         touchscreenLayoutsDir = coreSharedDataDir + "/skins/touchscreens/";
         touchpadLayoutsDir = coreSharedDataDir + "/skins/touchpads/";
         fontsDir = coreSharedDataDir + "/skins/fonts/";
