@@ -132,7 +132,7 @@ abstract public class ManageProfilesActivity extends ListActivity
         // Get the config files from the subclass-specified paths
         String customPath = getConfigFilePath( false );
         String builtinPath = getConfigFilePath( true );
-        new File( customPath ).mkdirs();
+        new File( customPath ).getParentFile().mkdirs();
         mConfigBuiltin = new ConfigFile( builtinPath );
         mConfigCustom = new ConfigFile( customPath );
     }
