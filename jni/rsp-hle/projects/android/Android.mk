@@ -28,17 +28,19 @@ LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
-LOCAL_SRC_FILES :=          \
-    $(SRCDIR)/alist.c       \
-    $(SRCDIR)/audio.c       \
-    $(SRCDIR)/cicx105.c     \
-    $(SRCDIR)/jpeg.c        \
-    $(SRCDIR)/main.c        \
-    $(SRCDIR)/musyx.c       \
-    $(SRCDIR)/ucode1.c      \
-    $(SRCDIR)/ucode2.c      \
-    $(SRCDIR)/ucode3.c      \
-    $(SRCDIR)/ucode3mp3.c   \
+LOCAL_SRC_FILES :=           \
+    $(SRCDIR)/alist.c        \
+    $(SRCDIR)/alist_audio.c  \
+    $(SRCDIR)/alist_naudio.c \
+    $(SRCDIR)/alist_nead.c   \
+    $(SRCDIR)/audio.c        \
+    $(SRCDIR)/cicx105.c      \
+    $(SRCDIR)/hle.c          \
+    $(SRCDIR)/jpeg.c         \
+    $(SRCDIR)/memory.c       \
+    $(SRCDIR)/mp3.c          \
+    $(SRCDIR)/musyx.c        \
+    $(SRCDIR)/plugin.c       \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 

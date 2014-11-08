@@ -221,21 +221,29 @@ ifeq ($(PLUGINDIR),)
   PLUGINDIR := $(LIBDIR)/mupen64plus
 endif
 
+# enable/disable task dumping support
+ifeq ($(DUMP), 1)
+	CFLAGS += -DENABLE_TASK_DUMP
+endif
+
+
 SRCDIR = ../../src
 OBJDIR = _obj$(POSTFIX)
 
 # list of source files to compile
 SOURCE = \
-	$(SRCDIR)/main.c \
 	$(SRCDIR)/alist.c \
+	$(SRCDIR)/alist_audio.c \
+	$(SRCDIR)/alist_naudio.c \
+	$(SRCDIR)/alist_nead.c \
 	$(SRCDIR)/audio.c \
 	$(SRCDIR)/cicx105.c \
+	$(SRCDIR)/hle.c \
 	$(SRCDIR)/jpeg.c \
+	$(SRCDIR)/memory.c \
+	$(SRCDIR)/mp3.c \
 	$(SRCDIR)/musyx.c \
-	$(SRCDIR)/ucode3.c \
-	$(SRCDIR)/ucode2.c \
-	$(SRCDIR)/ucode1.c \
-	$(SRCDIR)/ucode3mp3.c
+	$(SRCDIR)/plugin.c
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
@@ -260,6 +268,7 @@ targets:
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
+	@echo "    DUMP=(1|0)    == Enable/Disable unknown task dumping (default: 0)"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"

@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - jpeg.h                                          *
+ *   Mupen64plus-rsp-hle - stdbool.h                                       *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2002 Hacktarux                                          *
+ *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,12 +19,19 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef JPEG_H
-#define JPEG_H
+/* This header is only intended to be used with msvc compilers */
 
-void jpeg_decode_PS0(void);
-void jpeg_decode_PS(void);
-void jpeg_decode_OB(void);
+#pragma once
 
-#endif
+typedef int _Bool;
+
+/**
+ * The standard states that "an application may undefine and then possibly redefine the macro
+ * bool, true and false". However, such feature might be withdrawn in a future version.
+ **/
+#define bool _Bool
+#define true 1
+#define false 0
+
+#define __bool_true_false_are_defined 1
 

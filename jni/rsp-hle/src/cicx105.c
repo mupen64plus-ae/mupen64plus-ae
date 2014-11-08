@@ -23,9 +23,7 @@
 
 #include <string.h>
 
-#include "m64p_plugin.h"
-#include "hle.h"
-#include "cicx105.h"
+#include "hle_internal.h"
 
 /**
  * During IPL3 stage of CIC x105 games, the RSP performs some checks and transactions
@@ -35,15 +33,15 @@
  *
  * Found in Banjo-Tooie, Zelda, Perfect Dark, ...)
  **/
-void cicx105_ucode(void)
+void cicx105_ucode(struct hle_t* hle)
 {
     /* memcpy is okay to use because access constrains are met (alignment, size) */
     unsigned int i;
-    unsigned char *dst = rsp.RDRAM + 0x2fb1f0;
-    unsigned char *src = rsp.IMEM + 0x120;
+    unsigned char *dst = hle->dram + 0x2fb1f0;
+    unsigned char *src = hle->imem + 0x120;
 
     /* dma_read(0x1120, 0x1e8, 0x1e8) */
-    memcpy(rsp.IMEM + 0x120, rsp.RDRAM + 0x1e8, 0x1f0);
+    memcpy(hle->imem + 0x120, hle->dram + 0x1e8, 0x1f0);
 
     /* dma_write(0x1120, 0x2fb1f0, 0xfe817000) */
     for (i = 0; i < 24; ++i) {

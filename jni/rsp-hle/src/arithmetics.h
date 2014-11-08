@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - hle.h                                           *
+ *   Mupen64plus-rsp-hle - arithmetics.h                                   *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
@@ -19,36 +19,20 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef HLE_H
-#define HLE_H
+#ifndef ARITHMETICS_H
+#define ARITHMETICS_H
 
-#include "hle_internal.h"
+#include <stdint.h>
 
-void hle_init(struct hle_t* hle,
-    unsigned char* dram,
-    unsigned char* dmem,
-    unsigned char* imem,
-    unsigned int* mi_intr,
-    unsigned int* sp_mem_addr,
-    unsigned int* sp_dram_addr,
-    unsigned int* sp_rd_length,
-    unsigned int* sp_wr_length,
-    unsigned int* sp_status,
-    unsigned int* sp_dma_full,
-    unsigned int* sp_dma_busy,
-    unsigned int* sp_pc,
-    unsigned int* sp_semaphore,
-    unsigned int* dpc_start,
-    unsigned int* dpc_end,
-    unsigned int* dpc_current,
-    unsigned int* dpc_status,
-    unsigned int* dpc_clock,
-    unsigned int* dpc_bufbusy,
-    unsigned int* dpc_pipebusy,
-    unsigned int* dpc_tmem,
-    void* user_defined);
+#include "common.h"
 
-void hle_execute(struct hle_t* hle);
+static inline int16_t clamp_s16(int_fast32_t x)
+{
+    x = (x < INT16_MIN) ? INT16_MIN: x;
+    x = (x > INT16_MAX) ? INT16_MAX: x;
+
+    return x;
+}
 
 #endif
 
