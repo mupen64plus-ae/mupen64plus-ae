@@ -28,6 +28,7 @@ LOCAL_CFLAGS :=         \
     -DANDROID           \
     -DNO_ASM            \
     -DPAULSCODE         \
+    -DANDROID_EDITION   \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
