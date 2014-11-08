@@ -632,7 +632,7 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 */
 #ifdef ANDROID_EDITION
 // Declare state callback and allow main to be called dynamically from external library
-#include "ae_imports.h"
+// #include "ae_imports.h"
 EXPORT
 #endif
 int main(int argc, char *argv[])
