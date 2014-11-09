@@ -411,13 +411,6 @@ void CColorCombiner::UpdateCombiner(uint32 dwMux0, uint32 dwMux1)
 
             m_decodedMux.Hack();
 
-            if( !m_bSupportMultiTexture )
-            {
-                m_decodedMux.ReplaceVal(MUX_TEXEL1, MUX_TEXEL0);
-                m_decodedMux.ReplaceVal(MUX_LODFRAC,1);
-                m_decodedMux.ReplaceVal(MUX_PRIMLODFRAC,1);
-            }
-
             m_decodedMux.Simplify();
             if( m_supportedStages>1)    
                 m_decodedMux.SplitComplexStages();

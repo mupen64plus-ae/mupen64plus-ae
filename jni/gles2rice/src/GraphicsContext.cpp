@@ -29,8 +29,6 @@
 CGraphicsContext* CGraphicsContext::g_pGraphicsContext = NULL;
 bool CGraphicsContext::m_deviceCapsIsInitialized = false;
 bool CGraphicsContext::needCleanScene = false;
-int CGraphicsContext::m_maxFSAA = 16;
-int CGraphicsContext::m_maxAnisotropy = 16;
 
 CGraphicsContext * CGraphicsContext::Get(void)
 {   
@@ -38,10 +36,9 @@ CGraphicsContext * CGraphicsContext::Get(void)
 }
     
 CGraphicsContext::CGraphicsContext() :
-    m_supportTextureMirror(false),
-    m_bReady(false), 
-        m_bActive(false),
-        m_bWindowed(true)
+    m_bReady(false),
+    m_bActive(false),
+    m_bWindowed(true)
 {
 }
 CGraphicsContext::~CGraphicsContext()

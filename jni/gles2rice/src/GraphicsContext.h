@@ -30,17 +30,6 @@ enum ClearFlag
     CLEAR_COLOR_AND_DEPTH_BUFFER=0x03,
 };
 
-
-typedef struct
-{
-    uint32  addr;   //N64 RDRAM address
-    uint32  size;   //N64 buffer size
-    uint32  format; //N64 format
-    uint32  width;
-    uint32  height;
-} TextureBufferShortInfo;
-
-
 // This class basically provides an extra level of security for our
 // multithreaded code. Threads can Grab the CGraphicsContext to prevent
 // other threads from changing/releasing any of the pointers while it is
@@ -66,12 +55,6 @@ public:
 
     static void InitWindowInfo();
     static void InitDeviceParameters();
-
-    bool m_supportTextureMirror;
-
-public:
-    static  int          m_maxFSAA;
-    static  int          m_maxAnisotropy;
 
 protected:
     static  uint32      m_dwWindowStyle;       // Saved window style for mode switches

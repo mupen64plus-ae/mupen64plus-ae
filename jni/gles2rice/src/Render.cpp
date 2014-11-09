@@ -1099,29 +1099,6 @@ void CRender::SetTextureEnableAndScale(int dwTile, bool bEnable, float fScaleX, 
     }
 }
 
-void CRender::SetFogFlagForNegativeW()
-{
-    if( !gRSP.bFogEnabled ) return;
-
-    m_bFogStateSave = gRSP.bFogEnabled;
-
-    bool flag=gRSP.bFogEnabled;
-    
-    for (uint32 i = 0; i < gRSP.numVertices; i++) 
-    {
-        if( g_vtxBuffer[i].rhw < 0 )
-            flag = FALSE;
-    }
-
-    TurnFogOnOff(flag);
-}
-
-void CRender::RestoreFogFlag()
-{
-    if( !gRSP.bFogEnabled ) return;
-    TurnFogOnOff(m_bFogStateSave);
-}
-
 void CRender::SetViewport(int nLeft, int nTop, int nRight, int nBottom, int maxZ)
 {
     if( status.bHandleN64RenderTexture )

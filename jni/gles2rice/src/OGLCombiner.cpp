@@ -69,7 +69,6 @@ bool COGLColorCombiner::Initialize(void)
     m_bSupportAdd = false;
     m_bSupportSubtract = false;
     m_supportedStages = 1;
-    m_bSupportMultiTexture = false;
 
     COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
     if( pcontext->IsExtensionSupported(OSAL_GL_ARB_TEXTURE_ENV_ADD) || pcontext->IsExtensionSupported("GL_EXT_texture_env_add") )
@@ -211,7 +210,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
             if( shadeIsUsedInColor && texIsUsedInColor )
             {
                 if( m_bSupportSubtract )
-                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_SUBTRACT_ARB);
+                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_SUBTRACT);
                 else
                     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
             }

@@ -25,15 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 static void APIENTRY EmptyFunc(void) { return; }
 
-bool                                 bNvidiaExtensionsSupported = false;
-PFUNCGLCOMBINERPARAMETERFVNVPROC     pglCombinerParameterfvNV = (PFUNCGLCOMBINERPARAMETERFVNVPROC) EmptyFunc;
-PFUNCGLFINALCOMBINERINPUTNVPROC      pglFinalCombinerInputNV = (PFUNCGLFINALCOMBINERINPUTNVPROC) EmptyFunc;
-PFUNCGLCOMBINEROUTPUTNVPROC          pglCombinerOutputNV = (PFUNCGLCOMBINEROUTPUTNVPROC) EmptyFunc;
-PFUNCGLCOMBINERINPUTNVPROC           pglCombinerInputNV = (PFUNCGLCOMBINERINPUTNVPROC) EmptyFunc;
-PFUNCGLCOMBINERPARAMETERINVPROC      pglCombinerParameteriNV = (PFUNCGLCOMBINERPARAMETERINVPROC) EmptyFunc;
-
 PFUNCGLACTIVETEXTUREPROC             pglActiveTexture = (PFUNCGLACTIVETEXTUREPROC) EmptyFunc;
-PFUNCGLACTIVETEXTUREARBPROC          pglActiveTextureARB = (PFUNCGLACTIVETEXTUREARBPROC) EmptyFunc;
 PFUNCGLMULTITEXCOORD2FPROC           pglMultiTexCoord2f = (PFUNCGLMULTITEXCOORD2FPROC) EmptyFunc;
 PFUNCGLMULTITEXCOORD2FVPROC          pglMultiTexCoord2fv = (PFUNCGLMULTITEXCOORD2FVPROC) EmptyFunc;
 PFUNCGLDELETEPROGRAMSARBPROC         pglDeleteProgramsARB = (PFUNCGLDELETEPROGRAMSARBPROC) EmptyFunc;
@@ -41,8 +33,8 @@ PFUNCGLPROGRAMSTRINGARBPROC          pglProgramStringARB = (PFUNCGLPROGRAMSTRING
 PFUNCGLBINDPROGRAMARBPROC            pglBindProgramARB = (PFUNCGLBINDPROGRAMARBPROC) EmptyFunc;
 PFUNCGLGENPROGRAMSARBPROC            pglGenProgramsARB = (PFUNCGLGENPROGRAMSARBPROC) EmptyFunc;
 PFUNCGLPROGRAMENVPARAMETER4FVARBPROC pglProgramEnvParameter4fvARB = (PFUNCGLPROGRAMENVPARAMETER4FVARBPROC) EmptyFunc;
-PFUNCGLFOGCOORDPOINTEREXTPROC        pglFogCoordPointerEXT = (PFUNCGLFOGCOORDPOINTEREXTPROC) EmptyFunc;
-PFUNCGLCLIENTACTIVETEXTUREARBPROC    pglClientActiveTextureARB = (PFUNCGLCLIENTACTIVETEXTUREARBPROC) EmptyFunc;
+PFUNCGLFOGCOORDPOINTERPROC           pglFogCoordPointer = (PFUNCGLFOGCOORDPOINTERPROC) EmptyFunc;
+PFUNCGLCLIENTACTIVETEXTUREPROC       pglClientActiveTexture = (PFUNCGLCLIENTACTIVETEXTUREPROC) EmptyFunc;
 
 #define INIT_ENTRY_POINT(type, funcname) \
   p##funcname = (type) CoreVideo_GL_GetProcAddress(#funcname); \
@@ -51,21 +43,7 @@ PFUNCGLCLIENTACTIVETEXTUREARBPROC    pglClientActiveTextureARB = (PFUNCGLCLIENTA
 
 void OGLExtensions_Init(void)
 {
-    /* nvidia extensions are a special case */
-    bNvidiaExtensionsSupported = true;
-    pglCombinerParameterfvNV = (PFUNCGLCOMBINERPARAMETERFVNVPROC) CoreVideo_GL_GetProcAddress("glCombinerParameterfvNV");
-    if (pglCombinerParameterfvNV == NULL) bNvidiaExtensionsSupported = false;
-    pglFinalCombinerInputNV = (PFUNCGLFINALCOMBINERINPUTNVPROC) CoreVideo_GL_GetProcAddress("glFinalCombinerInputNV");
-    if (pglFinalCombinerInputNV == NULL) bNvidiaExtensionsSupported = false;
-    pglCombinerOutputNV = (PFUNCGLCOMBINEROUTPUTNVPROC) CoreVideo_GL_GetProcAddress("glCombinerOutputNV");
-    if (pglCombinerOutputNV == NULL) bNvidiaExtensionsSupported = false;
-    pglCombinerInputNV = (PFUNCGLCOMBINERINPUTNVPROC) CoreVideo_GL_GetProcAddress("glCombinerInputNV");
-    if (pglCombinerInputNV == NULL) bNvidiaExtensionsSupported = false;
-    pglCombinerParameteriNV = (PFUNCGLCOMBINERPARAMETERINVPROC) CoreVideo_GL_GetProcAddress("glCombinerParameteriNV");
-    if (pglCombinerParameteriNV == NULL) bNvidiaExtensionsSupported = false;
-
     INIT_ENTRY_POINT(PFUNCGLACTIVETEXTUREPROC,             glActiveTexture);
-    INIT_ENTRY_POINT(PFUNCGLACTIVETEXTUREARBPROC,          glActiveTextureARB);
     INIT_ENTRY_POINT(PFUNCGLMULTITEXCOORD2FPROC,           glMultiTexCoord2f);
     INIT_ENTRY_POINT(PFUNCGLMULTITEXCOORD2FVPROC,          glMultiTexCoord2fv);
     INIT_ENTRY_POINT(PFUNCGLDELETEPROGRAMSARBPROC,         glDeleteProgramsARB);
@@ -73,8 +51,8 @@ void OGLExtensions_Init(void)
     INIT_ENTRY_POINT(PFUNCGLBINDPROGRAMARBPROC,            glBindProgramARB);
     INIT_ENTRY_POINT(PFUNCGLGENPROGRAMSARBPROC,            glGenProgramsARB);
     INIT_ENTRY_POINT(PFUNCGLPROGRAMENVPARAMETER4FVARBPROC, glProgramEnvParameter4fvARB);
-    INIT_ENTRY_POINT(PFUNCGLFOGCOORDPOINTEREXTPROC,        glFogCoordPointerEXT);
-    INIT_ENTRY_POINT(PFUNCGLCLIENTACTIVETEXTUREARBPROC,    glClientActiveTextureARB);
+    INIT_ENTRY_POINT(PFUNCGLFOGCOORDPOINTERPROC,           glFogCoordPointer);
+    INIT_ENTRY_POINT(PFUNCGLCLIENTACTIVETEXTUREPROC,       glClientActiveTexture);
 }
 
 

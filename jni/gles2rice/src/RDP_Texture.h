@@ -30,7 +30,6 @@ bool IsTmemFlagValid(uint32 tmemAddr);
 uint32 GetValidTmemInfoIndex(uint32 tmemAddr);
 
 void EnhanceTexture(TxtrCacheEntry *pEntry);
-void MirrorTexture(uint32 tileno, TxtrCacheEntry *pEntry);
 void LoadHiresTexture( TxtrCacheEntry &entry );
 
 
@@ -1157,11 +1156,6 @@ void PrepareTextures()
                         if( pEntry->pEnhancedTexture && pEntry->dwEnhancementFlag == TEXTURE_EXTERNAL && !options.bLoadHiResTextures )
                         {
                             SAFE_DELETE(pEntry->pEnhancedTexture);
-                        }
-
-                        if( pEntry->pEnhancedTexture == NULL )
-                        {
-                            MirrorTexture(tilenos[i], pEntry);;
                         }
 
                         if( options.bLoadHiResTextures && (pEntry->pEnhancedTexture == NULL || pEntry->dwEnhancementFlag < TEXTURE_EXTERNAL ) )

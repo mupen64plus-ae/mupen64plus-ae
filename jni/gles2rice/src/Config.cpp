@@ -181,18 +181,6 @@ SettingInfo openGLDepthBufferSettings[] =
 {"32-bit", 32},
 };
 
-RenderEngineSetting OpenGLRenderSettings[] =
-{
-{"To Fit Your Video Card", OGL_DEVICE},
-{"OpenGL 1.1 (Lowest)",  OGL_1_1_DEVICE},
-{"OpenGL 1.2/1.3", OGL_1_2_DEVICE},
-{"OpenGL 1.4", OGL_1_4_DEVICE},
-//{"OpenGL 1.4, the 2nd combiner",  OGL_1_4_V2_DEVICE},
-{"OpenGL for Nvidia TNT or better", OGL_TNT2_DEVICE},
-{"OpenGL for Nvidia GeForce or better ", NVIDIA_OGL_DEVICE},
-{"OpenGL Fragment Program Extension", OGL_FRAGMENT_PROGRAM},
-};
-
 SettingInfo OnScreenDisplaySettings[] =
 {
 {"Display Nothing", ONSCREEN_DISPLAY_NOTHING},
@@ -205,8 +193,6 @@ SettingInfo OnScreenDisplaySettings[] =
 {"Display Debug Information With Core Msgs", ONSCREEN_DISPLAY_DEBUG_INFORMATION_WITH_CORE_MSG},
 };
 
-const int numberOfOpenGLRenderEngineSettings = sizeof(OpenGLRenderSettings)/sizeof(RenderEngineSetting);
-
 void GenerateFrameBufferOptions(void)
 {
     if( CDeviceBuilder::GetGeneralDeviceType() == OGL_DEVICE )
@@ -218,76 +204,76 @@ void GenerateFrameBufferOptions(void)
             currentRomOptions.N64RenderToTextureEmuType = TXT_BUF_IGNORE;
     }
 
-    frameBufferOptions.bUpdateCIInfo            = false;
+    frameBufferOptions.bUpdateCIInfo                       = false;
 
-    frameBufferOptions.bCheckBackBufs           = false;
-    frameBufferOptions.bWriteBackBufToRDRAM     = false;
-    frameBufferOptions.bLoadBackBufFromRDRAM    = false;
+    frameBufferOptions.bCheckBackBufs                      = false;
+    frameBufferOptions.bWriteBackBufToRDRAM                = false;
+    frameBufferOptions.bLoadBackBufFromRDRAM               = false;
 
-    frameBufferOptions.bIgnore                  = true;
+    frameBufferOptions.bIgnore                             = true;
 
-    frameBufferOptions.bSupportRenderTextures           = false;
-    frameBufferOptions.bCheckRenderTextures         = false;
-    frameBufferOptions.bRenderTextureWriteBack          = false;
-    frameBufferOptions.bLoadRDRAMIntoRenderTexture      = false;
+    frameBufferOptions.bSupportRenderTextures              = false;
+    frameBufferOptions.bCheckRenderTextures                = false;
+    frameBufferOptions.bRenderTextureWriteBack             = false;
+    frameBufferOptions.bLoadRDRAMIntoRenderTexture         = false;
 
-    frameBufferOptions.bProcessCPUWrite         = false;
-    frameBufferOptions.bProcessCPURead          = false;
-    frameBufferOptions.bAtEachFrameUpdate       = false;
-    frameBufferOptions.bIgnoreRenderTextureIfHeightUnknown      = false;
+    frameBufferOptions.bProcessCPUWrite                    = false;
+    frameBufferOptions.bProcessCPURead                     = false;
+    frameBufferOptions.bAtEachFrameUpdate                  = false;
+    frameBufferOptions.bIgnoreRenderTextureIfHeightUnknown = false;
 
     switch( currentRomOptions.N64FrameBufferEmuType )
     {
     case FRM_BUF_NONE:
         break;
     case FRM_BUF_COMPLETE:
-        frameBufferOptions.bAtEachFrameUpdate       = true;
-        frameBufferOptions.bProcessCPUWrite         = true;
-        frameBufferOptions.bProcessCPURead          = true;
-        frameBufferOptions.bUpdateCIInfo            = true;
+        frameBufferOptions.bAtEachFrameUpdate    = true;
+        frameBufferOptions.bProcessCPUWrite      = true;
+        frameBufferOptions.bProcessCPURead       = true;
+        frameBufferOptions.bUpdateCIInfo         = true;
         break;
     case FRM_BUF_WRITEBACK_AND_RELOAD:
-        frameBufferOptions.bLoadBackBufFromRDRAM    = true;
+        frameBufferOptions.bLoadBackBufFromRDRAM = true;
     case FRM_BUF_BASIC_AND_WRITEBACK:
-        frameBufferOptions.bWriteBackBufToRDRAM     = true;
+        frameBufferOptions.bWriteBackBufToRDRAM  = true;
     case FRM_BUF_BASIC:
-        frameBufferOptions.bCheckBackBufs           = true;
+        frameBufferOptions.bCheckBackBufs        = true;
     case FRM_BUF_IGNORE:
-        frameBufferOptions.bUpdateCIInfo            = true;
+        frameBufferOptions.bUpdateCIInfo         = true;
         break;
     case FRM_BUF_BASIC_AND_WITH_EMULATOR:
         // Banjo Kazooie
-        frameBufferOptions.bCheckBackBufs           = true;
+        frameBufferOptions.bCheckBackBufs        = true;
     case FRM_BUF_WITH_EMULATOR:
-        frameBufferOptions.bUpdateCIInfo            = true;
-        frameBufferOptions.bProcessCPUWrite         = true;
-        frameBufferOptions.bProcessCPURead          = true;
+        frameBufferOptions.bUpdateCIInfo         = true;
+        frameBufferOptions.bProcessCPUWrite      = true;
+        frameBufferOptions.bProcessCPURead       = true;
         break;
     case FRM_BUF_WITH_EMULATOR_READ_ONLY:
-        frameBufferOptions.bUpdateCIInfo            = true;
-        frameBufferOptions.bProcessCPURead          = true;
+        frameBufferOptions.bUpdateCIInfo         = true;
+        frameBufferOptions.bProcessCPURead       = true;
         break;
     case FRM_BUF_WITH_EMULATOR_WRITE_ONLY:
-        frameBufferOptions.bUpdateCIInfo            = true;
-        frameBufferOptions.bProcessCPUWrite         = true;
+        frameBufferOptions.bUpdateCIInfo         = true;
+        frameBufferOptions.bProcessCPUWrite      = true;
         break;
     }
 
     switch( currentRomOptions.N64RenderToTextureEmuType )
     {
     case TXT_BUF_NONE:
-        frameBufferOptions.bSupportRenderTextures           = false;
+        frameBufferOptions.bSupportRenderTextures      = false;
         break;
     case TXT_BUF_WRITE_BACK_AND_RELOAD:
-        frameBufferOptions.bLoadRDRAMIntoRenderTexture      = true;
+        frameBufferOptions.bLoadRDRAMIntoRenderTexture = true;
     case TXT_BUF_WRITE_BACK:
-        frameBufferOptions.bRenderTextureWriteBack          = true;
+        frameBufferOptions.bRenderTextureWriteBack     = true;
     case TXT_BUF_NORMAL:
-        frameBufferOptions.bCheckRenderTextures         = true;
-        frameBufferOptions.bIgnore                  = false;
+        frameBufferOptions.bCheckRenderTextures        = true;
+        frameBufferOptions.bIgnore                     = false;
     case TXT_BUF_IGNORE:
-        frameBufferOptions.bUpdateCIInfo            = true;
-        frameBufferOptions.bSupportRenderTextures           = true;
+        frameBufferOptions.bUpdateCIInfo               = true;
+        frameBufferOptions.bSupportRenderTextures      = true;
         break;
     }
 
@@ -309,12 +295,50 @@ BOOL InitConfiguration(void)
         DebugMessage(M64MSG_ERROR, "Unable to open Video-Rice configuration section");
         return FALSE;
     }
+    
+    /* Ensure versionning is present */
+    int ConfigParamsVersion;
+    if (ConfigGetParameter(l_ConfigVideoRice, "Version", M64TYPE_INT, &ConfigParamsVersion, sizeof(int)) != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_WARNING, "No version number in 'Rice-Video' config section. Setting defaults.");
+        ConfigParamsVersion = 0; // zero to ensure updates will be applied
+    }
+    /* Update config parameters */
+    if (ConfigParamsVersion < CONFIG_PARAM_VERSION)
+    {
+        DebugMessage(M64MSG_WARNING, "Old parameter config version detected : %d, updating to %d;", ConfigParamsVersion, CONFIG_PARAM_VERSION);
+        if (ConfigParamsVersion == 0) /* From v0 to v1: Remove OGL_TNT2_DEVICE and NVIDIA_OGL device */
+        {
+            int oldOglDevice;
+            if (ConfigGetParameter(l_ConfigVideoRice, "OpenGLRenderSetting", M64TYPE_INT, &oldOglDevice, sizeof(int)) == M64ERR_SUCCESS)
+            {
+                /* OGL_1.2 was 2, OGL_1.3 was 3, OGL_1.4_V2 was 5, OGL_TNT2_DEVICE was 6, NVIDIA_OGL was 7 but doesnt exist anymore: Put to auto*/
+                if ((oldOglDevice == 2) || (oldOglDevice == 3) || (oldOglDevice == 5) || (oldOglDevice == 6) || (oldOglDevice == 7))
+                {
+                    oldOglDevice = 0; // auto
+                }
+                if (oldOglDevice == 4) /* OGL_1.4 (was 4) is now 2*/
+                {
+                    oldOglDevice = 2;
+                }
+                else if (oldOglDevice >= 8) /* OGL_FRAGMENT_PROGRAM (was 8+) is now 4*/
+                {
+                    oldOglDevice = 3;
+                }
+                ConfigSetParameter(l_ConfigVideoRice, "OpenGLRenderSetting", M64TYPE_INT, &oldOglDevice);
+                ConfigSetParameterHelp(l_ConfigVideoRice, "OpenGLRenderSetting", "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.4, 3=OGL_FRAGMENT_PROGRAM)");
+            }
+            ConfigParamsVersion = 1;
+        } // place others update stuff here and increment "ConfigParamsVersion" and CONFIG_PARAM_VERSION each time.
+    }
 
+    /* Set default config parameters */
     ConfigSetDefaultBool(l_ConfigVideoGeneral, "Fullscreen", 0, "Use fullscreen mode if True, or windowed mode if False ");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenWidth", 640, "Width of output window or fullscreen width");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 480, "Height of output window or fullscreen height");
     ConfigSetDefaultBool(l_ConfigVideoGeneral, "VerticalSync", 0, "If true, activate the SDL_GL_SWAP_CONTROL attribute");
 
+    ConfigSetDefaultInt(l_ConfigVideoRice, "Version", CONFIG_PARAM_VERSION, "Mupen64Plus Rice Video Plugin config parameter version number");
     ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferSetting", FRM_BUF_NONE, "Frame Buffer Emulation (0=ROM default, 1=disable)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferWriteBackControl", FRM_BUF_WRITEBACK_NORMAL, "Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "RenderToTexture", TXT_BUF_NONE, "Render-to-texture emulation (0=none, 1=ignore, 2=normal, 3=write back, 4=write back and reload)");
@@ -336,7 +360,6 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultBool(l_ConfigVideoRice, "FullTMEMEmulation", FALSE, "N64 Texture Memory Full Emulation (may fix some games, may break others)");
     ConfigSetDefaultBool(l_ConfigVideoRice, "OpenGLVertexClipper", FALSE, "Enable vertex clipper for fog operations");
     ConfigSetDefaultBool(l_ConfigVideoRice, "EnableSSE", TRUE, "Enable/Disable SSE optimizations for capable CPUs");
-    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableVertexShader", FALSE, "Use GPU vertex shader");
     ConfigSetDefaultBool(l_ConfigVideoRice, "SkipFrame", FALSE, "If this option is enabled, the plugin will skip every other frame");
     ConfigSetDefaultBool(l_ConfigVideoRice, "TexRectOnly", FALSE, "If enabled, texture enhancement will be done only for TxtRect ucode");
     ConfigSetDefaultBool(l_ConfigVideoRice, "SmallTextureOnly", FALSE, "If enabled, texture enhancement will be done only for textures width+height<=128");
@@ -354,7 +377,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting", 16, "Z-buffer depth (only 16 or 32)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "MultiSampling", 0, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ColorQuality", TEXTURE_FMT_A8R8G8B8, "Color bit depth for rendering window (0=32 bits, 1=16 bits)");
-    ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.2, 3=OGL_1.3, 4=OGL_1.4, 5=OGL_1.4_V2, 6=OGL_TNT2, 7=NVIDIA_OGL, 8=OGL_FRAGMENT_PROGRAM)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.4, 3=OGL_FRAGMENT_PROGRAM)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "AnisotropicFiltering", 0, "Enable/Disable Anisotropic Filtering for Mipmapping (0=no filtering, 2-16=quality). This is uneffective if Mipmapping is 0. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering");
     return TRUE;
 }
@@ -450,7 +473,6 @@ static void ReadConfiguration(void)
     options.bFullTMEM = ConfigGetParamBool(l_ConfigVideoRice, "FullTMEMEmulation");
     options.bOGLVertexClipper = ConfigGetParamBool(l_ConfigVideoRice, "OpenGLVertexClipper");
     options.bEnableSSE = ConfigGetParamBool(l_ConfigVideoRice, "EnableSSE");
-    options.bEnableVertexShader = ConfigGetParamBool(l_ConfigVideoRice, "EnableVertexShader");
     options.bSkipFrame = ConfigGetParamBool(l_ConfigVideoRice, "SkipFrame");
     options.bTexRectOnly = ConfigGetParamBool(l_ConfigVideoRice, "TexRectOnly");
     options.bSmallTextureOnly = ConfigGetParamBool(l_ConfigVideoRice, "SmallTextureOnly");
@@ -480,7 +502,6 @@ static void ReadConfiguration(void)
 
     status.isMMXSupported = isMMXSupported();
     status.isSSESupported = isSSESupported();
-    status.isVertexShaderSupported = false;
 
     status.isSSEEnabled = status.isSSESupported && options.bEnableSSE;
 #if !defined(NO_ASM)
@@ -495,9 +516,6 @@ static void ReadConfiguration(void)
         ProcessVertexData = ProcessVertexDataNoSSE;
         DebugMessage(M64MSG_INFO, "Disabled SSE processing.");
     }
-
-    status.isVertexShaderEnabled = status.isVertexShaderSupported && options.bEnableVertexShader;
-    status.bUseHW_T_L = false;
 }
     
 BOOL LoadConfiguration(void)
@@ -933,7 +951,7 @@ char * tidy(char * s)
     char * p = s + strlen(s);
 
     p--;
-    while (p >= s && (*p == ' ' || *p == 0xa || *p == '\n') )
+    while (p >= s && (*p == ' ' || *p == '\r' || *p == '\n') )
     {
         *p = 0;
         p--;

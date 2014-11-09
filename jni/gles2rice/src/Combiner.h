@@ -52,7 +52,7 @@ public:
 protected:
     CColorCombiner(CRender *pRender) : 
         m_pDecodedMux(NULL), m_bTex0Enabled(false),m_bTex1Enabled(false),m_bTexelsEnable(false),
-        m_bCycleChanged(false), m_supportedStages(1),m_bSupportMultiTexture(true),m_pRender(pRender)
+        m_bCycleChanged(false), m_supportedStages(1),m_pRender(pRender)
     {
     }
 
@@ -67,7 +67,6 @@ protected:
     bool    m_bCycleChanged;    // A flag will be set if cycle is changed to FILL or COPY
 
     int     m_supportedStages;
-    bool    m_bSupportMultiTexture;
 
     CRender *m_pRender;
 

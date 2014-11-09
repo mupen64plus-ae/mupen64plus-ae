@@ -128,60 +128,6 @@ const char *fragmentFill =
 
 GLuint fillProgram,fillColorLocation;
 
-COGLFragmentShaderCombiner::COGLFragmentShaderCombiner(CRender *pRender)
-: COGLColorCombiner(pRender)
-{
-    m_bShaderIsSupported = true;
-}
-COGLFragmentShaderCombiner::~COGLFragmentShaderCombiner()
-{
-}
-
-bool COGLFragmentShaderCombiner::Initialize(void)
-{
-    if( !COGLColorCombiner::Initialize() )
-        return false;
-
-    COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
-//    if( pcontext->IsExtensionSupported("GL_fragment_shader") )
-//    {
-        m_bShaderIsSupported = true;
-//    }
-
-    return true;
-}
-
-void COGLFragmentShaderCombiner::InitCombinerCycle12(void)
-{
-}
-void COGLFragmentShaderCombiner::DisableCombiner(void)
-{
-    COGLColorCombiner::DisableCombiner();
-}
-
-void COGLFragmentShaderCombiner::InitCombinerCycleCopy(void)
-{
-    COGLColorCombiner::InitCombinerCycleCopy();
-}
-
-void COGLFragmentShaderCombiner::InitCombinerCycleFill(void)
-{
-    COGLColorCombiner::InitCombinerCycleFill();
-}
-void COGLFragmentShaderCombiner::InitCombinerBlenderForSimpleTextureDraw(uint32 tile)
-{
-    COGLColorCombiner::InitCombinerBlenderForSimpleTextureDraw(tile);
-}
-
-#ifdef DEBUGGER
-void COGLFragmentShaderCombiner::DisplaySimpleMuxString(void)
-{
-    COGLColorCombiner::DisplaySimpleMuxString();
-}
-#endif
-
-
-
 COGL_FragmentProgramCombiner::COGL_FragmentProgramCombiner(CRender *pRender)
 : COGLColorCombiner4(pRender)
 {

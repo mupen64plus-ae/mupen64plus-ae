@@ -97,21 +97,3 @@ void COGLExtDecodedMux::FurtherFormatForOGL2(void)
     */
 }
 
-
-void COGLExtDecodedMuxTNT2::FurtherFormatForOGL2(void)
-{
-    if( Count(MUX_PRIM) >= Count(MUX_ENV) )
-    {
-        //ReplaceVal(MUX_ENV, MUX_PRIM);
-        //ReplaceVal(MUX_ENV, MUX_SHADE);
-        ReplaceVal(MUX_ENV, MUX_1);
-        //ReplaceVal(MUX_PRIM, MUX_0);
-    }
-    else
-    {
-        //ReplaceVal(MUX_PRIM, MUX_ENV);
-        //ReplaceVal(MUX_PRIM, MUX_SHADE);
-        ReplaceVal(MUX_PRIM, MUX_0);
-    }
-}
-

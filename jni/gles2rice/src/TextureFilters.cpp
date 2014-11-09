@@ -789,113 +789,6 @@ void EnhanceTexture(TxtrCacheEntry *pEntry)
     pEntry->pEnhancedTexture = pSurfaceHandler;
 }
 
-
-/************************************************************************/
-/*                                                                      */
-/************************************************************************/
-void MirrorEmulator_DrawLine(DrawInfo& destInfo, DrawInfo& srcInfo, uint32 *pSource, uint32 *pDest, uint32 nWidth, BOOL bFlipLeftRight)
-{
-    if(!bFlipLeftRight)
-    {
-        memcpy(pDest, pSource, nWidth * 4);
-    }
-    else
-    {
-        uint32 *pMaxDest = pDest + nWidth;
-        pSource += nWidth - 1;
-        for(; pDest < pMaxDest; pDest++, pSource--)
-        {
-            *pDest = *pSource;
-        }
-    }
-}
-
-
-void MirrorEmulator_Draw(DrawInfo& destInfo, DrawInfo& srcInfo, uint32 nDestX, uint32 nDestY, BOOL bFlipLeftRight, BOOL bFlipUpDown)
-{
-    uint8 *pDest = (uint8 *) destInfo.lpSurface + (destInfo.lPitch * nDestY) + (4 * nDestX);
-    uint8 *pMaxDest = pDest + (destInfo.lPitch * srcInfo.dwHeight);
-    uint8 *pSource = (uint8 *)(srcInfo.lpSurface);
-    if(!bFlipUpDown)
-    {
-        for(; pDest < pMaxDest; pDest += destInfo.lPitch, pSource += srcInfo.lPitch)
-        {
-            MirrorEmulator_DrawLine(destInfo, srcInfo, (uint32*)pSource, (uint32*)pDest, srcInfo.dwWidth, bFlipLeftRight);
-        }
-    }
-    else
-    {
-        pSource += (srcInfo.lPitch * (srcInfo.dwHeight - 1));
-        for(; pDest < pMaxDest; pDest += destInfo.lPitch, pSource -= srcInfo.lPitch)
-        {
-            MirrorEmulator_DrawLine(destInfo, srcInfo, (uint32*)pSource, (uint32*)pDest, srcInfo.dwWidth, bFlipLeftRight);
-        }
-    }
-}
-
-void MirrorTexture(uint32 dwTile, TxtrCacheEntry *pEntry)
-{
-    if( ((gRDP.tiles[dwTile].bMirrorS) || (gRDP.tiles[dwTile].bMirrorT)) && CGraphicsContext::Get()->m_supportTextureMirror == false )
-    {
-        if(pEntry->pEnhancedTexture)
-        {
-            return;
-        }
-        else
-        {
-            CTexture* pSurfaceHandler = NULL;
-
-            // FIXME: Compute the correct values. 2/2 seems to always work correctly in Mario64
-            uint32 nXTimes = gRDP.tiles[dwTile].bMirrorS ? 2 : 1;
-            uint32 nYTimes = gRDP.tiles[dwTile].bMirrorT ? 2 : 1;
-            
-            // For any texture need to use mirror, we should not need to rescale it
-            // because texture need to be mirrored must with MaskS and MaskT
-
-            // But again, check me
-
-            //if( pEntry->pTexture->m_bScaledS == false || pEntry->pTexture->m_bScaledT == false)
-            //{
-            //  pEntry->pTexture->ScaleImageToSurface();
-            //}
-
-            DrawInfo srcInfo;   
-            if( pEntry->pTexture->StartUpdate(&srcInfo) )
-            {
-                uint32 nWidth = srcInfo.dwWidth;
-                uint32 nHeight = srcInfo.dwHeight;
-
-                pSurfaceHandler = CDeviceBuilder::GetBuilder()->CreateTexture(nWidth * nXTimes, nHeight * nYTimes);
-                if( pSurfaceHandler )
-                {
-                    DrawInfo destInfo;
-                    if( pSurfaceHandler->StartUpdate(&destInfo) )
-                    {
-                        for(uint32 nY = 0; nY < nYTimes; nY++)
-                        {
-                            for(uint32 nX = 0; nX < nXTimes; nX++)
-                            {
-                                MirrorEmulator_Draw(destInfo, srcInfo, nWidth * nX, nHeight * nY, nX & 0x1, nY & 0x1);
-                            }
-                        }
-
-                        pSurfaceHandler->EndUpdate(&destInfo);
-                    }
-                
-                    // FIXME: There should be a flag to tell that it is a mirrored texture handler
-                    // not the original texture handlers, so all texture coordinate should be divided by 2
-                    pSurfaceHandler->SetOthersVariables();
-                }
-
-                pEntry->pTexture->EndUpdate(&srcInfo);  
-                pEntry->dwEnhancementFlag = TEXTURE_MIRRORED;
-            }
-
-
-            pEntry->pEnhancedTexture = pSurfaceHandler;
-        }
-    }
-}
 /****
  All code bellow, CLEAN ME
 ****/
@@ -903,11 +796,11 @@ void MirrorTexture(uint32 dwTile, TxtrCacheEntry *pEntry)
 enum TextureType
 {
     NO_TEXTURE,
- RGB_PNG,
- COLOR_INDEXED_BMP,
- RGB_WITH_ALPHA_TOGETHER_PNG,
- RGBA_PNG_FOR_CI,
- RGBA_PNG_FOR_ALL_CI,
+    RGB_PNG,
+    COLOR_INDEXED_BMP,
+    RGB_WITH_ALPHA_TOGETHER_PNG,
+    RGBA_PNG_FOR_CI,
+    RGBA_PNG_FOR_ALL_CI,
 };
 typedef struct {
     unsigned int width;

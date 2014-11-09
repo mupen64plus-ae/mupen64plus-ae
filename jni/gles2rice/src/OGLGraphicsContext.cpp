@@ -32,20 +32,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "version.h"
 
 COGLGraphicsContext::COGLGraphicsContext() :
-    m_bSupportMultiTexture(false),
-    m_bSupportTextureEnvCombine(false),
-    m_bSupportSeparateSpecularColor(false),
-    m_bSupportSecondColor(false),
-    m_bSupportFogCoord(false),
-    m_bSupportTextureObject(false),
-    m_bSupportRescaleNormal(false),
-    m_bSupportLODBias(false),
-    m_bSupportTextureMirrorRepeat(false),
-    m_bSupportTextureLOD(false),
-    m_bSupportNVRegisterCombiner(false),
-    m_bSupportBlendColor(false),
-    m_bSupportBlendSubtract(false),
-    m_bSupportNVTextureEnvCombine4(false),
     m_pVendorStr(NULL),
     m_pRenderStr(NULL),
     m_pExtensionStr(NULL),
@@ -63,7 +49,6 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     DebugMessage(M64MSG_INFO, "Initializing OpenGL Device Context.");
     Lock();
 
-    CGraphicsContext::Get()->m_supportTextureMirror = false;
     CGraphicsContext::Initialize(dwWidth, dwHeight, bWindowed );
 
     if( bWindowed )
@@ -159,7 +144,6 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     UpdateFrame();
     
     m_bReady = true;
-    status.isVertexShaderEnabled = false;
 
     return true;
 }
@@ -219,10 +203,10 @@ bool COGLGraphicsContext::ResizeInitialize(uint32 dwWidth, uint32 dwHeight, BOOL
 
 void COGLGraphicsContext::InitState(void)
 {
-    m_pRenderStr = glGetString(GL_RENDERER);
+    m_pRenderStr    = glGetString(GL_RENDERER);
     m_pExtensionStr = glGetString(GL_EXTENSIONS);
-    m_pVersionStr = glGetString(GL_VERSION);
-    m_pVendorStr = glGetString(GL_VENDOR);
+    m_pVersionStr   = glGetString(GL_VERSION);
+    m_pVendorStr    = glGetString(GL_VENDOR);
     glMatrixMode(GL_PROJECTION);
     OPENGL_CHECK_ERRORS;
     glLoadIdentity();
@@ -290,26 +274,7 @@ void COGLGraphicsContext::InitState(void)
 
 void COGLGraphicsContext::InitOGLExtension(void)
 {
-    // important extension features, it is very bad not to have these feature
-#if SDL_VIDEO_OPENGL
-    m_bSupportMultiTexture = IsExtensionSupported("GL_ARB_multitexture");
-#elif SDL_VIDEO_OPENGL_ES2
-    m_bSupportMultiTexture = true;
-#endif
-    m_bSupportTextureEnvCombine = IsExtensionSupported("GL_EXT_texture_env_combine");
-    
-    m_bSupportSeparateSpecularColor = IsExtensionSupported("GL_EXT_separate_specular_color");
-    m_bSupportSecondColor = IsExtensionSupported("GL_EXT_secondary_color");
-#if SDL_VIDEO_OPENGL
-    m_bSupportFogCoord = IsExtensionSupported("GL_EXT_fog_coord");
-#elif SDL_VIDEO_OPENGL_ES2
-    m_bSupportFogCoord = true;
-#endif
-    m_bSupportTextureObject = IsExtensionSupported("GL_EXT_texture_object");
-
     // Optional extension features
-    m_bSupportRescaleNormal = IsExtensionSupported("GL_EXT_rescale_normal");
-    m_bSupportLODBias = IsExtensionSupported("GL_EXT_texture_lod_bias");
     m_bSupportAnisotropicFiltering = IsExtensionSupported("GL_EXT_texture_filter_anisotropic");
 
     // Compute maxAnisotropicFiltering
@@ -335,20 +300,6 @@ void COGLGraphicsContext::InitOGLExtension(void)
         if((uint32) m_maxAnisotropicFiltering > options.anisotropicFiltering)
         m_maxAnisotropicFiltering = options.anisotropicFiltering;
     }
-
-    // Nvidia only extension features (optional)
-    m_bSupportNVRegisterCombiner = IsExtensionSupported("GL_NV_register_combiners");
-    m_bSupportTextureMirrorRepeat = IsExtensionSupported("GL_IBM_texture_mirrored_repeat") || IsExtensionSupported("ARB_texture_mirrored_repeat");
-#if SDL_VIDEO_OPENGL
-    m_supportTextureMirror = m_bSupportTextureMirrorRepeat;
-#elif SDL_VIDEO_OPENGL_ES2
-    m_supportTextureMirror = true;
-#endif
-    m_bSupportTextureLOD = IsExtensionSupported("GL_EXT_texture_lod");
-    m_bSupportBlendColor = IsExtensionSupported("GL_EXT_blend_color");
-    m_bSupportBlendSubtract = IsExtensionSupported("GL_EXT_blend_subtract");
-    m_bSupportNVTextureEnvCombine4 = IsExtensionSupported("GL_NV_texture_env_combine4");
-
 }
 
 bool COGLGraphicsContext::IsExtensionSupported(const char* pExtName)
@@ -364,18 +315,6 @@ bool COGLGraphicsContext::IsExtensionSupported(const char* pExtName)
         return false;
     }
 }
-
-bool COGLGraphicsContext::IsWglExtensionSupported(const char* pExtName)
-{
-    if( m_pWglExtensionStr == NULL )
-        return false;
-
-    if( strstr((const char*)m_pWglExtensionStr, pExtName) != NULL )
-        return true;
-    else
-        return false;
-}
-
 
 void COGLGraphicsContext::CleanUp()
 {
@@ -523,7 +462,6 @@ int COGLGraphicsContext::ToggleFullscreen()
 // This is a static function, will be called when the plugin DLL is initialized
 void COGLGraphicsContext::InitDeviceParameters()
 {
-    status.isVertexShaderEnabled = false;   // Disable it for now
 }
 
 // Get methods
