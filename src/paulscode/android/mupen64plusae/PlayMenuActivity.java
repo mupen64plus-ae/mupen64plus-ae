@@ -127,6 +127,17 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Get the detailed info about the ROM
         mRomDetail = RomDetail.lookupByMd5( romMd5 );
+        if( mRomDetail == null )
+        {
+            // MD5 not in the database; lookup by CRC instead
+            mRomDetail = RomDetail.lookupByCrc( romCrc );
+            if( mRomDetail == null )
+            {
+                // CRC not in the database; create temporary ROM info
+                // TODO Implement solution
+                Log.e( "PlayMenuActivity.OnCreate", "Could not locate meta-info for ROM " + mRomPath );
+            }
+        }
         
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );

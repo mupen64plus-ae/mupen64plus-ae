@@ -26,6 +26,8 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Locale;
 
+import org.apache.commons.lang.NullArgumentException;
+
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import android.text.TextUtils;
@@ -70,12 +72,14 @@ public class RomDetail
     
     public static RomDetail lookupByCrc( String crc )
     {
-        return new RomDetail( sCrcMap.get( crc ), null );
+        ConfigSection section = sCrcMap.get( crc );
+        return section == null ? null : new RomDetail( section, null );
     }
     
     public static RomDetail lookupByMd5( String md5 )
     {
-        return new RomDetail( sConfigFile.get( md5 ), md5 );
+        ConfigSection section = sConfigFile.get( md5 );
+        return section == null ? null : new RomDetail( section, md5 );
     }
     
     public static String computeMd5( File file )
@@ -126,6 +130,10 @@ public class RomDetail
     
     private RomDetail( ConfigSection section, String computedMd5 )
     {
+        // Never pass a null section
+        if( section == null )
+            throw new NullArgumentException( "section" );
+        
         // Never query the database before initializing it
         if( sConfigFile == null )
             throw new IllegalStateException(
@@ -143,7 +151,6 @@ public class RomDetail
         int _players = 0;
         boolean _rumble = false;
         
-        if( section != null )
         {
             // Record the MD5 if it was accurately provided; otherwise null
             _md5 = section.name.equals( computedMd5 ) ? computedMd5 : null;
