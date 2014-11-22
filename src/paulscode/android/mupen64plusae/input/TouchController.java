@@ -332,19 +332,15 @@ public class TouchController extends AbstractController implements OnTouchListen
                                 break;
                             
                             case AUTOHOLD_METHOD_SLIDEOUT:
-                                // Using slide-off method
-                                if( index != prevIndex )
+                                // Using slide-off method, engage auto-hold button
+                                if( mVibrator != null )
                                 {
-                                    // Finger slid onto nothing, engage auto-hold button
-                                    if( mVibrator != null )
-                                    {
-                                        mVibrator.cancel();
-                                        mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1 );
-                                    }
-                                    if( mListener != null )
-                                        mListener.onAutoHold( true, prevIndex );
-                                    setTouchState( prevIndex, true );
+                                    mVibrator.cancel();
+                                    mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1 );
                                 }
+                                if( mListener != null )
+                                    mListener.onAutoHold( true, prevIndex );
+                                setTouchState( prevIndex, true );
                                 break;
                         }
                     }
