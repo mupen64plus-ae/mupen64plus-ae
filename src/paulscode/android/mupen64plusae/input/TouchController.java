@@ -333,7 +333,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                             
                             case AUTOHOLD_METHOD_SLIDEOUT:
                                 // Using slide-off method
-                                if( index == TouchMap.UNMAPPED )
+                                if( index != prevIndex )
                                 {
                                     // Finger slid onto nothing, engage auto-hold button
                                     if( mVibrator != null )
