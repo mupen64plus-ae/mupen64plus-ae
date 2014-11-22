@@ -30,6 +30,7 @@ import org.acra.ErrorReporter;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import tv.ouya.console.api.OuyaFacade;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -199,6 +200,7 @@ public class AppData
      * 
      * @param context The application context.
      */
+    @TargetApi( 9 )
     public AppData( Context context )
     {
         hardwareInfo = new HardwareInfo();
@@ -232,7 +234,10 @@ public class AppData
             coreSharedDataDir = storageDir;
         }
         tempDir = coreSharedDataDir + "/tmp";
-        libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
+        String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
+        if( !( new File( _libsDir ) ).exists() && IS_GINGERBREAD )
+            _libsDir = context.getApplicationInfo().nativeLibraryDir;
+        libsDir = _libsDir;
         touchscreenLayoutsDir = coreSharedDataDir + "/skins/touchscreens/";
         touchpadLayoutsDir = coreSharedDataDir + "/skins/touchpads/";
         fontsDir = coreSharedDataDir + "/skins/fonts/";
