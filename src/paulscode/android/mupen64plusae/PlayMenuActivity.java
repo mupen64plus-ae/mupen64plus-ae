@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
@@ -111,8 +112,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         mRomPath = extras.getString( Keys.Extras.ROM_PATH );
         String romMd5 = extras.getString( Keys.Extras.ROM_MD5 );
-        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( romMd5 ) )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
+        String romCrc = extras.getString( Keys.Extras.ROM_CRC ); 
+        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( romMd5 ) || TextUtils.isEmpty( romCrc ) )
+            throw new Error( "ROM path, MD5, and CRC must be passed via the extras bundle" );
         
         // Initialize MOGA controller API
         mMogaController.init();
@@ -126,6 +128,32 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Get the detailed info about the ROM
         mRomDetail = RomDetail.lookupByMd5( romMd5 );
+        if( mRomDetail == null )
+        {
+            // MD5 not in the database; lookup by CRC instead
+            RomDetail[] romDetails = RomDetail.lookupByCrc( romCrc );
+            if( romDetails.length == 0 )
+            {
+                // CRC not in the database; create best guess
+                Log.w( "PlayMenuActivity.OnCreate", "No meta-info entry found for ROM " + mRomPath );
+                Log.i( "PlayMenuActivity.OnCreate", "Constructing a best guess for the meta-info");
+                String goodName = new File( mRomPath ).getName().split( "\\." )[0];
+                mRomDetail = RomDetail.createAssumption( romMd5, romCrc, goodName );
+            }
+            else if( romDetails.length > 1 )
+            {
+                // CRC in the database more than once; let user pick best match
+                // TODO Implement popup selector
+                Log.w( "PlayMenuActivity.OnCreate", "Multiple meta-info entries found for ROM " + mRomPath );
+                Log.i( "PlayMenuActivity.OnCreate", "Defaulting to first entry");
+                mRomDetail = romDetails[0];
+            }
+            else
+            {
+                // CRC in the database exactly once; use it
+                mRomDetail = romDetails[0];
+            }
+        }
         
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );

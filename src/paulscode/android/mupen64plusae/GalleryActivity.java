@@ -34,6 +34,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.util.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -195,22 +196,26 @@ public class GalleryActivity extends Activity implements OnClickListener
     {
         // Asynchronously compute MD5 and launch play menu when finished
         Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
-        new AsyncTask<Void, Void, String>()
+        new AsyncTask<Void, Void, String[]>()
         {
             @Override
-            protected String doInBackground( Void... params )
+            protected String[] doInBackground( Void... params )
             {
-                return RomDetail.computeMd5( new File( romPath ) );
+                File file = new File( romPath );
+                RomHeader header = new RomHeader( file );
+                String[] hashes = { RomDetail.computeMd5( file ), header.crc };
+                return hashes;
             }
             
             @Override
-            protected void onPostExecute( String md5 )
+            protected void onPostExecute( String[] hashes )
             {
-                if( !TextUtils.isEmpty( md5 ) )
+                if( !TextUtils.isEmpty( hashes[1] ) || !TextUtils.isEmpty( hashes[0] ) )
                 {
                     Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
                     intent.putExtra( Keys.Extras.ROM_PATH, romPath );
-                    intent.putExtra( Keys.Extras.ROM_MD5, md5 );
+                    intent.putExtra( Keys.Extras.ROM_MD5, hashes[0] );
+                    intent.putExtra( Keys.Extras.ROM_CRC, hashes[1] );
                     startActivity( intent );
                 }
             }
