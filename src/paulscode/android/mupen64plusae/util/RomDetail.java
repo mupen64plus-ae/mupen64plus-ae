@@ -202,8 +202,8 @@ public class RomDetail
             Log.e( "RomDetail.ctor", "mupen64plus.ini appears to be corrupt.  RefMD5 field does not refer to a known ROM." );
             saveType = null;
             status = 0;
-            players = 0;
-            rumble = false;
+            players = 4;
+            rumble = true;
         }
     }
 }
