@@ -32,6 +32,7 @@ import org.apache.commons.lang.NullArgumentException;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class RomDetail
 {
@@ -147,72 +148,62 @@ public class RomDetail
             throw new IllegalStateException(
                     "RomDetail#initializeDatabase must be called before any other RomDetail method" );
         
-        String _md5 = null;
-        String _crc = null;
-        String _goodName = null;
-        String _baseName = null;
-        String _artName = null;
-        String _artUrl = null;
-        String _wikiUrl = null;
-        String _saveType = null;
-        int _status = 0;
-        int _players = 0;
-        boolean _rumble = false;
+        md5 = section.name;
+        crc = section.get( "CRC" );
         
+        // Use an empty goodname (not null) for certain homebrew ROMs
+        if( "00000000 00000000".equals( crc ) )
+            goodName = "";
+        else
+            goodName = section.get( "GoodName" );
+        
+        if( goodName != null )
         {
-            // Record the MD5 if it was accurately provided; otherwise null
-            _md5 = section.name;
-            _crc = section.get( "CRC" );
+            // Extract basename (goodname without the extra parenthetical tags)
+            baseName = goodName.split( " \\(" )[0].trim();
             
-            // Use an empty goodname (not null) for certain homebrew ROMs
-            if( "00000000 00000000".equals( _crc ) )
-                _goodName = "";
-            else
-                _goodName = section.get( "GoodName" );
+            // Generate the cover art URL string
+            artName = baseName.replaceAll( "['\\.]", "" ).replaceAll( "\\W+", "_" ) + ".png";
+            artUrl = String.format( ART_URL_TEMPLATE, artName );
             
-            if( _goodName != null )
-            {
-                // Extract basename (goodname without the extra parenthetical tags)
-                _baseName = _goodName.split( " \\(" )[0].trim();
-                
-                // Generate the cover art URL string
-                _artName = _baseName.replaceAll( "['\\.]", "" ).replaceAll( "\\W+", "_" ) + ".png";
-                _artUrl = String.format( ART_URL_TEMPLATE, _artName );
-                
-                // Generate wiki page URL string
-                _wikiUrl = String.format( WIKI_URL_TEMPLATE, _baseName.replaceAll( " ", "_" ) );
-                if( _goodName.contains( "(Kiosk" ) )
-                    _wikiUrl += "_(Kiosk_Demo)";
-            }
-            
-            // Some ROMs have multiple entries. Instead of duplicating common data, the ini file
-            // just references another entry.
-            String refMd5 = section.get( "RefMD5" );
-            if( !TextUtils.isEmpty( refMd5 ) )
-                section = sConfigFile.get( refMd5 );
-            
-            if( section != null )
-            {
-                _saveType = section.get( "SaveType" );
-                String statusString = section.get( "Status" );
-                String playersString = section.get( "Players" );
-                _status = TextUtils.isEmpty( statusString ) ? 0 : Integer.parseInt( statusString );
-                _players = TextUtils.isEmpty( playersString ) ? 0 : Integer.parseInt( playersString );
-                _rumble = "Yes".equals( section.get( "Rumble" ) );
-            }
+            // Generate wiki page URL string
+            String _wikiUrl = null;
+            _wikiUrl = String.format( WIKI_URL_TEMPLATE, baseName.replaceAll( " ", "_" ) );
+            if( goodName.contains( "(Kiosk" ) )
+                _wikiUrl += "_(Kiosk_Demo)";
+            wikiUrl = _wikiUrl;
+        }
+        else
+        {
+            Log.e( "RomDetail.ctor", "mupen64plus.ini appears to be corrupt.  GoodName field is not defined for selected ROM." );
+            baseName = null;
+            artName = null;
+            artUrl = null;
+            wikiUrl = null;
         }
         
-        // Assign the final fields; assign goodname only if MD5 is valid
-        md5 = _md5;
-        goodName = _goodName;
-        baseName = _baseName;
-        artName = _artName;
-        artUrl = _artUrl;
-        wikiUrl = _wikiUrl;
-        crc = _crc;
-        saveType = _saveType;
-        status = _status;
-        players = _players;
-        rumble = _rumble;
+        // Some ROMs have multiple entries. Instead of duplicating common data, the ini file
+        // just references another entry.
+        String refMd5 = section.get( "RefMD5" );
+        if( !TextUtils.isEmpty( refMd5 ) )
+            section = sConfigFile.get( refMd5 );
+        
+        if( section != null )
+        {
+            saveType = section.get( "SaveType" );
+            String statusString = section.get( "Status" );
+            String playersString = section.get( "Players" );
+            status = TextUtils.isEmpty( statusString ) ? 0 : Integer.parseInt( statusString );
+            players = TextUtils.isEmpty( playersString ) ? 0 : Integer.parseInt( playersString );
+            rumble = "Yes".equals( section.get( "Rumble" ) );
+        }
+        else
+        {
+            Log.e( "RomDetail.ctor", "mupen64plus.ini appears to be corrupt.  RefMD5 field does not refer to a known ROM." );
+            saveType = null;
+            status = 0;
+            players = 0;
+            rumble = false;
+        }
     }
 }
