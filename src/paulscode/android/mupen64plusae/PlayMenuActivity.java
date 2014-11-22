@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
@@ -133,9 +134,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             RomDetail[] romDetails = RomDetail.lookupByCrc( romCrc );
             if( romDetails.length == 0 )
             {
-                // CRC not in the database; create temporary ROM info
-                // TODO Implement solution
-                Log.e( "PlayMenuActivity.OnCreate", "No meta-info entry found for ROM " + mRomPath );
+                // CRC not in the database; create best guess
+                Log.w( "PlayMenuActivity.OnCreate", "No meta-info entry found for ROM " + mRomPath );
+                Log.i( "PlayMenuActivity.OnCreate", "Constructing a best guess for the meta-info");
+                String goodName = new File( mRomPath ).getName().split( "\\." )[0];
+                mRomDetail = RomDetail.createAssumption( romMd5, romCrc, goodName );
             }
             else if( romDetails.length > 1 )
             {

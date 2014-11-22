@@ -73,6 +73,12 @@ public class RomDetail
         }
     }
     
+    public static RomDetail createAssumption( String assumedMd5, String assumedCrc, String assumedGoodName )
+    {
+        // Hide the constructor behind a factory method so that caller is clear this is a last resort
+        return new RomDetail( assumedMd5, assumedCrc, assumedGoodName );
+    }
+    
     public static RomDetail[] lookupByCrc( String crc )
     {
         ArrayList<ConfigSection> sections = sCrcMap.get( crc );
@@ -135,6 +141,29 @@ public class RomDetail
             returnVal += Integer.toString( ( md5Bytes[i] & 0xff ) + 0x100, 16 ).substring( 1 );
         }
         return returnVal.toUpperCase( Locale.US );
+    }
+    
+    private RomDetail( String assumedMd5, String assumedCrc, String assumedGoodName )
+    {
+        // Never pass null arguments
+        if( assumedMd5 == null )
+            throw new NullArgumentException( "assumedMd5" );
+        if( assumedCrc == null )
+            throw new NullArgumentException( "assumedCrc" );
+        if( assumedGoodName == null )
+            throw new NullArgumentException( "assumedGoodName" );
+        
+        md5 = assumedMd5;
+        crc = assumedCrc;
+        goodName = assumedGoodName;
+        baseName = goodName.split( " \\(" )[0].trim();
+        artName = null;
+        artUrl = null;
+        wikiUrl = null;
+        saveType = null;
+        status = 0;
+        players = 4;
+        rumble = true;
     }
     
     private RomDetail( ConfigSection section )
