@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -50,7 +51,7 @@ public class RomDetail
     private static final String WIKI_URL_TEMPLATE = "http://littleguy77.wikia.com/wiki/%s";
     
     private static ConfigFile sConfigFile = null;
-    private static final HashMap<String, ConfigSection> sCrcMap = new HashMap<String, ConfigSection>();
+    private static final HashMap<String, ArrayList<ConfigSection>> sCrcMap = new HashMap<String, ArrayList<ConfigSection>>();
     
     public static void initializeDatabase( String mupen64plusIni )
     {
@@ -64,16 +65,23 @@ public class RomDetail
                 if( crc != null )
                 {
                     if( sCrcMap.get( crc ) == null )
-                        sCrcMap.put( crc, section );
+                        sCrcMap.put( crc, new ArrayList<ConfigSection>() );
+                    sCrcMap.get( crc ).add( section );
                 }
             }
         }
     }
     
-    public static RomDetail lookupByCrc( String crc )
+    public static RomDetail[] lookupByCrc( String crc )
     {
-        ConfigSection section = sCrcMap.get( crc );
-        return section == null ? null : new RomDetail( section, null );
+        ArrayList<ConfigSection> sections = sCrcMap.get( crc );
+        if( sections == null )
+            return new RomDetail[0];
+        
+        RomDetail[] results = new RomDetail[sections.size()];
+        for( int i = 0; i < results.length; i++ )
+            results[i] = new RomDetail( sections.get( i ), null );
+        return results;
     }
     
     public static RomDetail lookupByMd5( String md5 )

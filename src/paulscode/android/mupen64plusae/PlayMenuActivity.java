@@ -130,12 +130,25 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( mRomDetail == null )
         {
             // MD5 not in the database; lookup by CRC instead
-            mRomDetail = RomDetail.lookupByCrc( romCrc );
-            if( mRomDetail == null )
+            RomDetail[] romDetails = RomDetail.lookupByCrc( romCrc );
+            if( romDetails.length == 0 )
             {
                 // CRC not in the database; create temporary ROM info
                 // TODO Implement solution
-                Log.e( "PlayMenuActivity.OnCreate", "Could not locate meta-info for ROM " + mRomPath );
+                Log.e( "PlayMenuActivity.OnCreate", "No meta-info entry found for ROM " + mRomPath );
+            }
+            else if( romDetails.length > 1 )
+            {
+                // CRC in the database more than once; let user pick best match
+                // TODO Implement popup selector
+                Log.w( "PlayMenuActivity.OnCreate", "Multiple meta-info entries found for ROM " + mRomPath );
+                Log.i( "PlayMenuActivity.OnCreate", "Defaulting to first entry");
+                mRomDetail = romDetails[0];
+            }
+            else
+            {
+                // CRC in the database exactly once; use it
+                mRomDetail = romDetails[0];
             }
         }
         
