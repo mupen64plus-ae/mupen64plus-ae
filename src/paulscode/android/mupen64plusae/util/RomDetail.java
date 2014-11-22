@@ -80,14 +80,14 @@ public class RomDetail
         
         RomDetail[] results = new RomDetail[sections.size()];
         for( int i = 0; i < results.length; i++ )
-            results[i] = new RomDetail( sections.get( i ), null );
+            results[i] = new RomDetail( sections.get( i ) );
         return results;
     }
     
     public static RomDetail lookupByMd5( String md5 )
     {
         ConfigSection section = sConfigFile.get( md5 );
-        return section == null ? null : new RomDetail( section, md5 );
+        return section == null ? null : new RomDetail( section );
     }
     
     public static String computeMd5( File file )
@@ -136,7 +136,7 @@ public class RomDetail
         return returnVal.toUpperCase( Locale.US );
     }
     
-    private RomDetail( ConfigSection section, String computedMd5 )
+    private RomDetail( ConfigSection section )
     {
         // Never pass a null section
         if( section == null )
@@ -161,7 +161,7 @@ public class RomDetail
         
         {
             // Record the MD5 if it was accurately provided; otherwise null
-            _md5 = section.name.equals( computedMd5 ) ? computedMd5 : null;
+            _md5 = section.name;
             _crc = section.get( "CRC" );
             
             // Use an empty goodname (not null) for certain homebrew ROMs
@@ -204,7 +204,7 @@ public class RomDetail
         
         // Assign the final fields; assign goodname only if MD5 is valid
         md5 = _md5;
-        goodName = _md5 == null ? null : _goodName;
+        goodName = _goodName;
         baseName = _baseName;
         artName = _artName;
         artUrl = _artUrl;
