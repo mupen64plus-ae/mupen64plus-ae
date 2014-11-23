@@ -30,6 +30,8 @@ import org.apache.commons.lang.WordUtils;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.SuppressLint;
@@ -135,14 +137,14 @@ public class UserPrefs
     /** The number of frames over which touchscreen is redrawn (0 = disabled). */
     public final int touchscreenRefresh;
     
+    /** The directory of the selected touchscreen skin. */
+    public final String touchscreenSkin;
+    
     /** The touchscreen transparency value. */
     public final int touchscreenTransparency;
     
     /** Factor applied to the final calculated visible touchmap scale. */
     public final float touchscreenScale;
-    
-    /** The folder name of the selected touchscreen style. */
-    public final String touchscreenStyle;
     
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
@@ -153,8 +155,11 @@ public class UserPrefs
     /** True if Xperia Play touchpad feedback is enabled. */
     public final boolean isTouchpadFeedbackEnabled;
     
-    /** The filename of the selected Xperia Play layout. */
-    public final String touchpadLayout;
+    /** The directory of the selected Xperia Play skin. */
+    public final String touchpadSkin;
+    
+    /** The touchpad profile. */
+    public final Profile touchpadProfile;
     
     /** True if a single peripheral device can control multiple players concurrently. */
     public final boolean isControllerShared;
@@ -303,13 +308,19 @@ public class UserPrefs
         touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
         touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
-        touchscreenStyle = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
+        touchscreenSkin = appData.touchscreenSkinsDir + "/" + mPreferences.getString( "touchscreenStyle", "Outline" );
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );
         isTouchpadFeedbackEnabled = mPreferences.getBoolean( "touchpadFeedback", false );
-        touchpadLayout = appData.touchpadLayoutsDir + mPreferences.getString( "touchpadLayout", "" );
+        touchpadSkin = appData.touchpadSkinsDir + "/Xperia-Play";
+        ConfigFile touchpad_cfg = new ConfigFile( appData.touchpadProfiles_cfg );
+        ConfigSection section = touchpad_cfg.get( mPreferences.getString( "touchpadLayout", "" ) );
+        if( section != null )
+            touchpadProfile = new Profile( true, section );
+        else
+            touchpadProfile = null;
         
         // Video prefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );

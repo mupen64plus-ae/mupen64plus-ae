@@ -129,10 +129,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         }
         
         // Initialize the touchmap and overlay
-        AppData appData = new AppData( this );
-        mTouchscreenMap = new VisibleTouchMap( getResources(),
-                mUserPrefs.isFpsEnabled, appData.fontsDir, mUserPrefs.touchscreenStyle,
-                mUserPrefs.touchscreenScale, mUserPrefs.touchscreenTransparency );
+        mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
         mOverlay.initialize( mTouchscreenMap, true, 1, mUserPrefs.touchscreenRefresh );
     }
@@ -140,7 +137,10 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     @TargetApi( 11 )
     private void refresh()
     {
-        // TODO: Reposition the assets and refresh the overlay and options menu
+        // Reposition the assets and refresh the overlay and options menu
+        mTouchscreenMap.load( mUserPrefs.touchscreenSkin, mProfile,
+                mUserPrefs.touchscreenRefresh > 0, true, mUserPrefs.touchscreenScale,
+                mUserPrefs.touchscreenTransparency );
         mOverlay.postInvalidate();
         if( AppData.IS_HONEYCOMB )
             invalidateOptionsMenu();

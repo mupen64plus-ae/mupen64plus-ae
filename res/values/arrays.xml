@@ -118,11 +118,11 @@
         <item>@string/touchscreenStyle_entryShaded</item>
     </string-array>
     <string-array name="touchscreenStyle_values" translatable="false">
-        <item>../../images/Mupen64Plus-AE-Outline</item>
-        <item>../../images/Mupen64Plus-AE-Shaded</item>
+        <item>Outline</item>
+        <item>Shaded</item>
     </string-array>
 
-    <string name="touchscreenStyle_default" translatable="false">../../images/Mupen64Plus-AE-Outline</string>
+    <string name="touchscreenStyle_default" translatable="false">Outline</string>
     
     <!-- Touchscreen Layout Heights -->
     <string-array name="touchscreenHeight_entries" translatable="false">
@@ -161,11 +161,11 @@
         <item>@string/touchpadLayout_entryReverse</item>
     </string-array>
     <string-array name="touchpadLayout_values" translatable="false">
-        <item>Mupen64Plus-AE-Xperia-Play</item>
-        <item>Mupen64Plus-AE-Xperia-Play-Swapped</item>
+        <item>Xperia-Play</item>
+        <item>Xperia-Play-Swapped</item>
     </string-array>
 
-    <string name="touchpadLayout_default" translatable="false">Mupen64Plus-AE-Xperia-Play</string>
+    <string name="touchpadLayout_default" translatable="false">Xperia-Play</string>
 
     <!-- Screen Orientation List -->
     <string-array name="displayOrientation_entries" translatable="false">

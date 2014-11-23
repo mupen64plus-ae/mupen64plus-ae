@@ -133,34 +133,21 @@ public final class Image
     }
     
     /**
-     * Centers the image at the specified coordinates, without going beyond the specified screen
-     * dimensions.
+     * Places the image at the specified location in terms of percentage of screen size.
      * 
-     * @param centerX
-     *            X-coordinate to center the image at.
-     * @param centerY
-     *            Y-coordinate to center the image at.
+     * @param percentX
+     *            Percent of screen width to shift the image by.
+     * @param percentY
+     *            Percent of screen height to shift the image by.
      * @param screenW
      *            Horizontal screen dimension (in pixels).
      * @param screenH
      *            Vertical screen dimension (in pixels).
      */
-    public void fitCenter( int centerX, int centerY, int screenW, int screenH )
+    public void fitPercent( float percentX, float percentY, int screenW, int screenH )
     {
-        float cx = centerX;
-        float cy = centerY;
-        
-        if( cx < hWidth * scale )
-            cx = hWidth * scale;
-        if( cy < hHeight * scale )
-            cy = hHeight * scale;
-        if( cx + ( hWidth * scale ) > screenW )
-            cx = screenW - ( hWidth * scale );
-        if( cy + ( hHeight * scale ) > screenH )
-            cy = screenH - ( hHeight * scale );
-        
-        int px = (int) ( cx - ( hWidth * scale ) );
-        int py = (int) ( cy - ( hHeight * scale ) );
+        int px = (int) ( ( percentX / 100f ) * ( screenW - width * scale ) );
+        int py = (int) ( ( percentY / 100f ) * ( screenH - height * scale )  );
         setPos( px, py );
     }
     

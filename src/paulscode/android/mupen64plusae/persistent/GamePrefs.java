@@ -282,7 +282,7 @@ public class GamePrefs
                     layout += height;
                 }
                 
-                folder = appData.touchscreenLayoutsDir + layout;
+                folder = appData.touchscreenSkinsDir + layout;
             }
         }
         else
@@ -290,7 +290,7 @@ public class GamePrefs
             // Touchscreen disabled, profile is null
             if( userPrefs.isFpsEnabled )
             {
-                folder = appData.touchscreenLayoutsDir
+                folder = appData.touchscreenSkinsDir
                         + context.getString( R.string.touchscreenLayout_fpsOnly );
             }
             touchscreenAutoHoldables = null;

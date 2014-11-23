@@ -20,12 +20,13 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
-import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -60,20 +61,35 @@ public class VisibleTouchMap extends TouchMap
     /** The current FPS value. */
     private int mFpsValue;
     
+    /** The minimum size of the FPS indicator in pixels. */
+    private float mFpsMinPixels;
+    
     /** The minimum size to scale the FPS indicator. */
     private float mFpsMinScale;
     
     /** True if the FPS indicator should be drawn. */
-    private final boolean mFpsEnabled;
+    private boolean mFpsEnabled;
     
     /** The factor to scale images by. */
-    private final float mScalingFactor;
+    private float mScalingFactor = 1.0f;
     
     /** Touchscreen opacity. */
-    private final int mTouchscreenTransparency;
+    private int mTouchscreenTransparency;
     
-    /** The file directory containing the FPS font resources. */
-    private final String mFontsDir;
+    /** Reference screen width in pixels (if provided in skin.ini). */
+    private int mReferenceWidth = 0;
+    
+    /** Reference screen height in pixels (if provided in skin.ini). */
+    private int mReferenceHeight = 0;
+    
+    /** The last width passed to {@link #resize(int, int, DisplayMetrics)}. */
+    private int cacheWidth = 0;
+    
+    /** The last height passed to {@link #resize(int, int, DisplayMetrics)}. */
+    private int cacheHeight = 0;
+    
+    /** The last height passed to {@link #resize(int, int, DisplayMetrics)}. */
+    private DisplayMetrics cacheMetrics;
     
     /** The set of images representing the FPS string. */
     private final CopyOnWriteArrayList<Image> mFpsDigits;
@@ -94,25 +110,15 @@ public class VisibleTouchMap extends TouchMap
      * Instantiates a new visible touch map.
      * 
      * @param resources  The resources of the activity associated with this touch map.
-     * @param fpsEnabled True to display the FPS indicator.
-     * @param fontsDir   The directory containing the FPS font resources.
-     * @param imageDir   The directory containing the button images.
-     * @param scale      The factor to scale images by.
-     * @param alpha      The opacity of the visible elements.
      */
-    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, String imageDir, float scale, int alpha )
+    public VisibleTouchMap( Resources resources )
     {
         super( resources );
-        mFpsEnabled = fpsEnabled;
-        mFontsDir = fontsDir;
-        imageFolder = imageDir;
         mFpsDigits = new CopyOnWriteArrayList<Image>();
         mNumerals = new Image[10];
         autoHoldImages = new Image[NUM_N64_PSEUDOBUTTONS];
         autoHoldX = new int[NUM_N64_PSEUDOBUTTONS];
         autoHoldY = new int[NUM_N64_PSEUDOBUTTONS];
-        mScalingFactor = scale;
-        mTouchscreenTransparency = alpha;
     }
     
     /*
@@ -149,46 +155,24 @@ public class VisibleTouchMap extends TouchMap
      */
     public void resize( int w, int h, DisplayMetrics metrics )
     {
+        // Cache the width and height in case we need to reload assets
+        cacheWidth = w;
+        cacheHeight = h;
+        cacheMetrics = metrics;
         scale = 1.0f;
         
         if( metrics != null )
         {
-            float screenWidthPixels;
-            float screenWidthInches;
-            float screenHeightPixels;
-            float screenHeightInches;
-            if( metrics.widthPixels > metrics.heightPixels )
-            {
-                screenWidthPixels = metrics.widthPixels;
-                screenWidthInches = screenWidthPixels / (float) metrics.xdpi;
-                screenHeightPixels = metrics.heightPixels;
-                screenHeightInches = screenHeightPixels / (float) metrics.ydpi;
-            }
-            else
-            {
-                screenWidthPixels = metrics.heightPixels;
-                screenWidthInches = screenWidthPixels / (float) metrics.ydpi;
-                screenHeightPixels = metrics.widthPixels;
-                screenHeightInches = screenHeightPixels / (float) metrics.xdpi;
-            }
-            if( referenceScreenWidthPixels > 0 )
-                scale = screenWidthPixels / (float) referenceScreenWidthPixels;
-            
-            float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
-            if( screenSizeInches < Utility.MINIMUM_TABLET_SIZE && screenHeightInches > screenWidthInches )
-            {
-                // This is a phone in portrait mode.  TODO: Anything special?
-            }
-
-            if( buttonsNoScaleBeyondScreenWidthInches > 0.0f )
-            {
-                float inchScale = buttonsNoScaleBeyondScreenWidthInches / screenWidthInches;
-                // Don't allow controls to exceeded the maximum physical size
-                if( inchScale < 1.0f )
-                    scale *= inchScale;
-            }
+            // Scale buttons to match the skin designer's proportions
+            float scaleW = 1f;
+            float scaleH = 1f;
+            if( mReferenceWidth > 0 )
+                scaleW = Math.max( metrics.widthPixels, metrics.heightPixels ) / (float) mReferenceWidth;
+            if( mReferenceHeight > 0 )
+                scaleH = Math.min( metrics.widthPixels, metrics.heightPixels ) / (float) mReferenceHeight;
+            scale = Math.min( scaleW, scaleH );
         }
-        // Apply the scaling factor (derived from user prefs)
+        // Apply the global scaling factor (derived from user prefs)
         scale *= mScalingFactor;
         
         resize( w, h );
@@ -219,10 +203,8 @@ public class VisibleTouchMap extends TouchMap
         {
             if( autoHoldImages[i] != null )
             {
-                int cX = (int) ( w * ( (float) autoHoldX[i] / 100f ) );
-                int cY = (int) ( h * ( (float) autoHoldY[i] / 100f ) );
                 autoHoldImages[i].setScale( scale );
-                autoHoldImages[i].fitCenter( cX, cY, w, h );
+                autoHoldImages[i].fitPercent( autoHoldX[i], autoHoldY[i], w, h );
             }
         }
         
@@ -232,11 +214,8 @@ public class VisibleTouchMap extends TouchMap
             fpsScale = mFpsMinScale;
         if( mFpsFrame != null )
         {
-            
-            int cX = (int) ( w * ( mFpsFrameX / 100f ) );
-            int cY = (int) ( h * ( mFpsFrameY / 100f ) );
             mFpsFrame.setScale( fpsScale );
-            mFpsFrame.fitCenter( cX, cY, w, h );
+            mFpsFrame.fitPercent( mFpsFrameX, mFpsFrameY, w, h );
         }
         for( int i = 0; i < mNumerals.length; i++ )
         {
@@ -451,17 +430,45 @@ public class VisibleTouchMap extends TouchMap
         }
     }
     
+    /**
+     * Loads all touch map data from the filesystem.
+     * 
+     * @param skinDir    The directory containing the skin.ini and image files.
+     * @param profile    The name of the touchscreen profile.
+     * @param animated   True to load the analog assets in two parts for animation.
+     * @param fpsEnabled True to display the FPS indicator.
+     * @param scale      The factor to scale images by.
+     * @param alpha      The opacity of the visible elements.
+     */
+    public void load( String skinDir, Profile profile, boolean animated, boolean fpsEnabled, float scale, int alpha )
+    {
+        mFpsEnabled = fpsEnabled;
+        mScalingFactor = scale;
+        mTouchscreenTransparency = alpha;
+        
+        super.load( skinDir, profile, animated );
+        ConfigFile skin_ini = new ConfigFile( skinFolder + "/skin.ini" );
+        mReferenceWidth = SafeMethods.toInt( skin_ini.get( "INFO", "referenceScreenWidth" ), 0 );
+        mReferenceHeight = SafeMethods.toInt( skin_ini.get( "INFO", "referenceScreenHeight" ), 0 );
+        mFpsTextX = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numx" ), 50 );
+        mFpsTextY = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numy" ), 50 );
+        mFpsMinPixels = SafeMethods.toInt( skin_ini.get( "INFO", "fps-minPixels" ), 0 );
+        
+        // Scale the assets to the last screensize used
+        resize( cacheWidth, cacheHeight, cacheMetrics );
+    }
+    
     /*
      * (non-Javadoc)
      * 
      * @see
      * paulscode.android.mupen64plusae.input.map.TouchMap#loadAllAssets(paulscode.android.mupen64plusae
-     * .persistent.ConfigFile, java.lang.String)
+     * .profile.Profile, boolean)
      */
     @Override
-    protected void loadAllAssets( ConfigFile pad_ini, String directory )
+    protected void loadAllAssets( Profile profile, boolean animated )
     {
-        super.loadAllAssets( pad_ini, directory );
+        super.loadAllAssets( profile, animated );
         
         // Set the transparency of the images
         for( Image buttonImage : buttonImages )
@@ -471,71 +478,67 @@ public class VisibleTouchMap extends TouchMap
         if( analogBackImage != null )
         {
             analogBackImage.setAlpha( mTouchscreenTransparency );
-        }        
+        }
         if( analogForeImage != null )
         {
             analogForeImage.setAlpha( mTouchscreenTransparency );
         }
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see paulscode.android.mupen64plusae.input.map.TouchMap#loadAssetSection(java.lang.String,
-     * java.lang.String, paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection,
-     * java.lang.String)
-     */
-    @Override
-    protected void loadAssetSection( String directory, String filename, ConfigSection section,
-            String info )
-    {
-        if( info.contains( "fps" ) )
-            loadFpsIndicator( imageFolder, filename, section );
-        else if( filename.contains( "AUTOHOLD" ) )
-            loadAutoHold( imageFolder, filename, section, info );
-        else
-            super.loadAssetSection( directory, filename, section, info );
+        
+        // Load the FPS and autohold images
+        if( profile != null )
+        {
+            loadFpsIndicator( profile );
+            loadAutoHoldImages( profile, "groupAB-holdA" );
+            loadAutoHoldImages( profile, "groupAB-holdB" );
+            loadAutoHoldImages( profile, "groupC-holdCu" );
+            loadAutoHoldImages( profile, "groupC-holdCd" );
+            loadAutoHoldImages( profile, "groupC-holdCl" );
+            loadAutoHoldImages( profile, "groupC-holdCr" );
+            loadAutoHoldImages( profile, "buttonL-holdL" );
+            loadAutoHoldImages( profile, "buttonR-holdR" );
+            loadAutoHoldImages( profile, "buttonZ-holdZ" );
+            loadAutoHoldImages( profile, "buttonS-holdS" );
+        }
     }
     
     /**
      * Loads FPS indicator assets and properties from the filesystem.
      * 
-     * @param directory The directory containing the FPS indicator assets.
-     * @param filename The filename of the FPS indicator assets, without extension.
-     * @param section The configuration section containing the FPS indicator properties.
+     * @param profile The touchscreen profile containing the FPS properties.
      */
-    private void loadFpsIndicator( final String directory, String filename, ConfigSection section )
+    private void loadFpsIndicator( Profile profile )
     {
-        mFpsFrame = new Image( mResources, directory + "/" + filename + ".png" );
+        int x = profile.getInt( "fps-x", -1 );
+        int y = profile.getInt( "fps-y", -1 );
         
-        // Position (percentages of the screen dimensions)
-        mFpsFrameX = SafeMethods.toInt( section.get( "x" ), 0 );
-        mFpsFrameY = SafeMethods.toInt( section.get( "y" ), 0 );
-        
-        // Number position (percentages of the FPS indicator dimensions)
-        mFpsTextX = SafeMethods.toInt( section.get( "numx" ), 50 );
-        mFpsTextY = SafeMethods.toInt( section.get( "numy" ), 50 );
-        
-        // Minimum factor the FPS indicator can be scaled by
-        mFpsMinScale = SafeMethods.toFloat( section.get( "minPixels" ), 0 ) / (float) mFpsFrame.width;
-        
-        // Numeral font
-        String fpsFont = section.get( "font" );
-        if( fpsFont != null && fpsFont.length() > 0 )
+        if( x >= 0 && y >= 0 )
         {
-            // Load the font images
-            int i = 0;
+            // Position (percentages of the screen dimensions)
+            mFpsFrameX = x;
+            mFpsFrameY = y;
+            
+            // Load frame image
+            mFpsFrame = new Image( mResources, skinFolder + "/fps.png" );
+            
+            // Minimum factor the FPS indicator can be scaled by
+            mFpsMinScale = mFpsMinPixels / (float) mFpsFrame.width;
+            
+            // Load numeral images
+            String filename = "";
             try
             {
                 // Make sure we can load them (they might not even exist)
-                for( i = 0; i < mNumerals.length; i++ )
-                    mNumerals[i] = new Image( mResources, mFontsDir + fpsFont + "/" + i + ".png" );
+                for( int i = 0; i < mNumerals.length; i++ )
+                {
+                    filename = skinFolder + "/fps-" + i + ".png";
+                    mNumerals[i] = new Image( mResources, filename );
+                }
             }
             catch( Exception e )
             {
                 // Problem, let the user know
-                Log.e( "VisibleTouchMap", "Problem loading font '" + mFontsDir + fpsFont + "/" + i
-                        + ".png', error message: " + e.getMessage() );
+                Log.e( "VisibleTouchMap", "Problem loading fps numeral '" + filename
+                        + "', error message: " + e.getMessage() );
             }
         }
     }
@@ -543,27 +546,31 @@ public class VisibleTouchMap extends TouchMap
     /**
      * Loads auto-hold assets and properties from the filesystem.
      * 
-     * @param directory The directory containing the auto-hold assets.
-     * @param filename  The filename of the auto-hold assets, without extension.
-     * @param section   The configuration section containing the auto-hold properties.
-     * @param info      The information section containing the auto-hold button.
+     * @param profile The touchscreen profile containing the auto-hold properties.
+     * @param name The name of the image to load.
      */
-    private void loadAutoHold( final String directory, String filename, ConfigSection section,
-            String info )
+    private void loadAutoHoldImages( Profile profile, String name )
     {
-        // Assign the auto-hold option to the appropriate N64 button
-        if( info != null )
+        Matcher matcher = Pattern.compile( "([^-]*)-hold(.*)" ).matcher( name );
+        if( matcher.groupCount() < 3 )
+            return;
+        
+        String group = matcher.group( 1 );
+        String hold = matcher.group( 2 );
+        
+        int x = profile.getInt( group + "-x", -1 );
+        int y = profile.getInt( group + "-y", -1 );
+        Integer index = MASK_KEYS.get( hold );
+        
+        if( x >= 0 && y >= 0 && index != null )
         {
-            // TODO: fix possible crash when info isn't a N64 button
-            int index = BUTTON_STRING_MAP.get( info.toLowerCase( Locale.US ) );
+            // Position (percentages of the digitizer dimensions)
+            autoHoldX[index] = x;
+            autoHoldY[index] = y;
             
             // The drawable image is in PNG image format.
-            autoHoldImages[index] = new Image( mResources, directory + "/" + filename + ".png" );
+            autoHoldImages[index] = new Image( mResources, skinFolder + "/" + name + ".png" );
             autoHoldImages[index].setAlpha( 0 );
-            
-            // Position (percentages of the digitizer dimensions)
-            autoHoldX[index] = SafeMethods.toInt( section.get( "x" ), 0 );
-            autoHoldY[index] = SafeMethods.toInt( section.get( "y" ), 0 );
         }
     }
 }
