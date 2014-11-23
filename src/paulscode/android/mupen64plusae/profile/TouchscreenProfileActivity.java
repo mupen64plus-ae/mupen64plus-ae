@@ -20,23 +20,32 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.input.AbstractController;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.util.SeekBarGroup;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.FloatMath;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
@@ -46,11 +55,17 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public class TouchscreenProfileActivity extends Activity implements OnTouchListener
 {
+    private static final String TOUCHSCREEN_AUTOHOLDABLES = "touchscreenAutoholdables";
+    private static final String AUTOHOLDABLES_DELIMITER = "~";
+    
     private static final String ANALOG = "analog";
     private static final String DPAD = "dpad";
     private static final String GROUP_AB = "groupAB";
@@ -102,6 +117,26 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         if( section == null )
             throw new Error( "Invalid usage: profile name not found in config file" );
         mProfile = new Profile( false, section );
+        
+        // Define the map from N64 button indices to readable button names
+        READABLE_NAMES.put( AbstractController.DPD_R, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( AbstractController.DPD_L, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( AbstractController.DPD_D, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( AbstractController.DPD_U, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( AbstractController.START, getString( R.string.controller_buttonS ) );
+        READABLE_NAMES.put( AbstractController.BTN_Z, getString( R.string.controller_buttonZ ) );
+        READABLE_NAMES.put( AbstractController.BTN_B, getString( R.string.controller_buttonB ) );
+        READABLE_NAMES.put( AbstractController.BTN_A, getString( R.string.controller_buttonA ) );
+        READABLE_NAMES.put( AbstractController.CPD_R, getString( R.string.controller_buttonCr ) );
+        READABLE_NAMES.put( AbstractController.CPD_L, getString( R.string.controller_buttonCl ) );
+        READABLE_NAMES.put( AbstractController.CPD_D, getString( R.string.controller_buttonCd ) );
+        READABLE_NAMES.put( AbstractController.CPD_U, getString( R.string.controller_buttonCu ) );
+        READABLE_NAMES.put( AbstractController.BTN_R, getString( R.string.controller_buttonR ) );
+        READABLE_NAMES.put( AbstractController.BTN_L, getString( R.string.controller_buttonL ) );
+        READABLE_NAMES.put( TouchMap.DPD_LU, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( TouchMap.DPD_LD, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( TouchMap.DPD_RD, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( TouchMap.DPD_RU, getString( R.string.controller_dpad ) );
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
@@ -268,6 +303,36 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         refresh();
     }
     
+    private void setHoldable( int n64Index, boolean holdable )
+    {
+        String index = String.valueOf( n64Index );
+        
+        // Get the serialized list from the profile
+        String serialized = mProfile.get( TOUCHSCREEN_AUTOHOLDABLES, "" );
+        String[] holdables = serialized.split( AUTOHOLDABLES_DELIMITER );
+        
+        // Modify the list as necessary
+        if( !holdable )
+        {
+            holdables = (String[]) ArrayUtils.removeElement( holdables, index );
+        }
+        else if( !ArrayUtils.contains( holdables, index ) )
+        {
+            holdables = (String[]) ArrayUtils.add( holdables, index );
+        }
+        
+        // Put the serialized list back into the profile
+        serialized = TextUtils.join( AUTOHOLDABLES_DELIMITER, holdables );
+        mProfile.put( TOUCHSCREEN_AUTOHOLDABLES, serialized );
+    }
+    
+    private boolean getHoldable( int n64Index )
+    {
+        String serialized = mProfile.get( TOUCHSCREEN_AUTOHOLDABLES, "" );
+        String[] holdables = serialized.split( AUTOHOLDABLES_DELIMITER );
+        return ArrayUtils.contains( holdables, String.valueOf( n64Index ) );
+    }
+    
     @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
     @Override
@@ -323,10 +388,116 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         
         // Get the N64 index of the button that was pressed
         int index = mTouchscreenMap.getButtonPress( x, y );
-        
-        // TODO: Respond to the touch, e.g. popup dialog
-        Log.d( "TouchscreenProfileActivity", "Pressed button " + index );
+        if( index != TouchMap.UNMAPPED )
+        {
+            String assetName = TouchMap.ASSET_NAMES.get( index );
+            String title = READABLE_NAMES.get( index );
+            
+            // D-pad buttons are not holdable
+            if( DPAD.equals( assetName ) )
+                index = -1;
+            
+            popupDialog( assetName, title, index );
+        }
+        else
+        {
+            // See if analog was pressed
+            Point point = mTouchscreenMap.getAnalogDisplacement( x, y );
+            int dX = point.x;
+            int dY = point.y;
+            float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
+            if( mTouchscreenMap.isInCaptureRange( displacement ) )
+                popupDialog( ANALOG, getString( R.string.controller_analog ), -1 );
+        }
         
         return true;
+    }
+    
+    @SuppressLint( "InflateParams" )
+    private void popupDialog( final String assetName, String title, final int holdableIndex )
+    {
+        // Get the original position of the asset
+        final int initialX = mProfile.getInt( assetName + TAG_X, INITIAL_ASSET_POS );
+        final int initialY = mProfile.getInt( assetName + TAG_Y, INITIAL_ASSET_POS );
+        
+        // Inflate the dialog's main view area
+        View view = getLayoutInflater().inflate( R.layout.touchscreen_profile_activity_popup, null );
+        
+        // Setup the dialog's compound seekbar widgets
+        final SeekBarGroup posX = new SeekBarGroup( initialX, view, R.id.seekbarX,
+                R.id.buttonXdown, R.id.buttonXup, R.id.textX,
+                getString( R.string.touchscreenProfileActivity_horizontalSlider ),
+                new SeekBarGroup.Listener()
+                {
+                    @Override
+                    public void onValueChanged( int value )
+                    {
+                        mProfile.put( assetName + TAG_X, String.valueOf( value ) );
+                        refresh();
+                    }
+                } );
+        
+        final SeekBarGroup posY = new SeekBarGroup( initialY, view, R.id.seekbarY,
+                R.id.buttonYdown, R.id.buttonYup, R.id.textY,
+                getString( R.string.touchscreenProfileActivity_verticalSlider ),
+                new SeekBarGroup.Listener()
+                {
+                    @Override
+                    public void onValueChanged( int value )
+                    {
+                        mProfile.put( assetName + TAG_Y, String.valueOf( value ) );
+                        refresh();
+                    }
+                } );
+        
+        // Setup the auto-holdability checkbox
+        CheckBox holdable = (CheckBox) view.findViewById( R.id.checkBox_holdable );
+        if( holdableIndex < 0 )
+        {
+            // This is not a holdable button
+            holdable.setVisibility( View.GONE );
+        }
+        else
+        {
+            holdable.setChecked( getHoldable( holdableIndex ) );
+            holdable.setOnCheckedChangeListener( new OnCheckedChangeListener()
+            {
+                @Override
+                public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
+                {
+                    setHoldable( holdableIndex, isChecked );
+                }
+            } );
+        }
+        
+        // Setup the listener for the dialog's bottom buttons (ok, cancel, etc.)
+        OnClickListener listener = new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which == DialogInterface.BUTTON_NEGATIVE )
+                {
+                    // Revert asset to original position if user cancels
+                    posX.revertValue();
+                    posY.revertValue();
+                }
+                else if( which == DialogInterface.BUTTON_NEUTRAL )
+                {
+                    // Remove the asset from this profile
+                    toggleAsset( assetName );
+                }
+            }
+        };
+        
+        // Create and show the popup dialog
+        Builder builder = new Builder( this );
+        builder.setTitle( title );
+        builder.setView( view );
+        builder.setNegativeButton( getString( android.R.string.cancel ), listener );
+        builder.setNeutralButton( getString( R.string.touchscreenProfileActivity_remove ), listener );
+        builder.setPositiveButton( getString( android.R.string.ok ), listener );
+        builder.setCancelable( false );
+        builder.create().show();
     }
 }

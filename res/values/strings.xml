@@ -490,6 +490,36 @@
     <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
     <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
 
+    <!-- Touchscreen Profile Activity -->
+    <string name="touchscreenProfileActivity_remove">Remove</string>
+    <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
+    <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
+
+    <!-- Controller button names -->
+    <string name="controller_analog">Analog stick</string>
+    <string name="controller_analogR">Analog →</string>
+    <string name="controller_analogL">Analog ←</string>
+    <string name="controller_analogD">Analog ↓</string>
+    <string name="controller_analogU">Analog ↑</string>
+    <string name="controller_dpad">D-pad</string>
+    <string name="controller_dpadR">D-pad →</string>
+    <string name="controller_dpadL">D-pad ←</string>
+    <string name="controller_dpadD">D-pad ↓</string>
+    <string name="controller_dpadU">D-pad ↑</string>
+    <string name="controller_groupAB">A/B buttons</string>
+    <string name="controller_buttonA">A button</string>
+    <string name="controller_buttonB">B button</string>
+    <string name="controller_groupC">C buttons</string>
+    <string name="controller_buttonCr">C-pad →</string>
+    <string name="controller_buttonCl">C-pad ←</string>
+    <string name="controller_buttonCd">C-pad ↓</string>
+    <string name="controller_buttonCu">C-pad ↑</string>
+    <string name="controller_buttonL">L button</string>
+    <string name="controller_buttonR">R button</string>
+    <string name="controller_buttonZ">Z button</string>
+    <string name="controller_buttonS">Start button</string>
+    <string name="controller_fps">FPS indicator</string>
+
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
     <string name="inputMapActivity_popupUnmap">Unmap</string>
