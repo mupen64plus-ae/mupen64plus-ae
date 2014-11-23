@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -228,6 +229,10 @@ public class ConfigFile
             return false; // Quit
         }
         
+        // Ensure parent directories exist before writing file
+        new File( mFilename ).getParentFile().mkdirs();
+        
+        // Write data to file
         FileWriter fw = null;
         try
         {

@@ -91,7 +91,6 @@ public class RomCache
             @Override
             protected ConfigFile doInBackground( File... files )
             {
-                new File( configPath ).mkdirs();
                 final ConfigFile config = new ConfigFile( configPath );
                 config.clear();
                 for( final File file : files )
@@ -135,7 +134,6 @@ public class RomCache
             @Override
             protected ConfigFile doInBackground( Void... values )
             {
-                new File( configPath ).mkdirs();
                 final ConfigFile config = new ConfigFile( configPath );
                 for( String md5 : config.keySet() )
                 {
