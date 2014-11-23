@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -29,6 +31,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -38,6 +41,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -327,5 +331,74 @@ public final class FileUtil
         {
             stream.close();
         }
+    }
+    
+    /**
+     * Copies a file from a network source to a local destination.
+     * 
+     * @param sourceUrl     URL of the source file
+     * @param destPath      Full path of the destination file
+     * 
+     * @return True if the download succeeded, false otherwise.
+     */
+    public static boolean downloadFile( String sourceUrl, String destPath )
+    {
+        // Quit if source or destination is empty
+        if( TextUtils.isEmpty( sourceUrl ) || TextUtils.isEmpty( destPath ) )
+            return false;
+        
+        // Be sure destination directory exists
+        new File( destPath ).getParentFile().mkdirs();
+        
+        // Download file
+        URL url = null;
+        DataInputStream input = null;
+        FileOutputStream fos = null;
+        DataOutputStream output = null;
+        try
+        {
+            url = new URL( sourceUrl );
+            input = new DataInputStream( url.openStream() );
+            fos = new FileOutputStream( destPath );
+            output = new DataOutputStream( fos );
+            
+            int contentLength = url.openConnection().getContentLength();
+            byte[] buffer = new byte[contentLength];
+            input.readFully( buffer );
+            output.write( buffer );
+            output.flush();
+        }
+        catch( Exception ignored )
+        {
+            return false;
+        }
+        finally
+        {
+            if( output != null )
+                try
+                {
+                    output.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+            if( fos != null )
+                try
+                {
+                    fos.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+            if( input != null )
+                try
+                {
+                    input.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+        return true;
     }
 }

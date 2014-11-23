@@ -19,19 +19,13 @@
  */
 package paulscode.android.mupen64plusae.util;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
 
 public class RomCache
@@ -129,7 +123,7 @@ public class RomCache
                     config.put( md5, "goodName", detail.goodName );
                     config.put( md5, "romPath", file.getAbsolutePath() );
                     config.put( md5, "artPath", artPath );
-                    downloadArt( detail.artUrl, artPath );
+                    FileUtil.downloadFile( detail.artUrl, artPath );
                     
                     this.publishProgress( detail.goodName );
                 }
@@ -153,66 +147,5 @@ public class RomCache
                     listener.onFinished( result );
             }
         }.execute( files.toArray( new File[files.size()] ) );
-    }
-    
-    private static boolean downloadArt( String artUrl, String destination )
-    {
-        // Quit if url or destination is empty
-        if( TextUtils.isEmpty( artUrl ) || TextUtils.isEmpty( destination ) )
-            return false;
-        
-        // Be sure destination directory exists
-        new File( destination ).getParentFile().mkdirs();
-        
-        // Download file
-        URL url = null;
-        DataInputStream input = null;
-        FileOutputStream fos = null;
-        DataOutputStream output = null;
-        try
-        {
-            url = new URL( artUrl );
-            input = new DataInputStream( url.openStream() );
-            fos = new FileOutputStream( destination );
-            output = new DataOutputStream( fos );
-            
-            int contentLength = url.openConnection().getContentLength();
-            byte[] buffer = new byte[contentLength];
-            input.readFully( buffer );
-            output.write( buffer );
-            output.flush();
-        }
-        catch( Exception ignored )
-        {
-            return false;
-        }
-        finally
-        {
-            if( output != null )
-                try
-                {
-                    output.close();
-                }
-                catch( IOException ignored )
-                {
-                }
-            if( fos != null )
-                try
-                {
-                    fos.close();
-                }
-                catch( IOException ignored )
-                {
-                }
-            if( input != null )
-                try
-                {
-                    input.close();
-                }
-                catch( IOException ignored )
-                {
-                }
-        }
-        return true;
     }
 }
