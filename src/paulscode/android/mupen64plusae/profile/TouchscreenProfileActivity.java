@@ -25,6 +25,7 @@ import org.apache.commons.lang.ArrayUtils;
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.SettingsGlobalActivity;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
@@ -40,6 +41,7 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -260,7 +262,9 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         switch( item.getItemId() )
         {
             case R.id.menuItem_globalSettings:
-                // TODO: Launch an abbreviated version of the global settings
+                Intent intent = new Intent( this, SettingsGlobalActivity.class );
+                intent.putExtra( Keys.Extras.MENU_DISPLAY_MODE, 1 );
+                startActivity( intent );
                 return true;
             case R.id.menuItem_exit:
                 finish();
@@ -376,6 +380,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
         }
     }
+
     
     @Override
     public boolean onTouch( View v, MotionEvent event )
