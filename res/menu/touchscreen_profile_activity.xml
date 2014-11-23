@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menuItem_globalSettings"
+        android:icon="@drawable/ic_settings"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menuItem_globalSettings"/>
+    <item
+        android:id="@+id/menuItem_buttons"
+        android:showAsAction="ifRoom|withText"
+        android:title="Buttons">
+        <menu>
+            <group android:checkableBehavior="all" >
+                <item
+                    android:id="@+id/menuItem_analog"
+                    android:title="Analog stick"/>
+                <item
+                    android:id="@+id/menuItem_dpad"
+                    android:title="D-pad"/>
+                <item
+                    android:id="@+id/menuItem_groupAB"
+                    android:title="A/B buttons"/>
+                <item
+                    android:id="@+id/menuItem_groupC"
+                    android:title="C buttons"/>
+                <item
+                    android:id="@+id/menuItem_buttonL"
+                    android:title="L button"/>
+                <item
+                    android:id="@+id/menuItem_buttonR"
+                    android:title="R button"/>
+                <item
+                    android:id="@+id/menuItem_buttonZ"
+                    android:title="Z button"/>
+                <item
+                    android:id="@+id/menuItem_buttonS"
+                    android:title="Start button"/>
+            </group>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menuItem_exit"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menuItem_exit"/>
+
+</menu>

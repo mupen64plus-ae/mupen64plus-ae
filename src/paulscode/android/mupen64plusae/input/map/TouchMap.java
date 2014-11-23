@@ -22,18 +22,18 @@ package paulscode.android.mupen64plusae.input.map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Image;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.text.TextUtils;
+import android.util.Log;
+import android.util.SparseArray;
 
 /**
  * A class for mapping digitizer coordinates to N64 buttons/axes.
@@ -64,14 +64,8 @@ public class TouchMap
     /** Total number of N64 (pseudo-)buttons. */
     public static final int NUM_N64_PSEUDOBUTTONS = OFFSET_EXTRAS + 4;
     
-    /** Folder containing the images (if provided). */
-    protected String imageFolder;
-    
-    /** Reference screen width in pixels (if provided). */
-    protected int referenceScreenWidthPixels = 0;
-    
-    /** Upper limit screen-width in inches to scale the buttons */
-    protected float buttonsNoScaleBeyondScreenWidthInches = 0;
+    /** Folder containing the images. */
+    protected String skinFolder;
     
     /** Scaling factor to apply to images. */
     protected float scale = 1.0f;
@@ -115,40 +109,58 @@ public class TouchMap
     /** Map from N64 (pseudo-)button to mask color. */
     private final int[] mN64ToColor;
     
-    /** The map from strings in the .ini file to N64 button indices. */
-    protected static final HashMap<String, Integer> BUTTON_STRING_MAP;
+    /** The map from strings in the skin.ini file to N64 button indices. */
+    public static final HashMap<String, Integer> MASK_KEYS = new HashMap<String, Integer>();
+    
+    /** The map from N64 button indices to asset name prefixes in the skin folder. */
+    public static final SparseArray<String> ASSET_NAMES = new SparseArray<String>();
     
     /** The error in RGB (256x256x256) space that we tolerate when matching mask colors. */
     private static final int MATCH_TOLERANCE = 10;
     
     static
     {
-        // Define the map from strings in the .ini file to N64 button indices
+        // Define the map from skin.ini keys to N64 button indices
         // @formatter:off
-        BUTTON_STRING_MAP = new HashMap<String, Integer>();
-        BUTTON_STRING_MAP.put( "right",     AbstractController.DPD_R );
-        BUTTON_STRING_MAP.put( "left",      AbstractController.DPD_L );
-        BUTTON_STRING_MAP.put( "down",      AbstractController.DPD_D );
-        BUTTON_STRING_MAP.put( "up",        AbstractController.DPD_U );
-        BUTTON_STRING_MAP.put( "start",     AbstractController.START );
-        BUTTON_STRING_MAP.put( "z",         AbstractController.BTN_Z );
-        BUTTON_STRING_MAP.put( "b",         AbstractController.BTN_B );
-        BUTTON_STRING_MAP.put( "a",         AbstractController.BTN_A );
-        BUTTON_STRING_MAP.put( "cright",    AbstractController.CPD_R );
-        BUTTON_STRING_MAP.put( "cleft",     AbstractController.CPD_L );
-        BUTTON_STRING_MAP.put( "cdown",     AbstractController.CPD_D );
-        BUTTON_STRING_MAP.put( "cup",       AbstractController.CPD_U );
-        BUTTON_STRING_MAP.put( "r",         AbstractController.BTN_R );
-        BUTTON_STRING_MAP.put( "l",         AbstractController.BTN_L );
-        BUTTON_STRING_MAP.put( "rightup",   DPD_RU );
-        BUTTON_STRING_MAP.put( "upright",   DPD_RU );
-        BUTTON_STRING_MAP.put( "rightdown", DPD_RD );
-        BUTTON_STRING_MAP.put( "downright", DPD_RD );
-        BUTTON_STRING_MAP.put( "leftdown",  DPD_LD );
-        BUTTON_STRING_MAP.put( "downleft",  DPD_LD );
-        BUTTON_STRING_MAP.put( "leftup",    DPD_LU );
-        BUTTON_STRING_MAP.put( "upleft",    DPD_LU );
+        MASK_KEYS.put( "Dr",  AbstractController.DPD_R );
+        MASK_KEYS.put( "Dl",  AbstractController.DPD_L );
+        MASK_KEYS.put( "Dd",  AbstractController.DPD_D );
+        MASK_KEYS.put( "Du",  AbstractController.DPD_U );
+        MASK_KEYS.put( "S",   AbstractController.START );
+        MASK_KEYS.put( "Z",   AbstractController.BTN_Z );
+        MASK_KEYS.put( "B",   AbstractController.BTN_B );
+        MASK_KEYS.put( "A",   AbstractController.BTN_A );
+        MASK_KEYS.put( "Cr",  AbstractController.CPD_R );
+        MASK_KEYS.put( "Cl",  AbstractController.CPD_L );
+        MASK_KEYS.put( "Cd",  AbstractController.CPD_D );
+        MASK_KEYS.put( "Cu",  AbstractController.CPD_U );
+        MASK_KEYS.put( "R",   AbstractController.BTN_R );
+        MASK_KEYS.put( "L",   AbstractController.BTN_L );
+        MASK_KEYS.put( "Dru", DPD_RU );
+        MASK_KEYS.put( "Drd", DPD_RD );
+        MASK_KEYS.put( "Dld", DPD_LD );
+        MASK_KEYS.put( "Dlu", DPD_LU );
         // @formatter:on
+        
+        // Define the map from N64 button indices to profile key prefixes
+        ASSET_NAMES.put( AbstractController.DPD_R, "dpad" );
+        ASSET_NAMES.put( AbstractController.DPD_L, "dpad" );
+        ASSET_NAMES.put( AbstractController.DPD_D, "dpad" );
+        ASSET_NAMES.put( AbstractController.DPD_U, "dpad" );
+        ASSET_NAMES.put( AbstractController.START, "buttonS" );
+        ASSET_NAMES.put( AbstractController.BTN_Z, "buttonZ" );
+        ASSET_NAMES.put( AbstractController.BTN_B, "groupAB" );
+        ASSET_NAMES.put( AbstractController.BTN_A, "groupAB" );
+        ASSET_NAMES.put( AbstractController.CPD_R, "groupC" );
+        ASSET_NAMES.put( AbstractController.CPD_L, "groupC" );
+        ASSET_NAMES.put( AbstractController.CPD_D, "groupC" );
+        ASSET_NAMES.put( AbstractController.CPD_U, "groupC" );
+        ASSET_NAMES.put( AbstractController.BTN_R, "buttonR" );
+        ASSET_NAMES.put( AbstractController.BTN_L, "buttonL" );
+        ASSET_NAMES.put( DPD_LU, "dpad" );
+        ASSET_NAMES.put( DPD_LD, "dpad" );
+        ASSET_NAMES.put( DPD_RD, "dpad" );
+        ASSET_NAMES.put( DPD_RU, "dpad" );
     }
     
     /**
@@ -196,21 +208,17 @@ public class TouchMap
         // Recompute button locations
         for( int i = 0; i < buttonImages.size(); i++ )
         {
-            int cX = (int) ( w * ( (float) buttonX.get( i ) / 100f ) );
-            int cY = (int) ( h * ( (float) buttonY.get( i ) / 100f ) );
             buttonImages.get( i ).setScale( scale );
-            buttonImages.get( i ).fitCenter( cX, cY, w, h );
+            buttonImages.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
             buttonMasks.get( i ).setScale( scale );
-            buttonMasks.get( i ).fitCenter( cX, cY, w, h );
+            buttonMasks.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
         }
         
         // Recompute analog background location
         if( analogBackImage != null )
         {
-            int cX = (int) ( w * ( analogBackX / 100f ) );
-            int cY = (int) ( h * ( analogBackY / 100f ) );
             analogBackImage.setScale(  scale );
-            analogBackImage.fitCenter( cX, cY, w, h );
+            analogBackImage.fitPercent( analogBackX, analogBackY, w, h );
         }
     }
     
@@ -359,46 +367,34 @@ public class TouchMap
     /**
      * Loads all touch map data from the filesystem.
      * 
-     * @param directory The directory containing the .ini and asset files.
+     * @param skinDir The directory containing the skin.ini and image files.
+     * @param profile  The name of the layout profile.
+     * @param animated True to load the analog assets in two parts for animation.
      */
-    public void load( String directory )
+    public void load( String skinDir, Profile profile, boolean animated )
     {
         // Clear any old assets and map data
         clear();
         
-        // Load the configuration file (pad.ini)
-        ConfigFile pad_ini = new ConfigFile( directory + "/pad.ini" );
-        
-        // If a style wasn't chosen, check if an image folder is listed in pad.ini
-        if( TextUtils.isEmpty( imageFolder ) )
-            imageFolder = pad_ini.get( "INFO", "images" );
-        // If no image folder was provided, use the layout directory
-        if( TextUtils.isEmpty( imageFolder ) )
-            imageFolder = directory;
-        else
-            imageFolder = directory + "/" + imageFolder;
-        
-        referenceScreenWidthPixels = SafeMethods.toInt( pad_ini.get( "INFO", "referenceScreenWidthPixels" ), 0 );
-        buttonsNoScaleBeyondScreenWidthInches = SafeMethods.toFloat( pad_ini.get( "INFO", "buttonsNoScaleBeyondScreenWidthInches" ), 0 );
+        // Load the configuration files
+        skinFolder = skinDir;
+        ConfigFile skin_ini = new ConfigFile( skinFolder + "/skin.ini" );
         
         // Look up the mask colors
-        loadMaskColors( pad_ini );
+        loadMaskColors( skin_ini );
         
         // Loop through all the configuration sections
-        loadAllAssets( pad_ini, directory );
-        
-        // Free the data that was loaded from the config file:
-        pad_ini.clear();
+        loadAllAssets( profile, animated );
     }
     
     /**
      * Loads the mask colors from a configuration file.
      * 
-     * @param pad_ini The configuration file.
+     * @param skin_ini The configuration file containing mask info.
      */
-    private void loadMaskColors( ConfigFile pad_ini )
+    private void loadMaskColors( ConfigFile skin_ini )
     {
-        ConfigSection section = pad_ini.get( "MASK_COLOR" );
+        ConfigSection section = skin_ini.get( "MASK_COLOR" );
         if( section != null )
         {
             // Loop through the key-value pairs
@@ -406,35 +402,17 @@ public class TouchMap
             {
                 // Assign the map colors to the appropriate N64 button
                 String val = section.get( key );
-                Integer index = BUTTON_STRING_MAP.get( key.toLowerCase( Locale.US ) );
+                Integer index = MASK_KEYS.get( key );
                 if( index != null )
-                    mN64ToColor[index] = SafeMethods.toInt( val, -1 );
-            }
-        }
-    }
-    
-    /**
-     * Loads all assets and properties specified in a configuration file.
-     * 
-     * @param pad_ini   The configuration file.
-     * @param directory The directory containing the assets.
-     */
-    protected void loadAllAssets( ConfigFile pad_ini, String directory )
-    {
-        for( String filename : pad_ini.keySet() )
-        {
-            // Make sure it's a filename
-            if( isFilename( filename ) )
-            {
-                ConfigSection section = pad_ini.get( filename );
-                if( section != null )
                 {
-                    // Get the type of asset
-                    String info = section.get( "info" );
-                    if( info != null )
+                    try
                     {
-                        // Let's not make this part case-sensitive
-                        loadAssetSection( directory, filename, section, info.toLowerCase( Locale.US ) );
+                        mN64ToColor[index] = Integer.parseInt( val, 16 );
+                    }
+                    catch( NumberFormatException ex )
+                    {
+                        mN64ToColor[index] = -1;
+                        Log.w( "TouchMap", "Invalid mask color '" + val + "' in " + skinFolder + "/skin.ini" );
                     }
                 }
             }
@@ -442,88 +420,81 @@ public class TouchMap
     }
     
     /**
-     * Loads assets and properties for a given configuration section. This method can be overridden
-     * in subclasses to handle new asset types.
+     * Loads all assets and properties specified in a profile.
      * 
-     * @param directory The directory containing the assets.
-     * @param filename  The name of the asset, without file extension.
-     * @param section   The configuration section containing the properties.
-     * @param info      The meta-information provided inside the configuration section.
+     * @param profile  The touchscreen/touchpad profile.
+     * @param animated True to load the analog assets in two parts for animation.
      */
-    protected void loadAssetSection( final String directory, String filename,
-            ConfigSection section, String info )
+    protected void loadAllAssets( Profile profile, boolean animated )
     {
-        if( info.contains( "analog" ) )
-            loadAnalog( imageFolder, filename, section, info.contains( "hat" ) );
-        else if( filename.contains( "BUTTON" ) )
-            loadButton( imageFolder, filename, section );
+        if( profile != null )
+        {
+            loadAnalog( profile, animated );
+            loadButton( profile, "dpad" );
+            loadButton( profile, "groupAB" );
+            loadButton( profile, "groupC" );
+            loadButton( profile, "buttonL" );
+            loadButton( profile, "buttonR" );
+            loadButton( profile, "buttonZ" );
+            loadButton( profile, "buttonS" );
+        }
     }
     
     /**
      * Loads analog assets and properties from the filesystem.
      * 
-     * @param directory      The directory containing the analog assets.
-     * @param filename       The filename of the analog assets, without extension.
-     * @param section        The configuration section containing the analog properties.
-     * @param loadForeground True to load the analog foreground in addition to the background.
+     * @param profile  The touchscreen/touchpad profile containing the analog properties.
+     * @param animated True to load the assets in two parts for animation.
      */
-    private void loadAnalog( final String directory, String filename, ConfigSection section,
-            boolean loadForeground )
+    protected void loadAnalog( Profile profile, boolean animated )
     {
-        // The images (used by touchscreens) are in PNG image format.
-        analogBackImage = new Image( mResources, directory + "/" + filename + ".png" );
-        if( loadForeground )
+        int x = profile.getInt( "analog-x", -1 );
+        int y = profile.getInt( "analog-y", -1 );
+        
+        if( x >= 0 && y >= 0 )
         {
-            // There's a "stick" image.. same name, with "_2" appended
-            analogForeImage = new Image( mResources, directory + "/" + filename + "_2.png" );
+            // Position (percentages of the digitizer dimensions)
+            analogBackX = x;
+            analogBackY = y;
+            
+            // The images (used by touchscreens) are in PNG image format.
+            if( animated )
+            {
+                 analogBackImage = new Image( mResources, skinFolder + "/analog-back.png" );
+                 analogForeImage = new Image( mResources, skinFolder + "/analog-fore.png" );
+            }
+            else
+            {
+                analogBackImage = new Image( mResources, skinFolder + "/analog.png" );
+            }
+            
+            // Sensitivity (percentages of the radius, i.e. half the image width)
+            analogDeadzone = (int) ( analogBackImage.hWidth * ( profile.getFloat( "analog-min", 1 ) / 100.0f ) );
+            analogMaximum = (int) ( analogBackImage.hWidth * ( profile.getFloat( "analog-max", 55 ) / 100.0f ) );
+            analogPadding = (int) ( analogBackImage.hWidth * ( profile.getFloat( "analog-buff", 55 ) / 100.0f ) );
         }
-        
-        // Load the image in BMP format if not available in PNG format (applies to touchpads).
-        if( analogBackImage.width == 0 && analogBackImage.height == 0 )
-            analogBackImage = new Image( mResources, directory + "/" + filename + ".bmp" );
-        
-        // Position (percentages of the digitizer dimensions)
-        analogBackX = SafeMethods.toInt( section.get( "x" ), 0 );
-        analogBackY = SafeMethods.toInt( section.get( "y" ), 0 );
-        
-        // Sensitivity (percentages of the radius, i.e. half the image width)
-        analogDeadzone = (int) ( analogBackImage.hWidth * ( SafeMethods.toFloat(
-                section.get( "min" ), 1 ) / 100.0f ) );
-        analogMaximum = (int) ( analogBackImage.hWidth * ( SafeMethods.toFloat(
-                section.get( "max" ), 55 ) / 100.0f ) );
-        analogPadding = (int) ( analogBackImage.hWidth * ( SafeMethods.toFloat(
-                section.get( "buff" ), 55 ) / 100.0f ) );
     }
     
     /**
      * Loads button assets and properties from the filesystem.
      * 
-     * @param directory The directory containing the button assets.
-     * @param filename  The filename of the button assets, without extension.
-     * @param section   The configuration section containing the button properties.
+     * @param profile The touchscreen/touchpad profile containing the button properties.
+     * @param name    The name of the button/group to load.
      */
-    private void loadButton( final String directory, String filename, ConfigSection section )
+    protected void loadButton( Profile profile, String name )
     {
-        // The drawable image is in PNG image format. The color mask image is in BMP image format
-        // (doesn't actually get drawn).
-        buttonImages.add( new Image( mResources, directory + "/" + filename + ".png" ) );
-        buttonMasks.add( new Image( mResources, directory + "/" + filename + ".bmp" ) );
+        int x = profile.getInt( name + "-x", -1 );
+        int y = profile.getInt( name + "-y", -1 );
         
-        // Position (percentages of the digitizer dimensions)
-        buttonX.add( SafeMethods.toInt( section.get( "x" ), 0 ) );
-        buttonY.add( SafeMethods.toInt( section.get( "y" ), 0 ) );
-    }
-    
-    /**
-     * Checks if a configuration parameter is a filename.
-     * 
-     * @param parameter The configuration parameter.
-     * 
-     * @return True, if it is a filename.
-     */
-    private boolean isFilename( String parameter )
-    {
-        return parameter != null && parameter.length() > 0 && !parameter.equals( "INFO" )
-                && !parameter.equals( "MASK_COLOR" ) && !parameter.equals( ConfigFile.SECTIONLESS_NAME );
+        if( x >= 0 && y >= 0 )
+        {
+            // Position (percentages of the digitizer dimensions)
+            buttonX.add( x );
+            buttonY.add( y );
+            
+            // Load the displayed and mask images
+            buttonImages.add( new Image( mResources, skinFolder + "/" + name + ".png" ) );
+            buttonMasks.add( new Image( mResources, skinFolder + "/" + name + "-mask.png" ) );
+        }
     }
 }

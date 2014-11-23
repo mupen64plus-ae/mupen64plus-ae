@@ -57,10 +57,10 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 42;
+    private static final int ASSET_VERSION = 43;
     
     /** The total number of assets to be extracted (for computing progress %). */
-    private static final int TOTAL_ASSETS = 124;
+    private static final int TOTAL_ASSETS = 115;
     
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
@@ -96,6 +96,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_REFRESH = "touchscreenRefresh";
+    private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String NAVIGATION_MODE = "navigationMode";
     
@@ -132,6 +133,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_BUFFER_SIZE,        R.string.audioBufferSize_default,       R.array.audioBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_STYLE,        R.string.touchscreenStyle_default,      R.array.touchscreenStyle_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_REFRESH,      R.string.touchscreenRefresh_default,    R.array.touchscreenRefresh_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHPAD_LAYOUT,          R.string.touchpadLayout_default,        R.array.touchpadLayout_values );
         PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
         // @formatter:on

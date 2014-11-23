@@ -112,9 +112,6 @@ public class GamePrefs
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
     
-    /** The method used for auto holding buttons. */
-    public final int touchscreenAutoHold;
-    
     /** The set of auto-holdable button commands. */
     public final Set<Integer> touchscreenAutoHoldables;
     
@@ -230,7 +227,6 @@ public class GamePrefs
         String folder = "";
         if( isTouchscreenEnabled )
         {
-            touchscreenAutoHold = getSafeInt( touchscreenProfile, "touchscreenAutoHold", 0 );
             touchscreenAutoHoldables = getSafeIntSet( touchscreenProfile,
                     "touchscreenAutoHoldables" );
             
@@ -286,7 +282,7 @@ public class GamePrefs
                     layout += height;
                 }
                 
-                folder = appData.touchscreenLayoutsDir + layout;
+                folder = appData.touchscreenSkinsDir + layout;
             }
         }
         else
@@ -294,10 +290,9 @@ public class GamePrefs
             // Touchscreen disabled, profile is null
             if( userPrefs.isFpsEnabled )
             {
-                folder = appData.touchscreenLayoutsDir
+                folder = appData.touchscreenSkinsDir
                         + context.getString( R.string.touchscreenLayout_fpsOnly );
             }
-            touchscreenAutoHold = 0;
             touchscreenAutoHoldables = null;
         }
         isTouchscreenHidden = !isTouchscreenEnabled || userPrefs.touchscreenTransparency == 0;

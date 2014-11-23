@@ -133,14 +133,11 @@ public class AppData
     /** The directory containing the native Mupen64Plus libraries. Contents deleted on uninstall, not accessible without root. */
     public final String libsDir;
     
-    /** The directory containing all touchscreen layout folders. Contents deleted on uninstall. */
-    public final String touchscreenLayoutsDir;
+    /** The directory containing all touchscreen skin folders. Contents deleted on uninstall. */
+    public final String touchscreenSkinsDir;
     
-    /** The directory containing all Xperia Play layout folders. Contents deleted on uninstall. */
-    public final String touchpadLayoutsDir;
-    
-    /** The directory containing all fonts. Contents deleted on uninstall. */
-    public final String fontsDir;
+    /** The directory containing all Xperia Play skin folders. Contents deleted on uninstall. */
+    public final String touchpadSkinsDir;
     
     /** The directory contaiing all built-in profiles. Contents deleted on uninstall. */
     public final String profilesDir;
@@ -174,6 +171,9 @@ public class AppData
     
     /** The path of the built-in touchscreen profiles file. Deleted on uninstall, sometimes overwritten on update. */
     public final String touchscreenProfiles_cfg;
+    
+    /** The path of the built-in touchpad profiles file. Deleted on uninstall, sometimes overwritten on update. */
+    public final String touchpadProfiles_cfg;
     
     /** The path of the built-in emulation profiles file. Deleted on uninstall, sometimes overwritten on update. */
     public final String emulationProfiles_cfg;
@@ -238,9 +238,8 @@ public class AppData
         if( !( new File( _libsDir ) ).exists() && IS_GINGERBREAD )
             _libsDir = context.getApplicationInfo().nativeLibraryDir;
         libsDir = _libsDir;
-        touchscreenLayoutsDir = coreSharedDataDir + "/skins/touchscreens/";
-        touchpadLayoutsDir = coreSharedDataDir + "/skins/touchpads/";
-        fontsDir = coreSharedDataDir + "/skins/fonts/";
+        touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
+        touchpadSkinsDir = coreSharedDataDir + "/skins/touchpad/";
         profilesDir = coreSharedDataDir + "/profiles";
         
         // Files
@@ -254,6 +253,7 @@ public class AppData
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
+        touchpadProfiles_cfg = profilesDir + "/touchpad.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         
         // Installation validity

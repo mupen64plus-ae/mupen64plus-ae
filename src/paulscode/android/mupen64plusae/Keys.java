@@ -37,12 +37,13 @@ public class Keys
     {
         private static final String NAMESPACE = Extras.class.getCanonicalName() + ".";
         //@formatter:off
-        public static final String ROM_PATH     = NAMESPACE + "ROM_PATH";
-        public static final String ROM_MD5      = NAMESPACE + "ROM_MD5";
-        public static final String ROM_CRC      = NAMESPACE + "ROM_CRC";
-        public static final String CHEAT_ARGS   = NAMESPACE + "CHEAT_ARGS";
-        public static final String DO_RESTART   = NAMESPACE + "DO_RESTART";
-        public static final String PROFILE_NAME = NAMESPACE + "PROFILE_NAME";
+        public static final String ROM_PATH             = NAMESPACE + "ROM_PATH";
+        public static final String ROM_MD5              = NAMESPACE + "ROM_MD5";
+        public static final String ROM_CRC              = NAMESPACE + "ROM_CRC";
+        public static final String CHEAT_ARGS           = NAMESPACE + "CHEAT_ARGS";
+        public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
+        public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
+        public static final String MENU_DISPLAY_MODE    = NAMESPACE + "MENU_DISPLAY_MODE";
         //@formatter:on
     }
     

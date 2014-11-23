@@ -127,7 +127,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     private boolean mIsSurface = false;     // true if the surface is available
     
     // App data and user preferences
-    private AppData mAppData;
     private UserPrefs mUserPrefs;
     private GamePrefs mGamePrefs;
     
@@ -159,7 +158,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mMogaController.init();
         
         // Get app data and user preferences
-        mAppData = new AppData( mActivity );
         mUserPrefs = new UserPrefs( mActivity );
         mGamePrefs = new GamePrefs( mActivity, mRomMd5 );
         mUserPrefs.enforceLocale( mActivity );
@@ -224,11 +222,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         if( mGamePrefs.isTouchscreenEnabled || mUserPrefs.isFpsEnabled )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
-            String style = mGamePrefs.isTouchscreenCustom ? "" : mUserPrefs.touchscreenStyle;
-            mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, style, mUserPrefs.touchscreenScale,
-                    mUserPrefs.touchscreenTransparency );
-            mTouchscreenMap.load( mGamePrefs.touchscreenLayout );
+            mTouchscreenMap = new VisibleTouchMap( mActivity.getResources() );
+            mTouchscreenMap.load( mUserPrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
+                    mUserPrefs.touchscreenRefresh > 0, mUserPrefs.isFpsEnabled,
+                    mUserPrefs.touchscreenScale, mUserPrefs.touchscreenTransparency );
             mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden,
                     mUserPrefs.displayFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
@@ -347,7 +344,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         {
             // Create the map for the touchpad
             TouchMap touchpadMap = new TouchMap( mActivity.getResources() );
-            touchpadMap.load( mUserPrefs.touchpadLayout );
+            touchpadMap.load( mUserPrefs.touchpadSkin, mUserPrefs.touchpadProfile, false );
             touchpadMap.resize( NativeXperiaTouchpad.PAD_WIDTH, NativeXperiaTouchpad.PAD_HEIGHT );
             
             // Create the touchpad controller
@@ -365,7 +362,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, vibrator, mGamePrefs.touchscreenAutoHold,
+                    inputSource, mOverlay, vibrator, mUserPrefs.touchscreenAutoHold,
                     mUserPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables );
             mControllers.add( touchscreenController );
             
