@@ -3,14 +3,6 @@
     xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
     android:key="screenRoot" >
 
-    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-        android:defaultValue="@string/touchscreenAutoHold_default"
-        android:entries="@array/touchscreenAutoHold_entries"
-        android:entryValues="@array/touchscreenAutoHold_values"
-        android:key="touchscreenAutoHold"
-        android:summary="@string/selectedValue"
-        android:title="@string/touchscreenAutoHold_title" />
-
     <paulscode.android.mupen64plusae.persistent.MultiSelectListPreference
         android:defaultValue="@string/touchscreenAutoHoldables_default"
         android:entries="@array/touchscreenAutoHoldables_entries"

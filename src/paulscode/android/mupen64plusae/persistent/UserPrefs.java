@@ -144,6 +144,9 @@ public class UserPrefs
     /** The folder name of the selected touchscreen style. */
     public final String touchscreenStyle;
     
+    /** The method used for auto holding buttons. */
+    public final int touchscreenAutoHold;
+    
     /** True if Xperia Play touchpad is enabled. */
     public final boolean isTouchpadEnabled;
     
@@ -301,6 +304,7 @@ public class UserPrefs
         touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
         touchscreenStyle = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
+        touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );

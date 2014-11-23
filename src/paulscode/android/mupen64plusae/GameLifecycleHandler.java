@@ -365,7 +365,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, vibrator, mGamePrefs.touchscreenAutoHold,
+                    inputSource, mOverlay, vibrator, mUserPrefs.touchscreenAutoHold,
                     mUserPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables );
             mControllers.add( touchscreenController );
             
