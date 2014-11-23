@@ -126,11 +126,12 @@ public class RomCache
                         }
                     }
                     String artPath = cacheDir + "/" + detail.artName;
-                    
-                    this.publishProgress( detail.goodName );
                     config.put( md5, "goodName", detail.goodName );
                     config.put( md5, "romPath", file.getAbsolutePath() );
                     config.put( md5, "artPath", artPath );
+                    downloadArt( detail.artUrl, artPath );
+                    
+                    this.publishProgress( detail.goodName );
                 }
                 config.save();
                 return config;
@@ -154,52 +155,16 @@ public class RomCache
         }.execute( files.toArray( new File[files.size()] ) );
     }
     
-    public static void refreshArt( final String configPath, final String cacheDir,
-            final OnFinishedListener listener )
-    {
-        new AsyncTask<Void, String, ConfigFile>()
-        {
-            @Override
-            protected ConfigFile doInBackground( Void... values )
-            {
-                final ConfigFile config = new ConfigFile( configPath );
-                for( String md5 : config.keySet() )
-                {
-                    if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
-                    {
-                        RomDetail detail = RomDetail.lookupByMd5( md5 );
-                        String artPath = config.get( md5, "artPath" );
-                        downloadArt( detail.artUrl, artPath );
-                        
-                        this.publishProgress( detail.goodName );
-                    }
-                }
-                return config;
-            }
-            
-            @Override
-            protected void onProgressUpdate( String... values )
-            {
-                super.onProgressUpdate( values );
-                if( listener != null )
-                    listener.onProgress( values[0] );
-            }
-            
-            @Override
-            protected void onPostExecute( ConfigFile result )
-            {
-                super.onPostExecute( result );
-                if( listener != null )
-                    listener.onFinished( result );
-            }
-        }.execute();
-    }
-    
     private static boolean downloadArt( String artUrl, String destination )
     {
-        if( TextUtils.isEmpty( artUrl ) )
+        // Quit if url or destination is empty
+        if( TextUtils.isEmpty( artUrl ) || TextUtils.isEmpty( destination ) )
             return false;
         
+        // Be sure destination directory exists
+        new File( destination ).getParentFile().mkdirs();
+        
+        // Download file
         URL url = null;
         DataInputStream input = null;
         FileOutputStream fos = null;
