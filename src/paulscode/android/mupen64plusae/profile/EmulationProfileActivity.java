@@ -20,15 +20,14 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import java.io.File;
-
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.task.ExtractTexturesTask;
+import paulscode.android.mupen64plusae.task.ExtractTexturesTask.ExtractTexturesListener;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
-import paulscode.android.mupen64plusae.util.TaskHandler;
-import paulscode.android.mupen64plusae.util.Utility;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -139,34 +138,24 @@ public class EmulationProfileActivity extends ProfileActivity
             return;
         }
         
-        TaskHandler.Task task = new TaskHandler.Task()
+        // Display popup window
+        String title = getString( R.string.pathHiResTexturesTask_title );
+        String message = getString( R.string.pathHiResTexturesTask_message );
+        final AlertDialog dialog = new Builder( this ).setTitle( title ).setMessage( message ).create();
+        dialog.show();
+        
+        // Asynchronously extract textures and dismiss popup
+        UserPrefs userPrefs = new UserPrefs( EmulationProfileActivity.this );
+        new ExtractTexturesTask( filename, userPrefs.hiResTextureDir, new ExtractTexturesListener()
         {
-            private boolean success = false;
-            
             @Override
-            public void run()
+            public void onExtractTexturesFinished( boolean success )
             {
-                String headerName = Utility.getTexturePackName( filename );
-                if( !TextUtils.isEmpty( headerName ) )
-                {
-                    UserPrefs userPrefs = new UserPrefs( EmulationProfileActivity.this );
-                    String outputFolder = userPrefs.hiResTextureDir + headerName;
-                    FileUtil.deleteFolder( new File( outputFolder ) );
-                    success = Utility.unzipAll( new File( filename ), outputFolder );
-                }
-            }
-            
-            @Override
-            public void onComplete()
-            {
+                dialog.dismiss();
                 if( !success )
                     Notifier.showToast( EmulationProfileActivity.this,
                             R.string.pathHiResTexturesTask_errorMessage );
             }
-        };
-        
-        String title = getString( R.string.pathHiResTexturesTask_title );
-        String message = getString( R.string.pathHiResTexturesTask_message );
-        TaskHandler.run( this, title, message, task );
+        } ).execute();
     }
 }
