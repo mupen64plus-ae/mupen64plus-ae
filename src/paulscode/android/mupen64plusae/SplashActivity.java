@@ -173,15 +173,16 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         @Override
         public void run()
         {
-            // Extract and merge the assets if they are out of date
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
+                // Extract and merge the assets if they are out of date
                 FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
                 mAssetsExtracted = 0;
                 new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
             }
             else
             {
+                // Assets already extracted, just launch next activity
                 launchGalleryActivity();
             }
         }
@@ -202,6 +203,8 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         if( failures.size() == 0 )
         {
             // Extraction succeeded, record new asset version, merge cheats, and launch next activity
+            mTextView.setText( R.string.assetExtractor_finished );
+            mAppData.putAssetVersion( ASSET_VERSION );
             CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mUserPrefs.usrcheat_txt, mAppData.mupencheat_txt );
             launchGalleryActivity();
         }
@@ -222,12 +225,8 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
     
     private void launchGalleryActivity( )
     {
-        // Initialize ROM database after the assets have been extracted
+        // Initialize ROM database before starting next activity
         RomDetail.initializeDatabase( mAppData.mupen64plus_ini );
-        
-        // Remember what asset version is installed
-        mAppData.putAssetVersion( ASSET_VERSION );
-        mTextView.setText( R.string.assetExtractor_finished );
         
         // Launch the activity, passing ROM path if it was provided externally
         Intent intent = new Intent( this, GalleryActivity.class );
