@@ -21,7 +21,7 @@
  * References:
  * http://stackoverflow.com/questions/4447477/android-how-to-copy-files-in-assets-to-sdcard
  */
-package paulscode.android.mupen64plusae.util;
+package paulscode.android.mupen64plusae.task;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,33 +38,73 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
-/**
- *  A class for extracting the emulator assets.
- */
-public final class AssetExtractor
+public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAssetsTask.Failure>>
 {
-    public interface OnExtractionProgressListener
+    public interface ExtractAssetsListener
     {
-        public void onExtractionProgress( String nextFileExtracted );
+        public void onExtractAssetsProgress( String nextFileToExtract );
+        public void onExtractAssetsFinished( List<Failure> failures );
     }
     
-    public enum FailureReason
+    public ExtractAssetsTask( AssetManager assetManager, String srcPath, String dstPath, ExtractAssetsListener listener )
     {
-        FILE_UNWRITABLE,
-        FILE_UNCLOSABLE,
-        ASSET_UNCLOSABLE,
-        ASSET_IO_EXCEPTION,
-        FILE_IO_EXCEPTION,
+        if (assetManager == null )
+            throw new IllegalArgumentException( "Asset manager cannot be null" );
+        if( TextUtils.isEmpty( srcPath ) )
+            throw new IllegalArgumentException( "Source path cannot be null or empty" );
+        if( TextUtils.isEmpty( dstPath ) )
+            throw new IllegalArgumentException( "Destination path cannot be null or empty" );
+        if( listener == null )
+            throw new IllegalArgumentException( "Listener cannot be null" );
+        
+        mAssetManager = assetManager;
+        mSrcPath = srcPath;
+        mDstPath = dstPath;
+        mListener = listener;
     }
     
-    public static final class ExtractionFailure
+    private final AssetManager mAssetManager;
+    private final String mSrcPath;
+    private final String mDstPath;
+    private final ExtractAssetsListener mListener;
+    
+    @Override
+    protected List<Failure> doInBackground( Void... params )
     {
+        return extractAssets( mSrcPath, mDstPath );
+    }
+    
+    @Override
+    protected void onProgressUpdate( String... values )
+    {
+        mListener.onExtractAssetsProgress( values[0] );
+    }
+    
+    @Override
+    protected void onPostExecute( List<ExtractAssetsTask.Failure> result )
+    {
+        mListener.onExtractAssetsFinished( result );
+    }
+    
+    public static final class Failure
+    {
+        public enum Reason
+        {
+            FILE_UNWRITABLE,
+            FILE_UNCLOSABLE,
+            ASSET_UNCLOSABLE,
+            ASSET_IO_EXCEPTION,
+            FILE_IO_EXCEPTION,
+        }
+        
         public final String srcPath;
         public final String dstPath;
-        public final FailureReason reason;
-        public ExtractionFailure( String srcPath, String dstPath, FailureReason reason )
+        public final Reason reason;
+        public Failure( String srcPath, String dstPath, Reason reason )
         {
             this.srcPath = srcPath;
             this.dstPath = dstPath;
@@ -92,25 +132,14 @@ public final class AssetExtractor
         }
     }
     
-    /**
-     * Extracts all the assets from a source path to a given destination path.
-     * 
-     * @param assetManager A handle to the asset manager.
-     * @param srcPath      The source path containing the assets.
-     * @param dstPath      The destination path for the assets.
-     * @param onProgress   A progress listener.
-     * 
-     * @return A list containing all extraction failures, if any.  Never null.
-     */
-    public static List<ExtractionFailure> extractAssets( AssetManager assetManager, String srcPath, String dstPath,
-            OnExtractionProgressListener onProgress )
+    private List<Failure> extractAssets( String srcPath, String dstPath )
     {
-        final List<ExtractionFailure> failures = new ArrayList<ExtractionFailure>();
+        final List<Failure> failures = new ArrayList<Failure>();
         
         if( srcPath.startsWith( "/" ) )
             srcPath = srcPath.substring( 1 );
         
-        String[] srcSubPaths = getAssetList( assetManager, srcPath );
+        String[] srcSubPaths = getAssetList( mAssetManager, srcPath );
         
         if( srcSubPaths.length > 0 )
         {
@@ -137,7 +166,7 @@ public final class AssetExtractor
                         fileParts.put( name, 1 );
                 }
                 String suffix = "/" + srcSubPath;
-                failures.addAll( extractAssets( assetManager, srcPath + suffix, dstPath + suffix, onProgress ) );
+                failures.addAll( extractAssets( srcPath + suffix, dstPath + suffix ) );
             }
             
             // Combine the large broken files, if any
@@ -146,8 +175,7 @@ public final class AssetExtractor
         else // srcPath is a file.
         {
             // Call the progress listener before extracting
-            if( onProgress != null )
-                onProgress.onExtractionProgress( dstPath );
+            publishProgress( dstPath );
             
             // IO objects, initialize null to eliminate lint error
             OutputStream out = null;
@@ -157,7 +185,7 @@ public final class AssetExtractor
             try
             {
                 out = new FileOutputStream( dstPath );
-                in = assetManager.open( srcPath );
+                in = mAssetManager.open( srcPath );
                 byte[] buffer = new byte[1024];
                 int read;
                 
@@ -169,14 +197,14 @@ public final class AssetExtractor
             }
             catch( FileNotFoundException e )
             {
-                ExtractionFailure failure = new ExtractionFailure( srcPath, dstPath, FailureReason.FILE_UNWRITABLE ); 
-                Log.e( "AssetExtractor", failure.toString() );
+                Failure failure = new Failure( srcPath, dstPath, Failure.Reason.FILE_UNWRITABLE ); 
+                Log.e( "ExtractAssetsTask", failure.toString() );
                 failures.add( failure );
             }
             catch( IOException e )
             {
-                ExtractionFailure failure = new ExtractionFailure( srcPath, dstPath, FailureReason.ASSET_IO_EXCEPTION ); 
-                Log.e( "AssetExtractor", failure.toString() );
+                Failure failure = new Failure( srcPath, dstPath, Failure.Reason.ASSET_IO_EXCEPTION ); 
+                Log.e( "ExtractAssetsTask", failure.toString() );
                 failures.add( failure );
             }
             finally
@@ -189,8 +217,8 @@ public final class AssetExtractor
                     }
                     catch( IOException e )
                     {
-                        ExtractionFailure failure = new ExtractionFailure( srcPath, dstPath, FailureReason.FILE_UNCLOSABLE ); 
-                        Log.e( "AssetExtractor", failure.toString() );
+                        Failure failure = new Failure( srcPath, dstPath, Failure.Reason.FILE_UNCLOSABLE ); 
+                        Log.e( "ExtractAssetsTask", failure.toString() );
                         failures.add( failure );
                     }
                 }
@@ -202,8 +230,8 @@ public final class AssetExtractor
                     }
                     catch( IOException e )
                     {
-                        ExtractionFailure failure = new ExtractionFailure( srcPath, dstPath, FailureReason.ASSET_UNCLOSABLE ); 
-                        Log.e( "AssetExtractor", failure.toString() );
+                        Failure failure = new Failure( srcPath, dstPath, Failure.Reason.ASSET_UNCLOSABLE ); 
+                        Log.e( "ExtractAssetsTask", failure.toString() );
                         failures.add( failure );
                     }
                 }
@@ -213,14 +241,6 @@ public final class AssetExtractor
         return failures;
     }
     
-    /**
-     * Gets a string array list of assets in a given source path.
-     *  
-     * @param assetManager A handle to the asset manager.
-     * @param srcPath      The path containing the assets.
-     * 
-     * @return A list of all the assets in the source path.
-     */
     private static String[] getAssetList( AssetManager assetManager, String srcPath )
     {
         String[] srcSubPaths = null;
@@ -231,15 +251,15 @@ public final class AssetExtractor
         }
         catch( IOException e )
         {
-            Log.w( "AssetExtractor", "Failed to get asset file list." );
+            Log.w( "ExtractAssetsTask", "Failed to get asset file list." );
         }
         
         return srcSubPaths;
     }
 
-    private static List<ExtractionFailure> combineFileParts( Map<String, Integer> filePieces, String dstPath )
+    private static List<Failure> combineFileParts( Map<String, Integer> filePieces, String dstPath )
     {
-        List<ExtractionFailure> failures = new ArrayList<ExtractionFailure>();
+        List<Failure> failures = new ArrayList<Failure>();
         for (String name : filePieces.keySet() )
         {
             String src = null;
@@ -265,8 +285,8 @@ public final class AssetExtractor
                     }
                     catch( IOException e )
                     {
-                        ExtractionFailure failure = new ExtractionFailure( src, dst, FailureReason.FILE_IO_EXCEPTION ); 
-                        Log.e( "AssetExtractor", failure.toString() );
+                        Failure failure = new Failure( src, dst, Failure.Reason.FILE_IO_EXCEPTION ); 
+                        Log.e( "ExtractAssetsTask", failure.toString() );
                         failures.add( failure );
                     }
                     finally
@@ -280,8 +300,8 @@ public final class AssetExtractor
                             }
                             catch( IOException e )
                             {
-                                ExtractionFailure failure = new ExtractionFailure( src, dst, FailureReason.FILE_UNCLOSABLE ); 
-                                Log.e( "AssetExtractor", failure.toString() );
+                                Failure failure = new Failure( src, dst, Failure.Reason.FILE_UNCLOSABLE ); 
+                                Log.e( "ExtractAssetsTask", failure.toString() );
                                 failures.add( failure );
                             }
                         }
@@ -290,8 +310,8 @@ public final class AssetExtractor
             }
             catch( FileNotFoundException e )
             {
-                ExtractionFailure failure = new ExtractionFailure( src, dst, FailureReason.FILE_UNWRITABLE ); 
-                Log.e( "AssetExtractor", failure.toString() );
+                Failure failure = new Failure( src, dst, Failure.Reason.FILE_UNWRITABLE ); 
+                Log.e( "ExtractAssetsTask", failure.toString() );
                 failures.add( failure );
             }
             finally
@@ -304,8 +324,8 @@ public final class AssetExtractor
                     }
                     catch( IOException e )
                     {
-                        ExtractionFailure failure = new ExtractionFailure( src, dst, FailureReason.FILE_UNCLOSABLE ); 
-                        Log.e( "AssetExtractor", failure.toString() );
+                        Failure failure = new Failure( src, dst, Failure.Reason.FILE_UNCLOSABLE ); 
+                        Log.e( "ExtractAssetsTask", failure.toString() );
                         failures.add( failure );
                     }
                 }

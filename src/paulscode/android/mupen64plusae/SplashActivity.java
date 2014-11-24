@@ -26,9 +26,9 @@ import java.util.List;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.AssetExtractor;
-import paulscode.android.mupen64plusae.util.AssetExtractor.ExtractionFailure;
-import paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener;
+import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
+import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListener;
+import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
@@ -51,7 +51,7 @@ import android.widget.TextView;
  * The main activity that presents the splash screen, extracts the assets if necessary, and launches
  * the main menu activity.
  */
-public class SplashActivity extends Activity implements OnExtractionProgressListener
+public class SplashActivity extends Activity implements ExtractAssetsListener
 {
     /**
      * Asset version number, used to determine stale assets. Increment this number every time the
@@ -164,123 +164,79 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         // Extract the assets in a separate thread and launch the menu activity
         // Handler.postDelayed ensures this runs only after activity has resumed
         final Handler handler = new Handler();
-        handler.postDelayed( nonUiThreadLauncher, SPLASH_DELAY );
+        handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
     }
     
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
-    private final Runnable nonUiThreadLauncher = new Runnable()
+    private final Runnable extractAssetsTaskLauncher = new Runnable()
     {
         @Override
         public void run()
         {
-            Thread nonUiThread = new Thread( nonUiThreadWorker, "AssetExtractorThread" );
-            nonUiThread.start();
-        }
-    };
-    
-    /** Runnable that performs the asset extraction from the non-UI thread. */
-    private final Runnable nonUiThreadWorker = new Runnable()
-    {
-        @Override
-        public void run()
-        {
-            // This runs on non-UI thread and ensures that the app is responsive during the lengthy
-            // extraction process
-            List<ExtractionFailure> failures = null;
-            
             // Extract and merge the assets if they are out of date
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
                 FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
                 mAssetsExtracted = 0;
-                
-                failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR,
-                        mAppData.coreSharedDataDir, SplashActivity.this );
-                
-                if( failures == null || failures.size() == 0 )
-                {
-                    CheatUtils.mergeCheatFiles( mAppData.mupencheat_default,
-                            mUserPrefs.usrcheat_txt, mAppData.mupencheat_txt );
-                }
-            }
-            
-            // Launch menu activity if successful; post failure notice otherwise
-            if( failures == null || failures.size() == 0 )
-            {
-                // Initialize ROM database after the assets have been extracted
-                RomDetail.initializeDatabase( mAppData.mupen64plus_ini );
-                
-                // Remember what asset version is installed
-                mAppData.putAssetVersion( ASSET_VERSION );
-                updateText( R.string.assetExtractor_finished );
-                
-                // Launch the GalleryActivity, passing ROM path if it was provided externally
-                Intent intent = new Intent( SplashActivity.this, GalleryActivity.class );
-                Uri dataUri = SplashActivity.this.getIntent().getData();
-                if( dataUri != null )
-                    intent.putExtra( Keys.Extras.ROM_PATH, dataUri.getPath() );
-                startActivity( intent );
-                
-                // We never want to come back to this activity, so finish it
-                finish();
+                new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
             }
             else
             {
-                // There was an error, update the on-screen text and don't start next activity
-                String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
-                String message = getString( R.string.assetExtractor_failed, weblink );
-                String textHtml = message.replace( "\n", "<br/>" ) + "<p><small>";
-                for( ExtractionFailure failure : failures )
-                {
-                    textHtml += failure.toString() + "<br/>";
-                }
-                textHtml += "</small>";
-                updateText( Html.fromHtml( textHtml ) );
+                launchGalleryActivity();
             }
         }
     };
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener#
-     * onExtractionProgress(java.lang.String)
-     */
     @Override
-    public void onExtractionProgress( final String nextFileExtracted )
+    public void onExtractAssetsProgress( String nextFileToExtract )
     {
-        float percent = ( 100f * mAssetsExtracted ) / (float) TOTAL_ASSETS;
+        final float percent = ( 100f * mAssetsExtracted ) / (float) TOTAL_ASSETS;
+        final String text = getString( R.string.assetExtractor_progress, percent, nextFileToExtract );
+        mTextView.setText( text );
         mAssetsExtracted++;
-        updateText( R.string.assetExtractor_progress, percent, nextFileExtracted );
     }
     
-    /**
-     * Update the status text from the UI thread.
-     * 
-     * @param resId The resource ID for the format string.
-     * @param formatArgs The format arguments that will be used for substitution.
-     */
-    private void updateText( int resId, Object... formatArgs )
+    @Override
+    public void onExtractAssetsFinished( List<Failure> failures )
     {
-        final String text = getString( resId, formatArgs );
-        updateText( text );
-    }
-    
-    /**
-     * Update the status text from the UI thread.
-     * 
-     * @param text The text to be displayed
-     */
-    private void updateText( final CharSequence text )
-    {
-        // Ensures that text view is updated from the UI thread
-        runOnUiThread( new Runnable()
+        if( failures.size() == 0 )
         {
-            @Override
-            public void run()
+            // Extraction succeeded, record new asset version, merge cheats, and launch next activity
+            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mUserPrefs.usrcheat_txt, mAppData.mupencheat_txt );
+            launchGalleryActivity();
+        }
+        else
+        {
+            // Extraction failed, update the on-screen text and don't start next activity
+            String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
+            String message = getString( R.string.assetExtractor_failed, weblink );
+            String textHtml = message.replace( "\n", "<br/>" ) + "<p><small>";
+            for( Failure failure : failures )
             {
-                mTextView.setText( text );
+                textHtml += failure.toString() + "<br/>";
             }
-        } );
+            textHtml += "</small>";
+            mTextView.setText( Html.fromHtml( textHtml ) );
+        }
+    }
+    
+    private void launchGalleryActivity( )
+    {
+        // Initialize ROM database after the assets have been extracted
+        RomDetail.initializeDatabase( mAppData.mupen64plus_ini );
+        
+        // Remember what asset version is installed
+        mAppData.putAssetVersion( ASSET_VERSION );
+        mTextView.setText( R.string.assetExtractor_finished );
+        
+        // Launch the activity, passing ROM path if it was provided externally
+        Intent intent = new Intent( this, GalleryActivity.class );
+        Uri dataUri = getIntent().getData();
+        if( dataUri != null )
+            intent.putExtra( Keys.Extras.ROM_PATH, dataUri.getPath() );
+        startActivity( intent );
+        
+        // We never want to come back to this activity, so finish it
+        finish();
     }
 }
