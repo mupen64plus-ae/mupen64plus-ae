@@ -28,20 +28,19 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
+import paulscode.android.mupen64plusae.task.ComputeFileHashesTask;
+import paulscode.android.mupen64plusae.task.ComputeFileHashesTask.ComputeFileHashesListener;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
-import paulscode.android.mupen64plusae.util.RomDetail;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -51,7 +50,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class GalleryActivity extends Activity implements OnClickListener
+public class GalleryActivity extends Activity implements OnClickListener, ComputeFileHashesListener
 {
     // App data and user preferences
     private AppData mAppData = null;
@@ -196,30 +195,20 @@ public class GalleryActivity extends Activity implements OnClickListener
     {
         // Asynchronously compute MD5 and launch play menu when finished
         Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
-        new AsyncTask<Void, Void, String[]>()
+        new ComputeFileHashesTask( new File( romPath ), this ).execute();
+    }
+    
+    @Override
+    public void onComputeFileHashesFinished( File file, String md5, String crc )
+    {
+        if( !TextUtils.isEmpty( md5 ) || !TextUtils.isEmpty( crc ) )
         {
-            @Override
-            protected String[] doInBackground( Void... params )
-            {
-                File file = new File( romPath );
-                RomHeader header = new RomHeader( file );
-                String[] hashes = { RomDetail.computeMd5( file ), header.crc };
-                return hashes;
-            }
-            
-            @Override
-            protected void onPostExecute( String[] hashes )
-            {
-                if( !TextUtils.isEmpty( hashes[1] ) || !TextUtils.isEmpty( hashes[0] ) )
-                {
-                    Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
-                    intent.putExtra( Keys.Extras.ROM_PATH, romPath );
-                    intent.putExtra( Keys.Extras.ROM_MD5, hashes[0] );
-                    intent.putExtra( Keys.Extras.ROM_CRC, hashes[1] );
-                    startActivity( intent );
-                }
-            }
-        }.execute();
+            Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
+            intent.putExtra( Keys.Extras.ROM_PATH, file.getAbsolutePath() );
+            intent.putExtra( Keys.Extras.ROM_MD5, md5 );
+            intent.putExtra( Keys.Extras.ROM_CRC, crc );
+            startActivity( intent );
+        }
     }
     
     private void promptFile( File startPath )
