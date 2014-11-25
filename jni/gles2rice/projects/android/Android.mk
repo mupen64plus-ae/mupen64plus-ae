@@ -83,6 +83,7 @@ LOCAL_CFLAGS :=         \
     -DANDROID           \
     -DANDROID_EDITION   \
     -DNO_ASM            \
+    -DUSE_GLES=1        \
     -fsigned-char       \
     #-DBGR_SHADER        \
     #-DSDL_NO_COMPAT     \

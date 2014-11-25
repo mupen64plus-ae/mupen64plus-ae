@@ -48,6 +48,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
+static unsigned char frameBuffer[2048*2048*4];
 
 //=======================================================
 // global variables
@@ -983,7 +984,7 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
     if (dest == NULL)
         return;
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     GLint oldMode;
     glGetIntegerv( GL_READ_BUFFER, &oldMode );
     if (bFront)
@@ -993,6 +994,23 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
     glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
                  GL_RGB, GL_UNSIGNED_BYTE, dest );
     glReadBuffer( oldMode );
+#else
+    unsigned char * line = (unsigned char *)dest;
+    glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
+                 GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer );
+    //Convert RGBA to RGB
+    for (Uint32 y=0; y<windowSetting.uDisplayHeight; y++)
+    {
+        unsigned char *ptr = (unsigned char *) frameBuffer + (windowSetting.uDisplayWidth * 4 * y);
+        for (Uint32 x=0; x<windowSetting.uDisplayWidth; x++)
+        {
+            line[x*3] = ptr[0]; // red
+            line[x*3+1] = ptr[1]; // green
+            line[x*3+2] = ptr[2]; // blue
+            ptr += 4;
+        }
+        line += windowSetting.uDisplayWidth * 3;
+    }
 #endif
 }
     

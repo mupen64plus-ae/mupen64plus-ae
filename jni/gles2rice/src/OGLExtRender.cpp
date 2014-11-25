@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "osal_opengl.h"
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
 #include "OGLExtensions.h"
 #endif
 #include "OGLDebug.h"
@@ -32,6 +32,10 @@ void COGLExtRender::Initialize(void)
     // Initialize multitexture
     glGetIntegerv(GL_MAX_TEXTURE_UNITS,&m_maxTexUnits);
     OPENGL_CHECK_ERRORS;
+
+    /* limited by size 8 arrays like m_maxTexUnits, mtex, m_texUnitEnabled... */
+    if (m_maxTexUnits > 8)
+        m_maxTexUnits = 8;
 
     for( int i=0; i<8; i++ )
         m_textureUnitMap[i] = -1;
@@ -77,7 +81,7 @@ void COGLExtRender::DisBindTexture(GLuint texture, int unitno)
 
 void COGLExtRender::TexCoord2f(float u, float v)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     if( m_bEnableMultiTexture )
     {
         for( int i=0; i<8; i++ )
@@ -97,7 +101,7 @@ void COGLExtRender::TexCoord2f(float u, float v)
 
 void COGLExtRender::TexCoord(TLITVERTEX &vtxInfo)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     if( m_bEnableMultiTexture )
     {
         for( int i=0; i<8; i++ )

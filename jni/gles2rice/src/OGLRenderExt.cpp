@@ -37,7 +37,7 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
 
     glBegin(GL_TRIANGLES);
     glColor4fv(gRDP.fvPrimitiveColor);
@@ -62,7 +62,7 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
 
     glEnd();
 
-#elif SDL_VIDEO_OPENGL_ES2
+#else
 
     GLfloat colour[] = {
             gRDP.fvPrimitiveColor[0], gRDP.fvPrimitiveColor[1], gRDP.fvPrimitiveColor[2], gRDP.fvPrimitiveColor[3],

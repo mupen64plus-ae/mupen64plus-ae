@@ -157,7 +157,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
         return;
     }
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     uint32 mask = 0x1f;
     COGLTexture* pTexture = g_textures[gRSP.curTile].m_pCOGLTexture;
     if( pTexture )

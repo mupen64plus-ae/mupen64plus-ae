@@ -194,6 +194,7 @@ LDLIBS += $(LIBPNG_LDLIBS)
 
 # search for OpenGL libraries
 ifeq ($(USE_GLES), 1)
+  CFLAGS += -DUSE_GLES
   GL_LDLIBS = -lGLESv2
 endif
 ifeq ($(OS), OSX)
