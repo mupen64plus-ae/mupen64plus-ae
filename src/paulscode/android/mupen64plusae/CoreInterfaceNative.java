@@ -162,6 +162,8 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native int emuGetState();
     
+    public static native void emuScreenshot();
+    
     // ------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/ae-bridge/ae_imports.cpp
