@@ -113,6 +113,9 @@ public class UserPrefs
     
     /** The subdirectory containing input map profiles. */
     public final String profileDir;
+
+    /** The subdirectory containing screenshots. */
+    public final String screenshotDir;
     
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
@@ -425,6 +428,7 @@ public class UserPrefs
         sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         profileDir = gameSaveDir + "/InputProfiles";
+        screenshotDir = gameSaveDir + "/Screenshots";
         File game = new File( selectedGame );
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";

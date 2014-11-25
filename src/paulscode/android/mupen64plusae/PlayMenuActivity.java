@@ -346,6 +346,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         new File( userPrefs.manualSaveDir ).mkdirs();
         new File( userPrefs.slotSaveDir ).mkdirs();
         new File( userPrefs.autoSaveDir ).mkdirs();
+        new File( userPrefs.screenshotDir ).mkdirs();
         
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_launchingEmulator );

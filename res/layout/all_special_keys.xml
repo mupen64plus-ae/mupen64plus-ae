@@ -106,4 +106,15 @@
             android:text="@string/inputMapActivity_simulateMenu" />
     </TableRow>
 
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonScreenshot"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapActivity_screenshot" />
+    </TableRow>
+
 </TableLayout>

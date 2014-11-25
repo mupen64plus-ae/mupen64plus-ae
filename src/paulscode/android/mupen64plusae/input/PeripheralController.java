@@ -285,6 +285,10 @@ public class PeripheralController extends AbstractController implements
                     String[] menu_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_MENU ) };
                     SafeMethods.exec( menu_cmd, false );
                     break;
+                case InputMap.FUNC_SCREENSHOT:
+                    Log.v( "PeripheralController", "FUNC_SCREENSHOT" );
+                    CoreInterfaceNative.emuScreenshot();
+                    break;
 // TODO: Less hackish method of synchronizing slots and speeds between PeripheralController and GameMenuHandler
                 default:
                     return false;
