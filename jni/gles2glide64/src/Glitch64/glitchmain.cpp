@@ -203,7 +203,7 @@ struct texbuf_t {
 static texbuf_t texbufs[NB_TEXBUFS];
 static int texbuf_i;
 
-unsigned short frameBuffer[2048*2048];
+unsigned short frameBuffer[2048*2048*4];
 unsigned short depthBuffer[2048*2048];
 
 //#define VOODOO1
@@ -1807,7 +1807,7 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
         info->strideInBytes = width*4;
         info->writeMode = GR_LFBWRITEMODE_888;
         info->origin = origin;
-        //glReadPixels(0, viewport_offset, width, height, GL_BGRA, GL_UNSIGNED_BYTE, frameBuffer);
+        glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer);
       } else {
         buf = (unsigned char*)malloc(width*height*4);
 

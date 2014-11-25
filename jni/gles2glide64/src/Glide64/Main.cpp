@@ -1448,16 +1448,16 @@ extern "C" {
 EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
 {
   VLOG("CALL ReadScreen2 ()\n");
-  *width = settings.res_x;
-  *height = settings.res_y;
+  *width = settings.scr_res_x;
+  *height = settings.scr_res_y;
   if (dest)
   {
     BYTE * line = (BYTE*)dest;
     if (!fullscreen)
     {
-      for (wxUint32 y=0; y<settings.res_y; y++)
+      for (wxUint32 y=0; y<settings.scr_res_y; y++)
       {
-        for (wxUint32 x=0; x<settings.res_x; x++)
+        for (wxUint32 x=0; x<settings.scr_res_x; x++)
         {
           line[x*3] = 0x20;
           line[x*3+1] = 0x7f;
@@ -1480,17 +1480,17 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
     &info))
   {
     // Copy the screen, let's hope this works.
-      for (wxUint32 y=0; y<settings.res_y; y++)
+      for (wxUint32 y=0; y<settings.scr_res_y; y++)
       {
         BYTE *ptr = (BYTE*) info.lfbPtr + (info.strideInBytes * y);
-        for (wxUint32 x=0; x<settings.res_x; x++)
+        for (wxUint32 x=0; x<settings.scr_res_x; x++)
         {
-          line[x*3]   = ptr[2];  // red
+          line[x*3]   = ptr[0];  // red
           line[x*3+1] = ptr[1];  // green
-          line[x*3+2] = ptr[0];  // blue
+          line[x*3+2] = ptr[2];  // blue
           ptr += 4;
         }
-        line += settings.res_x * 3;
+        line += settings.scr_res_x * 3;
       }
 
       // Unlock the frontbuffer
