@@ -48,7 +48,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
-static unsigned char frameBuffer[2048*2048*4];
 
 //=======================================================
 // global variables
@@ -996,6 +995,9 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
     glReadBuffer( oldMode );
 #else
     unsigned char * line = (unsigned char *)dest;
+
+    unsigned char *frameBuffer = (unsigned char *)malloc((*width)*(*height)*4);
+
     glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
                  GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer );
     //Convert RGBA to RGB
@@ -1011,6 +1013,8 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
         }
         line += windowSetting.uDisplayWidth * 3;
     }
+
+    free(frameBuffer);
 #endif
 }
     
