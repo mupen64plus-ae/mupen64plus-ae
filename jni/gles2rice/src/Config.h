@@ -203,6 +203,8 @@ typedef struct {
     int     OpenglRenderSetting;
     uint32  colorQuality;
 
+    int rotate;
+
     HACK_FOR_GAMES  enableHackForGames;
 } GlobalOptions;
 

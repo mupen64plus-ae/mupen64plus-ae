@@ -338,6 +338,8 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 480, "Height of output window or fullscreen height");
     ConfigSetDefaultBool(l_ConfigVideoGeneral, "VerticalSync", 0, "If true, activate the SDL_GL_SWAP_CONTROL attribute");
 
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "Rotate", 0, "Rotate screen contents: 0=0 degree, 1=90 degree, 2 = 180 degree, 3=270 degree");
+
     ConfigSetDefaultInt(l_ConfigVideoRice, "Version", CONFIG_PARAM_VERSION, "Mupen64Plus Rice Video Plugin config parameter version number");
     ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferSetting", FRM_BUF_NONE, "Frame Buffer Emulation (0=ROM default, 1=disable)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferWriteBackControl", FRM_BUF_WRITEBACK_NORMAL, "Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)");
@@ -497,6 +499,8 @@ static void ReadConfiguration(void)
     options.colorQuality = ConfigGetParamInt(l_ConfigVideoRice, "ColorQuality");
     options.OpenglRenderSetting = ConfigGetParamInt(l_ConfigVideoRice, "OpenGLRenderSetting");
     options.anisotropicFiltering = ConfigGetParamInt(l_ConfigVideoRice, "AnisotropicFiltering");
+
+    options.rotate = ConfigGetParamInt(l_ConfigVideoGeneral, "Rotate");
 
     CDeviceBuilder::SelectDeviceType((SupportedDeviceType)options.OpenglRenderSetting);
 
