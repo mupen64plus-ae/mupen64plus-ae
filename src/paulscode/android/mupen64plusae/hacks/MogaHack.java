@@ -27,11 +27,23 @@ import android.util.Log;
 
 import com.bda.controller.Controller;
 
+/**
+ * Temporary hack for crash in MOGA library on Lollipop. This hack can be removed once MOGA fixes
+ * their library. The actual issue is caused by the use of implicit service intents, which are
+ * illegal in Lollipop, as seen in the logcat message below.
+ * 
+ * <pre>
+ * {@code Service Intent must be explicit: Intent { act=com.bda.controller.IControllerService } }
+ * </pre>
+ * 
+ * @see <a href="http://www.mogaanywhere.com/developers/">MOGA developer site</a>
+ * @see <a href="http://commonsware.com/blog/2014/06/29/dealing-deprecations-bindservice.html">
+ *      Discussion on explicit intents</a>
+ */
 public class MogaHack
 {
-    public static void init(Controller controller, Context context)
+    public static void init( Controller controller, Context context )
     {
-        /** Temporary hack for crash in MOGA library on Lollipop **/
         if( AppData.IS_LOLLIPOP )
         {
             boolean mIsBound = false;
@@ -83,6 +95,5 @@ public class MogaHack
         {
             controller.init();
         }
-        /** End MOGA Lollipop Hack **/
     }
 }
