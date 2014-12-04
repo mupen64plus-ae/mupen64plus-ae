@@ -20,12 +20,18 @@
  */
 package paulscode.android.mupen64plusae.hacks;
 
+import java.util.List;
+
 import paulscode.android.mupen64plusae.persistent.AppData;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.content.pm.ServiceInfo;
 import android.util.Log;
 
 import com.bda.controller.Controller;
+import com.bda.controller.IControllerService;
 
 /**
  * Temporary hack for crash in MOGA library on Lollipop. This hack can be removed once MOGA fixes
@@ -74,7 +80,20 @@ public class MogaHack
             }
             if( ( !mIsBound ) && ( mServiceConnection != null ) )
             {
-                Intent intent = new Intent( context, com.bda.controller.IControllerService.class );
+                // Convert implicit intent to explicit intent, see http://stackoverflow.com/a/26318757
+                Intent intent = new Intent( IControllerService.class.getName() );
+                List<ResolveInfo> resolveInfos = context.getPackageManager().queryIntentServices( intent, 0 );
+                if( resolveInfos == null || resolveInfos.size() != 1 )
+                {
+                    Log.e( "MogaHack", "Somebody is trying to intercept our intent. Disabling MOGA controller for security." );
+                    return;
+                }
+                ServiceInfo serviceInfo = resolveInfos.get( 0 ).serviceInfo;
+                String packageName = serviceInfo.packageName;
+                String className = serviceInfo.name;
+                intent.setComponent( new ComponentName( packageName, className ) );
+                
+                // Start the service explicitly
                 context.startService( intent );
                 context.bindService( intent, mServiceConnection, 1 );
                 try
