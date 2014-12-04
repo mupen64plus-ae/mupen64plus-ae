@@ -78,7 +78,52 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         super.onCreate( savedInstanceState );
         
         // Initialize MOGA controller API
-        mMogaController.init();
+        // mMogaController.init();
+        /** Temporary hack for crash in MOGA library on Lollipop **/
+        boolean mIsBound = false;
+        java.lang.reflect.Field fIsBound = null;
+        android.content.ServiceConnection mServiceConnection = null;
+        java.lang.reflect.Field fServiceConnection = null;
+        try
+        {
+            Class<?> cMogaController = mMogaController.getClass();
+            fIsBound = cMogaController.getDeclaredField( "mIsBound" );
+            fIsBound.setAccessible( true );
+            mIsBound = fIsBound.getBoolean( mMogaController );
+            fServiceConnection = cMogaController.getDeclaredField( "mServiceConnection" );
+            fServiceConnection.setAccessible( true );
+            mServiceConnection = ( android.content.ServiceConnection ) fServiceConnection.get( mMogaController );        
+        }
+        catch( NoSuchFieldException e )
+        {
+            Log.e( "PlayMenuActivity", "MOGA Lollipop Hack NoSuchFieldException (get)", e );
+        }
+        catch( IllegalAccessException e )
+        {
+            Log.e( "PlayMenuActivity", "MOGA Lollipop Hack IllegalAccessException (get)", e );
+        }
+        catch( IllegalArgumentException e )
+        {
+            Log.e( "PlayMenuActivity", "MOGA Lollipop Hack IllegalArgumentException (get)", e );
+        }
+        if( ( !mIsBound ) && ( mServiceConnection != null ) ) {
+            Intent intent = new Intent( this, com.bda.controller.IControllerService.class );
+            this.startService( intent );
+            this.bindService( intent, mServiceConnection, 1 );
+            try
+            {
+                fIsBound.setBoolean( mMogaController, true );
+            }
+            catch( IllegalAccessException e )
+            {
+                Log.e( "PlayMenuActivity", "MOGA Lollipop Hack IllegalAccessException (set)", e );
+            }
+            catch( IllegalArgumentException e )
+            {
+                Log.e( "PlayMenuActivity", "MOGA Lollipop Hack IllegalArgumentException (set)", e );
+            }
+        }
+        /** End MOGA Lollipop Hack **/
         
         // Get app data and user preferences
         mAppData = new AppData( this );
