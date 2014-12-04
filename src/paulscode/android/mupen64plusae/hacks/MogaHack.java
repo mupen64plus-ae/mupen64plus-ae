@@ -62,15 +62,15 @@ public class MogaHack
             }
             catch( NoSuchFieldException e )
             {
-                Log.e( "PlayMenuActivity", "MOGA Lollipop Hack NoSuchFieldException (get)", e );
+                Log.e( "MogaHack", "MOGA Lollipop Hack NoSuchFieldException (get)", e );
             }
             catch( IllegalAccessException e )
             {
-                Log.e( "PlayMenuActivity", "MOGA Lollipop Hack IllegalAccessException (get)", e );
+                Log.e( "MogaHack", "MOGA Lollipop Hack IllegalAccessException (get)", e );
             }
             catch( IllegalArgumentException e )
             {
-                Log.e( "PlayMenuActivity", "MOGA Lollipop Hack IllegalArgumentException (get)", e );
+                Log.e( "MogaHack", "MOGA Lollipop Hack IllegalArgumentException (get)", e );
             }
             if( ( !mIsBound ) && ( mServiceConnection != null ) )
             {
@@ -83,11 +83,11 @@ public class MogaHack
                 }
                 catch( IllegalAccessException e )
                 {
-                    Log.e( "PlayMenuActivity", "MOGA Lollipop Hack IllegalAccessException (set)", e );
+                    Log.e( "MogaHack", "MOGA Lollipop Hack IllegalAccessException (set)", e );
                 }
                 catch( IllegalArgumentException e )
                 {
-                    Log.e( "PlayMenuActivity", "MOGA Lollipop Hack IllegalArgumentException (set)", e );
+                    Log.e( "MogaHack", "MOGA Lollipop Hack IllegalArgumentException (set)", e );
                 }
             }
         }
