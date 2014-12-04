@@ -99,6 +99,9 @@ public class AppData
     
     /** True if device is running KitKat or later (19 - Android 4.4.x) */
     public static final boolean IS_KITKAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+    /** True if device is running Lollipop or later (21 - Android 5.0.x) */
+    public static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     
     /** True if device is an OUYA. */
     public static final boolean IS_OUYA_HARDWARE = OuyaFacade.getInstance().isRunningOnOUYAHardware();
