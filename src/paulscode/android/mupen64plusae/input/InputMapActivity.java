@@ -28,6 +28,7 @@ import java.util.List;
 import com.bda.controller.Controller;
 
 import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.hacks.MogaHack;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
@@ -120,7 +121,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         super.onCreate( savedInstanceState );
         
         // Initialize MOGA controller API
-        mMogaController.init();
+        // TODO: Remove hack after MOGA SDK is fixed
+        // mMogaController.init();
+        MogaHack.init( mMogaController, this );
         
         // Get the user preferences wrapper
         mUserPrefs = new UserPrefs( this );
