@@ -131,9 +131,14 @@ endif
 
 # test for presence of SDL
 ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
-  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  SDL_CONFIG = $(CROSS_COMPILE)sdl2-config
   ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-    $(error No SDL development libraries found!)
+    SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+    ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+      $(error No SDL development libraries found!)
+    else
+      $(warning Using SDL 1.2 libraries)
+    endif
   endif
   SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
   SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
@@ -225,6 +230,12 @@ endif
 ifeq ($(MANDIR),)
   MANDIR := $(PREFIX)/share/man
 endif
+ifeq ($(APPSDIR),)
+  APPSDIR := $(PREFIX)/share/applications
+endif
+ifeq ($(ICONSDIR),)
+  ICONSDIR := $(PREFIX)/share/icons/hicolor
+endif
 
 SRCDIR = ../../src
 OBJDIR = _obj$(POSTFIX)
@@ -282,6 +293,8 @@ targets:
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
 	@echo "    MANDIR=path    == path to install mupen64plus manual page (default: PREFIX/share/man)"
+	@echo "    APPSDIR=path   == path to install desktop file (default: PREFIX/share/applications)"
+	@echo "    ICONSDIR=path  == path to install icon files (default: PREFIX/share/icons/hicolor)"
 	@echo "    DESTDIR=path   == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
@@ -299,9 +312,20 @@ install: $(TARGET)
 	$(INSTALL) -m 0755 $(INSTALL_STRIP_FLAG) $(TARGET) "$(DESTDIR)$(BINDIR)"
 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6"
 	$(INSTALL) -m 0644 ../../doc/mupen64plus.6 "$(DESTDIR)$(MANDIR)/man6"
+	$(INSTALL) -d "$(DESTDIR)$(APPSDIR)"
+	$(INSTALL) -m 0644 ../../data/mupen64plus.desktop "$(DESTDIR)$(APPSDIR)"
+	$(INSTALL) -d "$(DESTDIR)$(ICONSDIR)/48x48/apps"
+	$(INSTALL) -m 0644 ../../data/icons/48x48/apps/mupen64plus.png "$(DESTDIR)$(ICONSDIR)/48x48/apps"
+	$(INSTALL) -d "$(DESTDIR)$(ICONSDIR)/scalable/apps"
+	$(INSTALL) -m 0644 ../../data/icons/scalable/apps/mupen64plus.svg "$(DESTDIR)$(ICONSDIR)/scalable/apps"
+
 
 uninstall:
 	$(RM) "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/man6/mupen64plus.6"
+	$(RM) "$(DESTDIR)$(APPSDIR)/mupen64plus.desktop"
+	$(RM) "$(DESTDIR)$(ICONSDIR)/48x48/apps/mupen64plus.png"
+	$(RM) "$(DESTDIR)$(ICONSDIR)/scalable/apps/mupen64plus.svg"
+
 
 # build dependency files
 CFLAGS += -MD -MP

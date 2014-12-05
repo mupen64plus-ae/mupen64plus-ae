@@ -45,7 +45,6 @@ LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/Debugger.cpp              \
     $(SRCDIR)/DecodedMux.cpp            \
     $(SRCDIR)/DeviceBuilder.cpp         \
-    $(SRCDIR)/DirectXDecodedMux.cpp     \
     $(SRCDIR)/FrameBuffer.cpp           \
     $(SRCDIR)/GeneralCombiner.cpp       \
     $(SRCDIR)/GraphicsContext.cpp       \
@@ -84,6 +83,7 @@ LOCAL_CFLAGS :=         \
     -DANDROID           \
     -DANDROID_EDITION   \
     -DNO_ASM            \
+    -DUSE_GLES=1        \
     -fsigned-char       \
     #-DBGR_SHADER        \
     #-DSDL_NO_COMPAT     \

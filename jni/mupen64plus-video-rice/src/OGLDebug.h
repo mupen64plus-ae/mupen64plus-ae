@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         glGetPointerv(GL_COLOR_ARRAY_POINTER, &ptr);
         printf("GL_COLOR_ARRAY: %i (%lx)\n", (int) glIsEnabled(GL_COLOR_ARRAY), (int) ptr);
         glGetPointerv(GL_FOG_COORD_ARRAY_POINTER, &ptr);
-        printf("GL_FOG_COORDINATE_ARRAY_EXT: %i (%lx)\n", (int) glIsEnabled(GL_FOG_COORDINATE_ARRAY_EXT), (int) ptr);
+        printf("GL_FOG_COORDINATE_ARRAY: %i (%lx)\n", (int) glIsEnabled(GL_FOG_COORDINATE_ARRAY), (int) ptr);
         glGetPointerv(GL_INDEX_ARRAY_POINTER, &ptr);
         printf("GL_INDEX_ARRAY: %i (%lx)\n", (int) glIsEnabled(GL_INDEX_ARRAY), (int) ptr);
         glGetPointerv(GL_NORMAL_ARRAY_POINTER, &ptr);

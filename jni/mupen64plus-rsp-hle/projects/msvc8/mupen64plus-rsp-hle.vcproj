@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\mupen64plus-core\src\api"
+				AdditionalIncludeDirectories="..\..\..\mupen64plus-core\src\api;..\..\src\msvc-compat"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\mupen64plus-core\src\api"
+				AdditionalIncludeDirectories="..\..\..\mupen64plus-core\src\api;..\..\src\msvc-compat"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -183,6 +183,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\alist_audio.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\alist_naudio.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\alist_nead.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\audio.c"
 				>
 			</File>
@@ -191,11 +203,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\hle.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\jpeg.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\main.c"
+				RelativePath="..\..\src\memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\mp3.c"
 				>
 			</File>
 			<File
@@ -203,19 +223,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ucode1.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ucode2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ucode3.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ucode3mp3.c"
+				RelativePath="..\..\src\plugin.c"
 				>
 			</File>
 		</Filter>
@@ -229,15 +237,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\alist_internal.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\audio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\cicx105.h"
+				RelativePath="..\..\src\arithmetics.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\common.h"
 				>
 			</File>
 			<File
@@ -245,11 +253,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\jpeg.h"
+				RelativePath="..\..\src\hle_external.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\musyx.h"
+				RelativePath="..\..\src\hle_internal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\memory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ucodes.h"
 				>
 			</File>
 		</Filter>

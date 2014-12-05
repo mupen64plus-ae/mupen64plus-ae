@@ -875,11 +875,22 @@ void RSP_RDP_InsertMatrix(Gfx *gfx)
         int y = x >> 2;
         x &= 3;
 
-        fraction = (float)fabs(gRSPworldProject.m[y][x] - (int)gRSPworldProject.m[y][x]);
-        gRSPworldProject.m[y][x] = (short)((gfx->words.w1)>>16) + fraction;
+        float integer = (float)(short)((gfx->words.w1)>>16);
+        fraction      = (float)fabs(gRSPworldProject.m[y][x] - (int)gRSPworldProject.m[y][x]);
 
+        if(integer >= 0.0f)
+            gRSPworldProject.m[y][x] = integer + fraction;
+        else
+            gRSPworldProject.m[y][x] = integer - fraction;
+
+
+        integer  = (float)(short)((gfx->words.w1)&0xFFFF);
         fraction = (float)fabs(gRSPworldProject.m[y][x+1] - (int)gRSPworldProject.m[y][x+1]);
-        gRSPworldProject.m[y][x+1] = (short)((gfx->words.w1)&0xFFFF) + fraction;
+
+        if(integer >= 0.0f)
+            gRSPworldProject.m[y][x+1] = integer + fraction;
+        else
+            gRSPworldProject.m[y][x+1] = integer - fraction;
     }
 
     gRSP.bMatrixIsUpdated = false;

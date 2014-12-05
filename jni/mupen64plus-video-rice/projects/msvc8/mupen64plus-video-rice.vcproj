@@ -196,10 +196,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\CNvTNTCombiner.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\Combiner.cpp"
 				>
 			</File>
@@ -232,10 +228,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\DirectXDecodedMux.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\FrameBuffer.cpp"
 				>
 			</File>
@@ -249,14 +241,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\OGLCombiner.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\OGLCombinerNV.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\OGLCombinerTNT2.cpp"
 				>
 			</File>
 			<File
@@ -390,10 +374,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\CNvTNTCombiner.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\COLOR.h"
 				>
 			</File>
@@ -434,10 +414,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\DirectXDecodedMux.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\ExtendedRender.h"
 				>
 			</File>
@@ -467,14 +443,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\OGLCombiner.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\OGLCombinerNV.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\OGLCombinerTNT2.h"
 				>
 			</File>
 			<File

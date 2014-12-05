@@ -95,7 +95,11 @@ ifneq ("$(filter arm%,$(HOST_CPU))","")
     ARCH_DETECTED := 32BITS
     PIC ?= 1
     NEW_DYNAREC := 1
-    CFLAGS += -mfpu=vfp -mfloat-abi=softfp
+    ifeq ($(NEON), 1)
+        CFLAGS += -mfpu=neon -mfloat-abi=hard -DNEON
+    else
+        CFLAGS += -mfpu=vfp -mfloat-abi=softfp
+    endif
     $(warning Architecture "$(HOST_CPU)" not officially supported.')
   endif
 endif
@@ -220,15 +224,26 @@ LDLIBS += $(LIBPNG_LDLIBS)
 
 # test for presence of SDL
 ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
-  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  SDL_CONFIG = $(CROSS_COMPILE)sdl2-config
   ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-    $(error No SDL development libraries found!)
+    SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+    ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+      $(error No SDL development libraries found!)
+    else
+      $(warning Using SDL 1.2 libraries)
+    endif
   endif
   SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
   SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
 CFLAGS += $(SDL_CFLAGS)
 LDLIBS += $(SDL_LDLIBS)
+
+ifeq ($(USE_GLES), 1)
+  CFLAGS += -DUSE_GLES
+  # OSD uses non-ES code and breaks attribs of video plugins
+  OSD=0
+endif
 
 OSD ?= 1
 ifeq ($(OSD), 1)
@@ -245,6 +260,9 @@ ifeq ($(OSD), 1)
   LDLIBS += $(FREETYPE2_LDLIBS)
 
   # search for OpenGL libraries
+  ifeq ($(USE_GLES), 1)
+    GL_LDLIBS = -lGLESv2
+  endif
   ifeq ($(OS), OSX)
     GL_LDLIBS = -framework OpenGL
     GLU_LDLIBS = -framework OpenGL
@@ -373,6 +391,7 @@ SOURCE = \
 	$(SRCDIR)/main/cheat.c \
 	$(SRCDIR)/main/eventloop.c \
 	$(SRCDIR)/main/md5.c \
+	$(SRCDIR)/main/profile.c \
 	$(SRCDIR)/main/rom.c \
 	$(SRCDIR)/main/savestates.c \
 	$(SRCDIR)/main/sdl_key_converter.c \
@@ -382,19 +401,22 @@ SOURCE = \
 	$(SRCDIR)/memory/memory.c \
 	$(SRCDIR)/memory/n64_cic_nus_6105.c \
 	$(SRCDIR)/memory/pif.c \
-	$(SRCDIR)/memory/tlb.c \
 	$(SRCDIR)/plugin/plugin.c \
 	$(SRCDIR)/plugin/dummy_video.c \
 	$(SRCDIR)/plugin/dummy_audio.c \
 	$(SRCDIR)/plugin/dummy_input.c \
 	$(SRCDIR)/plugin/dummy_rsp.c \
 	$(SRCDIR)/r4300/r4300.c \
+	$(SRCDIR)/r4300/cached_interp.c \
+	$(SRCDIR)/r4300/cp0.c \
+	$(SRCDIR)/r4300/cp1.c \
 	$(SRCDIR)/r4300/exception.c \
+	$(SRCDIR)/r4300/instr_counters.c \
 	$(SRCDIR)/r4300/interupt.c \
-	$(SRCDIR)/r4300/profile.c \
 	$(SRCDIR)/r4300/pure_interp.c \
 	$(SRCDIR)/r4300/recomp.c \
 	$(SRCDIR)/r4300/reset.c \
+	$(SRCDIR)/r4300/tlb.c \
 	$(SRCDIR)/osd/screenshot.cpp
 ifeq ("$(OS)","MINGW")
 SOURCE += \
@@ -512,6 +534,8 @@ targets:
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    LIRC=1        == enable LIRC support"
 	@echo "    NO_ASM=1      == build without assembly (no dynamic recompiler or MMX/SSE code)"
+	@echo "    USE_GLES=1    == build against GLESv2 instead of OpenGL"
+	@echo "    NEON=1        == (ARM only) build for hard floating point environments"
 	@echo "    SHAREDIR=path == extra path to search for shared data files"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
@@ -552,7 +576,6 @@ uninstall:
 	$(RM) "$(DESTDIR)$(LIBDIR)/$(TARGET)"
 	if [ "$(SONAME)" != "" ]; then $(RM) "$(DESTDIR)$(LIBDIR)/$(SONAME)"; fi
 	$(RM) $(DESTDIR)$(INCDIR)/m64p_*.h
-	$(RM) "$(DESTDIR)$(SHAREDIR)/mupen64plus.cht"
 	$(RM) "$(DESTDIR)$(SHAREDIR)/mupen64plus.ini"
 	$(RM) "$(DESTDIR)$(SHAREDIR)/font.ttf"
 	$(RM) "$(DESTDIR)$(SHAREDIR)/mupencheat.txt"

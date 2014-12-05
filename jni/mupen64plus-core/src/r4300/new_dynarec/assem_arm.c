@@ -18,6 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include "../cp0.h"
+
 extern int cycle_count;
 extern int last_count;
 extern int pcaddr;
@@ -1030,6 +1032,12 @@ static void emit_adds(int rs1,int rs2,int rt)
   output_w32(0xe0900000|rd_rn_rm(rt,rs1,rs2));
 }
 
+static void emit_adc(int rs1,int rs2,int rt)
+{
+  assem_debug("adc %s,%s,%s",regname[rt],regname[rs1],regname[rs2]);
+  output_w32(0xe0a00000|rd_rn_rm(rt,rs1,rs2));
+}
+
 static void emit_adcs(int rs1,int rs2,int rt)
 {
   assem_debug("adcs %s,%s,%s",regname[rt],regname[rs1],regname[rs2]);
@@ -1139,7 +1147,7 @@ static void emit_loadreg(int r, int hr)
     if((r&63)==HIREG) addr=(int)&hi+((r&64)>>4);
     if((r&63)==LOREG) addr=(int)&lo+((r&64)>>4);
     if(r==CCREG) addr=(int)&cycle_count;
-    if(r==CSREG) addr=(int)&Status;
+    if(r==CSREG) addr=(int)&g_cp0_regs[CP0_STATUS_REG];
     if(r==FSREG) addr=(int)&FCR31;
     if(r==INVCP) addr=(int)&invc_ptr;
     if(r==ROREG) addr=(int)&ram_offset;
@@ -1741,6 +1749,18 @@ static void emit_jno(int a)
 }
 
 static void emit_jcc(int a)
+{
+  assem_debug("bcc %x",a);
+  u_int offset=genjmp(a);
+  output_w32(0x3a000000|offset);
+}
+static void emit_jae(int a)
+{
+  assem_debug("bcs %x",a);
+  u_int offset=genjmp(a);
+  output_w32(0x2a000000|offset);
+}
+static void emit_jb(int a)
 {
   assem_debug("bcc %x",a);
   u_int offset=genjmp(a);
@@ -2561,7 +2581,7 @@ static void emit_extjump2(int addr, int target, int linker)
   emit_readword((int)&last_count,ECX);
   emit_add(HOST_CCREG,ECX,HOST_CCREG);
   emit_readword((int)&next_interupt,ECX);
-  emit_writeword(HOST_CCREG,(int)&Count);
+  emit_writeword(HOST_CCREG,(int)&g_cp0_regs[CP0_COUNT_REG]);
   emit_sub(HOST_CCREG,ECX,HOST_CCREG);
   emit_writeword(ECX,(int)&last_count);
 #endif
@@ -2631,14 +2651,14 @@ static void do_readstub(int n)
   emit_movimm(start+stubs[n][3]*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,3);
   //emit_readword((int)&last_count,temp);
   //emit_add(cc,temp,cc);
-  //emit_writeword(cc,(int)&Count);
+  //emit_writeword(cc,(int)&g_cp0_regs[CP0_COUNT_REG]);
   //emit_mov(15,14);
   emit_call((int)&indirect_jump_indexed);
   //emit_callreg(rs);
   //emit_readword_dualindexedx4(rs,HOST_TEMPREG,15);
   // We really shouldn't need to update the count here,
   // but not doing so causes random crashes...
-  emit_readword((int)&Count,HOST_TEMPREG);
+  emit_readword((int)&g_cp0_regs[CP0_COUNT_REG],HOST_TEMPREG);
   emit_readword((int)&next_interupt,2);
   emit_addimm(HOST_TEMPREG,-2*stubs[n][6]-2,HOST_TEMPREG);
   emit_writeword(2,(int)&last_count);
@@ -2714,12 +2734,12 @@ static void inline_readstub(int type, int i, u_int addr, signed char regmap[], i
     emit_movimm(start+i*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,3);
   }
   //emit_add(12,2,2);
-  //emit_writeword(2,(int)&Count);
+  //emit_writeword(2,(int)&g_cp0_regs[CP0_COUNT_REG]);
   //emit_call(((u_int *)ftable)[addr>>16]);
   emit_call((int)&indirect_jump);
   // We really shouldn't need to update the count here,
   // but not doing so causes random crashes...
-  emit_readword((int)&Count,HOST_TEMPREG);
+  emit_readword((int)&g_cp0_regs[CP0_COUNT_REG],HOST_TEMPREG);
   emit_readword((int)&next_interupt,2);
   emit_addimm(HOST_TEMPREG,-CLOCK_DIVIDER*(adj+1),HOST_TEMPREG);
   emit_writeword(2,(int)&last_count);
@@ -2813,10 +2833,10 @@ static void do_writestub(int n)
   //emit_readword((int)&last_count,temp);
   //emit_addimm(cc,2*stubs[n][5]+2,cc);
   //emit_add(cc,temp,cc);
-  //emit_writeword(cc,(int)&Count);
+  //emit_writeword(cc,(int)&g_cp0_regs[CP0_COUNT_REG]);
   emit_call((int)&indirect_jump_indexed);
   //emit_callreg(rs);
-  emit_readword((int)&Count,HOST_TEMPREG);
+  emit_readword((int)&g_cp0_regs[CP0_COUNT_REG],HOST_TEMPREG);
   emit_readword((int)&next_interupt,2);
   emit_addimm(HOST_TEMPREG,-2*stubs[n][6]-2,HOST_TEMPREG);
   emit_writeword(2,(int)&last_count);
@@ -2888,10 +2908,10 @@ static void inline_writestub(int type, int i, u_int addr, signed char regmap[], 
     emit_movimm(start+i*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,3);
   }
   //emit_add(12,2,2);
-  //emit_writeword(2,(int)&Count);
+  //emit_writeword(2,(int)&g_cp0_regs[CP0_COUNT_REG]);
   //emit_call(((u_int *)ftable)[addr>>16]);
   emit_call((int)&indirect_jump);
-  emit_readword((int)&Count,HOST_TEMPREG);
+  emit_readword((int)&g_cp0_regs[CP0_COUNT_REG],HOST_TEMPREG);
   emit_readword((int)&next_interupt,2);
   emit_addimm(HOST_TEMPREG,-CLOCK_DIVIDER*(adj+1),HOST_TEMPREG);
   emit_writeword(2,(int)&last_count);
@@ -3362,7 +3382,7 @@ static void cop0_assemble(int i,struct regstat *i_regs)
           emit_loadreg(CCREG,HOST_CCREG); // TODO: do proper reg alloc
           emit_add(HOST_CCREG,ECX,HOST_CCREG);
           emit_addimm(HOST_CCREG,CLOCK_DIVIDER*ccadj[i],HOST_CCREG);
-          emit_writeword(HOST_CCREG,(int)&Count);
+          emit_writeword(HOST_CCREG,(int)&g_cp0_regs[CP0_COUNT_REG]);
         }
         emit_call((int)cached_interpreter_table.MFC0);
         emit_readword((int)&readmem_dword,t);
@@ -3385,7 +3405,7 @@ static void cop0_assemble(int i,struct regstat *i_regs)
       emit_loadreg(CCREG,HOST_CCREG); // TODO: do proper reg alloc
       emit_add(HOST_CCREG,ECX,HOST_CCREG);
       emit_addimm(HOST_CCREG,CLOCK_DIVIDER*ccadj[i],HOST_CCREG);
-      emit_writeword(HOST_CCREG,(int)&Count);
+      emit_writeword(HOST_CCREG,(int)&g_cp0_regs[CP0_COUNT_REG]);
     }
     // What a mess.  The status register (12) can enable interrupts,
     // so needs a special case to handle a pending interrupt.
@@ -3401,7 +3421,7 @@ static void cop0_assemble(int i,struct regstat *i_regs)
     //else
     emit_call((int)cached_interpreter_table.MTC0);
     if(copr==9||copr==11||copr==12) {
-      emit_readword((int)&Count,HOST_CCREG);
+      emit_readword((int)&g_cp0_regs[CP0_COUNT_REG],HOST_CCREG);
       emit_readword((int)&next_interupt,ECX);
       emit_addimm(HOST_CCREG,-CLOCK_DIVIDER*ccadj[i],HOST_CCREG);
       emit_sub(HOST_CCREG,ECX,HOST_CCREG);
@@ -3435,7 +3455,7 @@ static void cop0_assemble(int i,struct regstat *i_regs)
       if(i_regs->regmap[HOST_CCREG]!=CCREG) emit_loadreg(CCREG,HOST_CCREG);
       emit_add(HOST_CCREG,ECX,HOST_CCREG);
       emit_addimm(HOST_CCREG,CLOCK_DIVIDER*ccadj[i],HOST_CCREG);
-      emit_writeword(HOST_CCREG,(int)&Count);
+      emit_writeword(HOST_CCREG,(int)&g_cp0_regs[CP0_COUNT_REG]);
       emit_call((int)TLBWR_new);
     }
     if((source[i]&0x3f)==0x08) // TLBP
@@ -4416,7 +4436,7 @@ static void wb_valid(signed char pre[],signed char entry[],u_int dirty_pre,u_int
       if(((~u)>>(reg&63))&1) {
         if(reg>0) {
           if(((dirty_pre&~dirty)>>hr)&1) {
-            if(reg>0&&reg<34) {
+            if(reg>0&&reg<36) {
               emit_storereg(reg,hr);
               if( ((is32_pre&~uu)>>reg)&1 ) {
                 emit_sarimm(hr,31,HOST_TEMPREG);

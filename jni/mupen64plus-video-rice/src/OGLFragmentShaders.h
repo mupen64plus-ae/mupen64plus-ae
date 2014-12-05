@@ -68,32 +68,5 @@ private:
 
 };
 
-
-
-class COGLFragmentShaderCombiner : public COGLColorCombiner
-{
-public:
-    bool Initialize(void);
-    void InitCombinerBlenderForSimpleTextureDraw(uint32 tile=0);
-protected:
-    friend class OGLDeviceBuilder;
-
-    void DisableCombiner(void);
-    void InitCombinerCycleCopy(void);
-    void InitCombinerCycleFill(void);
-    void InitCombinerCycle12(void);
-
-    COGLFragmentShaderCombiner(CRender *pRender);
-    ~COGLFragmentShaderCombiner();
-
-    bool m_bShaderIsSupported;
-
-#ifdef DEBUGGER
-    void DisplaySimpleMuxString(void);
-#endif
-
-};
-
-
 #endif
 

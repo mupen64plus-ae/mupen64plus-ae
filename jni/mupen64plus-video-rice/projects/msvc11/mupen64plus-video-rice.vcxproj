@@ -97,7 +97,6 @@
     <ClCompile Include="..\..\src\liblinux\BMGImage.c" />
     <ClCompile Include="..\..\src\liblinux\BMGUtils.c" />
     <ClCompile Include="..\..\src\liblinux\bmp.c" />
-    <ClCompile Include="..\..\src\CNvTNTCombiner.cpp" />
     <ClCompile Include="..\..\src\Combiner.cpp" />
     <ClCompile Include="..\..\src\CombinerTable.cpp" />
     <ClCompile Include="..\..\src\Config.cpp" />
@@ -106,13 +105,10 @@
     <ClCompile Include="..\..\src\Debugger.cpp" />
     <ClCompile Include="..\..\src\DecodedMux.cpp" />
     <ClCompile Include="..\..\src\DeviceBuilder.cpp" />
-    <ClCompile Include="..\..\src\DirectXDecodedMux.cpp" />
     <ClCompile Include="..\..\src\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\GeneralCombiner.cpp" />
     <ClCompile Include="..\..\src\GraphicsContext.cpp" />
     <ClCompile Include="..\..\src\OGLCombiner.cpp" />
-    <ClCompile Include="..\..\src\OGLCombinerNV.cpp" />
-    <ClCompile Include="..\..\src\OGLCombinerTNT2.cpp" />
     <ClCompile Include="..\..\src\OGLDecodedMux.cpp" />
     <ClCompile Include="..\..\src\OGLExtCombiner.cpp" />
     <ClCompile Include="..\..\src\OGLExtensions.cpp" />
@@ -146,7 +142,6 @@
     <ClInclude Include="..\..\src\liblinux\BMGImage.h" />
     <ClInclude Include="..\..\src\liblinux\BMGLibPNG.h" />
     <ClInclude Include="..\..\src\liblinux\BMGUtils.h" />
-    <ClInclude Include="..\..\src\CNvTNTCombiner.h" />
     <ClInclude Include="..\..\src\COLOR.h" />
     <ClInclude Include="..\..\src\Combiner.h" />
     <ClInclude Include="..\..\src\CombinerDefs.h" />
@@ -157,7 +152,6 @@
     <ClInclude Include="..\..\src\Debugger.h" />
     <ClInclude Include="..\..\src\DecodedMux.h" />
     <ClInclude Include="..\..\src\DeviceBuilder.h" />
-    <ClInclude Include="..\..\src\DirectXDecodedMux.h" />
     <ClInclude Include="..\..\src\ExtendedRender.h" />
     <ClInclude Include="..\..\src\FrameBuffer.h" />
     <ClInclude Include="..\..\src\GeneralCombiner.h" />
@@ -166,8 +160,6 @@
     <ClInclude Include="..\..\src\liblinux\inffixed.h" />
     <ClInclude Include="..\..\src\liblinux\jpegrw.h" />
     <ClInclude Include="..\..\src\OGLCombiner.h" />
-    <ClInclude Include="..\..\src\OGLCombinerNV.h" />
-    <ClInclude Include="..\..\src\OGLCombinerTNT2.h" />
     <ClInclude Include="..\..\src\OGLDebug.h" />
     <ClInclude Include="..\..\src\OGLDecodedMux.h" />
     <ClInclude Include="..\..\src\OGLExtCombiner.h" />

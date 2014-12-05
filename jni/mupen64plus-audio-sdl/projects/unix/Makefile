@@ -53,6 +53,7 @@ ifeq ("$(UNAME)","OpenBSD")
   OS = FREEBSD
   SHARED = -shared
   SO_EXTENSION = so
+  NO_OSS = 1
   $(warning OS type "$(UNAME)" not officially supported.')
 endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
@@ -165,9 +166,14 @@ endif
 
 # test for presence of SDL
 ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
-  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  SDL_CONFIG = $(CROSS_COMPILE)sdl2-config
   ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-    $(error No SDL development libraries found!)
+    SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+    ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+      $(error No SDL development libraries found!)
+    else
+      $(warning Using SDL 1.2 libraries)
+    endif
   endif
   SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
   SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)

@@ -101,10 +101,6 @@ protected:
     bool RenderFillRect(uint32 dwColor, float depth);
     bool RenderLine3D();
 
-    bool m_bSupportFogCoordExt;
-    bool m_bMultiTexture;
-    bool m_bSupportClampToEdge;
-
     GLuint  m_curBoundTex[8];
     BOOL    m_texUnitEnabled[8];
 

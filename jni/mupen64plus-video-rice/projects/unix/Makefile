@@ -193,6 +193,10 @@ CFLAGS += $(LIBPNG_CFLAGS)
 LDLIBS += $(LIBPNG_LDLIBS)
 
 # search for OpenGL libraries
+ifeq ($(USE_GLES), 1)
+  CFLAGS += -DUSE_GLES
+  GL_LDLIBS = -lGLESv2
+endif
 ifeq ($(OS), OSX)
   GL_LDLIBS = -framework OpenGL
 endif
@@ -211,9 +215,14 @@ LDLIBS += $(GL_LDLIBS)
 
 # test for presence of SDL
 ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
-  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  SDL_CONFIG = $(CROSS_COMPILE)sdl2-config
   ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-    $(error No SDL development libraries found!)
+    SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+    ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+      $(error No SDL development libraries found!)
+    else
+      $(warning Using SDL 1.2 libraries)
+    endif
   endif
   SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
   SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
@@ -304,22 +313,17 @@ SOURCE = \
 	$(SRCDIR)/Config.cpp \
 	$(SRCDIR)/ConvertImage.cpp \
 	$(SRCDIR)/ConvertImage16.cpp \
-	$(SRCDIR)/CNvTNTCombiner.cpp \
 	$(SRCDIR)/Debugger.cpp \
 	$(SRCDIR)/DecodedMux.cpp \
-	$(SRCDIR)/DirectXDecodedMux.cpp \
 	$(SRCDIR)/DeviceBuilder.cpp \
 	$(SRCDIR)/FrameBuffer.cpp \
 	$(SRCDIR)/GeneralCombiner.cpp \
 	$(SRCDIR)/GraphicsContext.cpp \
 	$(SRCDIR)/OGLCombiner.cpp \
-	$(SRCDIR)/OGLCombinerNV.cpp \
-	$(SRCDIR)/OGLCombinerTNT2.cpp \
 	$(SRCDIR)/OGLDecodedMux.cpp \
 	$(SRCDIR)/OGLExtCombiner.cpp \
 	$(SRCDIR)/OGLExtensions.cpp \
 	$(SRCDIR)/OGLExtRender.cpp \
-	$(SRCDIR)/OGLFragmentShaders.cpp \
 	$(SRCDIR)/OGLGraphicsContext.cpp \
 	$(SRCDIR)/OGLRender.cpp \
 	$(SRCDIR)/OGLRenderExt.cpp \
@@ -338,6 +342,14 @@ SOURCE = \
 	$(SRCDIR)/TextureManager.cpp \
 	$(SRCDIR)/VectorMath.cpp \
 	$(SRCDIR)/Video.cpp
+
+ifeq ($(USE_GLES), 1)
+	SOURCE += \
+		$(SRCDIR)/OGLES2FragmentShaders.cpp
+else
+	SOURCE += \
+		$(SRCDIR)/OGLFragmentShaders.cpp
+endif
 
 ifeq ($(OS),MINGW)
 SOURCE += \
@@ -369,6 +381,7 @@ targets:
 	@echo "  Options:"
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    NO_ASM=1      == build without inline assembly code (x86 MMX/SSE)"
+	@echo "    USE_GLES=1    == build against GLESv2 instead of OpenGL"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"

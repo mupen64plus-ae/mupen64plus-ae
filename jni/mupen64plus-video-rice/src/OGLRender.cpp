@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "osal_opengl.h"
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
 #include "OGLExtensions.h"
-#elif SDL_VIDEO_OPENGL_ES2
+#else
 #include "OGLES2FragmentShaders.h"
 #endif
 #include "OGLDebug.h"
@@ -48,10 +48,6 @@ UVFlagMap OGLXUVFlagMaps[] =
 //===================================================================
 OGLRender::OGLRender()
 {
-    COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
-    m_bSupportFogCoordExt = pcontext->m_bSupportFogCoord;
-    m_bMultiTexture = pcontext->m_bSupportMultiTexture;
-    m_bSupportClampToEdge = false;
     for( int i=0; i<8; i++ )
     {
         m_curBoundTex[i]=0;
@@ -86,83 +82,50 @@ void OGLRender::Initialize(void)
 
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
+    
+    OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_MIRRORED_REPEAT;
+    OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
 
-#if SDL_VIDEO_OPENGL
-    COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
-    if( pcontext->IsExtensionSupported("GL_IBM_texture_mirrored_repeat") )
-    {
-        OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_MIRRORED_REPEAT_IBM;
-    }
-    else if( pcontext->IsExtensionSupported("ARB_texture_mirrored_repeat") )
-    {
-        OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_MIRRORED_REPEAT_ARB;
-    }
-    else
-    {
-        OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_REPEAT;
-    }
-
-    if( pcontext->IsExtensionSupported("GL_ARB_texture_border_clamp") || pcontext->IsExtensionSupported("GL_EXT_texture_edge_clamp") )
-    {
-        m_bSupportClampToEdge = true;
-        OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
-    }
-    else
-    {
-        m_bSupportClampToEdge = false;
-        OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP;
-    }
+#ifndef USE_GLES
 
     glVertexPointer( 4, GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5[0][0]) );
     OPENGL_CHECK_ERRORS;
     glEnableClientState( GL_VERTEX_ARRAY );
     OPENGL_CHECK_ERRORS;
 
-    if( m_bMultiTexture )
-    {
-        pglClientActiveTextureARB( GL_TEXTURE0_ARB );
-        OPENGL_CHECK_ERRORS;
-        glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
-        OPENGL_CHECK_ERRORS;
-        glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-        OPENGL_CHECK_ERRORS;
+    pglClientActiveTexture( GL_TEXTURE0 );
+    OPENGL_CHECK_ERRORS;
+    glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
+    OPENGL_CHECK_ERRORS;
+    glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+    OPENGL_CHECK_ERRORS;
 
-        pglClientActiveTextureARB( GL_TEXTURE1_ARB );
-        OPENGL_CHECK_ERRORS;
-        glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u) );
-        OPENGL_CHECK_ERRORS;
-        glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-        OPENGL_CHECK_ERRORS;
-    }
-    else
-    {
-        glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
-        OPENGL_CHECK_ERRORS;
-        glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-        OPENGL_CHECK_ERRORS;
-    }
+    pglClientActiveTexture( GL_TEXTURE1 );
+    OPENGL_CHECK_ERRORS;
+    glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u) );
+    OPENGL_CHECK_ERRORS;
+    glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+    OPENGL_CHECK_ERRORS;
 
-    if (m_bSupportFogCoordExt)
-    {
-        pglFogCoordPointerEXT( GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5[0][4]) );
-        OPENGL_CHECK_ERRORS;
-        glEnableClientState( GL_FOG_COORDINATE_ARRAY_EXT );
-        OPENGL_CHECK_ERRORS;
-        glFogi( GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT );
-        OPENGL_CHECK_ERRORS;
-        glFogi(GL_FOG_MODE, GL_LINEAR); // Fog Mode
-        OPENGL_CHECK_ERRORS;
-        glFogf(GL_FOG_DENSITY, 1.0f); // How Dense Will The Fog Be
-        OPENGL_CHECK_ERRORS;
-        glHint(GL_FOG_HINT, GL_FASTEST); // Fog Hint Value
-        OPENGL_CHECK_ERRORS;
-        glFogi( GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT );
-        OPENGL_CHECK_ERRORS;
-        glFogf( GL_FOG_START, 0.0f );
-        OPENGL_CHECK_ERRORS;
-        glFogf( GL_FOG_END, 1.0f );
-        OPENGL_CHECK_ERRORS;
-    }
+
+    pglFogCoordPointer( GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5[0][4]) );
+    OPENGL_CHECK_ERRORS;
+    glEnableClientState( GL_FOG_COORDINATE_ARRAY );
+    OPENGL_CHECK_ERRORS;
+    glFogi( GL_FOG_COORDINATE_SOURCE, GL_FOG_COORDINATE );
+    OPENGL_CHECK_ERRORS;
+    glFogi(GL_FOG_MODE, GL_LINEAR); // Fog Mode
+    OPENGL_CHECK_ERRORS;
+    glFogf(GL_FOG_DENSITY, 1.0f); // How Dense Will The Fog Be
+    OPENGL_CHECK_ERRORS;
+    glHint(GL_FOG_HINT, GL_FASTEST); // Fog Hint Value
+    OPENGL_CHECK_ERRORS;
+    glFogi( GL_FOG_COORDINATE_SOURCE, GL_FOG_COORDINATE );
+    OPENGL_CHECK_ERRORS;
+    glFogf( GL_FOG_START, 0.0f );
+    OPENGL_CHECK_ERRORS;
+    glFogf( GL_FOG_END, 1.0f );
+    OPENGL_CHECK_ERRORS;
 
     //glColorPointer( 1, GL_UNSIGNED_BYTE, sizeof(TLITVERTEX), &g_vtxBuffer[0].r);
     glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
@@ -170,38 +133,25 @@ void OGLRender::Initialize(void)
     glEnableClientState( GL_COLOR_ARRAY );
     OPENGL_CHECK_ERRORS;
 
+    COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
     if( pcontext->IsExtensionSupported("GL_NV_depth_clamp") )
     {
         glEnable(GL_DEPTH_CLAMP_NV);
         OPENGL_CHECK_ERRORS;
     }
 
-#elif SDL_VIDEO_OPENGL_ES2
-    OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_MIRRORED_REPEAT;
-    m_bSupportClampToEdge = true;
-    OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
+#else
 
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][0]));
     OPENGL_CHECK_ERRORS;
 
-    if( m_bMultiTexture )
-    {
-        glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u));
-        OPENGL_CHECK_ERRORS;
-        glVertexAttribPointer(VS_TEXCOORD1,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u));
-        OPENGL_CHECK_ERRORS;
-    }
-    else
-    {
-        glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u));
-        OPENGL_CHECK_ERRORS;
-    }
+    glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u));
+    OPENGL_CHECK_ERRORS;
+    glVertexAttribPointer(VS_TEXCOORD1,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u));
+    OPENGL_CHECK_ERRORS;
 
-    if (m_bSupportFogCoordExt)
-    {
-        glVertexAttribPointer(VS_FOG,1,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][4]));
-        OPENGL_CHECK_ERRORS;
-    }
+    glVertexAttribPointer(VS_FOG,1,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][4]));
+    OPENGL_CHECK_ERRORS;
 
     glVertexAttribPointer(VS_COLOR, 4, GL_UNSIGNED_BYTE,GL_TRUE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
     OPENGL_CHECK_ERRORS;
@@ -255,7 +205,7 @@ void OGLRender::ApplyTextureFilter()
 
 void OGLRender::SetShadeMode(RenderShadeMode mode)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     if( mode == SHADE_SMOOTH )
         glShadeModel(GL_SMOOTH);
     else
@@ -385,7 +335,7 @@ void OGLRender::SetAlphaRef(uint32 dwAlpha)
     if (m_dwAlpha != dwAlpha)
     {
         m_dwAlpha = dwAlpha;
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
         glAlphaFunc(GL_GEQUAL, (float)dwAlpha);
         OPENGL_CHECK_ERRORS;
 #endif
@@ -394,18 +344,18 @@ void OGLRender::SetAlphaRef(uint32 dwAlpha)
 
 void OGLRender::ForceAlphaRef(uint32 dwAlpha)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     float ref = dwAlpha/255.0f;
     glAlphaFunc(GL_GEQUAL, ref);
     OPENGL_CHECK_ERRORS;
-#elif SDL_VIDEO_OPENGL_ES2
+#else
     m_dwAlpha = dwAlpha;
 #endif
 }
 
 void OGLRender::SetFillMode(FillMode mode)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     if( mode == RICE_FILLMODE_WINFRAME )
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -576,7 +526,7 @@ bool OGLRender::RenderTexRect()
 
     float depth = -(g_texRectTVtx[3].z*2-1);
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
 
     glBegin(GL_TRIANGLE_FAN);
 
@@ -599,7 +549,7 @@ bool OGLRender::RenderTexRect()
     glEnd();
     OPENGL_CHECK_ERRORS;
 
-#elif SDL_VIDEO_OPENGL_ES2
+#else
 
     GLfloat colour[] = {
             g_texRectTVtx[3].r, g_texRectTVtx[3].g, g_texRectTVtx[3].b, g_texRectTVtx[3].a,
@@ -666,7 +616,7 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
 
     glBegin(GL_TRIANGLE_FAN);
     glColor4f(r,g,b,a);
@@ -677,7 +627,7 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     glEnd();
     OPENGL_CHECK_ERRORS;
 
-#elif SDL_VIDEO_OPENGL_ES2
+#else
 
     GLfloat colour[] = {
             r,g,b,a,
@@ -718,7 +668,7 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
 
 bool OGLRender::RenderLine3D()
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     ApplyZBias(0);  // disable z offsets
 
     glBegin(GL_TRIANGLE_FAN);
@@ -746,14 +696,9 @@ extern FiddledVtx * g_pVtxBase;
 // OpenGL internal transform
 bool OGLRender::RenderFlushTris()
 {
-    if( !m_bSupportFogCoordExt )    
-        SetFogFlagForNegativeW();
-    else
+    if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
     {
-        if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
-        {
-            TurnFogOnOff(false);
-        }
+        TurnFogOnOff(false);
     }
 
     ApplyZBias(m_dwZBias);  // set the bias factors
@@ -774,22 +719,22 @@ bool OGLRender::RenderFlushTris()
         glVertexPointer( 4, GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5Clipped[0][0]) );
         glEnableClientState( GL_VERTEX_ARRAY );
 
-        pglClientActiveTextureARB( GL_TEXTURE0_ARB );
+        pglClientActiveTexture( GL_TEXTURE0 );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_clippedVtxBuffer[0].tcord[0].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
-        pglClientActiveTextureARB( GL_TEXTURE1_ARB );
+        pglClientActiveTexture( GL_TEXTURE1 );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_clippedVtxBuffer[0].tcord[1].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
         glDrawElements( GL_TRIANGLES, gRSP.numVertices, GL_UNSIGNED_INT, g_vtxIndex );
 
         // Reset the array
-        pglClientActiveTextureARB( GL_TEXTURE0_ARB );
+        pglClientActiveTexture( GL_TEXTURE0 );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
-        pglClientActiveTextureARB( GL_TEXTURE1_ARB );
+        pglClientActiveTexture( GL_TEXTURE1 );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
@@ -798,14 +743,9 @@ bool OGLRender::RenderFlushTris()
     }
 */
 
-    if( !m_bSupportFogCoordExt )    
-        RestoreFogFlag();
-    else
+    if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
     {
-        if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
-        {
-            TurnFogOnOff(true);
-        }
+        TurnFogOnOff(true);
     }
     return true;
 }
@@ -833,7 +773,7 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     float g = ((g_texRectTVtx[0].dcDiffuse>>8)&0xFF)/255.0f;
     float b = (g_texRectTVtx[0].dcDiffuse&0xFF)/255.0f;
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
 
     glBegin(GL_TRIANGLES);
 
@@ -860,7 +800,7 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     glEnd();
     OPENGL_CHECK_ERRORS;
 
-#elif SDL_VIDEO_OPENGL_ES2
+#else
 
     GLfloat colour[] = {
             r,g,b,a,
@@ -936,7 +876,7 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     float g = ((dwColor>>8)&0xFF)/255.0f;
     float b = (dwColor&0xFF)/255.0f;
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
 
     glBegin(GL_TRIANGLE_FAN);
 
@@ -949,7 +889,7 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     glEnd();
     OPENGL_CHECK_ERRORS;
 
-#elif SDL_VIDEO_OPENGL_ES2
+#else
 
     GLfloat colour[] = {
             r,g,b,a,
@@ -1047,7 +987,7 @@ void OGLRender::RenderReset()
 
 void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
   #ifdef DEBUGGER
     if( bAlphaTestEnable && debuggerEnableAlphaTest )
   #else
@@ -1056,7 +996,7 @@ void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
         glEnable(GL_ALPHA_TEST);
     else
         glDisable(GL_ALPHA_TEST);
-#elif SDL_VIDEO_OPENGL_ES2
+#else
     ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetAlphaTestState(bAlphaTestEnable);
 #endif
     OPENGL_CHECK_ERRORS;
@@ -1171,7 +1111,7 @@ void OGLRender::ApplyScissorWithClipRatio(bool force)
 
 void OGLRender::SetFogMinMax(float fMin, float fMax)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
     OPENGL_CHECK_ERRORS;
     glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
@@ -1181,13 +1121,13 @@ void OGLRender::SetFogMinMax(float fMin, float fMax)
 
 void OGLRender::TurnFogOnOff(bool flag)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     if( flag )
         glEnable(GL_FOG);
     else
         glDisable(GL_FOG);
     OPENGL_CHECK_ERRORS;
-#elif SDL_VIDEO_OPENGL_ES2
+#else
     ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetFogState(flag);
     OPENGL_CHECK_ERRORS;
 #endif
@@ -1205,7 +1145,7 @@ void OGLRender::SetFogEnable(bool bEnable)
         gRSP.bFogEnabled = true;
     }
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     if( gRSP.bFogEnabled )
     {
         //TRACE2("Enable fog, min=%f, max=%f",gRSPfFogMin,gRSPfFogMax );
@@ -1223,7 +1163,7 @@ void OGLRender::SetFogEnable(bool bEnable)
         glDisable(GL_FOG);
         OPENGL_CHECK_ERRORS;
     }
-#elif SDL_VIDEO_OPENGL_ES2
+#else
     ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->SetFogState(gRSP.bFogEnabled);
     OPENGL_CHECK_ERRORS;
 #endif
@@ -1236,7 +1176,7 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
     gRDP.fvFogColor[1] = g/255.0f;      //g
     gRDP.fvFogColor[2] = b/255.0f;      //b
     gRDP.fvFogColor[3] = a/255.0f;      //a
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
 #endif
     OPENGL_CHECK_ERRORS;
@@ -1244,20 +1184,20 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
 
 void OGLRender::DisableMultiTexture()
 {
-    pglActiveTexture(GL_TEXTURE1_ARB);
+    pglActiveTexture(GL_TEXTURE1);
     OPENGL_CHECK_ERRORS;
     EnableTexUnit(1,FALSE);
-    pglActiveTexture(GL_TEXTURE0_ARB);
+    pglActiveTexture(GL_TEXTURE0);
     OPENGL_CHECK_ERRORS;
     EnableTexUnit(0,FALSE);
-    pglActiveTexture(GL_TEXTURE0_ARB);
+    pglActiveTexture(GL_TEXTURE0);
     OPENGL_CHECK_ERRORS;
     EnableTexUnit(0,TRUE);
 }
 
 void OGLRender::EndRendering(void)
 {
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
     glFlush();
     OPENGL_CHECK_ERRORS;
 #endif

@@ -24,16 +24,24 @@
 
 #include <SDL_config.h>
 
-#if SDL_VIDEO_OPENGL
+#ifndef USE_GLES
+
+#ifndef SDL_VIDEO_OPENGL
+#error SDL is not build with OpenGL support. Try USE_GLES=1
+#endif
+
 #include <SDL_opengl.h>
 #define GLSL_VERSION "120"
 
 // Extension names
 #define OSAL_GL_ARB_TEXTURE_ENV_ADD         "GL_ARB_texture_env_add"
 
+#else // !USE_GLES
 
+#ifndef SDL_VIDEO_OPENGL_ES2
+#error SDL is not build with OpenGL ES2 support. Try USE_GLES=0
+#endif
 
-#elif SDL_VIDEO_OPENGL_ES2
 #include <SDL_opengles2.h>
 #define GLSL_VERSION "100"
 
@@ -49,27 +57,18 @@
 
 // Constant substitutions
 #define GL_CLAMP                            GL_CLAMP_TO_EDGE
-#define GL_MAX_TEXTURE_UNITS_ARB            GL_MAX_TEXTURE_IMAGE_UNITS
+#define GL_MAX_TEXTURE_UNITS                GL_MAX_TEXTURE_IMAGE_UNITS
 #define GL_MIRRORED_REPEAT_ARB              GL_MIRRORED_REPEAT
-#define GL_TEXTURE0_ARB                     GL_TEXTURE0
-#define GL_TEXTURE1_ARB                     GL_TEXTURE1
-#define GL_TEXTURE2_ARB                     GL_TEXTURE2
-#define GL_TEXTURE3_ARB                     GL_TEXTURE3
-#define GL_TEXTURE4_ARB                     GL_TEXTURE4
-#define GL_TEXTURE5_ARB                     GL_TEXTURE5
-#define GL_TEXTURE6_ARB                     GL_TEXTURE6
-#define GL_TEXTURE7_ARB                     GL_TEXTURE7
 
 #define GL_ADD                              0x0104
 #define GL_MODULATE                         0x2100
-#define GL_INTERPOLATE_ARB                  0x8575
-#define GL_CONSTANT_ARB                     0x8576
-#define GL_PREVIOUS_ARB                     0x8578
+#define GL_INTERPOLATE                      0x8575
+#define GL_CONSTANT                         0x8576
+#define GL_PREVIOUS                         0x8578
 
 // Function substitutions
 #define glClearDepth                        glClearDepthf
 #define pglActiveTexture                    glActiveTexture
-#define pglActiveTextureARB                 glActiveTexture
 
 // No-op substitutions (unavailable in GLES2)
 #define glLoadIdentity()
@@ -80,6 +79,6 @@
 #define glTexEnvfv(x,y,z)
 #define glTexCoord2f(u,v)
 
-#endif // SDL_VIDEO_OPENGL*
+#endif // !USE_GLES
 
 #endif // OSAL_OPENGL_H

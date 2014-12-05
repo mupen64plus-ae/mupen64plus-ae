@@ -20,7 +20,7 @@ echo
 read COMPONENTS
 
 for i in $COMPONENTS; do
-    git subtree pull --prefix="jni/mupen64plus-${i}" --message="${i}: Sync with upstream." https://github.com/mupen64plus-ae/mupen64plus-"${i}".git master
+    git subtree pull --squash --prefix="jni/mupen64plus-${i}" --message="${i}: Sync with upstream." https://github.com/mupen64plus-ae/mupen64plus-"${i}".git master
 done
 
 echo "Finished"

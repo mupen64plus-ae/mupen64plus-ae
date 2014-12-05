@@ -124,12 +124,9 @@ typedef struct {
 
     bool    isMMXSupported;
     bool    isSSESupported;
-    bool    isVertexShaderSupported;
 
     bool    isMMXEnabled;
     bool    isSSEEnabled;
-    bool    isVertexShaderEnabled;
-    bool    bUseHW_T_L;                 // Use hardware T&L, for debug purpose only
 
     bool    toShowCFB;
 
@@ -168,6 +165,7 @@ extern ptr_ConfigOpenSection      ConfigOpenSection;
 extern ptr_ConfigListParameters   ConfigListParameters;
 extern ptr_ConfigSaveFile         ConfigSaveFile;
 extern ptr_ConfigSetParameter     ConfigSetParameter;
+extern ptr_ConfigSetParameterHelp ConfigSetParameterHelp;
 extern ptr_ConfigGetParameter     ConfigGetParameter;
 extern ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
 extern ptr_ConfigSetDefaultInt    ConfigSetDefaultInt;

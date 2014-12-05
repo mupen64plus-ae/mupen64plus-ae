@@ -25,6 +25,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "common.h"
+
 extern const int16_t RESAMPLE_LUT[64 * 4];
 
 int32_t rdot(size_t n, const int16_t *x, const int16_t *y);
