@@ -1,0 +1,81 @@
+===============================================================================
+-------------------------------------------------------------------------------
+Mupen64plus-ui-console README                                              v2.0
+-------------------------------------------------------------------------------
+===============================================================================
+
+The latest documentation for this plugin can be found at:
+
+https://code.google.com/p/mupen64plus/wiki/UIConsoleUsage
+
+-------------------------------------------------------------------------------
+Console Options
+-------------------------------------------------------------------------------
+
+At startup, the mupen64plus program will look for a user configuration file
+called 'mupen64plus.cfg'.  If this file does not exist, it will be created and
+default settings will be written. If desired, an alternate config directory can
+be specified using the --configdir commandline option.
+
+Run 'mupen64plus --help' for a complete list of commandline options: 
+
+ $ mupen64plus --help
+Usage: mupen64plus [parameter(s)] [romfile]
+
+Parameters:
+    --noosd               : disable onscreen display
+    --osd                 : enable onscreen display
+    --fullscreen          : use fullscreen display mode
+    --windowed            : use windowed display mode
+    --resolution (res)    : display resolution (640x480, 800x600, 1024x768, etc)
+    --nospeedlimit        : disable core speed limiter (should be used with dummy audio plugin)
+    --cheats (cheat-spec) : enable or list cheat codes for the given rom file
+    --corelib (filepath)  : use core library (filepath) (can be only filename or full path)
+    --configdir (dir)     : force configation directory to (dir); should contain mupen64plus.cfg
+    --datadir (dir)       : search for shared data files (.ini files, languages, etc) in (dir)
+    --plugindir (dir)     : search for plugins in (dir)
+    --sshotdir (dir)      : set screenshot directory to (dir)
+    --gfx (plugin-spec)   : use gfx plugin given by (plugin-spec)
+    --audio (plugin-spec) : use audio plugin given by (plugin-spec)
+    --input (plugin-spec) : use input plugin given by (plugin-spec)
+    --rsp (plugin-spec)   : use rsp plugin given by (plugin-spec)
+    --emumode (mode)      : set emu mode to: 0=Pure Interpreter 1=Interpreter 2=DynaRec
+    --testshots (list)    : take screenshots at frames given in comma-separated (list), then quit
+    --set (param-spec)    : set a configuration variable, format: ParamSection[ParamName]=Value
+    --core-compare-send   : use the Core Comparison debugging feature, in data sending mode
+    --core-compare-recv   : use the Core Comparison debugging feature, in data receiving mode
+    --nosaveoptions       : do not save the given command-line options in configuration file
+    --verbose             : print lots of information
+    --help                : see this help message
+
+(plugin-spec):
+    (pluginname)          : filename (without path) of plugin to find in plugin directory
+    (pluginpath)          : full path and filename of plugin
+    'dummy'               : use dummy plugin
+
+(cheat-spec):
+    'list'                : show all of the available cheat codes
+    'all'                 : enable all of the available cheat codes
+    (codelist)            : a comma-separated list of cheat code numbers to enable,
+                            with dashes to use code variables (ex 1-2 to use cheat 1 option 2)
+
+-------------------------------------------------------------------------------
+Cheats
+-------------------------------------------------------------------------------
+
+To list the available cheats in the rom:
+
+mupen64plus --cheats list "/path/to/my/rom.v64"
+
+If there are cheats in the rom, you will get (in the output console):
+
+UI-Console: 3 cheat code(s) found for ROM 'MY ROM'
+   0: [Enable All Levels] (This is needed to be able to Play all Levels of the Game)
+   1: [Enable All Weapons] (This is needed to be able to Play with all Weapons of the Game)
+   2: etc...
+
+All you have to do to use this cheats is:
+
+mupen64plus --cheats 0,1,2 "/path/to/my/rom.v64"
+
+
