@@ -25,6 +25,7 @@ import java.util.List;
 
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.hacks.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -110,7 +111,9 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
         super.onCreate( savedInstanceState );
         
         // Initialize MOGA controller API
-        mMogaController.init();
+        // TODO: Remove hack after MOGA SDK is fixed
+        // mMogaController.init();
+        MogaHack.init( mMogaController, this );
         
         // Get the user preferences wrapper
         mUserPrefs = new UserPrefs( this );

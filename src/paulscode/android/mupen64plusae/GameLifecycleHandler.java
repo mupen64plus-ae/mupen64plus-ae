@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import com.bda.controller.Controller;
 
+import paulscode.android.mupen64plusae.hacks.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchController;
@@ -155,7 +156,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         Log.i( "GameLifecycleHandler", "onCreate" );
         
         // Initialize MOGA controller API
-        mMogaController.init();
+        // TODO: Remove hack after MOGA SDK is fixed
+        // mMogaController.init();
+        MogaHack.init( mMogaController, mActivity );
         
         // Get app data and user preferences
         mUserPrefs = new UserPrefs( mActivity );

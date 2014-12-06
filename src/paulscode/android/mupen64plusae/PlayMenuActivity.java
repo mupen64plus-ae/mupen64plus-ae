@@ -29,6 +29,7 @@ import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
+import paulscode.android.mupen64plusae.hacks.MogaHack;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
@@ -117,7 +118,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             throw new Error( "ROM path, MD5, and CRC must be passed via the extras bundle" );
         
         // Initialize MOGA controller API
-        mMogaController.init();
+        // TODO: Remove hack after MOGA SDK is fixed
+        // mMogaController.init();
+        MogaHack.init( mMogaController, this );
         
         // Get app data and user preferences
         mAppData = new AppData( this );
