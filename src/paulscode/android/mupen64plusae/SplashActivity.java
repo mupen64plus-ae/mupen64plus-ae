@@ -205,7 +205,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
             // Extraction succeeded, record new asset version, merge cheats, and launch next activity
             mTextView.setText( R.string.assetExtractor_finished );
             mAppData.putAssetVersion( ASSET_VERSION );
-            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mUserPrefs.usrcheat_txt, mAppData.mupencheat_txt );
+            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mUserPrefs.customCheats_txt, mAppData.mupencheat_txt );
             launchGalleryActivity();
         }
         else
