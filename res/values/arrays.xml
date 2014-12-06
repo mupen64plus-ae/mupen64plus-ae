@@ -486,6 +486,7 @@
         <item>@string/inputMapActivity_gameshark</item>
         <item>@string/inputMapActivity_simulateBack</item>
         <item>@string/inputMapActivity_simulateMenu</item>
+        <item>@string/inputMapActivity_screenshot</item>
     </string-array>
     <string-array name="inputMapActivity_values" translatable="false">
         <item>13</item>

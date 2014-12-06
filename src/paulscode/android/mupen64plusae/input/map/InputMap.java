@@ -97,8 +97,11 @@ public class InputMap extends SerializableMap
     /** Simulated key-press function: Menu. */
     public static final int FUNC_SIMULATE_MENU          = OFFSET_GLOBAL_FUNCS + 12;
     
+    /** Mupen64Plus function: Screenshot. */
+    public static final int FUNC_SCREENSHOT             = OFFSET_GLOBAL_FUNCS + 13;
+    
     /** Total number of mappable controls/functions. */
-    public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 13;
+    public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 14;
     // @formatter:on
     
     /**

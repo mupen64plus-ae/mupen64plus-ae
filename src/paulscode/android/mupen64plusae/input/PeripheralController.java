@@ -268,6 +268,10 @@ public class PeripheralController extends AbstractController implements
                     String[] menu_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_MENU ) };
                     SafeMethods.exec( menu_cmd, false );
                     break;
+                case InputMap.FUNC_SCREENSHOT:
+                    Log.v( "PeripheralController", "FUNC_SCREENSHOT" );
+                    NativeExports.emuScreenshot();
+                    break;
                 default:
                     return false;
             }

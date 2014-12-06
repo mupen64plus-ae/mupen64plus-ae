@@ -555,6 +555,7 @@
     <string name="inputMapActivity_gameshark">Gameshark</string>
     <string name="inputMapActivity_simulateBack">Back key</string>
     <string name="inputMapActivity_simulateMenu">Menu key</string>
+    <string name="inputMapActivity_screenshot">Screenshot</string>
 
     <!-- Controller Diagnostics -->
     <string name="diagnosticActivity_textKey_text">Press button or key…</string>
