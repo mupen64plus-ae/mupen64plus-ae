@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.Keys;
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;

@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;

@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.Keys;
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.hacks.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.InputMap;

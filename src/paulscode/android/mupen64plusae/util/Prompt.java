@@ -26,7 +26,7 @@ import java.util.List;
 
 import com.bda.controller.Controller;
 
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;

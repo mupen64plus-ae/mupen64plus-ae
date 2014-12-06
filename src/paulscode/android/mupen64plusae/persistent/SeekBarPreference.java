@@ -20,7 +20,7 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcelable;

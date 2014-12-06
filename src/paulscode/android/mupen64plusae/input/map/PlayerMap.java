@@ -20,7 +20,7 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import android.content.Context;
 import android.util.Log;
