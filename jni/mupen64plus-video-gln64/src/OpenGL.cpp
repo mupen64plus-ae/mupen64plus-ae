@@ -80,6 +80,8 @@ const char _default_fsh[] = "                           \n\t" \
 "gl_FragColor = texture2D(uTex, vTexCoord);             \n\t" \
 "}                                                      \n\t";
 
+static unsigned char frameBuffer[2048*2048*4];
+
 void OGL_EnableRunfast()
 {
 #ifdef ARM_ASM
@@ -1320,8 +1322,24 @@ void OGL_ReadScreen( void *dest, int *width, int *height )
     if (dest == NULL)
         return;
 
+    unsigned char * line = (unsigned char *)dest;
+
     glReadPixels( config.framebuffer.xpos, config.framebuffer.ypos,
             config.framebuffer.width, config.framebuffer.height,
-            GL_RGBA, GL_UNSIGNED_BYTE, dest );
+            GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer );
+
+    //Convert RGBA to RGB
+    for (Uint32 y=0; y<config.framebuffer.height; y++)
+    {
+        unsigned char *ptr = (unsigned char *) frameBuffer + (config.framebuffer.width * 4 * y);
+        for (Uint32 x=0; x<config.framebuffer.width; x++)
+        {
+            line[x*3]   = ptr[0];  // red
+            line[x*3+1] = ptr[1];  // green
+            line[x*3+2] = ptr[2];  // blue
+            ptr += 4;
+        }
+        line += config.framebuffer.width * 3;
+    }
 }
 
