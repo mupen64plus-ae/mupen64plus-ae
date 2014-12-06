@@ -83,17 +83,8 @@ import android.view.WindowManager;
  */
 public class UserPrefs
 {
-    /** The parent directory containing all save files. */
-    public final String gameSaveDir;
-    
-    /** The subdirectory containing slot save files. */
-    public final String slotSaveDir;
-    
-    /** The subdirectory containing SRAM/EEPROM data (in-game saves). */
-    public final String sramSaveDir;
-    
-    /** The subdirectory containing auto save files. */
-    public final String autoSaveDir;
+    /** The parent directory containing all user-writable data files. */
+    public final String userDataDir;
     
     /** The subdirectory containing custom profiles. */
     public final String profilesDir;
@@ -284,14 +275,11 @@ public class UserPrefs
         mLocaleCodes = values;
         
         // Files
-        gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
-        slotSaveDir = gameSaveDir + "/SlotSaves";
-        sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
-        autoSaveDir = gameSaveDir + "/AutoSaves";
-        profilesDir = gameSaveDir + "/Profiles";
-        coreUserConfigDir = gameSaveDir + "/CoreConfig/UserConfig";
-        coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
-        coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
+        userDataDir = mPreferences.getString( "pathGameSaves", "" );
+        profilesDir = userDataDir + "/Profiles";
+        coreUserConfigDir = userDataDir + "/CoreConfig/UserConfig";
+        coreUserDataDir = userDataDir + "/CoreConfig/UserData";
+        coreUserCacheDir = userDataDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         romInfoCache_ini = coreUserCacheDir + "/romInfoCache.ini";
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
