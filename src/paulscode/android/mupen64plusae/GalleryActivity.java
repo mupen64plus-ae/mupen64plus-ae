@@ -21,15 +21,26 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
+import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
+import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeFileHashesTask;
+import paulscode.android.mupen64plusae.task.FindRomsTask;
 import paulscode.android.mupen64plusae.task.ComputeFileHashesTask.ComputeFileHashesListener;
+import paulscode.android.mupen64plusae.task.FindRomsTask.FindRomsListener;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -44,18 +55,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 
-public class GalleryActivity extends Activity implements OnClickListener, ComputeFileHashesListener
+public class GalleryActivity extends Activity implements OnItemClickListener, ComputeFileHashesListener, FindRomsListener, CacheRomInfoListener
 {
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-    private String mRomPath = null;
+    
+    // Widgets
+    private GridView mGridView;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -83,7 +98,6 @@ public class GalleryActivity extends Activity implements OnClickListener, Comput
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
-        mRomPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         
         int lastVer = mAppData.getLastAppVersionCode();
         int currVer = mAppData.appVersionCode;
@@ -104,13 +118,13 @@ public class GalleryActivity extends Activity implements OnClickListener, Comput
         {
             String givenRomPath = extras.getString( Keys.Extras.ROM_PATH );
             if( !TextUtils.isEmpty( givenRomPath ) )
-                mRomPath = givenRomPath;
+                launchPlayMenuActivity( givenRomPath );
         }
         
         // Lay out the content
         setContentView( R.layout.gallery_activity );
-        findViewById( R.id.button_pathSelectedGame ).setOnClickListener( this );
-        findViewById( R.id.button_play ).setOnClickListener( this );
+        mGridView = (GridView) findViewById( R.id.gridview );
+        refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
         
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
@@ -133,6 +147,9 @@ public class GalleryActivity extends Activity implements OnClickListener, Comput
     {
         switch( item.getItemId() )
         {
+            case R.id.menuItem_refreshRoms:
+                promptSearchPath( null );
+                return true;
             case R.id.menuItem_globalSettings:
                 startActivity( new Intent( this, SettingsGlobalActivity.class ) );
                 return true;
@@ -178,17 +195,17 @@ public class GalleryActivity extends Activity implements OnClickListener, Comput
     }
     
     @Override
-    public void onClick( View v )
+    public void onItemClick( AdapterView<?> parent, View view, int position, long id )
     {
-        switch( v.getId() )
-        {
-            case R.id.button_pathSelectedGame:
-                promptFile( new File( mRomPath ) );
-                break;
-            case R.id.button_play:
-                launchPlayMenuActivity( mRomPath );
-                break;
-        }
+        GalleryItem item = (GalleryItem) parent.getItemAtPosition( position );
+        if( item == null )
+            Log.e( "GalleryActivity", "No item selected" );
+        else if( item.romFile == null )
+            Log.e( "GalleryActivity", "No ROM file available" );
+        else if( item.detail == null )
+            Log.e( "GalleryActivity", "No ROM detail available" );
+        else
+            launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.detail.md5, item.detail.crc );
     }
     
     private void launchPlayMenuActivity( final String romPath )
@@ -201,41 +218,88 @@ public class GalleryActivity extends Activity implements OnClickListener, Comput
     @Override
     public void onComputeFileHashesFinished( File file, String md5, String crc )
     {
-        if( !TextUtils.isEmpty( md5 ) || !TextUtils.isEmpty( crc ) )
+        launchPlayMenuActivity( file.getAbsolutePath(), md5, crc );
+    }
+    
+    private void launchPlayMenuActivity( String romPath, String md5, String crc )
+    {
+        if( !TextUtils.isEmpty( romPath ) && !TextUtils.isEmpty( md5 ) && !TextUtils.isEmpty( crc ) )
         {
             Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
-            intent.putExtra( Keys.Extras.ROM_PATH, file.getAbsolutePath() );
+            intent.putExtra( Keys.Extras.ROM_PATH, romPath );
             intent.putExtra( Keys.Extras.ROM_MD5, md5 );
             intent.putExtra( Keys.Extras.ROM_CRC, crc );
             startActivity( intent );
         }
     }
     
-    private void promptFile( File startPath )
+    private void promptSearchPath( File startDir )
     {
-        String title = startPath.getPath();
-        String message = null;
-        Prompt.promptFile( this, title, message, startPath, true, true, true, false, new PromptFileListener()
-        {
-            @Override
-            public void onDialogClosed( File file, int which )
-            {
-                if( which >= 0 )
+        // Prompt for search path, then asynchronously search for ROMs
+        if( startDir == null || !startDir.exists() )
+            startDir = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+        
+        Prompt.promptFile( this, startDir.getPath(), null, startDir, true, true, false, true,
+                new PromptFileListener()
                 {
-                    if( file.isFile() )
+                    @Override
+                    public void onDialogClosed( File file, int which )
                     {
-                        mRomPath = file.getAbsolutePath();
-                        refreshViews();
+                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        {
+                            refreshRoms( file );
+                        }
+                        else if( file != null )
+                        {
+                            promptSearchPath( file );
+                        }
                     }
-                    else
-                    {
-                        promptFile( file );
-                    }
-                }
-            }
-        } );
+                } );
     }
-
+    
+    private void refreshRoms( final File startDir )
+    {
+        // Asynchronously search for ROMs
+        Notifier.showToast( this, "Searching for ROMs in " + startDir.getName() );
+        new FindRomsTask( startDir, this ).execute();
+    }
+    
+    @Override
+    public void onFindRomsFinished( List<File> result )
+    {
+        new CacheRomInfoTask( result, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this ).execute();
+    }
+    
+    @Override
+    public void onCacheRomInfoProgress( ConfigSection section )
+    {
+        Notifier.showToast( this, section.get( "goodName" ) );
+    }
+    
+    @Override
+    public void onCacheRomInfoFinished( ConfigFile config )
+    {
+        Notifier.showToast( this, "Finished" );
+        refreshGrid( config );
+    }
+    
+    private void refreshGrid( ConfigFile config )
+    {
+        List<GalleryItem> items = new ArrayList<GalleryItem>();
+        for( String md5 : config.keySet() )
+        {
+            if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
+            {
+                String romPath = config.get( md5, "romPath" );
+                String artPath = config.get( md5, "artPath" );
+                items.add( new GalleryItem( this, md5, romPath, artPath ) );
+            }
+        }
+        Collections.sort( items );
+        mGridView.setAdapter( new GalleryItem.Adapter( this, R.id.text1, items ) );
+        mGridView.setOnItemClickListener( this );
+    }
+    
     private void popupFaq()
     {
         CharSequence title = getText( R.string.menuItem_faq );
@@ -295,10 +359,5 @@ public class GalleryActivity extends Activity implements OnClickListener, Comput
         // Refresh the action bar
         if( AppData.IS_HONEYCOMB )
             invalidateOptionsMenu();
-        
-        // Update the button text for the selected game
-        File selectedGame = new File( mRomPath );
-        Button button = (Button) findViewById( R.id.button_pathSelectedGame );
-        button.setText( selectedGame.getName() );
     }
 }

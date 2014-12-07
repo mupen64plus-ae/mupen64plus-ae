@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <dimen name="inputMapPreferenceButtonSize">40dp</dimen>
     <dimen name="inputMapPreferenceButtonSizeX1_5">60dp</dimen>
     <dimen name="inputMapPreferenceButtonSizeX3">120dp</dimen>
     <dimen name="inputMapPreferenceButtonSizeX5">200dp</dimen>
+    <dimen name="galleryImageWidth">175dp</dimen>
+    <dimen name="galleryImageHeight">121dp</dimen> <!-- galleryImageWidth * 177 / 256 -->
+    <dimen name="galleryMargin">10dp</dimen>
+
 </resources>

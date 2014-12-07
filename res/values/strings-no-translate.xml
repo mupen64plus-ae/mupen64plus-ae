@@ -12,6 +12,7 @@
 
     <!-- Strings only seen in the eclipse editor -->
     <string name="inputMapActivity_dummyFeedback" translatable="false">KEYCODE_XXXX</string>
+    <string name="galleryItemAdapter_dummyText" translatable="false">Super Mario 64 (U) [!]</string>
 
     <!-- Activity titles, aliased to other strings -->
     <string name="SplashActivity_title" translatable="false">@string/app_name</string>

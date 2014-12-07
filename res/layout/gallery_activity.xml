@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gridview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/galleryMargin"
     android:gravity="center"
-    android:orientation="vertical" >
-
-    <Button
-        android:id="@+id/button_pathSelectedGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/button_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/menuItem_play" />
-
-</LinearLayout>
+    android:numColumns="1"
+    android:verticalSpacing="@dimen/galleryMargin" />
