@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 import java.util.ArrayList;
-
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.jni.NativeConfigFiles;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
@@ -128,7 +128,6 @@ public class CoreInterface
     
     // Save paths - used internally
     private static String sAutoSavePath = null;
-    private static String sManualSaveDir = null;
     
     public static void initialize( Activity activity, GameSurface surface, String romPath, String romMd5, String cheatArgs, boolean isRestarting )
     {
@@ -143,18 +142,16 @@ public class CoreInterface
         sGamePrefs = new GamePrefs( sActivity, romMd5 );
         NativeConfigFiles.syncConfigFiles( sGamePrefs, sUserPrefs, sAppData );
         
-        File romFile = new File( romPath );
-        sAutoSavePath = sUserPrefs.autoSaveDir + "/" + romFile.getName() + ".sav";
-        sManualSaveDir = sUserPrefs.gameSaveDir + "/" + romFile.getName();
-        
         // Make sure various directories exist so that we can write to them
-        new File( sUserPrefs.sramSaveDir ).mkdirs();
-        new File( sUserPrefs.slotSaveDir ).mkdirs();
-        new File( sUserPrefs.autoSaveDir ).mkdirs();
-        new File( sManualSaveDir ).mkdirs();
+        new File( sGamePrefs.sramDataDir ).mkdirs();
+        new File( sGamePrefs.autoSaveDir ).mkdirs();
+        new File( sGamePrefs.slotSaveDir ).mkdirs();
+        new File( sGamePrefs.userSaveDir ).mkdirs();
+        new File( sGamePrefs.screenshotDir ).mkdirs();
         new File( sUserPrefs.coreUserConfigDir ).mkdirs();
         new File( sUserPrefs.coreUserDataDir ).mkdirs();
         new File( sUserPrefs.coreUserCacheDir ).mkdirs();
+        sAutoSavePath = sGamePrefs.autoSaveDir + "/yyyy-mm-dd-hh-mm-ss.sav";
     }
     
     @TargetApi( 11 )
@@ -369,7 +366,7 @@ public class CoreInterface
     {
         CoreInterface.pauseEmulator( false );
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
-        File startPath = new File( sManualSaveDir );
+        File startPath = new File( sGamePrefs.userSaveDir );
         Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
         {
             @Override
@@ -384,7 +381,7 @@ public class CoreInterface
     
     public static void saveState( final String filename )
     {
-        final File file = new File( sManualSaveDir + "/" + filename );
+        final File file = new File( sGamePrefs.userSaveDir + "/" + filename );
         if( file.exists() )
         {
             String title = sActivity.getString( R.string.confirm_title );

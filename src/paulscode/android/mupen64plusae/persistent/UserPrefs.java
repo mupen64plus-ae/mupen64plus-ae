@@ -28,7 +28,7 @@ import java.util.Locale;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
 
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.profile.Profile;
@@ -83,17 +83,11 @@ import android.view.WindowManager;
  */
 public class UserPrefs
 {
-    /** The parent directory containing all save files. */
-    public final String gameSaveDir;
+    /** The parent directory containing all user-writable data files. */
+    public final String userDataDir;
     
-    /** The subdirectory containing slot save files. */
-    public final String slotSaveDir;
-    
-    /** The subdirectory containing SRAM/EEPROM data (in-game saves). */
-    public final String sramSaveDir;
-    
-    /** The subdirectory containing auto save files. */
-    public final String autoSaveDir;
+    /** The subdirectory containing gallery data. */
+    public final String galleryDataDir;
     
     /** The subdirectory containing custom profiles. */
     public final String profilesDir;
@@ -110,11 +104,11 @@ public class UserPrefs
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
     
-    /** The path of the rom info cache for the gallery. */
-    public final String romInfoCache_ini;
-    
     /** The path of the Mupen64Plus base configuration file. */
     public final String mupen64plus_cfg;
+    
+    /** The path of the rom info cache for the gallery. */
+    public final String romInfoCache_cfg;
     
     /** The path of the custom controller profiles file. */
     public final String controllerProfiles_cfg;
@@ -126,7 +120,7 @@ public class UserPrefs
     public final String emulationProfiles_cfg;
     
     /** The path of the user's custom cheat files. */
-    public final String usrcheat_txt;
+    public final String customCheats_txt;
     
     /** The selected audio plug-in. */
     public final Plugin audioPlugin;
@@ -284,21 +278,19 @@ public class UserPrefs
         mLocaleCodes = values;
         
         // Files
-        gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
-        slotSaveDir = gameSaveDir + "/SlotSaves";
-        sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
-        autoSaveDir = gameSaveDir + "/AutoSaves";
-        profilesDir = gameSaveDir + "/Profiles";
-        coreUserConfigDir = gameSaveDir + "/CoreConfig/UserConfig";
-        coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
-        coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
+        userDataDir = mPreferences.getString( "pathGameSaves", "" );
+        galleryDataDir = userDataDir + "/GalleryData";
+        profilesDir = userDataDir + "/Profiles";
+        coreUserConfigDir = userDataDir + "/CoreConfig/UserConfig";
+        coreUserDataDir = userDataDir + "/CoreConfig/UserData";
+        coreUserCacheDir = userDataDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
-        romInfoCache_ini = coreUserCacheDir + "/romInfoCache.ini";
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
+        romInfoCache_cfg = galleryDataDir + "/romInfoCache.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
-        usrcheat_txt = profilesDir + "/usrcheat.txt";
+        customCheats_txt = profilesDir + "/customCheats.txt";
         
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );

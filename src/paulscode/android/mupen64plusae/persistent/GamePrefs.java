@@ -4,11 +4,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
+import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Context;
@@ -21,6 +22,24 @@ public class GamePrefs
 {
     /** The name of the game-specific {@link SharedPreferences} object.*/
     public final String sharedPrefsName;
+    
+    /** The parent directory containing all game-specific data files. */
+    public final String gameDataDir;
+    
+    /** The subdirectory containing SRAM/EEPROM data (in-game saves). */
+    public final String sramDataDir;
+    
+    /** The subdirectory containing auto save files. */
+    public final String autoSaveDir;
+    
+    /** The subdirectory containing slot save files. */
+    public final String slotSaveDir;
+    
+    /** The subdirectory containing manual save files. */
+    public final String userSaveDir;
+    
+    /** The subdirectory containing user screenshots. */
+    public final String screenshotDir;
     
     /** The emulation profile. */
     public final Profile emulationProfile;
@@ -157,6 +176,20 @@ public class GamePrefs
         
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
+        
+        // ROM goodname used for directory prefix, if available
+        RomDetail detail = RomDetail.lookupByMd5( romMd5 );
+        String prefix = "Game";
+        if ( detail != null && !TextUtils.isEmpty( detail.goodName ) )
+            prefix = detail.goodName;
+        
+        // Game-specific data
+        gameDataDir = userPrefs.userDataDir + "/GameData/" + prefix + "_" + romMd5;
+        sramDataDir = gameDataDir + "/SramData";
+        autoSaveDir = gameDataDir + "/AutoSaves";
+        slotSaveDir = gameDataDir + "/SlotSaves";
+        userSaveDir = gameDataDir + "/UserSaves";
+        screenshotDir = gameDataDir + "/Screenshots";
         
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, "emulationProfile",

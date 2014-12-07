@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.Keys;
-import paulscode.android.mupen64plusae.R;
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -132,7 +132,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         
         // Get the appropriate section of the config file, using CRC as the key
         CheatFile mupencheat_default = new CheatFile( mAppData.mupencheat_default );
-        CheatFile usrcheat_txt = new CheatFile( mUserPrefs.usrcheat_txt );
+        CheatFile usrcheat_txt = new CheatFile( mUserPrefs.customCheats_txt );
         cheats.addAll( CheatUtils.populate( crc, mupencheat_default, true, this ) );
         cheats.addAll( CheatUtils.populate( crc, usrcheat_txt, false, this ) );
         cheatListAdapter = new CheatListAdapter( this, cheats );
@@ -141,7 +141,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     
     private void save( String crc )
     {
-        CheatFile usrcheat_txt = new CheatFile( mUserPrefs.usrcheat_txt );
+        CheatFile usrcheat_txt = new CheatFile( mUserPrefs.customCheats_txt );
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
         CheatUtils.save( crc, usrcheat_txt, cheats, mRomHeader, this, false );
         CheatUtils.save( crc, mupencheat_txt, cheats, mRomHeader, this, true );

@@ -380,7 +380,7 @@
     <string name="pathHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Game save folder</string>
-    <string name="pathGameSaves_default">!mupen64plus</string>
+    <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
 
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multi-player</string>

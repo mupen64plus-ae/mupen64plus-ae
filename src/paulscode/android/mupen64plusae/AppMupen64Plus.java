@@ -109,7 +109,7 @@ public class AppMupen64Plus extends android.app.Application
         try
         {
             ACRAConfiguration config = ACRA.getNewDefaultConfig( this );
-            config.setFormUriBasicAuthPassword( getPackageName().substring( 0, 29 ) );
+            config.setFormUriBasicAuthPassword( "paulscode.android.mupen64plus" );
             ACRA.setConfig( config );
             ACRA.init( this );
         }

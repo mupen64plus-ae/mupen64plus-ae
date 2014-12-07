@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
