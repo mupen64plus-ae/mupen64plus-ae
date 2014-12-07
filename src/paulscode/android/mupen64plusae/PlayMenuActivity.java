@@ -129,33 +129,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
         // Get the detailed info about the ROM
-        mRomDetail = RomDetail.lookupByMd5( romMd5 );
-        if( mRomDetail == null )
-        {
-            // MD5 not in the database; lookup by CRC instead
-            RomDetail[] romDetails = RomDetail.lookupByCrc( romCrc );
-            if( romDetails.length == 0 )
-            {
-                // CRC not in the database; create best guess
-                Log.w( "PlayMenuActivity.OnCreate", "No meta-info entry found for ROM " + mRomPath );
-                Log.i( "PlayMenuActivity.OnCreate", "Constructing a best guess for the meta-info");
-                String goodName = new File( mRomPath ).getName().split( "\\." )[0];
-                mRomDetail = RomDetail.createAssumption( romMd5, romCrc, goodName );
-            }
-            else if( romDetails.length > 1 )
-            {
-                // CRC in the database more than once; let user pick best match
-                // TODO Implement popup selector
-                Log.w( "PlayMenuActivity.OnCreate", "Multiple meta-info entries found for ROM " + mRomPath );
-                Log.i( "PlayMenuActivity.OnCreate", "Defaulting to first entry");
-                mRomDetail = romDetails[0];
-            }
-            else
-            {
-                // CRC in the database exactly once; use it
-                mRomDetail = romDetails[0];
-            }
-        }
+        mRomDetail = RomDetail.lookupByMd5WithFallback( romMd5, new File( mRomPath ) );
         
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );

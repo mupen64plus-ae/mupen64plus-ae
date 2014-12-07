@@ -73,7 +73,7 @@ public class RomDetail
         }
     }
     
-    public static RomDetail createAssumption( String assumedMd5, String assumedCrc, String assumedGoodName )
+    private static RomDetail createAssumption( String assumedMd5, String assumedCrc, String assumedGoodName )
     {
         // Hide the constructor behind a factory method so that caller is clear this is a last resort
         return new RomDetail( assumedMd5, assumedCrc, assumedGoodName );
@@ -95,6 +95,39 @@ public class RomDetail
     {
         ConfigSection section = sConfigFile.get( md5 );
         return section == null ? null : new RomDetail( section );
+    }
+    
+    public static RomDetail lookupByMd5WithFallback( String md5, File file )
+    {
+        RomDetail detail = RomDetail.lookupByMd5( md5 );
+        if( detail == null )
+        {
+            // MD5 not in the database; lookup by CRC instead
+            String crc = new RomHeader( file ).crc;
+            RomDetail[] romDetails = RomDetail.lookupByCrc( crc );
+            if( romDetails.length == 0 )
+            {
+                // CRC not in the database; create best guess
+                Log.w( "RomDetail", "No meta-info entry found for ROM " + file.getAbsolutePath() );
+                Log.i( "RomDetail", "Constructing a best guess for the meta-info" );
+                String goodName = file.getName().split( "\\." )[0];
+                detail = RomDetail.createAssumption( md5, crc, goodName );
+            }
+            else if( romDetails.length > 1 )
+            {
+                // CRC in the database more than once; let user pick best match
+                // TODO Implement popup selector
+                Log.w( "RomDetail", "Multiple meta-info entries found for ROM " + file.getAbsolutePath() );
+                Log.i( "RomDetail", "Defaulting to first entry" );
+                detail = romDetails[0];
+            }
+            else
+            {
+                // CRC in the database exactly once; use it
+                detail = romDetails[0];
+            }
+        }
+        return detail;
     }
     
     public static String computeMd5( File file )

@@ -71,34 +71,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         for( final File file : mFiles )
         {
             String md5 = RomDetail.computeMd5( file );
-            RomDetail detail = RomDetail.lookupByMd5( md5 );
-            if( detail == null )
-            {
-                // MD5 not in the database; lookup by CRC instead
-                String crc = new RomHeader( file ).crc;
-                RomDetail[] romDetails = RomDetail.lookupByCrc( crc );
-                if( romDetails.length == 0 )
-                {
-                    // CRC not in the database; create best guess
-                    Log.w( "RomCache", "No meta-info entry found for ROM " + file.getAbsolutePath() );
-                    Log.i( "RomCache", "Constructing a best guess for the meta-info" );
-                    String goodName = file.getName().split( "\\." )[0];
-                    detail = RomDetail.createAssumption( md5, crc, goodName );
-                }
-                else if( romDetails.length > 1 )
-                {
-                    // CRC in the database more than once; let user pick best match
-                    // TODO Implement popup selector
-                    Log.w( "RomCache", "Multiple meta-info entries found for ROM " + file.getAbsolutePath() );
-                    Log.i( "RomCache", "Defaulting to first entry" );
-                    detail = romDetails[0];
-                }
-                else
-                {
-                    // CRC in the database exactly once; use it
-                    detail = romDetails[0];
-                }
-            }
+            RomDetail detail = RomDetail.lookupByMd5WithFallback( md5, file );
             String artPath = mArtDir + "/" + detail.artName;
             config.put( md5, "refMd5", detail.md5 );
             config.put( md5, "goodName", detail.goodName );

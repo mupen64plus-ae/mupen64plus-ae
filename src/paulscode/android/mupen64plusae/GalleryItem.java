@@ -44,7 +44,7 @@ public class GalleryItem implements Comparable<GalleryItem>
     
     public GalleryItem( Context context, String md5, String romPath, String artPath )
     {
-        detail = RomDetail.lookupByMd5( md5 );
+        detail = RomDetail.lookupByMd5WithFallback( md5, new File( romPath ) );
         
         romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
         
