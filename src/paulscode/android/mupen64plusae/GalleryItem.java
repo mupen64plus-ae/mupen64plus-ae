@@ -57,12 +57,18 @@ public class GalleryItem implements Comparable<GalleryItem>
     @Override
     public int compareTo( GalleryItem that )
     {
-        if( this.detail == null || this.detail.goodName == null )
-            return 1;
-        else if( that.detail == null || that.detail.goodName == null )
-            return -1;
+        return this.toString().compareToIgnoreCase( that.toString() );
+    }
+    
+    @Override
+    public String toString()
+    {
+        if( detail != null && !TextUtils.isEmpty( detail.goodName ) )
+            return detail.goodName;
+        else if( romFile != null && !TextUtils.isEmpty( romFile.getName() ) )
+            return romFile.getName();
         else
-            return this.detail.goodName.compareToIgnoreCase( that.detail.goodName );
+            return "unknown file";
     }
     
     public static class Adapter extends ArrayAdapter<GalleryItem>
@@ -94,12 +100,7 @@ public class GalleryItem implements Comparable<GalleryItem>
                     artView.setImageResource( R.drawable.default_coverart );
                 
                 TextView tv1 = (TextView) view.findViewById( R.id.text1 );
-                if( item.detail != null && !TextUtils.isEmpty( item.detail.goodName ) )
-                    tv1.setText( item.detail.goodName );
-                else if( item.romFile != null && !TextUtils.isEmpty( item.romFile.getName() ) )
-                    tv1.setText( item.romFile.getName() );
-                else
-                    tv1.setText( "unknown file" );
+                tv1.setText( item.toString() );
             }
             
             return view;
