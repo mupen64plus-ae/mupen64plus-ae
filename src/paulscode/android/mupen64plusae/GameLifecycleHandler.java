@@ -21,8 +21,9 @@
 package paulscode.android.mupen64plusae;
 
 import java.util.ArrayList;
-import com.bda.controller.Controller;
+
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.hacks.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
@@ -61,6 +62,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
+
+import com.bda.controller.Controller;
 
 //@formatter:off
 /**

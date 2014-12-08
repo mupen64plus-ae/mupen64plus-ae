@@ -22,9 +22,8 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.util.List;
 
-import com.bda.controller.Controller;
-
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptInputCodeListener;
@@ -39,6 +38,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+
+import com.bda.controller.Controller;
 
 public class PlayerMapPreference extends DialogPreference implements
         DialogInterface.OnClickListener, View.OnClickListener, OnCheckedChangeListener

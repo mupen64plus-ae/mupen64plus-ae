@@ -38,8 +38,8 @@ import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeFileHashesTask;
-import paulscode.android.mupen64plusae.task.FindRomsTask;
 import paulscode.android.mupen64plusae.task.ComputeFileHashesTask.ComputeFileHashesListener;
+import paulscode.android.mupen64plusae.task.FindRomsTask;
 import paulscode.android.mupen64plusae.task.FindRomsTask.FindRomsListener;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;

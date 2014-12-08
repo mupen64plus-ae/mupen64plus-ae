@@ -21,10 +21,10 @@
 package paulscode.android.mupen64plusae.profile;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.Keys;
-import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.SettingsGlobalActivity;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.TouchMap;

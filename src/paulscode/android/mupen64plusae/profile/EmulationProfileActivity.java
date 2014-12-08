@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.profile;
 
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.task.ExtractTexturesTask;
 import paulscode.android.mupen64plusae.task.ExtractTexturesTask.ExtractTexturesListener;

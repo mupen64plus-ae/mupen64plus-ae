@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.cheat;
 
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.cheat.OptionDialog.Listener;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;

@@ -21,8 +21,8 @@
 package paulscode.android.mupen64plusae.util;
 
 import org.acra.ACRA;
-
 import org.mupen64plusae.v3.alpha.R;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.preference.Preference;

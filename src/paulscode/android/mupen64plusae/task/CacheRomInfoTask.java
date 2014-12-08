@@ -27,10 +27,8 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomDetail;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
 {

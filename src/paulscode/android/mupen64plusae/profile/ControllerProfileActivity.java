@@ -23,8 +23,9 @@ package paulscode.android.mupen64plusae.profile;
 import java.util.Arrays;
 import java.util.List;
 
-import paulscode.android.mupen64plusae.Keys;
 import org.mupen64plusae.v3.alpha.R;
+
+import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.hacks.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.InputMap;
@@ -36,8 +37,8 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;

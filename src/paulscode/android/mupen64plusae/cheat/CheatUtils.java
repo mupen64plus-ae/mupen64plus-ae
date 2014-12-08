@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatBlock;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatCode;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatOption;

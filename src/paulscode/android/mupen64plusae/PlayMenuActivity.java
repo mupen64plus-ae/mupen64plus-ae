@@ -22,7 +22,9 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
@@ -52,6 +54,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.bda.controller.Controller;
 
 public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener,

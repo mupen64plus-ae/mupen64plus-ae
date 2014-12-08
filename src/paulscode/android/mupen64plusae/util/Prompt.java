@@ -24,15 +24,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bda.controller.Controller;
-
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
-import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -50,6 +49,8 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.bda.controller.Controller;
 
 /**
  * A utility class that generates dialogs to prompt the user for information.

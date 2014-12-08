@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.input.map;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
 
 /**
  * A class for mapping arbitrary user inputs to N64 buttons/axes.
