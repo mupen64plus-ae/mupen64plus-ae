@@ -373,13 +373,15 @@ void ReadSettings ()
   settings.scr_res_x = settings.res_x = Config_ReadScreenInt("ScreenWidth");
   settings.scr_res_y = settings.res_y = Config_ReadScreenInt("ScreenHeight");
 
-  settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 0);
+  settings.rotate = Config_ReadScreenInt("Rotate");
+
+  settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 1);
   settings.ssformat = (BOOL)Config_ReadInt("ssformat", "TODO:ssformat", 0);
   //settings.fast_crc = (BOOL)Config_ReadInt ("fast_crc", "Fast CRC", 0);
 
   settings.show_fps = (BYTE)Config_ReadInt ("show_fps", "Display performance stats (add together desired flags): 1=FPS counter, 2=VI/s counter, 4=% speed, 8=FPS transparent", 0, TRUE, FALSE);
   settings.clock = (BOOL)Config_ReadInt ("clock", "Clock enabled", 0);
-  settings.clock_24_hr = (BOOL)Config_ReadInt ("clock_24_hr", "Clock is 24-hour", 0);
+  settings.clock_24_hr = (BOOL)Config_ReadInt ("clock_24_hr", "Clock is 24-hour", 1);
   // settings.advanced_options only good for GUI config
   // settings.texenh_options = only good for GUI config
   //settings.use_hotkeys = ini->Read(_T("hotkeys"), 1l);
@@ -387,7 +389,7 @@ void ReadSettings ()
   settings.wrpResolution = (BYTE)Config_ReadInt ("wrpResolution", "Wrapper resolution", 0, TRUE, FALSE);
   settings.wrpVRAM = (BYTE)Config_ReadInt ("wrpVRAM", "Wrapper VRAM", 0, TRUE, FALSE);
   settings.wrpFBO = (BOOL)Config_ReadInt ("wrpFBO", "Wrapper FBO", 1, TRUE, TRUE);
-  settings.wrpAnisotropic = (BOOL)Config_ReadInt ("wrpAnisotropic", "Wrapper Anisotropic Filtering", 0, TRUE, TRUE);
+  settings.wrpAnisotropic = (BOOL)Config_ReadInt ("wrpAnisotropic", "Wrapper Anisotropic Filtering", 1, TRUE, TRUE);
 
 #ifndef _ENDUSER_RELEASE_
   settings.autodetect_ucode = (BOOL)Config_ReadInt ("autodetect_ucode", "Auto-detect microcode", 1);
