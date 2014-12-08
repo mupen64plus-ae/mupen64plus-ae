@@ -1682,7 +1682,7 @@ grAuxBufferExt( GrBuffer_t buffer )
     need_to_compile = 1;
   }
 }
-
+void vbo_draw();
 FX_ENTRY void FX_CALL
 grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 {

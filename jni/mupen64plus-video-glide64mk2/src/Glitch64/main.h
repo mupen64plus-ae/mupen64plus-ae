@@ -112,7 +112,6 @@ extern "C" {
 #include <SDL_opengles2.h>
 #endif // _WIN32
 #include "glide.h"
-#include "glState.cpp"
 
 void display_warning(const unsigned char *text, ...);
 void display_warning(const char *text, ...);
