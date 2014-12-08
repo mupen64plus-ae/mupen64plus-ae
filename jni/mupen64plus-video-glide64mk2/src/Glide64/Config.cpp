@@ -23,11 +23,8 @@
 #include "m64p.h"
 #include "rdp.h"
 
-#ifndef OLDAPI
-
 static m64p_handle video_general_section;
 static m64p_handle video_glide64_section;
-
 
 BOOL Config_Open()
 {
@@ -75,67 +72,6 @@ BOOL Config_ReadInt(const char *itemname, const char *desc, int def_value, int c
     }
 
 }
-#else
-
-// Resolutions, MUST be in the correct order (SST1VID.H)
-wxUint32 resolutions[0x18][2] = {
-  { 320, 200 },
-  { 320, 240 },
-  { 400, 256 },
-  { 512, 384 },
-  { 640, 200 },
-  { 640, 350 },
-  { 640, 400 },
-  { 640, 480 },
-  { 800, 600 },
-  { 960, 720 },
-  { 856, 480 },
-  { 512, 256 },
-  { 1024, 768 },
-  { 1280, 1024 },
-  { 1600, 1200 },
-  { 400, 300 },
-
-  // 0x10
-  { 1152, 864 },
-  { 1280, 960 },
-  { 1600, 1024 },
-  { 1792, 1344 },
-  { 1856, 1392 },
-  { 1920, 1440 },
-  { 2048, 1536 },
-  { 2048, 2048 }
-};
-
-
-BOOL Config_Open()
-{
-  INI_Open();
-  if(INI_FindSection("SETTINGS",FALSE) == FALSE) {
-    INI_Close();
-    ERRLOG("Could not open configuration");
-    return FALSE;
-  }
-  return TRUE;
-}
-
-int Config_ReadScreenInt(const char *itemname) {
-  int res_data = Config_ReadInt("resolution", NULL, 7, FALSE, FALSE);
-  if(!strcmp("ScreenWidth", itemname))
-    return resolutions[res_data][0];
-  else if(!strcmp("ScreenHeight", itemname))
-    return resolutions[res_data][1];
-  else return FALSE;
-}
-
-BOOL Config_ReadInt(const char *itemname, const char *desc, int def_value, int create, int isBoolean) {
-    VLOG("Getting value %s", itemname);
-    int z = INI_ReadInt(itemname, def_value, FALSE);
-    if(isBoolean) z=(z && 1);
-    return z;
-}
-
-#endif
 
 #ifdef TEXTURE_FILTER
 wxUint32 texfltr[] = {
