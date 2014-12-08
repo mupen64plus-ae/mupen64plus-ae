@@ -131,16 +131,6 @@ int exception = FALSE;
 int evoodoo = 0;
 int ev_fullscreen = 0;
 
-#ifdef __WINDOWS__
-#define WINPROC_OVERRIDE
-#endif
-
-#ifdef WINPROC_OVERRIDE
-LRESULT CALLBACK WndProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-WNDPROC oldWndProc = NULL;
-WNDPROC myWndProc = NULL;
-#endif
-
 #ifdef ALTTAB_FIX
 HHOOK hhkLowLevelKybd = NULL;
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode,
@@ -352,7 +342,7 @@ static wxConfigBase * OpenIni()
   return ini;
 }
 */
-#ifndef OLDAPI
+
 void WriteLog(m64p_msg_level level, const char *msg, ...)
 {
   char buf[1024];
@@ -366,7 +356,6 @@ void WriteLog(m64p_msg_level level, const char *msg, ...)
     l_DebugCallback(l_DebugCallContext, level, buf);
   }
 }
-#endif
 
 void ReadSettings ()
 {
@@ -1642,60 +1631,6 @@ output:   none
 EXPORT void CALL ChangeWindow (void)
 {
   VLOG ("ChangeWindow()\n");
-  #ifdef OLDAPI
-  if (evoodoo)
-  {
-    if (!ev_fullscreen)
-    {
-      to_fullscreen = TRUE;
-      ev_fullscreen = TRUE;
-#ifdef __WINDOWS__
-      if (gfx.hStatusBar)
-        ShowWindow( gfx.hStatusBar, SW_HIDE );
-      ShowCursor( FALSE );
-#endif
-    }
-    else
-    {
-      ev_fullscreen = FALSE;
-      InitGfx ();
-#ifdef __WINDOWS__
-      ShowCursor( TRUE );
-      if (gfx.hStatusBar)
-        ShowWindow( gfx.hStatusBar, SW_SHOW );
-      SetWindowLong (gfx.hWnd, GWL_WNDPROC, (long)oldWndProc);
-#endif
-    }
-  }
-  else
-  {
-    // Go to fullscreen at next dlist
-    // This is for compatibility with 1964, which reloads the plugin
-    //  when switching to fullscreen
-    if (!fullscreen)
-    {
-      to_fullscreen = TRUE;
-#ifdef __WINDOWS__
-      if (gfx.hStatusBar)
-        ShowWindow( gfx.hStatusBar, SW_HIDE );
-      ShowCursor( FALSE );
-#endif
-    }
-    else
-    {
-      ReleaseGfx ();
-#ifdef __WINDOWS__
-      ShowCursor( TRUE );
-      if (gfx.hStatusBar)
-        ShowWindow( gfx.hStatusBar, SW_SHOW );
-      // SetWindowLong fixes the following Windows XP Banshee issues:
-      // 1964 crash error when loading another rom.
-      // All N64 emu's minimize, restore crashes.
-      SetWindowLong (gfx.hWnd, GWL_WNDPROC, (long)oldWndProc);
-#endif
-    }
-  }
-#endif
 }
 
 /******************************************************************
@@ -1708,11 +1643,6 @@ output:   none
 void CALL CloseDLL (void)
 {
   VLOG ("CloseDLL ()\n");
-
-  // re-set the old window proc
-#ifdef WINPROC_OVERRIDE
-  SetWindowLong (gfx.hWnd, GWL_WNDPROC, (long)oldWndProc);
-#endif
 
 #ifdef ALTTAB_FIX
   if (hhkLowLevelKybd)
@@ -1846,15 +1776,6 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
   debug_init ();    // Initialize debugger
 
   gfx = Gfx_Info;
-
-#ifdef WINPROC_OVERRIDE
-  // [H.Morii] inject our own winproc so that "alt-enter to fullscreen"
-  // message is shown when the emulator window is activated.
-  WNDPROC curWndProc = (WNDPROC)GetWindowLong(gfx.hWnd, GWL_WNDPROC);
-  if (curWndProc && curWndProc != (WNDPROC)WndProc) {
-    oldWndProc = (WNDPROC)SetWindowLong (gfx.hWnd, GWL_WNDPROC, (long)WndProc);
-  }
-#endif
 
   util_init ();
   math_init ();
@@ -2381,92 +2302,6 @@ void newSwapBuffers()
       output (120.0f, (float)settings.res_y, 0, message, 0);
     }
   }
-    #ifdef OLDAPI
-  if (capture_screen)
-  {
-    //char path[256];
-    // Make the directory if it doesn't exist
-    if (!wxDirExists(capture_path))
-      wxMkdir(capture_path);
-    wxString path;
-    wxString romName = rdp.RomName;
-    romName.Replace(wxT(" "), wxT("_"), true);
-    romName.Replace(wxT(":"), wxT(";"), true);
-
-    for (int i=1; ; i++)
-    {
-      path = capture_path;
-      path += wxT("Glide64mk2_");
-      path += romName;
-      path += wxT("_");
-      if (i < 10)
-        path += wxT("0");
-      path << i << wxT(".") << ScreenShotFormats[settings.ssformat].extension;
-      if (!wxFileName::FileExists(path))
-        break;
-    }
-
-    const wxUint32 offset_x = (wxUint32)rdp.offset_x;
-    const wxUint32 offset_y = (wxUint32)rdp.offset_y;
-    const wxUint32 image_width = settings.scr_res_x - offset_x*2;
-    const wxUint32 image_height = settings.scr_res_y - offset_y*2;
-
-    GrLfbInfo_t info;
-    info.size = sizeof(GrLfbInfo_t);
-    if (grLfbLock (GR_LFB_READ_ONLY,
-      GR_BUFFER_BACKBUFFER,
-      GR_LFBWRITEMODE_565,
-      GR_ORIGIN_UPPER_LEFT,
-      FXFALSE,
-      &info))
-    {
-      wxUint8 *ssimg = (wxUint8*)malloc(image_width * image_height * 3); // will be free in wxImage destructor
-      int sspos = 0;
-      wxUint32 offset_src = info.strideInBytes * offset_y;
-
-      // Copy the screen
-      if (info.writeMode == GR_LFBWRITEMODE_8888)
-      {
-        wxUint32 col;
-        for (wxUint32 y = 0; y < image_height; y++)
-        {
-          wxUint32 *ptr = (wxUint32*)((wxUint8*)info.lfbPtr + offset_src);
-          ptr += offset_x;
-          for (wxUint32 x = 0; x < image_width; x++)
-          {
-            col = *(ptr++);
-            ssimg[sspos++] = (wxUint8)((col >> 16) & 0xFF);
-            ssimg[sspos++] = (wxUint8)((col >> 8) & 0xFF);
-            ssimg[sspos++] = (wxUint8)(col & 0xFF);
-          }
-          offset_src += info.strideInBytes;
-        }
-      }
-      else
-      {
-        wxUint16 col;
-        for (wxUint32 y = 0; y < image_height; y++)
-        {
-          wxUint16 *ptr = (wxUint16*)((wxUint8*)info.lfbPtr + offset_src);
-          ptr += offset_x;
-          for (wxUint32 x = 0; x < image_width; x++)
-          {
-            col = *(ptr++);
-            ssimg[sspos++] = (wxUint8)((float)(col >> 11) / 31.0f * 255.0f);
-            ssimg[sspos++] = (wxUint8)((float)((col >> 5) & 0x3F) / 63.0f * 255.0f);
-            ssimg[sspos++] = (wxUint8)((float)(col & 0x1F) / 31.0f * 255.0f);
-          }
-          offset_src += info.strideInBytes;
-        }
-      }
-      // Unlock the backbuffer
-      grLfbUnlock (GR_LFB_READ_ONLY, GR_BUFFER_BACKBUFFER);
-      wxImage screenshot(image_width, image_height, ssimg);
-      screenshot.SaveFile(path, ScreenShotFormats[settings.ssformat].type);
-      capture_screen = 0;
-    }
-  }
-    #endif
 
   // Capture the screen if debug capture is set
   if (_debugger.capture)
@@ -2643,27 +2478,6 @@ EXPORT void CALL ViWidthChanged (void)
 {
 }
 
-#ifdef WINPROC_OVERRIDE
-LRESULT CALLBACK WndProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-  switch (msg)
-  {
-  case WM_ACTIVATEAPP:
-    if (wParam == TRUE && !fullscreen) rdp.window_changed = TRUE;
-    break;
-  case WM_PAINT:
-    if (!fullscreen) rdp.window_changed = TRUE;
-    break;
-
-    /*    case WM_DESTROY:
-    SetWindowLong (gfx.hWnd, GWL_WNDPROC, (long)oldWndProc);
-    break;*/
-  }
-
-  return CallWindowProc(oldWndProc, hwnd, msg, wParam, lParam);
-}
-#endif
-
 }
 
 int CheckKeyPressed(int key, int mask)
@@ -2671,12 +2485,8 @@ int CheckKeyPressed(int key, int mask)
 static Glide64Keys g64Keys;
   if (settings.use_hotkeys == 0)
     return 0;
-#ifdef __WINDOWS__
-  return (GetAsyncKeyState(g64Keys[key]) & mask);
-#else
   if (grKeyPressed)
     return grKeyPressed(g64Keys[key]);
-#endif
   return 0;
 }
 
@@ -2733,154 +2543,3 @@ do_it:
 }
 #endif
 
-//
-// DllMain - called when the DLL is loaded, use this to get the DLL's instance
-//
-#ifdef OLDAPI
-class wxDLLApp : public wxApp
-{
-public:
-  virtual bool OnInit();
-};
-
-IMPLEMENT_APP_NO_MAIN(wxDLLApp)
-
-bool wxDLLApp::OnInit()
-{
-  if (mutexProcessDList == NULL)
-    mutexProcessDList = new wxMutex(wxMUTEX_DEFAULT);
-  wxImage::AddHandler(new wxPNGHandler);
-  wxImage::AddHandler(new wxJPEGHandler);
-  return true;
-}
-
-#ifndef __WINDOWS__
-int __attribute__ ((constructor)) DllLoad(void);
-int __attribute__ ((destructor)) DllUnload(void);
-#endif
-
-// Called when the library is loaded and before dlopen() returns
-int DllLoad(void)
-{
-    int argc = 0;
-    char **argv = NULL;
-    wxEntryStart(argc, argv);
-    if (wxTheApp)
-      return wxTheApp->CallOnInit() ? TRUE : FALSE;
-    return 0;
-}
-
-// Called when the library is unloaded and before dlclose() returns
-int DllUnload(void)
-{
-    if ( wxTheApp )
-      wxTheApp->OnExit();
-    wxEntryCleanup();
-    return TRUE;
-}
-
-#ifdef __WINDOWS__
-extern "C" int WINAPI DllMain (HINSTANCE hinstDLL,
-                     wxUint32 fdwReason,
-                     LPVOID lpReserved)
-{
-  sprintf (out_buf, "DllMain (%08lx - %d)\n", hinstDLL, fdwReason);
-  LOG (out_buf);
-
-  if (fdwReason == DLL_PROCESS_ATTACH)
-  {
-    wxSetInstance(hinstDLL);
-    return DllLoad();
-  }
-  else if (fdwReason == DLL_PROCESS_DETACH)
-  {
-    if (GFXWindow != NULL)
-      GFXWindow->SetHWND(NULL);
-    return DllUnload();
-  }
-  return TRUE;
-}
-
-void CALL ReadScreen(void **dest, int *width, int *height)
-{
-  *width = settings.res_x;
-  *height = settings.res_y;
-  wxUint8 * buff = (wxUint8*)malloc(settings.res_x * settings.res_y * 3);
-  wxUint8 * line = buff;
-  *dest = (void*)buff;
-
-  if (!fullscreen)
-  {
-    for (wxUint32 y=0; y<settings.res_y; y++)
-    {
-      for (wxUint32 x=0; x<settings.res_x; x++)
-      {
-        line[x*3] = 0x20;
-        line[x*3+1] = 0x7f;
-        line[x*3+2] = 0x40;
-      }
-    }
-    LOG ("ReadScreen. not in the fullscreen!\n");
-    return;
-  }
-
-  GrLfbInfo_t info;
-  info.size = sizeof(GrLfbInfo_t);
-  if (grLfbLock (GR_LFB_READ_ONLY,
-    GR_BUFFER_FRONTBUFFER,
-    GR_LFBWRITEMODE_565,
-    GR_ORIGIN_UPPER_LEFT,
-    FXFALSE,
-    &info))
-  {
-    wxUint32 offset_src=info.strideInBytes*(settings.scr_res_y-1);
-
-    // Copy the screen
-    wxUint8 r, g, b;
-    if (info.writeMode == GR_LFBWRITEMODE_8888)
-    {
-      wxUint32 col;
-      for (wxUint32 y=0; y<settings.res_y; y++)
-      {
-        wxUint32 *ptr = (wxUint32*)((wxUint8*)info.lfbPtr + offset_src);
-        for (wxUint32 x=0; x<settings.res_x; x++)
-        {
-          col = *(ptr++);
-          r = (wxUint8)((col >> 16) & 0xFF);
-          g = (wxUint8)((col >> 8) & 0xFF);
-          b = (wxUint8)(col & 0xFF);
-          line[x*3] = b;
-          line[x*3+1] = g;
-          line[x*3+2] = r;
-        }
-        line += settings.res_x * 3;
-        offset_src -= info.strideInBytes;
-      }
-    }
-    else
-    {
-      wxUint16 col;
-      for (wxUint32 y=0; y<settings.res_y; y++)
-      {
-        wxUint16 *ptr = (wxUint16*)((wxUint8*)info.lfbPtr + offset_src);
-        for (wxUint32 x=0; x<settings.res_x; x++)
-        {
-          col = *(ptr++);
-          r = (wxUint8)((float)(col >> 11) / 31.0f * 255.0f);
-          g = (wxUint8)((float)((col >> 5) & 0x3F) / 63.0f * 255.0f);
-          b = (wxUint8)((float)(col & 0x1F) / 31.0f * 255.0f);
-          line[x*3] = b;
-          line[x*3+1] = g;
-          line[x*3+2] = r;
-        }
-        line += settings.res_x * 3;
-        offset_src -= info.strideInBytes;
-      }
-    }
-    // Unlock the frontbuffer
-    grLfbUnlock (GR_LFB_READ_ONLY, GR_BUFFER_FRONTBUFFER);
-  }
-  LOG ("ReadScreen. Success.\n");
-}
-#endif
-#endif

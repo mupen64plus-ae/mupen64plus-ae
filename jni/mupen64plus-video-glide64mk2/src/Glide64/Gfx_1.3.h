@@ -195,23 +195,10 @@ extern int64 perf_cur;
 extern int64 perf_next;
 #endif
 
-//#ifdef LOGGING
-//extern std::ofstream loga;
-//#define LOG(X) loga.open("log.txt",std::ios::app); loga << (...); loga.flush(); loga.close();
-
-//#else
-  #ifndef OLD_API
-    #define LOG(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
-    #define VLOG(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
-    #define WARNLOG(...) WriteLog(M64MSG_WARNING, __VA_ARGS__)
-    #define ERRLOG(...) WriteLog(M64MSG_ERROR, __VA_ARGS__)
-#else
-    #define LOG(...) printf(__VA_ARGS__)
-    #define VLOG(...)
-     #define WARNLOG(...) printf(__VA_ARGS__)
-    #define ERRLOG(X, ...) str.Printf(_T(X), __VA_ARGS__); wxMessageBox(str, _T("Error"), wxOK | wxICON_EXCLAMATION, GFXWindow)
-    #define ERRLOG(X) str.Printf(_T(X)); wxMessageBox(str, _T("Error"), wxOK | wxICON_EXCLAMATION, GFXWindow)
-#endif
+#define LOG(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
+#define VLOG(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define WARNLOG(...) WriteLog(M64MSG_WARNING, __VA_ARGS__)
+#define ERRLOG(...) WriteLog(M64MSG_ERROR, __VA_ARGS__)
 
 
 #ifdef RDP_LOGGING
@@ -308,16 +295,6 @@ __inline wxUint32 segoffset (wxUint32 so)
 /* Plugin types */
 #define PLUGIN_TYPE_GFX				2
 
-// this is already defined in API
-/*
-#ifdef __WINDOWS__
-#define EXPORT					__declspec(dllexport)
-#define CALL						_cdecl
-#else
-#define EXPORT					extern
-#define CALL						
-#endif
-*/
 /***** Structures *****/
 typedef struct {
 	wxUint16 Version;        /* Set to 0x0103 */
