@@ -332,7 +332,8 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         // Set up click handler to share text with a user-selected app (email, clipboard, etc.)
         DialogInterface.OnClickListener shareHandler = new DialogInterface.OnClickListener()
         {
-            @Override
+            @SuppressWarnings("deprecation")
+			@Override
             public void onClick( DialogInterface dialog, int which )
             {
                 // See http://android-developers.blogspot.com/2012/02/share-with-intents.html
