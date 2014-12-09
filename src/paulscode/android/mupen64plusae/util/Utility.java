@@ -27,8 +27,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -484,5 +487,35 @@ public final class Utility
                 return false;
             }
         }
+    }
+
+    public static String getDateString()
+    {
+        return getDateString( new Date() );
+    }
+
+    public static String getDateString( Date date )
+    {
+        return new SimpleDateFormat( "yyyy-MM-dd_HH-mm-ss", Locale.US ).format( date );
+    }
+    
+    public static String executeShellCommand(String... args)
+    {
+        try
+        {
+            Process process = Runtime.getRuntime().exec( args );
+            BufferedReader reader = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
+            StringBuilder result = new StringBuilder();
+            String line;
+            while( ( line = reader.readLine() ) != null )
+            {
+                result.append( line + "\n" );
+            }
+            return result.toString();
+        }
+        catch( IOException ignored )
+        {
+        }
+        return "";
     }
 }

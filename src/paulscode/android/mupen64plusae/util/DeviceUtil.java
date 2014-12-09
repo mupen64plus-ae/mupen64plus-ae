@@ -20,8 +20,6 @@
  */
 package paulscode.android.mupen64plusae.util;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -46,21 +44,7 @@ public final class DeviceUtil
     public static String getCpuInfo()
     {
         // From http://android-er.blogspot.com/2009/09/read-android-cpu-info.html
-        String result = "";
-        try
-        {
-            String[] args = { "/system/bin/cat", "/proc/cpuinfo" };
-            Process process = new ProcessBuilder( args ).start();
-            InputStream in = process.getInputStream();
-            byte[] re = new byte[1024];
-            while( in.read( re ) != -1 )
-                result = result + new String( re );
-            in.close();
-        }
-        catch( IOException ex )
-        {
-            ex.printStackTrace();
-        }
+        String result = Utility.executeShellCommand( "/system/bin/cat", "/proc/cpuinfo" );
         
         // Remove the serial number for privacy
         Pattern pattern = Pattern.compile( "^serial\\s*?:.*?$", Pattern.CASE_INSENSITIVE
@@ -79,6 +63,16 @@ public final class DeviceUtil
         result += "Model: " + Build.MODEL + "\n";
         result += "Product: " + Build.PRODUCT + "\n";
         return result;
+    }
+    
+    public static String getLogCat()
+    {
+        return Utility.executeShellCommand( "logcat", "-d", "-v", "long" );
+    }
+    
+    public static void clearLogCat()
+    {
+        Utility.executeShellCommand( "logcat", "-c" );
     }
     
     @TargetApi( 12 )
