@@ -31,6 +31,7 @@
     <string name="menuItem_setSlot">Slot %1$d</string>
     <string name="menuItem_fileSave">Save to file…</string>
     <string name="menuItem_fileLoad">Load from file…</string>
+    <string name="menuItem_screenshot">Screenshot</string>
     <string name="menuItem_setSpeed">Game speed</string>
     <string name="menuItem_enableFramelimiter">Sync audio</string>
     <string name="menuItem_disableFramelimiter">Desync audio</string>

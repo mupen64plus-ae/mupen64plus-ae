@@ -64,6 +64,9 @@
         android:id="@+id/menuItem_fileSave"
         android:title="@string/menuItem_fileSave"/>
     <item
+        android:id="@+id/menuItem_screenshot"
+        android:title="@string/menuItem_screenshot"/>
+    <item
         android:id="@+id/menuItem_setSpeed"
         android:title="@string/menuItem_setSpeed"/>
     <item
