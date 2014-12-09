@@ -180,6 +180,9 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
             case R.id.menuItem_changelog:
                 new ChangeLog( getAssets() ).show( GalleryActivity.this, 0, mAppData.appVersionCode );
                 return true;
+            case R.id.menuItem_logcat:
+                popupLogcat();
+                return true;
             case R.id.menuItem_hardwareInfo:
                 popupHardwareInfo();
                 return true;
@@ -307,14 +310,25 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
+    private void popupLogcat()
+    {
+        String title = getString( R.string.menuItem_logcat );
+        String message = DeviceUtil.getLogCat();
+        popupShareableText( title, message );
+    }
+    
     private void popupHardwareInfo()
     {
         String title = getString( R.string.menuItem_hardwareInfo );
         String axisInfo = DeviceUtil.getAxisInfo();
         String peripheralInfo = DeviceUtil.getPeripheralInfo();
         String cpuInfo = DeviceUtil.getCpuInfo();
-        final String message = axisInfo + peripheralInfo + cpuInfo;
-        
+        String message = axisInfo + peripheralInfo + cpuInfo;
+        popupShareableText( title, message );
+    }
+    
+    private void popupShareableText( String title, final String message )
+    {
         // Set up click handler to share text with a user-selected app (email, clipboard, etc.)
         DialogInterface.OnClickListener shareHandler = new DialogInterface.OnClickListener()
         {

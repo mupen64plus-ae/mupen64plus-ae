@@ -73,6 +73,7 @@
     <string name="menuItem_credits">Credits</string>
     <string name="menuItem_appVersion">App version</string>
     <string name="menuItem_changelog">Changelog</string>
+    <string name="menuItem_logcat">Logcat</string>
     <string name="menuItem_hardwareInfo">Hardware info</string>
     <string name="menuItem_localeOverride">Language</string>
 
