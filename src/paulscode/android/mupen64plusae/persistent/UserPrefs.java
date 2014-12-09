@@ -92,6 +92,9 @@ public class UserPrefs
     /** The subdirectory containing custom profiles. */
     public final String profilesDir;
     
+    /** The subdirectory containing crash logs. */
+    public final String crashLogDir;
+    
     /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
     public final String coreUserConfigDir;
     
@@ -281,6 +284,7 @@ public class UserPrefs
         userDataDir = mPreferences.getString( "pathGameSaves", "" );
         galleryDataDir = userDataDir + "/GalleryData";
         profilesDir = userDataDir + "/Profiles";
+        crashLogDir = userDataDir + "/CrashLogs";
         coreUserConfigDir = userDataDir + "/CoreConfig/UserConfig";
         coreUserDataDir = userDataDir + "/CoreConfig/UserData";
         coreUserCacheDir = userDataDir + "/CoreConfig/UserCache";

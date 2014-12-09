@@ -55,6 +55,8 @@ import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender.Method;
 import org.acra.sender.HttpSender.Type;
 
+import paulscode.android.mupen64plusae.util.CrashHandler;
+
 // @formatter:off
 @ReportsCrashes
 (
@@ -116,5 +118,8 @@ public class AppMupen64Plus extends android.app.Application
         catch( Exception ignored )
         {
         }
+        
+        // Initialize local crash log system
+        CrashHandler.init( this );
     }
 }
