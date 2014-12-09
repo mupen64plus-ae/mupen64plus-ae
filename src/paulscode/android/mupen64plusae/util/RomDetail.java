@@ -118,19 +118,15 @@ public class RomDetail
                 // CRC in the database more than once; let user pick best match
                 // TODO Implement popup selector
 
-            	// Temporary fix to avoid PAL/U roms being identified as JAP - Zaneris
+            	// Temporary fix for duplicate game matches
                 Log.w( "RomDetail", "Multiple meta-info entries found for ROM " + file.getAbsolutePath() );
-            	for (RomDetail rd : romDetails) {
-            		if (!rd.goodName.contains("(J)")) {
-            				Log.i( "RomDetail", "Defaulting to non-Japanese entry" );
-            				detail = rd;
-            				break;
-            		}
-            	}
-            	if(detail == null) {
-            		Log.i( "RomDetail", "Defaulting to first entry" );
-            		detail = romDetails[0];
-            	}
+                Log.i( "RomDetail", "Attempting to auto select the correct entry" );
+                for (RomDetail rd : romDetails) {
+                    if (!rd.goodName.contains("(J)") || rd == romDetails[romDetails.length-1]) {
+                        detail = rd;
+                        break;
+                    }
+                }
             }
             else
             {
