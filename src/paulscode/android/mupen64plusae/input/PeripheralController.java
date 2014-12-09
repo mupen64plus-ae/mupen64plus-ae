@@ -270,7 +270,7 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_SCREENSHOT:
                     Log.v( "PeripheralController", "FUNC_SCREENSHOT" );
-                    NativeExports.emuScreenshot();
+                    CoreInterface.screenshot();
                     break;
                 default:
                     return false;

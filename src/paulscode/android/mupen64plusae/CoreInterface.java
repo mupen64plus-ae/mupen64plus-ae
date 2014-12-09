@@ -411,6 +411,12 @@ public class CoreInterface
         NativeExports.emuLoadFile( file.getAbsolutePath() );
     }
     
+    public static void screenshot()
+    {
+        Notifier.showToast( sActivity, R.string.toast_savingScreenshot );
+        NativeExports.emuScreenshot();
+    }
+    
     public static void setCustomSpeedFromPrompt()
     {
         NativeExports.emuPause();

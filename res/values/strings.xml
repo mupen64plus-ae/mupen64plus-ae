@@ -121,6 +121,7 @@
     <string name="toast_savingFile">Saving %1$s…</string>
     <string name="toast_overwritingFile">Overwriting %1$s…</string>
     <string name="toast_loadingGameInfo">Loading game info…</string>
+    <string name="toast_savingScreenshot">Saving screenshot…</string>
 
     <!-- Something happened (use '.') -->
     <string name="toast_usingSlot">Now using slot %1$d.</string>
