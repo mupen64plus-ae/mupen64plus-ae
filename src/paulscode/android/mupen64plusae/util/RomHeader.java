@@ -52,6 +52,7 @@ public final class RomHeader
     public final short countryCode;              // 0x3E
     // @formatter:on
     public final String crc;
+    public final boolean isValid;
     
     /**
      * Constructor.
@@ -103,6 +104,11 @@ public final class RomHeader
             countryCode = readShort( buffer, 0x3E );
             crc = String.format( "%08X %08X", crc1, crc2 );
         }
+        
+        isValid = init_PI_BSB_DOM1_LAT_REG == (byte) 0x80
+                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
+                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x12
+                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x40;
     }
     
     private static byte[] readFile( File file )
