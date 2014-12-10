@@ -102,8 +102,9 @@ public class RomDetail
         RomDetail detail = RomDetail.lookupByMd5( md5 );
         if( detail == null )
         {
+        	RomHeader romHeader = new RomHeader(file);
             // MD5 not in the database; lookup by CRC instead
-            String crc = new RomHeader( file ).crc;
+            String crc = romHeader.crc;
             RomDetail[] romDetails = RomDetail.lookupByCrc( crc );
             if( romDetails.length == 0 )
             {
@@ -115,11 +116,17 @@ public class RomDetail
             }
             else if( romDetails.length > 1 )
             {
-                // CRC in the database more than once; let user pick best match
-                // TODO Implement popup selector
-                Log.w( "RomDetail", "Multiple meta-info entries found for ROM " + file.getAbsolutePath() );
-                Log.i( "RomDetail", "Defaulting to first entry" );
-                detail = romDetails[0];
+                // CRC in the database more than once; 
+            	// Attempt to auto-select the correct match based on country code of rom
+                // TODO Implement menu option to correct the name?
+            	for(RomDetail romDetail : romDetails)
+            		if(romDetail.goodName.contains(romHeader.countryCode.toString())) {
+            			detail = romDetail;
+            			break;
+            		}
+            	// Catch if something went wrong
+            	if(detail==null)
+            		detail = romDetails[0];
             }
             else
             {
