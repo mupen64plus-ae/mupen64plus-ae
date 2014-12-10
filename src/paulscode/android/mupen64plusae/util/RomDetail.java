@@ -81,6 +81,11 @@ public class RomDetail
     
     public static RomDetail[] lookupByCrc( String crc )
     {
+        // Never query the database before initializing it
+        if( sConfigFile == null )
+            throw new IllegalStateException(
+                    "RomDetail#initializeDatabase must be called before any other RomDetail method" );
+        
         ArrayList<ConfigSection> sections = sCrcMap.get( crc );
         if( sections == null )
             return new RomDetail[0];
@@ -93,6 +98,11 @@ public class RomDetail
     
     public static RomDetail lookupByMd5( String md5 )
     {
+        // Never query the database before initializing it
+        if( sConfigFile == null )
+            throw new IllegalStateException(
+                    "RomDetail#initializeDatabase must be called before any other RomDetail method" );
+        
         ConfigSection section = sConfigFile.get( md5 );
         return section == null ? null : new RomDetail( section );
     }
