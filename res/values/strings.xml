@@ -125,6 +125,20 @@
     <string name="toast_savingScreenshot">Saving screenshot…</string>
 
     <!-- Something happened (use '.') -->
+    <string name="toast_nativeMainFailure01">Failed to parse initial command line parameters.</string>
+    <string name="toast_nativeMainFailure02">Failed to attach core library.</string>
+    <string name="toast_nativeMainFailure03">Failed to start core library.</string>
+    <string name="toast_nativeMainFailure04">Failed to open configuration handles.</string>
+    <string name="toast_nativeMainFailure05">Failed to parse final command line parameters.</string>
+    <string name="toast_nativeMainFailure06">Cannot use --core-compare feature with this Mupen64Plus core library.</string>
+    <string name="toast_nativeMainFailure07">Failed to open ROM file for reading.</string>
+    <string name="toast_nativeMainFailure08">Failed to allocate buffer for ROM image file.</string>
+    <string name="toast_nativeMainFailure09">Failed to read bytes from ROM image file.</string>
+    <string name="toast_nativeMainFailure10">Core failed to open ROM image file.</string>
+    <string name="toast_nativeMainFailure11">Listed cheats as requested.</string>
+    <string name="toast_nativeMainFailure12">Failed to load plugins.</string>
+    <string name="toast_nativeMainFailure13">Core failed to attach plugin.</string>
+    <string name="toast_nativeMainFailureUnknown">Unknown launch error.</string>
     <string name="toast_usingSlot">Now using slot %1$d.</string>
     <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
     <string name="toast_crashReportSent">Report sent.</string>
