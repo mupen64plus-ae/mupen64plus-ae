@@ -228,7 +228,7 @@ public class CheatUtils
         {
             // Game name and country code from header
             c = new CheatSection( crc.replace( ' ', '-' ), mRomHeader.name, String.format( "%02x",
-                    mRomHeader.countryCode ).substring( 0, 2 ) );
+                    mRomHeader.countryCode.getValue() ).substring( 0, 2 ) );
             mupencheat_txt.add( c );
         }
         {

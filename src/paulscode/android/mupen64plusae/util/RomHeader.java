@@ -49,7 +49,7 @@ public final class RomHeader
     public final int unknown3;                   // 0x34
     public final int manufacturerId;             // 0x38
     public final short cartridgeId;              // 0x3C - Game serial number
-    public final short countryCode;              // 0x3E
+    public final CountryCode countryCode;              // 0x3E
     // @formatter:on
     public final String crc;
     public final boolean isValid;
@@ -80,7 +80,7 @@ public final class RomHeader
             unknown3 = 0;
             manufacturerId = 0;
             cartridgeId = 0;
-            countryCode = 0;
+            countryCode = CountryCode.UNKNOWN;
             crc = "";
         }
         else
@@ -101,7 +101,7 @@ public final class RomHeader
             unknown3 = readInt( buffer, 0x34 );
             manufacturerId = readInt( buffer, 0x38 );
             cartridgeId = readShort( buffer, 0x3C );
-            countryCode = readShort( buffer, 0x3E );
+            countryCode = getCountryCode(readShort( buffer, 0x3E ));
             crc = String.format( "%08X %08X", crc1, crc2 );
         }
         
@@ -109,6 +109,14 @@ public final class RomHeader
                 && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
                 && init_PI_BSB_DOM1_PWD_REG == (byte) 0x12
                 && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x40;
+    }
+    
+    private static CountryCode getCountryCode(short value) {
+    	CountryCode[] codes = CountryCode.values();
+    	for (CountryCode code : codes)
+    		if(code.getValue() == value)
+    			return code;
+    	return CountryCode.UNKNOWN;
     }
     
     private static byte[] readFile( File file )
