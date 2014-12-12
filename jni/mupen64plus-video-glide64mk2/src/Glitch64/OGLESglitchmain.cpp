@@ -39,9 +39,6 @@
 #include "main.h"
 #include "m64p.h"
 
-#include <SDL_opengles.h>
-//#include <GL/glext.h>
-
 #define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) LOG("OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
 
 #ifdef VPDEBUG
@@ -1685,7 +1682,7 @@ grAuxBufferExt( GrBuffer_t buffer )
     need_to_compile = 1;
   }
 }
-void vbo_draw();
+
 FX_ENTRY void FX_CALL
 grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 {
