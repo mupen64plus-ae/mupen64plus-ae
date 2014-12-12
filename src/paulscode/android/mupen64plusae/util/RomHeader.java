@@ -49,7 +49,7 @@ public final class RomHeader
     public final int unknown3;                   // 0x34
     public final int manufacturerId;             // 0x38
     public final short cartridgeId;              // 0x3C - Game serial number
-    public final short countryCode;              // 0x3E
+    public final byte countryCode;               // 0x3E
     // @formatter:on
     public final String crc;
     public final boolean isValid;
@@ -101,7 +101,7 @@ public final class RomHeader
             unknown3 = readInt( buffer, 0x34 );
             manufacturerId = readInt( buffer, 0x38 );
             cartridgeId = readShort( buffer, 0x3C );
-            countryCode = readShort( buffer, 0x3E );
+            countryCode = buffer[0x3E];
             crc = String.format( "%08X %08X", crc1, crc2 );
         }
         
