@@ -29,6 +29,9 @@
 #include "glide.h"
 #include "main.h"
 
+#include "../Glide64/winlnxdefs.h"
+#include "../Glide64/rdp.h" // for settings
+
 void vbo_draw();
 
 static int fct[4], source0[4], operand0[4], source1[4], operand1[4], source2[4], operand2[4];
@@ -68,6 +71,7 @@ static GLuint vertex_shader_object;
 static GLuint program_object_default;
 static GLuint program_object_depth;
 static GLuint program_object;
+static GLuint rotation_matrix_location;
 static int constant_color_location;
 static int ccolor0_location;
 static int ccolor1_location;
@@ -176,6 +180,7 @@ SHADER_HEADER
 "uniform vec3 vertexOffset;                                     \n" //Moved some calculations from grDrawXXX to shader
 "uniform vec4 textureSizes;                                     \n" 
 "uniform vec3 fogModeEndScale;                                  \n" //0 = Mode, 1 = gl_Fog.end, 2 = gl_Fog.scale
+"uniform mat4 rotation_matrix;                                  \n"
 SHADER_VARYING
 "                                                               \n"
 "void main()                                                    \n"
@@ -187,6 +192,7 @@ SHADER_VARYING
 "  gl_Position.z = aVertex.z / Z_MAX;                                       \n"
 "  gl_Position.w = 1.0;                                                     \n"
 "  gl_Position /= q;                                                        \n"
+"  gl_Position = rotation_matrix * gl_Position;                             \n"
 "  gl_FrontColor = aColor.bgra;                                             \n"
 "                                                                           \n"
 "  gl_TexCoord[0] = vec4(aMultiTexCoord0.xy / q / textureSizes.xy,0,1);     \n"
@@ -236,6 +242,70 @@ void check_link(GLuint program)
   }
 }
 
+void set_rotation_matrix(GLuint loc, int rotate)
+{
+    GLfloat mat[16];
+
+    /* first setup everything which is the same everytime */
+    /* (X, X, 0, 0)
+     * (X, X, 0, 0)
+     * (0, 0, 1, 0)
+     * (0, 0, 0, 1)
+     */
+
+    //mat[0] =  cos(angle);
+    //mat[1] =  sin(angle);
+    mat[2] = 0;
+    mat[3] = 0;
+
+    //mat[4] = -sin(angle);
+    //mat[5] =  cos(angle);
+    mat[6] = 0;
+    mat[7] = 0;
+
+    mat[8] = 0;
+    mat[9] = 0;
+    mat[10] = 1;
+    mat[11] = 0;
+
+    mat[12] = 0;
+    mat[13] = 0;
+    mat[14] = 0;
+    mat[15] = 1;
+
+    /* now set the actual rotation */
+    if(1 == rotate) // 90 degree
+    {
+        mat[0] =  0;
+        mat[1] =  1;
+        mat[4] = -1;
+        mat[5] =  0;
+    }
+    else if(2 == rotate) // 180 degree
+    {
+        mat[0] = -1;
+        mat[1] =  0;
+        mat[4] =  0;
+        mat[5] =  -1;
+    }
+    else if(3 == rotate) // 270 degree
+    {
+        mat[0] =  0;
+        mat[1] = -1;
+        mat[4] =  1;
+        mat[5] =  0;
+    }
+    else /* 0 degree, also fallback if input is wrong) */
+    {
+        mat[0] =  1;
+        mat[1] =  0;
+        mat[4] =  0;
+        mat[5] =  1;
+    }
+
+    glUniformMatrix4fv(loc, 1, GL_FALSE, mat);
+}
+
 void init_combiner()
 {
   int texture[4] = {0, 0, 0, 0};
@@ -253,6 +323,7 @@ void init_combiner()
   glBindTexture(GL_TEXTURE_2D, default_texture);
   glEnable(GL_TEXTURE_2D);
 
+  int rotation_matrix_location;
   int texture0_location;
   int texture1_location;
 
@@ -315,6 +386,9 @@ void init_combiner()
   check_link(program_object);
   glUseProgram(program_object);
 
+  rotation_matrix_location = glGetUniformLocation(program_object, "rotation_matrix");
+  set_rotation_matrix(rotation_matrix_location, settings.rotate);
+
   texture0_location = glGetUniformLocation(program_object, "texture0");
   texture1_location = glGetUniformLocation(program_object, "texture1");
   glUniform1i(texture0_location, 0);
@@ -335,6 +409,9 @@ void init_combiner()
   glLinkProgram(program_object);
   check_link(program_object);
   glUseProgram(program_object);
+
+  rotation_matrix_location = glGetUniformLocation(program_object, "rotation_matrix");
+  set_rotation_matrix(rotation_matrix_location, settings.rotate);
 
   texture0_location = glGetUniformLocation(program_object, "texture0");
   texture1_location = glGetUniformLocation(program_object, "texture1");
@@ -411,6 +488,7 @@ typedef struct _shader_program_key
   int blackandwhite1;
   GLuint fragment_shader_object;
   GLuint program_object;
+  int rotation_matrix_location;
   int texture0_location;
   int texture1_location;
   int vertexOffset_location;
@@ -470,6 +548,11 @@ void update_uniforms(shader_program_key prog)
     glUniform1i(prog.ditherTex_location, 2);
       }
 
+  rotation_matrix_location = glGetUniformLocation(program_object, "rotation_matrix");
+  set_rotation_matrix(rotation_matrix_location, settings.rotate);
+  rotation_matrix_location = glGetUniformLocation(program_object, "rotation_matrix");
+  set_rotation_matrix(rotation_matrix_location, settings.rotate);
+
       set_lambda();
 }
 
@@ -481,6 +564,7 @@ void disable_textureSizes()
 
 void compile_shader()
 {
+  int rotation_matrix_location;
   int texture0_location;
   int texture1_location;
   int ditherTex_location;
@@ -583,7 +667,7 @@ void compile_shader()
   check_link(program_object);
   glUseProgram(program_object);
 
-
+  shader_programs[number_of_programs].rotation_matrix_location = glGetUniformLocation(program_object, "rotation_matrix");
   shader_programs[number_of_programs].texture0_location = glGetUniformLocation(program_object, "texture0");
   shader_programs[number_of_programs].texture1_location = glGetUniformLocation(program_object, "texture1");
   shader_programs[number_of_programs].vertexOffset_location = glGetUniformLocation(program_object, "vertexOffset");

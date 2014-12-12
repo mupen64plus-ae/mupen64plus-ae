@@ -373,6 +373,8 @@ void ReadSettings ()
   settings.scr_res_x = settings.res_x = Config_ReadScreenInt("ScreenWidth");
   settings.scr_res_y = settings.res_y = Config_ReadScreenInt("ScreenHeight");
 
+  settings.rotate = Config_ReadScreenInt("Rotate");
+
   settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 0);
   settings.ssformat = (BOOL)Config_ReadInt("ssformat", "TODO:ssformat", 0);
   //settings.fast_crc = (BOOL)Config_ReadInt ("fast_crc", "Fast CRC", 0);
