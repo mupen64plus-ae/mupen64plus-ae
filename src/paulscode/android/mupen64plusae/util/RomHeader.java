@@ -52,6 +52,7 @@ public final class RomHeader
     public final byte countryCode;               // 0x3E
     // @formatter:on
     public final String crc;
+    public final String countrySymbol;
     public final boolean isValid;
     
     /**
@@ -103,6 +104,54 @@ public final class RomHeader
             cartridgeId = readShort( buffer, 0x3C );
             countryCode = buffer[0x3E];
             crc = String.format( "%08X %08X", crc1, crc2 );
+        }
+        
+        // Symbols match mappings from mupen64plus-core/util.c
+        // See also https://code.google.com/p/mupen64plus/wiki/RomBrowserColumns
+        switch( countryCode )
+        {
+            case 0x00: // Demo
+                countrySymbol = "(Demo)";
+                break;
+            case 0x07: // Beta
+                countrySymbol = "(Beta)";
+                break;
+            case 0x41: // 'A' - Japan / USA
+                countrySymbol = "(JU)";
+                break;
+            case 0x44: // 'D' - Germany
+                countrySymbol = "(G)";
+                break;
+            case 0x45: // 'E' - USA
+                countrySymbol = "(U)";
+                break;
+            case 0x46: // 'F' - France
+                countrySymbol = "(F)";
+                break;
+            case 0x49: // 'I' - Italy
+                countrySymbol = "(I)";
+                break;
+            case 0x4a: // 'J' - Japan
+                countrySymbol = "(J)";
+                break;
+            case 0x53: // 'S' - Spain
+                countrySymbol = "(S)";
+                break;
+            case 0x55: // 'U' - Australia
+            case 0x59: // 'Y' - Australia (alt)
+                countrySymbol = "(A)";
+                break;
+            case 0x50: // 'P' - Europe
+            case 0x58: // 'X' - Europe (alt)
+            case 0x20: // ' ' - Europe (alt)
+            case 0x21: // '!' - Europe (alt)
+            case 0x38: // '8' - Europe (alt)
+            case 0x70: // 'p' - Europe (alt)
+                countrySymbol = "(E)";
+                break;
+            default:
+                countrySymbol = String.format("(%02X)", countryCode );
+                break;
         }
         
         isValid = init_PI_BSB_DOM1_LAT_REG == (byte) 0x80
