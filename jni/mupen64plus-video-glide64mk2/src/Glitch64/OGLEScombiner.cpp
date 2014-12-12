@@ -255,6 +255,7 @@ void init_combiner()
 
   int texture0_location;
   int texture1_location;
+
   char *fragment_shader;
   int log_length;
 

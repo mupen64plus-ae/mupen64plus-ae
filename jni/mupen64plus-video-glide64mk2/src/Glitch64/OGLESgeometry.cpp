@@ -28,8 +28,6 @@
 #include "../Glide64/winlnxdefs.h"
 #include "../Glide64/rdp.h"
 
-
-
 #define Z_MAX (65536.0f)
 #define VERTEX_SIZE sizeof(VERTEX) //Size of vertex struct
 

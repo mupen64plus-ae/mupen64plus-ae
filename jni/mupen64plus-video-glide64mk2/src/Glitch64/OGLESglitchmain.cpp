@@ -1363,23 +1363,23 @@ static void render_rectangle(int texture_number,
   int vertexOffset_location;
   int textureSizes_location;
   static float data[] = {
-    ((int)dst_x),                             //X 0
-    invert*-((int)dst_y),                     //Y 0 
+    (float)((int)dst_x),                      //X 0
+    (float)(invert*-((int)dst_y)),            //Y 0 
     0.0f,                                     //U 0 
     0.0f,                                     //V 0
 
-    ((int)dst_x),                             //X 1
-    invert*-((int)dst_y + (int)src_height),   //Y 1
+    (float)((int)dst_x),                      //X 1
+    (float)(invert*-((int)dst_y + (int)src_height)),   //Y 1
     0.0f,                                     //U 1
     (float)src_height / (float)tex_height,    //V 1
 
-    ((int)dst_x + (int)src_width), 
-    invert*-((int)dst_y + (int)src_height),
+    (float)((int)dst_x + (int)src_width), 
+    (float)(invert*-((int)dst_y + (int)src_height)),
     (float)src_width / (float)tex_width,
     (float)src_height / (float)tex_height,
 
-    ((int)dst_x),
-    invert*-((int)dst_y),
+    (float)((int)dst_x),
+    (float)(invert*-((int)dst_y)),
     0.0f,
     0.0f
   };
