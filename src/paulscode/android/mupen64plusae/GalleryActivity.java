@@ -208,7 +208,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         else if( item.detail == null )
             Log.e( "GalleryActivity", "No ROM detail available" );
         else
-            launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.detail.md5, item.detail.crc );
+            launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.detail.md5 );
     }
     
     private void launchPlayMenuActivity( final String romPath )
@@ -221,17 +221,16 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     @Override
     public void onComputeFileHashesFinished( File file, String md5, String crc )
     {
-        launchPlayMenuActivity( file.getAbsolutePath(), md5, crc );
+        launchPlayMenuActivity( file.getAbsolutePath(), md5 );
     }
     
-    private void launchPlayMenuActivity( String romPath, String md5, String crc )
+    private void launchPlayMenuActivity( String romPath, String md5 )
     {
-        if( !TextUtils.isEmpty( romPath ) && !TextUtils.isEmpty( md5 ) && !TextUtils.isEmpty( crc ) )
+        if( !TextUtils.isEmpty( romPath ) && !TextUtils.isEmpty( md5 ) )
         {
             Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
             intent.putExtra( Keys.Extras.ROM_PATH, romPath );
             intent.putExtra( Keys.Extras.ROM_MD5, md5 );
-            intent.putExtra( Keys.Extras.ROM_CRC, crc );
             startActivity( intent );
         }
     }

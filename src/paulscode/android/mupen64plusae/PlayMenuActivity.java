@@ -115,9 +115,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         mRomPath = extras.getString( Keys.Extras.ROM_PATH );
         String romMd5 = extras.getString( Keys.Extras.ROM_MD5 );
-        String romCrc = extras.getString( Keys.Extras.ROM_CRC ); 
-        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( romMd5 ) || TextUtils.isEmpty( romCrc ) )
-            throw new Error( "ROM path, MD5, and CRC must be passed via the extras bundle" );
+        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( romMd5 ) )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         
         // Initialize MOGA controller API
         // TODO: Remove hack after MOGA SDK is fixed
