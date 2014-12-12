@@ -58,6 +58,16 @@ public final class RomHeader
     /**
      * Constructor.
      * 
+     * @param path The path of the ROM to get the header information about.
+     */
+    public RomHeader( String path )
+    {
+        this( new File( path ) );
+    }
+    
+    /**
+     * Constructor.
+     * 
      * @param file The ROM file to get the header information about.
      */
     public RomHeader( File file )
