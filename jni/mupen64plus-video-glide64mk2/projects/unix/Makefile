@@ -92,7 +92,7 @@ ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
   ARCH_DETECTED := 32BITS
   PIC ?= 0
 endif
-ifneq ("$(filter ppc macppc socppc powerpc,$(HOST_CPU))","")
+ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
   CPU := PPC
   ARCH_DETECTED := 32BITS
   BIG_ENDIAN := 1
@@ -212,10 +212,6 @@ CFLAGS += $(LIBPNG_CFLAGS)
 LDLIBS += $(LIBPNG_LDLIBS)
 
 # search for OpenGL libraries
-ifeq ($(USE_GLES), 1)
-  CFLAGS += -DUSE_GLES
-  GL_LDLIBS = -lGLESv2
-endif
 ifeq ($(OS), OSX)
   GL_LDLIBS = -framework OpenGL
 endif
@@ -234,18 +230,13 @@ LDLIBS += $(GL_LDLIBS)
 
 # test for presence of SDL
 ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
-  SDL_CONFIG = $(CROSS_COMPILE)sdl2-config
+  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
   ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-    SDL_CONFIG = $(CROSS_COMPILE)sdl-config
-    ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-      $(error No SDL development libraries found!)
-    else
-      $(warning Using SDL 1.2 libraries)
-    endif
+    $(error No SDL development libraries found!)
   endif
   ifeq ($(OS),OSX)
     SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    # sdl2-config on mac screws up when we're trying to build a library and not an executable
+    # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
     SDL_LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
   else
@@ -313,13 +304,6 @@ endif
 ifeq ($(NO_ASM), 1)
   CFLAGS += -DNO_ASM
 endif
-ifeq ($(NO_SSE), 1)
-  CFLAGS += -DNOSSE
-endif
-
-ifneq ($(CFG_DEFAULTS),)
-  CFLAGS += -DCFG_DEFAULTS=$(CFG_DEFAULTS)
-endif
 
 # set installation options
 ifeq ($(PREFIX),)
@@ -340,6 +324,10 @@ OBJDIR = _obj$(POSTFIX)
 
 # list of source files to compile
 SOURCE = \
+	$(SRCDIR)/Glitch64/combiner.cpp \
+	$(SRCDIR)/Glitch64/geometry.cpp \
+	$(SRCDIR)/Glitch64/glitchmain.cpp \
+	$(SRCDIR)/Glitch64/textures.cpp \
 	$(SRCDIR)/Glide64/3dmath.cpp \
 	$(SRCDIR)/Glide64/Combine.cpp \
 	$(SRCDIR)/Glide64/Config.cpp \
@@ -354,20 +342,6 @@ SOURCE = \
 	$(SRCDIR)/Glide64/TexBuffer.cpp \
 	$(SRCDIR)/Glide64/TexCache.cpp \
 	$(SRCDIR)/Glide64/Util.cpp
-
-ifeq ($(USE_GLES), 1)
-	SOURCE += \
-		$(SRCDIR)/Glitch64/OGLEScombiner.cpp \
-		$(SRCDIR)/Glitch64/OGLESgeometry.cpp \
-		$(SRCDIR)/Glitch64/OGLESglitchmain.cpp \
-		$(SRCDIR)/Glitch64/OGLEStextures.cpp
-else
-	SOURCE += \
-		$(SRCDIR)/Glitch64/OGLcombiner.cpp \
-		$(SRCDIR)/Glitch64/OGLgeometry.cpp \
-		$(SRCDIR)/Glitch64/OGLglitchmain.cpp \
-		$(SRCDIR)/Glitch64/OGLtextures.cpp
-endif
 
 ifneq ($(HIRES), 0)
 SOURCE += \
@@ -430,8 +404,6 @@ targets:
 	@echo "  Options:"
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    NO_ASM=1      == build without inline assembly code (x86 MMX/SSE)"
-	@echo "    USE_GLES=1    == build against GLESv2 instead of OpenGL"
-	@echo "    NO_SSE=1      == build without SSE support"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
@@ -439,7 +411,6 @@ targets:
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "    HIRES=(1|0)   == Enables/Disables support for hires textures and texture filters (default: 1)"
 	@echo "    TXCDXTN=(1|0) == Enable/Disable external txc_dxtn library (default: 0)"
-	@echo "    CFG_DEFAULTS=jp1 == Use config values optimized for the jolla phone 1"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"

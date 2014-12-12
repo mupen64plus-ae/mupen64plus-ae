@@ -78,7 +78,11 @@ typedef struct dbgPOINT {
 #endif
 void DbgCursorPos(POINT * pt)
 {
+#ifdef __WINDOWS__
+  GetCursorPos (pt);
+#else //!todo find a way to get cursor position on Unix
   pt->x = pt->y = 0;
+#endif
 }
 
 //

@@ -205,7 +205,6 @@ typedef struct {
   int show_fps;
   int clock;
   int clock_24_hr;
-  int rotate;
 
   int filtering;
   int fog;
@@ -383,7 +382,6 @@ typedef struct {
   int wrpVRAM;
   int wrpFBO;
   int wrpAnisotropic;
-  int wrpAntiAliasing;
 
 } SETTINGS;
 

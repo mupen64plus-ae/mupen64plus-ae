@@ -23,8 +23,8 @@
 
 #include <m64p_types.h>
 
-#define LOG(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
-#define LOGINFO(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define LOG(...) // WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define LOGINFO(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -103,27 +103,16 @@ extern "C" {
     extern PFNGLUNIFORM1IARBPROC glUniform1iARB;
     extern PFNGLUNIFORM4FARBPROC glUniform4fARB;
     extern PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObjectARB;
-    extern PFNGLGETHANDLEARBPROC glGetHandleARB;
     typedef const char * (WINAPI * PFNWGLGETEXTENSIONSSTRINGARBPROC) (HDC hdc);
 }
 #else
 #include <stdio.h>
 //#define printf(...)
 #define GL_GLEXT_PROTOTYPES
-#include <SDL_config.h>
-#ifdef USE_GLES
-#ifndef SDL_VIDEO_OPENGL_ES2
-#error SDL is not build with OpenGL ES2 support. Try USE_GLES=0
-#endif
 #include <SDL_opengles2.h>
-#else
-#ifndef SDL_VIDEO_OPENGL
-#error SDL is not build with OpenGL support. Try USE_GLES=1
-#endif
-#include <SDL_opengl.h>
-#endif
 #endif // _WIN32
 #include "glide.h"
+#include "glState.cpp"
 
 void display_warning(const unsigned char *text, ...);
 void display_warning(const char *text, ...);
@@ -149,7 +138,6 @@ extern PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObjectARB;
 extern PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
 extern PFNGLLINKPROGRAMARBPROC glLinkProgramARB;
 extern PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObjectARB;
-extern PFNGLGETHANDLEARBPROC glGetHandleARB;
 extern PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB;
 extern PFNGLUNIFORM1IARBPROC glUniform1iARB;
 extern PFNGLUNIFORM4IARBPROC glUniform4iARB;
@@ -300,7 +288,6 @@ FX_ENTRY void FX_CALL
 grConstantColorValueExt(GrChipID_t    tmu,
                         GrColor_t     value);
 
-#ifdef USE_GLES
 #define CHECK_FRAMEBUFFER_STATUS() \
 {\
  GLenum status; \
@@ -330,52 +317,6 @@ grConstantColorValueExt(GrChipID_t    tmu,
    /*assert(0);*/ \
  }\
 }
-#else
-#define CHECK_FRAMEBUFFER_STATUS() \
-{\
- GLenum status; \
- status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
- /*display_warning("%x\n", status);*/\
- switch(status) { \
- case GL_FRAMEBUFFER_COMPLETE_EXT: \
-   /*display_warning("framebuffer complete!\n");*/\
-   break; \
- case GL_FRAMEBUFFER_UNSUPPORTED_EXT: \
-   display_warning("framebuffer GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");\
-    /* you gotta choose different formats */ \
-   /*assert(0);*/ \
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT: \
-   display_warning("framebuffer INCOMPLETE_ATTACHMENT\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT: \
-   display_warning("framebuffer FRAMEBUFFER_MISSING_ATTACHMENT\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT: \
-   display_warning("framebuffer FRAMEBUFFER_DIMENSIONS\n");\
-   break; \
- /*case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT: \
-   display_warning("framebuffer INCOMPLETE_DUPLICATE_ATTACHMENT\n");\
-   break;*/ \
- case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT: \
-   display_warning("framebuffer INCOMPLETE_FORMATS\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: \
-   display_warning("framebuffer INCOMPLETE_DRAW_BUFFER\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT: \
-   display_warning("framebuffer INCOMPLETE_READ_BUFFER\n");\
-   break; \
- case GL_FRAMEBUFFER_BINDING_EXT: \
-   display_warning("framebuffer BINDING_EXT\n");\
-   break; \
- default: \
-   break; \
-   /* programming error; will fail on all hardware */ \
-   /*assert(0);*/ \
- }\
-}
-#endif
 
 #ifdef VPDEBUG
 #define LOGGING

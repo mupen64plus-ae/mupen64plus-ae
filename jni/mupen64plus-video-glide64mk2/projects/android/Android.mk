@@ -36,10 +36,10 @@ LOCAL_C_INCLUDES :=                             \
     $(AE_BRIDGE_INCLUDES)                       \
 
 LOCAL_SRC_FILES :=                              \
-    $(SRCDIR)/Glitch64/OGLEScombiner.cpp        \
-    $(SRCDIR)/Glitch64/OGLESgeometry.cpp        \
-    $(SRCDIR)/Glitch64/OGLESglitchmain.cpp      \
-    $(SRCDIR)/Glitch64/OGLEStextures.cpp        \
+    $(SRCDIR)/Glitch64/combiner.cpp             \
+    $(SRCDIR)/Glitch64/geometry.cpp             \
+    $(SRCDIR)/Glitch64/glitchmain.cpp           \
+    $(SRCDIR)/Glitch64/textures.cpp             \
     $(SRCDIR)/Glide64/osal_dynamiclib_unix.c    \
     $(SRCDIR)/Glide64/3dmath.cpp                \
     $(SRCDIR)/Glide64/Combine.cpp               \
@@ -83,7 +83,6 @@ LOCAL_CFLAGS :=         \
     -DANDROID_EDITION   \
     -DNOSSE             \
     -DNO_ASM            \
-    -DUSE_GLES          \
     -fsigned-char       \
     
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
