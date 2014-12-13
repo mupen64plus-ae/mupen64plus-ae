@@ -52,6 +52,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -70,6 +71,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String ACTION_RESTART = "actionRestart";
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
+    private static final String ACTION_RESET_GAME_PREFS = "actionResetGamePrefs";
     
     private static final String EMULATION_PROFILE = "emulationProfile";
     private static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
@@ -158,6 +160,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESTART, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_CHEAT_EDITOR, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_GAME_PREFS, this );
         
         // Remove wiki menu item if not applicable
         if( TextUtils.isEmpty( mRomDetail.wikiUrl ) )
@@ -335,6 +338,10 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         {
             Utility.launchUri( this, mRomDetail.wikiUrl );
         }
+        else if( key.equals( ACTION_RESET_GAME_PREFS ) )
+        {
+            actionResetGamePrefs();
+        }
         return false;
     }
     
@@ -461,5 +468,26 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
         
         return cheatArgs;
+    }
+    
+    private void actionResetGamePrefs()
+    {
+        String title = getString( R.string.confirm_title );
+        String message = getString( R.string.actionResetGamePrefs_popupMessage );
+        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
+        {
+            @Override
+            public void onConfirm()
+            {
+                // Reset the user preferences
+                mPrefs.unregisterOnSharedPreferenceChangeListener( PlayMenuActivity.this );
+                mPrefs.edit().clear().commit();
+                PreferenceManager.setDefaultValues( PlayMenuActivity.this, R.xml.preferences_game, true );
+                
+                // Rebuild the menu system by restarting the activity
+                finish();
+                startActivity( getIntent() );
+            }
+        } );
     }
 }
