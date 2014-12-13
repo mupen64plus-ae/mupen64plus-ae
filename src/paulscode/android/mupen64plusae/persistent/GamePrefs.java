@@ -10,7 +10,6 @@ import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
-import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
@@ -179,14 +178,8 @@ public class GamePrefs
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
         
-        // ROM goodname used for directory prefix, if available
-        RomDetail detail = RomDetail.lookupByMd5( romMd5 );
-        String prefix = "Game";
-        if ( detail != null && !TextUtils.isEmpty( detail.goodName ) )
-            prefix = detail.goodName;
-        
         // Game-specific data
-        gameDataDir = userPrefs.userDataDir + "/GameData/" + prefix + "_" + romMd5;
+        gameDataDir = String.format( "%s/GameData/%s_%s_%s", userPrefs.userDataDir, header.name, header.countrySymbol, romMd5 );
         sramDataDir = gameDataDir + "/SramData";
         autoSaveDir = gameDataDir + "/AutoSaves";
         slotSaveDir = gameDataDir + "/SlotSaves";
