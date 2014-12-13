@@ -11,6 +11,7 @@ import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Context;
@@ -170,7 +171,7 @@ public class GamePrefs
     
     private final SharedPreferences mPreferences;
     
-    public GamePrefs( Context context, String romMd5 )
+    public GamePrefs( Context context, String romMd5, RomHeader header )
     {
         final AppData appData = new AppData( context );
         final UserPrefs userPrefs = new UserPrefs( context );
