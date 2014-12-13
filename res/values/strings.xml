@@ -162,10 +162,10 @@
     <string name="actionCrashTest_summary">Send a configuration report to the developers</string>
     <string name="actionResetUserPrefs_title">Defaults</string>
     <string name="actionResetUserPrefs_summary">Restore default global settings</string>
-    <string name="actionResetUserPrefs_popupMessage">Reset all global preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
+    <string name="actionResetUserPrefs_popupMessage">Reset all global preferences to their defaults?</string>
     <string name="actionResetGamePrefs_title">Defaults</string>
     <string name="actionResetGamePrefs_summary">Restore default game settings</string>
-    <string name="actionResetGamePrefs_popupMessage">Reset all game preferences to their defaults?</string>
+    <string name="actionResetGamePrefs_popupMessage">Reset all game preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
     <string name="actionCheatEditor_title">Manage cheat codes</string>
     <string name="actionCheatEditor_summary">Add, modify, and delete custom cheats</string>
     <string name="actionShare_title">Share</string>

@@ -30,6 +30,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -44,6 +45,7 @@ public class GameMenuHandler implements OnStateCallbackListener
 {
     private final Activity mActivity;
     private final String mRomMd5;
+    private final RomHeader mRomHeader;
     
     private UserPrefs mUserPrefs;
     private GamePrefs mGamePrefs;
@@ -52,13 +54,15 @@ public class GameMenuHandler implements OnStateCallbackListener
     {
         mActivity = activity;
         
-        // Get the ROM's MD5 that was passed to the activity
+        // Get the intent data
         Bundle extras = mActivity.getIntent().getExtras();
         if( extras == null )
-            throw new Error( "ROM MD5 must be passed via the extras bundle when starting GameActivity" );
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
+        String romPath = extras.getString( Keys.Extras.ROM_PATH );
         mRomMd5 = extras.getString( Keys.Extras.ROM_MD5 );
-        if( TextUtils.isEmpty( mRomMd5 ) )
-            throw new Error( "ROM MD5 must be passed via the extras bundle when starting GameActivity" );
+        if( TextUtils.isEmpty( romPath ) || TextUtils.isEmpty( mRomMd5 ) )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
+        mRomHeader = new RomHeader( romPath );
     }
     
     @TargetApi( 11 )
@@ -83,7 +87,7 @@ public class GameMenuHandler implements OnStateCallbackListener
         
         // Get the app data and user prefs after the activity has been created
         mUserPrefs = new UserPrefs( mActivity );
-        mGamePrefs = new GamePrefs( mActivity, mRomMd5 );
+        mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomHeader );
         
         // Initialize the pak menus (reverse order since some get hidden)
         initializePakMenu( menu, 4, mGamePrefs.isPlugged4, mUserPrefs.getPakType( 4 ) );

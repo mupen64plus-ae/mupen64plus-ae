@@ -40,6 +40,7 @@ import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -141,7 +142,7 @@ public class CoreInterface
         sSurface = surface;
         sAppData = new AppData( sActivity );
         sUserPrefs = new UserPrefs( sActivity );
-        sGamePrefs = new GamePrefs( sActivity, romMd5 );
+        sGamePrefs = new GamePrefs( sActivity, romMd5, new RomHeader( romPath ) );
         NativeConfigFiles.syncConfigFiles( sGamePrefs, sUserPrefs, sAppData );
         
         // Make sure various directories exist so that we can write to them
@@ -150,7 +151,7 @@ public class CoreInterface
         new File( sGamePrefs.slotSaveDir ).mkdirs();
         new File( sGamePrefs.userSaveDir ).mkdirs();
         new File( sGamePrefs.screenshotDir ).mkdirs();
-        new File( sUserPrefs.coreUserConfigDir ).mkdirs();
+        new File( sGamePrefs.coreUserConfigDir ).mkdirs();
         new File( sUserPrefs.coreUserDataDir ).mkdirs();
         new File( sUserPrefs.coreUserCacheDir ).mkdirs();
         sAutoSavePath = sGamePrefs.autoSaveDir + "/yyyy-mm-dd-hh-mm-ss.sav";
@@ -216,7 +217,7 @@ public class CoreInterface
                     arglist.add( "--corelib" );
                     arglist.add( sAppData.coreLib );
                     arglist.add( "--configdir" );
-                    arglist.add( sUserPrefs.coreUserConfigDir );
+                    arglist.add( sGamePrefs.coreUserConfigDir );
                     if( !sUserPrefs.isFramelimiterEnabled )
                     {
                         arglist.add( "--nospeedlimit" );

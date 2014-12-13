@@ -95,9 +95,6 @@ public class UserPrefs
     /** The subdirectory containing crash logs. */
     public final String crashLogDir;
     
-    /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
-    public final String coreUserConfigDir;
-    
     /** The subdirectory returned from the core's ConfigGetUserDataPath() method. */
     public final String coreUserDataDir;
     
@@ -106,9 +103,6 @@ public class UserPrefs
     
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
-    
-    /** The path of the Mupen64Plus base configuration file. */
-    public final String mupen64plus_cfg;
     
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
@@ -285,11 +279,9 @@ public class UserPrefs
         galleryDataDir = userDataDir + "/GalleryData";
         profilesDir = userDataDir + "/Profiles";
         crashLogDir = userDataDir + "/CrashLogs";
-        coreUserConfigDir = userDataDir + "/CoreConfig/UserConfig";
         coreUserDataDir = userDataDir + "/CoreConfig/UserData";
         coreUserCacheDir = userDataDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
-        mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         romInfoCache_cfg = galleryDataDir + "/romInfoCache.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
