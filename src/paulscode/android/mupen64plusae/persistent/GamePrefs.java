@@ -42,6 +42,12 @@ public class GamePrefs
     /** The subdirectory containing user screenshots. */
     public final String screenshotDir;
     
+    /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
+    public final String coreUserConfigDir;
+    
+    /** The path of the Mupen64Plus base configuration file. */
+    public final String mupen64plus_cfg;
+    
     /** The emulation profile. */
     public final Profile emulationProfile;
     
@@ -185,6 +191,8 @@ public class GamePrefs
         slotSaveDir = gameDataDir + "/SlotSaves";
         userSaveDir = gameDataDir + "/UserSaves";
         screenshotDir = gameDataDir + "/Screenshots";
+        coreUserConfigDir = gameDataDir + "/CoreConfig";
+        mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, "emulationProfile",

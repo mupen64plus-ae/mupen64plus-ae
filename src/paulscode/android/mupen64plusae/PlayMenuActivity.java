@@ -488,6 +488,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 mPrefs.edit().clear().commit();
                 PreferenceManager.setDefaultValues( PlayMenuActivity.this, R.xml.preferences_game, true );
                 
+                // Also reset any manual overrides the user may have made in the config file
+                File configFile = new File( mGamePrefs.mupen64plus_cfg );
+                if( configFile.exists() )
+                    configFile.delete();
+                
                 // Rebuild the menu system by restarting the activity
                 finish();
                 startActivity( getIntent() );
