@@ -41,7 +41,8 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.util.RomDetail;
+import paulscode.android.mupen64plusae.util.RomDatabase;
+import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Intent;
@@ -93,6 +94,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private String mRomPath = null;
     private String mRomMd5 = null;
     private RomHeader mRomHeader = null;
+    private RomDatabase mRomDatabase = null;
     private RomDetail mRomDetail = null;
     
     // Preference menu items
@@ -137,7 +139,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
         // Get the detailed info about the ROM
-        mRomDetail = RomDetail.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ) );
+        mRomDatabase = new RomDatabase( mAppData.mupen64plus_ini );
+        mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ) );
         
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );

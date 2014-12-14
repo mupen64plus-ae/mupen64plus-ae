@@ -267,7 +267,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     @Override
     public void onFindRomsFinished( List<File> result )
     {
-        new CacheRomInfoTask( result, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this ).execute();
+        new CacheRomInfoTask( result, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this ).execute();
     }
     
     @Override

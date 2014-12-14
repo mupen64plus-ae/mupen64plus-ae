@@ -26,7 +26,8 @@ import java.util.List;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.RomDetail;
+import paulscode.android.mupen64plusae.util.RomDatabase;
+import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
@@ -38,10 +39,12 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         public void onCacheRomInfoFinished( ConfigFile file );
     }
     
-    public CacheRomInfoTask( List<File> files, String configPath, String artDir, CacheRomInfoListener listener )
+    public CacheRomInfoTask( List<File> files, String databasePath, String configPath, String artDir, CacheRomInfoListener listener )
     {
         if( files == null )
             throw new IllegalArgumentException( "File list cannot be null" );
+        if( TextUtils.isEmpty( databasePath ) )
+            throw new IllegalArgumentException( "ROM database path cannot be null or empty" );
         if( TextUtils.isEmpty( configPath ) )
             throw new IllegalArgumentException( "Config file path cannot be null or empty" );
         if( TextUtils.isEmpty( artDir ) )
@@ -50,12 +53,14 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             throw new IllegalArgumentException( "Listener cannot be null" );
         
         mFiles = files;
+        mDatabasePath = databasePath;
         mConfigPath = configPath;
         mArtDir = artDir;
         mListener = listener;
     }
     
     private final List<File> mFiles;
+    private final String mDatabasePath;
     private final String mConfigPath;
     private final String mArtDir;
     private final CacheRomInfoListener mListener;
@@ -63,13 +68,14 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     @Override
     protected ConfigFile doInBackground( Void... params )
     {
+        final RomDatabase database = new RomDatabase( mDatabasePath );
         final ConfigFile config = new ConfigFile( mConfigPath );
         config.clear();
         
         for( final File file : mFiles )
         {
             String md5 = ComputeMd5Task.computeMd5( file );
-            RomDetail detail = RomDetail.lookupByMd5WithFallback( md5, file );
+            RomDetail detail = database.lookupByMd5WithFallback( md5, file );
             String artPath = mArtDir + "/" + detail.artName;
             config.put( md5, "goodName", detail.goodName );
             config.put( md5, "romPath", file.getAbsolutePath() );
