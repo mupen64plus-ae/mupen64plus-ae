@@ -20,12 +20,8 @@
 package paulscode.android.mupen64plusae.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 import org.apache.commons.lang.NullArgumentException;
 
@@ -137,52 +133,6 @@ public class RomDetail
             }
         }
         return detail;
-    }
-    
-    public static String computeMd5( File file )
-    {
-        // From http://stackoverflow.com/a/16938703
-        InputStream inputStream = null;
-        try
-        {
-            inputStream = new FileInputStream( file );
-            MessageDigest digester = MessageDigest.getInstance( "MD5" );
-            byte[] bytes = new byte[8192];
-            int byteCount;
-            while( ( byteCount = inputStream.read( bytes ) ) > 0 )
-            {
-                digester.update( bytes, 0, byteCount );
-            }
-            return convertHashToString( digester.digest() );
-        }
-        catch( Exception e )
-        {
-            return null;
-        }
-        finally
-        {
-            if( inputStream != null )
-            {
-                try
-                {
-                    inputStream.close();
-                }
-                catch( Exception e )
-                {
-                }
-            }
-        }
-    }
-    
-    private static String convertHashToString( byte[] md5Bytes )
-    {
-        // From http://stackoverflow.com/a/16938703
-        String returnVal = "";
-        for( int i = 0; i < md5Bytes.length; i++ )
-        {
-            returnVal += Integer.toString( ( md5Bytes[i] & 0xff ) + 0x100, 16 ).substring( 1 );
-        }
-        return returnVal.toUpperCase( Locale.US );
     }
     
     private RomDetail( String assumedCrc, String assumedGoodName )
