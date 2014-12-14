@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.util.RomDetail;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.TextUtils;
@@ -39,14 +38,14 @@ import android.widget.TextView;
 public class GalleryItem implements Comparable<GalleryItem>
 {
     public final String md5;
-    public final RomDetail detail;
+    public final String goodName;
     public final File romFile;
     public final BitmapDrawable artBitmap;
     
-    public GalleryItem( Context context, String md5, String romPath, String artPath )
+    public GalleryItem( Context context, String md5, String goodName, String romPath, String artPath )
     {
         this.md5 = md5;
-        detail = RomDetail.lookupByMd5WithFallback( md5, new File( romPath ) );
+        this.goodName = goodName;
         
         romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
         
@@ -65,8 +64,8 @@ public class GalleryItem implements Comparable<GalleryItem>
     @Override
     public String toString()
     {
-        if( detail != null && !TextUtils.isEmpty( detail.goodName ) )
-            return detail.goodName;
+        if( !TextUtils.isEmpty( goodName ) )
+            return goodName;
         else if( romFile != null && !TextUtils.isEmpty( romFile.getName() ) )
             return romFile.getName();
         else

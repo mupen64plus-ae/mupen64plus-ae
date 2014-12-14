@@ -205,8 +205,6 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
             Log.e( "GalleryActivity", "No item selected" );
         else if( item.romFile == null )
             Log.e( "GalleryActivity", "No ROM file available" );
-        else if( item.detail == null )
-            Log.e( "GalleryActivity", "No ROM detail available" );
         else
             launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.md5 );
     }
@@ -292,9 +290,10 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         {
             if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
             {
+                String goodName = config.get( md5, "goodName" );
                 String romPath = config.get( md5, "romPath" );
                 String artPath = config.get( md5, "artPath" );
-                items.add( new GalleryItem( this, md5, romPath, artPath ) );
+                items.add( new GalleryItem( this, md5, goodName, romPath, artPath ) );
             }
         }
         Collections.sort( items );
