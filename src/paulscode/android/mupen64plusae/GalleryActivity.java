@@ -37,8 +37,8 @@ import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
-import paulscode.android.mupen64plusae.task.ComputeFileHashesTask;
-import paulscode.android.mupen64plusae.task.ComputeFileHashesTask.ComputeFileHashesListener;
+import paulscode.android.mupen64plusae.task.ComputeMd5Task;
+import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.task.FindRomsTask;
 import paulscode.android.mupen64plusae.task.FindRomsTask.FindRomsListener;
 import paulscode.android.mupen64plusae.util.ChangeLog;
@@ -63,7 +63,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-public class GalleryActivity extends Activity implements OnItemClickListener, ComputeFileHashesListener, FindRomsListener, CacheRomInfoListener
+public class GalleryActivity extends Activity implements OnItemClickListener, ComputeMd5Listener, FindRomsListener, CacheRomInfoListener
 {
     // App data and user preferences
     private AppData mAppData = null;
@@ -215,11 +215,11 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     {
         // Asynchronously compute MD5 and launch play menu when finished
         Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
-        new ComputeFileHashesTask( new File( romPath ), this ).execute();
+        new ComputeMd5Task( new File( romPath ), this ).execute();
     }
     
     @Override
-    public void onComputeFileHashesFinished( File file, String md5, String crc )
+    public void onComputeMd5Finished( File file, String md5 )
     {
         launchPlayMenuActivity( file.getAbsolutePath(), md5 );
     }

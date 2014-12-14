@@ -23,17 +23,16 @@ package paulscode.android.mupen64plusae.task;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.util.RomDetail;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import android.os.AsyncTask;
 
-public class ComputeFileHashesTask extends AsyncTask<Void, Void, String[]>
+public class ComputeMd5Task extends AsyncTask<Void, Void, String>
 {
-    public interface ComputeFileHashesListener
+    public interface ComputeMd5Listener
     {
-        public void onComputeFileHashesFinished( File file, String md5, String crc );
+        public void onComputeMd5Finished( File file, String md5 );
     }
     
-    public ComputeFileHashesTask( File file, ComputeFileHashesListener listener )
+    public ComputeMd5Task( File file, ComputeMd5Listener listener )
     {
         if( file == null)
             throw new IllegalArgumentException( "File cannot be null" );
@@ -47,20 +46,17 @@ public class ComputeFileHashesTask extends AsyncTask<Void, Void, String[]>
     }
     
     private final File mFile;
-    private final ComputeFileHashesListener mListener;
+    private final ComputeMd5Listener mListener;
     
     @Override
-    protected String[] doInBackground( Void... params )
+    protected String doInBackground( Void... params )
     {
-        String md5 = RomDetail.computeMd5( mFile );
-        String crc = new RomHeader( mFile ).crc;
-        String[] result = { md5, crc };
-        return result;
+        return RomDetail.computeMd5( mFile );
     }
     
     @Override
-    protected void onPostExecute( String[] result )
+    protected void onPostExecute( String result )
     {
-        mListener.onComputeFileHashesFinished( mFile, result[0], result[1] );
+        mListener.onComputeMd5Finished( mFile, result );
     }
 }
