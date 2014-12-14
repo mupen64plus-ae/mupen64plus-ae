@@ -441,7 +441,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Pass the startup info via the intent
         intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
-        intent.putExtra( Keys.Extras.ROM_MD5, mRomDetail.md5 );
+        intent.putExtra( Keys.Extras.ROM_MD5, mRomMd5 );
         intent.putExtra( Keys.Extras.CHEAT_ARGS, getCheatArgs() );
         intent.putExtra( Keys.Extras.DO_RESTART, isRestarting );
         

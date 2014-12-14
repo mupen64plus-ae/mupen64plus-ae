@@ -36,7 +36,6 @@ import android.util.Log;
 
 public class RomDetail
 {
-    public final String md5;
     public final String crc;
     public final String goodName;
     public final String baseName;
@@ -73,10 +72,10 @@ public class RomDetail
         }
     }
     
-    private static RomDetail createAssumption( String assumedMd5, String assumedCrc, String assumedGoodName )
+    private static RomDetail createAssumption( String assumedCrc, String assumedGoodName )
     {
         // Hide the constructor behind a factory method so that caller is clear this is a last resort
-        return new RomDetail( assumedMd5, assumedCrc, assumedGoodName );
+        return new RomDetail( assumedCrc, assumedGoodName );
     }
     
     public static RomDetail[] lookupByCrc( String crc )
@@ -121,7 +120,7 @@ public class RomDetail
                 Log.w( "RomDetail", "No meta-info entry found for ROM " + file.getAbsolutePath() );
                 Log.i( "RomDetail", "Constructing a best guess for the meta-info" );
                 String goodName = file.getName().split( "\\." )[0];
-                detail = RomDetail.createAssumption( md5, crc, goodName );
+                detail = RomDetail.createAssumption( crc, goodName );
             }
             else if( romDetails.length > 1 )
             {
@@ -186,17 +185,14 @@ public class RomDetail
         return returnVal.toUpperCase( Locale.US );
     }
     
-    private RomDetail( String assumedMd5, String assumedCrc, String assumedGoodName )
+    private RomDetail( String assumedCrc, String assumedGoodName )
     {
         // Never pass null arguments
-        if( assumedMd5 == null )
-            throw new NullArgumentException( "assumedMd5" );
         if( assumedCrc == null )
             throw new NullArgumentException( "assumedCrc" );
         if( assumedGoodName == null )
             throw new NullArgumentException( "assumedGoodName" );
         
-        md5 = assumedMd5;
         crc = assumedCrc;
         goodName = assumedGoodName;
         baseName = goodName.split( " \\(" )[0].trim();
@@ -220,7 +216,6 @@ public class RomDetail
             throw new IllegalStateException(
                     "RomDetail#initializeDatabase must be called before any other RomDetail method" );
         
-        md5 = section.name;
         crc = section.get( "CRC" );
         
         // Use an empty goodname (not null) for certain homebrew ROMs

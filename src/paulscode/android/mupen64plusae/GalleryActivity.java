@@ -208,7 +208,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         else if( item.detail == null )
             Log.e( "GalleryActivity", "No ROM detail available" );
         else
-            launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.detail.md5 );
+            launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.md5 );
     }
     
     private void launchPlayMenuActivity( final String romPath )

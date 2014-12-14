@@ -71,7 +71,6 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             String md5 = RomDetail.computeMd5( file );
             RomDetail detail = RomDetail.lookupByMd5WithFallback( md5, file );
             String artPath = mArtDir + "/" + detail.artName;
-            config.put( md5, "assumedToBeMd5", detail.md5 );
             config.put( md5, "goodName", detail.goodName );
             config.put( md5, "romPath", file.getAbsolutePath() );
             config.put( md5, "artPath", artPath );

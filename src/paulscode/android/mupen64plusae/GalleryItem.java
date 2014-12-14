@@ -38,12 +38,14 @@ import android.widget.TextView;
 
 public class GalleryItem implements Comparable<GalleryItem>
 {
+    public final String md5;
     public final RomDetail detail;
     public final File romFile;
     public final BitmapDrawable artBitmap;
     
     public GalleryItem( Context context, String md5, String romPath, String artPath )
     {
+        this.md5 = md5;
         detail = RomDetail.lookupByMd5WithFallback( md5, new File( romPath ) );
         
         romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
