@@ -195,7 +195,7 @@
         <item>80</item> <!-- Gravity.BOTTOM -->
     </string-array>
 
-    <string name="displayPosition_default" translatable="false">16</string>
+    <string name="displayPosition_default" translatable="false">48</string>
 
     <!-- Screen Resolution List -->
     <string-array name="displayResolution_entries" translatable="false">
