@@ -375,6 +375,10 @@ void ReadSettings ()
 
   settings.rotate = Config_ReadScreenInt("Rotate");
 
+  settings.force_polygon_offset = (BOOL)Config_ReadInt("force_polygon_offset", "If true, use polygon offset values specified below", 0, TRUE, TRUE);
+  settings.polygon_offset_factor = Config_ReadFloat("polygon_offset_factor", "Specifies a scale factor that is used to create a variable depth offset for each polygon", 0.0f);
+  settings.polygon_offset_units = Config_ReadFloat("polygon_offset_units", "Is multiplied by an implementation-specific value to create a constant depth offset", 0.0f);
+
   settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 0);
   settings.ssformat = (BOOL)Config_ReadInt("ssformat", "TODO:ssformat", 0);
   //settings.fast_crc = (BOOL)Config_ReadInt ("fast_crc", "Fast CRC", 0);

@@ -207,6 +207,10 @@ typedef struct {
   int clock_24_hr;
   int rotate;
 
+  int force_polygon_offset;
+  float polygon_offset_factor;
+  float polygon_offset_units;
+
   int filtering;
   int fog;
   int buff_clear;

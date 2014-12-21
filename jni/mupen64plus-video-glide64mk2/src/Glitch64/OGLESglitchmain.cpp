@@ -707,8 +707,8 @@ grSstWinOpen(
     save_w = save_h = 0;
   }
 
-  void FindBestDepthBias();
-  FindBestDepthBias();
+  //void FindBestDepthBias();
+  //FindBestDepthBias();
 
   init_geometry();
   init_textures();
