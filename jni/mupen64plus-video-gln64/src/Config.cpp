@@ -33,6 +33,7 @@
 #include "Config.h"
 #include "Common.h"
 
+#define POLYGON_OFFSET_PREFIX "polygon offset "
 
 Config config;
 
@@ -105,6 +106,11 @@ Option configOptions[] =
     {"vertical sync", &config.verticalSync, 0},
     {"", NULL, 0},
 
+    {"#Polygon Offset:", NULL, 0},
+    {POLYGON_OFFSET_PREFIX "factor", (int*)(&config.polygonOffsetFactor), 0},
+    {POLYGON_OFFSET_PREFIX "units", (int*)(&config.polygonOffsetUnits), 0},
+    {"", NULL, 0},
+
     {"#Other Settings:", NULL, 0},
     {"update mode", &config.updateMode, SCREEN_UPDATE_AT_VI_UPDATE },
     {"ignore offscreen rendering", &config.ignoreOffscreenRendering, 0},
@@ -139,7 +145,13 @@ void Config_WriteConfig(const char *filename)
     {
         Option *o = &configOptions[i];
         fprintf(f, "%s", o->name);
-        if (o->data) fprintf(f,"=%i", *(o->data));
+        if (o->data)
+        {
+            if (strstr(o->name, POLYGON_OFFSET_PREFIX))
+                fprintf(f,"=%f", *((float*)(o->data)));
+            else
+            	fprintf(f,"=%i", *(o->data));
+        }
         fprintf(f, "\n");
     }
 
@@ -152,7 +164,13 @@ void Config_SetDefault()
     for(int i=0; i < configOptionsSize; i++)
     {
         Option *o = &configOptions[i];
-        if (o->data) *(o->data) = o->initial;
+        if (o->data)
+        {
+            if (strstr(o->name, POLYGON_OFFSET_PREFIX))
+            	*((float*)(o->data)) = o->initial;
+            else
+            	*(o->data) = o->initial;
+        }
     }
 }
 
@@ -165,9 +183,18 @@ void Config_SetOption(char* line, char* val)
         {
             if (o->data)
             {
-                int v = atoi(val);
-                *(o->data) = v;
-                LOG(LOG_VERBOSE, "Config Option: %s = %i\n", o->name, v);
+                if (strstr(o->name, POLYGON_OFFSET_PREFIX))
+                {
+                    float f = atof(val);
+                    *((float*)(o->data)) = f;
+                    LOG(LOG_VERBOSE, "Config Option: %s = %f\n", o->name, f);
+                }
+                else
+                {
+                    int v = atoi(val);
+                    *(o->data) = v;
+                    LOG(LOG_VERBOSE, "Config Option: %s = %i\n", o->name, v);
+                }
             }
             break;
         }
