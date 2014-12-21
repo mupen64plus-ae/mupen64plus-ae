@@ -185,7 +185,7 @@ public class GamePrefs
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
         
         // Game-specific data
-        gameDataDir = String.format( "%s/GameData/%s_%s_%s", userPrefs.userDataDir, header.name, header.countrySymbol, romMd5 );
+        gameDataDir = String.format( "%s/GameData/%s %s %s", userPrefs.userDataDir, header.name, header.countrySymbol, romMd5 );
         sramDataDir = gameDataDir + "/SramData";
         autoSaveDir = gameDataDir + "/AutoSaves";
         slotSaveDir = gameDataDir + "/SlotSaves";
