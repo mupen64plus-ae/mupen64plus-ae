@@ -36,6 +36,11 @@
 #include <speex/speex_resampler.h>
 #endif
 
+#ifdef USE_AUDIORESOURCE
+#include <audioresource.h>
+#include <glib.h>
+#endif
+
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_types.h"
 #include "m64p_plugin.h"
@@ -84,6 +89,10 @@ static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
 static int l_PausedForSync = 1; /* Audio is started in paused state after SDL initialization */
 static m64p_handle l_ConfigAudio;
+#ifdef USE_AUDIORESOURCE
+static audioresource_t *l_audioresource = NULL;
+static int l_audioresource_acquired = 0;
+#endif
 
 enum resampler_type {
 	RESAMPLER_TRIVIAL,
@@ -178,6 +187,14 @@ static void DebugMessage(int level, const char *message, ...)
 
   va_end(args);
 }
+
+#ifdef USE_AUDIORESOURCE
+void on_audioresource_acquired(audioresource_t *audioresource, bool acquired, void *user_data)
+{
+    DebugMessage(M64MSG_VERBOSE, "audioresource acquired: %d", acquired);
+    l_audioresource_acquired = acquired;
+}
+#endif
 
 /* Mupen64Plus plugin functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
@@ -282,6 +299,18 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
         ConfigSaveSection("Audio-SDL");
 
+#ifdef USE_AUDIORESOURCE
+    l_audioresource = audioresource_init(AUDIO_RESOURCE_GAME, on_audioresource_acquired, NULL);
+
+    audioresource_acquire(l_audioresource);
+
+    while(!l_audioresource_acquired)
+    {
+        DebugMessage(M64MSG_INFO, "Waiting for audioresource...");
+        g_main_context_iteration(NULL, false);
+    }
+#endif
+
     l_PluginInit = 1;
     return M64ERR_SUCCESS;
 }
@@ -301,6 +330,11 @@ EXPORT m64p_error CALL PluginShutdown(void)
         free(mixBuffer);
         mixBuffer = NULL;
     }
+
+#ifdef USE_AUDIORESOURCE
+    audioresource_release(l_audioresource);
+    audioresource_free(l_audioresource);
+#endif
 
     l_PluginInit = 0;
     return M64ERR_SUCCESS;
@@ -672,7 +706,7 @@ static void CreatePrimaryBuffer(void)
 static void InitializeAudio(int freq)
 {
     SDL_AudioSpec *desired, *obtained;
-    
+
     if(SDL_WasInit(SDL_INIT_AUDIO|SDL_INIT_TIMER) == (SDL_INIT_AUDIO|SDL_INIT_TIMER) ) 
     {
         DebugMessage(M64MSG_VERBOSE, "InitializeAudio(): SDL Audio sub-system already initialized.");
