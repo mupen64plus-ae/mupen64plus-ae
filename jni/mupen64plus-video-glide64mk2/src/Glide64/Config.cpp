@@ -74,6 +74,13 @@ BOOL Config_ReadInt(const char *itemname, const char *desc, int def_value, int c
 
 }
 
+float Config_ReadFloat(const char *itemname, const char *desc, float def_value)
+{
+    VLOG("Getting value %s", itemname);
+    ConfigSetDefaultFloat(video_glide64_section, itemname, def_value, desc);
+    return ConfigGetParamFloat(video_glide64_section, itemname);
+}
+
 #ifdef TEXTURE_FILTER
 wxUint32 texfltr[] = {
   NO_FILTER, //"None"

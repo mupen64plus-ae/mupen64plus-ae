@@ -30,6 +30,7 @@ import org.apache.commons.lang.WordUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
@@ -194,7 +195,7 @@ public class UserPrefs
     /** The manually-overridden hardware type, used for flicker reduction. */
     public final int videoHardwareType;
     
-    /** The polygon offset to use if hardware type is 'custom'. */
+    /** The polygon offset to use. */
     public final float videoPolygonOffset;
     
     /** True if the left and right audio channels are swapped. */
@@ -317,8 +318,32 @@ public class UserPrefs
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
         displayFpsRefresh = getSafeInt( mPreferences, "displayFpsRefresh", 0 );
         isFpsEnabled = displayFpsRefresh > 0;
-        videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
-        videoPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "videoPolygonOffset", "-0.2" ), -0.2f );
+        int selectedHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
+        videoHardwareType = selectedHardwareType < 0 ? appData.hardwareInfo.hardwareType : selectedHardwareType;
+        switch( videoHardwareType )
+        {
+            case HardwareInfo.HARDWARE_TYPE_OMAP:
+                videoPolygonOffset = 0.2f;
+                break;
+            case HardwareInfo.HARDWARE_TYPE_OMAP_2:
+                videoPolygonOffset = -1.5f;
+                break;
+            case HardwareInfo.HARDWARE_TYPE_QUALCOMM:
+                videoPolygonOffset = -0.2f;
+                break;
+            case HardwareInfo.HARDWARE_TYPE_IMAP:
+                videoPolygonOffset = -0.001f;
+                break;
+            case HardwareInfo.HARDWARE_TYPE_TEGRA:
+                videoPolygonOffset = -2.0f;
+                break;
+            case HardwareInfo.HARDWARE_TYPE_UNKNOWN:
+                videoPolygonOffset = -1.5f;
+                break;
+            default:
+                videoPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "videoPolygonOffset", "-1.5" ), -1.5f );
+                break;
+        }
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
         
         // Audio prefs

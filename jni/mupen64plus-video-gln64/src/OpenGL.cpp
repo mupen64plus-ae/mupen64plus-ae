@@ -152,10 +152,7 @@ void OGL_InitStates()
 */
     //// paulscode, added for different configurations based on hardware
     // (part of the missing shadows and stars bug fix)
-    int hardwareType = Android_JNI_GetHardwareType();
-    float f1, f2;
-    Android_JNI_GetPolygonOffset(hardwareType, 1, &f1, &f2);
-    glPolygonOffset( f1, f2 );
+    glPolygonOffset( config.polygonOffsetFactor, config.polygonOffsetUnits );
     ////
 
 // some other settings that have been tried, which do not work:

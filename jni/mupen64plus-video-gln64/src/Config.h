@@ -49,6 +49,9 @@ struct Config
     int     frameRenderRate;
     int     verticalSync;
 
+    float   polygonOffsetFactor;
+    float   polygonOffsetUnits;
+
     int     enableFog;
     int     enablePrimZ;
     int     enableLighting;

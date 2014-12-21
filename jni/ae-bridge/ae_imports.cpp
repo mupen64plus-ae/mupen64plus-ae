@@ -30,16 +30,11 @@
 static pthread_key_t mThreadKey;
 static JavaVM* mJavaVM;
 
-// Store custom polygon offset natively to reduce JNI calls
-static float videoPolygonOffset = -1.5f;
-
 // Imported java class reference
 static jclass mActivityClass;
 
 // Imported java method references
 static jmethodID midStateCallback;
-static jmethodID midGetHardwareType;
-static jmethodID midGetCustomPolygonOffset;
 
 /*******************************************************************************
  Functions called internally
@@ -148,14 +143,9 @@ extern DECLSPEC void Android_JNI_InitImports(JNIEnv* env, jclass cls)
     LOGI("Android_JNI_InitImports()");
 
     Android_JNI_SetupThread();
-
     mActivityClass = (jclass) env->NewGlobalRef(cls);
-
-    midStateCallback          = env->GetStaticMethodID(mActivityClass, "stateCallback",          "(II)V");
-    midGetHardwareType        = env->GetStaticMethodID(mActivityClass, "getHardwareType",        "()I");
-    midGetCustomPolygonOffset = env->GetStaticMethodID(mActivityClass, "getCustomPolygonOffset", "()F");
-
-    if (!midStateCallback || !midGetHardwareType || !midGetCustomPolygonOffset)
+    midStateCallback = env->GetStaticMethodID(mActivityClass, "stateCallback", "(II)V");
+    if (!midStateCallback)
     {
         LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
@@ -186,54 +176,4 @@ extern DECLSPEC void Android_JNI_StateCallback(void* context, m64p_core_param pa
      */
     JNIEnv *env = Android_JNI_GetEnv();
     env->CallStaticVoidMethod(mActivityClass, midStateCallback, (int) paramChanged, newValue);
-}
-
-extern DECLSPEC int Android_JNI_GetHardwareType()
-{
-    int hardwareType = GetInt( midGetHardwareType );
-    if( hardwareType == HARDWARE_TYPE_CUSTOM )
-    {
-        videoPolygonOffset = GetFloat( midGetCustomPolygonOffset );
-    }
-    return hardwareType;
-}
-
-extern DECLSPEC void Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2)
-{
-    // Part of the missing shadows and stars bug fix
-    if( hardwareType == HARDWARE_TYPE_OMAP )
-    {
-        *f1 = bias > 0 ? 0.2f : 0.0f;
-        *f2 = bias > 0 ? 0.2f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_OMAP_2 )
-    {
-        *f1 = bias > 0 ? -1.5f : 0.0f;
-        *f2 = bias > 0 ? -1.5f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_QUALCOMM )
-    {
-        *f1 = bias > 0 ? -0.2f : 0.0f;
-        *f2 = bias > 0 ? -0.2f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_IMAP )
-    {
-        *f1 = bias > 0 ? -0.001f : 0.0f;
-        *f2 = bias > 0 ? -0.001f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_TEGRA )
-    {
-        *f1 = bias > 0 ? -2.0f : 0.0f;
-        *f2 = bias > 0 ? -2.0f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_CUSTOM )
-    {
-        *f1 = bias > 0 ? videoPolygonOffset : 0.0f;
-        *f2 = bias > 0 ? videoPolygonOffset : 0.0f;
-    }
-    else // HARDWARE_TYPE_UNKNOWN
-    {
-        *f1 = bias > 0 ? -1.5f : 0.0f;
-        *f2 = bias > 0 ? -1.5f : 0.0f;
-    }
 }

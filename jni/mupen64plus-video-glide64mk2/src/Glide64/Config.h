@@ -29,6 +29,7 @@ BOOL Config_Open();
 int Config_ReadScreenInt(const char *itemname);
 PackedScreenResolution Config_ReadScreenSettings();
 BOOL Config_ReadInt(const char *itemname, const char *desc, int def_value, int create=TRUE, BOOL isBoolean=TRUE);
+float Config_ReadFloat(const char *itemname, const char *desc, float def_value);
 
 
 #endif /* CONFIG_H */

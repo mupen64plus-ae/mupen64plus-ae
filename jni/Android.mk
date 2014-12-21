@@ -121,7 +121,6 @@ LOCAL_SRC_FILES :=                              \
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DANDROID           \
-    -DANDROID_EDITION   \
     -DIOAPI_NO_64       \
     -DNOCRYPT           \
     -DNOUNCRYPT         \
@@ -403,7 +402,6 @@ LOCAL_SRC_FILES :=                      \
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DANDROID           \
-    -DANDROID_EDITION   \
     -DNO_ASM            \
     -DUSE_GLES=1        \
     -fsigned-char       \

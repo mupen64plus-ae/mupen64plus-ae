@@ -41,19 +41,6 @@ extern "C" {
 #endif
 
 /*******************************************************************************
- Constants (must match definitions in Java)
- *******************************************************************************/
-
-// arrays.xml, AppData.HardwareInfo
-#define HARDWARE_TYPE_UNKNOWN       0
-#define HARDWARE_TYPE_OMAP          1
-#define HARDWARE_TYPE_OMAP_2        2
-#define HARDWARE_TYPE_QUALCOMM      3
-#define HARDWARE_TYPE_IMAP          4
-#define HARDWARE_TYPE_TEGRA         5
-#define HARDWARE_TYPE_CUSTOM        999
-
-/*******************************************************************************
  Imported Java methods (to be called from C)
  *******************************************************************************/
 
@@ -62,10 +49,6 @@ extern void         Android_JNI_InitImports(JNIEnv* env, jclass cls);
 
 // Called by mupen64plus-ui-console
 extern void         Android_JNI_StateCallback(void* context, m64p_core_param paramChanged, int newValue);
-
-// Called by mupen64plus-video-*
-extern int          Android_JNI_GetHardwareType();
-extern void         Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2);
 
 // Called by mupen64plus-video-gln64
 extern void         Android_JNI_SwapWindow();
