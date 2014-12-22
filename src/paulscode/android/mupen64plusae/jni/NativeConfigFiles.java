@@ -53,8 +53,6 @@ public class NativeConfigFiles
         // glide64 config file
         ConfigFile glide64_conf = new ConfigFile( appData.glide64mk2_ini );
         glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                       // Stretch to GameSurface, Java will manage aspect ratio
-        glide64_conf.put( "DEFAULT", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
-        glide64_conf.put( "DEFAULT", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
         
         // Core and rice config file
         ConfigFile mupen64plus_cfg = new ConfigFile( game.mupen64plus_cfg );
@@ -117,6 +115,8 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "force_polygon_offset", "1" );                                             // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_factor", String.valueOf( user.videoPolygonOffset ) );      // Specifies a scale factor that is used to create a variable depth offset for each polygon
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( user.videoPolygonOffset ) );       // Is multiplied by an implementation-specific value to create a constant depth offset
+        mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
         
         mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", "True" );                                                  // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( user.videoPolygonOffset ) );              // Specifies a scale factor that is used to create a variable depth offset for each polygon

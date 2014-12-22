@@ -275,7 +275,6 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glide64/rdp.cpp                   \
     $(SRCDIR)/Glide64/TexBuffer.cpp             \
     $(SRCDIR)/Glide64/TexCache.cpp              \
-    $(SRCDIR)/Glide64/ticks.c                   \
     $(SRCDIR)/Glide64/Util.cpp                  \
 #    $(SRCDIR)/GlideHQ/Ext_TxFilter.cpp          \
 #    $(SRCDIR)/GlideHQ/TxFilterExport.cpp        \
@@ -300,7 +299,7 @@ LOCAL_SRC_FILES :=                              \
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DANDROID           \
-    -DANDROID_EDITION   \
+    -DUSE_FRAMESKIPPER  \
     -DNOSSE             \
     -DNO_ASM            \
     -DUSE_GLES          \
