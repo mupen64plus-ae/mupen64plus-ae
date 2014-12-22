@@ -19,8 +19,8 @@
  * Authors: Paul Lamb, littleguy77
  */
 
-#ifndef AE_BRIDGE_H
-#define AE_BRIDGE_H
+#ifndef AE_IMPORTS_H
+#define AE_IMPORTS_H
 
 #include <jni.h>
 #include <android/log.h>
@@ -57,4 +57,4 @@ extern void         Android_JNI_SwapWindow();
 }
 #endif
 
-#endif // AE_BRIDGE_H
+#endif // AE_IMPORTS_H
