@@ -20,21 +20,6 @@
 #include "FrameSkipper.h"
 #include <time.h>
 
-static struct timespec startTicks;
-
-static void ticksInitialize()
-{
-	clock_gettime(CLOCK_MONOTONIC, &startTicks);
-}
-
-static unsigned int ticksGetTicks()
-{
-	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	return (now.tv_sec - startTicks.tv_sec) * 1000 +
-			(now.tv_nsec - startTicks.tv_nsec) / 1000000;
-}
-
 FrameSkipper::FrameSkipper()
 	: skipType(AUTO), maxSkips(2), targetFPS(60)
 {
@@ -51,11 +36,11 @@ void FrameSkipper::update()
 {
 	// for the first frame
 	if (initialTicks == 0) {
-		initialTicks = ticksGetTicks();
+		initialTicks = getCurrentTicks();
 		return;
 	}
 
-	unsigned int elapsed = ticksGetTicks() - initialTicks;
+	unsigned int elapsed = getCurrentTicks() - initialTicks;
 	unsigned int realCount = elapsed * targetFPS / 1000;
 
 	virtualCount++;
@@ -73,4 +58,11 @@ void FrameSkipper::update()
 		if (++skipCounter > maxSkips)
 			skipCounter = 0;
 	}
+}
+
+unsigned int FrameSkipper::getCurrentTicks()
+{
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	return (now.tv_sec) * 1000 + (now.tv_nsec) / 1000000;
 }
