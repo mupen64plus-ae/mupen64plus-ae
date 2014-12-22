@@ -21,7 +21,8 @@
 #include <time.h>
 
 FrameSkipper::FrameSkipper()
-	: skipType(AUTO), maxSkips(2), targetFPS(60)
+	: skipType(AUTO), maxSkips(2), targetFPS(60),
+	  skipCounter(0), initialTicks(0), virtualCount(0)
 {
 }
 
