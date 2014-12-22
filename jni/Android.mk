@@ -245,7 +245,7 @@ include $(CLEAR_VARS)
 SRCDIR := ./mupen64plus-video-glide64mk2/src
 
 LOCAL_MODULE := mupen64plus-video-glide64mk2
-LOCAL_SHARED_LIBRARIES := ae-imports SDL2
+LOCAL_SHARED_LIBRARIES := SDL2
 LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 
@@ -254,7 +254,6 @@ LOCAL_C_INCLUDES :=                             \
     $(M64P_API_INCLUDES)                        \
     $(PNG_INCLUDES)                             \
     $(SDL_INCLUDES)                             \
-    $(AE_BRIDGE_INCLUDES)                       \
 
 LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glitch64/OGLEScombiner.cpp        \
@@ -345,7 +344,7 @@ include $(CLEAR_VARS)
 SRCDIR := ./mupen64plus-video-rice/src
 
 LOCAL_MODULE := mupen64plus-video-rice
-LOCAL_SHARED_LIBRARIES := ae-imports SDL2
+LOCAL_SHARED_LIBRARIES := SDL2
 LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 
@@ -354,7 +353,6 @@ LOCAL_C_INCLUDES :=                     \
     $(M64P_API_INCLUDES)                \
     $(PNG_INCLUDES)                     \
     $(SDL_INCLUDES)                     \
-    $(AE_BRIDGE_INCLUDES)               \
 
 LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/Blender.cpp               \
