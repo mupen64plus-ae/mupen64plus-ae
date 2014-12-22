@@ -675,6 +675,7 @@ void compile_shader()
   shader_programs[number_of_programs].fogModeEndScale_location = glGetUniformLocation(program_object, "fogModeEndScale");
   shader_programs[number_of_programs].fogColor_location = glGetUniformLocation(program_object, "fogColor");
   shader_programs[number_of_programs].alphaRef_location = glGetUniformLocation(program_object, "alphaRef");
+  shader_programs[number_of_programs].chroma_color_location = glGetUniformLocation(program_object, "chroma_color");
 
   update_uniforms(shader_programs[number_of_programs]);
 
