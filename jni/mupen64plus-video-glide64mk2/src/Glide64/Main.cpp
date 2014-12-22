@@ -378,6 +378,15 @@ void ReadSettings ()
   settings.polygon_offset_factor = Config_ReadFloat("polygon_offset_factor", "Specifies a scale factor that is used to create a variable depth offset for each polygon", 0.0f);
   settings.polygon_offset_units = Config_ReadFloat("polygon_offset_units", "Is multiplied by an implementation-specific value to create a constant depth offset", 0.0f);
 
+#ifdef USE_FRAMESKIPPER
+  settings.autoframeskip = (BOOL)Config_ReadInt("autoframeskip", "If true, skip up to maxframeskip frames to maintain clock schedule; if false, skip exactly maxframeskip frames", 0, TRUE, TRUE);
+  settings.maxframeskip = Config_ReadInt("maxframeskip", "If autoframeskip is true, skip up to this many frames to maintain clock schedule; if autoframeskip is false, skip exactly this many frames", 0, TRUE, FALSE);
+  if( settings.autoframeskip )
+    frameSkipper.setSkips( FrameSkipper::AUTO, settings.maxframeskip );
+  else
+    frameSkipper.setSkips( FrameSkipper::MANUAL, settings.maxframeskip );
+#endif
+
   settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 0);
   settings.ssformat = (BOOL)Config_ReadInt("ssformat", "TODO:ssformat", 0);
   //settings.fast_crc = (BOOL)Config_ReadInt ("fast_crc", "Fast CRC", 0);
@@ -726,15 +735,6 @@ void ReadSpecialSettings (const char * name)
     ini->Read(_T("lodmode"), &(settings.lodmode));
     if (settings.special_lodmode >= 0)
       settings.lodmode = settings.special_lodmode;
-
-#ifdef USE_FRAMESKIPPER
-    ini->Read(_T("autoframeskip"), &(settings.autoframeskip));
-    ini->Read(_T("maxframeskip"), &(settings.maxframeskip));
-    if( settings.autoframeskip )
-      frameSkipper.setSkips( FrameSkipper::AUTO, settings.maxframeskip );
-    else
-      frameSkipper.setSkips( FrameSkipper::MANUAL, settings.maxframeskip );
-#endif
 
     /*
     TODO-port: fix resolutions
