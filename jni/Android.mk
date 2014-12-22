@@ -275,7 +275,6 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glide64/rdp.cpp                   \
     $(SRCDIR)/Glide64/TexBuffer.cpp             \
     $(SRCDIR)/Glide64/TexCache.cpp              \
-    $(SRCDIR)/Glide64/ticks.c                   \
     $(SRCDIR)/Glide64/Util.cpp                  \
 #    $(SRCDIR)/GlideHQ/Ext_TxFilter.cpp          \
 #    $(SRCDIR)/GlideHQ/TxFilterExport.cpp        \

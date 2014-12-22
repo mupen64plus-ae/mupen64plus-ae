@@ -18,7 +18,22 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "FrameSkipper.h"
-#include "ticks.h"
+#include <time.h>
+
+static struct timespec startTicks;
+
+static void ticksInitialize()
+{
+	clock_gettime(CLOCK_MONOTONIC, &startTicks);
+}
+
+static unsigned int ticksGetTicks()
+{
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	return (now.tv_sec - startTicks.tv_sec) * 1000 +
+			(now.tv_nsec - startTicks.tv_nsec) / 1000000;
+}
 
 FrameSkipper::FrameSkipper()
 	: skipType(AUTO), maxSkips(2), targetFPS(60)
