@@ -29,52 +29,54 @@ FrameSkipper::FrameSkipper()
 void FrameSkipper::start()
 {
 	initialTicks = 0;
-	actualFrame = 0;
-	skipCounter = 0;
 }
 
 void FrameSkipper::update()
 {
-	// Just record the tick offset on the first frame
-	if (initialTicks == 0)
+	if (maxSkips < 1)
 	{
-		initialTicks = getCurrentTicks();
-		return;
+		// Frameskip disabled, do nothing
 	}
-
-	// Compute the frame number we want be at, based on elapsed time and target FPS
-	unsigned int elapsedMilliseconds = getCurrentTicks() - initialTicks;
-	unsigned int desiredFrame = (elapsedMilliseconds * targetFPS) / 1000;
-
-	// Record the frame number we are actually at
-	actualFrame++;
-
-    // See if we need to skip
-	if (desiredFrame >= actualFrame)
+	else if (skipType == MANUAL)
 	{
-		// We are on or behind schedule
+		// Skip this frame based on a deterministic skip rate
+		if (++skipCounter > maxSkips)
+			skipCounter = 0;
+	}
+	else if (initialTicks > 0) // skipType == AUTO, running
+	{
+		// Compute the frame number we want be at, based on elapsed time and target FPS
+		unsigned int elapsedMilliseconds = getCurrentTicks() - initialTicks;
+		unsigned int desiredFrame = (elapsedMilliseconds * targetFPS) / 1000;
 
-		if (desiredFrame > actualFrame && skipType == AUTO && skipCounter < maxSkips)
+		// Record the frame number we are actually at
+		actualFrame++;
+
+		// See if we need to skip
+		if (desiredFrame < actualFrame)
 		{
-			// We are behind schedule and we are allowed to skip this frame...
-			// ... so skip this frame
+			// We are ahead of schedule, so do nothing
+		}
+		else if (desiredFrame > actualFrame && skipCounter < maxSkips)
+		{
+			// We are behind schedule and we are allowed to skip this frame, so skip this frame
 			skipCounter++;
 		}
 		else
 		{
 			// We are on schedule, or we are not allowed to skip this frame...
-			// ... so pretend we are on schedule (if not already)
+			// ... so do not skip this frame
+			skipCounter = 0;
+			// ... and pretend we are on schedule (if not already)
 			actualFrame = desiredFrame;
-			// ... and do not skip this frame
-			if (skipType == AUTO)
-				skipCounter = 0;
 		}
 	}
-	if (skipType == MANUAL)
+	else // skipType == AUTO, initializing
 	{
-		// Skip this frame based on a deterministic skip rate
-		if (++skipCounter > maxSkips)
-			skipCounter = 0;
+		// First frame, initialize auto-skip variables
+		initialTicks = getCurrentTicks();
+		actualFrame = 0;
+		skipCounter = 0;
 	}
 }
 
