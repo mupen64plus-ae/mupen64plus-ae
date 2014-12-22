@@ -33,7 +33,6 @@ public:
 
 	bool willSkipNext() { return (skipCounter > 0); }
 
-	void start();
 	void update();
 
 private:

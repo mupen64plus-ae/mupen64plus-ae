@@ -26,11 +26,6 @@ FrameSkipper::FrameSkipper()
 {
 }
 
-void FrameSkipper::start()
-{
-	initialTicks = 0;
-}
-
 void FrameSkipper::update()
 {
 	if (maxSkips < 1)

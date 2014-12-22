@@ -1960,13 +1960,6 @@ EXPORT int CALL RomOpen (void)
   return true;
 }
 
-EXPORT void CALL RomResumed(void)
-{
-#ifdef ANDROID_EDITION
-  frameSkipper.start();
-#endif
-}
-
 /******************************************************************
 Function: ShowCFB
 Purpose:  Useally once Dlists are started being displayed, cfb is

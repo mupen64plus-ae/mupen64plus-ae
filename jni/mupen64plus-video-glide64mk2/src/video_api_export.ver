@@ -9,7 +9,6 @@ ProcessDList;
 ProcessRDPList;
 RomClosed;
 RomOpen;
-RomResumed;
 ShowCFB;
 UpdateScreen;
 ViStatusChanged;
