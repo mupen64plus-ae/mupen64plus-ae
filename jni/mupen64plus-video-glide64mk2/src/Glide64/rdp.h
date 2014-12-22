@@ -216,7 +216,7 @@ typedef struct {
   int buff_clear;
   int swapmode;
   int lodmode;
-#ifdef ANDROID_EDITION
+#ifdef USE_FRAMESKIPPER
   int autoframeskip;
   int maxframeskip;
 #endif

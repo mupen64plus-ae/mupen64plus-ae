@@ -162,7 +162,7 @@ float      pal_percent = 0.0f;
 // ref rate
 // 60=0x0, 70=0x1, 72=0x2, 75=0x3, 80=0x4, 90=0x5, 100=0x6, 85=0x7, 120=0x8, none=0xff
 
-#ifdef ANDROID_EDITION
+#ifdef USE_FRAMESKIPPER
 #include "FrameSkipper.h"
 FrameSkipper frameSkipper;
 #endif
@@ -727,7 +727,7 @@ void ReadSpecialSettings (const char * name)
     if (settings.special_lodmode >= 0)
       settings.lodmode = settings.special_lodmode;
 
-#ifdef ANDROID_EDITION
+#ifdef USE_FRAMESKIPPER
     ini->Read(_T("autoframeskip"), &(settings.autoframeskip));
     ini->Read(_T("maxframeskip"), &(settings.maxframeskip));
     if( settings.autoframeskip )
@@ -1903,7 +1903,7 @@ EXPORT int CALL RomOpen (void)
   if (code == 0x5000) region = 1; // Europe (PAL)
   if (code == 0x5500) region = 0; // Australia (NTSC)
 
-#ifdef ANDROID_EDITION
+#ifdef USE_FRAMESKIPPER
   frameSkipper.setTargetFPS(region == 1 ? 50 : 60);
 #endif
 
@@ -2047,7 +2047,7 @@ output:   none
 wxUint32 update_screen_count = 0;
 EXPORT void CALL UpdateScreen (void)
 {
-#ifdef ANDROID_EDITION
+#ifdef USE_FRAMESKIPPER
   frameSkipper.update();
 #endif
 #ifdef LOG_KEY
