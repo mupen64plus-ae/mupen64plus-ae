@@ -22,40 +22,57 @@
 
 FrameSkipper::FrameSkipper()
 	: skipType(AUTO), maxSkips(2), targetFPS(60),
-	  skipCounter(0), initialTicks(0), virtualCount(0)
+	  skipCounter(0), initialTicks(0), actualFrame(0)
 {
 }
 
 void FrameSkipper::start()
 {
 	initialTicks = 0;
-	virtualCount = 0;
+	actualFrame = 0;
 	skipCounter = 0;
 }
 
 void FrameSkipper::update()
 {
-	// for the first frame
-	if (initialTicks == 0) {
+	// Just record the tick offset on the first frame
+	if (initialTicks == 0)
+	{
 		initialTicks = getCurrentTicks();
 		return;
 	}
 
-	unsigned int elapsed = getCurrentTicks() - initialTicks;
-	unsigned int realCount = elapsed * targetFPS / 1000;
+	// Compute the frame number we want be at, based on elapsed time and target FPS
+	unsigned int elapsedMilliseconds = getCurrentTicks() - initialTicks;
+	unsigned int desiredFrame = (elapsedMilliseconds * targetFPS) / 1000;
 
-	virtualCount++;
-	if (realCount >= virtualCount) {
-		if (realCount > virtualCount &&
-				skipType == AUTO && skipCounter < maxSkips) {
+	// Record the frame number we are actually at
+	actualFrame++;
+
+    // See if we need to skip
+	if (desiredFrame >= actualFrame)
+	{
+		// We are on or behind schedule
+
+		if (desiredFrame > actualFrame && skipType == AUTO && skipCounter < maxSkips)
+		{
+			// We are behind schedule and we are allowed to skip this frame...
+			// ... so skip this frame
 			skipCounter++;
-		} else {
-			virtualCount = realCount;
+		}
+		else
+		{
+			// We are on schedule, or we are not allowed to skip this frame...
+			// ... so pretend we are on schedule (if not already)
+			actualFrame = desiredFrame;
+			// ... and do not skip this frame
 			if (skipType == AUTO)
 				skipCounter = 0;
 		}
 	}
-	if (skipType == MANUAL) {
+	if (skipType == MANUAL)
+	{
+		// Skip this frame based on a deterministic skip rate
 		if (++skipCounter > maxSkips)
 			skipCounter = 0;
 	}
@@ -63,6 +80,7 @@ void FrameSkipper::update()
 
 unsigned int FrameSkipper::getCurrentTicks()
 {
+	// Get the number of milliseconds since system epoch
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	return (now.tv_sec) * 1000 + (now.tv_nsec) / 1000000;
