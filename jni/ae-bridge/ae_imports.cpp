@@ -91,20 +91,6 @@ static int Android_JNI_SetupThread(void)
     return 1;
 }
 
-static int GetInt(jmethodID methodID)
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    jint i = env->CallStaticIntMethod(mActivityClass, methodID);
-    return (int) i;
-}
-
-static float GetFloat(jmethodID methodID)
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    jfloat f = env->CallStaticFloatMethod(mActivityClass, methodID);
-    return (float) f;
-}
-
 /*******************************************************************************
  Functions called automatically by JNI framework
  *******************************************************************************/
