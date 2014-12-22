@@ -388,6 +388,7 @@ typedef struct {
   int wrpVRAM;
   int wrpFBO;
   int wrpAnisotropic;
+  int wrpAntiAliasing;
 
 } SETTINGS;
 

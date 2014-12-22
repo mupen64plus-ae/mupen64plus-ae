@@ -387,13 +387,13 @@ void ReadSettings ()
     frameSkipper.setSkips( FrameSkipper::MANUAL, settings.maxframeskip );
 #endif
 
-  settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 0);
+  settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 1);
   settings.ssformat = (BOOL)Config_ReadInt("ssformat", "TODO:ssformat", 0);
   //settings.fast_crc = (BOOL)Config_ReadInt ("fast_crc", "Fast CRC", 0);
 
   settings.show_fps = (BYTE)Config_ReadInt ("show_fps", "Display performance stats (add together desired flags): 1=FPS counter, 2=VI/s counter, 4=% speed, 8=FPS transparent", 0, TRUE, FALSE);
   settings.clock = (BOOL)Config_ReadInt ("clock", "Clock enabled", 0);
-  settings.clock_24_hr = (BOOL)Config_ReadInt ("clock_24_hr", "Clock is 24-hour", 0);
+  settings.clock_24_hr = (BOOL)Config_ReadInt ("clock_24_hr", "Clock is 24-hour", 1);
   // settings.advanced_options only good for GUI config
   // settings.texenh_options = only good for GUI config
   //settings.use_hotkeys = ini->Read(_T("hotkeys"), 1l);
@@ -401,7 +401,7 @@ void ReadSettings ()
   settings.wrpResolution = (BYTE)Config_ReadInt ("wrpResolution", "Wrapper resolution", 0, TRUE, FALSE);
   settings.wrpVRAM = (BYTE)Config_ReadInt ("wrpVRAM", "Wrapper VRAM", 0, TRUE, FALSE);
   settings.wrpFBO = (BOOL)Config_ReadInt ("wrpFBO", "Wrapper FBO", 1, TRUE, TRUE);
-  settings.wrpAnisotropic = (BOOL)Config_ReadInt ("wrpAnisotropic", "Wrapper Anisotropic Filtering", 0, TRUE, TRUE);
+  settings.wrpAnisotropic = (BOOL)Config_ReadInt ("wrpAnisotropic", "Wrapper Anisotropic Filtering", 1, TRUE, TRUE);
 
 #ifndef _ENDUSER_RELEASE_
   settings.autodetect_ucode = (BOOL)Config_ReadInt ("autodetect_ucode", "Auto-detect microcode", 1);
@@ -1442,16 +1442,16 @@ extern "C" {
 EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
 {
   VLOG("CALL ReadScreen2 ()\n");
-  *width = settings.scr_res_x;
-  *height = settings.scr_res_y;
+  *width = settings.res_x;
+  *height = settings.res_y;
   if (dest)
   {
     BYTE * line = (BYTE*)dest;
     if (!fullscreen)
     {
-      for (wxUint32 y=0; y<settings.scr_res_y; y++)
+      for (wxUint32 y=0; y<settings.res_y; y++)
       {
-        for (wxUint32 x=0; x<settings.scr_res_x; x++)
+        for (wxUint32 x=0; x<settings.res_x; x++)
         {
           line[x*3] = 0x20;
           line[x*3+1] = 0x7f;
@@ -1474,17 +1474,17 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
     &info))
   {
     // Copy the screen, let's hope this works.
-      for (wxUint32 y=0; y<settings.scr_res_y; y++)
+      for (wxUint32 y=0; y<settings.res_y; y++)
       {
         BYTE *ptr = (BYTE*) info.lfbPtr + (info.strideInBytes * y);
-        for (wxUint32 x=0; x<settings.scr_res_x; x++)
+        for (wxUint32 x=0; x<settings.res_x; x++)
         {
           line[x*3]   = ptr[0];  // red
           line[x*3+1] = ptr[1];  // green
           line[x*3+2] = ptr[2];  // blue
           ptr += 4;
         }
-        line += settings.scr_res_x * 3;
+        line += settings.res_x * 3;
       }
 
       // Unlock the frontbuffer
