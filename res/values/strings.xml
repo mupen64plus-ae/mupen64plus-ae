@@ -208,7 +208,6 @@
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
     <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
-    <string name="touchscreenEnabled_title">Enable touchscreen</string>
     <string name="touchscreenFeedback_title">Haptic feedback</string>
     <string name="touchscreenFeedback_summary">Vibrate on button press</string>
     <string name="touchpadEnabled_title">Enable touchpad</string>
@@ -248,7 +247,6 @@
     <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
     <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
     <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
-    <string name="touchscreenAutoHoldables_title">Holdable buttons</string>
 
     <string name="touchscreenRefresh_title">Joystick animation</string>
     <string name="touchscreenRefresh_entryNever">Never</string>
@@ -258,17 +256,6 @@
     <string name="touchscreenStyle_title">Button style</string>
     <string name="touchscreenStyle_entryOutline">Outlines</string>
     <string name="touchscreenStyle_entryShaded">Shaded</string>
-
-    <string name="touchscreenHeight_title">Button vertical spacing</string>
-    <string name="touchscreenHeight_entryAuto">Auto</string>
-    <string name="touchscreenHeight_entryFullHeight">Full-height</string>
-    <string name="touchscreenHeight_entryHalfHeight">Half-height</string>
-
-    <string name="touchscreenLayout_title">Button layout</string>
-    <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
-    <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>
-    <string name="touchscreenLayout_entryAll">Both (by roymustang16)</string>
-    <string name="touchscreenLayout_entryCustom">Custom (see http://tinyurl.com/984ofyo)</string>
 
     <string name="touchpadLayout_title">Touchpad layout</string>
     <string name="touchpadLayout_entryDefault">Left pad: Analog control; Right pad: C buttons</string>
@@ -394,9 +381,6 @@
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
-    <string name="pathSelectedGame_title">Game</string>
-    <string name="pathCustomTouchscreen_title">Custom layout folder</string>
-    <string name="pathCustomTouchscreen_default">~</string>
     <string name="pathHiResTextures_title">Import texture pack</string>
     <string name="pathHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
     <string name="pathHiResTextures_default">~</string>
@@ -470,8 +454,6 @@
     <string name="cheatEditor_config_desc">Edit cheat configuration</string>
     <string name="cheatEditor_title">Cheat title</string>
     <string name="cheatEditor_title_desc">Edit cheat title</string>
-    <string name="cheatEditor_ok">OK</string>
-    <string name="cheatEditor_cancel">Cancel</string>
     <string name="cheatEditor_notes">Cheat notes</string>
     <string name="cheatEditor_notes_desc">Edit cheat notes</string>
     <string name="cheatEditor_code">Cheat code</string>
@@ -482,8 +464,6 @@
     <string name="cheatEditor_badOption">Bad option(s), reverting…</string>
     <string name="cheatEditor_delete">Delete cheat</string>
     <string name="cheatEditor_confirm">Are you sure?</string>
-    <string name="cheatEditor_yes">Yes</string>
-    <string name="cheatEditor_no">No</string>
     <string name="cheatEditor_info">Cheat information</string>
     <string name="cheatEditor_title2">Title:</string>
     <string name="cheatEditor_notes2">Notes:</string>

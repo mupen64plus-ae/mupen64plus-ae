@@ -77,40 +77,6 @@
     <string name="touchscreenAutoHold_default" translatable="false">0</string>
 
     <!-- Touchscreen Auto-Holdable Buttons -->
-    <string-array name="touchscreenAutoHoldables_entries" translatable="false">
-        <item>@string/inputMapActivity_btnL</item>
-        <item>@string/inputMapActivity_btnR</item>
-        <item>@string/inputMapActivity_btnZ</item>
-        <item>@string/inputMapActivity_btnS</item>
-        <item>@string/inputMapActivity_btnA</item>
-        <item>@string/inputMapActivity_btnB</item>
-        <item>@string/inputMapActivity_btnCR</item>
-        <item>@string/inputMapActivity_btnCL</item>
-        <item>@string/inputMapActivity_btnCD</item>
-        <item>@string/inputMapActivity_btnCU</item>
-        <item>@string/inputMapActivity_btnDR</item>
-        <item>@string/inputMapActivity_btnDL</item>
-        <item>@string/inputMapActivity_btnDD</item>
-        <item>@string/inputMapActivity_btnDU</item>
-    </string-array>
-    <string-array name="touchscreenAutoHoldables_values" translatable="false">
-        <item>13</item>
-        <item>12</item>
-        <item>5</item>
-        <item>4</item>
-        <item>7</item>
-        <item>6</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-        <item>11</item>
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string name="touchscreenAutoHoldables_default" translatable="false">13~12~5</string>
 
     <!-- Touchscreen Button Styles -->
     <string-array name="touchscreenStyle_entries" translatable="false">
@@ -125,34 +91,8 @@
     <string name="touchscreenStyle_default" translatable="false">Outline</string>
     
     <!-- Touchscreen Layout Heights -->
-    <string-array name="touchscreenHeight_entries" translatable="false">
-        <item>@string/touchscreenHeight_entryAuto</item>
-        <item>@string/touchscreenHeight_entryFullHeight</item>
-        <item>@string/touchscreenHeight_entryHalfHeight</item>
-    </string-array>
-    <string-array name="touchscreenHeight_values" translatable="false">
-        <item></item>
-        <item>-Full-Height</item>
-        <item>-Half-Height</item>
-    </string-array>
-
-    <string name="touchscreenHeight_default" translatable="false"></string>
 
     <!-- Touchscreen Layouts -->
-    <string-array name="touchscreenLayout_entries" translatable="false">
-        <item>@string/touchscreenLayout_entryAnalog</item>
-        <item>@string/touchscreenLayout_entryDigital</item>
-        <item>@string/touchscreenLayout_entryAll</item>
-        <item>@string/touchscreenLayout_entryCustom</item>
-    </string-array>
-    <string-array name="touchscreenLayout_values" translatable="false">
-        <item>Mupen64Plus-AE-Analog</item>
-        <item>Mupen64Plus-AE-Digital</item>
-        <item>Mupen64Plus-AE-All</item>
-        <item>Custom</item>
-    </string-array>
-
-    <string name="touchscreenLayout_default" translatable="false">Mupen64Plus-AE-Analog</string>
     <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
 
     <!-- Xperia Play Touchpad Layouts -->
