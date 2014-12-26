@@ -15,7 +15,7 @@ Android用N64エミュレータ。 Mupen64Plus AEは現在ベータテスト中�
 
 このアプリケーションはROMファイルが付属していません！
 - あなたがそのROMを再生する前に、あなたはゲームを所有する必要があります！
-- A number of public domain games/demos are available at www.pdroms.de
+- 多くのパブリックドメインのゲーム/デモはwww.pdroms.deでご利用いただけます
 
 99¢のバージョンはあなたが寄付したい場合のためのものです。
 - このアプリは作者のウェブサイトから無料でダウンロードできます (広告なし!)
@@ -24,23 +24,23 @@ Android用N64エミュレータ。 Mupen64Plus AEは現在ベータテスト中�
 
 Mupen64Plus、Android Edition (AE)はAndroid用N64エミュレーターです。現在ベータテスト中、すなわち開発段階であることを意味し、数多くのグラフィック、ラグやオーディオの不具合が残っています。www.paulscode.comを訪れてバグ修正やFAQはもちろん、開発とテストに参加してください。
 
-In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
+ゲームのスクリーンショットに関する潜在的な著作権の問題を回避するために、私はスクリーンショットのみパブリックドメインのゲームやデモを使用することに決めました。アプリが再び市場から削除されるような場合は、paulscode.com上で将来のアップデートを無料で取得することができるようになります。
 
-This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/mupen64plus-ae/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
+このアプリはGNU GPL v3でライセンスされ、すべてのソースコードは、GITリポジトリ https://github.com/mupen64plus-ae/mupen64plus-ae から入手できます。リポジトリへの書き込み権限をご希望の開発者は、サポートフォーラムで作者（Paul）に連絡を取ってください。   もし、プロジェクトのブランチに補助が必要な場合は、作者まで知らせていただければ、セットアップのお手伝いをします。
 
 Xperia PLAYに最適化
 - アナログ入力は、タッチパッドを介して可能です！
 
 パーミッション
-Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
-Write External Storage - The device storage is used for writing savegames and custom input profiles.
-Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
+Internet - クラッシュレポートを送信するために使用されます。決してウィルス、スパイウェアやいかなる種類の高校をダウンロードすることはありません。いかなる個人情報を収集することはありません。通常のデータ·レートが適用されます。
+Write External Storage - 記憶装置は、セーブデータとカスタム入力プロファイルを書き込むために使用されます
+Vibrate -デバイスが対応している場合、振動パックのエミュレーションとボタンのフィードバックに使用されます。
 
 はじめに
-- Transfer ROMs anywhere to your internal storage/SD card
-- Browse to them from within the app
-- Default SD card directory on most devices is /mnt/sdcard
-- ROMs must be in .n64, .v64, or .z64 format, optionally in .zip files
+- 任意の内部ストレージ/SDカードにロムを転送してください。
+- アプリからそれらを参照できます。
+- ほとんどのデバイス上の標準のSDカードのディレクトリは、/mnt/sdcard です。
+- ロムは.n64、.v64または.z64形式、必要に応じてzipファイルである必要があります。
 
-HELP, FAQS, BUG-FIXES, GAME BACKUP INSTRUCTIONS:
+ヘル、FAQS、バグ修正、ゲームのバックアップ手順などは:
 - http://www.paulscode.com

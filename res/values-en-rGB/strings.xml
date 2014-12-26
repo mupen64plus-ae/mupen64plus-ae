@@ -43,6 +43,7 @@
   <string name="menuItem_play">Play</string>
   <string name="menuItem_settings">Settings</string>
   <string name="menuItem_globalSettings">Global settings</string>
+  <string name="menuItem_emulationProfiles">Emulation profiles</string>
   <string name="menuItem_touchscreenProfiles">Touchscreen profiles</string>
   <string name="menuItem_controllerProfiles">Controller profiles</string>
   <string name="menuItem_customCheats">Custom cheats</string>
@@ -55,13 +56,26 @@
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">App version</string>
   <string name="menuItem_changelog">Changelog</string>
+  <string name="menuItem_hardwareInfo">Hardware info</string>
   <string name="menuItem_localeOverride">Language</string>
   <!--ManageProfilesActivity-->
+  <string name="menuItem_new">New</string>
+  <string name="menuItem_hideBuiltins">Hide built-ins</string>
+  <string name="menuItem_showBuiltins">Show built-ins</string>
+  <string name="profile_name_cannot_be_empty">Name cannot be empty</string>
+  <string name="profile_name_cannot_contain_brackets">Name cannot contain brackets</string>
+  <string name="profile_name_must_be_unique">Name must be unique</string>
+  <string name="profile_manage_profiles">Manage profiles</string>
   <!--Popup Dialogs-->
-  <string name="popup_faq">Mupen64Plus is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the <i>video plugin</i>.\n\nTo fix lag, try changing the <i>video frameskip</i> setting or the <i>video plugin</i>.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the <i>button scale</i> or <i>button layout</i>.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.\n\n</small>Thank you for helping us improve the app!</string>
-  <string name="popup_version">Version: %1$s\nVersion code: %2$d</string>
   <!--Lists-->
+  <string name="listItem_edit">Edit</string>
+  <string name="listItem_rename">Rename</string>
+  <string name="listItem_copy">Copy</string>
+  <string name="listItem_delete">Delete</string>
+  <string name="listItem_disabled">(Disabled)</string>
   <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Profile name</string>
+  <string name="hint_profileComment">Description (optional)</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -76,6 +90,7 @@
   <string name="toast_loadingFile">Loading %1$s…</string>
   <string name="toast_savingFile">Saving %1$s…</string>
   <string name="toast_overwritingFile">Overwriting %1$s…</string>
+  <string name="toast_loadingGameInfo">Loading game info…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Now using slot %1$d.</string>
   <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
@@ -94,9 +109,9 @@
   <string name="actionReloadAssets_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
   <string name="actionCrashTest_title">Test</string>
   <string name="actionCrashTest_summary">Send a configuration report to the developers</string>
-  <string name="actionResetUserPrefs_title">Reset</string>
-  <string name="actionResetUserPrefs_summary">Restore default settings</string>
-  <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
+  <string name="actionCheatEditor_title">Enable cheats</string>
+  <string name="actionCheatEditor_summary">Add, modify, and delete custom cheats</string>
+  <string name="actionShare_title">Share</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Input</string>
   <string name="screenInput_summary">Control settings</string>
@@ -111,6 +126,9 @@
   <string name="screenAdvanced_title">Advanced</string>
   <string name="screenAdvanced_summary">Core, storage, and debug settings</string>
   <string name="screenGlobalSettings_title">Global settings</string>
+  <string name="screenGlobalSettings_summary">Display, audio, storage, and debug settings</string>
+  <string name="screenCheats_title">Cheats</string>
+  <string name="screenCheats_summaryEnabled">Enabled</string>
   <string name="screenCheats_summaryDisabled">Disabled</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheat options (long-press for notes)</string>
@@ -130,7 +148,6 @@
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Enable cheats</string>
   <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
-  <string name="touchscreenEnabled_title">Enable touchscreen</string>
   <string name="touchscreenFeedback_title">Haptic feedback</string>
   <string name="touchscreenFeedback_summary">Vibrate on button press</string>
   <string name="touchpadEnabled_title">Enable touchpad</string>
@@ -148,8 +165,6 @@
   <string name="gln64ScreenClear_summary">Disable for speed (might cause video glitches)</string>
   <string name="gln64AlphaTest_title">Alpha test</string>
   <string name="gln64AlphaTest_summary">Disable for speed (causes black textures)</string>
-  <string name="gln64DepthTest_title">Depth test</string>
-  <string name="gln64DepthTest_summary">Disable for speed (causes flashing background)</string>
   <string name="riceAutoFrameskip_title">Auto frameskip</string>
   <string name="riceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
   <string name="riceFastTexture_title">Fast texture loading</string>
@@ -167,7 +182,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
   <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
   <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
-  <string name="touchscreenAutoHoldables_title">Holdable buttons</string>
   <string name="touchscreenRefresh_title">Joystick animation</string>
   <string name="touchscreenRefresh_entryNever">Never</string>
   <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
@@ -175,15 +189,6 @@
   <string name="touchscreenStyle_title">Button style</string>
   <string name="touchscreenStyle_entryOutline">Outlines</string>
   <string name="touchscreenStyle_entryShaded">Shaded</string>
-  <string name="touchscreenHeight_title">Button vertical spacing</string>
-  <string name="touchscreenHeight_entryAuto">Auto</string>
-  <string name="touchscreenHeight_entryFullHeight">Full-height</string>
-  <string name="touchscreenHeight_entryHalfHeight">Half-height</string>
-  <string name="touchscreenLayout_title">Button layout</string>
-  <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
-  <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>
-  <string name="touchscreenLayout_entryAll">Both (by roymustang16)</string>
-  <string name="touchscreenLayout_entryCustom">Custom (see http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Touchpad layout</string>
   <string name="touchpadLayout_entryDefault">Left pad: Analogue control; Right pad: C buttons</string>
   <string name="touchpadLayout_entryReverse">Left pad: C buttons; Right pad: Analogue control</string>
@@ -205,19 +210,12 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (highest framerate)</string>
   <string name="displayScaling_title">Screen scaling</string>
-  <string name="displayScaling_entryNone">None\n<small>Use exact resolution selected above</small></string>
-  <string name="displayScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
-  <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
-  <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
   <string name="displayFpsRefresh_title">Display framerate</string>
   <string name="displayFpsRefresh_entryNever">Never</string>
   <string name="displayFpsRefresh_entryOccasionally">Occasionally</string>
   <string name="displayFpsRefresh_entryFrequently">Frequently</string>
   <string name="videoPlugin_title">Video plugin</string>
   <string name="videoPlugin_entryNone">None (video disabled)</string>
-  <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
-  <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Flicker reduction</string>
   <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
   <string name="videoHardwareType_entryStandard">Standard profile</string>
@@ -290,18 +288,21 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
-  <string name="pathSelectedGame_title">Game</string>
-  <string name="pathCustomTouchscreen_title">Custom layout folder</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Import texture pack</string>
   <string name="pathHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Game save folder</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multi-player</string>
   <string name="playerMap_summary">Define each player\'s controller(s)</string>
   <!--Profile Preferences-->
+  <string name="emulationProfile_title">Emulation profile</string>
+  <string name="touchscreenProfile_title">Touchscreen profile</string>
+  <string name="controllerProfile_title">Controller profile</string>
+  <string name="controllerProfile1_title">Controller 1 profile</string>
+  <string name="controllerProfile2_title">Controller 2 profile</string>
+  <string name="controllerProfile3_title">Controller 3 profile</string>
+  <string name="controllerProfile4_title">Controller 4 profile</string>
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -312,6 +313,7 @@
   <string name="confirmResetGame_message">Reset game? All progress since your last save will be lost.</string>
   <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
   <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
+  <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Change log</string>
   <!--Corrupt Installation Warning-->
@@ -323,7 +325,6 @@
   <string name="assetExtractor_initializing">Initialising</string>
   <string name="assetExtractor_progress">%1$.0f%% done: %2$s</string>
   <string name="assetExtractor_finished">Finished</string>
-  <string name="assetExtractor_failed">Error extracting app data.\nPlease unplug USB cable, reboot device, and re-launch app.\nFor help, please visit %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(long-press for full text)</string>
@@ -332,7 +333,38 @@
   <string name="cheatNotes_title">Notes</string>
   <string name="cheatNotes_none">(no notes available for this cheat)</string>
   <!--Cheat Editor-->
+  <string name="menuItem_cheatEditor">Cheat editor</string>
+  <string name="cheatEditor_empty">Empty cheat</string>
+  <string name="cheatEditor_added">Empty cheat added at bottom of list</string>
+  <string name="cheatEditor_edit">Edit cheats</string>
+  <string name="cheatEditor_edit_desc">Long press a cheat to edit it</string>
   <string name="cheatEditor_help">Help</string>
+  <string name="cheatEditor_readme1">Welcome to the Mupen64plus AE Cheat editor</string>
+  <string name="cheatEditor_readme2">Please adhere to the following guidelines when adding or editing cheats:</string>
+  <string name="cheatEditor_readme3">1. Titles and descriptions should NOT contain line breaks (the enter button). Any line breaks will be replaced with spaces.</string>
+  <string name="cheatEditor_readme4">2. Hexadecimal numbers must be used in place of the X\'s in the examples given below.</string>
+  <string name="cheatEditor_readme5">3. Cheats must only have one code per line in the format \"XXXXXXXX XXXX\" without quotes or \"XXXXXXXX ????\" without quotes if the cheat code has options. Cheats can have multiple lines.</string>
+  <string name="cheatEditor_readme6">4. Options codes must only have one option per line in the format \"Option Description XXXX\" without quotes. Option codes can also have multiple lines.</string>
+  <string name="cheatEditor_config">Cheat config</string>
+  <string name="cheatEditor_config_desc">Edit cheat configuration</string>
+  <string name="cheatEditor_title">Cheat title</string>
+  <string name="cheatEditor_title_desc">Edit cheat title</string>
+  <string name="cheatEditor_notes">Cheat notes</string>
+  <string name="cheatEditor_notes_desc">Edit cheat notes</string>
+  <string name="cheatEditor_code">Cheat code</string>
+  <string name="cheatEditor_code_desc">Edit cheat code</string>
+  <string name="cheatEditor_badCode">Bad code(s), reverting…</string>
+  <string name="cheatEditor_option">Cheat options</string>
+  <string name="cheatEditor_option_desc">Edit cheat options</string>
+  <string name="cheatEditor_badOption">Bad option(s), reverting…</string>
+  <string name="cheatEditor_delete">Delete cheat</string>
+  <string name="cheatEditor_confirm">Are you sure?</string>
+  <string name="cheatEditor_info">Cheat information</string>
+  <string name="cheatEditor_title2">Title:</string>
+  <string name="cheatEditor_notes2">Notes:</string>
+  <string name="cheatEditor_code2">Code(s):</string>
+  <string name="cheatEditor_option2">Option(s):</string>
+  <string name="cheatEditor_saveConfirm">Save cheat file?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Unpacking textures</string>
   <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
@@ -345,12 +377,11 @@
   <string name="playerMap_deviceWithName">Device %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Device %1$d</string>
   <string name="playerMapPreference_popupTitle">Player %1$d</string>
-  <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Unmap</string>
-  <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Unmap</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analogue stick controlled with touchpad</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad controlled with touchpad</string>

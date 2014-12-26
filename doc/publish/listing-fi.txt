@@ -1,46 +1,46 @@
-[Promotional Text]
+[Kaupallinen Teksti]
 
 
-Nintendo64 emulator for Android. Mupen64Plus AE is in Beta testing.
-
-
-
+Nintendo64 emulaattori Androidille. Mupen64Plus AE on Betatestauksessa.
 
 
 
 
 
-[App Lisätiedot]
 
 
-Tämä App:si ei tule ROM:ien kanssa
--Sinulla täytyy olla oikeudet annettu ROM:iin ennen kuin pelaat sitä!
-- A number of public domain games/demos are available at www.pdroms.de
 
-99¢ IS FOR DONATIONS ONLY
--Tämä APP:si on ilmanen ladata minun sivuiltani (EI MAINOKSIA!)
--Ajattele lahjoitusta, Kiitos
-- Donations support MANY open-source projects and developers
+[App Kuvaus]
 
-Mupen64Plus, Android Edition (AE) is an N64 emulator for Android. It is currently in Beta testing, which means it is a work in progress. There are still many graphical, lag, and audio problems, even on modern devices. Visit www.paulscode.com to get involved in development and testing, as well as bug-fixes and FAQs.
 
-In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
+TÄMÄ APP EI TULE ROM:IEN KANSSA
+- Sinulla täytyy olla oikeus annettuun ROM:iin ennen kuin pelaat sitä!
+- Useita yleiseen käyttöön suunnattuja pelejä/demoja saatavilla osoitteessa www.pdroms.de
 
-This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/mupen64plus-ae/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
+99¢ ON VAIN LAHJOITUKSILLE
+- Tämä app on ladattavissa ilmaseksi verkkosivultani (EI MAINOKSIA!)
+- Ole hyvä ja harkitse lahjoittamista
+- Lahjoitukset tukevat MONIA avoimen lähdekoodin projekteja ja kehittäjiä
 
-XPERIA PLAY OPTIMIZED
-- Analog input from the touchpad!
+Mupen64Plus, Android Edition (AE) on N64 emulaattori Androidille. Se on tällä hetkellä Betatestauksessa, mikä tarkoittaa sen olevan työn alla. Siinä on edelleen monia graafisia, lagi, ja audio ongelmia, jopa moderneilla laitteilla. Vieraile www.paulscode.com päästäksesi mukaan kehittämiseen ja testaamiseen, sekä bugikorjauksiin ja UKK:iin.
+
+Välttääkseni mahdollisia tekijänoikeusongelmia liittyen pelikuvankaappauksiin, olen päättänyt käyttää kuvankaappauksiin vain yleisen käyttöön suunnattuja pelejä ja demoja. Kuitenkin, jos app taas poistetaan Marketista, pystyt edelleen hankkimaan tulevaisuuden päivityksiä ilmaiseksi osoitteesta paulscode.com.
+
+Tämä app on GNU GPL v3 lisensoitu, ja täysi lähdekoodi on saatavissa julkisesta GIT varastosta osoitteessa https://github.com/mupen64plus-ae/mupen64plus-ae Jos joku kehittäjistä haluaisi kirjoitusoikeudet varastoon, ota yhteyttä minuun (Paul) tukifoorumilla. Jos tarvitset apua projektin haarauksessa, ilmoita minulle, ja voin auttaa sen perustuksessa.
+
+XPERIA PLAY OPTIMISOITU
+- Analoginen sisääntulo kosketuslevyltä!
 
 LUVAT
-Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
-Write External Storage - The device storage is used for writing savegames and custom input profiles.
-Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
+Internet - Internettiä käytetään kaatumisraporttien lähettämiseen.  Se ei lataa viruksia, spywarea, tai minkäänlaisia mainoksia, ja se ei kerää mitään yksityistä informaatiota.  Normaalit datahinnat pätevät.
+Kirjoita Ulkoiseen Tallennustilaan - Laitteen tallennustilaa käytetään pelitallennuksien ja kustom sisääntuloprofiilien kirjoittamiseen.
+Värinä - Jos laitteesi tukee sitä, värinää käytetään Rumble Pak emulointiin ja haptiseen painike palautteeseen
 
-GETTING STARTED
-- Transfer ROMs anywhere to your internal storage/SD card
-- Browse to them from within the app
-- Default SD card directory on most devices is /mnt/sdcard
-- ROMs must be in .n64, .v64, or .z64 format, optionally in .zip files
+ALOITTAMINEN
+- Siirrä ROM:it mihin tahansa sisäiselle muistille/SD-kortille
+- Selaa niihin app:sta
+- Oletus SD-kortin hakemisto on useimmilla laitteilla /mnt/sdcard
+- ROM:ien pitäää olla .n64, .v64, tai .z64 muodossa, vaihtoehtoisesti .zip tiedostoissa
 
-HELP, FAQS, BUG-FIXES, GAME BACKUP INSTRUCTIONS:
+APUA, UKK:T, BUGIKORJAUKSET, PELI VARMUUSKOPIOINTI OHJEET:
 - http://www.paulscode.com

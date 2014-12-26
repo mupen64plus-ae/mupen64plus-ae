@@ -36,10 +36,14 @@
   <string name="menuItem_setIme">Byt IME</string>
   <string name="menuItem_exit">Avsluta</string>
   <!--Input Mapping Activity-->
+  <string name="menuItem_deadzone">Dödzon</string>
   <string name="menuItem_sensitivity">Sensitivitet</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Spela</string>
   <string name="menuItem_settings">Inställningar</string>
+  <string name="menuItem_globalSettings">Globala inställningar</string>
+  <string name="menuItem_touchscreenProfiles">Pekskärmsprofiler</string>
+  <string name="menuItem_controllerProfiles">Kontrollerprofiler</string>
   <string name="menuItem_help">Hjälp</string>
   <string name="menuItem_faq">FAQ</string>
   <string name="menuItem_controllerDiagnostics">Kontroll diagnostik</string>
@@ -47,12 +51,26 @@
   <string name="menuItem_about">Om</string>
   <string name="menuItem_credits">krediter</string>
   <string name="menuItem_changelog">Ändringslogg</string>
+  <string name="menuItem_hardwareInfo">Hårdvaruinformation</string>
   <string name="menuItem_localeOverride">Språk</string>
   <!--ManageProfilesActivity-->
+  <string name="menuItem_new">Ny</string>
+  <string name="menuItem_hideBuiltins">Göm inbyggda</string>
+  <string name="menuItem_showBuiltins">Visa inbyggda</string>
+  <string name="profile_name_cannot_be_empty">Namn kan inte vara tomt</string>
+  <string name="profile_name_cannot_contain_brackets">Namn kan inte innehålla klammerparentes</string>
+  <string name="profile_name_must_be_unique">Namn måste vara unikt</string>
+  <string name="profile_manage_profiles">Hantera profiler</string>
   <!--Popup Dialogs-->
-  <string name="popup_version">Version: %1$s\nVersion kod: %2$d</string>
   <!--Lists-->
+  <string name="listItem_edit">Ändra</string>
+  <string name="listItem_rename">Byt namn</string>
+  <string name="listItem_copy">Kopiera</string>
+  <string name="listItem_delete">Ta bort</string>
+  <string name="listItem_disabled">(Inaktiverad)</string>
   <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Profilnamn</string>
+  <string name="hint_profileComment">Beskrivning (valfritt)</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -67,6 +85,7 @@
   <string name="toast_loadingFile">Laddar %1$s…</string>
   <string name="toast_savingFile">Sparar %1$s…</string>
   <string name="toast_overwritingFile">Skriver över %1$s…</string>
+  <string name="toast_loadingGameInfo">Ladda spelinformation...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Använder nu slot %1$d.</string>
   <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
@@ -85,8 +104,8 @@
   <string name="actionReloadAssets_summary">Påverkar INTE användarinställningar, ROMs, sparfiler, eller andra egna data</string>
   <string name="actionCrashTest_title">Test</string>
   <string name="actionCrashTest_summary">Skicka en konfiguration rapport till utvecklarna</string>
-  <string name="actionResetUserPrefs_title">Ladda om</string>
-  <string name="actionResetUserPrefs_summary">Återställa standardinställningar</string>
+  <string name="actionCheatEditor_title">Hantera fuskkoder</string>
+  <string name="actionShare_title">Dela</string>
   <!--Preference Screens-->
   <string name="screenInput_title">ingång</string>
   <string name="screenInput_summary">Kontroll inställningar</string>
@@ -95,9 +114,14 @@
   <string name="screenTouchpad_title">Pekplatta</string>
   <string name="screenTouchpad_summary">Xperia PLAY inställningar</string>
   <string name="screenDisplay_title">Visa</string>
+  <string name="screenDisplay_summary">Layoutinställningar</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik inställningar</string>
   <string name="screenAdvanced_title">Avancerat</string>
+  <string name="screenAdvanced_summary">Kärna, lagring och felsökningsinställningar</string>
+  <string name="screenGlobalSettings_title">Globala inställningar</string>
+  <string name="screenCheats_title">Fusk</string>
+  <string name="screenCheats_summaryEnabled">Akriverad</string>
   <string name="screenCheats_summaryDisabled">Inaktiverad</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Fusk alternativ (håll in för beskrivning)</string>
@@ -115,7 +139,6 @@
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Aktivera fusk</string>
   <string name="playShowCheats_summary">Meny laddning är långsammare när aktiverad</string>
-  <string name="touchscreenEnabled_title">Aktivera pekskärm</string>
   <string name="touchscreenFeedback_title">Haptisk återkoppling</string>
   <string name="touchscreenFeedback_summary">Vibrera vid knapptryckning</string>
   <string name="touchpadEnabled_title">Aktivera pekplatta</string>
@@ -131,8 +154,6 @@
   <string name="gln64ScreenClear_summary">Inaktivera för hastighet (kan orsaka video buggar)</string>
   <string name="gln64AlphaTest_title">Alpha test</string>
   <string name="gln64AlphaTest_summary">Inaktivera för hastighet (kan orsaka svarta texturer)</string>
-  <string name="gln64DepthTest_title">Djup test</string>
-  <string name="gln64DepthTest_summary">Inaktivera för hastighet (orsakar blinkande bakgrund)</string>
   <string name="riceAutoFrameskip_title">Auto frameskip</string>
   <string name="riceAutoFrameskip_summary">Förbättrar spel hastighet till kostnad av framerate</string>
   <string name="riceFastTexture_title">Snabb textur laddning</string>
@@ -150,7 +171,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Inaktiverad</string>
   <string name="touchscreenAutoHold_entryLongPress">vid långt-tryck</string>
   <string name="touchscreenAutoHold_entrySlideOut">Vid slide-off</string>
-  <string name="touchscreenAutoHoldables_title">Hållbara knappar</string>
   <string name="touchscreenRefresh_title">Styrspak animation</string>
   <string name="touchscreenRefresh_entryNever">Aldrig</string>
   <string name="touchscreenRefresh_entryOccasionally">Ibland</string>
@@ -158,15 +178,6 @@
   <string name="touchscreenStyle_title">Knapp stil</string>
   <string name="touchscreenStyle_entryOutline">Konturer</string>
   <string name="touchscreenStyle_entryShaded">Skuggad</string>
-  <string name="touchscreenHeight_title">Vertikalt knapp mellanrum</string>
-  <string name="touchscreenHeight_entryAuto">Auto</string>
-  <string name="touchscreenHeight_entryFullHeight">Full-höjd</string>
-  <string name="touchscreenHeight_entryHalfHeight">Halv-höjd</string>
-  <string name="touchscreenLayout_title">Knapp layout</string>
-  <string name="touchscreenLayout_entryAnalog">Analog (av roymustang16)</string>
-  <string name="touchscreenLayout_entryDigital">digital (av roymustang16)</string>
-  <string name="touchscreenLayout_entryAll">Båda (av roymustang16)</string>
-  <string name="touchscreenLayout_entryCustom">Anpassad (se http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Pekplatta layout</string>
   <string name="touchpadLayout_entryDefault">Vänster pad: Analog kontroll; Höger pad: C knappar</string>
   <string name="touchpadLayout_entryReverse">Vänster pad: C knappar; Höger pad: Analog kontrol</string>
@@ -178,6 +189,7 @@
   <string name="displayPosition_entryBottom">Botten</string>
   <string name="displayPosition_entryMiddle">Mitten</string>
   <string name="displayPosition_entryTop">Toppen</string>
+  <string name="displayResolution_title">Renderingsupplösning</string>
   <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
   <string name="displayResolution_entry640x480">640 x 480</string>
@@ -235,6 +247,7 @@
   <string name="r4300Emulator_entryCachedInterpreter">Cachad interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamisk recompiler (dynarec)</string>
   <string name="audioPlugin_entryNone">Ingen (ljud inaktiverad)</string>
+  <string name="audioPlugin_entryNoneNoSpeedLimit">Ingen-felsökning (ljud inaktiverat, ingen hastighetsbegränsning)</string>
   <string name="audioBufferSize_entry2048">Standard</string>
   <string name="localeOverride_entrySystemDefault">System standard</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -250,14 +263,10 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Vald mapp: %1$s</string>
-  <string name="pathSelectedGame_title">Spel</string>
-  <string name="pathCustomTouchscreen_title">Anpassad layout mapp</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Import textur pack</string>
   <string name="pathHiResTextures_summary">Tillämpa anpassade texturer (ZIP-format) till ett spel</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Spel spar mapp</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multi-player</string>
   <string name="playerMap_summary">Definera varje spelares kontroll(er)</string>
@@ -283,7 +292,6 @@
   <string name="assetExtractor_initializing">Initierar</string>
   <string name="assetExtractor_progress">%1$.0f%% gjort: %2$s</string>
   <string name="assetExtractor_finished">Färdig</string>
-  <string name="assetExtractor_failed">Error under extraktionen av app data.\nVar vänlig koppla ur USB kabeln, starta om enheten och starta om applikationen.\nFör hjälp, vänligen besök %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Fusk %1$d</string>
   <string name="cheats_longPress">(lång-tryck för full text)</string>
@@ -305,12 +313,11 @@
   <string name="playerMap_deviceWithName">Enhet %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Enhet %1$d</string>
   <string name="playerMapPreference_popupTitle">Spelare %1$d</string>
-  <string name="playerMapPreference_popupMessage">Spelare %1$d, tryck på en knapp eller stick på handkontrollen…\n\nAktuella enheter:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Unmap</string>
-  <string name="playerMapPreference_button">Spelare %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Påminn mig när spelarna inte är mappade</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Tryck på en knapp, tangent, eller joystick för att mappa/tilldela...\n\nNuvarande mappningar/tilldelningar:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Unmap</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analog spak kontrollerad med pekplatta</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad styrs med pekplatta</string>

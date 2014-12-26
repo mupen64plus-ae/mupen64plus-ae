@@ -50,7 +50,6 @@
   <string name="menuItem_localeOverride">Nyelv</string>
   <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
-  <string name="popup_version">Verzió: %1$s\nVerzió kód: %2$d</string>
   <!--Lists-->
   <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
@@ -85,8 +84,6 @@
   <string name="actionReloadAssets_summary">Nem befolyásolja a felhasználói beállításokat, a ROMokat, vagy az egyéni adatokat</string>
   <string name="actionCrashTest_title">Teszt</string>
   <string name="actionCrashTest_summary">Küldj egy konfigurációs jelentést a küszítőknek</string>
-  <string name="actionResetUserPrefs_title">Újraindítás</string>
-  <string name="actionResetUserPrefs_summary">Alapértelmezett beállítások használata</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Bevitel</string>
   <string name="screenInput_summary">Irányítás beállítások</string>
@@ -112,7 +109,6 @@
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Csalás engedélyezése</string>
   <string name="playShowCheats_summary">A menü lassaban tölt, ha engedélyezve van</string>
-  <string name="touchscreenEnabled_title">Érintőpanel bekapcsolása</string>
   <string name="touchscreenFeedback_title">Haptic visszajelzés</string>
   <string name="touchscreenFeedback_summary">Gombnyomáskor rezgés</string>
   <string name="touchpadEnabled_title">Érintőpad bekapcsolása</string>
@@ -128,8 +124,6 @@
   <string name="gln64ScreenClear_summary">Kapcsold ki a sebességért (okozhat videoproblémákat)</string>
   <string name="gln64AlphaTest_title">Alfa teszt</string>
   <string name="gln64AlphaTest_summary">Kapcsold ki a sebességért (fekete textúrákat okozhat)</string>
-  <string name="gln64DepthTest_title">Mély teszt</string>
-  <string name="gln64DepthTest_summary">Kapcsold ki a sebességért (villogó hátteret okoz)</string>
   <string name="riceAutoFrameskip_title">Automata képkockaugrás </string>
   <string name="riceAutoFrameskip_summary">Növeli a játék sebességét, fps szám ellenében</string>
   <string name="riceFastTexture_title">Gyors textúra betöltés</string>
@@ -146,15 +140,10 @@
   <string name="touchscreenAutoHold_entryDisabled">Kikapcsolva</string>
   <string name="touchscreenAutoHold_entryLongPress">Hosszan nyomáskor</string>
   <string name="touchscreenAutoHold_entrySlideOut">Elcsúsztatáskor</string>
-  <string name="touchscreenAutoHoldables_title">Nyomva tartható gombok</string>
   <string name="touchscreenRefresh_title">Joystick animáció</string>
   <string name="touchscreenRefresh_entryNever">Soha</string>
   <string name="touchscreenRefresh_entryOccasionally">Néha</string>
   <string name="touchscreenRefresh_entryFrequently">Gyakran</string>
-  <string name="touchscreenLayout_title">Érintőpanel kiosztás</string>
-  <string name="touchscreenLayout_entryAnalog">Analóg (roymustang16 által)</string>
-  <string name="touchscreenLayout_entryDigital">Digitális (roymustang16 által)</string>
-  <string name="touchscreenLayout_entryCustom">Egyéni (lásd http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Érintőpad kiosztás</string>
   <string name="touchpadLayout_entryDefault">Bal pad: analóg irányítás; jobb pad? C gombok</string>
   <string name="touchpadLayout_entryReverse">Bal pad: C gombok; Jobb pad: Analóg irányítás</string>
@@ -232,14 +221,10 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Kiválasztott mappa: %1$s</string>
-  <string name="pathSelectedGame_title">Játék</string>
-  <string name="pathCustomTouchscreen_title">Egyéni kiosztású mappa</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Textúra csomag importálása</string>
   <string name="pathHiResTextures_summary">Egyéni textúrák alkalmazása (ZIP) a játékhoz</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Mentési mappa</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Többjátékos</string>
   <string name="playerMap_summary">Minden játékos kontrollerének a definiálása</string>
@@ -263,7 +248,6 @@
   <string name="assetExtractor_initializing">Inicializálás</string>
   <string name="assetExtractor_progress">%1$.0f%% kész: %2$s</string>
   <string name="assetExtractor_finished">Befejezve</string>
-  <string name="assetExtractor_failed">Hiba az alkalmazás adat kicsomagolása közben.\nKérlek csatlakoztasd le az USB-t, indítsd újra a készüléket, és indítsd újra az alkalmazást.\n Segítségért látogasd meg a  %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Csalás %1$d</string>
   <string name="cheats_longPress">(hosszú nyomás a teljes szövegért)</string>
@@ -285,12 +269,11 @@
   <string name="playerMap_deviceWithName">Készülék %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Készülék  %1$d</string>
   <string name="playerMapPreference_popupTitle">Játékos %1$d</string>
-  <string name="playerMapPreference_popupMessage">Játékos %1$d, nyomj meg egy gombot a kontrollereden…\n\nJelenlegi készülékek:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Kiosztás megszüntése</string>
-  <string name="playerMapPreference_button">Játékos %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Emlékeztess amikor a játékosok nincsenek kiosztva</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Nyomj meg egy gombot, billentyűt, vagy joystick-ot hogy beprogramozd …\n\n Jelenlegi kiosztások: \n\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Kiosztás megszüntése</string>
   <string name="inputMapActivity_aPadXperiaPlay">Az érintőpad irányítja az analóg kart</string>
   <string name="inputMapActivity_cPadXperiaPlay">Az érintőpad irányítja a C-padot</string>

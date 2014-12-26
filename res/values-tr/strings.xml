@@ -51,7 +51,6 @@
   <string name="menuItem_localeOverride">Dil</string>
   <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
-  <string name="popup_version">Sürüm: %1$s\n Sürüm kodu: %2$d</string>
   <!--Lists-->
   <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
@@ -86,8 +85,6 @@
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
   <string name="actionCrashTest_title">Sına</string>
   <string name="actionCrashTest_summary">Geliştiricilere bir yapılandırma raporu gönder</string>
-  <string name="actionResetUserPrefs_title">Sıfırla</string>
-  <string name="actionResetUserPrefs_summary">Varsayılan ayarları geri yükle</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Girdi</string>
   <string name="screenInput_summary">Denetim Ayarları</string>
@@ -114,7 +111,6 @@
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Hileleri etkinleştir</string>
   <string name="playShowCheats_summary">Etkin olduğunda menü yüklenmesi yavaşlar</string>
-  <string name="touchscreenEnabled_title">Dokunmatik ekranı etkinleştir</string>
   <string name="touchscreenFeedback_title">Dokunsal geri bildirim</string>
   <string name="touchscreenFeedback_summary">Tuşa basıldığında titreşim</string>
   <string name="touchpadEnabled_title">Dokunmatik yüzeyi etkinleştir</string>
@@ -130,8 +126,6 @@
   <string name="gln64ScreenClear_summary">Performans için pasifleştirin (video sorunlarına yol açabilir)</string>
   <string name="gln64AlphaTest_title">Alfa testi</string>
   <string name="gln64AlphaTest_summary">Performans için pasifleştirin (siyah dokulara neden olur)</string>
-  <string name="gln64DepthTest_title">Derinlik testi</string>
-  <string name="gln64DepthTest_summary">Performans için pasifleştirin (parlayan arkaplana neden olur)</string>
   <string name="riceAutoFrameskip_title">Otomatik kare atlama</string>
   <string name="riceAutoFrameskip_summary">Kare sayısı pahasına oyun hızını iyileştirir</string>
   <string name="riceFastTexture_title">Hızlı doku yükleme</string>
@@ -148,7 +142,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Devre dışı</string>
   <string name="touchscreenAutoHold_entryLongPress">Uzun basın</string>
   <string name="touchscreenAutoHold_entrySlideOut">Kaydırın</string>
-  <string name="touchscreenAutoHoldables_title">Taşınabilir düğmeler</string>
   <string name="touchscreenRefresh_title">Oyun çubuğu animasyonu</string>
   <string name="touchscreenRefresh_entryNever">Asla</string>
   <string name="touchscreenRefresh_entryOccasionally">Bazen</string>
@@ -156,15 +149,6 @@
   <string name="touchscreenStyle_title">Tuş stili</string>
   <string name="touchscreenStyle_entryOutline">Anahatlar</string>
   <string name="touchscreenStyle_entryShaded">Gölgelenmiş</string>
-  <string name="touchscreenHeight_title">Dikey mesafe tuşu</string>
-  <string name="touchscreenHeight_entryAuto">Otomatik</string>
-  <string name="touchscreenHeight_entryFullHeight">Tam yükseklik</string>
-  <string name="touchscreenHeight_entryHalfHeight">Yarım yükseklik</string>
-  <string name="touchscreenLayout_title">Dokunmatik ekran düzeni</string>
-  <string name="touchscreenLayout_entryAnalog">Analog (roymustang16 tarafından)</string>
-  <string name="touchscreenLayout_entryDigital">Dijital (roymustang16 tarafından)</string>
-  <string name="touchscreenLayout_entryAll">İkiside (roymustang16 tarafından)</string>
-  <string name="touchscreenLayout_entryCustom">Özel (bkz: http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Dokunmatik yüzey düzeni</string>
   <string name="touchpadLayout_entryDefault">Sol tık: Analog kontrol; Sağ tık: C tuşları</string>
   <string name="touchpadLayout_entryReverse">Sol tık:  C tuşları ; Sağ tık:Analog kontrol</string>
@@ -252,14 +236,10 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Seçilen klasör: %1$s</string>
-  <string name="pathSelectedGame_title">Oyun</string>
-  <string name="pathCustomTouchscreen_title">Özel düzen klasörü</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">İçe doku paketi aktar</string>
   <string name="pathHiResTextures_summary">Oyuna özel dokuları (ZIP biçiminde) uygula</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Oyun kayıtları klasörü</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Çoklu Oyuncu</string>
   <string name="playerMap_summary">Her oyuncunun kumandasını tanımla</string>
@@ -285,7 +265,6 @@
   <string name="assetExtractor_initializing">Başlatılıyor</string>
   <string name="assetExtractor_progress">%1$.0f%% tamamlandı: %2$s</string>
   <string name="assetExtractor_finished">Bitti</string>
-  <string name="assetExtractor_failed">Uygulamayı çıkartırken hata oluştu.\nLütfen USB kablosunu çıkarınız, cihazınızı yeniden başlatınız, ve uygulamayı tekrar başlatınız .\nYardım için lütfen ziyaret ediniz %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">%1$d Hilesi</string>
   <string name="cheats_longPress">(tüm yazılar için uzun bas)</string>
@@ -307,12 +286,11 @@
   <string name="playerMap_deviceWithName">%1$d (%2$s) Aygıtı</string>
   <string name="playerMap_deviceWithoutName">%1$d Aygıtı</string>
   <string name="playerMapPreference_popupTitle">Oyuncu %1$d</string>
-  <string name="playerMapPreference_popupMessage">Oyuncu %1$d, kumandanızdaki bir düğmeye veya çubuğa basın…\n \nMevcut aygıtlar:\n %2$s</string>
   <string name="playerMapPreference_popupUnmap">Eşlemeyi kaldır</string>
-  <string name="playerMapPreference_button">Oyuncu %1$d\n \n%2$s</string>
   <string name="playerMapPreference_reminder">Oyuncular eşlenmediği zaman bana hatırlat</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Eşlemek için bir düğmeye, tuşa veya oyun çubuğuna basın…\n \nMevcut eşlemeler:\n %1$s</string>
   <string name="inputMapActivity_popupUnmap">Eşlemeyi kaldır</string>
   <string name="inputMapActivity_aPadXperiaPlay">Dokunmatik yüzeyle kontrol edilen analog çubuk</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad , touchpad tarafından kontrol ediliyor</string>

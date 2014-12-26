@@ -11,7 +11,8 @@
   <string name="menuItem_fileSave">Guarda a fitxer…</string>
   <string name="menuItem_fileLoad">Carrega des de fitxer</string>
   <string name="menuItem_setSpeed">Velocitat de joc</string>
-  <string name="menuItem_paks">\t\nController Paks</string>
+  <string name="menuItem_paks">	
+Controller Paks</string>
   <!--capitalize since trademark-->
   <string name="menuItem_pak1_empty">Jugador 1: buit</string>
   <string name="menuItem_pak1_mem">Jugador 1: Memory Pak</string>
@@ -44,6 +45,7 @@
   <string name="menuItem_settings">Configuració</string>
   <string name="menuItem_help">Ajuda</string>
   <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_helpForum">Fòrum d\'ajuda</string>
   <string name="menuItem_controllerDiagnostics">Diagnostic del comandament</string>
   <string name="menuItem_reportBug">Reporta una errada</string>
   <string name="menuItem_about">Sobre</string>
@@ -52,9 +54,10 @@
   <string name="menuItem_localeOverride">Idioma</string>
   <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
-  <string name="popup_faq">Mupen64Plus és desenvolupat i mantingut per voluntaris. <small> \n\nPer solucionar errors gràfics, provi a canviar el <i>plugin de vídeo</i> .\n\nPer solucionar lag, intenti canviar el  <i>frameskip del vídeo</i> o el <i>plugin de vídeo</i> .\n\nPer ROMS no reproduïbles, intenti descomprimir el ROM primer o provar una versió diferent de la ROM.\n\nPer qüestions de control de pantalla tàctil, provi a canviar <i>l\'escalat botons</i> o <i>la disposició dels botons</i>.\n\nPer a altres problemes, o si encara està encallat, si us plau feu clic al botó de <i>FAQ</i> que hi ha a continuació. Per a errors que no es produeixen en jocs específics, feu clic al botó <i>d\'informe error </i> que hi ha sota. Responem a la gran majoria de posts en 24 hores. Honestament.\n\n</small> Gràcies per ajudar-nos a millorar l\'aplicació!</string>
-  <string name="popup_version">Versió: %1$s Codi de versió: %2$d</string>
   <!--Lists-->
+  <string name="listItem_edit">Editar</string>
+  <string name="listItem_copy">Copiar</string>
+  <string name="listItem_delete">Esborrar</string>
   <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
@@ -88,8 +91,6 @@
   <string name="actionReloadAssets_summary">NO afecta la configuració de l\'usuari, ROM, partides i altres dades personalitzades</string>
   <string name="actionCrashTest_title">Test</string>
   <string name="actionCrashTest_summary">Envia un informe de configuració als programadors</string>
-  <string name="actionResetUserPrefs_title">Reinicia</string>
-  <string name="actionResetUserPrefs_summary">Restaura la configuració per defecte</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Entrada</string>
   <string name="screenInput_summary">Configuració del comandament</string>
@@ -97,6 +98,7 @@
   <string name="screenTouchscreen_summary">Configuració del comandament en pantalla</string>
   <string name="screenTouchpad_title">Touchpad</string>
   <string name="screenTouchpad_summary">Configuració per Xperia PLAY</string>
+  <string name="screenDisplay_summary">Configuració de disseny</string>
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Configuració de vídeo</string>
   <string name="screenAdvanced_title">Avançat</string>
@@ -105,7 +107,8 @@
   <string name="categoryCheats_title">Configuració dels cheats (mantingues oprimit per mostrar notes)</string>
   <string name="categoryHardware_title">Maquinari</string>
   <string name="categoryOther_title">Altres</string>
-  <string name="categoryTouchscreenBehavior_title">\t\nFuncionament</string>
+  <string name="categoryTouchscreenBehavior_title">	
+Funcionament</string>
   <string name="categoryTouchscreenAppearance_title">Aparença</string>
   <string name="categoryGln64_title">Configuració de Gln64</string>
   <string name="categoryRice_title">Configuració de Rice</string>
@@ -114,9 +117,9 @@
   <string name="categoryData_title">Dades</string>
   <string name="categoryCrashReports_title">Informes d\'error</string>
   <!--Checkbox Preferences-->
-  <string name="playShowCheats_title">\t\nHabilita cheats</string>
+  <string name="playShowCheats_title">	
+Habilita cheats</string>
   <string name="playShowCheats_summary">La càrrega del menú és més lenta quan es troben activats</string>
-  <string name="touchscreenEnabled_title">Habilita pantalla tàctil</string>
   <string name="touchscreenFeedback_title">Retroalimentació hàptica</string>
   <string name="touchscreenFeedback_summary">Vibra en prémer botons</string>
   <string name="touchpadEnabled_title">Habilita touchpad</string>
@@ -134,8 +137,6 @@
   <string name="gln64ScreenClear_summary">Deshabilita per a una major velocitat (pot causar errors de vídeo)</string>
   <string name="gln64AlphaTest_title">Test alfa</string>
   <string name="gln64AlphaTest_summary">Deshabilita per millorar la velocitat (pot causar textures negres)</string>
-  <string name="gln64DepthTest_title">Test de profunditat</string>
-  <string name="gln64DepthTest_summary">Deshabilita per a una major velocitat (pot provocar textures negres)</string>
   <string name="riceAutoFrameskip_title">Salt de quadres automàtic (frameskip)</string>
   <string name="riceAutoFrameskip_summary">Millora la velocitat del joc en detriment de la velocitat de quadres (frameskip)</string>
   <string name="riceFastTexture_title">Carrega ràpida de textures</string>
@@ -153,7 +154,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitat</string>
   <string name="touchscreenAutoHold_entryLongPress">En lliscar</string>
   <string name="touchscreenAutoHold_entrySlideOut">En lliscar</string>
-  <string name="touchscreenAutoHoldables_title">botons mantenibles</string>
   <string name="touchscreenRefresh_title">Animació del joystick </string>
   <string name="touchscreenRefresh_entryNever">Mai</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalment</string>
@@ -161,15 +161,6 @@
   <string name="touchscreenStyle_title">Estil del botó</string>
   <string name="touchscreenStyle_entryOutline">Borejat</string>
   <string name="touchscreenStyle_entryShaded">Ombrejat</string>
-  <string name="touchscreenHeight_title">Espaciado vertical entre botons</string>
-  <string name="touchscreenHeight_entryAuto">Auto</string>
-  <string name="touchscreenHeight_entryFullHeight">Alçada completa</string>
-  <string name="touchscreenHeight_entryHalfHeight">Mitja alçada</string>
-  <string name="touchscreenLayout_title">Disposició de botons en pantalla</string>
-  <string name="touchscreenLayout_entryAnalog">Analògic (per roymustang16)</string>
-  <string name="touchscreenLayout_entryDigital">Digital (per roymustang16)</string>
-  <string name="touchscreenLayout_entryAll">Els dos (per roymustang16)</string>
-  <string name="touchscreenLayout_entryCustom">Personalitzat (visita http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Disposició de botons de touchpad</string>
   <string name="touchpadLayout_entryDefault">Pad esquerre: Control analògic; Pad dret: Botons C</string>
   <string name="touchpadLayout_entryReverse">Pad esquerre: Botons C; Pad dret: Control analògic</string>
@@ -191,26 +182,21 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (framerate més alt)</string>
   <string name="displayScaling_title">Escalat de pantalla</string>
-  <string name="displayScaling_entryNone">cap\n<small> Utilitza la resolució exacta seleccionada anteriorment </small></string>
-  <string name="displayScaling_entryZoom">Zoom\n<small>Emplena la pantalla, sense distorsió (afegeix barres negres) </small></string>
-  <string name="displayScaling_entryCrop">Crop\n<small>Emplena la pantalla, sense distorsió (retalla gràfics) </small></string>
-  <string name="displayScaling_entryStretch">Stretch\n<small>Emplena la pantalla, sense barres negres (afegeix distorsió) </small></string>
   <string name="displayFpsRefresh_title">Mostra velocitat de quadres (framerate)</string>
   <string name="displayFpsRefresh_entryNever">Mai</string>
   <string name="displayFpsRefresh_entryOccasionally">Ocasionalment</string>
   <string name="displayFpsRefresh_entryFrequently">Freqüentment</string>
   <string name="videoPlugin_entryNone">Cap (vídeo deshabilitat)</string>
-  <string name="videoPlugin_entryGln64">gln64\n<small>(adaptació de GLN64 v0.4.1)</small></string>
-  <string name="videoPlugin_entryRice">rice\n<small>(adaptatció de Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptatció de Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Reducció del parpelleig</string>
   <string name="videoHardwareType_entryAuto">Auto-detecta des del model de mòbil/tablet</string>
   <string name="videoHardwareType_entryStandard">Perfil estàndard</string>
-  <string name="videoHardwareType_entryI">\t\nPerfil I</string>
+  <string name="videoHardwareType_entryI">	
+Perfil I</string>
   <string name="videoHardwareType_entryO1">Perfil O-1</string>
   <string name="videoHardwareType_entryO2">Perfil O-2</string>
   <string name="videoHardwareType_entryQ">Perfil Q</string>
-  <string name="videoHardwareType_entryT">\t\nPerfil T</string>
+  <string name="videoHardwareType_entryT">	
+Perfil T</string>
   <string name="videoHardwareType_entryCustom">Perfil personalitzat</string>
   <string name="videoPolygonOffset_title">Polygon offset</string>
   <string name="videoPolygonOffset_summary">Flicker reduction bias personalitzat</string>
@@ -270,14 +256,10 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Carpeta seleccionada: %1$s</string>
-  <string name="pathSelectedGame_title">Joc</string>
-  <string name="pathCustomTouchscreen_title">Carpeta amb dades de disposició</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importa un pac de textures</string>
   <string name="pathHiResTextures_summary">Aplicar textures personalitzades (en format ZIP) a un joc</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Carpeta de partides de joc</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multijugador</string>
   <string name="playerMap_summary">Definir controlador de cada jugador</string>
@@ -303,7 +285,6 @@
   <string name="assetExtractor_initializing">Inicialitzant</string>
   <string name="assetExtractor_progress">%1$.0f%% completat: %2$s</string>
   <string name="assetExtractor_finished">Finalitzat</string>
-  <string name="assetExtractor_failed">Error en extreure dades de l\'aplicació. Si us plau, desconnecta el cable USB, reinicia el dispositiu i executa novament l\'aplicació. Per obtenir ajuda, visita% 1 $ s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(mantingues premut per mostrar el text complet)</string>
@@ -313,6 +294,7 @@
   <string name="cheatNotes_none">(no hi ha notes disponibles per aquest cheat)</string>
   <!--Cheat Editor-->
   <string name="cheatEditor_help">Ajuda</string>
+  <string name="cheatEditor_confirm">Està segur?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Extraient textures</string>
   <string name="pathHiResTexturesTask_message">Si us plau, sigues pacient. Aquest proces pot tardar una mica.</string>
@@ -325,12 +307,12 @@
   <string name="playerMap_deviceWithName">Terminal %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Terminal %1$d</string>
   <string name="playerMapPreference_popupTitle">Jugador %1$d</string>
-  <string name="playerMapPreference_popupMessage">Jugador %1$d, prem un botó a joystick del teu comandament…  Terminals connectats: %2$s</string>
-  <string name="playerMapPreference_popupUnmap">\t\nDessasignar</string>
-  <string name="playerMapPreference_button">Jugador %1$d %2$s</string>
+  <string name="playerMapPreference_popupUnmap">	
+Dessasignar</string>
   <string name="playerMapPreference_reminder">Avisam quan els jugadors no estan assignats</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Prem un botó, tecla o joystick a assignar…   Assignacions actives: %1$s</string>
   <string name="inputMapActivity_popupUnmap">Dessasignar</string>
   <string name="inputMapActivity_aPadXperiaPlay">Estic analògic controlat amb touchpad</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad controlat amb el touchpad</string>
@@ -366,5 +348,6 @@
   <string name="inputMapActivity_simulateMenu">Tecla de menú</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Prem un botó o tecla…</string>
-  <string name="diagnosticActivity_textMotion_text">\t\nPantalla tàctil o joystick…</string>
+  <string name="diagnosticActivity_textMotion_text">	
+Pantalla tàctil o joystick…</string>
 </resources>

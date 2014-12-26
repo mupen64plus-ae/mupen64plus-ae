@@ -1,0 +1,422 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">Nopeus %1$d %%</string>
+  <string name="menuItem_slotSave">Tallenna paikka</string>
+  <string name="menuItem_slotLoad">Lataa paikka</string>
+  <string name="menuItem_setSlot">Paikka %1$d</string>
+  <string name="menuItem_fileSave">Tallenna tiedostoon...</string>
+  <string name="menuItem_fileLoad">Lataa tiedostosta...</string>
+  <string name="menuItem_setSpeed">Pelin nopeus</string>
+  <string name="menuItem_paks">Ohjain Pak:it</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Pelaaja 1: Tyhjä</string>
+  <string name="menuItem_pak1_mem">Pelaaja 1: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Pelaaja 1: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Pelaaja 2: Tyhjä</string>
+  <string name="menuItem_pak2_mem">Pelaaja 2: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Pelaaja 2: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Pelaaja 3: Tyhjä</string>
+  <string name="menuItem_pak3_mem">Pelaaja 3: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Pelaaja 3: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Pelaaja 4: Tyhjä</string>
+  <string name="menuItem_pak4_mem">Pelaaja 4: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Pelaaja 4: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">Vaihda IME</string>
+  <string name="menuItem_exit">Poistu</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_deadzone">Kuollut alue</string>
+  <string name="menuItem_sensitivity">Herkkyys</string>
+  <string name="menuItem_unmapAll">Posta kaikki asettamiset</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Pelaa</string>
+  <string name="menuItem_settings">Asetukset</string>
+  <string name="menuItem_globalSettings">Globaalit asetukset</string>
+  <string name="menuItem_emulationProfiles">Emulaatioprofiilit</string>
+  <string name="menuItem_touchscreenProfiles">Kosketusnäyttöprofiilit</string>
+  <string name="menuItem_controllerProfiles">Ohjainprofiilit</string>
+  <string name="menuItem_customCheats">Kustom huijaukset</string>
+  <string name="menuItem_help">Apua</string>
+  <string name="menuItem_faq">UKK</string>
+  <string name="menuItem_helpForum">Tukifoorumi</string>
+  <string name="menuItem_controllerDiagnostics">Ohjaindiagnostiikka</string>
+  <string name="menuItem_reportBug">Raportoi bugi</string>
+  <string name="menuItem_about">Tietoa</string>
+  <string name="menuItem_credits">Tekijät</string>
+  <string name="menuItem_appVersion">App versio</string>
+  <string name="menuItem_changelog">Muutosloki</string>
+  <string name="menuItem_hardwareInfo">Laitetiedot</string>
+  <string name="menuItem_localeOverride">Kieli</string>
+  <!--ManageProfilesActivity-->
+  <string name="menuItem_new">Uusi</string>
+  <string name="menuItem_hideBuiltins">Piilota sisäänrakennetut</string>
+  <string name="menuItem_showBuiltins">Näytä sisäänrakennetut</string>
+  <string name="profile_name_cannot_be_empty">Nimi ei voi olla tyhjä</string>
+  <string name="profile_name_cannot_contain_brackets">Nimi ei voi sisältää sulkumerkkejä</string>
+  <string name="profile_name_must_be_unique">Nimen pitää olla uniikki</string>
+  <string name="profile_manage_profiles">Hallinnoi profiileja</string>
+  <!--Popup Dialogs-->
+  <!--Lists-->
+  <string name="listItem_edit">Muokkaa</string>
+  <string name="listItem_rename">Uudelleennimeä</string>
+  <string name="listItem_copy">Kopioi</string>
+  <string name="listItem_delete">Poista</string>
+  <string name="listItem_disabled">(Pois käytöstä)</string>
+  <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Profiilin nimi</string>
+  <string name="hint_profileComment">Kuvaus (valinnainen)</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_rebuildingCheats">Uudelleenrakennetaan huijaustietokantaa…</string>
+  <string name="toast_launchingEmulator">Käynnistetään emulaattoria...</string>
+  <string name="toast_loadingSession">Automaattisesti jatketaan peliä...</string>
+  <string name="toast_savingSession">Automaattisesti tallennetaan peliä...</string>
+  <string name="toast_loadingSlot">Ladataan paikkaa %1$d...</string>
+  <string name="toast_savingSlot">Tallennetaan paikkaa %1$d...</string>
+  <string name="toast_loadingFile">Ladataan %1$s...</string>
+  <string name="toast_savingFile">Tallennetaan %1$s...</string>
+  <string name="toast_overwritingFile">Ylikirjoittaa %1$s…</string>
+  <string name="toast_loadingGameInfo">Ladataan pelitietoja…</string>
+  <!--Something happened (use '.')-->
+  <string name="toast_usingSlot">Nyt käytössä paikka %1$d.</string>
+  <string name="toast_sdInaccessible">SD-kortti ei käytettävissä (irroita USB-kaapeli ja yritä uudelleen).</string>
+  <string name="toast_crashReportSent">Raportti lähetetty.</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Jatka</string>
+  <string name="actionResume_summary">Arvaamaton jos huijaukset ovat käytössä</string>
+  <string name="actionRestart_title">Uudelleenkäynnistä</string>
+  <string name="actionRestart_summary">Suositeltu jos huijaukset ovat käytössä</string>
+  <string name="actionReloadAssets_title">Uudelleenlataa app resurssit</string>
+  <string name="actionReloadAssets_summary">EI vaikuta käyttäjäasetuksiin, ROM:eihin, pelitallennuksiin, tai muuhun kustom dataan</string>
+  <string name="actionCrashTest_title">Testi</string>
+  <string name="actionCrashTest_summary">Lähetä asetusraportti kehittäjille</string>
+  <string name="actionCheatEditor_title">Hallinnoi huijauskoodeja</string>
+  <string name="actionCheatEditor_summary">Lisää, muokkaa ja poista kustom huijauksia</string>
+  <string name="actionShare_title">Jaa</string>
+  <!--Preference Screens-->
+  <string name="screenInput_title">Sisääntulo</string>
+  <string name="screenInput_summary">Ohjainasetukset</string>
+  <string name="screenTouchscreen_title">Kosketusnäyttö</string>
+  <string name="screenTouchscreen_summary">Näytöllä olevan ohjaimen asetukset</string>
+  <string name="screenTouchpad_title">Kosketuslevy</string>
+  <string name="screenTouchpad_summary">Xperia PLAY asetukset</string>
+  <string name="screenDisplay_title">Näyttö</string>
+  <string name="screenDisplay_summary">Ulkoasu asetukset</string>
+  <string name="screenVideo_title">Video</string>
+  <string name="screenVideo_summary">Grafiikka-asetukset</string>
+  <string name="screenAdvanced_title">Edistynyt</string>
+  <string name="screenAdvanced_summary">Ydin-, tallennustila-, ja debug-asetukset</string>
+  <string name="screenGlobalSettings_title">Globaalit asetukset</string>
+  <string name="screenGlobalSettings_summary">Näyttö, audio, tallennustila ja debug asetukset</string>
+  <string name="screenCheats_title">Huijaukset</string>
+  <string name="screenCheats_summaryEnabled">Käytössä</string>
+  <string name="screenCheats_summaryDisabled">Pois käytöstä</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Huijausvalinnat (pikään paina merkintöihin)</string>
+  <string name="categoryHardware_title">Laitteisto</string>
+  <string name="categoryOther_title">Muu</string>
+  <string name="categoryTouchscreenBehavior_title">Käytös</string>
+  <string name="categoryTouchscreenAppearance_title">Ulkonäkö</string>
+  <string name="categoryGln64_title">Gln64 asetukset</string>
+  <string name="categoryRice_title">Rice asetukset</string>
+  <string name="categoryGlide64_title">Glide64 asetukset</string>
+  <string name="categoryCore_title">Ydin</string>
+  <string name="categoryAudio_title">Audio</string>
+  <string name="categoryData_title">Data</string>
+  <string name="categoryCrashReports_title">Kaatumisraportit</string>
+  <string name="categoryGameSettings_title">Pelikohtaiset asetukset</string>
+  <string name="categoryGameSettings_titleNamed">%1$s asetukset</string>
+  <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Käytä huijauksia</string>
+  <string name="playShowCheats_summary">Valikon lataaminen hitaampaa kun käytössä</string>
+  <string name="touchscreenFeedback_title">Haptinen palaute</string>
+  <string name="touchscreenFeedback_summary">Värinä painikketta painettaessa</string>
+  <string name="touchpadEnabled_title">Käytä kosketuslevyä</string>
+  <string name="inputVolumeMappable_title">Asetettavat ääninäppäimet</string>
+  <string name="inputVolumeMappable_summary">Salli ääninäppäimien asetus ohjaimiksi</string>
+  <string name="inputShareController_title">Jaa ohjain</string>
+  <string name="inputShareController_summary">Salli yhden sisääntulolaitteen ohjata useampaa pelaajaa samaan aikaan</string>
+  <string name="displayImmersiveMode_title">Immersiivinen tila</string>
+  <string name="displayImmersiveMode_summary">Piilota täysin navigointi- ja tilapalkit</string>
+  <string name="gln64Fog_title">Sumu</string>
+  <string name="gln64Fog_summary">(tarvitsee työtä)</string>
+  <string name="gln64Sai_title">2xSaI tekstuurisuodatin</string>
+  <string name="gln64Sai_summary">Vähentää tekstuurien pikselöintiä</string>
+  <string name="gln64ScreenClear_title">Pakota ruuduntyhjennys</string>
+  <string name="gln64ScreenClear_summary">Poista nopeuttaaksesi (voi aiheuttaa videohäiriöitä)</string>
+  <string name="gln64AlphaTest_title">Alphatesti</string>
+  <string name="gln64AlphaTest_summary">Poista nopeuttaaksesi (aiheuttaa mustia tekstuureja)</string>
+  <string name="riceAutoFrameskip_title">Auto ruudun ohitus</string>
+  <string name="riceAutoFrameskip_summary">Parantaa pelin nopeutta ruudunpäivityksen kustannuksella</string>
+  <string name="riceFastTexture_title">Nopea tekstuurien lataus</string>
+  <string name="riceFastTexture_summary">Korjaa ympyräsiirtymät</string>
+  <string name="riceForceTextureFilter_title">Tekstuurien suodatus</string>
+  <string name="riceForceTextureFilter_summary">Korjaa tekstuurien heijastelun ja sumeuden kaukaisissa objekteissa</string>
+  <string name="riceHiResTextures_title">Korkearesoluutioiset tekstuurit</string>
+  <string name="riceHiResTextures_summary">Käytä tuotuja tekstuuripaketteja</string>
+  <string name="riceFog_title">Sumu</string>
+  <string name="riceFog_summary">Näytä sumuefektit</string>
+  <string name="audioSwapChannels_title">Vaihda audiokanavat</string>
+  <string name="audioSwapChannels_summary">Vaihda vasen ja oikea audiokanava keskenään</string>
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Painike auto-pito</string>
+  <string name="touchscreenAutoHold_entryDisabled">Pois käytöstä</string>
+  <string name="touchscreenAutoHold_entryLongPress">Pitkään painettaessa</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Pois pyyhkäisyssä</string>
+  <string name="touchscreenRefresh_title">Joystick animaatio</string>
+  <string name="touchscreenRefresh_entryNever">Ei koskaan</string>
+  <string name="touchscreenRefresh_entryOccasionally">Satunnaisesti</string>
+  <string name="touchscreenRefresh_entryFrequently">Usein</string>
+  <string name="touchscreenStyle_title">Painiketyyli</string>
+  <string name="touchscreenStyle_entryOutline">Ulkolinjat</string>
+  <string name="touchscreenStyle_entryShaded">Varjostettu</string>
+  <string name="touchpadLayout_title">Kosketuslevyasettelu</string>
+  <string name="touchpadLayout_entryDefault">Vasen pädi: Analogiohjaus; Oikea pädi: C-painikkeet</string>
+  <string name="touchpadLayout_entryReverse">Vasen pädi: C-painikkeet; Oikea pädi: Analogiohjaus</string>
+  <string name="displayOrientation_title">Näytön suuntaus</string>
+  <string name="displayOrientation_entryLandscape">Vaaka</string>
+  <string name="displayOrientation_entryReverseLandscape">Käänteinen vaaka</string>
+  <string name="displayOrientation_entryPortrait">Pysty</string>
+  <string name="displayOrientation_entryReversePortrait">Käänteinen pysty</string>
+  <string name="displayPosition_title">Pystysuuntainen ruudun sijainti</string>
+  <string name="displayPosition_entryBottom">Alhaalla</string>
+  <string name="displayPosition_entryMiddle">Keskellä</string>
+  <string name="displayPosition_entryTop">Ylhäällä</string>
+  <string name="displayResolution_title">Renderöity resoluutio</string>
+  <string name="displayResolution_entryNative">Natiivi (korkein laatu)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (korkein ruudunpäivitys)</string>
+  <string name="displayScaling_title">Näytön skaalaus</string>
+  <string name="displayFpsRefresh_title">Näytä ruudunpäivitysnopeus</string>
+  <string name="displayFpsRefresh_entryNever">Ei koskaan</string>
+  <string name="displayFpsRefresh_entryOccasionally">Satunnaisesti</string>
+  <string name="displayFpsRefresh_entryFrequently">Usein</string>
+  <string name="videoPlugin_title">Videoliittännäinen</string>
+  <string name="videoPlugin_entryNone">Ei mitään (video pois käytöstä)</string>
+  <string name="videoHardwareType_title">Välkkymisen vähennys</string>
+  <string name="videoHardwareType_entryAuto">Autotunnista puhelin/tablet mallista</string>
+  <string name="videoHardwareType_entryStandard">Vakio profiili</string>
+  <string name="videoHardwareType_entryI">I profiili</string>
+  <string name="videoHardwareType_entryO1">O-1 profiili</string>
+  <string name="videoHardwareType_entryO2">O-2 profiili</string>
+  <string name="videoHardwareType_entryQ">Q profiili</string>
+  <string name="videoHardwareType_entryT">T profiili</string>
+  <string name="videoHardwareType_entryCustom">Kustom profiili</string>
+  <string name="videoPolygonOffset_title">Polygon sivusiirtymä</string>
+  <string name="videoPolygonOffset_summary">Kustom välkynnän vähennys taipumus</string>
+  <string name="gln64Frameskip_title">Ruudun ohitus</string>
+  <string name="gln64Frameskip_entryNever">Älä koskaan ohita ruutuja</string>
+  <string name="gln64Frameskip_entryUpTo1">Ei enempää kuin 1 ruutu</string>
+  <string name="gln64Frameskip_entryUpTo2">Ei enempää kuin 2 ruutua</string>
+  <string name="gln64Frameskip_entryUpTo3">Ei enempää kuin 3 ruutua</string>
+  <string name="gln64Frameskip_entryUpTo4">Ei enempää kuin 4 ruutua</string>
+  <string name="gln64Frameskip_entryUpTo5">Ei enempää kuin 5 ruutua</string>
+  <string name="gln64Frameskip_entryExactly1">Tarkalleen 1 ruutu</string>
+  <string name="gln64Frameskip_entryExactly2">Tarkalleen 2 ruutua</string>
+  <string name="gln64Frameskip_entryExactly3">Tarkalleen 3 ruutua</string>
+  <string name="gln64Frameskip_entryExactly4">Tarkalleen 4 ruutua</string>
+  <string name="gln64Frameskip_entryExactly5">Tarkalleen 5 ruutua</string>
+  <string name="riceScreenUpdate_title">Ruudunpäivitysmetodi</string>
+  <string name="riceScreenUpdate_entryRomDefault">ROM oletus</string>
+  <string name="riceScreenUpdate_entryVIOriginUpdate">VI origin päivitys</string>
+  <string name="riceScreenUpdate_entryVIOriginChange">VI origin muutos</string>
+  <string name="riceScreenUpdate_entryCIChange">CI muutos</string>
+  <string name="riceScreenUpdate_entryFirstCIChange">Ensimmäinen CI muutos</string>
+  <string name="riceScreenUpdate_entryFirstPrimDraw">Ensimmänen primitiivinen piirto</string>
+  <string name="riceScreenUpdate_entryBeforeScreenClear">Ennen ruuduntyhjennystä</string>
+  <string name="riceScreenUpdate_entryAfterScreenDrawn">Ruudunpiiirron jälkeen</string>
+  <string name="riceTextureEnhancement_title">Tekstuurien ylösskaalaus/kohennus</string>
+  <string name="riceTextureEnhancement_entryNone">Ei mitään</string>
+  <string name="riceTextureEnhancement_entryScale2x">Skaala 2x</string>
+  <string name="riceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="riceTextureEnhancement_entrySharpen">Terävoitä</string>
+  <string name="riceTextureEnhancement_entrySharpen_more">Terävöitä enemmän</string>
+  <string name="navigationMode_title">Esteettömyys</string>
+  <string name="navigationMode_summary">Valikon navigointi tila: %1$s</string>
+  <string name="navigationMode_entryAuto">Auto-valitse laitekonfiguraatiosta</string>
+  <string name="navigationMode_entryStandard">Vakiotila</string>
+  <string name="navigationMode_entryBigScreen">Iso-näyttö tila (ei kosketusnäyttöä; vain pelipädi/näppäimistö sisääntulo)</string>
+  <string name="r4300Emulator_title">R4300 emulaattori</string>
+  <string name="r4300Emulator_entryPureInterpreter">Puhdas tulkitsija</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Välimuistillinen tulkitsija</string>
+  <string name="r4300Emulator_entryDynarec">Dynaaminen kääntäjä (dynarec)</string>
+  <string name="audioPlugin_title">Audioliitännäinen</string>
+  <string name="audioPlugin_entryNone">Ei mitään (audio pois käytöstä)</string>
+  <string name="audioPlugin_entryNoneNoSpeedLimit">Ei mitään-debug (audio pois käytöstä, ei nopeusrajaa)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="audioBufferSize_title">Audiopuskurin koko</string>
+  <string name="audioBufferSize_entry2048">Oletus</string>
+  <string name="audioBufferSize_entry128">Alhainen latenssi (kokeellinen)</string>
+  <string name="audioBufferSize_entry8">Ultra-alhainen latenssi (kokeellinen)</string>
+  <string name="localeOverride_entrySystemDefault">Järjestelmän oletus</string>
+  <!--ACRA Preferences (key names must not be changed)-->
+  <string name="acraEnable_title">Ota käyttöön kaatumisraportointi</string>
+  <string name="acraEnable_summary">Yksityistä informaatiota ei kerätä</string>
+  <string name="acraUserEmail_title">Yhteystiedot</string>
+  <string name="acraUserEmail_summary">Sinun paulscode.com nimimerkkisi (valinnainen)</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Painike läpinäkyvyys</string>
+  <string name="touchscreenScale_title">Painike skaala</string>
+  <string name="displayActionBarTransparency_title">Toimintapalkin läpinäkyvyys</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <string name="pathPreference_dialogTitle">Valittu kansio: %1$s</string>
+  <string name="pathHiResTextures_title">Tuo tekstuuripaketti</string>
+  <string name="pathHiResTextures_summary">Käytä kustom tekstuureja (ZIP muoto) peliin</string>
+  <string name="pathHiResTextures_default">~</string>
+  <string name="pathGameSaves_title">Pelitallennuskansio</string>
+  <!--Player Map Preferences-->
+  <string name="playerMap_title">Moninpeli</string>
+  <string name="playerMap_summary">Määritä kunkin pelaajan ohjaimet</string>
+  <!--Profile Preferences-->
+  <string name="emulationProfile_title">Emulaatioprofiili</string>
+  <string name="touchscreenProfile_title">Kosketusnäyttöprofiili</string>
+  <string name="controllerProfile_title">Ohjainprofiili</string>
+  <string name="controllerProfile1_title">Ohjain 1 profiili</string>
+  <string name="controllerProfile2_title">Ohjain 2 profiili</string>
+  <string name="controllerProfile3_title">Ohjain 3 profiili</string>
+  <string name="controllerProfile4_title">Ohjain 4 profiili</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Vahvistus</string>
+  <string name="confirmResetGame_message">Nollaa peli? Kaikki edistymisesi viime tallennuksesta lähtien menetetään.</string>
+  <string name="confirmOverwriteFile_message">Ylikirjoita %1$s?</string>
+  <string name="confirmUnmapAll_message">Poista kaikki asettelut sisääntulolle %1$s?</string>
+  <string name="confirmDeleteProfile_message">Poista profiili \"%1$s\"?</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Muutosloki</string>
+  <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">Varoitus</string>
+  <string name="invalidInstall_message">Mupen64 Plus AE ei ole tainnut asentua kunnollisesti. Ole hyvä ja yritä uudelleenasentaa app jos koet kaatumisia.</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">tiedostonimi</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Alustaa</string>
+  <string name="assetExtractor_progress">%1$.0f%% tehty: %2$s</string>
+  <string name="assetExtractor_finished">Valmistunut</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Huijaus %1$d</string>
+  <string name="cheats_longPress">(pitkään paina täydelle tekstille)</string>
+  <string name="cheat_disabled">(pois käytöstä)</string>
+  <string name="cheatOption_title">Täysi teksti</string>
+  <string name="cheatNotes_title">Merkinnät
+</string>
+  <string name="cheatNotes_none">(ei merkintöjä saatavilla tälle huijakselle)</string>
+  <!--Cheat Editor-->
+  <string name="menuItem_cheatEditor">Huijauseditori</string>
+  <string name="cheatEditor_empty">Tyhjennä huijaus</string>
+  <string name="cheatEditor_added">Tyhjennä listan loppuun lisätty huijaus</string>
+  <string name="cheatEditor_edit">Muokkaa huijauksia</string>
+  <string name="cheatEditor_edit_desc">Paina pitkään huijausta muokataksesi sitä</string>
+  <string name="cheatEditor_help">Apua</string>
+  <string name="cheatEditor_readme1">Tervetuloa Mupen64plus AE Huijauseditoriin</string>
+  <string name="cheatEditor_readme2">Ole hyvä ja kiinnitä huomiota seuraaviin ohjesääntöihin huijausia lisättäessä tai muokattaessa:</string>
+  <string name="cheatEditor_readme3">1. Otsikot ja kuvaukset EIVÄT saisi sisältää rivinvaihtoja (enter painike). Rivinvaihdot korvataan välilyönneillä.</string>
+  <string name="cheatEditor_readme4">2. Heksadesimaalinumeroita pitää käyttää X:ien paikalla alla annetuissa esimerkeissä.</string>
+  <string name="cheatEditor_readme5">3. Huijauksissa pitää olla vain yksi koodi riviä kohden muodossa \"XXXXXXXX XXXX\" ilman lainausmerkkejä tai \"XXXXXXXX ????\" ilman lainausmerkkejä jos huijauskoodissa on valintoja. Huijauksilla voi olla monia rivejä.</string>
+  <string name="cheatEditor_readme6">4. Valintakoodeissa pitää olla vain yksi valinta per rivi muodossa \"Valinta Kuvaus XXXX\" ilman lainausmerkkejä. Valintakoodeilla voi myös olla monia rivejä.</string>
+  <string name="cheatEditor_config">Huijauskonfiguraatio</string>
+  <string name="cheatEditor_config_desc">Muokkaa huijauskonfiguraatiota</string>
+  <string name="cheatEditor_title">Huijauksen otsikko</string>
+  <string name="cheatEditor_title_desc">Muokkaa huijauksen otsikkoa</string>
+  <string name="cheatEditor_notes">Huijausmerkinnät</string>
+  <string name="cheatEditor_notes_desc">Muokkaa huijausmerkintöjä</string>
+  <string name="cheatEditor_code">Huijauskoodi</string>
+  <string name="cheatEditor_code_desc">Muokkaa huijaskoodia</string>
+  <string name="cheatEditor_badCode">Huonot koodit, palautetaan…</string>
+  <string name="cheatEditor_option">Huijausvalinnat</string>
+  <string name="cheatEditor_option_desc">Muokkaa huijausvalintoja</string>
+  <string name="cheatEditor_badOption">Huonot valinnat, palautetaan…</string>
+  <string name="cheatEditor_delete">Poista huijaus</string>
+  <string name="cheatEditor_confirm">Oletko varma?</string>
+  <string name="cheatEditor_info">Huijaustiedot</string>
+  <string name="cheatEditor_title2">Otsikko:</string>
+  <string name="cheatEditor_notes2">Merkinnät:</string>
+  <string name="cheatEditor_code2">Koodi(t):</string>
+  <string name="cheatEditor_option2">Valinna(t):</string>
+  <string name="cheatEditor_saveConfirm">Tallenna huijaustiedosto?</string>
+  <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Puretaan tekstuureja</string>
+  <string name="pathHiResTexturesTask_message">Ole kärsivällinen. Prosessi voi kestää jonkin aikaa.</string>
+  <string name="pathHiResTexturesTask_errorMessage">Ongelma tekstuurien purkamisessa!</string>
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Yläkansio</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Laite %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Laite %1$d</string>
+  <string name="playerMapPreference_popupTitle">Pelaaja %1$d</string>
+  <string name="playerMapPreference_popupUnmap">Poista asettaminen</string>
+  <string name="playerMapPreference_reminder">Muistuta minua kun pelaajat eivät ole asetettuina</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupUnmap">Poista asetus</string>
+  <string name="inputMapActivity_aPadXperiaPlay">Analogitikku ohjattuna kosketuslevyllä</string>
+  <string name="inputMapActivity_cPadXperiaPlay">C-pädi ohjattuna kosketuslevyllä</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pädi →</string>
+  <string name="inputMapActivity_btnCL">C-pädi ←</string>
+  <string name="inputMapActivity_btnCD">C-pädi ↓</string>
+  <string name="inputMapActivity_btnCU">C-pädi ↑</string>
+  <string name="inputMapActivity_btnDR">D-pädi →</string>
+  <string name="inputMapActivity_btnDL">D-pädi ←</string>
+  <string name="inputMapActivity_btnDD">D-pädi ↓</string>
+  <string name="inputMapActivity_btnDU">D-pädi ↑</string>
+  <string name="inputMapActivity_btnAR">Analogi →</string>
+  <string name="inputMapActivity_btnAL">Analogi ←</string>
+  <string name="inputMapActivity_btnAD">Analogi ↓</string>
+  <string name="inputMapActivity_btnAU">Analogi ↑</string>
+  <string name="inputMapActivity_incrementSlot">Lisää paikka</string>
+  <string name="inputMapActivity_reset">Nollaa</string>
+  <string name="inputMapActivity_pause">Pysäytä</string>
+  <string name="inputMapActivity_stop">Lopeta</string>
+  <string name="inputMapActivity_frameAdvance">Ruudun eteneminen</string>
+  <string name="inputMapActivity_fastForward">Pikakelaa eteen</string>
+  <string name="inputMapActivity_speedDown">Hidasta</string>
+  <string name="inputMapActivity_speedUp">Nopeuta</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Takaisin-näppäin</string>
+  <string name="inputMapActivity_simulateMenu">Menu-näppäin</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Paina painiketta tai näppäintä...</string>
+  <string name="diagnosticActivity_textMotion_text">Kosketa näyttöä tai joystick:iä…</string>
+</resources>
