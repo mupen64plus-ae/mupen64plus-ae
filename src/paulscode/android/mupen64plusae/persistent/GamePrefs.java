@@ -363,7 +363,9 @@ public class GamePrefs
         final ConfigFile builtin = new ConfigFile( builtinPath );
         final String name = prefs.getString( key, defaultName );
         
-        if( custom.keySet().contains( name ) )
+        if( TextUtils.isEmpty( name ) )
+            return null;
+        else if( custom.keySet().contains( name ) )
             return new Profile( false, custom.get( name ) );
         else if( builtin.keySet().contains( name ) )
             return new Profile( true, builtin.get( name ) );
