@@ -51,7 +51,7 @@ for i in $COMPONENTS; do
     COMMIT_URL="${BASE_URL}/commit/"
     MSG_PREFIX="${i}: Update to commit "
     
-    OLD_SYNC_HASH=`git log -1 --grep="${MSG_PREFIX}[0-9a-fA-F]\{7\}" --pretty=format:"%s" | sed -e 's/.*\([0-9a-fA-F]\{7\}\)/\1/'`
+    OLD_SYNC_HASH=`git log -1 --grep="${MSG_PREFIX}[0-9a-fA-F]\{7\}" --pretty=format:"%s" | sed -e 's/.*\([0-9a-fA-F]\{7\}\).*/\1/'`
     if [ "$OLD_SYNC_HASH" == "" ];then
         echo
         echo "This script has not yet been used to pull from ${BASE_URL}."
@@ -68,7 +68,7 @@ for i in $COMPONENTS; do
     rm -r -f "${CLONE_DIR}"
     echo "Cloning ${CLONE_URL}"
     git clone --single-branch "${CLONE_URL}" "${CLONE_DIR}"
-
+    
     cd "${CLONE_DIR}"
     NEW_SYNC_HASH=`git log -1 --pretty=format:"%h"`
     echo
@@ -85,11 +85,25 @@ for i in $COMPONENTS; do
     echo "${NEW_MSG_BODY}"
     echo
     cd "${BASE_DIR}"
-
-    rm -r -f "${CLONE_DIR}/.git"
-    rm -r -f "${DEST_DIR}"
-    mv "${CLONE_DIR}" "${DEST_DIR}"
-    git commit "${DEST_DIR}/." --allow-empty --message="${NEW_MSG_SUBJECT}" --message="" --message="${NEW_MSG_LINK}" --message="" --message="${NEW_MSG_BODY}"
+    
+    DO_COMMIT="y"
+    if [ "$NEW_MSG_BODY" == "" ];then
+        echo
+        echo "Nothing to commit.  Continue? [y/N]"
+        echo
+        read DO_COMMIT
+    fi
+    
+    if [ "$DO_COMMIT" == "y" -o "$DO_COMMIT" == "Y" ];then
+        rm -r -f "${CLONE_DIR}/.git"
+        rm -r -f "${DEST_DIR}"
+        mv "${CLONE_DIR}" "${DEST_DIR}"
+        git commit "${DEST_DIR}/." --allow-empty --message="${NEW_MSG_SUBJECT}" --message="" --message="${NEW_MSG_LINK}" --message="" --message="${NEW_MSG_BODY}"
+    else
+        echo
+        echo "Cleaning up..."
+        rm -r -f "${CLONE_DIR}"
+    fi
 done
 
 echo "Finished"
