@@ -21,7 +21,9 @@
 package paulscode.android.mupen64plusae.task;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -36,13 +38,16 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     public interface CacheRomInfoListener
     {
         public void onCacheRomInfoProgress( ConfigSection section );
+        
         public void onCacheRomInfoFinished( ConfigFile file );
     }
     
-    public CacheRomInfoTask( List<File> files, String databasePath, String configPath, String artDir, CacheRomInfoListener listener )
+    public CacheRomInfoTask( File searchPath, String databasePath, String configPath, String artDir, CacheRomInfoListener listener )
     {
-        if( files == null )
-            throw new IllegalArgumentException( "File list cannot be null" );
+        if( searchPath == null )
+            throw new IllegalArgumentException( "Root path cannot be null" );
+        if( !searchPath.exists() )
+            throw new IllegalArgumentException( "Root path does not exist: " + searchPath.getAbsolutePath() );
         if( TextUtils.isEmpty( databasePath ) )
             throw new IllegalArgumentException( "ROM database path cannot be null or empty" );
         if( TextUtils.isEmpty( configPath ) )
@@ -52,14 +57,14 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         if( listener == null )
             throw new IllegalArgumentException( "Listener cannot be null" );
         
-        mFiles = files;
+        mSearchPath = searchPath;
         mDatabasePath = databasePath;
         mConfigPath = configPath;
         mArtDir = artDir;
         mListener = listener;
     }
     
-    private final List<File> mFiles;
+    private final File mSearchPath;
     private final String mDatabasePath;
     private final String mConfigPath;
     private final String mArtDir;
@@ -68,11 +73,12 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     @Override
     protected ConfigFile doInBackground( Void... params )
     {
+        final List<File> files = getRomFiles( mSearchPath );
         final RomDatabase database = new RomDatabase( mDatabasePath );
         final ConfigFile config = new ConfigFile( mConfigPath );
         config.clear();
         
-        for( final File file : mFiles )
+        for( final File file : files )
         {
             String md5 = ComputeMd5Task.computeMd5( file );
             RomDetail detail = database.lookupByMd5WithFallback( md5, file );
@@ -98,5 +104,22 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     protected void onPostExecute( ConfigFile result )
     {
         mListener.onCacheRomInfoFinished( result );
+    }
+    
+    private List<File> getRomFiles( File searchPath )
+    {
+        List<File> result = new ArrayList<File>();
+        if( searchPath.isDirectory() )
+        {
+            for( File file : searchPath.listFiles() )
+                result.addAll( getRomFiles( file ) );
+        }
+        else
+        {
+            String name = searchPath.getName().toLowerCase( Locale.US );
+            if( name.matches( ".*\\.(n64|v64|z64|zip)$" ) )
+                result.add( searchPath );
+        }
+        return result;
     }
 }

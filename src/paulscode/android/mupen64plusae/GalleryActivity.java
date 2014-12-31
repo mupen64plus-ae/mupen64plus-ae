@@ -39,8 +39,6 @@ import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
-import paulscode.android.mupen64plusae.task.FindRomsTask;
-import paulscode.android.mupen64plusae.task.FindRomsTask.FindRomsListener;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -63,7 +61,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-public class GalleryActivity extends Activity implements OnItemClickListener, ComputeMd5Listener, FindRomsListener, CacheRomInfoListener
+public class GalleryActivity extends Activity implements OnItemClickListener, ComputeMd5Listener, CacheRomInfoListener
 {
     // App data and user preferences
     private AppData mAppData = null;
@@ -261,13 +259,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     {
         // Asynchronously search for ROMs
         Notifier.showToast( this, "Searching for ROMs in " + startDir.getName() );
-        new FindRomsTask( startDir, this ).execute();
-    }
-    
-    @Override
-    public void onFindRomsFinished( List<File> result )
-    {
-        new CacheRomInfoTask( result, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this ).execute();
+        new CacheRomInfoTask( startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this ).execute();
     }
     
     @Override
