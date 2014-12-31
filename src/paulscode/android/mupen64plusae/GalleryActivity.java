@@ -70,6 +70,9 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     // Widgets
     private GridView mGridView;
     
+    // Background tasks
+    private CacheRomInfoTask mCacheRomInfoTask = null;
+    
     @Override
     protected void onNewIntent( Intent intent )
     {
@@ -130,6 +133,18 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
             CharSequence title = getText( R.string.invalidInstall_title );
             CharSequence message = getText( R.string.invalidInstall_message );
             new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+        }
+    }
+    
+    protected void onStop()
+    {
+        super.onStop();
+        
+        // Cancel long-running background tasks
+        if( mCacheRomInfoTask != null )
+        {
+            mCacheRomInfoTask.cancel( false );
+            mCacheRomInfoTask = null;
         }
     }
     
@@ -259,7 +274,8 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     {
         // Asynchronously search for ROMs
         Notifier.showToast( this, "Searching for ROMs in " + startDir.getName() );
-        new CacheRomInfoTask( startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this ).execute();
+        mCacheRomInfoTask = new CacheRomInfoTask( startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this );
+        mCacheRomInfoTask.execute();
     }
     
     @Override
@@ -271,6 +287,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     @Override
     public void onCacheRomInfoFinished( ConfigFile config )
     {
+        mCacheRomInfoTask = null;
         Notifier.showToast( this, "Finished" );
         refreshGrid( config );
     }
