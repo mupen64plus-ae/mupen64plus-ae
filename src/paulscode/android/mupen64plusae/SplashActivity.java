@@ -58,7 +58,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 48;
+    private static final int ASSET_VERSION = 49;
     
     /** The total number of assets to be extracted (for computing progress %). */
     private static final int TOTAL_ASSETS = 115;
