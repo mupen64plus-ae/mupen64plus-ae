@@ -84,14 +84,20 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         
         for( final File file : files )
         {
+            if( isCancelled() ) break;
             String md5 = ComputeMd5Task.computeMd5( file );
+            
+            if( isCancelled() ) break;
             RomDetail detail = database.lookupByMd5WithFallback( md5, file );
+            
+            if( isCancelled() ) break;
             String artPath = mArtDir + "/" + detail.artName;
             config.put( md5, "goodName", detail.goodName );
             config.put( md5, "romPath", file.getAbsolutePath() );
             config.put( md5, "artPath", artPath );
             downloadFile( detail.artUrl, artPath );
             
+            if( isCancelled() ) break;
             this.publishProgress( config.get( md5 ) );
         }
         config.save();
@@ -116,7 +122,10 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         if( searchPath.isDirectory() )
         {
             for( File file : searchPath.listFiles() )
+            {
+                if( isCancelled() ) break;
                 result.addAll( getRomFiles( file ) );
+            }
         }
         else
         {
