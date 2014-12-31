@@ -42,7 +42,7 @@ for i in $COMPONENTS; do
     CLONE_DIR="tmp/mupen64plus-${i}"
     BASE_URL="https://github.com/mupen64plus/mupen64plus-${i}"
     case "$i" in
-        "audio-sdl"|"core"|"ui-console")
+        "audio-sdl"|"ui-console")
             # Use mupen64plus-ae fork in some cases
             BASE_URL="https://github.com/mupen64plus-ae/mupen64plus-${i}"
             ;;
