@@ -20,14 +20,18 @@
  */
 package paulscode.android.mupen64plusae.task;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.os.AsyncTask;
@@ -86,7 +90,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             config.put( md5, "goodName", detail.goodName );
             config.put( md5, "romPath", file.getAbsolutePath() );
             config.put( md5, "artPath", artPath );
-            FileUtil.downloadFile( detail.artUrl, artPath );
+            downloadFile( detail.artUrl, artPath );
             
             this.publishProgress( config.get( md5 ) );
         }
@@ -121,5 +125,62 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                 result.add( searchPath );
         }
         return result;
+    }
+    
+    private Throwable downloadFile( String sourceUrl, String destPath )
+    {
+        // Be sure destination directory exists
+        new File( destPath ).getParentFile().mkdirs();
+        
+        // Download file
+        URL url = null;
+        DataInputStream input = null;
+        FileOutputStream fos = null;
+        DataOutputStream output = null;
+        try
+        {
+            url = new URL( sourceUrl );
+            input = new DataInputStream( url.openStream() );
+            fos = new FileOutputStream( destPath );
+            output = new DataOutputStream( fos );
+            
+            int contentLength = url.openConnection().getContentLength();
+            byte[] buffer = new byte[contentLength];
+            input.readFully( buffer );
+            output.write( buffer );
+            output.flush();
+        }
+        catch( Throwable error )
+        {
+            return error;
+        }
+        finally
+        {
+            if( output != null )
+                try
+                {
+                    output.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+            if( fos != null )
+                try
+                {
+                    fos.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+            if( input != null )
+                try
+                {
+                    input.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+        return null;
     }
 }
