@@ -39,8 +39,6 @@ import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
-import paulscode.android.mupen64plusae.task.FindRomsTask;
-import paulscode.android.mupen64plusae.task.FindRomsTask.FindRomsListener;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -63,7 +61,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-public class GalleryActivity extends Activity implements OnItemClickListener, ComputeMd5Listener, FindRomsListener, CacheRomInfoListener
+public class GalleryActivity extends Activity implements OnItemClickListener, ComputeMd5Listener, CacheRomInfoListener
 {
     // App data and user preferences
     private AppData mAppData = null;
@@ -71,6 +69,9 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     
     // Widgets
     private GridView mGridView;
+    
+    // Background tasks
+    private CacheRomInfoTask mCacheRomInfoTask = null;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -132,6 +133,18 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
             CharSequence title = getText( R.string.invalidInstall_title );
             CharSequence message = getText( R.string.invalidInstall_message );
             new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+        }
+    }
+    
+    protected void onStop()
+    {
+        super.onStop();
+        
+        // Cancel long-running background tasks
+        if( mCacheRomInfoTask != null )
+        {
+            mCacheRomInfoTask.cancel( false );
+            mCacheRomInfoTask = null;
         }
     }
     
@@ -261,13 +274,8 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     {
         // Asynchronously search for ROMs
         Notifier.showToast( this, "Searching for ROMs in " + startDir.getName() );
-        new FindRomsTask( startDir, this ).execute();
-    }
-    
-    @Override
-    public void onFindRomsFinished( List<File> result )
-    {
-        new CacheRomInfoTask( result, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this ).execute();
+        mCacheRomInfoTask = new CacheRomInfoTask( startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this );
+        mCacheRomInfoTask.execute();
     }
     
     @Override
@@ -277,9 +285,10 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     }
     
     @Override
-    public void onCacheRomInfoFinished( ConfigFile config )
+    public void onCacheRomInfoFinished( ConfigFile config, boolean canceled )
     {
-        Notifier.showToast( this, "Finished" );
+        mCacheRomInfoTask = null;
+        Notifier.showToast( this, canceled ? "Canceled" : "Finished" );
         refreshGrid( config );
     }
     
