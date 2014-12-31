@@ -285,10 +285,10 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     }
     
     @Override
-    public void onCacheRomInfoFinished( ConfigFile config )
+    public void onCacheRomInfoFinished( ConfigFile config, boolean canceled )
     {
         mCacheRomInfoTask = null;
-        Notifier.showToast( this, "Finished" );
+        Notifier.showToast( this, canceled ? "Canceled" : "Finished" );
         refreshGrid( config );
     }
     

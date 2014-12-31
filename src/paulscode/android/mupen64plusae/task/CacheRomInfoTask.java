@@ -43,7 +43,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     {
         public void onCacheRomInfoProgress( ConfigSection section );
         
-        public void onCacheRomInfoFinished( ConfigFile file );
+        public void onCacheRomInfoFinished( ConfigFile file, boolean canceled );
     }
     
     public CacheRomInfoTask( File searchPath, String databasePath, String configPath, String artDir, CacheRomInfoListener listener )
@@ -113,7 +113,13 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     @Override
     protected void onPostExecute( ConfigFile result )
     {
-        mListener.onCacheRomInfoFinished( result );
+        mListener.onCacheRomInfoFinished( result, false );
+    }
+    
+    @Override
+    protected void onCancelled( ConfigFile result )
+    {
+        mListener.onCacheRomInfoFinished( result, true );
     }
     
     private List<File> getRomFiles( File searchPath )
