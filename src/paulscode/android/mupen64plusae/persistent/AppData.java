@@ -489,6 +489,7 @@ public class AppData
                     || hardware.contains( "smdkc" )
                     || hardware.contains( "smdk4x12" )
                     || hardware.contains( "sun6i" )
+                    || hardware.contains( "mt799" )
                     || ( features != null && features.contains( "vfpv3d16" ) ) )
                 hardwareType = HARDWARE_TYPE_TEGRA;
             
