@@ -46,7 +46,6 @@ LOCAL_SRC_FILES :=                      \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
-    -DANDROID_EDITION   \
     -DUSE_SRC           \
 
 include $(BUILD_SHARED_LIBRARY)

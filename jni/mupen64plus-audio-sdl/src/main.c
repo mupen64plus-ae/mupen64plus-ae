@@ -631,13 +631,9 @@ static void my_audio_callback(void *userdata, unsigned char *stream, int len)
         else
 #endif
         {
-#ifdef ANDROID_EDITION
-            input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, stream, len, newsamplerate);
-#else
             input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, mixBuffer, len, newsamplerate);
             memset(stream, 0, len);
             SDL_MixAudio(stream, mixBuffer, len, VolSDL);
-#endif
         }
         memmove(primaryBuffer, &primaryBuffer[input_used], buffer_pos - input_used);
         buffer_pos -= input_used;
