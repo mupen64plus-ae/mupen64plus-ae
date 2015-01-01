@@ -23,27 +23,27 @@
 class FrameSkipper
 {
 public:
-	enum { AUTO, MANUAL };
+  enum { AUTO, MANUAL };
 
-	FrameSkipper();
+  FrameSkipper();
 
-	void setSkips(int type, int max) { skipType = type; maxSkips = max; }
+  void setSkips(int type, int max) { _skipType = type; _maxSkips = max; }
 
-	void setTargetFPS(int fps) { targetFPS = fps; }
+  void setTargetFPS(int fps) { _targetFPS = fps; }
 
-	bool willSkipNext() { return (skipCounter > 0); }
+  bool willSkipNext() { return (_skipCounter > 0); }
 
-	void update();
+  void update();
 
 private:
-	unsigned int getCurrentTicks();
+  unsigned int getCurrentTicks();
 
-	int skipType;
-	int maxSkips;
-	int targetFPS;
-	int skipCounter;
-	unsigned int initialTicks;
-	unsigned int actualFrame;
+  int _skipType;
+  int _maxSkips;
+  int _targetFPS;
+  int _skipCounter;
+  unsigned int _initialTicks;
+  unsigned int _actualFrame;
 };
 
 #endif
