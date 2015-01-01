@@ -10,14 +10,14 @@ void inline cache_glActiveTexture (GLenum texture)
     cached_ActiveTexture_texture = texture;
   }
 }
-#define glActiveTexture(texture) cache_glActiveTexture(texture)
+//#define glActiveTexture(texture) cache_glActiveTexture(texture)
 
 void inline cache_glBindTexture (GLenum target, GLuint texture)
 {
     vbo_draw();
     glBindTexture(target, texture);
 }
-#define glBindTexture(target, texture) cache_glBindTexture(target, texture)
+//#define glBindTexture(target, texture) cache_glBindTexture(target, texture)
 
 static GLenum cached_BlendEquation_mode;
 void inline cache_glBlendEquation ( GLenum mode )
@@ -29,7 +29,7 @@ void inline cache_glBlendEquation ( GLenum mode )
     cached_BlendEquation_mode = mode;
   }
 }
-#define glBlendEquation(mode) cache_glBlendEquation(mode)
+//#define glBlendEquation(mode) cache_glBlendEquation(mode)
 
 static GLenum cached_BlendEquationSeparate_modeRGB;
 static GLenum cached_BlendEquationSeparate_modeAlpha;
@@ -43,7 +43,7 @@ void inline cache_glBlendEquationSeparate (GLenum modeRGB, GLenum modeAlpha)
     cached_BlendEquationSeparate_modeAlpha = modeAlpha;
   }
 }
-#define glBlendEquationSeparate(modeRGB, modeAlpha) cache_glBlendEquationSeparate(modeRGB, modeAlpha)
+//#define glBlendEquationSeparate(modeRGB, modeAlpha) cache_glBlendEquationSeparate(modeRGB, modeAlpha)
 
 static GLenum cached_BlendFunc_sfactor;
 static GLenum cached_BlendFunc_dfactor;
@@ -57,7 +57,7 @@ void inline cache_glBlendFunc (GLenum sfactor, GLenum dfactor)
     cached_BlendFunc_dfactor = dfactor;
   }
 }
-#define glBlendFunc(sfactor, dfactor) cache_glBlendFunc(sfactor, dfactor)
+//#define glBlendFunc(sfactor, dfactor) cache_glBlendFunc(sfactor, dfactor)
 
 static GLenum cached_BlendFuncSeparate_srcRGB;
 static GLenum cached_BlendFuncSeparate_dstRGB;
@@ -75,7 +75,7 @@ void inline cache_glBlendFuncSeparate (GLenum srcRGB, GLenum dstRGB, GLenum srcA
     cached_BlendFuncSeparate_dstAlpha = dstAlpha;
   }
 }
-#define glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha) cache_glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha)
+//#define glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha) cache_glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha)
 
 static GLclampf cached_ClearColor_red;
 static GLclampf cached_ClearColor_green;
@@ -93,7 +93,7 @@ void inline cache_glClearColor (GLclampf red, GLclampf green, GLclampf blue, GLc
     cached_ClearColor_alpha = alpha;
   }
 }
-#define glClearColor(red, green, blue, alpha) cache_glClearColor(red, green, blue, alpha)
+//#define glClearColor(red, green, blue, alpha) cache_glClearColor(red, green, blue, alpha)
 
 static GLclampf cached_ClearDepthf_depth;
 void inline cache_glClearDepthf (GLclampf depth)
@@ -105,7 +105,7 @@ void inline cache_glClearDepthf (GLclampf depth)
     cached_ClearDepthf_depth = depth;
   }
 }
-#define glClearDepthf(depth) cache_glClearDepthf(depth)
+//#define glClearDepthf(depth) cache_glClearDepthf(depth)
 
 static GLenum cached_CullFace_mode;
 void inline cache_glCullFace (GLenum mode)
@@ -117,7 +117,7 @@ void inline cache_glCullFace (GLenum mode)
     cached_CullFace_mode = mode;
   }
 }
-#define glCullFace(mode) cache_glCullFace(mode)
+//#define glCullFace(mode) cache_glCullFace(mode)
 
 static GLenum cached_DepthFunc_func;
 void inline cache_glDepthFunc (GLenum func)
@@ -129,7 +129,7 @@ void inline cache_glDepthFunc (GLenum func)
     cached_DepthFunc_func = func;
   }
 }
-#define glDepthFunc(func) cache_glDepthFunc(func)
+//#define glDepthFunc(func) cache_glDepthFunc(func)
 
 static GLboolean cached_DepthMask_flag;
 void inline cache_glDepthMask (GLboolean flag)
@@ -141,7 +141,7 @@ void inline cache_glDepthMask (GLboolean flag)
     cached_DepthMask_flag = flag;
   }
 }
-#define glDepthMask(flag) cache_glDepthMask(flag)
+#define glDepthMask(flag) cache_glDepthMask(flag) // fixes captions in DK64 startup screen
 
 static GLclampf cached_DepthRangef_zNear;
 static GLclampf cached_DepthRangef_zFar;
@@ -155,7 +155,7 @@ void inline cache_glDepthRangef (GLclampf zNear, GLclampf zFar)
     cached_DepthRangef_zFar = zFar;
   }
 }
-#define glDepthRangef(zNear, zFar) cache_glDepthRangef(zNear, zFar)
+//#define glDepthRangef(zNear, zFar) cache_glDepthRangef(zNear, zFar)
 
 static bool cached_BLEND = false;
 static bool cached_CULL_FACE = false;
@@ -223,7 +223,7 @@ void inline cache_glDisable (GLenum cap)
     cached_STENCIL_TEST = false;
   }
 }
-#define glDisable(cap) cache_glDisable(cap)
+//#define glDisable(cap) cache_glDisable(cap)
 
 void inline cache_glEnable (GLenum cap)
 {
@@ -282,7 +282,7 @@ void inline cache_glEnable (GLenum cap)
     cached_STENCIL_TEST = true;
   }
 }
-#define glEnable(cap) cache_glEnable(cap)
+//#define glEnable(cap) cache_glEnable(cap)
 
 static GLenum cached_FrontFace_mode;
 void inline cache_glFrontFace (GLenum mode)
@@ -294,7 +294,7 @@ void inline cache_glFrontFace (GLenum mode)
     cached_FrontFace_mode = mode;
   }
 }
-#define glFrontFace(mode) cache_glFrontFace(mode)
+//#define glFrontFace(mode) cache_glFrontFace(mode)
 
 static GLfloat cached_PolygonOffset_factor;
 static GLfloat cached_PolygonOffset_units;
@@ -308,7 +308,7 @@ void inline cache_glPolygonOffset (GLfloat factor, GLfloat units)
     cached_PolygonOffset_units = units;
   }
 }
-#define glPolygonOffset(factor, units) cache_glPolygonOffset(factor, units)
+//#define glPolygonOffset(factor, units) cache_glPolygonOffset(factor, units)
 
 static GLint cached_Scissor_x;
 static GLint cached_Scissor_y;
@@ -326,7 +326,7 @@ void inline cache_glScissor (GLint x, GLint y, GLsizei width, GLsizei height)
     cached_Scissor_height = height;
   }
 }
-#define glScissor(x, y, width, height) cache_glScissor(x, y, width, height)
+#define glScissor(x, y, width, height) cache_glScissor(x, y, width, height) // fixes transition after Dolby logo in DK64 startup screen
 
 static GLuint cached_UseProgram_program;
 void inline cache_glUseProgram (GLuint program)
@@ -338,7 +338,7 @@ void inline cache_glUseProgram (GLuint program)
     cached_UseProgram_program = program;
   }
 }
-#define glUseProgram(program) cache_glUseProgram(program)
+//#define glUseProgram(program) cache_glUseProgram(program)
 
 static GLint cached_Viewport_x;
 static GLint cached_Viewport_y;
@@ -356,5 +356,5 @@ void inline cache_glViewport (GLint x, GLint y, GLsizei width, GLsizei height)
     cached_Viewport_height = height;
   }
 }
-#define glViewport(x, y, width, height) cache_glViewport(x, y, width, height)
+//#define glViewport(x, y, width, height) cache_glViewport(x, y, width, height)
 
