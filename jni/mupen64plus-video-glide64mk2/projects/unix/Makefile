@@ -316,6 +316,9 @@ endif
 ifeq ($(NO_SSE), 1)
   CFLAGS += -DNOSSE
 endif
+ifeq ($(USE_FRAMESKIPPER), 1)
+  CFLAGS += -DUSE_FRAMESKIPPER
+endif
 
 # set installation options
 ifeq ($(PREFIX),)
@@ -363,6 +366,11 @@ else
 		$(SRCDIR)/Glitch64/OGLgeometry.cpp \
 		$(SRCDIR)/Glitch64/OGLglitchmain.cpp \
 		$(SRCDIR)/Glitch64/OGLtextures.cpp
+endif
+
+ifeq ($(USE_FRAMESKIPPER), 1)
+	SOURCE += \
+		$(SRCDIR)/Glide64/FrameSkipper.cpp
 endif
 
 ifneq ($(HIRES), 0)
@@ -428,6 +436,7 @@ targets:
 	@echo "    NO_ASM=1      == build without inline assembly code (x86 MMX/SSE)"
 	@echo "    USE_GLES=1    == build against GLESv2 instead of OpenGL"
 	@echo "    NO_SSE=1      == build without SSE support"
+	@echo "    USE_FRAMESKIPPER=1 == build with frameskipper feature"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
