@@ -18,7 +18,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "FrameSkipper.h"
-#include <time.h>
+#include <SDL_timer.h>
 
 FrameSkipper::FrameSkipper()
   : _skipType(AUTO), _maxSkips(2), _targetFPS(60),
@@ -41,7 +41,7 @@ void FrameSkipper::update()
   else if (_initialTicks > 0) // skipType == AUTO, running
   {
     // Compute the frame number we want be at, based on elapsed time and target FPS
-    unsigned int elapsedMilliseconds = getCurrentTicks() - _initialTicks;
+    unsigned int elapsedMilliseconds = SDL_GetTicks() - _initialTicks;
     unsigned int desiredFrame = (elapsedMilliseconds * _targetFPS) / 1000;
 
     // Record the frame number we are actually at
@@ -69,16 +69,8 @@ void FrameSkipper::update()
   else // skipType == AUTO, initializing
   {
     // First frame, initialize auto-skip variables
-    _initialTicks = getCurrentTicks();
+    _initialTicks = SDL_GetTicks();
     _actualFrame = 0;
     _skipCounter = 0;
   }
-}
-
-unsigned int FrameSkipper::getCurrentTicks()
-{
-  // Get the number of milliseconds since system epoch
-  struct timespec now;
-  clock_gettime(CLOCK_MONOTONIC, &now);
-  return (now.tv_sec) * 1000 + (now.tv_nsec) / 1000000;
 }

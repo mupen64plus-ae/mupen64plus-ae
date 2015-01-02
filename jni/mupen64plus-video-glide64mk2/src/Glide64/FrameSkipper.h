@@ -36,8 +36,6 @@ public:
   void update();
 
 private:
-  unsigned int getCurrentTicks();
-
   int _skipType;
   int _maxSkips;
   int _targetFPS;
