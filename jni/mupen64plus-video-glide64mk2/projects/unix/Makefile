@@ -165,14 +165,14 @@ ifeq ($(OS), OSX)
   OSX_SDK_ROOT = $(shell xcode-select -print-path)/Platforms/MacOSX.platform/Developer/SDKs
   OSX_SDK_PATH = $(OSX_SDK_ROOT)/$(shell ls $(OSX_SDK_ROOT) | tail -1)
 
-  CXXFLAGS += -std=c++11 -stdlib=libc++
   ifeq ($(CPU), X86)
     LDFLAGS += -bundle -L/opt/local/lib
+    CXXFLAGS += -stdlib=libc++
     LDLIBS += -ldl
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
+      CFLAGS += -pipe -I /opt/local/include -arch x86_64 -mmacosx-version-min=10.7 -isysroot $(OSX_SDK_PATH)
     else
-      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
+      CFLAGS += -pipe -I /opt/local/include -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.7 -isysroot $(OSX_SDK_PATH)
     endif
   endif
 endif
@@ -243,14 +243,10 @@ ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
       $(warning Using SDL 1.2 libraries)
     endif
   endif
+  SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+  SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
   ifeq ($(OS),OSX)
-    SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    # sdl2-config on mac screws up when we're trying to build a library and not an executable
-    # SDL 1.3 is supposed to fix that, if it's ever released
-    SDL_LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
-  else
-    SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
+    SDL_LDLIBS += -Wl,-framework,Cocoa
   endif
 endif
 CFLAGS += $(SDL_CFLAGS)

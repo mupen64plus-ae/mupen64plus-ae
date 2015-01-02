@@ -42,6 +42,10 @@
 #include <3dfx.h>
 #include <glidesys.h>
 #include <sst1vid.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,7 +64,7 @@ typedef FxU8  GrFog_t;
 typedef FxU32 GrContext_t;
 typedef int (FX_CALL *GrProc)();
 
-#ifndef WIN32
+#ifndef _WIN32
 typedef int HWND;
 #endif
 

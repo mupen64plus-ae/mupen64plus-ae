@@ -147,7 +147,7 @@ void init_textures()
 
 void free_textures()
 {
-#ifndef WIN32
+#ifndef _WIN32
   // ZIGGY for some reasons, Pj64 doesn't like remove_tex on exit
   remove_tex(0x00000000, 0xFFFFFFFF);
 #endif

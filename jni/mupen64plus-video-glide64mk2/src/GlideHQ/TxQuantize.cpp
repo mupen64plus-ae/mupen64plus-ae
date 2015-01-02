@@ -26,13 +26,69 @@
 #endif
 
 #ifndef NO_FILTER_THREAD
-#include <functional>
-#include <thread>
+#include <SDL.h>
+#include <SDL_thread.h>
 #endif
 
-/* NOTE: The codes are not optimized. They can be made faster. */
-
 #include "TxQuantize.h"
+
+typedef void (*quantizerFunc)(uint32* src, uint32* dest, int width, int height);
+
+typedef struct {
+	quantizerFunc  func;
+    uint32        *src;
+    uint32        *dest;
+    uint32         width;
+    uint32         height;
+} QuantizeParams;
+
+int QuantizeThreadFunc(void *pQuantParams)
+{
+    QuantizeParams *pParams = (QuantizeParams *) pQuantParams;
+    pParams->func(pParams->src, pParams->dest, pParams->width, pParams->height);
+    return 0;
+}
+
+typedef struct {
+    TxQuantize *pThis;
+    int         comps;
+    int         width;
+    int         height;
+    const void *src;
+    int         srcRowStride;
+    int         destformat;
+    void       *dest;
+    int         dstRowStride;
+} CompressParams;
+
+int TxQuantize::CompressThreadFuncFXT1(void *pCompressParams)
+{
+    CompressParams *pParams = (CompressParams *) pCompressParams;
+    
+    return pParams->pThis->_tx_compress_fxt1(pParams->width,
+                                             pParams->height,
+                                             pParams->comps,
+                                             pParams->src,
+                                             pParams->srcRowStride,
+                                             pParams->dest,
+                                             pParams->dstRowStride);
+}
+
+int TxQuantize::CompressThreadFuncDXT(void *pCompressParams)
+{
+    CompressParams *pParams = (CompressParams *) pCompressParams;
+
+    pParams->pThis->_tx_compress_dxtn_rgba(pParams->comps,
+                                           pParams->width,
+                                           pParams->height,
+                                           pParams->src,
+                                           pParams->destformat,
+                                           pParams->dest,
+                                           pParams->dstRowStride);
+    return 0;
+}
+
+/* NOTE: The codes are not optimized. They can be made faster. */
 
 TxQuantize::TxQuantize()
 {
@@ -1735,7 +1791,6 @@ TxQuantize::P8_16BPP(uint32* src, uint32* dest, int width, int height, uint32* p
 boolean
 TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcformat, uint16 destformat, boolean fastQuantizer)
 {
-  typedef void (TxQuantize::*quantizerFunc)(uint32* src, uint32* dest, int width, int height);
   quantizerFunc quantizer;
   int bpp_shift = 0;
 
@@ -1777,36 +1832,37 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      std::thread *thrd[MAX_NUMCORE];
+      SDL_Thread *thrd[MAX_NUMCORE];
+      QuantizeParams params[MAX_NUMCORE];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (width * blkheight) << (2 - bpp_shift);
       unsigned int destStride = srcStride << bpp_shift;
       for (i = 0; i < numcore - 1; i++) {
-        thrd[i] = new std::thread(std::bind(quantizer,
-                                            this,
-                                            (uint32*)src,
-                                            (uint32*)dest,
-                                            width,
-                                            blkheight));
+          params[i].func = quantizer;
+          params[i].src = (uint32*) src;
+          params[i].dest = (uint32*) dest;
+          params[i].width = width;
+          if (i == numcore-1)
+              params[i].height = height - blkheight * i;
+          else
+              params[i].height = blkheight;
+#if SDL_VERSION_ATLEAST(2,0,0)
+          thrd[i] = SDL_CreateThread(QuantizeThreadFunc, "quantizer", &params[i]);
+#else
+          thrd[i] = SDL_CreateThread(QuantizeThreadFunc, &params[i]);
+#endif
         src  += srcStride;
         dest += destStride;
       }
-      thrd[i] = new std::thread(std::bind(quantizer,
-                                          this,
-                                          (uint32*)src,
-                                          (uint32*)dest,
-                                          width,
-                                          height - blkheight * i));
       for (i = 0; i < numcore; i++) {
-        thrd[i]->join();
-        delete thrd[i];
+          SDL_WaitThread(thrd[i], NULL);
       }
     } else {
-      (*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
+      quantizer((uint32*)src, (uint32*)dest, width, height);
     }
 #else
-    (*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
+    quantizer((uint32*)src, (uint32*)dest, width, height);
 #endif
 
   } else if (srcformat == GR_TEXFMT_ARGB_8888) {
@@ -1848,36 +1904,37 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      std::thread *thrd[MAX_NUMCORE];
+      SDL_Thread *thrd[MAX_NUMCORE];
+      QuantizeParams params[MAX_NUMCORE];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (width * blkheight) << 2;
       unsigned int destStride = srcStride >> bpp_shift;
-      for (i = 0; i < numcore - 1; i++) {
-        thrd[i] = new std::thread(std::bind(quantizer,
-                                            this,
-                                            (uint32*)src,
-                                            (uint32*)dest,
-                                            width,
-                                            blkheight));
+      for (i = 0; i < numcore; i++) {
+        params[i].func = quantizer;
+        params[i].src = (uint32*) src;
+        params[i].dest = (uint32*) dest;
+        params[i].width = width;
+        if (i == numcore-1)
+            params[i].height = height - blkheight*i;
+        else
+            params[i].height = blkheight;
+#if SDL_VERSION_ATLEAST(2,0,0)
+        thrd[i] = SDL_CreateThread(QuantizeThreadFunc, "quantizer", &params[i]);
+#else
+        thrd[i] = SDL_CreateThread(QuantizeThreadFunc, &params[i]);
+#endif
         src  += srcStride;
         dest += destStride;
       }
-      thrd[i] = new std::thread(std::bind(quantizer,
-                                          this,
-                                          (uint32*)src,
-                                          (uint32*)dest,
-                                          width,
-                                          height - blkheight * i));
       for (i = 0; i < numcore; i++) {
-        thrd[i]->join();
-        delete thrd[i];
+          SDL_WaitThread(thrd[i], NULL);
       }
     } else {
-      (*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
+      quantizer((uint32*)src, (uint32*)dest, width, height);
     }
 #else
-    (*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
+    quantizer((uint32*)src, (uint32*)dest, width, height);
 #endif
 
   } else {
@@ -1918,34 +1975,34 @@ TxQuantize::FXT1(uint8 *src, uint8 *dest,
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      std::thread *thrd[MAX_NUMCORE];
+      SDL_Thread     *thrd[MAX_NUMCORE];
+      CompressParams  params[MAX_NUMCORE];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (srcwidth * blkheight) << 2;
       unsigned int destStride = dstRowStride * blkrow;
-      for (i = 0; i < numcore - 1; i++) {
-        thrd[i] = new std::thread(std::bind(_tx_compress_fxt1,
-                                            srcwidth,
-                                            blkheight,
-                                            4,
-                                            src,
-                                            srcRowStride,
-                                            dest,
-                                            dstRowStride));
+      for (i = 0; i < numcore; i++) {
+        params[i].pThis = this;
+        params[i].comps = 4;
+        params[i].width = srcwidth;
+        if (i == numcore-1)
+            params[i].height = srcheight - blkheight * i;
+        else
+            params[i].height = blkheight;
+        params[i].src = src;
+        params[i].srcRowStride = srcRowStride;
+        params[i].dest = dest;
+        params[i].dstRowStride = dstRowStride;
+#if SDL_VERSION_ATLEAST(2,0,0)
+        thrd[i] = SDL_CreateThread(TxQuantize::CompressThreadFuncFXT1, "compressor", &params[i]);
+#else
+        thrd[i] = SDL_CreateThread(TxQuantize::CompressThreadFuncFXT1, &params[i]);
+#endif
         src  += srcStride;
         dest += destStride;
       }
-      thrd[i] = new std::thread(std::bind(_tx_compress_fxt1,
-                                          srcwidth,
-                                          srcheight - blkheight * i,
-                                          4,
-                                          src,
-                                          srcRowStride,
-                                          dest,
-                                          dstRowStride));
       for (i = 0; i < numcore; i++) {
-        thrd[i]->join();
-        delete thrd[i];
+          SDL_WaitThread(thrd[i], NULL);
       }
     } else {
       (*_tx_compress_fxt1)(srcwidth,      /* width */
@@ -2034,34 +2091,34 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
         numcore--;
       }
       if (blkrow > 0 && numcore > 1) {
-        std::thread *thrd[MAX_NUMCORE];
+        SDL_Thread     *thrd[MAX_NUMCORE];
+        CompressParams  params[MAX_NUMCORE];
         unsigned int i;
         int blkheight = blkrow << 2;
         unsigned int srcStride = (srcwidth * blkheight) << 2;
         unsigned int destStride = dstRowStride * blkrow;
-        for (i = 0; i < numcore - 1; i++) {
-          thrd[i] = new std::thread(std::bind(_tx_compress_dxtn_rgba,
-                                              4,
-                                              srcwidth,
-                                              blkheight,
-                                              src,
-                                              compression,
-                                              dest,
-                                              dstRowStride));
+        for (i = 0; i < numcore; i++) {
+          params[i].pThis = this;
+          params[i].comps = 4;
+          params[i].width = srcwidth;
+          if (i == numcore-1)
+              params[i].height = srcheight - blkheight * i;
+          else
+              params[i].height = blkheight;
+          params[i].src = src;
+          params[i].destformat = compression;
+          params[i].dest = dest;
+          params[i].dstRowStride = dstRowStride;
+#if SDL_VERSION_ATLEAST(2,0,0)
+          thrd[i] = SDL_CreateThread(TxQuantize::CompressThreadFuncDXT, "compressor", &params[i]);
+#else
+          thrd[i] = SDL_CreateThread(TxQuantize::CompressThreadFuncDXT, &params[i]);
+#endif
           src  += srcStride;
           dest += destStride;
         }
-        thrd[i] = new std::thread(std::bind(_tx_compress_dxtn_rgba,
-                                            4,
-                                            srcwidth,
-                                            srcheight - blkheight * i,
-                                            src,
-                                            compression,
-                                            dest,
-                                            dstRowStride));
         for (i = 0; i < numcore; i++) {
-          thrd[i]->join();
-          delete thrd[i];
+          SDL_WaitThread(thrd[i], NULL);
         }
       } else {
         (*_tx_compress_dxtn_rgba)(4,             /* comps: ARGB8888=4, RGB888=3 */

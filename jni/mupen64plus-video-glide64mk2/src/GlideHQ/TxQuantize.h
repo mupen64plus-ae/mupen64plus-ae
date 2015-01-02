@@ -40,28 +40,31 @@ private:
   fxtCompressTexFuncExt _tx_compress_fxt1;
   dxtCompressTexFuncExt _tx_compress_dxtn_rgba;
 
-  /* fast optimized... well, sort of. */
-  void ARGB1555_ARGB8888(uint32* src, uint32* dst, int width, int height);
-  void ARGB4444_ARGB8888(uint32* src, uint32* dst, int width, int height);
-  void RGB565_ARGB8888(uint32* src, uint32* dst, int width, int height);
-  void A8_ARGB8888(uint32* src, uint32* dst, int width, int height);
-  void AI44_ARGB8888(uint32* src, uint32* dst, int width, int height);
-  void AI88_ARGB8888(uint32* src, uint32* dst, int width, int height);
+  static int CompressThreadFuncFXT1(void *pCompressParams);
+  static int CompressThreadFuncDXT(void *pCompressParams);
 
-  void ARGB8888_ARGB1555(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_ARGB4444(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_RGB565(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_A8(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_AI44(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_AI88(uint32* src, uint32* dst, int width, int height);
+  /* fast optimized... well, sort of. */
+  static void ARGB1555_ARGB8888(uint32* src, uint32* dst, int width, int height);
+  static void ARGB4444_ARGB8888(uint32* src, uint32* dst, int width, int height);
+  static void RGB565_ARGB8888(uint32* src, uint32* dst, int width, int height);
+  static void A8_ARGB8888(uint32* src, uint32* dst, int width, int height);
+  static void AI44_ARGB8888(uint32* src, uint32* dst, int width, int height);
+  static void AI88_ARGB8888(uint32* src, uint32* dst, int width, int height);
+
+  static void ARGB8888_ARGB1555(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_ARGB4444(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_RGB565(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_A8(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_AI44(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_AI88(uint32* src, uint32* dst, int width, int height);
 
   /* quality */
-  void ARGB8888_RGB565_ErrD(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_ARGB1555_ErrD(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_ARGB4444_ErrD(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_AI44_ErrD(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_AI88_Slow(uint32* src, uint32* dst, int width, int height);
-  void ARGB8888_I8_Slow(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_RGB565_ErrD(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_ARGB1555_ErrD(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_ARGB4444_ErrD(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_AI44_ErrD(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_AI88_Slow(uint32* src, uint32* dst, int width, int height);
+  static void ARGB8888_I8_Slow(uint32* src, uint32* dst, int width, int height);
 
   /* compressors */
   boolean FXT1(uint8 *src, uint8 *dest,
