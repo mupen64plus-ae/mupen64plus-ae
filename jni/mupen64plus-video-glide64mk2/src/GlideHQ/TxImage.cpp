@@ -81,9 +81,10 @@ TxImage::readPNG(FILE* fp, int* width, int* height, uint16* format)
 
   png_structp png_ptr;
   png_infop info_ptr;
+  png_uint_32 o_width, o_height;
   uint8 *image = NULL;
   int bit_depth, color_type, interlace_type, compression_type, filter_type,
-      row_bytes, o_width, o_height, num_pas;
+      row_bytes, num_pas;
 
   /* initialize */
   *width  = 0;
@@ -100,10 +101,10 @@ TxImage::readPNG(FILE* fp, int* width, int* height, uint16* format)
   }
 
   png_get_IHDR(png_ptr, info_ptr,
-               (png_uint_32*)&o_width, (png_uint_32*)&o_height, &bit_depth, &color_type,
+               &o_width, &o_height, &bit_depth, &color_type,
                &interlace_type, &compression_type, &filter_type);
 
-  DBG_INFO(80, L"png format %d x %d bitdepth:%d color:%x interlace:%x compression:%x filter:%x\n",
+  DBG_INFO(80, L"png format %ld x %ld bitdepth:%d color:%x interlace:%x compression:%x filter:%x\n",
            o_width, o_height, bit_depth, color_type,
            interlace_type, compression_type, filter_type);
 
@@ -185,8 +186,9 @@ TxImage::readPNG(FILE* fp, int* width, int* height, uint16* format)
 
   /* read in image */
   if (image) {
-    int pas, i;
     uint8* tmpimage;
+    png_uint_32 i;
+    int pas;
 
     for (pas = 0; pas < num_pas; pas++) { /* deal with interlacing */
       tmpimage = image;

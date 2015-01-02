@@ -1724,7 +1724,7 @@ void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
   // bswap on a dword (32 bits) boundry
 }
 
-#ifndef WIN32
+#ifndef _WIN32
 BOOL WINAPI QueryPerformanceCounter(PLARGE_INTEGER counter)
 {
    struct timeval tv;

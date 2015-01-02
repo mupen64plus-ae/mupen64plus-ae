@@ -165,14 +165,14 @@ ifeq ($(OS), OSX)
   OSX_SDK_ROOT = $(shell xcode-select -print-path)/Platforms/MacOSX.platform/Developer/SDKs
   OSX_SDK_PATH = $(OSX_SDK_ROOT)/$(shell ls $(OSX_SDK_ROOT) | tail -1)
 
-  CXXFLAGS += -std=c++11 -stdlib=libc++
   ifeq ($(CPU), X86)
     LDFLAGS += -bundle -L/opt/local/lib
+    CXXFLAGS += -stdlib=libc++
     LDLIBS += -ldl
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
+      CFLAGS += -pipe -I /opt/local/include -arch x86_64 -mmacosx-version-min=10.7 -isysroot $(OSX_SDK_PATH)
     else
-      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
+      CFLAGS += -pipe -I /opt/local/include -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.7 -isysroot $(OSX_SDK_PATH)
     endif
   endif
 endif
@@ -243,14 +243,10 @@ ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
       $(warning Using SDL 1.2 libraries)
     endif
   endif
+  SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+  SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
   ifeq ($(OS),OSX)
-    SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    # sdl2-config on mac screws up when we're trying to build a library and not an executable
-    # SDL 1.3 is supposed to fix that, if it's ever released
-    SDL_LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
-  else
-    SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
+    SDL_LDLIBS += -Wl,-framework,Cocoa
   endif
 endif
 CFLAGS += $(SDL_CFLAGS)
@@ -316,6 +312,9 @@ endif
 ifeq ($(NO_SSE), 1)
   CFLAGS += -DNOSSE
 endif
+ifeq ($(USE_FRAMESKIPPER), 1)
+  CFLAGS += -DUSE_FRAMESKIPPER
+endif
 
 # set installation options
 ifeq ($(PREFIX),)
@@ -363,6 +362,11 @@ else
 		$(SRCDIR)/Glitch64/OGLgeometry.cpp \
 		$(SRCDIR)/Glitch64/OGLglitchmain.cpp \
 		$(SRCDIR)/Glitch64/OGLtextures.cpp
+endif
+
+ifeq ($(USE_FRAMESKIPPER), 1)
+	SOURCE += \
+		$(SRCDIR)/Glide64/FrameSkipper.cpp
 endif
 
 ifneq ($(HIRES), 0)
@@ -428,6 +432,7 @@ targets:
 	@echo "    NO_ASM=1      == build without inline assembly code (x86 MMX/SSE)"
 	@echo "    USE_GLES=1    == build against GLESv2 instead of OpenGL"
 	@echo "    NO_SSE=1      == build without SSE support"
+	@echo "    USE_FRAMESKIPPER=1 == build with frameskipper feature"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
