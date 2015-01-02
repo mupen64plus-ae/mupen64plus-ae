@@ -155,7 +155,7 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     handleAEI       = NULL;
 }
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring juserDataPath, jstring juserCachePath, jobjectArray jargv)
+extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring juserDataPath, jstring juserCachePath, jobjectArray jargv)
 {
     // Define some environment variables needed by rice video plugin
     const char *userDataPath = env->GetStringUTFChars(juserDataPath, 0);
@@ -185,7 +185,7 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     }
 
     // Launch main emulator loop (continues until emuStop is called)
-    frontMain(argc, argv);
+    return frontMain(argc, argv);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStop(JNIEnv* env, jclass cls)

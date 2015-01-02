@@ -224,6 +224,35 @@ ifneq ($(NO_SRC), 1)
   LDLIBS += $(SRC_LDLIBS)
 endif
 
+USE_AUDIORESOURCE = 0
+ifeq ($(origin AUDIORESOURCE_CFLAGS) $(origin AUDIORESOURCE_LDLIBS), undefined undefined)
+  ifneq ($(strip $(shell $(PKG_CONFIG) audioresource --modversion 2> /dev/null)),)
+    # set audioresourceflags and libraries
+    USE_AUDIORESOURCE = 1
+    AUDIORESOURCE_CFLAGS += $(shell $(PKG_CONFIG) audioresource --cflags) -DUSE_AUDIORESOURCE
+    AUDIORESOURCE_LDLIBS += $(shell $(PKG_CONFIG) audioresource --libs)
+  endif
+else
+  USE_AUDIORESOURCE = 1
+  AUDIORESOURCE_CFLAGS += -DUSE_AUDIORESOURCE
+endif
+
+ifeq ($(USE_AUDIORESOURCE),1)
+  ifeq ($(origin GLIB_CFLAGS) $(origin GLIB_LDLIBS), undefined undefined)
+    ifneq ($(strip $(shell $(PKG_CONFIG) glib-2.0 --modversion 2> /dev/null)),)
+      # set glib-2.0 flags and libraries
+      GLIB_CFLAGS += $(shell $(PKG_CONFIG) glib-2.0 --cflags)
+      GLIB_LDLIBS += $(shell $(PKG_CONFIG) glib-2.0 --libs)
+    else
+      $(warning audioresource available but glib-2.0 not found, disabling audioresource support.  Mupen64plus-sdl-audio will be built without the Nemo Mobile Audio Resource API.)
+      AUDIORESOURCE_CFLAGS =
+      AUDIORESOURCE_LDLIBS =
+    endif
+  endif
+  CFLAGS += $(GLIB_CFLAGS) $(AUDIORESOURCE_CFLAGS)
+  LDLIBS += $(GLIB_LDLIBS) $(AUDIORESOURCE_LDLIBS)
+endif
+
 # test for the presence of OSS
 ifneq ($(wildcard /dev/mixer),)
   ifneq ($(NO_OSS), 1)

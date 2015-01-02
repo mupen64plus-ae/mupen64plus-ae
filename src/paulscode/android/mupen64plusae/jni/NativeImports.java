@@ -49,30 +49,4 @@ public class NativeImports extends CoreInterface
             }
         }
     }
-    
-    /**
-     * Returns the hardware type of a device. If the user has overridden the detected type in the
-     * settings, the overridden value is returned.
-     * 
-     * @return The hardware type of the device, or the user-specified type if the user has
-     *         overridden it in the settings.
-     * @see jni/ae-bridge/ae_imports.cpp
-     */
-    public static int getHardwareType()
-    {
-        int autoDetected = sAppData.hardwareInfo.hardwareType;
-        int overridden = sUserPrefs.videoHardwareType;
-        return ( overridden < 0 ) ? autoDetected : overridden;
-    }
-    
-    /**
-     * Returns the custom polygon offset.
-     * 
-     * @return The polygon offset value.
-     * @see jni/ae-bridge/ae_imports.cpp
-     */
-    public static float getCustomPolygonOffset()
-    {
-        return sUserPrefs.videoPolygonOffset;
-    }
 }

@@ -49,7 +49,7 @@ typedef int64_t wxInt64;
 typedef unsigned char wxChar;
 typedef uintptr_t wxUIntPtr;
 
-#ifndef WIN32
+#ifndef _WIN32
 
 typedef union _LARGE_INTEGER
 {

@@ -43,6 +43,7 @@
   <string name="menuItem_play">Spelen</string>
   <string name="menuItem_settings">Instellingen</string>
   <string name="menuItem_globalSettings">Globale instellingen</string>
+  <string name="menuItem_emulationProfiles">Gebruikersprofiel</string>
   <string name="menuItem_touchscreenProfiles">Touchscreenprofielen</string>
   <string name="menuItem_controllerProfiles">Controllerprofielen</string>
   <string name="menuItem_customCheats">Eigen cheats</string>
@@ -55,13 +56,26 @@
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">Appversie</string>
   <string name="menuItem_changelog">Wijzigingsgeschiedenis</string>
+  <string name="menuItem_hardwareInfo">Hardware informatie</string>
   <string name="menuItem_localeOverride">Taal</string>
   <!--ManageProfilesActivity-->
+  <string name="menuItem_new">Nieuw</string>
+  <string name="menuItem_hideBuiltins">Verberg ingebouwde functies</string>
+  <string name="menuItem_showBuiltins">Toon ingebouwde functies</string>
+  <string name="profile_name_cannot_be_empty">Naam kan niet leeg zijn</string>
+  <string name="profile_name_cannot_contain_brackets">Naam mag geen haakjes bevatten</string>
+  <string name="profile_name_must_be_unique">Naam moet uniek zijn</string>
+  <string name="profile_manage_profiles">Beheer profielen</string>
   <!--Popup Dialogs-->
-  <string name="popup_faq">Mupen64Plus is ontwikkeld en wordt onderhouden door vrijwilligers.<small>\n\nGrafische problemen? Kies een andere <i>video plugin</i>.\n\nLast van lag? Probeer de <i>video beelden overslaan</i>-instelling of kies een andere <i>video plugin</i>.\n\nAls ROMs onspeelbaar zijn, probeer deze uit te pakken of probeer een andere versie van de ROM.\n\nProblemen met de touchscreenbediening? Probeer een andere <i>knopschaal</i> of <i>knopindeling</i>.\n\nBij andere problemen, of als u nog steeds problemen ondervindt, klik dan op de <i>Veelgestelde vragen</i> knop hieronder. In geval van fouten die niet met een bepaald spel te maken hebben, klik op de <i>Meld bug</i>-knop hieronder.  We beantwoorden de meeste berichten binnen 24 uur. Eerlijk waar.\n\n</small>Bedankt voor de hulp om de app beter te maken!</string>
-  <string name="popup_version">Versie: %1$s\nCode versie: %2$d</string>
   <!--Lists-->
+  <string name="listItem_edit">Verander</string>
+  <string name="listItem_rename">Hernoem</string>
+  <string name="listItem_copy">Kopiëer</string>
+  <string name="listItem_delete">Verwijder</string>
+  <string name="listItem_disabled">(Uitgeschakeld)</string>
   <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Profiel naam</string>
+  <string name="hint_profileComment">Beschrijving (optioneel)</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -76,6 +90,7 @@
   <string name="toast_loadingFile">%1$s laden…</string>
   <string name="toast_savingFile">%1$s opslaan…</string>
   <string name="toast_overwritingFile">%1$s wordt overschreven…</string>
+  <string name="toast_loadingGameInfo">Game info aan het laden...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Huidig slot %1$d.</string>
   <string name="toast_sdInaccessible">SD-kaart niet beschikbaar (verwijder de USB-kabel en probeer opnieuw).</string>
@@ -94,9 +109,9 @@
   <string name="actionReloadAssets_summary">Heeft geen invloed op gebruikersinstellingen, ROM\'s, opgeslagen spellen, of andere eigen gegevens</string>
   <string name="actionCrashTest_title">Test</string>
   <string name="actionCrashTest_summary">Stuur een configuratierapport naar de ontwikkelaars</string>
-  <string name="actionResetUserPrefs_title">Reset</string>
-  <string name="actionResetUserPrefs_summary">Herstel standaardinstellingen</string>
-  <string name="actionResetUserPrefs_popupMessage">Reset alle voorkeuren naar standaardwaarden?<small>\n\nAlle handmatige wijzigingen aan de config file gaan verloren.</small></string>
+  <string name="actionCheatEditor_title">Beheer cheat codes</string>
+  <string name="actionCheatEditor_summary">Voeg toe, verander en verwijder cheat codes</string>
+  <string name="actionShare_title">Deel</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Invoer</string>
   <string name="screenInput_summary">Besturingsinstellingen</string>
@@ -111,7 +126,9 @@
   <string name="screenAdvanced_title">Geavanceerd</string>
   <string name="screenAdvanced_summary">Kern-, opslag- en foutopsporingsinstellingen</string>
   <string name="screenGlobalSettings_title">Globale instellingen</string>
+  <string name="screenGlobalSettings_summary">Beeld, geluid, opslag en debug instellingen</string>
   <string name="screenCheats_title">Cheats</string>
+  <string name="screenCheats_summaryEnabled">Ingeschakeld</string>
   <string name="screenCheats_summaryDisabled">Uitgeschakeld</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheat opties (lang indrukken voor opmerkingen)</string>
@@ -131,7 +148,6 @@
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Cheats inschakelen</string>
   <string name="playShowCheats_summary">Menu laadt langzamer indien ingeschakeld</string>
-  <string name="touchscreenEnabled_title">Inschakelen aanraakscherm</string>
   <string name="touchscreenFeedback_title">Haptische feedback</string>
   <string name="touchscreenFeedback_summary">Trillen bij knopaanraking</string>
   <string name="touchpadEnabled_title">Touchpad inschakelen</string>
@@ -149,8 +165,6 @@
   <string name="gln64ScreenClear_summary">Schakel uit voor snelheid (kan beeldfouten veroorzaken)</string>
   <string name="gln64AlphaTest_title">Transparantietest</string>
   <string name="gln64AlphaTest_summary">Uitschakelen voor snelheid (veroorzaakt zwarte texturen)</string>
-  <string name="gln64DepthTest_title">Dieptetest</string>
-  <string name="gln64DepthTest_summary">Uitschakelen voor snelheid (veroorzaakt knipperende achtergrond)</string>
   <string name="riceAutoFrameskip_title">Automatisch frames overslaan</string>
   <string name="riceAutoFrameskip_summary">Verbetert spelsnelheid ten koste van framesnelheid</string>
   <string name="riceFastTexture_title">Snel texturen laden</string>
@@ -168,7 +182,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Uitgeschakeld</string>
   <string name="touchscreenAutoHold_entryLongPress">Bij lang indrukken</string>
   <string name="touchscreenAutoHold_entrySlideOut">Bij afglijden</string>
-  <string name="touchscreenAutoHoldables_title">Vasthoudbare knoppen</string>
   <string name="touchscreenRefresh_title">Joystickanimatie</string>
   <string name="touchscreenRefresh_entryNever">Nooit</string>
   <string name="touchscreenRefresh_entryOccasionally">Soms</string>
@@ -176,15 +189,6 @@
   <string name="touchscreenStyle_title">Knopstijl</string>
   <string name="touchscreenStyle_entryOutline">Omtrekken</string>
   <string name="touchscreenStyle_entryShaded">Gearceerd</string>
-  <string name="touchscreenHeight_title">Vertikale knopafstand</string>
-  <string name="touchscreenHeight_entryAuto">Automatisch</string>
-  <string name="touchscreenHeight_entryFullHeight">Volledige hoogte</string>
-  <string name="touchscreenHeight_entryHalfHeight">Halverwege</string>
-  <string name="touchscreenLayout_title">Knopindeling</string>
-  <string name="touchscreenLayout_entryAnalog">Analoog (door roymustang16)</string>
-  <string name="touchscreenLayout_entryDigital">Digitaal (door roymustang16)</string>
-  <string name="touchscreenLayout_entryAll">Beide (door roymustang16)</string>
-  <string name="touchscreenLayout_entryCustom">Eigen indeling (zie http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Touchpadindeling</string>
   <string name="touchpadLayout_entryDefault">Links: Analoge controller; Rechts: C-knoppen</string>
   <string name="touchpadLayout_entryReverse">Links: C-knoppen; Rechts: Analoge controller</string>
@@ -206,19 +210,12 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (hoogste beeldfrequentie)</string>
   <string name="displayScaling_title">Schermschaling</string>
-  <string name="displayScaling_entryNone">Geen\n<small>Gebruik precies de geselecteerde resolutie</small></string>
-  <string name="displayScaling_entryZoom">Zoom\n<small>Scherm vullen zonder vervorming (voegt zwarte balken toe)</small></string>
-  <string name="displayScaling_entryCrop">Crop\n<small>Schermvullend, geen vervorming (beeld wordt afgesneden)</small></string>
-  <string name="displayScaling_entryStretch">Uitrekken\n<small>Schermvullend zonder zwarte balken (geeft vervorming)</small></string>
   <string name="displayFpsRefresh_title">Framesnelheid weergeven</string>
   <string name="displayFpsRefresh_entryNever">Nooit</string>
   <string name="displayFpsRefresh_entryOccasionally">Soms</string>
   <string name="displayFpsRefresh_entryFrequently">Vaak</string>
   <string name="videoPlugin_title">Videoplugin</string>
   <string name="videoPlugin_entryNone">Geen (video uitgeschakeld)</string>
-  <string name="videoPlugin_entryGln64">gln64\n<small>(aangepaste versie van GLN64 v0.4.1)</small></string>
-  <string name="videoPlugin_entryRice">rice\n<small>(aangepaste versie van Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGlide64">glide64\n<small>(aangepaste versie van Glide64 Final (10e Jubileum))</small></string>
   <string name="videoHardwareType_title">Knipperonderdrukking</string>
   <string name="videoHardwareType_entryAuto">Automatische herkenning van telefoon-/tabletmodel</string>
   <string name="videoHardwareType_entryStandard">Standaardprofiel</string>
@@ -291,18 +288,21 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Geselecteerde map: %1$s</string>
-  <string name="pathSelectedGame_title">Spel</string>
-  <string name="pathCustomTouchscreen_title">Map voor eigen lay-outs</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importeer textuurpakket</string>
   <string name="pathHiResTextures_summary">Pas eigen texturen toe (ZIP formaat) op een spel</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Map voor opgeslagen spellen</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Meerdere spelers</string>
   <string name="playerMap_summary">Controller voor elke speler instellen</string>
   <!--Profile Preferences-->
+  <string name="emulationProfile_title">Emulatie profiel</string>
+  <string name="touchscreenProfile_title">Aanraakscherm profiel</string>
+  <string name="controllerProfile_title">Controller profiel</string>
+  <string name="controllerProfile1_title">Profiel van controller 1</string>
+  <string name="controllerProfile2_title">Profiel van controller 2</string>
+  <string name="controllerProfile3_title">Profiel van controller 3</string>
+  <string name="controllerProfile4_title">Profiel van controller 4</string>
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -313,6 +313,7 @@
   <string name="confirmResetGame_message">Spel resetten? Alle voortgang sinds de laatste keer opslaan gaat verloren.</string>
   <string name="confirmOverwriteFile_message">%1$s overschrijven?</string>
   <string name="confirmUnmapAll_message">Alle invoertoewijzigingen verwijderen voor %1$s?</string>
+  <string name="confirmDeleteProfile_message">Wilt u het profiel \"%1$s\" verwijderen?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Wijzigingsgeschiedenis</string>
   <!--Corrupt Installation Warning-->
@@ -324,7 +325,6 @@
   <string name="assetExtractor_initializing">Bezig te initialiseren</string>
   <string name="assetExtractor_progress">%1$.0f%% gedaan: %2$s</string>
   <string name="assetExtractor_finished">Voltooid</string>
-  <string name="assetExtractor_failed">Fout bij het uitpakken van app data. Haal de USB kabel er uit, herstart het apparaat, en herstart de app. Voor hulp, bezoek %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(lang indrukken voor volledige tekst)</string>
@@ -333,7 +333,38 @@
   <string name="cheatNotes_title">Opmerkingen</string>
   <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
   <!--Cheat Editor-->
+  <string name="menuItem_cheatEditor">Cheat editor</string>
+  <string name="cheatEditor_empty">Lege cheat</string>
+  <string name="cheatEditor_added">Lege cheat is toegevoegd aan de onderkant van de lijst</string>
+  <string name="cheatEditor_edit">Verander cheats</string>
+  <string name="cheatEditor_edit_desc">Druk een cheat lang in om hem te veranderen</string>
   <string name="cheatEditor_help">Help</string>
+  <string name="cheatEditor_readme1">Welkom bij de Mupen64plus AE Cheat editor</string>
+  <string name="cheatEditor_readme2">Volg alstublieft de volgende richtlijnen als u cheats toevoegt of verandert:</string>
+  <string name="cheatEditor_readme3">1. Titels en beschrijvingen mogen GEEN wit regels (de enter knop) bevatten. Elke wit regel zal worden vervangen met een spatie.</string>
+  <string name="cheatEditor_readme4">2. Hexadecimale nummers moeten worden gebruikt op de plaats van de X\'en in de voorbeelden beneden.</string>
+  <string name="cheatEditor_readme5">3. Cheats mogen slechts één code per regel in het formaat \"XXXXXXXX XXXX\" (zonder aanhalingstekens) of \"\"XXXXXXXX ????\"\" (zonder aanhalingstekens) hebben. Cheats kunnen uit meerdere regels bestaan.</string>
+  <string name="cheatEditor_readme6">4. </string>
+  <string name="cheatEditor_config">Cheat configuratie</string>
+  <string name="cheatEditor_config_desc">Configureer cheats</string>
+  <string name="cheatEditor_title">Cheat titel</string>
+  <string name="cheatEditor_title_desc">Verander cheat titel</string>
+  <string name="cheatEditor_notes">Cheat notities</string>
+  <string name="cheatEditor_notes_desc">Verander cheat notities</string>
+  <string name="cheatEditor_code">Cheat code</string>
+  <string name="cheatEditor_code_desc">Verander cheat code</string>
+  <string name="cheatEditor_badCode">Verkeerde code(s), terug aan het gaan...</string>
+  <string name="cheatEditor_option">Cheat opties</string>
+  <string name="cheatEditor_option_desc">Verander cheat opties</string>
+  <string name="cheatEditor_badOption">Verkeerde optie(s), terug aan het gaan...</string>
+  <string name="cheatEditor_delete">Verwijder cheat</string>
+  <string name="cheatEditor_confirm">Weet u het zeker?</string>
+  <string name="cheatEditor_info">Cheat informatie</string>
+  <string name="cheatEditor_title2">Titel:</string>
+  <string name="cheatEditor_notes2">Notities:</string>
+  <string name="cheatEditor_code2">Code(s):</string>
+  <string name="cheatEditor_option2">Optie(s):</string>
+  <string name="cheatEditor_saveConfirm">Wilt u de cheat file opslaan?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Texturen uitpakken</string>
   <string name="pathHiResTexturesTask_message">Wees geduldig. Dit proces kan enige tijd duren.</string>
@@ -346,12 +377,11 @@
   <string name="playerMap_deviceWithName">Apparaat %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Apparaat %1$d</string>
   <string name="playerMapPreference_popupTitle">Speler %1$d</string>
-  <string name="playerMapPreference_popupMessage">Speler %1$d, druk op een knop of stick op uw controller…  Huidige apparaten: %2$s</string>
   <string name="playerMapPreference_popupUnmap">Toewijzing ongedaan maken</string>
-  <string name="playerMapPreference_button">Speler %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Herinner mij als spelers niet zijn toegewezen</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Druk op een knop, toets, of joystick om toe te wijzen…  Huidige toewijzingen: %1$s</string>
   <string name="inputMapActivity_popupUnmap">Toewijzing ongedaan maken</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analoge stick bestuurd met touchpad</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-knoppen bestuurd met touchpad</string>

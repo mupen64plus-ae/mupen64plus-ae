@@ -203,6 +203,19 @@ typedef struct {
     int     OpenglRenderSetting;
     uint32  colorQuality;
 
+    // Polygon Offset Settings
+    // These can be used to eliminate stitching artifacts in textures and shadows, which are typically only a problem
+    // in mobile/embedded platforms (e.g. Android), where chipsets are inconsistent in their implementation of
+    // glPolygonOffset. The float settings (factor and units) are typically set to the same value, and are ignored if
+    // bForcePolygonOffset is False. The float settings (factor and units) are found through trial and error and may be
+    // positive or negative. Mario's shadow in Super Mario 64 is a good test case when tuning this value. If the shadow
+    // flickers, use a larger magnitude for the float settings. Do not use a larger value than necessary to eliminate
+    // artifacts. As a guideline, typical values for mobile chipsets circa 2012-2014 are positive or negative values in
+    // the range 0.001 to 2.
+    BOOL    bForcePolygonOffset;
+    float   polygonOffsetFactor;
+    float   polygonOffsetUnits;
+
     int rotate;
 
     HACK_FOR_GAMES  enableHackForGames;

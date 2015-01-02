@@ -23,8 +23,8 @@
 
 #include <m64p_types.h>
 
-#define LOG(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
-#define LOGINFO(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define LOG(...) // WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define LOGINFO(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -124,6 +124,7 @@ extern "C" {
 #endif
 #endif // _WIN32
 #include "glide.h"
+#include "glState.cpp"
 
 void display_warning(const unsigned char *text, ...);
 void display_warning(const char *text, ...);

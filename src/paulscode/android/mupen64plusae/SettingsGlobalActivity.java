@@ -20,8 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -233,11 +231,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
                 mPrefs.unregisterOnSharedPreferenceChangeListener( SettingsGlobalActivity.this );
                 mPrefs.edit().clear().commit();
                 PreferenceManager.setDefaultValues( SettingsGlobalActivity.this, R.xml.preferences_global, true );
-                
-                // Also reset any manual overrides the user may have made in the config file
-                File configFile = new File( mUserPrefs.mupen64plus_cfg );
-                if( configFile.exists() )
-                    configFile.delete();
                 
                 // Rebuild the menu system by restarting the activity
                 finish();

@@ -43,6 +43,7 @@
   <string name="menuItem_play">Jogar</string>
   <string name="menuItem_settings">Configurações</string>
   <string name="menuItem_globalSettings">Configurações globais</string>
+  <string name="menuItem_emulationProfiles">Perfis de emulação</string>
   <string name="menuItem_touchscreenProfiles">Perfil do controle de toque</string>
   <string name="menuItem_controllerProfiles">Perfil do controle</string>
   <string name="menuItem_customCheats">Cheats custumizados</string>
@@ -55,13 +56,26 @@
   <string name="menuItem_credits">Créditos</string>
   <string name="menuItem_appVersion">Versão do aplicativo</string>
   <string name="menuItem_changelog">Melhorias do emulador</string>
+  <string name="menuItem_hardwareInfo">Informações do Hardware</string>
   <string name="menuItem_localeOverride">Idioma</string>
   <!--ManageProfilesActivity-->
+  <string name="menuItem_new">Novo</string>
+  <string name="menuItem_hideBuiltins">Esconder perfis pré-instalados</string>
+  <string name="menuItem_showBuiltins">Exibir perfis pré-instalados</string>
+  <string name="profile_name_cannot_be_empty">O nome não pode ficar vazio</string>
+  <string name="profile_name_cannot_contain_brackets">O nome não pode conter colchetes/chaves</string>
+  <string name="profile_name_must_be_unique">O nome não pode estar em uso</string>
+  <string name="profile_manage_profiles">Gerenciar perfis</string>
   <!--Popup Dialogs-->
-  <string name="popup_faq">Mupen64Plus é desenvolvido e mantido por voluntários.<small>\n\nPara corrigir falhas nos gráficos, tente mudar o <i>plugin de vídeo</i>.\n\nPara corrigir lag, tente alterar a configuração de <i>frameskip</i> ou do <i>plugin de vídeo</i>.\n\nSe não conseguir jogar uma ROM, tente descompactá-la antes ou procure outra versão da ROM.\n\nPara problemas com o controle na tela, tente mudar a <i>Escala do botão</i> ou o <i>Tipo de controle de toque</i>.\n\nPara outros problemas, ou se nada acima resolver, clique no botão <i>FAQ</i> abaixo. Para problemas não relacionados ao jogo, clique no botão <i>Relatar bug</i> abaixo.  Nós respondemos a maioria dos posts dentro de 24 horas. Sério.\n\n</small>Obrigado por nos ajudar a melhorar o app!</string>
-  <string name="popup_version">Versão: %1$s\nCódigo da versão: %2$d</string>
   <!--Lists-->
+  <string name="listItem_edit">Editar</string>
+  <string name="listItem_rename">Renomear</string>
+  <string name="listItem_copy">Copiar</string>
+  <string name="listItem_delete">Apagar</string>
+  <string name="listItem_disabled">(Desabilitado)</string>
   <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Nome do perfil</string>
+  <string name="hint_profileComment">Descrição (opcional)</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -76,6 +90,7 @@
   <string name="toast_loadingFile">Carregando %1$s…</string>
   <string name="toast_savingFile">Salvando %1$s…</string>
   <string name="toast_overwritingFile">Sobrescrevendo %1$s…</string>
+  <string name="toast_loadingGameInfo">Carregando informações do jogo...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessível (desconecte o cabo USB e tente novamente).</string>
@@ -94,9 +109,9 @@
   <string name="actionReloadAssets_summary">Não afeta configurações do usuário, ROMs, jogos salvos, ou outros dados externos</string>
   <string name="actionCrashTest_title">Testar</string>
   <string name="actionCrashTest_summary">Enviar relatório de configuração aos desenvolvedores</string>
-  <string name="actionResetUserPrefs_title">Reiniciar</string>
-  <string name="actionResetUserPrefs_summary">Restaurar configuração padrão</string>
-  <string name="actionResetUserPrefs_popupMessage">Reiniciar todas as preferências para o padrão?<small>\n\nTodas as configurações manuais que você possa ter feito ao arquivo de configuração serão substituídas.</small></string>
+  <string name="actionCheatEditor_title">Gerenciar cheats</string>
+  <string name="actionCheatEditor_summary">Adicionar, modificar e deletar cheats customizados</string>
+  <string name="actionShare_title">Compartilhar</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Controle</string>
   <string name="screenInput_summary">Configurações de controle</string>
@@ -111,6 +126,9 @@
   <string name="screenAdvanced_title">Avançado</string>
   <string name="screenAdvanced_summary">Núcleo, armazenamento e configurações de depuração</string>
   <string name="screenGlobalSettings_title">Configurações globais</string>
+  <string name="screenGlobalSettings_summary">Configurações de tela, áudio, armazenamento e depuração</string>
+  <string name="screenCheats_title">Cheats</string>
+  <string name="screenCheats_summaryEnabled">Habilitado</string>
   <string name="screenCheats_summaryDisabled">Desabilitado</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opções de Cheats (toque longo para ver notas)</string>
@@ -130,7 +148,6 @@
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Habilitar Cheats</string>
   <string name="playShowCheats_summary">O carregamento do menu é mais lento quando habilitado</string>
-  <string name="touchscreenEnabled_title">Habilitar toque na tela</string>
   <string name="touchscreenFeedback_title">Feedback tátil</string>
   <string name="touchscreenFeedback_summary">Vibrar ao apertar botão</string>
   <string name="touchpadEnabled_title">Habilitar touchpad</string>
@@ -148,8 +165,6 @@
   <string name="gln64ScreenClear_summary">Desabilite para ganhar velocidade (pode causar problemas gráficos)</string>
   <string name="gln64AlphaTest_title">Teste de transparência</string>
   <string name="gln64AlphaTest_summary">Desabilite para ganhar velocidade (deixa texturas transparentes)</string>
-  <string name="gln64DepthTest_title">Teste de profundidade</string>
-  <string name="gln64DepthTest_summary">Desabilite para ganhar velocidade (deixa o fundo piscando)</string>
   <string name="riceAutoFrameskip_title">Frameskip automático</string>
   <string name="riceAutoFrameskip_summary">Melhora a velocidade do jogo a custo da taxa de frames</string>
   <string name="riceFastTexture_title">Carregamento de texturas rápido</string>
@@ -167,7 +182,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Desabilitado</string>
   <string name="touchscreenAutoHold_entryLongPress">Em toque longo</string>
   <string name="touchscreenAutoHold_entrySlideOut">Ao arrastar fora</string>
-  <string name="touchscreenAutoHoldables_title">Botões seguráveis</string>
   <string name="touchscreenRefresh_title">Animação do controle</string>
   <string name="touchscreenRefresh_entryNever">Nunca</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
@@ -175,15 +189,6 @@
   <string name="touchscreenStyle_title">Estilo do botão</string>
   <string name="touchscreenStyle_entryOutline">Contorno</string>
   <string name="touchscreenStyle_entryShaded">Sombreado</string>
-  <string name="touchscreenHeight_title">Espaçamento vertical</string>
-  <string name="touchscreenHeight_entryAuto">Automático</string>
-  <string name="touchscreenHeight_entryFullHeight">Altura total</string>
-  <string name="touchscreenHeight_entryHalfHeight">Metade da altura</string>
-  <string name="touchscreenLayout_title">Tipo do controle de toque</string>
-  <string name="touchscreenLayout_entryAnalog">Analógico (por roymustang16)</string>
-  <string name="touchscreenLayout_entryDigital">Digital (por roymustang16)</string>
-  <string name="touchscreenLayout_entryAll">Ambos (por roymustang16)</string>
-  <string name="touchscreenLayout_entryCustom">Personalizado (veja http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Posição dos controles de toque</string>
   <string name="touchpadLayout_entryDefault">Esquerda: Analógico; Direita: Botões C</string>
   <string name="touchpadLayout_entryReverse">Esquerda: Botões C; Direita: Analógico</string>
@@ -205,19 +210,12 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (maior framerate)</string>
   <string name="displayScaling_title">Dimensionamento da tela</string>
-  <string name="displayScaling_entryNone">Nenhum\n<small>Usar a resolução selecionada acima</small></string>
-  <string name="displayScaling_entryZoom">Zoom\n<small> Preencher tela, sem distorção (adiciona bordas pretas)</small></string>
-  <string name="displayScaling_entryCrop">Cortar\n<small>Preenche a tela sem distorção (corta a imagem)</small></string>
-  <string name="displayScaling_entryStretch">Esticar\n<small>Preencher tela, não adiciona bordas (pode distorcer)</small></string>
   <string name="displayFpsRefresh_title">Exibir taxa de frames</string>
   <string name="displayFpsRefresh_entryNever">Nunca</string>
   <string name="displayFpsRefresh_entryOccasionally">Ocasionalmente</string>
   <string name="displayFpsRefresh_entryFrequently">Frequentemente</string>
   <string name="videoPlugin_title">Plugin de vídeo</string>
   <string name="videoPlugin_entryNone">Nenhum (vídeo desabilitado)</string>
-  <string name="videoPlugin_entryGln64">gln64\n<small>(adaptação do GLN64 v0.4.1)</small></string>
-  <string name="videoPlugin_entryRice">rice\n<small>(adaptação do Rice Vídeo v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptação do Glide64 Final (Aniversário de 10 anos))</small></string>
   <string name="videoHardwareType_title">Redução de Flicker</string>
   <string name="videoHardwareType_entryAuto">Auto detectar pelo modelo do celular/tablet</string>
   <string name="videoHardwareType_entryStandard">Perfil padrão</string>
@@ -290,18 +288,21 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Diretório selecionado: %1$s</string>
-  <string name="pathSelectedGame_title">Jogo</string>
-  <string name="pathCustomTouchscreen_title">Diretório de layout personalizado</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importar pacote de texturas</string>
   <string name="pathHiResTextures_summary">Aplicar textura custumizada (formato ZIP) para um jogo</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Diretório para salvar jogo</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multi-jogador</string>
   <string name="playerMap_summary">Define controle de cada jogador</string>
   <!--Profile Preferences-->
+  <string name="emulationProfile_title">Perfil de emulação</string>
+  <string name="touchscreenProfile_title">Perfil do controle de toque</string>
+  <string name="controllerProfile_title">Perfil do controle físico</string>
+  <string name="controllerProfile1_title">Perfil do controle 1</string>
+  <string name="controllerProfile2_title">Perfil do controle 2</string>
+  <string name="controllerProfile3_title">Perfil do controle 3</string>
+  <string name="controllerProfile4_title">Perfil do controle 4</string>
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -312,6 +313,7 @@
   <string name="confirmResetGame_message">Resetar jogo? Todo o progresso desde o seu último jogo salvo será perdido.</string>
   <string name="confirmOverwriteFile_message">Sobrescrever %1$s?</string>
   <string name="confirmUnmapAll_message">Desmapear todos os controles de %1$s?</string>
+  <string name="confirmDeleteProfile_message">Deletar o perfil \"%1$s\"?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Atualizações recentes</string>
   <!--Corrupt Installation Warning-->
@@ -323,7 +325,6 @@
   <string name="assetExtractor_initializing">Inicializando</string>
   <string name="assetExtractor_progress">%1$.0f%% concluído: %2$s</string>
   <string name="assetExtractor_finished">Finalizado</string>
-  <string name="assetExtractor_failed">Erro extraindo os dados do aplicativo. Por favor, desconecte o cabo USB, reinicie seu dispositivo e abra o emulador. Para ajuda, visite %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(toque longo para ver texto completo)</string>
@@ -332,7 +333,38 @@
   <string name="cheatNotes_title">Notas</string>
   <string name="cheatNotes_none">(sem notas disponíveis para esse Cheat)</string>
   <!--Cheat Editor-->
+  <string name="menuItem_cheatEditor">Editor de cheats</string>
+  <string name="cheatEditor_empty">Cheat vazio</string>
+  <string name="cheatEditor_added">Cheat vazio adicionado ao fim da lista</string>
+  <string name="cheatEditor_edit">Editar cheats</string>
+  <string name="cheatEditor_edit_desc">Dê um toque longo no cheat para editar</string>
   <string name="cheatEditor_help">Ajuda</string>
+  <string name="cheatEditor_readme1">Bem vindo ao editor de cheats do Mupen64plus AE</string>
+  <string name="cheatEditor_readme2">Por favor, siga os seguintes procedimentos ao adicionar ou editar cheats:</string>
+  <string name="cheatEditor_readme3">1. Os títulos e descrições NÃO devem conter quebras de linha (o botão enter). Qualquer quebra de linha será substituída com espaços.</string>
+  <string name="cheatEditor_readme4">2. Números hexadecimais devem ser usados no lugar dos X no exemplo abaixo.</string>
+  <string name="cheatEditor_readme5">3. Os cheats devem ter apenas um código por linha, no formato \"XXXXXXXX XXXX\" sem aspas ou \"XXXXXXXX ????\" sem aspas se o cheat tiver opções. Os cheats podem ter mais de uma linha.</string>
+  <string name="cheatEditor_readme6">4. Os códigos com opções só podem ter uma opção por linha, no formato \"Opção Descrição XXXX\" sem aspas. Códigos com opções também podem ter mais de uma linha.</string>
+  <string name="cheatEditor_config">Configurações de cheats</string>
+  <string name="cheatEditor_config_desc">Editar configurações de cheat</string>
+  <string name="cheatEditor_title">Título do cheat</string>
+  <string name="cheatEditor_title_desc">Editar título do cheat</string>
+  <string name="cheatEditor_notes">Notas do cheat</string>
+  <string name="cheatEditor_notes_desc">Editar notas do cheat</string>
+  <string name="cheatEditor_code">Código do cheat</string>
+  <string name="cheatEditor_code_desc">Editar código do cheat</string>
+  <string name="cheatEditor_badCode">Código(s) ruins, revertendo...</string>
+  <string name="cheatEditor_option">Opções do cheat</string>
+  <string name="cheatEditor_option_desc">Editar opções do cheat</string>
+  <string name="cheatEditor_badOption">Opções ruins, revertendo...</string>
+  <string name="cheatEditor_delete">Apagar cheat</string>
+  <string name="cheatEditor_confirm">Tem certeza?</string>
+  <string name="cheatEditor_info">Informações do cheat</string>
+  <string name="cheatEditor_title2">Título:</string>
+  <string name="cheatEditor_notes2">Notas:</string>
+  <string name="cheatEditor_code2">Código(s):</string>
+  <string name="cheatEditor_option2">Opções:</string>
+  <string name="cheatEditor_saveConfirm">Salvar arquivo do cheat?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Extraindo texturas</string>
   <string name="pathHiResTexturesTask_message">Seja paciente.  Esse processo pode levar algum tempo.</string>
@@ -345,12 +377,11 @@
   <string name="playerMap_deviceWithName">Dispositivo %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
   <string name="playerMapPreference_popupTitle">Jogador %1$d</string>
-  <string name="playerMapPreference_popupMessage">Jogador %1$d, pressione um botão ou ligue no seu controle…\n\nDispositivos atuais:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desmapear</string>
-  <string name="playerMapPreference_button">Jogador %1$d\n\n%2$s</string>
   <string name="playerMapPreference_reminder">Lembrar quando os jogadores não estiverem mapeados</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Pressione um botão, tecla, ou joystick para mapear…\n\nMapeamento atual:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Desmapear</string>
   <string name="inputMapActivity_aPadXperiaPlay">Controle analógico controlado com touchpad</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad controlado com touchpad</string>
@@ -369,10 +400,10 @@
   <string name="inputMapActivity_btnDL">D-pad â†</string>
   <string name="inputMapActivity_btnDD">D-pad â†“</string>
   <string name="inputMapActivity_btnDU">D-pad â†‘</string>
-  <string name="inputMapActivity_btnAR">Analógico â†’</string>
-  <string name="inputMapActivity_btnAL">Analógico â†</string>
-  <string name="inputMapActivity_btnAD">Analógico â†“</string>
-  <string name="inputMapActivity_btnAU">Analógico â†‘</string>
+  <string name="inputMapActivity_btnAR">Analógico →</string>
+  <string name="inputMapActivity_btnAL">Analógico ←</string>
+  <string name="inputMapActivity_btnAD">Analógico ↓</string>
+  <string name="inputMapActivity_btnAU">Analógico ↑</string>
   <string name="inputMapActivity_incrementSlot">Incrementar entrada</string>
   <string name="inputMapActivity_reset">Resetar</string>
   <string name="inputMapActivity_pause">Pausar</string>

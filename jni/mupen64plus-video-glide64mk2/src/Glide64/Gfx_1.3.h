@@ -88,7 +88,7 @@ the plugin
 #define GLIDE64_CATCH catch (...)
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
 typedef int HWND;
 #endif
 

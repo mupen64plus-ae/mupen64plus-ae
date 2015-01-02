@@ -48,6 +48,7 @@
 #include <stdlib.h>
 #else
 #include <io.h>
+#include <windows.h>
 #endif // _WIN32
 
 #include <errno.h>
@@ -56,7 +57,9 @@
 #endif
 
 #ifdef _WIN32
-  #define PATH_MAX _MAX_PATH
+  #ifndef PATH_MAX
+    #define PATH_MAX _MAX_PATH
+  #endif
   #define stricmp _stricmp
 #endif
 #ifndef PATH_MAX

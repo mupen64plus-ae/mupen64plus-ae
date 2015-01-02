@@ -95,6 +95,7 @@ ifneq ("$(filter arm%,$(HOST_CPU))","")
     ARCH_DETECTED := 32BITS
     PIC ?= 1
     NEW_DYNAREC := 1
+    CFLAGS += -marm
     ifeq ($(NEON), 1)
         CFLAGS += -mfpu=neon -mfloat-abi=hard -DNEON
     else
@@ -156,7 +157,7 @@ ifeq ($(OS), OSX)
   OSX_SDK_PATH = $(OSX_SDK_ROOT)/$(shell ls $(OSX_SDK_ROOT) | tail -1)
 
   TARGET = libmupen64plus$(POSTFIX).dylib
-  LDFLAGS += -bundle -read_only_relocs suppress
+  LDFLAGS += -framework CoreFoundation -bundle -read_only_relocs suppress
   LDLIBS += -ldl
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)

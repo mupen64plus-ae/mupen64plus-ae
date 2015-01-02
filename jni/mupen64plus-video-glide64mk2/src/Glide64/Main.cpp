@@ -162,8 +162,7 @@ float      pal_percent = 0.0f;
 // ref rate
 // 60=0x0, 70=0x1, 72=0x2, 75=0x3, 80=0x4, 90=0x5, 100=0x6, 85=0x7, 120=0x8, none=0xff
 
-#ifdef ANDROID_EDITION
-#include "ae_imports.h"
+#ifdef USE_FRAMESKIPPER
 #include "FrameSkipper.h"
 FrameSkipper frameSkipper;
 #endif
@@ -374,6 +373,19 @@ void ReadSettings ()
   settings.scr_res_y = settings.res_y = Config_ReadScreenInt("ScreenHeight");
 
   settings.rotate = Config_ReadScreenInt("Rotate");
+
+  settings.force_polygon_offset = (BOOL)Config_ReadInt("force_polygon_offset", "If true, use polygon offset values specified below", 0, TRUE, TRUE);
+  settings.polygon_offset_factor = Config_ReadFloat("polygon_offset_factor", "Specifies a scale factor that is used to create a variable depth offset for each polygon", 0.0f);
+  settings.polygon_offset_units = Config_ReadFloat("polygon_offset_units", "Is multiplied by an implementation-specific value to create a constant depth offset", 0.0f);
+
+#ifdef USE_FRAMESKIPPER
+  settings.autoframeskip = (BOOL)Config_ReadInt("autoframeskip", "If true, skip up to maxframeskip frames to maintain clock schedule; if false, skip exactly maxframeskip frames", 0, TRUE, TRUE);
+  settings.maxframeskip = Config_ReadInt("maxframeskip", "If autoframeskip is true, skip up to this many frames to maintain clock schedule; if autoframeskip is false, skip exactly this many frames", 0, TRUE, FALSE);
+  if( settings.autoframeskip )
+    frameSkipper.setSkips( FrameSkipper::AUTO, settings.maxframeskip );
+  else
+    frameSkipper.setSkips( FrameSkipper::MANUAL, settings.maxframeskip );
+#endif
 
   settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 1);
   settings.ssformat = (BOOL)Config_ReadInt("ssformat", "TODO:ssformat", 0);
@@ -723,15 +735,6 @@ void ReadSpecialSettings (const char * name)
     ini->Read(_T("lodmode"), &(settings.lodmode));
     if (settings.special_lodmode >= 0)
       settings.lodmode = settings.special_lodmode;
-
-#ifdef ANDROID_EDITION
-    ini->Read(_T("autoframeskip"), &(settings.autoframeskip));
-    ini->Read(_T("maxframeskip"), &(settings.maxframeskip));
-    if( settings.autoframeskip )
-      frameSkipper.setSkips( FrameSkipper::AUTO, settings.maxframeskip );
-    else
-      frameSkipper.setSkips( FrameSkipper::MANUAL, settings.maxframeskip );
-#endif
 
     /*
     TODO-port: fix resolutions
@@ -1439,16 +1442,16 @@ extern "C" {
 EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
 {
   VLOG("CALL ReadScreen2 ()\n");
-  *width = settings.scr_res_x;
-  *height = settings.scr_res_y;
+  *width = settings.res_x;
+  *height = settings.res_y;
   if (dest)
   {
     BYTE * line = (BYTE*)dest;
     if (!fullscreen)
     {
-      for (wxUint32 y=0; y<settings.scr_res_y; y++)
+      for (wxUint32 y=0; y<settings.res_y; y++)
       {
-        for (wxUint32 x=0; x<settings.scr_res_x; x++)
+        for (wxUint32 x=0; x<settings.res_x; x++)
         {
           line[x*3] = 0x20;
           line[x*3+1] = 0x7f;
@@ -1471,17 +1474,17 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
     &info))
   {
     // Copy the screen, let's hope this works.
-      for (wxUint32 y=0; y<settings.scr_res_y; y++)
+      for (wxUint32 y=0; y<settings.res_y; y++)
       {
         BYTE *ptr = (BYTE*) info.lfbPtr + (info.strideInBytes * y);
-        for (wxUint32 x=0; x<settings.scr_res_x; x++)
+        for (wxUint32 x=0; x<settings.res_x; x++)
         {
           line[x*3]   = ptr[0];  // red
           line[x*3+1] = ptr[1];  // green
           line[x*3+2] = ptr[2];  // blue
           ptr += 4;
         }
-        line += settings.scr_res_x * 3;
+        line += settings.res_x * 3;
       }
 
       // Unlock the frontbuffer
@@ -1721,7 +1724,7 @@ void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
   // bswap on a dword (32 bits) boundry
 }
 
-#ifndef WIN32
+#ifndef _WIN32
 BOOL WINAPI QueryPerformanceCounter(PLARGE_INTEGER counter)
 {
    struct timeval tv;
@@ -1900,7 +1903,7 @@ EXPORT int CALL RomOpen (void)
   if (code == 0x5000) region = 1; // Europe (PAL)
   if (code == 0x5500) region = 0; // Australia (NTSC)
 
-#ifdef ANDROID_EDITION
+#ifdef USE_FRAMESKIPPER
   frameSkipper.setTargetFPS(region == 1 ? 50 : 60);
 #endif
 
@@ -1955,13 +1958,6 @@ EXPORT int CALL RomOpen (void)
   }
   // **
   return true;
-}
-
-EXPORT void CALL RomResumed(void)
-{
-#ifdef ANDROID_EDITION
-  frameSkipper.start();
-#endif
 }
 
 /******************************************************************
@@ -2051,7 +2047,7 @@ output:   none
 wxUint32 update_screen_count = 0;
 EXPORT void CALL UpdateScreen (void)
 {
-#ifdef ANDROID_EDITION
+#ifdef USE_FRAMESKIPPER
   frameSkipper.update();
 #endif
 #ifdef LOG_KEY

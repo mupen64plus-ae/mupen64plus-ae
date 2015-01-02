@@ -381,6 +381,10 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultInt(l_ConfigVideoRice, "ColorQuality", TEXTURE_FMT_A8R8G8B8, "Color bit depth for rendering window (0=32 bits, 1=16 bits)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.4, 3=OGL_FRAGMENT_PROGRAM)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "AnisotropicFiltering", 0, "Enable/Disable Anisotropic Filtering for Mipmapping (0=no filtering, 2-16=quality). This is uneffective if Mipmapping is 0. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering");
+
+    ConfigSetDefaultBool(l_ConfigVideoRice, "ForcePolygonOffset", FALSE, "If true, use polygon offset values specified below");
+    ConfigSetDefaultFloat(l_ConfigVideoRice, "PolygonOffsetFactor", 0.0f, "Specifies a scale factor that is used to create a variable depth offset for each polygon");
+    ConfigSetDefaultFloat(l_ConfigVideoRice, "PolygonOffsetUnits", 0.0f, "Is multiplied by an implementation-specific value to create a constant depth offset");
     return TRUE;
 }
 
@@ -494,6 +498,10 @@ static void ReadConfiguration(void)
     options.colorQuality = ConfigGetParamInt(l_ConfigVideoRice, "ColorQuality");
     options.OpenglRenderSetting = ConfigGetParamInt(l_ConfigVideoRice, "OpenGLRenderSetting");
     options.anisotropicFiltering = ConfigGetParamInt(l_ConfigVideoRice, "AnisotropicFiltering");
+
+    options.bForcePolygonOffset = ConfigGetParamBool(l_ConfigVideoRice, "ForcePolygonOffset");
+    options.polygonOffsetFactor = ConfigGetParamFloat(l_ConfigVideoRice, "PolygonOffsetFactor");
+    options.polygonOffsetUnits = ConfigGetParamFloat(l_ConfigVideoRice, "PolygonOffsetUnits");
 
     options.rotate = ConfigGetParamInt(l_ConfigVideoGeneral, "Rotate");
 

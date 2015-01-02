@@ -41,7 +41,9 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.util.RomDetail;
+import paulscode.android.mupen64plusae.util.RomDatabase;
+import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,6 +54,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -70,6 +73,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String ACTION_RESTART = "actionRestart";
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
+    private static final String ACTION_RESET_GAME_PREFS = "actionResetGamePrefs";
     
     private static final String EMULATION_PROFILE = "emulationProfile";
     private static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
@@ -88,6 +92,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // ROM info
     private String mRomPath = null;
+    private String mRomMd5 = null;
+    private RomHeader mRomHeader = null;
+    private RomDatabase mRomDatabase = null;
     private RomDetail mRomDetail = null;
     
     // Preference menu items
@@ -114,10 +121,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( extras == null )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         mRomPath = extras.getString( Keys.Extras.ROM_PATH );
-        String romMd5 = extras.getString( Keys.Extras.ROM_MD5 );
-        String romCrc = extras.getString( Keys.Extras.ROM_CRC ); 
-        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( romMd5 ) || TextUtils.isEmpty( romCrc ) )
-            throw new Error( "ROM path, MD5, and CRC must be passed via the extras bundle" );
+        mRomMd5 = extras.getString( Keys.Extras.ROM_MD5 );
+        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         
         // Initialize MOGA controller API
         // TODO: Remove hack after MOGA SDK is fixed
@@ -126,13 +132,15 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Get app data and user preferences
         mAppData = new AppData( this );
+        mRomHeader = new RomHeader( mRomPath );
         mUserPrefs = new UserPrefs( this );
-        mGamePrefs = new GamePrefs( this, romMd5 );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
         mUserPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
         // Get the detailed info about the ROM
-        mRomDetail = RomDetail.lookupByMd5WithFallback( romMd5, new File( mRomPath ) );
+        mRomDatabase = new RomDatabase( mAppData.mupen64plus_ini );
+        mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ) );
         
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );
@@ -159,6 +167,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESTART, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_CHEAT_EDITOR, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_GAME_PREFS, this );
         
         // Remove wiki menu item if not applicable
         if( TextUtils.isEmpty( mRomDetail.wikiUrl ) )
@@ -242,7 +251,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Refresh the preferences objects
         mUserPrefs = new UserPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomDetail.md5 );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
         
         // Populate the profile preferences
         mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
@@ -260,7 +269,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Refresh the preferences objects in case populate* changed a value
         mUserPrefs = new UserPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomDetail.md5 );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
         
         // Set cheats screen summary text
         mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
@@ -291,7 +300,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( mGamePrefs.isCheatOptionsShown )
         {
             // Populate menu items
-            buildCheatsCategory( mRomDetail.crc );
+            buildCheatsCategory( mRomHeader.crc );
             
             // Show the cheats category
             mScreenCheats.addPreference( mCategoryCheats );
@@ -335,6 +344,10 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         else if( key.equals( ACTION_WIKI ) )
         {
             Utility.launchUri( this, mRomDetail.wikiUrl );
+        }
+        else if( key.equals( ACTION_RESET_GAME_PREFS ) )
+        {
+            actionResetGamePrefs();
         }
         return false;
     }
@@ -431,7 +444,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Pass the startup info via the intent
         intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
-        intent.putExtra( Keys.Extras.ROM_MD5, mRomDetail.md5 );
+        intent.putExtra( Keys.Extras.ROM_MD5, mRomMd5 );
         intent.putExtra( Keys.Extras.CHEAT_ARGS, getCheatArgs() );
         intent.putExtra( Keys.Extras.DO_RESTART, isRestarting );
         
@@ -462,5 +475,31 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
         
         return cheatArgs;
+    }
+    
+    private void actionResetGamePrefs()
+    {
+        String title = getString( R.string.confirm_title );
+        String message = getString( R.string.actionResetGamePrefs_popupMessage );
+        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
+        {
+            @Override
+            public void onConfirm()
+            {
+                // Reset the user preferences
+                mPrefs.unregisterOnSharedPreferenceChangeListener( PlayMenuActivity.this );
+                mPrefs.edit().clear().commit();
+                PreferenceManager.setDefaultValues( PlayMenuActivity.this, R.xml.preferences_game, true );
+                
+                // Also reset any manual overrides the user may have made in the config file
+                File configFile = new File( mGamePrefs.mupen64plus_cfg );
+                if( configFile.exists() )
+                    configFile.delete();
+                
+                // Rebuild the menu system by restarting the activity
+                finish();
+                startActivity( getIntent() );
+            }
+        } );
     }
 }

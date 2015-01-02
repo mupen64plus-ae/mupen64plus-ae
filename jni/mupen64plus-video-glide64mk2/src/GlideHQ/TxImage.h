@@ -28,7 +28,7 @@
 #include <png.h>
 #include "TxInternal.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 typedef struct tagBITMAPFILEHEADER {
   uint16_t bfType;
   uint32_t bfSize;

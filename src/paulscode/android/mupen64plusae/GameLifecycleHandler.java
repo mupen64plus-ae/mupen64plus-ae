@@ -43,6 +43,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -164,7 +165,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // Get app data and user preferences
         mUserPrefs = new UserPrefs( mActivity );
-        mGamePrefs = new GamePrefs( mActivity, mRomMd5 );
+        mGamePrefs = new GamePrefs( mActivity, mRomMd5, new RomHeader( mRomPath ) );
         mUserPrefs.enforceLocale( mActivity );
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)

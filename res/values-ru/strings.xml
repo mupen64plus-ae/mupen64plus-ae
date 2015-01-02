@@ -43,8 +43,6 @@
   <string name="menuItem_localeOverride">Язык</string>
   <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
-  <string name="popup_faq">Mupen64Plus разрабатывается добровольцами.<small>\n\nДля решения проблем с графикой попробуйте другой плагин видео.\n\nДля повышения производительности измените настройки пропуска кадров.\n\nПри ошибке открытия образа игры извлеките его из архива или найдите другую версию.\n\nбла-бла-бла, короче пользуйтесь настройками, иначе зачем я столько переводил?\n\nПри появлении других проблем воспользуйтесь ЧАВО и форумом (см. ниже).\n</small>\n\nЗаранее спасибо.</string>
-  <string name="popup_version">Версия: %1$s\nКод версии: %2$d</string>
   <!--Lists-->
   <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
@@ -79,8 +77,6 @@
   <string name="actionReloadAssets_summary">Не влияет на настройки пользователя, ROMs, сохранения игр, или другие пользовательские данные</string>
   <string name="actionCrashTest_title">Проверка</string>
   <string name="actionCrashTest_summary">Отправить отчёт разработчикам</string>
-  <string name="actionResetUserPrefs_title">Сброс</string>
-  <string name="actionResetUserPrefs_summary">Восстановить настройки по умолчанию</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Ввод</string>
   <string name="screenInput_summary">Настройки управления</string>
@@ -108,7 +104,6 @@
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Включить читы</string>
   <string name="playShowCheats_summary">Загрузка меню медленнее при включенном</string>
-  <string name="touchscreenEnabled_title">Использовать тачскрин</string>
   <string name="touchscreenFeedback_title">Виброотклик</string>
   <string name="touchscreenFeedback_summary">Вибрировать при нажатии</string>
   <string name="touchpadEnabled_title">Использовать экранные кнопки</string>
@@ -124,8 +119,6 @@
   <string name="gln64ScreenClear_summary">При отключении возможны помехи</string>
   <string name="gln64AlphaTest_title">Проверка прозрачности</string>
   <string name="gln64AlphaTest_summary">При отключении возможны чёрные квадраты на месте текстур</string>
-  <string name="gln64DepthTest_title">Проверка глубины</string>
-  <string name="gln64DepthTest_summary">При отключении возможны блики</string>
   <string name="riceAutoFrameskip_title">Автоматический пропуск кадров</string>
   <string name="riceAutoFrameskip_summary">Улучшает скорость ценой FPS</string>
   <string name="riceFastTexture_title">Быстрая загрузка текстур</string>
@@ -146,10 +139,6 @@
   <string name="touchscreenRefresh_entryOccasionally">Изредка</string>
   <string name="touchscreenRefresh_entryFrequently">Часто</string>
   <string name="touchscreenStyle_title">Вид кнопок</string>
-  <string name="touchscreenLayout_title">Тип экранных кнопок</string>
-  <string name="touchscreenLayout_entryAnalog">Аналоговый (от roymustang16)</string>
-  <string name="touchscreenLayout_entryDigital">Цифровой (от roymustang16)</string>
-  <string name="touchscreenLayout_entryCustom">Свой (см http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Расположение экранных кнопок</string>
   <string name="touchpadLayout_entryDefault">Слева джойстик, справа кнопки</string>
   <string name="touchpadLayout_entryReverse">Слева кнопки, справа джойстик</string>
@@ -171,17 +160,11 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (Наибольшая частота кадров)</string>
   <string name="displayScaling_title">Размер экрана</string>
-  <string name="displayScaling_entryNone">По умолчанию\n<small>Использовать разрешение заданное выше</small></string>
-  <string name="displayScaling_entryZoom">Максимальное\n<small>Без искажений, но с чёрными полосами</small></string>
-  <string name="displayScaling_entryStretch">На весь экран\n<small>Без чёрных полос, возможно нарушение пропорций</small></string>
   <string name="displayFpsRefresh_title">Отображать FPS</string>
   <string name="displayFpsRefresh_entryNever">Никогда</string>
   <string name="displayFpsRefresh_entryOccasionally">Изредка</string>
   <string name="displayFpsRefresh_entryFrequently">Часто</string>
   <string name="videoPlugin_entryNone">Заглушка (выключить изображение)</string>
-  <string name="videoPlugin_entryGln64">gln64\n<small>(порт GLN64 v0.4.1)</small></string>
-  <string name="videoPlugin_entryRice">rice\n<small>(порт Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGlide64">glide64\n<small>(порт Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Уменьшение мерцания</string>
   <string name="videoHardwareType_entryAuto">Автоматическое определение модели телефона/планшета </string>
   <string name="videoHardwareType_entryStandard">Стандартный профиль</string>
@@ -236,14 +219,10 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Выбранная папка: %1$s</string>
-  <string name="pathSelectedGame_title">Игра</string>
-  <string name="pathCustomTouchscreen_title">Стандартное расположение папки</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Указать путь к архиву с текстурами</string>
   <string name="pathHiResTextures_summary">Использовать в игре свои текстуры (zip файл)</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Папка для сохранений</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Многопользовательская игра</string>
   <string name="playerMap_summary">Определить контроллер каждого игрока</string>
@@ -269,7 +248,6 @@
   <string name="assetExtractor_initializing">Инициализация</string>
   <string name="assetExtractor_progress">%1$.0f%% Успешно: %2$s</string>
   <string name="assetExtractor_finished">Готово</string>
-  <string name="assetExtractor_failed">Ошибка извлечения данных приложением. \nПожалуйста, отключите USB-кабель, перезапустите устройство, и повторно запустите приложение. \nДля справки, пожалуйста, посетите %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Чит %1$d</string>
   <string name="cheats_longPress">(нажмите и удерживайте для полного описания)</string>
@@ -291,12 +269,11 @@
   <string name="playerMap_deviceWithName">Устройство %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Устройство %1$d</string>
   <string name="playerMapPreference_popupTitle">Игрок %1$d</string>
-  <string name="playerMapPreference_popupMessage">Игрок %1$d, нажмите кнопку или джойстик на вашем контроллере…\n\nТекущие устройства:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Сброс</string>
-  <string name="playerMapPreference_button">Игрок %1$d\n\n%2$s</string>
   <string name="playerMapPreference_reminder">Напоминать, если управление настроено не для всех игроков</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Нажмите кнопку…\n\nТекущее соответствие:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Сбросить</string>
   <string name="inputMapActivity_aPadXperiaPlay">Управление джойстиком с сенсорной панели</string>
   <string name="inputMapActivity_cPadXperiaPlay">Управление C-pad с сенсорной панели</string>

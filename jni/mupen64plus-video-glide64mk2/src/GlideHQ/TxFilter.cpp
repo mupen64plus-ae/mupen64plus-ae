@@ -29,12 +29,27 @@
 #include "TextureFilters.h"
 #include "TxDbg.h"
 #ifndef NO_FILTER_THREAD
-#include <functional>
-#include <thread>
+#include <SDL.h>
+#include <SDL_thread.h>
 #endif
 #if defined(__MINGW32__)
 #define swprintf _snwprintf
 #endif
+
+typedef struct {
+    uint32 *src;
+    uint32 srcwidth;
+    uint32 srcheight;
+    uint32 *dest;
+    uint32 filter;
+} FilterParams;
+
+int FilterThreadFunc(void *pFilterParams)
+{
+    FilterParams *pParams = (FilterParams *) pFilterParams;
+    filter_8888(pParams->src, pParams->srcwidth, pParams->srcheight, pParams->dest, pParams->filter);
+    return 0;
+}
 
 void TxFilter::clear()
 {
@@ -275,30 +290,31 @@ TxFilter::filter(uint8 *src, int srcwidth, int srcheight, uint16 srcformat, uint
           numcore--;
         }
         if (blkrow > 0 && numcore > 1) {
-          std::thread *thrd[MAX_NUMCORE];
+          SDL_Thread *thrd[MAX_NUMCORE];
+          FilterParams params[MAX_NUMCORE];
           unsigned int i;
           int blkheight = blkrow << 2;
           unsigned int srcStride = (srcwidth * blkheight) << 2;
           unsigned int destStride = srcStride << scale_shift << scale_shift;
-          for (i = 0; i < numcore - 1; i++) {
-            thrd[i] = new std::thread(std::bind(filter_8888,
-                                                (uint32*)_texture,
-                                                srcwidth,
-                                                blkheight,
-                                                (uint32*)_tmptex,
-                                                filter));
+          for (i = 0; i < numcore; i++) {
+            params[i].src = (uint32*) _texture;
+            params[i].srcwidth = srcwidth;
+            if (i == numcore - 1)
+                params[i].srcheight = srcheight - blkheight * i;
+            else
+                params[i].srcheight = blkheight;
+            params[i].dest = (uint32*) _tmptex;
+            params[i].filter = filter;
+#if SDL_VERSION_ATLEAST(2,0,0)
+            thrd[i] = SDL_CreateThread(FilterThreadFunc, "filter8888", &params[i]);
+#else
+            thrd[i] = SDL_CreateThread(FilterThreadFunc, &params[i]);
+#endif
             _texture += srcStride;
             _tmptex  += destStride;
           }
-          thrd[i] = new std::thread(std::bind(filter_8888,
-                                              (uint32*)_texture,
-                                              srcwidth,
-                                              srcheight - blkheight * i,
-                                              (uint32*)_tmptex,
-                                              filter));
           for (i = 0; i < numcore; i++) {
-            thrd[i]->join();
-            delete thrd[i];
+            SDL_WaitThread(thrd[i], NULL);
           }
         } else {
           filter_8888((uint32*)_texture, srcwidth, srcheight, (uint32*)_tmptex, filter);
@@ -664,7 +680,7 @@ TxFilter::dmptx(uint8 *src, int width, int height, int rowStridePixel, uint16 gf
       tmpbuf.append(L"/" + _ident + L"#" + texid + L"_all.png");
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     if ((fp = _wfopen(tmpbuf.c_str(), L"wb")) != NULL) {
 #else
     char cbuf[MAX_PATH];

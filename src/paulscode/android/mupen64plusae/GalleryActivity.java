@@ -37,10 +37,8 @@ import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
-import paulscode.android.mupen64plusae.task.ComputeFileHashesTask;
-import paulscode.android.mupen64plusae.task.ComputeFileHashesTask.ComputeFileHashesListener;
-import paulscode.android.mupen64plusae.task.FindRomsTask;
-import paulscode.android.mupen64plusae.task.FindRomsTask.FindRomsListener;
+import paulscode.android.mupen64plusae.task.ComputeMd5Task;
+import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -63,7 +61,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-public class GalleryActivity extends Activity implements OnItemClickListener, ComputeFileHashesListener, FindRomsListener, CacheRomInfoListener
+public class GalleryActivity extends Activity implements OnItemClickListener, ComputeMd5Listener, CacheRomInfoListener
 {
     // App data and user preferences
     private AppData mAppData = null;
@@ -71,6 +69,9 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     
     // Widgets
     private GridView mGridView;
+    
+    // Background tasks
+    private CacheRomInfoTask mCacheRomInfoTask = null;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -132,6 +133,18 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
             CharSequence title = getText( R.string.invalidInstall_title );
             CharSequence message = getText( R.string.invalidInstall_message );
             new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+        }
+    }
+    
+    protected void onStop()
+    {
+        super.onStop();
+        
+        // Cancel long-running background tasks
+        if( mCacheRomInfoTask != null )
+        {
+            mCacheRomInfoTask.cancel( false );
+            mCacheRomInfoTask = null;
         }
     }
     
@@ -205,33 +218,30 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
             Log.e( "GalleryActivity", "No item selected" );
         else if( item.romFile == null )
             Log.e( "GalleryActivity", "No ROM file available" );
-        else if( item.detail == null )
-            Log.e( "GalleryActivity", "No ROM detail available" );
         else
-            launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.detail.md5, item.detail.crc );
+            launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.md5 );
     }
     
     private void launchPlayMenuActivity( final String romPath )
     {
         // Asynchronously compute MD5 and launch play menu when finished
         Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
-        new ComputeFileHashesTask( new File( romPath ), this ).execute();
+        new ComputeMd5Task( new File( romPath ), this ).execute();
     }
     
     @Override
-    public void onComputeFileHashesFinished( File file, String md5, String crc )
+    public void onComputeMd5Finished( File file, String md5 )
     {
-        launchPlayMenuActivity( file.getAbsolutePath(), md5, crc );
+        launchPlayMenuActivity( file.getAbsolutePath(), md5 );
     }
     
-    private void launchPlayMenuActivity( String romPath, String md5, String crc )
+    private void launchPlayMenuActivity( String romPath, String md5 )
     {
-        if( !TextUtils.isEmpty( romPath ) && !TextUtils.isEmpty( md5 ) && !TextUtils.isEmpty( crc ) )
+        if( !TextUtils.isEmpty( romPath ) && !TextUtils.isEmpty( md5 ) )
         {
             Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
             intent.putExtra( Keys.Extras.ROM_PATH, romPath );
             intent.putExtra( Keys.Extras.ROM_MD5, md5 );
-            intent.putExtra( Keys.Extras.ROM_CRC, crc );
             startActivity( intent );
         }
     }
@@ -264,13 +274,8 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     {
         // Asynchronously search for ROMs
         Notifier.showToast( this, "Searching for ROMs in " + startDir.getName() );
-        new FindRomsTask( startDir, this ).execute();
-    }
-    
-    @Override
-    public void onFindRomsFinished( List<File> result )
-    {
-        new CacheRomInfoTask( result, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this ).execute();
+        mCacheRomInfoTask = new CacheRomInfoTask( startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.galleryDataDir, this );
+        mCacheRomInfoTask.execute();
     }
     
     @Override
@@ -280,9 +285,10 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     }
     
     @Override
-    public void onCacheRomInfoFinished( ConfigFile config )
+    public void onCacheRomInfoFinished( ConfigFile config, boolean canceled )
     {
-        Notifier.showToast( this, "Finished" );
+        mCacheRomInfoTask = null;
+        Notifier.showToast( this, canceled ? "Canceled" : "Finished" );
         refreshGrid( config );
     }
     
@@ -293,9 +299,10 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         {
             if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
             {
+                String goodName = config.get( md5, "goodName" );
                 String romPath = config.get( md5, "romPath" );
                 String artPath = config.get( md5, "artPath" );
-                items.add( new GalleryItem( this, md5, romPath, artPath ) );
+                items.add( new GalleryItem( this, md5, goodName, romPath, artPath ) );
             }
         }
         Collections.sort( items );

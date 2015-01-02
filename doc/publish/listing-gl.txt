@@ -1,4 +1,4 @@
-[Texto promocional]
+[Promotional Text]
 
 
 Emulador da Nintendo64 para Android. Mupen64Plus AE está en probas Beta.
@@ -10,7 +10,7 @@ Emulador da Nintendo64 para Android. Mupen64Plus AE está en probas Beta.
 
 
 
-[Descrición da aplicación]
+[App Description]
 
 
 ESTA APLICACIÓN NON VÉN CON ROMS
@@ -20,27 +20,27 @@ ESTA APLICACIÓN NON VÉN CON ROMS
 99¢ É SÓ PARA DOAZÓNS
 - Esta aplicación pode descargarse de balde na miña web (SEN ANUNCIOS!)
 - Por favor, considera facer unha doazón
-- As doazóns soportan a MOITOS proxectos de código aberto e desenvolvedores
+- As doazóns axudan a MOITOS proxectos de código aberto e desenvolvedores
 
 Mupen64Plus, Android Edition (AE) é un emulador da N64 para Android. Actualmente atópase en probas Beta, o que indica que se está a traballar nel. Inda hai varios problemas gráficos, de velocidade e son, incluso en dispositivos modernos. Visita www.paulscode.com para involucrarte no desenvolvemento e probas, así coma na corrección de bugs e preguntas habituais.
 
-In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
+Coa fin de evitar posibles problemas cos dereitos de autor das capturas, decidín usar só xogos de dominio público ou de demostración para as mesmas. Porén, se a aplicación volve ser retirada do Market, podes seguir as actualizacións futuras de balde en paulscode.com.
 
 This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/mupen64plus-ae/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
 
 OPTIMIZADO PARA XPERIA PLAY
 - Entrada analóxica dende o touchpad!
 
-PERMISSIONS
+PERMISOS
 Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
-Write External Storage - The device storage is used for writing savegames and custom input profiles.
+Escribe memoria externa - A memoria do dispositivo úsase para gardar partidas e perfís de entrada propios.
 Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
 
 PARA COMEZAR
-- Transfire ROMs a calquera lugar do teu almacenamento interno ou tarxeta SD
+- Pon as ROMs en calquera lugar da memoria interna ou da SD
 - Navega cara elas dende a mesma aplicación
 - O cartafol predefinido da tarxeta SD soe ser /mnt/sdcard
-- As ROMs teñen que ter formato .n64, .v64 ou z64, ou ben dentro de arquivos .zip
+- As ROMs estarán en formato .n64, .v64 ou .z64, ata en arquivos .zip
 
 AXUDA, PREGUNTAS HABITUAIS, INSTRUCIÓNS PARA RESPALDAR XOGOS:
 - http://www.paulscode.com

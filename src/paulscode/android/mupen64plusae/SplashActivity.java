@@ -34,7 +34,6 @@ import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
-import paulscode.android.mupen64plusae.util.RomDetail;
 import tv.ouya.console.api.OuyaFacade;
 import android.app.Activity;
 import android.content.Intent;
@@ -59,7 +58,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 43;
+    private static final int ASSET_VERSION = 49;
     
     /** The total number of assets to be extracted (for computing progress %). */
     private static final int TOTAL_ASSETS = 115;
@@ -227,9 +226,6 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
     
     private void launchGalleryActivity( )
     {
-        // Initialize ROM database before starting next activity
-        RomDetail.initializeDatabase( mAppData.mupen64plus_ini );
-        
         // Launch the activity, passing ROM path if it was provided externally
         Intent intent = new Intent( this, GalleryActivity.class );
         Uri dataUri = getIntent().getData();

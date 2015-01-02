@@ -42,6 +42,8 @@ public class NativeConfigFiles
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( user.videoRenderHeight ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( game.isGln64AutoFrameskipEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( game.gln64MaxFrameskip ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "polygon offset factor", String.valueOf( user.videoPolygonOffset ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "polygon offset units", String.valueOf( user.videoPolygonOffset ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable fog", boolToNum( game.isGln64FogEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "texture 2xSAI", boolToNum( game.isGln64SaiEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( game.isGln64AlphaTestEnabled ) );
@@ -50,12 +52,10 @@ public class NativeConfigFiles
         
         // glide64 config file
         ConfigFile glide64_conf = new ConfigFile( appData.glide64mk2_ini );
-        glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                    // Stretch to GameSurface, Java will manage aspect ratio
-        glide64_conf.put( "DEFAULT", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
-        glide64_conf.put( "DEFAULT", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
+        glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                       // Stretch to GameSurface, Java will manage aspect ratio
         
         // Core and rice config file
-        ConfigFile mupen64plus_cfg = new ConfigFile( user.mupen64plus_cfg );
+        ConfigFile mupen64plus_cfg = new ConfigFile( game.mupen64plus_cfg );
         
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.000000" );                                                          // Mupen64Plus SDL Audio Plugin config parameter version number
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", boolToTF( user.audioSwapChannels ) );                            // Swaps left and right channels
@@ -65,7 +65,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );                                                          // Draw on-screen display if True, otherwise don't draw OSD
         mupen64plus_cfg.put( "Core", "R4300Emulator", game.r4300Emulator );                                                 // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
         mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );                                                   // Increment the save state slot after each save operation
-        mupen64plus_cfg.put( "Core", "ScreenshotPath", '"' + game.screenshotDir + '"' );                                                             // Path to directory where screenshots are saved. If this is blank, the default value of ${UserConfigPath}/screenshot will be used
+        mupen64plus_cfg.put( "Core", "ScreenshotPath", '"' + game.screenshotDir + '"' );                                    // Path to directory where screenshots are saved. If this is blank, the default value of ${UserConfigPath}/screenshot will be used
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + game.slotSaveDir + '"' );                                       // Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserConfigPath}/save will be used
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.sramDataDir + '"' );                                        // Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used
         mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );                             // Path to a directory to search when looking for shared data files
@@ -112,6 +112,18 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( user.videoRenderHeight ) );                   // Height of output window or fullscreen height
         mupen64plus_cfg.put( "Video-General", "VerticalSync", "False" );                                                    // If true, activate the SDL_GL_SWAP_CONTROL attribute
         
+        mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );                                                        // Vertical sync
+        mupen64plus_cfg.put( "Video-Glide64mk2", "wrpAnisotropic", "False" );                                               // Wrapper Anisotropic Filtering
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_read_always", "0" );                                                   // Read framebuffer every frame (may be slow use only for effects that need it e.g. Banjo Kazooie, DK64 transitions)
+        mupen64plus_cfg.put( "Video-Glide64mk2", "force_polygon_offset", "1" );                                             // If true, use polygon offset values specified below
+        mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_factor", String.valueOf( user.videoPolygonOffset ) );      // Specifies a scale factor that is used to create a variable depth offset for each polygon
+        mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( user.videoPolygonOffset ) );       // Is multiplied by an implementation-specific value to create a constant depth offset
+        mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
+        
+        mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", "True" );                                                  // If true, use polygon offset values specified below
+        mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( user.videoPolygonOffset ) );              // Specifies a scale factor that is used to create a variable depth offset for each polygon
+        mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetUnits", String.valueOf( user.videoPolygonOffset ) );               // Is multiplied by an implementation-specific value to create a constant depth offset
         mupen64plus_cfg.put( "Video-Rice", "ScreenUpdateSetting", game.riceScreenUpdateType );                              // Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
         mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", boolToTF( game.isRiceFastTextureLoadingEnabled ) );        // Use a faster algorithm to speed up texture loading and CRC computation
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", boolToTF( game.isRiceAutoFrameskipEnabled ) );                      // If this option is enabled, the plugin will skip every other frame

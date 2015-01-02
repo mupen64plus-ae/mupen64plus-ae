@@ -40,6 +40,7 @@ import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -141,7 +142,7 @@ public class CoreInterface
         sSurface = surface;
         sAppData = new AppData( sActivity );
         sUserPrefs = new UserPrefs( sActivity );
-        sGamePrefs = new GamePrefs( sActivity, romMd5 );
+        sGamePrefs = new GamePrefs( sActivity, romMd5, new RomHeader( romPath ) );
         NativeConfigFiles.syncConfigFiles( sGamePrefs, sUserPrefs, sAppData );
         
         // Make sure various directories exist so that we can write to them
@@ -150,7 +151,7 @@ public class CoreInterface
         new File( sGamePrefs.slotSaveDir ).mkdirs();
         new File( sGamePrefs.userSaveDir ).mkdirs();
         new File( sGamePrefs.screenshotDir ).mkdirs();
-        new File( sUserPrefs.coreUserConfigDir ).mkdirs();
+        new File( sGamePrefs.coreUserConfigDir ).mkdirs();
         new File( sUserPrefs.coreUserDataDir ).mkdirs();
         new File( sUserPrefs.coreUserCacheDir ).mkdirs();
         sAutoSavePath = sGamePrefs.autoSaveDir + "/yyyy-mm-dd-hh-mm-ss.sav";
@@ -216,7 +217,7 @@ public class CoreInterface
                     arglist.add( "--corelib" );
                     arglist.add( sAppData.coreLib );
                     arglist.add( "--configdir" );
-                    arglist.add( sUserPrefs.coreUserConfigDir );
+                    arglist.add( sGamePrefs.coreUserConfigDir );
                     if( !sUserPrefs.isFramelimiterEnabled )
                     {
                         arglist.add( "--nospeedlimit" );
@@ -227,7 +228,66 @@ public class CoreInterface
                         arglist.add( sCheatOptions );
                     }
                     arglist.add( sRomPath );
-                    NativeExports.emuStart( sUserPrefs.coreUserDataDir, sUserPrefs.coreUserCacheDir, arglist.toArray() );
+                    int result = NativeExports.emuStart( sUserPrefs.coreUserDataDir, sUserPrefs.coreUserCacheDir, arglist.toArray() );
+                    if( result != 0 )
+                    {
+                        // Messages match return codes from mupen64plus-ui-console/main.c
+                        final String message;
+                        switch( result )
+                        {
+                            case 1:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure01 );
+                                break;
+                            case 2:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure02 );
+                                break;
+                            case 3:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure03 );
+                                break;
+                            case 4:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure04 );
+                                break;
+                            case 5:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure05 );
+                                break;
+                            case 6:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure06 );
+                                break;
+                            case 7:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure07 );
+                                break;
+                            case 8:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure08 );
+                                break;
+                            case 9:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure09 );
+                                break;
+                            case 10:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure10 );
+                                break;
+                            case 11:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure11 );
+                                break;
+                            case 12:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure12 );
+                                break;
+                            case 13:
+                                message = sActivity.getString( R.string.toast_nativeMainFailure13 );
+                                break;
+                            default:
+                                message = sActivity.getString( R.string.toast_nativeMainFailureUnknown );
+                                break;
+                        }
+                        Log.e( "CoreInterface", "Launch failure: " + message );
+                        sActivity.runOnUiThread( new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                Notifier.showToast( sActivity, message );
+                            }
+                        } );
+                    }
                 }
             }, "CoreThread" );
             

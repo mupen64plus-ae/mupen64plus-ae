@@ -52,8 +52,6 @@
   <string name="menuItem_localeOverride">Γλώσσα</string>
   <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
-  <string name="popup_faq">Mupen64Plus αναπτύσσεται και συντηρείται από εθελοντές.<small>\n\nΓια να διορθώσετε δυσλειτουργίες σε γραφικά, δοκιμάστε να αλλάξετε το <i>πρόσθετο γραφικών</i>.\n\nΓια να διορθώσετε τις καθυστερήσεις, δοκιμάστε να αλλάξετε την <i>παράλειψη καρέ βίντεο</i> ή το <i>πρόσθετο γραφικών</i>.\n\nΓια ROMS που δεν παίζουν, δοκιμάστε να ξε-συμπιέσετε το ROM πρώτα ή να δοκιμάσετε διαφορετική έκδοση του ROM.\n\nΓια προβλήματα με τον χειρισμό μέσω οθόνης αφής, δοκιμάστε να αλλάξετε την <i>κλίμακα κουμπιών</i> ή την <i>διάταξη κουμπιών</i>.\n\nΓια άλλα θέματα, ή αν έχει κολλήσει, δοκιμάστε το κουμπί <i>FAQ</i> παρακάτω.  Για προβλήματα που δεν σχετίζονται με συγκεκριμένα παιχνίδια, πατήστε το κουμπί <i>Αναφορά σφάλματος</i> παρακάτω.  Απαντάμε στην πλειοψηφία των μηνυμάτων μέσα σε 24 ώρες. Ειλικρινά.\n\n</small>Ευχαριστούμε για την βοήθειά σας στην βελτίωση της εφαρμογής!</string>
-  <string name="popup_version">Έκδοση: %1$s\nΈκδοση κώδικα: %2$d</string>
   <!--Lists-->
   <!--ManageProfilesActivity Name/Comment Dialog-->
   <!--**************************************************************************-->
@@ -88,8 +86,6 @@
   <string name="actionReloadAssets_summary">ΔΕΝ επηρεάζει ρυθμίσεις χρήστη, αρχεία ROM, αποθηκευμένα παιχνίδια, ή άλλα προσαρμοσμένα δεδομένα</string>
   <string name="actionCrashTest_title">Δοκιμή</string>
   <string name="actionCrashTest_summary">Αποστολή αναφοράς διαμόρφωσης στους προγραμματιστές</string>
-  <string name="actionResetUserPrefs_title">Επανεκκίνηση</string>
-  <string name="actionResetUserPrefs_summary">Επαναφορά προεπιλογών</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Εισαγωγή</string>
   <string name="screenInput_summary">Ρυθμίσεις χειρισμού</string>
@@ -116,7 +112,6 @@
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Ενεργοποίηση κωδικών</string>
   <string name="playShowCheats_summary">Το μενού φορτώνει πιο αργά όταν είναι ενεργοποιημένο</string>
-  <string name="touchscreenEnabled_title">Ενεργοποίηση οθόνης αφής</string>
   <string name="touchscreenFeedback_title">Ανάδραση αφής</string>
   <string name="touchscreenFeedback_summary">Δόνηση σε πάτημα πλήκτρου</string>
   <string name="touchpadEnabled_title">Ενεργοποίηση επιφάνειας αφής</string>
@@ -132,8 +127,6 @@
   <string name="gln64ScreenClear_summary">Απενεργοποίηση για τα ταχύτητα (μπορεί να προκαλέσει γραφικές ανωμαλίες )</string>
   <string name="gln64AlphaTest_title">Δοκιμή διαφάνειας alpha</string>
   <string name="gln64AlphaTest_summary">Απενεργοποιημένο για ταχύτητα (προκαλεί μαύρες υφές)</string>
-  <string name="gln64DepthTest_title">Δοκιμή βάθους</string>
-  <string name="gln64DepthTest_summary">Απενεργοποίηση για ταχύτητα (προκαλεί αναβόσβημα του φόντου)</string>
   <string name="riceAutoFrameskip_title">Αυτόμ. παράλειψη καρέ</string>
   <string name="riceAutoFrameskip_summary">Βελτιώνει την ταχύτητα παιχνιδιού με κόστος τον ρυθμό καρέ</string>
   <string name="riceFastTexture_title">Γρήγορο φόρτωμα υφών</string>
@@ -150,7 +143,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Απενεργοποιημένο</string>
   <string name="touchscreenAutoHold_entryLongPress">Στο παρατετ. πάτημα</string>
   <string name="touchscreenAutoHold_entrySlideOut">Στην ολίσθηση</string>
-  <string name="touchscreenAutoHoldables_title">Πλήκτρα που μπορούν να κρατηθούν</string>
   <string name="touchscreenRefresh_title">Κίνηση μοχλού</string>
   <string name="touchscreenRefresh_entryNever">Ποτέ</string>
   <string name="touchscreenRefresh_entryOccasionally">Περιστασιακά</string>
@@ -158,15 +150,6 @@
   <string name="touchscreenStyle_title">Στυλ πλήκτρων</string>
   <string name="touchscreenStyle_entryOutline">Περιγράμματα</string>
   <string name="touchscreenStyle_entryShaded">Σκιασμένα</string>
-  <string name="touchscreenHeight_title">Κατακόρυφο κενό πλήκτρων</string>
-  <string name="touchscreenHeight_entryAuto">Αυτόματο</string>
-  <string name="touchscreenHeight_entryFullHeight">Πλήρες ύψος</string>
-  <string name="touchscreenHeight_entryHalfHeight">Μισό ύψος</string>
-  <string name="touchscreenLayout_title">Διάταξη πλήκτρων</string>
-  <string name="touchscreenLayout_entryAnalog">Αναλογικό (από roymustang16)</string>
-  <string name="touchscreenLayout_entryDigital">Ψηφιακό (από roymustang16)</string>
-  <string name="touchscreenLayout_entryAll">Και τα δυο (από roymustang16)</string>
-  <string name="touchscreenLayout_entryCustom">Προσαρμοσμένο (βλέπε http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Διάταξη επιφάνειας αφής</string>
   <string name="touchpadLayout_entryDefault">Αριστερά: Αναλογικός μοχλός, Δεξιά: κουμπιά C</string>
   <string name="touchpadLayout_entryReverse">Αριστερά: κουμπιά C, Δεξιά: Αναλογικός μοχλός</string>
@@ -188,17 +171,11 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (περισσότερα καρέ)</string>
   <string name="displayScaling_title">Κλιμάκωση οθόνης</string>
-  <string name="displayScaling_entryNone">Καμία\n<small>Χρήση ίδιας ανάλυσης με παραπάνω</small></string>
-  <string name="displayScaling_entryZoom">Zoom\n<small>Γέμισμα οθόνης, καμία παραμόρφωση (προσθήκη μαύρων μπαρών)</small></string>
-  <string name="displayScaling_entryStretch">Τέντωμα\n<small>Γέμισμα οθόνης, χωρίς μαύρες μπάρες (παραμορφώνει)</small></string>
   <string name="displayFpsRefresh_title">Προβολή ρυθμού καρέ</string>
   <string name="displayFpsRefresh_entryNever">Ποτέ</string>
   <string name="displayFpsRefresh_entryOccasionally">Περιστασιακά</string>
   <string name="displayFpsRefresh_entryFrequently">Συχνά</string>
   <string name="videoPlugin_entryNone">Κανένα (βίντεο απενεργοποιημένο)</string>
-  <string name="videoPlugin_entryGln64">gln64\n<small>(προσαρμογή του GLN64 v0.4.1)</small></string>
-  <string name="videoPlugin_entryRice">rice\n<small>(προσαρμογή του Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGlide64">glide64\n<small>(προσαρμογή του Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Μείωση τρεμοπαίγματος</string>
   <string name="videoHardwareType_entryAuto">Αυτόμ. ανίχνευση από το μοντέλου του τηλεφώνου/τάμπλετ</string>
   <string name="videoHardwareType_entryStandard">Κανονικό προφίλ</string>
@@ -263,14 +240,10 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Επιλεγμένος φάκελος: %1$s</string>
-  <string name="pathSelectedGame_title">Παιχνίδι</string>
-  <string name="pathCustomTouchscreen_title">Προσαρμοσμένης διάταξης φάκελος</string>
-  <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Προσθήκη πακέτου υφής</string>
   <string name="pathHiResTextures_summary">Εφαρμογή προσαρμοσμένων υφών (αρχείο ZIP) σε ένα παιχνίδι</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Φάκελος αποθήκευσης παιχνιδιών</string>
-  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Πολλαπλών παικτών</string>
   <string name="playerMap_summary">Ορισμός χειριστηρίου κάθε παίκτη</string>
@@ -296,7 +269,6 @@
   <string name="assetExtractor_initializing">Αρχικοποίηση</string>
   <string name="assetExtractor_progress">%1$.0f%% ολοκλ: %2$s</string>
   <string name="assetExtractor_finished">Ολοκληρώθηκε</string>
-  <string name="assetExtractor_failed">Σφάλμα εξαγωγής δεδομένων εφαρμογής.\nΠαρακαλώ αποσυνδέστε το καλώδιο USB, επανεκκινήστε την συσκευή, και τρέξτε ξανά την εφαρμογή.\nΓια βοήθεια, επισκεφτείτε %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Κωδικός %1$d</string>
   <string name="cheats_longPress">(παρατετ. πάτημα για πλήρες κείμενο)</string>
@@ -318,12 +290,11 @@
   <string name="playerMap_deviceWithName">Συσκευή %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Συσκευή %1$d</string>
   <string name="playerMapPreference_popupTitle">Παίκτης %1$d</string>
-  <string name="playerMapPreference_popupMessage">Παίκτης %1$d, πατήστε ένα πλήκτρο ή μοχλό στο χειριστήριο σας…\n\nΤρέχουσες συσκευές:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Διαγρ. αντιστοίχισης</string>
-  <string name="playerMapPreference_button">Παίκτης %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Υπενθύμιση μη αντιστοίχισης παικτών</string>
+  <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Πατήστε ένα πλήκτρο ή μοχλό για αντιστοίχιση…\n\nΤρέχουσες αντιστοιχίσειςs:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Διαγρ. αντιστοίχισης</string>
   <string name="inputMapActivity_aPadXperiaPlay">Χειρισμός αναλογικού μοχλού με την οθόνη αφής</string>
   <string name="inputMapActivity_cPadXperiaPlay">Χειρισμός C-pad με οθόνης αφής</string>

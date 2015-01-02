@@ -10,7 +10,7 @@ import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
-import paulscode.android.mupen64plusae.util.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Context;
@@ -41,6 +41,12 @@ public class GamePrefs
     
     /** The subdirectory containing user screenshots. */
     public final String screenshotDir;
+    
+    /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
+    public final String coreUserConfigDir;
+    
+    /** The path of the Mupen64Plus base configuration file. */
+    public final String mupen64plus_cfg;
     
     /** The emulation profile. */
     public final Profile emulationProfile;
@@ -170,7 +176,7 @@ public class GamePrefs
     
     private final SharedPreferences mPreferences;
     
-    public GamePrefs( Context context, String romMd5 )
+    public GamePrefs( Context context, String romMd5, RomHeader header )
     {
         final AppData appData = new AppData( context );
         final UserPrefs userPrefs = new UserPrefs( context );
@@ -178,19 +184,15 @@ public class GamePrefs
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
         
-        // ROM goodname used for directory prefix, if available
-        RomDetail detail = RomDetail.lookupByMd5( romMd5 );
-        String prefix = "Game";
-        if ( detail != null && !TextUtils.isEmpty( detail.goodName ) )
-            prefix = detail.goodName;
-        
         // Game-specific data
-        gameDataDir = userPrefs.userDataDir + "/GameData/" + prefix + "_" + romMd5;
+        gameDataDir = String.format( "%s/GameData/%s %s %s", userPrefs.userDataDir, header.name, header.countrySymbol, romMd5 );
         sramDataDir = gameDataDir + "/SramData";
         autoSaveDir = gameDataDir + "/AutoSaves";
         slotSaveDir = gameDataDir + "/SlotSaves";
         userSaveDir = gameDataDir + "/UserSaves";
         screenshotDir = gameDataDir + "/Screenshots";
+        coreUserConfigDir = gameDataDir + "/CoreConfig";
+        mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, "emulationProfile",
@@ -361,7 +363,9 @@ public class GamePrefs
         final ConfigFile builtin = new ConfigFile( builtinPath );
         final String name = prefs.getString( key, defaultName );
         
-        if( custom.keySet().contains( name ) )
+        if( TextUtils.isEmpty( name ) )
+            return null;
+        else if( custom.keySet().contains( name ) )
             return new Profile( false, custom.get( name ) );
         else if( builtin.keySet().contains( name ) )
             return new Profile( true, builtin.get( name ) );

@@ -18,44 +18,59 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "FrameSkipper.h"
-#include "ticks.h"
+#include <SDL_timer.h>
 
 FrameSkipper::FrameSkipper()
-	: skipType(AUTO), maxSkips(2), targetFPS(60)
+  : _skipType(AUTO), _maxSkips(2), _targetFPS(60),
+    _skipCounter(0), _initialTicks(0), _actualFrame(0)
 {
-}
-
-void FrameSkipper::start()
-{
-	initialTicks = 0;
-	virtualCount = 0;
-	skipCounter = 0;
 }
 
 void FrameSkipper::update()
 {
-	// for the first frame
-	if (initialTicks == 0) {
-		initialTicks = ticksGetTicks();
-		return;
-	}
+  if (_maxSkips < 1)
+  {
+    // Frameskip disabled, do nothing
+  }
+  else if (_skipType == MANUAL)
+  {
+    // Skip this frame based on a deterministic skip rate
+    if (++_skipCounter > _maxSkips)
+      _skipCounter = 0;
+  }
+  else if (_initialTicks > 0) // skipType == AUTO, running
+  {
+    // Compute the frame number we want be at, based on elapsed time and target FPS
+    unsigned int elapsedMilliseconds = SDL_GetTicks() - _initialTicks;
+    unsigned int desiredFrame = (elapsedMilliseconds * _targetFPS) / 1000;
 
-	unsigned int elapsed = ticksGetTicks() - initialTicks;
-	unsigned int realCount = elapsed * targetFPS / 1000;
+    // Record the frame number we are actually at
+    _actualFrame++;
 
-	virtualCount++;
-	if (realCount >= virtualCount) {
-		if (realCount > virtualCount &&
-				skipType == AUTO && skipCounter < maxSkips) {
-			skipCounter++;
-		} else {
-			virtualCount = realCount;
-			if (skipType == AUTO)
-				skipCounter = 0;
-		}
-	}
-	if (skipType == MANUAL) {
-		if (++skipCounter > maxSkips)
-			skipCounter = 0;
-	}
+    // See if we need to skip
+    if (desiredFrame < _actualFrame)
+    {
+      // We are ahead of schedule, so do nothing
+    }
+    else if (desiredFrame > _actualFrame && _skipCounter < _maxSkips)
+    {
+      // We are behind schedule and we are allowed to skip this frame, so skip this frame
+      _skipCounter++;
+    }
+    else
+    {
+      // We are on schedule, or we are not allowed to skip this frame...
+      // ... so do not skip this frame
+      _skipCounter = 0;
+      // ... and pretend we are on schedule (if not already)
+      _actualFrame = desiredFrame;
+    }
+  }
+  else // skipType == AUTO, initializing
+  {
+    // First frame, initialize auto-skip variables
+    _initialTicks = SDL_GetTicks();
+    _actualFrame = 0;
+    _skipCounter = 0;
+  }
 }
