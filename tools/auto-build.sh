@@ -1,9 +1,13 @@
 #!/bin/bash
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -eq 3 ] && [ "$3" == "-f" ]; then
+    forceBuild=true
+elif [ "$#" -ne 2 ]; then
     echo "Usage:"
-    echo "tools/auto-build.sh username@hostname.ext path/to/destination/folder"
+    echo "tools/auto-build.sh username@hostname.ext path/to/destination/folder [-f]"
     exit 1
+else
+    forceBuild=false
 fi
 
 #TODO: Loop through all branches
@@ -17,10 +21,13 @@ echo "Executing git pull"
 git pull
 newRevision=`git rev-parse --short HEAD`
 
-if [ "$oldRevision" == "$newRevision" ]; then
+if [ "$oldRevision" == "$newRevision" ] && [ "$forceBuild" == false ]; then
     echo "Nothing new to build"
     exit 0
 else
+    if [ "$forceBuild" == false ]; then
+        "Forcing auto-build"
+    fi
     echo "Cleaning previous build"
     ant clean
     ndk-build clean
