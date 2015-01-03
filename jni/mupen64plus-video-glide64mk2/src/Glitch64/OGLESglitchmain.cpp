@@ -39,6 +39,8 @@
 #include "main.h"
 #include "m64p.h"
 
+#include <SDL_opengles2.h>
+
 #define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) LOG("OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
 
 #ifdef VPDEBUG
@@ -46,6 +48,7 @@
 #endif
 
 extern void (*renderCallback)(int);
+void vbo_draw();
 
 wrapper_config config = {0, 0, 0, 0};
 int screen_width, screen_height;
@@ -203,8 +206,8 @@ struct texbuf_t {
 static texbuf_t texbufs[NB_TEXBUFS];
 static int texbuf_i;
 
-unsigned short frameBuffer[2048*2048*4];
-unsigned short depthBuffer[2048*2048];
+unsigned short frameBuffer[2048*2048*2]; // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
+unsigned short depthBuffer[2048*2048];   // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
 
 //#define VOODOO1
 
@@ -348,6 +351,7 @@ grClipWindow( FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy )
     glScissor(minx, miny+viewport_offset, maxx - minx, maxy - miny);
     //printf("gl scissor %d %d %d %d\n", minx, miny, maxx, maxy);
   } else {
+    vbo_draw();
     glScissor(minx, (viewport_offset)+height-maxy, maxx - minx, maxy - miny);
   }
   glEnable(GL_SCISSOR_TEST);

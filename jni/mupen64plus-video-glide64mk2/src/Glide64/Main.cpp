@@ -1479,9 +1479,17 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
         BYTE *ptr = (BYTE*) info.lfbPtr + (info.strideInBytes * y);
         for (wxUint32 x=0; x<settings.res_x; x++)
         {
+#ifdef USE_GLES
+          // GLESv2 only guarantees support for GL_RGBA pixel format
           line[x*3]   = ptr[0];  // red
           line[x*3+1] = ptr[1];  // green
           line[x*3+2] = ptr[2];  // blue
+#else
+          // OpenGL guarantees support for GL_BGRA pixel format
+          line[x*3]   = ptr[2];  // red
+          line[x*3+1] = ptr[1];  // green
+          line[x*3+2] = ptr[0];  // blue
+#endif
           ptr += 4;
         }
         line += settings.res_x * 3;
