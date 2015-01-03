@@ -203,8 +203,8 @@ struct texbuf_t {
 static texbuf_t texbufs[NB_TEXBUFS];
 static int texbuf_i;
 
-unsigned short frameBuffer[2048*2048*4];
-unsigned short depthBuffer[2048*2048];
+unsigned short frameBuffer[2048*2048*2]; // Support 2048x2048 screen resolution at 32 bits (RGBA) per pixel
+unsigned short depthBuffer[2048*2048];   // Support 2048x2048 screen resolution at 16 bits (depth) per pixel
 
 //#define VOODOO1
 
