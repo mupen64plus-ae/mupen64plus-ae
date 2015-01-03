@@ -25,7 +25,7 @@ if [ "$oldRevision" == "$newRevision" ] && [ "$forceBuild" == false ]; then
     echo "Nothing new to build"
     exit 0
 else
-    if [ "$forceBuild" == false ]; then
+    if [ "$forceBuild" == true ]; then
         "Forcing auto-build"
     fi
     echo "Cleaning previous build"
