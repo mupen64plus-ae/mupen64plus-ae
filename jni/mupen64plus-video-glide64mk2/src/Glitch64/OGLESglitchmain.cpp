@@ -351,6 +351,7 @@ grClipWindow( FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy )
     glScissor(minx, miny+viewport_offset, maxx - minx, maxy - miny);
     //printf("gl scissor %d %d %d %d\n", minx, miny, maxx, maxy);
   } else {
+    vbo_draw();
     glScissor(minx, (viewport_offset)+height-maxy, maxx - minx, maxy - miny);
   }
   glEnable(GL_SCISSOR_TEST);
