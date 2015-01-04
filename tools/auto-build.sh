@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ "$#" -eq 3 ] && [ "$3" == "-f" ]; then
+if [ "$#" -eq 4 ] && [ "$4" == "-f" ]; then
     forceBuild=true
-elif [ "$#" -ne 2 ]; then
+elif [ "$#" -ne 3 ]; then
     echo "Usage:"
-    echo "tools/auto-build.sh username@hostname.ext path/to/destination/folder [-f]"
+    echo "tools/auto-build.sh username@hostname.ext path/to/destination/folder path/to/key [-f]"
     exit 1
 else
     forceBuild=false
@@ -42,7 +42,7 @@ else
         sanitizedBranchName="$currentBranch"
 
         echo "Uploading APK to host"
-        cmd="scp bin/Mupen64Plus-debug.apk ""$1"":""$2""/Mupen64PlusAE_""$sanitizedBranchName""_""$(date +'%Y%m%d%H%M')""_""$newRevision"".apk"; $cmd
+        cmd="scp -v -i ""$3"" bin/Mupen64Plus-debug.apk ""$1"":""$2""/Mupen64PlusAE_""$sanitizedBranchName""_""$(date +'%Y%m%d%H%M')""_""$newRevision"".apk"; $cmd
         echo "Done"
         exit 0
     fi
