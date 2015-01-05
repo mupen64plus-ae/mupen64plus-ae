@@ -69,6 +69,8 @@ public class RomDatabase
             {
                 // CRC not in the database; create best guess
                 Log.w( "RomDetail", "No meta-info entry found for ROM " + file.getAbsolutePath() );
+                Log.w( "RomDetail", "MD5: " + md5 );
+                Log.w( "RomDetail", "CRC: " + crc );
                 Log.i( "RomDetail", "Constructing a best guess for the meta-info" );
                 String goodName = file.getName().split( "\\." )[0];
                 detail = new RomDetail( crc, goodName );
@@ -78,6 +80,8 @@ public class RomDatabase
                 // CRC in the database more than once; let user pick best match
                 // TODO Implement popup selector
                 Log.w( "RomDetail", "Multiple meta-info entries found for ROM " + file.getAbsolutePath() );
+                Log.w( "RomDetail", "MD5: " + md5 );
+                Log.w( "RomDetail", "CRC: " + crc );
                 Log.i( "RomDetail", "Defaulting to first entry" );
                 detail = romDetails[0];
             }
