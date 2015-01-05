@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.task;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -69,12 +70,44 @@ public class ComputeMd5Task extends AsyncTask<Void, Void, String>
         InputStream inputStream = null;
         try
         {
-            inputStream = new FileInputStream( file );
+            inputStream = new BufferedInputStream( new FileInputStream( file ) );
+            inputStream.mark( 1 );
+            int firstByte = inputStream.read();
+            inputStream.reset();
+            
             MessageDigest digester = MessageDigest.getInstance( "MD5" );
             byte[] bytes = new byte[8192];
             int byteCount;
             while( ( byteCount = inputStream.read( bytes ) ) > 0 )
             {
+                // TODO: Test multiple bytes
+                switch( firstByte )
+                {
+                    case 0x37:
+                        // Byteswap if .v64 image
+                        for( int i = 0; i < byteCount; i += 2 )
+                        {
+                            byte temp = bytes[i];
+                            bytes[i] = bytes[i + 1];
+                            bytes[i + 1] = temp;
+                        }
+                        break;
+                    case 0x40:
+                        // Wordswap if .n64 image
+                        for( int i = 0; i < byteCount; i += 4 )
+                        {
+                            byte temp = bytes[i];
+                            bytes[i] = bytes[i + 3];
+                            bytes[i + 3] = temp;
+                            temp = bytes[i + 1];
+                            bytes[i + 1] = bytes[i + 2];
+                            bytes[i + 2] = temp;
+                        }
+                        break;
+                    default:
+                        // No swap otherwise
+                        break;
+                }
                 digester.update( bytes, 0, byteCount );
             }
             return convertHashToString( digester.digest() );
