@@ -39,8 +39,6 @@
 #include "main.h"
 #include "m64p.h"
 
-#include <SDL_opengles2.h>
-
 #define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) LOG("OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
 
 #ifdef VPDEBUG
@@ -48,7 +46,6 @@
 #endif
 
 extern void (*renderCallback)(int);
-void vbo_draw();
 
 wrapper_config config = {0, 0, 0, 0};
 int screen_width, screen_height;

@@ -124,6 +124,7 @@ extern "C" {
 #endif
 #endif // _WIN32
 #include "glide.h"
+#include "glState.cpp"
 
 void display_warning(const unsigned char *text, ...);
 void display_warning(const char *text, ...);
