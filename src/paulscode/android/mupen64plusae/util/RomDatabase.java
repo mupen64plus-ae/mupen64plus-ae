@@ -176,9 +176,10 @@ public class RomDatabase
                 saveType = section.get( "SaveType" );
                 String statusString = section.get( "Status" );
                 String playersString = section.get( "Players" );
+                String rumbleString = section.get( "Rumble" );
                 status = TextUtils.isEmpty( statusString ) ? 0 : Integer.parseInt( statusString );
-                players = TextUtils.isEmpty( playersString ) ? 0 : Integer.parseInt( playersString );
-                rumble = "Yes".equals( section.get( "Rumble" ) );
+                players = TextUtils.isEmpty( playersString ) ? 4 : Integer.parseInt( playersString );
+                rumble = TextUtils.isEmpty( rumbleString ) ? true : "Yes".equals( rumbleString );
             }
             else
             {
