@@ -116,6 +116,7 @@ extern "C" {
 #error SDL is not build with OpenGL ES2 support. Try USE_GLES=0
 #endif
 #include <SDL_opengles2.h>
+#include "OGLESwrappers.h"
 #else
 #ifndef SDL_VIDEO_OPENGL
 #error SDL is not build with OpenGL support. Try USE_GLES=1
@@ -124,7 +125,6 @@ extern "C" {
 #endif
 #endif // _WIN32
 #include "glide.h"
-#include "glState.cpp"
 
 void display_warning(const unsigned char *text, ...);
 void display_warning(const char *text, ...);

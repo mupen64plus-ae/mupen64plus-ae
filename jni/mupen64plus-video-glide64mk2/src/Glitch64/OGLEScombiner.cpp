@@ -27,7 +27,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "glide.h"
-#include "main.h"
+#include "glitchmain.h"
 
 #include "../Glide64/winlnxdefs.h"
 #include "../Glide64/rdp.h" // for settings

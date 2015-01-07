@@ -36,7 +36,7 @@
 #include <math.h>
 #include "glide.h"
 #include "g3ext.h"
-#include "main.h"
+#include "glitchmain.h"
 #include "m64p.h"
 
 #define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) LOG("OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
