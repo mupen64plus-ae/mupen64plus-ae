@@ -89,7 +89,7 @@ for i in $COMPONENTS; do
     DO_COMMIT="y"
     if [ "$NEW_MSG_BODY" == "" ];then
         echo
-        echo "Nothing to commit.  Continue? [y/N]"
+        echo "No upstream changes to pull.  Continue? [N/y]"
         echo
         read DO_COMMIT
     fi
