@@ -98,6 +98,7 @@ for i in $COMPONENTS; do
         rm -r -f "${CLONE_DIR}/.git"
         rm -r -f "${DEST_DIR}"
         mv "${CLONE_DIR}" "${DEST_DIR}"
+        git add "${DEST_DIR}/."
         git commit "${DEST_DIR}/." --allow-empty --message="${NEW_MSG_SUBJECT}" --message="" --message="${NEW_MSG_LINK}" --message="" --message="${NEW_MSG_BODY}"
     else
         echo
