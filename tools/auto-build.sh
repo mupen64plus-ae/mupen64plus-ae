@@ -16,7 +16,7 @@ localBranches=($(git branch | awk -F ' +' '! /\(no branch\)/ {print $2}'))
 remoteBranches=($(git branch -r | awk -F ' origin/+' '! /\->/ {print $2}'))
 
 echo "Executing git fetch"
-git fetch --all
+git fetch --prune --all
 
 exitCode=0
 # Loop through the remote branches (these are the only ones that may have changed)
@@ -39,8 +39,8 @@ for currentBranch in "${remoteBranches[@]}"; do
         oldRevision=`git rev-parse --short HEAD`
     fi
     
-    echo "Executing git pull"
-    git pull
+    echo "Executing git reset"
+    cmd="git reset --hard origin/""$currentBranch"; $cmd
     newRevision=`git rev-parse --short HEAD`
     
     # Compare local and remote revision numbers, and build if there are changes
