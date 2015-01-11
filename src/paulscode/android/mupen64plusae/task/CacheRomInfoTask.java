@@ -171,7 +171,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         return null;
     }
     
-    private Throwable downloadFile( String sourceUrl, String destPath )
+    private static Throwable downloadFile( String sourceUrl, String destPath )
     {
         // Be sure destination directory exists
         new File( destPath ).getParentFile().mkdirs();
