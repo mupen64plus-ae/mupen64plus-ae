@@ -29,7 +29,7 @@ set -e
 cd ..
 BASE_DIR=`pwd`
 
-COMPONENTS_ALL="audio-sdl core rsp-hle ui-console video-rice"
+COMPONENTS_ALL="audio-sdl core rsp-hle ui-console video-glide64mk2 video-rice"
 
 echo
 echo "Type the names of the upstream repositories you wish to pull, separated by whitespace."
