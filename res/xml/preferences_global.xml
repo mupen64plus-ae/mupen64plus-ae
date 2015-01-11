@@ -47,8 +47,7 @@
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
-    <PreferenceScreen
-        android:icon="@drawable/ic_display"
+    <PreferenceCategory
         android:key="screenDisplay"
         android:title="@string/screenDisplay_title" >
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
@@ -115,9 +114,8 @@
             android:key="videoPolygonOffset"
             android:summary="@string/videoPolygonOffset_summary"
             android:title="@string/videoPolygonOffset_title" />
-    </PreferenceScreen>
-    <PreferenceScreen
-        android:icon="@drawable/ic_speaker"
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="categoryAudio"
         android:title="@string/categoryAudio_title" >
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
@@ -145,11 +143,9 @@
             android:key="audioSwapChannels"
             android:summary="@string/audioSwapChannels_summary"
             android:title="@string/audioSwapChannels_title" />
-    </PreferenceScreen>
-    <PreferenceScreen
-        android:icon="@drawable/ic_phone"
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="screenTouchscreen"
-        android:summary="@string/screenTouchscreen_summary"
         android:title="@string/screenTouchscreen_title" >
         <paulscode.android.mupen64plusae.persistent.SeekBarPreference
             android:defaultValue="100"
@@ -197,11 +193,9 @@
             android:key="touchscreenAutoHold"
             android:summary="@string/selectedValue"
             android:title="@string/touchscreenAutoHold_title" />
-    </PreferenceScreen>
-    <PreferenceScreen
-        android:icon="@drawable/ic_xperia"
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="screenTouchpad"
-        android:summary="@string/screenTouchpad_summary"
         android:title="@string/screenTouchpad_title" >
         <CheckBoxPreference
             android:defaultValue="true"
@@ -222,9 +216,8 @@
             android:key="touchpadLayout"
             android:summary="@string/selectedValue"
             android:title="@string/touchpadLayout_title" />
-    </PreferenceScreen>
-    <PreferenceScreen
-        android:icon="@drawable/ic_controller"
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="screenInput"
         android:title="@string/screenInput_title" >
         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
@@ -245,9 +238,8 @@
             android:key="inputShareController"
             android:summary="@string/inputShareController_summary"
             android:title="@string/inputShareController_title" />
-    </PreferenceScreen>
-    <PreferenceScreen
-        android:icon="@drawable/ic_storage"
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="categoryData"
         android:title="@string/categoryData_title" >
         <paulscode.android.mupen64plusae.persistent.PathPreference
@@ -260,9 +252,8 @@
             android:key="actionReloadAssets"
             android:summary="@string/actionReloadAssets_summary"
             android:title="@string/actionReloadAssets_title" />
-    </PreferenceScreen>
-    <PreferenceScreen
-        android:icon="@drawable/ic_debug"
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="categoryCrashReports"
         android:title="@string/categoryCrashReports_title" >
         <CheckBoxPreference
@@ -282,7 +273,7 @@
             android:key="actionCrashTest"
             android:summary="@string/actionCrashTest_summary"
             android:title="@string/actionCrashTest_title" />
-    </PreferenceScreen>
+    </PreferenceCategory>
 
     <Preference
         android:icon="@drawable/ic_undo"
