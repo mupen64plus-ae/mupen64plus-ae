@@ -23,7 +23,6 @@
 
 #include <m64p_types.h>
 
-#define LOG(...) // WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
 #define LOGINFO(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
 #ifdef __cplusplus
 extern "C" {
@@ -385,11 +384,11 @@ grConstantColorValueExt(GrChipID_t    tmu,
 #ifdef LOGGING
 void OPEN_LOG();
 void CLOSE_LOG();
-//void LOG(const char *text, ...);
+void LOG(const char *text, ...);
 #else // LOGGING
 #define OPEN_LOG()
 #define CLOSE_LOG()
-//#define LOG
+#define LOG
 #endif // LOGGING
 
 #endif
