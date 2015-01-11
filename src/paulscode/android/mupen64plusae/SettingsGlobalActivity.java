@@ -47,6 +47,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
+    private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
     private static final String ACTION_CRASH_TEST = "actionCrashTest";
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
@@ -173,6 +174,9 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     {
         // Refresh the preferences object
         mUserPrefs = new UserPrefs( this );
+        
+        // Enable polygon offset pref if flicker reduction is custom
+        PrefUtil.enablePreference( this, VIDEO_POLYGON_OFFSET, mUserPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM );
         
         // Enable audio prefs if audio is enabled
         PrefUtil.enablePreference( this, AUDIO_BUFFER_SIZE, mUserPrefs.audioPlugin.enabled );
