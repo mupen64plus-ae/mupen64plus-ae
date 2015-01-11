@@ -224,11 +224,12 @@ LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/osal_files_unix.c         \
     $(SRCDIR)/plugin.c                  \
 
-LOCAL_CFLAGS :=         \
-    $(COMMON_CFLAGS)    \
-    -DANDROID           \
-    -DANDROID_EDITION   \
-    -DNO_ASM            \
+LOCAL_CFLAGS :=                                 \
+    $(COMMON_CFLAGS)                            \
+    -DANDROID                                   \
+    -DNO_ASM                                    \
+    -DCALLBACK_HEADER=ae_imports.h              \
+    -DCALLBACK_FUNC=Android_JNI_StateCallback   \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 

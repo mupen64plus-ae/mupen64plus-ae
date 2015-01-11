@@ -41,12 +41,6 @@ for i in $COMPONENTS; do
     DEST_DIR="jni/mupen64plus-${i}"
     CLONE_DIR="tmp/mupen64plus-${i}"
     BASE_URL="https://github.com/mupen64plus/mupen64plus-${i}"
-    case "$i" in
-        "ui-console")
-            # Use mupen64plus-ae fork in some cases
-            BASE_URL="https://github.com/mupen64plus-ae/mupen64plus-${i}"
-            ;;
-    esac
     CLONE_URL="${BASE_URL}.git"
     COMMIT_URL="${BASE_URL}/commit/"
     MSG_PREFIX="${i}: Update to commit "
