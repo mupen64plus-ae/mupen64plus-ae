@@ -77,6 +77,10 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     @Override
     protected ConfigFile doInBackground( Void... params )
     {
+        // Create .nomedia file to hide cover art from Android Photo Gallery
+        // http://android2know.blogspot.com/2013/01/create-nomedia-file.html
+        touchFile( mArtDir + "/.nomedia" );
+        
         final List<File> files = getRomFiles( mSearchPath );
         final RomDatabase database = new RomDatabase( mDatabasePath );
         final ConfigFile config = new ConfigFile( mConfigPath );
@@ -140,6 +144,31 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                 result.add( searchPath );
         }
         return result;
+    }
+    
+    private static Throwable touchFile( String destPath )
+    {
+        FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream( destPath );
+        }
+        catch( Throwable error )
+        {
+            return error;
+        }
+        finally
+        {
+            if( fos != null )
+                try
+                {
+                    fos.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+        return null;
     }
     
     private Throwable downloadFile( String sourceUrl, String destPath )
