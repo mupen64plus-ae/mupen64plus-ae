@@ -299,6 +299,7 @@
     <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
 
     <string name="videoHardwareType_title">Flicker reduction</string>
+    <string name="videoHardwareType_entryDisableHack">Disable flicker reduction hack</string>
     <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
     <string name="videoHardwareType_entryStandard">Standard profile</string>
     <string name="videoHardwareType_entryI">I profile</string>

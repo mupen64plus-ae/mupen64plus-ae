@@ -192,6 +192,9 @@ public class UserPrefs
     /** True if framelimiter is used. */
     public final boolean isFramelimiterEnabled;
     
+    /** True if Android polygon offset hack is enabled. **/
+    public final boolean isPolygonOffsetHackEnabled;
+    
     /** The manually-overridden hardware type, used for flicker reduction. */
     public final int videoHardwareType;
     
@@ -319,6 +322,7 @@ public class UserPrefs
         displayFpsRefresh = getSafeInt( mPreferences, "displayFpsRefresh", 0 );
         isFpsEnabled = displayFpsRefresh > 0;
         int selectedHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
+        isPolygonOffsetHackEnabled = selectedHardwareType > -2;
         videoHardwareType = selectedHardwareType < 0 ? appData.hardwareInfo.hardwareType : selectedHardwareType;
         switch( videoHardwareType )
         {

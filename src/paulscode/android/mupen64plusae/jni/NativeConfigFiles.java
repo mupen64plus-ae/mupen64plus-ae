@@ -42,6 +42,7 @@ public class NativeConfigFiles
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( user.videoRenderHeight ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( game.isGln64AutoFrameskipEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( game.gln64MaxFrameskip ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "polygon offset hack", boolToNum( user.isPolygonOffsetHackEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "polygon offset factor", String.valueOf( user.videoPolygonOffset ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "polygon offset units", String.valueOf( user.videoPolygonOffset ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable fog", boolToNum( game.isGln64FogEnabled ) );
@@ -115,13 +116,13 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );                                                        // Vertical sync
         mupen64plus_cfg.put( "Video-Glide64mk2", "wrpAnisotropic", "False" );                                               // Wrapper Anisotropic Filtering
         mupen64plus_cfg.put( "Video-Glide64mk2", "fb_read_always", "0" );                                                   // Read framebuffer every frame (may be slow use only for effects that need it e.g. Banjo Kazooie, DK64 transitions)
-        mupen64plus_cfg.put( "Video-Glide64mk2", "force_polygon_offset", "1" );                                             // If true, use polygon offset values specified below
+        mupen64plus_cfg.put( "Video-Glide64mk2", "force_polygon_offset", boolToNum( user.isPolygonOffsetHackEnabled ) );    // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_factor", String.valueOf( user.videoPolygonOffset ) );      // Specifies a scale factor that is used to create a variable depth offset for each polygon
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( user.videoPolygonOffset ) );       // Is multiplied by an implementation-specific value to create a constant depth offset
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
         
-        mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", "True" );                                                  // If true, use polygon offset values specified below
+        mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( user.isPolygonOffsetHackEnabled ) );             // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( user.videoPolygonOffset ) );              // Specifies a scale factor that is used to create a variable depth offset for each polygon
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetUnits", String.valueOf( user.videoPolygonOffset ) );               // Is multiplied by an implementation-specific value to create a constant depth offset
         mupen64plus_cfg.put( "Video-Rice", "ScreenUpdateSetting", game.riceScreenUpdateType );                              // Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
