@@ -254,7 +254,7 @@ void display_error()
 #endif // _WIN32
 
 #ifdef LOGGING
-char out_buf[256];
+char log_buf[256];
 bool log_open = false;
 std::ofstream log_file;
 
@@ -285,8 +285,8 @@ void LOG(const char *text, ...)
     return;
 	va_list ap;
 	va_start(ap, text);
-	vsprintf(out_buf, text, ap);
-  log_file << out_buf;
+	vsprintf(log_buf, text, ap);
+  log_file << log_buf;
   log_file.flush();
 	va_end(ap);
 }
@@ -306,7 +306,7 @@ LogManager logManager;
 #else // LOGGING
 #define OPEN_LOG()
 #define CLOSE_LOG()
-//#define LOG
+#define LOG
 #endif // LOGGING
 
 FX_ENTRY void FX_CALL
