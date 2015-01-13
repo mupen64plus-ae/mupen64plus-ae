@@ -33,6 +33,7 @@ import java.util.Locale;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.RomDatabase;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -139,8 +140,10 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         }
         else
         {
-            String name = searchPath.getName().toLowerCase( Locale.US );
-            if( name.matches( ".*\\.(n64|v64|z64|zip)$" ) )
+            // TODO: if name ends in zip, extract, then search contents
+            
+            RomHeader header = new RomHeader( searchPath );
+            if( header.isValid )
                 result.add( searchPath );
         }
         return result;
