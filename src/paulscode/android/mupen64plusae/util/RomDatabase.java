@@ -33,7 +33,7 @@ import android.util.Log;
 public class RomDatabase
 {
     private static final String ART_URL_TEMPLATE = "http://paulscode.com/downloads/Mupen64Plus-AE/CoverArt/%s";
-    private static final String WIKI_URL_TEMPLATE = "http://littleguy77.wikia.com/wiki/%s";
+    private static final String WIKI_URL_TEMPLATE = "https://github.com/mupen64plus-ae/mupen64plus-ae-meta/wiki/%s";
     
     private ConfigFile mConfigFile = null;
     private final HashMap<String, ArrayList<ConfigSection>> mCrcMap = new HashMap<String, ArrayList<ConfigSection>>();
