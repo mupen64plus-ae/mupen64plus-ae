@@ -85,7 +85,8 @@ public class CheatUtils
                         String name = cheat_section_u.goodName;
                         String crc = key.substring( 0, 17 );
                         String country = key.substring( 20 );
-                        cheat_v.add( new CheatSection( crc, name, country ) );
+                        cheat_section_v = new CheatSection( crc, name, country );
+                        cheat_v.add( cheat_section_v );
                     }
                     
                     // Append the user cheats to the volatile cheatfile
