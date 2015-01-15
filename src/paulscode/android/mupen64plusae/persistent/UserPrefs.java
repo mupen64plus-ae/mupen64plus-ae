@@ -87,8 +87,8 @@ public class UserPrefs
     /** The parent directory containing all user-writable data files. */
     public final String userDataDir;
     
-    /** The subdirectory containing gallery data. */
-    public final String galleryDataDir;
+    /** The subdirectory containing gallery data cache. */
+    public final String galleryCacheDir;
     
     /** The subdirectory containing cover art files. */
     public final String coverArtDir;
@@ -286,15 +286,15 @@ public class UserPrefs
         
         // Files
         userDataDir = mPreferences.getString( "pathGameSaves", "" );
-        galleryDataDir = userDataDir + "/GalleryData";
-        coverArtDir = galleryDataDir + "/CoverArt";
-        unzippedRomsDir = galleryDataDir + "/UnzippedRoms";
+        galleryCacheDir = userDataDir + "/GalleryCache";
+        coverArtDir = galleryCacheDir + "/CoverArt";
+        unzippedRomsDir = galleryCacheDir + "/UnzippedRoms";
         profilesDir = userDataDir + "/Profiles";
         crashLogDir = userDataDir + "/CrashLogs";
         coreUserDataDir = userDataDir + "/CoreConfig/UserData";
         coreUserCacheDir = userDataDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
-        romInfoCache_cfg = galleryDataDir + "/romInfoCache.cfg";
+        romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
