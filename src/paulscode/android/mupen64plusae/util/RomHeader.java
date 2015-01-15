@@ -72,9 +72,17 @@ public final class RomHeader
      */
     public RomHeader( File file )
     {
-        byte[] buffer = readFile( file );
-        
-        if( buffer == null )
+        this(readFile( file ));
+    }
+    
+    /**
+     * Constructor.
+     * 
+     * @param buffer The array of bytes to get the header information about.
+     */
+    public RomHeader( byte[] buffer )
+    {
+        if( buffer == null ||  buffer.length < 0x40 )
         {
             init_PI_BSB_DOM1_LAT_REG = 0;
             init_PI_BSB_DOM1_PGS_REG = 0;
