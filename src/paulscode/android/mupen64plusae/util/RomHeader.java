@@ -54,6 +54,7 @@ public final class RomHeader
     public final String crc;
     public final String countrySymbol;
     public final boolean isValid;
+    public final boolean isZip;
     
     /**
      * Constructor.
@@ -84,10 +85,20 @@ public final class RomHeader
     {
         if( buffer == null ||  buffer.length < 0x40 )
         {
-            init_PI_BSB_DOM1_LAT_REG = 0;
-            init_PI_BSB_DOM1_PGS_REG = 0;
-            init_PI_BSB_DOM1_PWD_REG = 0;
-            init_PI_BSB_DOM1_PGS_REG2 = 0;
+            if (buffer == null || buffer.length < 4 )
+            {
+                init_PI_BSB_DOM1_LAT_REG = 0;
+                init_PI_BSB_DOM1_PGS_REG = 0;
+                init_PI_BSB_DOM1_PWD_REG = 0;
+                init_PI_BSB_DOM1_PGS_REG2 = 0;
+            }
+            else
+            {
+                init_PI_BSB_DOM1_LAT_REG = buffer[0x00];
+                init_PI_BSB_DOM1_PGS_REG = buffer[0x01];
+                init_PI_BSB_DOM1_PWD_REG = buffer[0x02];
+                init_PI_BSB_DOM1_PGS_REG2 = buffer[0x03];
+            }
             clockRate = 0;
             pc = 0;
             release = 0;
@@ -176,6 +187,11 @@ public final class RomHeader
                 && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
                 && init_PI_BSB_DOM1_PWD_REG == (byte) 0x12
                 && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x40;
+        
+        isZip = init_PI_BSB_DOM1_LAT_REG == (byte) 0x50
+                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x4b
+                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x03
+                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x04;
     }
     
     private static byte[] readFile( File file )
