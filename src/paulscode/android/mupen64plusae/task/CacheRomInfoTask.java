@@ -53,7 +53,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         public void onCacheRomInfoFinished( ConfigFile file, boolean canceled );
     }
     
-    public CacheRomInfoTask( File searchPath, String databasePath, String configPath, String artDir, CacheRomInfoListener listener )
+    public CacheRomInfoTask( File searchPath, String databasePath, String configPath, String artDir, String unzipDir, CacheRomInfoListener listener )
     {
         if( searchPath == null )
             throw new IllegalArgumentException( "Root path cannot be null" );
@@ -65,6 +65,8 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             throw new IllegalArgumentException( "Config file path cannot be null or empty" );
         if( TextUtils.isEmpty( artDir ) )
             throw new IllegalArgumentException( "Art directory cannot be null or empty" );
+        if( TextUtils.isEmpty( unzipDir ) )
+            throw new IllegalArgumentException( "Unzip directory cannot be null or empty" );
         if( listener == null )
             throw new IllegalArgumentException( "Listener cannot be null" );
         
@@ -72,6 +74,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         mDatabasePath = databasePath;
         mConfigPath = configPath;
         mArtDir = artDir;
+        mUnzipDir = unzipDir;
         mListener = listener;
     }
     
@@ -79,11 +82,16 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     private final String mDatabasePath;
     private final String mConfigPath;
     private final String mArtDir;
+    private final String mUnzipDir;
     private final CacheRomInfoListener mListener;
     
     @Override
     protected ConfigFile doInBackground( Void... params )
     {
+        // Ensure destination directories exist
+        new File( mArtDir ).mkdirs();
+        new File( mUnzipDir ).mkdirs();
+        
         // Create .nomedia file to hide cover art from Android Photo Gallery
         // http://android2know.blogspot.com/2013/01/create-nomedia-file.html
         touchFile( mArtDir + "/.nomedia" );
@@ -114,7 +122,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                         while( ( zipEntry = zipStream.getNextEntry() ) != null )
                         {
                             if( isCancelled() ) break;
-                            File extractedFile = extractRomFile( new File( mArtDir ), zipEntry, zipStream );
+                            File extractedFile = extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
 
                             if( isCancelled() ) break;
                             if( extractedFile != null )

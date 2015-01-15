@@ -90,6 +90,12 @@ public class UserPrefs
     /** The subdirectory containing gallery data. */
     public final String galleryDataDir;
     
+    /** The subdirectory containing cover art files. */
+    public final String coverArtDir;
+    
+    /** The subdirectory containing unzipped ROM files. */
+    public final String unzippedRomsDir;
+    
     /** The subdirectory containing custom profiles. */
     public final String profilesDir;
     
@@ -281,6 +287,8 @@ public class UserPrefs
         // Files
         userDataDir = mPreferences.getString( "pathGameSaves", "" );
         galleryDataDir = userDataDir + "/GalleryData";
+        coverArtDir = galleryDataDir + "/CoverArt";
+        unzippedRomsDir = galleryDataDir + "/UnzippedRoms";
         profilesDir = userDataDir + "/Profiles";
         crashLogDir = userDataDir + "/CrashLogs";
         coreUserDataDir = userDataDir + "/CoreConfig/UserData";
