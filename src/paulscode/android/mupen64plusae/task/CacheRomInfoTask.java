@@ -28,13 +28,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
@@ -82,7 +81,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         // http://android2know.blogspot.com/2013/01/create-nomedia-file.html
         touchFile( mArtDir + "/.nomedia" );
         
-        final List<File> files = getRomFiles( mSearchPath );
+        final List<File> files = getAllFiles( mSearchPath );
         final RomDatabase database = new RomDatabase( mDatabasePath );
         final ConfigFile config = new ConfigFile( mConfigPath );
         config.clear();
@@ -90,20 +89,11 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         for( final File file : files )
         {
             if( isCancelled() ) break;
-            String md5 = ComputeMd5Task.computeMd5( file );
-            
-            if( isCancelled() ) break;
-            RomDetail detail = database.lookupByMd5WithFallback( md5, file );
-            
-            if( isCancelled() ) break;
-            String artPath = mArtDir + "/" + detail.artName;
-            config.put( md5, "goodName", detail.goodName );
-            config.put( md5, "romPath", file.getAbsolutePath() );
-            config.put( md5, "artPath", artPath );
-            downloadFile( detail.artUrl, artPath );
-            
-            if( isCancelled() ) break;
-            this.publishProgress( config.get( md5 ) );
+            RomHeader header = new RomHeader( file );
+            if( header.isValid )
+            {
+                cacheFile( file, database, config );
+            }
         }
         config.save();
         return config;
@@ -127,7 +117,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         mListener.onCacheRomInfoFinished( result, true );
     }
     
-    private List<File> getRomFiles( File searchPath )
+    private List<File> getAllFiles( File searchPath )
     {
         List<File> result = new ArrayList<File>();
         if( searchPath.isDirectory() )
@@ -135,18 +125,33 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             for( File file : searchPath.listFiles() )
             {
                 if( isCancelled() ) break;
-                result.addAll( getRomFiles( file ) );
+                result.addAll( getAllFiles( file ) );
             }
         }
         else
         {
-            // TODO: if name ends in zip, extract, then search contents
-            
-            RomHeader header = new RomHeader( searchPath );
-            if( header.isValid )
-                result.add( searchPath );
+            result.add( searchPath );
         }
         return result;
+    }
+    
+    private void cacheFile( File file, RomDatabase database, ConfigFile config )
+    {
+        if( isCancelled() ) return;
+        String md5 = ComputeMd5Task.computeMd5( file );
+        
+        if( isCancelled() ) return;
+        RomDetail detail = database.lookupByMd5WithFallback( md5, file );
+        
+        if( isCancelled() ) return;
+        String artPath = mArtDir + "/" + detail.artName;
+        config.put( md5, "goodName", detail.goodName );
+        config.put( md5, "romPath", file.getAbsolutePath() );
+        config.put( md5, "artPath", artPath );
+        downloadFile( detail.artUrl, artPath );
+        
+        if( isCancelled() ) return;
+        this.publishProgress( config.get( md5 ) );
     }
     
     private static Throwable touchFile( String destPath )
