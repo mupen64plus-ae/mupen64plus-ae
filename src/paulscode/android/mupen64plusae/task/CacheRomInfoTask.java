@@ -35,11 +35,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.util.ProgressDialog;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -53,7 +57,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         public void onCacheRomInfoFinished( ConfigFile file, boolean canceled );
     }
     
-    public CacheRomInfoTask( File searchPath, String databasePath, String configPath, String artDir, String unzipDir, CacheRomInfoListener listener )
+    public CacheRomInfoTask( Activity activity, File searchPath, String databasePath, String configPath, String artDir, String unzipDir, CacheRomInfoListener listener )
     {
         if( searchPath == null )
             throw new IllegalArgumentException( "Root path cannot be null" );
@@ -76,6 +80,11 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         mArtDir = artDir;
         mUnzipDir = unzipDir;
         mListener = listener;
+        
+        CharSequence title = activity.getString( R.string.scanning_title );
+        CharSequence message = activity.getString( R.string.toast_pleaseWait );
+        mProgress = new ProgressDialog( activity, this, title, mSearchPath.getAbsolutePath(), message, true );
+        mProgress.show();
     }
     
     private final File mSearchPath;
@@ -84,6 +93,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     private final String mArtDir;
     private final String mUnzipDir;
     private final CacheRomInfoListener mListener;
+    private final ProgressDialog mProgress;
     
     @Override
     protected ConfigFile doInBackground( Void... params )
@@ -101,8 +111,13 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         final ConfigFile config = new ConfigFile( mConfigPath );
         config.clear();
         
+        mProgress.setMaxProgress( files.size() );
         for( final File file : files )
         {
+            mProgress.setMaxSubprogress( 0 );
+            mProgress.setSubtext( "" );
+            mProgress.setText( file.getAbsolutePath().substring( mSearchPath.getAbsolutePath().length() ) );
+            
             if( isCancelled() ) break;
             RomHeader header = new RomHeader( file );
             if( header.isValid )
@@ -115,10 +130,12 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                 try
                 {
                     ZipFile zipFile = new ZipFile( file );
+                    mProgress.setMaxSubprogress( zipFile.size() );
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
                     while( entries.hasMoreElements() )
                     {
                         ZipEntry zipEntry = entries.nextElement();
+                        mProgress.setSubtext( zipEntry.getName() );
                         
                         if( isCancelled() ) break;
                         try
@@ -135,6 +152,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                         {
                             Log.w( "CacheRomInfoTask", e );
                         }
+                        mProgress.incrementSubprogress( 1 );
                     }
                     zipFile.close();
                 }
@@ -147,6 +165,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                     Log.w( "CacheRomInfoTask", e );
                 }
             }
+            mProgress.incrementProgress( 1 );
         }
         config.save();
         return config;
@@ -162,12 +181,14 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     protected void onPostExecute( ConfigFile result )
     {
         mListener.onCacheRomInfoFinished( result, false );
+        mProgress.dismiss();
     }
     
     @Override
     protected void onCancelled( ConfigFile result )
     {
         mListener.onCacheRomInfoFinished( result, true );
+        mProgress.dismiss();
     }
     
     private List<File> getAllFiles( File searchPath )

@@ -479,6 +479,9 @@
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
 
+    <!-- ROM Scanning -->
+    <string name="scanning_title">Scanning…</string>
+
     <!-- Seek Bar Preference -->
     <string name="seekBarPreference_summary">%1$d %2$s</string>
 

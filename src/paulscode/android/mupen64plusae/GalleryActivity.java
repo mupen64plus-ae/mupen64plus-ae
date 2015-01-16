@@ -274,7 +274,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     {
         // Asynchronously search for ROMs
         Notifier.showToast( this, "Searching for ROMs in " + startDir.getName() );
-        mCacheRomInfoTask = new CacheRomInfoTask( startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg,
+        mCacheRomInfoTask = new CacheRomInfoTask( this, startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg,
                 mUserPrefs.coverArtDir, mUserPrefs.unzippedRomsDir, this );
         mCacheRomInfoTask.execute();
     }
