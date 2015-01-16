@@ -123,6 +123,8 @@
     <string name="toast_overwritingFile">Overwriting %1$s…</string>
     <string name="toast_loadingGameInfo">Loading game info…</string>
     <string name="toast_savingScreenshot">Saving screenshot…</string>
+    <string name="toast_canceling">Canceling…</string>
+    <string name="toast_pleaseWait">Please wait…</string>
 
     <!-- Something happened (use '.') -->
     <string name="toast_nativeMainFailure01">Failed to parse initial command line parameters.</string>
@@ -476,6 +478,9 @@
     <string name="pathHiResTexturesTask_title">Unpacking textures</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
+
+    <!-- ROM Scanning -->
+    <string name="scanning_title">Scanning…</string>
 
     <!-- Seek Bar Preference -->
     <string name="seekBarPreference_summary">%1$d %2$s</string>
