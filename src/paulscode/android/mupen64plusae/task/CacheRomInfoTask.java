@@ -20,20 +20,20 @@
  */
 package paulscode.android.mupen64plusae.task;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -114,38 +114,35 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                 Log.i( "CacheRomInfoTask", "Found zip file " + file.getName() );
                 try
                 {
-                    FileInputStream inStream = new FileInputStream( file );
-                    try
+                    ZipFile zipFile = new ZipFile( file );
+                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                    while( entries.hasMoreElements() )
                     {
-                        ZipInputStream zipStream = new ZipInputStream( new BufferedInputStream( inStream ) );
-                        ZipEntry zipEntry;
-                        while( ( zipEntry = zipStream.getNextEntry() ) != null )
+                        ZipEntry zipEntry = entries.nextElement();
+                        
+                        if( isCancelled() ) break;
+                        try
                         {
-                            if( isCancelled() ) break;
+                            InputStream zipStream = zipFile.getInputStream( zipEntry );
                             File extractedFile = extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
-
+                            
                             if( isCancelled() ) break;
                             if( extractedFile != null )
                                 cacheFile( extractedFile, database, config );
-                        }
-                    }
-                    catch( IOException e )
-                    {
-                        Log.w( "CacheRomInfoTask", e );
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            inStream.close();
+                            zipStream.close();
                         }
                         catch( IOException e )
                         {
                             Log.w( "CacheRomInfoTask", e );
                         }
                     }
+                    zipFile.close();
                 }
-                catch( FileNotFoundException e )
+                catch( ZipException e )
+                {
+                    Log.w( "CacheRomInfoTask", e );
+                }
+                catch( IOException e )
                 {
                     Log.w( "CacheRomInfoTask", e );
                 }
@@ -210,7 +207,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         this.publishProgress( config.get( md5 ) );
     }
     
-    private File extractRomFile( File destDir, ZipEntry zipEntry, ZipInputStream zipStream )
+    private File extractRomFile( File destDir, ZipEntry zipEntry, InputStream zipStream )
     {
         if( zipEntry.isDirectory() )
             return null;
