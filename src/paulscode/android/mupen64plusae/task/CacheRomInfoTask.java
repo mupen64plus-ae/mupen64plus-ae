@@ -176,6 +176,10 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                 {
                     Log.w( "CacheRomInfoTask", e );
                 }
+                catch( ArrayIndexOutOfBoundsException e )
+                {
+                    Log.w( "CacheRomInfoTask", e );
+                }
             }
             mProgress.incrementProgress( 1 );
         }
