@@ -624,7 +624,12 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 #define CALLBACK_FUNC NULL
 #endif
 
-EXPORT
+#ifndef WIN32
+/* Allow external modules to call the main function as a library method.  This is useful for user
+ * interfaces that simply layer on top of (rather than re-implement) UI-Console (e.g. mupen64plus-ae).
+ */
+__attribute__ ((visibility("default")))
+#endif
 int main(int argc, char *argv[])
 {
     int i;
