@@ -235,7 +235,6 @@ public class UserPrefs
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
-    public static final String DEFAULT_PATH_SELECTED_GAME = "~roms/n64";
     // ... add more as needed
     
     private final SharedPreferences mPreferences;
