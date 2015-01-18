@@ -58,7 +58,9 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         public void onCacheRomInfoFinished( ConfigFile file, boolean canceled );
     }
     
-    public CacheRomInfoTask( Activity activity, File searchPath, String databasePath, String configPath, String artDir, String unzipDir, CacheRomInfoListener listener )
+    public CacheRomInfoTask( Activity activity, File searchPath, String databasePath, String configPath,
+            String artDir, String unzipDir, boolean searchZips, boolean downloadArt, boolean clearGallery,
+            CacheRomInfoListener listener )
     {
         if( searchPath == null )
             throw new IllegalArgumentException( "Root path cannot be null" );
@@ -80,6 +82,9 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         mConfigPath = configPath;
         mArtDir = artDir;
         mUnzipDir = unzipDir;
+        mSearchZips = searchZips;
+        mDownloadArt = downloadArt;
+        mClearGallery = clearGallery;
         mListener = listener;
         
         CharSequence title = activity.getString( R.string.scanning_title );
@@ -93,6 +98,9 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     private final String mConfigPath;
     private final String mArtDir;
     private final String mUnzipDir;
+    private final boolean mSearchZips;
+    private final boolean mDownloadArt;
+    private final boolean mClearGallery;
     private final CacheRomInfoListener mListener;
     private final ProgressDialog mProgress;
     
@@ -110,7 +118,8 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         final List<File> files = getAllFiles( mSearchPath );
         final RomDatabase database = new RomDatabase( mDatabasePath );
         final ConfigFile config = new ConfigFile( mConfigPath );
-        config.clear();
+        if (mClearGallery)
+            config.clear();
         
         mProgress.setMaxProgress( files.size() );
         for( final File file : files )
@@ -126,7 +135,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             {
                 cacheFile( file, database, config );
             }
-            else if( header.isZip )
+            else if( header.isZip && mSearchZips )
             {
                 Log.i( "CacheRomInfoTask", "Found zip file " + file.getName() );
                 try
@@ -221,14 +230,17 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         if( isCancelled() ) return;
         mProgress.setMessage( "Searching ROM database…" );
         RomDetail detail = database.lookupByMd5WithFallback( md5, file );
-        
-        if( isCancelled() ) return;
-        mProgress.setMessage( "Downloading cover art…" );
         String artPath = mArtDir + "/" + detail.artName;
         config.put( md5, "goodName", detail.goodName );
         config.put( md5, "romPath", file.getAbsolutePath() );
         config.put( md5, "artPath", artPath );
-        downloadFile( detail.artUrl, artPath );
+        
+        if( mDownloadArt )
+        {
+            if( isCancelled() ) return;
+            mProgress.setMessage( "Downloading cover art…" );
+            downloadFile( detail.artUrl, artPath );
+        }
         
         if( isCancelled() ) return;
         mProgress.setMessage( "Refreshing UI…" );

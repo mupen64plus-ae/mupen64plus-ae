@@ -284,8 +284,9 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     private void refreshRoms( final File startDir )
     {
         // Asynchronously search for ROMs
-        mCacheRomInfoTask = new CacheRomInfoTask( this, startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg,
-                mUserPrefs.coverArtDir, mUserPrefs.unzippedRomsDir, this );
+        mCacheRomInfoTask = new CacheRomInfoTask( this, startDir,
+                mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.coverArtDir, mUserPrefs.unzippedRomsDir,
+                mUserPrefs.getSearchZips(), mUserPrefs.getDownloadArt(), mUserPrefs.getClearGallery(),this );
         mCacheRomInfoTask.execute();
     }
     
