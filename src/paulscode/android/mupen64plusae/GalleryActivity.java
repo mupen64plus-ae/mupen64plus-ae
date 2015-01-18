@@ -28,8 +28,8 @@ import java.util.List;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.dialog.ChangeLog;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
+import paulscode.android.mupen64plusae.dialog.ScanRomsDialog;
+import paulscode.android.mupen64plusae.dialog.ScanRomsDialog.ScanRomsDialogListener;
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
@@ -252,29 +252,41 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         if( startDir == null || !startDir.exists() )
             startDir = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
         
-        Prompt.promptFile( this, startDir.getPath(), null, startDir, true, true, false, true,
-                new PromptFileListener()
+        ScanRomsDialog dialog = new ScanRomsDialog( this, startDir,
+                mUserPrefs.getSearchZips(),
+                mUserPrefs.getDownloadArt(),
+                mUserPrefs.getClearGallery(),
+                new ScanRomsDialogListener()
                 {
                     @Override
-                    public void onDialogClosed( File file, int which )
+                    public void onDialogClosed( File file, int which, boolean searchZips,
+                            boolean downloadArt, boolean clearGallery )
                     {
+                        mUserPrefs.putSearchZips( searchZips );
+                        mUserPrefs.putDownloadArt( downloadArt );
+                        mUserPrefs.putClearGallery( clearGallery );
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
                             refreshRoms( file );
                         }
                         else if( file != null )
-                        {
-                            promptSearchPath( file );
+                        { 
+                            if( file.isDirectory() )
+                                promptSearchPath( file );
+                            else
+                                refreshRoms( file );
                         }
                     }
                 } );
+        dialog.show();
     }
     
     private void refreshRoms( final File startDir )
     {
         // Asynchronously search for ROMs
-        mCacheRomInfoTask = new CacheRomInfoTask( this, startDir, mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg,
-                mUserPrefs.coverArtDir, mUserPrefs.unzippedRomsDir, this );
+        mCacheRomInfoTask = new CacheRomInfoTask( this, startDir,
+                mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.coverArtDir, mUserPrefs.unzippedRomsDir,
+                mUserPrefs.getSearchZips(), mUserPrefs.getDownloadArt(), mUserPrefs.getClearGallery(),this );
         mCacheRomInfoTask.execute();
     }
     
