@@ -29,10 +29,10 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;

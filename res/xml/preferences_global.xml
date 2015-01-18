@@ -50,28 +50,28 @@
     <PreferenceCategory
         android:key="screenDisplay"
         android:title="@string/screenDisplay_title" >
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/displayOrientation_default"
             android:entries="@array/displayOrientation_entries"
             android:entryValues="@array/displayOrientation_values"
             android:key="displayOrientation"
             android:summary="@string/selectedValue"
             android:title="@string/displayOrientation_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/displayPosition_default"
             android:entries="@array/displayPosition_entries"
             android:entryValues="@array/displayPosition_values"
             android:key="displayPosition"
             android:summary="@string/selectedValue"
             android:title="@string/displayPosition_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/displayResolution_default"
             android:entries="@array/displayResolution_entries"
             android:entryValues="@array/displayResolution_values"
             android:key="displayResolution"
             android:summary="@string/selectedValue"
             android:title="@string/displayResolution_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/displayScaling_default"
             android:entries="@array/displayScaling_entries"
             android:entryValues="@array/displayScaling_values"
@@ -85,7 +85,7 @@
             android:summary="@string/displayImmersiveMode_summary"
             android:title="@string/displayImmersiveMode_title" />
 
-        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="50"
             android:key="displayActionBarTransparency"
             android:title="@string/displayActionBarTransparency_title"
@@ -93,14 +93,14 @@
             mupen64:stepSize="10"
             mupen64:units="%" />
 
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/displayFpsRefresh_default"
             android:entries="@array/displayFpsRefresh_entries"
             android:entryValues="@array/displayFpsRefresh_values"
             android:key="displayFpsRefresh"
             android:summary="@string/selectedValue"
             android:title="@string/displayFpsRefresh_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/videoHardwareType_default"
             android:entries="@array/videoHardwareType_entries"
             android:entryValues="@array/videoHardwareType_values"
@@ -118,14 +118,14 @@
     <PreferenceCategory
         android:key="categoryAudio"
         android:title="@string/categoryAudio_title" >
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/audioPlugin_default"
             android:entries="@array/audioPlugin_entries"
             android:entryValues="@array/audioPlugin_values"
             android:key="audioPlugin"
             android:summary="@string/selectedValue"
             android:title="@string/audioPlugin_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/audioBufferSize_default"
             android:entries="@array/audioBufferSize_entries"
             android:entryValues="@array/audioBufferSize_values"
@@ -147,7 +147,7 @@
     <PreferenceCategory
         android:key="screenTouchscreen"
         android:title="@string/screenTouchscreen_title" >
-        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="100"
             android:key="touchscreenScale"
             android:title="@string/touchscreenScale_title"
@@ -156,7 +156,7 @@
             mupen64:stepSize="1"
             mupen64:units="%" />
 
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/touchscreenStyle_default"
             android:entries="@array/touchscreenStyle_entries"
             android:entryValues="@array/touchscreenStyle_values"
@@ -164,7 +164,7 @@
             android:summary="@string/selectedValue"
             android:title="@string/touchscreenStyle_title" />
 
-        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="100"
             android:key="touchscreenTransparency"
             android:title="@string/touchscreenTransparency_title"
@@ -172,7 +172,7 @@
             mupen64:stepSize="10"
             mupen64:units="%" />
 
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/touchscreenRefresh_default"
             android:entries="@array/touchscreenRefresh_entries"
             android:entryValues="@array/touchscreenRefresh_values"
@@ -186,7 +186,7 @@
             android:summary="@string/touchscreenFeedback_summary"
             android:title="@string/touchscreenFeedback_title" />
 
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/touchscreenAutoHold_default"
             android:entries="@array/touchscreenAutoHold_entries"
             android:entryValues="@array/touchscreenAutoHold_values"
@@ -208,7 +208,7 @@
             android:summary="@string/touchpadFeedback_summary"
             android:title="@string/touchpadFeedback_title" />
 
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/touchpadLayout_default"
             android:dependency="touchpadEnabled"
             android:entries="@array/touchpadLayout_entries"
@@ -220,7 +220,7 @@
     <PreferenceCategory
         android:key="screenInput"
         android:title="@string/screenInput_title" >
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/navigationMode_default"
             android:entries="@array/navigationMode_entries"
             android:entryValues="@array/navigationMode_values"
@@ -242,7 +242,7 @@
     <PreferenceCategory
         android:key="categoryData"
         android:title="@string/categoryData_title" >
-        <paulscode.android.mupen64plusae.persistent.PathPreference
+        <paulscode.android.mupen64plusae.preference.PathPreference
             android:defaultValue="@string/pathGameSaves_default"
             android:key="pathGameSaves"
             android:title="@string/pathGameSaves_title"

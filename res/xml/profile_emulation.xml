@@ -3,14 +3,14 @@
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
-    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+    <paulscode.android.mupen64plusae.preference.CompatibleListPreference
         android:defaultValue="@string/r4300Emulator_default"
         android:entries="@array/r4300Emulator_entries"
         android:entryValues="@array/r4300Emulator_values"
         android:key="r4300Emulator"
         android:summary="@string/selectedValue"
         android:title="@string/r4300Emulator_title" />
-    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+    <paulscode.android.mupen64plusae.preference.CompatibleListPreference
         android:defaultValue="@string/videoPlugin_default"
         android:entries="@array/videoPlugin_entries"
         android:entryValues="@array/videoPlugin_values"
@@ -21,7 +21,7 @@
     <PreferenceCategory
         android:key="categoryGln64"
         android:title="@string/categoryGln64_title" >
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/gln64Frameskip_default"
             android:entries="@array/gln64Frameskip_entries"
             android:entryValues="@array/gln64Frameskip_values"
@@ -29,33 +29,33 @@
             android:summary="@string/selectedValue"
             android:title="@string/gln64Frameskip_title" />
 
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="gln64Fog"
             android:summary="@string/gln64Fog_summary"
             android:title="@string/gln64Fog_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="gln64Sai"
             android:summary="@string/gln64Sai_summary"
             android:title="@string/gln64Sai_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="gln64ScreenClear"
             android:summary="@string/gln64ScreenClear_summary"
             android:title="@string/gln64ScreenClear_title" />
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="gln64AlphaTest"
             android:summary="@string/gln64AlphaTest_summary"
             android:title="@string/gln64AlphaTest_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="gln64HackDepth"
             android:summary="@string/gln64HackDepth_summary"
@@ -66,35 +66,35 @@
     <PreferenceCategory
         android:key="categoryRice"
         android:title="@string/categoryRice_title" >
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="riceAutoFrameskip"
             android:summary="@string/riceAutoFrameskip_summary"
             android:title="@string/riceAutoFrameskip_title" />
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="riceFog"
             android:summary="@string/riceFog_summary"
             android:title="@string/riceFog_title" />
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="riceFastTexture"
             android:summary="@string/riceFastTexture_summary"
             android:title="@string/riceFastTexture_title" />
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="riceForceTextureFilter"
             android:summary="@string/riceForceTextureFilter_summary"
             android:title="@string/riceForceTextureFilter_title" />
 
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/riceScreenUpdate_default"
             android:entries="@array/riceScreenUpdate_entries"
             android:entryValues="@array/riceScreenUpdate_values"
             android:key="riceScreenUpdate"
             android:summary="@string/selectedValue"
             android:title="@string/riceScreenUpdate_title" />
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/riceTextureEnhancement_default"
             android:entries="@array/riceTextureEnhancement_entries"
             android:entryValues="@array/riceTextureEnhancement_values"
@@ -102,13 +102,13 @@
             android:summary="@string/selectedValue"
             android:title="@string/riceTextureEnhancement_title" />
 
-        <paulscode.android.mupen64plusae.persistent.StringCheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="riceHiResTextures"
             android:summary="@string/riceHiResTextures_summary"
             android:title="@string/riceHiResTextures_title" />
 
-        <paulscode.android.mupen64plusae.persistent.PathPreference
+        <paulscode.android.mupen64plusae.preference.PathPreference
             android:defaultValue="@string/pathHiResTextures_default"
             android:dependency="riceHiResTextures"
             android:key="pathHiResTextures"
@@ -119,7 +119,7 @@
     <PreferenceCategory
         android:key="categoryGlide64"
         android:title="@string/categoryGlide64_title" >
-        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/glide64Frameskip_default"
             android:entries="@array/glide64Frameskip_entries"
             android:entryValues="@array/glide64Frameskip_values"

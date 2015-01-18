@@ -17,7 +17,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.persistent;
+package paulscode.android.mupen64plusae.preference;
 
 import android.content.Context;
 import android.preference.ListPreference;

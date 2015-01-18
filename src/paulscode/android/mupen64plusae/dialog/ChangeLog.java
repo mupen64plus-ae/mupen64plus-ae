@@ -18,7 +18,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.util;
+package paulscode.android.mupen64plusae.dialog;
 
 import java.io.IOException;
 import java.io.InputStream;

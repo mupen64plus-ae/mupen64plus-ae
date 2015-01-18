@@ -23,10 +23,10 @@ package paulscode.android.mupen64plusae.profile;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractTexturesTask;
 import paulscode.android.mupen64plusae.task.ExtractTexturesTask.ExtractTexturesListener;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.PrefUtil;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.SharedPreferences;

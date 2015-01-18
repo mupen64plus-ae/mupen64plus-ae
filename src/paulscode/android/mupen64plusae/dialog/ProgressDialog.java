@@ -1,4 +1,4 @@
-package paulscode.android.mupen64plusae.util;
+package paulscode.android.mupen64plusae.dialog;
 
 import org.mupen64plusae.v3.alpha.R;
 

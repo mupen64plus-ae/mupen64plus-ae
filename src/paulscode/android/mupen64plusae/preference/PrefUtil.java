@@ -18,7 +18,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.util;
+package paulscode.android.mupen64plusae.preference;
 
 import org.apache.commons.lang.ArrayUtils;
 

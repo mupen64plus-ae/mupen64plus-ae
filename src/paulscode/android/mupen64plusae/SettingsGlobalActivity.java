@@ -22,12 +22,12 @@ package paulscode.android.mupen64plusae;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.CrashTester;
-import paulscode.android.mupen64plusae.util.PrefUtil;
-import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;

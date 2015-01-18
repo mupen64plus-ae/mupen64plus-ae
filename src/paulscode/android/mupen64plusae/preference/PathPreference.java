@@ -18,7 +18,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.persistent;
+package paulscode.android.mupen64plusae.preference;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,8 +26,9 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Prompt;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;

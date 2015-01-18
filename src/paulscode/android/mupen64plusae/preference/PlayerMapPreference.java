@@ -18,15 +18,16 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.persistent;
+package paulscode.android.mupen64plusae.preference;
 
 import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.Prompt.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
-import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Prompt.PromptInputCodeListener;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;

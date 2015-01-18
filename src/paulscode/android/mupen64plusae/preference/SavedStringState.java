@@ -20,52 +20,52 @@
  * 
  * References: http://developer.android.com/guide/topics/ui/settings.html#CustomSaveState
  */
-package paulscode.android.mupen64plusae.persistent;
+package paulscode.android.mupen64plusae.preference;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.Preference;
 import android.preference.Preference.BaseSavedState;
 
-public class SavedIntegerState extends BaseSavedState
+public class SavedStringState extends BaseSavedState
 {
-    int mValue;
+    String mValue;
     
-    public SavedIntegerState( Parcel source )
+    public SavedStringState( Parcel source )
     {
         super( source );
-        mValue = source.readInt();
+        mValue = source.readString();
     }
     
     @Override
     public void writeToParcel( Parcel dest, int flags )
     {
         super.writeToParcel( dest, flags );
-        dest.writeInt( mValue );
+        dest.writeString( mValue );
     }
     
-    public SavedIntegerState( Parcelable superState )
+    public SavedStringState( Parcelable superState )
     {
         super( superState );
     }
     
-    public static final Parcelable.Creator<SavedIntegerState> CREATOR = new Parcelable.Creator<SavedIntegerState>()
+    public static final Parcelable.Creator<SavedStringState> CREATOR = new Parcelable.Creator<SavedStringState>()
     {
         @Override
-        public SavedIntegerState createFromParcel( Parcel in )
+        public SavedStringState createFromParcel( Parcel in )
         {
-            return new SavedIntegerState( in );
+            return new SavedStringState( in );
         }
 
         @Override
-        public SavedIntegerState[] newArray( int size )
+        public SavedStringState[] newArray( int size )
         {
-            return new SavedIntegerState[size];
+            return new SavedStringState[size];
         }
     };
     
     public static Parcelable onSaveInstanceState( final Parcelable superState,
-            Preference preference, int value )
+            Preference preference, String value )
     {
         if( preference.isPersistent() )
         {
@@ -73,7 +73,7 @@ public class SavedIntegerState extends BaseSavedState
             return superState;
         }
         
-        final SavedIntegerState myState = new SavedIntegerState( superState );
+        final SavedStringState myState = new SavedStringState( superState );
         myState.mValue = value;
         return myState;
     }

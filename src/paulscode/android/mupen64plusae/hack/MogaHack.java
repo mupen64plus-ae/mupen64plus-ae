@@ -18,7 +18,7 @@
  * 
  * Authors: Paul Lamb
  */
-package paulscode.android.mupen64plusae.hacks;
+package paulscode.android.mupen64plusae.hack;
 
 import java.util.List;
 

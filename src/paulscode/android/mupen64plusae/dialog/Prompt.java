@@ -18,7 +18,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.util;
+package paulscode.android.mupen64plusae.dialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
