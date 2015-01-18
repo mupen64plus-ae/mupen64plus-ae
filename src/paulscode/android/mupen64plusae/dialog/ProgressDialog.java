@@ -23,6 +23,7 @@ public class ProgressDialog implements OnClickListener
     private final AsyncTask<?, ?, ?> mTask;
     private final TextView mTextProgress;
     private final TextView mTextSubprogress;
+    private final TextView mTextMessage;
     private final ProgressBar mProgressSubtotal;
     private final ProgressBar mProgressTotal;
     private final AlertDialog mDialog;
@@ -47,11 +48,12 @@ public class ProgressDialog implements OnClickListener
         Builder builder = getBuilder( activity, title, subtitle, message, cancelable, layout );
         mTextProgress = (TextView) layout.findViewById( R.id.textProgress );
         mTextSubprogress = (TextView) layout.findViewById( R.id.textSubprogress );
+        mTextMessage = (TextView) layout.findViewById( R.id.textMessage );
         mProgressSubtotal = (ProgressBar) layout.findViewById( R.id.progressSubtotal );
         mProgressTotal = (ProgressBar) layout.findViewById( R.id.progressTotal );
         mDialog = builder.create();
         
-        // Create abort dialog
+        // Create canceling dialog
         subtitle = mActivity.getString( R.string.toast_canceling );
         message = mActivity.getString( R.string.toast_pleaseWait );
         layout = inflater.inflate( R.layout.progress_dialog, null );
@@ -121,6 +123,18 @@ public class ProgressDialog implements OnClickListener
         } );
     }
     
+    public void setMessage( final CharSequence text )
+    {
+        mActivity.runOnUiThread( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mTextMessage.setText( text );
+            }
+        } );
+    }
+    
     public void setMaxProgress( final long size )
     {
         mActivity.runOnUiThread( new Runnable()
@@ -161,8 +175,8 @@ public class ProgressDialog implements OnClickListener
                 if( mMaxProgress > 0 )
                 {
                     mProgress += inc;
-                    int pctProgress = Math
-                            .round( ( PROGRESS_PRECISION * mProgress ) / mMaxProgress );
+                    int pctProgress = Math.round( ( PROGRESS_PRECISION * mProgress )
+                            / mMaxProgress );
                     mProgressTotal.setProgress( pctProgress );
                 }
             }
