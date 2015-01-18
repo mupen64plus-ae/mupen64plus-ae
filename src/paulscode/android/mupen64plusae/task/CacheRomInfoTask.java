@@ -278,6 +278,8 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                 int n;
                 while( ( n = inStream.read( buffer ) ) >= 0 )
                 {
+                    if( isCancelled() )
+                        return null;
                     outStream.write( buffer, 0, n );
                 }
                 return extractedFile;
@@ -323,7 +325,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         return null;
     }
     
-    private static Throwable downloadFile( String sourceUrl, String destPath )
+    private Throwable downloadFile( String sourceUrl, String destPath )
     {
         // Be sure destination directory exists
         new File( destPath ).getParentFile().mkdirs();
@@ -347,6 +349,8 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             int n;
             while( ( n = inStream.read( buffer ) ) >= 0 )
             {
+                if( isCancelled() )
+                    return null;
                 outStream.write( buffer, 0, n );
             }
             return null;
