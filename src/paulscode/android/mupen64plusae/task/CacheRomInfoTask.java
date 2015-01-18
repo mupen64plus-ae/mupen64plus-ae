@@ -117,6 +117,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             mProgress.setMaxSubprogress( 0 );
             mProgress.setSubtext( "" );
             mProgress.setText( file.getAbsolutePath().substring( mSearchPath.getAbsolutePath().length() ) );
+            mProgress.setMessage( "Searching…" );
             
             if( isCancelled() ) break;
             RomHeader header = new RomHeader( file );
@@ -136,6 +137,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                     {
                         ZipEntry zipEntry = entries.nextElement();
                         mProgress.setSubtext( zipEntry.getName() );
+                        mProgress.setMessage( "Searching zip file…" );
                         
                         if( isCancelled() ) break;
                         try
@@ -212,12 +214,15 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     private void cacheFile( File file, RomDatabase database, ConfigFile config )
     {
         if( isCancelled() ) return;
+        mProgress.setMessage( "Computing MD5…" );
         String md5 = ComputeMd5Task.computeMd5( file );
         
         if( isCancelled() ) return;
+        mProgress.setMessage( "Searching ROM database…" );
         RomDetail detail = database.lookupByMd5WithFallback( md5, file );
         
         if( isCancelled() ) return;
+        mProgress.setMessage( "Downloading cover art…" );
         String artPath = mArtDir + "/" + detail.artName;
         config.put( md5, "goodName", detail.goodName );
         config.put( md5, "romPath", file.getAbsolutePath() );
@@ -225,6 +230,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         downloadFile( detail.artUrl, artPath );
         
         if( isCancelled() ) return;
+        mProgress.setMessage( "Refreshing UI…" );
         this.publishProgress( config.get( md5 ) );
     }
     
@@ -252,6 +258,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         
         // This entry appears to be a valid ROM, extract it
         Log.i( "CacheRomInfoTask", "Found zip entry " + zipEntry.getName() );
+        mProgress.setMessage( "Extracting zip entry…" );
         String entryName = new File( zipEntry.getName() ).getName();
         File extractedFile = new File( destDir, entryName );
         try
