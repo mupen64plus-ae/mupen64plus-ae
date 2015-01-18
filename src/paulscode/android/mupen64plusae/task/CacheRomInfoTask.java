@@ -20,13 +20,14 @@
  */
 package paulscode.android.mupen64plusae.task;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -234,7 +235,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         this.publishProgress( config.get( md5 ) );
     }
     
-    private File extractRomFile( File destDir, ZipEntry zipEntry, InputStream zipStream )
+    private File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )
     {
         if( zipEntry.isDirectory() )
             return null;
@@ -243,7 +244,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         byte[] buffer = new byte[1024];
         try
         {
-            if( zipStream.read( buffer, 0, 4 ) != 4 )
+            if( inStream.read( buffer, 0, 4 ) != 4 )
                 return null;
         }
         catch( IOException e )
@@ -252,7 +253,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             return null;
         }
         
-        // See if this entry is a valid ROM (copy bits in case RomHeader twiddles them)
+        // See if this entry is a valid ROM (copy array in case RomHeader mutates it)
         if( !new RomHeader( new byte[] { buffer[0], buffer[1], buffer[2], buffer[3] } ).isValid )
             return null;
         
@@ -263,21 +264,22 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         File extractedFile = new File( destDir, entryName );
         try
         {
-            FileOutputStream outStream = new FileOutputStream( extractedFile );
+            // Open the output stream (throws exceptions)
+            OutputStream outStream = new FileOutputStream( extractedFile );
             try
             {
-                BufferedOutputStream boutStream = new BufferedOutputStream( outStream );
+                // Buffer the stream
+                outStream = new BufferedOutputStream( outStream );
                 
-                // Write the first four bytes we already peeked at
-                boutStream.write( buffer, 0, 4 );
+                // Write the first four bytes we already peeked at (throws exceptions)
+                outStream.write( buffer, 0, 4 );
                 
-                // Read/write the remainder of the zip entry
+                // Read/write the remainder of the zip entry (throws exceptions)
                 int n;
-                while( ( n = zipStream.read( buffer ) ) >= 0 )
+                while( ( n = inStream.read( buffer ) ) >= 0 )
                 {
-                    boutStream.write( buffer, 0, n );
+                    outStream.write( buffer, 0, n );
                 }
-                boutStream.close();
                 return extractedFile;
             }
             catch( IOException e )
@@ -287,6 +289,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             }
             finally
             {
+                // Flush output stream and guarantee no memory leaks
                 outStream.close();
             }
         }
@@ -299,25 +302,23 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     
     private static Throwable touchFile( String destPath )
     {
-        FileOutputStream fos = null;
         try
         {
-            fos = new FileOutputStream( destPath );
+            OutputStream outStream = new FileOutputStream( destPath );
+            try
+            {
+                outStream.close();
+            }
+            catch( IOException e )
+            {
+                Log.w( "CacheRomInfoTask", e );
+                return e;
+            }
         }
-        catch( Throwable error )
+        catch( FileNotFoundException e )
         {
-            return error;
-        }
-        finally
-        {
-            if( fos != null )
-                try
-                {
-                    fos.close();
-                }
-                catch( IOException ignored )
-                {
-                }
+            Log.w( "CacheRomInfoTask", e );
+            return e;
         }
         return null;
     }
@@ -328,54 +329,54 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         new File( destPath ).getParentFile().mkdirs();
         
         // Download file
-        URL url = null;
-        DataInputStream input = null;
-        FileOutputStream fos = null;
-        DataOutputStream output = null;
+        InputStream inStream = null;
+        OutputStream outStream = null;
         try
         {
-            url = new URL( sourceUrl );
-            input = new DataInputStream( url.openStream() );
-            fos = new FileOutputStream( destPath );
-            output = new DataOutputStream( fos );
+            // Open the streams (throws exceptions)
+            URL url = new URL( sourceUrl );
+            inStream = url.openStream();
+            outStream = new FileOutputStream( destPath );
+
+            // Buffer the streams
+            inStream = new BufferedInputStream( inStream );
+            outStream = new BufferedOutputStream( outStream );
             
-            int contentLength = url.openConnection().getContentLength();
-            byte[] buffer = new byte[contentLength];
-            input.readFully( buffer );
-            output.write( buffer );
-            output.flush();
+            // Read/write the streams (throws exceptions)
+            byte[] buffer = new byte[1024];
+            int n;
+            while( ( n = inStream.read( buffer ) ) >= 0 )
+            {
+                outStream.write( buffer, 0, n );
+            }
+            return null;
         }
-        catch( Throwable error )
+        catch( Throwable e )
         {
-            return error;
+            Log.w( "CacheRomInfoTask", e );
+            return e;
         }
         finally
         {
-            if( output != null )
+            // Flush output stream and guarantee no memory leaks
+            if( outStream != null )
                 try
                 {
-                    output.close();
+                    outStream.close();
                 }
-                catch( IOException ignored )
+                catch( IOException e )
                 {
+                    Log.w( "CacheRomInfoTask", e );
                 }
-            if( fos != null )
+            if( inStream != null )
                 try
                 {
-                    fos.close();
+                    inStream.close();
                 }
-                catch( IOException ignored )
+                catch( IOException e )
                 {
-                }
-            if( input != null )
-                try
-                {
-                    input.close();
-                }
-                catch( IOException ignored )
-                {
+                    Log.w( "CacheRomInfoTask", e );
                 }
         }
-        return null;
     }
 }
