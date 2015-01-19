@@ -26,6 +26,7 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
     private static final int SIGNATURE_HASH_MOGA_PRO = -1933523749;
     private static final int SIGNATURE_HASH_OUYA = 699487739;
+    private static final int SIGNATURE_HASH_AMAZON_FIRE = 2050752785;
     
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
     private final String mSignature;
@@ -132,6 +133,12 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_GENERIC_3, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_4, AXIS_CLASS_IGNORED );
                 signatureName = "OUYA controller";
+                break;
+                
+            case SIGNATURE_HASH_AMAZON_FIRE:
+                // Ignore floating generic axis
+                setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
+                signatureName = "Amazon Fire Game Controller";
                 break;
         }
         
