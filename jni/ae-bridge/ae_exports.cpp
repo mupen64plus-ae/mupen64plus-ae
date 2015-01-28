@@ -33,7 +33,7 @@
 
 
 /*******************************************************************************
- Variables used internally
+ Variables and functions used internally
  *******************************************************************************/
 
 // JNI objects
@@ -63,6 +63,47 @@ static pVoidFunc        sdlMainReady    = NULL;
 static pCoreDoCommand   coreDoCommand   = NULL;
 static pFrontMain       frontMain       = NULL;
 
+void checkLibraryError(const char* message)
+{
+    const char* error = dlerror();
+    if (error)
+        LOGE("%s: %s", message, error);
+}
+
+void* loadLibrary(const char* libPath, const char* libName)
+{
+    char path[256];
+    sprintf(path, "%s/lib%s.so", libPath, libName);
+    void* handle = dlopen(path, RTLD_NOW);
+    if (!handle)
+        LOGE("Failed to load lib%s.so", libName);
+    checkLibraryError(libName);
+    return handle;
+}
+
+int unloadLibrary(void* handle, const char* libName)
+{
+    if (!handle)
+        return 0;
+
+    int code = dlclose(handle);
+    if (code)
+        LOGE("Failed to unload lib%s.so", libName);
+    checkLibraryError(libName);
+    return code;
+}
+
+void* locateFunction(void* handle, const char* libName, const char* funcName)
+{
+    char message[256];
+    sprintf(message, "Locating %s::%s", libName, funcName);
+    void* func = dlsym(handle, funcName);
+    if (!func)
+        LOGE("Failed to locate %s::%s", libName, funcName);
+    checkLibraryError(message);
+    return func;
+}
+
 /*******************************************************************************
  Functions called automatically by JNI framework
  *******************************************************************************/
@@ -81,24 +122,19 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_loadLibraries(JNIEnv* env, jclass cls, jstring jlibPath)
 {
     LOGI("Loading native libraries");
+    checkLibraryError("Unknown");
 
-    // Construct the library paths
+    // Get the library path from the java-managed string
     const char *libPath = env->GetStringUTFChars(jlibPath, 0);
-    char pathAEI[256];
-    char pathSDL[256];
-    char pathCore[256];
-    char pathFront[256];
-    sprintf(pathAEI,    "%s/libae-imports.so",              libPath);
-    sprintf(pathSDL,    "%s/libSDL2.so",                    libPath);
-    sprintf(pathCore,   "%s/libmupen64plus-core.so",        libPath);
-    sprintf(pathFront,  "%s/libmupen64plus-ui-console.so",	libPath);
+    char path[256];
+    strcpy(path, libPath);
     env->ReleaseStringUTFChars(jlibPath, libPath);
 
     // Open shared libraries
-    handleAEI   = dlopen(pathAEI,   RTLD_NOW);
-    handleSDL   = dlopen(pathSDL,   RTLD_NOW);
-    handleCore  = dlopen(pathCore,  RTLD_NOW);
-    handleFront = dlopen(pathFront, RTLD_NOW);
+    handleAEI   = loadLibrary(path, "ae-imports");
+    handleSDL   = loadLibrary(path, "SDL2");
+    handleCore  = loadLibrary(path, "mupen64plus-core");
+    handleFront = loadLibrary(path, "mupen64plus-ui-console");
 
     // Make sure we don't have any typos
     if (!handleAEI || !handleSDL || !handleCore || !handleFront)
@@ -107,20 +143,20 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     }
 
     // Find and call the JNI_OnLoad functions manually since we aren't loading the libraries from Java
-    pJNI_OnLoad JNI_OnLoad0 = (pJNI_OnLoad) dlsym(handleAEI, "JNI_OnLoad");
-    pJNI_OnLoad JNI_OnLoad1 = (pJNI_OnLoad) dlsym(handleSDL, "JNI_OnLoad");
+    pJNI_OnLoad JNI_OnLoad0 = (pJNI_OnLoad) locateFunction(handleAEI, "ae-imports", "JNI_OnLoad");
+    pJNI_OnLoad JNI_OnLoad1 = (pJNI_OnLoad) locateFunction(handleSDL, "SDL2",       "JNI_OnLoad");
     JNI_OnLoad0(mVm, mReserved);
     JNI_OnLoad1(mVm, mReserved);
     JNI_OnLoad0 = NULL;
     JNI_OnLoad1 = NULL;
 
     // Find library functions
-    aeiInit         = (pAeiInit)        dlsym(handleAEI,    "Android_JNI_InitImports");
-    sdlInit         = (pSdlInit)        dlsym(handleSDL,    "SDL_Android_Init");
-    sdlSetScreen    = (pSdlSetScreen)   dlsym(handleSDL,    "Android_SetScreenResolution");
-    sdlMainReady    = (pVoidFunc)       dlsym(handleSDL,    "SDL_SetMainReady");
-    coreDoCommand   = (pCoreDoCommand)  dlsym(handleCore,   "CoreDoCommand");
-    frontMain       = (pFrontMain)      dlsym(handleFront,  "SDL_main");
+    aeiInit       = (pAeiInit)       locateFunction(handleAEI,   "ae-imports",             "Android_JNI_InitImports");
+    sdlInit       = (pSdlInit)       locateFunction(handleSDL,   "SDL2",                   "SDL_Android_Init");
+    sdlSetScreen  = (pSdlSetScreen)  locateFunction(handleSDL,   "SDL2",                   "Android_SetScreenResolution");
+    sdlMainReady  = (pVoidFunc)      locateFunction(handleSDL,   "SDL2",                   "SDL_SetMainReady");
+    coreDoCommand = (pCoreDoCommand) locateFunction(handleCore,  "mupen64plus-core",       "CoreDoCommand");
+    frontMain     = (pFrontMain)     locateFunction(handleFront, "mupen64plus-ui-console", "SDL_main");
 
     // Make sure we don't have any typos
     if (!aeiInit || !sdlInit || !sdlSetScreen || !sdlMainReady || !coreDoCommand || !frontMain)
@@ -133,8 +169,9 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 {
     // Unload the libraries to ensure that static variables are re-initialized next time
     LOGI("Unloading native libraries");
+    checkLibraryError("Unknown");
 
-    // Nullify function pointers
+    // Nullify function pointers so that they can no longer be used
     aeiInit         = NULL;
     sdlInit         = NULL;
     sdlSetScreen    = NULL;
@@ -143,12 +180,12 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     frontMain       = NULL;
 
     // Close shared libraries
-    if (handleFront) dlclose(handleFront);
-    if (handleCore)  dlclose(handleCore);
-    if (handleSDL)   dlclose(handleSDL);
-    if (handleAEI)   dlclose(handleAEI);
+    unloadLibrary(handleFront, "mupen64plus-ui-console");
+    unloadLibrary(handleCore,  "mupen64plus-core");
+    unloadLibrary(handleSDL,   "SDL2");
+    unloadLibrary(handleAEI,   "ae-imports");
 
-    // Nullify handles
+    // Nullify handles so that they can no longer be used
     handleFront     = NULL;
     handleCore      = NULL;
     handleSDL       = NULL;
