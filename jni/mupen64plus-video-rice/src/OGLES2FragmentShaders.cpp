@@ -40,11 +40,10 @@ const char *vertexShader =
 "varying mediump vec2 vTexCoord0;                           \n"\
 "varying lowp vec2    vTexCoord1;                           \n"\
 "varying lowp float   vFog;                                 \n"\
-"uniform mat4 rotation_matrix;                              \n"\
 "                                                           \n"\
 "void main()                                                \n"\
 "{                                                          \n"\
-"gl_Position = rotation_matrix * aPosition;                 \n"\
+"gl_Position = aPosition;                                   \n"\
 "vShadeColor = aColor;                                      \n"\
 "vTexCoord0 = aTexCoord0;                                   \n"\
 "vTexCoord1 = aTexCoord1;                                   \n"\
@@ -128,70 +127,6 @@ const char *fragmentFill =
 "}";
 
 GLuint fillProgram,fillColorLocation;
-
-void set_rotation_matrix(GLuint loc, int rotate)
-{
-    GLfloat mat[16];
-
-    /* first setup everything which is the same everytime */
-    /* (X, X, 0, 0)
-     * (X, X, 0, 0)
-     * (0, 0, 1, 0)
-     * (0, 0, 0, 1)
-     */
-
-    //mat[0] =  cos(angle);
-    //mat[1] =  sin(angle);
-    mat[2] = 0;
-    mat[3] = 0;
-
-    //mat[4] = -sin(angle);
-    //mat[5] =  cos(angle);
-    mat[6] = 0;
-    mat[7] = 0;
-
-    mat[8] = 0;
-    mat[9] = 0;
-    mat[10] = 1;
-    mat[11] = 0;
-
-    mat[12] = 0;
-    mat[13] = 0;
-    mat[14] = 0;
-    mat[15] = 1;
-
-    /* now set the actual rotation */
-    if(1 == rotate) // 90 degree
-    {
-        mat[0] =  0;
-        mat[1] =  1;
-        mat[4] = -1;
-        mat[5] =  0;
-    }
-    else if(2 == rotate) // 180 degree
-    {
-        mat[0] = -1;
-        mat[1] =  0;
-        mat[4] =  0;
-        mat[5] =  -1;
-    }
-    else if(3 == rotate) // 270 degree
-    {
-        mat[0] =  0;
-        mat[1] = -1;
-        mat[4] =  1;
-        mat[5] =  0;
-    }
-    else /* 0 degree, also fallback if input is wrong) */
-    {
-        mat[0] =  1;
-        mat[1] =  0;
-        mat[4] =  0;
-        mat[5] =  1;
-    }
-
-    glUniformMatrix4fv(loc, 1, GL_FALSE, mat);
-}
 
 COGL_FragmentProgramCombiner::COGL_FragmentProgramCombiner(CRender *pRender)
 : COGLColorCombiner4(pRender)
@@ -626,12 +561,6 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
         OPENGL_CHECK_ERRORS;
         res.FogMinMaxLocation = glGetUniformLocation(res.programID,"FogMinMax");
         OPENGL_CHECK_ERRORS;
-
-        GLint rotation_matrix_location = glGetUniformLocation(res.programID, "rotation_matrix");
-        if(-1 != rotation_matrix_location)
-        {
-            set_rotation_matrix(rotation_matrix_location, options.rotate);
-        }
 
         res.dwMux0 = m_pDecodedMux->m_dwMux0;
         res.dwMux1 = m_pDecodedMux->m_dwMux1;

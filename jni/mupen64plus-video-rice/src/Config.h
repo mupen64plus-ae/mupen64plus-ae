@@ -216,8 +216,6 @@ typedef struct {
     float   polygonOffsetFactor;
     float   polygonOffsetUnits;
 
-    int rotate;
-
     HACK_FOR_GAMES  enableHackForGames;
 } GlobalOptions;
 
