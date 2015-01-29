@@ -233,7 +233,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                     mUserPrefs.isTouchscreenAnimated, mUserPrefs.isFpsEnabled,
                     mUserPrefs.touchscreenScale, mUserPrefs.touchscreenTransparency );
             mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden,
-                    mUserPrefs.displayFpsRefresh, mUserPrefs.touchscreenRefresh );
+                    mUserPrefs.isFpsEnabled, mUserPrefs.isTouchscreenAnimated );
         }
         
         // Initialize user interface devices

@@ -168,7 +168,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
-        mOverlay.initialize( mTouchscreenMap, true, 1, mUserPrefs.isTouchscreenAnimated ? 1 : 0 );
+        mOverlay.initialize( mTouchscreenMap, true, mUserPrefs.isFpsEnabled, mUserPrefs.isTouchscreenAnimated );
     }
     
     @TargetApi( 11 )

@@ -42,14 +42,14 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         requestFocus();
     }
     
-    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, int fpsRefreshPeriod, int hatRefreshPeriod )
+    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, boolean fpsEnabled, boolean joystickAnimated )
     {
         mTouchMap = touchMap;
         mDrawingEnabled = drawingEnabled;
-        mFpsEnabled = fpsRefreshPeriod > 0;
-        mHatRefreshPeriod = hatRefreshPeriod;
+        mFpsEnabled = fpsEnabled;
+        mHatRefreshPeriod = joystickAnimated ? 3 : 0;
         
-        CoreInterface.setOnFpsChangedListener( this, fpsRefreshPeriod );
+        CoreInterface.setOnFpsChangedListener( this, fpsEnabled ? 15 : 0 );
     }
     
     @Override
