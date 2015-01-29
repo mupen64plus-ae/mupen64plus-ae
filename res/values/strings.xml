@@ -247,10 +247,8 @@
     <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
     <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
 
-    <string name="touchscreenRefresh_title">Joystick animation</string>
-    <string name="touchscreenRefresh_entryNever">Never</string>
-    <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
-    <string name="touchscreenRefresh_entryFrequently">Frequently</string>
+    <string name="touchscreenAnimation_title">Visual feedback</string>
+    <string name="touchscreenAnimation_summary">Animate joystick</string>
 
     <string name="touchscreenStyle_title">Button style</string>
     <string name="touchscreenStyle_entryOutline">Outlines</string>
@@ -286,10 +284,8 @@
     <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
     <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
 
-    <string name="displayFpsRefresh_title">Display framerate</string>
-    <string name="displayFpsRefresh_entryNever">Never</string>
-    <string name="displayFpsRefresh_entryOccasionally">Occasionally</string>
-    <string name="displayFpsRefresh_entryFrequently">Frequently</string>
+    <string name="displayFps_title">Framerate</string>
+    <string name="displayFps_summary">Display FPS on screen</string>
 
     <string name="videoPlugin_title">Video plugin</string>
     <string name="videoPlugin_entryNone">None (video disabled)</string>

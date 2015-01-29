@@ -93,13 +93,11 @@
             mupen64:stepSize="10"
             mupen64:units="%" />
 
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
-            android:defaultValue="@string/displayFpsRefresh_default"
-            android:entries="@array/displayFpsRefresh_entries"
-            android:entryValues="@array/displayFpsRefresh_values"
-            android:key="displayFpsRefresh"
-            android:summary="@string/selectedValue"
-            android:title="@string/displayFpsRefresh_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="displayFps"
+            android:summary="@string/displayFps_summary"
+            android:title="@string/displayFps_title" />
         <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/videoHardwareType_default"
             android:entries="@array/videoHardwareType_entries"
@@ -172,13 +170,11 @@
             mupen64:stepSize="10"
             mupen64:units="%" />
 
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
-            android:defaultValue="@string/touchscreenRefresh_default"
-            android:entries="@array/touchscreenRefresh_entries"
-            android:entryValues="@array/touchscreenRefresh_values"
-            android:key="touchscreenRefresh"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenRefresh_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="touchscreenAnimation"
+            android:summary="@string/touchscreenAnimation_summary"
+            android:title="@string/touchscreenAnimation_title" />
 
         <CheckBoxPreference
             android:defaultValue="false"

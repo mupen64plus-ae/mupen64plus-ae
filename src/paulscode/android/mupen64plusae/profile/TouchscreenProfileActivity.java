@@ -168,7 +168,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
-        mOverlay.initialize( mTouchscreenMap, true, 1, mUserPrefs.touchscreenRefresh );
+        mOverlay.initialize( mTouchscreenMap, true, 1, mUserPrefs.isTouchscreenAnimated ? 1 : 0 );
     }
     
     @TargetApi( 11 )
@@ -176,7 +176,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     {
         // Reposition the assets and refresh the overlay and options menu
         mTouchscreenMap.load( mUserPrefs.touchscreenSkin, mProfile,
-                mUserPrefs.touchscreenRefresh > 0, true, mUserPrefs.touchscreenScale,
+                mUserPrefs.isTouchscreenAnimated, true, mUserPrefs.touchscreenScale,
                 mUserPrefs.touchscreenTransparency );
         mOverlay.postInvalidate();
         if( AppData.IS_HONEYCOMB )

@@ -132,6 +132,9 @@ public class UserPrefs
     /** True if the touchscreen feedback is enabled. */
     public final boolean isTouchscreenFeedbackEnabled;
     
+    /** True if the touchscreen joystick is animated. */
+    public final boolean isTouchscreenAnimated;
+    
     /** The number of frames over which touchscreen is redrawn (0 = disabled). */
     public final int touchscreenRefresh;
     
@@ -186,11 +189,11 @@ public class UserPrefs
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
     
-    /** The number of frames over which FPS is calculated (0 = disabled). */
-    public final int displayFpsRefresh;
-    
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
+    
+    /** The number of frames over which FPS is calculated (0 = disabled). */
+    public final int displayFpsRefresh;
     
     /** True if immersive mode should be used (KitKat only). */
     public final boolean isImmersiveModeEnabled;
@@ -310,7 +313,8 @@ public class UserPrefs
         
         // Touchscreen prefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
-        touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
+        isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimation", false );
+        touchscreenRefresh = isTouchscreenAnimated ? 3 : 0;
         touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
         touchscreenSkin = appData.touchscreenSkinsDir + "/" + mPreferences.getString( "touchscreenStyle", "Outline" );
@@ -332,8 +336,8 @@ public class UserPrefs
         displayPosition = getSafeInt( mPreferences, "displayPosition", Gravity.CENTER_VERTICAL );
         int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
-        displayFpsRefresh = getSafeInt( mPreferences, "displayFpsRefresh", 0 );
-        isFpsEnabled = displayFpsRefresh > 0;
+        isFpsEnabled = mPreferences.getBoolean( "displayFps", false );
+        displayFpsRefresh = isFpsEnabled ? 15 : 0;
         int selectedHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
         isPolygonOffsetHackEnabled = selectedHardwareType > -2;
         videoHardwareType = selectedHardwareType < 0 ? appData.hardwareInfo.hardwareType : selectedHardwareType;

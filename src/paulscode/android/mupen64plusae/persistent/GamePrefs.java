@@ -280,10 +280,10 @@ public class GamePrefs
                 if( layout.equals( "Mupen64Plus-AE-Analog" )
                         || layout.equals( "Mupen64Plus-AE-All" ) )
                 {
-                    if( userPrefs.touchscreenRefresh == 0 )
-                        layout += "-Nostick";
-                    else
+                    if( userPrefs.isTouchscreenAnimated )
                         layout += "-Stick";
+                    else
+                        layout += "-Nostick";
                 }
                 
                 String height = touchscreenProfile.get( "touchscreenHeight", "" );
