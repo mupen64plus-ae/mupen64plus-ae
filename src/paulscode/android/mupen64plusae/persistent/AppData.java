@@ -21,14 +21,9 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Locale;
 
-import org.acra.ACRA;
-import org.acra.ErrorReporter;
-
 import paulscode.android.mupen64plusae.util.DeviceUtil;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import tv.ouya.console.api.OuyaFacade;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -37,7 +32,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -279,41 +273,6 @@ public class AppData
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
-        
-        // Get the contents of the libraries directory
-        ArrayList<CharSequence> names = new ArrayList<CharSequence>();
-        ArrayList<String> paths = new ArrayList<String>();
-        FileUtil.populate( new File( libsDir ), false, false, true, names, paths );
-        String libnames = TextUtils.join( "\n", names );
-
-        // Record some info in the crash reporter
-        ErrorReporter reporter = ACRA.getErrorReporter();
-        reportMultilineText( reporter, "Libraries", libnames );
-        reporter.putCustomData( "CPU Features", hardwareInfo.features );
-        reporter.putCustomData( "CPU Hardware", hardwareInfo.hardware );
-        reporter.putCustomData( "CPU Processor", hardwareInfo.processor );
-        reportMultilineText( reporter, "Axis Report", DeviceUtil.getAxisInfo() );
-        reportMultilineText( reporter, "CPU Report", DeviceUtil.getCpuInfo() );
-        reportMultilineText( reporter, "HID Report", DeviceUtil.getPeripheralInfo() );
-    }
-    
-    public static void reportMultilineText( ErrorReporter reporter, String key, String multilineText )
-    {
-        final String[] lines = multilineText.split( "\n" );
-        
-        int numLines = lines.length;
-        int padding = 1;
-        while( numLines > 9 )
-        {
-            numLines /= 10;
-            padding++;
-        }
-        final String template = "%s.%0" + padding + "d"; 
-        
-        for( int i = 0; i < lines.length; i++ )
-        {
-            reporter.putCustomData( String.format( template, key, i ), lines[i].trim() );
-        }
     }
     
     /**

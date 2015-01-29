@@ -253,27 +253,6 @@
             android:summary="@string/actionReloadAssets_summary"
             android:title="@string/actionReloadAssets_title" />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:key="categoryCrashReports"
-        android:title="@string/categoryCrashReports_title" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="acra.enable"
-            android:summary="@string/acraEnable_summary"
-            android:title="@string/acraEnable_title" />
-
-        <EditTextPreference
-            android:dependency="acra.enable"
-            android:key="acra.user.email"
-            android:summary="@string/acraUserEmail_summary"
-            android:title="@string/acraUserEmail_title" />
-
-        <Preference
-            android:dependency="acra.enable"
-            android:key="actionCrashTest"
-            android:summary="@string/actionCrashTest_summary"
-            android:title="@string/actionCrashTest_title" />
-    </PreferenceCategory>
 
     <Preference
         android:icon="@drawable/ic_undo"
