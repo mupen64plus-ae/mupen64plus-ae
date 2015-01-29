@@ -221,6 +221,7 @@ void tx_compress_dxtn(GLint srccomps, GLint width, GLint height,
 			dxt = DXT1;
 			rgb565_image(rgba, srcPixData, width, height, srccomps, 1, dither);
 			break;
+#ifndef USE_GLES
 		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 			dxt = DXT3;
 			rgb565_image(rgba, srcPixData, width, height, srccomps, 4, dither);
@@ -229,6 +230,7 @@ void tx_compress_dxtn(GLint srccomps, GLint width, GLint height,
 			dxt = DXT5;
 			rgb565_image(rgba, srcPixData, width, height, srccomps, 8, dither);
 			break;
+#endif
 		default:
 			free(rgba);
 			fprintf(stderr, "libdxtn: Bad dstFormat %d in tx_compress_dxtn\n", destformat);
@@ -257,6 +259,7 @@ void tx_compress_dxtn(GLint srccomps, GLint width, GLint height,
 				blkaddr += dstRowDiff;
 			}
 			break;
+#ifndef USE_GLES
 		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 			dstRowDiff = dstRowStride >= (width * 4) ? dstRowStride - (((width + 3) & ~3) * 4) : 0;
 			/*      fprintf(stderr, "dxt3 tex width %d tex height %d dstRowStride %d\n",
@@ -293,6 +296,7 @@ void tx_compress_dxtn(GLint srccomps, GLint width, GLint height,
 				blkaddr += dstRowDiff;
 			}
 			break;
+#endif
 	}
 
 	free(rgba);

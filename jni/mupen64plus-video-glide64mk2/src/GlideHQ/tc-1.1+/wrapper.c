@@ -25,7 +25,11 @@
 
 #include "types.h"
 #include "internal.h"
+#ifdef USE_GLES
+#include <SDL_opengles2.h>
+#else
 #include <SDL_opengl.h>
+#endif
 #include "../../Glide64/m64p.h"
 
 typedef void (*dxtCompressTexFuncExt)(GLint srccomps, GLint width, GLint height,

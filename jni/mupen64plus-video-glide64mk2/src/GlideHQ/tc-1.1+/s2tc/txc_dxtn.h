@@ -25,7 +25,11 @@
 #ifndef _TXC_DXTN_H
 #define _TXC_DXTN_H
 
+#ifdef USE_GLES
+#include <SDL_opengles2.h>
+#else
 #include <SDL_opengl.h>
+#endif
 
 typedef GLubyte GLchan;
 #define UBYTE_TO_CHAN(b)  (b)
