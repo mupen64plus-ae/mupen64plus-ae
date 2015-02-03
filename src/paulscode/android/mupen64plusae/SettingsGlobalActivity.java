@@ -32,12 +32,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
 public class SettingsGlobalActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
@@ -67,7 +65,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String NAVIGATION_MODE = "navigationMode";
-    private static final String ACRA_USER_EMAIL = "acra.user.email";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -179,17 +176,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         PrefUtil.enablePreference( this, AUDIO_BUFFER_SIZE, mUserPrefs.audioPlugin.enabled );
         PrefUtil.enablePreference( this, AUDIO_SYNCHRONIZE, mUserPrefs.audioPlugin.enabled );
         PrefUtil.enablePreference( this, AUDIO_SWAP_CHANNELS, mUserPrefs.audioPlugin.enabled );
-        
-        // Update the summary text in a particular way for ACRA user info
-        EditTextPreference pref = (EditTextPreference) findPreference( ACRA_USER_EMAIL );
-        if( pref != null )
-        {
-            String value = pref.getText();
-            if( TextUtils.isEmpty( value ) )
-                pref.setSummary( getString( R.string.acraUserEmail_summary ) );
-            else
-                pref.setSummary( value );
-        }
     }
     
     @Override
