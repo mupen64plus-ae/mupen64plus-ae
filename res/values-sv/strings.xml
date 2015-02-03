@@ -57,6 +57,8 @@
   <string name="menuItem_new">Ny</string>
   <string name="menuItem_hideBuiltins">Göm inbyggda</string>
   <string name="menuItem_showBuiltins">Visa inbyggda</string>
+  <string name="popup_titleBuiltin">%1$s (inbyggd)</string>
+  <string name="popup_titleCustom">%1$s</string>
   <string name="profile_name_cannot_be_empty">Namn kan inte vara tomt</string>
   <string name="profile_name_cannot_contain_brackets">Namn kan inte innehålla klammerparentes</string>
   <string name="profile_name_must_be_unique">Namn måste vara unikt</string>
@@ -102,8 +104,6 @@
   <string name="actionRestart_summary">Rekommenderad om fusk används</string>
   <string name="actionReloadAssets_title">Ladda om app resurser</string>
   <string name="actionReloadAssets_summary">Påverkar INTE användarinställningar, ROMs, sparfiler, eller andra egna data</string>
-  <string name="actionCrashTest_title">Test</string>
-  <string name="actionCrashTest_summary">Skicka en konfiguration rapport till utvecklarna</string>
   <string name="actionCheatEditor_title">Hantera fuskkoder</string>
   <string name="actionShare_title">Dela</string>
   <!--Preference Screens-->
@@ -135,7 +135,6 @@
   <string name="categoryCore_title">Kärna</string>
   <string name="categoryAudio_title">Ljud</string>
   <string name="categoryData_title">Data</string>
-  <string name="categoryCrashReports_title">Felrapporter</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Aktivera fusk</string>
   <string name="playShowCheats_summary">Meny laddning är långsammare när aktiverad</string>
@@ -171,10 +170,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Inaktiverad</string>
   <string name="touchscreenAutoHold_entryLongPress">vid långt-tryck</string>
   <string name="touchscreenAutoHold_entrySlideOut">Vid slide-off</string>
-  <string name="touchscreenRefresh_title">Styrspak animation</string>
-  <string name="touchscreenRefresh_entryNever">Aldrig</string>
-  <string name="touchscreenRefresh_entryOccasionally">Ibland</string>
-  <string name="touchscreenRefresh_entryFrequently">Ofta</string>
   <string name="touchscreenStyle_title">Knapp stil</string>
   <string name="touchscreenStyle_entryOutline">Konturer</string>
   <string name="touchscreenStyle_entryShaded">Skuggad</string>
@@ -197,10 +192,6 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (högsta framerate)</string>
   <string name="displayScaling_title">Skärm skalning</string>
-  <string name="displayFpsRefresh_title">Visa framerate</string>
-  <string name="displayFpsRefresh_entryNever">Aldrig</string>
-  <string name="displayFpsRefresh_entryOccasionally">Ibland</string>
-  <string name="displayFpsRefresh_entryFrequently">Ofta</string>
   <string name="videoPlugin_entryNone">Ingen (video inaktiverad)</string>
   <string name="videoHardwareType_title">Flimmer minskning</string>
   <string name="videoHardwareType_entryAuto">Auto-upptäck från mobil/tablett modell</string>
@@ -250,11 +241,6 @@
   <string name="audioPlugin_entryNoneNoSpeedLimit">Ingen-felsökning (ljud inaktiverat, ingen hastighetsbegränsning)</string>
   <string name="audioBufferSize_entry2048">Standard</string>
   <string name="localeOverride_entrySystemDefault">System standard</string>
-  <!--ACRA Preferences (key names must not be changed)-->
-  <string name="acraEnable_title">Aktivera kraschrapporteringen</string>
-  <string name="acraEnable_summary">Ingen personlig information samlas in</string>
-  <string name="acraUserEmail_title">Kontakt info</string>
-  <string name="acraUserEmail_summary">Din paulscode.com username (valfritt)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knapp opacitet</string>
   <string name="touchscreenScale_title">Knapp skala</string>
@@ -305,6 +291,7 @@
   <string name="pathHiResTexturesTask_title">Uppackning texturer</string>
   <string name="pathHiResTexturesTask_message">Var god och vänta. Denna process kan ta lite tid.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem med uppackning av texturer!</string>
+  <!--ROM Scanning-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -317,6 +304,18 @@
   <string name="playerMapPreference_reminder">Påminn mig när spelarna inte är mappade</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
+  <string name="controller_analogR">Analog →</string>
+  <string name="controller_analogL">Analog ←</string>
+  <string name="controller_analogD">Analog ↓</string>
+  <string name="controller_analogU">Analog ↑</string>
+  <string name="controller_dpadR">D-pad →</string>
+  <string name="controller_dpadL">D-pad ←</string>
+  <string name="controller_dpadD">D-pad ↓</string>
+  <string name="controller_dpadU">D-pad ↑</string>
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonCl">C-pad ←</string>
+  <string name="controller_buttonCd">C-pad ↓</string>
+  <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Unmap</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analog spak kontrollerad med pekplatta</string>
