@@ -163,7 +163,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     }
     
     @TargetApi( 9 )
-    @SuppressWarnings( "deprecation" )
     private void refreshViews()
     {
         // Refresh the preferences object

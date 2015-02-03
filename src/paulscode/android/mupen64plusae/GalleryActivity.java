@@ -45,6 +45,7 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -349,13 +350,14 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         // Set up click handler to share text with a user-selected app (email, clipboard, etc.)
         DialogInterface.OnClickListener shareHandler = new DialogInterface.OnClickListener()
         {
+            @SuppressLint( "InlinedApi" )
             @Override
             public void onClick( DialogInterface dialog, int which )
             {
                 // See http://android-developers.blogspot.com/2012/02/share-with-intents.html
                 Intent intent = new Intent( android.content.Intent.ACTION_SEND );
                 intent.setType( "text/plain" );
-                intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET );
+                intent.addFlags( Intent.FLAG_ACTIVITY_NEW_DOCUMENT );
                 intent.putExtra( Intent.EXTRA_TEXT, message );
                 // intent.putExtra( Intent.EXTRA_SUBJECT, subject );
                 // intent.putExtra( Intent.EXTRA_EMAIL, new String[] { emailTo } );
