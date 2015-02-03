@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -35,7 +37,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import android.text.Html;
 import android.util.Log;
@@ -327,5 +333,114 @@ public final class FileUtil
         {
             stream.close();
         }
+    }
+    
+    
+    /**
+     * Unzips a ZIP file in its entirety.
+     *
+     * @param archive   The archive to extract.
+     * @param outputDir Directory to place all of the extracted files.
+     *
+     * @return True if extraction was successful, false otherwise.
+     */
+    public static boolean unzipAll( File archive, String outputDir )
+    {
+        if( archive == null )
+        {
+            Log.e( "unzipAll", "Zip file is null" );
+            return false;
+        }
+        else if( !archive.exists() )
+        {
+            Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
+            return false;
+        }
+        else if( !archive.isFile() )
+        {
+            Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
+            return false;
+        }
+        
+        ZipFile zipfile = null;
+        try
+        {
+            zipfile = new ZipFile( archive );
+            Enumeration<? extends ZipEntry> e = zipfile.entries();
+            while( e.hasMoreElements() )
+            {
+                ZipEntry entry = e.nextElement();
+                if( entry != null && !entry.isDirectory() )
+                {
+                    File f = new File( outputDir + "/" + entry.toString() );
+                    f = f.getParentFile();
+                    if( f != null )
+                    {
+                        f.mkdirs();
+                        unzipEntry( zipfile, entry, outputDir );
+                    }
+                }
+            }
+        }
+        catch( ZipException ze )
+        {
+            Log.e( "unzipAll", "ZipException: ", ze );
+            return false;
+        }
+        catch( IOException ioe )
+        {
+            Log.e( "unzipAll", "IOException: ", ioe );
+            return false;
+        }
+        catch( Exception e )
+        {
+            Log.e( "unzipAll", "Exception: ", e );
+            return false;
+        }
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+        return true;
+    }
+
+    // Unzips a specific entry from a ZIP file into the given output directory.
+    //
+    // Returns the absolute path to the outputted entry.
+    // Returns null if the entry passed in happens to be a directory.
+    private static String unzipEntry( ZipFile zipfile, ZipEntry entry, String outputDir )
+            throws IOException
+    {
+        if( entry.isDirectory() )
+        {
+            Log.e( "unzipEntry", "Zip entry '" + entry.getName() + "' is not a file" );
+            return null;
+        }
+        
+        File outputFile = new File( outputDir, entry.getName() );
+        String newFile = outputFile.getAbsolutePath();
+        
+        BufferedInputStream inputStream = new BufferedInputStream( zipfile.getInputStream( entry ) );
+        BufferedOutputStream outputStream = new BufferedOutputStream( new FileOutputStream(
+                outputFile ) );
+        byte[] b = new byte[1024];
+        int n;
+        
+        while( ( n = inputStream.read( b, 0, 1024 ) ) >= 0 )
+        {
+            outputStream.write( b, 0, n );
+        }
+        
+        outputStream.close();
+        inputStream.close();
+        
+        return newFile;
     }
 }

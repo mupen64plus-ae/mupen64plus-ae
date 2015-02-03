@@ -32,6 +32,7 @@ import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.util.FloatMath;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -334,7 +335,21 @@ public class TouchMap
      */
     public Point getConstrainedDisplacement( int dX, int dY )
     {
-        return Utility.constrainToOctagon( dX, dY, (int) ( analogMaximum * scale ) );
+        final float dC = (int) ( analogMaximum * scale );
+        final float dA = dC * FloatMath.sqrt( 0.5f );
+        final float signX = (dX < 0) ? -1 : 1;
+        final float signY = (dY < 0) ? -1 : 1;
+        
+        Point crossPt = new Point();
+        crossPt.x = dX;
+        crossPt.y = dY;
+        
+        if( ( signX * dX ) > ( signY * dY ) )
+            segsCross( 0, 0, dX, dY, signX * dC, 0, signX * dA, signY * dA, crossPt );
+        else
+            segsCross( 0, 0, dX, dY, 0, signY * dC, signX * dA, signY * dA, crossPt );
+        
+        return crossPt;
     }
     
     /**
@@ -496,5 +511,52 @@ public class TouchMap
             buttonImages.add( new Image( mResources, skinFolder + "/" + name + ".png" ) );
             buttonMasks.add( new Image( mResources, skinFolder + "/" + name + "-mask.png" ) );
         }
+    }
+
+    /**
+     * Determines if the two specified line segments intersect with each other, and calculates where
+     * the intersection occurs if they do.
+     * 
+     * @param seg1pt1_x X-coordinate for the first end of the first line segment.
+     * @param seg1pt1_y Y-coordinate for the first end of the first line segment.
+     * @param seg1pt2_x X-coordinate for the second end of the first line segment.
+     * @param seg1pt2_y Y-coordinate for the second end of the first line segment.
+     * @param seg2pt1_x X-coordinate for the first end of the second line segment.
+     * @param seg2pt1_y Y-coordinate for the first end of the second line segment.
+     * @param seg2pt2_x X-coordinate for the second end of the second line segment.
+     * @param seg2pt2_y Y-coordinate for the second end of the second line segment.
+     * @param crossPt Changed to the point of intersection if there is one, otherwise unchanged.
+     * 
+     * @return True if the two line segments intersect.
+     */
+    private static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
+            float seg1pt2_y, float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
+            Point crossPt )
+    {
+        float vec1_x = seg1pt2_x - seg1pt1_x;
+        float vec1_y = seg1pt2_y - seg1pt1_y;
+        
+        float vec2_x = seg2pt2_x - seg2pt1_x;
+        float vec2_y = seg2pt2_y - seg2pt1_y;
+        
+        float div = ( -vec2_x * vec1_y + vec1_x * vec2_y );
+        
+        // Segments don't cross
+        if( div == 0 )
+            return false;
+        
+        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) ) / div;
+        float t = ( vec2_x  * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
+        
+        if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
+        {
+            // Segments cross, point of intersection stored in 'crossPt'
+            crossPt.x = (int) ( seg1pt1_x + ( t * vec1_x ) );
+            crossPt.y = (int) ( seg1pt1_y + ( t * vec1_y ) );
+            return true;
+        }
+        
+        // Segments don't cross
+        return false;
     }
 }

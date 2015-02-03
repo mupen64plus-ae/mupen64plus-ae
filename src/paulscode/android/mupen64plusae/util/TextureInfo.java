@@ -20,10 +20,17 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * Utility class that encapsulates meta-info about a hi-res texture file.
@@ -103,5 +110,71 @@ public class TextureInfo
             textureFormat = TEXTURE_FORMAT_INVALID;
             imageFormat = IMAGE_FORMAT_INVALID;
         }
+    }
+
+    /**
+     * Returns the name embedded in a zipped texture pack.
+     * 
+     * @param filename The path to the zipped texture pack.
+     * @return The name, or null if there were any errors.
+     */
+    public static String getTexturePackName( String filename )
+    {
+        File archive = new File( filename );       
+        if( !archive.exists() )
+        {
+            Log.e( "getTexturePackName", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
+            return null;
+        }
+        else if( !archive.isFile() )
+        {
+            Log.e( "getTexturePackName", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
+            return null;
+        }
+        
+        ZipFile zipfile = null;
+        try
+        {
+            zipfile = new ZipFile( archive );
+            Enumeration<? extends ZipEntry> e = zipfile.entries();
+            while( e.hasMoreElements() )
+            {
+                ZipEntry entry = e.nextElement();
+                if( entry != null && !entry.isDirectory() )
+                {
+                    TextureInfo info = new TextureInfo( entry.getName() );
+                    if( info.imageFormat != IMAGE_FORMAT_INVALID )
+                        return info.romName;
+                }
+            }
+        }
+        catch( ZipException ze )
+        {
+            Log.e( "getTexturePackName", "ZipException: ", ze );
+            return null;
+        }
+        catch( IOException ioe )
+        {
+            Log.e( "getTexturePackName", "IOException: ", ioe );
+            return null;
+        }
+        catch( Exception e )
+        {
+            Log.e( "getTexturePackName", "Exception: ", e );
+            return null;
+        }
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+        Log.e( "getTexturePackName", "No compatible textures found in .zip archive" );
+        return null;
     }
 }

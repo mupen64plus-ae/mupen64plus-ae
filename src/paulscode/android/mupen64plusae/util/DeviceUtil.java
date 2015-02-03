@@ -28,11 +28,15 @@ import paulscode.android.mupen64plusae.input.map.AxisMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
+import android.view.View;
 
 public final class DeviceUtil
 {
@@ -353,5 +357,25 @@ public final class DeviceUtil
     {
         if( ( sources & sourceClass ) > 0 )
             strings.add( getSourceName( sourceClass ) );
+    }
+
+    /**
+     * Returns display metrics for the specified view.
+     * 
+     * @param view An instance of View (must be the child of an Activity).
+     * 
+     * @return DisplayMetrics instance, or null if there was a problem.
+     */
+    public static DisplayMetrics getDisplayMetrics( View view )
+    {
+        if( view == null )
+            return null;
+        
+        Context context = view.getContext();
+        if( !( context instanceof Activity ) )
+            return null;
+        DisplayMetrics metrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        return metrics;
     }
 }

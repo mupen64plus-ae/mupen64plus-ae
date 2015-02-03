@@ -23,7 +23,7 @@ package paulscode.android.mupen64plusae.task;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.util.TextureInfo;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
@@ -55,12 +55,12 @@ public class ExtractTexturesTask extends AsyncTask<Void, Void, Boolean>
     @Override
     protected Boolean doInBackground( Void... params )
     {
-        String headerName = Utility.getTexturePackName( mSrcFile );
+        String headerName = TextureInfo.getTexturePackName( mSrcFile );
         if( !TextUtils.isEmpty( headerName ) )
         {
             String outputFolder = mDstDir + headerName;
             FileUtil.deleteFolder( new File( outputFolder ) );
-            return Utility.unzipAll( new File( mSrcFile ), outputFolder );
+            return FileUtil.unzipAll( new File( mSrcFile ), outputFolder );
         }
         return false;
     }

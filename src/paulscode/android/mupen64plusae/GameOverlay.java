@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
-import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.util.DeviceUtil;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -96,7 +96,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     {
         // Recompute skin layout geometry
         if( mTouchMap != null )
-            mTouchMap.resize( w, h, Utility.getDisplayMetrics( this ) );
+            mTouchMap.resize( w, h, DeviceUtil.getDisplayMetrics( this ) );
         super.onSizeChanged( w, h, oldw, oldh );
     }
     
