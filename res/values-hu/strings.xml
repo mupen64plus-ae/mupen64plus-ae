@@ -82,8 +82,6 @@
   <string name="actionRestart_summary">Ajánlott csalások használatánál</string>
   <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
   <string name="actionReloadAssets_summary">Nem befolyásolja a felhasználói beállításokat, a ROMokat, vagy az egyéni adatokat</string>
-  <string name="actionCrashTest_title">Teszt</string>
-  <string name="actionCrashTest_summary">Küldj egy konfigurációs jelentést a küszítőknek</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Bevitel</string>
   <string name="screenInput_summary">Irányítás beállítások</string>
@@ -105,7 +103,6 @@
   <string name="categoryRice_title">Rice beállítások</string>
   <string name="categoryAudio_title">Hang</string>
   <string name="categoryData_title">Adat</string>
-  <string name="categoryCrashReports_title">Összeomlás jelentések</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Csalás engedélyezése</string>
   <string name="playShowCheats_summary">A menü lassaban tölt, ha engedélyezve van</string>
@@ -140,10 +137,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Kikapcsolva</string>
   <string name="touchscreenAutoHold_entryLongPress">Hosszan nyomáskor</string>
   <string name="touchscreenAutoHold_entrySlideOut">Elcsúsztatáskor</string>
-  <string name="touchscreenRefresh_title">Joystick animáció</string>
-  <string name="touchscreenRefresh_entryNever">Soha</string>
-  <string name="touchscreenRefresh_entryOccasionally">Néha</string>
-  <string name="touchscreenRefresh_entryFrequently">Gyakran</string>
   <string name="touchpadLayout_title">Érintőpad kiosztás</string>
   <string name="touchpadLayout_entryDefault">Bal pad: analóg irányítás; jobb pad? C gombok</string>
   <string name="touchpadLayout_entryReverse">Bal pad: C gombok; Jobb pad: Analóg irányítás</string>
@@ -155,10 +148,6 @@
   <string name="displayPosition_entryBottom">Alul</string>
   <string name="displayPosition_entryMiddle">Középen</string>
   <string name="displayPosition_entryTop">Felül</string>
-  <string name="displayFpsRefresh_title">FPS szám mutatása</string>
-  <string name="displayFpsRefresh_entryNever">Soha</string>
-  <string name="displayFpsRefresh_entryOccasionally">Néha</string>
-  <string name="displayFpsRefresh_entryFrequently">Gyakran</string>
   <string name="videoPlugin_entryNone">Nincs (video kikapcsolva)</string>
   <string name="videoHardwareType_title">Vibrálás csökkentése</string>
   <string name="videoHardwareType_entryAuto">Telefon/tablet alapján auto-felismerés</string>
@@ -209,11 +198,6 @@
   <string name="audioPlugin_entryNone">Nincs (hang kikapcsolva)</string>
   <string name="audioBufferSize_entry2048">Alapértelmezett</string>
   <string name="localeOverride_entrySystemDefault">Rendszer alapértelmezett</string>
-  <!--ACRA Preferences (key names must not be changed)-->
-  <string name="acraEnable_title">Összeomlás jelentés bekapcsolása</string>
-  <string name="acraEnable_summary">Nincs személyes információ gyűjtve</string>
-  <string name="acraUserEmail_title">Kapcsolat infó</string>
-  <string name="acraUserEmail_summary">A paulscode.com felh. neved (választható)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Érintőkijelző átlátszóság</string>
   <string name="displayActionBarTransparency_title">Action bar átlátszóság</string>
@@ -261,6 +245,7 @@
   <string name="pathHiResTexturesTask_title">Textúrák kicsomagolása</string>
   <string name="pathHiResTexturesTask_message">Légy türelemmel. Ez időbe telik.</string>
   <string name="pathHiResTexturesTask_errorMessage">Probléma a textúrák kicsomagolásánál!</string>
+  <!--ROM Scanning-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -273,6 +258,18 @@
   <string name="playerMapPreference_reminder">Emlékeztess amikor a játékosok nincsenek kiosztva</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
+  <string name="controller_analogR">Analog →</string>
+  <string name="controller_analogL">Analog ←</string>
+  <string name="controller_analogD">Analog ↓</string>
+  <string name="controller_analogU">Analog ↑</string>
+  <string name="controller_dpadR">D-pad →</string>
+  <string name="controller_dpadL">D-pad ←</string>
+  <string name="controller_dpadD">D-pad ↓</string>
+  <string name="controller_dpadU">D-pad ↑</string>
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonCl">C-pad ←</string>
+  <string name="controller_buttonCd">C-pad ↓</string>
+  <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Kiosztás megszüntése</string>
   <string name="inputMapActivity_aPadXperiaPlay">Az érintőpad irányítja az analóg kart</string>

@@ -7,7 +7,7 @@ source_file = res/values/strings.xml
 source_lang = en
 type = ANDROID
 minimum_perc = 50
-lang_map = en_GB: en-rGB
+lang_map = en_GB: en-rGB, ar_SA: ar-rSA
 
 [mupen64plus-ae.market-listing]
 file_filter = doc/publish/listing-<lang>.txt

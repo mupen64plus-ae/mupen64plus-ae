@@ -10,7 +10,10 @@
   <string name="menuItem_setSlot">Entrada %1$d</string>
   <string name="menuItem_fileSave">Salvar para o arquivo…</string>
   <string name="menuItem_fileLoad">Carregar do arquivo…</string>
+  <string name="menuItem_screenshot">Captura de tela</string>
   <string name="menuItem_setSpeed">Velocidade do jogo</string>
+  <string name="menuItem_enableFramelimiter">Sincronizar áudio</string>
+  <string name="menuItem_disableFramelimiter">Dessincronizar áudio</string>
   <string name="menuItem_paks">Paks de Controles</string>
   <!--capitalize since trademark-->
   <string name="menuItem_pak1_empty">Jogador 1: Vazio</string>
@@ -41,6 +44,7 @@
   <string name="menuItem_unmapAll">Desmapear tudo</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Jogar</string>
+  <string name="menuItem_refreshRoms">Atualizar ROMs</string>
   <string name="menuItem_settings">Configurações</string>
   <string name="menuItem_globalSettings">Configurações globais</string>
   <string name="menuItem_emulationProfiles">Perfis de emulação</string>
@@ -56,18 +60,23 @@
   <string name="menuItem_credits">Créditos</string>
   <string name="menuItem_appVersion">Versão do aplicativo</string>
   <string name="menuItem_changelog">Melhorias do emulador</string>
+  <string name="menuItem_logcat">Log de funcionamento</string>
   <string name="menuItem_hardwareInfo">Informações do Hardware</string>
   <string name="menuItem_localeOverride">Idioma</string>
   <!--ManageProfilesActivity-->
   <string name="menuItem_new">Novo</string>
   <string name="menuItem_hideBuiltins">Esconder perfis pré-instalados</string>
   <string name="menuItem_showBuiltins">Exibir perfis pré-instalados</string>
+  <string name="popup_titleBuiltin">%1$s (pré-instalado)</string>
+  <string name="popup_titleCustom">%1$s</string>
   <string name="profile_name_cannot_be_empty">O nome não pode ficar vazio</string>
   <string name="profile_name_cannot_contain_brackets">O nome não pode conter colchetes/chaves</string>
   <string name="profile_name_must_be_unique">O nome não pode estar em uso</string>
   <string name="profile_manage_profiles">Gerenciar perfis</string>
   <!--Popup Dialogs-->
   <!--Lists-->
+  <string name="listItem_setDefault">Estabelecer padrão</string>
+  <string name="listItem_unsetDefault">Desestabelecer padrão</string>
   <string name="listItem_edit">Editar</string>
   <string name="listItem_rename">Renomear</string>
   <string name="listItem_copy">Copiar</string>
@@ -91,7 +100,13 @@
   <string name="toast_savingFile">Salvando %1$s…</string>
   <string name="toast_overwritingFile">Sobrescrevendo %1$s…</string>
   <string name="toast_loadingGameInfo">Carregando informações do jogo...</string>
+  <string name="toast_savingScreenshot">Salvando captura de tela...</string>
   <!--Something happened (use '.')-->
+  <string name="toast_nativeMainFailure01">Falha na análise de parâmetros de linha de comando.</string>
+  <string name="toast_nativeMainFailure02">Falha na opção de núcleo.</string>
+  <string name="toast_nativeMainFailure03">Falha em iniciar o núcleo.</string>
+  <string name="toast_nativeMainFailure04">Falha na abertura da configuração.</string>
+  <string name="toast_nativeMainFailure05">Falha na análise dos parâmetros de conclusão.</string>
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessível (desconecte o cabo USB e tente novamente).</string>
   <string name="toast_crashReportSent">Relatório enviado.</string>
@@ -107,8 +122,6 @@
   <string name="actionRestart_summary">Recomendado se você usar Cheats</string>
   <string name="actionReloadAssets_title">Recarregar dados do emulador</string>
   <string name="actionReloadAssets_summary">Não afeta configurações do usuário, ROMs, jogos salvos, ou outros dados externos</string>
-  <string name="actionCrashTest_title">Testar</string>
-  <string name="actionCrashTest_summary">Enviar relatório de configuração aos desenvolvedores</string>
   <string name="actionCheatEditor_title">Gerenciar cheats</string>
   <string name="actionCheatEditor_summary">Adicionar, modificar e deletar cheats customizados</string>
   <string name="actionShare_title">Compartilhar</string>
@@ -142,7 +155,6 @@
   <string name="categoryCore_title">Núcleo</string>
   <string name="categoryAudio_title">Áudio</string>
   <string name="categoryData_title">Dados</string>
-  <string name="categoryCrashReports_title">Erros críticos</string>
   <string name="categoryGameSettings_title">Configurações específicas do jogo</string>
   <string name="categoryGameSettings_titleNamed">Configurações de %1$s</string>
   <!--Checkbox Preferences-->
@@ -182,10 +194,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Desabilitado</string>
   <string name="touchscreenAutoHold_entryLongPress">Em toque longo</string>
   <string name="touchscreenAutoHold_entrySlideOut">Ao arrastar fora</string>
-  <string name="touchscreenRefresh_title">Animação do controle</string>
-  <string name="touchscreenRefresh_entryNever">Nunca</string>
-  <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
-  <string name="touchscreenRefresh_entryFrequently">Frequentemente</string>
   <string name="touchscreenStyle_title">Estilo do botão</string>
   <string name="touchscreenStyle_entryOutline">Contorno</string>
   <string name="touchscreenStyle_entryShaded">Sombreado</string>
@@ -210,10 +218,6 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (maior framerate)</string>
   <string name="displayScaling_title">Dimensionamento da tela</string>
-  <string name="displayFpsRefresh_title">Exibir taxa de frames</string>
-  <string name="displayFpsRefresh_entryNever">Nunca</string>
-  <string name="displayFpsRefresh_entryOccasionally">Ocasionalmente</string>
-  <string name="displayFpsRefresh_entryFrequently">Frequentemente</string>
   <string name="videoPlugin_title">Plugin de vídeo</string>
   <string name="videoPlugin_entryNone">Nenhum (vídeo desabilitado)</string>
   <string name="videoHardwareType_title">Redução de Flicker</string>
@@ -275,11 +279,6 @@
   <string name="audioBufferSize_entry128">Baixa latência (experimental)</string>
   <string name="audioBufferSize_entry8">Latência ultra baixa (experimental)</string>
   <string name="localeOverride_entrySystemDefault">Padrão</string>
-  <!--ACRA Preferences (key names must not be changed)-->
-  <string name="acraEnable_title">Habilitar relatório de erros</string>
-  <string name="acraEnable_summary">Nenhuma informação pessoal é coletada</string>
-  <string name="acraUserEmail_title">Informações de contato</string>
-  <string name="acraUserEmail_summary">Seu usuário no paulscode.com (opcional)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparência do controle de toque</string>
   <string name="touchscreenScale_title">Escala do botão</string>
@@ -369,6 +368,7 @@
   <string name="pathHiResTexturesTask_title">Extraindo texturas</string>
   <string name="pathHiResTexturesTask_message">Seja paciente.  Esse processo pode levar algum tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema extraindo texturas!</string>
+  <!--ROM Scanning-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -381,6 +381,18 @@
   <string name="playerMapPreference_reminder">Lembrar quando os jogadores não estiverem mapeados</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
+  <string name="controller_analogR">Analógico →</string>
+  <string name="controller_analogL">Analógico ←</string>
+  <string name="controller_analogD">Analógico ↓</string>
+  <string name="controller_analogU">Analógico ↑</string>
+  <string name="controller_dpadR">D-pad â†’</string>
+  <string name="controller_dpadL">D-pad â†</string>
+  <string name="controller_dpadD">D-pad â†“</string>
+  <string name="controller_dpadU">D-pad â†‘</string>
+  <string name="controller_buttonCr">C-pad â†’</string>
+  <string name="controller_buttonCl">C-pad â†</string>
+  <string name="controller_buttonCd">C-pad â†“</string>
+  <string name="controller_buttonCu">C-pad â†‘</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Desmapear</string>
   <string name="inputMapActivity_aPadXperiaPlay">Controle analógico controlado com touchpad</string>

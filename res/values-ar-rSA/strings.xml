@@ -1,0 +1,393 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">السرعه %1$d %%</string>
+  <string name="menuItem_slotSave">الحفظ السريع</string>
+  <string name="menuItem_slotLoad">التحميل السريع</string>
+  <string name="menuItem_setSlot">مدخل  الحفظ %1$d</string>
+  <string name="menuItem_fileSave">الحفظ الى ملف</string>
+  <string name="menuItem_fileLoad">التحميل من ملف</string>
+  <string name="menuItem_screenshot">التقاط صوره</string>
+  <string name="menuItem_setSpeed">سرعة العبه</string>
+  <string name="menuItem_enableFramelimiter">ربط مع الصوت</string>
+  <string name="menuItem_disableFramelimiter">فصل الربط مع الصوت</string>
+  <string name="menuItem_paks">مجوعة التحكم بالعبه</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">الاعب 1: غير موجود</string>
+  <string name="menuItem_pak1_mem">الاعب 1: مجموعة الذاكره</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">الاعب 1: مجموعة الذبذبه</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">الاعب 2: غير موجود</string>
+  <string name="menuItem_pak2_mem">الاعب 2: مجموعة الذاكره</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">الاعب 2: مجموعة الذبذبه</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">الاعب 3: غير موجود</string>
+  <string name="menuItem_pak3_mem">الاعب 3: مجموعة الذاكره</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">الاعب 3: مجموعة الذبذبه</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">الاعب 4: غير موجود</string>
+  <string name="menuItem_pak4_mem">الاعب 4: مجموعة الذاكره</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">الاعب 4: مجموعة الذبذبه</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">تعديل IME</string>
+  <string name="menuItem_exit">خروج</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_deadzone">نقطة الادخال الميته</string>
+  <string name="menuItem_sensitivity">الحساسات</string>
+  <string name="menuItem_unmapAll">فصل التوصيل الكلي</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">تشغيل</string>
+  <string name="menuItem_refreshRoms">تحديث الروم</string>
+  <string name="menuItem_settings">الاعدادات</string>
+  <string name="menuItem_globalSettings">الاعدادات العامة</string>
+  <string name="menuItem_emulationProfiles">اعدادات التطبيق العامة</string>
+  <string name="menuItem_touchscreenProfiles">اعدادات شاشة المس</string>
+  <string name="menuItem_controllerProfiles">الادخال الخاص</string>
+  <string name="menuItem_customCheats">الهاك المعدل</string>
+  <string name="menuItem_help">مساعدة</string>
+  <string name="menuItem_faq">الاسئلة</string>
+  <string name="menuItem_helpForum">المنتدى للمساعده</string>
+  <string name="menuItem_controllerDiagnostics">حالة اداة التحكم</string>
+  <string name="menuItem_reportBug">الابلاغ عن خطا</string>
+  <string name="menuItem_about">حول البرنامج</string>
+  <string name="menuItem_credits">المساهمين</string>
+  <string name="menuItem_appVersion">اصدار البرنامج</string>
+  <string name="menuItem_changelog">التحديثات</string>
+  <string name="menuItem_logcat">للمطورين</string>
+  <string name="menuItem_hardwareInfo">معلومات عن الجهاز</string>
+  <string name="menuItem_localeOverride">الغة</string>
+  <!--ManageProfilesActivity-->
+  <string name="menuItem_new">جديد</string>
+  <string name="menuItem_hideBuiltins">اخفاء  built-ins</string>
+  <string name="menuItem_showBuiltins">اظهار  built-ins</string>
+  <string name="popup_titleBuiltin">%1$s (built-in)</string>
+  <string name="popup_titleCustom">%1$s</string>
+  <string name="profile_name_cannot_be_empty">الاسم لا يجيب ان يكون فارغ</string>
+  <string name="profile_name_cannot_contain_brackets">الاسم لا يجب ان يحتوي على اقواس</string>
+  <string name="profile_name_must_be_unique">يجب ان يكون الاسم مميز</string>
+  <string name="profile_manage_profiles">ادارة الاختيار الخاص</string>
+  <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus تم تتطويره وصيانته من قبل متطوعين.&lt;small&gt; \n\n من اجل اصلاح اخطاء الفيديو,قم بتعديل&lt;i&gt; خصائص الفيديو &lt;/i&gt;.\n\n لتخلص من التهنيق من قائمة الاعدادات او من &lt;i&gt; مدمجات الفيديو &lt;/i&gt;.\n\n واذا واجهتك مشكله في الروم قم بفك الظغط عنه او تجربة اصدار اخر لروم . \n\n ومن اجل شاشة المسل  قم بتعديل &lt;i&gt; امتداد الازرار &lt;i&gt; او من &lt;i&gt; موقع الازرار &lt;/i&gt;.\n\n ومن اجل المساعده يمكنك الظغط على &lt;i&gt;الاسئلة&lt;/i&gt; بالاسفل ومن اجل ابلاغ عن عطل معين وقم باظغط  &lt;i&gt;تبليغ عن عطل&lt;/i&gt; وسيتم الرد عليك خلال 24 ساعه. .\n\n&lt;/small&gt; واخيرا شكرا لك للمساعده في تطوير هاذا التطبيق.</string>
+  <string name="popup_version">الاصدار: %1$s\n نسخة الكود: %2$d</string>
+  <!--Lists-->
+  <string name="listItem_setDefault">الوضع الافتراضي</string>
+  <string name="listItem_unsetDefault">فصل الوضع الافتراضي</string>
+  <string name="listItem_edit">تعديل</string>
+  <string name="listItem_rename">اعادة التسمية</string>
+  <string name="listItem_copy">نسخ</string>
+  <string name="listItem_delete">حذف</string>
+  <string name="listItem_disabled">(تعطيل)</string>
+  <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">اسم الاختيار الخاص</string>
+  <string name="hint_profileComment">الوصف (اختياري)</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_rebuildingCheats">اعادة بناء قاعدة بيانات الهاك</string>
+  <string name="toast_launchingEmulator">تشغيل المحاكي...</string>
+  <string name="toast_loadingSession">تكلمة العبة تلقائيا...</string>
+  <string name="toast_savingSession">الحفظ التلقائي</string>
+  <string name="toast_loadingSlot">التحميل السريع %1$d...</string>
+  <string name="toast_savingSlot">الحفظ السريع %1$d...</string>
+  <string name="toast_loadingFile">تحميل %1$s…</string>
+  <string name="toast_savingFile">حفظ %1$s…</string>
+  <string name="toast_overwritingFile">اعادة الكتابه على %1$s…</string>
+  <string name="toast_loadingGameInfo">تحميل معلومات الروم...</string>
+  <string name="toast_savingScreenshot">حفظ الصورة...</string>
+  <string name="toast_canceling">الغاء العملية...</string>
+  <string name="toast_pleaseWait">ارجو الانتضار...</string>
+  <!--Something happened (use '.')-->
+  <string name="toast_nativeMainFailure01">فشل في تحليل سطر الاوامر الاولية</string>
+  <string name="toast_nativeMainFailure02">فشل في دمج مكتبة النواة.</string>
+  <string name="toast_nativeMainFailure03">فشل في بدء مكتبة النواة.</string>
+  <string name="toast_nativeMainFailure04">فشل في فتح الاعدادات.</string>
+  <string name="toast_nativeMainFailure05">فشل في تحليل سطر الاوامر النهائيه.</string>
+  <string name="toast_nativeMainFailure06">لا يمكنك استعمال -- النواه مع نواة Mupen64Plus .</string>
+  <string name="toast_nativeMainFailure07">فشل في فتح الروم من اجل التشغيل.</string>
+  <string name="toast_nativeMainFailure08">فشل في تحديد buffer من اجل الروم.</string>
+  <string name="toast_nativeMainFailure09">فشل في قراءة بايت من الروم.</string>
+  <string name="toast_nativeMainFailure10">فشل النواة في تشغيل الروم.</string>
+  <string name="toast_nativeMainFailure11">جلب قائمة الهاك حسب الطلب</string>
+  <string name="toast_nativeMainFailure12">فشل في تحميل الاضافات.</string>
+  <string name="toast_nativeMainFailure13">فشل النواه في الدمج مع الاضافات.</string>
+  <string name="toast_nativeMainFailureUnknown">مشكلة غير معروفه عند التشغيل</string>
+  <string name="toast_usingSlot">الان المدخل %1$d.</string>
+  <string name="toast_sdInaccessible">لا يمكن الوصول لذاكره (قم بفصل كيبل USB واعد المحاوله).</string>
+  <string name="toast_crashReportSent">ارسال التقرير.</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">استكمال</string>
+  <string name="actionResume_summary">اخطاء غير متوقعة عند استخدام الهاك</string>
+  <string name="actionRestart_title">اعادة التشغيل</string>
+  <string name="actionRestart_summary">مستحسن استخدام الهاك</string>
+  <string name="actionWiki_title">ويكيبيديا</string>
+  <string name="actionWiki_summary">الحصول على المساعدة لهذه الروم</string>
+  <string name="actionReloadAssets_title">اعادة تحميل مصادر التطبيق</string>
+  <string name="actionReloadAssets_summary">الاعدادات الخاصه لا توئثر على الروم او على حفظ او على البيانات الخاصه</string>
+  <string name="actionResetUserPrefs_title">الافتراضي</string>
+  <string name="actionResetUserPrefs_summary">الوضع الافتراضي للعدادات العامة</string>
+  <string name="actionResetUserPrefs_popupMessage">اعادة الاعدادات العامه للوضع الافتراضي؟</string>
+  <string name="actionResetGamePrefs_title">الافتراضي</string>
+  <string name="actionResetGamePrefs_summary">اعادة اعدادات الروم للوضع الافتراضي</string>
+  <string name="actionResetGamePrefs_popupMessage">اعادة جميع  اعدادات الروم الى الوضع الافتراضي؟<small>\n\n اي تعديل يدوي على الروم قد قمت به سيتم اعادة الكتابه عليه.</small></string>
+  <string name="actionCheatEditor_title">اعدادات كود الهاك</string>
+  <string name="actionCheatEditor_summary">اضافة,تعديل و الحذف على الهاك المعدل</string>
+  <string name="actionShare_title">المشاركة</string>
+  <!--Preference Screens-->
+  <string name="screenInput_title">الادخال</string>
+  <string name="screenInput_summary">اعدادات التحكم</string>
+  <string name="screenTouchscreen_title">شاشة المس</string>
+  <string name="screenTouchscreen_summary">اعدادات الازرار على الشاشه</string>
+  <string name="screenTouchpad_title">المس</string>
+  <string name="screenTouchpad_summary">اعدادات جهاز ال Xperia</string>
+  <string name="screenDisplay_title">الشاشه</string>
+  <string name="screenDisplay_summary">اعدادات التصميم</string>
+  <string name="screenVideo_title">الفيديو</string>
+  <string name="screenVideo_summary">اعدادات الفيديو</string>
+  <string name="screenAdvanced_title">خيارات متطوره</string>
+  <string name="screenAdvanced_summary">النواه,والتخزين,واعدادات المنقح</string>
+  <string name="screenGlobalSettings_title">الاعدادات العامه</string>
+  <string name="screenGlobalSettings_summary">الشاشه,الصوت,التخزين,و اعدادات المنقح</string>
+  <string name="screenCheats_title">الهاك</string>
+  <string name="screenCheats_summaryEnabled">تفعيل</string>
+  <string name="screenCheats_summaryDisabled">الغاء التفعيل</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">خيارات الهاك(ظغطه مطولة للحصول على الارشادات)</string>
+  <string name="categoryHardware_title">الجهاز</string>
+  <string name="categoryOther_title">اخرى</string>
+  <string name="categoryTouchscreenBehavior_title">سلوك</string>
+  <string name="categoryTouchscreenAppearance_title">المظهر</string>
+  <string name="categoryGln64_title">اعدادات Gln64</string>
+  <string name="categoryRice_title">اعدادات Rice</string>
+  <string name="categoryGlide64_title">اعدادات Glide64</string>
+  <string name="categoryCore_title">النواه</string>
+  <string name="categoryAudio_title">الصوت</string>
+  <string name="categoryData_title">البيانات</string>
+  <string name="categoryGameSettings_title">اعدادات خاصه لروم</string>
+  <string name="categoryGameSettings_titleNamed">اعدادات %1$s</string>
+  <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">تفعيل الهاك</string>
+  <string name="playShowCheats_summary">القائمة ستكون بطيئة التحميل عند التفغيل</string>
+  <string name="touchscreenFeedback_title">التحريك عند المس</string>
+  <string name="touchscreenFeedback_summary">الارتجاج عند ظغط الازار</string>
+  <string name="touchpadEnabled_title">تفعيل خاصية المس</string>
+  <string name="inputVolumeMappable_title">استخدام ازرار الصوت في التحكم</string>
+  <string name="inputVolumeMappable_summary">تفعيل استخدام ازرار الصوت في التحكم</string>
+  <string name="inputShareController_title">مشاركة التحكم</string>
+  <string name="displayImmersiveMode_summary">اخفاء ازرار الملاحة و شريط الحاله بشكل كامل</string>
+  <string name="gln64Fog_title">موثرات Fog</string>
+  <string name="gln64Fog_summary">(بحاجة الى عمل)</string>
+  <string name="gln64Sai_title">2xSaI فلتر الفيديو</string>
+  <string name="gln64Sai_summary">التقليل من البكسل في الصور</string>
+  <string name="gln64ScreenClear_title">خيار اجباري لتنقية الشاشه</string>
+  <string name="gln64ScreenClear_summary">الغاء تفعيل السرعه (يمكن ان يسبب مشاكل في الفيديو)</string>
+  <string name="gln64AlphaTest_title">تجربة Alpha</string>
+  <string name="gln64AlphaTest_summary">الغاء تفعيل السرعه(يسبب مشاكل على الفيديو)</string>
+  <string name="gln64HackDepth_title">تعديل مقاسات العمق</string>
+  <string name="gln64HackDepth_summary">هاذا الخيار يمكن ان يصلح بعض مشاكل الفيديو في العبة</string>
+  <string name="riceAutoFrameskip_title">frameskip تلقائي</string>
+  <string name="riceAutoFrameskip_summary">تحسين سرعة العبة من خلال Frame</string>
+  <string name="riceFastTexture_title">تحميل الخامات بشكل سريع</string>
+  <string name="riceFastTexture_summary">اصلاح الاخطاء الحرجة</string>
+  <string name="riceForceTextureFilter_title">فلاتر الخامات</string>
+  <string name="riceForceTextureFilter_summary">اصلاح اخطاء الفيديو وجعلها اكثر تحديدا</string>
+  <string name="riceHiResTextures_title">استعامل الخامات القصوى</string>
+  <string name="riceHiResTextures_summary">استيراد مجموعه من خامات الفيديو</string>
+  <string name="riceFog_title">موثرات Fog</string>
+  <string name="riceFog_summary">روية موثرات Fog</string>
+  <string name="audioSynchronize_title">تزامن الصوت مع الصورة</string>
+  <string name="audioSynchronize_summary">خيار latency ,قدد يسبب مجموعة من المشاكل على بعض الالعاب والاجهزه</string>
+  <string name="audioSwapChannels_title">تبديل الصوت مع الصوره</string>
+  <string name="audioSwapChannels_summary">تبديل قنوات الصوت اليسرى مع اليمنى</string>
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">زر الظغه المطوله الاوتماتيكي</string>
+  <string name="touchscreenAutoHold_entryDisabled">الغاء التفعيل</string>
+  <string name="touchscreenAutoHold_entryLongPress"> الظعط بشكل مطول</string>
+  <string name="touchscreenStyle_title">اشكال الازرار</string>
+  <string name="touchscreenStyle_entryOutline">الحدود فارغه</string>
+  <string name="touchscreenStyle_entryShaded">الحدود ممتلئة</string>
+  <string name="touchpadLayout_title">تصميم شاشة المس</string>
+  <string name="touchpadLayout_entryDefault">التحكم من جهة اليسار: Analog ; التحكم من الجهة اليمنى: زر C</string>
+  <string name="touchpadLayout_entryReverse">التحكم من الجهة اليسر: زر C ; التحكم من الجهة اليمنى :Analog</string>
+  <string name="displayOrientation_title">انماط عرض الشاشة</string>
+  <string name="displayOrientation_entryLandscape">الشاشة بشكل عرضي </string>
+  <string name="displayOrientation_entryReverseLandscape">الشاشه بشكل عرضي مقلوب</string>
+  <string name="displayOrientation_entryPortrait">الشاشة بشكل طولي</string>
+  <string name="displayOrientation_entryReversePortrait">الشاشة بشكل طولي مقلوب</string>
+  <string name="displayPosition_title">موقع الشاشة بشكل عامودي</string>
+  <string name="displayPosition_entryBottom">اسفل</string>
+  <string name="displayPosition_entryMiddle">متوسط</string>
+  <string name="displayPosition_entryTop">الاعلى</string>
+  <string name="displayResolution_title">مقاسات Rendered</string>
+  <string name="displayResolution_entryNative">مقاسات الشاشه (الطبيعي)</string>
+  <string name="displayResolution_entry960x720">960 في 720</string>
+  <string name="displayResolution_entry800x600">800 في 600</string>
+  <string name="displayResolution_entry640x480">640 في 480</string>
+  <string name="displayResolution_entry480x360">480 في 360</string>
+  <string name="displayResolution_entry320x240">320 في 240</string>
+  <string name="displayResolution_entry160x120">160 في 120 (خيار سريع جدا)</string>
+  <string name="displayScaling_title">انماط عرض الفيديو</string>
+  <string name="videoPlugin_title">اضافات الفيديو</string>
+  <string name="videoPlugin_entryNone">ابدا (الغاء الفيديو)</string>
+  <string name="videoHardwareType_title">تقليل من الارتجاجات</string>
+  <string name="videoHardwareType_entryI">الاختيار I</string>
+  <string name="videoHardwareType_entryO1">الاختيار O-1</string>
+  <string name="videoHardwareType_entryO2">الاختيار O-2</string>
+  <string name="videoHardwareType_entryQ">الاختيار O</string>
+  <string name="videoHardwareType_entryT">الاختيار T</string>
+  <string name="videoHardwareType_entryCustom">الاختيار المعدل</string>
+  <string name="gln64Frameskip_entryUpTo1">ليش اكثر من Frame 1</string>
+  <string name="gln64Frameskip_entryUpTo2">ليس اكثر من Frame 2</string>
+  <string name="gln64Frameskip_entryUpTo3">ليس اكثر من Frame 3</string>
+  <string name="gln64Frameskip_entryUpTo4">ليس اكثر من Frame 4</string>
+  <string name="gln64Frameskip_entryUpTo5">ليس اكثر من Frame 5</string>
+  <string name="gln64Frameskip_entryExactly1">frame 1 تحديدا</string>
+  <string name="gln64Frameskip_entryExactly2">frame 2 تحديدا</string>
+  <string name="gln64Frameskip_entryExactly3">frame 3 تحديدا</string>
+  <string name="gln64Frameskip_entryExactly4">frame 4 تحديدا</string>
+  <string name="gln64Frameskip_entryExactly5">frame 5 تحديدا</string>
+  <string name="riceScreenUpdate_title">تحديث انماط الشاشة</string>
+  <string name="riceScreenUpdate_entryRomDefault">الروم الافتراضية</string>
+  <string name="riceScreenUpdate_entryCIChange">تعديل CI</string>
+  <string name="riceScreenUpdate_entryBeforeScreenClear">قبل تنقية الشاشة</string>
+  <string name="riceScreenUpdate_entryAfterScreenDrawn">بعد تنقية الشاشة</string>
+  <string name="riceTextureEnhancement_entryNone">غير ذلك</string>
+  <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="riceTextureEnhancement_entrySharpen">محدد</string>
+  <string name="navigationMode_entryStandard">الوضع الاعتيادي</string>
+  <string name="r4300Emulator_title">المحاكي R4300</string>
+  <string name="audioPlugin_title">اضافات الصوت</string>
+  <string name="audioPlugin_entryNone">بدون (الغاء الصوت)</string>
+  <string name="audioBufferSize_entry2048">الافتراضي</string>
+  <string name="localeOverride_entrySystemDefault">اعدادات النظام الافتراضية</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <string name="pathHiResTextures_default">~</string>
+  <string name="pathGameSaves_title">مجلد الحفظ</string>
+  <!--Player Map Preferences-->
+  <!--Profile Preferences-->
+  <string name="emulationProfile_title">خيارات المحاكي</string>
+  <string name="touchscreenProfile_title">خيارات شاشة المس</string>
+  <string name="controllerProfile_title">خيارات التحكم</string>
+  <string name="controllerProfile1_title">خيارات التحكم 1</string>
+  <string name="controllerProfile2_title">خيارات التحكم 2</string>
+  <string name="controllerProfile3_title">خيارات التحكم 3</string>
+  <string name="controllerProfile4_title">خيارات التحكم 4</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">التاكيد</string>
+  <string name="confirmResetGame_message">اعدة التشغيل؟ جميع مناطق الحفظ سوف تحذف.</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">التحديثات</string>
+  <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">تحذير</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">اسم الملف</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">تهية...</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">هاك %1$d</string>
+  <string name="cheats_longPress">(ظفطة مطول لمشاهدة النص كامل)</string>
+  <string name="cheat_disabled">(الغاء التفعيل)</string>
+  <string name="cheatOption_title">النص كامل</string>
+  <string name="cheatNotes_title">ملاحظات</string>
+  <string name="cheatNotes_none">(لا يوجد ملاحظات على هاذا الهاك)</string>
+  <!--Cheat Editor-->
+  <string name="menuItem_cheatEditor">محرر الهاك</string>
+  <string name="cheatEditor_empty">هاك فارغ</string>
+  <string name="cheatEditor_edit">تعديل الهاك</string>
+  <string name="cheatEditor_edit_desc">ظغطه مطوله لتعديل الهاك</string>
+  <string name="cheatEditor_help">مساعدة</string>
+  <string name="cheatEditor_readme1">اهلا بك في Mupen64plus AE محرر الهاك</string>
+  <string name="cheatEditor_readme2">يرجى الالتزام بالإرشادات التالية عند تعديل الهاك:</string>
+  <string name="cheatEditor_config">اعدادات الهاك</string>
+  <string name="cheatEditor_config_desc">تعديل اعدادات الهاك</string>
+  <string name="cheatEditor_title">عنوان الهاك</string>
+  <string name="cheatEditor_title_desc">تحرير اسم الهاك</string>
+  <string name="cheatEditor_notes">نص الهاك</string>
+  <string name="cheatEditor_notes_desc">تحرير نص الهاك</string>
+  <string name="cheatEditor_code">كود الهاك</string>
+  <string name="cheatEditor_code_desc">تحرير كود الهاك</string>
+  <string name="cheatEditor_badCode">كود (سيء),اعادة...</string>
+  <string name="cheatEditor_option">خيارات الهاك</string>
+  <string name="cheatEditor_option_desc">تحرير خيارات الهاك</string>
+  <string name="cheatEditor_badOption">اختيار (سيء),اعاده...</string>
+  <string name="cheatEditor_delete">حذف الهاك</string>
+  <string name="cheatEditor_confirm">هل انت متاكد؟</string>
+  <string name="cheatEditor_info">معلومات عن الهاك</string>
+  <string name="cheatEditor_title2">العنوان:</string>
+  <string name="cheatEditor_notes2">ملاحظات:</string>
+  <string name="cheatEditor_code2">الكود(المصدري):</string>
+  <string name="cheatEditor_option2">الخيارات(هاك):</string>
+  <string name="cheatEditor_saveConfirm">حفظ الهاك الى ملف؟</string>
+  <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">فك الظغط عن الخامات</string>
+  <!--ROM Scanning-->
+  <string name="scanning_title">جاري البحث...</string>
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">المجلد الاول</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithoutName">الجهاز %1$d</string>
+  <string name="playerMapPreference_popupTitle">الاعب %1$d</string>
+  <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_remove">حذف</string>
+  <!--Controller button names-->
+  <string name="controller_analogR">زر →</string>
+  <string name="controller_analogL">زر ←</string>
+  <string name="controller_analogD">زر ↓</string>
+  <string name="controller_analogU">زر ↑</string>
+  <string name="controller_groupAB">زر A/B</string>
+  <string name="controller_buttonA">زر A</string>
+  <string name="controller_buttonB">زر B</string>
+  <string name="controller_groupC">زر C</string>
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonL">زر L</string>
+  <string name="controller_buttonR">زر R</string>
+  <string name="controller_buttonZ">زر Z</string>
+  <string name="controller_buttonS">زر البدء</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_btnA">ِِA</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnAR">زر →</string>
+  <string name="inputMapActivity_btnAL">زر ←</string>
+  <string name="inputMapActivity_btnAD">زر ↓</string>
+  <string name="inputMapActivity_btnAU">زر ↑</string>
+  <string name="inputMapActivity_reset">اعادة التشغيل</string>
+  <string name="inputMapActivity_pause">ايقاف مؤقت</string>
+  <string name="inputMapActivity_stop">ْايقاف</string>
+  <string name="inputMapActivity_speedDown">انزال السرعة</string>
+  <string name="inputMapActivity_speedUp">زيادة السرعه</string>
+  <string name="inputMapActivity_simulateMenu">أزرار القائمة</string>
+  <string name="inputMapActivity_screenshot">التقاط صورة</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">اظغط على اي زر...</string>
+</resources>

@@ -62,6 +62,8 @@
   <string name="menuItem_new">Novo</string>
   <string name="menuItem_hideBuiltins">Agochar internos</string>
   <string name="menuItem_showBuiltins">Amosar internos</string>
+  <string name="popup_titleBuiltin">%1$s (interno)</string>
+  <string name="popup_titleCustom">%1$s</string>
   <string name="profile_name_cannot_be_empty">O nome non pode estar baleiro</string>
   <string name="profile_name_cannot_contain_brackets">O nome non pode ter parenteses</string>
   <string name="profile_name_must_be_unique">O nome non pode estar en uso</string>
@@ -107,8 +109,6 @@
   <string name="actionRestart_summary">Recomendado cos trucos en uso</string>
   <string name="actionReloadAssets_title">Recargar recursos da aplicación</string>
   <string name="actionReloadAssets_summary">NON afecta aos axustes, ROMs, partidas gardadas ou outros datos propios</string>
-  <string name="actionCrashTest_title">Proba</string>
-  <string name="actionCrashTest_summary">Enviar informe da configuración aos desenvolvedores</string>
   <string name="actionCheatEditor_title">Xestionar códigos de trucos</string>
   <string name="actionCheatEditor_summary">Engadir, modificar e eliminar trucos propios</string>
   <string name="actionShare_title">Compartir</string>
@@ -142,7 +142,6 @@
   <string name="categoryCore_title">Núcleo</string>
   <string name="categoryAudio_title">Son</string>
   <string name="categoryData_title">Datos</string>
-  <string name="categoryCrashReports_title">Informes de erros</string>
   <string name="categoryGameSettings_title">Axustes específicos do xogo</string>
   <string name="categoryGameSettings_titleNamed">Axustes de %1$s</string>
   <!--Checkbox Preferences-->
@@ -182,10 +181,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Desactivado</string>
   <string name="touchscreenAutoHold_entryLongPress">Ao manter apertado</string>
   <string name="touchscreenAutoHold_entrySlideOut">Ao deslizar</string>
-  <string name="touchscreenRefresh_title">Animación do joystick</string>
-  <string name="touchscreenRefresh_entryNever">Nunca</string>
-  <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
-  <string name="touchscreenRefresh_entryFrequently">Habitualmente</string>
   <string name="touchscreenStyle_title">Estilo de botón</string>
   <string name="touchscreenStyle_entryOutline">Contornos</string>
   <string name="touchscreenStyle_entryShaded">Ensombrecido</string>
@@ -210,10 +205,6 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (maior taxa de cadros)</string>
   <string name="displayScaling_title">Escalado de pantalla</string>
-  <string name="displayFpsRefresh_title">Amosar taxa de cadros</string>
-  <string name="displayFpsRefresh_entryNever">Nunca</string>
-  <string name="displayFpsRefresh_entryOccasionally">Ocasionalmente</string>
-  <string name="displayFpsRefresh_entryFrequently">Habitualmente</string>
   <string name="videoPlugin_title">Complemento de vídeo</string>
   <string name="videoPlugin_entryNone">Nada (vídeo desactivado)</string>
   <string name="videoHardwareType_title">Redución de escintileo</string>
@@ -275,11 +266,6 @@
   <string name="audioBufferSize_entry128">Latencia baixa (experimental)</string>
   <string name="audioBufferSize_entry8">Latencia ultra-baixa (experimental)</string>
   <string name="localeOverride_entrySystemDefault">Predefinido do sistema</string>
-  <!--ACRA Preferences (key names must not be changed)-->
-  <string name="acraEnable_title">Habilitar informe de erros</string>
-  <string name="acraEnable_summary">Non se recolle información persoal</string>
-  <string name="acraUserEmail_title">Info. de contacto</string>
-  <string name="acraUserEmail_summary">Usuario en paulscode.com (opcional)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparencia da pantalla táctil</string>
   <string name="touchscreenScale_title">Escala de botón</string>
@@ -369,6 +355,7 @@
   <string name="pathHiResTexturesTask_title">Desempaquetando texturas</string>
   <string name="pathHiResTexturesTask_message">Teña paciencia. Este proceso pode levar un tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema desempaquetando texturas!</string>
+  <!--ROM Scanning-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -381,6 +368,18 @@
   <string name="playerMapPreference_reminder">Lembrarme cando os xogadores non foron asignados</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
+  <string name="controller_analogR">Analóxico →</string>
+  <string name="controller_analogL">Analóxico ←</string>
+  <string name="controller_analogD">Analóxico ↓</string>
+  <string name="controller_analogU">Analóxico ↑</string>
+  <string name="controller_dpadR">Pad-D →</string>
+  <string name="controller_dpadL">Pad-D ←</string>
+  <string name="controller_dpadD">Pad-D ↓</string>
+  <string name="controller_dpadU">Pad-D ↑</string>
+  <string name="controller_buttonCr">Pad-C →</string>
+  <string name="controller_buttonCl">Pad-C ←</string>
+  <string name="controller_buttonCd">Pad-C ↓</string>
+  <string name="controller_buttonCu">Pad-C ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Desasignar</string>
   <string name="inputMapActivity_aPadXperiaPlay">Stick analóxico controlado por touchpad</string>

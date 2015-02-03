@@ -89,8 +89,6 @@ Controller Paks</string>
   <string name="actionRestart_summary">Recomanat si els cheats són utilitzats</string>
   <string name="actionReloadAssets_title">Recarrega els recursos de l\'aplicació</string>
   <string name="actionReloadAssets_summary">NO afecta la configuració de l\'usuari, ROM, partides i altres dades personalitzades</string>
-  <string name="actionCrashTest_title">Test</string>
-  <string name="actionCrashTest_summary">Envia un informe de configuració als programadors</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Entrada</string>
   <string name="screenInput_summary">Configuració del comandament</string>
@@ -115,7 +113,6 @@ Funcionament</string>
   <string name="categoryGlide64_title">Configuració de Glide64</string>
   <string name="categoryAudio_title">Àudio</string>
   <string name="categoryData_title">Dades</string>
-  <string name="categoryCrashReports_title">Informes d\'error</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">	
 Habilita cheats</string>
@@ -154,10 +151,6 @@ Habilita cheats</string>
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitat</string>
   <string name="touchscreenAutoHold_entryLongPress">En lliscar</string>
   <string name="touchscreenAutoHold_entrySlideOut">En lliscar</string>
-  <string name="touchscreenRefresh_title">Animació del joystick </string>
-  <string name="touchscreenRefresh_entryNever">Mai</string>
-  <string name="touchscreenRefresh_entryOccasionally">Ocasionalment</string>
-  <string name="touchscreenRefresh_entryFrequently">Freqüentment</string>
   <string name="touchscreenStyle_title">Estil del botó</string>
   <string name="touchscreenStyle_entryOutline">Borejat</string>
   <string name="touchscreenStyle_entryShaded">Ombrejat</string>
@@ -182,10 +175,6 @@ Habilita cheats</string>
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (framerate més alt)</string>
   <string name="displayScaling_title">Escalat de pantalla</string>
-  <string name="displayFpsRefresh_title">Mostra velocitat de quadres (framerate)</string>
-  <string name="displayFpsRefresh_entryNever">Mai</string>
-  <string name="displayFpsRefresh_entryOccasionally">Ocasionalment</string>
-  <string name="displayFpsRefresh_entryFrequently">Freqüentment</string>
   <string name="videoPlugin_entryNone">Cap (vídeo deshabilitat)</string>
   <string name="videoHardwareType_title">Reducció del parpelleig</string>
   <string name="videoHardwareType_entryAuto">Auto-detecta des del model de mòbil/tablet</string>
@@ -243,11 +232,6 @@ Perfil T</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="audioBufferSize_entry2048">Per defecte</string>
   <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
-  <!--ACRA Preferences (key names must not be changed)-->
-  <string name="acraEnable_title">Habilita l\'enviament d\'informes d\'errades</string>
-  <string name="acraEnable_summary">Cap tipus d\'informació personal es recollida</string>
-  <string name="acraUserEmail_title">Informació de contacte</string>
-  <string name="acraUserEmail_summary">El teu nom d\'usuari de paulscode.com (opcional)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Opacitat de la pantalla tàctil</string>
   <string name="touchscreenScale_title">Escala del botó</string>
@@ -299,6 +283,7 @@ Perfil T</string>
   <string name="pathHiResTexturesTask_title">Extraient textures</string>
   <string name="pathHiResTexturesTask_message">Si us plau, sigues pacient. Aquest proces pot tardar una mica.</string>
   <string name="pathHiResTexturesTask_errorMessage">Error extraient les textures!</string>
+  <!--ROM Scanning-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -312,6 +297,18 @@ Dessasignar</string>
   <string name="playerMapPreference_reminder">Avisam quan els jugadors no estan assignats</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
+  <string name="controller_analogR">Analog →</string>
+  <string name="controller_analogL">Analog ←</string>
+  <string name="controller_analogD">Analog ↓</string>
+  <string name="controller_analogU">Analog ↑</string>
+  <string name="controller_dpadR">D-pad →</string>
+  <string name="controller_dpadL">D-pad ←</string>
+  <string name="controller_dpadD">D-pad ↓</string>
+  <string name="controller_dpadU">D-pad ↑</string>
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonCl">C-pad ←</string>
+  <string name="controller_buttonCd">C-pad ↓</string>
+  <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Dessasignar</string>
   <string name="inputMapActivity_aPadXperiaPlay">Estic analògic controlat amb touchpad</string>

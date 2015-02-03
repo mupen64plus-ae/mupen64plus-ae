@@ -62,6 +62,8 @@
   <string name="menuItem_new">Nieuw</string>
   <string name="menuItem_hideBuiltins">Verberg ingebouwde functies</string>
   <string name="menuItem_showBuiltins">Toon ingebouwde functies</string>
+  <string name="popup_titleBuiltin">%1$s (ingebouwd)</string>
+  <string name="popup_titleCustom">%1$s</string>
   <string name="profile_name_cannot_be_empty">Naam kan niet leeg zijn</string>
   <string name="profile_name_cannot_contain_brackets">Naam mag geen haakjes bevatten</string>
   <string name="profile_name_must_be_unique">Naam moet uniek zijn</string>
@@ -107,8 +109,6 @@
   <string name="actionRestart_summary">Aanbevolen als cheats worden gebruikt</string>
   <string name="actionReloadAssets_title">Applicatiebronnen herladen</string>
   <string name="actionReloadAssets_summary">Heeft geen invloed op gebruikersinstellingen, ROM\'s, opgeslagen spellen, of andere eigen gegevens</string>
-  <string name="actionCrashTest_title">Test</string>
-  <string name="actionCrashTest_summary">Stuur een configuratierapport naar de ontwikkelaars</string>
   <string name="actionCheatEditor_title">Beheer cheat codes</string>
   <string name="actionCheatEditor_summary">Voeg toe, verander en verwijder cheat codes</string>
   <string name="actionShare_title">Deel</string>
@@ -142,7 +142,6 @@
   <string name="categoryCore_title">Kern</string>
   <string name="categoryAudio_title">Geluid</string>
   <string name="categoryData_title">Gegevens</string>
-  <string name="categoryCrashReports_title">Crash rapporten</string>
   <string name="categoryGameSettings_title">Spelspecifieke instellingen</string>
   <string name="categoryGameSettings_titleNamed">%1$s instellingen</string>
   <!--Checkbox Preferences-->
@@ -182,10 +181,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Uitgeschakeld</string>
   <string name="touchscreenAutoHold_entryLongPress">Bij lang indrukken</string>
   <string name="touchscreenAutoHold_entrySlideOut">Bij afglijden</string>
-  <string name="touchscreenRefresh_title">Joystickanimatie</string>
-  <string name="touchscreenRefresh_entryNever">Nooit</string>
-  <string name="touchscreenRefresh_entryOccasionally">Soms</string>
-  <string name="touchscreenRefresh_entryFrequently">Vaak</string>
   <string name="touchscreenStyle_title">Knopstijl</string>
   <string name="touchscreenStyle_entryOutline">Omtrekken</string>
   <string name="touchscreenStyle_entryShaded">Gearceerd</string>
@@ -210,10 +205,6 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (hoogste beeldfrequentie)</string>
   <string name="displayScaling_title">Schermschaling</string>
-  <string name="displayFpsRefresh_title">Framesnelheid weergeven</string>
-  <string name="displayFpsRefresh_entryNever">Nooit</string>
-  <string name="displayFpsRefresh_entryOccasionally">Soms</string>
-  <string name="displayFpsRefresh_entryFrequently">Vaak</string>
   <string name="videoPlugin_title">Videoplugin</string>
   <string name="videoPlugin_entryNone">Geen (video uitgeschakeld)</string>
   <string name="videoHardwareType_title">Knipperonderdrukking</string>
@@ -275,11 +266,6 @@
   <string name="audioBufferSize_entry128">Lage latency (experimenteel)</string>
   <string name="audioBufferSize_entry8">Ultralage latency (experimenteel)</string>
   <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
-  <!--ACRA Preferences (key names must not be changed)-->
-  <string name="acraEnable_title">Crashrapportage inschakelen</string>
-  <string name="acraEnable_summary">Er wordt geen persoonlijke informatie verzameld</string>
-  <string name="acraUserEmail_title">Contactinformatie</string>
-  <string name="acraUserEmail_summary">Uw paulscode.com gebruikersnaam (optioneel)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knoptransparantie</string>
   <string name="touchscreenScale_title">Knopschaal</string>
@@ -369,6 +355,7 @@
   <string name="pathHiResTexturesTask_title">Texturen uitpakken</string>
   <string name="pathHiResTexturesTask_message">Wees geduldig. Dit proces kan enige tijd duren.</string>
   <string name="pathHiResTexturesTask_errorMessage">Probleem met het uitpakken van texturen!</string>
+  <!--ROM Scanning-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -381,6 +368,18 @@
   <string name="playerMapPreference_reminder">Herinner mij als spelers niet zijn toegewezen</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
+  <string name="controller_analogR">Analoog →</string>
+  <string name="controller_analogL">Analoog ←</string>
+  <string name="controller_analogD">Analoog ↓</string>
+  <string name="controller_analogU">Analoog ↑</string>
+  <string name="controller_dpadR">D-pad →</string>
+  <string name="controller_dpadL">D-pad ←</string>
+  <string name="controller_dpadD">D-pad ↓</string>
+  <string name="controller_dpadU">D-pad ↑</string>
+  <string name="controller_buttonCr">C-knop →</string>
+  <string name="controller_buttonCl">C-knop ←</string>
+  <string name="controller_buttonCd">C-knop ↓</string>
+  <string name="controller_buttonCu">C-knop ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Toewijzing ongedaan maken</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analoge stick bestuurd met touchpad</string>

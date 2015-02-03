@@ -10,7 +10,10 @@
   <string name="menuItem_setSlot">Paikka %1$d</string>
   <string name="menuItem_fileSave">Tallenna tiedostoon...</string>
   <string name="menuItem_fileLoad">Lataa tiedostosta...</string>
+  <string name="menuItem_screenshot">Kuvankaappaus</string>
   <string name="menuItem_setSpeed">Pelin nopeus</string>
+  <string name="menuItem_enableFramelimiter">Synkronoi audio</string>
+  <string name="menuItem_disableFramelimiter">Desynkronoi audio</string>
   <string name="menuItem_paks">Ohjain Pak:it</string>
   <!--capitalize since trademark-->
   <string name="menuItem_pak1_empty">Pelaaja 1: Tyhjä</string>
@@ -41,6 +44,7 @@
   <string name="menuItem_unmapAll">Posta kaikki asettamiset</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Pelaa</string>
+  <string name="menuItem_refreshRoms">Päivitä ROM:it</string>
   <string name="menuItem_settings">Asetukset</string>
   <string name="menuItem_globalSettings">Globaalit asetukset</string>
   <string name="menuItem_emulationProfiles">Emulaatioprofiilit</string>
@@ -56,18 +60,25 @@
   <string name="menuItem_credits">Tekijät</string>
   <string name="menuItem_appVersion">App versio</string>
   <string name="menuItem_changelog">Muutosloki</string>
+  <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Laitetiedot</string>
   <string name="menuItem_localeOverride">Kieli</string>
   <!--ManageProfilesActivity-->
   <string name="menuItem_new">Uusi</string>
   <string name="menuItem_hideBuiltins">Piilota sisäänrakennetut</string>
   <string name="menuItem_showBuiltins">Näytä sisäänrakennetut</string>
+  <string name="popup_titleBuiltin">%1$s (sisäänrakennettu)</string>
+  <string name="popup_titleCustom">%1$s</string>
   <string name="profile_name_cannot_be_empty">Nimi ei voi olla tyhjä</string>
   <string name="profile_name_cannot_contain_brackets">Nimi ei voi sisältää sulkumerkkejä</string>
   <string name="profile_name_must_be_unique">Nimen pitää olla uniikki</string>
   <string name="profile_manage_profiles">Hallinnoi profiileja</string>
   <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus:aa kehittävät ja ylläpitävät vapaaehtoiset.<small>\n\nKorjataksesi graafisia virheitä, yritä <i>videoliitännäisen</i> vaihtamista.\n\nKorjataksesi lagia, yritä <i>video ruudun ohitus</i> asetuksen tai <i>video liitännäisen</i> vaihtamista.\n\nPelaamattomille ROM:eille, try yritä ensin ROM:in zip purkamista tai eri ROM version kokeilemista.\n\nKosketusnäytön ohjausongelmiin, yritä <i>painikeskaalan</i> tai <i>painikeasettelun</i> vaihtamista.\n\nMuihin ongelmiin, tai jos olet edelleen jumissa, ole hyvä ja klikkaa <i>UKK</i> painiketta alla. Ei pelikeskeisille bugeille, klikkaa <i>Raportoi bugi</i> painiketta alla. Vastaamme suureen osaan viesteistä 24 tunnin kuluessa. Rehellisesti.\n\n</small>Kiitos auttaessasi meitä app:in parantamisessa!</string>
+  <string name="popup_version">Versio: %1$s\nVersiokoodi: %2$d</string>
   <!--Lists-->
+  <string name="listItem_setDefault">Aseta oletus</string>
+  <string name="listItem_unsetDefault">Poista oletus</string>
   <string name="listItem_edit">Muokkaa</string>
   <string name="listItem_rename">Uudelleennimeä</string>
   <string name="listItem_copy">Kopioi</string>
@@ -91,7 +102,24 @@
   <string name="toast_savingFile">Tallennetaan %1$s...</string>
   <string name="toast_overwritingFile">Ylikirjoittaa %1$s…</string>
   <string name="toast_loadingGameInfo">Ladataan pelitietoja…</string>
+  <string name="toast_savingScreenshot">Tallennetaan kuvankaappausta...</string>
+  <string name="toast_canceling">Peruutetaan...</string>
+  <string name="toast_pleaseWait">Odota...</string>
   <!--Something happened (use '.')-->
+  <string name="toast_nativeMainFailure01">Alustavien komentoriviparametrien jäsennys epäonnistui.</string>
+  <string name="toast_nativeMainFailure02">Liitos ydinkirjastoon epäonnistui.</string>
+  <string name="toast_nativeMainFailure03">Ydinkirjaston käynnistys epäonnistui.</string>
+  <string name="toast_nativeMainFailure04">Konfiguraatio kahvojen avaaminen epäonnistui.</string>
+  <string name="toast_nativeMainFailure05">Viimeisien komentoriviparametrien jäsennys epäonnistui.</string>
+  <string name="toast_nativeMainFailure06">Ei voi käyttää --core-compare ominaisuutta tämän Mupen64Plus ydinkirjaston kanssa.</string>
+  <string name="toast_nativeMainFailure07">ROM kuvatiedoston avaaminen lukemiseen epäonnistui.</string>
+  <string name="toast_nativeMainFailure08">Puskurin varaaminen ROM kuvatiedostolle epäonnistui.</string>
+  <string name="toast_nativeMainFailure09">Tavujen luku ROM kuvatiedostosta epäonnistui.</string>
+  <string name="toast_nativeMainFailure10">Ydin epäonnistui ROM kuvatiedoston avaamisessa.</string>
+  <string name="toast_nativeMainFailure11">Huijaukset listattu kuten pyydetty.</string>
+  <string name="toast_nativeMainFailure12">Liitännäisten lataaminen epäonnistui.</string>
+  <string name="toast_nativeMainFailure13">Ydin epäonnistui liitännäiseen kiinnityksessä.</string>
+  <string name="toast_nativeMainFailureUnknown">Tuntematon käynnistysvirhe.</string>
   <string name="toast_usingSlot">Nyt käytössä paikka %1$d.</string>
   <string name="toast_sdInaccessible">SD-kortti ei käytettävissä (irroita USB-kaapeli ja yritä uudelleen).</string>
   <string name="toast_crashReportSent">Raportti lähetetty.</string>
@@ -105,10 +133,16 @@
   <string name="actionResume_summary">Arvaamaton jos huijaukset ovat käytössä</string>
   <string name="actionRestart_title">Uudelleenkäynnistä</string>
   <string name="actionRestart_summary">Suositeltu jos huijaukset ovat käytössä</string>
+  <string name="actionWiki_title">Wiki</string>
+  <string name="actionWiki_summary">Yhteisöapu tälle pelille.</string>
   <string name="actionReloadAssets_title">Uudelleenlataa app resurssit</string>
   <string name="actionReloadAssets_summary">EI vaikuta käyttäjäasetuksiin, ROM:eihin, pelitallennuksiin, tai muuhun kustom dataan</string>
-  <string name="actionCrashTest_title">Testi</string>
-  <string name="actionCrashTest_summary">Lähetä asetusraportti kehittäjille</string>
+  <string name="actionResetUserPrefs_title">Oletukset</string>
+  <string name="actionResetUserPrefs_summary">Palauta globaalit oletusasetukset</string>
+  <string name="actionResetUserPrefs_popupMessage">Nollaa kaikki globaalit asetukset niiden oletuksiin?</string>
+  <string name="actionResetGamePrefs_title">Oletukset</string>
+  <string name="actionResetGamePrefs_summary">Palauta pelin oletusasetukset</string>
+  <string name="actionResetGamePrefs_popupMessage">Nollaa kaikki peliominaisuudet niiden oletuksiksi?<small>\n\nMitkä tahansa manuaaliset muutokset jotka olet saattanut tehdä asetustiedostoon ylikirjoitetaan.</small></string>
   <string name="actionCheatEditor_title">Hallinnoi huijauskoodeja</string>
   <string name="actionCheatEditor_summary">Lisää, muokkaa ja poista kustom huijauksia</string>
   <string name="actionShare_title">Jaa</string>
@@ -142,7 +176,6 @@
   <string name="categoryCore_title">Ydin</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Data</string>
-  <string name="categoryCrashReports_title">Kaatumisraportit</string>
   <string name="categoryGameSettings_title">Pelikohtaiset asetukset</string>
   <string name="categoryGameSettings_titleNamed">%1$s asetukset</string>
   <!--Checkbox Preferences-->
@@ -165,6 +198,8 @@
   <string name="gln64ScreenClear_summary">Poista nopeuttaaksesi (voi aiheuttaa videohäiriöitä)</string>
   <string name="gln64AlphaTest_title">Alphatesti</string>
   <string name="gln64AlphaTest_summary">Poista nopeuttaaksesi (aiheuttaa mustia tekstuureja)</string>
+  <string name="gln64HackDepth_title">Hack syvyyskoordinaatit</string>
+  <string name="gln64HackDepth_summary">Saattaa korjata välkkyvät tekstuurit joissain peleissä.</string>
   <string name="riceAutoFrameskip_title">Auto ruudun ohitus</string>
   <string name="riceAutoFrameskip_summary">Parantaa pelin nopeutta ruudunpäivityksen kustannuksella</string>
   <string name="riceFastTexture_title">Nopea tekstuurien lataus</string>
@@ -175,6 +210,8 @@
   <string name="riceHiResTextures_summary">Käytä tuotuja tekstuuripaketteja</string>
   <string name="riceFog_title">Sumu</string>
   <string name="riceFog_summary">Näytä sumuefektit</string>
+  <string name="audioSynchronize_title">Synkronoi audio ja video</string>
+  <string name="audioSynchronize_summary">Minimoi viiveen, mutta voi aiheuttaa rätinointiä joissain peleissä/laitteissa</string>
   <string name="audioSwapChannels_title">Vaihda audiokanavat</string>
   <string name="audioSwapChannels_summary">Vaihda vasen ja oikea audiokanava keskenään</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -182,10 +219,8 @@
   <string name="touchscreenAutoHold_entryDisabled">Pois käytöstä</string>
   <string name="touchscreenAutoHold_entryLongPress">Pitkään painettaessa</string>
   <string name="touchscreenAutoHold_entrySlideOut">Pois pyyhkäisyssä</string>
-  <string name="touchscreenRefresh_title">Joystick animaatio</string>
-  <string name="touchscreenRefresh_entryNever">Ei koskaan</string>
-  <string name="touchscreenRefresh_entryOccasionally">Satunnaisesti</string>
-  <string name="touchscreenRefresh_entryFrequently">Usein</string>
+  <string name="touchscreenAnimation_title">Visuaalinen palaute</string>
+  <string name="touchscreenAnimation_summary">Animoi joystick</string>
   <string name="touchscreenStyle_title">Painiketyyli</string>
   <string name="touchscreenStyle_entryOutline">Ulkolinjat</string>
   <string name="touchscreenStyle_entryShaded">Varjostettu</string>
@@ -210,13 +245,19 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (korkein ruudunpäivitys)</string>
   <string name="displayScaling_title">Näytön skaalaus</string>
-  <string name="displayFpsRefresh_title">Näytä ruudunpäivitysnopeus</string>
-  <string name="displayFpsRefresh_entryNever">Ei koskaan</string>
-  <string name="displayFpsRefresh_entryOccasionally">Satunnaisesti</string>
-  <string name="displayFpsRefresh_entryFrequently">Usein</string>
-  <string name="videoPlugin_title">Videoliittännäinen</string>
+  <string name="displayScaling_entryNone">Ei mitään\n<small>Käytä tarkkaa yllä valittua resoluutiota</small></string>
+  <string name="displayScaling_entryZoom">Zoomaa\n<small>Täyttää ruudun, ei vääristymistä (lisää mustat palkit)</small></string>
+  <string name="displayScaling_entryCrop">Rajaa\n<small>Täyttää ruudun, ei vääristymistä (leikkaa pois grafiikkaa)</small></string>
+  <string name="displayScaling_entryStretch">Venytä\n<small>Täyttää ruudun, ei mustia palkkeja (lisää vääristymisen)</small></string>
+  <string name="displayFps_title">Ruudunpäivitysnopeus</string>
+  <string name="displayFps_summary">Näytä FPS ruudulla</string>
+  <string name="videoPlugin_title">Videoliitännäinen</string>
   <string name="videoPlugin_entryNone">Ei mitään (video pois käytöstä)</string>
-  <string name="videoHardwareType_title">Välkkymisen vähennys</string>
+  <string name="videoPlugin_entryGln64">gln64\n<small>(adaptoitu GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryRice">rice\n<small>(adaptoitu Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptoitu Glide64 Final (10th Anniversary))</small></string>
+  <string name="videoHardwareType_title">Välkynnänvähennys</string>
+  <string name="videoHardwareType_entryDisableHack">Poista käytöstä välkynnänvähennys hack</string>
   <string name="videoHardwareType_entryAuto">Autotunnista puhelin/tablet mallista</string>
   <string name="videoHardwareType_entryStandard">Vakio profiili</string>
   <string name="videoHardwareType_entryI">I profiili</string>
@@ -226,7 +267,7 @@
   <string name="videoHardwareType_entryT">T profiili</string>
   <string name="videoHardwareType_entryCustom">Kustom profiili</string>
   <string name="videoPolygonOffset_title">Polygon sivusiirtymä</string>
-  <string name="videoPolygonOffset_summary">Kustom välkynnän vähennys taipumus</string>
+  <string name="videoPolygonOffset_summary">Kustom välkynnänvähennys taipumus</string>
   <string name="gln64Frameskip_title">Ruudun ohitus</string>
   <string name="gln64Frameskip_entryNever">Älä koskaan ohita ruutuja</string>
   <string name="gln64Frameskip_entryUpTo1">Ei enempää kuin 1 ruutu</string>
@@ -234,11 +275,11 @@
   <string name="gln64Frameskip_entryUpTo3">Ei enempää kuin 3 ruutua</string>
   <string name="gln64Frameskip_entryUpTo4">Ei enempää kuin 4 ruutua</string>
   <string name="gln64Frameskip_entryUpTo5">Ei enempää kuin 5 ruutua</string>
-  <string name="gln64Frameskip_entryExactly1">Tarkalleen 1 ruutu</string>
-  <string name="gln64Frameskip_entryExactly2">Tarkalleen 2 ruutua</string>
-  <string name="gln64Frameskip_entryExactly3">Tarkalleen 3 ruutua</string>
-  <string name="gln64Frameskip_entryExactly4">Tarkalleen 4 ruutua</string>
-  <string name="gln64Frameskip_entryExactly5">Tarkalleen 5 ruutua</string>
+  <string name="gln64Frameskip_entryExactly1">Täsmälleen 1 ruutu</string>
+  <string name="gln64Frameskip_entryExactly2">Täsmälleen 2 ruutua</string>
+  <string name="gln64Frameskip_entryExactly3">Täsmälleen 3 ruutua</string>
+  <string name="gln64Frameskip_entryExactly4">Täsmälleen 4 ruutua</string>
+  <string name="gln64Frameskip_entryExactly5">Täsmälleen 5 ruutua</string>
   <string name="riceScreenUpdate_title">Ruudunpäivitysmetodi</string>
   <string name="riceScreenUpdate_entryRomDefault">ROM oletus</string>
   <string name="riceScreenUpdate_entryVIOriginUpdate">VI origin päivitys</string>
@@ -258,7 +299,7 @@
   <string name="riceTextureEnhancement_entrySharpen">Terävoitä</string>
   <string name="riceTextureEnhancement_entrySharpen_more">Terävöitä enemmän</string>
   <string name="navigationMode_title">Esteettömyys</string>
-  <string name="navigationMode_summary">Valikon navigointi tila: %1$s</string>
+  <string name="navigationMode_summary">Valikon navigointitila: %1$s</string>
   <string name="navigationMode_entryAuto">Auto-valitse laitekonfiguraatiosta</string>
   <string name="navigationMode_entryStandard">Vakiotila</string>
   <string name="navigationMode_entryBigScreen">Iso-näyttö tila (ei kosketusnäyttöä; vain pelipädi/näppäimistö sisääntulo)</string>
@@ -275,11 +316,6 @@
   <string name="audioBufferSize_entry128">Alhainen latenssi (kokeellinen)</string>
   <string name="audioBufferSize_entry8">Ultra-alhainen latenssi (kokeellinen)</string>
   <string name="localeOverride_entrySystemDefault">Järjestelmän oletus</string>
-  <!--ACRA Preferences (key names must not be changed)-->
-  <string name="acraEnable_title">Ota käyttöön kaatumisraportointi</string>
-  <string name="acraEnable_summary">Yksityistä informaatiota ei kerätä</string>
-  <string name="acraUserEmail_title">Yhteystiedot</string>
-  <string name="acraUserEmail_summary">Sinun paulscode.com nimimerkkisi (valinnainen)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Painike läpinäkyvyys</string>
   <string name="touchscreenScale_title">Painike skaala</string>
@@ -292,6 +328,7 @@
   <string name="pathHiResTextures_summary">Käytä kustom tekstuureja (ZIP muoto) peliin</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Pelitallennuskansio</string>
+  <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Moninpeli</string>
   <string name="playerMap_summary">Määritä kunkin pelaajan ohjaimet</string>
@@ -318,13 +355,14 @@
   <string name="changeLog_dialogTitle">Muutosloki</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Varoitus</string>
-  <string name="invalidInstall_message">Mupen64 Plus AE ei ole tainnut asentua kunnollisesti. Ole hyvä ja yritä uudelleenasentaa app jos koet kaatumisia.</string>
+  <string name="invalidInstall_message">Mupen64 Plus AE ei ehkä ole asennettu oikein. Ole hyvä ja yritä uudelleenasentaa app jos koet kaatumisia.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">tiedostonimi</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Alustaa</string>
   <string name="assetExtractor_progress">%1$.0f%% tehty: %2$s</string>
   <string name="assetExtractor_finished">Valmistunut</string>
+  <string name="assetExtractor_failed">Virhe app datan purkamisessa.\nOle hyvä ja irroita USB-kaapeli, uudelleenkäynnistä laite, ja avaa app uudelleen.\nSaadaksesi apua, vieraile %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Huijaus %1$d</string>
   <string name="cheats_longPress">(pitkään paina täydelle tekstille)</string>
@@ -332,7 +370,7 @@
   <string name="cheatOption_title">Täysi teksti</string>
   <string name="cheatNotes_title">Merkinnät
 </string>
-  <string name="cheatNotes_none">(ei merkintöjä saatavilla tälle huijakselle)</string>
+  <string name="cheatNotes_none">(merkintöjä ei saatavilla tälle huijakselle)</string>
   <!--Cheat Editor-->
   <string name="menuItem_cheatEditor">Huijauseditori</string>
   <string name="cheatEditor_empty">Tyhjennä huijaus</string>
@@ -370,6 +408,8 @@
   <string name="pathHiResTexturesTask_title">Puretaan tekstuureja</string>
   <string name="pathHiResTexturesTask_message">Ole kärsivällinen. Prosessi voi kestää jonkin aikaa.</string>
   <string name="pathHiResTexturesTask_errorMessage">Ongelma tekstuurien purkamisessa!</string>
+  <!--ROM Scanning-->
+  <string name="scanning_title">Skannataan...</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -378,11 +418,40 @@
   <string name="playerMap_deviceWithName">Laite %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Laite %1$d</string>
   <string name="playerMapPreference_popupTitle">Pelaaja %1$d</string>
+  <string name="playerMapPreference_popupMessage">Pelaaja %1$d, paina painiketta tai tikkua ohjaimessasi... \n\nNykyiset laitteet:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Poista asettaminen</string>
+  <string name="playerMapPreference_button">Pelaaja %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Muistuta minua kun pelaajat eivät ole asetettuina</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_remove">Poista</string>
+  <string name="touchscreenProfileActivity_horizontalSlider">Vaakataso: %1$d %%</string>
+  <string name="touchscreenProfileActivity_verticalSlider">Pystysuora: %1$d %%</string>
   <!--Controller button names-->
+  <string name="controller_analog">Analogitikku</string>
+  <string name="controller_analogR">Analogi →</string>
+  <string name="controller_analogL">Analogi ←</string>
+  <string name="controller_analogD">Analogi ↓</string>
+  <string name="controller_analogU">Analogi ↑</string>
+  <string name="controller_dpad">D-pädi</string>
+  <string name="controller_dpadR">D-pädi →</string>
+  <string name="controller_dpadL">D-pädi ←</string>
+  <string name="controller_dpadD">D-pädi ↓</string>
+  <string name="controller_dpadU">D-pädi ↑</string>
+  <string name="controller_groupAB">A/B-painikkeet</string>
+  <string name="controller_buttonA">A-painike</string>
+  <string name="controller_buttonB">B-painike</string>
+  <string name="controller_groupC">C-painikkeet</string>
+  <string name="controller_buttonCr">C-pädi →</string>
+  <string name="controller_buttonCl">C-pädi ←</string>
+  <string name="controller_buttonCd">C-pädi ↓</string>
+  <string name="controller_buttonCu">C-pädi ↑</string>
+  <string name="controller_buttonL">L-painike</string>
+  <string name="controller_buttonR">R-painike</string>
+  <string name="controller_buttonZ">Z-painike</string>
+  <string name="controller_buttonS">Start-painike</string>
+  <string name="controller_fps">FPS mitttari</string>
   <!--Input Mapping-->
+  <string name="inputMapActivity_popupMessage">Paina painiketta, näppäintä, tai joystick:iä asettaaksesi... \n\nNykyiset asettamiset:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Poista asetus</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analogitikku ohjattuna kosketuslevyllä</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pädi ohjattuna kosketuslevyllä</string>
@@ -416,6 +485,7 @@
   <string name="inputMapActivity_gameshark">Gameshark</string>
   <string name="inputMapActivity_simulateBack">Takaisin-näppäin</string>
   <string name="inputMapActivity_simulateMenu">Menu-näppäin</string>
+  <string name="inputMapActivity_screenshot">Kuvankaappaus</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Paina painiketta tai näppäintä...</string>
   <string name="diagnosticActivity_textMotion_text">Kosketa näyttöä tai joystick:iä…</string>

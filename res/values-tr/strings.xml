@@ -83,8 +83,6 @@
   <string name="actionRestart_summary">Hileler kullanılıyorsa tavsiye edilir</string>
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
-  <string name="actionCrashTest_title">Sına</string>
-  <string name="actionCrashTest_summary">Geliştiricilere bir yapılandırma raporu gönder</string>
   <!--Preference Screens-->
   <string name="screenInput_title">Girdi</string>
   <string name="screenInput_summary">Denetim Ayarları</string>
@@ -107,7 +105,6 @@
   <string name="categoryGlide64_title">Glide64 ayarları</string>
   <string name="categoryAudio_title">Ses</string>
   <string name="categoryData_title">Veri</string>
-  <string name="categoryCrashReports_title">Çökme Raporları</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Hileleri etkinleştir</string>
   <string name="playShowCheats_summary">Etkin olduğunda menü yüklenmesi yavaşlar</string>
@@ -142,10 +139,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Devre dışı</string>
   <string name="touchscreenAutoHold_entryLongPress">Uzun basın</string>
   <string name="touchscreenAutoHold_entrySlideOut">Kaydırın</string>
-  <string name="touchscreenRefresh_title">Oyun çubuğu animasyonu</string>
-  <string name="touchscreenRefresh_entryNever">Asla</string>
-  <string name="touchscreenRefresh_entryOccasionally">Bazen</string>
-  <string name="touchscreenRefresh_entryFrequently">Sıkça</string>
   <string name="touchscreenStyle_title">Tuş stili</string>
   <string name="touchscreenStyle_entryOutline">Anahatlar</string>
   <string name="touchscreenStyle_entryShaded">Gölgelenmiş</string>
@@ -167,10 +160,6 @@
   <string name="displayResolution_entry480x360">480 x 360</string>
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayScaling_title">Ekran ölçekleme</string>
-  <string name="displayFpsRefresh_title">Ekran kare hızı</string>
-  <string name="displayFpsRefresh_entryNever">Asla</string>
-  <string name="displayFpsRefresh_entryOccasionally">Bazen</string>
-  <string name="displayFpsRefresh_entryFrequently">Sıkça</string>
   <string name="videoPlugin_entryNone">Hiçbiri (video devre dışı)</string>
   <string name="videoHardwareType_title">Titreme azaltma</string>
   <string name="videoHardwareType_entryAuto">Telefon/tablet modelinden otomatik olarak algıla</string>
@@ -223,11 +212,6 @@
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="audioBufferSize_entry2048">Varsayılan</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
-  <!--ACRA Preferences (key names must not be changed)-->
-  <string name="acraEnable_title">Çökme raporlamayı etkinleştir</string>
-  <string name="acraEnable_summary">Hiçbir kişisel veri toplanmadı</string>
-  <string name="acraUserEmail_title">İletişim bilgisi</string>
-  <string name="acraUserEmail_summary">paulscode.com kullanıcı adınız (isteğe bağlı)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Dokunmatik ekran şeffaflığı</string>
   <string name="touchscreenScale_title">Düğme boyutu</string>
@@ -278,6 +262,7 @@
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>
   <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>
+  <!--ROM Scanning-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -290,6 +275,18 @@
   <string name="playerMapPreference_reminder">Oyuncular eşlenmediği zaman bana hatırlat</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
+  <string name="controller_analogR">Analog →</string>
+  <string name="controller_analogL">Analog ←</string>
+  <string name="controller_analogD">Analog ↓</string>
+  <string name="controller_analogU">Analog ↑</string>
+  <string name="controller_dpadR">D-pad →</string>
+  <string name="controller_dpadL">D-pad ←</string>
+  <string name="controller_dpadD">D-pad ↓</string>
+  <string name="controller_dpadU">D-pad ↑</string>
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonCl">C-pad ←</string>
+  <string name="controller_buttonCd">C-pad ↓</string>
+  <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Eşlemeyi kaldır</string>
   <string name="inputMapActivity_aPadXperiaPlay">Dokunmatik yüzeyle kontrol edilen analog çubuk</string>

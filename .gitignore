@@ -39,3 +39,6 @@ local.properties
 
 # Crash-report related
 crashreport.txt
+
+# Transifex client
+tx.exe
