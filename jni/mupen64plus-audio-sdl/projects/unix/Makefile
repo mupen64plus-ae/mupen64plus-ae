@@ -72,10 +72,9 @@ ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
 
-# detect system architecture
+# detect system architecture, only if it matters for build flags
 HOST_CPU ?= $(shell uname -m)
-NO_ASM ?= 1
-CPU := NONE
+CPU := OTHER
 ifneq ("$(filter x86_64 amd64,$(HOST_CPU))","")
   CPU := X86
   ifeq ("$(BITS)", "32")
@@ -91,30 +90,8 @@ ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
   ARCH_DETECTED := 32BITS
   PIC ?= 0
 endif
-ifneq ("$(filter ppc macppc socppc powerpc,$(HOST_CPU))","")
-  CPU := PPC
-  ARCH_DETECTED := 32BITS
-  BIG_ENDIAN := 1
+ifeq ("$(CPU)","OTHER")
   PIC ?= 1
-  $(warning Architecture "$(HOST_CPU)" not officially supported.')
-endif
-ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
-  CPU := PPC
-  ARCH_DETECTED := 64BITS
-  BIG_ENDIAN := 1
-  PIC ?= 1
-  $(warning Architecture "$(HOST_CPU)" not officially supported.')
-endif
-ifneq ("$(filter arm%,$(HOST_CPU))","")
-  ifeq ("$(filter arm%b,$(HOST_CPU))","")
-    CPU := ARM
-    ARCH_DETECTED := 32BITS
-    PIC ?= 1
-    $(warning Architecture "$(HOST_CPU)" not officially supported.')
-  endif
-endif
-ifeq ("$(CPU)","NONE")
-  $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
@@ -129,10 +106,6 @@ ifeq ($(PIC), 1)
   CFLAGS += -fPIC
 else
   CFLAGS += -fno-PIC
-endif
-
-ifeq ($(BIG_ENDIAN), 1)
-  CFLAGS += -DM64P_BIG_ENDIAN
 endif
 
 # tweak flags for 32-bit build on 64-bit system
