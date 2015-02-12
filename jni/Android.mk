@@ -68,6 +68,7 @@ LOCAL_C_INCLUDES :=         \
     $(SDL_INCLUDES)         \
 
 LOCAL_SRC_FILES :=                              \
+    $(SRCDIR)/ai/ai_controller.c                \
     $(SRCDIR)/api/callbacks.c                   \
     $(SRCDIR)/api/common.c                      \
     $(SRCDIR)/api/config.c                      \
@@ -75,30 +76,37 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/api/frontend.c                    \
     $(SRCDIR)/api/vidext.c                      \
     $(SRCDIR)/main/cheat.c                      \
+    $(SRCDIR)/main/eep_file.c                   \
     $(SRCDIR)/main/eventloop.c                  \
+    $(SRCDIR)/main/fla_file.c                   \
     $(SRCDIR)/main/main.c                       \
     $(SRCDIR)/main/md5.c                        \
+    $(SRCDIR)/main/mpk_file.c                   \
     $(SRCDIR)/main/profile.c                    \
     $(SRCDIR)/main/rom.c                        \
     $(SRCDIR)/main/savestates.c                 \
     $(SRCDIR)/main/sdl_key_converter.c          \
+    $(SRCDIR)/main/sra_file.c                   \
     $(SRCDIR)/main/util.c                       \
     $(SRCDIR)/main/zip/ioapi.c                  \
     $(SRCDIR)/main/zip/unzip.c                  \
     $(SRCDIR)/main/zip/zip.c                    \
-    $(SRCDIR)/memory/dma.c                      \
-    $(SRCDIR)/memory/flashram.c                 \
     $(SRCDIR)/memory/memory.c                   \
-    $(SRCDIR)/memory/n64_cic_nus_6105.c         \
-    $(SRCDIR)/memory/pif.c                      \
     $(SRCDIR)/osal/dynamiclib_unix.c            \
     $(SRCDIR)/osal/files_unix.c                 \
     $(SRCDIR)/osd/screenshot.cpp                \
+    $(SRCDIR)/pi/cart_rom.c                     \
+    $(SRCDIR)/pi/flashram.c                     \
+    $(SRCDIR)/pi/pi_controller.c                \
+    $(SRCDIR)/pi/sram.c                         \
     $(SRCDIR)/plugin/dummy_audio.c              \
     $(SRCDIR)/plugin/dummy_input.c              \
     $(SRCDIR)/plugin/dummy_rsp.c                \
     $(SRCDIR)/plugin/dummy_video.c              \
+    $(SRCDIR)/plugin/emulate_game_controller_via_input_plugin.c \
+    $(SRCDIR)/plugin/get_time_using_C_localtime.c \
     $(SRCDIR)/plugin/plugin.c                   \
+    $(SRCDIR)/plugin/rumble_via_input_plugin.c  \
     $(SRCDIR)/r4300/cached_interp.c             \
     $(SRCDIR)/r4300/cp0.c                       \
     $(SRCDIR)/r4300/cp1.c                       \
@@ -106,12 +114,29 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/r4300/exception.c                 \
     $(SRCDIR)/r4300/instr_counters.c            \
     $(SRCDIR)/r4300/interupt.c                  \
+    $(SRCDIR)/r4300/mi_controller.c             \
     $(SRCDIR)/r4300/pure_interp.c               \
     $(SRCDIR)/r4300/r4300.c                     \
+    $(SRCDIR)/r4300/r4300_core.c                \
     $(SRCDIR)/r4300/recomp.c                    \
     $(SRCDIR)/r4300/reset.c                     \
     $(SRCDIR)/r4300/tlb.c                       \
     $(SRCDIR)/r4300/new_dynarec/new_dynarec.c   \
+    $(SRCDIR)/rdp/fb.c                          \
+    $(SRCDIR)/rdp/rdp_core.c                    \
+    $(SRCDIR)/ri/rdram.c                        \
+    $(SRCDIR)/ri/ri_controller.c                \
+    $(SRCDIR)/rsp/rsp_core.c                    \
+    $(SRCDIR)/si/af_rtc.c                       \
+    $(SRCDIR)/si/cic.c                          \
+    $(SRCDIR)/si/eeprom.c                       \
+    $(SRCDIR)/si/game_controller.c              \
+    $(SRCDIR)/si/mempak.c                       \
+    $(SRCDIR)/si/n64_cic_nus_6105.c             \
+    $(SRCDIR)/si/pif.c                          \
+    $(SRCDIR)/si/rumblepak.c                    \
+    $(SRCDIR)/si/si_controller.c                \
+    $(SRCDIR)/vi/vi_controller.c                \
     #$(SRCDIR)/debugger/dbg_breakpoints.c        \
     #$(SRCDIR)/debugger/dbg_decoder.c            \
     #$(SRCDIR)/debugger/dbg_memory.c             \
