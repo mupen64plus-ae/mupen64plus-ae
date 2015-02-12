@@ -18,19 +18,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	.cpu arm9tdmi
-#ifndef NEON
-	.fpu softvfp
+#ifndef __ARM_NEON__
+#if (defined(__VFP_FP__) && !defined(__SOFTFP__) && defined(__ARM_PCS_VFP))
+ 	.fpu vfp
 #else
-    .fpu neon
+	.fpu softvfp
+#endif
+#else
+    	.fpu neon
 #endif
 	.eabi_attribute 20, 1
 	.eabi_attribute 21, 1
-#ifndef NEON
+#ifndef __ARM_NEON__
 	.eabi_attribute 23, 3
 #endif
 	.eabi_attribute 24, 1
 	.eabi_attribute 25, 1
 	.eabi_attribute 26, 2
+#ifndef __ARM_NEON__
+#if (defined(__VFP_FP__) && !defined(__SOFTFP__) && defined(__ARM_PCS_VFP))
+	.eabi_attribute 28, 1
+#endif
+#endif
 	.eabi_attribute 30, 6
 	.eabi_attribute 18, 4
 	.file	"linkage_arm.S"
