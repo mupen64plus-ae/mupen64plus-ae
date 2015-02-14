@@ -265,7 +265,7 @@ public class GamePrefs
         if( isTouchscreenEnabled )
         {
             touchscreenAutoHoldables = getSafeIntSet( touchscreenProfile,
-                    "touchscreenAutoHoldables" );
+                    "touchscreenAutoholdables" );
             
             String layout = touchscreenProfile.get( "touchscreenLayout", "" );
             if( layout.equals( "Custom" ) )
