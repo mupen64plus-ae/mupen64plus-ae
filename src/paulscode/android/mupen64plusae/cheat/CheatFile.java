@@ -716,7 +716,7 @@ public class CheatFile
                 writer.append( "  " ).append( code.address ).append( ' ' ).append( code.code );
                 if( code.options != null )
                 {
-                    String delimiter = "";
+                    String delimiter = " ";
                     for( CheatOption option : code.options )
                     {
                         writer.append( delimiter ).append( option.code ).append( ':' );
