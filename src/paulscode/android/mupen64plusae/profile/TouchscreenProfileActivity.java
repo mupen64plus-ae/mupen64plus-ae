@@ -65,7 +65,7 @@ import android.widget.ImageView;
 
 public class TouchscreenProfileActivity extends Activity implements OnTouchListener
 {
-    private static final String TOUCHSCREEN_AUTOHOLDABLES = "touchscreenAutoholdables";
+    private static final String TOUCHSCREEN_AUTOHOLDABLES = "touchscreenAutoHoldables";
     private static final String AUTOHOLDABLES_DELIMITER = "~";
     
     private static final String ANALOG = "analog";
