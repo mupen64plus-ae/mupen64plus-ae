@@ -1027,6 +1027,20 @@ static void emit_add(int rs1,int rs2,int rt)
   output_w32(0xe0800000|rd_rn_rm(rt,rs1,rs2));
 }
 
+static void emit_addne(int rs1,int rs2,int rt)
+{
+  assem_debug("addne %s,%s,%s",regname[rt],regname[rs1],regname[rs2]);
+  output_w32(0x12800000|rd_rn_rm(rt,rs1,rs2));
+}
+
+static void emit_addsarimm(int rs1,int rs2,int rt,int imm)
+{
+  assert(imm>0);
+  assert(imm<32);
+  assem_debug("add %s,%s,%s,ASR#%d",regname[rt],regname[rs1],regname[rs2],imm);
+  output_w32(0xe0a00000|rd_rn_rm(rt,rs1,rs2)|0x40|(imm<<7));
+}
+
 static void emit_adds(int rs1,int rs2,int rt)
 {
   assem_debug("adds %s,%s,%s",regname[rt],regname[rs1],regname[rs2]);
@@ -2056,6 +2070,15 @@ static void emit_umull(u_int rs1, u_int rs2, u_int hi, u_int lo)
   assert(lo<16);
   output_w32(0xe0800090|(hi<<16)|(lo<<12)|(rs2<<8)|rs1);
 }
+static void emit_umlal(u_int rs1, u_int rs2, u_int hi, u_int lo)
+{
+  assem_debug("umlal %s, %s, %s, %s",regname[lo],regname[hi],regname[rs1],regname[rs2]);
+  assert(rs1<16);
+  assert(rs2<16);
+  assert(hi<16);
+  assert(lo<16);
+  output_w32(0xe0a00090|(hi<<16)|(lo<<12)|(rs2<<8)|rs1);
+}
 static void emit_smull(u_int rs1, u_int rs2, u_int hi, u_int lo)
 {
   assem_debug("smull %s, %s, %s, %s",regname[lo],regname[hi],regname[rs1],regname[rs2]);
@@ -2064,6 +2087,15 @@ static void emit_smull(u_int rs1, u_int rs2, u_int hi, u_int lo)
   assert(hi<16);
   assert(lo<16);
   output_w32(0xe0c00090|(hi<<16)|(lo<<12)|(rs2<<8)|rs1);
+}
+static void emit_smlal(u_int rs1, u_int rs2, u_int hi, u_int lo)
+{
+  assem_debug("smlal %s, %s, %s, %s",regname[lo],regname[hi],regname[rs1],regname[rs2]);
+  assert(rs1<16);
+  assert(rs2<16);
+  assert(hi<16);
+  assert(lo<16);
+  output_w32(0xe0e00090|(hi<<16)|(lo<<12)|(rs2<<8)|rs1);
 }
 
 static void emit_clz(int rs,int rt)
@@ -2807,12 +2839,12 @@ static void do_writestub(int n)
   if(type==STOREB_STUB)
     emit_writebyte(rt,(int)&cpu_byte);
   if(type==STOREH_STUB)
-    emit_writehword(rt,(int)&hword);
+    emit_writehword(rt,(int)&cpu_hword);
   if(type==STOREW_STUB)
-    emit_writeword(rt,(int)&word);
+    emit_writeword(rt,(int)&cpu_word);
   if(type==STORED_STUB) {
-    emit_writeword(rt,(int)&dword);
-    emit_writeword(r?rth:rt,(int)&dword+4);
+    emit_writeword(rt,(int)&cpu_dword);
+    emit_writeword(r?rth:rt,(int)&cpu_dword+4);
   }
   //emit_pusha();
   save_regs(reglist);
@@ -2874,12 +2906,12 @@ static void inline_writestub(int type, int i, u_int addr, signed char regmap[], 
   if(type==STOREB_STUB)
     emit_writebyte(rt,(int)&cpu_byte);
   if(type==STOREH_STUB)
-    emit_writehword(rt,(int)&hword);
+    emit_writehword(rt,(int)&cpu_hword);
   if(type==STOREW_STUB)
-    emit_writeword(rt,(int)&word);
+    emit_writeword(rt,(int)&cpu_word);
   if(type==STORED_STUB) {
-    emit_writeword(rt,(int)&dword);
-    emit_writeword(target?rth:rt,(int)&dword+4);
+    emit_writeword(rt,(int)&cpu_dword);
+    emit_writeword(target?rth:rt,(int)&cpu_dword+4);
   }
   //emit_pusha();
   save_regs(reglist);
@@ -4179,24 +4211,29 @@ static void multdiv_assemble_arm(int i,struct regstat *i_regs)
         assert(m2h>=0);
         assert(m1l>=0);
         assert(m2l>=0);
-        save_regs(0x100f);
-        if(m1l!=0) emit_mov(m1l,0);
-        if(m1h==0) emit_readword((int)&dynarec_local,1);
-        else if(m1h>1) emit_mov(m1h,1);
-        if(m2l<2) emit_readword((int)&dynarec_local+m2l*4,2);
-        else if(m2l>2) emit_mov(m2l,2);
-        if(m2h<3) emit_readword((int)&dynarec_local+m2h*4,3);
-        else if(m2h>3) emit_mov(m2h,3);
-        emit_call((int)&mult64);
-        restore_regs(0x100f);
-        signed char hih=get_reg(i_regs->regmap,HIREG|64);
-        signed char hil=get_reg(i_regs->regmap,HIREG);
-        if(hih>=0) emit_loadreg(HIREG|64,hih);
-        if(hil>=0) emit_loadreg(HIREG,hil);
-        signed char loh=get_reg(i_regs->regmap,LOREG|64);
-        signed char lol=get_reg(i_regs->regmap,LOREG);
-        if(loh>=0) emit_loadreg(LOREG|64,loh);
-        if(lol>=0) emit_loadreg(LOREG,lol);
+        signed char rh=get_reg(i_regs->regmap,HIREG|64);
+        signed char rl=get_reg(i_regs->regmap,HIREG);
+        assert(rh>=0);
+        assert(rl>=0);
+
+        emit_umull(m1l,m2l,rh,rl);
+        emit_storereg(LOREG,rl);
+        emit_mov(rh,rl);
+        emit_zeroreg(rh);
+        emit_smlal(m1l,m2h,rh,rl);
+        emit_mov(rh,HOST_TEMPREG);
+        emit_testimm(m1l,0x80000000);
+        emit_addne(HOST_TEMPREG,m2h,HOST_TEMPREG);
+        emit_zeroreg(rh);
+        emit_smlal(m1h,m2l,rh,rl);
+        emit_testimm(m2l,0x80000000);
+        emit_addne(rh,m1h,rh);
+        emit_storereg(LOREG|64,rl);
+        emit_sarimm(HOST_TEMPREG,31,rl);
+        emit_adds(HOST_TEMPREG,rh,HOST_TEMPREG);
+        emit_addsarimm(rl,rh,rh,31);
+        emit_mov(HOST_TEMPREG,rl);
+        emit_smlal(m1h,m2h,rh,rl);
       }
       if(opcode2[i]==0x1D) // DMULTU
       {
@@ -4208,75 +4245,25 @@ static void multdiv_assemble_arm(int i,struct regstat *i_regs)
         assert(m2h>=0);
         assert(m1l>=0);
         assert(m2l>=0);
-        save_regs(0x100f);
-        if(m1l!=0) emit_mov(m1l,0);
-        if(m1h==0) emit_readword((int)&dynarec_local,1);
-        else if(m1h>1) emit_mov(m1h,1);
-        if(m2l<2) emit_readword((int)&dynarec_local+m2l*4,2);
-        else if(m2l>2) emit_mov(m2l,2);
-        if(m2h<3) emit_readword((int)&dynarec_local+m2h*4,3);
-        else if(m2h>3) emit_mov(m2h,3);
-        emit_call((int)&multu64);
-        restore_regs(0x100f);
-        signed char hih=get_reg(i_regs->regmap,HIREG|64);
-        signed char hil=get_reg(i_regs->regmap,HIREG);
-        signed char loh=get_reg(i_regs->regmap,LOREG|64);
-        signed char lol=get_reg(i_regs->regmap,LOREG);
-        /*signed char temp=get_reg(i_regs->regmap,-1);
         signed char rh=get_reg(i_regs->regmap,HIREG|64);
         signed char rl=get_reg(i_regs->regmap,HIREG);
-        assert(m1h>=0);
-        assert(m2h>=0);
-        assert(m1l>=0);
-        assert(m2l>=0);
-        assert(temp>=0);
-        //emit_mov(m1l,EAX);
-        //emit_mul(m2l);
-        emit_umull(rl,rh,m1l,m2l);
+        assert(rh>=0);
+        assert(rl>=0);
+        
+        emit_umull(m1l,m2l,rh,rl);
         emit_storereg(LOREG,rl);
-        emit_mov(rh,temp);
-        //emit_mov(m1h,EAX);
-        //emit_mul(m2l);
-        emit_umull(rl,rh,m1h,m2l);
-        emit_adds(rl,temp,temp);
-        emit_adcimm(rh,0,rh);
-        emit_storereg(HIREG,rh);
-        //emit_mov(m2h,EAX);
-        //emit_mul(m1l);
-        emit_umull(rl,rh,m1l,m2h);
-        emit_adds(rl,temp,temp);
-        emit_adcimm(rh,0,rh);
-        emit_storereg(LOREG|64,temp);
-        emit_mov(rh,temp);
-        //emit_mov(m2h,EAX);
-        //emit_mul(m1h);
-        emit_umull(rl,rh,m1h,m2h);
-        emit_adds(rl,temp,rl);
-        emit_loadreg(HIREG,temp);
-        emit_adcimm(rh,0,rh);
-        emit_adds(rl,temp,rl);
-        emit_adcimm(rh,0,rh);
-        // DEBUG
-        /*
-        emit_pushreg(m2h);
-        emit_pushreg(m2l);
-        emit_pushreg(m1h);
-        emit_pushreg(m1l);
-        emit_call((int)&multu64);
-        emit_popreg(m1l);
-        emit_popreg(m1h);
-        emit_popreg(m2l);
-        emit_popreg(m2h);
-        signed char hih=get_reg(i_regs->regmap,HIREG|64);
-        signed char hil=get_reg(i_regs->regmap,HIREG);
-        if(hih>=0) emit_loadreg(HIREG|64,hih);  // DEBUG
-        if(hil>=0) emit_loadreg(HIREG,hil);  // DEBUG
-        */
-        // Shouldn't be necessary
-        //char loh=get_reg(i_regs->regmap,LOREG|64);
-        //char lol=get_reg(i_regs->regmap,LOREG);
-        //if(loh>=0) emit_loadreg(LOREG|64,loh);
-        //if(lol>=0) emit_loadreg(LOREG,lol);
+        emit_mov(rh,rl);
+        emit_zeroreg(rh);
+        emit_umlal(m1l,m2h,rh,rl);
+        emit_mov(rh,HOST_TEMPREG);
+        emit_zeroreg(rh);
+        emit_umlal(m1h,m2l,rh,rl);
+        emit_storereg(LOREG|64,rl);
+        emit_zeroreg(rl);
+        emit_adds(HOST_TEMPREG,rh,HOST_TEMPREG);
+        emit_adcimm(rl,0,rh);
+        emit_mov(HOST_TEMPREG,rl);
+        emit_umlal(m1h,m2h,rh,rl);
       }
       if(opcode2[i]==0x1E) // DDIV
       {

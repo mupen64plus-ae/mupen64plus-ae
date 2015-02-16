@@ -104,6 +104,7 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/plugin/dummy_rsp.c                \
     $(SRCDIR)/plugin/dummy_video.c              \
     $(SRCDIR)/plugin/emulate_game_controller_via_input_plugin.c \
+    $(SRCDIR)/plugin/emulate_speaker_via_audio_plugin.c \
     $(SRCDIR)/plugin/get_time_using_C_localtime.c \
     $(SRCDIR)/plugin/plugin.c                   \
     $(SRCDIR)/plugin/rumble_via_input_plugin.c  \
@@ -125,6 +126,7 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/rdp/fb.c                          \
     $(SRCDIR)/rdp/rdp_core.c                    \
     $(SRCDIR)/ri/rdram.c                        \
+    $(SRCDIR)/ri/rdram_detection_hack.c         \
     $(SRCDIR)/ri/ri_controller.c                \
     $(SRCDIR)/rsp/rsp_core.c                    \
     $(SRCDIR)/si/af_rtc.c                       \

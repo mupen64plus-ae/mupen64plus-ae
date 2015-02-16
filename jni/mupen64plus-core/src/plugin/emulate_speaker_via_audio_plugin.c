@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - arithmetics.h                                   *
+ *   Mupen64plus - emulate_speaker_via_audio_plugin.c                      *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
@@ -19,25 +19,44 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef ARITHMETICS_H
-#define ARITHMETICS_H
+#include "emulate_speaker_via_audio_plugin.h"
+
+#include "ai/ai_controller.h"
+#include "main/rom.h"
+#include "plugin/plugin.h"
+#include "ri/ri_controller.h"
 
 #include <stdint.h>
 
-#include "common.h"
-
-static inline int16_t clamp_s16(int_fast32_t x)
+void set_audio_format_via_audio_plugin(void* user_data, unsigned int frequency, unsigned int bits)
 {
-    x = (x < INT16_MIN) ? INT16_MIN: x;
-    x = (x > INT16_MAX) ? INT16_MAX: x;
+    /* not really implementable with just the zilmar spec.
+     * Try a best effort approach
+     */
+    struct ai_controller* ai = (struct ai_controller*)user_data;
+    uint32_t saved_ai_dacrate = ai->regs[AI_DACRATE_REG];
+    
+    ai->regs[AI_DACRATE_REG] = ROM_PARAMS.aidacrate / frequency - 1;
 
-    return x;
+    audio.aiDacrateChanged(ROM_PARAMS.systemtype);
+
+    ai->regs[AI_DACRATE_REG] = saved_ai_dacrate;
 }
 
-static inline int32_t vmulf(int16_t x, int16_t y)
+void push_audio_samples_via_audio_plugin(void* user_data, const void* buffer, size_t size)
 {
-    return (((int32_t)(x))*((int32_t)(y))+0x4000)>>15;
-}
+    /* abuse core & audio plugin implementation to approximate desired effect */
+    struct ai_controller* ai = (struct ai_controller*)user_data;
+    uint32_t saved_ai_length = ai->regs[AI_LEN_REG];
+    uint32_t saved_ai_dram = ai->regs[AI_DRAM_ADDR_REG];
 
-#endif
+    /* exploit the fact that buffer points in g_rdram to retreive dram_addr_reg value */
+    ai->regs[AI_DRAM_ADDR_REG] = (uint8_t*)buffer - (uint8_t*)ai->ri->rdram.dram;
+    ai->regs[AI_LEN_REG] = size;
+
+    audio.aiLenChanged();
+
+    ai->regs[AI_LEN_REG] = saved_ai_length;
+    ai->regs[AI_DRAM_ADDR_REG] = saved_ai_dram;
+}
 
