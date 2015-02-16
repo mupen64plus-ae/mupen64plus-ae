@@ -34,5 +34,10 @@ static inline int16_t clamp_s16(int_fast32_t x)
     return x;
 }
 
+static inline int32_t vmulf(int16_t x, int16_t y)
+{
+    return (((int32_t)(x))*((int32_t)(y))+0x4000)>>15;
+}
+
 #endif
 
