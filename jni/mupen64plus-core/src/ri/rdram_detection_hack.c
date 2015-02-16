@@ -1,10 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - reset.c                                                 *
+ *   Mupen64plus - rdram_detection_hack.c                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2011 CasualJames                                        *
- *   Copyright (C) 2008-2009 Richard Goedeken                              *
- *   Copyright (C) 2008 Ebenblues Nmn Okaygo Tillin9                       *
- *   Hard reset based on code by hacktarux.                                *
+ *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -22,32 +19,25 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "r4300/reset.h"
-#include "r4300/r4300.h"
-#include "r4300/interupt.h"
-#include "memory/memory.h"
-#include "r4300/cached_interp.h"
+#include "rdram_detection_hack.h"
+#include "ri_controller.h"
 
-int reset_hard_job = 0;
+#include "main/main.h"
+#include "si/si_controller.h"
 
-void reset_hard(void)
+#include <stdint.h>
+
+/* HACK: force detected RDRAM size
+ * This hack is triggered just before initial ROM loading (see pi_controller.c)
+ *
+ * Proper emulation of RI/RDRAM subsystem is required to avoid this hack.
+ */
+void force_detected_rdram_size_hack(void)
 {
-    init_memory();
-    r4300_reset_hard();
-    r4300_reset_soft();
-    last_addr = 0xa4000040;
-    next_interupt = 624999;
-    init_interupt();
-    if(r4300emu != CORE_PURE_INTERPRETER)
-    {
-        free_blocks();
-        init_blocks();
-    }
-    generic_jump_to(last_addr);
+    uint32_t address = (g_si.pif.cic.version != CIC_X105)
+        ? 0x318
+        : 0x3f0;
+
+    g_ri.rdram.dram[address/4] = g_ri.rdram.dram_size;
 }
 
-void reset_soft(void)
-{
-    add_interupt_event(HW2_INT, 0);  /* Hardware 2 Interrupt immediately */
-    add_interupt_event(NMI_INT, 50000000);  /* Non maskable Interrupt after 1/2 second */
-}

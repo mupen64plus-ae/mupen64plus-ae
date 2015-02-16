@@ -132,6 +132,7 @@
     <ClCompile Include="..\..\src\main\eep_file.c" />
     <ClCompile Include="..\..\src\si\eeprom.c" />
     <ClCompile Include="..\..\src\plugin\emulate_game_controller_via_input_plugin.c" />
+    <ClCompile Include="..\..\src\plugin\emulate_speaker_via_audio_plugin.c" />
     <ClCompile Include="..\..\src\main\eventloop.c" />
     <ClCompile Include="..\..\src\r4300\exception.c" />
     <ClCompile Include="..\..\src\rdp\fb.c" />
@@ -174,6 +175,7 @@
     <ClCompile Include="..\..\src\r4300\r4300_core.c" />
     <ClCompile Include="..\..\src\rdp\rdp_core.c" />
     <ClCompile Include="..\..\src\ri\rdram.c" />
+    <ClCompile Include="..\..\src\ri\rdram_detection_hack.c" />
     <ClCompile Include="..\..\src\r4300\recomp.c" />
     <ClCompile Include="..\..\src\r4300\x86\regcache.c" />
     <ClCompile Include="..\..\src\r4300\reset.c" />
@@ -225,6 +227,7 @@
     <ClInclude Include="..\..\src\main\eep_file.h" />
     <ClInclude Include="..\..\src\si\eeprom.h" />
     <ClInclude Include="..\..\src\plugin\emulate_game_controller_via_input_plugin.h" />
+    <ClInclude Include="..\..\src\plugin\emulate_speaker_via_audio_plugin.h" />
     <ClInclude Include="..\..\src\main\eventloop.h" />
     <ClInclude Include="..\..\src\r4300\exception.h" />
     <ClInclude Include="..\..\src\rdp\fb.h" />
@@ -266,6 +269,7 @@
     <ClInclude Include="..\..\src\r4300\r4300_core.h" />
     <ClInclude Include="..\..\src\rdp\rdp_core.h" />
     <ClInclude Include="..\..\src\ri\rdram.h" />
+    <ClInclude Include="..\..\src\ri\rdram_detection_hack.h" />
     <ClInclude Include="..\..\src\r4300\recomp.h" />
     <ClInclude Include="..\..\src\r4300\recomph.h" />
     <ClInclude Include="..\..\src\r4300\x86\regcache.h" />

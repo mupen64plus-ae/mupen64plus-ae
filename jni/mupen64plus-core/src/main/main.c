@@ -63,6 +63,7 @@
 #include "pi/pi_controller.h"
 #include "plugin/plugin.h"
 #include "plugin/emulate_game_controller_via_input_plugin.h"
+#include "plugin/emulate_speaker_via_audio_plugin.h"
 #include "plugin/get_time_using_C_localtime.h"
 #include "plugin/rumble_via_input_plugin.h"
 #include "r4300/r4300.h"
@@ -851,7 +852,7 @@ static void connect_all(
 {
     connect_rdp(dp, r4300, sp, ri);
     connect_rsp(sp, r4300, dp, ri);
-    connect_ai(ai, r4300, vi);
+    connect_ai(ai, r4300, ri, vi);
     connect_pi(pi, r4300, ri, rom, rom_size);
     connect_ri(ri, dram, dram_size);
     connect_si(si, r4300, ri);
@@ -864,10 +865,12 @@ static void connect_all(
 m64p_error main_run(void)
 {
     size_t i;
+    unsigned int disable_extra_mem;
     struct eep_file eep;
     struct fla_file fla;
     struct mpk_file mpk;
     struct sra_file sra;
+    static int channels[] = { 0, 1, 2, 3 };
 
     /* take the r4300 emulator mode from the config file at this point and cache it in a global variable */
     r4300emu = ConfigGetParamInt(g_CoreConfig, "R4300Emulator");
@@ -877,6 +880,7 @@ m64p_error main_run(void)
     savestates_select_slot(ConfigGetParamInt(g_CoreConfig, "CurrentStateSlot"));
     no_compiled_jump = ConfigGetParamBool(g_CoreConfig, "NoCompiledJump");
     g_delay_si = ConfigGetParamBool(g_CoreConfig, "DelaySI");
+    disable_extra_mem = ConfigGetParamInt(g_CoreConfig, "DisableExtraMem");
     count_per_op = ConfigGetParamInt(g_CoreConfig, "CountPerOp");
     if (count_per_op <= 0)
         count_per_op = ROM_PARAMS.countperop;
@@ -891,7 +895,7 @@ m64p_error main_run(void)
 
     connect_all(&g_r4300, &g_dp, &g_sp,
                 &g_ai, &g_pi, &g_ri, &g_si, &g_vi,
-                g_rdram, RDRAM_MAX_SIZE,
+                g_rdram, (disable_extra_mem == 0) ? 0x800000 : 0x400000,
                 g_rom, g_rom_size);
 
     init_memory();
@@ -925,12 +929,16 @@ m64p_error main_run(void)
     // setup rendering callback from video plugin to the core, for screenshots and On-Screen-Display
     gfx.setRenderingCallback(video_plugin_render_callback);
 
+    /* connect external audio sink to AI component */
+    g_ai.user_data = &g_ai;
+    g_ai.set_audio_format = set_audio_format_via_audio_plugin;
+    g_ai.push_audio_samples = push_audio_samples_via_audio_plugin;
+
     /* connect external time source to AF_RTC component */
     g_si.pif.af_rtc.user_data = NULL;
     g_si.pif.af_rtc.get_time = get_time_using_C_localtime;
 
     /* connect external game controllers */
-    static int channels[] = { 0, 1, 2, 3 };
     for(i = 0; i < GAME_CONTROLLERS_COUNT; ++i)
     {
         g_si.pif.controllers[i].user_data = &channels[i];
