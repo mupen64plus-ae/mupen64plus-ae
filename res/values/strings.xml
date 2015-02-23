@@ -469,6 +469,15 @@
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>
 
+    <!-- ROM information calculation -->
+    <string name="cacheRomInfo_searching">Searching…</string>
+    <string name="cacheRomInfo_searchingZip">Searching zip file…</string>
+    <string name="cacheRomInfo_computingMD5">Computing MD5…</string>
+    <string name="cacheRomInfo_searchingDB">Searching ROM database…</string>
+    <string name="cacheRomInfo_downloadingArt">Downloading cover art…</string>
+    <string name="cacheRomInfo_refreshingUI">Refreshing UI…</string>
+    <string name="cacheRomInfo_extractingZip">Extracting zip entry…</string>
+
     <!-- Seek Bar Preference -->
     <string name="seekBarPreference_summary">%1$d %2$s</string>
 
@@ -554,6 +563,5 @@
     <!-- Controller Diagnostics -->
     <string name="diagnosticActivity_textKey_text">Press button or key…</string>
     <string name="diagnosticActivity_textMotion_text">Touch screen or joystick…</string>
-
 
 </resources>

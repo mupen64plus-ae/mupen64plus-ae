@@ -135,6 +135,18 @@ public class ProgressDialog implements OnClickListener
         } );
     }
     
+    public void setMessage( final int resid )
+    {
+        mActivity.runOnUiThread( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mTextMessage.setText( resid );
+            }
+        } );
+    }
+    
     public void setMaxProgress( final long size )
     {
         mActivity.runOnUiThread( new Runnable()
