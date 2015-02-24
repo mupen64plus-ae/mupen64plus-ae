@@ -551,12 +551,12 @@ public class VisibleTouchMap extends TouchMap
      */
     private void loadAutoHoldImages( Profile profile, String name )
     {
-        Matcher matcher = Pattern.compile( "([^-]*)-hold(.*)" ).matcher( name );
-        if( matcher.groupCount() < 3 )
+        if ( !name.contains("-hold") )
             return;
         
-        String group = matcher.group( 1 );
-        String hold = matcher.group( 2 );
+        String[] fields = name.split( "-hold" );
+        String group = fields[0];
+        String hold = fields[1];
         
         int x = profile.getInt( group + "-x", -1 );
         int y = profile.getInt( group + "-y", -1 );
