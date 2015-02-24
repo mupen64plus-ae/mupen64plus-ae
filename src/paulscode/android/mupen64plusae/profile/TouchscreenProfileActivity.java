@@ -446,7 +446,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         }
         else if( ( event.getAction() & MotionEvent.ACTION_MASK ) == MotionEvent.ACTION_MOVE )
         {
-            if (dragIndex != TouchMap.UNMAPPED || dragAsset.equals(ANALOG))
+            if (dragIndex != TouchMap.UNMAPPED || ANALOG.equals(dragAsset))
             {
                 if (!dragging)
                 {
@@ -487,7 +487,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 return false;
             
             // show the editor for the tapped button
-            if (dragAsset.equals(ANALOG))
+            if (ANALOG.equals(dragAsset))
             {
                 // play the standard button sound effect
                 View view = getWindow().getDecorView();
