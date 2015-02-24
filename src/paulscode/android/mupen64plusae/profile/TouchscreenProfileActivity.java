@@ -434,7 +434,6 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
                 if( mTouchscreenMap.isInCaptureRange( displacement ) )
                 {
-                    dragIndex = -2;
                     dragAsset = ANALOG;
                     dragFrame = mTouchscreenMap.getAnalogFrame();
                 }
@@ -447,7 +446,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         }
         else if( ( event.getAction() & MotionEvent.ACTION_MASK ) == MotionEvent.ACTION_MOVE )
         {
-            if (dragIndex != TouchMap.UNMAPPED)
+            if (dragIndex != TouchMap.UNMAPPED || dragAsset.equals(ANALOG))
             {
                 if (!dragging)
                 {
@@ -488,7 +487,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 return false;
             
             // show the editor for the tapped button
-            if (dragIndex == -2)
+            if (dragAsset.equals(ANALOG))
             {
                 // play the standard button sound effect
                 View view = getWindow().getDecorView();
