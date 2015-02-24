@@ -406,6 +406,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
             initialY = y;
             dragIndex = TouchMap.UNMAPPED;
             dragging = false;
+            dragAsset = "";
             
             if( AppData.IS_KITKAT && mUserPrefs.isImmersiveModeEnabled )
             {
