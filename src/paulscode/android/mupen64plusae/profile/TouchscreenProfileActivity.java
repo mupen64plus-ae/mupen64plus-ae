@@ -407,10 +407,15 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
             dragIndex = TouchMap.UNMAPPED;
             dragging = false;
             
-            // ignore touches that start at the very bottom or top of the screen
-            View view = getWindow().getDecorView();
-            if (y < 10 || y > view.getHeight() - 10)
-                return false;
+            if( AppData.IS_KITKAT && mUserPrefs.isImmersiveModeEnabled )
+            {
+                // ignore edge swipes.
+                // unfortunately KitKat lacks a way to do this on its own,
+                // so just ignore all touches along the edges.
+                View view = getWindow().getDecorView();
+                if (y < 10 || y > view.getHeight() - 10 || x < 10 || x > view.getWidth() - 10)
+                    return false;
+            }
             
             // Get the N64 index of the button that was pressed
             int index = mTouchscreenMap.getButtonPress( x, y );
