@@ -32,6 +32,7 @@ import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.FloatMath;
 import android.util.Log;
 import android.util.SparseArray;
@@ -82,6 +83,9 @@ public class TouchMap
     
     /** Y-coordinates of the buttons, in percent. */
     private final ArrayList<Integer> buttonY;
+    
+    /** names of the buttons. */
+    private final ArrayList<String> buttonNames;
     
     /** Analog background image (fixed). */
     protected Image analogBackImage;
@@ -177,6 +181,7 @@ public class TouchMap
         buttonMasks = new ArrayList<Image>();
         buttonX = new ArrayList<Integer>();
         buttonY = new ArrayList<Integer>();
+        buttonNames = new ArrayList<String>();
     }
     
     /**
@@ -188,6 +193,7 @@ public class TouchMap
         buttonMasks.clear();
         buttonX.clear();
         buttonY.clear();
+        buttonNames.clear();
         analogBackImage = null;
         analogForeImage = null;
         analogBackX = analogBackY = 0;
@@ -265,6 +271,28 @@ public class TouchMap
     }
     
     /**
+     * Gets the frame for the N64 button with a given asset name
+     * 
+     * @param assetName The asset name for the button
+     * 
+     * @return The frame for the N64 button with the given asset name
+     * 
+     */
+    public Rect getButtonFrame( String assetName )
+    {
+        for( int i = 0; i < buttonNames.size(); i++ )
+        {
+            String name = buttonNames.get( i );
+            if ( name.equals( assetName ) )
+            {
+                Image mask = buttonMasks.get( i );
+                return new Rect( mask.x, mask.y, mask.x + (int) ( mask.width * mask.scale ), mask.y + (int) ( mask.height * mask.scale ));
+            }
+        }
+        return new Rect(0, 0, 0, 0);
+    }
+    
+    /**
      * Gets the N64 button mapped to a given mask color.
      * 
      * @param color The mask color.
@@ -323,6 +351,19 @@ public class TouchMap
         int dY = yLocation - ( analogBackImage.y + (int) ( analogBackImage.hHeight * scale ) );
         
         return new Point( dX, dY );
+    }
+    
+    /**
+     * Gets the N64 analog stick's frame.
+     * 
+     * @return The analog stick's frame.
+     */
+    public Rect getAnalogFrame()
+    {
+        if( analogBackImage == null )
+            return new Rect(0, 0, 0, 0);
+        
+        return new Rect( analogBackImage.x, analogBackImage.y, analogBackImage.x + (int) ( analogBackImage.width * analogBackImage.scale ), analogBackImage.y + (int) ( analogBackImage.height * analogBackImage.scale ) );
     }
     
     /**
@@ -506,6 +547,7 @@ public class TouchMap
             // Position (percentages of the digitizer dimensions)
             buttonX.add( x );
             buttonY.add( y );
+            buttonNames.add( name );
             
             // Load the displayed and mask images
             buttonImages.add( new Image( mResources, skinFolder + "/" + name + ".png" ) );

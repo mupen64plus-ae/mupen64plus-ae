@@ -44,6 +44,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -57,6 +58,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
+import android.view.SoundEffectConstants;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -96,6 +98,16 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     private VisibleTouchMap mTouchscreenMap;
     private GameOverlay mOverlay;
     private ImageView mSurface;
+    
+    // Live drag and drop editing
+    private int initialX;
+    private int initialY;
+    private int dragIndex;
+    private boolean dragging;
+    private String dragAsset;
+    private int dragX;
+    private int dragY;
+    private Rect dragFrame;
     
     @TargetApi( 11 )
     @Override
@@ -385,37 +397,120 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     @Override
     public boolean onTouch( View v, MotionEvent event )
     {
-        if( ( event.getAction() & MotionEvent.ACTION_MASK ) != MotionEvent.ACTION_DOWN )
-            return false;
-        
         int x = (int) event.getX();
         int y = (int) event.getY();
         
-        // Get the N64 index of the button that was pressed
-        int index = mTouchscreenMap.getButtonPress( x, y );
-        if( index != TouchMap.UNMAPPED )
+        if( ( event.getAction() & MotionEvent.ACTION_MASK ) == MotionEvent.ACTION_DOWN )
         {
-            String assetName = TouchMap.ASSET_NAMES.get( index );
-            String title = READABLE_NAMES.get( index );
+            initialX = x;
+            initialY = y;
+            dragIndex = TouchMap.UNMAPPED;
+            dragging = false;
             
-            // D-pad buttons are not holdable
-            if( DPAD.equals( assetName ) )
-                index = -1;
+            // ignore touches that start at the very bottom or top of the screen
+            View view = getWindow().getDecorView();
+            if (y < 10 || y > view.getHeight() - 10)
+                return false;
             
-            popupDialog( assetName, title, index );
+            // Get the N64 index of the button that was pressed
+            int index = mTouchscreenMap.getButtonPress( x, y );
+            if( index != TouchMap.UNMAPPED )
+            {
+                dragIndex = index;
+                dragAsset = TouchMap.ASSET_NAMES.get( index );
+                dragFrame = mTouchscreenMap.getButtonFrame( dragAsset );
+            }
+            else
+            {
+                // See if analog was pressed
+                Point point = mTouchscreenMap.getAnalogDisplacement( x, y );
+                int dX = point.x;
+                int dY = point.y;
+                float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
+                if( mTouchscreenMap.isInCaptureRange( displacement ) )
+                {
+                    dragIndex = -2;
+                    dragAsset = ANALOG;
+                    dragFrame = mTouchscreenMap.getAnalogFrame();
+                }
+            }
+            
+            dragX = mProfile.getInt( dragAsset + TAG_X, INITIAL_ASSET_POS );
+            dragY = mProfile.getInt( dragAsset + TAG_Y, INITIAL_ASSET_POS );
+            
+            return true;
         }
-        else
+        else if( ( event.getAction() & MotionEvent.ACTION_MASK ) == MotionEvent.ACTION_MOVE )
         {
-            // See if analog was pressed
-            Point point = mTouchscreenMap.getAnalogDisplacement( x, y );
-            int dX = point.x;
-            int dY = point.y;
-            float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
-            if( mTouchscreenMap.isInCaptureRange( displacement ) )
-                popupDialog( ANALOG, getString( R.string.controller_analog ), -1 );
+            if (dragIndex != TouchMap.UNMAPPED)
+            {
+                if (!dragging)
+                {
+                    int dX = x - initialX;
+                    int dY = y - initialY;
+                    float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
+                    if (displacement >= 10)
+                        dragging = true;
+                }
+                if (!dragging)
+                    return false;
+                
+                // drag this button or analog stick around
+                
+                // calculate the X and Y percentage
+                View view = getWindow().getDecorView();
+                int newDragX = (x - (initialX - dragFrame.left)) * 100/(view.getWidth() - (dragFrame.right - dragFrame.left));
+                int newDragY = (y - (initialY - dragFrame.top)) * 100/(view.getHeight() - (dragFrame.bottom - dragFrame.top));
+                
+                // round to the nearest 5%
+                newDragX = Math.min(Math.max(Math.round(newDragX / 5) * 5, 0), 100);
+                newDragY = Math.min(Math.max(Math.round(newDragY / 5) * 5, 0), 100);
+                
+                if (newDragX != dragX || newDragY != dragY)
+                {
+                    dragX = newDragX;
+                    dragY = newDragY;
+                    mProfile.put( dragAsset + TAG_X, String.valueOf(newDragX) );
+                    mProfile.put( dragAsset + TAG_Y, String.valueOf(newDragY) );
+                    refresh();
+                }
+            }
+        }
+        else if( ( event.getAction() & MotionEvent.ACTION_MASK ) == MotionEvent.ACTION_UP )
+        {
+            // if this touch was part of a drag/swipe gesture then don't tap the button
+            if (dragging)
+                return false;
+            
+            // show the editor for the tapped button
+            if (dragIndex == -2)
+            {
+                // play the standard button sound effect
+                View view = getWindow().getDecorView();
+                view.playSoundEffect(SoundEffectConstants.CLICK);
+                
+                popupDialog( dragAsset, getString( R.string.controller_analog ), -1 );
+            }
+            else if( dragIndex != TouchMap.UNMAPPED )
+            {
+                int index = dragIndex;
+                String title = READABLE_NAMES.get( dragIndex );
+                
+                // D-pad buttons are not holdable
+                if( DPAD.equals( dragAsset ) )
+                    index = -1;
+                
+                // play the standard button sound effect
+                View view = getWindow().getDecorView();
+                view.playSoundEffect(SoundEffectConstants.CLICK);
+                
+                popupDialog( dragAsset, title, index );
+            }
+            
+            return true;
         }
         
-        return true;
+        return false;
     }
     
     @SuppressLint( "InflateParams" )
