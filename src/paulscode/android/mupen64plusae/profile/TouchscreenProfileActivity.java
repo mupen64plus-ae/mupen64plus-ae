@@ -413,7 +413,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 // unfortunately KitKat lacks a way to do this on its own,
                 // so just ignore all touches along the edges.
                 View view = getWindow().getDecorView();
-                if (y < 10 || y > view.getHeight() - 10 || x < 10 || x > view.getWidth() - 10)
+                if ( y < 10 || y > view.getHeight() - 10 || x < 10 || x > view.getWidth() - 10 )
                     return false;
             }
             
@@ -446,36 +446,36 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         }
         else if( ( event.getAction() & MotionEvent.ACTION_MASK ) == MotionEvent.ACTION_MOVE )
         {
-            if (dragIndex != TouchMap.UNMAPPED || ANALOG.equals(dragAsset))
+            if ( dragIndex != TouchMap.UNMAPPED || ANALOG.equals(dragAsset) )
             {
-                if (!dragging)
+                if ( !dragging )
                 {
                     int dX = x - initialX;
                     int dY = y - initialY;
                     float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
-                    if (displacement >= 10)
+                    if ( displacement >= 10 )
                         dragging = true;
                 }
-                if (!dragging)
+                if ( !dragging )
                     return false;
                 
                 // drag this button or analog stick around
                 
                 // calculate the X and Y percentage
                 View view = getWindow().getDecorView();
-                int newDragX = (x - (initialX - dragFrame.left)) * 100/(view.getWidth() - (dragFrame.right - dragFrame.left));
-                int newDragY = (y - (initialY - dragFrame.top)) * 100/(view.getHeight() - (dragFrame.bottom - dragFrame.top));
+                int newDragX = ( x - ( initialX - dragFrame.left ) ) * 100/( view.getWidth() - ( dragFrame.right - dragFrame.left ) );
+                int newDragY = ( y - ( initialY - dragFrame.top ) ) * 100/( view.getHeight() - ( dragFrame.bottom - dragFrame.top ) );
                 
                 // round to the nearest 5%
-                newDragX = Math.min(Math.max(Math.round(newDragX / 5) * 5, 0), 100);
-                newDragY = Math.min(Math.max(Math.round(newDragY / 5) * 5, 0), 100);
+                newDragX = Math.min( Math.max( Math.round( newDragX / 5 ) * 5, 0 ), 100 );
+                newDragY = Math.min( Math.max( Math.round( newDragY / 5 ) * 5, 0 ), 100 );
                 
-                if (newDragX != dragX || newDragY != dragY)
+                if ( newDragX != dragX || newDragY != dragY )
                 {
                     dragX = newDragX;
                     dragY = newDragY;
-                    mProfile.put( dragAsset + TAG_X, String.valueOf(newDragX) );
-                    mProfile.put( dragAsset + TAG_Y, String.valueOf(newDragY) );
+                    mProfile.put( dragAsset + TAG_X, String.valueOf( newDragX ) );
+                    mProfile.put( dragAsset + TAG_Y, String.valueOf( newDragY ) );
                     refresh();
                 }
             }
@@ -483,15 +483,15 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         else if( ( event.getAction() & MotionEvent.ACTION_MASK ) == MotionEvent.ACTION_UP )
         {
             // if this touch was part of a drag/swipe gesture then don't tap the button
-            if (dragging)
+            if ( dragging )
                 return false;
             
             // show the editor for the tapped button
-            if (ANALOG.equals(dragAsset))
+            if ( ANALOG.equals( dragAsset ) )
             {
                 // play the standard button sound effect
                 View view = getWindow().getDecorView();
-                view.playSoundEffect(SoundEffectConstants.CLICK);
+                view.playSoundEffect( SoundEffectConstants.CLICK );
                 
                 popupDialog( dragAsset, getString( R.string.controller_analog ), -1 );
             }
@@ -506,7 +506,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 
                 // play the standard button sound effect
                 View view = getWindow().getDecorView();
-                view.playSoundEffect(SoundEffectConstants.CLICK);
+                view.playSoundEffect( SoundEffectConstants.CLICK );
                 
                 popupDialog( dragAsset, title, index );
             }
