@@ -127,7 +127,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             mProgress.setMaxSubprogress( 0 );
             mProgress.setSubtext( "" );
             mProgress.setText( file.getAbsolutePath().substring( mSearchPath.getAbsolutePath().length() ) );
-            mProgress.setMessage( "Searching…" );
+            mProgress.setMessage( R.string.cacheRomInfo_searching );
             
             if( isCancelled() ) break;
             RomHeader header = new RomHeader( file );
@@ -147,7 +147,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                     {
                         ZipEntry zipEntry = entries.nextElement();
                         mProgress.setSubtext( zipEntry.getName() );
-                        mProgress.setMessage( "Searching zip file…" );
+                        mProgress.setMessage( R.string.cacheRomInfo_searchingZip );
                         
                         if( isCancelled() ) break;
                         try
@@ -228,26 +228,28 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
     private void cacheFile( File file, RomDatabase database, ConfigFile config )
     {
         if( isCancelled() ) return;
-        mProgress.setMessage( "Computing MD5…" );
+        mProgress.setMessage( R.string.cacheRomInfo_computingMD5 );
         String md5 = ComputeMd5Task.computeMd5( file );
         
         if( isCancelled() ) return;
-        mProgress.setMessage( "Searching ROM database…" );
+        mProgress.setMessage( R.string.cacheRomInfo_searchingDB );
         RomDetail detail = database.lookupByMd5WithFallback( md5, file );
         String artPath = mArtDir + "/" + detail.artName;
         config.put( md5, "goodName", detail.goodName );
+        if (detail.baseName != null && detail.baseName.length() != 0)
+            config.put( md5, "baseName", detail.baseName );
         config.put( md5, "romPath", file.getAbsolutePath() );
         config.put( md5, "artPath", artPath );
         
         if( mDownloadArt )
         {
             if( isCancelled() ) return;
-            mProgress.setMessage( "Downloading cover art…" );
+            mProgress.setMessage( R.string.cacheRomInfo_downloadingArt );
             downloadFile( detail.artUrl, artPath );
         }
         
         if( isCancelled() ) return;
-        mProgress.setMessage( "Refreshing UI…" );
+        mProgress.setMessage( R.string.cacheRomInfo_refreshingUI );
         this.publishProgress( config.get( md5 ) );
     }
     
@@ -275,7 +277,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         
         // This entry appears to be a valid ROM, extract it
         Log.i( "CacheRomInfoTask", "Found zip entry " + zipEntry.getName() );
-        mProgress.setMessage( "Extracting zip entry…" );
+        mProgress.setMessage( R.string.cacheRomInfo_extractingZip );
         String entryName = new File( zipEntry.getName() ).getName();
         File extractedFile = new File( destDir, entryName );
         try
