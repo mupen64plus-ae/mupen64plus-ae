@@ -37,6 +37,7 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -109,6 +110,9 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     private int dragY;
     private Rect dragFrame;
     
+    // Don't enter immersive mode until the ActionBar menus are closed
+    private boolean actionBarMenuOpen = false;
+    
     @TargetApi( 11 )
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -175,6 +179,18 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
             ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
             color.setAlpha( mUserPrefs.displayActionBarTransparency );
             getActionBar().setBackgroundDrawable( color );
+            
+            // onOptionsMenuClosed is not called due to a bug in Android:
+            // http://stackoverflow.com/questions/3688077/android-onoptionsmenuclosed-not-being-called-for-submenu
+            // so add a menu visibility listener instead
+            getActionBar().addOnMenuVisibilityListener( new OnMenuVisibilityListener()
+            {
+                @Override
+                public void onMenuVisibilityChanged( boolean isVisible )
+                {
+                    actionBarMenuOpen = isVisible;
+                }
+            });
         }
         
         // Initialize the touchmap and overlay
@@ -218,7 +234,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     public void onWindowFocusChanged( boolean hasFocus )
     {
         super.onWindowFocusChanged( hasFocus );
-        if( hasFocus )
+        if( hasFocus && !actionBarMenuOpen )
             hideSystemBars();
     }
     
