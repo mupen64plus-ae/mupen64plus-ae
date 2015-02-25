@@ -282,12 +282,8 @@ public class TouchMap
     {
         for( int i = 0; i < buttonNames.size(); i++ )
         {
-            String name = buttonNames.get( i );
-            if ( name.equals( assetName ) )
-            {
-                Image mask = buttonMasks.get( i );
-                return new Rect( mask.x, mask.y, mask.x + (int) ( mask.width * mask.scale ), mask.y + (int) ( mask.height * mask.scale ));
-            }
+            if ( buttonNames.get( i ).equals( assetName ) )
+                return new Rect( buttonMasks.get( i ).drawRect );
         }
         return new Rect(0, 0, 0, 0);
     }
@@ -360,10 +356,9 @@ public class TouchMap
      */
     public Rect getAnalogFrame()
     {
-        if( analogBackImage == null )
-            return new Rect(0, 0, 0, 0);
-        
-        return new Rect( analogBackImage.x, analogBackImage.y, analogBackImage.x + (int) ( analogBackImage.width * analogBackImage.scale ), analogBackImage.y + (int) ( analogBackImage.height * analogBackImage.scale ) );
+        if( analogBackImage != null )
+            return new Rect( analogBackImage.drawRect );
+        return new Rect(0, 0, 0, 0);
     }
     
     /**
