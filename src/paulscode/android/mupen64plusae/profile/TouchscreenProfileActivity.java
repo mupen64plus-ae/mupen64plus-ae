@@ -413,6 +413,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 // ignore edge swipes.
                 // unfortunately KitKat lacks a way to do this on its own,
                 // so just ignore all touches along the edges.
+                // http://stackoverflow.com/questions/20530333/ignore-immersive-mode-swipe
                 View view = getWindow().getDecorView();
                 if ( y < 10 || y > view.getHeight() - 10 || x < 10 || x > view.getWidth() - 10 )
                     return false;
@@ -467,9 +468,8 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 int newDragX = ( x - ( initialX - dragFrame.left ) ) * 100/( view.getWidth() - ( dragFrame.right - dragFrame.left ) );
                 int newDragY = ( y - ( initialY - dragFrame.top ) ) * 100/( view.getHeight() - ( dragFrame.bottom - dragFrame.top ) );
                 
-                // round to the nearest 5%
-                newDragX = Math.min( Math.max( Math.round( newDragX / 5 ) * 5, 0 ), 100 );
-                newDragY = Math.min( Math.max( Math.round( newDragY / 5 ) * 5, 0 ), 100 );
+                newDragX = Math.min( Math.max( newDragX, 0 ), 100 );
+                newDragY = Math.min( Math.max( newDragY, 0 ), 100 );
                 
                 if ( newDragX != dragX || newDragY != dragY )
                 {
