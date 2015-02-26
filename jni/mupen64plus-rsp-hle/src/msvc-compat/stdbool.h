@@ -23,13 +23,13 @@
 
 #pragma once
 
-typedef int _Bool;
+typedef int __Bool;
 
 /**
  * The standard states that "an application may undefine and then possibly redefine the macro
  * bool, true and false". However, such feature might be withdrawn in a future version.
  **/
-#define bool _Bool
+#define bool __Bool
 #define true 1
 #define false 0
 
