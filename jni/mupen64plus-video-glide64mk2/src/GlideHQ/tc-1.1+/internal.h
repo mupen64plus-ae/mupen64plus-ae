@@ -147,7 +147,7 @@ do {                                \
 } while (0)
 
 /** Copy a 4-element unsigned byte vector */
-static inline void
+static void
 COPY_4UBV(uint8_t dst[4], const uint8_t src[4])
 {
 #if defined(__i386__)

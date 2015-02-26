@@ -47,23 +47,26 @@ namespace
 	{
 		signed char r, g, b;
 	};
-	inline color_t make_color_t()
+	static color_t make_color_t()
 	{
-		return (color_t) {0, 0, 0};
+		color_t retColor = { 0, 0, 0 };
+		return retColor;
 	}
-	inline color_t make_color_t(signed char r_, signed char g_, signed char b_)
+	static color_t make_color_t(signed char r_, signed char g_, signed char b_)
 	{
-		return (color_t) {r_, g_, b_};
+		color_t retColor = { r_, g_, b_ };
+		return retColor;
 	}
-	inline color_t make_color_t(int i)
+	static color_t make_color_t(int i)
 	{
-		return (color_t) {(signed char)(i >> 3), (signed char)(i >> 2), (signed char)(i >> 3)};
+		color_t retColor = { (signed char)(i >> 3), (signed char)(i >> 2), (signed char)(i >> 3) };
+		return retColor;
 	}
-	inline bool operator==(const color_t &a, const color_t &b)
+	static bool operator==(const color_t &a, const color_t &b)
 	{
 		return a.r == b.r && a.g == b.g && a.b == b.b;
 	}
-	inline bool operator<(const color_t &a, const color_t &b)
+	static bool operator<(const color_t &a, const color_t &b)
 	{
 		signed char d;
 		d = a.r - b.r;
@@ -75,7 +78,7 @@ namespace
 		d = a.b - b.b;
 		return d < 0;
 	}
-	inline color_t &operator--(color_t &c)
+	static color_t &operator--(color_t &c)
 	{
 		if(c.b > 0)
 		{
@@ -100,7 +103,7 @@ namespace
 		}
 		return c;
 	}
-	inline color_t &operator++(color_t &c)
+	static color_t &operator++(color_t &c)
 	{
 		if(c.b < 31)
 		{
@@ -288,7 +291,7 @@ namespace
 		// find luminance
 		int y = 37 * (r * 21*2*2 + g * 72 + b * 7*2*2); // multiplier: 14555800
 		// square root it (!)
-		y = sqrtf(y) + 0.5f; // now in range 0 to 3815
+		y = (int) (sqrtf((float) y) + 0.5f); // now in range 0 to 3815
 		return y;
 	}
 
@@ -338,14 +341,14 @@ namespace
 		}
 
 		return
-			100000 *
+			(int) (100000 *
 			(
 				(cb[0] - ca[0]) * (cb[0] - ca[0])
 				+
 				(cb[1] - ca[1]) * (cb[1] - ca[1])
 				+
 				(cb[2] - ca[2]) * (cb[2] - ca[2])
-			)
+			))
 			;
 		// max value: 1000 * (4 + 4 + 4) = 6000
 	}
@@ -367,15 +370,15 @@ namespace
 		int bestsum = -1;
 		int besti = 0;
 		int bestj = 1;
-		int dists[m][n];
+		int *pDists = new int[m*n];
 		// first the square
 		for(i = 0; i < n; ++i)
 		{
-			dists[i][i] = 0;
+			pDists[i*n+i] = 0;
 			for(j = i+1; j < n; ++j)
 			{
 				int d = dist(c[i], c[j]);
-				dists[i][j] = dists[j][i] = d;
+				pDists[i*n+j] = pDists[j*n+i] = d;
 			}
 		}
 		// then the box
@@ -384,7 +387,7 @@ namespace
 			for(j = 0; j < n; ++j)
 			{
 				int d = dist(c[i], c[j]);
-				dists[i][j] = d;
+				pDists[i*n+j] = d;
 			}
 		}
 		for(i = 0; i < m; ++i)
@@ -393,8 +396,8 @@ namespace
 				int sum = 0;
 				for(k = 0; k < n; ++k)
 				{
-					int di = dists[i][k];
-					int dj = dists[j][k];
+					int di = pDists[i*n+k];
+					int dj = pDists[j*n+k];
 					int m  = min(di, dj);
 					sum += m;
 				}
@@ -408,6 +411,7 @@ namespace
 		T c0 = c[besti];
 		c[1] = c[bestj];
 		c[0] = c0;
+		delete[] pDists;
 	}
 	template <class T, class F>
 	inline void reduce_colors_inplace_2fixpoints(T *c, int n, int m, F dist, const T &fix0, const T &fix1)
@@ -417,15 +421,15 @@ namespace
 		int bestsum = -1;
 		int besti = 0;
 		int bestj = 1;
-		int dists[m+2][n];
+		int *pDists = new int[(m+2)*n];
 		// first the square
 		for(i = 0; i < n; ++i)
 		{
-			dists[i][i] = 0;
+			pDists[i*n+i] = 0;
 			for(j = i+1; j < n; ++j)
 			{
 				int d = dist(c[i], c[j]);
-				dists[i][j] = dists[j][i] = d;
+				pDists[i*n+j] = pDists[j*n+i] = d;
 			}
 		}
 		// then the box
@@ -434,19 +438,19 @@ namespace
 			for(j = 0; j < n; ++j)
 			{
 				int d = dist(c[i], c[j]);
-				dists[i][j] = d;
+				pDists[i*n+j] = d;
 			}
 		}
 		// then the two extra rows
 		for(j = 0; j < n; ++j)
 		{
 			int d = dist(fix0, c[j]);
-			dists[m][j] = d;
+			pDists[m*n+j] = d;
 		}
 		for(j = 0; j < n; ++j)
 		{
 			int d = dist(fix1, c[j]);
-			dists[m+1][j] = d;
+			pDists[(m + 1)*n+j] = d;
 		}
 		for(i = 0; i < m; ++i)
 			for(j = i+1; j < m; ++j)
@@ -454,10 +458,10 @@ namespace
 				int sum = 0;
 				for(k = 0; k < n; ++k)
 				{
-					int di = dists[i][k];
-					int dj = dists[j][k];
-					int d0 = dists[m][k];
-					int d1 = dists[m+1][k];
+					int di = pDists[i*n+k];
+					int dj = pDists[j*n+k];
+					int d0 = pDists[m*n+k];
+					int d1 = pDists[(m+1)*n+k];
 					int m  = min(min(di, dj), min(d0, d1));
 					sum += m;
 				}
@@ -472,6 +476,7 @@ namespace
 			c[0] = c[besti];
 		if(bestj != 1)
 			c[1] = c[bestj];
+		delete[] pDists;
 	}
 
 	enum CompressionMode
@@ -499,11 +504,11 @@ namespace
 	}
 	template<> inline int refine_component_decode<color_dist_srgb>(int comp)
 	{
-		return sqrtf(comp) + 0.5f;
+		return (int) (sqrtf((float) comp) + 0.5f);
 	}
 	template<> inline int refine_component_decode<color_dist_srgb_mixed>(int comp)
 	{
-		return sqrtf(comp) + 0.5f;
+		return (int) (sqrtf((float) comp) + 0.5f);
 	}
 
 	template <class T, class Big, int scale_l>
@@ -869,8 +874,8 @@ namespace
 	template<DxtMode dxt, ColorDistFunc ColorDist, CompressionMode mode, RefinementMode refine>
 	inline void s2tc_encode_block(unsigned char *out, const unsigned char *rgba, int iw, int w, int h, int nrandom)
 	{
-		color_t c[16 + (nrandom >= 0 ? nrandom : 0)];
-		unsigned char ca[16 + (nrandom >= 0 ? nrandom : 0)];
+		color_t *c = new color_t[16 + (nrandom >= 0 ? nrandom : 0)];
+		unsigned char *ca = new unsigned char[16 + (nrandom >= 0 ? nrandom : 0)];
 		int x, y;
 
 		if(mode == MODE_FAST)
@@ -1102,6 +1107,8 @@ namespace
 				}
 				break;
 		}
+		delete [] c;
+		delete [] ca;
 	}
 
 	// compile time dispatch magic
@@ -1345,8 +1352,8 @@ namespace
 				{
 					int x, y;
 					int pw = w+2;
-					int downrow[6*pw];
-					memset(downrow, 0, sizeof(downrow));
+					int *downrow = new int[6*pw];
+					memset(downrow, 0, 6*pw*sizeof(int));
 					int *thisrow_r, *thisrow_g, *thisrow_b, *thisrow_a;
 					int *downrow_r, *downrow_g, *downrow_b, *downrow_a;
 					for(y = 0; y < h; ++y)
@@ -1402,6 +1409,7 @@ namespace
 							for(x = 0; x < w; ++x)
 								out[(x + y * w) * 4 + 3] = (1 << alphabits) - 1;
 					}
+					delete[]  downrow;
 				}
 				break;
 		}
