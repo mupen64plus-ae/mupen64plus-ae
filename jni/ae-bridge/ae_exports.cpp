@@ -122,7 +122,9 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_loadLibraries(JNIEnv* env, jclass cls, jstring jlibPath)
 {
     LOGI("Loading native libraries");
-    checkLibraryError("Unknown");
+
+    // Clear stale error messages
+    dlerror();
 
     // Get the library path from the java-managed string
     const char *libPath = env->GetStringUTFChars(jlibPath, 0);
@@ -169,7 +171,9 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 {
     // Unload the libraries to ensure that static variables are re-initialized next time
     LOGI("Unloading native libraries");
-    checkLibraryError("Unknown");
+
+    // Clear stale error messages
+    dlerror();
 
     // Nullify function pointers so that they can no longer be used
     aeiInit         = NULL;
