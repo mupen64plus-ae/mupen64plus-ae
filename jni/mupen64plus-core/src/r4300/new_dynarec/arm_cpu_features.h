@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - cic.c                                                   *
+ *   Mupen64plus - arm_cpu_features.h                                      *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2014 Bobby Smiles                                       *
+ *   Copyright (C) 2015 Gilles Siberlin                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,47 +19,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "cic.h"
+#ifndef ARM_CPU_FEATURES_H
+#define ARM_CPU_FEATURES_H
 
-#include "api/m64p_types.h"
-#include "api/callbacks.h"
-
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
-
-
-void init_cic_using_ipl3(struct cic* cic, const void* ipl3)
+typedef struct
 {
-    size_t i;
-    uint64_t crc = 0;
+    unsigned char SWP;
+    unsigned char Half;
+    unsigned char Thumb;
+    unsigned char FastMult;
+    unsigned char VFP;
+    unsigned char EDSP;
+    unsigned char ThumbEE;
+    unsigned char NEON;
+    unsigned char VFPv3;
+    unsigned char TLS;
+    unsigned char VFPv4;
+    unsigned char IDIVa;
+    unsigned char IDIVt;
+}arm_cpu_features_t;
 
-    static const struct cic cics[] =
-    {
-        { CIC_X101, 0x3f },
-        { CIC_X102, 0x3f },
-        { CIC_X103, 0x78 },
-        { CIC_X105, 0x91 },
-        { CIC_X106, 0x85 }
-    };
+extern arm_cpu_features_t arm_cpu_features;
+void detect_arm_cpu_features(void);
+void print_arm_cpu_features(void);
 
-    for (i = 0; i < 0xfc0/4; i++)
-        crc += ((uint32_t*)ipl3)[i];
-
-    switch(crc)
-    {
-        default:
-            DebugMessage(M64MSG_WARNING, "Unknown CIC type (%016" PRIX64 ")! using CIC 6102.", crc);
-        case UINT64_C(0x000000D057C85244): i = 1; break; /* CIC_X102 */
-        case UINT64_C(0x000000D0027FDF31):               /* CIC_X101 */
-        case UINT64_C(0x000000CFFB631223): i = 0; break; /* CIC_X101 */
-        case UINT64_C(0x000000D6497E414B): i = 2; break; /* CIC_X103 */
-        case UINT64_C(0x0000011A49F60E96): i = 3; break; /* CIC_X105 */
-        case UINT64_C(0x000000D6D5BE5580): i = 4; break; /* CIC_X106 */
-    }
-
-    memcpy(cic, &cics[i], sizeof(*cic));
-}
-
+#endif /* ARM_CPU_FEATURES_H */
