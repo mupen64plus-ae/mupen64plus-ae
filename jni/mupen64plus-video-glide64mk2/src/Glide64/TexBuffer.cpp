@@ -293,7 +293,7 @@ int OpenTextureBuffer(COLOR_IMAGE & cimage)
             grRenderBuffer( GR_BUFFER_BACKBUFFER );
             rdp.texbufs[i].count--;
             if (j < rdp.texbufs[i].count)
-              memcpy(&(rdp.texbufs[i].images[j]), &(rdp.texbufs[i].images[j+1]), sizeof(TBUFF_COLOR_IMAGE)*(rdp.texbufs[i].count-j));
+              memmove(&(rdp.texbufs[i].images[j]), &(rdp.texbufs[i].images[j+1]), sizeof(TBUFF_COLOR_IMAGE)*(rdp.texbufs[i].count-j));
           }
         }
       }
@@ -722,7 +722,7 @@ int FindTextureBuffer(wxUint32 addr, wxUint16 width)
         {
           rdp.texbufs[index].count--;
           if (j < rdp.texbufs[index].count)
-            memcpy(&(rdp.texbufs[index].images[j]), &(rdp.texbufs[index].images[j+1]), sizeof(TBUFF_COLOR_IMAGE)*(rdp.texbufs[index].count-j));
+            memmove(&(rdp.texbufs[index].images[j]), &(rdp.texbufs[index].images[j+1]), sizeof(TBUFF_COLOR_IMAGE)*(rdp.texbufs[index].count-j));
         }
       }
     }

@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - stdbool.h                                       *
+ *   Mupen64plus - arm_cpu_features.h                                      *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2014 Bobby Smiles                                       *
+ *   Copyright (C) 2015 Gilles Siberlin                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,19 +19,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* This header is only intended to be used with msvc compilers */
+#ifndef ARM_CPU_FEATURES_H
+#define ARM_CPU_FEATURES_H
 
-#pragma once
+typedef struct
+{
+    unsigned char SWP;
+    unsigned char Half;
+    unsigned char Thumb;
+    unsigned char FastMult;
+    unsigned char VFP;
+    unsigned char EDSP;
+    unsigned char ThumbEE;
+    unsigned char NEON;
+    unsigned char VFPv3;
+    unsigned char TLS;
+    unsigned char VFPv4;
+    unsigned char IDIVa;
+    unsigned char IDIVt;
+}arm_cpu_features_t;
 
-typedef int __Bool;
+extern arm_cpu_features_t arm_cpu_features;
+void detect_arm_cpu_features(void);
+void print_arm_cpu_features(void);
 
-/**
- * The standard states that "an application may undefine and then possibly redefine the macro
- * bool, true and false". However, such feature might be withdrawn in a future version.
- **/
-#define bool __Bool
-#define true 1
-#define false 0
-
-#define __bool_true_false_are_defined 1
-
+#endif /* ARM_CPU_FEATURES_H */

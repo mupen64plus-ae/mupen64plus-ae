@@ -129,7 +129,7 @@ endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3 -flto
-WARNFLAGS ?= -Wall
+WARNFLAGS ?= -Wall -Wno-unused-function
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -DM64P_PARALLEL
 CXXFLAGS += -fvisibility-inlines-hidden
 LDLIBS +=  -lm
@@ -520,7 +520,8 @@ ifneq ($(DYNAREC), )
       ifeq ($(DYNAREC), arm)
         CFLAGS += -DNEW_DYNAREC=3
         SOURCE += \
-		  $(SRCDIR)/r4300/new_dynarec/linkage_arm.S
+         $(SRCDIR)/r4300/new_dynarec/linkage_arm.S \
+         $(SRCDIR)/r4300/new_dynarec/arm_cpu_features.c
       else
         $(error NEW_DYNAREC is only supported on 32 bit x86 and 32 bit armel)
       endif

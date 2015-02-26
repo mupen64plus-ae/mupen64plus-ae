@@ -193,9 +193,14 @@ CFLAGS += $(LIBPNG_CFLAGS)
 LDLIBS += $(LIBPNG_LDLIBS)
 
 # search for OpenGL libraries
+ifeq ($(VC), 1)
+  GL_CFLAGS += -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/vmcs_host/linux
+  GL_LDLIBS += -L/opt/vc/lib -lEGL -lbcm_host -lvcos -lvchiq_arm
+  USE_GLES=1
+endif
 ifeq ($(USE_GLES), 1)
   CFLAGS += -DUSE_GLES
-  GL_LDLIBS = -lGLESv2
+  GL_LDLIBS += -lGLESv2
 endif
 ifeq ($(OS), OSX)
   GL_LDLIBS = -framework OpenGL
@@ -382,6 +387,7 @@ targets:
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    NO_ASM=1      == build without inline assembly code (x86 MMX/SSE)"
 	@echo "    USE_GLES=1    == build against GLESv2 instead of OpenGL"
+	@echo "    VC=1 	 == build against Broadcom Videocore GLESv2"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"

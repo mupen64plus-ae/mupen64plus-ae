@@ -62,6 +62,7 @@
  *
  *	from: @(#)kadb.c	8.1 (Berkeley) 6/10/93
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -149,10 +150,10 @@ static const char * const r4k_str_fmt_name[16] =
 
 static const char * const r4k_str_reg_name[32] = 
 {
-	"$zero", "$at",	"v0",	"v1",	"a0",	"a1",	"a2",	"a3",
-	"t0",	"t1",	"t2",	"t3",	"t4",	"t5",	"t6",	"t7",
-	"s0",	"s1",	"s2",	"s3",	"s4",	"s5",	"s6",	"s7",
-	"t8",	"t9",	"k0",	"k1",	"$gp",	"$sp",	"s8",	"$ra"
+	"$zero", "$at",	"$v0",	"$v1",	"$a0",	"$a1",	"$a2",	"$a3",
+	"$t0",	"$t1",	"$t2",	"$t3",	"$t4",	"$t5",	"$t6",	"$t7",
+	"$s0",	"$s1",	"$s2",	"$s3",	"$s4",	"$s5",	"$s6",	"$s7",
+	"$t8",	"$t9",	"$k0",	"$k1",	"$gp",	"$sp",	"$s8",	"$ra"
 };
 
 static const char * const r4k_str_c0_opname[64] = 
@@ -361,7 +362,8 @@ db_disasm_insn ( struct r4k_dis_t * state,
             case OP_DIVU:
             case OP_DDIV:
             case OP_DDIVU:
-                    db_printf(state, "$zero,%s,%s",
+                    db_printf(state, "%s,%s,%s",
+                        r4k_str_reg_name[0],
                         r4k_str_reg_name[i.RType.rs],
                         r4k_str_reg_name[i.RType.rt]);
                     break;
@@ -762,11 +764,11 @@ r4k_disassemble_split ( struct r4k_dis_t * state,
     dupd = strdup( buff );
     *opcode = &dupd[0];
     
-    for( i = 0; buff[i] && buff[i] != ' '; i++ );
+    for( i = 0; buff[i] && buff[i] != ' ' && buff[i] != '\t'; i++ );
     
     dupd[i] = '\0';
     
-    for( ; buff[i] && buff[i] == ' '; i++ );
+    for( ; buff[i] && (buff[i] == ' ' || buff[i] == '\t'); i++ );
     
     *operands = &dupd[i];
     
@@ -800,7 +802,7 @@ r4k_disassemble_split_quick ( uint32_t instruction,
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=[ DECODE_OP ]=-=-=-=-=-=-=-=-=-=-=-=-=-=-=[//
 
-void r4300_decode_op ( uint32 instr, char * opcode, char * arguments, int counter )
+void r4300_decode_op ( uint32_t instr, char * opcode, char * arguments, uint32_t counter )
 {
     char * _op, * _args;
     
