@@ -10,7 +10,10 @@
   <string name="menuItem_setSlot">Slot %1$d</string>
   <string name="menuItem_fileSave">Save to file…</string>
   <string name="menuItem_fileLoad">Load from file…</string>
+  <string name="menuItem_screenshot">Screenshot</string>
   <string name="menuItem_setSpeed">Game speed</string>
+  <string name="menuItem_enableFramelimiter">Sync audio</string>
+  <string name="menuItem_disableFramelimiter">Desync audio</string>
   <string name="menuItem_paks">Controller Paks</string>
   <!--capitalize since trademark-->
   <string name="menuItem_pak1_empty">Player 1: Empty</string>
@@ -41,6 +44,7 @@
   <string name="menuItem_unmapAll">Unmap all</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Play</string>
+  <string name="menuItem_refreshRoms">Refresh ROMs</string>
   <string name="menuItem_settings">Settings</string>
   <string name="menuItem_globalSettings">Global settings</string>
   <string name="menuItem_emulationProfiles">Emulation profiles</string>
@@ -56,6 +60,7 @@
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">App version</string>
   <string name="menuItem_changelog">Changelog</string>
+  <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Hardware info</string>
   <string name="menuItem_localeOverride">Language</string>
   <!--ManageProfilesActivity-->
@@ -69,7 +74,11 @@
   <string name="profile_name_must_be_unique">Name must be unique</string>
   <string name="profile_manage_profiles">Manage profiles</string>
   <!--Popup Dialogs-->
+  <string name="popup_faq">Mupen64Plus is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the <i>video plugin</i>.\n\nTo fix lag, try changing the <i>video frameskip</i> setting or the <i>video plugin</i>.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the <i>button scale</i> or <i>button layout</i>.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.\n\n</small>Thank you for helping us improve the app!</string>
+  <string name="popup_version">Version: %1$s\nVersion code: %2$d</string>
   <!--Lists-->
+  <string name="listItem_setDefault">Set default</string>
+  <string name="listItem_unsetDefault">Unset default</string>
   <string name="listItem_edit">Edit</string>
   <string name="listItem_rename">Rename</string>
   <string name="listItem_copy">Copy</string>
@@ -93,7 +102,24 @@
   <string name="toast_savingFile">Saving %1$s…</string>
   <string name="toast_overwritingFile">Overwriting %1$s…</string>
   <string name="toast_loadingGameInfo">Loading game info…</string>
+  <string name="toast_savingScreenshot">Saving screenshot…</string>
+  <string name="toast_canceling">Cancelling…</string>
+  <string name="toast_pleaseWait">Please wait…</string>
   <!--Something happened (use '.')-->
+  <string name="toast_nativeMainFailure01">Failed to parse initial command line parameters.</string>
+  <string name="toast_nativeMainFailure02">Failed to attach core library.</string>
+  <string name="toast_nativeMainFailure03">Failed to start core library.</string>
+  <string name="toast_nativeMainFailure04">Failed to open configuration handles.</string>
+  <string name="toast_nativeMainFailure05">Failed to parse final command line parameters.</string>
+  <string name="toast_nativeMainFailure06">Cannot use --core-compare feature with this Mupen64Plus core library.</string>
+  <string name="toast_nativeMainFailure07">Failed to open ROM file for reading.</string>
+  <string name="toast_nativeMainFailure08">Failed to allocate buffer for ROM image file.</string>
+  <string name="toast_nativeMainFailure09">Failed to read bytes from ROM image file.</string>
+  <string name="toast_nativeMainFailure10">Core failed to open ROM image file.</string>
+  <string name="toast_nativeMainFailure11">Listed cheats as requested.</string>
+  <string name="toast_nativeMainFailure12">Failed to load plugins.</string>
+  <string name="toast_nativeMainFailure13">Core failed to attach plugin.</string>
+  <string name="toast_nativeMainFailureUnknown">Unknown launch error.</string>
   <string name="toast_usingSlot">Now using slot %1$d.</string>
   <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
   <string name="toast_crashReportSent">Report sent.</string>
@@ -107,8 +133,16 @@
   <string name="actionResume_summary">Unpredictable if cheats are used</string>
   <string name="actionRestart_title">Restart</string>
   <string name="actionRestart_summary">Recommended if cheats are used</string>
+  <string name="actionWiki_title">Wiki</string>
+  <string name="actionWiki_summary">Community help for this game</string>
   <string name="actionReloadAssets_title">Reload app resources</string>
   <string name="actionReloadAssets_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
+  <string name="actionResetUserPrefs_title">Defaults</string>
+  <string name="actionResetUserPrefs_summary">Restore default global settings</string>
+  <string name="actionResetUserPrefs_popupMessage">Reset all global preferences to their defaults?</string>
+  <string name="actionResetGamePrefs_title">Defaults</string>
+  <string name="actionResetGamePrefs_summary">Restore default game settings</string>
+  <string name="actionResetGamePrefs_popupMessage">Reset all game preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
   <string name="actionCheatEditor_title">Enable cheats</string>
   <string name="actionCheatEditor_summary">Add, modify, and delete custom cheats</string>
   <string name="actionShare_title">Share</string>
@@ -164,6 +198,8 @@
   <string name="gln64ScreenClear_summary">Disable for speed (might cause video glitches)</string>
   <string name="gln64AlphaTest_title">Alpha test</string>
   <string name="gln64AlphaTest_summary">Disable for speed (causes black textures)</string>
+  <string name="gln64HackDepth_title">Hack depth coordinates</string>
+  <string name="gln64HackDepth_summary">May fix flashing textures in some games</string>
   <string name="riceAutoFrameskip_title">Auto frameskip</string>
   <string name="riceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
   <string name="riceFastTexture_title">Fast texture loading</string>
@@ -174,6 +210,8 @@
   <string name="riceHiResTextures_summary">Use imported texture packs</string>
   <string name="riceFog_title">Fog</string>
   <string name="riceFog_summary">Show fog effects</string>
+  <string name="audioSynchronize_title">Synchronise audio and video</string>
+  <string name="audioSynchronize_summary">Minimises latency, but may cause crackling in some games/devices</string>
   <string name="audioSwapChannels_title">Swap audio channels</string>
   <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -181,6 +219,8 @@
   <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
   <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
   <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
+  <string name="touchscreenAnimation_title">Visual feedback</string>
+  <string name="touchscreenAnimation_summary">Animate joystick</string>
   <string name="touchscreenStyle_title">Button style</string>
   <string name="touchscreenStyle_entryOutline">Outlines</string>
   <string name="touchscreenStyle_entryShaded">Shaded</string>
@@ -205,9 +245,19 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (highest framerate)</string>
   <string name="displayScaling_title">Screen scaling</string>
+  <string name="displayScaling_entryNone">None\n<small>Use exact resolution selected above</small></string>
+  <string name="displayScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
+  <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
+  <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
+  <string name="displayFps_title">Framerate</string>
+  <string name="displayFps_summary">Display FPS on screen</string>
   <string name="videoPlugin_title">Video plugin</string>
   <string name="videoPlugin_entryNone">None (video disabled)</string>
+  <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Flicker reduction</string>
+  <string name="videoHardwareType_entryDisableHack">Disable flicker reduction hack</string>
   <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
   <string name="videoHardwareType_entryStandard">Standard profile</string>
   <string name="videoHardwareType_entryI">I profile</string>
@@ -278,6 +328,7 @@
   <string name="pathHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Game save folder</string>
+  <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multi-player</string>
   <string name="playerMap_summary">Define each player\'s controller(s)</string>
@@ -311,6 +362,7 @@
   <string name="assetExtractor_initializing">Initialising</string>
   <string name="assetExtractor_progress">%1$.0f%% done: %2$s</string>
   <string name="assetExtractor_finished">Finished</string>
+  <string name="assetExtractor_failed">Error extracting app data.\nPlease unplug USB cable, reboot device, and re-launch app.\nFor help, please visit %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(long-press for full text)</string>
@@ -356,6 +408,8 @@
   <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
   <!--ROM Scanning-->
+  <string name="scanning_title">Scanning…</string>
+  <!--ROM information calculation-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -364,23 +418,40 @@
   <string name="playerMap_deviceWithName">Device %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Device %1$d</string>
   <string name="playerMapPreference_popupTitle">Player %1$d</string>
+  <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Unmap</string>
+  <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_remove">Remove</string>
+  <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
+  <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
   <!--Controller button names-->
+  <string name="controller_analog">Analogue stick</string>
   <string name="controller_analogR">Analog →</string>
   <string name="controller_analogL">Analog ←</string>
   <string name="controller_analogD">Analog ↓</string>
   <string name="controller_analogU">Analogue ↑</string>
+  <string name="controller_dpad">D-pad</string>
   <string name="controller_dpadR">D-pad →</string>
   <string name="controller_dpadL">D-pad ←</string>
   <string name="controller_dpadD">D-pad ↓</string>
   <string name="controller_dpadU">D-pad ↑</string>
+  <string name="controller_groupAB">A/B buttons</string>
+  <string name="controller_buttonA">A button</string>
+  <string name="controller_buttonB">B button</string>
+  <string name="controller_groupC">C buttons</string>
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
+  <string name="controller_buttonL">L button</string>
+  <string name="controller_buttonR">R button</string>
+  <string name="controller_buttonZ">Z button</string>
+  <string name="controller_buttonS">Start button</string>
+  <string name="controller_fps">FPS indicator</string>
   <!--Input Mapping-->
+  <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Unmap</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analogue stick controlled with touchpad</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad controlled with touchpad</string>
@@ -414,6 +485,7 @@
   <string name="inputMapActivity_gameshark">Gameshark</string>
   <string name="inputMapActivity_simulateBack">Back key</string>
   <string name="inputMapActivity_simulateMenu">Menu key</string>
+  <string name="inputMapActivity_screenshot">Screenshot</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Press button or key…</string>
   <string name="diagnosticActivity_textMotion_text">Touch screen or joystick…</string>

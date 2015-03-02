@@ -356,6 +356,7 @@
   <string name="pathHiResTexturesTask_message">Per favore.  Questo processo potrebbe durare un po\' di tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema spacchettando texture!</string>
   <!--ROM Scanning-->
+  <!--ROM information calculation-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->

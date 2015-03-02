@@ -410,6 +410,7 @@
   <string name="pathHiResTexturesTask_errorMessage">Ongelma tekstuurien purkamisessa!</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Skannataan...</string>
+  <!--ROM information calculation-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->

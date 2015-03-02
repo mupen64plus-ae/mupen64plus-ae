@@ -58,6 +58,7 @@
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">App-Version</string>
   <string name="menuItem_changelog">Changelog</string>
+  <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Hardware Infos</string>
   <string name="menuItem_localeOverride">Sprache</string>
   <!--ManageProfilesActivity-->
@@ -126,8 +127,10 @@
   <string name="actionWiki_summary">Community-Hilfe für dieses Spiel</string>
   <string name="actionReloadAssets_title">App-Ressourcen erneut laden</string>
   <string name="actionReloadAssets_summary">Dies hat KEINE Auswirkungen auf benutzerdefinierte Einstellungen, ROMs, Speicherstände oder andere Benutzerdaten.</string>
+  <string name="actionResetUserPrefs_title">Standards</string>
   <string name="actionResetUserPrefs_summary">Globale Standardeinstellungen wiederherstellen</string>
   <string name="actionResetUserPrefs_popupMessage">Alle globalen Einstellungen auf Standardwerte zurücksetzen?</string>
+  <string name="actionResetGamePrefs_title">Standards</string>
   <string name="actionResetGamePrefs_summary">Spiel-Standardeinstellungen wiederherstellen</string>
   <string name="actionResetGamePrefs_popupMessage">Alle Einstellungen auf Standardwerte zurücksetzen?<small>\n\nAlle manuellen Änderungen, die Sie an der Konfigurationsdatei vorgenommen haben, werden überschrieben.</small></string>
   <string name="actionCheatEditor_title">Cheat codes bearbeiten</string>
@@ -235,6 +238,9 @@
   <string name="displayFps_title">Framerate</string>
   <string name="videoPlugin_title">Video Plugin</string>
   <string name="videoPlugin_entryNone">Keins (Video deaktiviert)</string>
+  <string name="videoPlugin_entryGln64">gln64\n<small>(Adaption von GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryRice">rice\n<small>(Adaption von Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGlide64">glide64\n<small>(Adaption von Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Flimmerreduktion</string>
   <string name="videoHardwareType_entryAuto">Auto-Erkennung anhand des Telefon-/Tabletmodells</string>
   <string name="videoHardwareType_entryStandard">Standard-Profil</string>
@@ -386,6 +392,7 @@
   <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>
   <!--ROM Scanning-->
+  <!--ROM information calculation-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -399,6 +406,8 @@
   <string name="playerMapPreference_button">Spieler %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Mich erinnern, wenn Spieler nicht belegt sind</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
+  <string name="touchscreenProfileActivity_verticalSlider">Vertikal: %1$d %%</string>
   <!--Controller button names-->
   <string name="controller_analog">Analog-Stick</string>
   <string name="controller_analogR">Analog →</string>

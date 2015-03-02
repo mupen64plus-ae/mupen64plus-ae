@@ -409,6 +409,7 @@
   <string name="pathHiResTexturesTask_errorMessage">Une erreur est survenue durant la décompression des textures !</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Scan en cours...</string>
+  <!--ROM information calculation-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->

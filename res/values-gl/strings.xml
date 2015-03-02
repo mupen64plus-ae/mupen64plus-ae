@@ -356,6 +356,7 @@
   <string name="pathHiResTexturesTask_message">Teña paciencia. Este proceso pode levar un tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema desempaquetando texturas!</string>
   <!--ROM Scanning-->
+  <!--ROM information calculation-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->

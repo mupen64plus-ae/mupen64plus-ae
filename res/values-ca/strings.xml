@@ -284,6 +284,7 @@ Perfil T</string>
   <string name="pathHiResTexturesTask_message">Si us plau, sigues pacient. Aquest proces pot tardar una mica.</string>
   <string name="pathHiResTexturesTask_errorMessage">Error extraient les textures!</string>
   <!--ROM Scanning-->
+  <!--ROM information calculation-->
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
