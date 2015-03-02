@@ -2,7 +2,7 @@
 
 # Push the transifex source files using the command-line tool.
 
-cd..
+cd ..
 echo
 echo "WARNING:"
 echo
