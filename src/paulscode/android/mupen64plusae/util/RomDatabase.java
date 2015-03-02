@@ -30,6 +30,67 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import android.text.TextUtils;
 import android.util.Log;
 
+/**
+ * This class wraps the <a href=https://github.com/mupen64plus/mupen64plus-core/tree/master/data>ROM
+ * database</a> maintained upstream. Upstream uses it for the following:
+ * <ul>
+ * <li>It provides an absolute identity for different rips of the same ROM (e.g. some rips are "bad"
+ * or are hacked with cheats/bugfixes after they are ripped). Having an absolute identity of the rip
+ * (via md5) is important when reproducing error reports.</li>
+ * <li>It uses a consistent naming convention for the friendly (user-facing) name of each ROM. Again
+ * useful when isolating and reproducing bugs from user reports.</li>
+ * <li>It contains a bunch of additional meta info, like:
+ * <ul>
+ * <li>original method of saving data (SRAM, mempak, etc.) (critical to core operation)</li>
+ * <li>number of players (minimize unnecessary controller polling)</li>
+ * <li>rumble support a subjective rating of emulation quality (though I haven't seen this used
+ * much)</li>
+ * <li>game-specific tweaks (CountPerOp)</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * <p>
+ * The ROM header does not provide all this extra information, nor does it sufficiently
+ * differentiate rip variants. The header is also very inconsistent in the names. They are good
+ * enough for development purposes, but not pretty enough to display to a user. Here are the header
+ * names for some common games:
+ * <ul>
+ * <li>Banjo-Kazooie</li>
+ * <li>BANJO TOOIE</li>
+ * <li>CONKER BFD</li>
+ * <li>Diddy Kong Racing</li>
+ * <li>DONKEY KONG 64</li>
+ * <li>GOLDENEYE</li>
+ * <li>JET FORCE GEMINI</li>
+ * <li>Kirby64</li>
+ * <li>MARIOKART64</li>
+ * <li>MarioParty</li>
+ * <li>PAPER MARIO</li>
+ * <li>Perfect Dark</li>
+ * <li>SMASH BROTHERS</li>
+ * <li>STAR WARS EP1 RACER</li>
+ * <li>STARFOX64</li>
+ * <li>SUPER MARIO 64</li>
+ * <li>TUROK_DINOSAUR_HUNTE</li>
+ * <li>Turok 2: Seeds of Ev</li>
+ * <li>Turok 3: Shadow of O</li>
+ * <li>THE LEGEND OF ZELDA</li>
+ * <li>ZELDA MAJORA'S MASK</li>
+ * </ul>
+ * So we use the same database in the front-end, mostly for the same reasons:
+ * <ul>
+ * <li>Consistent, meaningful user-facing names that can also be used to determine the exact rip
+ * variant from user reports</li>
+ * <li>Consistency with upstream naming conventions, in case a user submits a bug report upstream</li>
+ * <li>Number of players and rumble support is used in the front-end to present the proper menu
+ * options to users (number of controllers in play menu, pak options in in-game menu)</li>
+ * </ul>
+ * We wrap the database info in a java class, which we use to hold additional derived meta-info,
+ * like URLs for the cover art and wiki entries.
+ * 
+ * @see RomHeader
+ * @see assets/mupen64plus_data/mupen64plus.ini
+ */
 public class RomDatabase
 {
     private static final String ART_URL_TEMPLATE = "http://paulscode.com/downloads/Mupen64Plus-AE/CoverArt/%s";
