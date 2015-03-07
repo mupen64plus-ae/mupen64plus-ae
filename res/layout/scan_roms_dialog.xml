@@ -26,26 +26,26 @@
             android:id="@+id/text1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select a ROM file or an entire folder to scan"
+            android:text="@string/scanRomsDialog_selectRom"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <CheckBox
             android:id="@+id/checkBox1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Search zip files" />
+            android:text="@string/scanRomsDialog_searchZips" />
 
         <CheckBox
             android:id="@+id/checkBox2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Download cover art" />
+            android:text="@string/scanRomsDialog_downloadArt" />
 
         <CheckBox
             android:id="@+id/checkBox3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Clear gallery before adding" />
+            android:text="@string/scanRomsDialog_clearGallery" />
     </LinearLayout>
 
 </RelativeLayout>

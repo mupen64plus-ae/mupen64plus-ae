@@ -466,6 +466,12 @@
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
 
+    <!-- Scan Roms Dialog -->
+    <string name="scanRomsDialog_selectRom">Select a ROM file or an entire folder to scan</string>
+    <string name="scanRomsDialog_searchZips">Search zip files</string>
+    <string name="scanRomsDialog_downloadArt">Download cover art</string>
+    <string name="scanRomsDialog_clearGallery">Clear gallery before adding</string>
+
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>
 
