@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/inputMapSpecialKeys"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
@@ -18,7 +19,8 @@
             android:id="@+id/buttonIncrementSlot"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_incrementSlot" />
+            android:text="@string/inputMapActivity_incrementSlot"
+            tools:ignore="RtlHardcoded" />
     </TableRow>
 
     <TableRow
@@ -35,7 +37,8 @@
             android:id="@+id/buttonSaveSlot"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_saveSlot" />
+            android:text="@string/inputMapActivity_saveSlot"
+            tools:ignore="RtlHardcoded" />
     </TableRow>
 
     <TableRow
@@ -52,7 +55,8 @@
             android:id="@+id/buttonStop"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_stop" />
+            android:text="@string/inputMapActivity_stop"
+            tools:ignore="RtlHardcoded" />
     </TableRow>
 
     <TableRow
@@ -69,7 +73,8 @@
             android:id="@+id/buttonFrameAdvance"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_frameAdvance" />
+            android:text="@string/inputMapActivity_frameAdvance"
+            tools:ignore="RtlHardcoded" />
     </TableRow>
 
     <TableRow
@@ -86,7 +91,8 @@
             android:id="@+id/buttonSpeedUp"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_speedUp" />
+            android:text="@string/inputMapActivity_speedUp"
+            tools:ignore="RtlHardcoded" />
     </TableRow>
 
     <TableRow
@@ -103,7 +109,8 @@
             android:id="@+id/buttonSimulateMenu"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_simulateMenu" />
+            android:text="@string/inputMapActivity_simulateMenu"
+            tools:ignore="RtlHardcoded" />
     </TableRow>
 
     <TableRow

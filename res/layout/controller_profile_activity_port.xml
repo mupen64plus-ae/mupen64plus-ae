@@ -13,6 +13,7 @@
     ***********************************************************************************
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/inputMapPreference"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -73,7 +74,8 @@
                 style="@style/btnMappable"
                 android:layout_marginLeft="@dimen/inputMapPreferenceButtonSize"
                 android:background="@drawable/button_a"
-                android:text="@string/inputMapActivity_btnA" />
+                android:text="@string/inputMapActivity_btnA"
+                tools:ignore="RtlHardcoded" />
         </TableRow>
 
         <EditText
