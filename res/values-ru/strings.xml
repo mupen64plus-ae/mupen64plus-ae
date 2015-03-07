@@ -234,6 +234,7 @@
   <string name="pathHiResTexturesTask_title">Извлечение текстур</string>
   <string name="pathHiResTexturesTask_message">Подождите немного.</string>
   <string name="pathHiResTexturesTask_errorMessage">Ошибка при извлечении текстур!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

@@ -270,6 +270,7 @@ Perfil T</string>
   <string name="pathHiResTexturesTask_title">Extraient textures</string>
   <string name="pathHiResTexturesTask_message">Si us plau, sigues pacient. Aquest proces pot tardar una mica.</string>
   <string name="pathHiResTexturesTask_errorMessage">Error extraient les textures!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

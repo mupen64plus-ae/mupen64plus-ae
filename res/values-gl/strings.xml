@@ -341,6 +341,7 @@
   <string name="pathHiResTexturesTask_title">Desempaquetando texturas</string>
   <string name="pathHiResTexturesTask_message">Teña paciencia. Este proceso pode levar un tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema desempaquetando texturas!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

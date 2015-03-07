@@ -331,6 +331,7 @@
   <string name="pathHiResTexturesTask_title">テクスチャの展開中</string>
   <string name="pathHiResTexturesTask_message">しばらくお待ちください。この処理には多少時間がかかる場合があります。</string>
   <string name="pathHiResTexturesTask_errorMessage">テクスチャの展開時に問題が発生しました！</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

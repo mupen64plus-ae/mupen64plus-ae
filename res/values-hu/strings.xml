@@ -234,6 +234,7 @@
   <string name="pathHiResTexturesTask_title">Textúrák kicsomagolása</string>
   <string name="pathHiResTexturesTask_message">Légy türelemmel. Ez időbe telik.</string>
   <string name="pathHiResTexturesTask_errorMessage">Probléma a textúrák kicsomagolásánál!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

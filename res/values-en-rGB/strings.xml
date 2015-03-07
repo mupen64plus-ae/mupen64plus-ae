@@ -393,6 +393,7 @@
   <string name="pathHiResTexturesTask_title">Unpacking textures</string>
   <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <string name="scanning_title">Scanning…</string>
   <!--ROM information calculation-->

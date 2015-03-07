@@ -329,6 +329,7 @@
   <string name="cheatEditor_saveConfirm">حفظ الهاك الى ملف؟</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">فك الظغط عن الخامات</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <string name="scanning_title">جاري البحث...</string>
   <!--ROM information calculation-->

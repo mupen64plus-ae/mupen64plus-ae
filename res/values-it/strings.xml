@@ -341,6 +341,7 @@
   <string name="pathHiResTexturesTask_title">Spacchettando texture</string>
   <string name="pathHiResTexturesTask_message">Per favore.  Questo processo potrebbe durare un po\' di tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema spacchettando texture!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

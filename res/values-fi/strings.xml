@@ -394,6 +394,7 @@
   <string name="pathHiResTexturesTask_title">Puretaan tekstuureja</string>
   <string name="pathHiResTexturesTask_message">Ole kärsivällinen. Prosessi voi kestää jonkin aikaa.</string>
   <string name="pathHiResTexturesTask_errorMessage">Ongelma tekstuurien purkamisessa!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <string name="scanning_title">Skannataan...</string>
   <!--ROM information calculation-->

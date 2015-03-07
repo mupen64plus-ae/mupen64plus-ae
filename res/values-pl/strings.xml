@@ -350,6 +350,7 @@
   <string name="pathHiResTexturesTask_title">Rozpakowywanie tekstur</string>
   <string name="pathHiResTexturesTask_message">Prosimy o cierpliwość. Może to potrwać kilka minut.</string>
   <string name="pathHiResTexturesTask_errorMessage">Błąd przy rozpakowywaniu tekstur!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

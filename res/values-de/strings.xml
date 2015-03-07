@@ -12,6 +12,8 @@
   <string name="menuItem_fileLoad">Aus Datei laden…</string>
   <string name="menuItem_screenshot">Screenshot</string>
   <string name="menuItem_setSpeed">Spielgeschwindigkeit</string>
+  <string name="menuItem_enableFramelimiter">Audio synchronisieren</string>
+  <string name="menuItem_disableFramelimiter">Audio desynchronisieren</string>
   <string name="menuItem_paks">Controller Paks</string>
   <!--capitalize since trademark-->
   <string name="menuItem_pak1_empty">Spieler 1: Leer</string>
@@ -104,11 +106,19 @@
   <string name="toast_canceling">Breche ab...</string>
   <string name="toast_pleaseWait">Bitte warten...</string>
   <!--Something happened (use '.')-->
+  <string name="toast_nativeMainFailure01">Der Anfangsbefehlszeilenparameter konnte nicht geparsert werden.</string>
   <string name="toast_nativeMainFailure02">Kernbibliothek konnte nicht anhängt werden.</string>
   <string name="toast_nativeMainFailure03">Kernbibliothek konnte nicht gestartet werden.</string>
+  <string name="toast_nativeMainFailure04">Konfigurations-handles konnten nicht geöffnet werden.</string>
+  <string name="toast_nativeMainFailure05">Die abschließenden Kommandozeilen-Parameter konnten nicht geparsert werden</string>
   <string name="toast_nativeMainFailure06">--core-compare Funktion kann mit dieser Mupen64Plus-Kernbibliothek nicht benutzt werden.</string>
   <string name="toast_nativeMainFailure07">ROM-Datei konnte nicht zum Lesen geöffnet werden.</string>
+  <string name="toast_nativeMainFailure08">Fehler bei der Zuweisung des Puffers für die ROM-Image-Datei .</string>
+  <string name="toast_nativeMainFailure09">Fehler beim Lesen von Bytes der ROM-Image-Datei.</string>
+  <string name="toast_nativeMainFailure10">Der Kern konnte die ROM-Image-Datei nicht öffnen.</string>
+  <string name="toast_nativeMainFailure11">Die gewünschten aufgelisteten Cheats.</string>
   <string name="toast_nativeMainFailure12">Plugins konnten nicht geladen werden.</string>
+  <string name="toast_nativeMainFailure13">Der Kern konnte das Plugin nicht anhängen.</string>
   <string name="toast_nativeMainFailureUnknown">Unbekannter Startfehler.</string>
   <string name="toast_usingSlot">Slot %1$d wird nun genutzt.</string>
   <string name="toast_sdInaccessible">SD-Karte nicht zugänglich (trenne das USB-Kabel und versuche es erneut).</string>
@@ -174,6 +184,8 @@
   <string name="gln64ScreenClear_summary">Deaktivieren für mehr Geschwindigkeit (könnte Video-Glitches verursachen)</string>
   <string name="gln64AlphaTest_title">Alphatest</string>
   <string name="gln64AlphaTest_summary">Deaktivieren für mehr Geschwindigkeit (verursacht schwarze Texturen)</string>
+  <string name="gln64HackDepth_title">Hacke Tiefenkoordinaten</string>
+  <string name="gln64HackDepth_summary">Kann blinkende Texturen in einigen Spielen beheben</string>
   <string name="riceAutoFrameskip_title">Auto-Frameskip</string>
   <string name="riceAutoFrameskip_summary">Verbessert die Spielgeschwindigkeit auf Kosten der Framerate</string>
   <string name="riceFastTexture_title">Schnelles Texturladen</string>
@@ -184,6 +196,7 @@
   <string name="riceHiResTextures_summary">Importierte Texturenpakete nutzen</string>
   <string name="riceFog_title">Nebel</string>
   <string name="riceFog_summary">Nebeleffekte anzeigen</string>
+  <string name="audioSynchronize_title">Audio und Video synchronisieren</string>
   <string name="audioSynchronize_summary">Verringert Latenzzeit, könnte aber bei manchen Spielen/Geräten Knistern verursachen.</string>
   <string name="audioSwapChannels_title">Audiokanäle tauschen</string>
   <string name="audioSwapChannels_summary">Linken und rechten Audiokanal tauschen</string>
@@ -192,6 +205,7 @@
   <string name="touchscreenAutoHold_entryDisabled">Deaktiviert</string>
   <string name="touchscreenAutoHold_entryLongPress">Bei langem Drücken</string>
   <string name="touchscreenAutoHold_entrySlideOut">Beim Wegsliden</string>
+  <string name="touchscreenAnimation_title">Visuelles Feedback</string>
   <string name="touchscreenAnimation_summary">Joystick animieren</string>
   <string name="touchscreenStyle_title">Knopf-Aussehen</string>
   <string name="touchscreenStyle_entryOutline">Umrandung</string>
@@ -222,12 +236,14 @@
   <string name="displayScaling_entryCrop">Zuschneiden\n<small>Bildschirm füllen, keine Verzerrung (beschneidet die Grafik)</small></string>
   <string name="displayScaling_entryStretch">Strecken\n<small>Bildschirm füllen, keine schwarzen Balken (fügt Verzerrung hinzu)</small></string>
   <string name="displayFps_title">Framerate</string>
+  <string name="displayFps_summary">FPS auf Bildschirm anzeigen</string>
   <string name="videoPlugin_title">Video Plugin</string>
   <string name="videoPlugin_entryNone">Keins (Video deaktiviert)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(Adaption von GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryRice">rice\n<small>(Adaption von Rice Video v6.1.0(b))</small></string>
   <string name="videoPlugin_entryGlide64">glide64\n<small>(Adaption von Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Flimmerreduktion</string>
+  <string name="videoHardwareType_entryDisableHack">Flimmerreduzierung deaktivieren</string>
   <string name="videoHardwareType_entryAuto">Auto-Erkennung anhand des Telefon-/Tabletmodells</string>
   <string name="videoHardwareType_entryStandard">Standard-Profil</string>
   <string name="videoHardwareType_entryI">I-Profil</string>
@@ -377,8 +393,17 @@
   <string name="pathHiResTexturesTask_title">Texturen werden entpackt</string>
   <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
+  <string name="scanning_title">Überprüfung...</string>
   <!--ROM information calculation-->
+  <string name="cacheRomInfo_searching">Suche...</string>
+  <string name="cacheRomInfo_searchingZip">Suche ZIP-Datei...</string>
+  <string name="cacheRomInfo_computingMD5">Berechne MD5...</string>
+  <string name="cacheRomInfo_searchingDB">Suche ROM-Datenbank...</string>
+  <string name="cacheRomInfo_downloadingArt">Cover herunterladen...</string>
+  <string name="cacheRomInfo_refreshingUI">Aktualisiere UI...</string>
+  <string name="cacheRomInfo_extractingZip">Extrahierende ZIP-Eingabe…</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -392,6 +417,7 @@
   <string name="playerMapPreference_button">Spieler %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Mich erinnern, wenn Spieler nicht belegt sind</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_remove">Entfernen</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertikal: %1$d %%</string>
   <!--Controller button names-->

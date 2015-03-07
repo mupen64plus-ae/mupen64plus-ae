@@ -251,6 +251,7 @@
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>
   <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

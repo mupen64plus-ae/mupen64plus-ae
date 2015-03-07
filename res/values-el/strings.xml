@@ -255,6 +255,7 @@
   <string name="pathHiResTexturesTask_title">Ξεπακετάρισμα υφών</string>
   <string name="pathHiResTexturesTask_message">Παρακαλώ περιμένετε. Αυτή ενέργεια μπορεί να πάρει λίγη ώρα.</string>
   <string name="pathHiResTexturesTask_errorMessage">Σφάλμα ξεπακεταρίσματος υφών!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

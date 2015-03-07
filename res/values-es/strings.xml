@@ -386,6 +386,7 @@
   <string name="pathHiResTexturesTask_title">Extrayendo texturas</string>
   <string name="pathHiResTexturesTask_message">Por favor, sé paciente. Este proceso puede tomar algo de tiempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">¡Error al extraer texturas!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->

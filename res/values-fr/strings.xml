@@ -393,9 +393,21 @@
   <string name="pathHiResTexturesTask_title">Décompresser les textures</string>
   <string name="pathHiResTexturesTask_message">Merci de patienter. Cette opération peut prendre quelques minutes.</string>
   <string name="pathHiResTexturesTask_errorMessage">Une erreur est survenue durant la décompression des textures !</string>
+  <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Sélectionnez un fichier ROM ou un dossier entier à scanner</string>
+  <string name="scanRomsDialog_searchZips">Rechercher des fichiers zip</string>
+  <string name="scanRomsDialog_downloadArt">Télécharger la pochette</string>
+  <string name="scanRomsDialog_clearGallery">Effacer la galerie avant ajout</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Scan en cours...</string>
   <!--ROM information calculation-->
+  <string name="cacheRomInfo_searching">Recherche en cours...</string>
+  <string name="cacheRomInfo_searchingZip">Recherche de fichier zip...</string>
+  <string name="cacheRomInfo_computingMD5">Calcul MD5</string>
+  <string name="cacheRomInfo_searchingDB">Recherche dans la base de donnée de ROM...</string>
+  <string name="cacheRomInfo_downloadingArt">Téléchargement de la pochette...</string>
+  <string name="cacheRomInfo_refreshingUI">Mise à jour de l\'interface...</string>
+  <string name="cacheRomInfo_extractingZip">Extraction de l\'entrée zip...</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -409,9 +421,11 @@
   <string name="playerMapPreference_button">Joueur %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Me rappeler lorsque des joueurs ne sont pas assignés</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Boutons</string>
   <string name="touchscreenProfileActivity_remove">Supprimer</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal : %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertical : %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Auto-maintenable</string>
   <!--Controller button names-->
   <string name="controller_analog">Stick analogique</string>
   <string name="controller_dpad">Flèches directionelles</string>

@@ -277,6 +277,7 @@
   <string name="pathHiResTexturesTask_title">Uppackning texturer</string>
   <string name="pathHiResTexturesTask_message">Var god och vänta. Denna process kan ta lite tid.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem med uppackning av texturer!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->
