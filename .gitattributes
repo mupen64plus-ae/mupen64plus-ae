@@ -25,6 +25,7 @@ Makefile text
 *.md text
 *.mk text
 *.pl text
+.project
 *.py text
 README text
 RELEASE text
