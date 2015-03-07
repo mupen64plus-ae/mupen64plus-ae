@@ -113,14 +113,14 @@
   <string name="actionCheatEditor_summary">Dodaj, uredi ili obriši opcije za varanje</string>
   <string name="actionShare_title">Podijeli</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Unos</string>
-  <string name="screenInput_summary">Postavke kontrolera</string>
-  <string name="screenTouchscreen_title">Dodirni ekran</string>
-  <string name="screenTouchscreen_summary">Postavke kontrolera na ekranu</string>
-  <string name="screenTouchpad_title">Dodirna površina</string>
-  <string name="screenTouchpad_summary">Xperia PLAY postavke</string>
-  <string name="screenDisplay_title">Prikaz</string>
-  <string name="screenDisplay_summary">Postavke izgleda</string>
+  <string name="categoryInput_title">Unos</string>
+  <string name="categoryInput_summary">Postavke kontrolera</string>
+  <string name="categoryTouchscreen_title">Dodirni ekran</string>
+  <string name="categoryTouchscreen_summary">Postavke kontrolera na ekranu</string>
+  <string name="categoryTouchpad_title">Dodirna površina</string>
+  <string name="categoryTouchpad_summary">Xperia PLAY postavke</string>
+  <string name="categoryDisplay_title">Prikaz</string>
+  <string name="categoryDisplay_summary">Postavke izgleda</string>
   <string name="screenVideo_title">Grafika</string>
   <string name="screenVideo_summary">Postavke grafike</string>
   <string name="screenAdvanced_title">Napredno</string>

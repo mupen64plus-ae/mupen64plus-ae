@@ -115,14 +115,14 @@
   <string name="actionCheatEditor_summary">Dodaj, modyfikuj i usuń własne cheat\'y</string>
   <string name="actionShare_title">Udostępnij</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Urządzenie wejścia</string>
-  <string name="screenInput_summary">Ustawienia kontrolera</string>
-  <string name="screenTouchscreen_title">Ekran dotykowy</string>
-  <string name="screenTouchscreen_summary">Ustawienia ekranowego kontrolera dotykowego</string>
-  <string name="screenTouchpad_title">Touchpad</string>
-  <string name="screenTouchpad_summary">Ustawienia Xperia PLAY</string>
-  <string name="screenDisplay_title">Ekran</string>
-  <string name="screenDisplay_summary">Ustawienia układu</string>
+  <string name="categoryInput_title">Urządzenie wejścia</string>
+  <string name="categoryInput_summary">Ustawienia kontrolera</string>
+  <string name="categoryTouchscreen_title">Ekran dotykowy</string>
+  <string name="categoryTouchscreen_summary">Ustawienia ekranowego kontrolera dotykowego</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryTouchpad_summary">Ustawienia Xperia PLAY</string>
+  <string name="categoryDisplay_title">Ekran</string>
+  <string name="categoryDisplay_summary">Ustawienia układu</string>
   <string name="screenVideo_title">Obraz</string>
   <string name="screenVideo_summary">Ustawienia graficzne</string>
   <string name="screenAdvanced_title">Ustawienia zaawansowane</string>

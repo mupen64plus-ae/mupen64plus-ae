@@ -107,14 +107,14 @@
   <string name="actionCheatEditor_title">Hantera fuskkoder</string>
   <string name="actionShare_title">Dela</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">ingång</string>
-  <string name="screenInput_summary">Kontroll inställningar</string>
-  <string name="screenTouchscreen_title">Pekskärm</string>
-  <string name="screenTouchscreen_summary">On-screen kontroll inställningar</string>
-  <string name="screenTouchpad_title">Pekplatta</string>
-  <string name="screenTouchpad_summary">Xperia PLAY inställningar</string>
-  <string name="screenDisplay_title">Visa</string>
-  <string name="screenDisplay_summary">Layoutinställningar</string>
+  <string name="categoryInput_title">ingång</string>
+  <string name="categoryInput_summary">Kontroll inställningar</string>
+  <string name="categoryTouchscreen_title">Pekskärm</string>
+  <string name="categoryTouchscreen_summary">On-screen kontroll inställningar</string>
+  <string name="categoryTouchpad_title">Pekplatta</string>
+  <string name="categoryTouchpad_summary">Xperia PLAY inställningar</string>
+  <string name="categoryDisplay_title">Visa</string>
+  <string name="categoryDisplay_summary">Layoutinställningar</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik inställningar</string>
   <string name="screenAdvanced_title">Avancerat</string>

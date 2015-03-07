@@ -147,14 +147,14 @@
   <string name="actionCheatEditor_summary">اضافة,تعديل و الحذف على الهاك المعدل</string>
   <string name="actionShare_title">المشاركة</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">الادخال</string>
-  <string name="screenInput_summary">اعدادات التحكم</string>
-  <string name="screenTouchscreen_title">شاشة المس</string>
-  <string name="screenTouchscreen_summary">اعدادات الازرار على الشاشه</string>
-  <string name="screenTouchpad_title">المس</string>
-  <string name="screenTouchpad_summary">اعدادات جهاز ال Xperia</string>
-  <string name="screenDisplay_title">الشاشه</string>
-  <string name="screenDisplay_summary">اعدادات التصميم</string>
+  <string name="categoryInput_title">الادخال</string>
+  <string name="categoryInput_summary">اعدادات التحكم</string>
+  <string name="categoryTouchscreen_title">شاشة المس</string>
+  <string name="categoryTouchscreen_summary">اعدادات الازرار على الشاشه</string>
+  <string name="categoryTouchpad_title">المس</string>
+  <string name="categoryTouchpad_summary">اعدادات جهاز ال Xperia</string>
+  <string name="categoryDisplay_title">الشاشه</string>
+  <string name="categoryDisplay_summary">اعدادات التصميم</string>
   <string name="screenVideo_title">الفيديو</string>
   <string name="screenVideo_summary">اعدادات الفيديو</string>
   <string name="screenAdvanced_title">خيارات متطوره</string>

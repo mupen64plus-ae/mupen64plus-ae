@@ -84,12 +84,12 @@
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Girdi</string>
-  <string name="screenInput_summary">Denetim Ayarları</string>
-  <string name="screenTouchscreen_title">Dokunmatik Ekran</string>
-  <string name="screenTouchscreen_summary">Ekran üstü denetleyici ayarları</string>
-  <string name="screenTouchpad_title">Dokunmatik yüzey</string>
-  <string name="screenTouchpad_summary">Xperia PLAY ayarları</string>
+  <string name="categoryInput_title">Girdi</string>
+  <string name="categoryInput_summary">Denetim Ayarları</string>
+  <string name="categoryTouchscreen_title">Dokunmatik Ekran</string>
+  <string name="categoryTouchscreen_summary">Ekran üstü denetleyici ayarları</string>
+  <string name="categoryTouchpad_title">Dokunmatik yüzey</string>
+  <string name="categoryTouchpad_summary">Xperia PLAY ayarları</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik ayarları</string>
   <string name="screenAdvanced_title">Gelişmiş</string>

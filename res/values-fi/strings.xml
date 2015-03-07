@@ -147,14 +147,14 @@
   <string name="actionCheatEditor_summary">Lisää, muokkaa ja poista kustom huijauksia</string>
   <string name="actionShare_title">Jaa</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Sisääntulo</string>
-  <string name="screenInput_summary">Ohjainasetukset</string>
-  <string name="screenTouchscreen_title">Kosketusnäyttö</string>
-  <string name="screenTouchscreen_summary">Näytöllä olevan ohjaimen asetukset</string>
-  <string name="screenTouchpad_title">Kosketuslevy</string>
-  <string name="screenTouchpad_summary">Xperia PLAY asetukset</string>
-  <string name="screenDisplay_title">Näyttö</string>
-  <string name="screenDisplay_summary">Ulkoasu asetukset</string>
+  <string name="categoryInput_title">Sisääntulo</string>
+  <string name="categoryInput_summary">Ohjainasetukset</string>
+  <string name="categoryTouchscreen_title">Kosketusnäyttö</string>
+  <string name="categoryTouchscreen_summary">Näytöllä olevan ohjaimen asetukset</string>
+  <string name="categoryTouchpad_title">Kosketuslevy</string>
+  <string name="categoryTouchpad_summary">Xperia PLAY asetukset</string>
+  <string name="categoryDisplay_title">Näyttö</string>
+  <string name="categoryDisplay_summary">Ulkoasu asetukset</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafiikka-asetukset</string>
   <string name="screenAdvanced_title">Edistynyt</string>

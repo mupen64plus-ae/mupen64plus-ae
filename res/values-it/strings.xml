@@ -113,14 +113,14 @@
   <string name="actionCheatEditor_summary">Aggiungi, modifica ed elimina trucchi personalizzti</string>
   <string name="actionShare_title">Condividi</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Input</string>
-  <string name="screenInput_summary">Impostazioni controlli</string>
-  <string name="screenTouchscreen_title">Touchscreen</string>
-  <string name="screenTouchscreen_summary">Impostazioni controlli su schermo</string>
-  <string name="screenTouchpad_title">Touchpad</string>
-  <string name="screenTouchpad_summary">Impostazioni Xperia PLAY</string>
-  <string name="screenDisplay_title">Schermo</string>
-  <string name="screenDisplay_summary">Impostazioni aspetto</string>
+  <string name="categoryInput_title">Input</string>
+  <string name="categoryInput_summary">Impostazioni controlli</string>
+  <string name="categoryTouchscreen_title">Touchscreen</string>
+  <string name="categoryTouchscreen_summary">Impostazioni controlli su schermo</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryTouchpad_summary">Impostazioni Xperia PLAY</string>
+  <string name="categoryDisplay_title">Schermo</string>
+  <string name="categoryDisplay_summary">Impostazioni aspetto</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Impostazioni grafiche</string>
   <string name="screenAdvanced_title">Avanzate</string>

@@ -113,14 +113,14 @@
   <string name="actionCheatEditor_summary">Voeg toe, verander en verwijder cheat codes</string>
   <string name="actionShare_title">Deel</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Invoer</string>
-  <string name="screenInput_summary">Besturingsinstellingen</string>
-  <string name="screenTouchscreen_title">Aanraakscherm</string>
-  <string name="screenTouchscreen_summary">On-screen controllerinstellingen</string>
-  <string name="screenTouchpad_title">Touchpad</string>
-  <string name="screenTouchpad_summary">Xperia PLAY instellingen</string>
-  <string name="screenDisplay_title">Scherm</string>
-  <string name="screenDisplay_summary">Layout instellingen</string>
+  <string name="categoryInput_title">Invoer</string>
+  <string name="categoryInput_summary">Besturingsinstellingen</string>
+  <string name="categoryTouchscreen_title">Aanraakscherm</string>
+  <string name="categoryTouchscreen_summary">On-screen controllerinstellingen</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryTouchpad_summary">Xperia PLAY instellingen</string>
+  <string name="categoryDisplay_title">Scherm</string>
+  <string name="categoryDisplay_summary">Layout instellingen</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafische instellingen</string>
   <string name="screenAdvanced_title">Geavanceerd</string>

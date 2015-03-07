@@ -43,11 +43,11 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     // These constants must match the keys used in res/xml/preferences.xml
     
     private static final String SCREEN_ROOT = "screenRoot";
-    private static final String CATEGORY_DISPLAY = "screenDisplay";
+    private static final String CATEGORY_DISPLAY = "categoryDisplay";
     private static final String CATEGORY_AUDIO = "categoryAudio";
-    private static final String CATEGORY_TOUCHSCREEN = "screenTouchscreen";
-    private static final String CATEGORY_TOUCHPAD = "screenTouchpad";
-    private static final String CATEGORY_INPUT = "screenInput";
+    private static final String CATEGORY_TOUCHSCREEN = "categoryTouchscreen";
+    private static final String CATEGORY_TOUCHPAD = "categoryTouchpad";
+    private static final String CATEGORY_INPUT = "categoryInput";
     private static final String CATEGORY_DATA = "categoryData";
     
     private static final String DISPLAY_ORIENTATION = "displayOrientation";

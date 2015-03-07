@@ -76,12 +76,12 @@
   <string name="actionReloadAssets_title">Перезагрузить ресурсы</string>
   <string name="actionReloadAssets_summary">Не влияет на настройки пользователя, ROMs, сохранения игр, или другие пользовательские данные</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Ввод</string>
-  <string name="screenInput_summary">Настройки управления</string>
-  <string name="screenTouchscreen_title">Тачскрин</string>
-  <string name="screenTouchscreen_summary">Параметры экранных кнопок</string>
-  <string name="screenTouchpad_title">Тачпад</string>
-  <string name="screenTouchpad_summary">Для Xperia PLAY</string>
+  <string name="categoryInput_title">Ввод</string>
+  <string name="categoryInput_summary">Настройки управления</string>
+  <string name="categoryTouchscreen_title">Тачскрин</string>
+  <string name="categoryTouchscreen_summary">Параметры экранных кнопок</string>
+  <string name="categoryTouchpad_title">Тачпад</string>
+  <string name="categoryTouchpad_summary">Для Xperia PLAY</string>
   <string name="screenVideo_title">Видео</string>
   <string name="screenVideo_summary">Настройки графики</string>
   <string name="screenAdvanced_title">Другое</string>

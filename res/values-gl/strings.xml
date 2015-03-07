@@ -113,14 +113,14 @@
   <string name="actionCheatEditor_summary">Engadir, modificar e eliminar trucos propios</string>
   <string name="actionShare_title">Compartir</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Entrada</string>
-  <string name="screenInput_summary">Axustes do mando</string>
-  <string name="screenTouchscreen_title">Pantalla táctil</string>
-  <string name="screenTouchscreen_summary">Axustes do mando na pantalla</string>
-  <string name="screenTouchpad_title">Touchpad</string>
-  <string name="screenTouchpad_summary">Axustes Xperia PLAY</string>
-  <string name="screenDisplay_title">Amosar</string>
-  <string name="screenDisplay_summary">Axustes de disposición</string>
+  <string name="categoryInput_title">Entrada</string>
+  <string name="categoryInput_summary">Axustes do mando</string>
+  <string name="categoryTouchscreen_title">Pantalla táctil</string>
+  <string name="categoryTouchscreen_summary">Axustes do mando na pantalla</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryTouchpad_summary">Axustes Xperia PLAY</string>
+  <string name="categoryDisplay_title">Amosar</string>
+  <string name="categoryDisplay_summary">Axustes de disposición</string>
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Axustes dos gráficos</string>
   <string name="screenAdvanced_title">Avanzado</string>

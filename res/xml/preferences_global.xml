@@ -48,8 +48,8 @@
     android:key="screenRoot" >
 
     <PreferenceCategory
-        android:key="screenDisplay"
-        android:title="@string/screenDisplay_title" >
+        android:key="categoryDisplay"
+        android:title="@string/categoryDisplay_title" >
         <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/displayOrientation_default"
             android:entries="@array/displayOrientation_entries"
@@ -143,8 +143,8 @@
             android:title="@string/audioSwapChannels_title" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="screenTouchscreen"
-        android:title="@string/screenTouchscreen_title" >
+        android:key="categoryTouchscreen"
+        android:title="@string/categoryTouchscreen_title" >
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="100"
             android:key="touchscreenScale"
@@ -191,8 +191,8 @@
             android:title="@string/touchscreenAutoHold_title" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="screenTouchpad"
-        android:title="@string/screenTouchpad_title" >
+        android:key="categoryTouchpad"
+        android:title="@string/categoryTouchpad_title" >
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="touchpadEnabled"
@@ -214,8 +214,8 @@
             android:title="@string/touchpadLayout_title" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="screenInput"
-        android:title="@string/screenInput_title" >
+        android:key="categoryInput"
+        android:title="@string/categoryInput_title" >
         <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/navigationMode_default"
             android:entries="@array/navigationMode_entries"

@@ -83,12 +83,12 @@
   <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
   <string name="actionReloadAssets_summary">Nem befolyásolja a felhasználói beállításokat, a ROMokat, vagy az egyéni adatokat</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Bevitel</string>
-  <string name="screenInput_summary">Irányítás beállítások</string>
-  <string name="screenTouchscreen_title">Érintőpanel</string>
-  <string name="screenTouchscreen_summary">Képernyőn lévő kontroller beállítása</string>
-  <string name="screenTouchpad_title">Érintőpad</string>
-  <string name="screenTouchpad_summary">Xperia PLAY beállítások</string>
+  <string name="categoryInput_title">Bevitel</string>
+  <string name="categoryInput_summary">Irányítás beállítások</string>
+  <string name="categoryTouchscreen_title">Érintőpanel</string>
+  <string name="categoryTouchscreen_summary">Képernyőn lévő kontroller beállítása</string>
+  <string name="categoryTouchpad_title">Érintőpad</string>
+  <string name="categoryTouchpad_summary">Xperia PLAY beállítások</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafikai beállítások</string>
   <string name="screenAdvanced_title">Haladó</string>

@@ -90,13 +90,13 @@ Controller Paks</string>
   <string name="actionReloadAssets_title">Recarrega els recursos de l\'aplicació</string>
   <string name="actionReloadAssets_summary">NO afecta la configuració de l\'usuari, ROM, partides i altres dades personalitzades</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Entrada</string>
-  <string name="screenInput_summary">Configuració del comandament</string>
-  <string name="screenTouchscreen_title">Pantalla tàctil</string>
-  <string name="screenTouchscreen_summary">Configuració del comandament en pantalla</string>
-  <string name="screenTouchpad_title">Touchpad</string>
-  <string name="screenTouchpad_summary">Configuració per Xperia PLAY</string>
-  <string name="screenDisplay_summary">Configuració de disseny</string>
+  <string name="categoryInput_title">Entrada</string>
+  <string name="categoryInput_summary">Configuració del comandament</string>
+  <string name="categoryTouchscreen_title">Pantalla tàctil</string>
+  <string name="categoryTouchscreen_summary">Configuració del comandament en pantalla</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryTouchpad_summary">Configuració per Xperia PLAY</string>
+  <string name="categoryDisplay_summary">Configuració de disseny</string>
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Configuració de vídeo</string>
   <string name="screenAdvanced_title">Avançat</string>

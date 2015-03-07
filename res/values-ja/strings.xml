@@ -110,14 +110,14 @@
   <string name="actionCheatEditor_summary">チートコードの追加、編集、削除</string>
   <string name="actionShare_title">共有</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">入力</string>
-  <string name="screenInput_summary">コントローラーの設定</string>
-  <string name="screenTouchscreen_title">タッチスクリーン</string>
-  <string name="screenTouchscreen_summary">タッチパネル/タッチパッドの設定</string>
-  <string name="screenTouchpad_title">タッチパッド</string>
-  <string name="screenTouchpad_summary">Xperia PLAYの設定</string>
-  <string name="screenDisplay_title">表示</string>
-  <string name="screenDisplay_summary">レイアウトの設定</string>
+  <string name="categoryInput_title">入力</string>
+  <string name="categoryInput_summary">コントローラーの設定</string>
+  <string name="categoryTouchscreen_title">タッチスクリーン</string>
+  <string name="categoryTouchscreen_summary">タッチパネル/タッチパッドの設定</string>
+  <string name="categoryTouchpad_title">タッチパッド</string>
+  <string name="categoryTouchpad_summary">Xperia PLAYの設定</string>
+  <string name="categoryDisplay_title">表示</string>
+  <string name="categoryDisplay_summary">レイアウトの設定</string>
   <string name="screenVideo_title">ビデオ</string>
   <string name="screenVideo_summary">グラフィックの設定</string>
   <string name="screenAdvanced_title">高度な設定</string>

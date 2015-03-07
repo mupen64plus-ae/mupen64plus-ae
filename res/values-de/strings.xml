@@ -137,14 +137,14 @@
   <string name="actionCheatEditor_summary">Hinzufügen, bearbeiten und löschen von eigenen cheats</string>
   <string name="actionShare_title">Teilen</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Eingabe</string>
-  <string name="screenInput_summary">Steuerungseinstellungen</string>
-  <string name="screenTouchscreen_title">Touchscreen</string>
-  <string name="screenTouchscreen_summary">On-Screen-Controllereinstellungen</string>
-  <string name="screenTouchpad_title">Touchpad</string>
-  <string name="screenTouchpad_summary">Xperia PLAY-Einstellungen</string>
-  <string name="screenDisplay_title">Anzeige</string>
-  <string name="screenDisplay_summary">Layout-Einstellungen</string>
+  <string name="categoryInput_title">Eingabe</string>
+  <string name="categoryInput_summary">Steuerungseinstellungen</string>
+  <string name="categoryTouchscreen_title">Touchscreen</string>
+  <string name="categoryTouchscreen_summary">On-Screen-Controllereinstellungen</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryTouchpad_summary">Xperia PLAY-Einstellungen</string>
+  <string name="categoryDisplay_title">Anzeige</string>
+  <string name="categoryDisplay_summary">Layout-Einstellungen</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafikeinstellungen</string>
   <string name="screenAdvanced_title">Erweitert</string>

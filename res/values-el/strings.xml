@@ -85,12 +85,12 @@
   <string name="actionReloadAssets_title">Ανανέωση πόρων εφαρμογής</string>
   <string name="actionReloadAssets_summary">ΔΕΝ επηρεάζει ρυθμίσεις χρήστη, αρχεία ROM, αποθηκευμένα παιχνίδια, ή άλλα προσαρμοσμένα δεδομένα</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Εισαγωγή</string>
-  <string name="screenInput_summary">Ρυθμίσεις χειρισμού</string>
-  <string name="screenTouchscreen_title">Οθόνη αφής</string>
-  <string name="screenTouchscreen_summary">Ρυθμίσεις χειριστηρίου οθόνης</string>
-  <string name="screenTouchpad_title">Επιφάνεια αφής</string>
-  <string name="screenTouchpad_summary">Ρυθμίσεις Xperia PLAY</string>
+  <string name="categoryInput_title">Εισαγωγή</string>
+  <string name="categoryInput_summary">Ρυθμίσεις χειρισμού</string>
+  <string name="categoryTouchscreen_title">Οθόνη αφής</string>
+  <string name="categoryTouchscreen_summary">Ρυθμίσεις χειριστηρίου οθόνης</string>
+  <string name="categoryTouchpad_title">Επιφάνεια αφής</string>
+  <string name="categoryTouchpad_summary">Ρυθμίσεις Xperia PLAY</string>
   <string name="screenVideo_title">Βίντεο</string>
   <string name="screenVideo_summary">Ρυθμίσεις γραφικών</string>
   <string name="screenAdvanced_title">Προχωρημένα</string>
