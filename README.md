@@ -1,71 +1,33 @@
 mupen64plus-ae
 ==============
 
-Mupen64Plus, Android Edition (AE) is a port of Mupen64Plus to Android. (Not officially supported by the Mupen64Plus team)
+Mupen64Plus, Android Edition (AE) is an Android user interface for Mupen64Plus.
+
+Please visit [the official forum](http://www.paulscode.com/forum/index.php) for support and discussion.
 
 
-Mupen64Plus, AE Build Instructions
-==================================
+Build Instructions
+==================
 
-Author: Paul Lamb
+For now, we recommend using Eclipse rather than Android Studio, since the project contains a heavy mix of C, C++, and Java source code.
 
-(for assistance, visit http://www.paulscode.com)
-
-
-
-
-
-
-Downloading the source:
------------------------
-
-1. From the terminal, go to the folder where you want to put mupen64plus-ae
-   (for Eclipse users, this should be ~/workspace/)
-
-2. Clone the git repository
-   (example: "git clone https://github.com/mupen64plus-ae/mupen64plus-ae.git")
-
-
-
-
-
-
-Setting up the project:
------------------------
-
-1. From the terminal, enter the mupen64plus-ae folder
-
-2. Run "android list targets" to find the index ## for API level 17 or higher
-
-3. Update the Android project
-   (example: "android update project --target ## --name Mupen64Plus --path .")
-
-
-
-
-
-
-Eclipse users:
---------------
-
-1. Install or update to the latest ADT plug-in (and optionally the Sequoyah Android Native Support plug-ins)
-
-2. Import existing project into the workspace, and choose the mupen64plus-ae folder
-
-3. If using Sequoyah, right-click on the mupen64plus-ae project and choose "Android->Add native support"
-
-4. Check the paths to the SDK and NDK
-
-
-
-
-
-
-Building from the command line:
--------------------------------
-
-1. Navigate to the mupen64plus-ae folder
-
-2. Run "ndk-build" to generate the native libraries
-
-3. Run "ant debug" (or "ant release") to generate the .apk file(s)
+1. Download and install the prerequisites
+   - [Android SDK](http://developer.android.com/sdk/index.html)
+   - [Android NDK](https://developer.android.com/tools/sdk/ndk/index.html)
+   - [Eclipse ADT plugin](http://developer.android.com/sdk/installing/installing-adt.html)
+2. Clone the mupen64plus-ae repository and initialize the working copy
+   - `git clone https://github.com/mupen64plus-ae/mupen64plus-ae.git`
+   - `cp .project.init .project`
+3. Import the Eclipse project and dependencies
+   - Open Eclipse
+   - Select File → Import → Android → Existing Android Code Into Workspace, and press Next
+   - Browse to root of cloned repository, and press OK
+   - Select all projects, and press Finish
+4. Add native support to the Eclipse project
+   - Right-click the mupen64plus-ae project in the Eclipse Package Explorer window
+   - Select Android Tools → Add Native Support...
+   - Accept the default library name (mupen64plus-ae), and press Finish
+   - Delete the unneeded generated C++ file: `rm jni/mupen64plus-ae.cpp`
+5. Build and run the app from Eclipse
+   - Select the mupen64plus-ae project in the Eclipse Package Explorer window
+   - Select Run → Run
