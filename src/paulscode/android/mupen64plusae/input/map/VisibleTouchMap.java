@@ -21,8 +21,6 @@
 package paulscode.android.mupen64plusae.input.map;
 
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
