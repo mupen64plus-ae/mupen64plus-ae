@@ -42,29 +42,31 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
 {
     // These constants must match the keys used in res/xml/preferences.xml
     
-    private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
-    private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
-    private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
-    private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
-    private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
-    
     private static final String SCREEN_ROOT = "screenRoot";
-    private static final String SCREEN_DISPLAY = "screenDisplay";
-    private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
-    private static final String SCREEN_TOUCHPAD = "screenTouchpad";
-    private static final String SCREEN_INPUT = "screenInput";
+    private static final String CATEGORY_DISPLAY = "screenDisplay";
+    private static final String CATEGORY_AUDIO = "categoryAudio";
+    private static final String CATEGORY_TOUCHSCREEN = "screenTouchscreen";
+    private static final String CATEGORY_TOUCHPAD = "screenTouchpad";
+    private static final String CATEGORY_INPUT = "screenInput";
+    private static final String CATEGORY_DATA = "categoryData";
     
     private static final String DISPLAY_ORIENTATION = "displayOrientation";
     private static final String DISPLAY_RESOLUTION = "displayResolution";
     private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
     private static final String DISPLAY_ACTION_BAR_TRANSPARENCY = "displayActionBarTransparency";
     private static final String DISPLAY_FPS_REFRESH = "displayFpsRefresh";
+    private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
+    private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
+    private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
     private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
     private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
     private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String NAVIGATION_MODE = "navigationMode";
+    
+    private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
+    private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -97,13 +99,13 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
         if( !AppData.IS_KITKAT )
-            PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_IMMERSIVE_MODE );
+            PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_IMMERSIVE_MODE );
         
         if( !mUserPrefs.isActionBarAvailable )
-            PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_ACTION_BAR_TRANSPARENCY );
+            PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_ACTION_BAR_TRANSPARENCY );
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
-            PrefUtil.removePreference( this, SCREEN_ROOT, SCREEN_TOUCHPAD );
+            PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_TOUCHPAD );
         
         // Remove some menu items in some cases
         Bundle extras = getIntent().getExtras();
@@ -113,19 +115,18 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
             if( mode == 1 )
             {
                 // Remove distractions if this was launched from TouchscreenProfileActivity
-                PrefUtil.removePreference( this, SCREEN_ROOT, "categoryAudio" );
-                PrefUtil.removePreference( this, SCREEN_ROOT, SCREEN_TOUCHPAD );
-                PrefUtil.removePreference( this, SCREEN_ROOT, SCREEN_INPUT );
-                PrefUtil.removePreference( this, SCREEN_ROOT, "categoryData" );
-                PrefUtil.removePreference( this, SCREEN_ROOT, "categoryCrashReports" );
+                PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_AUDIO );
+                PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_TOUCHPAD );
+                PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_INPUT );
+                PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_DATA );
                 PrefUtil.removePreference( this, SCREEN_ROOT, ACTION_RESET_USER_PREFS );
-                PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_ORIENTATION );
-                PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_RESOLUTION );
-                PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_FPS_REFRESH );
-                PrefUtil.removePreference( this, SCREEN_DISPLAY, VIDEO_HARDWARE_TYPE );
-                PrefUtil.removePreference( this, SCREEN_DISPLAY, VIDEO_POLYGON_OFFSET );
-                PrefUtil.removePreference( this, SCREEN_TOUCHSCREEN, TOUCHSCREEN_FEEDBACK );
-                PrefUtil.removePreference( this, SCREEN_TOUCHSCREEN, TOUCHSCREEN_AUTO_HOLD );
+                PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_ORIENTATION );
+                PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_RESOLUTION );
+                PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_FPS_REFRESH );
+                PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_HARDWARE_TYPE );
+                PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_POLYGON_OFFSET );
+                PrefUtil.removePreference( this, CATEGORY_TOUCHSCREEN, TOUCHSCREEN_FEEDBACK );
+                PrefUtil.removePreference( this, CATEGORY_TOUCHSCREEN, TOUCHSCREEN_AUTO_HOLD );
             }
         }
     }
