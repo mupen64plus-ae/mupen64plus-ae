@@ -500,6 +500,7 @@
     <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
 
     <!-- Touchscreen Profile Activity -->
+    <string name="touchscreenProfileActivity_buttons">Buttons</string>
     <string name="touchscreenProfileActivity_remove">Remove</string>
     <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
     <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>

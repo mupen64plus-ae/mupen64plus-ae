@@ -9,33 +9,33 @@
     <item
         android:id="@+id/menuItem_buttons"
         android:showAsAction="ifRoom|withText"
-        android:title="Buttons">
+        android:title="@string/touchscreenProfileActivity_buttons">
         <menu>
             <group android:checkableBehavior="all" >
                 <item
                     android:id="@+id/menuItem_analog"
-                    android:title="Analog stick"/>
+                    android:title="@string/controller_analog"/>
                 <item
                     android:id="@+id/menuItem_dpad"
-                    android:title="D-pad"/>
+                    android:title="@string/controller_dpad"/>
                 <item
                     android:id="@+id/menuItem_groupAB"
-                    android:title="A/B buttons"/>
+                    android:title="@string/controller_groupAB"/>
                 <item
                     android:id="@+id/menuItem_groupC"
-                    android:title="C buttons"/>
+                    android:title="@string/controller_groupC"/>
                 <item
                     android:id="@+id/menuItem_buttonL"
-                    android:title="L button"/>
+                    android:title="@string/controller_buttonL"/>
                 <item
                     android:id="@+id/menuItem_buttonR"
-                    android:title="R button"/>
+                    android:title="@string/controller_buttonR"/>
                 <item
                     android:id="@+id/menuItem_buttonZ"
-                    android:title="Z button"/>
+                    android:title="@string/controller_buttonZ"/>
                 <item
                     android:id="@+id/menuItem_buttonS"
-                    android:title="Start button"/>
+                    android:title="@string/controller_buttonS"/>
             </group>
         </menu>
     </item>
