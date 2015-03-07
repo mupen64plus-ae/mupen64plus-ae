@@ -120,7 +120,6 @@
   <string name="toast_nativeMainFailureUnknown">Error de inicio desconocido.</string>
   <string name="toast_usingSlot">Usando ahora el slot %1$d.</string>
   <string name="toast_sdInaccessible">Tarjeta SD no accesible (desconecta el cable USB e intenta de nuevo).</string>
-  <string name="toast_crashReportSent">Reporte enviado.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -145,18 +144,6 @@
   <string name="actionCheatEditor_summary">Añadir, modificar y borrar trucos personalizados</string>
   <string name="actionShare_title">Compartir</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">Entrada</string>
-  <string name="categoryInput_summary">Configuración del mando</string>
-  <string name="categoryTouchscreen_title">Pantalla táctil</string>
-  <string name="categoryTouchscreen_summary">Ajustes del mando en pantalla</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
-  <string name="categoryTouchpad_summary">Opciones de Xperia PLAY</string>
-  <string name="categoryDisplay_title">Pantalla</string>
-  <string name="categoryDisplay_summary">Opciones de diseño</string>
-  <string name="screenVideo_title">Video</string>
-  <string name="screenVideo_summary">Configuración de gráficos</string>
-  <string name="screenAdvanced_title">Avanzadas</string>
-  <string name="screenAdvanced_summary">Núcleo, almacenamiento, y opciones de depuración</string>
   <string name="screenGlobalSettings_title">Configuración global</string>
   <string name="screenGlobalSettings_summary">Ajustes de pantalla, audio, almacenamiento y depuración</string>
   <string name="screenCheats_title">Cheats</string>
@@ -164,15 +151,14 @@
   <string name="screenCheats_summaryDisabled">Deshabilitado</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Ajustes de cheats (mantén oprimido para mostrar notas)</string>
-  <string name="categoryHardware_title">Hardware</string>
-  <string name="categoryOther_title">Otras</string>
-  <string name="categoryTouchscreenBehavior_title">Funcionamiento</string>
-  <string name="categoryTouchscreenAppearance_title">Apariencia</string>
   <string name="categoryGln64_title">Opciones del plugin Gln64</string>
   <string name="categoryRice_title">Opciones del plugin Rice</string>
   <string name="categoryGlide64_title">Opciones del plugin Glide64</string>
-  <string name="categoryCore_title">Núcleo</string>
+  <string name="categoryDisplay_title">Pantalla</string>
   <string name="categoryAudio_title">Audio</string>
+  <string name="categoryTouchscreen_title">Pantalla táctil</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryInput_title">Entrada</string>
   <string name="categoryData_title">Datos</string>
   <string name="categoryGameSettings_title">Ajustes específicos del juego</string>
   <string name="categoryGameSettings_titleNamed">Opciones %1$s</string>
@@ -420,15 +406,7 @@
   <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
   <!--Controller button names-->
   <string name="controller_analog">Stick analógico</string>
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
   <string name="controller_dpad">Pad direccional</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_groupAB">Botones A/B</string>
   <string name="controller_buttonA">Botón A</string>
   <string name="controller_buttonB">Botón B</string>
@@ -445,8 +423,6 @@
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Presiona un botón, tecla, o palanca de mando para mapear...\n\nActualmente mapeados:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Desasignar</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Stick analógico controlado con el touchpad</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-pad controlado con el touchpad</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

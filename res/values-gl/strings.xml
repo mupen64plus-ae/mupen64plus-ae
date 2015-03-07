@@ -96,7 +96,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Usando a rañura %1$d.</string>
   <string name="toast_sdInaccessible">Non se pode acceder á SD (desconecte o cable USB e probe de novo)</string>
-  <string name="toast_crashReportSent">Informe enviado.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -113,18 +112,6 @@
   <string name="actionCheatEditor_summary">Engadir, modificar e eliminar trucos propios</string>
   <string name="actionShare_title">Compartir</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">Entrada</string>
-  <string name="categoryInput_summary">Axustes do mando</string>
-  <string name="categoryTouchscreen_title">Pantalla táctil</string>
-  <string name="categoryTouchscreen_summary">Axustes do mando na pantalla</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
-  <string name="categoryTouchpad_summary">Axustes Xperia PLAY</string>
-  <string name="categoryDisplay_title">Amosar</string>
-  <string name="categoryDisplay_summary">Axustes de disposición</string>
-  <string name="screenVideo_title">Vídeo</string>
-  <string name="screenVideo_summary">Axustes dos gráficos</string>
-  <string name="screenAdvanced_title">Avanzado</string>
-  <string name="screenAdvanced_summary">Axustes de núcleo, almacenamento e depuración</string>
   <string name="screenGlobalSettings_title">Axustes globais</string>
   <string name="screenGlobalSettings_summary">Axustes de pantalla, son, almacenamento e depuración</string>
   <string name="screenCheats_title">Trucos</string>
@@ -132,15 +119,14 @@
   <string name="screenCheats_summaryDisabled">Desactivado</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opcións de trucos (presión longa para notas)</string>
-  <string name="categoryHardware_title">Hardware</string>
-  <string name="categoryOther_title">Outro</string>
-  <string name="categoryTouchscreenBehavior_title">Comportamento</string>
-  <string name="categoryTouchscreenAppearance_title">Aparencia</string>
   <string name="categoryGln64_title">Axustes do Gln64</string>
   <string name="categoryRice_title">Axustes do Rice</string>
   <string name="categoryGlide64_title">Axustes do Glide64</string>
-  <string name="categoryCore_title">Núcleo</string>
+  <string name="categoryDisplay_title">Amosar</string>
   <string name="categoryAudio_title">Son</string>
+  <string name="categoryTouchscreen_title">Pantalla táctil</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryInput_title">Entrada</string>
   <string name="categoryData_title">Datos</string>
   <string name="categoryGameSettings_title">Axustes específicos do xogo</string>
   <string name="categoryGameSettings_titleNamed">Axustes de %1$s</string>
@@ -369,22 +355,12 @@
   <string name="playerMapPreference_reminder">Lembrarme cando os xogadores non foron asignados</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analóxico →</string>
-  <string name="controller_analogL">Analóxico ←</string>
-  <string name="controller_analogD">Analóxico ↓</string>
-  <string name="controller_analogU">Analóxico ↑</string>
-  <string name="controller_dpadR">Pad-D →</string>
-  <string name="controller_dpadL">Pad-D ←</string>
-  <string name="controller_dpadD">Pad-D ↓</string>
-  <string name="controller_dpadU">Pad-D ↑</string>
   <string name="controller_buttonCr">Pad-C →</string>
   <string name="controller_buttonCl">Pad-C ←</string>
   <string name="controller_buttonCd">Pad-C ↓</string>
   <string name="controller_buttonCu">Pad-C ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Desasignar</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Stick analóxico controlado por touchpad</string>
-  <string name="inputMapActivity_cPadXperiaPlay">Pad-C controlado por touchpad</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

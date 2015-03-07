@@ -62,7 +62,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Сейчас используется слот %1$d.</string>
   <string name="toast_sdInaccessible">Карта недоступна</string>
-  <string name="toast_crashReportSent">Отчёт отправлен.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -76,27 +75,17 @@
   <string name="actionReloadAssets_title">Перезагрузить ресурсы</string>
   <string name="actionReloadAssets_summary">Не влияет на настройки пользователя, ROMs, сохранения игр, или другие пользовательские данные</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">Ввод</string>
-  <string name="categoryInput_summary">Настройки управления</string>
-  <string name="categoryTouchscreen_title">Тачскрин</string>
-  <string name="categoryTouchscreen_summary">Параметры экранных кнопок</string>
-  <string name="categoryTouchpad_title">Тачпад</string>
-  <string name="categoryTouchpad_summary">Для Xperia PLAY</string>
-  <string name="screenVideo_title">Видео</string>
-  <string name="screenVideo_summary">Настройки графики</string>
-  <string name="screenAdvanced_title">Другое</string>
   <string name="screenCheats_title">Чит-коды</string>
   <string name="screenCheats_summaryDisabled">Отключить</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Чит-коды (нажмите и удерживайте для показа справки)</string>
-  <string name="categoryHardware_title">Оборудование</string>
-  <string name="categoryOther_title">Остальные</string>
-  <string name="categoryTouchscreenBehavior_title">Поведение</string>
-  <string name="categoryTouchscreenAppearance_title">Внешний вид</string>
   <string name="categoryGln64_title">Настройки Gln64</string>
   <string name="categoryRice_title">Настройки Rice</string>
   <string name="categoryGlide64_title">Настройки Glide64 settings</string>
   <string name="categoryAudio_title">Звук</string>
+  <string name="categoryTouchscreen_title">Тачскрин</string>
+  <string name="categoryTouchpad_title">Тачпад</string>
+  <string name="categoryInput_title">Ввод</string>
   <string name="categoryData_title">Данные</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Включить читы</string>
@@ -259,22 +248,12 @@
   <string name="playerMapPreference_reminder">Напоминать, если управление настроено не для всех игроков</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Сбросить</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Управление джойстиком с сенсорной панели</string>
-  <string name="inputMapActivity_cPadXperiaPlay">Управление C-pad с сенсорной панели</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

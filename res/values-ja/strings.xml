@@ -93,7 +93,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">スロット%1$dを使用中</string>
   <string name="toast_sdInaccessible">SDカードににアクセスできません。 （USBケーブルを外してください）</string>
-  <string name="toast_crashReportSent">エラーレポートを送信しました。</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -110,18 +109,6 @@
   <string name="actionCheatEditor_summary">チートコードの追加、編集、削除</string>
   <string name="actionShare_title">共有</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">入力</string>
-  <string name="categoryInput_summary">コントローラーの設定</string>
-  <string name="categoryTouchscreen_title">タッチスクリーン</string>
-  <string name="categoryTouchscreen_summary">タッチパネル/タッチパッドの設定</string>
-  <string name="categoryTouchpad_title">タッチパッド</string>
-  <string name="categoryTouchpad_summary">Xperia PLAYの設定</string>
-  <string name="categoryDisplay_title">表示</string>
-  <string name="categoryDisplay_summary">レイアウトの設定</string>
-  <string name="screenVideo_title">ビデオ</string>
-  <string name="screenVideo_summary">グラフィックの設定</string>
-  <string name="screenAdvanced_title">高度な設定</string>
-  <string name="screenAdvanced_summary">コア、ストレージ、デバッグ設定</string>
   <string name="screenGlobalSettings_title">標準設定</string>
   <string name="screenGlobalSettings_summary">表示、オーディオ、ストレージとデバッグ設定</string>
   <string name="screenCheats_title">チート</string>
@@ -129,15 +116,14 @@
   <string name="screenCheats_summaryDisabled">使用禁止</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">チートの設定 (長押しで詳細を表示)</string>
-  <string name="categoryHardware_title">ハードウェア設定</string>
-  <string name="categoryOther_title">その他の設定</string>
-  <string name="categoryTouchscreenBehavior_title">行動</string>
-  <string name="categoryTouchscreenAppearance_title">外観</string>
   <string name="categoryGln64_title">Gln64の設定</string>
   <string name="categoryRice_title">Riceの設定</string>
   <string name="categoryGlide64_title">Glide64設定</string>
-  <string name="categoryCore_title">コア</string>
+  <string name="categoryDisplay_title">表示</string>
   <string name="categoryAudio_title">オーディオ</string>
+  <string name="categoryTouchscreen_title">タッチスクリーン</string>
+  <string name="categoryTouchpad_title">タッチパッド</string>
+  <string name="categoryInput_title">入力</string>
   <string name="categoryData_title">データ</string>
   <string name="categoryGameSettings_title">ゲーム毎の設定</string>
   <string name="categoryGameSettings_titleNamed">%1$sの設定</string>
@@ -359,22 +345,12 @@
   <string name="playerMapPreference_reminder">プレイヤーがコントロールにマップされていない時に通知。</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">アナログ →</string>
-  <string name="controller_analogL">アナログ ←</string>
-  <string name="controller_analogD">アナログ ↓</string>
-  <string name="controller_analogU">アナログ ↑</string>
-  <string name="controller_dpadR">Dパッド →</string>
-  <string name="controller_dpadL">Dパッド ←</string>
-  <string name="controller_dpadD">Dパッド ↓</string>
-  <string name="controller_dpadU">Dパッド ↑</string>
   <string name="controller_buttonCr">Cパッド →</string>
   <string name="controller_buttonCl">Cパッド ←</string>
   <string name="controller_buttonCd">Cパッド ↓</string>
   <string name="controller_buttonCu">Cパッド ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">未割り当て</string>
-  <string name="inputMapActivity_aPadXperiaPlay">アナログスティックはタッチパッドで制御され。</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-パッドはタッチパッドで制御されている。</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

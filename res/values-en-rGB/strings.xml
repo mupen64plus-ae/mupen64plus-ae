@@ -122,7 +122,6 @@
   <string name="toast_nativeMainFailureUnknown">Unknown launch error.</string>
   <string name="toast_usingSlot">Now using slot %1$d.</string>
   <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
-  <string name="toast_crashReportSent">Report sent.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -147,18 +146,6 @@
   <string name="actionCheatEditor_summary">Add, modify, and delete custom cheats</string>
   <string name="actionShare_title">Share</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">Input</string>
-  <string name="categoryInput_summary">Control settings</string>
-  <string name="categoryTouchscreen_title">Touchscreen</string>
-  <string name="categoryTouchscreen_summary">On-screen controller settings</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
-  <string name="categoryTouchpad_summary">Xperia PLAY settings</string>
-  <string name="categoryDisplay_title">Display</string>
-  <string name="categoryDisplay_summary">Layout settings</string>
-  <string name="screenVideo_title">Video</string>
-  <string name="screenVideo_summary">Graphics settings</string>
-  <string name="screenAdvanced_title">Advanced</string>
-  <string name="screenAdvanced_summary">Core, storage, and debug settings</string>
   <string name="screenGlobalSettings_title">Global settings</string>
   <string name="screenGlobalSettings_summary">Display, audio, storage, and debug settings</string>
   <string name="screenCheats_title">Cheats</string>
@@ -166,15 +153,14 @@
   <string name="screenCheats_summaryDisabled">Disabled</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheat options (long-press for notes)</string>
-  <string name="categoryHardware_title">Hardware</string>
-  <string name="categoryOther_title">Other</string>
-  <string name="categoryTouchscreenBehavior_title">Behaviour</string>
-  <string name="categoryTouchscreenAppearance_title">Appearance</string>
   <string name="categoryGln64_title">Gln64 settings</string>
   <string name="categoryRice_title">Rice settings</string>
   <string name="categoryGlide64_title">Glide64 settings</string>
-  <string name="categoryCore_title">Core</string>
+  <string name="categoryDisplay_title">Display</string>
   <string name="categoryAudio_title">Audio</string>
+  <string name="categoryTouchscreen_title">Touchscreen</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryInput_title">Input</string>
   <string name="categoryData_title">Data</string>
   <string name="categoryGameSettings_title">Game-specific settings</string>
   <string name="categoryGameSettings_titleNamed">%1$s settings</string>
@@ -428,15 +414,7 @@
   <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
   <!--Controller button names-->
   <string name="controller_analog">Analogue stick</string>
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analogue ↑</string>
   <string name="controller_dpad">D-pad</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_groupAB">A/B buttons</string>
   <string name="controller_buttonA">A button</string>
   <string name="controller_buttonB">B button</string>
@@ -453,8 +431,6 @@
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Unmap</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Analogue stick controlled with touchpad</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-pad controlled with touchpad</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

@@ -76,7 +76,6 @@ Controller Paks</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Uilitzant l\'slot %1$d.</string>
   <string name="toast_sdInaccessible">La targeta SD no està accessible (desconnecta el cable USB i prova-ho de nou).</string>
-  <string name="toast_crashReportSent">Informe enviat.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -90,28 +89,16 @@ Controller Paks</string>
   <string name="actionReloadAssets_title">Recarrega els recursos de l\'aplicació</string>
   <string name="actionReloadAssets_summary">NO afecta la configuració de l\'usuari, ROM, partides i altres dades personalitzades</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">Entrada</string>
-  <string name="categoryInput_summary">Configuració del comandament</string>
-  <string name="categoryTouchscreen_title">Pantalla tàctil</string>
-  <string name="categoryTouchscreen_summary">Configuració del comandament en pantalla</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
-  <string name="categoryTouchpad_summary">Configuració per Xperia PLAY</string>
-  <string name="categoryDisplay_summary">Configuració de disseny</string>
-  <string name="screenVideo_title">Vídeo</string>
-  <string name="screenVideo_summary">Configuració de vídeo</string>
-  <string name="screenAdvanced_title">Avançat</string>
   <string name="screenCheats_summaryDisabled">Deshabilitat</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Configuració dels cheats (mantingues oprimit per mostrar notes)</string>
-  <string name="categoryHardware_title">Maquinari</string>
-  <string name="categoryOther_title">Altres</string>
-  <string name="categoryTouchscreenBehavior_title">	
-Funcionament</string>
-  <string name="categoryTouchscreenAppearance_title">Aparença</string>
   <string name="categoryGln64_title">Configuració de Gln64</string>
   <string name="categoryRice_title">Configuració de Rice</string>
   <string name="categoryGlide64_title">Configuració de Glide64</string>
   <string name="categoryAudio_title">Àudio</string>
+  <string name="categoryTouchscreen_title">Pantalla tàctil</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryInput_title">Entrada</string>
   <string name="categoryData_title">Dades</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">	
@@ -298,22 +285,12 @@ Dessasignar</string>
   <string name="playerMapPreference_reminder">Avisam quan els jugadors no estan assignats</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Dessasignar</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Estic analògic controlat amb touchpad</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-pad controlat amb el touchpad</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

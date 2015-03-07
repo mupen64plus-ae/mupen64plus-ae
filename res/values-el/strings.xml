@@ -71,7 +71,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Χρήση θέσης %1$d.</string>
   <string name="toast_sdInaccessible">Η κάρτα SD δεν είναι διαθέσιμη (αποσυνδέστε το καλώδιο USB και δοκιμάστε ξανά).</string>
-  <string name="toast_crashReportSent">Η αναφορά αποστάλθηκε.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -85,26 +84,16 @@
   <string name="actionReloadAssets_title">Ανανέωση πόρων εφαρμογής</string>
   <string name="actionReloadAssets_summary">ΔΕΝ επηρεάζει ρυθμίσεις χρήστη, αρχεία ROM, αποθηκευμένα παιχνίδια, ή άλλα προσαρμοσμένα δεδομένα</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">Εισαγωγή</string>
-  <string name="categoryInput_summary">Ρυθμίσεις χειρισμού</string>
-  <string name="categoryTouchscreen_title">Οθόνη αφής</string>
-  <string name="categoryTouchscreen_summary">Ρυθμίσεις χειριστηρίου οθόνης</string>
-  <string name="categoryTouchpad_title">Επιφάνεια αφής</string>
-  <string name="categoryTouchpad_summary">Ρυθμίσεις Xperia PLAY</string>
-  <string name="screenVideo_title">Βίντεο</string>
-  <string name="screenVideo_summary">Ρυθμίσεις γραφικών</string>
-  <string name="screenAdvanced_title">Προχωρημένα</string>
   <string name="screenCheats_summaryDisabled">Απενεργοποιημένο</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Ρυθμίσεις κωδικών (παρατ. πάτημα για σημειώσεις)</string>
-  <string name="categoryHardware_title">Υλικό</string>
-  <string name="categoryOther_title">Άλλα</string>
-  <string name="categoryTouchscreenBehavior_title">Συμπεριφορά</string>
-  <string name="categoryTouchscreenAppearance_title">Εμφάνιση</string>
   <string name="categoryGln64_title">Ρυθμίσεις Gln64</string>
   <string name="categoryRice_title">Ρυθμίσεις Rice</string>
   <string name="categoryGlide64_title">Ρυθμίσεις Glide64</string>
   <string name="categoryAudio_title">Ήχος</string>
+  <string name="categoryTouchscreen_title">Οθόνη αφής</string>
+  <string name="categoryTouchpad_title">Επιφάνεια αφής</string>
+  <string name="categoryInput_title">Εισαγωγή</string>
   <string name="categoryData_title">Δεδομένα</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Ενεργοποίηση κωδικών</string>
@@ -280,22 +269,12 @@
   <string name="playerMapPreference_reminder">Υπενθύμιση μη αντιστοίχισης παικτών</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Διαγρ. αντιστοίχισης</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Χειρισμός αναλογικού μοχλού με την οθόνη αφής</string>
-  <string name="inputMapActivity_cPadXperiaPlay">Χειρισμός C-pad με οθόνης αφής</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

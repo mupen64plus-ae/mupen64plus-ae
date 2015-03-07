@@ -96,7 +96,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Huidig slot %1$d.</string>
   <string name="toast_sdInaccessible">SD-kaart niet beschikbaar (verwijder de USB-kabel en probeer opnieuw).</string>
-  <string name="toast_crashReportSent">Rapport verzonden.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -113,18 +112,6 @@
   <string name="actionCheatEditor_summary">Voeg toe, verander en verwijder cheat codes</string>
   <string name="actionShare_title">Deel</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">Invoer</string>
-  <string name="categoryInput_summary">Besturingsinstellingen</string>
-  <string name="categoryTouchscreen_title">Aanraakscherm</string>
-  <string name="categoryTouchscreen_summary">On-screen controllerinstellingen</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
-  <string name="categoryTouchpad_summary">Xperia PLAY instellingen</string>
-  <string name="categoryDisplay_title">Scherm</string>
-  <string name="categoryDisplay_summary">Layout instellingen</string>
-  <string name="screenVideo_title">Video</string>
-  <string name="screenVideo_summary">Grafische instellingen</string>
-  <string name="screenAdvanced_title">Geavanceerd</string>
-  <string name="screenAdvanced_summary">Kern-, opslag- en foutopsporingsinstellingen</string>
   <string name="screenGlobalSettings_title">Globale instellingen</string>
   <string name="screenGlobalSettings_summary">Beeld, geluid, opslag en debug instellingen</string>
   <string name="screenCheats_title">Cheats</string>
@@ -132,15 +119,14 @@
   <string name="screenCheats_summaryDisabled">Uitgeschakeld</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheat opties (lang indrukken voor opmerkingen)</string>
-  <string name="categoryHardware_title">Hardware</string>
-  <string name="categoryOther_title">Overige</string>
-  <string name="categoryTouchscreenBehavior_title">Gedrag</string>
-  <string name="categoryTouchscreenAppearance_title">Uiterlijk</string>
   <string name="categoryGln64_title">Gln64 instellingen</string>
   <string name="categoryRice_title">Rice instellingen</string>
   <string name="categoryGlide64_title">Glide64 instellingen</string>
-  <string name="categoryCore_title">Kern</string>
+  <string name="categoryDisplay_title">Scherm</string>
   <string name="categoryAudio_title">Geluid</string>
+  <string name="categoryTouchscreen_title">Aanraakscherm</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryInput_title">Invoer</string>
   <string name="categoryData_title">Gegevens</string>
   <string name="categoryGameSettings_title">Spelspecifieke instellingen</string>
   <string name="categoryGameSettings_titleNamed">%1$s instellingen</string>
@@ -369,22 +355,12 @@
   <string name="playerMapPreference_reminder">Herinner mij als spelers niet zijn toegewezen</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analoog →</string>
-  <string name="controller_analogL">Analoog ←</string>
-  <string name="controller_analogD">Analoog ↓</string>
-  <string name="controller_analogU">Analoog ↑</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_buttonCr">C-knop →</string>
   <string name="controller_buttonCl">C-knop ←</string>
   <string name="controller_buttonCd">C-knop ↓</string>
   <string name="controller_buttonCu">C-knop ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Toewijzing ongedaan maken</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Analoge stick bestuurd met touchpad</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-knoppen bestuurd met touchpad</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

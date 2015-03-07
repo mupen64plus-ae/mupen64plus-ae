@@ -109,7 +109,6 @@
   <string name="toast_nativeMainFailure05">Falha na análise dos parâmetros de conclusão.</string>
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessível (desconecte o cabo USB e tente novamente).</string>
-  <string name="toast_crashReportSent">Relatório enviado.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -126,18 +125,6 @@
   <string name="actionCheatEditor_summary">Adicionar, modificar e deletar cheats customizados</string>
   <string name="actionShare_title">Compartilhar</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">Controle</string>
-  <string name="categoryInput_summary">Configurações de controle</string>
-  <string name="categoryTouchscreen_title">Toque na tela</string>
-  <string name="categoryTouchscreen_summary">Configuração do controle de toque</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
-  <string name="categoryTouchpad_summary">Configurações do Xperia PLAY</string>
-  <string name="categoryDisplay_title">Tela</string>
-  <string name="categoryDisplay_summary">Configurações de Layout</string>
-  <string name="screenVideo_title">Vídeo</string>
-  <string name="screenVideo_summary">Configurações gráficas</string>
-  <string name="screenAdvanced_title">Avançado</string>
-  <string name="screenAdvanced_summary">Núcleo, armazenamento e configurações de depuração</string>
   <string name="screenGlobalSettings_title">Configurações globais</string>
   <string name="screenGlobalSettings_summary">Configurações de tela, áudio, armazenamento e depuração</string>
   <string name="screenCheats_title">Cheats</string>
@@ -145,15 +132,14 @@
   <string name="screenCheats_summaryDisabled">Desabilitado</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opções de Cheats (toque longo para ver notas)</string>
-  <string name="categoryHardware_title">Hardware</string>
-  <string name="categoryOther_title">Outros</string>
-  <string name="categoryTouchscreenBehavior_title">Funcionamento</string>
-  <string name="categoryTouchscreenAppearance_title">Aparência</string>
   <string name="categoryGln64_title">Configurações do Gln64</string>
   <string name="categoryRice_title">Configurações do Rice</string>
   <string name="categoryGlide64_title">Configurações do Glide64</string>
-  <string name="categoryCore_title">Núcleo</string>
+  <string name="categoryDisplay_title">Tela</string>
   <string name="categoryAudio_title">Áudio</string>
+  <string name="categoryTouchscreen_title">Toque na tela</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryInput_title">Controle</string>
   <string name="categoryData_title">Dados</string>
   <string name="categoryGameSettings_title">Configurações específicas do jogo</string>
   <string name="categoryGameSettings_titleNamed">Configurações de %1$s</string>
@@ -382,22 +368,8 @@
   <string name="playerMapPreference_reminder">Lembrar quando os jogadores não estiverem mapeados</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analógico →</string>
-  <string name="controller_analogL">Analógico ←</string>
-  <string name="controller_analogD">Analógico ↓</string>
-  <string name="controller_analogU">Analógico ↑</string>
-  <string name="controller_dpadR">D-pad â†’</string>
-  <string name="controller_dpadL">D-pad â†</string>
-  <string name="controller_dpadD">D-pad â†“</string>
-  <string name="controller_dpadU">D-pad â†‘</string>
-  <string name="controller_buttonCr">C-pad â†’</string>
-  <string name="controller_buttonCl">C-pad â†</string>
-  <string name="controller_buttonCd">C-pad â†“</string>
-  <string name="controller_buttonCu">C-pad â†‘</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Desmapear</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Controle analógico controlado com touchpad</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-pad controlado com touchpad</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

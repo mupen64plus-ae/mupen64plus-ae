@@ -91,7 +91,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Använder nu slot %1$d.</string>
   <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
-  <string name="toast_crashReportSent">Rapport skickad.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -107,33 +106,20 @@
   <string name="actionCheatEditor_title">Hantera fuskkoder</string>
   <string name="actionShare_title">Dela</string>
   <!--Preference Screens-->
-  <string name="categoryInput_title">ingång</string>
-  <string name="categoryInput_summary">Kontroll inställningar</string>
-  <string name="categoryTouchscreen_title">Pekskärm</string>
-  <string name="categoryTouchscreen_summary">On-screen kontroll inställningar</string>
-  <string name="categoryTouchpad_title">Pekplatta</string>
-  <string name="categoryTouchpad_summary">Xperia PLAY inställningar</string>
-  <string name="categoryDisplay_title">Visa</string>
-  <string name="categoryDisplay_summary">Layoutinställningar</string>
-  <string name="screenVideo_title">Video</string>
-  <string name="screenVideo_summary">Grafik inställningar</string>
-  <string name="screenAdvanced_title">Avancerat</string>
-  <string name="screenAdvanced_summary">Kärna, lagring och felsökningsinställningar</string>
   <string name="screenGlobalSettings_title">Globala inställningar</string>
   <string name="screenCheats_title">Fusk</string>
   <string name="screenCheats_summaryEnabled">Akriverad</string>
   <string name="screenCheats_summaryDisabled">Inaktiverad</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Fusk alternativ (håll in för beskrivning)</string>
-  <string name="categoryHardware_title">Hårdvara</string>
-  <string name="categoryOther_title">Andra</string>
-  <string name="categoryTouchscreenBehavior_title">Beteende</string>
-  <string name="categoryTouchscreenAppearance_title">Utseende</string>
   <string name="categoryGln64_title">Gln64 inställningar</string>
   <string name="categoryRice_title">Rice inställningar</string>
   <string name="categoryGlide64_title">Glide64 inställningar</string>
-  <string name="categoryCore_title">Kärna</string>
+  <string name="categoryDisplay_title">Visa</string>
   <string name="categoryAudio_title">Ljud</string>
+  <string name="categoryTouchscreen_title">Pekskärm</string>
+  <string name="categoryTouchpad_title">Pekplatta</string>
+  <string name="categoryInput_title">ingång</string>
   <string name="categoryData_title">Data</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Aktivera fusk</string>
@@ -305,22 +291,12 @@
   <string name="playerMapPreference_reminder">Påminn mig när spelarna inte är mappade</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Unmap</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Analog spak kontrollerad med pekplatta</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-pad styrs med pekplatta</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>
