@@ -48,6 +48,25 @@
     android:key="screenRoot" >
 
     <PreferenceCategory
+        android:key="categoryLibrary"
+        android:title="@string/categoryLibrary_title" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="searchZips"
+            android:title="@string/scanRomsDialog_searchZips" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="downloadArt"
+            android:title="@string/scanRomsDialog_downloadArt" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="clearGallery"
+            android:title="@string/scanRomsDialog_clearGallery" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="categoryDisplay"
         android:title="@string/categoryDisplay_title" >
         <paulscode.android.mupen64plusae.preference.CompatibleListPreference

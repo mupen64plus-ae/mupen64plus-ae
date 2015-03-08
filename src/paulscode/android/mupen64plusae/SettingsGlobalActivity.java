@@ -43,6 +43,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     // These constants must match the keys used in res/xml/preferences.xml
     
     private static final String SCREEN_ROOT = "screenRoot";
+    private static final String CATEGORY_LIBRARY = "categoryLibrary";
     private static final String CATEGORY_DISPLAY = "categoryDisplay";
     private static final String CATEGORY_AUDIO = "categoryAudio";
     private static final String CATEGORY_TOUCHSCREEN = "categoryTouchscreen";
@@ -115,6 +116,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
             if( mode == 1 )
             {
                 // Remove distractions if this was launched from TouchscreenProfileActivity
+                PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_LIBRARY );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_AUDIO );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_TOUCHPAD );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_INPUT );

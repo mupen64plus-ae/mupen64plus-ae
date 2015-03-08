@@ -181,6 +181,7 @@
     <string name="categoryGln64_title">Gln64 settings</string>
     <string name="categoryRice_title">Rice settings</string>
     <string name="categoryGlide64_title">Glide64 settings</string>
+    <string name="categoryLibrary_title">Library</string>
     <string name="categoryDisplay_title">Display</string>
     <string name="categoryAudio_title">Audio</string>
     <string name="categoryTouchscreen_title">Touchscreen</string>
