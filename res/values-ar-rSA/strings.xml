@@ -122,7 +122,6 @@
   <string name="toast_nativeMainFailureUnknown">مشكلة غير معروفه عند التشغيل</string>
   <string name="toast_usingSlot">الان المدخل %1$d.</string>
   <string name="toast_sdInaccessible">لا يمكن الوصول لذاكره (قم بفصل كيبل USB واعد المحاوله).</string>
-  <string name="toast_crashReportSent">ارسال التقرير.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -147,18 +146,6 @@
   <string name="actionCheatEditor_summary">اضافة,تعديل و الحذف على الهاك المعدل</string>
   <string name="actionShare_title">المشاركة</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">الادخال</string>
-  <string name="screenInput_summary">اعدادات التحكم</string>
-  <string name="screenTouchscreen_title">شاشة المس</string>
-  <string name="screenTouchscreen_summary">اعدادات الازرار على الشاشه</string>
-  <string name="screenTouchpad_title">المس</string>
-  <string name="screenTouchpad_summary">اعدادات جهاز ال Xperia</string>
-  <string name="screenDisplay_title">الشاشه</string>
-  <string name="screenDisplay_summary">اعدادات التصميم</string>
-  <string name="screenVideo_title">الفيديو</string>
-  <string name="screenVideo_summary">اعدادات الفيديو</string>
-  <string name="screenAdvanced_title">خيارات متطوره</string>
-  <string name="screenAdvanced_summary">النواه,والتخزين,واعدادات المنقح</string>
   <string name="screenGlobalSettings_title">الاعدادات العامه</string>
   <string name="screenGlobalSettings_summary">الشاشه,الصوت,التخزين,و اعدادات المنقح</string>
   <string name="screenCheats_title">الهاك</string>
@@ -166,15 +153,14 @@
   <string name="screenCheats_summaryDisabled">الغاء التفعيل</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">خيارات الهاك(ظغطه مطولة للحصول على الارشادات)</string>
-  <string name="categoryHardware_title">الجهاز</string>
-  <string name="categoryOther_title">اخرى</string>
-  <string name="categoryTouchscreenBehavior_title">سلوك</string>
-  <string name="categoryTouchscreenAppearance_title">المظهر</string>
   <string name="categoryGln64_title">اعدادات Gln64</string>
   <string name="categoryRice_title">اعدادات Rice</string>
   <string name="categoryGlide64_title">اعدادات Glide64</string>
-  <string name="categoryCore_title">النواه</string>
+  <string name="categoryDisplay_title">الشاشه</string>
   <string name="categoryAudio_title">الصوت</string>
+  <string name="categoryTouchscreen_title">شاشة المس</string>
+  <string name="categoryTouchpad_title">المس</string>
+  <string name="categoryInput_title">الادخال</string>
   <string name="categoryData_title">البيانات</string>
   <string name="categoryGameSettings_title">اعدادات خاصه لروم</string>
   <string name="categoryGameSettings_titleNamed">اعدادات %1$s</string>
@@ -343,6 +329,7 @@
   <string name="cheatEditor_saveConfirm">حفظ الهاك الى ملف؟</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">فك الظغط عن الخامات</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <string name="scanning_title">جاري البحث...</string>
   <!--ROM information calculation-->
@@ -356,10 +343,6 @@
   <!--Touchscreen Profile Activity-->
   <string name="touchscreenProfileActivity_remove">حذف</string>
   <!--Controller button names-->
-  <string name="controller_analogR">زر →</string>
-  <string name="controller_analogL">زر ←</string>
-  <string name="controller_analogD">زر ↓</string>
-  <string name="controller_analogU">زر ↑</string>
   <string name="controller_groupAB">زر A/B</string>
   <string name="controller_buttonA">زر A</string>
   <string name="controller_buttonB">زر B</string>

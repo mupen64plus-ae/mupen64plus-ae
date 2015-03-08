@@ -96,7 +96,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Koristi se spremnik #%1$d.</string>
   <string name="toast_sdInaccessible">SD kartica nije dostupna (iskopčajte USB kabel i pokušajte ponovo).</string>
-  <string name="toast_crashReportSent">Izvještaj poslan.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -113,18 +112,6 @@
   <string name="actionCheatEditor_summary">Dodaj, uredi ili obriši opcije za varanje</string>
   <string name="actionShare_title">Podijeli</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Unos</string>
-  <string name="screenInput_summary">Postavke kontrolera</string>
-  <string name="screenTouchscreen_title">Dodirni ekran</string>
-  <string name="screenTouchscreen_summary">Postavke kontrolera na ekranu</string>
-  <string name="screenTouchpad_title">Dodirna površina</string>
-  <string name="screenTouchpad_summary">Xperia PLAY postavke</string>
-  <string name="screenDisplay_title">Prikaz</string>
-  <string name="screenDisplay_summary">Postavke izgleda</string>
-  <string name="screenVideo_title">Grafika</string>
-  <string name="screenVideo_summary">Postavke grafike</string>
-  <string name="screenAdvanced_title">Napredno</string>
-  <string name="screenAdvanced_summary">Postavke spremišta, ispravljanje grešaka i emulacije</string>
   <string name="screenGlobalSettings_title">Globalne postavke</string>
   <string name="screenGlobalSettings_summary">Postavke prikaza, zvuka, spremišta i ispravljanja grešaka</string>
   <string name="screenCheats_title">Opcije za varanje</string>
@@ -132,15 +119,14 @@
   <string name="screenCheats_summaryDisabled">Isključeno</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opcije za varanje (držati za detalje)</string>
-  <string name="categoryHardware_title">Hardver</string>
-  <string name="categoryOther_title">Ostalo</string>
-  <string name="categoryTouchscreenBehavior_title">Ponašanje</string>
-  <string name="categoryTouchscreenAppearance_title">Izgled</string>
   <string name="categoryGln64_title">Gln64 postavke</string>
   <string name="categoryRice_title">Rice postavke</string>
   <string name="categoryGlide64_title">Glide64 postavke</string>
-  <string name="categoryCore_title">Emulacija</string>
+  <string name="categoryDisplay_title">Prikaz</string>
   <string name="categoryAudio_title">Zvuk</string>
+  <string name="categoryTouchscreen_title">Dodirni ekran</string>
+  <string name="categoryTouchpad_title">Dodirna površina</string>
+  <string name="categoryInput_title">Unos</string>
   <string name="categoryData_title">Podaci</string>
   <string name="categoryGameSettings_title">Postavke specifične za igru</string>
   <string name="categoryGameSettings_titleNamed">%1$s postavke</string>
@@ -355,6 +341,7 @@
   <string name="pathHiResTexturesTask_title">Raspakiravanje teksture</string>
   <string name="pathHiResTexturesTask_message">Molimo pričekajte. Ovaj proces može potrajati.</string>
   <string name="pathHiResTexturesTask_errorMessage">Došlo je do greške sa raspakiravanjem teksture!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->
@@ -369,22 +356,12 @@
   <string name="playerMapPreference_reminder">Podsjeti me kad igrači nisu označili sve tipke</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
-  <string name="controller_dpadR">Digital →</string>
-  <string name="controller_dpadL">Digital ←</string>
-  <string name="controller_dpadD">Digital ↓</string>
-  <string name="controller_dpadU">Digital ↑</string>
   <string name="controller_buttonCr">C →</string>
   <string name="controller_buttonCl">C ←</string>
   <string name="controller_buttonCd">C ↓</string>
   <string name="controller_buttonCu">C ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Odznači</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Analogna palica kontrolirana sa dodirnom površinom</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C tipke kontrolirane sa dodirnom površinom</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

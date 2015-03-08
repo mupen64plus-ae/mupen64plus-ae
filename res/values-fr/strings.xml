@@ -122,7 +122,6 @@
   <string name="toast_nativeMainFailureUnknown">Erreur inconnue au lancement.</string>
   <string name="toast_usingSlot">Utilisation de l\'emplacement %1$d.</string>
   <string name="toast_sdInaccessible">Carte SD indisponible (veuillez déconnecter le cable USB puis réessayer)</string>
-  <string name="toast_crashReportSent">Rapport envoyé.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -147,18 +146,6 @@
   <string name="actionCheatEditor_summary">Ajouter, modifier et supprimer les cheats personalisés.</string>
   <string name="actionShare_title">Partager</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Contrôles</string>
-  <string name="screenInput_summary">Paramètres de contrôles</string>
-  <string name="screenTouchscreen_title">Commandes virtuelles</string>
-  <string name="screenTouchscreen_summary">Paramètres des boutons virtuels à l\'écran</string>
-  <string name="screenTouchpad_title">Pavé tactile</string>
-  <string name="screenTouchpad_summary">Paramètres de l\'Xperia PLAY</string>
-  <string name="screenDisplay_title">Affichage</string>
-  <string name="screenDisplay_summary">Paramètres de thème</string>
-  <string name="screenVideo_title">Vidéo</string>
-  <string name="screenVideo_summary">Paramètres graphiques</string>
-  <string name="screenAdvanced_title">Paramètres avancés</string>
-  <string name="screenAdvanced_summary">Noyau, mémoire et paramètres debug</string>
   <string name="screenGlobalSettings_title">Paramètres généraux</string>
   <string name="screenGlobalSettings_summary">Affichage, audio, stockage et paramètres debug</string>
   <string name="screenCheats_title">Cheats</string>
@@ -166,15 +153,14 @@
   <string name="screenCheats_summaryDisabled">Désactivé</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Options de cheats (appui long pour les notes)</string>
-  <string name="categoryHardware_title">Matériel</string>
-  <string name="categoryOther_title">Autres</string>
-  <string name="categoryTouchscreenBehavior_title">Comportement</string>
-  <string name="categoryTouchscreenAppearance_title">Apparence</string>
   <string name="categoryGln64_title">Paramètres Gln64</string>
   <string name="categoryRice_title">Paramètres Rice</string>
   <string name="categoryGlide64_title">Paramètres Glide64</string>
-  <string name="categoryCore_title">Noyau</string>
+  <string name="categoryDisplay_title">Affichage</string>
   <string name="categoryAudio_title">Audio</string>
+  <string name="categoryTouchscreen_title">Commandes virtuelles</string>
+  <string name="categoryTouchpad_title">Pavé tactile</string>
+  <string name="categoryInput_title">Contrôles</string>
   <string name="categoryData_title">Données</string>
   <string name="categoryGameSettings_title">Paramètres propres au jeu</string>
   <string name="categoryGameSettings_titleNamed">Paramètres %1$s</string>
@@ -407,9 +393,21 @@
   <string name="pathHiResTexturesTask_title">Décompresser les textures</string>
   <string name="pathHiResTexturesTask_message">Merci de patienter. Cette opération peut prendre quelques minutes.</string>
   <string name="pathHiResTexturesTask_errorMessage">Une erreur est survenue durant la décompression des textures !</string>
+  <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Sélectionnez un fichier ROM ou un dossier entier à scanner</string>
+  <string name="scanRomsDialog_searchZips">Rechercher des fichiers zip</string>
+  <string name="scanRomsDialog_downloadArt">Télécharger la pochette</string>
+  <string name="scanRomsDialog_clearGallery">Effacer la galerie avant ajout</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Scan en cours...</string>
   <!--ROM information calculation-->
+  <string name="cacheRomInfo_searching">Recherche en cours...</string>
+  <string name="cacheRomInfo_searchingZip">Recherche de fichier zip...</string>
+  <string name="cacheRomInfo_computingMD5">Calcul MD5</string>
+  <string name="cacheRomInfo_searchingDB">Recherche dans la base de donnée de ROM...</string>
+  <string name="cacheRomInfo_downloadingArt">Téléchargement de la pochette...</string>
+  <string name="cacheRomInfo_refreshingUI">Mise à jour de l\'interface...</string>
+  <string name="cacheRomInfo_extractingZip">Extraction de l\'entrée zip...</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -423,20 +421,14 @@
   <string name="playerMapPreference_button">Joueur %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Me rappeler lorsque des joueurs ne sont pas assignés</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Boutons</string>
   <string name="touchscreenProfileActivity_remove">Supprimer</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal : %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertical : %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Auto-maintenable</string>
   <!--Controller button names-->
   <string name="controller_analog">Stick analogique</string>
-  <string name="controller_analogR">Stick analogique vers la droite</string>
-  <string name="controller_analogL">Stick analogique vers la gauche</string>
-  <string name="controller_analogD">Stick analogique vers le bas</string>
-  <string name="controller_analogU">Stick analogique vers le haut</string>
   <string name="controller_dpad">Flèches directionelles</string>
-  <string name="controller_dpadR">Flèche directionnelle droite</string>
-  <string name="controller_dpadL">Flèche directionnelle gauche</string>
-  <string name="controller_dpadD">Flèche directionnelle bas</string>
-  <string name="controller_dpadU">Flèche directionnelle haut</string>
   <string name="controller_groupAB">Boutons A/B</string>
   <string name="controller_buttonA">Bouton A</string>
   <string name="controller_buttonB">Bouton B</string>
@@ -453,8 +445,6 @@
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Veuillez appuyer sur un bouton, une touche ou le joystick pour assigner cette fonction…\n\nTouche(s) actuellement assignée(s) :\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Désassigner</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Stick analogique controlé avec le pavé tactile</string>
-  <string name="inputMapActivity_cPadXperiaPlay">Boutons C controlés avec le pavé tactile</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

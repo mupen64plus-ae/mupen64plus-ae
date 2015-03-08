@@ -70,7 +70,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Şimdi %1$d soltu kullanılıyor</string>
   <string name="toast_sdInaccessible">SD kart erişilemez (USB kablosunu çıkartıp tekrar deneyin)</string>
-  <string name="toast_crashReportSent">Rapor gönderildi.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -84,26 +83,16 @@
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Girdi</string>
-  <string name="screenInput_summary">Denetim Ayarları</string>
-  <string name="screenTouchscreen_title">Dokunmatik Ekran</string>
-  <string name="screenTouchscreen_summary">Ekran üstü denetleyici ayarları</string>
-  <string name="screenTouchpad_title">Dokunmatik yüzey</string>
-  <string name="screenTouchpad_summary">Xperia PLAY ayarları</string>
-  <string name="screenVideo_title">Video</string>
-  <string name="screenVideo_summary">Grafik ayarları</string>
-  <string name="screenAdvanced_title">Gelişmiş</string>
   <string name="screenCheats_summaryDisabled">Devre dışı</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Hile seçenekleri (notlar için uzun basın)</string>
-  <string name="categoryHardware_title">Donanım</string>
-  <string name="categoryOther_title">Diğer</string>
-  <string name="categoryTouchscreenBehavior_title">Davranış</string>
-  <string name="categoryTouchscreenAppearance_title">Görünüm</string>
   <string name="categoryGln64_title">Gln64 Ayarları</string>
   <string name="categoryRice_title">Rice Ayarları</string>
   <string name="categoryGlide64_title">Glide64 ayarları</string>
   <string name="categoryAudio_title">Ses</string>
+  <string name="categoryTouchscreen_title">Dokunmatik Ekran</string>
+  <string name="categoryTouchpad_title">Dokunmatik yüzey</string>
+  <string name="categoryInput_title">Girdi</string>
   <string name="categoryData_title">Veri</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Hileleri etkinleştir</string>
@@ -262,6 +251,7 @@
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>
   <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->
@@ -276,22 +266,12 @@
   <string name="playerMapPreference_reminder">Oyuncular eşlenmediği zaman bana hatırlat</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Eşlemeyi kaldır</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Dokunmatik yüzeyle kontrol edilen analog çubuk</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-pad , touchpad tarafından kontrol ediliyor</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

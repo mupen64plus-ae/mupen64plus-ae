@@ -97,7 +97,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Obecnie używam slota %1$d…</string>
   <string name="toast_sdInaccessible">Nie można uzyskać dostępu do karty SD (odłącz kabel USB i spróbuj ponownie).</string>
-  <string name="toast_crashReportSent">Raport wysłany.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -115,18 +114,6 @@
   <string name="actionCheatEditor_summary">Dodaj, modyfikuj i usuń własne cheat\'y</string>
   <string name="actionShare_title">Udostępnij</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Urządzenie wejścia</string>
-  <string name="screenInput_summary">Ustawienia kontrolera</string>
-  <string name="screenTouchscreen_title">Ekran dotykowy</string>
-  <string name="screenTouchscreen_summary">Ustawienia ekranowego kontrolera dotykowego</string>
-  <string name="screenTouchpad_title">Touchpad</string>
-  <string name="screenTouchpad_summary">Ustawienia Xperia PLAY</string>
-  <string name="screenDisplay_title">Ekran</string>
-  <string name="screenDisplay_summary">Ustawienia układu</string>
-  <string name="screenVideo_title">Obraz</string>
-  <string name="screenVideo_summary">Ustawienia graficzne</string>
-  <string name="screenAdvanced_title">Ustawienia zaawansowane</string>
-  <string name="screenAdvanced_summary">Ustawienia rdzeni, miejsca zapisu i debugowania</string>
   <string name="screenGlobalSettings_title">Globalne ustawienia</string>
   <string name="screenGlobalSettings_summary">Ustawienia ekranu, dźwięku, miejsca zapisu i debugowania</string>
   <string name="screenCheats_title">Cheat\'y</string>
@@ -134,15 +121,14 @@
   <string name="screenCheats_summaryDisabled">Wyłączone</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opcje cheatów (przytrzymaj by zobaczyć opis)</string>
-  <string name="categoryHardware_title">Sprzęt</string>
-  <string name="categoryOther_title">Pozostałe</string>
-  <string name="categoryTouchscreenBehavior_title">Zachowanie</string>
-  <string name="categoryTouchscreenAppearance_title">Wygląd</string>
   <string name="categoryGln64_title">Ustawienia Gln64</string>
   <string name="categoryRice_title">Ustawienia Rice</string>
   <string name="categoryGlide64_title">Ustawienia Glide64</string>
-  <string name="categoryCore_title">Rdzeń</string>
+  <string name="categoryDisplay_title">Ekran</string>
   <string name="categoryAudio_title">Dźwięk</string>
+  <string name="categoryTouchscreen_title">Ekran dotykowy</string>
+  <string name="categoryTouchpad_title">Touchpad</string>
+  <string name="categoryInput_title">Urządzenie wejścia</string>
   <string name="categoryData_title">Dane</string>
   <string name="categoryGameSettings_title">Specyficzne ustawienia gry</string>
   <string name="categoryGameSettings_titleNamed">Ustawienia %1$s</string>
@@ -364,6 +350,7 @@
   <string name="pathHiResTexturesTask_title">Rozpakowywanie tekstur</string>
   <string name="pathHiResTexturesTask_message">Prosimy o cierpliwość. Może to potrwać kilka minut.</string>
   <string name="pathHiResTexturesTask_errorMessage">Błąd przy rozpakowywaniu tekstur!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->
@@ -380,22 +367,12 @@
   <string name="playerMapPreference_reminder">Przypomnij, gdy gracze nie będą zmapowani</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Odmapuj</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Drążek analogowy kontrolowany przez touchpad</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-pad kontrolowany przez touchpad</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

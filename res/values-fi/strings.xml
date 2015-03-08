@@ -122,7 +122,6 @@
   <string name="toast_nativeMainFailureUnknown">Tuntematon käynnistysvirhe.</string>
   <string name="toast_usingSlot">Nyt käytössä paikka %1$d.</string>
   <string name="toast_sdInaccessible">SD-kortti ei käytettävissä (irroita USB-kaapeli ja yritä uudelleen).</string>
-  <string name="toast_crashReportSent">Raportti lähetetty.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -147,18 +146,6 @@
   <string name="actionCheatEditor_summary">Lisää, muokkaa ja poista kustom huijauksia</string>
   <string name="actionShare_title">Jaa</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Sisääntulo</string>
-  <string name="screenInput_summary">Ohjainasetukset</string>
-  <string name="screenTouchscreen_title">Kosketusnäyttö</string>
-  <string name="screenTouchscreen_summary">Näytöllä olevan ohjaimen asetukset</string>
-  <string name="screenTouchpad_title">Kosketuslevy</string>
-  <string name="screenTouchpad_summary">Xperia PLAY asetukset</string>
-  <string name="screenDisplay_title">Näyttö</string>
-  <string name="screenDisplay_summary">Ulkoasu asetukset</string>
-  <string name="screenVideo_title">Video</string>
-  <string name="screenVideo_summary">Grafiikka-asetukset</string>
-  <string name="screenAdvanced_title">Edistynyt</string>
-  <string name="screenAdvanced_summary">Ydin-, tallennustila-, ja debug-asetukset</string>
   <string name="screenGlobalSettings_title">Globaalit asetukset</string>
   <string name="screenGlobalSettings_summary">Näyttö, audio, tallennustila ja debug asetukset</string>
   <string name="screenCheats_title">Huijaukset</string>
@@ -166,15 +153,14 @@
   <string name="screenCheats_summaryDisabled">Pois käytöstä</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Huijausvalinnat (pikään paina merkintöihin)</string>
-  <string name="categoryHardware_title">Laitteisto</string>
-  <string name="categoryOther_title">Muu</string>
-  <string name="categoryTouchscreenBehavior_title">Käytös</string>
-  <string name="categoryTouchscreenAppearance_title">Ulkonäkö</string>
   <string name="categoryGln64_title">Gln64 asetukset</string>
   <string name="categoryRice_title">Rice asetukset</string>
   <string name="categoryGlide64_title">Glide64 asetukset</string>
-  <string name="categoryCore_title">Ydin</string>
+  <string name="categoryDisplay_title">Näyttö</string>
   <string name="categoryAudio_title">Audio</string>
+  <string name="categoryTouchscreen_title">Kosketusnäyttö</string>
+  <string name="categoryTouchpad_title">Kosketuslevy</string>
+  <string name="categoryInput_title">Sisääntulo</string>
   <string name="categoryData_title">Data</string>
   <string name="categoryGameSettings_title">Pelikohtaiset asetukset</string>
   <string name="categoryGameSettings_titleNamed">%1$s asetukset</string>
@@ -408,9 +394,17 @@
   <string name="pathHiResTexturesTask_title">Puretaan tekstuureja</string>
   <string name="pathHiResTexturesTask_message">Ole kärsivällinen. Prosessi voi kestää jonkin aikaa.</string>
   <string name="pathHiResTexturesTask_errorMessage">Ongelma tekstuurien purkamisessa!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <string name="scanning_title">Skannataan...</string>
   <!--ROM information calculation-->
+  <string name="cacheRomInfo_searching">Haetaan...</string>
+  <string name="cacheRomInfo_searchingZip">Haetaan zip-tiedostoa...</string>
+  <string name="cacheRomInfo_computingMD5">Lasketaan MD5...</string>
+  <string name="cacheRomInfo_searchingDB">Haetaan ROM-tietokantaa...</string>
+  <string name="cacheRomInfo_downloadingArt">Ladataan kansitaidetta...</string>
+  <string name="cacheRomInfo_refreshingUI">Päivittää käyttöliittymää...</string>
+  <string name="cacheRomInfo_extractingZip">Puretaan zip-tuloa...</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -429,15 +423,7 @@
   <string name="touchscreenProfileActivity_verticalSlider">Pystysuora: %1$d %%</string>
   <!--Controller button names-->
   <string name="controller_analog">Analogitikku</string>
-  <string name="controller_analogR">Analogi →</string>
-  <string name="controller_analogL">Analogi ←</string>
-  <string name="controller_analogD">Analogi ↓</string>
-  <string name="controller_analogU">Analogi ↑</string>
   <string name="controller_dpad">D-pädi</string>
-  <string name="controller_dpadR">D-pädi →</string>
-  <string name="controller_dpadL">D-pädi ←</string>
-  <string name="controller_dpadD">D-pädi ↓</string>
-  <string name="controller_dpadU">D-pädi ↑</string>
   <string name="controller_groupAB">A/B-painikkeet</string>
   <string name="controller_buttonA">A-painike</string>
   <string name="controller_buttonB">B-painike</string>
@@ -454,8 +440,6 @@
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Paina painiketta, näppäintä, tai joystick:iä asettaaksesi... \n\nNykyiset asettamiset:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Poista asetus</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Analogitikku ohjattuna kosketuslevyllä</string>
-  <string name="inputMapActivity_cPadXperiaPlay">C-pädi ohjattuna kosketuslevyllä</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>

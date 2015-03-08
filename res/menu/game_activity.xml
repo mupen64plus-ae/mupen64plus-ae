@@ -1,59 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <item
         android:id="@+id/menuItem_toggleSpeed"
         android:icon="@drawable/ic_clock"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_toggleSpeed"/>
+        android:title="@string/menuItem_toggleSpeed"
+        tools:ignore="UnusedAttribute"/>
     <item
         android:id="@+id/menuItem_slotLoad"
         android:icon="@drawable/ic_folder"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_slotLoad"/>
+        android:title="@string/menuItem_slotLoad"
+        tools:ignore="UnusedAttribute"/>
     <item
         android:id="@+id/menuItem_slotSave"
         android:icon="@drawable/ic_save"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_slotSave"/>
+        android:title="@string/menuItem_slotSave"
+        tools:ignore="UnusedAttribute"/>
     <item
         android:id="@+id/menuItem_setSlot"
         android:icon="@drawable/ic_storage"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_setSlot">
+        android:title="@string/menuItem_setSlot"
+        tools:ignore="UnusedAttribute">
         <menu>
             <group android:checkableBehavior="single" >
                 <item
                     android:id="@+id/menuItem_slot0"
                     android:checked="true"
-                    android:title="0"/>
+                    android:title="0"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot1"
-                    android:title="1"/>
+                    android:title="1"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot2"
-                    android:title="2"/>
+                    android:title="2"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot3"
-                    android:title="3"/>
+                    android:title="3"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot4"
-                    android:title="4"/>
+                    android:title="4"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot5"
-                    android:title="5"/>
+                    android:title="5"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot6"
-                    android:title="6"/>
+                    android:title="6"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot7"
-                    android:title="7"/>
+                    android:title="7"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot8"
-                    android:title="8"/>
+                    android:title="8"
+                    tools:ignore="HardcodedText"/>
                 <item
                     android:id="@+id/menuItem_slot9"
-                    android:title="9"/>
+                    android:title="9"
+                    tools:ignore="HardcodedText"/>
             </group>
         </menu>
     </item>

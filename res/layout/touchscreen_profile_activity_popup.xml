@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,7 +17,8 @@
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:text="-" />
+            android:text="-"
+            tools:ignore="HardcodedText,RtlHardcoded" />
 
         <Button
             android:id="@+id/buttonXup"
@@ -24,7 +26,8 @@
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="+" />
+            android:text="+"
+            tools:ignore="HardcodedText,RtlHardcoded" />
 
         <LinearLayout
             android:id="@+id/seekgroupX"
@@ -42,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Horizontal: 50 %"
+                android:text="@string/touchscreenProfileActivity_horizontalSlider"
                 android:textIsSelectable="false" />
 
             <SeekBar
@@ -66,7 +69,8 @@
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:text="-" />
+            android:text="-"
+            tools:ignore="HardcodedText,RtlHardcoded" />
 
         <Button
             android:id="@+id/buttonYup"
@@ -74,7 +78,8 @@
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="+" />
+            android:text="+"
+            tools:ignore="HardcodedText,RtlHardcoded" />
 
         <LinearLayout
             android:id="@+id/seekgroupY"
@@ -92,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Vertical: 50 %"
+                android:text="@string/touchscreenProfileActivity_verticalSlider"
                 android:textIsSelectable="false" />
 
             <SeekBar
@@ -108,6 +113,6 @@
         android:id="@+id/checkBox_holdable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Auto-holdable" />
+        android:text="@string/touchscreenProfileActivity_autoHoldable" />
 
 </LinearLayout>

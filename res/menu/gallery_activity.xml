@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <item
         android:id="@+id/menuItem_refreshRoms"
         android:icon="@drawable/ic_refresh"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_refreshRoms"/>
+        android:title="@string/menuItem_refreshRoms"
+        tools:ignore="UnusedAttribute"/>
     <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_settings">
+        android:title="@string/menuItem_settings"
+        tools:ignore="UnusedAttribute">
         <menu>
             <item
                 android:id="@+id/menuItem_globalSettings"
@@ -33,7 +36,8 @@
         android:id="@+id/menuItem_help"
         android:icon="@drawable/ic_help"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_help">
+        android:title="@string/menuItem_help"
+        tools:ignore="UnusedAttribute">
         <menu>
             <item
                 android:id="@+id/menuItem_faq"
@@ -53,7 +57,8 @@
         android:id="@+id/menuItem_about"
         android:icon="@drawable/ic_about"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_about">
+        android:title="@string/menuItem_about"
+        tools:ignore="UnusedAttribute">
         <menu>
             <item
                 android:id="@+id/menuItem_appVersion"

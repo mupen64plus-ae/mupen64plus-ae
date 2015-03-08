@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/aPad"
     android:layout_width="@dimen/inputMapPreferenceButtonSizeX3"
     android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
@@ -46,7 +47,8 @@
         android:layout_centerVertical="true"
         android:background="@drawable/button_apad"
         android:drawableLeft="@drawable/ic_arrow_l"
-        android:text="@string/inputMapActivity_btnAL" />
+        android:text="@string/inputMapActivity_btnAL"
+        tools:ignore="RtlHardcoded" />
 
     <Button
         android:id="@+id/buttonAR"
@@ -56,6 +58,7 @@
         android:layout_centerVertical="true"
         android:background="@drawable/button_apad"
         android:drawableRight="@drawable/ic_arrow_r"
-        android:text="@string/inputMapActivity_btnAR" />
+        android:text="@string/inputMapActivity_btnAR"
+        tools:ignore="RtlHardcoded" />
 
 </RelativeLayout>

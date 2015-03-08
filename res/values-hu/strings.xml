@@ -69,7 +69,6 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot"> %1$d hely használata</string>
   <string name="toast_sdInaccessible">SD kártya nem elérhető (USB-t csatlakoztasd le majd próbáld újra)</string>
-  <string name="toast_crashReportSent">Jelentése elküldve.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->
@@ -83,25 +82,15 @@
   <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
   <string name="actionReloadAssets_summary">Nem befolyásolja a felhasználói beállításokat, a ROMokat, vagy az egyéni adatokat</string>
   <!--Preference Screens-->
-  <string name="screenInput_title">Bevitel</string>
-  <string name="screenInput_summary">Irányítás beállítások</string>
-  <string name="screenTouchscreen_title">Érintőpanel</string>
-  <string name="screenTouchscreen_summary">Képernyőn lévő kontroller beállítása</string>
-  <string name="screenTouchpad_title">Érintőpad</string>
-  <string name="screenTouchpad_summary">Xperia PLAY beállítások</string>
-  <string name="screenVideo_title">Video</string>
-  <string name="screenVideo_summary">Grafikai beállítások</string>
-  <string name="screenAdvanced_title">Haladó</string>
   <string name="screenCheats_summaryDisabled">Kikapcsolva</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Csalás beállítások (hosszan nyomd a jegyzetekért)</string>
-  <string name="categoryHardware_title">Hardver</string>
-  <string name="categoryOther_title">Egyéb</string>
-  <string name="categoryTouchscreenBehavior_title">Viselkedés</string>
-  <string name="categoryTouchscreenAppearance_title">Megjelenés</string>
   <string name="categoryGln64_title">Gln64 beállítások</string>
   <string name="categoryRice_title">Rice beállítások</string>
   <string name="categoryAudio_title">Hang</string>
+  <string name="categoryTouchscreen_title">Érintőpanel</string>
+  <string name="categoryTouchpad_title">Érintőpad</string>
+  <string name="categoryInput_title">Bevitel</string>
   <string name="categoryData_title">Adat</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Csalás engedélyezése</string>
@@ -245,6 +234,7 @@
   <string name="pathHiResTexturesTask_title">Textúrák kicsomagolása</string>
   <string name="pathHiResTexturesTask_message">Légy türelemmel. Ez időbe telik.</string>
   <string name="pathHiResTexturesTask_errorMessage">Probléma a textúrák kicsomagolásánál!</string>
+  <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
   <!--ROM information calculation-->
   <!--Seek Bar Preference-->
@@ -259,22 +249,12 @@
   <string name="playerMapPreference_reminder">Emlékeztess amikor a játékosok nincsenek kiosztva</string>
   <!--Touchscreen Profile Activity-->
   <!--Controller button names-->
-  <string name="controller_analogR">Analog →</string>
-  <string name="controller_analogL">Analog ←</string>
-  <string name="controller_analogD">Analog ↓</string>
-  <string name="controller_analogU">Analog ↑</string>
-  <string name="controller_dpadR">D-pad →</string>
-  <string name="controller_dpadL">D-pad ←</string>
-  <string name="controller_dpadD">D-pad ↓</string>
-  <string name="controller_dpadU">D-pad ↑</string>
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Kiosztás megszüntése</string>
-  <string name="inputMapActivity_aPadXperiaPlay">Az érintőpad irányítja az analóg kart</string>
-  <string name="inputMapActivity_cPadXperiaPlay">Az érintőpad irányítja a C-padot</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>
