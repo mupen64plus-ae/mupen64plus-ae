@@ -24,6 +24,7 @@ import java.util.Set;
 
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.os.Vibrator;
@@ -156,6 +157,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * 
      * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
      */
+    @SuppressLint( "ClickableViewAccessibility" )
     @Override
     @TargetApi( 9 )
     public boolean onTouch( View view, MotionEvent event )

@@ -113,6 +113,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     // Don't enter immersive mode until the ActionBar menus are closed
     private boolean actionBarMenuOpen = false;
     
+    @SuppressLint( "ClickableViewAccessibility" )
     @TargetApi( 11 )
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -410,6 +411,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     }
 
     
+    @SuppressLint( "ClickableViewAccessibility" )
     @Override
     public boolean onTouch( View v, MotionEvent event )
     {

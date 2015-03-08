@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.input.provider;
 
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
+import android.annotation.SuppressLint;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -129,6 +130,7 @@ public class Demultiplexer
          * @see android.view.View.OnTouchListener#onTouch(android.view.View,
          * android.view.MotionEvent)
          */
+        @SuppressLint( "ClickableViewAccessibility" )
         @Override
         public boolean onTouch( View view, MotionEvent event )
         {
