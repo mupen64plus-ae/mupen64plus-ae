@@ -34,6 +34,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.RomHeader;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
@@ -234,6 +235,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         }
     }
 
+    @SuppressLint( "InflateParams" )
     @Override
     public boolean onItemLongClick( AdapterView<?> av, View v, final int pos, long id )
     {

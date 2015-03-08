@@ -34,6 +34,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -425,6 +426,7 @@ public final class Prompt
      * @param max      The maximum value permitted.
      * @param listener The listener to process the integer, when provided.
      */
+    @SuppressLint( "InflateParams" )
     public static void promptInteger( Context context, CharSequence title, String format,
             final int initial, final int min, final int max, final PromptIntegerListener listener )
     {
