@@ -18,7 +18,9 @@
         android:key="screenGlobalSettings"
         android:summary="@string/screenGlobalSettings_summary"
         android:title="@string/screenGlobalSettings_title" >
-        <intent android:action=".SettingsGlobalActivity" />
+        <intent android:action=".SettingsGlobalActivity">
+            <extra android:name="paulscode.android.mupen64plusae.Keys.Extras.MENU_DISPLAY_MODE" android:value="2" />
+        </intent>
     </Preference>
 
     <PreferenceCategory
