@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -35,6 +36,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
@@ -457,6 +459,15 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_launchingEmulator );
+        
+        // Update the ConfigSection with the new value for lastPlayed
+        String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
+        ConfigFile config = new ConfigFile( mUserPrefs.romInfoCache_cfg );
+        if( config != null )
+        {
+            config.put( mRomMd5, "lastPlayed", lastPlayed );
+            config.save();
+        }
         
         // Launch the appropriate game activity
         Intent intent = mUserPrefs.isTouchpadEnabled ? new Intent( this,
