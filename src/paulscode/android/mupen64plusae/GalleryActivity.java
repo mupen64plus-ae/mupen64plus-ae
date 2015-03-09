@@ -52,20 +52,27 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class GalleryActivity extends ActionBarActivity implements ComputeMd5Listener,
         CacheRomInfoListener
@@ -76,6 +83,9 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     
     // Widgets
     private RecyclerView mGridView;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private MenuListView mDrawerList;
     private SearchView mSearchView;
     private String mSearchQuery = "";
     
@@ -109,7 +119,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat );
+        super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat_NoActionBar );
         super.onCreate( savedInstanceState );
         
         // Get app data and user preferences
@@ -160,6 +170,41 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         layoutManager.setSpanCount( galleryColumns );
         mGridView.getAdapter().notifyDataSetChanged();
         
+        // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
+        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+        toolbar.setTitle( R.string.app_name );
+        setSupportActionBar( toolbar );
+        
+        // Configure the navigation drawer
+        mDrawerLayout = (DrawerLayout) findViewById( R.id.drawerLayout );
+        mDrawerToggle = new ActionBarDrawerToggle( this, mDrawerLayout, toolbar, R.string.app_name, R.string.app_name )
+        {
+            @Override
+            public void onDrawerClosed( View drawerView )
+            {
+                super.onDrawerClosed( drawerView );
+            }
+            
+            @Override
+            public void onDrawerOpened( View drawerView )
+            {
+                super.onDrawerOpened( drawerView );
+            }
+        };
+        mDrawerLayout.setDrawerListener( mDrawerToggle );
+        
+        // Configure the list in the navigation drawer
+        mDrawerList = (MenuListView) findViewById( R.id.left_drawer );
+        mDrawerList.setMenuResource( R.menu.gallery_drawer );
+        mDrawerList.setOnClickListener( new MenuListView.OnClickListener()
+        {
+            @Override
+            public void onClick( MenuItem menuItem )
+            {
+                GalleryActivity.this.onOptionsItemSelected( menuItem );
+            }
+        } );
+        
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
         {
@@ -179,6 +224,20 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             mCacheRomInfoTask.cancel( false );
             mCacheRomInfoTask = null;
         }
+    }
+    
+    @Override
+    protected void onPostCreate( Bundle savedInstanceState )
+    {
+        super.onPostCreate( savedInstanceState );
+        mDrawerToggle.syncState();
+    }
+    
+    @Override
+    public void onConfigurationChanged( Configuration newConfig )
+    {
+        super.onConfigurationChanged( newConfig );
+        mDrawerToggle.onConfigurationChanged( newConfig );
     }
     
     @Override
@@ -335,6 +394,39 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         // Asynchronously compute MD5 and launch play menu when finished
         Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
         new ComputeMd5Task( new File( romPath ), this ).execute();
+    }
+    
+    @Override
+    public boolean onKeyDown( int keyCode, KeyEvent event )
+    {
+        if( keyCode == KeyEvent.KEYCODE_MENU )
+        {
+            // Show the navigation drawer when the user presses the Menu button
+            // http://stackoverflow.com/q/22220275
+            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            {
+                mDrawerLayout.closeDrawer( GravityCompat.START );
+            }
+            else
+            {
+                mDrawerLayout.openDrawer( GravityCompat.START );
+            }
+            return true;
+        }
+        return super.onKeyDown( keyCode, event );
+    }
+    
+    @Override
+    public void onBackPressed()
+    {
+        if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+        {
+            mDrawerLayout.closeDrawer( GravityCompat.START );
+        }
+        else
+        {
+            super.onBackPressed();
+        }
     }
     
     @Override
