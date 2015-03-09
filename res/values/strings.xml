@@ -228,6 +228,12 @@
     <string name="audioSynchronize_summary">Minimizes latency, but may cause crackling in some games/devices</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
+    <string name="showRecentlyPlayed_title">Recently played</string>
+    <string name="showRecentlyPlayed_summary">Show games played within the past week</string>
+
+    <!-- Gallery sections -->
+    <string name="galleryRecentlyPlayed">Recently played</string>
+    <string name="galleryLibrary">Library</string>
 
     <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
     <string name="touchscreenAutoHold_title">Button auto-hold</string>
