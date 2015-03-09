@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -35,6 +36,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
@@ -69,20 +71,21 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String CATEGORY_GAME_SETTINGS = "categoryGameSettings";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     
-    private static final String ACTION_RESUME = "actionResume";
-    private static final String ACTION_RESTART = "actionRestart";
-    private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
-    private static final String ACTION_WIKI = "actionWiki";
-    private static final String ACTION_RESET_GAME_PREFS = "actionResetGamePrefs";
+    public static final String ACTION_RESUME = "actionResume";
+    public static final String ACTION_RESTART = "actionRestart";
+    public static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
+    public static final String ACTION_WIKI = "actionWiki";
+    public static final String ACTION_RESET_GAME_PREFS = "actionResetGamePrefs";
+    public static final String ACTION_EXIT = "actionExit";
     
-    private static final String EMULATION_PROFILE = "emulationProfile";
-    private static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
-    private static final String CONTROLLER_PROFILE1 = "controllerProfile1";
-    private static final String CONTROLLER_PROFILE2 = "controllerProfile2";
-    private static final String CONTROLLER_PROFILE3 = "controllerProfile3";
-    private static final String CONTROLLER_PROFILE4 = "controllerProfile4";
-    private static final String PLAYER_MAP = "playerMap";
-    private static final String PLAY_SHOW_CHEATS = "playShowCheats";
+    public static final String EMULATION_PROFILE = "emulationProfile";
+    public static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
+    public static final String CONTROLLER_PROFILE1 = "controllerProfile1";
+    public static final String CONTROLLER_PROFILE2 = "controllerProfile2";
+    public static final String CONTROLLER_PROFILE3 = "controllerProfile3";
+    public static final String CONTROLLER_PROFILE4 = "controllerProfile4";
+    public static final String PLAYER_MAP = "playerMap";
+    public static final String PLAY_SHOW_CHEATS = "playShowCheats";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -109,6 +112,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // MOGA controller interface
     private Controller mMogaController = Controller.getInstance( this );
+    
+    // Go directly to gameplay from the gallery
+    public static String action = null;
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -211,6 +217,22 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mPrefs.registerOnSharedPreferenceChangeListener( this );
         mMogaController.onResume();
         refreshViews();
+        
+        if( ACTION_RESUME.equals( action ) )
+        {
+            action = ACTION_EXIT;
+            launchGame( false );
+        }
+        else if( ACTION_RESTART.equals( action ) )
+        {
+            action = ACTION_EXIT;
+            launchGame( true );
+        }
+        else if( ACTION_EXIT.equals( action ) )
+        {
+            action = null;
+            finish();
+        }
     }
     
     @Override
@@ -437,6 +459,15 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_launchingEmulator );
+        
+        // Update the ConfigSection with the new value for lastPlayed
+        String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
+        ConfigFile config = new ConfigFile( mUserPrefs.romInfoCache_cfg );
+        if( config != null )
+        {
+            config.put( mRomMd5, "lastPlayed", lastPlayed );
+            config.save();
+        }
         
         // Launch the appropriate game activity
         Intent intent = mUserPrefs.isTouchpadEnabled ? new Intent( this,

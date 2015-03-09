@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menuItem_resume"
+        android:title="@string/actionResume_title"/>
+
+    <item
+        android:id="@+id/menuItem_restart"
+        android:title="@string/actionRestart_title"/>
+
+    <item
+        android:id="@+id/menuItem_settings"
+        android:title="@string/menuItem_settings"/>
+
+</menu>

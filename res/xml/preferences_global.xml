@@ -52,6 +52,12 @@
         android:title="@string/categoryLibrary_title" >
         <CheckBoxPreference
             android:defaultValue="true"
+            android:key="showRecentlyPlayed"
+            android:summary="@string/showRecentlyPlayed_summary"
+            android:title="@string/showRecentlyPlayed_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="searchZips"
             android:title="@string/scanRomsDialog_searchZips" />
 
