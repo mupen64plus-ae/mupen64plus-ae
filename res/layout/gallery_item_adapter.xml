@@ -2,27 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/galleryHalfSpacing"
     android:orientation="vertical" >
 
-    <ImageView
-        android:id="@+id/imageArt"
-        android:layout_width="@dimen/galleryImageWidth"
-        android:layout_height="@dimen/galleryImageHeight"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/default_coverart" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/galleryHalfSpacing"
+        android:paddingRight="@dimen/galleryHalfSpacing"
+        android:paddingTop="@dimen/galleryHalfSpacing" >
 
-    <LinearLayout
+        <ImageView
+            android:id="@+id/imageArt"
+            android:layout_width="@dimen/galleryImageWidth"
+            android:layout_height="@dimen/galleryImageHeight"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/default_coverart" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/info"
         android:layout_width="@dimen/galleryImageWidth"
         android:layout_height="50dip"
-        android:orientation="horizontal" >
-        
+        android:paddingBottom="@dimen/galleryHalfSpacing"
+        android:paddingLeft="@dimen/galleryHalfSpacing" >
+
         <TextView
             android:id="@+id/text1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/dots"
             android:text="@string/galleryItemAdapter_dummyText"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-    </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/dots"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/galleryHalfSpacing" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.7"
+                android:src="@drawable/ic_dots" />
+        </RelativeLayout>
+    </RelativeLayout>
+
 </LinearLayout>

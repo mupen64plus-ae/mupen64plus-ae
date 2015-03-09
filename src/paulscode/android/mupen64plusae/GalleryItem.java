@@ -29,12 +29,13 @@ import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class GalleryItem implements Comparable<GalleryItem>
@@ -97,7 +98,23 @@ public class GalleryItem implements Comparable<GalleryItem>
         {
             super( view );
             mContext = context;
+            
+            // Tapping the view itself will go directly to the game
             view.setOnClickListener( this );
+            
+            // Tapping the dotsView will trigger a contextual menu
+            RelativeLayout dotsView = (RelativeLayout) view.findViewById( R.id.dots );
+            if( dotsView != null )
+            {
+                dotsView.setOnClickListener( new OnClickListener()
+                {
+                    @Override
+                    public void onClick( View view )
+                    {
+                        Log.i( "GalleryItem", "Show contextual menu" );
+                    }
+                } );
+            }
         }
         
         @Override
@@ -161,7 +178,7 @@ public class GalleryItem implements Comparable<GalleryItem>
                 else
                     artView.setImageResource( R.drawable.default_coverart );
                 
-                LinearLayout layout = (LinearLayout) view.findViewById( R.id.info );
+                RelativeLayout layout = (RelativeLayout) view.findViewById( R.id.info );
                 TextView tv1 = (TextView) view.findViewById( R.id.text1 );
                 tv1.setText( item.toString() );
                 
