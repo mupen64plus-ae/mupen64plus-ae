@@ -25,16 +25,21 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -89,7 +94,8 @@ public class GalleryItem implements Comparable<GalleryItem>
             return "unknown file";
     }
     
-    public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener
+    public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener,
+            OnLongClickListener
     {
         public GalleryItem item;
         private Context mContext;
@@ -102,6 +108,9 @@ public class GalleryItem implements Comparable<GalleryItem>
             // Tapping the view itself will go directly to the game
             view.setOnClickListener( this );
             
+            // Long-pressing the view will trigger a contextual menu
+            view.setOnLongClickListener( this );
+            
             // Tapping the dotsView will trigger a contextual menu
             RelativeLayout dotsView = (RelativeLayout) view.findViewById( R.id.dots );
             if( dotsView != null )
@@ -111,9 +120,45 @@ public class GalleryItem implements Comparable<GalleryItem>
                     @Override
                     public void onClick( View view )
                     {
-                        Log.i( "GalleryItem", "Show contextual menu" );
+                        showContextualMenu( view );
                     }
                 } );
+                
+                dotsView.setOnLongClickListener( new OnLongClickListener()
+                {
+                    @Override
+                    public boolean onLongClick( View view )
+                    {
+                        showContextualMenu( view );
+                        return true;
+                    }
+                } );
+            }
+        }
+        
+        @SuppressLint( "NewApi" )
+        public void showContextualMenu( View view )
+        {
+            final GalleryActivity galleryActivity = (GalleryActivity) mContext;
+            if( AppData.IS_HONEYCOMB )
+            {
+                // Allow user to choose between Resume/Restart/PlayMenuActivity
+                PopupMenu popupMenu = new PopupMenu( mContext, view );
+                popupMenu.setOnMenuItemClickListener( new OnMenuItemClickListener()
+                {
+                    public boolean onMenuItemClick( MenuItem menuItem )
+                    {
+                        return galleryActivity.onGalleryItemMenuSelected( item, menuItem );
+                    }
+                } );
+                
+                if( galleryActivity.onGalleryItemCreateMenu( item, popupMenu.getMenu() ) )
+                    popupMenu.show();
+            }
+            else
+            {
+                // Just jump to PlayMenuActivity for Gingerbread and below
+                galleryActivity.onGalleryItemMenuSelected( item, R.id.menuItem_settings );
             }
         }
         
@@ -131,6 +176,13 @@ public class GalleryItem implements Comparable<GalleryItem>
                 GalleryActivity activity = (GalleryActivity) mContext;
                 activity.onGalleryItemClick( item );
             }
+        }
+        
+        @Override
+        public boolean onLongClick( View view )
+        {
+            showContextualMenu( view );
+            return true;
         }
     }
     

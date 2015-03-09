@@ -285,7 +285,48 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         else if( item.romFile == null )
             Log.e( "GalleryActivity", "No ROM file available" );
         else
+        {
+            PlayMenuActivity.action = PlayMenuActivity.ACTION_RESUME;
             launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.md5 );
+        }
+    }
+    
+    public boolean onGalleryItemCreateMenu( GalleryItem item, Menu menu )
+    {
+        getMenuInflater().inflate( R.menu.gallery_item, menu );
+        return true;
+    }
+    
+    public boolean onGalleryItemMenuSelected( GalleryItem item, MenuItem menuItem )
+    {
+        if( item == null )
+            Log.e( "GalleryActivity", "No item selected" );
+        else if( item.romFile == null )
+            Log.e( "GalleryActivity", "No ROM file available" );
+        else
+        {
+            return onGalleryItemMenuSelected( item, menuItem.getItemId() );
+        }
+        
+        return false;
+    }
+    
+    public boolean onGalleryItemMenuSelected( GalleryItem item, int menuItemId )
+    {
+        PlayMenuActivity.action = null;
+        switch( menuItemId )
+        {
+            case R.id.menuItem_resume:
+                PlayMenuActivity.action = PlayMenuActivity.ACTION_RESUME;
+                break;
+            case R.id.menuItem_restart:
+                PlayMenuActivity.action = PlayMenuActivity.ACTION_RESTART;
+                break;
+            case R.id.menuItem_settings:
+                break;
+        }
+        launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.md5 );
+        return true;
     }
     
     private void launchPlayMenuActivity( final String romPath )
