@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -47,12 +48,16 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -62,7 +67,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-public class GalleryActivity extends Activity implements OnItemClickListener, ComputeMd5Listener, CacheRomInfoListener
+public class GalleryActivity extends ActionBarActivity implements OnItemClickListener,
+        ComputeMd5Listener, CacheRomInfoListener
 {
     // App data and user preferences
     private AppData mAppData = null;
@@ -70,6 +76,8 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     
     // Widgets
     private GridView mGridView;
+    private SearchView mSearchView;
+    private String mSearchQuery = "";
     
     // Background tasks
     private CacheRomInfoTask mCacheRomInfoTask = null;
@@ -94,6 +102,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
+        super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat );
         super.onCreate( savedInstanceState );
         
         // Get app data and user preferences
@@ -153,11 +162,47 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.gallery_activity, menu );
+        
+        MenuItem searchItem = menu.findItem( R.id.menuItem_search );
+        MenuItemCompat.setOnActionExpandListener( searchItem, new OnActionExpandListener()
+        {
+            @Override
+            public boolean onMenuItemActionCollapse( MenuItem item )
+            {
+                mSearchQuery = "";
+                refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+                return true;
+            }
+            
+            @Override
+            public boolean onMenuItemActionExpand( MenuItem item )
+            {
+                return true;
+            }
+        });
+        
+        mSearchView = (SearchView) MenuItemCompat.getActionView( searchItem );
+        mSearchView.setOnQueryTextListener( new OnQueryTextListener()
+        {
+            public boolean onQueryTextSubmit( String query )
+            {
+                
+                return false;
+            }
+            
+            public boolean onQueryTextChange( String query )
+            {
+                mSearchQuery = query;
+                refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+                return false;
+            }
+        });
+        
         return super.onCreateOptionsMenu( menu );
     }
     
     @Override
-    public boolean onMenuItemSelected( int featureId, MenuItem item )
+    public boolean onOptionsItemSelected( MenuItem item )
     {
         switch( item.getItemId() )
         {
@@ -207,7 +252,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
                 mUserPrefs.changeLocale( this );
                 return true;
             default:
-                return super.onMenuItemSelected( featureId, item );
+                return super.onOptionsItemSelected( item );
         }
     }
     
@@ -305,15 +350,39 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     
     private void refreshGrid( ConfigFile config )
     {
+        String query = mSearchQuery.toLowerCase( Locale.US );
+        String[] searches = null;
+        if( query.length() > 0 )
+            searches = query.split( " " );
+        
         List<GalleryItem> items = new ArrayList<GalleryItem>();
         for( String md5 : config.keySet() )
         {
             if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
             {
                 String goodName = config.get( md5, "goodName" );
-                String romPath = config.get( md5, "romPath" );
-                String artPath = config.get( md5, "artPath" );
-                items.add( new GalleryItem( this, md5, goodName, romPath, artPath ) );
+                
+                boolean matchesSearch = true;
+                if( searches != null && searches.length > 0 )
+                {
+                    // Make sure the ROM name contains every token in the query
+                    String lowerName = goodName.toLowerCase( Locale.US );
+                    for( String search : searches )
+                    {
+                        if( search.length() > 0 && !lowerName.contains( search ) )
+                        {
+                            matchesSearch = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if( matchesSearch )
+                {
+                    String romPath = config.get( md5, "romPath" );
+                    String artPath = config.get( md5, "artPath" );
+                    items.add( new GalleryItem( this, md5, goodName, romPath, artPath ) );
+                }
             }
         }
         Collections.sort( items );

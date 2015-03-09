@@ -57,6 +57,7 @@
     <string name="menuItem_unmapAll">Unmap all</string>
 
     <!-- Menu Activity -->
+    <string name="menuItem_search">Search</string>
     <string name="menuItem_play">Play</string>
     <string name="menuItem_refreshRoms">Refresh ROMs</string>
     <string name="menuItem_settings">Settings</string>
