@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
 
     <ImageView
         android:id="@+id/imageArt"
@@ -12,14 +11,17 @@
         android:layout_gravity="center_horizontal"
         android:src="@drawable/default_coverart" />
 
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/galleryImageHeight"
-        android:layout_marginLeft="@dimen/galleryMargin"
-        android:layout_marginRight="@dimen/galleryMargin"
-        android:gravity="center"
-        android:text="@string/galleryItemAdapter_dummyText"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
+    <LinearLayout
+        android:id="@+id/info"
+        android:layout_width="@dimen/galleryImageWidth"
+        android:layout_height="55dip"
+        android:orientation="horizontal" >
+        
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/galleryItemAdapter_dummyText"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
 </LinearLayout>

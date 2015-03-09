@@ -56,28 +56,32 @@ import android.os.Environment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
 
-public class GalleryActivity extends ActionBarActivity implements OnItemClickListener,
-        ComputeMd5Listener, CacheRomInfoListener
+public class GalleryActivity extends ActionBarActivity implements ComputeMd5Listener,
+        CacheRomInfoListener
 {
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
     
     // Widgets
-    private GridView mGridView;
+    private RecyclerView mGridView;
     private SearchView mSearchView;
     private String mSearchQuery = "";
+    
+    // Resizable gallery thumbnails
+    public static final int MAX_WIDTH = 175;
+    public int galleryWidth = MAX_WIDTH;
+    public int numColumns = 2;
     
     // Background tasks
     private CacheRomInfoTask mCacheRomInfoTask = null;
@@ -134,8 +138,21 @@ public class GalleryActivity extends ActionBarActivity implements OnItemClickLis
         
         // Lay out the content
         setContentView( R.layout.gallery_activity );
-        mGridView = (GridView) findViewById( R.id.gridview );
+        mGridView = (RecyclerView) findViewById( R.id.gridview );
         refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+        
+        // Update the grid layout
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        float logicalDensity = metrics.density;
+        
+        int width = (int) ( metrics.widthPixels / logicalDensity );
+        numColumns = (int) Math.ceil( width * 1.0 / MAX_WIDTH );
+        galleryWidth = (int) ( width / numColumns * logicalDensity );
+        
+        GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
+        layoutManager.setSpanCount( numColumns );
+        mGridView.getAdapter().notifyDataSetChanged();
         
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
@@ -256,10 +273,8 @@ public class GalleryActivity extends ActionBarActivity implements OnItemClickLis
         }
     }
     
-    @Override
-    public void onItemClick( AdapterView<?> parent, View view, int position, long id )
+    public void onGalleryItemClick( GalleryItem item )
     {
-        GalleryItem item = (GalleryItem) parent.getItemAtPosition( position );
         if( item == null )
             Log.e( "GalleryActivity", "No item selected" );
         else if( item.romFile == null )
@@ -386,8 +401,8 @@ public class GalleryActivity extends ActionBarActivity implements OnItemClickLis
             }
         }
         Collections.sort( items );
-        mGridView.setAdapter( new GalleryItem.Adapter( this, R.id.text1, items ) );
-        mGridView.setOnItemClickListener( this );
+        mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
+        mGridView.setLayoutManager( new GridLayoutManager( this, numColumns ) );
     }
     
     private void popupFaq()
