@@ -165,6 +165,9 @@ public class UserPrefs
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
     
+    /** True if the recently played section of the gallery should be shown. */
+    public final boolean isRecentShown;
+    
     /** True if the full ROM rip info should be shown. */
     public final boolean isFullNameShown;
     
@@ -229,7 +232,6 @@ public class UserPrefs
     private static final String KEY_SEARCH_ZIPS = "searchZips";
     private static final String KEY_DOWNLOAD_ART = "downloadArt";
     private static final String KEY_CLEAR_GALLERY = "clearGallery";
-    private static final String KEY_SHOW_RECENTLY_PLAYED = "showRecentlyPlayed";
     // ... add more as needed
     
     // Shared preferences default values
@@ -242,7 +244,6 @@ public class UserPrefs
     public static final boolean DEFAULT_SEARCH_ZIPS = true;
     public static final boolean DEFAULT_DOWNLOAD_ART = true;
     public static final boolean DEFAULT_CLEAR_GALLERY = true;
-    public static final boolean DEFAULT_SHOW_RECENTLY_PLAYED = true;
     // ... add more as needed
     
     private final SharedPreferences mPreferences;
@@ -311,6 +312,7 @@ public class UserPrefs
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
         
         // Library prefs
+        isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
         isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
         
         // Touchscreen prefs
@@ -588,11 +590,6 @@ public class UserPrefs
     public boolean getClearGallery()
     {
         return getBoolean( KEY_CLEAR_GALLERY, DEFAULT_CLEAR_GALLERY );
-    }
-    
-    public boolean getShowRecentlyPlayed()
-    {
-        return getBoolean( KEY_SHOW_RECENTLY_PLAYED, DEFAULT_SHOW_RECENTLY_PLAYED );
     }
     
     public void putEmulationProfileDefault( String value )

@@ -471,8 +471,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         List<GalleryItem> items = new ArrayList<GalleryItem>();
         List<GalleryItem> recentItems = null;
         int currentTime = 0;
-        final boolean showRecentlyPlayed = mUserPrefs.getShowRecentlyPlayed();
-        if( showRecentlyPlayed )
+        if( mUserPrefs.isRecentShown )
         {
             recentItems = new ArrayList<GalleryItem>();
             currentTime = (int) ( new Date().getTime() / 1000 );
@@ -515,7 +514,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     
                     GalleryItem item = new GalleryItem( this, md5, goodName, romPath, artPath, lastPlayed );
                     items.add( item );
-                    if( showRecentlyPlayed && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
+                    if( mUserPrefs.isRecentShown && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
                         recentItems.add( item );
                 }
             }
@@ -525,7 +524,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
         
         List<GalleryItem> combinedItems = items;
-        if( showRecentlyPlayed && recentItems.size() > 0 )
+        if( mUserPrefs.isRecentShown && recentItems.size() > 0 )
         {
             combinedItems = new ArrayList<GalleryItem>();
             
