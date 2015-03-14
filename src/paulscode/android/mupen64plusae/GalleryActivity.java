@@ -79,9 +79,11 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     private String mSearchQuery = "";
     
     // Resizable gallery thumbnails
-    public static final int MAX_WIDTH = 175;
-    public int galleryWidth = MAX_WIDTH;
-    public int numColumns = 2;
+    public int galleryWidth;
+    public int galleryMaxWidth;
+    public int galleryHalfSpacing;
+    public int galleryColumns = 2;
+    public float galleryAspectRatio;
     
     // Background tasks
     private CacheRomInfoTask mCacheRomInfoTask = null;
@@ -142,16 +144,19 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
         
         // Update the grid layout
+        galleryMaxWidth = (int) getResources().getDimension( R.dimen.galleryImageWidth );
+        galleryHalfSpacing = (int) getResources().getDimension( R.dimen.galleryHalfSpacing );
+        galleryAspectRatio = galleryMaxWidth * 1.0f / getResources().getDimension( R.dimen.galleryImageHeight );
+        
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics( metrics );
-        float logicalDensity = metrics.density;
         
-        int width = (int) ( metrics.widthPixels / logicalDensity );
-        numColumns = (int) Math.ceil( width * 1.0 / MAX_WIDTH );
-        galleryWidth = (int) ( width / numColumns * logicalDensity );
+        int width = metrics.widthPixels - galleryHalfSpacing * 2;
+        galleryColumns = (int) Math.ceil(width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
+        galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
         
         GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
-        layoutManager.setSpanCount( numColumns );
+        layoutManager.setSpanCount( galleryColumns );
         mGridView.getAdapter().notifyDataSetChanged();
         
         // Popup a warning if the installation appears to be corrupt
@@ -402,7 +407,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         }
         Collections.sort( items );
         mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
-        mGridView.setLayoutManager( new GridLayoutManager( this, numColumns ) );
+        mGridView.setLayoutManager( new GridLayoutManager( this, galleryColumns ) );
     }
     
     private void popupFaq()

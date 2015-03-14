@@ -39,8 +39,6 @@ import android.widget.TextView;
 
 public class GalleryItem implements Comparable<GalleryItem>
 {
-    public static final double ASPECT_RATIO = 121.0 / 175.0;
-    
     public final String md5;
     public final String goodName;
     public final String artPath;
@@ -171,7 +169,7 @@ public class GalleryItem implements Comparable<GalleryItem>
                 {
                     GalleryActivity activity = (GalleryActivity) item.context;
                     artView.getLayoutParams().width = activity.galleryWidth;
-                    artView.getLayoutParams().height = (int) ( activity.galleryWidth * ASPECT_RATIO );
+                    artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
                     layout.getLayoutParams().width = activity.galleryWidth;
                 }
             }
