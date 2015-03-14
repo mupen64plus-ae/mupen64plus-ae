@@ -484,7 +484,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             {
                 ConfigSection section = config.get( md5 );
                 String goodName;
-                if( mUserPrefs.isFullNamesEnabled || !section.keySet().contains( "baseName" ) )
+                if( mUserPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
                     goodName = section.get( "goodName" );
                 else
                     goodName = section.get( "baseName" );
