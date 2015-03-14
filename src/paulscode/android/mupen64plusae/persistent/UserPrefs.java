@@ -165,6 +165,9 @@ public class UserPrefs
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
     
+    /** True if the full ROM rip info is to be shown. */
+    public final boolean isFullNamesEnabled;
+    
     /** The screen orientation for the game activity. */
     public final int displayOrientation;
     
@@ -306,6 +309,9 @@ public class UserPrefs
         
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
+        
+        // Library prefs
+        isFullNamesEnabled = mPreferences.getBoolean( "showFullNames", true );
         
         // Touchscreen prefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
