@@ -21,44 +21,73 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class GalleryItem implements Comparable<GalleryItem>
+public class GalleryItem
 {
     public final String md5;
     public final String goodName;
+    public final String artPath;
+    public final int lastPlayed;
     public final File romFile;
-    public final BitmapDrawable artBitmap;
+    public final Context context;
+    public final boolean isHeading;
+    public BitmapDrawable artBitmap;
     
-    public GalleryItem( Context context, String md5, String goodName, String romPath, String artPath )
+    public GalleryItem( Context context, String md5, String goodName, String romPath,
+            String artPath, int lastPlayed )
     {
         this.md5 = md5;
         this.goodName = goodName;
+        this.context = context;
+        this.artPath = artPath;
+        this.artBitmap = null;
+        this.lastPlayed = lastPlayed;
+        this.isHeading = false;
         
         romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
+    }
+    
+    public GalleryItem( Context context, String headingName )
+    {
+        this.goodName = headingName;
+        this.context = context;
+        this.isHeading = true;
+        this.md5 = null;
+        this.artPath = null;
+        this.artBitmap = null;
+        this.lastPlayed = 0;
+        romFile = null;
+    }
+    
+    public void loadBitmap()
+    {
+        if( artBitmap != null )
+            return;
         
         if( !TextUtils.isEmpty( artPath ) && new File( artPath ).exists() )
             artBitmap = new BitmapDrawable( context.getResources(), artPath );
-        else
-            artBitmap = null;
     }
     
-    @Override
-    public int compareTo( GalleryItem that )
+    public void clearBitmap()
     {
-        return this.toString().compareToIgnoreCase( that.toString() );
+        artBitmap = null;
     }
     
     @Override
@@ -72,26 +101,93 @@ public class GalleryItem implements Comparable<GalleryItem>
             return "unknown file";
     }
     
-    public static class Adapter extends ArrayAdapter<GalleryItem>
+    public static class NameComparator implements Comparator<GalleryItem>
     {
-        private final Context mContext;
-        
-        public Adapter( Context context, int textViewResourceId, List<GalleryItem> objects )
+        @Override
+        public int compare( GalleryItem item1, GalleryItem item2 )
         {
-            super( context, textViewResourceId, objects );
+            return item1.toString().compareToIgnoreCase( item2.toString() );
+        }
+    }
+    
+    public static class RecentlyPlayedComparator implements Comparator<GalleryItem>
+    {
+        @Override
+        public int compare( GalleryItem item1, GalleryItem item2 )
+        {
+            return item2.lastPlayed - item1.lastPlayed;
+        }
+    }
+    
+    public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener
+    {
+        public GalleryItem item;
+        private Context mContext;
+        
+        public ViewHolder( Context context, View view )
+        {
+            super( view );
             mContext = context;
+            view.setOnClickListener( this );
         }
         
         @Override
-        public View getView( int position, View convertView, ViewGroup parent )
+        public String toString()
         {
-            LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            View view = convertView;
-            if( view == null )
-                view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
+            return item.toString();
+        }
+        
+        @Override
+        public void onClick( View view )
+        {
+            if( mContext instanceof GalleryActivity )
+            {
+                GalleryActivity activity = (GalleryActivity) mContext;
+                activity.onGalleryItemClick( item );
+            }
+        }
+    }
+    
+    public static class Adapter extends RecyclerView.Adapter<ViewHolder>
+    {
+        private final Context mContext;
+        private final List<GalleryItem> mObjects;
+        
+        public Adapter( Context context, List<GalleryItem> objects )
+        {
+            mContext = context;
+            mObjects = objects;
+        }
+        
+        @Override
+        public int getItemCount()
+        {
+            return mObjects.size();
+        }
+        
+        @Override
+        public long getItemId( int position )
+        {
+            return 0;
+        }
+        
+        @Override
+        public int getItemViewType( int position )
+        {
+            return mObjects.get( position ).isHeading ? 1 : 0;
+        }
+        
+        public void onBindViewHolder( ViewHolder holder, int position )
+        {
+            // Clear the now-offscreen bitmap to conserve memory
+            if( holder.item != null )
+                holder.item.clearBitmap();
             
-            GalleryItem item = getItem( position );
+            // Called by RecyclerView to display the data at the specified position.
+            View view = holder.itemView;
+            GalleryItem item = mObjects.get( position );
+            holder.item = item;
+            
             if( item != null )
             {
                 ImageView artView = (ImageView) view.findViewById( R.id.imageArt );
@@ -102,9 +198,51 @@ public class GalleryItem implements Comparable<GalleryItem>
                 
                 TextView tv1 = (TextView) view.findViewById( R.id.text1 );
                 tv1.setText( item.toString() );
+                
+                LinearLayout linearLayout = (LinearLayout) view.findViewById( R.id.galleryItem );
+                GalleryActivity activity = (GalleryActivity) item.context;
+                
+                if( item.isHeading )
+                {
+                    view.setClickable( false );
+                    view.setLongClickable( false );
+                    linearLayout.setPadding( 0, 0, 0, 0 );
+                    tv1.setPadding( 5, 10, 0, 0 );
+                    tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 18.0f );
+                    artView.setVisibility( View.GONE );
+                }
+                else
+                {
+                    view.setClickable( true );
+                    view.setLongClickable( true );
+                    linearLayout.setPadding( activity.galleryHalfSpacing,
+                            activity.galleryHalfSpacing, activity.galleryHalfSpacing,
+                            activity.galleryHalfSpacing );
+                    tv1.setPadding( 0, 0, 0, 0 );
+                    tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 13.0f );
+                    artView.setVisibility( View.VISIBLE );
+                    
+                    item.loadBitmap();
+                    if( item.artBitmap != null )
+                        artView.setImageDrawable( item.artBitmap );
+                    else
+                        artView.setImageResource( R.drawable.default_coverart );
+                    
+                    artView.getLayoutParams().width = activity.galleryWidth;
+                    artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
+                    
+                    LinearLayout layout = (LinearLayout) view.findViewById( R.id.info );
+                    layout.getLayoutParams().width = activity.galleryWidth;
+                }
             }
-            
-            return view;
+        }
+        
+        public ViewHolder onCreateViewHolder( ViewGroup parent, int viewType )
+        {
+            LayoutInflater inflater = (LayoutInflater) mContext
+                    .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+            View view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
+            return new ViewHolder( mContext, view );
         }
     }
 }

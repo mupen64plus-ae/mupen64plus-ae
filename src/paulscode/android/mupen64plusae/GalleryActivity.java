@@ -23,7 +23,9 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -47,29 +49,42 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
 
-public class GalleryActivity extends Activity implements OnItemClickListener, ComputeMd5Listener, CacheRomInfoListener
+public class GalleryActivity extends ActionBarActivity implements ComputeMd5Listener,
+        CacheRomInfoListener
 {
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
     
     // Widgets
-    private GridView mGridView;
+    private RecyclerView mGridView;
+    private SearchView mSearchView;
+    private String mSearchQuery = "";
+    
+    // Resizable gallery thumbnails
+    public int galleryWidth;
+    public int galleryMaxWidth;
+    public int galleryHalfSpacing;
+    public int galleryColumns = 2;
+    public float galleryAspectRatio;
     
     // Background tasks
     private CacheRomInfoTask mCacheRomInfoTask = null;
@@ -94,6 +109,7 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
+        super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat );
         super.onCreate( savedInstanceState );
         
         // Get app data and user preferences
@@ -125,8 +141,24 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
         
         // Lay out the content
         setContentView( R.layout.gallery_activity );
-        mGridView = (GridView) findViewById( R.id.gridview );
+        mGridView = (RecyclerView) findViewById( R.id.gridview );
         refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+        
+        // Update the grid layout
+        galleryMaxWidth = (int) getResources().getDimension( R.dimen.galleryImageWidth );
+        galleryHalfSpacing = (int) getResources().getDimension( R.dimen.galleryHalfSpacing );
+        galleryAspectRatio = galleryMaxWidth * 1.0f / getResources().getDimension( R.dimen.galleryImageHeight );
+        
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        
+        int width = metrics.widthPixels - galleryHalfSpacing * 2;
+        galleryColumns = (int) Math.ceil(width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
+        galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
+        
+        GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
+        layoutManager.setSpanCount( galleryColumns );
+        mGridView.getAdapter().notifyDataSetChanged();
         
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
@@ -153,11 +185,47 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.gallery_activity, menu );
+        
+        MenuItem searchItem = menu.findItem( R.id.menuItem_search );
+        MenuItemCompat.setOnActionExpandListener( searchItem, new OnActionExpandListener()
+        {
+            @Override
+            public boolean onMenuItemActionCollapse( MenuItem item )
+            {
+                mSearchQuery = "";
+                refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+                return true;
+            }
+            
+            @Override
+            public boolean onMenuItemActionExpand( MenuItem item )
+            {
+                return true;
+            }
+        });
+        
+        mSearchView = (SearchView) MenuItemCompat.getActionView( searchItem );
+        mSearchView.setOnQueryTextListener( new OnQueryTextListener()
+        {
+            public boolean onQueryTextSubmit( String query )
+            {
+                
+                return false;
+            }
+            
+            public boolean onQueryTextChange( String query )
+            {
+                mSearchQuery = query;
+                refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+                return false;
+            }
+        });
+        
         return super.onCreateOptionsMenu( menu );
     }
     
     @Override
-    public boolean onMenuItemSelected( int featureId, MenuItem item )
+    public boolean onOptionsItemSelected( MenuItem item )
     {
         switch( item.getItemId() )
         {
@@ -207,14 +275,12 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
                 mUserPrefs.changeLocale( this );
                 return true;
             default:
-                return super.onMenuItemSelected( featureId, item );
+                return super.onOptionsItemSelected( item );
         }
     }
     
-    @Override
-    public void onItemClick( AdapterView<?> parent, View view, int position, long id )
+    public void onGalleryItemClick( GalleryItem item )
     {
-        GalleryItem item = (GalleryItem) parent.getItemAtPosition( position );
         if( item == null )
             Log.e( "GalleryActivity", "No item selected" );
         else if( item.romFile == null )
@@ -305,20 +371,93 @@ public class GalleryActivity extends Activity implements OnItemClickListener, Co
     
     private void refreshGrid( ConfigFile config )
     {
+        String query = mSearchQuery.toLowerCase( Locale.US );
+        String[] searches = null;
+        if( query.length() > 0 )
+            searches = query.split( " " );
+        
         List<GalleryItem> items = new ArrayList<GalleryItem>();
+        List<GalleryItem> recentItems = null;
+        int currentTime = 0;
+        final boolean showRecentlyPlayed = mUserPrefs.getShowRecentlyPlayed();
+        if( showRecentlyPlayed )
+        {
+            recentItems = new ArrayList<GalleryItem>();
+            currentTime = (int) ( new Date().getTime() / 1000 );
+        }
+        
         for( String md5 : config.keySet() )
         {
             if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
             {
                 String goodName = config.get( md5, "goodName" );
-                String romPath = config.get( md5, "romPath" );
-                String artPath = config.get( md5, "artPath" );
-                items.add( new GalleryItem( this, md5, goodName, romPath, artPath ) );
+                
+                boolean matchesSearch = true;
+                if( searches != null && searches.length > 0 )
+                {
+                    // Make sure the ROM name contains every token in the query
+                    String lowerName = goodName.toLowerCase( Locale.US );
+                    for( String search : searches )
+                    {
+                        if( search.length() > 0 && !lowerName.contains( search ) )
+                        {
+                            matchesSearch = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if( matchesSearch )
+                {
+                    String romPath = config.get( md5, "romPath" );
+                    String artPath = config.get( md5, "artPath" );
+                    String lastPlayedStr = config.get( md5, "lastPlayed" );
+                    int lastPlayed = 0;
+                    if( lastPlayedStr != null )
+                        lastPlayed = Integer.parseInt( lastPlayedStr );
+                    
+                    GalleryItem item = new GalleryItem( this, md5, goodName, romPath, artPath, lastPlayed );
+                    items.add( item );
+                    if( showRecentlyPlayed && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
+                        recentItems.add( item );
+                }
             }
         }
-        Collections.sort( items );
-        mGridView.setAdapter( new GalleryItem.Adapter( this, R.id.text1, items ) );
-        mGridView.setOnItemClickListener( this );
+        Collections.sort( items, new GalleryItem.NameComparator() );
+        if( recentItems != null )
+            Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
+        
+        List<GalleryItem> combinedItems = items;
+        if( showRecentlyPlayed && recentItems.size() > 0 )
+        {
+            combinedItems = new ArrayList<GalleryItem>();
+            
+            combinedItems.add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
+            combinedItems.addAll( recentItems );
+            
+            combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ) ) );
+            combinedItems.addAll( items );
+            
+            items = combinedItems;
+        }
+        
+        mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
+        
+        // Allow the headings to take up the entire width of the layout
+        final List<GalleryItem> finalItems = items;
+        GridLayoutManager layoutManager = new GridLayoutManager( this, galleryColumns );
+        layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup()
+        {
+            @Override
+            public int getSpanSize( int position )
+            {
+                if( finalItems.get( position ).isHeading )
+                    return galleryColumns;
+                return 1;
+            }
+        } );
+        
+        mGridView.setLayoutManager( layoutManager );
     }
     
     private void popupFaq()
