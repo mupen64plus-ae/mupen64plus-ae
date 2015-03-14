@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 import java.util.List;
+import java.util.Comparator;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -37,22 +38,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class GalleryItem implements Comparable<GalleryItem>
+public class GalleryItem
 {
     public final String md5;
     public final String goodName;
     public final String artPath;
+    public final int lastPlayed;
     public final File romFile;
     public final Context context;
     public BitmapDrawable artBitmap;
     
-    public GalleryItem( Context context, String md5, String goodName, String romPath, String artPath )
+    public GalleryItem( Context context, String md5, String goodName, String romPath, String artPath, int lastPlayed )
     {
         this.md5 = md5;
         this.goodName = goodName;
         this.context = context;
         this.artPath = artPath;
         this.artBitmap = null;
+        this.lastPlayed = lastPlayed;
         
         romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
     }
@@ -72,12 +75,6 @@ public class GalleryItem implements Comparable<GalleryItem>
     }
     
     @Override
-    public int compareTo( GalleryItem that )
-    {
-        return this.toString().compareToIgnoreCase( that.toString() );
-    }
-    
-    @Override
     public String toString()
     {
         if( !TextUtils.isEmpty( goodName ) )
@@ -86,6 +83,24 @@ public class GalleryItem implements Comparable<GalleryItem>
             return romFile.getName();
         else
             return "unknown file";
+    }
+    
+    public static class NameComparator implements Comparator<GalleryItem>
+    {
+        @Override
+        public int compare( GalleryItem item1, GalleryItem item2 )
+        {
+            return item1.toString().compareToIgnoreCase( item2.toString() );
+        }
+    }
+    
+    public static class RecentlyPlayedComparator implements Comparator<GalleryItem>
+    {
+        @Override
+        public int compare( GalleryItem item1, GalleryItem item2 )
+        {
+            return item2.lastPlayed - item1.lastPlayed;
+        }
     }
     
     public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener

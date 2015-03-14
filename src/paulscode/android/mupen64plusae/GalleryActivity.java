@@ -401,11 +401,15 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 {
                     String romPath = config.get( md5, "romPath" );
                     String artPath = config.get( md5, "artPath" );
-                    items.add( new GalleryItem( this, md5, goodName, romPath, artPath ) );
+                    String lastPlayedStr = config.get( md5, "lastPlayed" );
+                    int lastPlayed = 0;
+                    if( lastPlayedStr != null )
+                        lastPlayed = Integer.parseInt( lastPlayedStr );
+                    items.add( new GalleryItem( this, md5, goodName, romPath, artPath, lastPlayed ) );
                 }
             }
         }
-        Collections.sort( items );
+        Collections.sort( items, new GalleryItem.NameComparator() );
         mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
         mGridView.setLayoutManager( new GridLayoutManager( this, galleryColumns ) );
     }
