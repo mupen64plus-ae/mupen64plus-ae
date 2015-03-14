@@ -226,6 +226,7 @@ public class UserPrefs
     private static final String KEY_SEARCH_ZIPS = "searchZips";
     private static final String KEY_DOWNLOAD_ART = "downloadArt";
     private static final String KEY_CLEAR_GALLERY = "clearGallery";
+    private static final String KEY_SHOW_RECENTLY_PLAYED = "showRecentlyPlayed";
     // ... add more as needed
     
     // Shared preferences default values
@@ -238,6 +239,7 @@ public class UserPrefs
     public static final boolean DEFAULT_SEARCH_ZIPS = true;
     public static final boolean DEFAULT_DOWNLOAD_ART = true;
     public static final boolean DEFAULT_CLEAR_GALLERY = true;
+    public static final boolean DEFAULT_SHOW_RECENTLY_PLAYED = true;
     // ... add more as needed
     
     private final SharedPreferences mPreferences;
@@ -580,6 +582,11 @@ public class UserPrefs
     public boolean getClearGallery()
     {
         return getBoolean( KEY_CLEAR_GALLERY, DEFAULT_CLEAR_GALLERY );
+    }
+    
+    public boolean getShowRecentlyPlayed()
+    {
+        return getBoolean( KEY_SHOW_RECENTLY_PLAYED, DEFAULT_SHOW_RECENTLY_PLAYED );
     }
     
     public void putEmulationProfileDefault( String value )
