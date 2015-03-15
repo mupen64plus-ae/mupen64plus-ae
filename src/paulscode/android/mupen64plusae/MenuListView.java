@@ -23,10 +23,19 @@ package paulscode.android.mupen64plusae;
 import org.mupen64plusae.v3.alpha.R;
 
 import android.app.Activity;
+import android.widget.ListView;
+import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.ExpandableListView.OnGroupCollapseListener;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.content.Context;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import java.util.Arrays;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -36,6 +45,9 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.util.DisplayMetrics;
 
 /* ExpandableListView which stores its data set as a Menu hierarchy */
 
@@ -64,18 +76,22 @@ public class MenuListView extends ExpandableListView
     
     public void setMenu( Menu menu )
     {
+        Context context = getContext();
         mListData = menu;
         mAdapter = new MenuListAdapter( this, menu );
         setAdapter( mAdapter );
-        setGroupIndicator( null );
+        setChoiceMode( ListView.CHOICE_MODE_SINGLE );
         
-        // In case we want to add custom expand/collapse views to the groups
+        // MenuListView uses its own group indicators
+        setGroupIndicator(null);
+        
+        // Update the expand/collapse group indicators as needed
         setOnGroupExpandListener( new OnGroupExpandListener()
         {
             @Override
             public void onGroupExpand( int groupPosition )
             {
-                
+                reload();
             }
         } );
         
@@ -84,7 +100,7 @@ public class MenuListView extends ExpandableListView
             @Override
             public void onGroupCollapse( int groupPosition )
             {
-                
+                reload();
             }
         } );
         
@@ -118,6 +134,21 @@ public class MenuListView extends ExpandableListView
         } );
     }
     
+    public Menu getMenu()
+    {
+        return mListData;
+    }
+    
+    public MenuListAdapter getMenuListAdapter()
+    {
+        return mAdapter;
+    }
+    
+    public void reload()
+    {
+        mAdapter.notifyDataSetChanged();
+    }
+    
     public void setOnClickListener( OnClickListener listener )
     {
         mListener = listener;
@@ -142,7 +173,7 @@ public class MenuListView extends ExpandableListView
         @Override
         public boolean isChildSelectable( int groupPosition, int childPosition )
         {
-            return true;
+            return getChild( groupPosition, childPosition ).isEnabled();
         }
         
         @Override
@@ -172,7 +203,7 @@ public class MenuListView extends ExpandableListView
                     Context.LAYOUT_INFLATER_SERVICE );
             View view = convertView;
             if( view == null )
-                view = inflater.inflate( R.layout.list_item_two_text_icon, null );
+                view = inflater.inflate( R.layout.list_item_menu, null );
             
             MenuItem item = getChild( groupPosition, childPosition );
             if( item != null )
@@ -180,10 +211,26 @@ public class MenuListView extends ExpandableListView
                 TextView text1 = (TextView) view.findViewById( R.id.text1 );
                 TextView text2 = (TextView) view.findViewById( R.id.text2 );
                 ImageView icon = (ImageView) view.findViewById( R.id.icon );
+                ImageView indicator = (ImageView) view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
                 text2.setVisibility( View.GONE );
                 icon.setImageDrawable( item.getIcon() );
+                
+                view.setBackgroundColor( 0x0 );
+                
+                // Indent child views by 15 points
+                DisplayMetrics metrics = new DisplayMetrics();
+                ((Activity) mListView.getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                
+                view.setPadding( (int) ( 15 * metrics.density ), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom() );
+                
+                if ( !item.isCheckable() )
+                    indicator.setImageResource( 0x0 );
+                else if ( item.isChecked() )
+                    indicator.setImageResource( R.drawable.ic_check );
+                else
+                    indicator.setImageResource( R.drawable.ic_box );
             }
             return view;
         }
@@ -214,7 +261,7 @@ public class MenuListView extends ExpandableListView
                     Context.LAYOUT_INFLATER_SERVICE );
             View view = convertView;
             if( view == null )
-                view = inflater.inflate( R.layout.list_item_two_text_icon, null );
+                view = inflater.inflate( R.layout.list_item_menu, null );
             
             MenuItem item = getGroup( groupPosition );
             if( item != null )
@@ -222,10 +269,23 @@ public class MenuListView extends ExpandableListView
                 TextView text1 = (TextView) view.findViewById( R.id.text1 );
                 TextView text2 = (TextView) view.findViewById( R.id.text2 );
                 ImageView icon = (ImageView) view.findViewById( R.id.icon );
+                ImageView indicator = (ImageView) view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
                 text2.setVisibility( View.GONE );
                 icon.setImageDrawable( item.getIcon() );
+                
+                if ( item.isChecked() )
+                    view.setBackgroundColor( 0x44FFFFFF );
+                else
+                    view.setBackgroundColor( 0x0 );
+                
+                if ( item.getSubMenu() == null )
+                    indicator.setImageResource( 0x0 );
+                else if ( isExpanded )
+                    indicator.setImageResource( R.drawable.ic_arrow_u );
+                else
+                    indicator.setImageResource( R.drawable.ic_arrow_d );
             }
             return view;
         }

@@ -47,6 +47,7 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.MenuListView;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -65,6 +66,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -86,6 +89,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MenuListView mDrawerList;
+    
     private SearchView mSearchView;
     private String mSearchQuery = "";
     
@@ -177,7 +181,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         
         // Configure the navigation drawer
         mDrawerLayout = (DrawerLayout) findViewById( R.id.drawerLayout );
-        mDrawerToggle = new ActionBarDrawerToggle( this, mDrawerLayout, toolbar, R.string.app_name, R.string.app_name )
+        mDrawerToggle = new ActionBarDrawerToggle( this, mDrawerLayout, toolbar, 0, 0 )
         {
             @Override
             public void onDrawerClosed( View drawerView )
@@ -194,8 +198,13 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         mDrawerLayout.setDrawerListener( mDrawerToggle );
         
         // Configure the list in the navigation drawer
-        mDrawerList = (MenuListView) findViewById( R.id.left_drawer );
+        mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
         mDrawerList.setMenuResource( R.menu.gallery_drawer );
+        
+        // Select the Library section
+        mDrawerList.getMenu().getItem( 0 ).setChecked( true );
+        
+        // Handle menu item selections
         mDrawerList.setOnClickListener( new MenuListView.OnClickListener()
         {
             @Override
@@ -291,7 +300,10 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             case R.id.menuItem_refreshRoms:
                 promptSearchPath( null );
                 return true;
-            case R.id.menuItem_globalSettings:
+            case R.id.menuItem_library:
+                mDrawerLayout.closeDrawer( GravityCompat.START );
+                return true;
+            case R.id.menuItem_settings:
                 startActivity( new Intent( this, SettingsGlobalActivity.class ) );
                 return true;
             case R.id.menuItem_emulationProfiles:
