@@ -47,7 +47,6 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
-import paulscode.android.mupen64plusae.MenuListView;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -66,8 +65,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
-
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -112,7 +109,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         // above this on the stack (e.g. GameActivity, PlayMenuActivity) will be destroyed
         // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
         // called again on this instance. Currently, the only info that may be passed via the intent
-        // is the selected game path, so we only need to refresh that aspect of the UI.  This will
+        // is the selected game path, so we only need to refresh that aspect of the UI. This will
         // happen anyhow in onResume(), so we don't really need to do much here.
         super.onNewIntent( intent );
         
@@ -161,13 +158,15 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         // Update the grid layout
         galleryMaxWidth = (int) getResources().getDimension( R.dimen.galleryImageWidth );
         galleryHalfSpacing = (int) getResources().getDimension( R.dimen.galleryHalfSpacing );
-        galleryAspectRatio = galleryMaxWidth * 1.0f / getResources().getDimension( R.dimen.galleryImageHeight );
+        galleryAspectRatio = galleryMaxWidth * 1.0f
+                / getResources().getDimension( R.dimen.galleryImageHeight );
         
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics( metrics );
         
         int width = metrics.widthPixels - galleryHalfSpacing * 2;
-        galleryColumns = (int) Math.ceil(width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
+        galleryColumns = (int) Math
+                .ceil( width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
         galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
         
         GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
@@ -270,7 +269,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             {
                 return true;
             }
-        });
+        } );
         
         mSearchView = (SearchView) MenuItemCompat.getActionView( searchItem );
         mSearchView.setOnQueryTextListener( new OnQueryTextListener()
@@ -287,7 +286,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
                 return false;
             }
-        });
+        } );
         
         return super.onCreateOptionsMenu( menu );
     }
@@ -331,7 +330,8 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 popupAppVersion();
                 return true;
             case R.id.menuItem_changelog:
-                new ChangeLog( getAssets() ).show( GalleryActivity.this, 0, mAppData.appVersionCode );
+                new ChangeLog( getAssets() )
+                        .show( GalleryActivity.this, 0, mAppData.appVersionCode );
                 return true;
             case R.id.menuItem_logcat:
                 popupLogcat();
@@ -423,10 +423,8 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         if( startDir == null || !startDir.exists() )
             startDir = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
         
-        ScanRomsDialog dialog = new ScanRomsDialog( this, startDir,
-                mUserPrefs.getSearchZips(),
-                mUserPrefs.getDownloadArt(),
-                mUserPrefs.getClearGallery(),
+        ScanRomsDialog dialog = new ScanRomsDialog( this, startDir, mUserPrefs.getSearchZips(),
+                mUserPrefs.getDownloadArt(), mUserPrefs.getClearGallery(),
                 new ScanRomsDialogListener()
                 {
                     @Override
@@ -441,7 +439,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                             refreshRoms( file );
                         }
                         else if( file != null )
-                        { 
+                        {
                             if( file.isDirectory() )
                                 promptSearchPath( file );
                             else
@@ -455,9 +453,10 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     private void refreshRoms( final File startDir )
     {
         // Asynchronously search for ROMs
-        mCacheRomInfoTask = new CacheRomInfoTask( this, startDir,
-                mAppData.mupen64plus_ini, mUserPrefs.romInfoCache_cfg, mUserPrefs.coverArtDir, mUserPrefs.unzippedRomsDir,
-                mUserPrefs.getSearchZips(), mUserPrefs.getDownloadArt(), mUserPrefs.getClearGallery(),this );
+        mCacheRomInfoTask = new CacheRomInfoTask( this, startDir, mAppData.mupen64plus_ini,
+                mUserPrefs.romInfoCache_cfg, mUserPrefs.coverArtDir, mUserPrefs.unzippedRomsDir,
+                mUserPrefs.getSearchZips(), mUserPrefs.getDownloadArt(),
+                mUserPrefs.getClearGallery(), this );
         mCacheRomInfoTask.execute();
     }
     
@@ -524,9 +523,11 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     if( lastPlayedStr != null )
                         lastPlayed = Integer.parseInt( lastPlayedStr );
                     
-                    GalleryItem item = new GalleryItem( this, md5, goodName, romPath, artPath, lastPlayed );
+                    GalleryItem item = new GalleryItem( this, md5, goodName, romPath, artPath,
+                            lastPlayed );
                     items.add( item );
-                    if( mUserPrefs.isRecentShown && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
+                    if( mUserPrefs.isRecentShown
+                            && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
                         recentItems.add( item );
                 }
             }
@@ -540,7 +541,8 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         {
             combinedItems = new ArrayList<GalleryItem>();
             
-            combinedItems.add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
+            combinedItems
+                    .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
             combinedItems.addAll( recentItems );
             
             combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ) ) );
@@ -619,7 +621,8 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     private void popupAppVersion()
     {
         String title = getString( R.string.menuItem_appVersion );
-        String message = getString( R.string.popup_version, mAppData.appVersion, mAppData.appVersionCode );
+        String message = getString( R.string.popup_version, mAppData.appVersion,
+                mAppData.appVersionCode );
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
