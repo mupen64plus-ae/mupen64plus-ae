@@ -62,6 +62,7 @@
     <string name="menuItem_refreshRoms">Refresh ROMs</string>
     <string name="menuItem_settings">Settings</string>
     <string name="menuItem_globalSettings">Global settings</string>
+    <string name="menuItem_profiles">Profiles</string>
     <string name="menuItem_emulationProfiles">Emulation profiles</string>
     <string name="menuItem_touchscreenProfiles">Touchscreen profiles</string>
     <string name="menuItem_controllerProfiles">Controller profiles</string>

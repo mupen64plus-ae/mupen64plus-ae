@@ -3,13 +3,25 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto" >
 
     <item
+        android:id="@+id/menuItem_library"
+        android:icon="@drawable/ic_controller"
+        android:title="@string/categoryLibrary_title"/>
+
+    <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"
-        android:title="@string/menuItem_settings">
+        android:title="@string/menuItem_settings"/>
+
+    <item
+        android:id="@+id/menuItem_localeOverride"
+        android:icon="@drawable/ic_location"
+        android:title="@string/menuItem_localeOverride"/>
+
+    <item
+        android:id="@+id/menuItem_profiles"
+        android:icon="@drawable/ic_sliders"
+        android:title="@string/menuItem_profiles">
         <menu>
-            <item
-                android:id="@+id/menuItem_globalSettings"
-                android:title="@string/menuItem_globalSettings"/>
             <item
                 android:id="@+id/menuItem_emulationProfiles"
                 android:title="@string/menuItem_emulationProfiles"/>
@@ -19,9 +31,6 @@
             <item
                 android:id="@+id/menuItem_controllerProfiles"
                 android:title="@string/menuItem_controllerProfiles"/>
-            <item
-                android:id="@+id/menuItem_localeOverride"
-                android:title="@string/menuItem_localeOverride"/>
         </menu>
     </item>
     <item
