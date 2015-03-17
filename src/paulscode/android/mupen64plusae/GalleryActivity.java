@@ -32,6 +32,8 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.dialog.ChangeLog;
 import paulscode.android.mupen64plusae.dialog.ScanRomsDialog;
 import paulscode.android.mupen64plusae.dialog.ScanRomsDialog.ScanRomsDialogListener;
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
@@ -47,6 +49,7 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.GameSidebar;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -69,14 +72,20 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.content.Context;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 public class GalleryActivity extends ActionBarActivity implements ComputeMd5Listener,
         CacheRomInfoListener
 {
+    // Saved instance states
+    public static final String STATE_QUERY = "query";
+    public static final String STATE_SIDEBAR = "sidebar";
+    
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
@@ -86,7 +95,9 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MenuListView mDrawerList;
+    private GameSidebar mGameSidebar;
     
+    // Searching
     private SearchView mSearchView;
     private String mSearchQuery = "";
     
@@ -99,6 +110,11 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     
     // Background tasks
     private CacheRomInfoTask mCacheRomInfoTask = null;
+    
+    // Misc.
+    private List<GalleryItem> mGalleryItems = null;
+    private GalleryItem mSelectedItem = null;
+    private boolean mDragging = false;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -183,14 +199,46 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         mDrawerToggle = new ActionBarDrawerToggle( this, mDrawerLayout, toolbar, 0, 0 )
         {
             @Override
+            public void onDrawerStateChanged( int newState )
+            {
+                // Intercepting the drawer open animation and re-closing it causes onDrawerClosed to
+                // not fire,
+                // So detect when this happens and wait until the drawer closes to handle it
+                // manually
+                if( newState == DrawerLayout.STATE_DRAGGING )
+                {
+                    // INTERCEPTED!
+                    mDragging = true;
+                    hideSoftKeyboard();
+                }
+                else if( newState == DrawerLayout.STATE_IDLE )
+                {
+                    if( mDragging && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+                    {
+                        // onDrawerClosed from dragging it
+                        mDragging = false;
+                        mDrawerList.setVisibility( View.VISIBLE );
+                        mGameSidebar.setVisibility( View.GONE );
+                        mSelectedItem = null;
+                    }
+                }
+            }
+            
+            @Override
             public void onDrawerClosed( View drawerView )
             {
+                // Hide the game information sidebar
+                mDrawerList.setVisibility( View.VISIBLE );
+                mGameSidebar.setVisibility( View.GONE );
+                mSelectedItem = null;
+                
                 super.onDrawerClosed( drawerView );
             }
             
             @Override
             public void onDrawerOpened( View drawerView )
             {
+                hideSoftKeyboard();
                 super.onDrawerOpened( drawerView );
             }
         };
@@ -213,6 +261,9 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             }
         } );
         
+        // Configure the game information drawer
+        mGameSidebar = (GameSidebar) findViewById( R.id.gameSidebar );
+        
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
         {
@@ -220,6 +271,49 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             CharSequence message = getText( R.string.invalidInstall_message );
             new Builder( this ).setTitle( title ).setMessage( message ).create().show();
         }
+        
+        if( savedInstanceState != null )
+        {
+            mSelectedItem = null;
+            String md5 = savedInstanceState.getString( STATE_SIDEBAR );
+            if( md5 != null )
+            {
+                // Repopulate the game sidebar
+                for( GalleryItem item : mGalleryItems )
+                {
+                    if( md5.equals( item.md5 ) )
+                    {
+                        onGalleryItemClick( item );
+                        break;
+                    }
+                }
+            }
+            
+            String query = savedInstanceState.getString( STATE_QUERY );
+            if( query != null )
+                mSearchQuery = query;
+        }
+    }
+    
+    @Override
+    public void onSaveInstanceState( Bundle savedInstanceState )
+    {
+        if( mSearchView != null )
+            savedInstanceState.putString( STATE_QUERY, mSearchView.getQuery().toString() );
+        if( mSelectedItem != null )
+            savedInstanceState.putString( STATE_SIDEBAR, mSelectedItem.md5 );
+        
+        super.onSaveInstanceState( savedInstanceState );
+    }
+    
+    public void hideSoftKeyboard()
+    {
+        // Hide the soft keyboard if needed
+        if( mSearchView == null )
+            return;
+        
+        InputMethodManager imm = (InputMethodManager) getSystemService( Context.INPUT_METHOD_SERVICE );
+        imm.hideSoftInputFromWindow( mSearchView.getWindowToken(), 0 );
     }
     
     protected void onStop()
@@ -288,6 +382,13 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             }
         } );
         
+        if( !"".equals( mSearchQuery ) )
+        {
+            String query = mSearchQuery;
+            MenuItemCompat.expandActionView( searchItem );
+            mSearchView.setQuery( query, true );
+        }
+        
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -350,14 +451,82 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         }
     }
     
+    public void updateSidebar()
+    {
+        GalleryItem item = mSelectedItem;
+        if( item == null )
+            return;
+        
+        // Set the game options
+        mGameSidebar.clear();
+        
+        final GalleryItem finalItem = item;
+        final Context finalContext = this;
+        
+        mGameSidebar.addRow( R.drawable.ic_play, getString( R.string.actionResume_title ),
+                getString( R.string.actionResume_summary ), new GameSidebar.Action()
+                {
+                    @Override
+                    public void onAction()
+                    {
+                        PlayMenuActivity.action = PlayMenuActivity.ACTION_RESUME;
+                        launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                    }
+                } );
+        
+        mGameSidebar.addRow( R.drawable.ic_undo, getString( R.string.actionRestart_title ),
+                getString( R.string.actionRestart_summary ), new GameSidebar.Action()
+                {
+                    @Override
+                    public void onAction()
+                    {
+                        CharSequence title = getText( R.string.confirm_title );
+                        CharSequence message = getText( R.string.confirmResetGame_message );
+                        Prompt.promptConfirm( finalContext, title, message,
+                                new PromptConfirmListener()
+                                {
+                                    @Override
+                                    public void onConfirm()
+                                    {
+                                        PlayMenuActivity.action = PlayMenuActivity.ACTION_RESTART;
+                                        launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                                    }
+                                } );
+                    }
+                } );
+        
+        mGameSidebar.addRow( R.drawable.ic_settings, getString( R.string.menuItem_settings ), null,
+                new GameSidebar.Action()
+                {
+                    @Override
+                    public void onAction()
+                    {
+                        PlayMenuActivity.action = null;
+                        launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                    }
+                } );
+    }
+    
     public void onGalleryItemClick( GalleryItem item )
     {
-        if( item == null )
-            Log.e( "GalleryActivity", "No item selected" );
-        else if( item.romFile == null )
-            Log.e( "GalleryActivity", "No ROM file available" );
-        else
-            launchPlayMenuActivity( item.romFile.getAbsolutePath(), item.md5 );
+        mSelectedItem = item;
+        
+        // Show the game info sidebar
+        mDrawerList.setVisibility( View.GONE );
+        mGameSidebar.setVisibility( View.VISIBLE );
+        mGameSidebar.scrollTo( 0, 0 );
+        
+        // Set the cover art in the sidebar
+        item.loadBitmap();
+        mGameSidebar.setImage( item.artBitmap );
+        
+        // Set the game title
+        mGameSidebar.setTitle( item.goodName );
+        
+        updateSidebar();
+        
+        // Open the navigation drawer
+        mDrawerLayout.openDrawer( GravityCompat.START );
     }
     
     private void launchPlayMenuActivity( final String romPath )
@@ -436,6 +605,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                         mUserPrefs.putClearGallery( clearGallery );
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
+                            // Search this folder for ROMs
                             refreshRoms( file );
                         }
                         else if( file != null )
@@ -443,7 +613,10 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                             if( file.isDirectory() )
                                 promptSearchPath( file );
                             else
+                            {
+                                // The user selected an individual file
                                 refreshRoms( file );
+                            }
                         }
                     }
                 } );
@@ -551,6 +724,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             items = combinedItems;
         }
         
+        mGalleryItems = items;
         mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
         
         // Allow the headings to take up the entire width of the layout
@@ -561,8 +735,11 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             @Override
             public int getSpanSize( int position )
             {
+                // Headings will take up every span (column) in the grid
                 if( finalItems.get( position ).isHeading )
                     return galleryColumns;
+                
+                // Games will fit in a single column
                 return 1;
             }
         } );
@@ -639,8 +816,13 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         // Refresh the preferences object in case another activity changed the data
         mUserPrefs = new UserPrefs( this );
         
-        // Refresh the action bar
-        if( AppData.IS_HONEYCOMB )
-            invalidateOptionsMenu();
+        // Set the sidebar opacity on the two sidebars
+        mDrawerList.setBackgroundDrawable( new DrawerDrawable(
+                mUserPrefs.displayActionBarTransparency ) );
+        mGameSidebar.setBackgroundDrawable( new DrawerDrawable(
+                mUserPrefs.displayActionBarTransparency ) );
+        
+        // Refresh the gallery
+        refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
     }
 }

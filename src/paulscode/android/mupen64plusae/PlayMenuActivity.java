@@ -71,11 +71,12 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String CATEGORY_GAME_SETTINGS = "categoryGameSettings";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     
-    private static final String ACTION_RESUME = "actionResume";
-    private static final String ACTION_RESTART = "actionRestart";
+    public static final String ACTION_RESUME = "actionResume";
+    public static final String ACTION_RESTART = "actionRestart";
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
     private static final String ACTION_RESET_GAME_PREFS = "actionResetGamePrefs";
+    private static final String ACTION_EXIT = "actionExit";
     
     private static final String EMULATION_PROFILE = "emulationProfile";
     private static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
@@ -111,6 +112,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // MOGA controller interface
     private Controller mMogaController = Controller.getInstance( this );
+    
+    // Go directly to gameplay from the gallery
+    public static String action = null;
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -158,15 +162,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Set some game-specific strings
         setTitle( mRomDetail.goodName );
-        if( !TextUtils.isEmpty( mRomDetail.baseName ) )
-        {
-            String title = getString( R.string.categoryGameSettings_titleNamed, mRomDetail.baseName );
-            findPreference( CATEGORY_GAME_SETTINGS ).setTitle( title );
-        }
         
         // Handle certain menu items that require extra processing or aren't actually preferences
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_RESUME, this );
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_RESTART, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_CHEAT_EDITOR, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_GAME_PREFS, this );
@@ -213,6 +210,22 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mPrefs.registerOnSharedPreferenceChangeListener( this );
         mMogaController.onResume();
         refreshViews();
+        
+        if( ACTION_RESUME.equals( action ) )
+        {
+            action = ACTION_EXIT;
+            launchGame( false );
+        }
+        else if( ACTION_RESTART.equals( action ) )
+        {
+            action = ACTION_EXIT;
+            launchGame( true );
+        }
+        else if( ACTION_EXIT.equals( action ) )
+        {
+            action = null;
+            finish();
+        }
     }
     
     @Override
@@ -318,26 +331,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     public boolean onPreferenceClick( Preference preference )
     {
         String key = preference.getKey();
-        if( key.equals( ACTION_RESUME ) )
-        {
-            launchGame( false );
-            return true;
-        }
-        else if( key.equals( ACTION_RESTART ) )
-        {
-            CharSequence title = getText( R.string.confirm_title );
-            CharSequence message = getText( R.string.confirmResetGame_message );
-            Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
-            {
-                @Override
-                public void onConfirm()
-                {
-                    launchGame( true );
-                }
-            } );
-            return true;
-        }
-        else if( key.equals( ACTION_CHEAT_EDITOR ) )
+        if( key.equals( ACTION_CHEAT_EDITOR ) )
         {
             Intent intent = new Intent( this, CheatEditorActivity.class );
             intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
