@@ -23,19 +23,11 @@ package paulscode.android.mupen64plusae;
 import org.mupen64plusae.v3.alpha.R;
 
 import android.app.Activity;
-import android.widget.ListView;
-import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
-import android.widget.ExpandableListView.OnGroupCollapseListener;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.content.Context;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import java.util.Arrays;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -44,10 +36,8 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.util.DisplayMetrics;
 
 /* ExpandableListView which stores its data set as a Menu hierarchy */
 
@@ -76,14 +66,13 @@ public class MenuListView extends ExpandableListView
     
     public void setMenu( Menu menu )
     {
-        Context context = getContext();
         mListData = menu;
         mAdapter = new MenuListAdapter( this, menu );
         setAdapter( mAdapter );
         setChoiceMode( ListView.CHOICE_MODE_SINGLE );
         
         // MenuListView uses its own group indicators
-        setGroupIndicator(null);
+        setGroupIndicator( null );
         
         // Update the expand/collapse group indicators as needed
         setOnGroupExpandListener( new OnGroupExpandListener()
@@ -107,7 +96,8 @@ public class MenuListView extends ExpandableListView
         setOnGroupClickListener( new OnGroupClickListener()
         {
             @Override
-            public boolean onGroupClick( ExpandableListView parent, View view, int groupPosition, long itemId )
+            public boolean onGroupClick( ExpandableListView parent, View view, int groupPosition,
+                    long itemId )
             {
                 MenuItem menuItem = mListData.getItem( groupPosition );
                 SubMenu submenu = menuItem.getSubMenu();
@@ -126,7 +116,8 @@ public class MenuListView extends ExpandableListView
             public boolean onChildClick( ExpandableListView parent, View view, int groupPosition,
                     int childPosition, long itemId )
             {
-                MenuItem menuItem = mListData.getItem( groupPosition ).getSubMenu().getItem( childPosition );
+                MenuItem menuItem = mListData.getItem( groupPosition ).getSubMenu()
+                        .getItem( childPosition );
                 if( mListener != null )
                     mListener.onClick( menuItem );
                 return false;
@@ -221,13 +212,15 @@ public class MenuListView extends ExpandableListView
                 
                 // Indent child views by 15 points
                 DisplayMetrics metrics = new DisplayMetrics();
-                ((Activity) mListView.getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                ( (Activity) mListView.getContext() ).getWindowManager().getDefaultDisplay()
+                        .getMetrics( metrics );
                 
-                view.setPadding( (int) ( 15 * metrics.density ), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom() );
+                view.setPadding( (int) ( 15 * metrics.density ), view.getPaddingTop(),
+                        view.getPaddingRight(), view.getPaddingBottom() );
                 
-                if ( !item.isCheckable() )
+                if( !item.isCheckable() )
                     indicator.setImageResource( 0x0 );
-                else if ( item.isChecked() )
+                else if( item.isChecked() )
                     indicator.setImageResource( R.drawable.ic_check );
                 else
                     indicator.setImageResource( R.drawable.ic_box );
@@ -275,14 +268,14 @@ public class MenuListView extends ExpandableListView
                 text2.setVisibility( View.GONE );
                 icon.setImageDrawable( item.getIcon() );
                 
-                if ( item.isChecked() )
+                if( item.isChecked() )
                     view.setBackgroundColor( 0x44FFFFFF );
                 else
                     view.setBackgroundColor( 0x0 );
                 
-                if ( item.getSubMenu() == null )
+                if( item.getSubMenu() == null )
                     indicator.setImageResource( 0x0 );
-                else if ( isExpanded )
+                else if( isExpanded )
                     indicator.setImageResource( R.drawable.ic_arrow_u );
                 else
                     indicator.setImageResource( R.drawable.ic_arrow_d );

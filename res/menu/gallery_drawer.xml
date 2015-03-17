@@ -6,17 +6,14 @@
         android:id="@+id/menuItem_library"
         android:icon="@drawable/ic_controller"
         android:title="@string/categoryLibrary_title"/>
-
     <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menuItem_settings"/>
-
     <item
         android:id="@+id/menuItem_localeOverride"
         android:icon="@drawable/ic_location"
         android:title="@string/menuItem_localeOverride"/>
-
     <item
         android:id="@+id/menuItem_profiles"
         android:icon="@drawable/ic_sliders"
