@@ -78,7 +78,6 @@
         android:key="actionWiki"
         android:summary="@string/actionWiki_summary"
         android:title="@string/actionWiki_title" />
-
     <Preference
         android:icon="@drawable/ic_undo"
         android:key="actionResetGamePrefs"

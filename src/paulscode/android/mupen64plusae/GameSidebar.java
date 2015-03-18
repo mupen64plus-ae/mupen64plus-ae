@@ -22,20 +22,20 @@ package paulscode.android.mupen64plusae;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import android.text.TextUtils;
+import android.app.Activity;
 import android.content.Context;
-import android.view.ViewTreeObserver.OnScrollChangedListener;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ScrollView;
-import android.widget.LinearLayout;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.util.AttributeSet;
 import android.graphics.drawable.BitmapDrawable;
+import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.app.Activity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewTreeObserver.OnScrollChangedListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 public class GameSidebar extends ScrollView
 {
@@ -66,14 +66,14 @@ public class GameSidebar extends ScrollView
             public void onScrollChanged()
             {
                 int scrollY = scroll.getScrollY();
-                mImageLayout.setPadding( 0, scrollY/2, 0, 0 );
+                mImageLayout.setPadding( 0, scrollY / 2, 0, 0 );
             }
-        });
+        } );
     }
     
     public void setImage( BitmapDrawable image )
     {
-        if ( image != null )
+        if( image != null )
             mInfoArt.setImageDrawable( image );
         else
             mInfoArt.setImageResource( R.drawable.default_coverart );
@@ -97,7 +97,7 @@ public class GameSidebar extends ScrollView
         headingView.setTextSize( TypedValue.COMPLEX_UNIT_SP, 14.0f );
         
         DisplayMetrics metrics = new DisplayMetrics();
-        ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        ( (Activity) mContext ).getWindowManager().getDefaultDisplay().getMetrics( metrics );
         int padding = (int) ( metrics.density * 5 );
         headingView.setPadding( padding, padding, padding, padding );
         mLayout.addView( headingView );
@@ -113,12 +113,13 @@ public class GameSidebar extends ScrollView
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         View view = inflater.inflate( R.layout.list_item_menu, null );
         
-        if ( indentation != 0 )
+        if( indentation != 0 )
         {
             DisplayMetrics metrics = new DisplayMetrics();
-            ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            ( (Activity) getContext() ).getWindowManager().getDefaultDisplay().getMetrics( metrics );
             
-            view.setPadding( (int) ( indentation * 15 * metrics.density ), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom() );
+            view.setPadding( (int) ( indentation * 15 * metrics.density ), view.getPaddingTop(),
+                    view.getPaddingRight(), view.getPaddingBottom() );
         }
         
         ImageView iconView = (ImageView) view.findViewById( R.id.icon );
@@ -127,17 +128,18 @@ public class GameSidebar extends ScrollView
         iconView.setImageResource( icon );
         text1.setText( title );
         text2.setText( summary );
-        if ( TextUtils.isEmpty( summary ) )
+        if( TextUtils.isEmpty( summary ) )
             text2.setVisibility( View.GONE );
         
         ImageView indicatorView = (ImageView) view.findViewById( R.id.indicator );
         indicatorView.setImageResource( indicator );
-        if ( indicator == 0x0 )
+        if( indicator == 0x0 )
             indicatorView.setVisibility( View.GONE );
         
         mLayout.addView( view );
         
-        if ( action == null ) return;
+        if( action == null )
+            return;
         
         // Pass the action to the click listener
         final Action finalAction = action;
@@ -151,7 +153,7 @@ public class GameSidebar extends ScrollView
             {
                 finalAction.onAction();
             }
-        });
+        } );
     }
     
     public abstract static class Action

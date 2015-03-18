@@ -20,11 +20,11 @@
  */
 package paulscode.android.mupen64plusae;
 
-import android.graphics.drawable.Drawable;
 import android.graphics.Canvas;
-import android.graphics.PixelFormat;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 
 public class DrawerDrawable extends Drawable
 {
