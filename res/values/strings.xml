@@ -36,10 +36,18 @@
     <string name="menuItem_enableFramelimiter">Sync audio</string>
     <string name="menuItem_disableFramelimiter">Desync audio</string>
     <string name="menuItem_paks">Controller Paks</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak_empty">Empty</string>
-    <string name="menuItem_pak_mem">Memory Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_player">Player %1$d</string>
+    <string name="menuItem_pak1_empty">Player 1: Empty</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak1_mem">Player 1: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak1_rumble">Player 1: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak2_empty">Player 2: Empty</string>
+    <string name="menuItem_pak2_mem">Player 2: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak2_rumble">Player 2: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak3_empty">Player 3: Empty</string>
+    <string name="menuItem_pak3_mem">Player 3: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak3_rumble">Player 3: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak4_empty">Player 4: Empty</string>
+    <string name="menuItem_pak4_mem">Player 4: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak4_rumble">Player 4: Rumble Pak</string> <!-- capitalize since trademark -->
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
 

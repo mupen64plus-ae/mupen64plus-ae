@@ -431,10 +431,28 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                 mGamePrefs.isPlugged3,
                 mGamePrefs.isPlugged4 };
             
-            final String[] pakTypes = {
-                mActivity.getString( R.string.menuItem_pak_empty ),
-                mActivity.getString( R.string.menuItem_pak_mem ),
-                mActivity.getString( R.string.menuItem_pak_rumble ) };
+            final String[][] pakTypes = {
+                {
+                    mActivity.getString( R.string.menuItem_pak1_empty ),
+                    mActivity.getString( R.string.menuItem_pak1_mem ),
+                    mActivity.getString( R.string.menuItem_pak1_rumble )
+                },
+                {
+                    mActivity.getString( R.string.menuItem_pak2_empty ),
+                    mActivity.getString( R.string.menuItem_pak2_mem ),
+                    mActivity.getString( R.string.menuItem_pak2_rumble )
+                },
+                {
+                    mActivity.getString( R.string.menuItem_pak3_empty ),
+                    mActivity.getString( R.string.menuItem_pak3_mem ),
+                    mActivity.getString( R.string.menuItem_pak3_rumble )
+                },
+                {
+                    mActivity.getString( R.string.menuItem_pak4_empty ),
+                    mActivity.getString( R.string.menuItem_pak4_mem ),
+                    mActivity.getString( R.string.menuItem_pak4_rumble )
+                }
+            };
             
             final int[] pakMap = {
                 NativeConstants.PAK_TYPE_NONE,
@@ -467,10 +485,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                         break;
                 }
                 
-                final String playerString = mActivity.getString( R.string.menuItem_player, player );
+                final String[] pakString = pakTypes[player - 1][pakIndex].split(": ");
                 final int finalPlayer = player;
                 
-                mGameSidebar.addRow( 0x0, playerString, pakTypes[pakIndex],
+                mGameSidebar.addRow( 0x0, pakString[0], pakString[pakString.length - 1],
                         new GameSidebar.Action()
                         {
                             @Override
@@ -488,7 +506,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                 boolean permitRumble = AppData.IS_JELLY_BEAN || ( player == 1 && hasPhoneVibrator );
                 
                 // Show the options for this player
-                for( int pak = 0; pak < pakTypes.length; pak++ )
+                for( int pak = 0; pak < pakTypes[0].length; pak++ )
                 {
                     if( !permitRumble && pak == 2 )
                         continue;
@@ -498,8 +516,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                         icon = R.drawable.ic_check;
                     
                     final int finalPak = pak;
+                    final String[] pakName = pakTypes[player - 1][pak].split(": ");
                     
-                    mGameSidebar.addRow( 0x0, pakTypes[pak], null, new GameSidebar.Action()
+                    mGameSidebar.addRow( 0x0, pakName[pakName.length - 1], null, new GameSidebar.Action()
                     {
                         @Override
                         public void onAction()
@@ -510,7 +529,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                             NativeInput.setConfig( finalPlayer - 1, true, newPakIndex );
                             
                             // Send a toast message
-                            Notifier.showToast( mActivity, playerString + ": " + pakTypes[finalPak] );
+                            Notifier.showToast( mActivity, pakTypes[finalPlayer - 1][finalPak] );
                             
                             // Collapse this section in the sidebar
                             mShowPak = 0;
