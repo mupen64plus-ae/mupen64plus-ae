@@ -33,6 +33,13 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+// Android's DrawerLayout intercepts touches along the left edge of the screen
+// so it can have the drawer peek out when you press and hold on the left edge.
+
+// As this would obviously interfere with gameplay, where the user is expected
+// to press and hold on buttons that could be on the left edge of the screen,
+// override DrawerLayout to ignore touches on the virtual gamepad!
+
 public class DrawerLayout extends android.support.v4.widget.DrawerLayout
 {
     private TouchMap mTouchMap;
