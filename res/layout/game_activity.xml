@@ -1,21 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<paulscode.android.mupen64plusae.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:id="@+id/drawerLayout"
+    android:fitsSystemWindows="true" >
 
-    <paulscode.android.mupen64plusae.GameSurface
-        android:id="@+id/gameSurface"
+    <!-- activity view -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusable="false"
-        android:focusableInTouchMode="false" />
+        android:orientation="vertical" >
 
-    <paulscode.android.mupen64plusae.GameOverlay
-        android:id="@+id/gameOverlay"
-        android:layout_width="match_parent"
+        <paulscode.android.mupen64plusae.GameSurface
+            android:id="@+id/gameSurface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <paulscode.android.mupen64plusae.GameOverlay
+            android:id="@+id/gameOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+    </FrameLayout>
+
+    <!-- navigation drawer -->
+    <RelativeLayout
+        android:layout_gravity="left|start"
+        android:layout_width="280dip"
         android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true" />
+        android:fitsSystemWindows="true" >
 
-</merge>
+        <paulscode.android.mupen64plusae.GameSidebar
+            android:id="@+id/gameSidebar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+
+</paulscode.android.mupen64plusae.DrawerLayout>

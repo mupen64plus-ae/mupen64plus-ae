@@ -68,6 +68,7 @@ public class GameActivityXperiaPlay extends NativeActivity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
+        super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat_NoActionBar );
         mMenuHandler = new GameMenuHandler( this );
         CoreInterface.addOnStateCallbackListener( mMenuHandler  );
         

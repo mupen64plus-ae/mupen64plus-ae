@@ -96,6 +96,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     // ROM info
     private String mRomPath = null;
     private String mRomMd5 = null;
+    private String mArtPath = null;
+    private String mRomName = null;
     private RomHeader mRomHeader = null;
     private RomDatabase mRomDatabase = null;
     private RomDetail mRomDetail = null;
@@ -130,6 +132,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mRomMd5 = extras.getString( Keys.Extras.ROM_MD5 );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
+        mRomName = extras.getString( Keys.Extras.ROM_NAME );
+        mArtPath = extras.getString( Keys.Extras.ART_PATH );
         
         // Initialize MOGA controller API
         // TODO: Remove hack after MOGA SDK is fixed
@@ -450,6 +454,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Pass the startup info via the intent
         intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
         intent.putExtra( Keys.Extras.ROM_MD5, mRomMd5 );
+        intent.putExtra( Keys.Extras.ART_PATH, mArtPath );
+        intent.putExtra( Keys.Extras.ROM_NAME, mRomName );
         intent.putExtra( Keys.Extras.CHEAT_ARGS, getCheatArgs() );
         intent.putExtra( Keys.Extras.DO_RESTART, isRestarting );
         

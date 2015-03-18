@@ -577,9 +577,15 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     {
         if( !TextUtils.isEmpty( romPath ) && !TextUtils.isEmpty( md5 ) )
         {
+            ConfigFile config = new ConfigFile( mUserPrefs.romInfoCache_cfg );
+            String romName = config.get( md5, "goodName" );
+            String artPath = config.get( md5, "artPath" );
+            
             Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
             intent.putExtra( Keys.Extras.ROM_PATH, romPath );
             intent.putExtra( Keys.Extras.ROM_MD5, md5 );
+            intent.putExtra( Keys.Extras.ROM_NAME, romName );
+            intent.putExtra( Keys.Extras.ART_PATH, artPath );
             startActivity( intent );
         }
     }

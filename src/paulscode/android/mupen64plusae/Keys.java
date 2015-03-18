@@ -43,6 +43,8 @@ public class Keys
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String MENU_DISPLAY_MODE    = NAMESPACE + "MENU_DISPLAY_MODE";
+        public static final String ART_PATH             = NAMESPACE + "ART_PATH";
+        public static final String ROM_NAME             = NAMESPACE + "ROM_NAME";
         //@formatter:on
     }
     
