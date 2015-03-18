@@ -42,6 +42,12 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingTop="20dip" />
+
+        <paulscode.android.mupen64plusae.GameSidebar
+            android:id="@+id/gameSidebar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

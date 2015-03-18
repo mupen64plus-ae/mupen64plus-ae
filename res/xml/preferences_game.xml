@@ -3,108 +3,85 @@
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenPlayMenuActivity" >
 
+    <paulscode.android.mupen64plusae.preference.ProfilePreference
+        android:icon="@drawable/ic_circuit"
+        android:key="emulationProfile"
+        android:summary="@string/selectedValue"
+        android:title="@string/emulationProfile_title"
+        mupen64:allowDisable="false"
+        mupen64:managerAction=".profile.ManageEmulationProfilesActivity" />
+    <paulscode.android.mupen64plusae.preference.ProfilePreference
+        android:icon="@drawable/ic_phone"
+        android:key="touchscreenProfile"
+        android:summary="@string/selectedValue"
+        android:title="@string/touchscreenProfile_title"
+        mupen64:allowDisable="true"
+        mupen64:managerAction=".profile.ManageTouchscreenProfilesActivity" />
+    <paulscode.android.mupen64plusae.preference.ProfilePreference
+        android:icon="@drawable/ic_gamepad"
+        android:key="controllerProfile1"
+        android:summary="@string/selectedValue"
+        android:title="@string/controllerProfile1_title"
+        mupen64:allowDisable="true"
+        mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+    <paulscode.android.mupen64plusae.preference.ProfilePreference
+        android:icon="@drawable/ic_gamepad"
+        android:key="controllerProfile2"
+        android:summary="@string/selectedValue"
+        android:title="@string/controllerProfile2_title"
+        mupen64:allowDisable="true"
+        mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+    <paulscode.android.mupen64plusae.preference.ProfilePreference
+        android:icon="@drawable/ic_gamepad"
+        android:key="controllerProfile3"
+        android:summary="@string/selectedValue"
+        android:title="@string/controllerProfile3_title"
+        mupen64:allowDisable="true"
+        mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+    <paulscode.android.mupen64plusae.preference.ProfilePreference
+        android:icon="@drawable/ic_gamepad"
+        android:key="controllerProfile4"
+        android:summary="@string/selectedValue"
+        android:title="@string/controllerProfile4_title"
+        mupen64:allowDisable="true"
+        mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+
+    <paulscode.android.mupen64plusae.preference.PlayerMapPreference
+        android:icon="@drawable/ic_users"
+        android:key="playerMap"
+        android:summary="@string/playerMap_summary"
+        android:title="@string/playerMap_title" />
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_key"
+        android:key="screenCheats"
+        android:title="@string/screenCheats_title" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="playShowCheats"
+            android:summary="@string/playShowCheats_summary"
+            android:title="@string/playShowCheats_title" />
+
+        <Preference
+            android:key="actionCheatEditor"
+            android:summary="@string/actionCheatEditor_summary"
+            android:title="@string/actionCheatEditor_title" >
+        </Preference>
+
+        <PreferenceCategory
+            android:key="categoryCheats"
+            android:title="@string/categoryCheats_title" />
+    </PreferenceScreen>
+
     <Preference
-        android:icon="@drawable/ic_play"
-        android:key="actionResume"
-        android:summary="@string/actionResume_summary"
-        android:title="@string/actionResume_title" />
+        android:icon="@drawable/ic_help"
+        android:key="actionWiki"
+        android:summary="@string/actionWiki_summary"
+        android:title="@string/actionWiki_title" />
     <Preference
         android:icon="@drawable/ic_undo"
-        android:key="actionRestart"
-        android:summary="@string/actionRestart_summary"
-        android:title="@string/actionRestart_title" />
-    <Preference
-        android:icon="@drawable/ic_settings"
-        android:key="screenGlobalSettings"
-        android:summary="@string/screenGlobalSettings_summary"
-        android:title="@string/screenGlobalSettings_title" >
-        <intent android:action=".SettingsGlobalActivity" />
-    </Preference>
-
-    <PreferenceCategory
-        android:key="categoryGameSettings"
-        android:title="@string/categoryGameSettings_title" >
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
-            android:icon="@drawable/ic_circuit"
-            android:key="emulationProfile"
-            android:summary="@string/selectedValue"
-            android:title="@string/emulationProfile_title"
-            mupen64:allowDisable="false"
-            mupen64:managerAction=".profile.ManageEmulationProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
-            android:icon="@drawable/ic_phone"
-            android:key="touchscreenProfile"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenProfile_title"
-            mupen64:allowDisable="true"
-            mupen64:managerAction=".profile.ManageTouchscreenProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
-            android:icon="@drawable/ic_gamepad"
-            android:key="controllerProfile1"
-            android:summary="@string/selectedValue"
-            android:title="@string/controllerProfile1_title"
-            mupen64:allowDisable="true"
-            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
-            android:icon="@drawable/ic_gamepad"
-            android:key="controllerProfile2"
-            android:summary="@string/selectedValue"
-            android:title="@string/controllerProfile2_title"
-            mupen64:allowDisable="true"
-            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
-            android:icon="@drawable/ic_gamepad"
-            android:key="controllerProfile3"
-            android:summary="@string/selectedValue"
-            android:title="@string/controllerProfile3_title"
-            mupen64:allowDisable="true"
-            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-        <paulscode.android.mupen64plusae.preference.ProfilePreference
-            android:icon="@drawable/ic_gamepad"
-            android:key="controllerProfile4"
-            android:summary="@string/selectedValue"
-            android:title="@string/controllerProfile4_title"
-            mupen64:allowDisable="true"
-            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-
-        <paulscode.android.mupen64plusae.preference.PlayerMapPreference
-            android:icon="@drawable/ic_users"
-            android:key="playerMap"
-            android:summary="@string/playerMap_summary"
-            android:title="@string/playerMap_title" />
-
-        <PreferenceScreen
-            android:icon="@drawable/ic_key"
-            android:key="screenCheats"
-            android:title="@string/screenCheats_title" >
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="playShowCheats"
-                android:summary="@string/playShowCheats_summary"
-                android:title="@string/playShowCheats_title" />
-
-            <Preference
-                android:key="actionCheatEditor"
-                android:summary="@string/actionCheatEditor_summary"
-                android:title="@string/actionCheatEditor_title" >
-            </Preference>
-
-            <PreferenceCategory
-                android:key="categoryCheats"
-                android:title="@string/categoryCheats_title" />
-        </PreferenceScreen>
-
-        <Preference
-            android:icon="@drawable/ic_help"
-            android:key="actionWiki"
-            android:summary="@string/actionWiki_summary"
-            android:title="@string/actionWiki_title" />
-
-        <Preference
-            android:icon="@drawable/ic_undo"
-            android:key="actionResetGamePrefs"
-            android:summary="@string/actionResetGamePrefs_summary"
-            android:title="@string/actionResetGamePrefs_title" />
-    </PreferenceCategory>
+        android:key="actionResetGamePrefs"
+        android:summary="@string/actionResetGamePrefs_summary"
+        android:title="@string/actionResetGamePrefs_title" />
 
 </PreferenceScreen>
