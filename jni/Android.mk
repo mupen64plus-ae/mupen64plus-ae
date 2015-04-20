@@ -140,9 +140,9 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/si/si_controller.c                \
     $(SRCDIR)/vi/vi_controller.c                \
     #$(SRCDIR)/debugger/dbg_breakpoints.c        \
+    #$(SRCDIR)/debugger/dbg_debugger.c           \
     #$(SRCDIR)/debugger/dbg_decoder.c            \
     #$(SRCDIR)/debugger/dbg_memory.c             \
-    #$(SRCDIR)/debugger/debugger.c               \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
@@ -161,8 +161,8 @@ LOCAL_LDLIBS := -lz
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
-    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/linkage_arm.S
-    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/arm_cpu_features.c
+    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/arm/linkage_arm.S
+    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/arm/arm_cpu_features.c
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=3
     LOCAL_CFLAGS += -mfloat-abi=softfp
@@ -170,15 +170,16 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 
 else ifeq ($(TARGET_ARCH_ABI), armeabi)
     # Use for pre-ARM7a:
-    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/linkage_arm.S
-    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/arm_cpu_features.c
+    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/arm/linkage_arm.S
+    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/arm/arm_cpu_features.c
     LOCAL_CFLAGS += -DARMv5_ONLY
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=3
 
 else ifeq ($(TARGET_ARCH_ABI), x86)
     # Use for x86:
-    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/linkage_x86.S
+    LOCAL_ASMFLAGS = -d ELF_TYPE
+    LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/x86/linkage_x86.asm
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=1
 
