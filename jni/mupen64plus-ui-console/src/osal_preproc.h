@@ -29,6 +29,7 @@
 #if defined(WIN32)
 
   #include <windows.h>
+
   #define PATH_MAX 2048
   #define OSAL_DEFAULT_DYNLIB_FILENAME "mupen64plus.dll"
   #define OSAL_DIR_SEPARATOR           '\\'
@@ -39,6 +40,7 @@
 #elif defined(__APPLE__)
 
   #include <limits.h>  // for PATH_MAX
+
   #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.dylib"
   #define OSAL_DIR_SEPARATOR           '/'
   #define OSAL_CURRENT_DIR             "./"
@@ -49,10 +51,12 @@
 
   #if defined(ANDROID)
     #include <android/log.h>
+
     #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
   #endif
 
   #include <limits.h>  // for PATH_MAX
+
   #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so.2"
   #define OSAL_DIR_SEPARATOR           '/'
   #define OSAL_CURRENT_DIR             "./"

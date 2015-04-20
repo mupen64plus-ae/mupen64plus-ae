@@ -22,6 +22,8 @@
 #if !defined(PLUGIN_H)
 #define PLUGIN_H
 
+#include <limits.h>
+
 #include "m64p_types.h"
 #include "osal_preproc.h"
 

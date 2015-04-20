@@ -24,10 +24,10 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "m64p_types.h"
-#include "main.h"
 #include "compare_core.h"
 #include "core_interface.h"
+#include "m64p_types.h"
+#include "main.h"
 
 /* local variables */
 
