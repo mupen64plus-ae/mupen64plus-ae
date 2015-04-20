@@ -20,9 +20,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // This file implements the S2DEX ucode, Yoshi story is using this ucodes
 
-#include "UcodeDefs.h"
+#include <string.h>
+
+#include "Debugger.h"
+#include "RSP_Parser.h"
+#include "RSP_S2DEX.h"
 #include "Render.h"
+#include "RenderBase.h"
 #include "Timing.h"
+#include "UcodeDefs.h"
+#include "VectorMath.h"
+#include "Video.h"
+#include "typedefs.h"
 
 uObjTxtr *gObjTxtr = NULL;
 uObjTxtrTLUT *gObjTlut = NULL;

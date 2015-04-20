@@ -522,8 +522,6 @@ void hq4x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int
             for (k=1; k<=9; k++)
                 c[k] = w[k];
 
-#include "TextureFilters_hq4x.h"
-
             pIn+=4;
             pOut+=16;
         }

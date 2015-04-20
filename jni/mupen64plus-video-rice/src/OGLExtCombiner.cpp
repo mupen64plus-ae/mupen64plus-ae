@@ -16,18 +16,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <stddef.h>
 #include <algorithm>
+
+#include "CombinerDefs.h"
+#include "Debugger.h"
+#include "DecodedMux.h"
+#include "GeneralCombiner.h"
+#include "GraphicsContext.h"
+#include "OGLRender.h"
+#include "RSP_Parser.h"
+#include "RenderBase.h"
 #include "osal_opengl.h"
+#include "osal_preproc.h"
 
 #ifndef USE_GLES
 #include "OGLExtensions.h"
 #endif
 #include "OGLDebug.h"
+#include "OGLDecodedMux.h"
 #include "OGLExtCombiner.h"
 #include "OGLExtRender.h"
-#include "OGLDecodedMux.h"
 #include "OGLGraphicsContext.h"
 #include "OGLTexture.h"
+
+class CRender;
 
 #define GL_MODULATE_ADD_ATI        0x8744
 #define GL_MODULATE_SUBTRACT_ATI   0x8746
@@ -326,7 +339,7 @@ int COGLColorCombiner4::ParseDecodedMux()
         }
     }
         
-    res.numOfUnits = min(m_maxTexUnits, max(unitNos[0],unitNos[1]));
+    res.numOfUnits = std::min(m_maxTexUnits, std::max(unitNos[0],unitNos[1]));
 
     if( unitNos[0]>m_maxTexUnits || unitNos[1]>m_maxTexUnits ) 
     {

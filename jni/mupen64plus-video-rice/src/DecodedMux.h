@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _DECODEDMUX_H_
 #define _DECODEDMUX_H_
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
-#include "typedefs.h"
 #include "CombinerDefs.h"
+#include "typedefs.h"
 
 typedef enum {
     N64Cycle0RGB=0,

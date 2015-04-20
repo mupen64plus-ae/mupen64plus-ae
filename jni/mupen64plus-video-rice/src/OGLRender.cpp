@@ -16,6 +16,18 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <stddef.h>
+
+#include "Combiner.h"
+#include "CombinerDefs.h"
+#include "Config.h"
+#include "Debugger.h"
+#include "DecodedMux.h"
+#include "GraphicsContext.h"
+#include "RSP_Parser.h"
+#include "Texture.h"
+#include "Video.h"
+#include "m64p_plugin.h"
 #include "osal_opengl.h"
 
 #ifndef USE_GLES
@@ -24,8 +36,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLES2FragmentShaders.h"
 #endif
 #include "OGLDebug.h"
-#include "OGLRender.h"
 #include "OGLGraphicsContext.h"
+#include "OGLRender.h"
 #include "OGLTexture.h"
 #include "TextureManager.h"
 
@@ -301,7 +313,7 @@ void OGLRender::ApplyZBias(int bias)
         }
         else
         {
-            f1 = -3.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
+            f1 = -3.0f;  // z offset = -3.0 * std::max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
             f2 = -3.0f;  // z offset += -3.0 * 1 bit
         }
         glEnable(GL_POLYGON_OFFSET_FILL);  // enable z offsets

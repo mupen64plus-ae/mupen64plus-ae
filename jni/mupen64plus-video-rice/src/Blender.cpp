@@ -16,7 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "Blender.h"
+
+#include "Config.h"
+#include "RSP_Parser.h"
 #include "Render.h"
+#include "RenderBase.h"
+#include "osal_preproc.h"
+#include "typedefs.h"
 
 const char * sc_szBlClr[4]      = { "In", "Mem", "Bl", "Fog" };
 const char * sc_szBlA1[4]       = { "AIn", "AFog", "AShade", "0" };
@@ -308,13 +315,6 @@ Possible Blending Factors:
             Enable();
             break;
         }
-
-#ifdef DEBUGGER
-        //if( (blendmode_1>>2) != blendmode_2 )
-        //{
-        //  DebuggerAppendMsg("Warning: in 1 cycle mode, blend1!=blend2");
-        //}
-#endif
 
         switch ( blendmode_1 )
         //switch ( blendmode_2<<2 )

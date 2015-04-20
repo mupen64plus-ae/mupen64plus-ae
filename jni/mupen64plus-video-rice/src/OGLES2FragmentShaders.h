@@ -21,11 +21,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <vector>
 
-#include "osal_opengl.h"
-
+#include "GeneralCombiner.h"
 #include "OGLCombiner.h"
 #include "OGLExtCombiner.h"
-#include "GeneralCombiner.h"
+#include "osal_opengl.h"
 
 typedef struct {
     uint32  dwMux0;

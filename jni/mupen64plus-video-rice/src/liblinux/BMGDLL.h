@@ -43,9 +43,9 @@
 */
 
 #include "BMGImage.h"
-#include "tiffrw.h"
-#include "pngrw.h"
 #include "jpegrw.h"
+#include "pngrw.h"
+#include "tiffrw.h"
 
 #if defined(__cplusplus)
 extern "C" {

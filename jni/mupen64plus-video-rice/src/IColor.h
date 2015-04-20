@@ -20,11 +20,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _ICOLOR_H_
 #define _ICOLOR_H_
 
-#ifndef min
-#define min(a,b) ((a) < (b) ? (a) : (b))
+#include <algorithm>
+
+#ifdef min
+  #undef min
 #endif
-#ifndef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
+#ifdef max
+  #undef  max
 #endif
 
 class IColor {
@@ -64,10 +66,10 @@ public:
     inline IColor operator + (const IColor &sec) const
     {
         IColor newc;
-        newc.r = (uint8)min((unsigned int) r + (unsigned int) sec.r, 0xFF);
-        newc.g = (uint8)min((unsigned int) g + (unsigned int) sec.g, 0xFF);
-        newc.b = (uint8)min((unsigned int) b + (unsigned int) sec.b, 0xFF);
-        newc.a = (uint8)min((unsigned int) a + (unsigned int) sec.a, 0xFF);
+        newc.r = (uint8)std::min((unsigned int) r + (unsigned int) sec.r, 0xFFu);
+        newc.g = (uint8)std::min((unsigned int) g + (unsigned int) sec.g, 0xFFu);
+        newc.b = (uint8)std::min((unsigned int) b + (unsigned int) sec.b, 0xFFu);
+        newc.a = (uint8)std::min((unsigned int) a + (unsigned int) sec.a, 0xFFu);
 
         return newc;
     }
@@ -75,47 +77,47 @@ public:
     inline IColor operator - (const IColor &sec) const
     {
         IColor newc;
-        newc.r = max(int(r)-int(sec.r),0);
-        newc.g = max(int(g)-int(sec.g),0);
-        newc.b = max(int(b)-int(sec.b),0);
-        newc.a = max(int(a)-int(sec.a),0);
+        newc.r = std::max(int(r)-int(sec.r),0);
+        newc.g = std::max(int(g)-int(sec.g),0);
+        newc.b = std::max(int(b)-int(sec.b),0);
+        newc.a = std::max(int(a)-int(sec.a),0);
 
         return newc;
     }
     inline IColor operator * (const IColor &sec) const
     {
         IColor newc;
-        newc.r = (uint8)min((unsigned int) r * (unsigned int) sec.r / 256,255);
-        newc.g = (uint8)min((unsigned int) g * (unsigned int) sec.g / 256,255);
-        newc.b = (uint8)min((unsigned int) b * (unsigned int) sec.b / 256,255);
-        newc.a = (uint8)min((unsigned int) a * (unsigned int) sec.a / 256,255);
+        newc.r = (uint8)std::min((unsigned int) r * (unsigned int) sec.r / 256,255u);
+        newc.g = (uint8)std::min((unsigned int) g * (unsigned int) sec.g / 256,255u);
+        newc.b = (uint8)std::min((unsigned int) b * (unsigned int) sec.b / 256,255u);
+        newc.a = (uint8)std::min((unsigned int) a * (unsigned int) sec.a / 256,255u);
         return newc;
     }
 
     inline IColor& operator += (const IColor &sec)
     {
-        r = uint8(min((unsigned int) r + (unsigned int) sec.r, 255));
-        g = uint8(min((unsigned int) g + (unsigned int) sec.g, 255));
-        b = uint8(min((unsigned int) b + (unsigned int) sec.b, 255));
-        a = uint8(min((unsigned int) a + (unsigned int) sec.a, 255));
+        r = uint8(std::min((unsigned int) r + (unsigned int) sec.r, 255u));
+        g = uint8(std::min((unsigned int) g + (unsigned int) sec.g, 255u));
+        b = uint8(std::min((unsigned int) b + (unsigned int) sec.b, 255u));
+        a = uint8(std::min((unsigned int) a + (unsigned int) sec.a, 255u));
         return *this;
     }
 
     inline IColor& operator -= (const IColor &sec)
     {
-        r = uint8(max(int(r)-int(sec.r),0));
-        g = uint8(max(int(g)-int(sec.g),0));
-        b = uint8(max(int(b)-int(sec.b),0));
-        a = uint8(max(int(a)-int(sec.a),0));
+        r = uint8(std::max(int(r)-int(sec.r),0));
+        g = uint8(std::max(int(g)-int(sec.g),0));
+        b = uint8(std::max(int(b)-int(sec.b),0));
+        a = uint8(std::max(int(a)-int(sec.a),0));
         return *this;
     }
 
     inline IColor& operator *= (const IColor &sec)
     {
-        r = uint8(min((unsigned int) r * (unsigned int) sec.r / 256,255));
-        g = uint8(min((unsigned int) g * (unsigned int) sec.g / 256,255));
-        b = uint8(min((unsigned int) b * (unsigned int) sec.b / 256,255));
-        a = uint8(min((unsigned int) a * (unsigned int) sec.a / 256,255));
+        r = uint8(std::min((unsigned int) r * (unsigned int) sec.r / 256,255u));
+        g = uint8(std::min((unsigned int) g * (unsigned int) sec.g / 256,255u));
+        b = uint8(std::min((unsigned int) b * (unsigned int) sec.b / 256,255u));
+        a = uint8(std::min((unsigned int) a * (unsigned int) sec.a / 256,255u));
         return *this;
     }
     

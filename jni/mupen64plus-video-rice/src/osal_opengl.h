@@ -31,6 +31,7 @@
 #endif
 
 #include <SDL_opengl.h>
+
 #define GLSL_VERSION "120"
 
 // Extension names
@@ -43,6 +44,7 @@
 #endif
 
 #include <SDL_opengles2.h>
+
 #define GLSL_VERSION "100"
 
 // Extension names

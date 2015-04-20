@@ -16,11 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <stdio.h>
+#include <string.h>
 #include <algorithm>
 
-#include "GeneralCombiner.h"
 #include "Combiner.h"
 #include "Debugger.h"
+#include "DecodedMux.h"
+#include "GeneralCombiner.h"
 
 extern const int numOf3StageCombiners;
 extern const int numOf2StageCombiners;
@@ -867,7 +870,7 @@ int CGeneralCombiner::ParseDecodedMux()
         stages[i] = n;
     }
 
-    gci.nStages = max(stages[0], stages[1]);
+    gci.nStages = std::max(stages[0], stages[1]);
     if( gci.nStages > m_dwGeneralMaxStages )
     {
         resultIsGood = false;

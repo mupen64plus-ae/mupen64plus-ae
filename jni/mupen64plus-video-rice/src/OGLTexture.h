@@ -19,9 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _OGL_TEXTURE_H_
 #define _OGL_TEXTURE_H_
 
-#include "osal_opengl.h"
-
+#include "Texture.h"
 #include "TextureManager.h"
+#include "osal_opengl.h"
+#include "typedefs.h"
 
 class COGLTexture : public CTexture
 {

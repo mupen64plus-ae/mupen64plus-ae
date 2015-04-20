@@ -17,9 +17,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include <stddef.h>
+
 #include "Config.h"
 #include "ConvertImage.h"
+#include "RSP_Parser.h"
 #include "RenderBase.h"
+#include "Texture.h"
+#include "TextureManager.h"
+#include "typedefs.h"
 
 // Still to be swapped:
 // IA16

@@ -20,9 +20,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef __CONVERTIMAGE_H__
 #define __CONVERTIMAGE_H__
 
-#include "typedefs.h"
 #include "Texture.h"
 #include "TextureManager.h"
+#include "typedefs.h"
+
+class CTexture;
+class TxtrInfo;
 
 
 static const uint8 OneToEight[2] =

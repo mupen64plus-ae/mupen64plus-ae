@@ -24,7 +24,9 @@
 
 #include "Blender.h"
 #include "Combiner.h"
+#include "typedefs.h"
 
+class CRender;
 class OGLRender;
 
 class COGLColorCombiner : public CColorCombiner

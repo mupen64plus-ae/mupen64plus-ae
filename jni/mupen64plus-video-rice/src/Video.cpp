@@ -18,28 +18,31 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <vector>
 
-#include <stdarg.h>
-
+#include "CritSect.h"
+#include "RenderBase.h"
 #include "osal_opengl.h"
 
 #define M64P_PLUGIN_PROTOTYPES 1
-#include "m64p_types.h"
-#include "m64p_common.h"
-#include "m64p_plugin.h"
-#include "osal_dynamiclib.h"
-
 #include "Config.h"
 #include "Debugger.h"
 #include "DeviceBuilder.h"
 #include "FrameBuffer.h"
 #include "GraphicsContext.h"
-#include "Render.h"
 #include "RSP_Parser.h"
+#include "Render.h"
 #include "TextureFilters.h"
 #include "TextureManager.h"
 #include "Video.h"
+#include "m64p_common.h"
+#include "m64p_plugin.h"
+#include "m64p_types.h"
+#include "osal_dynamiclib.h"
 #include "version.h"
 
 //=======================================================

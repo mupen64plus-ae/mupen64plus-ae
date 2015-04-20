@@ -24,10 +24,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Combiner.h"
 #include "Config.h"
 #include "Debugger.h"
-#include "RenderBase.h"
 #include "ExtendedRender.h"
 #include "RSP_Parser.h"
 #include "RSP_S2DEX.h"
+#include "RenderBase.h"
+#include "TextureManager.h"
+#include "osal_preproc.h"
+#include "typedefs.h"
+
+class CBlender;
+class CTexture;
 
 enum TextureChannel 
 {

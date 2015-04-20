@@ -18,17 +18,27 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #define M64P_PLUGIN_PROTOTYPES 1
-#include "osal_preproc.h"
-#include "m64p_plugin.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
 
+#include "Blender.h"
 #include "ConvertImage.h"
 #include "DeviceBuilder.h"
 #include "FrameBuffer.h"
+#include "GraphicsContext.h"
 #include "Render.h"
-
+#include "RenderTexture.h"
+#include "Texture.h"
+#include "VectorMath.h"
+#include "Video.h"
+#include "liblinux/BMGImage.h"
 #include "liblinux/BMGLibPNG.h"
-
-#include <algorithm>
+#include "liblinux/pngrw.h"
+#include "m64p_plugin.h"
+#include "m64p_types.h"
+#include "osal_preproc.h"
 
 extern FiddledVtx * g_pVtxBase;
 CRender * CRender::g_pRender=NULL;
@@ -40,13 +50,6 @@ extern char* right (const char * src, int nchars);
 
 #if defined(WIN32)
   #define strcasecmp _stricmp
-#endif
-
-#ifdef min
-#undef min
-#endif
-#ifdef max
-#undef max
 #endif
 
 //========================================================================

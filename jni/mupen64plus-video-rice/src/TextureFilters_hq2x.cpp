@@ -452,7 +452,6 @@ static void hq2x_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const ui
 #define I151(p0,p1) hq2x_interp_32_151(c[p0], c[p1])
 
         switch (mask) {
-#include "TextureFilters_hq2x.h"
         }
 
 #undef P0
@@ -679,7 +678,6 @@ static void lq2x_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const ui
 #define I151(p0,p1) hq2x_interp_32_151(c[p0], c[p1])
 
         switch (mask) {
-#include "TextureFilters_lq2x.h"
         }
 
 #undef P0

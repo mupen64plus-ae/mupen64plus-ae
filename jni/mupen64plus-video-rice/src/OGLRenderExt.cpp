@@ -16,9 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "osal_opengl.h"
-
 #include "OGLRender.h"
+#include "RSP_Parser.h"
+#include "RSP_S2DEX.h"
+#include "Render.h"
+#include "RenderBase.h"
+#include "Video.h"
+#include "m64p_types.h"
+#include "osal_opengl.h"
+#include "osal_preproc.h"
+#include "typedefs.h"
 
 extern Matrix g_MtxReal;
 extern uObjMtxReal gObjMtxReal;
