@@ -20,14 +20,13 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include <stddef.h>
-
-#include "common.h"
 
 #include "arithmetics.h"
 #include "audio.h"
+#include "common.h"
 #include "hle_external.h"
 #include "hle_internal.h"
 #include "memory.h"
