@@ -23,12 +23,13 @@
  * outside of the core library.
  */
 
+#include <stddef.h>
 #include <stdlib.h>
 
 #define M64P_CORE_PROTOTYPES 1
-#include "m64p_types.h"
-#include "m64p_common.h"
 #include "../main/version.h"
+#include "m64p_common.h"
+#include "m64p_types.h"
 
 EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
 {
@@ -101,7 +102,7 @@ EXPORT const char * CALL CoreErrorMessage(m64p_error ReturnCode)
 {
     size_t i = (size_t) ReturnCode;
 
-    if (i > (sizeof(ErrorMessages) / sizeof(char *)))
+    if (i >= (sizeof(ErrorMessages) / sizeof(char *)))
         return "ERROR: Invalid m64p_error code given to CoreErrorMessage()";
 
     return ErrorMessages[i];

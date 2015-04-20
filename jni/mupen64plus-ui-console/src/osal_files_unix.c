@@ -23,16 +23,17 @@
  *
  */
 
-#include <stdlib.h>
+#include <dirent.h>  // for opendir(), readdir(), closedir()
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <dirent.h>  // for opendir(), readdir(), closedir()
 
-#include "main.h"
 #include "m64p_types.h"
-#include "osal_preproc.h"
+#include "main.h"
 #include "osal_files.h"
+#include "osal_preproc.h"
 
 /* definitions for system directories to search when looking for mupen64plus plugins */
 #if defined(PLUGINDIR)

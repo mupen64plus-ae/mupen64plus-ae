@@ -55,7 +55,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\include;..\..\..\mupen64plus-win32-deps\libpng-1.2.37\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\include;..\..\..\mupen64plus-win32-deps\libpng-1.2.37\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -74,7 +74,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\include;..\..\..\mupen64plus-win32-deps\libpng-1.2.37\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\include;..\..\..\mupen64plus-win32-deps\libpng-1.2.37\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>

@@ -51,6 +51,9 @@ wxUint32 Load32bRGBA (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int 
   const wxUint32 tbase = (src - (wxUIntPtr)rdp.tmem) >> 1;
   const wxUint32 width = max(1, wid_64 << 1);
   const int ext = real_width - width;
+  if (ext < 0)
+    return 0;
+
   line = width + (line>>2);
   wxUint32 s, t, c;
   wxUint32 * tex = (wxUint32*)dst;

@@ -20,8 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef GFXCONTEXT_H
 #define GFXCONTEXT_H
 
-#include "typedefs.h"
 #include "CritSect.h"
+#include "osal_preproc.h"
+#include "typedefs.h"
 
 enum ClearFlag
 {

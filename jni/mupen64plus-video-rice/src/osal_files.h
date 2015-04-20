@@ -39,6 +39,7 @@ extern "C" {
   #define strdup _strdup
 #else  /* Not WIN32 */
   #include <limits.h>  // for PATH_MAX
+
   #define OSAL_DIR_SEPARATOR_STR       "/"
   #define OSAL_DIR_SEPARATOR_CHAR      '/'
 

@@ -25,18 +25,16 @@
 
 #include <stdio.h>
 
-#include "m64p_types.h"
+#include "core_interface.h"
 #include "m64p_common.h"
-#include "m64p_frontend.h"
 #include "m64p_config.h"
 #include "m64p_debugger.h"
-
-#include "osal_preproc.h"
-#include "osal_dynamiclib.h"
-
+#include "m64p_frontend.h"
+#include "m64p_types.h"
 #include "main.h"
+#include "osal_dynamiclib.h"
+#include "osal_preproc.h"
 #include "version.h"
-#include "core_interface.h"
 
 /* global data definitions */
 int g_CoreCapabilities;

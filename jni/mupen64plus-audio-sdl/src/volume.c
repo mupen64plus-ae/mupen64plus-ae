@@ -22,15 +22,15 @@
 
 #if defined(HAS_OSS_SUPPORT)
 
-/* Sound volume functions. */
-#include <sys/soundcard.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <unistd.h> /* close() */
+#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <errno.h>
+#include <sys/ioctl.h>
+/* Sound volume functions. */
+#include <sys/soundcard.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h> /* close() */
 
 #include "volume.h"
 

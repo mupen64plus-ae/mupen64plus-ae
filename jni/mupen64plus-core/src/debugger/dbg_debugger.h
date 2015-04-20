@@ -1,7 +1,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - stdbool.h                                       *
+ *   Mupen64plus - dbg_debugger.h                                              *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2014 Bobby Smiles                                       *
+ *   Copyright (C) 2008 DarkJeztr                                          *
+ *   Copyright (C) 2002 davFr                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,19 +20,22 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* This header is only intended to be used with msvc compilers */
+#ifndef __DBG_DEBUGGER_H__
+#define __DBG_DEBUGGER_H__
 
-#pragma once
+#include "api/m64p_types.h"
+#include "dbg_types.h"
 
-typedef int __Bool;
+extern int g_DebuggerActive;  /* True if the debugger is running */
 
-/**
- * The standard states that "an application may undefine and then possibly redefine the macro
- * bool, true and false". However, such feature might be withdrawn in a future version.
- **/
-#define bool __Bool
-#define true 1
-#define false 0
+extern m64p_dbg_runstate g_dbg_runstate;
 
-#define __bool_true_false_are_defined 1
+extern uint32 previousPC;
+
+void init_debugger(void);
+void update_debugger(uint32 pc);
+void destroy_debugger(void);
+void debugger_step(void);
+
+#endif /* __DBG_DEBUGGER_H__ */
 

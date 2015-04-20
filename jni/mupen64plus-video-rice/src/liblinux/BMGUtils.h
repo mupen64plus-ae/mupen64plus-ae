@@ -8,8 +8,8 @@
     All Rights Reserved
 */
 
-#include "BMGImage.h"
 #include "../osal_preproc.h"
+#include "BMGImage.h"
 
 /* the following 3 functions are used to access the background color
 // and the background image */

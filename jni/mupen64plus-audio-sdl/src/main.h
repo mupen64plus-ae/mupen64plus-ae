@@ -20,6 +20,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* version info */
+#include "m64p_config.h"
+
 #define SDL_AUDIO_PLUGIN_VERSION 0x020000
 #define AUDIO_PLUGIN_API_VERSION 0x020000
 #define CONFIG_API_VERSION       0x020100

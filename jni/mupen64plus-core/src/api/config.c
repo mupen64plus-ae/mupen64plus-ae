@@ -23,18 +23,17 @@
  * outside of the core library.
  */
 
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define M64P_CORE_PROTOTYPES 1
-#include "m64p_types.h"
-#include "m64p_config.h"
-#include "config.h"
 #include "callbacks.h"
-
+#include "config.h"
+#include "m64p_config.h"
+#include "m64p_types.h"
 #include "main/util.h"
-
 #include "osal/files.h"
 #include "osal/preproc.h"
 
@@ -132,9 +131,13 @@ static config_section *find_section(config_list list, const char *ParamName)
 
 static config_var *config_var_create(const char *ParamName, const char *ParamHelp)
 {
-    config_var *var = (config_var *) malloc(sizeof(config_var));
+    config_var *var;
 
-    if (var == NULL || ParamName == NULL)
+    if (ParamName == NULL)
+        return NULL;
+
+    var = (config_var *) malloc(sizeof(config_var));
+    if (var == NULL)
         return NULL;
 
     memset(var, 0, sizeof(config_var));
@@ -311,6 +314,7 @@ static config_section * section_deepcopy(config_section *orig_section)
                     if (new_var->val.string == NULL)
                     {
                         delete_section(new_section);
+                        delete_var(new_var);
                         return NULL;
                     }
                 }
@@ -1285,8 +1289,6 @@ EXPORT int CALL ConfigGetParamInt(m64p_handle ConfigSectionHandle, const char *P
             DebugMessage(M64MSG_ERROR, "ConfigGetParamInt(): invalid internal parameter type for '%s'", ParamName);
             return 0;
     }
-
-    return 0;
 }
 
 EXPORT float CALL ConfigGetParamFloat(m64p_handle ConfigSectionHandle, const char *ParamName)
@@ -1331,8 +1333,6 @@ EXPORT float CALL ConfigGetParamFloat(m64p_handle ConfigSectionHandle, const cha
             DebugMessage(M64MSG_ERROR, "ConfigGetParamFloat(): invalid internal parameter type for '%s'", ParamName);
             return 0.0;
     }
-
-    return 0.0;
 }
 
 EXPORT int CALL ConfigGetParamBool(m64p_handle ConfigSectionHandle, const char *ParamName)
@@ -1377,8 +1377,6 @@ EXPORT int CALL ConfigGetParamBool(m64p_handle ConfigSectionHandle, const char *
             DebugMessage(M64MSG_ERROR, "ConfigGetParamBool(): invalid internal parameter type for '%s'", ParamName);
             return 0;
     }
-
-    return 0;
 }
 
 EXPORT const char * CALL ConfigGetParamString(m64p_handle ConfigSectionHandle, const char *ParamName)
@@ -1428,8 +1426,6 @@ EXPORT const char * CALL ConfigGetParamString(m64p_handle ConfigSectionHandle, c
             DebugMessage(M64MSG_ERROR, "ConfigGetParamString(): invalid internal parameter type for '%s'", ParamName);
             return "";
     }
-
-  return "";
 }
 
 /* ------------------------------------------------------ */

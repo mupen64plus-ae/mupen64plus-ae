@@ -21,6 +21,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
@@ -119,7 +120,7 @@ void alist_process(struct hle_t* hle, const acmd_callback_t abi[], unsigned int 
 
 uint32_t alist_get_address(struct hle_t* hle, uint32_t so, const uint32_t *segments, size_t n)
 {
-    uint8_t  segment = (so >> 24);
+    uint8_t  segment = (so >> 24) & 0x3f;
     uint32_t offset  = (so & 0xffffff);
 
     if (segment >= n) {
@@ -132,7 +133,7 @@ uint32_t alist_get_address(struct hle_t* hle, uint32_t so, const uint32_t *segme
 
 void alist_set_address(struct hle_t* hle, uint32_t so, uint32_t *segments, size_t n)
 {
-    uint8_t  segment = (so >> 24);
+    uint8_t  segment = (so >> 24) & 0x3f;
     uint32_t offset  = (so & 0xffffff);
 
     if (segment >= n) {

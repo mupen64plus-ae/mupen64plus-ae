@@ -18,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include "../../cp0_private.h"
 #include "main/main.h"
-#include "../cp0_private.h"
 
 extern int cycle_count;
 extern int last_count;
@@ -102,7 +102,7 @@ const u_int invalidate_addr_reg[16] = {
   0,
   0};
 
-#include "../fpu.h"
+#include "../../fpu.h"
 
 static u_int jump_table_symbols[] = {
   (int)invalidate_addr,

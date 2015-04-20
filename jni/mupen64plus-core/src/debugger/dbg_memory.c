@@ -22,13 +22,12 @@
 
 #include <string.h>
 
-#include "dbg_types.h"
-#include "dbg_memory.h"
-#include "dbg_breakpoints.h"
-
 #include "ai/ai_controller.h"
-#include "api/m64p_types.h"
 #include "api/callbacks.h"
+#include "api/m64p_types.h"
+#include "dbg_breakpoints.h"
+#include "dbg_memory.h"
+#include "dbg_types.h"
 #include "main/main.h"
 #include "main/rom.h"
 #include "memory/memory.h"
@@ -38,8 +37,8 @@
 #include "r4300/r4300.h"
 #include "r4300/r4300_core.h"
 #include "rdp/rdp_core.h"
-#include "rsp/rsp_core.h"
 #include "ri/ri_controller.h"
+#include "rsp/rsp_core.h"
 #include "si/si_controller.h"
 #include "vi/vi_controller.h"
 
@@ -61,8 +60,7 @@ static void *opaddr_recompiled[564];
 static disassemble_info dis_info;
 
 #define CHECK_MEM(address) \
-   if (!invalid_code[(address) >> 12] && blocks[(address) >> 12]->block[((address) & 0xFFF) / 4].ops != current_instruction_table.NOTCOMPILED) \
-     invalid_code[(address) >> 12] = 1;
+   invalidate_r4300_cached_code(address, 4);
 
 static void process_opcode_out(void *strm, const char *fmt, ...){
   va_list ap;

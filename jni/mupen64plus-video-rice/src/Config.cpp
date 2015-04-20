@@ -17,23 +17,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include <vector>
-#include <fstream>
-
 #include <stdlib.h>
+#include <string.h>
+#include <fstream>
+#include <vector>
 
 #define M64P_PLUGIN_PROTOTYPES 1
-#include "osal_preproc.h"
-#include "m64p_types.h"
-#include "m64p_plugin.h"
-#include "m64p_config.h"
-
 #include "Config.h"
 #include "Debugger.h"
 #include "DeviceBuilder.h"
 #include "RenderBase.h"
+#include "Texture.h"
 #include "TextureManager.h"
 #include "Video.h"
+#include "m64p_config.h"
+#include "m64p_plugin.h"
+#include "m64p_types.h"
+#include "osal_preproc.h"
 
 #define INI_FILE        "RiceVideoLinux.ini"
 
@@ -969,11 +969,19 @@ BOOL ReadIniFile()
     char readinfo[100];
     const char *ini_filepath = ConfigGetSharedDataFilepath(szIniFileName);
 
-    DebugMessage(M64MSG_VERBOSE, "Reading .ini file: %s", ini_filepath);
+    DebugMessage(M64MSG_VERBOSE, "Reading .ini file: %s", szIniFileName);
+
+    if (ini_filepath == NULL)
+    {
+        DebugMessage(M64MSG_ERROR, "Could not find .ini file: %s", szIniFileName);
+        return FALSE;
+    }
+
     inifile.open(ini_filepath);
 
     if (inifile.fail())
     {
+        DebugMessage(M64MSG_ERROR, "Could not open .ini file: %s", szIniFileName);
         return FALSE;
     }
 

@@ -20,15 +20,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
-#include "m64p_types.h"
-
-#include "main.h"
 #include "cheat.h"
 #include "core_interface.h"
+#include "m64p_types.h"
+#include "main.h"
 
 /* local definitions */
 #define CHEAT_FILE	"mupencheat.txt"

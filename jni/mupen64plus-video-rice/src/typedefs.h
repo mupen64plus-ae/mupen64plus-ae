@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _TYPEDEFS_H_
 #define _TYPEDEFS_H_
 
-#include "osal_preproc.h"
 #include "VectorMath.h"
+#include "osal_preproc.h"
 
 #define uchar  unsigned char
 #define uint16 unsigned short

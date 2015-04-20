@@ -20,7 +20,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _OGL_RENDER_H_
 
 #include "Combiner.h"
+#include "RSP_S2DEX.h"
 #include "Render.h"
+#include "RenderBase.h"
+#include "osal_opengl.h"
+#include "osal_preproc.h"
+#include "typedefs.h"
+
+class CTexture;
+struct TxtrCacheEntry;
 
 class OGLRender : public CRender
 {

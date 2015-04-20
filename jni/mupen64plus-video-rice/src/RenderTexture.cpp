@@ -16,11 +16,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "osal_opengl.h"
+#include <stddef.h>
 
 #include "Debugger.h"
 #include "FrameBuffer.h"
 #include "OGLTexture.h"
+#include "RenderTexture.h"
+#include "Texture.h"
+#include "TextureManager.h"
+#include "osal_opengl.h"
 
 // ===========================================================================
 COGLRenderTexture::COGLRenderTexture(int width, int height, RenderTextureInfo* pInfo, TextureUsage usage)

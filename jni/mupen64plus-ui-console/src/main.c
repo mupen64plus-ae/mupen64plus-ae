@@ -25,20 +25,20 @@
  * for Mupen64Plus v2.0. 
  */
  
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "SDL_main.h"
-
 #include "cheat.h"
+#include "compare_core.h"
+#include "core_interface.h"
+#include "m64p_types.h"
 #include "main.h"
+#include "osal_preproc.h"
 #include "plugin.h"
 #include "version.h"
-#include "core_interface.h"
-#include "compare_core.h"
-#include "osal_preproc.h"
 
 /* Version number for UI-Console config section parameters */
 #define CONFIG_PARAM_VERSION     1.00

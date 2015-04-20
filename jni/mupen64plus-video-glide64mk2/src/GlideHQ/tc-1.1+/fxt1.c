@@ -1092,7 +1092,7 @@ fxt1_encode (dword width, dword height, int comps,
    dword x, y;
    const byte *data;
    dword *encoded = (dword *)dest;
-   void *newSource = NULL, *newSourcetmp = NULL;
+   void *newSource = NULL;
 
    assert(comps == 3 || comps == 4);
 
@@ -1101,29 +1101,28 @@ fxt1_encode (dword width, dword height, int comps,
    if (comps == 4)
        newSource = reorder_source_4_alloc(source, width, height, srcRowStride);
    if (!newSource)
-       goto cleanUp;
-   source = newSource;
+       return;
 
    /* Replicate image if width is not M8 or height is not M4 */
    if ((width & 7) | (height & 3)) {
       int newWidth = (width + 7) & ~7;
       int newHeight = (height + 3) & ~3;
-      newSourcetmp = malloc(comps * newWidth * newHeight * sizeof(byte));
-      free(newSource);
-      newSource = newSourcetmp;
-      if (!newSource) {
-         goto cleanUp;
+      void *newSourcetmp = malloc(comps * newWidth * newHeight * sizeof(byte));
+      if (!newSourcetmp) {
+         free(newSource);
+         return;
       }
       upscale_teximage2d(width, height, newWidth, newHeight,
-                         comps, (const byte *) source,
-                         srcRowStride, (byte *) newSource);
-      source = newSource;
+                         comps, (const byte *) newSource,
+                         srcRowStride, (byte *) newSourcetmp);
+      free(newSource);
+      newSource = newSourcetmp;
       width = newWidth;
       height = newHeight;
       srcRowStride = comps * newWidth;
    }
 
-   data = (const byte *) source;
+   data = (const byte *) newSource;
    destRowStride = (destRowStride - width * 2) / 4;
    for (y = 0; y < height; y += 4) {
       dword offs = 0 + (y + 0) * srcRowStride;
@@ -1141,7 +1140,6 @@ fxt1_encode (dword width, dword height, int comps,
       encoded += destRowStride;
    }
 
- cleanUp:
    free(newSource);
 }
 

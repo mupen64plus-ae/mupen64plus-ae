@@ -22,11 +22,11 @@
 #if !defined(CORE_INTERFACE_H)
 #define CORE_INTERFACE_H
 
-#include "m64p_types.h"
 #include "m64p_common.h"
-#include "m64p_frontend.h"
 #include "m64p_config.h"
 #include "m64p_debugger.h"
+#include "m64p_frontend.h"
+#include "m64p_types.h"
 
 /* function declarations */
 extern m64p_error AttachCoreLib(const char *CoreLibFilepath);

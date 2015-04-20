@@ -19,17 +19,18 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include "m64p_types.h"
-#include "m64p_common.h"
 #include "core_interface.h"
+#include "m64p_common.h"
+#include "m64p_types.h"
+#include "main.h"  /* for the debug callback function */
 #include "osal_dynamiclib.h"
 #include "osal_files.h"
+#include "osal_preproc.h"
 #include "plugin.h"
-#include "main.h"  /* for the debug callback function */
 #include "version.h"
 
 /* global variables */

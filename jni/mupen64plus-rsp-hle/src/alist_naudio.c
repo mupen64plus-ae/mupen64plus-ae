@@ -24,9 +24,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "common.h"
-
 #include "alist.h"
+#include "common.h"
 #include "hle_external.h"
 #include "hle_internal.h"
 #include "memory.h"

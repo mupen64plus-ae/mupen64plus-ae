@@ -25,22 +25,22 @@
  *  -String functions
  */
 
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <limits.h>
+
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 
-#include "rom.h"
-#include "util.h"
 #include "osal/files.h"
 #include "osal/preproc.h"
+#include "rom.h"
+#include "util.h"
 
 /**********************
      File utilities
@@ -239,10 +239,12 @@ static int is_path_separator(char c)
 
 char* combinepath(const char* first, const char *second)
 {
-    size_t len_first = strlen(first), off_second = 0;
+    size_t len_first, off_second = 0;
 
     if (first == NULL || second == NULL)
         return NULL;
+
+    len_first = strlen(first);
 
     while (is_path_separator(first[len_first-1]))
         len_first--;

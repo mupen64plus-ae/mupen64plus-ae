@@ -18,35 +18,36 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdint.h> //include for uint64_t
 #include <assert.h>
+#include <stdarg.h>
+#include <stdint.h> //include for uint64_t
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #if defined(__APPLE__)
 #include <sys/types.h> // needed for u_int, u_char, etc
+
 #define MAP_ANONYMOUS MAP_ANON
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "new_dynarec.h"
-#include "../recomp.h"
-#include "../recomph.h" //include for function prototypes
-#include "../cp0_private.h"
-#include "../cp1.h"
-#include "../r4300.h"
-#include "../ops.h"
-#include "../tlb.h"
-#include "../interupt.h"
-#include "../cached_interp.h"
-#include "../../memory/memory.h"
 #include "../../main/main.h"
 #include "../../main/rom.h"
+#include "../../memory/memory.h"
 #include "../../rsp/rsp_core.h"
+#include "../cached_interp.h"
+#include "../cp0_private.h"
+#include "../cp1_private.h"
+#include "../interupt.h"
+#include "../ops.h"
+#include "../r4300.h"
+#include "../recomp.h"
+#include "../recomph.h" //include for function prototypes
+#include "../tlb.h"
+#include "new_dynarec.h"
 #ifdef __cplusplus
 }
 #endif
@@ -56,10 +57,10 @@ extern "C" {
 #endif
 
 #if NEW_DYNAREC == NEW_DYNAREC_X86
-#include "assem_x86.h"
+#include "x86/assem_x86.h"
 #elif NEW_DYNAREC == NEW_DYNAREC_ARM
-#include "arm_cpu_features.h"
-#include "assem_arm.h"
+#include "arm/arm_cpu_features.h"
+#include "arm/assem_arm.h"
 #else
 #error Unsupported dynarec architecture
 #endif
@@ -1008,9 +1009,9 @@ static uint64_t ldr_merge(uint64_t original,uint64_t loaded,u_int bits)
 }
 
 #if NEW_DYNAREC == NEW_DYNAREC_X86
-#include "assem_x86.c"
+#include "x86/assem_x86.c"
 #elif NEW_DYNAREC == NEW_DYNAREC_ARM
-#include "assem_arm.c"
+#include "arm/assem_arm.c"
 #else
 #error Unsupported dynarec architecture
 #endif
@@ -1151,6 +1152,9 @@ static void ll_kill_pointers(struct ll_entry *head,int addr,int shift)
       u_int host_addr=(int)kill_pointer(head->addr);
       #if NEW_DYNAREC == NEW_DYNAREC_ARM
         needs_clear_cache[(host_addr-(u_int)base_addr)>>17]|=1<<(((host_addr-(u_int)base_addr)>>12)&31);
+      #else
+        /* avoid unused variable warning */
+        (void)host_addr;
       #endif
     }
     head=head->next;
@@ -1175,9 +1179,12 @@ static void invalidate_page(u_int page)
   jump_out[page]=0;
   while(head!=NULL) {
     inv_debug("INVALIDATE: kill pointer to %x (%x)\n",head->vaddr,(int)head->addr);
-    u_int host_addr=(int)kill_pointer(head->addr);
+      u_int host_addr=(int)kill_pointer(head->addr);
     #if NEW_DYNAREC == NEW_DYNAREC_ARM
       needs_clear_cache[(host_addr-(u_int)base_addr)>>17]|=1<<(((host_addr-(u_int)base_addr)>>12)&31);
+    #else
+      /* avoid unused variable warning */
+      (void)host_addr;
     #endif
     next=head->next;
     free(head);

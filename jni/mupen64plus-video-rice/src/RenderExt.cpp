@@ -17,10 +17,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "osal_opengl.h"
-#include "OGLDebug.h"
+#include "Blender.h"
+#include "Combiner.h"
+#include "Config.h"
+#include "Debugger.h"
 #include "FrameBuffer.h"
+#include "OGLDebug.h"
+#include "RSP_Parser.h"
+#include "RSP_S2DEX.h"
 #include "Render.h"
+#include "RenderBase.h"
+#include "RenderTexture.h"
+#include "Texture.h"
+#include "TextureManager.h"
+#include "Video.h"
+#include "m64p_plugin.h"
+#include "osal_opengl.h"
+#include "osal_preproc.h"
+#include "typedefs.h"
 
 extern uObjMtxReal gObjMtxReal;
 extern Matrix g_MtxReal;

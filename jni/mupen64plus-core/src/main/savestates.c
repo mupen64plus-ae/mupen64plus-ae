@@ -22,23 +22,24 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <SDL.h>
+#include <SDL_thread.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <SDL_thread.h>
+#include <sys/types.h>
+#include <zlib.h>
 
 #define M64P_CORE_PROTOTYPES 1
-#include "api/m64p_types.h"
-#include "api/callbacks.h"
-#include "api/m64p_config.h"
-#include "api/config.h"
-
-#include "savestates.h"
-#include "main.h"
-#include "rom.h"
-#include "util.h"
-#include "workqueue.h"
-
 #include "ai/ai_controller.h"
+#include "api/callbacks.h"
+#include "api/config.h"
+#include "api/m64p_config.h"
+#include "api/m64p_types.h"
+#include "main.h"
+#include "main/list.h"
 #include "memory/memory.h"
 #include "osal/preproc.h"
 #include "osd/osd.h"
@@ -47,9 +48,13 @@
 #include "r4300/r4300_core.h"
 #include "rdp/rdp_core.h"
 #include "ri/ri_controller.h"
+#include "rom.h"
 #include "rsp/rsp_core.h"
+#include "savestates.h"
 #include "si/si_controller.h"
+#include "util.h"
 #include "vi/vi_controller.h"
+#include "workqueue.h"
 
 #ifdef LIBMINIZIP
     #include <unzip.h>
@@ -192,6 +197,7 @@ static int savestates_load_m64p(char *filepath)
     gzFile f;
     int version;
     int i;
+    uint32_t FCR31;
 
     size_t savestateSize;
     unsigned char *savestateData, *curr;
@@ -410,7 +416,9 @@ static int savestates_load_m64p(char *filepath)
     if ((cp0_regs[CP0_STATUS_REG] & UINT32_C(0x04000000)) == 0)  // 32-bit FPR mode requires data shuffling because 64-bit layout is always stored in savestate file
         shuffle_fpr_data(UINT32_C(0x04000000), 0);
     *r4300_cp1_fcr0()  = GETDATA(curr, uint32_t);
-    *r4300_cp1_fcr31() = GETDATA(curr, uint32_t);
+    FCR31 = GETDATA(curr, uint32_t);
+    *r4300_cp1_fcr31() = FCR31;
+    update_x86_rounding_mode(FCR31);
 
     for (i = 0; i < 32; i++)
     {
@@ -463,6 +471,7 @@ static int savestates_load_pj64(char *filepath, void *handle,
     char buffer[1024];
     unsigned int vi_timer, SaveRDRAMSize;
     int i;
+    uint32_t FCR31;
 
     unsigned char header[8];
     unsigned char RomHeader[0x40];
@@ -550,7 +559,9 @@ static int savestates_load_pj64(char *filepath, void *handle,
     // FPCR
     *r4300_cp1_fcr0() = GETDATA(curr, uint32_t);
     curr += 30 * 4; // FCR1...FCR30 not supported
-    *r4300_cp1_fcr31() = GETDATA(curr, uint32_t);
+    FCR31 = GETDATA(curr, uint32_t);
+    *r4300_cp1_fcr31() = FCR31;
+    update_x86_rounding_mode(FCR31);
 
     // hi / lo
     *r4300_mult_hi() = GETDATA(curr, int64_t);

@@ -18,10 +18,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /* This source file contains code for assigning function pointers to some OpenGL functions */
 /* This is only necessary because Windows does not contain development support for OpenGL versions beyond 1.1 */
+#ifndef USE_GLES
+#include "osal_opengl.h"
+#include <stddef.h>
 
-#include <SDL_opengl.h>
 #include "OGLExtensions.h"
 #include "Video.h"
+#include "m64p_types.h"
 
 static void APIENTRY EmptyFunc(void) { return; }
 
@@ -54,5 +57,5 @@ void OGLExtensions_Init(void)
     INIT_ENTRY_POINT(PFUNCGLFOGCOORDPOINTERPROC,           glFogCoordPointer);
     INIT_ENTRY_POINT(PFUNCGLCLIENTACTIVETEXTUREPROC,       glClientActiveTexture);
 }
-
+#endif  // USE_GLES
 

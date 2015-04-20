@@ -17,14 +17,28 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include <string.h>
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
-#include "osal_preproc.h"
-#include "float.h"
+#include "Combiner.h"
+#include "CombinerDefs.h"
+#include "Config.h"
+#include "Debugger.h"
+#include "DecodedMux.h"
 #include "DeviceBuilder.h"
+#include "IColor.h"
+#include "RSP_Parser.h"
 #include "Render.h"
+#include "RenderBase.h"
 #include "Timing.h"
+#include "VectorMath.h"
+#include "Video.h"
+#include "float.h"
+#include "m64p_plugin.h"
+#include "osal_preproc.h"
+#include "typedefs.h"
 
 extern FiddledVtx * g_pVtxBase;
 
@@ -743,7 +757,7 @@ void SetFogMinMax(float fMin, float fMax, float fMul, float fOffset)
     }
 
     {
-        gRSPfFogMin = max(0,fMin/500-1);
+        gRSPfFogMin = std::max(0.f,fMin/500-1);
         gRSPfFogMax = fMax/500-1;
     }
 
@@ -1048,7 +1062,7 @@ uint32 LightVert(XVECTOR4 & norm, int vidx)
                 {
                     //float f = d2/gRSPlights[l].range*50;
                     float f = d2/15000*50;
-                    f = 1 - min(f,1);
+                    f = 1 - std::min(f,1.f);
                     fCosT *= f*f;
 
                     r += gRSPlights[l].fr * fCosT;

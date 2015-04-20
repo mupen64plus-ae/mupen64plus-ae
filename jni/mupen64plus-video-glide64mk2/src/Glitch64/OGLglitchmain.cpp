@@ -2331,39 +2331,11 @@ grTexMultibaseAddress( GrChipID_t       tmu,
   display_warning("grTexMultibaseAddress");
 }
 
-/*
-inline void MySleep(FxU32 ms)
-{
-#ifdef _WIN32
-  Sleep(ms);
-#else
-  SDL_Delay(ms);
-#endif
-}
-*/
-
-#ifdef _WIN32
-static void CorrectGamma(LPVOID apGammaRamp)
-{
-  HDC hdc = GetDC(NULL);
-  if (hdc != NULL)
-  {
-    SetDeviceGammaRamp(hdc, apGammaRamp);
-    ReleaseDC(NULL, hdc);
-  }
-}
-#else
-static void CorrectGamma(const FxU16 aGammaRamp[3][256])
-{
-  //TODO?
-  //int res = SDL_SetGammaRamp(aGammaRamp[0], aGammaRamp[1], aGammaRamp[2]);
-  //LOG("SDL_SetGammaRamp returned %d\r\n", res);
-}
-#endif
-
 FX_ENTRY void FX_CALL
 grLoadGammaTable( FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
 {
+  //TODO?
+  /*
   LOG("grLoadGammaTable\r\n");
   if (!fullscreen)
     return;
@@ -2374,8 +2346,7 @@ grLoadGammaTable( FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
     aGammaRamp[1][i] = (FxU16)((green[i] << 8) & 0xFFFF);
     aGammaRamp[2][i] = (FxU16)((blue[i] << 8) & 0xFFFF);
   }
-  CorrectGamma(aGammaRamp);
-  //MySleep(1000); //workaround for Mupen64
+  CorrectGamma(aGammaRamp);*/
 }
 
 FX_ENTRY void FX_CALL
@@ -2410,7 +2381,8 @@ grGetGammaTableExt(FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
 FX_ENTRY void FX_CALL
 guGammaCorrectionRGB( FxFloat gammaR, FxFloat gammaG, FxFloat gammaB )
 {
-  LOG("guGammaCorrectionRGB()\r\n");
+  //TODO?
+  /*LOG("guGammaCorrectionRGB()\r\n");
   if (!fullscreen)
     return;
   FxU16 aGammaRamp[3][256];
@@ -2420,7 +2392,7 @@ guGammaCorrectionRGB( FxFloat gammaR, FxFloat gammaG, FxFloat gammaB )
     aGammaRamp[1][i] = (((FxU16)((pow(i/255.0F, 1.0F/gammaG)) * 255.0F + 0.5F)) << 8) & 0xFFFF;
     aGammaRamp[2][i] = (((FxU16)((pow(i/255.0F, 1.0F/gammaB)) * 255.0F + 0.5F)) << 8) & 0xFFFF;
   }
-  CorrectGamma(aGammaRamp);
+  CorrectGamma(aGammaRamp);*/
 }
 
 FX_ENTRY void FX_CALL

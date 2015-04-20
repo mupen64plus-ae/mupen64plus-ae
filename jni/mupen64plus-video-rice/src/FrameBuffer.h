@@ -20,9 +20,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _FRAME_BUFFER_H_
 #define _FRAME_BUFFER_H_
 
-#include "typedefs.h"
+#include <stddef.h>
+
 #include "RenderTexture.h"
+#include "Texture.h"
 #include "TextureManager.h"
+#include "osal_preproc.h"
+#include "typedefs.h"
 
 typedef int SURFFORMAT;
 

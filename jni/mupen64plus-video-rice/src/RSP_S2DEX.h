@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _RSP_S2DEX_H_
 #define _RSP_S2DEX_H_
 
+#include "typedefs.h"
+
 #define S2DEX_BG_1CYC           0x01
 #define S2DEX_BG_COPY           0x02
 #define S2DEX_OBJ_RECTANGLE     0x03
