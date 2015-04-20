@@ -22,12 +22,12 @@
 #ifndef M64P_R4300_ASSEMBLE_H
 #define M64P_R4300_ASSEMBLE_H
 
-#include "r4300/recomph.h"
-#include "api/callbacks.h"
-#include "osal/preproc.h"
-
 #include <stdint.h>
 #include <stdlib.h>
+
+#include "api/callbacks.h"
+#include "osal/preproc.h"
+#include "r4300/recomph.h"
 
 extern int64_t reg[32];
 
@@ -59,6 +59,8 @@ extern int64_t reg[32];
 #define BH 7
 
 extern int branch_taken;
+
+extern const uint16_t trunc_mode, round_mode, ceil_mode, floor_mode;
 
 void jump_start_rel8(void);
 void jump_end_rel8(void);

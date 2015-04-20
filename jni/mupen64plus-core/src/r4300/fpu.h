@@ -22,15 +22,16 @@
 #ifndef M64P_R4300_FPU_H
 #define M64P_R4300_FPU_H
 
-#include <stdint.h>
 #include <math.h>
+#include <stdint.h>
 
-#include "r4300.h"
 #include "cp1_private.h"
+#include "r4300.h"
 
 #ifdef _MSC_VER
   #define M64P_FPU_INLINE static __inline
   #include <float.h>
+
   typedef enum { FE_TONEAREST = 0, FE_TOWARDZERO, FE_UPWARD, FE_DOWNWARD } eRoundType;
   static void fesetround(eRoundType RoundType)
   {
@@ -53,17 +54,17 @@
 
 M64P_FPU_INLINE void set_rounding(void)
 {
-  switch(rounding_mode) {
-  case 0x33F:
+  switch(FCR31 & 3) {
+  case 0: /* Round to nearest, or to even if equidistant */
     fesetround(FE_TONEAREST);
     break;
-  case 0xF3F:
+  case 1: /* Truncate (toward 0) */
     fesetround(FE_TOWARDZERO);
     break;
-  case 0xB3F:
+  case 2: /* Round up (toward +Inf) */
     fesetround(FE_UPWARD);
     break;
-  case 0x73F:
+  case 3: /* Round down (toward -Inf) */
     fesetround(FE_DOWNWARD);
     break;
   }

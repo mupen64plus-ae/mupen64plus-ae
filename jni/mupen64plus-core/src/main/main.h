@@ -23,17 +23,17 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <stdint.h>
+
 #include "api/m64p_types.h"
 #include "osal/preproc.h"
 
-#include <stdint.h>
-
-struct r4300_core;
-struct rdp_core;
-struct rsp_core;
 struct ai_controller;
 struct pi_controller;
+struct r4300_core;
+struct rdp_core;
 struct ri_controller;
+struct rsp_core;
 struct si_controller;
 struct vi_controller;
 
