@@ -43,6 +43,11 @@ for currentBranch in "${remoteBranches[@]}"; do
     cmd="git reset --hard origin/""$currentBranch"; $cmd
     newRevision=`git rev-parse --short HEAD`
     
+    # Configure build dependencies
+    android update project -s -p libs/extras/android/support/v7/appcompat
+    android update project -s -p libs/extras/android/support/v7/gridlayout
+    android update project -s -p .
+    
     # Compare local and remote revision numbers, and build if there are changes
     if [ "$oldRevision" == "$newRevision" ] && [ "$forceBuild" == false ]; then
         echo "Nothing new to build"
