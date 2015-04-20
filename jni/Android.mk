@@ -377,7 +377,7 @@ LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=                     \
-    $(SRCDIR)/liblinux                  \
+    $(LOCAL_PATH)/$(SRCDIR)             \
     $(M64P_API_INCLUDES)                \
     $(PNG_INCLUDES)                     \
     $(SDL_INCLUDES)                     \
