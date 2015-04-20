@@ -22,12 +22,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <SDL.h>
+#include <SDL_audio.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <SDL.h>
-#include <SDL_audio.h>
 
 #ifdef USE_SRC
 #include <samplerate.h>
@@ -42,14 +42,13 @@
 #endif
 
 #define M64P_PLUGIN_PROTOTYPES 1
-#include "m64p_types.h"
-#include "m64p_plugin.h"
 #include "m64p_common.h"
 #include "m64p_config.h"
-
+#include "m64p_plugin.h"
+#include "m64p_types.h"
 #include "main.h"
-#include "volume.h"
 #include "osal_dynamiclib.h"
+#include "volume.h"
 
 /* Default start-time size of primary buffer (in equivalent output samples).
    This is the buffer where audio is loaded after it's extracted from n64's memory.
