@@ -43,11 +43,6 @@ for currentBranch in "${remoteBranches[@]}"; do
     cmd="git reset --hard origin/""$currentBranch"; $cmd
     newRevision=`git rev-parse --short HEAD`
     
-    # Configure build dependencies
-    android update project -s -p libs/extras/android/support/v7/appcompat
-    android update project -s -p libs/extras/android/support/v7/gridlayout
-    android update project -s -p .
-    
     # Compare local and remote revision numbers, and build if there are changes
     if [ "$oldRevision" == "$newRevision" ] && [ "$forceBuild" == false ]; then
         echo "Nothing new to build"
@@ -55,6 +50,13 @@ for currentBranch in "${remoteBranches[@]}"; do
         if [ "$forceBuild" == true ]; then
             "Forcing auto-build"
         fi
+        
+        # Configure build dependencies
+        echo "Configuring build dependencies"
+        android update project -s -p libs/extras/android/support/v7/appcompat
+        android update project -s -p libs/extras/android/support/v7/gridlayout
+        android update project -s -p .
+        
         echo "Cleaning previous build"
         ant clean
         ndk-build clean
@@ -71,6 +73,10 @@ for currentBranch in "${remoteBranches[@]}"; do
             echo "Uploading APK to host"
             cmd="scp -v -i ""$3"" bin/Mupen64Plus-debug.apk ""$1"":""$2""/Mupen64PlusAE_""$sanitizedBranchName""_""$(date +'%Y%m%d%H%M')""_""$newRevision"".apk"; $cmd
         fi
+        
+        # Dependency configuration generates untracked files; remove them
+        echo "Cleaning up any untracked files"
+        git clean -fd
     fi
 done
 # Make sure 'master' branch is checked out next time this script is executed from crontab
