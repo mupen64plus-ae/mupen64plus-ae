@@ -351,6 +351,7 @@
     <string name="audioPlugin_entryNone">None (audio disabled)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
     <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
 
     <string name="audioBufferSize_title">Audio buffer size</string>
     <string name="audioBufferSize_entry2048">Default</string>

@@ -318,11 +318,13 @@
         <item>@string/audioPlugin_entryNone</item>
         <item>@string/audioPlugin_entryNoneNoSpeedLimit</item>
         <item>@string/audioPlugin_entrySdl</item>
+        <item>@string/audioPlugin_entrySles</item>
     </string-array>
     <string-array name="audioPlugin_values" translatable="false">
         <item></item>
         <item>nospeedlimit</item>
         <item>libmupen64plus-audio-sdl.so</item>
+        <item>libmupen64plus-audio-sles.so</item>
     </string-array>
 
     <string name="audioPlugin_default" translatable="false">libmupen64plus-audio-sdl.so</string>

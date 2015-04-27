@@ -259,6 +259,7 @@ public class AppData
                 libraryExists( "ae-exports" )                   &&
                 libraryExists( "ae-imports" )                   &&
                 libraryExists( "mupen64plus-audio-sdl" )        &&
+                libraryExists( "mupen64plus-audio-sles" )       &&
                 libraryExists( "mupen64plus-core" )             &&
                 libraryExists( "mupen64plus-input-android" )    &&
                 libraryExists( "mupen64plus-rsp-hle" )          &&
