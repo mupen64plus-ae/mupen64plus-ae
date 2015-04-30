@@ -353,10 +353,23 @@
     <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
 
-    <string name="audioBufferSize_title">Audio buffer size</string>
-    <string name="audioBufferSize_entry2048">Default</string>
-    <string name="audioBufferSize_entry128">Low-latency (experimental)</string>
-    <string name="audioBufferSize_entry8">Ultra-low latency (experimental)</string>
+    <string name="audioSDLBufferSize_title">Audio buffer size</string>
+    <string name="audioSDLBufferSize_entry2048">Default</string>
+    <string name="audioSDLBufferSize_entry128">Low-latency (experimental)</string>
+    <string name="audioSDLBufferSize_entry8">Ultra-low latency (experimental)</string>
+    
+    <string name="audioSLESBufferSize_title">Audio buffer size</string>
+    <string name="audioSLESBufferSize_entry2048">2048</string>
+    <string name="audioSLESBufferSize_entry1024">1024</string>
+    <string name="audioSLESBufferSize_entry512">512</string>
+    <string name="audioSLESBufferSize_entry256">256</string>
+    <string name="audioSLESBufferSize_entry128">128</string>
+    
+    <string name="audioSLESBufferNbr_title">Audio buffer number</string>
+    <string name="audioSLESBufferNbr_entry2">2</string>
+    <string name="audioSLESBufferNbr_entry3">3</string>
+    <string name="audioSLESBufferNbr_entry4">4</string>
+    <string name="audioSLESBufferNbr_entry5">5</string>
 
     <string name="localeOverride_entrySystemDefault">System default</string>
 

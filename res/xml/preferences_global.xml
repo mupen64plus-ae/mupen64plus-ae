@@ -155,13 +155,26 @@
             android:summary="@string/selectedValue"
             android:title="@string/audioPlugin_title" />
         <paulscode.android.mupen64plusae.preference.CompatibleListPreference
-            android:defaultValue="@string/audioBufferSize_default"
-            android:entries="@array/audioBufferSize_entries"
-            android:entryValues="@array/audioBufferSize_values"
-            android:key="audioBufferSize"
+            android:defaultValue="@string/audioSDLBufferSize_default"
+            android:entries="@array/audioSDLBufferSize_entries"
+            android:entryValues="@array/audioSDLBufferSize_values"
+            android:key="audioSDLBufferSize"
             android:summary="@string/selectedValue"
-            android:title="@string/audioBufferSize_title" />
-
+            android:title="@string/audioSDLBufferSize_title" />
+        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+            android:defaultValue="@string/audioSLESBufferSize_default"
+            android:entries="@array/audioSLESBufferSize_entries"
+            android:entryValues="@array/audioSLESBufferSize_values"
+            android:key="audioSLESBufferSize"
+            android:summary="@string/selectedValue"
+            android:title="@string/audioSLESBufferSize_title" />
+         <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+            android:defaultValue="@string/audioSLESBufferNbr_default"
+            android:entries="@array/audioSLESBufferNbr_entries"
+            android:entryValues="@array/audioSLESBufferNbr_values"
+            android:key="audioSLESBufferNbr"
+            android:summary="@string/selectedValue"
+            android:title="@string/audioSLESBufferNbr_title" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="audioSynchronize"

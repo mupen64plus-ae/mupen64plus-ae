@@ -93,7 +93,9 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
     private static final String DISPLAY_SCALING = "displayScaling";
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
     private static final String AUDIO_PLUGIN = "audioPlugin";
-    private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
+    private static final String AUDIO_SDL_BUFFER_SIZE = "audioSDLBufferSize";
+    private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize";
+    private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
@@ -128,7 +130,9 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING,          R.string.displayScaling_default,        R.array.displayScaling_values );
         PrefUtil.validateListPreference( res, mPrefs, VIDEO_HARDWARE_TYPE,      R.string.videoHardwareType_default,     R.array.videoHardwareType_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_PLUGIN,             R.string.audioPlugin_default,           R.array.audioPlugin_values );
-        PrefUtil.validateListPreference( res, mPrefs, AUDIO_BUFFER_SIZE,        R.string.audioBufferSize_default,       R.array.audioBufferSize_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_SDL_BUFFER_SIZE,    R.string.audioSDLBufferSize_default,    R.array.audioSDLBufferSize_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_SIZE,   R.string.audioSLESBufferSize_default,   R.array.audioSLESBufferSize_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_NBR,    R.string.audioSLESBufferNbr_default,    R.array.audioSLESBufferNbr_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_STYLE,        R.string.touchscreenStyle_default,      R.array.touchscreenStyle_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHPAD_LAYOUT,          R.string.touchpadLayout_default,        R.array.touchpadLayout_values );
