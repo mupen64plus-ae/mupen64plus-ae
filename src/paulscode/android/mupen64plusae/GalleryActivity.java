@@ -38,7 +38,7 @@ import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
@@ -86,7 +86,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     
     // App data and user preferences
     private AppData mAppData = null;
-    private UserPrefs mUserPrefs = null;
+    private GlobalPrefs mGlobalPrefs = null;
     
     // Widgets
     private RecyclerView mGridView;
@@ -139,8 +139,8 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mUserPrefs = new UserPrefs( this );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         
         int lastVer = mAppData.getLastAppVersionCode();
         int currVer = mAppData.appVersionCode;
@@ -167,7 +167,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         // Lay out the content
         setContentView( R.layout.gallery_activity );
         mGridView = (RecyclerView) findViewById( R.id.gridview );
-        refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+        refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
         
         // Update the grid layout
         galleryMaxWidth = (int) getResources().getDimension( R.dimen.galleryImageWidth );
@@ -352,7 +352,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             public boolean onMenuItemActionCollapse( MenuItem item )
             {
                 mSearchQuery = "";
-                refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+                refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
                 return true;
             }
             
@@ -375,7 +375,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             public boolean onQueryTextChange( String query )
             {
                 mSearchQuery = query;
-                refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+                refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
                 return false;
             }
         } );
@@ -442,7 +442,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 Utility.launchUri( GalleryActivity.this, R.string.uri_credits );
                 return true;
             case R.id.menuItem_localeOverride:
-                mUserPrefs.changeLocale( this );
+                mGlobalPrefs.changeLocale( this );
                 return true;
             default:
                 return super.onOptionsItemSelected( item );
@@ -590,17 +590,17 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         if( startDir == null || !startDir.exists() )
             startDir = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
         
-        ScanRomsDialog dialog = new ScanRomsDialog( this, startDir, mUserPrefs.getSearchZips(),
-                mUserPrefs.getDownloadArt(), mUserPrefs.getClearGallery(),
+        ScanRomsDialog dialog = new ScanRomsDialog( this, startDir, mGlobalPrefs.getSearchZips(),
+                mGlobalPrefs.getDownloadArt(), mGlobalPrefs.getClearGallery(),
                 new ScanRomsDialogListener()
                 {
                     @Override
                     public void onDialogClosed( File file, int which, boolean searchZips,
                             boolean downloadArt, boolean clearGallery )
                     {
-                        mUserPrefs.putSearchZips( searchZips );
-                        mUserPrefs.putDownloadArt( downloadArt );
-                        mUserPrefs.putClearGallery( clearGallery );
+                        mGlobalPrefs.putSearchZips( searchZips );
+                        mGlobalPrefs.putDownloadArt( downloadArt );
+                        mGlobalPrefs.putClearGallery( clearGallery );
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
                             // Search this folder for ROMs
@@ -625,9 +625,9 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     {
         // Asynchronously search for ROMs
         mCacheRomInfoTask = new CacheRomInfoTask( this, startDir, mAppData.mupen64plus_ini,
-                mUserPrefs.romInfoCache_cfg, mUserPrefs.coverArtDir, mUserPrefs.unzippedRomsDir,
-                mUserPrefs.getSearchZips(), mUserPrefs.getDownloadArt(),
-                mUserPrefs.getClearGallery(), this );
+                mGlobalPrefs.romInfoCache_cfg, mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir,
+                mGlobalPrefs.getSearchZips(), mGlobalPrefs.getDownloadArt(),
+                mGlobalPrefs.getClearGallery(), this );
         mCacheRomInfoTask.execute();
     }
     
@@ -653,7 +653,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         List<GalleryItem> items = new ArrayList<GalleryItem>();
         List<GalleryItem> recentItems = null;
         int currentTime = 0;
-        if( mUserPrefs.isRecentShown )
+        if( mGlobalPrefs.isRecentShown )
         {
             recentItems = new ArrayList<GalleryItem>();
             currentTime = (int) ( new Date().getTime() / 1000 );
@@ -665,7 +665,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             {
                 ConfigSection section = config.get( md5 );
                 String goodName;
-                if( mUserPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
+                if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
                     goodName = section.get( "goodName" );
                 else
                     goodName = section.get( "baseName" );
@@ -697,7 +697,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     GalleryItem item = new GalleryItem( this, md5, goodName, romPath, artPath,
                             lastPlayed );
                     items.add( item );
-                    if( mUserPrefs.isRecentShown
+                    if( mGlobalPrefs.isRecentShown
                             && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
                         recentItems.add( item );
                 }
@@ -708,7 +708,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
         
         List<GalleryItem> combinedItems = items;
-        if( mUserPrefs.isRecentShown && recentItems.size() > 0 )
+        if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
         {
             combinedItems = new ArrayList<GalleryItem>();
             
@@ -812,15 +812,15 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     private void refreshViews()
     {
         // Refresh the preferences object in case another activity changed the data
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         
         // Set the sidebar opacity on the two sidebars
         mDrawerList.setBackgroundDrawable( new DrawerDrawable(
-                mUserPrefs.displayActionBarTransparency ) );
+                mGlobalPrefs.displayActionBarTransparency ) );
         mGameSidebar.setBackgroundDrawable( new DrawerDrawable(
-                mUserPrefs.displayActionBarTransparency ) );
+                mGlobalPrefs.displayActionBarTransparency ) );
         
         // Refresh the gallery
-        refreshGrid( new ConfigFile( mUserPrefs.romInfoCache_cfg ) );
+        refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
     }
 }

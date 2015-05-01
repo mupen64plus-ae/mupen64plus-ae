@@ -27,7 +27,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListener;
@@ -83,7 +83,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
     
     // App data and user preferences
     private AppData mAppData = null;
-    private UserPrefs mUserPrefs = null;
+    private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
     
     // These constants must match the keys used in res/xml/preferences*.xml
@@ -111,8 +111,8 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mUserPrefs = new UserPrefs( this );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
@@ -136,7 +136,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         // @formatter:on
         
         // Refresh the preference data wrapper
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         
         // Initialize the OUYA interface if running on OUYA
         if( AppData.IS_OUYA_HARDWARE )
@@ -152,7 +152,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         setContentView( R.layout.splash_activity );
         mTextView = (TextView) findViewById( R.id.mainText );
         
-        if( mUserPrefs.isBigScreenMode )
+        if( mGlobalPrefs.isBigScreenMode )
         {
             ImageView splash = (ImageView) findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo_ouya );
@@ -202,7 +202,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
             // Extraction succeeded, record new asset version, merge cheats, and launch next activity
             mTextView.setText( R.string.assetExtractor_finished );
             mAppData.putAssetVersion( ASSET_VERSION );
-            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mUserPrefs.customCheats_txt, mAppData.mupencheat_txt );
+            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
             launchGalleryActivity();
         }
         else

@@ -38,7 +38,7 @@ import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.jni.NativeSDL;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -95,7 +95,7 @@ public class CoreInterface
     
     // User/app data - used by NativeImports, NativeSDL
     protected static AppData sAppData = null;
-    protected static UserPrefs sUserPrefs = null;
+    protected static GlobalPrefs sGlobalPrefs = null;
     protected static GamePrefs sGamePrefs = null;
     
     // Audio/video objects - used by NativeSDL
@@ -141,9 +141,9 @@ public class CoreInterface
         sActivity = activity;
         sSurface = surface;
         sAppData = new AppData( sActivity );
-        sUserPrefs = new UserPrefs( sActivity );
+        sGlobalPrefs = new GlobalPrefs( sActivity );
         sGamePrefs = new GamePrefs( sActivity, romMd5, new RomHeader( romPath ) );
-        NativeConfigFiles.syncConfigFiles( sGamePrefs, sUserPrefs, sAppData );
+        NativeConfigFiles.syncConfigFiles( sGamePrefs, sGlobalPrefs, sAppData );
         
         // Make sure various directories exist so that we can write to them
         new File( sGamePrefs.sramDataDir ).mkdirs();
@@ -152,8 +152,8 @@ public class CoreInterface
         new File( sGamePrefs.userSaveDir ).mkdirs();
         new File( sGamePrefs.screenshotDir ).mkdirs();
         new File( sGamePrefs.coreUserConfigDir ).mkdirs();
-        new File( sUserPrefs.coreUserDataDir ).mkdirs();
-        new File( sUserPrefs.coreUserCacheDir ).mkdirs();
+        new File( sGlobalPrefs.coreUserDataDir ).mkdirs();
+        new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
         sAutoSavePath = sGamePrefs.autoSaveDir + "/yyyy-mm-dd-hh-mm-ss.sav";
     }
     
@@ -207,10 +207,10 @@ public class CoreInterface
                 {
                     // Initialize input-android plugin (even if we aren't going to use it)
                     NativeInput.init();
-                    NativeInput.setConfig( 0, sGamePrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
-                    NativeInput.setConfig( 1, sGamePrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
-                    NativeInput.setConfig( 2, sGamePrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
-                    NativeInput.setConfig( 3, sGamePrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
+                    NativeInput.setConfig( 0, sGamePrefs.isPlugged1, sGlobalPrefs.getPakType( 1 ) );
+                    NativeInput.setConfig( 1, sGamePrefs.isPlugged2, sGlobalPrefs.getPakType( 2 ) );
+                    NativeInput.setConfig( 2, sGamePrefs.isPlugged3, sGlobalPrefs.getPakType( 3 ) );
+                    NativeInput.setConfig( 3, sGamePrefs.isPlugged4, sGlobalPrefs.getPakType( 4 ) );
                     
                     ArrayList<String> arglist = new ArrayList<String>();
                     arglist.add( "mupen64plus" );
@@ -218,7 +218,7 @@ public class CoreInterface
                     arglist.add( sAppData.coreLib );
                     arglist.add( "--configdir" );
                     arglist.add( sGamePrefs.coreUserConfigDir );
-                    if( !sUserPrefs.isFramelimiterEnabled )
+                    if( !sGlobalPrefs.isFramelimiterEnabled )
                     {
                         arglist.add( "--nospeedlimit" );
                     }
@@ -228,7 +228,7 @@ public class CoreInterface
                         arglist.add( sCheatOptions );
                     }
                     arglist.add( sRomPath );
-                    int result = NativeExports.emuStart( sUserPrefs.coreUserDataDir, sUserPrefs.coreUserCacheDir, arglist.toArray() );
+                    int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
                     if( result != 0 )
                     {
                         // Messages match return codes from mupen64plus-ui-console/main.c

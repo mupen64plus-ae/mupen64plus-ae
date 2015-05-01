@@ -38,7 +38,7 @@ import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
@@ -88,7 +88,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // App data and user preferences
     private AppData mAppData = null;
-    private UserPrefs mUserPrefs = null;
+    private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
     private SharedPreferences mPrefs = null;
     
@@ -138,9 +138,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Get app data and user preferences
         mAppData = new AppData( this );
         mRomHeader = new RomHeader( mRomPath );
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
         // Get the detailed info about the ROM
@@ -264,25 +264,25 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mPrefs.unregisterOnSharedPreferenceChangeListener( this );
         
         // Refresh the preferences objects
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
         
         // Populate the profile preferences
         mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
-                mUserPrefs.emulationProfiles_cfg, mUserPrefs.getEmulationProfileDefault() );
+                mGlobalPrefs.emulationProfiles_cfg, mGlobalPrefs.getEmulationProfileDefault() );
         mTouchscreenProfile.populateProfiles( mAppData.touchscreenProfiles_cfg,
-                mUserPrefs.touchscreenProfiles_cfg, mUserPrefs.getTouchscreenProfileDefault() );
+                mGlobalPrefs.touchscreenProfiles_cfg, mGlobalPrefs.getTouchscreenProfileDefault() );
         mControllerProfile1.populateProfiles( mAppData.controllerProfiles_cfg,
-                mUserPrefs.controllerProfiles_cfg, mUserPrefs.getControllerProfileDefault() );
+                mGlobalPrefs.controllerProfiles_cfg, mGlobalPrefs.getControllerProfileDefault() );
         mControllerProfile2.populateProfiles( mAppData.controllerProfiles_cfg,
-                mUserPrefs.controllerProfiles_cfg, "" );
+                mGlobalPrefs.controllerProfiles_cfg, "" );
         mControllerProfile3.populateProfiles( mAppData.controllerProfiles_cfg,
-                mUserPrefs.controllerProfiles_cfg, "" );
+                mGlobalPrefs.controllerProfiles_cfg, "" );
         mControllerProfile4.populateProfiles( mAppData.controllerProfiles_cfg,
-                mUserPrefs.controllerProfiles_cfg, "" );
+                mGlobalPrefs.controllerProfiles_cfg, "" );
         
         // Refresh the preferences objects in case populate* changed a value
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
         
         // Set cheats screen summary text
@@ -403,7 +403,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     {
         // Popup the multi-player dialog if necessary and abort if any players are unassigned
         if( mRomDetail.players > 1 && mGamePrefs.playerMap.isEnabled()
-                && mUserPrefs.getPlayerMapReminder() )
+                && mGlobalPrefs.getPlayerMapReminder() )
         {
             mGamePrefs.playerMap.removeUnavailableMappings();
             boolean needs1 = mGamePrefs.isControllerEnabled1 && !mGamePrefs.playerMap.isMapped( 1 );
@@ -435,7 +435,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Update the ConfigSection with the new value for lastPlayed
         String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
-        ConfigFile config = new ConfigFile( mUserPrefs.romInfoCache_cfg );
+        ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
         if( config != null )
         {
             config.put( mRomMd5, "lastPlayed", lastPlayed );
@@ -443,7 +443,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
         
         // Launch the appropriate game activity
-        Intent intent = mUserPrefs.isTouchpadEnabled ? new Intent( this,
+        Intent intent = mGlobalPrefs.isTouchpadEnabled ? new Intent( this,
                 GameActivityXperiaPlay.class ) : new Intent( this, GameActivity.class );
         
         // Pass the startup info via the intent

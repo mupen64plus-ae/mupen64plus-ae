@@ -41,7 +41,7 @@ import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.SuppressLint;
@@ -131,7 +131,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     private boolean mIsSurface = false;     // true if the surface is available
     
     // App data and user preferences
-    private UserPrefs mUserPrefs;
+    private GlobalPrefs mGlobalPrefs;
     private GamePrefs mGamePrefs;
     
     public GameLifecycleHandler( Activity activity )
@@ -164,14 +164,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         MogaHack.init( mMogaController, mActivity );
         
         // Get app data and user preferences
-        mUserPrefs = new UserPrefs( mActivity );
+        mGlobalPrefs = new GlobalPrefs( mActivity );
         mGamePrefs = new GamePrefs( mActivity, mRomMd5, new RomHeader( mRomPath ) );
-        mUserPrefs.enforceLocale( mActivity );
+        mGlobalPrefs.enforceLocale( mActivity );
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
         Window window = mActivity.getWindow();
-        if( mUserPrefs.isActionBarAvailable )
+        if( mGlobalPrefs.isActionBarAvailable )
             window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
         else
             window.requestFeature( Window.FEATURE_NO_TITLE );
@@ -183,10 +183,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Set the screen orientation
-        mActivity.setRequestedOrientation( mUserPrefs.displayOrientation );
+        mActivity.setRequestedOrientation( mGlobalPrefs.displayOrientation );
         
         // If the orientation changes, the screensize info changes, so we must refresh dependencies
-        mUserPrefs = new UserPrefs( mActivity );
+        mGlobalPrefs = new GlobalPrefs( mActivity );
     }
     
     @TargetApi( 11 )
@@ -208,32 +208,32 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mSurface.getHolder().addCallback( this );
         
         // Update the GameSurface size
-        mSurface.getHolder().setFixedSize( mUserPrefs.videoRenderWidth, mUserPrefs.videoRenderHeight );
+        mSurface.getHolder().setFixedSize( mGlobalPrefs.videoRenderWidth, mGlobalPrefs.videoRenderHeight );
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
-        params.width = mUserPrefs.videoSurfaceWidth;
-        params.height = mUserPrefs.videoSurfaceHeight;
-        params.gravity = mUserPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
+        params.width = mGlobalPrefs.videoSurfaceWidth;
+        params.height = mGlobalPrefs.videoSurfaceHeight;
+        params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
         mSurface.setLayoutParams( params );
         
         // Configure the action bar introduced in higher Android versions
-        if( mUserPrefs.isActionBarAvailable )
+        if( mGlobalPrefs.isActionBarAvailable )
         {
             mActivity.getActionBar().hide();
             ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
-            color.setAlpha( mUserPrefs.displayActionBarTransparency );
+            color.setAlpha( mGlobalPrefs.displayActionBarTransparency );
             mActivity.getActionBar().setBackgroundDrawable( color );
         }
         
         // Initialize the screen elements
-        if( mGamePrefs.isTouchscreenEnabled || mUserPrefs.isFpsEnabled )
+        if( mGamePrefs.isTouchscreenEnabled || mGlobalPrefs.isFpsEnabled )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources() );
-            mTouchscreenMap.load( mUserPrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
-                    mUserPrefs.isTouchscreenAnimated, mUserPrefs.isFpsEnabled,
-                    mUserPrefs.touchscreenScale, mUserPrefs.touchscreenTransparency );
+            mTouchscreenMap.load( mGlobalPrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
+                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled,
+                    mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
             mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden,
-                    mUserPrefs.isFpsEnabled, mUserPrefs.isTouchscreenAnimated );
+                    mGlobalPrefs.isFpsEnabled, mGlobalPrefs.isTouchscreenAnimated );
         }
         
         // Initialize user interface devices
@@ -317,7 +317,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // For devices with an action bar, absorb all back key presses
         // and toggle the action bar
-        if( keyCode == KeyEvent.KEYCODE_BACK && mUserPrefs.isActionBarAvailable )
+        if( keyCode == KeyEvent.KEYCODE_BACK && mGlobalPrefs.isActionBarAvailable )
         {
             if( keyDown )
                 toggleActionBar();
@@ -350,12 +350,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         {
             // Create the map for the touchpad
             TouchMap touchpadMap = new TouchMap( mActivity.getResources() );
-            touchpadMap.load( mUserPrefs.touchpadSkin, mUserPrefs.touchpadProfile, false );
+            touchpadMap.load( mGlobalPrefs.touchpadSkin, mGlobalPrefs.touchpadProfile, false );
             touchpadMap.resize( NativeXperiaTouchpad.PAD_WIDTH, NativeXperiaTouchpad.PAD_HEIGHT );
             
             // Create the touchpad controller
             touchpadController = new TouchController( touchpadMap, inputSource, null, vibrator,
-                    TouchController.AUTOHOLD_METHOD_DISABLED, mUserPrefs.isTouchpadFeedbackEnabled,
+                    TouchController.AUTOHOLD_METHOD_DISABLED, mGlobalPrefs.isTouchpadFeedbackEnabled,
                     null );
             mControllers.add( touchpadController );
             
@@ -368,8 +368,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, vibrator, mUserPrefs.touchscreenAutoHold,
-                    mUserPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables );
+                    inputSource, mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,
+                    mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...
@@ -388,7 +388,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // Create the input providers shared among all peripheral controllers
         mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
-                mUserPrefs.unmappableKeyCodes );
+                mGlobalPrefs.unmappableKeyCodes );
         MogaProvider mogaProvider = new MogaProvider( mMogaController );
         AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1
                 ? new AxisProvider( inputSource )
@@ -432,7 +432,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         View view = mSurface.getRootView();
         if( view != null )
         {
-            if( AppData.IS_KITKAT && mUserPrefs.isImmersiveModeEnabled )
+            if( AppData.IS_KITKAT && mGlobalPrefs.isImmersiveModeEnabled )
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN

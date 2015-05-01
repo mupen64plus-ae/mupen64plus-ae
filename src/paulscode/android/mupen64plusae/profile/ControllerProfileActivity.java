@@ -43,7 +43,7 @@ import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -88,7 +88,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     private ControllerProfile mProfile;
     
     // User preferences wrapper
-    private UserPrefs mUserPrefs;
+    private GlobalPrefs mGlobalPrefs;
     
     // Command information
     private String[] mCommandNames;
@@ -117,8 +117,8 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
         MogaHack.init( mMogaController, this );
         
         // Get the user preferences wrapper
-        mUserPrefs = new UserPrefs( this );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         
         // Get the command info
         mCommandNames = getResources().getStringArray( R.array.inputMapActivity_entries );
@@ -136,15 +136,15 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
         String name = extras.getString( Keys.Extras.PROFILE_NAME );
         if( TextUtils.isEmpty( name ) )
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
-        mConfigFile = new ConfigFile( mUserPrefs.controllerProfiles_cfg );
+        mConfigFile = new ConfigFile( mGlobalPrefs.controllerProfiles_cfg );
         ConfigSection section = mConfigFile.get( name );
         if( section == null )
             throw new Error( "Invalid usage: profile name not found in config file" );
         mProfile = new ControllerProfile( false, section );
         
         // Set up input listeners
-        mUnmappableInputCodes = mUserPrefs.unmappableKeyCodes;
-        if( !mUserPrefs.isBigScreenMode )
+        mUnmappableInputCodes = mGlobalPrefs.unmappableKeyCodes;
+        if( !mGlobalPrefs.isBigScreenMode )
         {
             mKeyProvider = new KeyProvider( ImeFormula.DEFAULT, mUnmappableInputCodes );
             mKeyProvider.registerListener( this );
@@ -164,7 +164,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
             setTitle( mProfile.name + " : " + mProfile.comment );
         
         // Initialize the layout
-        if( mUserPrefs.isBigScreenMode )
+        if( mGlobalPrefs.isBigScreenMode )
             initLayoutBigScreenMode();
         else
             initLayoutDefault();
@@ -280,7 +280,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.controller_profile_activity, menu );
-        menu.findItem( R.id.menuItem_exit ).setVisible( !mUserPrefs.isBigScreenMode );
+        menu.findItem( R.id.menuItem_exit ).setVisible( !mGlobalPrefs.isBigScreenMode );
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -413,7 +413,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     @Override
     public boolean onKeyDown( int keyCode, KeyEvent event )
     {
-        if( mUserPrefs.isBigScreenMode )
+        if( mGlobalPrefs.isBigScreenMode )
             return super.onKeyDown( keyCode, event );
         else
             return mKeyProvider.onKey( keyCode, event ) || super.onKeyDown( keyCode, event );
@@ -422,7 +422,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     @Override
     public boolean onKeyUp( int keyCode, KeyEvent event )
     {
-        if( mUserPrefs.isBigScreenMode )
+        if( mGlobalPrefs.isBigScreenMode )
             return super.onKeyUp( keyCode, event );
         else
             return mKeyProvider.onKey( keyCode, event ) || super.onKeyUp( keyCode, event );
@@ -434,7 +434,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
     {
         if( !AppData.IS_HONEYCOMB_MR1 )
             return false;
-        else if( mUserPrefs.isBigScreenMode )
+        else if( mGlobalPrefs.isBigScreenMode )
             return super.onGenericMotionEvent( event );
         else
             return mAxisProvider.onGenericMotion( event ) || super.onGenericMotionEvent( event );

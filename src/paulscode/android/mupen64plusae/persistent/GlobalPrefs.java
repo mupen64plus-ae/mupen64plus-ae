@@ -82,7 +82,7 @@ import android.view.WindowManager;
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.
  */
-public class UserPrefs
+public class GlobalPrefs
 {
     /** The parent directory containing all user-writable data files. */
     public final String userDataDir;
@@ -260,7 +260,7 @@ public class UserPrefs
     @SuppressWarnings( "deprecation" )
     @SuppressLint( "InlinedApi" )
     @TargetApi( 17 )
-    public UserPrefs( Context context )
+    public GlobalPrefs( Context context )
     {
         AppData appData = new AppData( context );
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );

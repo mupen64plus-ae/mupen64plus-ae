@@ -25,7 +25,7 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -71,7 +71,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     
     // App data and user preferences
     private AppData mAppData = null;
-    private UserPrefs mUserPrefs = null;
+    private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
     
     @SuppressWarnings( "deprecation" )
@@ -82,15 +82,15 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mUserPrefs = new UserPrefs( this );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_global );
         
         // Refresh the preference data wrapper
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
@@ -102,7 +102,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         if( !AppData.IS_KITKAT )
             PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_IMMERSIVE_MODE );
         
-        if( !mUserPrefs.isActionBarAvailable )
+        if( !mGlobalPrefs.isActionBarAvailable )
             PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_ACTION_BAR_TRANSPARENCY );
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
@@ -169,15 +169,15 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     private void refreshViews()
     {
         // Refresh the preferences object
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         
         // Enable polygon offset pref if flicker reduction is custom
-        PrefUtil.enablePreference( this, VIDEO_POLYGON_OFFSET, mUserPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM );
+        PrefUtil.enablePreference( this, VIDEO_POLYGON_OFFSET, mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM );
         
         // Enable audio prefs if audio is enabled
-        PrefUtil.enablePreference( this, AUDIO_BUFFER_SIZE, mUserPrefs.audioPlugin.enabled );
-        PrefUtil.enablePreference( this, AUDIO_SYNCHRONIZE, mUserPrefs.audioPlugin.enabled );
-        PrefUtil.enablePreference( this, AUDIO_SWAP_CHANNELS, mUserPrefs.audioPlugin.enabled );
+        PrefUtil.enablePreference( this, AUDIO_BUFFER_SIZE, mGlobalPrefs.audioPlugin.enabled );
+        PrefUtil.enablePreference( this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled );
+        PrefUtil.enablePreference( this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled );
     }
     
     @Override

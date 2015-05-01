@@ -23,7 +23,7 @@ package paulscode.android.mupen64plusae.profile;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -111,7 +111,7 @@ public abstract class ProfileActivity extends PreferenceActivity implements
         super.onCreate( savedInstanceState );
         
         // Set locale
-        new UserPrefs( this ).enforceLocale( this );
+        new GlobalPrefs( this ).enforceLocale( this );
         
         // Load the profile; fail fast if there are any programmer usage errors
         Bundle extras = getIntent().getExtras();

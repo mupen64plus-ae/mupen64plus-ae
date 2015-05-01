@@ -28,7 +28,7 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     @Override
     protected String getConfigFilePath( boolean isBuiltin )
     {
-        return isBuiltin ? mAppData.controllerProfiles_cfg : mUserPrefs.controllerProfiles_cfg;
+        return isBuiltin ? mAppData.controllerProfiles_cfg : mGlobalPrefs.controllerProfiles_cfg;
     }
     
     @Override
@@ -40,13 +40,13 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     @Override
     protected String getDefaultProfile()
     {
-        return mUserPrefs.getControllerProfileDefault();
+        return mGlobalPrefs.getControllerProfileDefault();
     }
     
     @Override
     protected void putDefaultProfile( String name )
     {
-        mUserPrefs.putControllerProfileDefault( name );
+        mGlobalPrefs.putControllerProfileDefault( name );
     }
     
     @Override

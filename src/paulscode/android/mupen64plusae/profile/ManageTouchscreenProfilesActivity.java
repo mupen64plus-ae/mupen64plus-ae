@@ -28,7 +28,7 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     @Override
     protected String getConfigFilePath( boolean isBuiltin )
     {
-        return isBuiltin ? mAppData.touchscreenProfiles_cfg : mUserPrefs.touchscreenProfiles_cfg;
+        return isBuiltin ? mAppData.touchscreenProfiles_cfg : mGlobalPrefs.touchscreenProfiles_cfg;
     }
     
     @Override
@@ -40,13 +40,13 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     @Override
     protected String getDefaultProfile()
     {
-        return mUserPrefs.getTouchscreenProfileDefault();
+        return mGlobalPrefs.getTouchscreenProfileDefault();
     }
     
     @Override
     protected void putDefaultProfile( String name )
     {
-        mUserPrefs.putTouchscreenProfileDefault( name );
+        mGlobalPrefs.putTouchscreenProfileDefault( name );
     }
     
     @Override

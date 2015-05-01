@@ -27,7 +27,7 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -50,7 +50,7 @@ public class DiagnosticActivity extends Activity implements ControllerListener
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        new UserPrefs( this ).enforceLocale( this );
+        new GlobalPrefs( this ).enforceLocale( this );
         setContentView( R.layout.diagnostic_activity );
         
         // TODO: Remove hack after MOGA SDK is fixed
