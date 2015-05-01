@@ -120,7 +120,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         // If the activity is already running and is launched again (e.g. from a file manager app),
         // the existing instance will be reused rather than a new one created. This behavior is
         // specified in the manifest (launchMode = singleTask). In that situation, any activities
-        // above this on the stack (e.g. GameActivity, PlayMenuActivity) will be destroyed
+        // above this on the stack (e.g. GameActivity, GamePrefsActivity) will be destroyed
         // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
         // called again on this instance. Currently, the only info that may be passed via the intent
         // is the selected game path, so we only need to refresh that aspect of the UI. This will
@@ -467,7 +467,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     @Override
                     public void onAction()
                     {
-                        PlayMenuActivity.action = PlayMenuActivity.ACTION_RESUME;
+                        GamePrefsActivity.action = GamePrefsActivity.ACTION_RESUME;
                         launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
                     }
                 } );
@@ -486,7 +486,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                                     @Override
                                     public void onConfirm()
                                     {
-                                        PlayMenuActivity.action = PlayMenuActivity.ACTION_RESTART;
+                                        GamePrefsActivity.action = GamePrefsActivity.ACTION_RESTART;
                                         launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
                                     }
                                 } );
@@ -499,7 +499,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     @Override
                     public void onAction()
                     {
-                        PlayMenuActivity.action = null;
+                        GamePrefsActivity.action = null;
                         launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
                     }
                 } );
@@ -577,7 +577,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     {
         if( !TextUtils.isEmpty( romPath ) && !TextUtils.isEmpty( md5 ) )
         {
-            Intent intent = new Intent( GalleryActivity.this, PlayMenuActivity.class );
+            Intent intent = new Intent( GalleryActivity.this, GamePrefsActivity.class );
             intent.putExtra( Keys.Extras.ROM_PATH, romPath );
             intent.putExtra( Keys.Extras.ROM_MD5, md5 );
             startActivity( intent );

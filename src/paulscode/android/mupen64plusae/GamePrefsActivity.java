@@ -62,7 +62,7 @@ import android.util.Log;
 
 import com.bda.controller.Controller;
 
-public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
+public class GamePrefsActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences_play.xml
@@ -351,7 +351,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     {
         mCategoryCheats.removeAll();
         
-        Log.v( "PlayMenuActivity", "building from CRC = " + crc );
+        Log.v( "GamePrefsActivity", "building from CRC = " + crc );
         if( crc == null )
             return;
         
@@ -360,7 +360,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
         if( cheatSection == null )
         {
-            Log.w( "PlayMenuActivity", "No cheat section found for '" + crc + "'" );
+            Log.w( "GamePrefsActivity", "No cheat section found for '" + crc + "'" );
             return;
         }
         ArrayList<Cheat> cheats = new ArrayList<Cheat>();
@@ -491,9 +491,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             public void onConfirm()
             {
                 // Reset the user preferences
-                mPrefs.unregisterOnSharedPreferenceChangeListener( PlayMenuActivity.this );
+                mPrefs.unregisterOnSharedPreferenceChangeListener( GamePrefsActivity.this );
                 mPrefs.edit().clear().commit();
-                PreferenceManager.setDefaultValues( PlayMenuActivity.this, R.xml.preferences_game, true );
+                PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
                 
                 // Also reset any manual overrides the user may have made in the config file
                 File configFile = new File( mGamePrefs.mupen64plus_cfg );

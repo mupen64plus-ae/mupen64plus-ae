@@ -63,7 +63,7 @@
             android:launchMode="singleTask" >
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.PlayMenuActivity"
+            android:name="paulscode.android.mupen64plusae.GamePrefsActivity"
             android:exported="false"
             android:label="@string/PlayMenuActivity_title" >
             <intent-filter>
