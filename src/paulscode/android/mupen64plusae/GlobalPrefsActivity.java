@@ -37,7 +37,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-public class SettingsGlobalActivity extends PreferenceActivity implements OnPreferenceClickListener,
+public class GlobalPrefsActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
@@ -217,9 +217,9 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
             public void onConfirm()
             {
                 // Reset the user preferences
-                mPrefs.unregisterOnSharedPreferenceChangeListener( SettingsGlobalActivity.this );
+                mPrefs.unregisterOnSharedPreferenceChangeListener( GlobalPrefsActivity.this );
                 mPrefs.edit().clear().commit();
-                PreferenceManager.setDefaultValues( SettingsGlobalActivity.this, R.xml.preferences_global, true );
+                PreferenceManager.setDefaultValues( GlobalPrefsActivity.this, R.xml.preferences_global, true );
                 
                 // Rebuild the menu system by restarting the activity
                 finish();

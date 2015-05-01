@@ -24,8 +24,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.GameOverlay;
+import paulscode.android.mupen64plusae.GlobalPrefsActivity;
 import paulscode.android.mupen64plusae.Keys;
-import paulscode.android.mupen64plusae.SettingsGlobalActivity;
 import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
@@ -291,7 +291,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         switch( item.getItemId() )
         {
             case R.id.menuItem_globalSettings:
-                Intent intent = new Intent( this, SettingsGlobalActivity.class );
+                Intent intent = new Intent( this, GlobalPrefsActivity.class );
                 intent.putExtra( Keys.Extras.MENU_DISPLAY_MODE, 1 );
                 startActivity( intent );
                 return true;

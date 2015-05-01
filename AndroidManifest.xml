@@ -73,7 +73,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.SettingsGlobalActivity"
+            android:name="paulscode.android.mupen64plusae.GlobalPrefsActivity"
             android:exported="false"
             android:label="@string/SettingsGlobalActivity_title" >
             <intent-filter>

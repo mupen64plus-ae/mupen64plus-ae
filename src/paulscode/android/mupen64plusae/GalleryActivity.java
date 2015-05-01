@@ -402,7 +402,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 mDrawerLayout.closeDrawer( GravityCompat.START );
                 return true;
             case R.id.menuItem_settings:
-                startActivity( new Intent( this, SettingsGlobalActivity.class ) );
+                startActivity( new Intent( this, GlobalPrefsActivity.class ) );
                 return true;
             case R.id.menuItem_emulationProfiles:
                 startActivity( new Intent( this, ManageEmulationProfilesActivity.class ) );
