@@ -24,7 +24,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.GameOverlay;
-import paulscode.android.mupen64plusae.GlobalPrefsActivity;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -34,6 +33,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;

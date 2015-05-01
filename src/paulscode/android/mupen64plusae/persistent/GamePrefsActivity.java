@@ -18,7 +18,7 @@
  * 
  * Authors: Paul Lamb
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,6 +26,9 @@ import java.util.Date;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.GameActivity;
+import paulscode.android.mupen64plusae.GameActivityXperiaPlay;
+import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
@@ -35,10 +38,6 @@ import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
