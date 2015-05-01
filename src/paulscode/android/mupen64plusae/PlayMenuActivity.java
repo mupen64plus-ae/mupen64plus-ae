@@ -66,9 +66,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences_play.xml
+    private static final String SCREEN_ROOT = "screenRoot";
     private static final String SCREEN_CHEATS = "screenCheats";
-    
-    private static final String CATEGORY_GAME_SETTINGS = "categoryGameSettings";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     
     public static final String ACTION_RESUME = "actionResume";
@@ -171,7 +170,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Remove wiki menu item if not applicable
         if( TextUtils.isEmpty( mRomDetail.wikiUrl ) )
         {
-            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, ACTION_WIKI );
+            PrefUtil.removePreference( this, SCREEN_ROOT, ACTION_WIKI );
         }
         
         // Setup controller profiles settings based on ROM's number of players
@@ -181,18 +180,18 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             findPreference( CONTROLLER_PROFILE1 ).setTitle( R.string.controllerProfile_title );
             
             // Remove unneeded preference items
-            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE2 );
-            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE3 );
-            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE4 );
-            PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, PLAYER_MAP );
+            PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE2 );
+            PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE3 );
+            PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE4 );
+            PrefUtil.removePreference( this, SCREEN_ROOT, PLAYER_MAP );
         }
         else
         {
             // Remove unneeded preference items
             if( mRomDetail.players < 4 )
-                PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE4 );
+                PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE4 );
             if( mRomDetail.players < 3 )
-                PrefUtil.removePreference( this, CATEGORY_GAME_SETTINGS, CONTROLLER_PROFILE3 );
+                PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE3 );
             
             // Configure the player map preference
             PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( PLAYER_MAP );
