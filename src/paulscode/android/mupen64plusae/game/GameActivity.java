@@ -18,8 +18,9 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.game;
 
+import paulscode.android.mupen64plusae.CoreInterface;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;

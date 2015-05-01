@@ -168,13 +168,13 @@
         This behavior is specified in android:configChanges below.
         -->
         <activity
-            android:name="paulscode.android.mupen64plusae.GameActivity"
+            android:name="paulscode.android.mupen64plusae.game.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/GameActivity_title"
             android:theme="@style/appTheme.Black" >
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.GameActivityXperiaPlay"
+            android:name="paulscode.android.mupen64plusae.game.GameActivityXperiaPlay"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/GameActivity_title"
             android:theme="@style/appTheme.Black" >

@@ -18,8 +18,9 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.game;
 
+import paulscode.android.mupen64plusae.CoreInterface;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
 import android.os.Bundle;

@@ -14,7 +14,7 @@
         android:focusableInTouchMode="false"
         tools:ignore="ContentDescription" />
 
-    <paulscode.android.mupen64plusae.GameOverlay
+    <paulscode.android.mupen64plusae.game.GameOverlay
         android:id="@+id/gameOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

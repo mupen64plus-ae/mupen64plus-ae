@@ -26,8 +26,6 @@ import java.util.Date;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.GameActivity;
-import paulscode.android.mupen64plusae.GameActivityXperiaPlay;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
@@ -37,6 +35,8 @@ import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.game.GameActivity;
+import paulscode.android.mupen64plusae.game.GameActivityXperiaPlay;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;

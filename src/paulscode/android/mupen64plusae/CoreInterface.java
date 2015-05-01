@@ -30,6 +30,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
+import paulscode.android.mupen64plusae.game.GameSurface;
 import paulscode.android.mupen64plusae.jni.NativeConfigFiles;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;

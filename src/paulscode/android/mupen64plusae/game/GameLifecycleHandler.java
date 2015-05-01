@@ -18,12 +18,14 @@
  * 
  * Authors: paulscode, lioncash, littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.game;
 
 import java.util.ArrayList;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.CoreInterface;
+import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;

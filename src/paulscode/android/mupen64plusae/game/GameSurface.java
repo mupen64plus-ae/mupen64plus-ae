@@ -18,7 +18,7 @@
  * 
  * Authors: Paul Lamb, littleguy77, Gillou68310
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.game;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;

@@ -18,10 +18,12 @@
  * 
  * Authors: littleguy77, Paul Lamb
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.game;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.CoreInterface;
+import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;

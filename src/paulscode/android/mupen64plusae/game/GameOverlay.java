@@ -18,8 +18,9 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.game;
 
+import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
