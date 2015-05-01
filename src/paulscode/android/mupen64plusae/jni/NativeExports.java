@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
-import paulscode.android.mupen64plusae.CoreInterface;
 
 /**
  * Call-outs made from Java to the native ae-exports library. Any function names changed here should

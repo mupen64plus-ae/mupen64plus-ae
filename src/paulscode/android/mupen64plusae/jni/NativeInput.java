@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
-import paulscode.android.mupen64plusae.CoreInterface;
 
 /**
  * Calls made between the native input-android library and Java. Any function names changed here

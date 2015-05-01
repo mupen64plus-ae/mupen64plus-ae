@@ -22,10 +22,10 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
-import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SafeMethods;

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -38,6 +37,7 @@ import paulscode.android.mupen64plusae.input.provider.Demultiplexer;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
+import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;

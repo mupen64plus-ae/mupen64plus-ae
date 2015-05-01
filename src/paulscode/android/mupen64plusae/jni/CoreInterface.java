@@ -18,7 +18,7 @@
  * 
  * Authors: Paul Lamb, littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.jni;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,12 +31,6 @@ import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.game.GameSurface;
-import paulscode.android.mupen64plusae.jni.NativeConfigFiles;
-import paulscode.android.mupen64plusae.jni.NativeConstants;
-import paulscode.android.mupen64plusae.jni.NativeExports;
-import paulscode.android.mupen64plusae.jni.NativeImports;
-import paulscode.android.mupen64plusae.jni.NativeInput;
-import paulscode.android.mupen64plusae.jni.NativeSDL;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
