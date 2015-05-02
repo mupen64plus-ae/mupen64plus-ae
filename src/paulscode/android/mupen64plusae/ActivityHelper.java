@@ -23,6 +23,8 @@ package paulscode.android.mupen64plusae;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.text.TextUtils;
 
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
@@ -40,9 +42,17 @@ public class ActivityHelper
         context.startActivity( new Intent( context, SplashActivity.class ) );
     }
     
-    public static void startGalleryActivity()
+    public static void startGalleryActivity( Context context, Uri romPath )
     {
-        // TODO
+        startGalleryActivity( context, romPath == null ? null : romPath.getPath() );
+    }
+    
+    public static void startGalleryActivity( Context context, String romPath )
+    {
+        Intent intent = new Intent( context, GalleryActivity.class );
+        if( !TextUtils.isEmpty( romPath ) )
+            intent.putExtra( Keys.Extras.ROM_PATH, romPath );
+        context.startActivity( intent );
     }
     
     public static void startGameActivity()
