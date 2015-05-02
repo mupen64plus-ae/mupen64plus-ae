@@ -20,14 +20,17 @@
 
 package paulscode.android.mupen64plusae;
 
+import android.app.Activity;
+
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
  */
 public class ActivityHelper
 {
-    public static void restartActivity()
+    public static void restartActivity( Activity activity )
     {
-        // TODO
+        activity.finish();
+        activity.startActivity( activity.getIntent() );
     }
     
     public static void startSplashActivity()

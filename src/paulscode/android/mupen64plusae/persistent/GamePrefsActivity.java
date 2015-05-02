@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
@@ -500,8 +501,7 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
                     configFile.delete();
                 
                 // Rebuild the menu system by restarting the activity
-                finish();
-                startActivity( getIntent() );
+                ActivityHelper.restartActivity( GamePrefsActivity.this );
             }
         } );
     }

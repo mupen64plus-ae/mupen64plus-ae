@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.SplashActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
@@ -155,8 +156,7 @@ public class GlobalPrefsActivity extends PreferenceActivity implements OnPrefere
         {
             // Sometimes one preference change affects the hierarchy or layout of the views. In this
             // case it's easier just to restart the activity than try to figure out what to fix.
-            finish();
-            startActivity( getIntent() );
+            ActivityHelper.restartActivity( this );
         }
         else
         {
@@ -222,8 +222,7 @@ public class GlobalPrefsActivity extends PreferenceActivity implements OnPrefere
                 PreferenceManager.setDefaultValues( GlobalPrefsActivity.this, R.xml.preferences_global, true );
                 
                 // Rebuild the menu system by restarting the activity
-                finish();
-                startActivity( getIntent() );
+                ActivityHelper.restartActivity( GlobalPrefsActivity.this );
             }
         } );
     }

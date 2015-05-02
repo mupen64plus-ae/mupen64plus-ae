@@ -29,6 +29,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -544,8 +545,7 @@ public class GlobalPrefs
                 if( which >= 0 && which != currentIndex )
                 {
                     mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).commit();
-                    activity.finish();
-                    activity.startActivity( activity.getIntent() );
+                    ActivityHelper.restartActivity( activity );
                 }
             }
         } );
