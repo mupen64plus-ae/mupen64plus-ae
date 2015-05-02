@@ -40,7 +40,6 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
@@ -404,7 +403,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 mDrawerLayout.closeDrawer( GravityCompat.START );
                 return true;
             case R.id.menuItem_settings:
-                startActivity( new Intent( this, GlobalPrefsActivity.class ) );
+                ActivityHelper.startGlobalPrefsActivity( this );
                 return true;
             case R.id.menuItem_emulationProfiles:
                 startActivity( new Intent( this, ManageEmulationProfilesActivity.class ) );

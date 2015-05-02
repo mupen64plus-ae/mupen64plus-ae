@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.GameActivityXperiaPlay;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -70,9 +71,16 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startGlobalPrefsActivity()
+    public static void startGlobalPrefsActivity( Context context )
     {
-        // TODO
+        startGlobalPrefsActivity( context, 0 );
+    }
+    
+    public static void startGlobalPrefsActivity( Context context, int menuDisplayMode )
+    {
+        Intent intent = new Intent( context, GlobalPrefsActivity.class );
+        intent.putExtra( Keys.Extras.MENU_DISPLAY_MODE, menuDisplayMode );
+        context.startActivity( intent );
     }
     
     public static void startGamePrefsActivity()
