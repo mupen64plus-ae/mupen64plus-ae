@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
@@ -133,7 +133,7 @@ public class ControllerProfileActivity extends Activity implements OnInputListen
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "Invalid usage: bundle must indicate profile name" );
-        String name = extras.getString( Keys.Extras.PROFILE_NAME );
+        String name = extras.getString( ActivityHelper.Keys.PROFILE_NAME );
         if( TextUtils.isEmpty( name ) )
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
         mConfigFile = new ConfigFile( mGlobalPrefs.controllerProfiles_cfg );

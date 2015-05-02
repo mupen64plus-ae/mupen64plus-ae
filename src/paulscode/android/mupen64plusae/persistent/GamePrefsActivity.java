@@ -27,7 +27,6 @@ import java.util.Date;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
@@ -122,8 +121,8 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
-        mRomPath = extras.getString( Keys.Extras.ROM_PATH );
-        mRomMd5 = extras.getString( Keys.Extras.ROM_MD5 );
+        mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         
@@ -330,7 +329,7 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
         if( key.equals( ACTION_CHEAT_EDITOR ) )
         {
             Intent intent = new Intent( this, CheatEditorActivity.class );
-            intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
+            intent.putExtra( ActivityHelper.Keys.ROM_PATH, mRomPath );
             startActivityForResult( intent, 111 );
         }
         else if( key.equals( ACTION_WIKI ) )

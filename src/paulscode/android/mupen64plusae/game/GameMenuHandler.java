@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.game;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
@@ -60,8 +60,8 @@ public class GameMenuHandler implements OnStateCallbackListener
         Bundle extras = mActivity.getIntent().getExtras();
         if( extras == null )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
-        String romPath = extras.getString( Keys.Extras.ROM_PATH );
-        mRomMd5 = extras.getString( Keys.Extras.ROM_MD5 );
+        String romPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         if( TextUtils.isEmpty( romPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
         mRomHeader = new RomHeader( romPath );

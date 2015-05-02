@@ -155,7 +155,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         Bundle extras = getIntent().getExtras();
         if( extras != null )
         {
-            String givenRomPath = extras.getString( Keys.Extras.ROM_PATH );
+            String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
             if( !TextUtils.isEmpty( givenRomPath ) )
                 launchPlayMenuActivity( givenRomPath );
         }

@@ -20,7 +20,7 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -117,7 +117,7 @@ public abstract class ProfileActivity extends PreferenceActivity implements
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "Invalid usage: bundle must indicate profile name" );
-        mProfileName = extras.getString( Keys.Extras.PROFILE_NAME );
+        mProfileName = extras.getString( ActivityHelper.Keys.PROFILE_NAME );
         if( TextUtils.isEmpty( mProfileName ) )
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
         

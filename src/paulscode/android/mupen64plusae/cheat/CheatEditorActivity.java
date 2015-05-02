@@ -27,7 +27,7 @@ import java.util.Locale;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
@@ -111,7 +111,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "ROM path must be passed via the extras bundle when starting CheatEditorActivity" );
-        String romPath = extras.getString( Keys.Extras.ROM_PATH );
+        String romPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         if( TextUtils.isEmpty( romPath ) )
             throw new Error( "ROM path must be passed via the extras bundle when starting CheatEditorActivity" );
         mRomHeader = new RomHeader( new File( romPath ) );

@@ -24,7 +24,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
 import paulscode.android.mupen64plusae.game.GameOverlay;
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -127,7 +126,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "Invalid usage: bundle must indicate profile name" );
-        String name = extras.getString( Keys.Extras.PROFILE_NAME );
+        String name = extras.getString( ActivityHelper.Keys.PROFILE_NAME );
         if( TextUtils.isEmpty( name ) )
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
         mConfigFile = new ConfigFile( mGlobalPrefs.touchscreenProfiles_cfg );

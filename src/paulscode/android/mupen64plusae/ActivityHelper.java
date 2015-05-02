@@ -43,6 +43,25 @@ import android.text.TextUtils;
  */
 public class ActivityHelper
 {
+    /**
+     * Keys used to pass data to activities via the intent extras bundle. It's good practice to
+     * namespace the keys to avoid conflicts with other apps. By convention this is usually the
+     * package name but it's not a strict requirement. We'll use the fully qualified name of this
+     * class since it's easy to get.
+     */
+    public static class Keys
+    {
+        private static final String NAMESPACE = Keys.class.getCanonicalName() + ".";
+        //@formatter:off
+        public static final String ROM_PATH             = NAMESPACE + "ROM_PATH";
+        public static final String ROM_MD5              = NAMESPACE + "ROM_MD5";
+        public static final String CHEAT_ARGS           = NAMESPACE + "CHEAT_ARGS";
+        public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
+        public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
+        public static final String MENU_DISPLAY_MODE    = NAMESPACE + "MENU_DISPLAY_MODE";
+        //@formatter:on
+    }
+
     public static void launchUri( Context context, int resId )
     {
         launchUri( context, context.getString( resId ) );
@@ -91,7 +110,7 @@ public class ActivityHelper
     {
         Intent intent = new Intent( context, GalleryActivity.class );
         if( !TextUtils.isEmpty( romPath ) )
-            intent.putExtra( Keys.Extras.ROM_PATH, romPath );
+            intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         context.startActivity( intent );
     }
     
@@ -101,10 +120,10 @@ public class ActivityHelper
         Intent intent = isXperiaPlay
                 ? new Intent( context, GameActivityXperiaPlay.class )
                 : new Intent( context, GameActivity.class );
-        intent.putExtra( Keys.Extras.ROM_PATH, romPath );
-        intent.putExtra( Keys.Extras.ROM_MD5, romMd5 );
-        intent.putExtra( Keys.Extras.CHEAT_ARGS, cheatArgs );
-        intent.putExtra( Keys.Extras.DO_RESTART, doRestart );
+        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
+        intent.putExtra( ActivityHelper.Keys.CHEAT_ARGS, cheatArgs );
+        intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
         context.startActivity( intent );
     }
     
@@ -116,15 +135,15 @@ public class ActivityHelper
     public static void startGlobalPrefsActivity( Context context, int menuDisplayMode )
     {
         Intent intent = new Intent( context, GlobalPrefsActivity.class );
-        intent.putExtra( Keys.Extras.MENU_DISPLAY_MODE, menuDisplayMode );
+        intent.putExtra( ActivityHelper.Keys.MENU_DISPLAY_MODE, menuDisplayMode );
         context.startActivity( intent );
     }
     
     public static void startGamePrefsActivity( Context context, String romPath, String romMd5 )
     {
         Intent intent = new Intent( context, GamePrefsActivity.class );
-        intent.putExtra( Keys.Extras.ROM_PATH, romPath );
-        intent.putExtra( Keys.Extras.ROM_MD5, romMd5 );
+        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         context.startActivity( intent );
     }
     
@@ -146,21 +165,21 @@ public class ActivityHelper
     public static void startEmulationProfileActivity( Context context, String profileName )
     {
         Intent intent = new Intent( context, EmulationProfileActivity.class );
-        intent.putExtra( Keys.Extras.PROFILE_NAME, profileName );
+        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }
     
     public static void startTouchscreenProfileActivity( Context context, String profileName )
     {
         Intent intent = new Intent( context, TouchscreenProfileActivity.class );
-        intent.putExtra( Keys.Extras.PROFILE_NAME, profileName );
+        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }
     
     public static void startControllerProfileActivity( Context context, String profileName )
     {
         Intent intent = new Intent( context, ControllerProfileActivity.class );
-        intent.putExtra( Keys.Extras.PROFILE_NAME, profileName );
+        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }
     

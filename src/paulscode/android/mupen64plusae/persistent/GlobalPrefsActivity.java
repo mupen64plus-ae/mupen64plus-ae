@@ -23,7 +23,6 @@ package paulscode.android.mupen64plusae.persistent;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
@@ -111,7 +110,7 @@ public class GlobalPrefsActivity extends PreferenceActivity implements OnPrefere
         Bundle extras = getIntent().getExtras();
         if( extras != null )
         {
-            int mode = extras.getInt( Keys.Extras.MENU_DISPLAY_MODE, 0 );
+            int mode = extras.getInt( ActivityHelper.Keys.MENU_DISPLAY_MODE, 0 );
             if( mode == 1 )
             {
                 // Remove distractions if this was launched from TouchscreenProfileActivity

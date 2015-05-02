@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
@@ -147,10 +147,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         Bundle extras = mActivity.getIntent().getExtras();
         if( extras == null )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
-        mRomPath = extras.getString( Keys.Extras.ROM_PATH );
-        mRomMd5 = extras.getString( Keys.Extras.ROM_MD5 );
-        mCheatArgs = extras.getString( Keys.Extras.CHEAT_ARGS );
-        mDoRestart = extras.getBoolean( Keys.Extras.DO_RESTART, false );
+        mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
+        mCheatArgs = extras.getString( ActivityHelper.Keys.CHEAT_ARGS );
+        mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
     }
