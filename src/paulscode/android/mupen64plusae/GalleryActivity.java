@@ -45,7 +45,6 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -414,13 +413,13 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 popupFaq();
                 return true;
             case R.id.menuItem_helpForum:
-                Utility.launchUri( GalleryActivity.this, R.string.uri_forum );
+                ActivityHelper.launchUri( GalleryActivity.this, R.string.uri_forum );
                 return true;
             case R.id.menuItem_controllerDiagnostics:
                 ActivityHelper.startDiagnosticActivity( this );
                 return true;
             case R.id.menuItem_reportBug:
-                Utility.launchUri( GalleryActivity.this, R.string.uri_bugReport );
+                ActivityHelper.launchUri( GalleryActivity.this, R.string.uri_bugReport );
                 return true;
             case R.id.menuItem_appVersion:
                 popupAppVersion();
@@ -436,7 +435,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 popupHardwareInfo();
                 return true;
             case R.id.menuItem_credits:
-                Utility.launchUri( GalleryActivity.this, R.string.uri_credits );
+                ActivityHelper.launchUri( GalleryActivity.this, R.string.uri_credits );
                 return true;
             case R.id.menuItem_localeOverride:
                 mGlobalPrefs.changeLocale( this );

@@ -43,6 +43,21 @@ import android.text.TextUtils;
  */
 public class ActivityHelper
 {
+    public static void launchUri( Context context, int resId )
+    {
+        launchUri( context, context.getString( resId ) );
+    }
+    
+    public static void launchUri( Context context, String uriString )
+    {
+        launchUri( context, Uri.parse( uriString ) );
+    }
+    
+    public static void launchUri( Context context, Uri uri )
+    {
+        context.startActivity( new Intent( Intent.ACTION_VIEW, uri ) );
+    }
+    
     @SuppressLint( "InlinedApi" )
     public static void launchPlainText( Context context, String text, CharSequence chooserTitle )
     {

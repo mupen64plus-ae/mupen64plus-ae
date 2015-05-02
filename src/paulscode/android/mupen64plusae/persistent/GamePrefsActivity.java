@@ -44,7 +44,6 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -336,7 +335,7 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
         }
         else if( key.equals( ACTION_WIKI ) )
         {
-            Utility.launchUri( this, mRomDetail.wikiUrl );
+            ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
         }
         else if( key.equals( ACTION_RESET_GAME_PREFS ) )
         {
