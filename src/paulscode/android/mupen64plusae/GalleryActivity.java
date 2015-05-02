@@ -469,7 +469,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     public void onAction()
                     {
                         GamePrefsActivity.action = GamePrefsActivity.ACTION_RESUME;
-                        launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(), finalItem.md5 );
                     }
                 } );
         
@@ -488,7 +488,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                                     public void onConfirm()
                                     {
                                         GamePrefsActivity.action = GamePrefsActivity.ACTION_RESTART;
-                                        launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(), finalItem.md5 );
                                     }
                                 } );
                     }
@@ -501,7 +501,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     public void onAction()
                     {
                         GamePrefsActivity.action = null;
-                        launchPlayMenuActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(), finalItem.md5 );
                     }
                 } );
     }
@@ -571,18 +571,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     @Override
     public void onComputeMd5Finished( File file, String md5 )
     {
-        launchPlayMenuActivity( file.getAbsolutePath(), md5 );
-    }
-    
-    private void launchPlayMenuActivity( String romPath, String md5 )
-    {
-        if( !TextUtils.isEmpty( romPath ) && !TextUtils.isEmpty( md5 ) )
-        {
-            Intent intent = new Intent( GalleryActivity.this, GamePrefsActivity.class );
-            intent.putExtra( Keys.Extras.ROM_PATH, romPath );
-            intent.putExtra( Keys.Extras.ROM_MD5, md5 );
-            startActivity( intent );
-        }
+        ActivityHelper.startGamePrefsActivity( this, file.getAbsolutePath(), md5 );
     }
     
     private void promptSearchPath( File startDir )

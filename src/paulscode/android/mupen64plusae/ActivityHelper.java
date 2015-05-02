@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.GameActivityXperiaPlay;
+import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
 import android.app.Activity;
 import android.content.Context;
@@ -83,9 +84,12 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startGamePrefsActivity()
+    public static void startGamePrefsActivity( Context context, String romPath, String romMd5 )
     {
-        // TODO
+        Intent intent = new Intent( context, GamePrefsActivity.class );
+        intent.putExtra( Keys.Extras.ROM_PATH, romPath );
+        intent.putExtra( Keys.Extras.ROM_MD5, romMd5 );
+        context.startActivity( intent );
     }
     
     public static void startManageEmulationProfilesActivity()
