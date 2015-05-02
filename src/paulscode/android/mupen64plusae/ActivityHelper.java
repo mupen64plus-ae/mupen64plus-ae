@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.GameActivityXperiaPlay;
+import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
 import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
@@ -134,8 +135,8 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startDiagnosticActivity()
+    public static void startDiagnosticActivity( Context context )
     {
-        // TODO
+        context.startActivity( new Intent( context, DiagnosticActivity.class ) );
     }
 }

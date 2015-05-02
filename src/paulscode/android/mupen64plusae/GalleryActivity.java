@@ -34,7 +34,6 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.ScanRomsDialog;
 import paulscode.android.mupen64plusae.dialog.ScanRomsDialog.ScanRomsDialogListener;
-import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -418,7 +417,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 Utility.launchUri( GalleryActivity.this, R.string.uri_forum );
                 return true;
             case R.id.menuItem_controllerDiagnostics:
-                startActivity( new Intent( this, DiagnosticActivity.class ) );
+                ActivityHelper.startDiagnosticActivity( this );
                 return true;
             case R.id.menuItem_reportBug:
                 Utility.launchUri( GalleryActivity.this, R.string.uri_bugReport );
