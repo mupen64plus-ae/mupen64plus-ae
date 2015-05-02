@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.profile;
 import org.apache.commons.lang.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
 import paulscode.android.mupen64plusae.game.GameOverlay;
@@ -33,7 +34,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -42,7 +42,6 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -291,9 +290,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         switch( item.getItemId() )
         {
             case R.id.menuItem_globalSettings:
-                Intent intent = new Intent( this, GlobalPrefsActivity.class );
-                intent.putExtra( Keys.Extras.MENU_DISPLAY_MODE, 1 );
-                startActivity( intent );
+                ActivityHelper.startGlobalPrefsActivity( this, 1 );
                 return true;
             case R.id.menuItem_exit:
                 finish();

@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.Keys;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatFile;
@@ -35,8 +36,6 @@ import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.game.GameActivity;
-import paulscode.android.mupen64plusae.game.GameActivityXperiaPlay;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
@@ -45,7 +44,6 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -337,7 +335,7 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
         }
         else if( key.equals( ACTION_WIKI ) )
         {
-            Utility.launchUri( this, mRomDetail.wikiUrl );
+            ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
         }
         else if( key.equals( ACTION_RESET_GAME_PREFS ) )
         {
@@ -441,17 +439,8 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
             config.save();
         }
         
-        // Launch the appropriate game activity
-        Intent intent = mGlobalPrefs.isTouchpadEnabled ? new Intent( this,
-                GameActivityXperiaPlay.class ) : new Intent( this, GameActivity.class );
-        
-        // Pass the startup info via the intent
-        intent.putExtra( Keys.Extras.ROM_PATH, mRomPath );
-        intent.putExtra( Keys.Extras.ROM_MD5, mRomMd5 );
-        intent.putExtra( Keys.Extras.CHEAT_ARGS, getCheatArgs() );
-        intent.putExtra( Keys.Extras.DO_RESTART, isRestarting );
-        
-        startActivity( intent );
+        // Launch the game activity
+        ActivityHelper.startGameActivity( this, mRomPath, mRomMd5, getCheatArgs(), isRestarting, mGlobalPrefs.isTouchpadEnabled );
     }
     
     @SuppressWarnings( "deprecation" )
@@ -500,8 +489,7 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
                     configFile.delete();
                 
                 // Rebuild the menu system by restarting the activity
-                finish();
-                startActivity( getIntent() );
+                ActivityHelper.restartActivity( GamePrefsActivity.this );
             }
         } );
     }

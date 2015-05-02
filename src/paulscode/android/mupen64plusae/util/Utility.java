@@ -27,10 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-
 /**
  * Utility class which collects a bunch of commonly used methods into one class.
  */
@@ -63,29 +59,6 @@ public final class Utility
             return temp;
         else
             return min;
-    }
-    
-    /**
-     * Launches a URI from a resource in a given context.
-     * 
-     * @param context The context to launch a URI from.
-     * @param resId   The ID of the resource to create the URI from.
-     */
-    public static void launchUri( Context context, int resId )
-    {
-        launchUri( context, context.getString( resId ) );
-    }
-    
-    /**
-     * Launches a URI from a string in a given context.
-     * 
-     * @param context The context to launch a URI from.
-     * @param uri     The URI to launch. 
-     */
-    public static void launchUri( Context context, String uri )
-    {
-        Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
-        context.startActivity( intent );
     }
     
     public static String getDateString()

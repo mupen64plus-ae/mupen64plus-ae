@@ -20,9 +20,8 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import android.content.Intent;
 
 public class ManageEmulationProfilesActivity extends ManageProfilesActivity
 {
@@ -53,8 +52,6 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     @Override
     protected void onEditProfile( Profile profile )
     {
-        Intent intent = new Intent( this, EmulationProfileActivity.class );
-        intent.putExtra( Keys.Extras.PROFILE_NAME, profile.name );
-        startActivity( intent );
+        ActivityHelper.startEmulationProfileActivity( this, profile.name );
     }
 }

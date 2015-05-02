@@ -36,10 +36,8 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import tv.ouya.console.api.OuyaFacade;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -179,8 +177,11 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
             }
             else
             {
-                // Assets already extracted, just launch next activity
-                launchGalleryActivity();
+                // Assets already extracted, just launch gallery activity, passing ROM path if it was provided externally
+                ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent().getData() );
+                
+                // We never want to come back to this activity, so finish it
+                finish();
             }
         }
     };
@@ -199,11 +200,16 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
     {
         if( failures.size() == 0 )
         {
-            // Extraction succeeded, record new asset version, merge cheats, and launch next activity
+            // Extraction succeeded, record new asset version and merge cheats
             mTextView.setText( R.string.assetExtractor_finished );
             mAppData.putAssetVersion( ASSET_VERSION );
             CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
-            launchGalleryActivity();
+            
+            // Launch gallery activity, passing ROM path if it was provided externally
+            ActivityHelper.startGalleryActivity( this, getIntent().getData() );
+            
+            // We never want to come back to this activity, so finish it
+            finish();
         }
         else
         {
@@ -218,18 +224,5 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
             textHtml += "</small>";
             mTextView.setText( Html.fromHtml( textHtml ) );
         }
-    }
-    
-    private void launchGalleryActivity( )
-    {
-        // Launch the activity, passing ROM path if it was provided externally
-        Intent intent = new Intent( this, GalleryActivity.class );
-        Uri dataUri = getIntent().getData();
-        if( dataUri != null )
-            intent.putExtra( Keys.Extras.ROM_PATH, dataUri.getPath() );
-        startActivity( intent );
-        
-        // We never want to come back to this activity, so finish it
-        finish();
     }
 }
