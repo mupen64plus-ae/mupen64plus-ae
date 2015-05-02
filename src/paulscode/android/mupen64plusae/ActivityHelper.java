@@ -24,9 +24,12 @@ import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.GameActivityXperiaPlay;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
+import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
+import paulscode.android.mupen64plusae.profile.EmulationProfileActivity;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
+import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -110,19 +113,25 @@ public class ActivityHelper
         context.startActivity( new Intent( context, ManageControllerProfilesActivity.class ) );
     }
     
-    public static void startEmulationProfileActivity()
+    public static void startEmulationProfileActivity( Context context, String profileName )
     {
-        // TODO
+        Intent intent = new Intent( context, EmulationProfileActivity.class );
+        intent.putExtra( Keys.Extras.PROFILE_NAME, profileName );
+        context.startActivity( intent );
     }
     
-    public static void startTouchscreenProfileActivity()
+    public static void startTouchscreenProfileActivity( Context context, String profileName )
     {
-        // TODO
+        Intent intent = new Intent( context, TouchscreenProfileActivity.class );
+        intent.putExtra( Keys.Extras.PROFILE_NAME, profileName );
+        context.startActivity( intent );
     }
     
-    public static void startControllerProfileActivity()
+    public static void startControllerProfileActivity( Context context, String profileName )
     {
-        // TODO
+        Intent intent = new Intent( context, ControllerProfileActivity.class );
+        intent.putExtra( Keys.Extras.PROFILE_NAME, profileName );
+        context.startActivity( intent );
     }
     
     public static void startDiagnosticActivity()

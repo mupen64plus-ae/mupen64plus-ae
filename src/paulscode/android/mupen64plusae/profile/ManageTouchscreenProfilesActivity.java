@@ -20,8 +20,7 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import paulscode.android.mupen64plusae.Keys;
-import android.content.Intent;
+import paulscode.android.mupen64plusae.ActivityHelper;
 
 public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
 {
@@ -52,8 +51,6 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     @Override
     protected void onEditProfile( Profile profile )
     {
-        Intent intent = new Intent( this, TouchscreenProfileActivity.class );
-        intent.putExtra( Keys.Extras.PROFILE_NAME, profile.name );
-        startActivity( intent );
+        ActivityHelper.startTouchscreenProfileActivity( this, profile.name );
     }
 }

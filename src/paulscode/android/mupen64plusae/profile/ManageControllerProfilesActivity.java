@@ -20,8 +20,7 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import paulscode.android.mupen64plusae.Keys;
-import android.content.Intent;
+import paulscode.android.mupen64plusae.ActivityHelper;
 
 public class ManageControllerProfilesActivity extends ManageProfilesActivity
 {
@@ -52,8 +51,6 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     @Override
     protected void onEditProfile( Profile profile )
     {
-        Intent intent = new Intent( this, ControllerProfileActivity.class );
-        intent.putExtra( Keys.Extras.PROFILE_NAME, profile.name );
-        startActivity( intent );
+        ActivityHelper.startControllerProfileActivity( this, profile.name );
     }
 }
