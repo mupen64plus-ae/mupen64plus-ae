@@ -24,12 +24,10 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.Keys;
-import paulscode.android.mupen64plusae.SplashActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -203,7 +201,7 @@ public class GlobalPrefsActivity extends PreferenceActivity implements OnPrefere
     private void actionReloadAssets()
     {
         mAppData.putAssetVersion( 0 );
-        startActivity( new Intent( this, SplashActivity.class ) );
+        ActivityHelper.startSplashActivity( this );
         finish();
     }
     

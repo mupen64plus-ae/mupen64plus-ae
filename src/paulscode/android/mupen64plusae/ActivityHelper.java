@@ -21,6 +21,8 @@
 package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
@@ -33,9 +35,9 @@ public class ActivityHelper
         activity.startActivity( activity.getIntent() );
     }
     
-    public static void startSplashActivity()
+    public static void startSplashActivity( Context context )
     {
-        // TODO
+        context.startActivity( new Intent( context, SplashActivity.class ) );
     }
     
     public static void startGalleryActivity()
