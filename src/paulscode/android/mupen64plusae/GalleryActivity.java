@@ -764,14 +764,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
             @Override
             public void onClick( DialogInterface dialog, int which )
             {
-                // See http://android-developers.blogspot.com/2012/02/share-with-intents.html
-                Intent intent = new Intent( android.content.Intent.ACTION_SEND );
-                intent.setType( "text/plain" );
-                intent.addFlags( Intent.FLAG_ACTIVITY_NEW_DOCUMENT );
-                intent.putExtra( Intent.EXTRA_TEXT, message );
-                // intent.putExtra( Intent.EXTRA_SUBJECT, subject );
-                // intent.putExtra( Intent.EXTRA_EMAIL, new String[] { emailTo } );
-                startActivity( Intent.createChooser( intent, getText( R.string.actionShare_title ) ) );
+                ActivityHelper.launchPlainText( GalleryActivity.this, message, getText( R.string.actionShare_title ) );
             }
         };
         

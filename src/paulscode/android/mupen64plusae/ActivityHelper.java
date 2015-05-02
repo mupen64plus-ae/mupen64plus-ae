@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +43,19 @@ import android.text.TextUtils;
  */
 public class ActivityHelper
 {
+    @SuppressLint( "InlinedApi" )
+    public static void launchPlainText( Context context, String text, CharSequence chooserTitle )
+    {
+        // See http://android-developers.blogspot.com/2012/02/share-with-intents.html
+        Intent intent = new Intent( android.content.Intent.ACTION_SEND );
+        intent.setType( "text/plain" );
+        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_DOCUMENT );
+        intent.putExtra( Intent.EXTRA_TEXT, text );
+        // intent.putExtra( Intent.EXTRA_SUBJECT, subject );
+        // intent.putExtra( Intent.EXTRA_EMAIL, new String[] { emailTo } );
+        context.startActivity( Intent.createChooser( intent, chooserTitle ) );
+    }
+    
     public static void restartActivity( Activity activity )
     {
         activity.finish();
