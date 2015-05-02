@@ -40,9 +40,6 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
-import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
-import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
@@ -406,13 +403,13 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                 ActivityHelper.startGlobalPrefsActivity( this );
                 return true;
             case R.id.menuItem_emulationProfiles:
-                startActivity( new Intent( this, ManageEmulationProfilesActivity.class ) );
+                ActivityHelper.startManageEmulationProfilesActivity( this );
                 return true;
             case R.id.menuItem_touchscreenProfiles:
-                startActivity( new Intent( this, ManageTouchscreenProfilesActivity.class ) );
+                ActivityHelper.startManageTouchscreenProfilesActivity( this );
                 return true;
             case R.id.menuItem_controllerProfiles:
-                startActivity( new Intent( this, ManageControllerProfilesActivity.class ) );
+                ActivityHelper.startManageControllerProfilesActivity( this );
                 return true;
             case R.id.menuItem_faq:
                 popupFaq();

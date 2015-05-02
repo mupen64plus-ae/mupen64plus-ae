@@ -24,6 +24,9 @@ import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.game.GameActivityXperiaPlay;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
+import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
+import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
+import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -92,19 +95,19 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startManageEmulationProfilesActivity()
+    public static void startManageEmulationProfilesActivity( Context context )
     {
-        // TODO
+        context.startActivity( new Intent( context, ManageEmulationProfilesActivity.class ) );
     }
     
-    public static void startManageTouchscreenProfilesActivity()
+    public static void startManageTouchscreenProfilesActivity( Context context )
     {
-        // TODO
+        context.startActivity( new Intent( context, ManageTouchscreenProfilesActivity.class ) );
     }
     
-    public static void startManageControllerProfilesActivity()
+    public static void startManageControllerProfilesActivity( Context context )
     {
-        // TODO
+        context.startActivity( new Intent( context, ManageControllerProfilesActivity.class ) );
     }
     
     public static void startEmulationProfileActivity()
