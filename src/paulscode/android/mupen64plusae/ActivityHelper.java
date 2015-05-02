@@ -20,6 +20,8 @@
 
 package paulscode.android.mupen64plusae;
 
+import paulscode.android.mupen64plusae.game.GameActivity;
+import paulscode.android.mupen64plusae.game.GameActivityXperiaPlay;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -55,9 +57,17 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startGameActivity()
+    public static void startGameActivity( Context context, String romPath, String romMd5,
+            String cheatArgs, boolean doRestart, boolean isXperiaPlay )
     {
-        // TODO
+        Intent intent = isXperiaPlay
+                ? new Intent( context, GameActivityXperiaPlay.class )
+                : new Intent( context, GameActivity.class );
+        intent.putExtra( Keys.Extras.ROM_PATH, romPath );
+        intent.putExtra( Keys.Extras.ROM_MD5, romMd5 );
+        intent.putExtra( Keys.Extras.CHEAT_ARGS, cheatArgs );
+        intent.putExtra( Keys.Extras.DO_RESTART, doRestart );
+        context.startActivity( intent );
     }
     
     public static void startGlobalPrefsActivity()
