@@ -50,7 +50,6 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -439,33 +438,7 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
         }
         
         // Launch the game activity
-        ActivityHelper.startGameActivity( this, mRomPath, mRomMd5, getCheatArgs(), isRestarting, mGlobalPrefs.isTouchpadEnabled );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private String getCheatArgs()
-    {
-        String cheatArgs = null;
-        
-        PreferenceCategory cheatsCategory = (PreferenceCategory) findPreference( CATEGORY_CHEATS );
-        if( cheatsCategory != null )
-        {
-            for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
-            {
-                CheatPreference pref = (CheatPreference) cheatsCategory.getPreference( i );
-                if( pref.isCheatEnabled() )
-                {
-                    if( cheatArgs == null )
-                        cheatArgs = ""; // First time through
-                    else
-                        cheatArgs += ",";
-                    
-                    cheatArgs += pref.getCheatCodeString( i );
-                }
-            }
-        }
-        
-        return cheatArgs;
+        ActivityHelper.startGameActivity( this, mRomPath, mRomMd5, mGamePrefs.getCheatArgs(), isRestarting, mGlobalPrefs.isTouchpadEnabled );
     }
     
     private void actionResetGamePrefs()

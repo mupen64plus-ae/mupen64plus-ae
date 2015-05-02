@@ -2,7 +2,10 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -177,6 +180,8 @@ public class GamePrefs
     
     private final SharedPreferences mPreferences;
     
+    private final RomHeader mHeader;
+    
     public GamePrefs( Context context, String romMd5, RomHeader header )
     {
         final AppData appData = new AppData( context );
@@ -184,6 +189,7 @@ public class GamePrefs
         
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
+        mHeader = header;
         
         // Game-specific data
         gameDataDir = String.format( "%s/GameData/%s %s %s", globalPrefs.userDataDir, header.name, header.countrySymbol, romMd5 );
@@ -355,6 +361,37 @@ public class GamePrefs
         isPlugged2 = isControllerEnabled2;
         isPlugged3 = isControllerEnabled3;
         isPlugged4 = isControllerEnabled4;
+    }
+    
+    public String getCheatArgs()
+    {
+        if( !isCheatOptionsShown )
+            return "";
+        
+        final Pattern pattern = Pattern.compile( "^" + mHeader.crc + " Cheat(\\d+)" );
+        StringBuilder builder = null;
+        Map<String, ?> map = mPreferences.getAll();
+        for (String key : map.keySet())
+        {
+            Matcher matcher = pattern.matcher( key );
+            if ( matcher.matches() && matcher.groupCount() > 0 )
+            {
+                int value = mPreferences.getInt( key, 0 );
+                if (value > 0)
+                {
+                    int index = Integer.parseInt( matcher.group( 1 ) );
+                    
+                    if (builder == null)
+                        builder = new StringBuilder();
+                    else
+                        builder.append( ',' );
+                    builder.append( index );
+                    builder.append( '-' );
+                    builder.append( value - 1 );
+                }
+            }
+        }
+        return builder == null ? "" : builder.toString();
     }
     
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,
