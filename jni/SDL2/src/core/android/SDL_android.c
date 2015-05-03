@@ -107,6 +107,11 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
     return JNI_VERSION_1_4;
 }
 
+void JNI_OnUnload(JavaVM *vm, void *reserved)
+{
+    pthread_key_delete(mThreadKey);
+}
+
 // Called before SDL_main() to initialize JNI bindings
 void SDL_Android_Init(JNIEnv* mEnv, jclass cls)
 {

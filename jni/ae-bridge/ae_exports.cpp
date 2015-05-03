@@ -48,6 +48,7 @@ static void *handleFront;       // libmupen64plus-ui-console.so
 
 // Function types
 typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
+typedef void        (*pJNI_OnUnload)    (JavaVM *vm, void *reserved);
 typedef int         (*pAeiInit)         (JNIEnv* env, jclass cls);
 typedef int         (*pSdlInit)         (JNIEnv* env, jclass cls);
 typedef void        (*pSdlSetScreen)    (int width, int height, Uint32 format);
@@ -174,6 +175,11 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 
     // Clear stale error messages
     dlerror();
+
+    // Find and call the JNI_OnUnLoad functions from the SDL2 library
+    pJNI_OnUnload JNI_OnUnLoad = (pJNI_OnUnload) locateFunction(handleSDL, "SDL2",       "JNI_OnUnload");
+    JNI_OnUnLoad(mVm, mReserved);
+    JNI_OnUnLoad = NULL;
 
     // Nullify function pointers so that they can no longer be used
     aeiInit         = NULL;
