@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -39,7 +38,6 @@ import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
-import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -65,12 +63,9 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
     private static final String SCREEN_CHEATS = "screenCheats";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     
-    public static final String ACTION_RESUME = "actionResume";
-    public static final String ACTION_RESTART = "actionRestart";
     private static final String ACTION_CHEAT_EDITOR = "actionCheatEditor";
     private static final String ACTION_WIKI = "actionWiki";
     private static final String ACTION_RESET_GAME_PREFS = "actionResetGamePrefs";
-    private static final String ACTION_EXIT = "actionExit";
     
     private static final String EMULATION_PROFILE = "emulationProfile";
     private static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
@@ -204,22 +199,6 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
         mPrefs.registerOnSharedPreferenceChangeListener( this );
         mMogaController.onResume();
         refreshViews();
-        
-        if( ACTION_RESUME.equals( action ) )
-        {
-            action = ACTION_EXIT;
-            launchGame( false );
-        }
-        else if( ACTION_RESTART.equals( action ) )
-        {
-            action = ACTION_EXIT;
-            launchGame( true );
-        }
-        else if( ACTION_EXIT.equals( action ) )
-        {
-            action = null;
-            finish();
-        }
     }
     
     @Override
@@ -392,53 +371,6 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
             // Add the preference menu item to the cheats category
             mCategoryCheats.addPreference( pref );
         }
-    }
-    
-    private void launchGame( boolean isRestarting )
-    {
-        // Popup the multi-player dialog if necessary and abort if any players are unassigned
-        if( mRomDetail.players > 1 && mGamePrefs.playerMap.isEnabled()
-                && mGlobalPrefs.getPlayerMapReminder() )
-        {
-            mGamePrefs.playerMap.removeUnavailableMappings();
-            boolean needs1 = mGamePrefs.isControllerEnabled1 && !mGamePrefs.playerMap.isMapped( 1 );
-            boolean needs2 = mGamePrefs.isControllerEnabled2 && !mGamePrefs.playerMap.isMapped( 2 );
-            boolean needs3 = mGamePrefs.isControllerEnabled3 && !mGamePrefs.playerMap.isMapped( 3 )
-                    && mRomDetail.players > 2;
-            boolean needs4 = mGamePrefs.isControllerEnabled4 && !mGamePrefs.playerMap.isMapped( 4 )
-                    && mRomDetail.players > 3;
-            
-            if( needs1 || needs2 || needs3 || needs4 )
-            {
-                @SuppressWarnings( "deprecation" )
-                PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
-                pref.show();
-                return;
-            }
-        }
-        
-        // Make sure that the storage is accessible
-        if( !mAppData.isSdCardAccessible() )
-        {
-            Log.e( "CheatMenuHandler", "SD Card not accessible in method onPreferenceClick" );
-            Notifier.showToast( this, R.string.toast_sdInaccessible );
-            return;
-        }
-        
-        // Notify user that the game activity is starting
-        Notifier.showToast( this, R.string.toast_launchingEmulator );
-        
-        // Update the ConfigSection with the new value for lastPlayed
-        String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
-        ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-        if( config != null )
-        {
-            config.put( mRomMd5, "lastPlayed", lastPlayed );
-            config.save();
-        }
-        
-        // Launch the game activity
-        ActivityHelper.startGameActivity( this, mRomPath, mRomMd5, mGamePrefs.getCheatArgs(), isRestarting, mGlobalPrefs.isTouchpadEnabled );
     }
     
     private void actionResetGamePrefs()

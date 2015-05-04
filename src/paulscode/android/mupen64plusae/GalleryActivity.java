@@ -37,6 +37,7 @@ import paulscode.android.mupen64plusae.dialog.ScanRomsDialog.ScanRomsDialogListe
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
@@ -45,6 +46,7 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -67,6 +69,7 @@ import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -463,8 +466,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     @Override
                     public void onAction()
                     {
-                        GamePrefsActivity.action = GamePrefsActivity.ACTION_RESUME;
-                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5, false );
                     }
                 } );
         
@@ -482,8 +484,7 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                                     @Override
                                     public void onConfirm()
                                     {
-                                        GamePrefsActivity.action = GamePrefsActivity.ACTION_RESTART;
-                                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5, true );
                                     }
                                 } );
                     }
@@ -800,5 +801,57 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
         
         // Refresh the gallery
         refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
+    }
+    
+    public void launchGameActivity( String romPath, String romMd5, boolean isRestarting )
+    {
+        RomHeader romHeader = new RomHeader( romPath );
+        GamePrefs gamePrefs = new GamePrefs( this, romMd5, romHeader );
+// TODO FIXME
+//        // Popup the multi-player dialog if necessary and abort if any players are unassigned
+//        RomDatabase romDatabase = new RomDatabase( mAppData.mupen64plus_ini );
+//        RomDetail romDetail = romDatabase.lookupByMd5WithFallback( romMd5, new File( romPath ) );
+//        if( romDetail.players > 1 && gamePrefs.playerMap.isEnabled()
+//                && mGlobalPrefs.getPlayerMapReminder() )
+//        {
+//            gamePrefs.playerMap.removeUnavailableMappings();
+//            boolean needs1 = gamePrefs.isControllerEnabled1 && !gamePrefs.playerMap.isMapped( 1 );
+//            boolean needs2 = gamePrefs.isControllerEnabled2 && !gamePrefs.playerMap.isMapped( 2 );
+//            boolean needs3 = gamePrefs.isControllerEnabled3 && !gamePrefs.playerMap.isMapped( 3 )
+//                    && romDetail.players > 2;
+//            boolean needs4 = gamePrefs.isControllerEnabled4 && !gamePrefs.playerMap.isMapped( 4 )
+//                    && romDetail.players > 3;
+//            
+//            if( needs1 || needs2 || needs3 || needs4 )
+//            {
+//                @SuppressWarnings( "deprecation" )
+//                PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
+//                pref.show();
+//                return;
+//            }
+//        }
+        
+        // Make sure that the storage is accessible
+        if( !mAppData.isSdCardAccessible() )
+        {
+            Log.e( "GalleryActivity", "SD Card not accessible" );
+            Notifier.showToast( this, R.string.toast_sdInaccessible );
+            return;
+        }
+        
+        // Notify user that the game activity is starting
+        Notifier.showToast( this, R.string.toast_launchingEmulator );
+        
+        // Update the ConfigSection with the new value for lastPlayed
+        String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
+        ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
+        if( config != null )
+        {
+            config.put( romMd5, "lastPlayed", lastPlayed );
+            config.save();
+        }
+        
+        // Launch the game activity
+        ActivityHelper.startGameActivity( this, romPath, romMd5, gamePrefs.getCheatArgs(), isRestarting, mGlobalPrefs.isTouchpadEnabled );
     }
 }
