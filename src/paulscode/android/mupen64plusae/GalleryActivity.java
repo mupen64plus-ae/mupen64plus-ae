@@ -133,7 +133,6 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat_NoActionBar );
         super.onCreate( savedInstanceState );
         
         // Get app data and user preferences
