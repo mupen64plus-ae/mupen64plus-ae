@@ -32,7 +32,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.SplashActivity"
             android:label="@string/SplashActivity_title"
-            android:theme="@style/appTheme.Black" >
+            android:theme="@style/Theme.AppCompat.Black" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
