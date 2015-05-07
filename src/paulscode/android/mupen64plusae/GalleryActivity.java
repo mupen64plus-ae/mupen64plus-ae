@@ -75,8 +75,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-public class GalleryActivity extends AppCompatActivity implements ComputeMd5Listener,
-        CacheRomInfoListener
+public class GalleryActivity extends AppCompatActivity implements CacheRomInfoListener
 {
     // Saved instance states
     public static final String STATE_QUERY = "query";
@@ -158,7 +157,19 @@ public class GalleryActivity extends AppCompatActivity implements ComputeMd5List
         {
             String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
             if( !TextUtils.isEmpty( givenRomPath ) )
-                launchPlayMenuActivity( givenRomPath );
+            {
+                // Asynchronously compute MD5 and launch game when finished
+                Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
+                ComputeMd5Task task = new ComputeMd5Task( new File( givenRomPath ), new ComputeMd5Listener()
+                {
+                    @Override
+                    public void onComputeMd5Finished( File file, String md5 )
+                    {
+                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, file.getAbsolutePath(), md5 );
+                    }
+                } );
+                task.execute();
+            }
         }
         
         // Lay out the content
@@ -521,13 +532,6 @@ public class GalleryActivity extends AppCompatActivity implements ComputeMd5List
         mDrawerLayout.openDrawer( GravityCompat.START );
     }
     
-    private void launchPlayMenuActivity( final String romPath )
-    {
-        // Asynchronously compute MD5 and launch play menu when finished
-        Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
-        new ComputeMd5Task( new File( romPath ), this ).execute();
-    }
-    
     @Override
     public boolean onKeyDown( int keyCode, KeyEvent event )
     {
@@ -559,12 +563,6 @@ public class GalleryActivity extends AppCompatActivity implements ComputeMd5List
         {
             super.onBackPressed();
         }
-    }
-    
-    @Override
-    public void onComputeMd5Finished( File file, String md5 )
-    {
-        ActivityHelper.startGamePrefsActivity( this, file.getAbsolutePath(), md5 );
     }
     
     private void promptSearchPath( File startDir )
