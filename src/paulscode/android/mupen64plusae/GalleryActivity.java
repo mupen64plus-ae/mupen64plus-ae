@@ -38,7 +38,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
@@ -495,7 +494,6 @@ public class GalleryActivity extends ActionBarActivity implements ComputeMd5List
                     @Override
                     public void onAction()
                     {
-                        GamePrefsActivity.action = null;
                         ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(), finalItem.md5 );
                     }
                 } );

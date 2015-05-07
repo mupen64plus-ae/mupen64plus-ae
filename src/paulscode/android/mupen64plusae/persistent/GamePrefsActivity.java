@@ -90,20 +90,17 @@ public class GamePrefsActivity extends PreferenceActivity implements OnPreferenc
     private RomDetail mRomDetail = null;
     
     // Preference menu items
-    ProfilePreference mEmulationProfile = null;
-    ProfilePreference mTouchscreenProfile = null;
-    ProfilePreference mControllerProfile1 = null;
-    ProfilePreference mControllerProfile2 = null;
-    ProfilePreference mControllerProfile3 = null;
-    ProfilePreference mControllerProfile4 = null;
-    PreferenceGroup mScreenCheats = null;
-    PreferenceGroup mCategoryCheats = null;
+    private ProfilePreference mEmulationProfile = null;
+    private ProfilePreference mTouchscreenProfile = null;
+    private ProfilePreference mControllerProfile1 = null;
+    private ProfilePreference mControllerProfile2 = null;
+    private ProfilePreference mControllerProfile3 = null;
+    private ProfilePreference mControllerProfile4 = null;
+    private PreferenceGroup mScreenCheats = null;
+    private PreferenceGroup mCategoryCheats = null;
     
     // MOGA controller interface
     private Controller mMogaController = Controller.getInstance( this );
-    
-    // Go directly to gameplay from the gallery
-    public static String action = null;
     
     @SuppressWarnings( "deprecation" )
     @Override
