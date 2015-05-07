@@ -146,7 +146,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.input.DiagnosticActivity"
             android:exported="false"
-            android:label="@string/DiagnosticActivity_title" >
+            android:label="@string/DiagnosticActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".input.DiagnosticActivity" />
 
