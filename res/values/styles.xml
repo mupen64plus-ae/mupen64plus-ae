@@ -12,6 +12,10 @@
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
     </style>
+    
+    <style name="Theme.AppCompat.Black.OverlayActionBar">
+        <item name="windowActionBarOverlay">true</item>
+    </style>
 
     <style name="btnMappable" parent="@android:style/Widget.Button">
         <item name="android:layout_width">@dimen/inputMapPreferenceButtonSize</item>

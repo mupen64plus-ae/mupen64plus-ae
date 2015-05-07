@@ -35,9 +35,6 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.ActionBar.OnMenuVisibilityListener;
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -46,6 +43,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.OnMenuVisibilityListener;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.FloatMath;
 import android.util.SparseArray;
@@ -56,7 +56,6 @@ import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -64,7 +63,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-public class TouchscreenProfileActivity extends Activity implements OnTouchListener
+public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener
 {
     private static final String TOUCHSCREEN_AUTOHOLDABLES = "touchscreenAutoHoldables";
     private static final String AUTOHOLDABLES_DELIMITER = "~";
@@ -155,34 +154,25 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         READABLE_NAMES.put( TouchMap.DPD_RD, getString( R.string.controller_dpad ) );
         READABLE_NAMES.put( TouchMap.DPD_RU, getString( R.string.controller_dpad ) );
         
-        // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
-        // For earlier APIs, remove the title bar to yield more space
-        Window window = getWindow();
-        if( mGlobalPrefs.isActionBarAvailable )
-            window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
-        else
-            window.requestFeature( Window.FEATURE_NO_TITLE );
-        
         // Enable full-screen mode
-        window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
+        getWindow().setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
         
         // Lay out content and get the views
         setContentView( R.layout.touchscreen_profile_activity );
         mSurface = (ImageView) findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) findViewById( R.id.gameOverlay );
         
-        // Configure the action bar introduced in higher Android versions
-        if( mGlobalPrefs.isActionBarAvailable )
+        // Configure the action bar
         {
-            getActionBar().hide();
+            getSupportActionBar().hide();
             ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
             color.setAlpha( mGlobalPrefs.displayActionBarTransparency );
-            getActionBar().setBackgroundDrawable( color );
+            getSupportActionBar().setBackgroundDrawable( color );
             
             // onOptionsMenuClosed is not called due to a bug in Android:
             // http://stackoverflow.com/questions/3688077/android-onoptionsmenuclosed-not-being-called-for-submenu
             // so add a menu visibility listener instead
-            getActionBar().addOnMenuVisibilityListener( new OnMenuVisibilityListener()
+            getSupportActionBar().addOnMenuVisibilityListener( new OnMenuVisibilityListener()
             {
                 @Override
                 public void onMenuVisibilityChanged( boolean isVisible )
@@ -284,7 +274,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     }
     
     @Override
-    public boolean onMenuItemSelected( int featureId, MenuItem item )
+    public boolean onOptionsItemSelected( MenuItem item )
     {
         switch( item.getItemId() )
         {
@@ -319,7 +309,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 toggleAsset( BUTTON_S );
                 return true;
             default:
-                return super.onMenuItemSelected( featureId, item );
+                return super.onOptionsItemSelected( item );
         }
     }
     
@@ -372,7 +362,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
             return;
         
         // Toggle the action bar
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if( actionBar.isShowing() )
         {
             hideSystemBars();
@@ -391,7 +381,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         if( !AppData.IS_HONEYCOMB )
             return;
         
-        getActionBar().hide();
+        getSupportActionBar().hide();
         View view = mSurface.getRootView();
         if( view != null )
         {

@@ -137,8 +137,9 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity"
             android:exported="false"
-            android:label="@string/TouchscreenProfileActivity_title" >
-            <intent-filter>
+            android:label="@string/TouchscreenProfileActivity_title"
+            android:theme="@style/Theme.AppCompat.Black.OverlayActionBar" >
+           <intent-filter>
                 <action android:name=".profile.TouchscreenProfileActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
