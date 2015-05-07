@@ -38,7 +38,7 @@
     <RelativeLayout
         android:layout_width="280dip"
         android:layout_height="match_parent"
-        android:layout_gravity="left|start"
+        android:layout_gravity="start"
         android:fitsSystemWindows="true" >
 
         <paulscode.android.mupen64plusae.MenuListView
