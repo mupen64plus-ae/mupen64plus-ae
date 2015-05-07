@@ -30,6 +30,7 @@ import java.util.Locale;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.dialog.ChangeLog;
+import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.ScanRomsDialog;
@@ -43,10 +44,8 @@ import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
-import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomHeader;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -143,7 +142,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         if( lastVer != currVer )
         {
             // First run after install/update, greet user with changelog, then help dialog
-            popupFaq();
+            Popups.showFaq( this );
             ChangeLog log = new ChangeLog( getAssets() );
             if( log.show( this, lastVer + 1, currVer ) )
             {
@@ -422,29 +421,28 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                 ActivityHelper.startManageControllerProfilesActivity( this );
                 return true;
             case R.id.menuItem_faq:
-                popupFaq();
+                Popups.showFaq( this );
                 return true;
             case R.id.menuItem_helpForum:
-                ActivityHelper.launchUri( GalleryActivity.this, R.string.uri_forum );
+                ActivityHelper.launchUri( this, R.string.uri_forum );
                 return true;
             case R.id.menuItem_controllerDiagnostics:
                 ActivityHelper.startDiagnosticActivity( this );
                 return true;
             case R.id.menuItem_reportBug:
-                ActivityHelper.launchUri( GalleryActivity.this, R.string.uri_bugReport );
+                ActivityHelper.launchUri( this, R.string.uri_bugReport );
                 return true;
             case R.id.menuItem_appVersion:
-                popupAppVersion();
+                Popups.showAppVersion( this );
                 return true;
             case R.id.menuItem_changelog:
-                new ChangeLog( getAssets() )
-                        .show( GalleryActivity.this, 0, mAppData.appVersionCode );
+                new ChangeLog( getAssets() ).show( this, 0, mAppData.appVersionCode );
                 return true;
             case R.id.menuItem_logcat:
-                popupLogcat();
+                Popups.showLogcat( this );
                 return true;
             case R.id.menuItem_hardwareInfo:
-                popupHardwareInfo();
+                Popups.showHardwareInfo( this );
                 return true;
             case R.id.menuItem_credits:
                 ActivityHelper.launchUri( GalleryActivity.this, R.string.uri_credits );
@@ -724,55 +722,6 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         } );
         
         mGridView.setLayoutManager( layoutManager );
-    }
-    
-    private void popupFaq()
-    {
-        CharSequence title = getText( R.string.menuItem_faq );
-        CharSequence message = getText( R.string.popup_faq );
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void popupLogcat()
-    {
-        String title = getString( R.string.menuItem_logcat );
-        String message = DeviceUtil.getLogCat();
-        popupShareableText( title, message );
-    }
-    
-    private void popupHardwareInfo()
-    {
-        String title = getString( R.string.menuItem_hardwareInfo );
-        String axisInfo = DeviceUtil.getAxisInfo();
-        String peripheralInfo = DeviceUtil.getPeripheralInfo();
-        String cpuInfo = DeviceUtil.getCpuInfo();
-        String message = axisInfo + peripheralInfo + cpuInfo;
-        popupShareableText( title, message );
-    }
-    
-    private void popupShareableText( String title, final String message )
-    {
-        // Set up click handler to share text with a user-selected app (email, clipboard, etc.)
-        DialogInterface.OnClickListener shareHandler = new DialogInterface.OnClickListener()
-        {
-            @SuppressLint( "InlinedApi" )
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                ActivityHelper.launchPlainText( GalleryActivity.this, message, getText( R.string.actionShare_title ) );
-            }
-        };
-        
-        new Builder( this ).setTitle( title ).setMessage( message.toString() )
-                .setNeutralButton( R.string.actionShare_title, shareHandler ).create().show();
-    }
-    
-    private void popupAppVersion()
-    {
-        String title = getString( R.string.menuItem_appVersion );
-        String message = getString( R.string.popup_version, mAppData.appVersion,
-                mAppData.appVersionCode );
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
     @Override
