@@ -45,11 +45,11 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -69,7 +69,7 @@ import android.widget.TextView;
 
 import com.bda.controller.Controller;
 
-public class ControllerProfileActivity extends Activity implements OnInputListener,
+public class ControllerProfileActivity extends AppCompatActivity implements OnInputListener,
         OnClickListener, OnItemClickListener
 {
     // Slider limits

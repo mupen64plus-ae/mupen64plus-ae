@@ -32,7 +32,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.SplashActivity"
             android:label="@string/SplashActivity_title"
-            android:theme="@style/appTheme.Black" >
+            android:theme="@style/Theme.AppCompat.Black" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
@@ -96,7 +96,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivity"
             android:exported="false"
-            android:label="@string/ControllerProfileActivity_title" >
+            android:label="@string/ControllerProfileActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".profile.ControllerProfileActivity" />
 
@@ -136,8 +137,9 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity"
             android:exported="false"
-            android:label="@string/TouchscreenProfileActivity_title" >
-            <intent-filter>
+            android:label="@string/TouchscreenProfileActivity_title"
+            android:theme="@style/Theme.AppCompat.Black.OverlayActionBar" >
+           <intent-filter>
                 <action android:name=".profile.TouchscreenProfileActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -146,7 +148,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.input.DiagnosticActivity"
             android:exported="false"
-            android:label="@string/DiagnosticActivity_title" >
+            android:label="@string/DiagnosticActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".input.DiagnosticActivity" />
 
