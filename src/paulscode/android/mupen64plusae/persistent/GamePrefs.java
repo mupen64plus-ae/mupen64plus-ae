@@ -2,7 +2,10 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -177,16 +180,19 @@ public class GamePrefs
     
     private final SharedPreferences mPreferences;
     
+    private final RomHeader mHeader;
+    
     public GamePrefs( Context context, String romMd5, RomHeader header )
     {
         final AppData appData = new AppData( context );
-        final UserPrefs userPrefs = new UserPrefs( context );
+        final GlobalPrefs globalPrefs = new GlobalPrefs( context );
         
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
+        mHeader = header;
         
         // Game-specific data
-        gameDataDir = String.format( "%s/GameData/%s %s %s", userPrefs.userDataDir, header.name, header.countrySymbol, romMd5 );
+        gameDataDir = String.format( "%s/GameData/%s %s %s", globalPrefs.userDataDir, header.name, header.countrySymbol, romMd5 );
         sramDataDir = gameDataDir + "/SramData";
         autoSaveDir = gameDataDir + "/AutoSaves";
         slotSaveDir = gameDataDir + "/SlotSaves";
@@ -197,27 +203,27 @@ public class GamePrefs
         
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, "emulationProfile",
-                UserPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
-                userPrefs.emulationProfiles_cfg, appData.emulationProfiles_cfg );
+                GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
+                globalPrefs.emulationProfiles_cfg, appData.emulationProfiles_cfg );
         
         // Touchscreen profile
         touchscreenProfile = loadProfile( mPreferences, "touchscreenProfile",
-                UserPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT,
-                userPrefs.touchscreenProfiles_cfg, appData.touchscreenProfiles_cfg );
+                GlobalPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT,
+                globalPrefs.touchscreenProfiles_cfg, appData.touchscreenProfiles_cfg );
         
         // Controller profiles
         controllerProfile1 = loadControllerProfile( mPreferences, "controllerProfile1",
-                UserPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
-                userPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
+                GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         controllerProfile2 = loadControllerProfile( mPreferences, "controllerProfile2",
                 "",
-                userPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
+                globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         controllerProfile3 = loadControllerProfile( mPreferences, "controllerProfile3",
                 "",
-                userPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
+                globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         controllerProfile4 = loadControllerProfile( mPreferences, "controllerProfile4",
                 "",
-                userPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
+                globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         
         // Player map
         playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
@@ -280,7 +286,7 @@ public class GamePrefs
                 if( layout.equals( "Mupen64Plus-AE-Analog" )
                         || layout.equals( "Mupen64Plus-AE-All" ) )
                 {
-                    if( userPrefs.isTouchscreenAnimated )
+                    if( globalPrefs.isTouchscreenAnimated )
                         layout += "-Stick";
                     else
                         layout += "-Nostick";
@@ -303,8 +309,8 @@ public class GamePrefs
                                 .sqrt( ( screenWidthInches * screenWidthInches )
                                         + ( screenHeightInches * screenHeightInches ) );
                         if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE
-                                || userPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                                || userPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
+                                || globalPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                                || globalPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
                         {
                             layout += "-Half-Height";
                         }
@@ -325,14 +331,14 @@ public class GamePrefs
         else
         {
             // Touchscreen disabled, profile is null
-            if( userPrefs.isFpsEnabled )
+            if( globalPrefs.isFpsEnabled )
             {
                 folder = appData.touchscreenSkinsDir
                         + context.getString( R.string.touchscreenLayout_fpsOnly );
             }
             touchscreenAutoHoldables = null;
         }
-        isTouchscreenHidden = !isTouchscreenEnabled || userPrefs.touchscreenTransparency == 0;
+        isTouchscreenHidden = !isTouchscreenEnabled || globalPrefs.touchscreenTransparency == 0;
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
         
@@ -348,13 +354,44 @@ public class GamePrefs
         numControllers += isControllerEnabled2 ? 1 : 0;
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
-        playerMap.setEnabled( numControllers > 1 && !userPrefs.isControllerShared );
+        playerMap.setEnabled( numControllers > 1 && !globalPrefs.isControllerShared );
         
         // Determine which players are "plugged in"
-        isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled || userPrefs.isTouchpadEnabled;
+        isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled || globalPrefs.isTouchpadEnabled;
         isPlugged2 = isControllerEnabled2;
         isPlugged3 = isControllerEnabled3;
         isPlugged4 = isControllerEnabled4;
+    }
+    
+    public String getCheatArgs()
+    {
+        if( !isCheatOptionsShown )
+            return "";
+        
+        final Pattern pattern = Pattern.compile( "^" + mHeader.crc + " Cheat(\\d+)" );
+        StringBuilder builder = null;
+        Map<String, ?> map = mPreferences.getAll();
+        for (String key : map.keySet())
+        {
+            Matcher matcher = pattern.matcher( key );
+            if ( matcher.matches() && matcher.groupCount() > 0 )
+            {
+                int value = mPreferences.getInt( key, 0 );
+                if (value > 0)
+                {
+                    int index = Integer.parseInt( matcher.group( 1 ) );
+                    
+                    if (builder == null)
+                        builder = new StringBuilder();
+                    else
+                        builder.append( ',' );
+                    builder.append( index );
+                    builder.append( '-' );
+                    builder.append( value - 1 );
+                }
+            }
+        }
+        return builder == null ? "" : builder.toString();
     }
     
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,

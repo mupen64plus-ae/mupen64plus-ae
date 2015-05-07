@@ -27,12 +27,12 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.InputDevice.MotionRange;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -42,7 +42,7 @@ import com.bda.controller.Controller;
 import com.bda.controller.ControllerListener;
 import com.bda.controller.StateEvent;
 
-public class DiagnosticActivity extends Activity implements ControllerListener
+public class DiagnosticActivity extends AppCompatActivity implements ControllerListener
 {
     private Controller mMogaController = Controller.getInstance( this );
     
@@ -50,7 +50,7 @@ public class DiagnosticActivity extends Activity implements ControllerListener
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        new UserPrefs( this ).enforceLocale( this );
+        new GlobalPrefs( this ).enforceLocale( this );
         setContentView( R.layout.diagnostic_activity );
         
         // TODO: Remove hack after MOGA SDK is fixed

@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.profile;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractTexturesTask;
 import paulscode.android.mupen64plusae.task.ExtractTexturesTask.ExtractTexturesListener;
@@ -67,7 +67,7 @@ public class EmulationProfileActivity extends ProfileActivity
     @Override
     protected String getConfigFilePath()
     {
-        return new UserPrefs( this ).emulationProfiles_cfg;
+        return new GlobalPrefs( this ).emulationProfiles_cfg;
     }
     
     @SuppressWarnings( "deprecation" )
@@ -138,8 +138,8 @@ public class EmulationProfileActivity extends ProfileActivity
         dialog.show();
         
         // Asynchronously extract textures and dismiss popup
-        UserPrefs userPrefs = new UserPrefs( EmulationProfileActivity.this );
-        new ExtractTexturesTask( filename, userPrefs.hiResTextureDir, new ExtractTexturesListener()
+        GlobalPrefs globalPrefs = new GlobalPrefs( EmulationProfileActivity.this );
+        new ExtractTexturesTask( filename, globalPrefs.hiResTextureDir, new ExtractTexturesListener()
         {
             @Override
             public void onExtractTexturesFinished( boolean success )

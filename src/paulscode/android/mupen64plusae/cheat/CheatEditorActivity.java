@@ -27,12 +27,12 @@ import java.util.Locale;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.Keys;
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -96,7 +96,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     private final ArrayList<Cheat> cheats = new ArrayList<Cheat>();
     private CheatListAdapter cheatListAdapter = null;
     private AppData mAppData = null;
-    private UserPrefs mUserPrefs = null;
+    private GlobalPrefs mGlobalPrefs = null;
     private RomHeader mRomHeader = null;
     
     @Override
@@ -104,14 +104,14 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     {
         super.onCreate( savedInstanceState );
         mAppData = new AppData( this );
-        mUserPrefs = new UserPrefs( this );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         
         // Get the ROM header info
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "ROM path must be passed via the extras bundle when starting CheatEditorActivity" );
-        String romPath = extras.getString( Keys.Extras.ROM_PATH );
+        String romPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         if( TextUtils.isEmpty( romPath ) )
             throw new Error( "ROM path must be passed via the extras bundle when starting CheatEditorActivity" );
         mRomHeader = new RomHeader( new File( romPath ) );
@@ -134,7 +134,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
         
         // Get the appropriate section of the config file, using CRC as the key
         CheatFile mupencheat_default = new CheatFile( mAppData.mupencheat_default );
-        CheatFile usrcheat_txt = new CheatFile( mUserPrefs.customCheats_txt );
+        CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt );
         cheats.addAll( CheatUtils.populate( crc, mupencheat_default, true, this ) );
         cheats.addAll( CheatUtils.populate( crc, usrcheat_txt, false, this ) );
         cheatListAdapter = new CheatListAdapter( this, cheats );
@@ -143,7 +143,7 @@ public class CheatEditorActivity extends ListActivity implements View.OnClickLis
     
     private void save( String crc )
     {
-        CheatFile usrcheat_txt = new CheatFile( mUserPrefs.customCheats_txt );
+        CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt );
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
         CheatUtils.save( crc, usrcheat_txt, cheats, mRomHeader, this, false );
         CheatUtils.save( crc, mupencheat_txt, cheats, mRomHeader, this, true );

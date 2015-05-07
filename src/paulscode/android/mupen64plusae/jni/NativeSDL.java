@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae.jni;
 
 import javax.microedition.khronos.egl.EGL10;
 
-import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.media.AudioFormat;
 import android.media.AudioManager;

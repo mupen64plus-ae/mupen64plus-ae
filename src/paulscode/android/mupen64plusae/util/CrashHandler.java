@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Locale;
 
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.content.Context;
 import android.util.Log;
 
@@ -59,9 +59,9 @@ public class CrashHandler implements UncaughtExceptionHandler
         try
         {
             // Setup crash log
-            UserPrefs user = new UserPrefs( mContext );
+            GlobalPrefs globalPrefs = new GlobalPrefs( mContext );
             String filename = String.format( Locale.US, "%s/Crash_%s_%03d.txt",
-                    user.crashLogDir, Utility.getDateString(), System.currentTimeMillis() % 1000 );
+                    globalPrefs.crashLogDir, Utility.getDateString(), System.currentTimeMillis() % 1000 );
             File log = new File( filename );
             log.getParentFile().mkdirs();
             

@@ -27,7 +27,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListener;
@@ -35,14 +35,12 @@ import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import tv.ouya.console.api.OuyaFacade;
-import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
@@ -52,7 +50,7 @@ import android.widget.TextView;
  * The main activity that presents the splash screen, extracts the assets if necessary, and launches
  * the main menu activity.
  */
-public class SplashActivity extends Activity implements ExtractAssetsListener
+public class SplashActivity extends AppCompatActivity implements ExtractAssetsListener
 {
     /**
      * Asset version number, used to determine stale assets. Increment this number every time the
@@ -83,7 +81,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
     
     // App data and user preferences
     private AppData mAppData = null;
-    private UserPrefs mUserPrefs = null;
+    private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
     
     // These constants must match the keys used in res/xml/preferences*.xml
@@ -113,8 +111,8 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mUserPrefs = new UserPrefs( this );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
@@ -140,7 +138,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         // @formatter:on
         
         // Refresh the preference data wrapper
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         
         // Initialize the OUYA interface if running on OUYA
         if( AppData.IS_OUYA_HARDWARE )
@@ -156,7 +154,7 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
         setContentView( R.layout.splash_activity );
         mTextView = (TextView) findViewById( R.id.mainText );
         
-        if( mUserPrefs.isBigScreenMode )
+        if( mGlobalPrefs.isBigScreenMode )
         {
             ImageView splash = (ImageView) findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo_ouya );
@@ -183,8 +181,11 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
             }
             else
             {
-                // Assets already extracted, just launch next activity
-                launchGalleryActivity();
+                // Assets already extracted, just launch gallery activity, passing ROM path if it was provided externally
+                ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent().getData() );
+                
+                // We never want to come back to this activity, so finish it
+                finish();
             }
         }
     };
@@ -203,11 +204,16 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
     {
         if( failures.size() == 0 )
         {
-            // Extraction succeeded, record new asset version, merge cheats, and launch next activity
+            // Extraction succeeded, record new asset version and merge cheats
             mTextView.setText( R.string.assetExtractor_finished );
             mAppData.putAssetVersion( ASSET_VERSION );
-            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mUserPrefs.customCheats_txt, mAppData.mupencheat_txt );
-            launchGalleryActivity();
+            CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
+            
+            // Launch gallery activity, passing ROM path if it was provided externally
+            ActivityHelper.startGalleryActivity( this, getIntent().getData() );
+            
+            // We never want to come back to this activity, so finish it
+            finish();
         }
         else
         {
@@ -222,18 +228,5 @@ public class SplashActivity extends Activity implements ExtractAssetsListener
             textHtml += "</small>";
             mTextView.setText( Html.fromHtml( textHtml ) );
         }
-    }
-    
-    private void launchGalleryActivity( )
-    {
-        // Launch the activity, passing ROM path if it was provided externally
-        Intent intent = new Intent( this, GalleryActivity.class );
-        Uri dataUri = getIntent().getData();
-        if( dataUri != null )
-            intent.putExtra( Keys.Extras.ROM_PATH, dataUri.getPath() );
-        startActivity( intent );
-        
-        // We never want to come back to this activity, so finish it
-        finish();
     }
 }

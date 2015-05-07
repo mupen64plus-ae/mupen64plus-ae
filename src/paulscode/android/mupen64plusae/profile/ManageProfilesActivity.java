@@ -31,7 +31,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -117,7 +117,7 @@ abstract public class ManageProfilesActivity extends ListActivity
     protected AppData mAppData;
     
     /** The user preferences wrapper, available as a convenience to subclasses. */
-    protected UserPrefs mUserPrefs;
+    protected GlobalPrefs mGlobalPrefs;
     
     private final List<String> mProfileNames = new ArrayList<String>();
     
@@ -126,8 +126,8 @@ abstract public class ManageProfilesActivity extends ListActivity
     {
         super.onCreate( savedInstanceState );
         mAppData = new AppData( this );
-        mUserPrefs = new UserPrefs( this );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         
         // Get the config files from the subclass-specified paths
         String customPath = getConfigFilePath( false );

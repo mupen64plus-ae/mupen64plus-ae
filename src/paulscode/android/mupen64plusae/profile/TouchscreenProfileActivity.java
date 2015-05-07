@@ -23,31 +23,29 @@ package paulscode.android.mupen64plusae.profile;
 import org.apache.commons.lang.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.GameOverlay;
-import paulscode.android.mupen64plusae.Keys;
-import paulscode.android.mupen64plusae.SettingsGlobalActivity;
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
+import paulscode.android.mupen64plusae.game.GameOverlay;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.ActionBar.OnMenuVisibilityListener;
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.OnMenuVisibilityListener;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.FloatMath;
 import android.util.SparseArray;
@@ -58,7 +56,6 @@ import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -66,7 +63,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-public class TouchscreenProfileActivity extends Activity implements OnTouchListener
+public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener
 {
     private static final String TOUCHSCREEN_AUTOHOLDABLES = "touchscreenAutoHoldables";
     private static final String AUTOHOLDABLES_DELIMITER = "~";
@@ -93,7 +90,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     private Profile mProfile;
     
     // User preferences wrapper
-    private UserPrefs mUserPrefs;
+    private GlobalPrefs mGlobalPrefs;
     
     // Visual elements
     private VisibleTouchMap mTouchscreenMap;
@@ -121,17 +118,17 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         super.onCreate( savedInstanceState );
         
         // Get the user preferences wrapper
-        mUserPrefs = new UserPrefs( this );
-        mUserPrefs.enforceLocale( this );
+        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs.enforceLocale( this );
         
         // Load the profile; fail fast if there are any programmer usage errors
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "Invalid usage: bundle must indicate profile name" );
-        String name = extras.getString( Keys.Extras.PROFILE_NAME );
+        String name = extras.getString( ActivityHelper.Keys.PROFILE_NAME );
         if( TextUtils.isEmpty( name ) )
             throw new Error( "Invalid usage: profile name cannot be null or empty" );
-        mConfigFile = new ConfigFile( mUserPrefs.touchscreenProfiles_cfg );
+        mConfigFile = new ConfigFile( mGlobalPrefs.touchscreenProfiles_cfg );
         ConfigSection section = mConfigFile.get( name );
         if( section == null )
             throw new Error( "Invalid usage: profile name not found in config file" );
@@ -157,34 +154,25 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         READABLE_NAMES.put( TouchMap.DPD_RD, getString( R.string.controller_dpad ) );
         READABLE_NAMES.put( TouchMap.DPD_RU, getString( R.string.controller_dpad ) );
         
-        // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
-        // For earlier APIs, remove the title bar to yield more space
-        Window window = getWindow();
-        if( mUserPrefs.isActionBarAvailable )
-            window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
-        else
-            window.requestFeature( Window.FEATURE_NO_TITLE );
-        
         // Enable full-screen mode
-        window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
+        getWindow().setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
         
         // Lay out content and get the views
         setContentView( R.layout.touchscreen_profile_activity );
         mSurface = (ImageView) findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) findViewById( R.id.gameOverlay );
         
-        // Configure the action bar introduced in higher Android versions
-        if( mUserPrefs.isActionBarAvailable )
+        // Configure the action bar
         {
-            getActionBar().hide();
+            getSupportActionBar().hide();
             ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
-            color.setAlpha( mUserPrefs.displayActionBarTransparency );
-            getActionBar().setBackgroundDrawable( color );
+            color.setAlpha( mGlobalPrefs.displayActionBarTransparency );
+            getSupportActionBar().setBackgroundDrawable( color );
             
             // onOptionsMenuClosed is not called due to a bug in Android:
             // http://stackoverflow.com/questions/3688077/android-onoptionsmenuclosed-not-being-called-for-submenu
             // so add a menu visibility listener instead
-            getActionBar().addOnMenuVisibilityListener( new OnMenuVisibilityListener()
+            getSupportActionBar().addOnMenuVisibilityListener( new OnMenuVisibilityListener()
             {
                 @Override
                 public void onMenuVisibilityChanged( boolean isVisible )
@@ -197,16 +185,16 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
-        mOverlay.initialize( mTouchscreenMap, true, mUserPrefs.isFpsEnabled, mUserPrefs.isTouchscreenAnimated );
+        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, mGlobalPrefs.isTouchscreenAnimated );
     }
     
     @TargetApi( 11 )
     private void refresh()
     {
         // Reposition the assets and refresh the overlay and options menu
-        mTouchscreenMap.load( mUserPrefs.touchscreenSkin, mProfile,
-                mUserPrefs.isTouchscreenAnimated, true, mUserPrefs.touchscreenScale,
-                mUserPrefs.touchscreenTransparency );
+        mTouchscreenMap.load( mGlobalPrefs.touchscreenSkin, mProfile,
+                mGlobalPrefs.isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
+                mGlobalPrefs.touchscreenTransparency );
         mOverlay.postInvalidate();
         if( AppData.IS_HONEYCOMB )
             invalidateOptionsMenu();
@@ -218,13 +206,13 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         super.onResume();
         
         // Refresh in case the global settings changed
-        mUserPrefs = new UserPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this );
         
         // Update the dummy GameSurface size in case global settings changed
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
-        params.width = mUserPrefs.videoSurfaceWidth;
-        params.height = mUserPrefs.videoSurfaceHeight;
-        params.gravity = mUserPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
+        params.width = mGlobalPrefs.videoSurfaceWidth;
+        params.height = mGlobalPrefs.videoSurfaceHeight;
+        params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
         mSurface.setLayoutParams( params );
         
         // Refresh the touchscreen controls
@@ -286,14 +274,12 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
     }
     
     @Override
-    public boolean onMenuItemSelected( int featureId, MenuItem item )
+    public boolean onOptionsItemSelected( MenuItem item )
     {
         switch( item.getItemId() )
         {
             case R.id.menuItem_globalSettings:
-                Intent intent = new Intent( this, SettingsGlobalActivity.class );
-                intent.putExtra( Keys.Extras.MENU_DISPLAY_MODE, 1 );
-                startActivity( intent );
+                ActivityHelper.startGlobalPrefsActivity( this, 1 );
                 return true;
             case R.id.menuItem_exit:
                 finish();
@@ -323,7 +309,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
                 toggleAsset( BUTTON_S );
                 return true;
             default:
-                return super.onMenuItemSelected( featureId, item );
+                return super.onOptionsItemSelected( item );
         }
     }
     
@@ -376,7 +362,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
             return;
         
         // Toggle the action bar
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if( actionBar.isShowing() )
         {
             hideSystemBars();
@@ -395,11 +381,11 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
         if( !AppData.IS_HONEYCOMB )
             return;
         
-        getActionBar().hide();
+        getSupportActionBar().hide();
         View view = mSurface.getRootView();
         if( view != null )
         {
-            if( AppData.IS_KITKAT && mUserPrefs.isImmersiveModeEnabled )
+            if( AppData.IS_KITKAT && mGlobalPrefs.isImmersiveModeEnabled )
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -426,7 +412,7 @@ public class TouchscreenProfileActivity extends Activity implements OnTouchListe
             dragging = false;
             dragAsset = "";
             
-            if( AppData.IS_KITKAT && mUserPrefs.isImmersiveModeEnabled )
+            if( AppData.IS_KITKAT && mGlobalPrefs.isImmersiveModeEnabled )
             {
                 // ignore edge swipes.
                 // unfortunately KitKat lacks a way to do this on its own,
