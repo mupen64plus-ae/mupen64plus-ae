@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -73,7 +74,7 @@ import android.text.TextUtils;
  * }
  * </pre>
  */
-public abstract class ProfileActivity extends PreferenceActivity implements
+public abstract class ProfileActivity extends AppCompatPreferenceActivity implements
         OnSharedPreferenceChangeListener
 {
     /**

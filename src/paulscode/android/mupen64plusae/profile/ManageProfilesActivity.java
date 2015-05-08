@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -35,7 +36,6 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -59,7 +59,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-abstract public class ManageProfilesActivity extends ListActivity
+abstract public class ManageProfilesActivity extends AppCompatListActivity
 {
     /**
      * Gets the absolute path of the {@link ConfigFile} that backs this profile. Subclasses should
