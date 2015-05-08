@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@+id/menuItem_deadzone"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_deadzone"
-        tools:ignore="UnusedAttribute"/>
+        android:title="@string/menuItem_deadzone"/>
     <item
         android:id="@+id/menuItem_sensitivity"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_sensitivity"
-        tools:ignore="UnusedAttribute"/>
+        android:title="@string/menuItem_sensitivity"/>
     <item
         android:id="@+id/menuItem_unmapAll"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_unmapAll"
-        tools:ignore="UnusedAttribute"/>
+        android:title="@string/menuItem_unmapAll"/>
     <item
         android:id="@+id/menuItem_exit"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_exit"
-        tools:ignore="UnusedAttribute"/>
+        android:title="@string/menuItem_exit"/>
 
 </menu>

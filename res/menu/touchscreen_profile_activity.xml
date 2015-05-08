@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@+id/menuItem_globalSettings"
         android:icon="@drawable/ic_settings"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_globalSettings"
-        tools:ignore="UnusedAttribute"/>
+        android:title="@string/menuItem_globalSettings"/>
     <item
         android:id="@+id/menuItem_buttons"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/touchscreenProfileActivity_buttons"
-        tools:ignore="UnusedAttribute">
+        android:title="@string/touchscreenProfileActivity_buttons">
         <menu>
             <group android:checkableBehavior="all" >
                 <item
@@ -44,8 +39,6 @@
     </item>
     <item
         android:id="@+id/menuItem_exit"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_exit"
-        tools:ignore="UnusedAttribute"/>
+        android:title="@string/menuItem_exit"/>
 
 </menu>
