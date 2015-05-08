@@ -66,7 +66,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.persistent.GamePrefsActivity"
             android:exported="false"
-            android:label="@string/PlayMenuActivity_title" >
+            android:label="@string/PlayMenuActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".persistent.GamePrefsActivity" />
 
@@ -76,7 +77,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity"
             android:exported="false"
-            android:label="@string/SettingsGlobalActivity_title" >
+            android:label="@string/SettingsGlobalActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".persistent.GlobalPrefsActivity" />
 
@@ -86,7 +88,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity"
             android:exported="false"
-            android:label="@string/ManageControllerProfilesActivity_title" >
+            android:label="@string/ManageControllerProfilesActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".profile.ManageControllerProfilesActivity" />
 
@@ -107,7 +110,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity"
             android:exported="false"
-            android:label="@string/ManageEmulationProfilesActivity_title" >
+            android:label="@string/ManageEmulationProfilesActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".profile.ManageEmulationProfilesActivity" />
 
@@ -117,7 +121,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.EmulationProfileActivity"
             android:exported="false"
-            android:label="@string/EmulationProfileActivity_title" >
+            android:label="@string/EmulationProfileActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".profile.EmulationProfileActivity" />
 
@@ -127,7 +132,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity"
             android:exported="false"
-            android:label="@string/ManageTouchscreenProfilesActivity_title" >
+            android:label="@string/ManageTouchscreenProfilesActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".profile.ManageTouchscreenProfilesActivity" />
 
@@ -159,7 +165,8 @@
         <activity
             android:name="paulscode.android.mupen64plusae.cheat.CheatEditorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/CheatEditorActivity_title" >
+            android:label="@string/CheatEditorActivity_title"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name=".cheat.CheatEditorActivity" />
 

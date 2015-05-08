@@ -29,6 +29,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
+import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -37,7 +38,6 @@ import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -57,7 +57,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CheatEditorActivity extends ListActivity implements View.OnClickListener, OnItemLongClickListener
+public class CheatEditorActivity extends AppCompatListActivity implements View.OnClickListener, OnItemLongClickListener
 {
     private static class CheatListAdapter extends ArrayAdapter<Cheat>
     {
