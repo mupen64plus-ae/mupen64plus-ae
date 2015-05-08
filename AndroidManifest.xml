@@ -68,7 +68,7 @@
             android:exported="false"
             android:label="@string/PlayMenuActivity_title" >
             <intent-filter>
-                <action android:name=".PlayMenuActivity" />
+                <action android:name=".persistent.GamePrefsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -78,7 +78,7 @@
             android:exported="false"
             android:label="@string/SettingsGlobalActivity_title" >
             <intent-filter>
-                <action android:name=".SettingsGlobalActivity" />
+                <action android:name=".persistent.GlobalPrefsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
