@@ -32,6 +32,13 @@ import android.content.DialogInterface;
 
 public class Popups
 {
+    public static void showInvalidInstall( Context context )
+    {
+        CharSequence title = context.getText( R.string.invalidInstall_title );
+        CharSequence message = context.getText( R.string.invalidInstall_message );
+        new Builder( context ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
     public static void showFaq( Context context )
     {
         CharSequence title = context.getText( R.string.menuItem_faq );

@@ -47,7 +47,6 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.TargetApi;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -272,9 +271,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
         {
-            CharSequence title = getText( R.string.invalidInstall_title );
-            CharSequence message = getText( R.string.invalidInstall_message );
-            new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+            Popups.showInvalidInstall( this );
         }
         
         if( savedInstanceState != null )
