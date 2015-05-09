@@ -215,7 +215,13 @@ public class GlobalPrefs
     public final boolean audioSwapChannels;
     
     /** Size of secondary buffer in output samples. This is SDL's hardware buffer, which directly affects latency. */
-    public final int audioSecondaryBufferSize;
+    public final int audioSDLSecondaryBufferSize;
+    
+    /** Size of secondary buffer in output samples. This is SLES's hardware buffer, which directly affects latency. */
+    public final int audioSLESSecondaryBufferSize;
+    
+    /** Number of SLES secondary buffers. */
+    public final int audioSLESSecondaryBufferNbr;
     
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
@@ -372,7 +378,10 @@ public class GlobalPrefs
         
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
-        audioSecondaryBufferSize = getSafeInt( mPreferences, "audioBufferSize", 2048 );
+        audioSDLSecondaryBufferSize = getSafeInt( mPreferences, "audioSDLBufferSize", 2048 );
+        audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize", 1024 );
+        audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr", 2 );
+        
         if( audioPlugin.enabled )
             isFramelimiterEnabled = mPreferences.getBoolean( "audioSynchronize", true );
         else

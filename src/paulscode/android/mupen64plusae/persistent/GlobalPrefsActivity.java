@@ -57,7 +57,9 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
     private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
-    private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
+    private static final String AUDIO_SDL_BUFFER_SIZE = "audioSDLBufferSize";
+    private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize";
+    private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr";
     private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
     private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
@@ -66,6 +68,9 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
+    
+    private static final String AUDIO_SDL_PLUGIN = "libmupen64plus-audio-sdl.so";
+    private static final String AUDIO_SLES_PLUGIN = "libmupen64plus-audio-sles.so";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -172,7 +177,9 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         PrefUtil.enablePreference( this, VIDEO_POLYGON_OFFSET, mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM );
         
         // Enable audio prefs if audio is enabled
-        PrefUtil.enablePreference( this, AUDIO_BUFFER_SIZE, mGlobalPrefs.audioPlugin.enabled );
+        PrefUtil.enablePreference( this, AUDIO_SDL_BUFFER_SIZE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SDL_PLUGIN ) );
+        PrefUtil.enablePreference( this, AUDIO_SLES_BUFFER_SIZE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
+        PrefUtil.enablePreference( this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
         PrefUtil.enablePreference( this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled );
         PrefUtil.enablePreference( this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled );
     }

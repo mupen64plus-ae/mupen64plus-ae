@@ -318,28 +318,64 @@
         <item>@string/audioPlugin_entryNone</item>
         <item>@string/audioPlugin_entryNoneNoSpeedLimit</item>
         <item>@string/audioPlugin_entrySdl</item>
+        <item>@string/audioPlugin_entrySles</item>
     </string-array>
     <string-array name="audioPlugin_values" translatable="false">
         <item></item>
         <item>nospeedlimit</item>
         <item>libmupen64plus-audio-sdl.so</item>
+        <item>libmupen64plus-audio-sles.so</item>
     </string-array>
 
     <string name="audioPlugin_default" translatable="false">libmupen64plus-audio-sdl.so</string>
 
-    <!-- Audio Buffer Size -->
-    <string-array name="audioBufferSize_entries" translatable="false">
-        <item>@string/audioBufferSize_entry2048</item>
-        <item>@string/audioBufferSize_entry128</item>
-        <item>@string/audioBufferSize_entry8</item>
+    <!-- Audio SDL Buffer Size -->
+    <string-array name="audioSDLBufferSize_entries" translatable="false">
+        <item>@string/audioSDLBufferSize_entry2048</item>
+        <item>@string/audioSDLBufferSize_entry128</item>
+        <item>@string/audioSDLBufferSize_entry8</item>
     </string-array>
-    <string-array name="audioBufferSize_values" translatable="false">
+    <string-array name="audioSDLBufferSize_values" translatable="false">
         <item>2048</item>
         <item>128</item>
         <item>8</item>
-        </string-array>
+    </string-array>
+    
+    <string name="audioSDLBufferSize_default" translatable="false">8</string>
+    
+    <!-- Audio SLES Buffer Size -->
+    <string-array name="audioSLESBufferSize_entries" translatable="false">
+        <item>@string/audioSLESBufferSize_entry2048</item>
+        <item>@string/audioSLESBufferSize_entry1024</item>
+        <item>@string/audioSLESBufferSize_entry512</item>
+        <item>@string/audioSLESBufferSize_entry256</item>
+        <item>@string/audioSLESBufferSize_entry128</item>
+    </string-array>
+    <string-array name="audioSLESBufferSize_values" translatable="false">
+        <item>2048</item>
+        <item>1024</item>
+        <item>512</item>
+        <item>256</item>
+        <item>128</item>
+    </string-array>
 
-    <string name="audioBufferSize_default" translatable="false">8</string>
+    <string name="audioSLESBufferSize_default" translatable="false">1024</string>
+    
+    <!-- Audio SLES Buffer Number -->
+    <string-array name="audioSLESBufferNbr_entries" translatable="false">
+        <item>@string/audioSLESBufferNbr_entry2</item>
+        <item>@string/audioSLESBufferNbr_entry3</item>
+        <item>@string/audioSLESBufferNbr_entry4</item>
+        <item>@string/audioSLESBufferNbr_entry5</item>
+    </string-array>
+    <string-array name="audioSLESBufferNbr_values" translatable="false">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    
+    <string name="audioSLESBufferNbr_default" translatable="false">2</string>
 
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">
