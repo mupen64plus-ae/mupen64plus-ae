@@ -22,7 +22,7 @@
 /* version info */
 #include "m64p_config.h"
 
-#define SDL_AUDIO_PLUGIN_VERSION 0x020000
+#define SDL_AUDIO_PLUGIN_VERSION 0x020500
 #define AUDIO_PLUGIN_API_VERSION 0x020000
 #define CONFIG_API_VERSION       0x020100
 #define CONFIG_PARAM_VERSION     1.00
