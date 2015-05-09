@@ -56,10 +56,10 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 51;
+    private static final int ASSET_VERSION = 60;
     
     /** The total number of assets to be extracted (for computing progress %). */
-    private static final int TOTAL_ASSETS = 118;
+    private static final int TOTAL_ASSETS = 120;
     
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;

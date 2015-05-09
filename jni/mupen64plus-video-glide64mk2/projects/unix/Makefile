@@ -122,8 +122,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
-OPTFLAGS ?= -O3
-WARNFLAGS ?= -Wall
+OPTFLAGS ?= -O3 -flto
+WARNFLAGS ?= -Wall -Wno-unused-function
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -I../../src/Glitch64/inc -DGCC
 CXXFLAGS += -fvisibility-inlines-hidden -std=gnu++0x
 LDFLAGS += $(SHARED)
@@ -156,7 +156,6 @@ endif
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
-  OPTFLAGS += -flto=jobserver
   # only export api symbols
   LDFLAGS += -Wl,-version-script,$(SRCDIR)/video_api_export.ver
   LDLIBS += -ldl
@@ -482,6 +481,6 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(COMPILE.cc) -o $@ $<
 
 $(TARGET): $(OBJECTS)
-	+$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 .PHONY: all clean install uninstall targets

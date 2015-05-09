@@ -596,9 +596,7 @@ wxUint32 Load4bCI (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int lin
 {
   if (wid_64 < 1) wid_64 = 1;
   if (height < 1) height = 1;
-  int ext = (real_width - (wid_64 << 4)) << 1;
-  if (ext < 0)
-    return 0;
+  int ext = (real_width - (wid_64 << 4));
 
   if (rdp.tlut_mode == 0)
   {
@@ -611,12 +609,13 @@ wxUint32 Load4bCI (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int lin
   wxUIntPtr pal = wxPtrToUInt(rdp.pal_8 + (rdp.tiles[tile].palette << 4));
   if (rdp.tlut_mode == 2)
   {
+    ext <<= 1;
     load4bCI ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext, (uint16_t *)pal);
-    
     return (1 << 16) | GR_TEXFMT_ARGB_1555;
   }
 
-    load4bIAPal ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext, (uint16_t *)pal);
+  ext <<= 1;
+  load4bIAPal ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext, (uint16_t *)pal);
   return (1 << 16) | GR_TEXFMT_ALPHA_INTENSITY_88;
 }
 
@@ -633,9 +632,6 @@ wxUint32 Load4bIA (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int lin
   if (wid_64 < 1) wid_64 = 1;
   if (height < 1) height = 1;
   int ext = (real_width - (wid_64 << 4));
-  if (ext < 0)
-    return 0;
-
   load4bIA ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
   return /*(0 << 16) | */GR_TEXFMT_ALPHA_INTENSITY_44;
 }
@@ -651,9 +647,6 @@ wxUint32 Load4bI (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int line
   if (wid_64 < 1) wid_64 = 1;
   if (height < 1) height = 1;
   int ext = (real_width - (wid_64 << 4));
-  if (ext < 0)
-    return 0;
-
   load4bI ((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
   
   return /*(0 << 16) | */GR_TEXFMT_ALPHA_INTENSITY_44;

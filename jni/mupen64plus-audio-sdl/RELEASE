@@ -1,6 +1,12 @@
 SDL Audio plugin for Mupen64Plus
 ---------------------------------
 
+Mupen64Plus-audio-sdl - v2.5 - April 26, 2015
+---------------------------------------------
+ - MS Visual Studio 2013 project files
+ - audioresource support for integration with Linux-based Nemo Mobile OS
+ - Makefile: use SDL2 by default if present, disable OSS support on OpenBSD
+
 Mupen64Plus-audio-sdl - v2.0 - July 4, 2013
 -------------------------------------------
  - Add support for resampling with speexdsp library

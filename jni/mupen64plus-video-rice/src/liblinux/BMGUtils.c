@@ -28,8 +28,8 @@
 #include <stdlib.h>
 
 #include "BMGUtils.h"
-#include "osal_preproc.h"
-#include "liblinux/BMGImage.h"
+#include "../osal_preproc.h"
+#include "BMGImage.h"
 
 #ifndef _WIN32
 #include <string.h>

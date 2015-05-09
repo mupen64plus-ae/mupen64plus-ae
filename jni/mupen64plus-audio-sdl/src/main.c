@@ -299,6 +299,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         ConfigSaveSection("Audio-SDL");
 
 #ifdef USE_AUDIORESOURCE
+    setenv("PULSE_PROP_media.role", "x-maemo", 1);
+
     l_audioresource = audioresource_init(AUDIO_RESOURCE_GAME, on_audioresource_acquired, NULL);
 
     audioresource_acquire(l_audioresource);
