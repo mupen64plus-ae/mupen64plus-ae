@@ -388,7 +388,7 @@ void LOG(const char *text, ...);
 #else // LOGGING
 #define OPEN_LOG()
 #define CLOSE_LOG()
-#define LOG
+#define LOG(...)
 #endif // LOGGING
 
 #endif
