@@ -1,6 +1,17 @@
 Mupen64Plus-Video-Rice RELEASE
 ------------------------------
 
+Mupen64Plus-Video-Rice v2.5 - April 26, 2015
+--------------------------------------------
+ - Add hack-fix to show last heart and map arrows in Zelda OoT & MM. 
+ - Lots of code cleanup, removal of deprecated code, and simplifications
+ - Modernize OpenGL interfaces, remove code for supporting very old opengl versions
+ - Graphics fixes for: fog, RDP InsertMatrix
+ - fix for INI file loading under Windows
+ - minor OpenGL ES fixes
+ - add config option to force polygon offset values (fixes artifacts on certains games / renderers)
+ - bugfix: crash if RiceVideoLinux.ini not found
+
 Mupen64Plus-Video-Rice v2.0 - July 4, 2013
 ------------------------------------------
  - support for resizable video window

@@ -448,7 +448,6 @@ void hq4x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int
     int  i, j, k;
     int  prevline, nextline;
     uint32  w[10];
-    uint32  c[10];
 
     //   +----+----+----+
     //   |    |    |    |
@@ -518,10 +517,6 @@ void hq4x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int
                 }
                 flag <<= 1;
             }
-
-            for (k=1; k<=9; k++)
-                c[k] = w[k];
-
             pIn+=4;
             pOut+=16;
         }
