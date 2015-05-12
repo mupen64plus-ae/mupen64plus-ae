@@ -327,7 +327,7 @@
         <item>libmupen64plus-audio-sles.so</item>
     </string-array>
 
-    <string name="audioPlugin_default" translatable="false">libmupen64plus-audio-sdl.so</string>
+    <string name="audioPlugin_default" translatable="false">libmupen64plus-audio-sles.so</string>
 
     <!-- Audio SDL Buffer Size -->
     <string-array name="audioSDLBufferSize_entries" translatable="false">
