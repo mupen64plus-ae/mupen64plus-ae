@@ -27,6 +27,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import android.content.Context;
+import android.opengl.GLES10;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -181,6 +182,8 @@ public class GameSurface extends SurfaceView
                 {
                     if( bindEGLContext() )
                     {
+                        String version = GLES10.glGetString( GLES10.GL_VERSION );
+                        Log.i( TAG, "Created GL context " + version );
                         return true;
                     }
                     unbindEGLContext();
