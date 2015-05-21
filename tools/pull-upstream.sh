@@ -101,7 +101,7 @@ for i in $COMPONENTS; do
     NEW_SYNC_HASH=`git log -1 --pretty=format:"%h"`
     NEW_MSG_SUBJECT="${MSG_PREFIX}${NEW_SYNC_HASH}."
     NEW_MSG_LINK="${COMMIT_URL}${NEW_SYNC_HASH}"
-    if git log ${OLD_SYNC_HASH}..${NEW_SYNC_HASH}; then
+    if git log ${OLD_SYNC_HASH}..${NEW_SYNC_HASH} --max-count=0; then
         NEW_MSG_BODY=`git log ${OLD_SYNC_HASH}..${NEW_SYNC_HASH} --pretty=format:"%h %s" --graph`
     else
         NEW_MSG_BODY="Not a direct descendant of base revision."
