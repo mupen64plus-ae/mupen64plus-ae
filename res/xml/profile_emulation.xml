@@ -17,6 +17,13 @@
         android:key="videoPlugin"
         android:summary="@string/selectedValue"
         android:title="@string/videoPlugin_title" />
+    <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        android:defaultValue="@string/videoSubPlugin_default"
+        android:entries="@array/videoSubPlugin_entries"
+        android:entryValues="@array/videoSubPlugin_values"
+        android:key="videoSubPlugin"
+        android:summary="@string/selectedValue"
+        android:title="@string/videoSubPlugin_title" />
 
     <PreferenceCategory
         android:key="categoryGln64"

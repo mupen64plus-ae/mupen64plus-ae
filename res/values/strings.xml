@@ -183,6 +183,7 @@
     <string name="categoryGln64_title">Gln64 settings</string>
     <string name="categoryRice_title">Rice settings</string>
     <string name="categoryGlide64_title">Glide64 settings</string>
+    <string name="categoryGliden64_title">GlideN64 settings</string>
     <string name="categoryLibrary_title">Library</string>
     <string name="categoryDisplay_title">Display</string>
     <string name="categoryAudio_title">Audio</string>
@@ -289,6 +290,12 @@
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
     <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
+    <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 alpha)</small></string>
+
+    <string name="videoSubPlugin_title">Video plugin variant</string>
+    <string name="videoSubPlugin_entryGles20">OpenGL ES 2.0</string>
+    <string name="videoSubPlugin_entryGles30">OpenGL ES 3.0\n<small>(requires Android 4.3+ and device support)</small></string>
+    <string name="videoSubPlugin_entryGles31">OpenGL ES 3.1\n<small>(requires Android 5.0+ and device support)</small></string>
 
     <string name="videoHardwareType_title">Flicker reduction</string>
     <string name="videoHardwareType_entryDisableHack">Disable flicker reduction hack</string>
