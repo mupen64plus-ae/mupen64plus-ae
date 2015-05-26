@@ -195,14 +195,13 @@ static void DebugMessage(int level, const char *message, ...)
 void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context)
 {
     threadLock *plock = (threadLock *) context;
-    
+
     pthread_mutex_lock(&(plock->mutex));
     
-    if(plock->value == 0)
-        pthread_cond_signal(&(plock->cond));
-
     if(plock->value < plock->limit)
         plock->value++;
+
+    pthread_cond_signal(&(plock->cond));
 
     pthread_mutex_unlock(&(plock->mutex));
 }
@@ -210,7 +209,10 @@ void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context)
 static void CloseAudio(void)
 {
     int i = 0;
-
+    
+    primaryBufferPos = 0;
+    secondaryBufferIndex = 0;
+    
     /* Delete Primary buffer */
     if (primaryBuffer != NULL)
     {
@@ -230,6 +232,7 @@ static void CloseAudio(void)
                 secondaryBuffers[i] = NULL;
             }
         }
+        secondaryBufferBytes = 0;
         free(secondaryBuffers);
         secondaryBuffers = NULL;
     }
