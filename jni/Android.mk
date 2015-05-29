@@ -5,6 +5,7 @@ M64P_API_INCLUDES := $(JNI_LOCAL_PATH)/mupen64plus-core/src/api/
 SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
 PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 SAMPLERATE_INCLUDES := $(JNI_LOCAL_PATH)/libsamplerate/
+FREETYPE_INCLUDES := $(JNI_LOCAL_PATH)/freetype/include/
 
 COMMON_CFLAGS :=                    \
     -O3                             \
@@ -20,6 +21,7 @@ COMMON_CPPFLAGS :=                  \
 
 include $(JNI_LOCAL_PATH)/SDL2/Android.mk
 include $(JNI_LOCAL_PATH)/png/Android.mk
+include $(JNI_LOCAL_PATH)/freetype.mk
 include $(JNI_LOCAL_PATH)/libsamplerate/Android.mk
 include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-audio-sdl.mk
