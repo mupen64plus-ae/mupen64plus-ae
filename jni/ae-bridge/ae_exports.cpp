@@ -41,10 +41,11 @@ static JavaVM* mVm;
 static void* mReserved;
 
 // Library handles
-static void *handleAEI;         // libae-imports.so
-static void *handleSDL;         // libSDL2.so
-static void *handleCore;        // libmupen64plus-core.so
-static void *handleFront;       // libmupen64plus-ui-console.so
+static void *handleAEI;      // libae-imports.so
+static void *handleSDL;      // libSDL2.so
+static void *handleFreetype; // libfreetype.so
+static void *handleCore;     // libmupen64plus-core.so
+static void *handleFront;    // libmupen64plus-ui-console.so
 
 // Function types
 typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
@@ -134,13 +135,14 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     env->ReleaseStringUTFChars(jlibPath, libPath);
 
     // Open shared libraries
-    handleAEI   = loadLibrary(path, "ae-imports");
-    handleSDL   = loadLibrary(path, "SDL2");
-    handleCore  = loadLibrary(path, "mupen64plus-core");
-    handleFront = loadLibrary(path, "mupen64plus-ui-console");
+    handleAEI      = loadLibrary(path, "ae-imports");
+    handleSDL      = loadLibrary(path, "SDL2");
+    handleFreetype = loadLibrary(path, "freetype");
+    handleCore     = loadLibrary(path, "mupen64plus-core");
+    handleFront    = loadLibrary(path, "mupen64plus-ui-console");
 
     // Make sure we don't have any typos
-    if (!handleAEI || !handleSDL || !handleCore || !handleFront)
+    if (!handleAEI || !handleSDL || !handleFreetype || !handleCore || !handleFront )
     {
         LOGE("Could not load libraries: be sure the paths are correct");
     }
@@ -190,16 +192,18 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     frontMain       = NULL;
 
     // Close shared libraries
-    unloadLibrary(handleFront, "mupen64plus-ui-console");
-    unloadLibrary(handleCore,  "mupen64plus-core");
-    unloadLibrary(handleSDL,   "SDL2");
-    unloadLibrary(handleAEI,   "ae-imports");
+    unloadLibrary(handleFront,    "mupen64plus-ui-console");
+    unloadLibrary(handleCore,     "mupen64plus-core");
+    unloadLibrary(handleFreetype, "freetype");
+    unloadLibrary(handleSDL,      "SDL2");
+    unloadLibrary(handleAEI,      "ae-imports");
 
     // Nullify handles so that they can no longer be used
-    handleFront     = NULL;
-    handleCore      = NULL;
-    handleSDL       = NULL;
-    handleAEI       = NULL;
+    handleFront    = NULL;
+    handleCore     = NULL;
+    handleFreetype = NULL;
+    handleSDL      = NULL;
+    handleAEI      = NULL;
 }
 
 extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring juserDataPath, jstring juserCachePath, jobjectArray jargv)
