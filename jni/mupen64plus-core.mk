@@ -105,8 +105,6 @@ LOCAL_LDFLAGS :=                                                    \
     -Wl,-export-dynamic                                             \
     -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver  \
 
-LOCAL_LDLIBS := -lz
-
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
     LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/arm/linkage_arm.S
