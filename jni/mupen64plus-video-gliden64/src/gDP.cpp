@@ -319,6 +319,8 @@ void gDPSetTile( u32 format, u32 size, u32 line, u32 tmem, u32 tile, u32 palette
 		}
 	}
 
+	gDP.changed |= CHANGED_TILE;
+
 #ifdef DEBUG
 	DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPSetTile( %s, %s, %i, %i, %i, %i, %s%s, %s%s, %i, %i, %i, %i );\n",
 		ImageFormatText[format],
@@ -1221,7 +1223,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 	}
 
 	if (_texture != 0)
-		gSP.changed |= CHANGED_TEXTURE;
+		gDP.changed |= CHANGED_TILE;
 	if (_zbuffer != 0)
 		gSP.geometryMode |= G_ZBUFFER;
 

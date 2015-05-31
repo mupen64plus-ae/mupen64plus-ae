@@ -1,6 +1,10 @@
 #ifndef GLSTATE_H
 #define GLSTATE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct GLState {
 	GLState() { reset(); }
 	void reset();
@@ -150,6 +154,7 @@ void inline cache_glDisable (GLenum cap)
 			glState.cached_DEPTH_TEST = false;
 		}
 		break;
+#ifndef GLESX
 	case GL_DEPTH_CLAMP:
 		if (glState.cached_DEPTH_CLAMP) {
 			glDisable(GL_DEPTH_CLAMP);
@@ -162,6 +167,7 @@ void inline cache_glDisable (GLenum cap)
 			glState.cached_CLIP_DISTANCE0 = false;
 		}
 		break;
+#endif
 	case GL_DITHER:
 		if (glState.cached_DITHER) {
 			glDisable(GL_DITHER);
@@ -220,6 +226,7 @@ void inline cache_glEnable(GLenum cap)
 			glState.cached_DEPTH_TEST = true;
 		}
 		break;
+#ifndef GLESX
 	case GL_DEPTH_CLAMP:
 		if (!glState.cached_DEPTH_CLAMP) {
 			glEnable(GL_DEPTH_CLAMP);
@@ -232,6 +239,7 @@ void inline cache_glEnable(GLenum cap)
 			glState.cached_CLIP_DISTANCE0 = true;
 		}
 		break;
+#endif
 	case GL_DITHER:
 		if (!glState.cached_DITHER) {
 			glEnable(GL_DITHER);
@@ -311,5 +319,9 @@ void inline cache_glViewport (GLint x, GLint y, GLsizei width, GLsizei height)
 	}
 }
 #define glViewport(x, y, width, height) cache_glViewport(x, y, width, height)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //GLSTATE_H

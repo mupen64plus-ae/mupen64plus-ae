@@ -201,7 +201,7 @@ CachedTexture * _createTexture()
 	pTexture->format = G_IM_FMT_RGBA;
 	pTexture->clampS = 1;
 	pTexture->clampT = 1;
-	pTexture->frameBufferTexture = TRUE;
+	pTexture->frameBufferTexture = CachedTexture::fbOneSample;
 	pTexture->maskS = 0;
 	pTexture->maskT = 0;
 	pTexture->mirrorS = 0;
@@ -349,7 +349,7 @@ void _setGLState() {
 	glDisableVertexAttribArray(SC_TEXCOORD1);
 	glDisableVertexAttribArray(SC_NUMLIGHTS);
 	glViewport(0, 0, video().getWidth(), video().getHeight());
-	gSP.changed |= CHANGED_VIEWPORT | CHANGED_TEXTURE;
+	gSP.changed |= CHANGED_VIEWPORT;
 	gDP.changed |= CHANGED_RENDERMODE;
 }
 

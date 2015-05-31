@@ -4,9 +4,9 @@
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
 //// paulscode, added for SDL linkage:
-#if defined(GLES2)
+#if defined(GLESX)
 #include "ae_bridge.h"
-#endif // GLES2
+#endif // GLESX
 ////
 
 #include "Types.h"
@@ -76,8 +76,10 @@ const char* GLErrorString(GLenum errorCode)
 	{GL_INVALID_ENUM, "invalid enumerant"},
 	{GL_INVALID_VALUE, "invalid value"},
 	{GL_INVALID_OPERATION, "invalid operation"},
+#ifndef GLESX
 	{GL_STACK_OVERFLOW, "stack overflow"},
 	{GL_STACK_UNDERFLOW, "stack underflow"},
+#endif
 	{GL_OUT_OF_MEMORY, "out of memory"},
 
 	{0, NULL }
@@ -253,7 +255,7 @@ void OGLVideo::readScreen(void **_pDest, long *_pWidth, long *_pHeight )
 	if (*_pDest == NULL)
 		return;
 
-#ifndef GLES2
+#ifndef GLESX
 	const GLenum format = GL_BGR_EXT;
 	glReadBuffer( GL_FRONT );
 #else
@@ -578,12 +580,16 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 			_updateDepthUpdate();
 
 			glEnable(GL_DEPTH_TEST);
+#ifndef GLESX
 			if (!GBI.isNoN())
 				glDisable(GL_DEPTH_CLAMP);
+#endif
 		} else {
 			glDisable(GL_DEPTH_TEST);
+#ifndef GLESX
 			if (!GBI.isNoN())
 				glEnable(GL_DEPTH_CLAMP);
+#endif
 		}
 	}
 
@@ -851,8 +857,12 @@ bool texturedRectShadowMap(const OGLRender::TexturedRectParams &)
 	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
 	if (pCurrentBuffer != NULL) {
 		if (gDP.textureImage.size == 2 && gDP.textureImage.address >= gDP.depthImageAddress &&  gDP.textureImage.address < (gDP.depthImageAddress + gDP.colorImage.width*gDP.colorImage.width * 6 / 4)) {
+#ifdef GL_IMAGE_TEXTURES_SUPPORT
 			pCurrentBuffer->m_pDepthBuffer->activateDepthBufferTexture(pCurrentBuffer);
 			SetDepthFogCombiner();
+#else
+			return true;
+#endif
 		}
 	}
 	return false;
@@ -1178,15 +1188,23 @@ void OGLRender::_initExtensions()
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 	GLint minorVersion = 0;
 	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+#ifndef GLESX
 	m_bImageTexture = (majorVersion >= 4) && (minorVersion >= 3) && (glBindImageTexture != NULL);
+#elif defined(GLES3_1)
+	m_bImageTexture = (majorVersion >= 3) && (minorVersion >= 1) && (glBindImageTexture != NULL);
+#else
+	m_bImageTexture = false;
+#endif
 #else
 	m_bImageTexture = false;
 #endif
 
+#ifndef GLESX
 	if (config.texture.maxAnisotropy != 0) {
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &config.texture.maxAnisotropyF);
 		config.texture.maxAnisotropyF = min(config.texture.maxAnisotropyF, (f32)config.texture.maxAnisotropy);
 	} else
+#endif
 		config.texture.maxAnisotropyF = 0.0f;
 }
 

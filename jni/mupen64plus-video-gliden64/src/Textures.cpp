@@ -19,6 +19,9 @@
 
 using namespace std;
 
+const GLuint g_noiseTexIndex = 2;
+const GLuint g_MSTex0Index = g_noiseTexIndex + 1;
+
 typedef u32 (*GetTexelFunc)( u64 *src, u16 x, u16 i, u8 palette );
 
 inline u32 GetNone( u64 *src, u16 x, u16 i, u8 palette )
@@ -436,45 +439,66 @@ TextureCache & TextureCache::get() {
 	return cache;
 }
 
+void TextureCache::_initDummyTexture(CachedTexture * _pDummy)
+{
+	_pDummy->address = 0;
+	_pDummy->clampS = 1;
+	_pDummy->clampT = 1;
+	_pDummy->clampWidth = 2;
+	_pDummy->clampHeight = 2;
+	_pDummy->crc = 0;
+	_pDummy->format = 0;
+	_pDummy->size = 0;
+	_pDummy->frameBufferTexture = CachedTexture::fbNone;
+	_pDummy->width = 2;
+	_pDummy->height = 2;
+	_pDummy->realWidth = 2;
+	_pDummy->realHeight = 2;
+	_pDummy->maskS = 0;
+	_pDummy->maskT = 0;
+	_pDummy->scaleS = 0.5f;
+	_pDummy->scaleT = 0.5f;
+	_pDummy->shiftScaleS = 1.0f;
+	_pDummy->shiftScaleT = 1.0f;
+	_pDummy->textureBytes = 2 * 2 * 4;
+	_pDummy->tMem = 0;
+}
+
 void TextureCache::init()
 {
+	m_maxBytes = config.texture.maxBytes;
+	m_curUnpackAlignment = 0;
+
 	u32 dummyTexture[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	m_maxBytes = config.texture.maxBytes;
-
 	m_pDummy = addFrameBufferTexture(); // we don't want to remove dummy texture
+	_initDummyTexture(m_pDummy);
 
-	m_pDummy->address = 0;
-	m_pDummy->clampS = 1;
-	m_pDummy->clampT = 1;
-	m_pDummy->clampWidth = 2;
-	m_pDummy->clampHeight = 2;
-	m_pDummy->crc = 0;
-	m_pDummy->format = 0;
-	m_pDummy->size = 0;
-	m_pDummy->frameBufferTexture = FALSE;
-	m_pDummy->width = 2;
-	m_pDummy->height = 2;
-	m_pDummy->realWidth = 2;
-	m_pDummy->realHeight = 2;
-	m_pDummy->maskS = 0;
-	m_pDummy->maskT = 0;
-	m_pDummy->scaleS = 0.5f;
-	m_pDummy->scaleT = 0.5f;
-	m_pDummy->shiftScaleS = 1.0f;
-	m_pDummy->shiftScaleT = 1.0f;
-	m_pDummy->textureBytes = 2*2*4;
-	m_pDummy->tMem = 0;
-
-	glGetIntegerv(GL_UNPACK_ALIGNMENT, &m_curUnpackAlignment);
-
-	glBindTexture( GL_TEXTURE_2D, m_pDummy->glName );
+	glBindTexture(GL_TEXTURE_2D, m_pDummy->glName);
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, dummyTexture );
 
 	m_cachedBytes = m_pDummy->textureBytes;
 	activateDummy( 0 );
 	activateDummy( 1 );
 	current[0] = current[1] = NULL;
+
+#ifdef GL_MULTISAMPLING_SUPPORT
+	m_pMSDummy = addFrameBufferTexture(); // we don't want to remove dummy texture
+	_initDummyTexture(m_pMSDummy);
+
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_pMSDummy->glName);
+
+#if defined(GLES3_1)
+	glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, GL_RGBA8, m_pMSDummy->realWidth, m_pMSDummy->realHeight, false);
+#else
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, GL_RGBA8, m_pMSDummy->realWidth, m_pMSDummy->realHeight, false);
+#endif
+
+	activateMSDummy(0);
+	activateMSDummy(1);
+#else
+	m_pMSDummy = NULL;
+#endif
 }
 
 void TextureCache::destroy()
@@ -507,6 +531,8 @@ void TextureCache::_checkCacheSize()
 
 CachedTexture * TextureCache::_addTexture(u32 _crc32)
 {
+	if (m_curUnpackAlignment == 0)
+		glGetIntegerv(GL_UNPACK_ALIGNMENT, &m_curUnpackAlignment);
 	_checkCacheSize();
 	GLuint glName;
 	glGenTextures(1, &glName);
@@ -647,7 +673,6 @@ void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture)
 		case GL_RGB:
 		case GL_RGBA4:
 		case GL_RGB5_A1:
-		case GL_LUMINANCE8_ALPHA8:
 		_pTexture->textureBytes <<= 1;
 		break;
 		default:
@@ -755,7 +780,7 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 	if ((config.textureFilter.txEnhancementMode | config.textureFilter.txFilterMode) != 0 && config.textureFilter.txFilterIgnoreBG == 0 && TFH.isInited()) {
 		GHQTexInfo ghqTexInfo;
 		if (txfilter_filter((u8*)pDest, pTexture->realWidth, pTexture->realHeight, glInternalFormat, (uint64)pTexture->crc, &ghqTexInfo) != 0 && ghqTexInfo.data != NULL) {
-			if (ghqTexInfo.width % 2 != 0 && ghqTexInfo.format != GL_RGBA)
+			if (ghqTexInfo.width % 2 != 0 && ghqTexInfo.format != GL_RGBA && m_curUnpackAlignment > 1)
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
 			glTexImage2D(GL_TEXTURE_2D, 0, ghqTexInfo.format, ghqTexInfo.width, ghqTexInfo.height, 0, ghqTexInfo.texture_format, ghqTexInfo.pixel_type, ghqTexInfo.data);
 			_updateCachedTexture(ghqTexInfo, pTexture);
@@ -767,7 +792,8 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
 		glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, pTexture->realWidth, pTexture->realHeight, 0, GL_RGBA, glType, pDest);
 	}
-	glPixelStorei(GL_UNPACK_ALIGNMENT, m_curUnpackAlignment);
+	if (m_curUnpackAlignment > 1)
+		glPixelStorei(GL_UNPACK_ALIGNMENT, m_curUnpackAlignment);
 	free(pDest);
 }
 
@@ -978,7 +1004,7 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 			}
 		}
 		if (!bLoaded) {
-			if (tmptex.realWidth % 2 != 0 && glInternalFormat != GL_RGBA)
+			if (tmptex.realWidth % 2 != 0 && glInternalFormat != GL_RGBA && m_curUnpackAlignment > 1)
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
 			glTexImage2D(GL_TEXTURE_2D, mipLevel, glInternalFormat, tmptex.realWidth, tmptex.realHeight, 0, GL_RGBA, glType, pDest);
 		}
@@ -1005,7 +1031,8 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 			tmptex.realHeight >>= 1;
 		_pTexture->textureBytes += (tmptex.realWidth * tmptex.realHeight) << sizeShift;
 	};
-	glPixelStorei(GL_UNPACK_ALIGNMENT, m_curUnpackAlignment);
+	if (m_curUnpackAlignment > 1)
+		glPixelStorei(GL_UNPACK_ALIGNMENT, m_curUnpackAlignment);
 	free(pDest);
 }
 
@@ -1054,30 +1081,40 @@ u32 _calculateCRC(u32 t, const TextureParams & _params)
 
 void TextureCache::activateTexture(u32 _t, CachedTexture *_pTexture)
 {
-	glActiveTexture(GL_TEXTURE0 + _t);
-
-	// Bind the cached texture
-	glBindTexture( GL_TEXTURE_2D, _pTexture->glName );
+#ifdef GL_MULTISAMPLING_SUPPORT
+	if (config.video.multisampling > 0 && _pTexture->frameBufferTexture == CachedTexture::fbMultiSample) {
+		glActiveTexture(GL_TEXTURE0 + g_MSTex0Index + _t);
+		// Bind the cached texture
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _pTexture->glName);
+	} else
+#endif
+	{
+		glActiveTexture(GL_TEXTURE0 + _t);
+		// Bind the cached texture
+		glBindTexture(GL_TEXTURE_2D, _pTexture->glName);
+	}
 
 	const bool bUseBilinear = (gDP.otherMode.textureFilter | (gSP.objRendermode&G_OBJRM_BILERP)) != 0;
+	const bool bUseLOD = currentCombiner()->usesLOD();
+	const GLint texLevel = bUseLOD ? _pTexture->max_level : 0;
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, _pTexture->max_level);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, texLevel);
 	if (config.texture.bilinearMode == BILINEAR_STANDARD) {
 		if (bUseBilinear) {
-			if (_pTexture->max_level > 0)
+			if (texLevel > 0)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 			else
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		} else {
-			if (_pTexture->max_level > 0)
+			if (texLevel > 0)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 			else
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		}
 	} else { // 3 point filter
-		if (_pTexture->max_level > 0) { // Apply standard bilinear to mipmap textures
+		if (texLevel > 0) { // Apply standard bilinear to mipmap textures
 			if (bUseBilinear) {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1085,7 +1122,7 @@ void TextureCache::activateTexture(u32 _t, CachedTexture *_pTexture)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			}
-		} else if (bUseBilinear && config.generalEmulation.enableLOD != 0 && currentCombiner()->usesLOD()) { // Apply standard bilinear to first tile of mipmap texture
+		} else if (bUseBilinear && config.generalEmulation.enableLOD != 0 && bUseLOD) { // Apply standard bilinear to first tile of mipmap texture
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		} else { // Don't use texture filter. Texture will be filtered by 3 point filter shader
@@ -1099,8 +1136,10 @@ void TextureCache::activateTexture(u32 _t, CachedTexture *_pTexture)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _pTexture->clampS ? GL_CLAMP_TO_EDGE : _pTexture->mirrorS ? GL_MIRRORED_REPEAT : GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _pTexture->clampT ? GL_CLAMP_TO_EDGE : _pTexture->mirrorT ? GL_MIRRORED_REPEAT : GL_REPEAT);
 
+#ifndef GLESX
 	if (video().getRender().getRenderState() == OGLRender::rsTriangle && config.texture.maxAnisotropyF > 0.0f)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, config.texture.maxAnisotropyF);
+#endif
 
 	_pTexture->lastDList = RSP.DList;
 
@@ -1115,6 +1154,20 @@ void TextureCache::activateDummy(u32 _t)
 
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+}
+
+void TextureCache::activateMSDummy(u32 _t)
+{
+#ifdef GL_MULTISAMPLING_SUPPORT
+	glActiveTexture(GL_TEXTURE0 + g_MSTex0Index + _t);
+
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_pMSDummy->glName);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+#endif
 }
 
 void TextureCache::_updateBackground()
@@ -1174,7 +1227,7 @@ void TextureCache::_updateBackground()
 	pCurrent->line = 0;
 	pCurrent->tMem = 0;
 	pCurrent->lastDList = RSP.DList;
-	pCurrent->frameBufferTexture = FALSE;
+	pCurrent->frameBufferTexture = CachedTexture::fbNone;
 
 	pCurrent->realWidth = gSP.bgImage.width;
 	pCurrent->realHeight = gSP.bgImage.height;
@@ -1336,7 +1389,7 @@ void TextureCache::update(u32 _t)
 	pCurrent->line = gSP.textureTile[_t]->line;
 	pCurrent->tMem = gSP.textureTile[_t]->tmem;
 	pCurrent->lastDList = RSP.DList;
-	pCurrent->frameBufferTexture = FALSE;
+	pCurrent->frameBufferTexture = CachedTexture::fbNone;
 
 	pCurrent->realWidth = sizes.realWidth;
 	pCurrent->realHeight = sizes.realHeight;

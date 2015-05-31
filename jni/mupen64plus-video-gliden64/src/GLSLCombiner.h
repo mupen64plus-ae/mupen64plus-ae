@@ -36,19 +36,22 @@ private:
 	struct iUniform {GLint loc; int val;};
 	struct fUniform {GLint loc; float val;};
 	struct fv2Uniform {GLint loc; float val[2];};
+	struct iv2Uniform { GLint loc; int val[2]; };
 
 	struct UniformLocation
 	{
-		iUniform uTex0, uTex1, uTexNoise, uTlutImage, uZlutImage, uDepthImage,
+		iUniform uTex0, uTex1, uMSTex0, uMSTex1, uTexNoise, uTlutImage, uZlutImage, uDepthImage,
 			uFogMode, uFogUsage, uEnableLod, uEnableAlphaTest,
 			uEnableDepth, uEnableDepthCompare, uEnableDepthUpdate,
-			uDepthMode, uDepthSource, uFb8Bit, uFbFixedAlpha, uRenderState, uSpecialBlendMode,
-			uMaxTile, uTextureDetail, uTexturePersp, uTextureFilterMode,
+			uDepthMode, uDepthSource, uRenderState, uSpecialBlendMode,
+			uMaxTile, uTextureDetail, uTexturePersp, uTextureFilterMode, uMSAASamples,
 			uAlphaCompareMode, uAlphaDitherMode, uColorDitherMode, uGammaCorrectionEnabled;
 
-		fUniform uFogAlpha, uPrimitiveLod, uMinLod, uDeltaZ, uAlphaTestValue;
+		fUniform uFogAlpha, uPrimitiveLod, uMinLod, uDeltaZ, uAlphaTestValue, uMSAAScale;
 
 		fv2Uniform uScreenScale, uDepthScale, uFogScale;
+
+		iv2Uniform uMSTexEnabled, uFb8Bit, uFbFixedAlpha;
 	};
 
 #ifdef OS_MAC_OS_X
@@ -79,6 +82,13 @@ private:
 			_u.val[0] = _val1;
 			_u.val[1] = _val2;
 			glUniform2f(_u.loc, _val1, _val2);
+		}
+	}
+	void _setIV2Uniform(iv2Uniform & _u, int _val1, int _val2, bool _force) {
+		if (_u.loc >= 0 && (_force || _u.val[0] != _val1 || _u.val[1] != _val2)) {
+			_u.val[0] = _val1;
+			_u.val[1] = _val2;
+			glUniform2i(_u.loc, _val1, _val2);
 		}
 	}
 

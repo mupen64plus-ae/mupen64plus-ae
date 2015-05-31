@@ -1,6 +1,11 @@
-static const char* vertex_shader =
+#ifdef GLES3
+#define SHADER_VERSION "#version 300 es \n"
+#else
+#define SHADER_VERSION "#version 330 core \n"
+#endif
 
-"#version 330 core										\n"
+static const char* vertex_shader =
+SHADER_VERSION
 "in highp vec4 aPosition;						\n"
 "in lowp vec4 aColor;							\n"
 "in highp vec2 aTexCoord0;						\n"
@@ -89,12 +94,14 @@ static const char* vertex_shader =
 "      break;													\n"
 "    }															\n"
 "  }															\n"
+#ifndef GLESX
 "  gl_ClipDistance[0] = gl_Position.w - gl_Position.z;			\n"
+#endif
 "}																\n"
 ;
 
 static const char* vertex_shader_notex =
-"#version 330 core					\n"
+SHADER_VERSION
 "in highp vec4 aPosition;			\n"
 "in lowp vec4 aColor;				\n"
 "in lowp float aNumLights;			\n"
@@ -146,14 +153,21 @@ static const char* vertex_shader_notex =
 "      break;													\n"
 "    }															\n"
 "  }															\n"
+#ifndef GLESX
 "  gl_ClipDistance[0] = gl_Position.w - gl_Position.z;			\n"
+#endif
 "}																\n"
 ;
 
 static const char* fragment_shader_header_common_variables =
-"#version 330 core				\n"
+SHADER_VERSION
 "uniform sampler2D uTex0;		\n"
 "uniform sampler2D uTex1;		\n"
+#ifdef GL_MULTISAMPLING_SUPPORT
+"uniform sampler2DMS uMSTex0;	\n"
+"uniform sampler2DMS uMSTex1;	\n"
+"uniform lowp ivec2 uMSTexEnabled;	\n"
+#endif
 "layout (std140) uniform ColorsBlock {\n"
 "  lowp vec4 uFogColor;			\n"
 "  lowp vec4 uCenterColor;		\n"
@@ -165,13 +179,16 @@ static const char* fragment_shader_header_common_variables =
 "  lowp float uK4;				\n"
 "  lowp float uK5;				\n"
 "};								\n"
+#ifdef GLESX
+"uniform mediump vec2 uScreenScale;	\n"
+#endif
 "uniform lowp int uAlphaCompareMode;	\n"
 "uniform lowp int uAlphaDitherMode;	\n"
 "uniform lowp int uColorDitherMode;	\n"
 "uniform lowp int uGammaCorrectionEnabled;	\n"
 "uniform lowp int uFogUsage;	\n"
-"uniform lowp int uFb8Bit;		\n"
-"uniform lowp int uFbFixedAlpha;\n"
+"uniform lowp ivec2 uFb8Bit;		\n"
+"uniform lowp ivec2 uFbFixedAlpha;\n"
 "uniform lowp int uSpecialBlendMode;\n"
 "uniform lowp int uEnableAlphaTest;	\n"
 "uniform lowp float uAlphaTestValue;\n"
@@ -187,7 +204,7 @@ static const char* fragment_shader_header_common_variables =
 ;
 
 static const char* fragment_shader_header_common_variables_notex =
-"#version 330 core				\n"
+SHADER_VERSION
 "layout (std140) uniform ColorsBlock {\n"
 "  lowp vec4 uFogColor;			\n"
 "  lowp vec4 uCenterColor;		\n"
@@ -199,6 +216,9 @@ static const char* fragment_shader_header_common_variables_notex =
 "  lowp float uK4;				\n"
 "  lowp float uK5;				\n"
 "};								\n"
+#ifdef GLESX
+"uniform mediump vec2 uScreenScale;	\n"
+#endif
 "uniform lowp int uAlphaCompareMode;	\n"
 "uniform lowp int uAlphaDitherMode;	\n"
 "uniform lowp int uColorDitherMode;	\n"
@@ -221,6 +241,9 @@ static const char* fragment_shader_header_common_functions =
 "void calc_light(in lowp float fLights, in lowp vec3 input_color, out lowp vec3 output_color);\n"
 "mediump float mipmap(out lowp vec4 readtex0, out lowp vec4 readtex1);		\n"
 "lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in bool fb8bit, in bool fbFixedAlpha);	\n"
+#ifdef GL_MULTISAMPLING_SUPPORT
+"lowp vec4 readTexMS(in sampler2DMS mstex, in mediump vec2 texCoord, in bool fb8bit, in bool fbFixedAlpha);	\n"
+#endif // GL_MULTISAMPLING_SUPPORT
 "bool depth_compare();										\n"
 "void colorNoiseDither(in float _noise, inout vec3 _color);	\n"
 "void alphaNoiseDither(in float _noise, inout float _alpha);\n"
@@ -239,7 +262,9 @@ static const char* fragment_shader_header_common_functions_notex =
 ;
 
 static const char* fragment_shader_calc_light =
-"#version 330 core						\n"
+#ifndef GLESX
+SHADER_VERSION
+#endif
 "layout (std140) uniform LightBlock {				\n"
 "  mediump vec3 uLightDirection[8];	\n"
 "  lowp vec3 uLightColor[8];	\n"
@@ -264,14 +289,18 @@ static const char* fragment_shader_header_main =
 "									\n"
 "void main()						\n"
 "{									\n"
+#ifndef GLESX
 "  gl_FragDepth = clamp((gl_FragCoord.z * 2.0 - 1.0) * uDepthScale.s + uDepthScale.t, 0.0, 1.0);   \n"
+#endif
 "  lowp vec4 vec_color, combined_color;	\n"
 "  lowp float alpha1, alpha2;			\n"
 "  lowp vec3 color1, color2;				\n"
 ;
 
 static const char* fragment_shader_dither =
-"#version 330 core					\n"
+#ifndef GLESX
+SHADER_VERSION
+#endif
 "void colorNoiseDither(in float _noise, inout vec3 _color)	\n"
 "{															\n"
 "    mediump vec3 tmpColor = _color*255.0;					\n"
@@ -340,27 +369,31 @@ static const char* fragment_shader_end =
 ;
 
 static const char* fragment_shader_mipmap =
-"#version 330 core					\n"
+#ifndef GLESX
+SHADER_VERSION
 "in mediump vec2 vTexCoord0;	\n"
 "in mediump vec2 vTexCoord1;	\n"
 "in mediump vec2 vLodTexCoord;	\n"
 "uniform sampler2D uTex0;			\n"
 "uniform sampler2D uTex1;			\n"
+"uniform mediump vec2 uScreenScale;	\n"
+#else
+"#ifdef GL_OES_standard_derivatives			\n"
+"    #extension GL_OES_standard_derivatives : enable \n"
+"#endif										\n"
+#endif
 "uniform lowp float uPrimitiveLod;		\n"
 "uniform lowp int uEnableLod;		\n"
-"uniform mediump vec2 uScreenScale;	\n"
 "uniform mediump float uMinLod;		\n"
 "uniform lowp int uMaxTile;			\n"
 "uniform lowp int uTextureDetail;	\n"
 "														\n"
 "mediump float mipmap(out lowp vec4 readtex0, out lowp vec4 readtex1) {	\n"
-"  if (uEnableLod == 0) {								\n"
-"    readtex0 = texture(uTex0, vTexCoord0);			\n"
-"    readtex1 = texture(uTex1, vTexCoord1);			\n"
-"    return uPrimitiveLod;									\n"
-"  }													\n"
+"  readtex0 = texture(uTex0, vTexCoord0);				\n"
+"  readtex1 = texture(uTex1, vTexCoord1);				\n"
+"  if (uEnableLod == 0)									\n"
+"    return uPrimitiveLod;								\n"
 "  if (uMaxTile == 0) {									\n"
-"    readtex0 = texture(uTex0, vTexCoord0);				\n"
 "    readtex1 = readtex0;								\n"
 "    return uMinLod;									\n"
 "  }													\n"
@@ -383,46 +416,44 @@ static const char* fragment_shader_mipmap =
 "    lod_tile = min(float(uMaxTile), floor(log2(floor(lod)))); \n"
 "    lod_frac = fract(lod/pow(2.0, lod_tile));			\n"
 "  }													\n"
+"  lowp vec4 lod0 = textureLod(uTex1, vTexCoord1, 0.0);	\n"
+"  lowp vec4 lod1 = textureLod(uTex1, vTexCoord1, 1.0);	\n"
+"  lowp vec4 lodT = textureLod(uTex1, vTexCoord1, lod_tile);	\n"
+"  lowp vec4 lodT_m1 = textureLod(uTex1, vTexCoord1, max(0.0, lod_tile - 1.0));	\n"
+"  lowp vec4 lodT_p1 = textureLod(uTex1, vTexCoord1, lod_tile + 1.0);	\n"
 "  if (lod_tile < 1.0) {								\n"
 "    if (magnifying) {									\n"
-"      readtex0 = texture(uTex0, vTexCoord0);			\n"
 //     !sharpen && !detail
 "      if (uTextureDetail == 0) readtex1 = readtex0;	\n"
-"      else readtex1 = texture(uTex1, vTexCoord1);	\n"
 "    } else {											\n"
 //     detail
 "      if (uTextureDetail == 2) {						\n"
-"        readtex0 = textureLod(uTex1, vTexCoord1, 0.0);\n"
-"        readtex1 = textureLod(uTex1, vTexCoord1, 1.0);\n"
-"      } else {											\n"
-"        readtex0 = texture(uTex0, vTexCoord0);		\n"
-"        readtex1 = texture(uTex1, vTexCoord1);		\n"
+"        readtex0 = lod0;								\n"
+"        readtex1 = lod1;								\n"
 "      }												\n"
 "    }													\n"
 "  } else {												\n"
 "    if (uTextureDetail == 2) {							\n"
-"      readtex0 = textureLod(uTex1, vTexCoord1, lod_tile);		\n"
-"      readtex1 = textureLod(uTex1, vTexCoord1, lod_tile + 1.0);	\n"
-"    } else {														\n"
-"      readtex0 = textureLod(uTex1, vTexCoord1, lod_tile - 1.0);	\n"
-"      readtex1 = textureLod(uTex1, vTexCoord1, lod_tile);		\n"
-"    }																\n"
-"  }																\n"
-"  return lod_frac;													\n"
-"}																	\n"
+"      readtex0 = lodT;									\n"
+"      readtex1 = lodT_p1;								\n"
+"    } else {											\n"
+"      readtex0 = lodT_m1;								\n"
+"      readtex1 = lodT;									\n"
+"    }													\n"
+"  }													\n"
+"  return lod_frac;										\n"
+"}														\n"
 ;
 
 static const char* fragment_shader_readtex =
-"#version 330 core													\n"
+#ifndef GLESX
+SHADER_VERSION
+#endif
 "uniform lowp int uTextureFilterMode;								\n"
-"lowp vec4 filterNearest(in sampler2D tex, in mediump vec2 texCoord)\n"
-"{																	\n"
-"  return textureLod(tex, texCoord, 0.0);							\n"
-"}																	\n"
 // 3 point texture filtering.
 // Original author: ArthurCarvalho
 // GLSL implementation: twinaphex, mupen64plus-libretro project.
-"#define TEX_OFFSET(off) textureLod(tex, texCoord - (off)/texSize, 0.0)	\n"
+"#define TEX_OFFSET(off) texture(tex, texCoord - (off)/texSize)	\n"
 "lowp vec4 filter3point(in sampler2D tex, in mediump vec2 texCoord)			\n"
 "{																			\n"
 "  mediump vec2 texSize = vec2(textureSize(tex,0));							\n"
@@ -435,17 +466,40 @@ static const char* fragment_shader_readtex =
 "}																			\n"
 "lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in bool fb8bit, in bool fbFixedAlpha)	\n"
 "{																			\n"
-"  lowp vec4 texColor = uTextureFilterMode == 0 ? filterNearest(tex, texCoord) : filter3point(tex, texCoord); \n"
+"  lowp vec4 texColor = uTextureFilterMode == 0 ? texture(tex, texCoord) : filter3point(tex, texCoord); \n"
 "  if (fb8bit) texColor = vec4(texColor.r);									\n"
 "  if (fbFixedAlpha) texColor.a = 0.825;									\n"
 "  return texColor;															\n"
 "}																			\n"
+#ifdef GL_MULTISAMPLING_SUPPORT
+"uniform lowp int uMSAASamples;	\n"
+"uniform lowp float uMSAAScale;	\n"
+"lowp vec4 sampleMS(in sampler2DMS mstex, in mediump ivec2 ipos)			\n"
+"{																			\n"
+"  lowp vec4 texel = vec4(0.0);												\n"
+"  for (int i = 0; i < uMSAASamples; ++i)									\n"
+"    texel += texelFetch(mstex, ipos, i);									\n"
+"  return texel * uMSAAScale;												\n"
+"}																			\n"
+"																			\n"
+"lowp vec4 readTexMS(in sampler2DMS mstex, in mediump vec2 texCoord, in bool fb8bit, in bool fbFixedAlpha)	\n"
+"{																			\n"
+"  mediump vec2 msTexSize = vec2(textureSize(mstex));						\n"
+"  mediump ivec2 itexCoord = ivec2(msTexSize * texCoord);					\n"
+"  lowp vec4 texColor = sampleMS(mstex, itexCoord);							\n"
+"  if (fb8bit) texColor = vec4(texColor.r);									\n"
+"  if (fbFixedAlpha) texColor.a = 0.825;									\n"
+"  return texColor;															\n"
+"}																			\n"
+#endif // GL_MULTISAMPLING_SUPPORT
 ;
 
 static const char* fragment_shader_noise =
-"#version 330 core					\n"
-"uniform sampler2D uTexNoise;		\n"
+#ifndef GLESX
+SHADER_VERSION
 "uniform mediump vec2 uScreenScale;	\n"
+#endif
+"uniform sampler2D uTexNoise;		\n"
 "lowp float snoise()									\n"
 "{														\n"
 "  ivec2 coord = ivec2(gl_FragCoord.xy/uScreenScale);	\n"
@@ -463,7 +517,13 @@ static const char* fragment_shader_dummy_noise =
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 static const char* depth_compare_shader_float =
+#ifndef GLESX
 "#version 430								\n"
+#else
+"#ifdef GL_OES_standard_derivatives			\n"
+"    #extension GL_OES_standard_derivatives : enable \n"
+"#endif										\n"
+#endif
 //"uniform int uEnableDepth;				\n"
 "uniform lowp int uDepthMode;				\n"
 "uniform lowp int uDepthSource;				\n"
@@ -529,7 +589,7 @@ static const char* shadow_map_fragment_shader_float =
 "#version 420 core											\n"
 "layout(binding = 0) uniform sampler2D uDepthImage;		\n"
 "layout(binding = 0, r16ui) uniform readonly uimage2D uZlutImage;\n"
-"layout(binding = 1, r16ui) uniform readonly uimage1D uTlutImage;\n"
+"layout(binding = 1, r16ui) uniform readonly uimage2D uTlutImage;\n"
 "uniform lowp vec4 uFogColor;								\n"
 "out lowp vec4 fragColor;									\n"
 "lowp float get_alpha()										\n"
@@ -542,7 +602,7 @@ static const char* shadow_map_fragment_shader_float =
 "  uint iN64z = imageLoad(uZlutImage,ivec2(x0,y0)).r;		\n"
 "  highp float n64z = clamp(float(iN64z)/65532.0, 0.0, 1.0);\n"
 "  int index = min(255, int(n64z*255.0));					\n"
-"  uint iAlpha = imageLoad(uTlutImage,index).r;			\n"
+"  uint iAlpha = imageLoad(uTlutImage,ivec2(index,0)).r;			\n"
 "  return float(iAlpha/256)/255.0;						\n"
 "}														\n"
 "void main()											\n"
@@ -552,12 +612,12 @@ static const char* shadow_map_fragment_shader_float =
 ;
 #endif // GL_IMAGE_TEXTURES_SUPPORT
 
-#if 0 // Do palette based monochrome image. Exactly as N64 does
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
+#if 0 // Do palette based monochrome image. Exactly as N64 does
 static const char* zelda_monochrome_fragment_shader =
 "#version 420 core											\n"
 "layout(binding = 0) uniform sampler2D uColorImage;			\n"
-"layout(binding = 1, r16ui) uniform readonly uimage1D uTlutImage;\n"
+"layout(binding = 1, r16ui) uniform readonly uimage2D uTlutImage;\n"
 "out lowp vec4 fragColor;									\n"
 "lowp float get_color()										\n"
 "{															\n"
@@ -568,7 +628,7 @@ static const char* zelda_monochrome_fragment_shader =
 //"  int color16 = 32768 + r*1024 + g*32 + b;		\n"
 "  int color16 = r*1024 + g*32 + b;						\n"
 "  int index = min(255, color16/256);					\n"
-"  uint iAlpha = imageLoad(uTlutImage,index).r;			\n"
+"  uint iAlpha = imageLoad(uTlutImage,ivec2(index,0)).r;			\n"
 "  memoryBarrier();										\n"
 "  return clamp(float((iAlpha&255) + index)/255.0, 0.0, 1.0); \n"
 "}														\n"
@@ -577,7 +637,6 @@ static const char* zelda_monochrome_fragment_shader =
 "  fragColor = vec4(vec3(get_color()), 1.0);			\n"
 "}														\n"
 ;
-#endif // GL_IMAGE_TEXTURES_SUPPORT
 #else // Cheat it
 static const char* zelda_monochrome_fragment_shader =
 "#version 420 core										\n"
@@ -593,3 +652,4 @@ static const char* zelda_monochrome_fragment_shader =
 "}														\n"
 ;
 #endif
+#endif // GL_IMAGE_TEXTURES_SUPPORT

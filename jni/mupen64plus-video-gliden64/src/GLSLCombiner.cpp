@@ -33,6 +33,12 @@ GLuint g_tlut_tex = 0;
 static u32 g_paletteCRC256 = 0;
 #endif // GL_IMAGE_TEXTURES_SUPPORT
 
+#ifndef GLESX
+#define GL_RED16 GL_R16
+#else
+#define GL_RED16 GL_R16UI
+#endif
+
 static std::string strFragmentShader;
 
 static const GLsizei nShaderLogSize = 1024;
@@ -40,8 +46,7 @@ bool checkShaderCompileStatus(GLuint obj)
 {
 	GLint status;
 	glGetShaderiv(obj, GL_COMPILE_STATUS, &status);
-	if(status == GL_FALSE)
-	{
+	if(status == GL_FALSE) {
 		GLchar shader_log[nShaderLogSize];
 		GLsizei nLogSize = nShaderLogSize;
 		glGetShaderInfoLog(obj, nShaderLogSize, &nLogSize, shader_log);
@@ -56,8 +61,7 @@ bool checkProgramLinkStatus(GLuint obj)
 {
 	GLint status;
 	glGetProgramiv(obj, GL_LINK_STATUS, &status);
-	if(status == GL_FALSE)
-	{
+	if(status == GL_FALSE) {
 		GLsizei nLogSize = nShaderLogSize;
 		GLchar shader_log[nShaderLogSize];
 		glGetProgramInfoLog(obj, nShaderLogSize, &nLogSize, shader_log);
@@ -67,7 +71,6 @@ bool checkProgramLinkStatus(GLuint obj)
 	return true;
 }
 
-static const GLuint noiseTexIndex = 2;
 class NoiseTexture
 {
 public:
@@ -92,7 +95,7 @@ void NoiseTexture::init()
 	m_pTexture->format = G_IM_FMT_RGBA;
 	m_pTexture->clampS = 1;
 	m_pTexture->clampT = 1;
-	m_pTexture->frameBufferTexture = TRUE;
+	m_pTexture->frameBufferTexture = CachedTexture::fbOneSample;
 	m_pTexture->maskS = 0;
 	m_pTexture->maskT = 0;
 	m_pTexture->mirrorS = 0;
@@ -135,7 +138,9 @@ void NoiseTexture::update()
 #ifndef GLES2
 	PBOBinder binder(GL_PIXEL_UNPACK_BUFFER, m_PBO);
 	glBufferData(GL_PIXEL_UNPACK_BUFFER, dataSize, NULL, GL_DYNAMIC_DRAW);
-	GLubyte* ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+	isGLError();
+	GLubyte* ptr = (GLubyte*)glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, dataSize, GL_MAP_WRITE_BIT);
+	isGLError();
 #else
 	m_PBO = (GLubyte*)malloc(dataSize);
 	GLubyte* ptr = m_PBO;
@@ -151,7 +156,7 @@ void NoiseTexture::update()
 	glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER); // release the mapped buffer
 #endif
 
-	glActiveTexture(GL_TEXTURE0 + noiseTexIndex);
+	glActiveTexture(GL_TEXTURE0 + g_noiseTexIndex);
 	glBindTexture(GL_TEXTURE_2D, m_pTexture->glName);
 #ifndef GLES2
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, VI.width, VI.height, GL_RED, GL_UNSIGNED_BYTE, 0);
@@ -174,9 +179,9 @@ void InitZlutTexture()
 	glBindTexture(GL_TEXTURE_2D, g_zlut_tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R16,
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED16,
 		512, 512, 0, GL_RED, GL_UNSIGNED_SHORT,
 		zLUT);
 	glBindImageTexture(ZlutImageUnit, g_zlut_tex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R16UI);
@@ -226,11 +231,11 @@ void InitShadowMapShader()
 
 	g_paletteCRC256 = 0;
 	glGenTextures(1, &g_tlut_tex);
-	glBindTexture(GL_TEXTURE_1D, g_tlut_tex);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexImage1D(GL_TEXTURE_1D, 0, GL_R16, 256, 0, GL_RED, GL_UNSIGNED_SHORT, NULL);
+	glBindTexture(GL_TEXTURE_2D, g_tlut_tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED16, 256, 1, 0, GL_RED, GL_UNSIGNED_SHORT, NULL);
 
 	g_draw_shadow_map_program = createShaderProgram(default_vertex_shader, shadow_map_fragment_shader_float);
 	g_monochrome_image_program = createShaderProgram(default_vertex_shader, zelda_monochrome_fragment_shader);
@@ -245,7 +250,7 @@ void DestroyShadowMapShader()
 	glBindImageTexture(TlutImageUnit, 0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R16UI);
 
 	if (g_tlut_tex > 0) {
-		glBindTexture(GL_TEXTURE_1D, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		glDeleteTextures(1, &g_tlut_tex);
 		g_tlut_tex = 0;
 	}
@@ -278,12 +283,13 @@ void InitShaderCombiner()
 
 	strFragmentShader.reserve(1024*5);
 
-#ifndef GLES2
+#ifndef GLESX
 	g_calc_light_shader_object = _createShader(GL_FRAGMENT_SHADER, fragment_shader_calc_light);
 	g_calc_mipmap_shader_object = _createShader(GL_FRAGMENT_SHADER, fragment_shader_mipmap);
 	g_calc_noise_shader_object = _createShader(GL_FRAGMENT_SHADER, fragment_shader_noise);
 	g_readtex_shader_object = _createShader(GL_FRAGMENT_SHADER, fragment_shader_readtex);
 	g_dither_shader_object = _createShader(GL_FRAGMENT_SHADER, fragment_shader_dither);
+#endif // GLESX
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
@@ -293,7 +299,6 @@ void InitShaderCombiner()
 	InitShadowMapShader();
 	noiseTex.init();
 #endif // GL_IMAGE_TEXTURES_SUPPORT
-#endif // GLES2
 }
 
 void DestroyShaderCombiner() {
@@ -304,7 +309,7 @@ void DestroyShaderCombiner() {
 	g_vertex_shader_object = 0;
 	glDeleteShader(g_vertex_shader_object_notex);
 	g_vertex_shader_object_notex = 0;
-#ifndef GLES2
+#ifndef GLESX
 	glDeleteShader(g_calc_light_shader_object);
 	g_calc_light_shader_object = 0;
 	glDeleteShader(g_calc_mipmap_shader_object);
@@ -317,13 +322,13 @@ void DestroyShaderCombiner() {
 	g_dither_shader_object = 0;
 	glDeleteShader(g_calc_depth_shader_object);
 	g_calc_depth_shader_object = 0;
+#endif // GLESX
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 	noiseTex.destroy();
 	DestroyZlutTexture();
 	DestroyShadowMapShader();
 #endif // GL_IMAGE_TEXTURES_SUPPORT
-#endif // GLES2
 }
 
 const char *ColorInput[] = {
@@ -520,10 +525,29 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 		strFragmentShader.append("  lowp vec4 readtex0, readtex1; \n");
 		strFragmentShader.append("  lowp float lod_frac = mipmap(readtex0, readtex1);	\n");
 	} else {
+#ifdef GL_MULTISAMPLING_SUPPORT
+		if (usesT0()) {
+			if (config.video.multisampling > 0) {
+				strFragmentShader.append("  lowp vec4 readtex0; \n");
+				strFragmentShader.append("  if (uMSTexEnabled[0] == 0) readtex0 = readTex(uTex0, vTexCoord0, uFb8Bit[0] != 0, uFbFixedAlpha[0] != 0); \n");
+				strFragmentShader.append("  else readtex0 = readTexMS(uMSTex0, vTexCoord0, uFb8Bit[0] != 0, uFbFixedAlpha[0] != 0); \n");
+			} else
+				strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFb8Bit[0] != 0, uFbFixedAlpha[0] != 0); \n");
+		}
+		if (usesT1()) {
+			if (config.video.multisampling > 0) {
+				strFragmentShader.append("  lowp vec4 readtex1; \n");
+				strFragmentShader.append("  if (uMSTexEnabled[1] == 0) readtex1 = readTex(uTex1, vTexCoord1, uFb8Bit[1] != 0, uFbFixedAlpha[1] != 0); \n");
+				strFragmentShader.append("  else readtex1 = readTexMS(uMSTex1, vTexCoord1, uFb8Bit[1] != 0, uFbFixedAlpha[1] != 0); \n");
+			} else
+				strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFb8Bit[1] != 0, uFbFixedAlpha[1] != 0); \n");
+		}
+#else
 		if (usesT0())
-			strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFb8Bit == 1 || uFb8Bit == 3, uFbFixedAlpha == 1 || uFbFixedAlpha == 3); \n");
+			strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFb8Bit[0] != 0, uFbFixedAlpha[0] != 0); \n");
 		if (usesT1())
-			strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFb8Bit == 2 || uFb8Bit == 3, uFbFixedAlpha == 2 || uFbFixedAlpha == 3); \n");
+			strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFb8Bit[1] != 0, uFbFixedAlpha[1] != 0); \n");
+#endif // GL_MULTISAMPLING_SUPPORT
 	}
 	const bool bUseHWLight = config.generalEmulation.enableHWLighting != 0 && GBI.isHWLSupported() && usesShadeColor();
 	if (bUseHWLight)
@@ -586,12 +610,21 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 	strFragmentShader.append(fragment_shader_toonify);
 #endif
 
-#ifdef GLES2
-	strFragmentShader.append(noise_fragment_shader);
+#ifdef GLESX
+	if (bUseHWLight)
+		strFragmentShader.append(fragment_shader_calc_light);
 	if (bUseLod)
 		strFragmentShader.append(fragment_shader_mipmap);
-	if (config.generalEmulation.enableHWLighting)
-		strFragmentShader.append(fragment_shader_calc_light);
+	else if (usesTex())
+		strFragmentShader.append(fragment_shader_readtex);
+#ifdef GL_IMAGE_TEXTURES_SUPPORT
+	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
+		strFragmentShader.append(depth_compare_shader_float);
+#endif
+	if (config.generalEmulation.enableNoise != 0) {
+		strFragmentShader.append(fragment_shader_noise);
+		strFragmentShader.append(fragment_shader_dither);
+	}
 #endif
 
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -608,7 +641,7 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 	else
 		glAttachShader(m_program, g_vertex_shader_object_notex);
 	glAttachShader(m_program, fragmentShader);
-#ifndef GLES2
+#ifndef GLESX
 	if (bUseHWLight)
 		glAttachShader(m_program, g_calc_light_shader_object);
 	if (bUseLod)
@@ -675,6 +708,14 @@ void ShaderCombiner::_locateUniforms() {
 	LocateUniform(uScreenScale);
 	LocateUniform(uDepthScale);
 	LocateUniform(uFogScale);
+
+#ifdef GL_MULTISAMPLING_SUPPORT
+	LocateUniform(uMSTex0);
+	LocateUniform(uMSTex1);
+	LocateUniform(uMSTexEnabled);
+	LocateUniform(uMSAASamples);
+	LocateUniform(uMSAAScale);
+#endif
 }
 
 void ShaderCombiner::_locate_attributes() const {
@@ -689,12 +730,21 @@ void ShaderCombiner::update(bool _bForce) {
 	glUseProgram(m_program);
 
 	if (_bForce) {
-		_setIUniform(m_uniforms.uTex0, 0, _bForce);
-		_setIUniform(m_uniforms.uTex1, 1, _bForce);
-		_setIUniform(m_uniforms.uTexNoise, noiseTexIndex, _bForce);
+		_setIUniform(m_uniforms.uTexNoise, g_noiseTexIndex, true);
+		if (usesTex()) {
+			_setIUniform(m_uniforms.uTex0, 0, true);
+			_setIUniform(m_uniforms.uTex1, 1, true);
+#ifdef GL_MULTISAMPLING_SUPPORT
+			_setIUniform(m_uniforms.uMSTex0, g_MSTex0Index + 0, true);
+			_setIUniform(m_uniforms.uMSTex1, g_MSTex0Index + 1, true);
+			_setIUniform(m_uniforms.uMSAASamples, config.video.multisampling, true);
+			_setFUniform(m_uniforms.uMSAAScale, 1.0f / (float)config.video.multisampling, true);
+			_setIV2Uniform(m_uniforms.uMSTexEnabled, 0, 0, true);
+#endif
+		}
 
-		updateFBInfo(_bForce);
-		updateRenderState(_bForce);
+		updateFBInfo(true);
+		updateRenderState(true);
 	}
 
 	updateGammaCorrection(_bForce);
@@ -840,24 +890,29 @@ void ShaderCombiner::updateFBInfo(bool _bForce) {
 	if (!usesTex())
 		return;
 
-	int nFb8bitMode = 0, nFbFixedAlpha = 0;
+	int nFb8bitMode0 = 0, nFb8bitMode1 = 0;
+	int nFbFixedAlpha0 = 0, nFbFixedAlpha1 = 0;
+	int nMSTex0Enabled = 0, nMSTex1Enabled = 0;
 	TextureCache & cache = textureCache();
-	if (cache.current[0] != NULL && cache.current[0]->frameBufferTexture == TRUE) {
+	if (cache.current[0] != NULL && cache.current[0]->frameBufferTexture != CachedTexture::fbNone) {
 		if (cache.current[0]->size == G_IM_SIZ_8b) {
-			nFb8bitMode |= 1;
+			nFb8bitMode0 = 1;
 			if (gDP.otherMode.imageRead == 0)
-				nFbFixedAlpha |= 1;
+				nFbFixedAlpha0 = 1;
 		}
+		nMSTex0Enabled = cache.current[0]->frameBufferTexture == CachedTexture::fbMultiSample ? 1 : 0;
 	}
-	if (cache.current[1] != NULL && cache.current[1]->frameBufferTexture == TRUE) {
+	if (cache.current[1] != NULL && cache.current[1]->frameBufferTexture != CachedTexture::fbNone) {
 		if (cache.current[1]->size == G_IM_SIZ_8b) {
-			nFb8bitMode |= 2;
+			nFb8bitMode1 = 1;
 			if (gDP.otherMode.imageRead == 0)
-				nFbFixedAlpha |= 2;
+				nFbFixedAlpha1 = 1;
 		}
+		nMSTex1Enabled = cache.current[1]->frameBufferTexture == CachedTexture::fbMultiSample ? 1 : 0;
 	}
-	_setIUniform(m_uniforms.uFb8Bit, nFb8bitMode, _bForce);
-	_setIUniform(m_uniforms.uFbFixedAlpha, nFbFixedAlpha, _bForce);
+	_setIV2Uniform(m_uniforms.uFb8Bit, nFb8bitMode0, nFb8bitMode1, _bForce);
+	_setIV2Uniform(m_uniforms.uFbFixedAlpha, nFbFixedAlpha0, nFbFixedAlpha1, _bForce);
+	_setIV2Uniform(m_uniforms.uMSTexEnabled, nMSTex0Enabled, nMSTex1Enabled, _bForce);
 
 	gDP.changed &= ~CHANGED_FB_TEXTURE;
 }
@@ -927,9 +982,9 @@ void SetDepthFogCombiner()
 		for (int i = 0; i < 256; ++i)
 			palette[i] = swapword(src[i*4]);
 		glBindImageTexture(TlutImageUnit, 0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R16UI);
-		glBindTexture(GL_TEXTURE_1D, g_tlut_tex);
-		glTexSubImage1D(GL_TEXTURE_1D, 0, 0, 256, GL_RED, GL_UNSIGNED_SHORT, palette);
-		glBindTexture(GL_TEXTURE_1D, 0);
+		glBindTexture(GL_TEXTURE_2D, g_tlut_tex);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RED, GL_UNSIGNED_SHORT, palette);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindImageTexture(TlutImageUnit, g_tlut_tex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R16UI);
 	}
 

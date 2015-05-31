@@ -146,7 +146,7 @@ void FrameBuffer::_initTexture(u16 _format, u16 _size, CachedTexture *_pTexture)
 	_pTexture->address = m_startAddress;
 	_pTexture->clampWidth = m_width;
 	_pTexture->clampHeight = m_height;
-	_pTexture->frameBufferTexture = TRUE;
+	_pTexture->frameBufferTexture = CachedTexture::fbOneSample;
 	_pTexture->maskS = 0;
 	_pTexture->maskT = 0;
 	_pTexture->mirrorS = 0;
@@ -172,6 +172,17 @@ void FrameBuffer::_setAndAttachTexture(u16 _size, CachedTexture *_pTexture)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _pTexture->glName, 0);
 }
 
+bool FrameBuffer::_isMarioTennisScoreboard() const
+{
+	if ((config.generalEmulation.hacks&hack_scoreboard) != 0) {
+		if (VI.PAL)
+			return m_startAddress == 0x13b480 || m_startAddress == 0x26a530;
+		else
+			return m_startAddress == 0x13ba50 || m_startAddress == 0x264430;
+	}
+	return (config.generalEmulation.hacks&hack_scoreboardJ) != 0 && (m_startAddress == 0x134080 || m_startAddress == 0x1332f8);
+}
+
 void FrameBuffer::init(u32 _address, u32 _endAddress, u16 _format, u16 _size, u16 _width, u16 _height, bool _cfb)
 {
 	OGLVideo & ogl = video();
@@ -190,12 +201,21 @@ void FrameBuffer::init(u32 _address, u32 _endAddress, u16 _format, u16 _size, u1
 	_initTexture(_format, _size, m_pTexture);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
+#ifdef GL_MULTISAMPLING_SUPPORT
 	if (config.video.multisampling != 0) {
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_pTexture->glName);
+#if defined(GLES3_1)
+		if (_size > G_IM_SIZ_8b)
+			glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, GL_RGBA8, m_pTexture->realWidth, m_pTexture->realHeight, false);
+		else
+			glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, monohromeInternalformat, m_pTexture->realWidth, m_pTexture->realHeight, false);
+#else
 		if (_size > G_IM_SIZ_8b)
 			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, GL_RGBA8, m_pTexture->realWidth, m_pTexture->realHeight, false);
 		else
 			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, monohromeInternalformat, m_pTexture->realWidth, m_pTexture->realHeight, false);
+#endif
+		m_pTexture->frameBufferTexture = CachedTexture::fbMultiSample;
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, m_pTexture->glName, 0);
 
 		m_pResolveTexture = textureCache().addFrameBufferTexture();
@@ -207,6 +227,7 @@ void FrameBuffer::init(u32 _address, u32 _endAddress, u16 _format, u16 _size, u1
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 	} else
+#endif // GL_MULTISAMPLING_SUPPORT
 		_setAndAttachTexture(_size, m_pTexture);
 }
 
@@ -350,17 +371,6 @@ void FrameBufferList::setBufferChanged()
 	}
 }
 
-bool FrameBufferList::_isMarioTennisScoreboard()
-{
-	if ((config.generalEmulation.hacks&hack_scoreboard) != 0) {
-		if (VI.PAL)
-			return m_pCurrent != NULL && (m_pCurrent->m_startAddress == 0x13b480 || m_pCurrent->m_startAddress == 0x26a530);
-		else
-			return m_pCurrent != NULL && (m_pCurrent->m_startAddress == 0x13ba50 || m_pCurrent->m_startAddress == 0x264430);
-	}
-	return (config.generalEmulation.hacks&hack_scoreboardJ) != 0 && m_pCurrent != NULL && (m_pCurrent->m_startAddress == 0x134080 || m_pCurrent->m_startAddress == 0x1332f8);
-}
-
 void FrameBufferList::correctHeight()
 {
 	if (m_pCurrent == NULL)
@@ -375,7 +385,7 @@ void FrameBufferList::correctHeight()
 		else
 			m_pCurrent->m_height = (u32)gDP.scissor.lry;
 
-		if (_isMarioTennisScoreboard())
+		if (m_pCurrent->_isMarioTennisScoreboard())
 			g_RDRAMtoFB.CopyFromRDRAM(m_pCurrent->m_startAddress + 4, false);
 
 		m_pCurrent->m_needHeightCorrection = false;
@@ -440,7 +450,7 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 			if (m_pCurrent->m_width == VI.width)
 				gDP.colorImage.height = min(gDP.colorImage.height, VI.height);
 			m_pCurrent->m_endAddress = min(RDRAMSize, m_pCurrent->m_startAddress + (((m_pCurrent->m_width * gDP.colorImage.height) << m_pCurrent->m_size >> 1) - 1));
-			if (!config.frameBufferEmulation.copyFromRDRAM && !_isMarioTennisScoreboard() && !m_pCurrent->m_isDepthBuffer && !m_pCurrent->m_copiedToRdram && !m_pCurrent->m_cfb && !m_pCurrent->m_cleared && m_pCurrent->m_RdramCopy.empty() && gDP.colorImage.height > 1) {
+			if (!config.frameBufferEmulation.copyFromRDRAM && !m_pCurrent->_isMarioTennisScoreboard() && !m_pCurrent->m_isDepthBuffer && !m_pCurrent->m_copiedToRdram && !m_pCurrent->m_cfb && !m_pCurrent->m_cleared && m_pCurrent->m_RdramCopy.empty() && gDP.colorImage.height > 1) {
 				m_pCurrent->copyRdram();
 			}
 		}
@@ -487,7 +497,7 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 		buffer.init(_address, endAddress, _format, _size, _width, _height, _cfb);
 		m_pCurrent = &buffer;
 
-		if (_isMarioTennisScoreboard() || ((config.generalEmulation.hacks & hack_legoRacers) != 0 && _width == VI.width))
+		if (m_pCurrent->_isMarioTennisScoreboard() || ((config.generalEmulation.hacks & hack_legoRacers) != 0 && _width == VI.width))
 			g_RDRAMtoFB.CopyFromRDRAM(m_pCurrent->m_startAddress + 4, false);
 	}
 
@@ -505,8 +515,6 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 	m_pCurrent->m_isDepthBuffer = _address == gDP.depthImageAddress;
 	m_pCurrent->m_isPauseScreen = m_pCurrent->m_isOBScreen = false;
 	m_pCurrent->m_postProcessed = false;
-
-	gSP.changed |= CHANGED_TEXTURE;
 }
 
 void FrameBufferList::removeBuffer(u32 _address )
@@ -563,20 +571,24 @@ void FrameBufferList::attachDepthBuffer()
 void FrameBuffer_Init()
 {
 	frameBufferList().init();
+	if (config.frameBufferEmulation.enable != 0) {
 #ifndef GLES2
 	g_fbToRDRAM.Init();
 	g_dbToRDRAM.Init();
 #endif
 	g_RDRAMtoFB.Init();
+	}
 }
 
 void FrameBuffer_Destroy()
 {
+	if (config.frameBufferEmulation.enable != 0) {
 	g_RDRAMtoFB.Destroy();
 #ifndef GLES2
 	g_dbToRDRAM.Destroy();
 	g_fbToRDRAM.Destroy();
 #endif
+	}
 	frameBufferList().destroy();
 }
 
@@ -754,7 +766,7 @@ void FrameBufferList::renderBuffer(u32 _address)
 	m_drawBuffer = GL_FRAMEBUFFER;
 	glEnable(GL_SCISSOR_TEST);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_pCurrent->m_FBO);
-	gSP.changed |= CHANGED_TEXTURE | CHANGED_VIEWPORT;
+	gSP.changed |= CHANGED_VIEWPORT;
 	gDP.changed |= CHANGED_COMBINE;
 }
 #endif
@@ -764,7 +776,7 @@ void FrameBuffer_ActivateBufferTexture(s16 t, FrameBuffer *pBuffer)
 	if (pBuffer == NULL || pBuffer->m_pTexture == NULL)
 		return;
 
-	CachedTexture *pTexture = pBuffer->getTexture();
+	CachedTexture *pTexture = pBuffer->m_pTexture;
 
 	pTexture->scaleS = pBuffer->m_scaleX / (float)pTexture->realWidth;
 	pTexture->scaleT = pBuffer->m_scaleY / (float)pTexture->realHeight;
@@ -806,7 +818,7 @@ void FrameBuffer_ActivateBufferTextureBG(s16 t, FrameBuffer *pBuffer )
 	if (pBuffer == NULL || pBuffer->m_pTexture == NULL)
 		return;
 
-	CachedTexture *pTexture = pBuffer->getTexture();
+	CachedTexture *pTexture = pBuffer->m_pTexture;
 	pTexture->scaleS = video().getScaleX() / (float)pTexture->realWidth;
 	pTexture->scaleT = video().getScaleY() / (float)pTexture->realHeight;
 
@@ -833,7 +845,7 @@ void FrameBufferToRDRAM::Init()
 	m_pTexture->format = G_IM_FMT_RGBA;
 	m_pTexture->clampS = 1;
 	m_pTexture->clampT = 1;
-	m_pTexture->frameBufferTexture = TRUE;
+	m_pTexture->frameBufferTexture = CachedTexture::fbOneSample;
 	m_pTexture->maskS = 0;
 	m_pTexture->maskT = 0;
 	m_pTexture->mirrorS = 0;
@@ -903,7 +915,7 @@ void FrameBufferToRDRAM::_copyWhite(FrameBuffer * _pBuffer)
 
 void FrameBufferToRDRAM::CopyToRDRAM(u32 _address)
 {
-	if (VI.width == 0) // H width is zero. Don't copy
+	if (VI.width == 0 || frameBufferList().getCurrent() == NULL) // H width is zero or no current buffer. Don't copy
 		return;
 	FrameBuffer *pBuffer = frameBufferList().findBuffer(_address);
 	if (pBuffer == NULL || pBuffer->m_width < VI.width || pBuffer->m_isOBScreen)
@@ -935,7 +947,9 @@ void FrameBufferToRDRAM::CopyToRDRAM(u32 _address)
 #ifndef GLES2
 	PBOBinder binder(GL_PIXEL_PACK_BUFFER, m_PBO);
 	glReadPixels(0, 0, VI.width, VI.height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	GLubyte* pixelData = (GLubyte*)glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+	isGLError();
+	GLubyte* pixelData = (GLubyte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, VI.width * VI.height * 4, GL_MAP_READ_BIT);
+	isGLError();
 	if(pixelData == NULL)
 		return;
 #else
@@ -1001,7 +1015,7 @@ void DepthBufferToRDRAM::Init()
 	m_pColorTexture->format = G_IM_FMT_I;
 	m_pColorTexture->clampS = 1;
 	m_pColorTexture->clampT = 1;
-	m_pColorTexture->frameBufferTexture = TRUE;
+	m_pColorTexture->frameBufferTexture = CachedTexture::fbOneSample;
 	m_pColorTexture->maskS = 0;
 	m_pColorTexture->maskT = 0;
 	m_pColorTexture->mirrorS = 0;
@@ -1015,7 +1029,7 @@ void DepthBufferToRDRAM::Init()
 	m_pDepthTexture->format = G_IM_FMT_I;
 	m_pDepthTexture->clampS = 1;
 	m_pDepthTexture->clampT = 1;
-	m_pDepthTexture->frameBufferTexture = TRUE;
+	m_pDepthTexture->frameBufferTexture = CachedTexture::fbOneSample;
 	m_pDepthTexture->maskS = 0;
 	m_pDepthTexture->maskT = 0;
 	m_pDepthTexture->mirrorS = 0;
@@ -1026,12 +1040,12 @@ void DepthBufferToRDRAM::Init()
 	textureCache().addFrameBufferTextureSize(m_pDepthTexture->textureBytes);
 
 	glBindTexture( GL_TEXTURE_2D, m_pColorTexture->glName );
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_pColorTexture->realWidth, m_pColorTexture->realHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, m_pColorTexture->realWidth, m_pColorTexture->realHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
 	glBindTexture( GL_TEXTURE_2D, m_pDepthTexture->glName );
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_pDepthTexture->realWidth, m_pDepthTexture->realHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, DEPTH_COMPONENT_FORMAT, m_pDepthTexture->realWidth, m_pDepthTexture->realHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
@@ -1101,7 +1115,7 @@ bool DepthBufferToRDRAM::CopyToRDRAM( u32 _address) {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
 	glReadPixels(0, 0, VI.width, VI.height, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 
-	GLubyte* pixelData = (GLubyte*)glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+	GLubyte* pixelData = (GLubyte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, VI.width * VI.height * 4, GL_MAP_READ_BIT);
 	if(pixelData == NULL)
 		return false;
 
@@ -1137,6 +1151,8 @@ bool DepthBufferToRDRAM::CopyToRDRAM( u32 _address) {
 bool FrameBuffer_CopyDepthBuffer( u32 address ) {
 #ifndef GLES2
 	return g_dbToRDRAM.CopyToRDRAM(address);
+#else
+	return false;
 #endif
 }
 
@@ -1146,7 +1162,7 @@ void RDRAMtoFrameBuffer::Init()
 	m_pTexture->format = G_IM_FMT_RGBA;
 	m_pTexture->clampS = 1;
 	m_pTexture->clampT = 1;
-	m_pTexture->frameBufferTexture = TRUE;
+	m_pTexture->frameBufferTexture = CachedTexture::fbOneSample;
 	m_pTexture->maskS = 0;
 	m_pTexture->maskT = 0;
 	m_pTexture->mirrorS = 0;
@@ -1197,7 +1213,7 @@ void RDRAMtoFrameBuffer::CopyFromRDRAM( u32 _address, bool _bUseAlpha)
 #ifndef GLES2
 	PBOBinder binder(GL_PIXEL_UNPACK_BUFFER, m_PBO);
 	glBufferData(GL_PIXEL_UNPACK_BUFFER, dataSize, NULL, GL_DYNAMIC_DRAW);
-	GLubyte* ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+	GLubyte* ptr = (GLubyte*)glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, dataSize, GL_MAP_WRITE_BIT);
 #else
 	m_PBO = (GLubyte*)malloc(dataSize);
 	GLubyte* ptr = m_PBO;
@@ -1292,6 +1308,7 @@ void RDRAMtoFrameBuffer::CopyFromRDRAM( u32 _address, bool _bUseAlpha)
 		CombinerInfo::get().setCombine(EncodeCombineMode(0, 0, 0, TEXEL0, 0, 0, 0, 1, 0, 0, 0, TEXEL0, 0, 0, 0, 1));
 		glDisable(GL_BLEND);
 	}
+	currentCombiner()->updateFBInfo();
 
 	glDisable(GL_DEPTH_TEST);
 	const u32 gspChanged = gSP.changed & CHANGED_CPU_FB_WRITE;
@@ -1304,7 +1321,6 @@ void RDRAMtoFrameBuffer::CopyFromRDRAM( u32 _address, bool _bUseAlpha)
 
 	gSP.textureTile[0] = pTile0;
 
-	gSP.changed |= gspChanged | CHANGED_TEXTURE;
 	gDP.changed |= CHANGED_RENDERMODE | CHANGED_COMBINE;
 }
 
