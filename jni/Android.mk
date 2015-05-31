@@ -18,17 +18,17 @@ COMMON_CFLAGS :=                    \
 COMMON_CPPFLAGS :=                  \
     -fvisibility-inlines-hidden     \
 
-include $(JNI_LOCAL_PATH)/SDL2/android.mk
-include $(JNI_LOCAL_PATH)/png/android.mk
-include $(JNI_LOCAL_PATH)/libsamplerate/android.mk
-include $(JNI_LOCAL_PATH)/ae-bridge/android.mk
+include $(JNI_LOCAL_PATH)/SDL2/Android.mk
+include $(JNI_LOCAL_PATH)/png/Android.mk
+include $(JNI_LOCAL_PATH)/libsamplerate/Android.mk
+include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-audio-sdl.mk
-include $(JNI_LOCAL_PATH)/mupen64plus-audio-sles/android.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-audio-sles/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-core.mk
-include $(JNI_LOCAL_PATH)/mupen64plus-input-android/android.mk
-include $(JNI_LOCAL_PATH)/xperia-touchpad/android.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-input-android/Android.mk
+include $(JNI_LOCAL_PATH)/xperia-touchpad/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-rsp-hle.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-ui-console.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-glide64mk2.mk
-include $(JNI_LOCAL_PATH)/mupen64plus-video-gln64/android.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-video-gln64/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-rice.mk
