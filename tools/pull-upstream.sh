@@ -43,7 +43,7 @@ echo
 echo "Type the name of the upstream organization/user you wish to pull from."
 echo "[${DEFAULT_ORG}]"
 read ORG
-if [ "$ORG" == "" ];then
+if [ "$ORG" = "" ];then
     ORG=$DEFAULT_ORG
 fi
 
@@ -51,7 +51,7 @@ echo
 echo "Type the name of the upstream branch you wish you pull from."
 echo "[${DEFAULT_BRANCH}]"
 read BRANCH
-if [ "$BRANCH" == "" ];then
+if [ "$BRANCH" = "" ];then
     BRANCH=$DEFAULT_BRANCH
 fi
 
@@ -59,7 +59,7 @@ echo
 echo "Type the name of the upstream revision you wish you pull from."
 echo "[${DEFAULT_REV}]"
 read REV
-if [ "$REV" == "" ];then
+if [ "$REV" = "" ];then
     REV=$DEFAULT_REV
 fi
 
@@ -80,7 +80,7 @@ for i in $COMPONENTS; do
     fi
     
     OLD_SYNC_HASH=`git log -1 --grep="${MSG_PREFIX}[0-9a-fA-F]\{7\}" --pretty=format:"%s" | sed -e 's/.*\([0-9a-fA-F]\{7\}\).*/\1/'`
-    if [ "$OLD_SYNC_HASH" == "" ];then
+    if [ "$OLD_SYNC_HASH" = "" ];then
         echo
         echo "This script has not yet been used to pull from ${BASE_URL}."
         echo "Please enter the hash of the last upstream commit that was pulled."
@@ -123,13 +123,13 @@ for i in $COMPONENTS; do
     DIFF=`git diff ${DEST_DIR}`
     
     DO_COMMIT="y"
-    if [ "$NEW_MSG_BODY" == "" -a "$DIFF" == "" ];then
+    if [ "$NEW_MSG_BODY" = "" -a "$DIFF" = "" ];then
         echo
         echo "No upstream changes to pull.  Continue? [N/y]"
         read DO_COMMIT
     fi
     
-    if [ "$DO_COMMIT" == "y" -o "$DO_COMMIT" == "Y" ];then
+    if [ "$DO_COMMIT" = "y" -o "$DO_COMMIT" = "Y" ];then
         git commit "${DEST_DIR}/." --allow-empty --message="${NEW_MSG_SUBJECT}" --message="" --message="${NEW_MSG_LINK}" --message="" --message="${NEW_MSG_BODY}"
     fi
 done
