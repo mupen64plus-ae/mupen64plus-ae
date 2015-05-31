@@ -31,6 +31,7 @@ include $(JNI_LOCAL_PATH)/mupen64plus-input-android/Android.mk
 include $(JNI_LOCAL_PATH)/xperia-touchpad/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-rsp-hle.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-ui-console.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-video-gliden64.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-glide64mk2.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-gln64/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-rice.mk
