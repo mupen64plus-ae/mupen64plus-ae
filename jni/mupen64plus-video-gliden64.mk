@@ -7,6 +7,7 @@ SRCDIR := ./mupen64plus-video-gliden64/src
 
 MY_LOCAL_MODULE := mupen64plus-video-gliden64
 MY_LOCAL_SHARED_LIBRARIES := freetype
+MY_LOCAL_STATIC_LIBRARIES := glidenhq
 MY_LOCAL_ARM_MODE := arm
 
 MY_LOCAL_C_INCLUDES :=                          \
@@ -59,11 +60,11 @@ MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/mupenplus/MupenPlusAPIImpl.cpp        \
     $(SRCDIR)/mupenplus/OpenGL_mupenplus.cpp        \
     $(SRCDIR)/TextDrawer.cpp                        \
-    $(SRCDIR)/TxFilterStub.cpp                      \
 
 MY_LOCAL_CFLAGS :=      \
     $(COMMON_CFLAGS)    \
     -g                  \
+    -DTXFILTER_LIB      \
     -DANDROID           \
     -DUSE_SDL           \
     -DMUPENPLUSAPI      \
