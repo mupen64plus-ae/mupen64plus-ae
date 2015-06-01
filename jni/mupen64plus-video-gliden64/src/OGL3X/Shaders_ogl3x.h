@@ -1,11 +1,16 @@
-#ifdef GLES3
-#define SHADER_VERSION "#version 300 es \n"
+#if defined(GLES3_1)
+#define MAIN_SHADER_VERSION "#version 330 core \n"
+#define AUXILIARY_SHADER_VERSION "\n"
+#elif defined(GLES3)
+#define MAIN_SHADER_VERSION "#version 300 es \n"
+#define AUXILIARY_SHADER_VERSION "\n"
 #else
-#define SHADER_VERSION "#version 330 core \n"
+#define MAIN_SHADER_VERSION "#version 330 core \n"
+#define AUXILIARY_SHADER_VERSION "#version 330 core \n"
 #endif
 
 static const char* vertex_shader =
-SHADER_VERSION
+MAIN_SHADER_VERSION
 "in highp vec4 aPosition;						\n"
 "in lowp vec4 aColor;							\n"
 "in highp vec2 aTexCoord0;						\n"
@@ -63,36 +68,28 @@ SHADER_VERSION
 "    vTexCoord1 = calcTexCoord(texCoord, 1);					\n"
 "    vLodTexCoord = texCoord * uCacheShiftScale[0];				\n"
 "    vNumLights = aNumLights;									\n"
-"    switch (uFogMode) {										\n"
-"      case 0:													\n"
+"    if (uFogMode == 0) {										\n"
 "        if (aPosition.z < -aPosition.w)						\n"
-"          vFogFragCoord = -uFogScale.s + uFogScale.t;		\n"
+"          vFogFragCoord = -uFogScale.s + uFogScale.t;			\n"
 "        else													\n"
-"          vFogFragCoord = aPosition.z/aPosition.w*uFogScale.s \n"
+"          vFogFragCoord = aPosition.z/aPosition.w*uFogScale.s	\n"
 "	                   + uFogScale.t;							\n"
-"      break;													\n"
-"      case 1:													\n"
+"    } else if (uFogMode == 1) {								\n"
 "          vFogFragCoord = uFogAlpha;							\n"
-"      break;													\n"
-"      case 2:													\n"
+"    } else if (uFogMode == 2) {								\n"
 "          vFogFragCoord = 1.0 - uFogAlpha;						\n"
-"      break;													\n"
 "    }															\n"
 "    vFogFragCoord = clamp(vFogFragCoord, 0.0, 1.0);			\n"
-"    if ((uFogUsage&255) == 1 && uFogMode == 0)					\n"
+"    lowp int fogUsage = uFogUsage;								\n"
+"    if (fogUsage >= 256) fogUsage -= 256;						\n"
+"    if (fogUsage == 1 && uFogMode == 0)						\n"
 "       vShadeColor.a = vFogFragCoord;							\n"
 "  } else {														\n"
 "    vTexCoord0 = aTexCoord0;									\n"
 "    vTexCoord1 = aTexCoord1;									\n"
 "    vNumLights = 0.0;											\n"
-"    switch (uFogMode) {										\n"
-"      case 1:													\n"
-"          vFogFragCoord = uFogAlpha;							\n"
-"      break;													\n"
-"      case 2:													\n"
-"          vFogFragCoord = 1.0 - uFogAlpha;						\n"
-"      break;													\n"
-"    }															\n"
+"    if (uFogMode == 1) vFogFragCoord = uFogAlpha;				\n"
+"    else if (uFogMode == 2) vFogFragCoord = 1.0 - uFogAlpha;	\n"
 "  }															\n"
 #ifndef GLESX
 "  gl_ClipDistance[0] = gl_Position.w - gl_Position.z;			\n"
@@ -101,7 +98,7 @@ SHADER_VERSION
 ;
 
 static const char* vertex_shader_notex =
-SHADER_VERSION
+MAIN_SHADER_VERSION
 "in highp vec4 aPosition;			\n"
 "in lowp vec4 aColor;				\n"
 "in lowp float aNumLights;			\n"
@@ -124,34 +121,26 @@ SHADER_VERSION
 "  vShadeColor = aColor;										\n"
 "  if (uRenderState == 1) {										\n"
 "    vNumLights = aNumLights;									\n"
-"    switch (uFogMode) {										\n"
-"      case 0:													\n"
+"    if (uFogMode == 0) {										\n"
 "        if (aPosition.z < -aPosition.w)						\n"
 "          vFogFragCoord = -uFogScale.s + uFogScale.t;			\n"
 "        else													\n"
 "          vFogFragCoord = aPosition.z/aPosition.w*uFogScale.s	\n"
 "	                   + uFogScale.t;							\n"
-"      break;													\n"
-"      case 1:													\n"
+"    } else if (uFogMode == 1) {								\n"
 "          vFogFragCoord = uFogAlpha;							\n"
-"      break;													\n"
-"      case 2:													\n"
+"    } else if (uFogMode == 2) {								\n"
 "          vFogFragCoord = 1.0 - uFogAlpha;						\n"
-"      break;													\n"
 "    }															\n"
 "    vFogFragCoord = clamp(vFogFragCoord, 0.0, 1.0);			\n"
-"    if ((uFogUsage&255) == 1 && uFogMode == 0)					\n"
+"    lowp int fogUsage = uFogUsage;								\n"
+"    if (fogUsage >= 256) fogUsage -= 256;						\n"
+"    if (fogUsage == 1 && uFogMode == 0)						\n"
 "       vShadeColor.a = vFogFragCoord;							\n"
 "  } else {														\n"
 "    vNumLights = 0.0;											\n"
-"    switch (uFogMode) {										\n"
-"      case 1:													\n"
-"          vFogFragCoord = uFogAlpha;							\n"
-"      break;													\n"
-"      case 2:													\n"
-"          vFogFragCoord = 1.0 - uFogAlpha;						\n"
-"      break;													\n"
-"    }															\n"
+"    if (uFogMode == 1) vFogFragCoord = uFogAlpha;				\n"
+"    else if (uFogMode == 2) vFogFragCoord = 1.0 - uFogAlpha;	\n"
 "  }															\n"
 #ifndef GLESX
 "  gl_ClipDistance[0] = gl_Position.w - gl_Position.z;			\n"
@@ -160,7 +149,7 @@ SHADER_VERSION
 ;
 
 static const char* fragment_shader_header_common_variables =
-SHADER_VERSION
+MAIN_SHADER_VERSION
 "uniform sampler2D uTex0;		\n"
 "uniform sampler2D uTex1;		\n"
 #ifdef GL_MULTISAMPLING_SUPPORT
@@ -204,7 +193,7 @@ SHADER_VERSION
 ;
 
 static const char* fragment_shader_header_common_variables_notex =
-SHADER_VERSION
+MAIN_SHADER_VERSION
 "layout (std140) uniform ColorsBlock {\n"
 "  lowp vec4 uFogColor;			\n"
 "  lowp vec4 uCenterColor;		\n"
@@ -245,8 +234,8 @@ static const char* fragment_shader_header_common_functions =
 "lowp vec4 readTexMS(in sampler2DMS mstex, in mediump vec2 texCoord, in bool fb8bit, in bool fbFixedAlpha);	\n"
 #endif // GL_MULTISAMPLING_SUPPORT
 "bool depth_compare();										\n"
-"void colorNoiseDither(in float _noise, inout vec3 _color);	\n"
-"void alphaNoiseDither(in float _noise, inout float _alpha);\n"
+"void colorNoiseDither(in lowp float _noise, inout lowp vec3 _color);	\n"
+"void alphaNoiseDither(in lowp float _noise, inout lowp float _alpha);\n"
 #ifdef USE_TOONIFY
 "void toonify(in mediump float intensity);	\n"
 #endif
@@ -257,18 +246,16 @@ static const char* fragment_shader_header_common_functions_notex =
 "lowp float snoise();						\n"
 "void calc_light(in lowp float fLights, in lowp vec3 input_color, out lowp vec3 output_color);\n"
 "bool depth_compare();										\n"
-"void colorNoiseDither(in float _noise, inout vec3 _color);	\n"
-"void alphaNoiseDither(in float _noise, inout float _alpha);\n"
+"void colorNoiseDither(in lowp float _noise, inout lowp vec3 _color);	\n"
+"void alphaNoiseDither(in lowp float _noise, inout lowp float _alpha);\n"
 ;
 
 static const char* fragment_shader_calc_light =
-#ifndef GLESX
-SHADER_VERSION
-#endif
-"layout (std140) uniform LightBlock {				\n"
-"  mediump vec3 uLightDirection[8];	\n"
-"  lowp vec3 uLightColor[8];	\n"
-"};																\n"
+AUXILIARY_SHADER_VERSION
+"layout (std140) uniform LightBlock {		\n"
+"  mediump vec3 uLightDirection[8];			\n"
+"  lowp vec3 uLightColor[8];				\n"
+"};											\n"
 "void calc_light(in lowp float fLights, in lowp vec3 input_color, out lowp vec3 output_color) {\n"
 "  output_color = input_color;									\n"
 "  lowp int nLights = int(floor(fLights + 0.5));				\n"
@@ -298,10 +285,8 @@ static const char* fragment_shader_header_main =
 ;
 
 static const char* fragment_shader_dither =
-#ifndef GLESX
-SHADER_VERSION
-#endif
-"void colorNoiseDither(in float _noise, inout vec3 _color)	\n"
+AUXILIARY_SHADER_VERSION
+"void colorNoiseDither(in lowp float _noise, inout lowp vec3 _color)	\n"
 "{															\n"
 "    mediump vec3 tmpColor = _color*255.0;					\n"
 "    mediump ivec3 iColor = ivec3(tmpColor);				\n"
@@ -309,7 +294,7 @@ SHADER_VERSION
 "    iColor |= ivec3(tmpColor*_noise)&7;					\n"
 "    _color = vec3(iColor)/255.0;							\n"
 "}															\n"
-"void alphaNoiseDither(in float _noise, inout float _alpha)	\n"
+"void alphaNoiseDither(in lowp float _noise, inout lowp float _alpha)	\n"
 "{															\n"
 "    mediump float tmpAlpha = _alpha*255.0;					\n"
 "    mediump int iAlpha = int(tmpAlpha)&248;				\n"
@@ -332,45 +317,13 @@ static const char* fragment_shader_toonify =
 ;
 #endif
 
-#if 0
-static const char* fragment_shader_blender =
-"  switch (uSpecialBlendMode) {							\n"
-"	case 1:												\n"
-// Mace
-"		color1 = color1 * alpha1 + uBlendColor.rgb * (1.0 - alpha1); \n"
-"	break;												\n"
-// Donald Duck
-"	case 2:												\n"
-"		color1 = uFogColor.rgb*uFogColor.a + color1*(1.0-alpha1);\n"
-"	break;												\n"
-"  }													\n"
-;
-#else
-static const char* fragment_shader_blender =
-"  switch (uSpecialBlendMode) {	\n"
-"    case 1:					\n"
-// Mace
-"		color1 = color1 * alpha1 + uBlendColor.rgb * (1.0 - alpha1); \n"
-"    break;						\n"
-"    case 2:					\n"
-// Bomberman2
-"		color1 = uBlendColor.rgb * uFogColor.a + color1 * (1.0 - uFogColor.a); \n"
-"    break;						\n"
-"    case 3:					\n"
-// Conker BFD
-"		color1 = color1 * uFogColor.a + uFogColor.rgb * (1.0 - uFogColor.a); \n"
-"    break;						\n"
-"  }							\n"
-;
-#endif
-
 static const char* fragment_shader_end =
 "}                               \n"
 ;
 
 static const char* fragment_shader_mipmap =
 #ifndef GLESX
-SHADER_VERSION
+AUXILIARY_SHADER_VERSION
 "in mediump vec2 vTexCoord0;	\n"
 "in mediump vec2 vTexCoord1;	\n"
 "in mediump vec2 vLodTexCoord;	\n"
@@ -446,9 +399,18 @@ SHADER_VERSION
 ;
 
 static const char* fragment_shader_readtex =
-#ifndef GLESX
-SHADER_VERSION
-#endif
+AUXILIARY_SHADER_VERSION
+"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in bool fb8bit, in bool fbFixedAlpha)	\n"
+"{												\n"
+"  lowp vec4 texColor = texture(tex, texCoord);	\n"
+"  if (fb8bit) texColor = vec4(texColor.r);		\n"
+"  if (fbFixedAlpha) texColor.a = 0.825;		\n"
+"  return texColor;								\n"
+"}												\n"
+;
+
+static const char* fragment_shader_readtex_3point =
+AUXILIARY_SHADER_VERSION
 "uniform lowp int uTextureFilterMode;								\n"
 // 3 point texture filtering.
 // Original author: ArthurCarvalho
@@ -466,12 +428,18 @@ SHADER_VERSION
 "}																			\n"
 "lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in bool fb8bit, in bool fbFixedAlpha)	\n"
 "{																			\n"
-"  lowp vec4 texColor = uTextureFilterMode == 0 ? texture(tex, texCoord) : filter3point(tex, texCoord); \n"
+"  lowp vec4 texStandard = texture(tex, texCoord); 							\n"
+"  lowp vec4 tex3Point = filter3point(tex, texCoord); 						\n"
+"  lowp vec4 texColor = uTextureFilterMode == 0 ? texStandard : tex3Point;	\n"
 "  if (fb8bit) texColor = vec4(texColor.r);									\n"
 "  if (fbFixedAlpha) texColor.a = 0.825;									\n"
 "  return texColor;															\n"
 "}																			\n"
+;
+
 #ifdef GL_MULTISAMPLING_SUPPORT
+static const char* fragment_shader_readtex_ms =
+AUXILIARY_SHADER_VERSION
 "uniform lowp int uMSAASamples;	\n"
 "uniform lowp float uMSAAScale;	\n"
 "lowp vec4 sampleMS(in sampler2DMS mstex, in mediump ivec2 ipos)			\n"
@@ -491,12 +459,12 @@ SHADER_VERSION
 "  if (fbFixedAlpha) texColor.a = 0.825;									\n"
 "  return texColor;															\n"
 "}																			\n"
-#endif // GL_MULTISAMPLING_SUPPORT
 ;
+#endif // GL_MULTISAMPLING_SUPPORT
 
 static const char* fragment_shader_noise =
+AUXILIARY_SHADER_VERSION
 #ifndef GLESX
-SHADER_VERSION
 "uniform mediump vec2 uScreenScale;	\n"
 #endif
 "uniform sampler2D uTexNoise;		\n"
@@ -576,15 +544,6 @@ static const char* depth_compare_shader_float =
 "}														\n"
 ;
 
-static const char* default_vertex_shader =
-"#version 420 core												\n"
-"in highp vec4 	aPosition;								\n"
-"void main()                                                    \n"
-"{                                                              \n"
-"  gl_Position = aPosition;										\n"
-"}                                                              \n"
-;
-
 static const char* shadow_map_fragment_shader_float =
 "#version 420 core											\n"
 "layout(binding = 0) uniform sampler2D uDepthImage;		\n"
@@ -612,7 +571,15 @@ static const char* shadow_map_fragment_shader_float =
 ;
 #endif // GL_IMAGE_TEXTURES_SUPPORT
 
-#ifdef GL_IMAGE_TEXTURES_SUPPORT
+static const char* default_vertex_shader =
+MAIN_SHADER_VERSION
+"in highp vec4 	aPosition;								\n"
+"void main()                                                    \n"
+"{                                                              \n"
+"  gl_Position = aPosition;										\n"
+"}                                                              \n"
+;
+
 #if 0 // Do palette based monochrome image. Exactly as N64 does
 static const char* zelda_monochrome_fragment_shader =
 "#version 420 core											\n"
@@ -639,8 +606,8 @@ static const char* zelda_monochrome_fragment_shader =
 ;
 #else // Cheat it
 static const char* zelda_monochrome_fragment_shader =
-"#version 420 core										\n"
-"layout(binding = 0) uniform sampler2D uColorImage;		\n"
+MAIN_SHADER_VERSION
+"uniform sampler2D uColorImage;							\n"
 "out lowp vec4 fragColor;								\n"
 "void main()											\n"
 "{														\n"
@@ -652,4 +619,3 @@ static const char* zelda_monochrome_fragment_shader =
 "}														\n"
 ;
 #endif
-#endif // GL_IMAGE_TEXTURES_SUPPORT

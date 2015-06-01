@@ -9,6 +9,7 @@
 #include "windows/GLFunctions.h"
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
+#define GL_UNIFORMBLOCK_SUPPORT
 #else
 #include "winlnxdefs.h"
 #ifdef GLES2
@@ -17,16 +18,21 @@
 #define GL_DRAW_FRAMEBUFFER GL_FRAMEBUFFER
 #define GL_READ_FRAMEBUFFER GL_FRAMEBUFFER
 #define GLESX
+#ifdef PANDORA
+typedef char GLchar;
+#endif
 #elif defined(GLES3)
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>
 #define GLESX
+#define GL_UNIFORMBLOCK_SUPPORT
 #elif defined(GLES3_1)
 #include <GLES3/gl31.h>
 #include <GLES3/gl3ext.h>
 #define GLESX
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
+#define GL_UNIFORMBLOCK_SUPPORT
 #else
 #define GL_GLEXT_PROTOTYPES
 #if defined(OS_MAC_OS_X)
@@ -38,12 +44,17 @@
 #include <GL/glext.h>
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
+#define GL_UNIFORMBLOCK_SUPPORT
 #endif // OS_MAC_OS_X
 #endif // GLES2
 #ifdef USE_SDL
 #include <SDL.h>
 #endif // USE_SDL
 #endif // OS_WINDOWS
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif
 
 #include "glState.h"
 #include "gSP.h"

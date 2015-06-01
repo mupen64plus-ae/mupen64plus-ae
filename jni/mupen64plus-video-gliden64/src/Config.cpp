@@ -6,13 +6,19 @@
 #include "RSP.h"
 #include "PluginAPI.h"
 #include "Config.h"
+#include "wst.h"
 
 void Config::resetToDefaults()
 {
 	version = CONFIG_VERSION_CURRENT;
 
+#ifdef PANDORA
+	video.fullscreen = 1;
+	video.fullscreenWidth = video.windowedWidth = 800;
+#else
 	video.fullscreen = 0;
 	video.fullscreenWidth = video.windowedWidth = 640;
+#endif
 	video.fullscreenHeight = video.windowedHeight = 480;
 	video.fullscreenRefresh = 60;
 	video.multisampling = 0;
@@ -52,11 +58,15 @@ void Config::resetToDefaults()
 	textureFilter.txForce16bpp = 0;
 	textureFilter.txSaveCache = 1;
 
-	api().FindPluginPath(textureFilter.txPath);
-	wcscat(textureFilter.txPath, L"/hires_texture");
+	api().GetUserDataPath(textureFilter.txPath);
+	gln_wcscat(textureFilter.txPath, wst("/hires_texture"));
 
 #ifdef OS_WINDOWS
-	font.name = "arial.ttf";
+	font.name.assign("arial.ttf");
+#elif defined (ANDROID)
+	font.name.assign("DroidSans.ttf");
+#elif defined (PANDORA)
+	font.name.assign("LiberationMono-Regular.ttf");
 #else
 	font.name = "FreeSans.ttf";
 #endif

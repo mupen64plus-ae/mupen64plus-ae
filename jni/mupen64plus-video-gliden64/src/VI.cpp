@@ -109,11 +109,11 @@ void VI_UpdateScreen()
 	}
 
 	if (config.frameBufferEmulation.enable) {
-		const bool bCFB = config.frameBufferEmulation.detectCFB != 0 && (gSP.changed&CHANGED_CPU_FB_WRITE) == CHANGED_CPU_FB_WRITE;
+		const bool bCFB = (gDP.changed&CHANGED_CPU_FB_WRITE) == CHANGED_CPU_FB_WRITE;
 		const bool bNeedUpdate = gDP.colorImage.changed != 0 || (bCFB ? true : (*REG.VI_ORIGIN != VI.lastOrigin));
 
 		if (bNeedUpdate) {
-			if ((gSP.changed&CHANGED_CPU_FB_WRITE) == CHANGED_CPU_FB_WRITE) {
+			if (bCFB) {
 				FrameBuffer * pBuffer = frameBufferList().findBuffer(*REG.VI_ORIGIN);
 				if (pBuffer == NULL || pBuffer->m_width != VI.width) {
 					if (!bVIUpdated) {
@@ -137,10 +137,10 @@ void VI_UpdateScreen()
 
 			if (gDP.colorImage.changed)
 				uNumCurFrameIsShown = 0;
-			else {
+			else if (config.frameBufferEmulation.detectCFB != 0) {
 				uNumCurFrameIsShown++;
 				if (uNumCurFrameIsShown > 25)
-					gSP.changed |= CHANGED_CPU_FB_WRITE;
+					gDP.changed |= CHANGED_CPU_FB_WRITE;
 			}
 			frameBufferList().clearBuffersChanged();
 			VI.lastOrigin = *REG.VI_ORIGIN;
@@ -148,16 +148,16 @@ void VI_UpdateScreen()
 			while (Debug.paused && !Debug.step);
 			Debug.step = FALSE;
 #endif
-		} else {
+		} else if (config.frameBufferEmulation.detectCFB != 0) {
 			uNumCurFrameIsShown++;
 			if (uNumCurFrameIsShown > 25)
-				gSP.changed |= CHANGED_CPU_FB_WRITE;
+				gDP.changed |= CHANGED_CPU_FB_WRITE;
 		}
 	}
 	else {
-		if (gSP.changed & CHANGED_COLORBUFFER) {
+		if (gDP.changed & CHANGED_COLORBUFFER) {
 			ogl.swapBuffers();
-			gSP.changed &= ~CHANGED_COLORBUFFER;
+			gDP.changed &= ~CHANGED_COLORBUFFER;
 #ifdef DEBUG
 			while (Debug.paused && !Debug.step);
 			Debug.step = FALSE;

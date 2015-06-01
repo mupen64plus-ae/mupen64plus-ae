@@ -597,7 +597,8 @@ void RDP_ProcessRDPList()
 	}
 
 	RSP.bLLE = false;
-	gSP.changed |= CHANGED_COLORBUFFER;
+	gDP.changed |= CHANGED_COLORBUFFER;
+	gDP.changed &= ~CHANGED_CPU_FB_WRITE;
 
 	dp_start = dp_current = dp_end;
 }

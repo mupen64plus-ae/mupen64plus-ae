@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 
+option(GLES2 "Set to ON if targeting a GLES2 device" ${GLES2})
+option(PANDORA "Set to ON if targeting an OpenPandora" ${PANDORA})
+option(MUPENPLUSAPI "Set to ON for Mupen64Plus plugin" ${MUPENPLUSAPI})
+
 project( GLideN64 )
 
 set(GLideN64_SOURCES
@@ -21,7 +25,6 @@ set(GLideN64_SOURCES
   GBI.cpp
   gDP.cpp
   GLideN64.cpp
-  GLSLCombiner.cpp
   glState.cpp
   gSP.cpp
   Keys.cpp
@@ -36,6 +39,7 @@ set(GLideN64_SOURCES
   S2DEX.cpp
   Turbo3D.cpp
   ZSort.cpp
+  ShaderUtils.cpp
   Textures.cpp
   TextDrawer.cpp
   PostProcessor.cpp
@@ -113,6 +117,15 @@ if(SDL)
   )
 endif(SDL)
 
+if(PANDORA)
+  #Pandora as a SGX530, but it should share the bugs and limitations as SGX540
+  add_definitions(
+  -DPANDORA
+  -DPowerVR_SGX_540
+  -DGLES2
+   )
+endif(PANDORA)
+
 SET( ENV{FREETYPE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../freetype )
 FIND_PACKAGE( Freetype REQUIRED )
 include_directories( ${FREETYPE_INCLUDE_DIRS} )
@@ -137,13 +150,28 @@ if( CMAKE_BUILD_TYPE STREQUAL "Debug")
 #	)
 endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-find_package(OpenGL REQUIRED)
-include_directories(${OpenGL_INCLUDE_DIRS})
-link_directories(${OpenGL_LIBRARY_DIRS})
-add_definitions(${OpenGL_DEFINITIONS})
-if(NOT OPENGL_FOUND)
-	message(ERROR " OPENGL not found!")
-endif(NOT OPENGL_FOUND)
+if(GLES2)
+  add_definitions(
+    -DGLES2
+   )
+   list(APPEND GLideN64_SOURCES 
+    GLES2/GLSLCombiner_gles2.cpp
+    GLES2/UniformSet.cpp
+   )
+   SET(OPENGL_LIBRARIES -lGLESv2 -lEGL)
+else(GLES2)
+  find_package(OpenGL REQUIRED)
+  include_directories(${OpenGL_INCLUDE_DIRS})
+  link_directories(${OpenGL_LIBRARY_DIRS})
+  add_definitions(${OpenGL_DEFINITIONS})
+  if(NOT OPENGL_FOUND)
+  	message(ERROR " OPENGL not found!")
+  endif(NOT OPENGL_FOUND)
+  list(APPEND GLideN64_SOURCES 
+    OGL3X/GLSLCombiner_ogl3x.cpp
+    OGL3X/UniformBlock.cpp
+  )
+endif(GLES2)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	SET(GCC_CPP11_COMPILE_FLAGS "-std=c++0x -static-libgcc -static-libstdc++")

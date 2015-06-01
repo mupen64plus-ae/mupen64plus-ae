@@ -173,14 +173,16 @@ inline u32 GetCI16IA_RGBA4444(u64 *src, u16 x, u16 i, u8 palette)
 
 inline u32 GetCI16RGBA_RGBA8888(u64 *src, u16 x, u16 i, u8 palette)
 {
-	const u16 tex = ((u16*)src)[x^i];
-	return RGBA5551_RGBA8888(*(u16*)&TMEM[256 + (tex >> 8)]);
+	u16 tex = ((u16*)src)[x^i];
+	tex = (tex >> 8) | ((tex & 0xff) << 8);
+	return RGBA5551_RGBA8888(((u16*)&TMEM[256])[((tex >> 6) & ~3)]);
 }
 
 inline u32 GetCI16RGBA_RGBA5551(u64 *src, u16 x, u16 i, u8 palette)
 {
-	const u16 tex = ((u16*)src)[x^i];
-	return RGBA5551_RGBA5551(*(u16*)&TMEM[256 + (tex >> 8)]);
+	u16 tex = ((u16*)src)[x^i];
+	tex = (tex >> 8) | ((tex & 0xff) << 8);
+	return RGBA5551_RGBA5551(((u16*)&TMEM[256])[((tex >> 6) & ~3)]);
 }
 
 inline u32 GetRGBA5551_RGBA8888(u64 *src, u16 x, u16 i, u8 palette)
@@ -790,7 +792,11 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 	if (!bLoaded) {
 		if (pTexture->realWidth % 2 != 0 && glInternalFormat != GL_RGBA)
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+#ifdef GLES2
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pTexture->realWidth, pTexture->realHeight, 0, GL_RGBA, glType, pDest);
+#else
 		glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, pTexture->realWidth, pTexture->realHeight, 0, GL_RGBA, glType, pDest);
+#endif
 	}
 	if (m_curUnpackAlignment > 1)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, m_curUnpackAlignment);
@@ -841,7 +847,11 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 	_ricecrc = txfilter_checksum(addr, tile_width, tile_height, (unsigned short)(_pTexture->format << 8 | _pTexture->size), bpl, paladdr);
 	GHQTexInfo ghqTexInfo;
 	if (txfilter_hirestex(_pTexture->crc, _ricecrc, palette, &ghqTexInfo)) {
+#ifdef GLES2
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ghqTexInfo.width, ghqTexInfo.height, 0, GL_RGBA, ghqTexInfo.pixel_type, ghqTexInfo.data);
+#else
 		glTexImage2D(GL_TEXTURE_2D, 0, ghqTexInfo.format, ghqTexInfo.width, ghqTexInfo.height, 0, ghqTexInfo.texture_format, ghqTexInfo.pixel_type, ghqTexInfo.data);
+#endif
 		assert(!isGLError());
 		_updateCachedTexture(ghqTexInfo, _pTexture);
 		return true;
@@ -885,8 +895,10 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 	pDest = (u32*)malloc(_pTexture->textureBytes);
 
 	GLint mipLevel = 0, maxLevel = 0;
+#ifndef GLES2
 	if (config.generalEmulation.enableLOD != 0 && gSP.texture.level > gSP.texture.tile + 1)
 		maxLevel = _tile == 0 ? 0 : gSP.texture.level - gSP.texture.tile - 1;
+#endif
 
 	_pTexture->max_level = maxLevel;
 
@@ -998,7 +1010,11 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 		{
 			GHQTexInfo ghqTexInfo;
 			if (txfilter_filter((u8*)pDest, tmptex.realWidth, tmptex.realHeight, glInternalFormat, (uint64)_pTexture->crc, &ghqTexInfo) != 0 && ghqTexInfo.data != NULL) {
+#ifdef GLES2
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ghqTexInfo.width, ghqTexInfo.height, 0, GL_RGBA, ghqTexInfo.pixel_type, ghqTexInfo.data);
+#else
 				glTexImage2D(GL_TEXTURE_2D, 0, ghqTexInfo.format, ghqTexInfo.width, ghqTexInfo.height, 0, ghqTexInfo.texture_format, ghqTexInfo.pixel_type, ghqTexInfo.data);
+#endif
 				_updateCachedTexture(ghqTexInfo, _pTexture);
 				bLoaded = true;
 			}
@@ -1006,7 +1022,11 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 		if (!bLoaded) {
 			if (tmptex.realWidth % 2 != 0 && glInternalFormat != GL_RGBA && m_curUnpackAlignment > 1)
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+#ifdef GLES2
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tmptex.realWidth, tmptex.realHeight, 0, GL_RGBA, glType, pDest);
+#else
 			glTexImage2D(GL_TEXTURE_2D, mipLevel, glInternalFormat, tmptex.realWidth, tmptex.realHeight, 0, GL_RGBA, glType, pDest);
+#endif
 		}
 		if (mipLevel == maxLevel)
 			break;
@@ -1098,7 +1118,9 @@ void TextureCache::activateTexture(u32 _t, CachedTexture *_pTexture)
 	const bool bUseLOD = currentCombiner()->usesLOD();
 	const GLint texLevel = bUseLOD ? _pTexture->max_level : 0;
 
+#ifndef GLES2
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, texLevel);
+#endif
 	if (config.texture.bilinearMode == BILINEAR_STANDARD) {
 		if (bUseBilinear) {
 			if (texLevel > 0)
@@ -1136,10 +1158,8 @@ void TextureCache::activateTexture(u32 _t, CachedTexture *_pTexture)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _pTexture->clampS ? GL_CLAMP_TO_EDGE : _pTexture->mirrorS ? GL_MIRRORED_REPEAT : GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _pTexture->clampT ? GL_CLAMP_TO_EDGE : _pTexture->mirrorT ? GL_MIRRORED_REPEAT : GL_REPEAT);
 
-#ifndef GLESX
 	if (video().getRender().getRenderState() == OGLRender::rsTriangle && config.texture.maxAnisotropyF > 0.0f)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, config.texture.maxAnisotropyF);
-#endif
 
 	_pTexture->lastDList = RSP.DList;
 

@@ -24,10 +24,37 @@
 #define DBG_LEVEL 80
 
 #include "TxDbg.h"
-#include <string.h>
 #include <stdarg.h>
-#include <boost/format.hpp>
+#include <stdio.h>
 
+#ifdef ANDROID
+#include <android/log.h>
+
+TxDbg::TxDbg()
+{
+	_level = DBG_LEVEL;
+}
+
+TxDbg::~TxDbg()
+{}
+
+
+void
+TxDbg::output(const int level, const wchar_t *format, ...)
+{
+	if (level > _level)
+		return;
+
+	char fmt[2048];
+	wcstombs(fmt, format, 2048);
+
+	va_list ap;
+	va_start(ap, format);
+	__android_log_vprint(ANDROID_LOG_DEBUG, "GLideN64", fmt, ap);
+	va_end(ap);
+}
+
+#else // ANDROID
 TxDbg::TxDbg()
 {
 	_level = DBG_LEVEL;
@@ -53,19 +80,16 @@ TxDbg::~TxDbg()
 void
 TxDbg::output(const int level, const wchar_t *format, ...)
 {
-	va_list args;
-	//wchar_t newformat[4095];
-	std::wstring newformat;
-
 	if (level > _level)
 		return;
 
+	va_list args;
+	wchar_t newformat[4095];
+
 	va_start(args, format);
-	//swprintf(newformat, 4095, L"%d:\t", level);
-	//wcscat(newformat, format);
-	//vfwprintf(_dbgfile, newformat, args);
-	newformat = boost::str(boost::wformat(L"%d:\t%ls") % level % format);
-	vfwprintf(_dbgfile, newformat.c_str(), args);
+	tx_swprintf(newformat, 4095, wst("%d:\t"), level);
+	wcscat(newformat, format);
+	vfwprintf(_dbgfile, newformat, args);
 	fflush(_dbgfile);
 #ifdef GHQCHK
 	//vwprintf(newformat, args);
@@ -73,3 +97,4 @@ TxDbg::output(const int level, const wchar_t *format, ...)
 #endif
 	va_end(args);
 }
+#endif // ANDROID

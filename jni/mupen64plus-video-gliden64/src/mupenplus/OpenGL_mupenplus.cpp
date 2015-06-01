@@ -6,6 +6,7 @@
 #include "../gDP.h"
 #include "../Config.h"
 #include "../Revision.h"
+#include "../Log.h"
 
 #ifndef OS_WINDOWS
 
@@ -38,6 +39,22 @@ OGLVideo & OGLVideo::get()
 
 void OGLVideoMupenPlus::_setAttributes()
 {
+#ifdef GLES2
+	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MAJOR_VERSION, 2);
+	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 0);
+	LOG(LOG_VERBOSE, "[gles2GlideN64]: _setAttributes\n");
+#elif defined(GLES3)
+	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MAJOR_VERSION, 3);
+	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 0);
+#elif defined(GLES3_1)
+	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MAJOR_VERSION, 3);
+	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 1);
+#elif defined(OS_MAC_OS_X)
+	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MAJOR_VERSION, 3);
+	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 2);
+#else
+	// Do nothing
+#endif
 	CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
 	CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, config.video.verticalSync);
 	CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 32);
@@ -68,10 +85,12 @@ bool OGLVideoMupenPlus::_start()
 	printf("(II) Setting video mode %dx%d...\n", m_screenWidth, m_screenHeight);
 	const m64p_video_flags flags = M64VIDEOFLAG_SUPPORT_RESIZING;
 	if (CoreVideo_SetVideoMode(m_screenWidth, m_screenHeight, 0, m_bFullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED, flags) != M64ERR_SUCCESS) {
-		printf("(EE) Error setting videomode %dx%d\n", m_screenWidth, m_screenHeight);
+		//printf("(EE) Error setting videomode %dx%d\n", m_screenWidth, m_screenHeight);
+		LOG(LOG_ERROR, "[gles2GlideN64]: Error setting videomode %dx%d\n", m_screenWidth, m_screenHeight);
 		CoreVideo_Quit();
 		return false;
 	}
+	LOG(LOG_VERBOSE, "[gles2GlideN64]: Create setting videomode %dx%d\n", m_screenWidth, m_screenHeight);
 
 	char caption[128];
 # ifdef _DEBUG
@@ -99,7 +118,7 @@ void OGLVideoMupenPlus::_swapBuffers()
 			gSP.changed |= CHANGED_VIEWPORT;
 		}
 		gDP.changed |= CHANGED_COMBINE;
-		(*renderCallback)((gSP.changed&CHANGED_CPU_FB_WRITE) == 0 ? 1 : 0);
+		(*renderCallback)((gDP.changed&CHANGED_CPU_FB_WRITE) == 0 ? 1 : 0);
 	}
 	CoreVideo_GL_SwapBuffers();
 }
@@ -122,6 +141,8 @@ bool OGLVideoMupenPlus::_resizeWindow()
 		CoreVideo_Quit();
 		return false;
 	}
+	_setBufferSize();
+	isGLError(); // reset GL error.
 	return true;
 }
 

@@ -162,10 +162,17 @@ void FrameBuffer::_initTexture(u16 _format, u16 _size, CachedTexture *_pTexture)
 void FrameBuffer::_setAndAttachTexture(u16 _size, CachedTexture *_pTexture)
 {
 	glBindTexture(GL_TEXTURE_2D, _pTexture->glName);
+#ifdef GLES2
+	if (_size > G_IM_SIZ_8b)
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _pTexture->realWidth, _pTexture->realHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+	else
+		glTexImage2D(GL_TEXTURE_2D, 0, monohromeInternalformat, _pTexture->realWidth, _pTexture->realHeight, 0, monohromeformat, GL_UNSIGNED_BYTE, NULL);
+#else
 	if (_size > G_IM_SIZ_8b)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _pTexture->realWidth, _pTexture->realHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	else
 		glTexImage2D(GL_TEXTURE_2D, 0, monohromeInternalformat, _pTexture->realWidth, _pTexture->realHeight, 0, monohromeformat, GL_UNSIGNED_BYTE, NULL);
+#endif
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -317,6 +324,7 @@ bool FrameBuffer::isValid() const
 
 void FrameBuffer::resolveMultisampledTexture()
 {
+#ifdef GL_MULTISAMPLING_SUPPORT
 	if (m_resolved)
 		return;
 	glScissor(0, 0, m_pTexture->realWidth, m_pTexture->realHeight);
@@ -332,6 +340,7 @@ void FrameBuffer::resolveMultisampledTexture()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferList().getCurrent()->m_FBO);
 	gDP.changed |= CHANGED_SCISSOR;
 	m_resolved = true;
+#endif
 }
 
 CachedTexture * FrameBuffer::getTexture()
@@ -736,18 +745,20 @@ void FrameBufferList::renderBuffer(u32 _address)
 	if (pBuffer == NULL)
 		return;
 
-	CombinerInfo::get().setCombine( EncodeCombineMode( 0, 0, 0, TEXEL0, 0, 0, 0, 1, 0, 0, 0, TEXEL0, 0, 0, 0, 1 ) );
+	OGLVideo & ogl = video();
+	ogl.getRender().updateScissor(pBuffer);
+	PostProcessor::get().process(pBuffer);
+	gSP.changed = gDP.changed = 0;
+
+	CombinerInfo::get().setCombine(EncodeCombineMode(0, 0, 0, TEXEL0, 0, 0, 0, 1, 0, 0, 0, TEXEL0, 0, 0, 0, 1));
 	glDisable( GL_BLEND );
-	glDisable(GL_SCISSOR_TEST);
 	glDisable(GL_DEPTH_TEST);
 	glDisable( GL_CULL_FACE );
 	glDisable( GL_POLYGON_OFFSET_FILL );
-	gSP.changed = gDP.changed = 0;
 
 	const u32 width = pBuffer->m_width;
 	const u32 height = pBuffer->m_height;
 
-	OGLVideo & ogl = video();
 	pBuffer->m_pTexture->scaleS = ogl.getScaleX() / (float)pBuffer->m_pTexture->realWidth;
 	pBuffer->m_pTexture->scaleT = ogl.getScaleY() / (float)pBuffer->m_pTexture->realHeight;
 	pBuffer->m_pTexture->shiftScaleS = 1.0f;
@@ -757,17 +768,21 @@ void FrameBufferList::renderBuffer(u32 _address)
 	textureCache().activateTexture(0, pBuffer->m_pTexture);
 	gSP.textureTile[0]->fuls = gSP.textureTile[0]->fult = 0.0f;
 	currentCombiner()->updateTextureInfo(true);
+	CombinerInfo::get().updateParameters();
+
+	glScissor(0, 0, ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset());
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	m_drawBuffer = GL_BACK;
 	OGLRender::TexturedRectParams params(0.0f, 0.0f, width, height, 0.0f, 0.0f, width - 1.0f, height - 1.0f, false);
 	ogl.getRender().drawTexturedRect(params);
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	if (m_pCurrent != NULL)
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_pCurrent->m_FBO);
 	ogl.swapBuffers();
-	m_drawBuffer = GL_FRAMEBUFFER;
-	glEnable(GL_SCISSOR_TEST);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_pCurrent->m_FBO);
+
 	gSP.changed |= CHANGED_VIEWPORT;
-	gDP.changed |= CHANGED_COMBINE;
+	gDP.changed |= CHANGED_COMBINE | CHANGED_SCISSOR;
 }
 #endif
 
@@ -1311,7 +1326,7 @@ void RDRAMtoFrameBuffer::CopyFromRDRAM( u32 _address, bool _bUseAlpha)
 	currentCombiner()->updateFBInfo();
 
 	glDisable(GL_DEPTH_TEST);
-	const u32 gspChanged = gSP.changed & CHANGED_CPU_FB_WRITE;
+	const u32 gdpChanged = gDP.changed & CHANGED_CPU_FB_WRITE;
 	gSP.changed = gDP.changed = 0;
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, pBuffer->m_FBO);
@@ -1321,7 +1336,7 @@ void RDRAMtoFrameBuffer::CopyFromRDRAM( u32 _address, bool _bUseAlpha)
 
 	gSP.textureTile[0] = pTile0;
 
-	gDP.changed |= CHANGED_RENDERMODE | CHANGED_COMBINE;
+	gDP.changed |= gdpChanged | CHANGED_RENDERMODE | CHANGED_COMBINE;
 }
 
 void FrameBuffer_CopyFromRDRAM( u32 address, bool bUseAlpha )

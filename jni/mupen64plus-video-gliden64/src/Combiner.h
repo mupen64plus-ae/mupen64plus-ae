@@ -114,7 +114,7 @@ struct CombineCycle
 };
 
 class ShaderCombiner;
-class UniformBlock;
+class UniformCollection;
 class CombinerInfo
 {
 public:
@@ -137,6 +137,8 @@ public:
 
 	void updateTextureParameters();
 	void updateLightParameters();
+	// Update uniforms for GL without UniformBlock support
+	void updateParameters();
 
 private:
 	CombinerInfo() : m_bChanged(false), m_pCurrent(NULL) {}
@@ -148,7 +150,7 @@ private:
 	ShaderCombiner * m_pCurrent;
 	typedef std::map<u64, ShaderCombiner *> Combiners;
 	Combiners m_combiners;
-	UniformBlock * m_pUniformBlock;
+	UniformCollection * m_pUniformCollection;
 };
 
 inline

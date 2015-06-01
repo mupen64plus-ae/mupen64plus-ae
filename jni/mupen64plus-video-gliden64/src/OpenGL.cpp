@@ -25,8 +25,10 @@
 #include "GLideNHQ/Ext_TxFilter.h"
 #include "VI.h"
 #include "Config.h"
+#include "wst.h"
 #include "Log.h"
 #include "TextDrawer.h"
+#include "PluginAPI.h"
 #include "PostProcessor.h"
 
 using namespace std;
@@ -275,6 +277,7 @@ void OGLVideo::readScreen2(void * _dest, int * _width, int * _height, int _front
 	if (_dest == NULL)
 		return;
 
+#ifndef GLES2
 	GLint oldMode;
 	glGetIntegerv(GL_READ_BUFFER, &oldMode);
 	if (_front != 0)
@@ -283,6 +286,9 @@ void OGLVideo::readScreen2(void * _dest, int * _width, int * _height, int _front
 		glReadBuffer(GL_BACK);
 	glReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGB, GL_UNSIGNED_BYTE, _dest);
 	glReadBuffer(oldMode);
+#else
+	glReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGB, GL_UNSIGNED_BYTE, _dest);
+#endif
 }
 
 void OGLRender::addTriangle(int _v0, int _v1, int _v2)
@@ -428,7 +434,7 @@ void OGLRender::_setBlendMode() const
 	} else if ((config.generalEmulation.hacks & hack_pilotWings) != 0 && (gDP.otherMode.l & 0x80) != 0) { //CLR_ON_CVG without FORCE_BL
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ZERO, GL_ONE);
-	} else if ((config.generalEmulation.hacks & hack_blastCorps) != 0 && gSP.texture.on == 0 && currentCombiner()->usesTex()) { // Blast Corps
+	} else if ((config.generalEmulation.hacks & hack_blastCorps) != 0 && gSP.texture.on == 0 && currentCombiner()->usesTexture()) { // Blast Corps
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ZERO, GL_ONE);
 	} else {
@@ -606,18 +612,12 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 		//For some reason updating the texture cache on the first frame of LOZ:OOT causes a NULL Pointer exception...
 		ShaderCombiner * pCurrentCombiner = cmbInfo.getCurrent();
 		if (pCurrentCombiner != NULL) {
-			if (pCurrentCombiner->usesT0())
-				textureCache().update(0);
-			else
-				textureCache().activateDummy(0);
-
-			//Note: enabling dummies makes some F-zero X textures flicker.... strange.
-
-			if (pCurrentCombiner->usesT1())
-				textureCache().update(1);
-			else
-				textureCache().activateDummy(1);
-
+			for (u32 t = 0; t < 2; ++t) {
+				if (pCurrentCombiner->usesTile(t))
+					textureCache().update(t);
+				else
+					textureCache().activateDummy(t);
+			}
 			pCurrentCombiner->updateFBInfo();
 		}
 		if (_renderState == rsTriangle || _renderState == rsLine)
@@ -630,6 +630,8 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 		_setBlendMode();
 		gDP.changed &= ~(CHANGED_RENDERMODE | CHANGED_CYCLETYPE);
 	}
+
+	cmbInfo.updateParameters();
 }
 
 void OGLRender::_setColorArray() const
@@ -644,17 +646,17 @@ void OGLRender::_setTexCoordArrays() const
 {
 	if (m_renderState == rsTriangle) {
 		glDisableVertexAttribArray(SC_TEXCOORD1);
-		if (currentCombiner()->usesT0() || currentCombiner()->usesT1())
+		if (currentCombiner()->usesTexture())
 			glEnableVertexAttribArray(SC_TEXCOORD0);
 		else
 			glDisableVertexAttribArray(SC_TEXCOORD0);
 	} else {
-		if (currentCombiner()->usesT0())
+		if (currentCombiner()->usesTile(0))
 			glEnableVertexAttribArray(SC_TEXCOORD0);
 		else
 			glDisableVertexAttribArray(SC_TEXCOORD0);
 
-		if (currentCombiner()->usesT1())
+		if (currentCombiner()->usesTile(1))
 			glEnableVertexAttribArray(SC_TEXCOORD1);
 		else
 			glDisableVertexAttribArray(SC_TEXCOORD1);
@@ -1039,64 +1041,36 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 		float s0, t0, s1, t1;
 	} texST[2] = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } }; //struct for texture coordinates
 
-	if (currentCombiner()->usesT0() && cache.current[0] && gSP.textureTile[0]) {
-		f32 shiftScaleS = 1.0f;
-		f32 shiftScaleT = 1.0f;
-		getTextureShiftScale(0, cache, shiftScaleS, shiftScaleT);
-		texST[0].s0 = _params.uls * shiftScaleS - gSP.textureTile[0]->fuls;
-		texST[0].t0 = _params.ult * shiftScaleT - gSP.textureTile[0]->fult;
-		texST[0].s1 = (_params.lrs + 1.0f) * shiftScaleS - gSP.textureTile[0]->fuls;
-		texST[0].t1 = (_params.lrt + 1.0f) * shiftScaleT - gSP.textureTile[0]->fult;
+	for (u32 t = 0; t < 2; ++t) {
+		if (currentCombiner()->usesTile(t) && cache.current[t] && gSP.textureTile[t]) {
+			f32 shiftScaleS = 1.0f;
+			f32 shiftScaleT = 1.0f;
+			getTextureShiftScale(t, cache, shiftScaleS, shiftScaleT);
+			texST[t].s0 = _params.uls * shiftScaleS - gSP.textureTile[t]->fuls;
+			texST[t].t0 = _params.ult * shiftScaleT - gSP.textureTile[t]->fult;
+			texST[t].s1 = (_params.lrs + 1.0f) * shiftScaleS - gSP.textureTile[t]->fuls;
+			texST[t].t1 = (_params.lrt + 1.0f) * shiftScaleT - gSP.textureTile[t]->fult;
 
-		if (cache.current[0]->frameBufferTexture) {
-			texST[0].s0 = cache.current[0]->offsetS + texST[0].s0;
-			texST[0].t0 = cache.current[0]->offsetT - texST[0].t0;
-			texST[0].s1 = cache.current[0]->offsetS + texST[0].s1;
-			texST[0].t1 = cache.current[0]->offsetT - texST[0].t1;
+			if (cache.current[t]->frameBufferTexture) {
+				texST[t].s0 = cache.current[t]->offsetS + texST[t].s0;
+				texST[t].t0 = cache.current[t]->offsetT - texST[t].t0;
+				texST[t].s1 = cache.current[t]->offsetS + texST[t].s1;
+				texST[t].t1 = cache.current[t]->offsetT - texST[t].t1;
+			}
+
+			glActiveTexture(GL_TEXTURE0 + t);
+
+			if ((cache.current[t]->mirrorS == 0) && ((texST[t].s0 < texST[t].s1 && texST[t].s0 >= 0.0 && texST[t].s1 <= cache.current[t]->width) || (cache.current[t]->maskS == 0 && (texST[t].s0 < -1024.0f || texST[t].s1 > 1023.99f))))
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
+			if (cache.current[t]->mirrorT == 0 && texST[t].t0 < texST[t].t1 && texST[t].t0 >= 0.0f && texST[t].t1 <= cache.current[t]->height)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+			texST[t].s0 *= cache.current[t]->scaleS;
+			texST[t].t0 *= cache.current[t]->scaleT;
+			texST[t].s1 *= cache.current[t]->scaleS;
+			texST[t].t1 *= cache.current[t]->scaleT;
 		}
-
-		glActiveTexture( GL_TEXTURE0 );
-
-		if ((texST[0].s0 < texST[0].s1 && texST[0].s0 >= 0.0 && texST[0].s1 <= cache.current[0]->width) || (cache.current[0]->maskS + cache.current[0]->mirrorS == 0 && (texST[0].s0 < -1024.0f || texST[0].s1 > 1023.99f)))
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-
-		if (texST[0].t0 < texST[0].t1 && texST[0].t0 >= 0.0f && texST[0].t1 <= cache.current[0]->height)
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		texST[0].s0 *= cache.current[0]->scaleS;
-		texST[0].t0 *= cache.current[0]->scaleT;
-		texST[0].s1 *= cache.current[0]->scaleS;
-		texST[0].t1 *= cache.current[0]->scaleT;
-	}
-
-	if (currentCombiner()->usesT1() && cache.current[1] && gSP.textureTile[1]) {
-		f32 shiftScaleS = 1.0f;
-		f32 shiftScaleT = 1.0f;
-		getTextureShiftScale(1, cache, shiftScaleS, shiftScaleT);
-		texST[1].s0 = _params.uls * shiftScaleS - gSP.textureTile[1]->fuls;
-		texST[1].t0 = _params.ult * shiftScaleT - gSP.textureTile[1]->fult;
-		texST[1].s1 = (_params.lrs + 1.0f) * shiftScaleS - gSP.textureTile[1]->fuls;
-		texST[1].t1 = (_params.lrt + 1.0f) * shiftScaleT - gSP.textureTile[1]->fult;
-
-		if (cache.current[1]->frameBufferTexture) {
-			texST[1].s0 = cache.current[1]->offsetS + texST[1].s0;
-			texST[1].t0 = cache.current[1]->offsetT - texST[1].t0;
-			texST[1].s1 = cache.current[1]->offsetS + texST[1].s1;
-			texST[1].t1 = cache.current[1]->offsetT - texST[1].t1;
-		}
-
-		glActiveTexture( GL_TEXTURE1 );
-
-		if ((texST[1].s0 == 0.0f) && (texST[1].s1 <= cache.current[1]->width))
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-
-		if ((texST[1].t0 == 0.0f) && (texST[1].t1 <= cache.current[1]->height))
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-
-		texST[1].s0 *= cache.current[1]->scaleS;
-		texST[1].t0 *= cache.current[1]->scaleT;
-		texST[1].s1 *= cache.current[1]->scaleS;
-		texST[1].t1 *= cache.current[1]->scaleT;
 	}
 
 	if (gDP.otherMode.cycleType == G_CYC_COPY) {
@@ -1181,13 +1155,21 @@ void OGLRender::clearColorBuffer(float *_pColor )
 
 void OGLRender::_initExtensions()
 {
+	LOG(LOG_VERBOSE, "OpenGL version string: %s\n", glGetString(GL_VERSION));
+	LOG(LOG_VERBOSE, "OpenGL vendor: %s\n", glGetString(GL_VENDOR));
+	LOG(LOG_VERBOSE, "OpenGL renderer: %s\n", glGetString(GL_RENDERER));
+
+#ifndef GLES2
 	GLint majorVersion = 0;
 	glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+	LOG(LOG_VERBOSE, "OpenGL major version: %d\n", majorVersion);
 	assert(majorVersion >= 3 && "Plugin requires GL version 3 or higher.");
+#endif
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 	GLint minorVersion = 0;
 	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+	LOG(LOG_VERBOSE, "OpenGL minor version: %d\n", minorVersion);
 #ifndef GLESX
 	m_bImageTexture = (majorVersion >= 4) && (minorVersion >= 3) && (glBindImageTexture != NULL);
 #elif defined(GLES3_1)
@@ -1198,14 +1180,14 @@ void OGLRender::_initExtensions()
 #else
 	m_bImageTexture = false;
 #endif
+	LOG(LOG_VERBOSE, "ImageTexture support: %s\n", m_bImageTexture ? "yes" : "no");
 
-#ifndef GLESX
-	if (config.texture.maxAnisotropy != 0) {
+	if (config.texture.maxAnisotropy != 0 && strstr((const char *)glGetString(GL_EXTENSIONS), "GL_EXT_texture_filter_anisotropic") != NULL) {
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &config.texture.maxAnisotropyF);
 		config.texture.maxAnisotropyF = min(config.texture.maxAnisotropyF, (f32)config.texture.maxAnisotropy);
 	} else
-#endif
 		config.texture.maxAnisotropyF = 0.0f;
+	LOG(LOG_VERBOSE, "Max Anisotropy: %f\n", config.texture.maxAnisotropyF);
 }
 
 void OGLRender::_initStates()
@@ -1329,9 +1311,20 @@ void displayLoadProgress(const wchar_t *format, ...)
 	char buf[INFO_BUF];
 
 	// process input
+#ifdef ANDROID
+	const u32 bufSize = 2048;
+	char cbuf[bufSize];
+	char fmt[bufSize];
+	wcstombs(fmt, format, bufSize);
+	va_start(args, format);
+	vsprintf(cbuf, fmt, args);
+	va_end(args);
+	mbstowcs(wbuf, cbuf, INFO_BUF);
+#else
 	va_start(args, format);
 	vswprintf(wbuf, INFO_BUF, format, args);
 	va_end(args);
+#endif
 
 	// XXX: convert to multibyte
 	wcstombs(buf, wbuf, INFO_BUF);
@@ -1376,17 +1369,19 @@ void TextureFilterHandler::init()
 			wchar_t txPath[PLUGIN_PATH_SIZE+16];
 			wchar_t * pTexPackPath = config.textureFilter.txPath;
 			if (::wcslen(config.textureFilter.txPath) == 0) {
-				wcscpy(txPath, RSP.pluginpath);
-				wcscat(txPath, L"/hires_texture");
+				api().GetUserDataPath(txPath);
+				gln_wcscat(txPath, wst("/hires_texture"));
 				pTexPackPath = txPath;
 			}
+			wchar_t txCachePath[PLUGIN_PATH_SIZE];
+			api().GetUserCachePath(txCachePath);
 
 			m_inited = txfilter_init(maxTextureSize, // max texture width supported by hardware
 				maxTextureSize, // max texture height supported by hardware
 				32, // max texture bpp supported by hardware
 				options,
 				config.textureFilter.txCacheSize, // cache texture to system memory
-				RSP.pluginpath, // plugin path
+				txCachePath, // path to store cache files
 				pTexPackPath, // path to texture packs folder
 				wRomName, // name of ROM. must be no longer than 256 characters
 				displayLoadProgress);

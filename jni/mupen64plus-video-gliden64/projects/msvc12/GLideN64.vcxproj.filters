@@ -8,18 +8,12 @@
     <Filter Include="Source Files\uCodes">
       <UniqueIdentifier>{23e5405e-5c26-4dcf-8c37-426901e33c55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Combiners">
-      <UniqueIdentifier>{5bde4d31-c542-44a9-a423-0f488a3f051b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{94476478-6142-414d-8301-45122ec74f2c}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
     </Filter>
     <Filter Include="Header Files\uCodes">
       <UniqueIdentifier>{80c1d464-fcae-461c-91c8-4c25b4f93055}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Combiners">
-      <UniqueIdentifier>{7eeef15f-09d3-4238-b68a-a2ff0018d124}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\windows">
       <UniqueIdentifier>{384c65a8-5096-4ef9-bdec-3256fcd337f2}</UniqueIdentifier>
@@ -35,6 +29,12 @@
     </Filter>
     <Filter Include="Source Files\mupenplus">
       <UniqueIdentifier>{b10a85f0-0fbb-4f8e-b6d8-78ee2a6394bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OGL3X">
+      <UniqueIdentifier>{b3016e90-1a88-4a28-9ca4-fbebf41e10ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OGL3X">
+      <UniqueIdentifier>{32bbb389-ea50-4ac9-bb55-84e4f066fe94}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -113,9 +113,6 @@
     <ClCompile Include="..\..\src\S2DEX2.cpp">
       <Filter>Source Files\uCodes</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\GLSLCombiner.cpp">
-      <Filter>Source Files\Combiners</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\3DMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -187,6 +184,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\windows\GLFunctions_windows.cpp">
       <Filter>Source Files\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OGL3X\UniformBlock.cpp">
+      <Filter>Source Files\OGL3X</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ShaderUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OGL3X\GLSLCombiner_ogl3x.cpp">
+      <Filter>Source Files\OGL3X</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,14 +289,8 @@
     <ClInclude Include="..\..\src\S2DEX2.h">
       <Filter>Header Files\uCodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\GLSLCombiner.h">
-      <Filter>Header Files\Combiners</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\ZilmarGFX_1_3.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Shaders.h">
-      <Filter>Header Files\Combiners</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\windows\GLFunctions.h">
       <Filter>Header Files\windows</Filter>
@@ -329,6 +329,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Keys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UniformCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\OGL3X\UniformBlock.h">
+      <Filter>OGL3X</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ShaderUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\OGL3X\Shaders_ogl3x.h">
+      <Filter>OGL3X</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GLSLCombiner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\wst.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
