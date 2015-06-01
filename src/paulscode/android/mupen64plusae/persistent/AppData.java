@@ -258,6 +258,7 @@ public class AppData
         isValidInstallation =
                 libraryExists( "ae-exports" )                   &&
                 libraryExists( "ae-imports" )                   &&
+                libraryExists( "freetype" )                     &&
                 libraryExists( "mupen64plus-audio-sdl" )        &&
                 libraryExists( "mupen64plus-audio-sles" )       &&
                 libraryExists( "mupen64plus-core" )             &&
