@@ -50,9 +50,6 @@ extern void         Android_JNI_InitImports(JNIEnv* env, jclass cls);
 // Called by mupen64plus-ui-console
 extern void         Android_JNI_StateCallback(void* context, m64p_core_param paramChanged, int newValue);
 
-// Called by mupen64plus-video-gln64
-extern void         Android_JNI_SwapWindow();
-
 #ifdef __cplusplus
 }
 #endif

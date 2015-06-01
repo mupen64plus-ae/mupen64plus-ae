@@ -32,8 +32,6 @@
 
 #include "FrameSkipper.h"
 
-#include "ae_imports.h"
-
 //// paulscode, function prototype missing from Yongzh's code
 void OGL_UpdateDepthUpdate();
 ////
@@ -316,7 +314,7 @@ bool OGL_Start()
     glClearColor( 0, 0, 0, 1 );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glFinish();
-    Android_JNI_SwapWindow();  // paulscode, fix for black-screen bug
+    SDL_GL_SwapBuffers();  // paulscode, fix for black-screen bug
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glFinish();
     OGL_UpdateDepthUpdate();
@@ -1274,7 +1272,7 @@ void OGL_SwapBuffers()
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (float*)vert + 2);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-        Android_JNI_SwapWindow(); // paulscode, fix for black-screen bug
+        SDL_GL_SwapBuffers(); // paulscode, fix for black-screen bug
 
         glBindFramebuffer(GL_FRAMEBUFFER, OGL.framebuffer.fb);
         OGL_UpdateViewport();
@@ -1283,7 +1281,7 @@ void OGL_SwapBuffers()
     }
     else
     {
-        Android_JNI_SwapWindow(); // paulscode, fix for black-screen bug
+    	SDL_GL_SwapBuffers(); // paulscode, fix for black-screen bug
     }
 
     // if emulator defined a render callback function, call it before
