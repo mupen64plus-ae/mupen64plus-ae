@@ -127,42 +127,42 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
         
-//        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "3" );                                                      // Settings version. Don't touch it.
-//        mupen64plus_cfg.put( "Video-GLideN64", "MultiSampling", "0" );                                                      // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
-//        mupen64plus_cfg.put( "Video-GLideN64", "AspectRatio", "1" );                                                        // Screen aspect ratio (0=stretch, 1=force 4:3, 2=force 16:9, 3=adjust)
-//        mupen64plus_cfg.put( "Video-GLideN64", "bilinearMode", "1" );                                                       // Bilinear filtering mode (0=N64 3point, 1=standard)
-//        mupen64plus_cfg.put( "Video-GLideN64", "MaxAnisotropy", "0" );                                                      // Max level of Anisotropic Filtering, 0 for off
-//        mupen64plus_cfg.put( "Video-GLideN64", "CacheSize", "500" );                                                        // Size of texture cache in megabytes. Good value is VRAM*3/4
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableFog", "True" );                                                       // Enable fog emulation.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableNoise", "True" );                                                     // Enable color noise emulation.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableLOD", "True" );                                                       // Enable LOD emulation.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableHWLighting", "False" );                                               // Enable hardware per-pixel lighting.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableFBEmulation", "True" );                                               // Enable frame and|or depth buffer emulation.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableCopyColorToRDRAM", "False" );                                         // Enable color buffer copy to RDRAM.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableCopyDepthToRDRAM", "False" );                                         // Enable depth buffer copy to RDRAM.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableCopyColorFromRDRAM", "False" );                                       // Enable color buffer copy from RDRAM.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableDetectCFB", "False" );                                                // Detect CPU writes to frame buffer.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableN64DepthCompare", "False" );                                          // Enable N64 depth compare instead of OpenGL standard one. Experimental.
-//        mupen64plus_cfg.put( "Video-GLideN64", "ValidityCheckMethod", "0" );                                                // Method to check validity of auxiliary texture frame buffer (0=write fingerprint to the buffer, 1=fill whole buffer in RDRAM with test value)
-//        mupen64plus_cfg.put( "Video-GLideN64", "txFilterMode", "0" );                                                       // Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)
-//        mupen64plus_cfg.put( "Video-GLideN64", "txEnhancementMode", "0" );                                                  // Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ)
-//        mupen64plus_cfg.put( "Video-GLideN64", "txFilterIgnoreBG", "False" );                                               // Don't filter background textures.
-//        mupen64plus_cfg.put( "Video-GLideN64", "txCacheSize", "100" );                                                      // Size of filtered textures cache in megabytes.
-//        mupen64plus_cfg.put( "Video-GLideN64", "txHiresEnable", "False" );                                                  // Use high-resolution texture packs if available.
-//        mupen64plus_cfg.put( "Video-GLideN64", "txHiresFullAlphaChannel", "False" );                                        // Allow to use alpha channel of high-res texture fully.
-//        mupen64plus_cfg.put( "Video-GLideN64", "txHresAltCRC", "False" );                                                   // Use alternative method of paletted textures CRC calculation.
-//        mupen64plus_cfg.put( "Video-GLideN64", "txDump", "False" );                                                         // Enable dump of loaded N64 textures.
-//        mupen64plus_cfg.put( "Video-GLideN64", "txCacheCompression", "True" );                                              // Zip textures cache.
-//        mupen64plus_cfg.put( "Video-GLideN64", "txForce16bpp", "False" );                                                   // Force use 16bit texture formats for HD textures.
-//        mupen64plus_cfg.put( "Video-GLideN64", "txSaveCache", "True" );                                                     // Save texture cache to hard disk.
-//        mupen64plus_cfg.put( "Video-GLideN64", "fontName", "DroidSans.ttf" );                                               // File name of True Type Font for text messages.
-//        mupen64plus_cfg.put( "Video-GLideN64", "fontSize", "18" );                                                          // Font size.
-//        mupen64plus_cfg.put( "Video-GLideN64", "fontColor", "B5E61D" );                                                     // Font color in RGB format.
-//        mupen64plus_cfg.put( "Video-GLideN64", "EnableBloom", "0" );                                                        // Enable bloom filter
-//        mupen64plus_cfg.put( "Video-GLideN64", "bloomThresholdLevel", "4" );                                                // Brightness threshold level for bloom. Values [2, 6]
-//        mupen64plus_cfg.put( "Video-GLideN64", "bloomBlendMode", "0" );                                                     // Bloom blend mode (0=Strong, 1=Mild, 2=Light)
-//        mupen64plus_cfg.put( "Video-GLideN64", "blurAmount", "10" );                                                        // Blur radius. Values [2, 10]
-//        mupen64plus_cfg.put( "Video-GLideN64", "blurStrength", "20" );                                                      // Blur strength. Values [10, 100]
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "3" );                                                      // Settings version. Don't touch it.
+        putGliden64( mupen64plus_cfg, game, "MultiSampling", "0" );                                                         // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
+        putGliden64( mupen64plus_cfg, game, "AspectRatio", "1" );                                                           // Screen aspect ratio (0=stretch, 1=force 4:3, 2=force 16:9, 3=adjust)
+        putGliden64( mupen64plus_cfg, game, "bilinearMode", "1" );                                                          // Bilinear filtering mode (0=N64 3point, 1=standard)
+        putGliden64( mupen64plus_cfg, game, "MaxAnisotropy", "0" );                                                         // Max level of Anisotropic Filtering, 0 for off
+        putGliden64( mupen64plus_cfg, game, "CacheSize", "500" );                                                           // Size of texture cache in megabytes. Good value is VRAM*3/4
+        putGliden64( mupen64plus_cfg, game, "EnableFog", "True" );                                                          // Enable fog emulation.
+        putGliden64( mupen64plus_cfg, game, "EnableNoise", "True" );                                                        // Enable color noise emulation.
+        putGliden64( mupen64plus_cfg, game, "EnableLOD", "True" );                                                          // Enable LOD emulation.
+        putGliden64( mupen64plus_cfg, game, "EnableHWLighting", "False" );                                                  // Enable hardware per-pixel lighting.
+        putGliden64( mupen64plus_cfg, game, "EnableFBEmulation", "True" );                                                  // Enable frame and|or depth buffer emulation.
+        putGliden64( mupen64plus_cfg, game, "EnableCopyColorToRDRAM", "False" );                                            // Enable color buffer copy to RDRAM.
+        putGliden64( mupen64plus_cfg, game, "EnableCopyDepthToRDRAM", "False" );                                            // Enable depth buffer copy to RDRAM.
+        putGliden64( mupen64plus_cfg, game, "EnableCopyColorFromRDRAM", "False" );                                          // Enable color buffer copy from RDRAM.
+        putGliden64( mupen64plus_cfg, game, "EnableDetectCFB", "False" );                                                   // Detect CPU writes to frame buffer.
+        putGliden64( mupen64plus_cfg, game, "EnableN64DepthCompare", "False" );                                             // Enable N64 depth compare instead of OpenGL standard one. Experimental.
+        putGliden64( mupen64plus_cfg, game, "ValidityCheckMethod", "0" );                                                   // Method to check validity of auxiliary texture frame buffer (0=write fingerprint to the buffer, 1=fill whole buffer in RDRAM with test value)
+        putGliden64( mupen64plus_cfg, game, "txFilterMode", "0" );                                                          // Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)
+        putGliden64( mupen64plus_cfg, game, "txEnhancementMode", "0" );                                                     // Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ)
+        putGliden64( mupen64plus_cfg, game, "txFilterIgnoreBG", "False" );                                                  // Don't filter background textures.
+        putGliden64( mupen64plus_cfg, game, "txCacheSize", "100" );                                                         // Size of filtered textures cache in megabytes.
+        putGliden64( mupen64plus_cfg, game, "txHiresEnable", "False" );                                                     // Use high-resolution texture packs if available.
+        putGliden64( mupen64plus_cfg, game, "txHiresFullAlphaChannel", "False" );                                           // Allow to use alpha channel of high-res texture fully.
+        putGliden64( mupen64plus_cfg, game, "txHresAltCRC", "False" );                                                      // Use alternative method of paletted textures CRC calculation.
+        mupen64plus_cfg.put( "Video-GLideN64", "txDump", "False" );                                                         // Enable dump of loaded N64 textures.
+        putGliden64( mupen64plus_cfg, game, "txCacheCompression", "True" );                                                 // Zip textures cache.
+        putGliden64( mupen64plus_cfg, game, "txForce16bpp", "False" );                                                      // Force use 16bit texture formats for HD textures.
+        putGliden64( mupen64plus_cfg, game, "txSaveCache", "True" );                                                        // Save texture cache to hard disk.
+        putGliden64( mupen64plus_cfg, game, "fontName", "DroidSans.ttf" );                                                  // File name of True Type Font for text messages.
+        putGliden64( mupen64plus_cfg, game, "fontSize", "18" );                                                             // Font size.
+        putGliden64( mupen64plus_cfg, game, "fontColor", "B5E61D" );                                                        // Font color in RGB format.
+        putGliden64( mupen64plus_cfg, game, "EnableBloom", "0" );                                                           // Enable bloom filter
+        putGliden64( mupen64plus_cfg, game, "bloomThresholdLevel", "4" );                                                   // Brightness threshold level for bloom. Values [2, 6]
+        putGliden64( mupen64plus_cfg, game, "bloomBlendMode", "0" );                                                        // Bloom blend mode (0=Strong, 1=Mild, 2=Light)
+        putGliden64( mupen64plus_cfg, game, "blurAmount", "10" );                                                           // Blur radius. Values [2, 10]
+        putGliden64( mupen64plus_cfg, game, "blurStrength", "20" );                                                         // Blur strength. Values [10, 100]
         
         mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );           // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );            // Specifies a scale factor that is used to create a variable depth offset for each polygon
@@ -185,6 +185,12 @@ public class NativeConfigFiles
         mupen64plus_cfg.save();
         
         //@formatter:on
+    }
+    
+    private static void putGliden64( ConfigFile cfg, GamePrefs game, String key, String defaultValue )
+    {
+        // Just a temporary implementation until integration is complete
+        cfg.put( "Video-GLideN64", key, game.emulationProfile.get( key, defaultValue ) );
     }
     
     private static String boolToTF( boolean b )
