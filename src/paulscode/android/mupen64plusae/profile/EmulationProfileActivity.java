@@ -48,12 +48,20 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
+    private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
+    private static final String GLIDEN64_ENABLE_LOD = "EnableLOD";
+    private static final String GLIDEN64_ENABLE_COPY_COLOR_TO_RDRAM = "EnableCopyColorToRDRAM";
+    private static final String GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM = "EnableCopyDepthToRDRAM";
+    private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
     
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
     private static final String LIBGLIDEN64_SO = "libmupen64plus-video-gliden64%1$s.so";
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
+    private static final String GLES20 = "-gles20";
+    private static final String GLES30 = "-gles30";
+    private static final String GLES31 = "-gles31";
     
     // Preference menu items
     private PreferenceGroup mScreenRoot = null;
@@ -103,11 +111,13 @@ public class EmulationProfileActivity extends ProfileActivity
             processTexturePak( sharedPreferences.getString( PATH_HI_RES_TEXTURES, "" ) );
     }
     
+    @SuppressWarnings( "deprecation" )
     @Override
     protected void refreshViews()
     {
         // Get the current values
         String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
+        String videoSubPlugin = mPrefs.getString( VIDEO_SUB_PLUGIN, null );
         
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
@@ -129,7 +139,17 @@ public class EmulationProfileActivity extends ProfileActivity
             mScreenRoot.removePreference( mCategoryGlide64 );
         
         if( LIBGLIDEN64_SO.equals( videoPlugin ) )
+        {
             mScreenRoot.addPreference( mCategoryGliden64 );
+            boolean isGles20 = GLES20.equals( videoSubPlugin );
+            boolean isGles30 = GLES30.equals( videoSubPlugin );
+            boolean isGles31 = GLES31.equals( videoSubPlugin );
+            findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 );
+            findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
+            findPreference( GLIDEN64_ENABLE_COPY_COLOR_TO_RDRAM ).setEnabled( !isGles20 );
+            findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
+            findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 );
+        }
         else
             mScreenRoot.removePreference( mCategoryGliden64 );
         
