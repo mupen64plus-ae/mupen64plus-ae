@@ -233,7 +233,11 @@ public class GamePrefs
         
         // Emulation prefs
         r4300Emulator = emulationProfile.get( "r4300Emulator", "2" );
-        videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
+        Plugin tempVideoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
+        if( tempVideoPlugin.name.contains( "%1$s" ))
+            videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin", "videoSubPlugin" );
+        else
+            videoPlugin = tempVideoPlugin;
         
         // Video prefs - gln64
         isGln64Enabled = videoPlugin.name.equals( "libmupen64plus-video-gln64.so" );

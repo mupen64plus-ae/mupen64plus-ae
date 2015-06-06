@@ -64,4 +64,20 @@ public class Plugin
         enabled = name.endsWith( ".so" );
         path = enabled ? libsDir + name : "dummy";
     }
+    
+    /**
+     * Instantiates a new plug-in meta-info object.
+     * 
+     * @param profile The shared preferences containing plug-in information.
+     * @param libsDir The directory containing the plug-in file.
+     * @param key The shared preference key for the plug-in.
+     * @param subkey The shared preference key for the plug-in sub-variant.
+     */
+    public Plugin( Profile profile, String libsDir, String key, String subkey )
+    {
+        String nameTemplate = profile.get( key, "" );
+        name = String.format( nameTemplate, profile.get( subkey, "" ) );
+        enabled = name.endsWith( ".so" );
+        path = enabled ? libsDir + name : "dummy";
+    }
 }

@@ -44,19 +44,32 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_RICE = "categoryRice";
     private static final String CATEGORY_GLN64 = "categoryGln64";
     private static final String CATEGORY_GLIDE64 = "categoryGlide64";
+    private static final String CATEGORY_GLIDEN64 = "categoryGliden64";
     private static final String VIDEO_PLUGIN = "videoPlugin";
+    private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
+    private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
+    private static final String GLIDEN64_ENABLE_LOD = "EnableLOD";
+    private static final String GLIDEN64_ENABLE_COPY_COLOR_TO_RDRAM = "EnableCopyColorToRDRAM";
+    private static final String GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM = "EnableCopyDepthToRDRAM";
+    private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
     
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
+    private static final String LIBGLIDEN64_SO = "libmupen64plus-video-gliden64%1$s.so";
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
+    private static final String GLES20 = "-gles20";
+    private static final String GLES30 = "-gles30";
+    private static final String GLES31 = "-gles31";
     
     // Preference menu items
     private PreferenceGroup mScreenRoot = null;
     private Preference mCategoryN64 = null;
     private Preference mCategoryRice = null;
     private Preference mCategoryGlide64 = null;
+    private Preference mCategoryGliden64 = null;
+    private Preference mPreferenceVideoSubPlugin = null;
     
     @Override
     protected int getPrefsResId()
@@ -86,6 +99,8 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryN64 = findPreference( CATEGORY_GLN64 );
         mCategoryRice = findPreference( CATEGORY_RICE );
         mCategoryGlide64 = findPreference( CATEGORY_GLIDE64 );
+        mCategoryGliden64 = findPreference( CATEGORY_GLIDEN64 );
+        mPreferenceVideoSubPlugin = findPreference( VIDEO_SUB_PLUGIN );
     }
     
     @Override
@@ -96,11 +111,13 @@ public class EmulationProfileActivity extends ProfileActivity
             processTexturePak( sharedPreferences.getString( PATH_HI_RES_TEXTURES, "" ) );
     }
     
+    @SuppressWarnings( "deprecation" )
     @Override
     protected void refreshViews()
     {
         // Get the current values
         String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
+        String videoSubPlugin = mPrefs.getString( VIDEO_SUB_PLUGIN, null );
         
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
@@ -120,6 +137,26 @@ public class EmulationProfileActivity extends ProfileActivity
             mScreenRoot.addPreference( mCategoryGlide64 );
         else
             mScreenRoot.removePreference( mCategoryGlide64 );
+        
+        if( LIBGLIDEN64_SO.equals( videoPlugin ) )
+        {
+            mScreenRoot.addPreference( mCategoryGliden64 );
+            boolean isGles20 = GLES20.equals( videoSubPlugin );
+            boolean isGles30 = GLES30.equals( videoSubPlugin );
+            boolean isGles31 = GLES31.equals( videoSubPlugin );
+            findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 );
+            findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
+            findPreference( GLIDEN64_ENABLE_COPY_COLOR_TO_RDRAM ).setEnabled( !isGles20 );
+            findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
+            findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 );
+        }
+        else
+            mScreenRoot.removePreference( mCategoryGliden64 );
+        
+        if( videoPlugin.contains( "%1$s" ) )
+            mScreenRoot.addPreference( mPreferenceVideoSubPlugin );
+        else
+            mScreenRoot.removePreference( mPreferenceVideoSubPlugin );
     }
     
     private void processTexturePak( final String filename )
