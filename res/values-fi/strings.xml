@@ -200,6 +200,7 @@
   <string name="audioSynchronize_summary">Minimoi viiveen, mutta voi aiheuttaa rätinointiä joissain peleissä/laitteissa</string>
   <string name="audioSwapChannels_title">Vaihda audiokanavat</string>
   <string name="audioSwapChannels_summary">Vaihda vasen ja oikea audiokanava keskenään</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Painike auto-pito</string>
   <string name="touchscreenAutoHold_entryDisabled">Pois käytöstä</string>
@@ -297,10 +298,6 @@
   <string name="audioPlugin_entryNone">Ei mitään (audio pois käytöstä)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Ei mitään-debug (audio pois käytöstä, ei nopeusrajaa)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Audiopuskurin koko</string>
-  <string name="audioBufferSize_entry2048">Oletus</string>
-  <string name="audioBufferSize_entry128">Alhainen latenssi (kokeellinen)</string>
-  <string name="audioBufferSize_entry8">Ultra-alhainen latenssi (kokeellinen)</string>
   <string name="localeOverride_entrySystemDefault">Järjestelmän oletus</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Painike läpinäkyvyys</string>

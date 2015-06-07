@@ -200,6 +200,7 @@
   <string name="audioSynchronize_summary">Minimises latency, but may cause crackling in some games/devices</string>
   <string name="audioSwapChannels_title">Swap audio channels</string>
   <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Button auto-hold</string>
   <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
@@ -297,10 +298,6 @@
   <string name="audioPlugin_entryNone">None (audio disabled)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Audio buffer size</string>
-  <string name="audioBufferSize_entry2048">Default</string>
-  <string name="audioBufferSize_entry128">Low-latency (experimental)</string>
-  <string name="audioBufferSize_entry8">Ultra-low latency (experimental)</string>
   <string name="localeOverride_entrySystemDefault">System default</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Button opacity</string>

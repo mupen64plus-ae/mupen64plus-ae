@@ -121,6 +121,7 @@
   <string name="riceFog_title">Köd</string>
   <string name="audioSwapChannels_title">Hang csatornák megcserélése</string>
   <string name="audioSwapChannels_summary">Kicseréli a bal és jobb hang csatornákat</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Gomb auto-tartása</string>
   <string name="touchscreenAutoHold_entryDisabled">Kikapcsolva</string>
@@ -185,7 +186,6 @@
   <string name="r4300Emulator_entryCachedInterpreter">Gyorsítótárazott interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dinamikus újrafordító (dynarec)</string>
   <string name="audioPlugin_entryNone">Nincs (hang kikapcsolva)</string>
-  <string name="audioBufferSize_entry2048">Alapértelmezett</string>
   <string name="localeOverride_entrySystemDefault">Rendszer alapértelmezett</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Érintőkijelző átlátszóság</string>

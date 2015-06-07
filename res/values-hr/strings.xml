@@ -200,6 +200,7 @@
   <string name="audioSynchronize_summary">Smanji kašnjenje, ali može izazvati pucketanje u nekim igricama/uređajima</string>
   <string name="audioSwapChannels_title">Zamjena zvučnih kanala</string>
   <string name="audioSwapChannels_summary">Zamjena lijevog i desnog kanala zvuka</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Automatsko držanje tipke</string>
   <string name="touchscreenAutoHold_entryDisabled">Isključeno</string>
@@ -297,10 +298,6 @@
   <string name="audioPlugin_entryNone">Nema (zvuk isključen)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (zvuk isključen, bez ograničenja brzine)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Veličina buffer-a za zvuk</string>
-  <string name="audioBufferSize_entry2048">Zadano</string>
-  <string name="audioBufferSize_entry128">Niska latencija (eksperimentalno)</string>
-  <string name="audioBufferSize_entry8">Vrlo niska latencija (eksperimentalno)</string>
   <string name="localeOverride_entrySystemDefault">Zadano</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Prozirnost</string>

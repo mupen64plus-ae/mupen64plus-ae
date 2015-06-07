@@ -159,6 +159,7 @@
   <string name="riceFog_summary">霧エフェクトを表示します</string>
   <string name="audioSwapChannels_title">オーディオチャンネルを入替える</string>
   <string name="audioSwapChannels_summary">オーディオチャンネルの左右を入替える</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">ボタンオートホールド</string>
   <string name="touchscreenAutoHold_entryDisabled">使用禁止</string>
@@ -244,10 +245,6 @@
   <string name="audioPlugin_entryNone">なし（オーディオ無効）</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (オーディオ無効、スピード制限なし)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">オーディオバッファサイズ</string>
-  <string name="audioBufferSize_entry2048">デフォルト</string>
-  <string name="audioBufferSize_entry128">低遅延（実験）</string>
-  <string name="audioBufferSize_entry8">ウルトラ低遅延（実験）</string>
   <string name="localeOverride_entrySystemDefault">システムのデフォルト</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">タッチスクリーンの透明度</string>

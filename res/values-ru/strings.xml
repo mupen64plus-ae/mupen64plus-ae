@@ -116,6 +116,7 @@
   <string name="riceFog_title">Туман</string>
   <string name="audioSwapChannels_title">Поменять местами аудио каналы</string>
   <string name="audioSwapChannels_summary">Меняет местами звук слева и справа</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_entryDisabled">Отключить</string>
   <string name="touchscreenAutoHold_entryLongPress">При долгом нажатии</string>
@@ -182,7 +183,6 @@
   <string name="r4300Emulator_entryDynarec">Рекомпиляция</string>
   <string name="audioPlugin_entryNone">Заглушка (выключить звук)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_entry2048">Умолчание</string>
   <string name="localeOverride_entrySystemDefault">Система по умолчанию</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Прозрачность оверлея</string>

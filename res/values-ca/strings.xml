@@ -133,6 +133,7 @@ Habilita cheats</string>
   <string name="riceFog_summary">Mostra efectes de boira</string>
   <string name="audioSwapChannels_title">Intercanvia els canals d\'àudio</string>
   <string name="audioSwapChannels_summary">Intercanviar els canals d\'àudio esquerre i dret </string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Mantenir botons automàticament</string>
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitat</string>
@@ -217,7 +218,6 @@ Perfil T</string>
   <string name="r4300Emulator_entryDynarec">Recompilador dinàmic (dynarec)</string>
   <string name="audioPlugin_entryNone">Cap (àudio deshabilitat)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_entry2048">Per defecte</string>
   <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Opacitat de la pantalla tàctil</string>

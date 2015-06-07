@@ -162,6 +162,7 @@
   <string name="riceFog_summary">Amosar efectos de néboa</string>
   <string name="audioSwapChannels_title">Intercambiar canles de son</string>
   <string name="audioSwapChannels_summary">Intercambiar canles de son esquerdo e dereito</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Manter botóns auto.</string>
   <string name="touchscreenAutoHold_entryDisabled">Desactivado</string>
@@ -247,10 +248,6 @@
   <string name="audioPlugin_entryNone">Nada (son desactivado)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Sen depuración (son desactivado, sen límite de velocidade)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Tamaño de búfer do son</string>
-  <string name="audioBufferSize_entry2048">Predefinido</string>
-  <string name="audioBufferSize_entry128">Latencia baixa (experimental)</string>
-  <string name="audioBufferSize_entry8">Latencia ultra-baixa (experimental)</string>
   <string name="localeOverride_entrySystemDefault">Predefinido do sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparencia da pantalla táctil</string>

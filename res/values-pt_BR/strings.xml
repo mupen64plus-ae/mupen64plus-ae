@@ -200,6 +200,7 @@
   <string name="audioSynchronize_summary">Minimiza a latência, mas pode causar ruídos em alguns jogos/aparelhos</string>
   <string name="audioSwapChannels_title">Trocar canais de áudio</string>
   <string name="audioSwapChannels_summary">Inverter canais de áudio</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Botão auto-pressionado</string>
   <string name="touchscreenAutoHold_entryDisabled">Desativado</string>
@@ -303,10 +304,10 @@
   <string name="audioPlugin_entryNone">Nenhum (áudio desativado)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Nenhum-debug (audio desativado, sem limite de velocidade)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Tamanho do buffer de áudio</string>
-  <string name="audioBufferSize_entry2048">Padrão</string>
-  <string name="audioBufferSize_entry128">Baixa latência (experimental)</string>
-  <string name="audioBufferSize_entry8">Ultra-baixa latência (experimental)</string>
+  <string name="audioSDLBufferSize_title">Tamanho do buffer de áudio</string>
+  <string name="audioSDLBufferSize_entry128">Baixa latência (experimental)</string>
+  <string name="audioSDLBufferSize_entry8">Ultra-baixa latência (experimental)</string>
+  <string name="audioSLESBufferSize_title">Tamanho do buffer de áudio</string>
   <string name="localeOverride_entrySystemDefault">Padrão do sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparência dos botões</string>

@@ -200,6 +200,7 @@
   <string name="audioSynchronize_summary">Minimiza la latencia, pero puede causar errores en algunos juegos/dispositivos</string>
   <string name="audioSwapChannels_title">Intercambiar canales de audio</string>
   <string name="audioSwapChannels_summary">Intercambia los canales de audio izquierdo y derecho</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Mantener botones automaticamente</string>
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitado</string>
@@ -297,10 +298,6 @@
   <string name="audioPlugin_entryNone">Ninguno (audio deshabilitado)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Ninguna depuración(audio desactivado, sin límite de velocidad)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Tamaño del búfer de audio</string>
-  <string name="audioBufferSize_entry2048">Por defecto</string>
-  <string name="audioBufferSize_entry128">Baja latencia (experimental)</string>
-  <string name="audioBufferSize_entry8">Ultra-baja latencia (experimental)</string>
   <string name="localeOverride_entrySystemDefault">Predeterminado del sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparencia de botones en la pantalla táctil</string>

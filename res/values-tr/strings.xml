@@ -47,6 +47,7 @@
   <string name="menuItem_refreshRoms">ROMları yenile</string>
   <string name="menuItem_settings">Ayarlar</string>
   <string name="menuItem_globalSettings">Genel ayarlar</string>
+  <string name="menuItem_profiles">Profiller</string>
   <string name="menuItem_emulationProfiles">Emülasyon profilleri</string>
   <string name="menuItem_touchscreenProfiles">Dokunmatik ekran profilleri</string>
   <string name="menuItem_controllerProfiles">Kontrol profilleri</string>
@@ -166,6 +167,7 @@
   <string name="riceFog_title">Sis</string>
   <string name="audioSwapChannels_title">Ses kanallarını değiştir</string>
   <string name="audioSwapChannels_summary">Sol ve sağ ses kanallarını değiştir</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Otomatik tutma tuşu</string>
   <string name="touchscreenAutoHold_entryDisabled">Devre dışı</string>
@@ -243,7 +245,7 @@
   <string name="r4300Emulator_entryDynarec">Dinamik derleyici (dynarec)</string>
   <string name="audioPlugin_entryNone">Hiçbiri (ses devre dışı)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_entry2048">Varsayılan</string>
+  <string name="audioSDLBufferSize_entry2048">Varsayılan</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Dokunmatik ekran şeffaflığı</string>

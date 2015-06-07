@@ -200,6 +200,7 @@
   <string name="audioSynchronize_summary">Verringert Latenzzeit, könnte aber bei manchen Spielen/Geräten Knistern verursachen.</string>
   <string name="audioSwapChannels_title">Audiokanäle tauschen</string>
   <string name="audioSwapChannels_summary">Linken und rechten Audiokanal tauschen</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Knopf autom. halten</string>
   <string name="touchscreenAutoHold_entryDisabled">Deaktiviert</string>
@@ -297,10 +298,6 @@
   <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Kein Debug (Audio ist deaktiviert, keine Geschwindigkeitsbegrenzung)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Audio-Puffergröße</string>
-  <string name="audioBufferSize_entry2048">Standard</string>
-  <string name="audioBufferSize_entry128">Geringe Latenzzeit (experimentell)</string>
-  <string name="audioBufferSize_entry8">Sehr geringe Latenzzeit (experimentell)</string>
   <string name="localeOverride_entrySystemDefault">Systemstandard</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knopf-Deckkraft</string>
