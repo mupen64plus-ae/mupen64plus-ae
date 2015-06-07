@@ -50,7 +50,7 @@
   <string name="menuItem_emulationProfiles">Perfis de emulação</string>
   <string name="menuItem_touchscreenProfiles">Perfil do controle de toque</string>
   <string name="menuItem_controllerProfiles">Perfil do controle</string>
-  <string name="menuItem_customCheats">Cheats custumizados</string>
+  <string name="menuItem_customCheats">Cheats customizados</string>
   <string name="menuItem_help">Ajuda</string>
   <string name="menuItem_faq">Dúvidas frequentes</string>
   <string name="menuItem_helpForum">Fórum de ajuda</string>
@@ -107,10 +107,10 @@
   <string name="toast_pleaseWait">Por favor, aguarde...</string>
   <!--Something happened (use '.')-->
   <string name="toast_nativeMainFailure01">Falha na análise de parâmetros de linha de comando.</string>
-  <string name="toast_nativeMainFailure02">Falha na opção de núcleo.</string>
-  <string name="toast_nativeMainFailure03">Falha em iniciar o núcleo.</string>
+  <string name="toast_nativeMainFailure02">Falha ao acoplar biblioteca do núcleo.</string>
+  <string name="toast_nativeMainFailure03">Falha ao iniciar a biblioteca do núcleo.</string>
   <string name="toast_nativeMainFailure04">Falha na abertura da configuração.</string>
-  <string name="toast_nativeMainFailure05">Falha na análise dos parâmetros de conclusão.</string>
+  <string name="toast_nativeMainFailure05">Falha na análise dos parâmetros finais da linha de comando.</string>
   <string name="toast_nativeMainFailure06">Não é possível usar o recurso --core-compare com essa biblioteca de núcleo do Mupen64Plus.</string>
   <string name="toast_nativeMainFailure07">Falha ao abrir ROM para leitura.</string>
   <string name="toast_nativeMainFailure08">Falha ao alocar memória para a ROM.</string>
@@ -137,7 +137,7 @@
   <string name="actionReloadAssets_title">Recarregar dados do emulador</string>
   <string name="actionReloadAssets_summary">Não afeta configurações do usuário, ROMs, jogos salvos, ou outros dados externos</string>
   <string name="actionResetUserPrefs_title">Padrões</string>
-  <string name="actionResetUserPrefs_summary">Restaurar configurações padrões.</string>
+  <string name="actionResetUserPrefs_summary">Restaurar configurações padrões</string>
   <string name="actionResetUserPrefs_popupMessage">Restaurar todas as preferências globais para o padrão?</string>
   <string name="actionResetGamePrefs_title">Padrões</string>
   <string name="actionResetGamePrefs_summary">Restaurar configurações padrões do jogo</string>
@@ -173,7 +173,7 @@
   <string name="inputVolumeMappable_title">Botões de volume mapeáveis</string>
   <string name="inputVolumeMappable_summary">Permite que as teclas de volume sejam usadas como controle</string>
   <string name="inputShareController_title">Compartilhar controle</string>
-  <string name="inputShareController_summary">Permitir um único controle controlar todos os multiplos jogadores de uma vez</string>
+  <string name="inputShareController_summary">Permitir um único controle controlar todos os múltiplos jogadores de uma vez</string>
   <string name="displayImmersiveMode_title">Modo imersivo</string>
   <string name="displayImmersiveMode_summary">Esconder completamente as barras de navegação e de status</string>
   <string name="gln64Fog_title">Névoa</string>
@@ -183,14 +183,14 @@
   <string name="gln64ScreenClear_title">Forçar limpeza da tela</string>
   <string name="gln64ScreenClear_summary">Desabilite para ganhar velocidade (pode causar problemas gráficos)</string>
   <string name="gln64AlphaTest_title">Teste de transparência</string>
-  <string name="gln64AlphaTest_summary">Desabilite para ganhar velocidade (deixa texturas transparentes)</string>
+  <string name="gln64AlphaTest_summary">Desabilite para ganhar velocidade (pode deixar texturas com fundo preto)</string>
   <string name="gln64HackDepth_title">Hack das coordenadas de profundidade</string>
   <string name="gln64HackDepth_summary">Pode consertar texturas \"piscando\" em alguns jogos</string>
   <string name="riceAutoFrameskip_title">Frameskip automático</string>
   <string name="riceAutoFrameskip_summary">Melhora a velocidade do jogo a custo da taxa de frames</string>
   <string name="riceFastTexture_title">Carregamento de texturas rápido</string>
   <string name="riceFastTexture_summary">Consertar transições circulares</string>
-  <string name="riceForceTextureFilter_title">Forçar filtro de textura</string>
+  <string name="riceForceTextureFilter_title">Filtro de textura</string>
   <string name="riceForceTextureFilter_summary">Melhora texturas de baixa qualidade</string>
   <string name="riceHiResTextures_title">Texturas de alta resolução</string>
   <string name="riceHiResTextures_summary">Usa pacotes com texturas melhoradas</string>
@@ -205,7 +205,7 @@
   <string name="touchscreenAutoHold_entryDisabled">Desabilitado</string>
   <string name="touchscreenAutoHold_entryLongPress">Em toque longo</string>
   <string name="touchscreenAutoHold_entrySlideOut">Ao arrastar fora</string>
-  <string name="touchscreenAnimation_title">Resposta visual</string>
+  <string name="touchscreenAnimation_title">Feedback visual</string>
   <string name="touchscreenAnimation_summary">Animar controle analógico</string>
   <string name="touchscreenStyle_title">Estilo do botão</string>
   <string name="touchscreenStyle_entryOutline">Contorno</string>
@@ -223,19 +223,19 @@
   <string name="displayPosition_entryMiddle">No meio</string>
   <string name="displayPosition_entryTop">Em cima</string>
   <string name="displayResolution_title">Resolução renderizada</string>
-  <string name="displayResolution_entryNative">Nativo (maior qualidade)</string>
+  <string name="displayResolution_entryNative">Nativa (maior qualidade)</string>
   <string name="displayResolution_entry960x720">960 x 720</string>
   <string name="displayResolution_entry800x600">800 x 600</string>
   <string name="displayResolution_entry640x480">640 x 480</string>
   <string name="displayResolution_entry480x360">480 x 360</string>
   <string name="displayResolution_entry320x240">320 x 240</string>
-  <string name="displayResolution_entry160x120">160 x 120 (maior framerate)</string>
+  <string name="displayResolution_entry160x120">160 x 120 (maior taxa de frames)</string>
   <string name="displayScaling_title">Dimensionamento da tela</string>
-  <string name="displayScaling_entryNone">Nenhum\n<small>Usar a exata resolução escolhida abaixo</small></string>
+  <string name="displayScaling_entryNone">Nenhum\n<small>Usar a exata resolução escolhida acima</small></string>
   <string name="displayScaling_entryZoom">Zoom\n<small>Preenche a tela, sem distorção (adiciona barras pretas)</small></string>
   <string name="displayScaling_entryCrop">Cortar\n<small>Preenche a tela, sem distorções (corta parte dos gráficos)</small></string>
   <string name="displayScaling_entryStretch">Esticar\n<small>Preenche a tela, sem barras pretas (distorce a imagem)</small></string>
-  <string name="displayFps_title">Tava de frames</string>
+  <string name="displayFps_title">Taxa de frames</string>
   <string name="displayFps_summary">Exibir FPS na tela</string>
   <string name="videoPlugin_title">Plugin de vídeo</string>
   <string name="videoPlugin_entryNone">Nenhum (vídeo desabilitado)</string>
@@ -251,10 +251,10 @@
   <string name="videoHardwareType_entryO2">Perfil O-2</string>
   <string name="videoHardwareType_entryQ">Perfil Q</string>
   <string name="videoHardwareType_entryT">Perfil T</string>
-  <string name="videoHardwareType_entryCustom">Perfil custumizado</string>
+  <string name="videoHardwareType_entryCustom">Perfil customizado</string>
   <string name="videoPolygonOffset_title">Offset do polígono</string>
-  <string name="videoPolygonOffset_summary">Redução de flicker custumizada</string>
-  <string name="gln64Frameskip_title">Pulo de frames</string>
+  <string name="videoPolygonOffset_summary">Redução de flicker customizada</string>
+  <string name="gln64Frameskip_title">Frameskip</string>
   <string name="gln64Frameskip_entryNever">Nunca pular frames</string>
   <string name="gln64Frameskip_entryUpTo1">Não mais que 1 frame</string>
   <string name="gln64Frameskip_entryUpTo2">Não mais que 2 frames</string>
@@ -301,7 +301,7 @@
   <string name="audioBufferSize_entry2048">Padrão</string>
   <string name="audioBufferSize_entry128">Baixa latência (experimental)</string>
   <string name="audioBufferSize_entry8">Latência ultra baixa (experimental)</string>
-  <string name="localeOverride_entrySystemDefault">Padrão</string>
+  <string name="localeOverride_entrySystemDefault">Padrão do sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparência do controle de toque</string>
   <string name="touchscreenScale_title">Escala do botão</string>
@@ -311,7 +311,7 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Diretório selecionado: %1$s</string>
   <string name="pathHiResTextures_title">Importar pacote de texturas</string>
-  <string name="pathHiResTextures_summary">Aplicar textura custumizada (formato ZIP) para um jogo</string>
+  <string name="pathHiResTextures_summary">Aplicar texturas customizadas (formato ZIP) para um jogo</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Diretório para salvar jogo</string>
   <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
@@ -341,7 +341,7 @@
   <string name="changeLog_dialogTitle">Atualizações recentes</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Atenção</string>
-  <string name="invalidInstall_message">Talvez o Mupen64 Plus AE não tenha sido instalado corretamente. Por favor, tente reinstalar o aplicativo se ele der problemas.</string>
+  <string name="invalidInstall_message">Talvez o Mupen64 Plus AE não tenha sido instalado corretamente. Em caso de problemas, por favor, reinstale o aplicativo.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
   <!--Asset Extractor-->
@@ -394,6 +394,10 @@
   <string name="pathHiResTexturesTask_message">Seja paciente.  Esse processo pode levar algum tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema extraindo texturas!</string>
   <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Escolha uma ROM ou um diretório inteiro para escanear</string>
+  <string name="scanRomsDialog_searchZips">Procurar arquivos zip</string>
+  <string name="scanRomsDialog_downloadArt">Baixar arte da capa</string>
+  <string name="scanRomsDialog_clearGallery">Limpar galeria antes de adicionar</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Escaneando...</string>
   <!--ROM information calculation-->
@@ -415,11 +419,13 @@
   <string name="playerMapPreference_popupMessage">Jogador %1$d, pressione um botão ou analógico em seu controle…\n\nDispositivos atuais:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desmapear</string>
   <string name="playerMapPreference_button">Jogador %1$d\n%2$s</string>
-  <string name="playerMapPreference_reminder">Lembrar quando os jogadores não estiverem mapeados</string>
+  <string name="playerMapPreference_reminder">Me lembrar quando os jogadores não estiverem mapeados</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Botões</string>
   <string name="touchscreenProfileActivity_remove">Remover</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Auto-segurável</string>
   <!--Controller button names-->
   <string name="controller_analog">Analógico</string>
   <string name="controller_dpad">D-pad</string>

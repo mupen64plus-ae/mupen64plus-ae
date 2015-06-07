@@ -395,6 +395,10 @@
   <string name="pathHiResTexturesTask_message">Ole kärsivällinen. Prosessi voi kestää jonkin aikaa.</string>
   <string name="pathHiResTexturesTask_errorMessage">Ongelma tekstuurien purkamisessa!</string>
   <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Valitse ROM-tiedosto tai kokonaan skannatava kansio</string>
+  <string name="scanRomsDialog_searchZips">Etsi zip-tiedostoja</string>
+  <string name="scanRomsDialog_downloadArt">Lataa kansitaide</string>
+  <string name="scanRomsDialog_clearGallery">Tyhjennä galleria ennen lisäämistä</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Skannataan...</string>
   <!--ROM information calculation-->
@@ -418,9 +422,11 @@
   <string name="playerMapPreference_button">Pelaaja %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Muistuta minua kun pelaajat eivät ole asetettuina</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Painikkeet</string>
   <string name="touchscreenProfileActivity_remove">Poista</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Vaakataso: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Pystysuora: %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Auto-pidettävä</string>
   <!--Controller button names-->
   <string name="controller_analog">Analogitikku</string>
   <string name="controller_dpad">D-pädi</string>

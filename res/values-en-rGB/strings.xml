@@ -394,9 +394,20 @@
   <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
   <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Select a ROM file or an entire folder to scan</string>
+  <string name="scanRomsDialog_searchZips">Search zip files</string>
+  <string name="scanRomsDialog_downloadArt">Download cover art</string>
+  <string name="scanRomsDialog_clearGallery">Clear gallery before adding</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Scanning…</string>
   <!--ROM information calculation-->
+  <string name="cacheRomInfo_searching">Searching…</string>
+  <string name="cacheRomInfo_searchingZip">Searching zip file…</string>
+  <string name="cacheRomInfo_computingMD5">Computing MD5…</string>
+  <string name="cacheRomInfo_searchingDB">Searching ROM database…</string>
+  <string name="cacheRomInfo_downloadingArt">Downloading cover art…</string>
+  <string name="cacheRomInfo_refreshingUI">Refreshing UI…</string>
+  <string name="cacheRomInfo_extractingZip">Extracting zip entry…</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -410,9 +421,11 @@
   <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Buttons</string>
   <string name="touchscreenProfileActivity_remove">Remove</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Auto-holdable</string>
   <!--Controller button names-->
   <string name="controller_analog">Analogue stick</string>
   <string name="controller_dpad">D-pad</string>

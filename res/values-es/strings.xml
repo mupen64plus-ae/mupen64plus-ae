@@ -103,6 +103,8 @@
   <string name="toast_overwritingFile">Sobrescribiendo %1$s…</string>
   <string name="toast_loadingGameInfo">Cargando informacion de juego...</string>
   <string name="toast_savingScreenshot">Guardando captura de pantalla</string>
+  <string name="toast_canceling">Cancelando....</string>
+  <string name="toast_pleaseWait">Por Favor, Espere...</string>
   <!--Something happened (use '.')-->
   <string name="toast_nativeMainFailure01">\'No se pudieron analizar los parámetros iniciales de la línea de comandos.\'</string>
   <string name="toast_nativeMainFailure02">Fallo al agregar librería del núcleo.</string>
@@ -203,6 +205,8 @@
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitado</string>
   <string name="touchscreenAutoHold_entryLongPress">Al mantener apretado</string>
   <string name="touchscreenAutoHold_entrySlideOut">Al deslizar</string>
+  <string name="touchscreenAnimation_title">Feedback Visual</string>
+  <string name="touchscreenAnimation_summary">Joystick Animado</string>
   <string name="touchscreenStyle_title">Estilo de botón</string>
   <string name="touchscreenStyle_entryOutline">Líneas de borde</string>
   <string name="touchscreenStyle_entryShaded">Sombreado</string>
@@ -231,12 +235,15 @@
   <string name="displayScaling_entryZoom">Acercamiento\n<small>Rellena la pantalla, sin distorsión (agrega barras negras)</small></string>
   <string name="displayScaling_entryCrop">Crop\n<small>Rellena la pantalla, sin distorsión (corta las gráficas)</small></string>
   <string name="displayScaling_entryStretch">Estirar\n<small>Rellana la pantalla, sin barras negras (agrega distorsión)</small></string>
+  <string name="displayFps_title">Velocidad de Cuadros</string>
+  <string name="displayFps_summary">Mostrar FPS en Pantalla</string>
   <string name="videoPlugin_title">Plugin de video</string>
   <string name="videoPlugin_entryNone">Ninguno (video deshabilitado)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(adaptación de GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryRice">rice\<small>(adaptación de Rice Video v6.1.0(b))</small></string>
   <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptación de Glide64 Final (10mo Aniversario))</small></string>
   <string name="videoHardwareType_title">Reducción del parpadeo</string>
+  <string name="videoHardwareType_entryDisableHack">Desactivar Hack de Reducción de Parpadeo</string>
   <string name="videoHardwareType_entryAuto">Detectar automáticamente a partir del modelo de teléfono/tablet</string>
   <string name="videoHardwareType_entryStandard">Perfil estándar</string>
   <string name="videoHardwareType_entryI">Perfil I</string>
@@ -387,8 +394,20 @@
   <string name="pathHiResTexturesTask_message">Por favor, sé paciente. Este proceso puede tomar algo de tiempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">¡Error al extraer texturas!</string>
   <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Seleccionar un ROM o Carpeta para Escanear</string>
+  <string name="scanRomsDialog_searchZips">Buscar archivos ZIP</string>
+  <string name="scanRomsDialog_downloadArt">Descargar Portada</string>
+  <string name="scanRomsDialog_clearGallery">Vaciar galería antes de agregar</string>
   <!--ROM Scanning-->
+  <string name="scanning_title">Escaneando...</string>
   <!--ROM information calculation-->
+  <string name="cacheRomInfo_searching">Buscando...</string>
+  <string name="cacheRomInfo_searchingZip">Buscando Archivos ZIP...</string>
+  <string name="cacheRomInfo_computingMD5">Computando MD5...</string>
+  <string name="cacheRomInfo_searchingDB">Buscando Base de Datos de ROM...</string>
+  <string name="cacheRomInfo_downloadingArt">Descargando Portada...</string>
+  <string name="cacheRomInfo_refreshingUI">Recargando UI...</string>
+  <string name="cacheRomInfo_extractingZip">Extrayendo ZIP...</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -402,9 +421,11 @@
   <string name="playerMapPreference_button">Jugador %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Recordarme cuando los jugadores no están asignados</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Botones</string>
   <string name="touchscreenProfileActivity_remove">Eliminar</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Mantener Automaticamente</string>
   <!--Controller button names-->
   <string name="controller_analog">Stick analógico</string>
   <string name="controller_dpad">Pad direccional</string>

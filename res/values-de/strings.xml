@@ -394,6 +394,10 @@
   <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>
   <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Eine ROM-Datei oder einen ganzen Ordner zum Scannen auswählen</string>
+  <string name="scanRomsDialog_searchZips">Suche nach zip-Dateien</string>
+  <string name="scanRomsDialog_downloadArt">Lade das Cover herunter</string>
+  <string name="scanRomsDialog_clearGallery">Lösche die Galerie vor dem Hinzufügen</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Überprüfung...</string>
   <!--ROM information calculation-->
@@ -417,9 +421,11 @@
   <string name="playerMapPreference_button">Spieler %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Mich erinnern, wenn Spieler nicht belegt sind</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Knöpfe</string>
   <string name="touchscreenProfileActivity_remove">Entfernen</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertikal: %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Auto-haltbar</string>
   <!--Controller button names-->
   <string name="controller_analog">Analog-Stick</string>
   <string name="controller_dpad">D-Pad</string>
