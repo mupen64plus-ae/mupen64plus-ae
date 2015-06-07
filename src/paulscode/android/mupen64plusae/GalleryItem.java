@@ -34,6 +34,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -119,7 +120,8 @@ public class GalleryItem
         }
     }
     
-    public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener
+    public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener,
+            OnLongClickListener
     {
         public GalleryItem item;
         private Context mContext;
@@ -129,6 +131,7 @@ public class GalleryItem
             super( view );
             mContext = context;
             view.setOnClickListener( this );
+            view.setOnLongClickListener( this );
         }
         
         @Override
@@ -145,6 +148,17 @@ public class GalleryItem
                 GalleryActivity activity = (GalleryActivity) mContext;
                 activity.onGalleryItemClick( item );
             }
+        }
+        
+        @Override
+        public boolean onLongClick( View view )
+        {
+            if( mContext instanceof GalleryActivity )
+            {
+                GalleryActivity activity = (GalleryActivity) mContext;
+                return activity.onGalleryItemLongClick( item );
+            }
+            return false;
         }
     }
     

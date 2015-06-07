@@ -527,6 +527,12 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         mDrawerLayout.openDrawer( GravityCompat.START );
     }
     
+    public boolean onGalleryItemLongClick( GalleryItem item )
+    {
+        launchGameActivity( item.romFile.getAbsolutePath(), item.md5, false );
+        return true;
+    }
+    
     @Override
     public boolean onKeyDown( int keyCode, KeyEvent event )
     {
