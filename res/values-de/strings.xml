@@ -200,6 +200,7 @@
   <string name="audioSynchronize_summary">Verringert Latenzzeit, könnte aber bei manchen Spielen/Geräten Knistern verursachen.</string>
   <string name="audioSwapChannels_title">Audiokanäle tauschen</string>
   <string name="audioSwapChannels_summary">Linken und rechten Audiokanal tauschen</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Knopf autom. halten</string>
   <string name="touchscreenAutoHold_entryDisabled">Deaktiviert</string>
@@ -297,10 +298,6 @@
   <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Kein Debug (Audio ist deaktiviert, keine Geschwindigkeitsbegrenzung)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Audio-Puffergröße</string>
-  <string name="audioBufferSize_entry2048">Standard</string>
-  <string name="audioBufferSize_entry128">Geringe Latenzzeit (experimentell)</string>
-  <string name="audioBufferSize_entry8">Sehr geringe Latenzzeit (experimentell)</string>
   <string name="localeOverride_entrySystemDefault">Systemstandard</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knopf-Deckkraft</string>
@@ -394,6 +391,10 @@
   <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>
   <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Eine ROM-Datei oder einen ganzen Ordner zum Scannen auswählen</string>
+  <string name="scanRomsDialog_searchZips">Suche nach zip-Dateien</string>
+  <string name="scanRomsDialog_downloadArt">Lade das Cover herunter</string>
+  <string name="scanRomsDialog_clearGallery">Lösche die Galerie vor dem Hinzufügen</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Überprüfung...</string>
   <!--ROM information calculation-->
@@ -417,9 +418,11 @@
   <string name="playerMapPreference_button">Spieler %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Mich erinnern, wenn Spieler nicht belegt sind</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Knöpfe</string>
   <string name="touchscreenProfileActivity_remove">Entfernen</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertikal: %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Auto-haltbar</string>
   <!--Controller button names-->
   <string name="controller_analog">Analog-Stick</string>
   <string name="controller_dpad">D-Pad</string>

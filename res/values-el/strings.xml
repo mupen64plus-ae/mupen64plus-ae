@@ -124,6 +124,7 @@
   <string name="riceFog_title">Ομίχλη</string>
   <string name="audioSwapChannels_title">Εναλλαγή καναλιών ήχου</string>
   <string name="audioSwapChannels_summary">Εναλλαγή του αριστερού και δεξιού καναλιού ήχου</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Αυτόμ. κράτημα πλήκτρου</string>
   <string name="touchscreenAutoHold_entryDisabled">Απενεργοποιημένο</string>
@@ -203,7 +204,6 @@
   <string name="r4300Emulator_entryDynarec">Δυναμικός επαναμεταγλωτιστής (dynarec)</string>
   <string name="audioPlugin_entryNone">Κανένας (ήχος απενεργοποιημένος)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_entry2048">Προεπιλεγμένο</string>
   <string name="localeOverride_entrySystemDefault">Προεπιλογή συστήματος</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Ορατότητα πλήκτρων</string>

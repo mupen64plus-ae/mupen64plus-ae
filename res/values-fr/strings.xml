@@ -156,6 +156,7 @@
   <string name="categoryGln64_title">Paramètres Gln64</string>
   <string name="categoryRice_title">Paramètres Rice</string>
   <string name="categoryGlide64_title">Paramètres Glide64</string>
+  <string name="categoryLibrary_title">Bibliothèque</string>
   <string name="categoryDisplay_title">Affichage</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryTouchscreen_title">Commandes virtuelles</string>
@@ -200,6 +201,8 @@
   <string name="audioSynchronize_summary">Minimise la latence, mais peut occasionner du crackling sur certains jeux/appareils</string>
   <string name="audioSwapChannels_title">Inversion des voies audio</string>
   <string name="audioSwapChannels_summary">Inverse le canal audio droit et le canal audio gauche</string>
+  <!--Gallery sections-->
+  <string name="galleryLibrary">Bibliothèque</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Appui continu automatique</string>
   <string name="touchscreenAutoHold_entryDisabled">Désactivé</string>
@@ -297,10 +300,6 @@
   <string name="audioPlugin_entryNone">Sans (audio désactivé)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Aucun-debug (désactive l\'audio, pas de limite de vitesse)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Taille du tampon audio</string>
-  <string name="audioBufferSize_entry2048">Par défaut</string>
-  <string name="audioBufferSize_entry128">Faible-latence (expérimental)</string>
-  <string name="audioBufferSize_entry8">Latence ultra-faible (expérimental)</string>
   <string name="localeOverride_entrySystemDefault">Système par défaut</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>

@@ -162,6 +162,7 @@
   <string name="riceFog_summary">Misteffect tonen</string>
   <string name="audioSwapChannels_title">Verwissel geluidskanalen</string>
   <string name="audioSwapChannels_summary">Verwissel linker- en rechteraudiokanaal</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Button automatisch vasthouden</string>
   <string name="touchscreenAutoHold_entryDisabled">Uitgeschakeld</string>
@@ -247,10 +248,6 @@
   <string name="audioPlugin_entryNone">Geen (geluid uitgeschakeld)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Geen-debug (audio uitgeschakeld, geen snelheidslimiet)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Audiobuffergrootte</string>
-  <string name="audioBufferSize_entry2048">Standaardwaarden</string>
-  <string name="audioBufferSize_entry128">Lage latency (experimenteel)</string>
-  <string name="audioBufferSize_entry8">Ultralage latency (experimenteel)</string>
   <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knoptransparantie</string>

@@ -198,6 +198,7 @@
   <string name="audioSynchronize_summary">خيار latency ,قدد يسبب مجموعة من المشاكل على بعض الالعاب والاجهزه</string>
   <string name="audioSwapChannels_title">تبديل الصوت مع الصوره</string>
   <string name="audioSwapChannels_summary">تبديل قنوات الصوت اليسرى مع اليمنى</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">زر الظغه المطوله الاوتماتيكي</string>
   <string name="touchscreenAutoHold_entryDisabled">الغاء التفعيل</string>
@@ -259,7 +260,6 @@
   <string name="r4300Emulator_title">المحاكي R4300</string>
   <string name="audioPlugin_title">اضافات الصوت</string>
   <string name="audioPlugin_entryNone">بدون (الغاء الصوت)</string>
-  <string name="audioBufferSize_entry2048">الافتراضي</string>
   <string name="localeOverride_entrySystemDefault">اعدادات النظام الافتراضية</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <!--Path Preferences (selected path will become the summary)-->

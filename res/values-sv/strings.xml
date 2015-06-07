@@ -151,6 +151,7 @@
   <string name="riceFog_summary">Visa dim effekter.</string>
   <string name="audioSwapChannels_title">Byt ljudkanaler</string>
   <string name="audioSwapChannels_summary">Byt de vänstra och högra ljudkanalerna</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Auto-hållning av knapp</string>
   <string name="touchscreenAutoHold_entryDisabled">Inaktiverad</string>
@@ -225,7 +226,6 @@
   <string name="r4300Emulator_entryDynarec">Dynamisk recompiler (dynarec)</string>
   <string name="audioPlugin_entryNone">Ingen (ljud inaktiverad)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Ingen-felsökning (ljud inaktiverat, ingen hastighetsbegränsning)</string>
-  <string name="audioBufferSize_entry2048">Standard</string>
   <string name="localeOverride_entrySystemDefault">System standard</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knapp opacitet</string>

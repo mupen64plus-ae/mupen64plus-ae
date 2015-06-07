@@ -10,7 +10,9 @@
   <string name="menuItem_setSlot">Slot %1$d</string>
   <string name="menuItem_fileSave">Salva a file…</string>
   <string name="menuItem_fileLoad">Carica da file…</string>
+  <string name="menuItem_screenshot">Screenshot</string>
   <string name="menuItem_setSpeed">Velocità gioco</string>
+  <string name="menuItem_enableFramelimiter">Sincronizza l\'audio</string>
   <string name="menuItem_paks">Pak controller</string>
   <!--capitalize since trademark-->
   <string name="menuItem_pak1_empty">Giocatore 1: Vuoto</string>
@@ -41,6 +43,7 @@
   <string name="menuItem_unmapAll">Rimuovi tasti impostati da tutto</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Gioca</string>
+  <string name="menuItem_refreshRoms">Aggiorna ROM</string>
   <string name="menuItem_settings">Impostazioni</string>
   <string name="menuItem_globalSettings">Impostazioni globali</string>
   <string name="menuItem_emulationProfiles">Profili emulatore</string>
@@ -56,6 +59,7 @@
   <string name="menuItem_credits">Crediti</string>
   <string name="menuItem_appVersion">Versione app</string>
   <string name="menuItem_changelog">log cambiamenti</string>
+  <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Info hardware</string>
   <string name="menuItem_localeOverride">Linguaggio</string>
   <!--ManageProfilesActivity-->
@@ -69,7 +73,10 @@
   <string name="profile_name_must_be_unique">Il nome deve essere unico</string>
   <string name="profile_manage_profiles">Gestisci profili</string>
   <!--Popup Dialogs-->
+  <string name="popup_version">Versione: %1$s\nCodice della versione: %2$d</string>
   <!--Lists-->
+  <string name="listItem_setDefault">Imposta predefinito</string>
+  <string name="listItem_unsetDefault">Non impostare predefinito</string>
   <string name="listItem_edit">Modifica</string>
   <string name="listItem_rename">Rinomina</string>
   <string name="listItem_copy">Copia</string>
@@ -93,6 +100,8 @@
   <string name="toast_savingFile">Salvando %1$s…</string>
   <string name="toast_overwritingFile">Sovrascrivendo %1$s…</string>
   <string name="toast_loadingGameInfo">Caricando info gioco...</string>
+  <string name="toast_canceling">Annullamento in corso...</string>
+  <string name="toast_pleaseWait">Attendere prego...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Usando slot %1$d.</string>
   <string name="toast_sdInaccessible">Scheda SD non accessibile (disconnetti cavo USB e riprova)</string>
@@ -106,8 +115,11 @@
   <string name="actionResume_summary">Imprevedibile se vengono usati trucchi</string>
   <string name="actionRestart_title">Riavvia</string>
   <string name="actionRestart_summary">Raccomandato se vengono usati trucchi</string>
+  <string name="actionWiki_title">Wiki</string>
   <string name="actionReloadAssets_title">Ricarica risorse app</string>
   <string name="actionReloadAssets_summary">NON influenza impostazioni utente, ROM, salvataggi o altri dati personalizzati</string>
+  <string name="actionResetUserPrefs_title">Predefiniti</string>
+  <string name="actionResetGamePrefs_title">Predefiniti</string>
   <string name="actionCheatEditor_title">Gestisci trucchi</string>
   <string name="actionCheatEditor_summary">Aggiungi, modifica ed elimina trucchi personalizzti</string>
   <string name="actionShare_title">Condividi</string>
@@ -162,6 +174,7 @@
   <string name="riceFog_summary">Mostra effetti nebbia</string>
   <string name="audioSwapChannels_title">Inverti canali audio</string>
   <string name="audioSwapChannels_summary">Inverte i canali audio sinistra e destra</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Auto tasto premuto</string>
   <string name="touchscreenAutoHold_entryDisabled">Disabilitato</string>
@@ -191,6 +204,7 @@
   <string name="displayResolution_entry320x240">320 x 240</string>
   <string name="displayResolution_entry160x120">160 x 120 (framerate migliore)</string>
   <string name="displayScaling_title">Ridimensionamento dello schermo</string>
+  <string name="displayFps_title">Framerate</string>
   <string name="videoPlugin_title">Plugin video</string>
   <string name="videoPlugin_entryNone">Nessuno (video disabilitato)</string>
   <string name="videoHardwareType_title">Riduzione tremolamento</string>
@@ -247,10 +261,6 @@
   <string name="audioPlugin_entryNone">Nessuno (audio disabilitato)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Nessun-debug (audio disabilitato, nessun limite velocità)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Dimensione buffer audio</string>
-  <string name="audioBufferSize_entry2048">Default</string>
-  <string name="audioBufferSize_entry128">Bassa-latenza (sperimentale)</string>
-  <string name="audioBufferSize_entry8">Ultra-bassa-latenza (sperimentale)</string>
   <string name="localeOverride_entrySystemDefault">Default di sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Trasparenza touchscreen</string>
@@ -392,6 +402,7 @@
   <string name="inputMapActivity_gameshark">Gameshark</string>
   <string name="inputMapActivity_simulateBack">Tasto indietro</string>
   <string name="inputMapActivity_simulateMenu">Tasto menu </string>
+  <string name="inputMapActivity_screenshot">Screenshot</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Premi tasto o lettera…</string>
   <string name="diagnosticActivity_textMotion_text">Touchscreen o joystick…</string>

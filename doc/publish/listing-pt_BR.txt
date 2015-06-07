@@ -1,0 +1,46 @@
+[Texto promocional]
+
+
+Emulador de Nintendo64 para Android. Mupen64Plus AE está em estado Beta.
+
+
+
+
+
+
+
+
+[Descrição do Aplicativo]
+
+
+ESSE PROGRAMA NÃO INCLUI JOGOS
+- Você deve ter direito sobre uma determinada ROM antes de jogá-la.
+- Um grande número de jogos e demos públicos estão disponíveis em www.pdroms.de
+
+O valor de 99 centavos de dólar é SOMENTE UMA DOAÇÃO
+- Esse aplicativo pode ser baixado gratuitamente no meu site (SEM PROPAGANDAS)
+- Por favor, considere fazer uma doação. Com isso, você estimula o mantenedor do projeto.
+- As doações ajudam MUITOS desenvolvedores e projetos de código aberto.
+
+Mupen64Plus, Android Edition (AE), é um emulador de Nintendo64 para Android. Atualmente está em testes beta, o que significa que ainda é um trabalho em andamento. Há muitos problemas gráficos, de áudio e lag, mesmo em dispositivos modernos. Visite o site www.paulscode.com para se envolver no desenvolvimento e testes, bem como para resolver problemas e ter as suas perguntas respondidas.
+
+Para evitar potenciais problemas de direitos autorais relativos às capturas de tela de jogos, eu decidi usar somente jogos de domínio público e demos para as capturas. Entretanto, se o aplicativo for retirado da Play Store novamente, você ainda será capaz de obter atualizações em paulscode.com .
+
+Esse aplicativo é licenciado pela GNU GPL v3, e o código-fonte completo está disponível pelo repositório GIT em https://github.com/mupen64plus-ae/mupen64plus-ae . Caso qualquer desenvolvedor deseje acesso de escrita no repositório, por favor entre contato comigo (Paul) no fórum de suporte. Se você precisa de ajuda para fazer uma derivação do projeto, deixe-me saber, e eu posso ajudar você a iniciar o trabalho.
+
+Otimizado para o Xperia Play
+- Inclui suporte analógico pelo touchpad!
+
+Permissões:
+Internet: a internet é usada para mandar relatórios de problema. Não há download de vírus, spyware ou propagandas de qualquer tipo, e não há coleta de qualquer informação privada. Entretanto, os dados podem ser cobrados pela sua operadora.
+Escrita em armazenamento externo: o dispositivo de armazenamento é usado para a escrita de saves e perfis de controle customizados.
+Vibração: se o seu dispositivo suportar o recurso, a vibração é utilizada para a emulação do Rumble Pak e feedback tátil.
+
+COMO COMEÇAR?
+- Transfira as ROMS para qualquer pasta da memória interna ou cartão SD
+- Navegue até elas dentro do emulador
+- O caminho padrão do cartão SD na maioria dos dispositivos é /mnt/sdcard
+- As ROMs devem estar no formato .n64, .v64 ou .z64. Opcionalmente, em arquivos zip.
+
+AJUDA, FAQS, CONSERTO DE BUGS E INSTRUÇÕES DE BACKUP DE JOGOS:
+- http://www.paulscode.com

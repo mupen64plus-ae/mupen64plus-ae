@@ -164,6 +164,7 @@
   <string name="riceFog_summary">Pokaż efekty mgły</string>
   <string name="audioSwapChannels_title">Zamień kanały audio</string>
   <string name="audioSwapChannels_summary">Zamień prawy i lewy kanał audio</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Auto przytrzymanie przycisku</string>
   <string name="touchscreenAutoHold_entryDisabled">Wyłączone</string>
@@ -256,10 +257,6 @@
   <string name="audioPlugin_entryNone">Brak (wyłączony dźwięk)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Brak debugowania (dźwięk wyłączony, nie ma ograniczenia prędkości)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Wielkość bufora dźwięku</string>
-  <string name="audioBufferSize_entry2048">Domyślne</string>
-  <string name="audioBufferSize_entry128">Niska latencja (eksperymentalne)</string>
-  <string name="audioBufferSize_entry8">Bardzo niska latencja (eksperymentalne)</string>
   <string name="localeOverride_entrySystemDefault">Domyślne ustawienia systemowe</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Przejrzystość przycisków</string>

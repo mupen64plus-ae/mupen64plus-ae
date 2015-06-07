@@ -10,7 +10,10 @@
   <string name="menuItem_setSlot">Slot %1$d</string>
   <string name="menuItem_fileSave">Dosyaya kaydet…</string>
   <string name="menuItem_fileLoad">Dosyadan yükle…</string>
+  <string name="menuItem_screenshot">Ekran çekimi</string>
   <string name="menuItem_setSpeed">Oyun hızı</string>
+  <string name="menuItem_enableFramelimiter">Sesi senkronize et</string>
+  <string name="menuItem_disableFramelimiter">Sesi desenkronize et</string>
   <string name="menuItem_paks">Kontrol Paketleri</string>
   <!--capitalize since trademark-->
   <string name="menuItem_pak1_empty">Oyuncu 1: Boş</string>
@@ -36,23 +39,54 @@
   <string name="menuItem_setIme">IME\'yi değiştir</string>
   <string name="menuItem_exit">Çıkış</string>
   <!--Input Mapping Activity-->
+  <string name="menuItem_deadzone">Ölü alan</string>
   <string name="menuItem_sensitivity">Hassasiyet</string>
   <string name="menuItem_unmapAll">Tüm eşlemeleri kaldır</string>
   <!--Menu Activity-->
   <string name="menuItem_play">Oyna</string>
+  <string name="menuItem_refreshRoms">ROMları yenile</string>
   <string name="menuItem_settings">Ayarlar</string>
+  <string name="menuItem_globalSettings">Genel ayarlar</string>
+  <string name="menuItem_profiles">Profiller</string>
+  <string name="menuItem_emulationProfiles">Emülasyon profilleri</string>
+  <string name="menuItem_touchscreenProfiles">Dokunmatik ekran profilleri</string>
+  <string name="menuItem_controllerProfiles">Kontrol profilleri</string>
+  <string name="menuItem_customCheats">Özel hile</string>
   <string name="menuItem_help">Yardım</string>
   <string name="menuItem_faq">SSS</string>
+  <string name="menuItem_helpForum">Yardim forumu</string>
   <string name="menuItem_controllerDiagnostics">Kumanda tanılama</string>
   <string name="menuItem_reportBug">Hata raporla</string>
   <string name="menuItem_about">Hakkında</string>
   <string name="menuItem_credits">Katkıda Bulunanlar</string>
+  <string name="menuItem_appVersion">Uygulama sürümü</string>
   <string name="menuItem_changelog">Değişim Kayıtları</string>
+  <string name="menuItem_logcat">Logcat</string>
+  <string name="menuItem_hardwareInfo">Donanim enfermasyonu</string>
   <string name="menuItem_localeOverride">Dil</string>
   <!--ManageProfilesActivity-->
+  <string name="menuItem_new">Yeni</string>
+  <string name="menuItem_hideBuiltins">Saklı yerleşikler</string>
+  <string name="menuItem_showBuiltins">Gözükür yerleşikler</string>
+  <string name="popup_titleBuiltin">%1$s (yerleşik)</string>
+  <string name="popup_titleCustom">%1$s</string>
+  <string name="profile_name_cannot_be_empty">Ad boş olmamalı</string>
+  <string name="profile_name_cannot_contain_brackets">Ad parantez içermemeli</string>
+  <string name="profile_name_must_be_unique">Ad benzersiz olmalı</string>
+  <string name="profile_manage_profiles">Profilleri yönet</string>
   <!--Popup Dialogs-->
+  <string name="popup_version">Versiyon: %1$s\nVersiyon kodu: %2$d</string>
   <!--Lists-->
+  <string name="listItem_setDefault">Ön deyer koy</string>
+  <string name="listItem_unsetDefault">Ön deyeri kaldır</string>
+  <string name="listItem_edit">Düzenle</string>
+  <string name="listItem_rename">Adı değiştir</string>
+  <string name="listItem_copy">Kopyala</string>
+  <string name="listItem_delete">Sil</string>
+  <string name="listItem_disabled">(Devre dışı)</string>
   <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Profil adı</string>
+  <string name="hint_profileComment">Açıklama (Optionen)</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -67,6 +101,10 @@
   <string name="toast_loadingFile">%1$s yükleniyor…</string>
   <string name="toast_savingFile">%1$s kaydediliyor…</string>
   <string name="toast_overwritingFile">%1$s üzerine yazılıyor…</string>
+  <string name="toast_loadingGameInfo">Oyun bilgisi yükleniyor...</string>
+  <string name="toast_savingScreenshot">Ekran görüntüsü kaydediliyor...</string>
+  <string name="toast_canceling">İptal ediliyor...</string>
+  <string name="toast_pleaseWait">Lütfen bekleyiniz...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Şimdi %1$d soltu kullanılıyor</string>
   <string name="toast_sdInaccessible">SD kart erişilemez (USB kablosunu çıkartıp tekrar deneyin)</string>
@@ -80,9 +118,15 @@
   <string name="actionResume_summary">Hileler kullanılıyorsa tahmin edilemez</string>
   <string name="actionRestart_title">Yeniden Başlat</string>
   <string name="actionRestart_summary">Hileler kullanılıyorsa tavsiye edilir</string>
+  <string name="actionWiki_title">Wiki</string>
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
+  <string name="actionResetUserPrefs_title">Ön ayarlar</string>
+  <string name="actionResetGamePrefs_title">Ön ayarlar</string>
+  <string name="actionResetGamePrefs_summary">Varsayılan ayarları geri yükle</string>
+  <string name="actionShare_title">Paylaş</string>
   <!--Preference Screens-->
+  <string name="screenGlobalSettings_title">Genel ayarlar</string>
   <string name="screenCheats_summaryDisabled">Devre dışı</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Hile seçenekleri (notlar için uzun basın)</string>
@@ -123,6 +167,7 @@
   <string name="riceFog_title">Sis</string>
   <string name="audioSwapChannels_title">Ses kanallarını değiştir</string>
   <string name="audioSwapChannels_summary">Sol ve sağ ses kanallarını değiştir</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Otomatik tutma tuşu</string>
   <string name="touchscreenAutoHold_entryDisabled">Devre dışı</string>
@@ -158,6 +203,7 @@
   <string name="videoHardwareType_entryO2">O-2 profili</string>
   <string name="videoHardwareType_entryQ">Q profili</string>
   <string name="videoHardwareType_entryT">T profili</string>
+  <string name="videoHardwareType_entryCustom">Özel profil</string>
   <string name="gln64Frameskip_title">Kare atlama</string>
   <string name="gln64Frameskip_entryNever">Asla kare atlama</string>
   <string name="gln64Frameskip_entryUpTo1">1 kareden fazla değil</string>
@@ -199,7 +245,7 @@
   <string name="r4300Emulator_entryDynarec">Dinamik derleyici (dynarec)</string>
   <string name="audioPlugin_entryNone">Hiçbiri (ses devre dışı)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_entry2048">Varsayılan</string>
+  <string name="audioSDLBufferSize_entry2048">Varsayılan</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Dokunmatik ekran şeffaflığı</string>
@@ -227,6 +273,7 @@
   <string name="confirmResetGame_message">Oyunu sıfırla? Son kaydınızdan bu yana tüm işlemler kaybedilecek.</string>
   <string name="confirmOverwriteFile_message">Üzerine yazılsınmı %1$s? </string>
   <string name="confirmUnmapAll_message">%1$s için tüm girdilerin eşlemelerini kaldır?</string>
+  <string name="confirmDeleteProfile_message">\"%1$s\" profili silinsin mi?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Değişiklik kaydı</string>
   <!--Corrupt Installation Warning-->
@@ -247,13 +294,22 @@
   <string name="cheatNotes_none">(bu hile için notlar mevcut değil)</string>
   <!--Cheat Editor-->
   <string name="cheatEditor_help">Yardım</string>
+  <string name="cheatEditor_confirm">Emin misiniz?</string>
+  <string name="cheatEditor_title2">Başlık:</string>
+  <string name="cheatEditor_notes2">Notlar</string>
+  <string name="cheatEditor_code2">Kod(lar):</string>
+  <string name="cheatEditor_option2">Seçenek(ler):</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>
   <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>
   <!--Scan Roms Dialog-->
   <!--ROM Scanning-->
+  <string name="scanning_title">Taranıyor...</string>
   <!--ROM information calculation-->
+  <string name="cacheRomInfo_searching">Aranıyor...</string>
+  <string name="cacheRomInfo_computingMD5">MD5 hesaplanıyor...</string>
+  <string name="cacheRomInfo_refreshingUI">Arayüz yenileniyor...</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
@@ -265,11 +321,16 @@
   <string name="playerMapPreference_popupUnmap">Eşlemeyi kaldır</string>
   <string name="playerMapPreference_reminder">Oyuncular eşlenmediği zaman bana hatırlat</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Tuşlar</string>
+  <string name="touchscreenProfileActivity_remove">Kaldır</string>
+  <string name="touchscreenProfileActivity_horizontalSlider">Yatay: %1$d %%</string>
+  <string name="touchscreenProfileActivity_verticalSlider">Dikey: %1$d %%</string>
   <!--Controller button names-->
   <string name="controller_buttonCr">C-pad →</string>
   <string name="controller_buttonCl">C-pad ←</string>
   <string name="controller_buttonCd">C-pad ↓</string>
   <string name="controller_buttonCu">C-pad ↑</string>
+  <string name="controller_buttonZ">Z buttonu</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Eşlemeyi kaldır</string>
   <string name="inputMapActivity_btnA">A</string>
@@ -302,6 +363,7 @@
   <string name="inputMapActivity_gameshark">Gameshark</string>
   <string name="inputMapActivity_simulateBack">Geri tuşu</string>
   <string name="inputMapActivity_simulateMenu">Menü tuşu</string>
+  <string name="inputMapActivity_screenshot">Ekran çekimi</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Düğmeye veya tuşa basın…</string>
   <string name="diagnosticActivity_textMotion_text">Dokunmatik ekran veya oyun çubuğu…</string>

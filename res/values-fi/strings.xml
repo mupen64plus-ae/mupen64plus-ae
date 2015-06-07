@@ -200,6 +200,7 @@
   <string name="audioSynchronize_summary">Minimoi viiveen, mutta voi aiheuttaa rätinointiä joissain peleissä/laitteissa</string>
   <string name="audioSwapChannels_title">Vaihda audiokanavat</string>
   <string name="audioSwapChannels_summary">Vaihda vasen ja oikea audiokanava keskenään</string>
+  <!--Gallery sections-->
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Painike auto-pito</string>
   <string name="touchscreenAutoHold_entryDisabled">Pois käytöstä</string>
@@ -297,10 +298,6 @@
   <string name="audioPlugin_entryNone">Ei mitään (audio pois käytöstä)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Ei mitään-debug (audio pois käytöstä, ei nopeusrajaa)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioBufferSize_title">Audiopuskurin koko</string>
-  <string name="audioBufferSize_entry2048">Oletus</string>
-  <string name="audioBufferSize_entry128">Alhainen latenssi (kokeellinen)</string>
-  <string name="audioBufferSize_entry8">Ultra-alhainen latenssi (kokeellinen)</string>
   <string name="localeOverride_entrySystemDefault">Järjestelmän oletus</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Painike läpinäkyvyys</string>
@@ -395,6 +392,10 @@
   <string name="pathHiResTexturesTask_message">Ole kärsivällinen. Prosessi voi kestää jonkin aikaa.</string>
   <string name="pathHiResTexturesTask_errorMessage">Ongelma tekstuurien purkamisessa!</string>
   <!--Scan Roms Dialog-->
+  <string name="scanRomsDialog_selectRom">Valitse ROM-tiedosto tai kokonaan skannatava kansio</string>
+  <string name="scanRomsDialog_searchZips">Etsi zip-tiedostoja</string>
+  <string name="scanRomsDialog_downloadArt">Lataa kansitaide</string>
+  <string name="scanRomsDialog_clearGallery">Tyhjennä galleria ennen lisäämistä</string>
   <!--ROM Scanning-->
   <string name="scanning_title">Skannataan...</string>
   <!--ROM information calculation-->
@@ -418,9 +419,11 @@
   <string name="playerMapPreference_button">Pelaaja %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Muistuta minua kun pelaajat eivät ole asetettuina</string>
   <!--Touchscreen Profile Activity-->
+  <string name="touchscreenProfileActivity_buttons">Painikkeet</string>
   <string name="touchscreenProfileActivity_remove">Poista</string>
   <string name="touchscreenProfileActivity_horizontalSlider">Vaakataso: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Pystysuora: %1$d %%</string>
+  <string name="touchscreenProfileActivity_autoHoldable">Auto-pidettävä</string>
   <!--Controller button names-->
   <string name="controller_analog">Analogitikku</string>
   <string name="controller_dpad">D-pädi</string>
