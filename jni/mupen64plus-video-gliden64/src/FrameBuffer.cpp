@@ -19,14 +19,6 @@
 using namespace std;
 
 #ifndef GLES2
-const GLint monohromeInternalformat = GL_R8;
-const GLenum monohromeformat = GL_RED;
-#else
-const GLint monohromeInternalformat = GL_LUMINANCE;
-const GLenum monohromeformat = GL_LUMINANCE;
-#endif // GLES2
-
-#ifndef GLES2
 class FrameBufferToRDRAM
 {
 public:
@@ -155,24 +147,19 @@ void FrameBuffer::_initTexture(u16 _format, u16 _size, CachedTexture *_pTexture)
 	_pTexture->realHeight = _pTexture->height;
 	_pTexture->textureBytes = _pTexture->realWidth * _pTexture->realHeight;
 	if (_size > G_IM_SIZ_8b)
-		_pTexture->textureBytes *= 4;
+		_pTexture->textureBytes *= fboFormats.colorFormatBytes;
+	else
+		_pTexture->textureBytes *= fboFormats.monochromeFormatBytes;
 	textureCache().addFrameBufferTextureSize(_pTexture->textureBytes);
 }
 
 void FrameBuffer::_setAndAttachTexture(u16 _size, CachedTexture *_pTexture)
 {
 	glBindTexture(GL_TEXTURE_2D, _pTexture->glName);
-#ifdef GLES2
 	if (_size > G_IM_SIZ_8b)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _pTexture->realWidth, _pTexture->realHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.colorInternalFormat, _pTexture->realWidth, _pTexture->realHeight, 0, fboFormats.colorFormat, fboFormats.colorType, NULL);
 	else
-		glTexImage2D(GL_TEXTURE_2D, 0, monohromeInternalformat, _pTexture->realWidth, _pTexture->realHeight, 0, monohromeformat, GL_UNSIGNED_BYTE, NULL);
-#else
-	if (_size > G_IM_SIZ_8b)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _pTexture->realWidth, _pTexture->realHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	else
-		glTexImage2D(GL_TEXTURE_2D, 0, monohromeInternalformat, _pTexture->realWidth, _pTexture->realHeight, 0, monohromeformat, GL_UNSIGNED_BYTE, NULL);
-#endif
+		glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.monochromeInternalFormat, _pTexture->realWidth, _pTexture->realHeight, 0, fboFormats.monochromeFormat, fboFormats.monochromeType, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -215,12 +202,12 @@ void FrameBuffer::init(u32 _address, u32 _endAddress, u16 _format, u16 _size, u1
 		if (_size > G_IM_SIZ_8b)
 			glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, GL_RGBA8, m_pTexture->realWidth, m_pTexture->realHeight, false);
 		else
-			glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, monohromeInternalformat, m_pTexture->realWidth, m_pTexture->realHeight, false);
+			glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, fboFormats.monochromeInternalFormat, m_pTexture->realWidth, m_pTexture->realHeight, false);
 #else
 		if (_size > G_IM_SIZ_8b)
 			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, GL_RGBA8, m_pTexture->realWidth, m_pTexture->realHeight, false);
 		else
-			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, monohromeInternalformat, m_pTexture->realWidth, m_pTexture->realHeight, false);
+			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.video.multisampling, fboFormats.monochromeInternalFormat, m_pTexture->realWidth, m_pTexture->realHeight, false);
 #endif
 		m_pTexture->frameBufferTexture = CachedTexture::fbMultiSample;
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, m_pTexture->glName, 0);
@@ -560,7 +547,11 @@ void FrameBufferList::attachDepthBuffer()
 	if (m_pCurrent->m_FBO > 0 && pDepthBuffer != NULL) {
 		pDepthBuffer->initDepthImageTexture(m_pCurrent);
 		pDepthBuffer->initDepthBufferTexture(m_pCurrent);
+#ifdef GLES2
+		if (pDepthBuffer->m_pDepthBufferTexture->realWidth == m_pCurrent->m_pTexture->realWidth) {
+#else
 		if (pDepthBuffer->m_pDepthBufferTexture->realWidth >= m_pCurrent->m_pTexture->realWidth) {
+#endif
 			m_pCurrent->m_pDepthBuffer = pDepthBuffer;
 			pDepthBuffer->setDepthAttachment(GL_DRAW_FRAMEBUFFER);
 			if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
@@ -739,8 +730,9 @@ void FrameBufferList::renderBuffer(u32 _address)
 
 void FrameBufferList::renderBuffer(u32 _address)
 {
-	if (VI.width == 0) // H width is zero. Don't draw
+	if (VI.width == 0 || *REG.VI_WIDTH == 0 || *REG.VI_H_START == 0) // H width is zero. Don't draw
 		return;
+
 	FrameBuffer *pBuffer = findBuffer(_address);
 	if (pBuffer == NULL)
 		return;
@@ -748,6 +740,7 @@ void FrameBufferList::renderBuffer(u32 _address)
 	OGLVideo & ogl = video();
 	ogl.getRender().updateScissor(pBuffer);
 	PostProcessor::get().process(pBuffer);
+	ogl.getRender().dropRenderState();
 	gSP.changed = gDP.changed = 0;
 
 	CombinerInfo::get().setCombine(EncodeCombineMode(0, 0, 0, TEXEL0, 0, 0, 0, 1, 0, 0, 0, TEXEL0, 0, 0, 0, 1));
@@ -773,8 +766,12 @@ void FrameBufferList::renderBuffer(u32 _address)
 	glScissor(0, 0, ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset());
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	FrameBuffer * pCurrent = m_pCurrent;
+	m_pCurrent = pBuffer;
 	OGLRender::TexturedRectParams params(0.0f, 0.0f, width, height, 0.0f, 0.0f, width - 1.0f, height - 1.0f, false);
 	ogl.getRender().drawTexturedRect(params);
+	m_pCurrent = pCurrent;
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	if (m_pCurrent != NULL)
@@ -870,7 +867,7 @@ void FrameBufferToRDRAM::Init()
 	m_pTexture->textureBytes = m_pTexture->realWidth * m_pTexture->realHeight * 4;
 	textureCache().addFrameBufferTextureSize(m_pTexture->textureBytes);
 	glBindTexture( GL_TEXTURE_2D, m_pTexture->glName );
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_pTexture->realWidth, m_pTexture->realHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.colorInternalFormat, m_pTexture->realWidth, m_pTexture->realHeight, 0, fboFormats.colorFormat, fboFormats.colorType, NULL);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -1055,12 +1052,12 @@ void DepthBufferToRDRAM::Init()
 	textureCache().addFrameBufferTextureSize(m_pDepthTexture->textureBytes);
 
 	glBindTexture( GL_TEXTURE_2D, m_pColorTexture->glName );
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, m_pColorTexture->realWidth, m_pColorTexture->realHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.monochromeInternalFormat, m_pColorTexture->realWidth, m_pColorTexture->realHeight, 0, fboFormats.monochromeFormat, fboFormats.monochromeType, NULL);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
 	glBindTexture( GL_TEXTURE_2D, m_pDepthTexture->glName );
-	glTexImage2D(GL_TEXTURE_2D, 0, DEPTH_COMPONENT_FORMAT, m_pDepthTexture->realWidth, m_pDepthTexture->realHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.depthInternalFormat, m_pDepthTexture->realWidth, m_pDepthTexture->realHeight, 0, GL_DEPTH_COMPONENT, fboFormats.depthType, NULL);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
@@ -1187,7 +1184,7 @@ void RDRAMtoFrameBuffer::Init()
 	m_pTexture->textureBytes = m_pTexture->realWidth * m_pTexture->realHeight * 4;
 	textureCache().addFrameBufferTextureSize(m_pTexture->textureBytes);
 	glBindTexture( GL_TEXTURE_2D, m_pTexture->glName );
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_pTexture->realWidth, m_pTexture->realHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.colorInternalFormat, m_pTexture->realWidth, m_pTexture->realHeight, 0, fboFormats.colorFormat, fboFormats.colorType, NULL);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glBindTexture(GL_TEXTURE_2D, 0);
