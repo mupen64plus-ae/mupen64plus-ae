@@ -163,7 +163,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onComputeMd5Finished( File file, String md5 )
                     {
-                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, file.getAbsolutePath(), md5 );
+                        launchGameActivity( file.getAbsolutePath(), md5, false );
                     }
                 } );
                 task.execute();
