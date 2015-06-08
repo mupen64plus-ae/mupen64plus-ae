@@ -89,4 +89,11 @@ public class Popups
                 appData.appVersionCode );
         new Builder( context ).setTitle( title ).setMessage( message ).create().show();
     }
+    
+    public static void showNeedsPlayerMap( Context context )
+    {
+        String title = context.getString( R.string.playerMap_title );
+        String message = context.getString( R.string.playerMap_needed );
+        new Builder( context ).setTitle( title ).setMessage( message ).create().show();
+    }
 }

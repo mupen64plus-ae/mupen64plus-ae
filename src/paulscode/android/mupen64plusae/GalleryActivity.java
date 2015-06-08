@@ -45,6 +45,8 @@ import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListene
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomDatabase;
+import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -754,29 +756,32 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
     {
         RomHeader romHeader = new RomHeader( romPath );
         GamePrefs gamePrefs = new GamePrefs( this, romMd5, romHeader );
+        
+        // Popup the multi-player dialog if necessary and abort if any players are unassigned
+        RomDatabase romDatabase = new RomDatabase( mAppData.mupen64plus_ini );
+        RomDetail romDetail = romDatabase.lookupByMd5WithFallback( romMd5, new File( romPath ) );
+        if( romDetail.players > 1 && gamePrefs.playerMap.isEnabled()
+                && mGlobalPrefs.getPlayerMapReminder() )
+        {
+            gamePrefs.playerMap.removeUnavailableMappings();
+            boolean needs1 = gamePrefs.isControllerEnabled1 && !gamePrefs.playerMap.isMapped( 1 );
+            boolean needs2 = gamePrefs.isControllerEnabled2 && !gamePrefs.playerMap.isMapped( 2 );
+            boolean needs3 = gamePrefs.isControllerEnabled3 && !gamePrefs.playerMap.isMapped( 3 )
+                    && romDetail.players > 2;
+            boolean needs4 = gamePrefs.isControllerEnabled4 && !gamePrefs.playerMap.isMapped( 4 )
+                    && romDetail.players > 3;
+            
+            if( needs1 || needs2 || needs3 || needs4 )
+            {
 // TODO FIXME
-//        // Popup the multi-player dialog if necessary and abort if any players are unassigned
-//        RomDatabase romDatabase = new RomDatabase( mAppData.mupen64plus_ini );
-//        RomDetail romDetail = romDatabase.lookupByMd5WithFallback( romMd5, new File( romPath ) );
-//        if( romDetail.players > 1 && gamePrefs.playerMap.isEnabled()
-//                && mGlobalPrefs.getPlayerMapReminder() )
-//        {
-//            gamePrefs.playerMap.removeUnavailableMappings();
-//            boolean needs1 = gamePrefs.isControllerEnabled1 && !gamePrefs.playerMap.isMapped( 1 );
-//            boolean needs2 = gamePrefs.isControllerEnabled2 && !gamePrefs.playerMap.isMapped( 2 );
-//            boolean needs3 = gamePrefs.isControllerEnabled3 && !gamePrefs.playerMap.isMapped( 3 )
-//                    && romDetail.players > 2;
-//            boolean needs4 = gamePrefs.isControllerEnabled4 && !gamePrefs.playerMap.isMapped( 4 )
-//                    && romDetail.players > 3;
-//            
-//            if( needs1 || needs2 || needs3 || needs4 )
-//            {
-//                @SuppressWarnings( "deprecation" )
-//                PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
-//                pref.show();
-//                return;
-//            }
-//        }
+//              @SuppressWarnings( "deprecation" )
+//              PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
+//              pref.show();
+//              return;
+                Popups.showNeedsPlayerMap( this );
+                return;
+            }
+        }
         
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
