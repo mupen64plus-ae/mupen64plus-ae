@@ -34,8 +34,11 @@ public:
 private:
 	void _copyWhite(FrameBuffer * _pBuffer);
 
-	struct RGBA {
-		u8 r, g, b, a;
+	union RGBA {
+		struct {
+			u8 r, g, b, a;
+		};
+		u32 raw;
 	};
 
 	GLuint m_FBO;
@@ -47,7 +50,7 @@ class DepthBufferToRDRAM
 {
 public:
 	DepthBufferToRDRAM() :
-		m_FBO(0), m_PBO(0), m_pColorTexture(NULL), m_pDepthTexture(NULL), m_lastDList(0)
+		m_FBO(0), m_PBO(0), m_pColorTexture(NULL), m_pDepthTexture(NULL)
 	{}
 
 	void Init();
@@ -60,7 +63,6 @@ private:
 	GLuint m_PBO;
 	CachedTexture * m_pColorTexture;
 	CachedTexture * m_pDepthTexture;
-	u32 m_lastDList;
 };
 #endif // GLES2
 
@@ -959,9 +961,7 @@ void FrameBufferToRDRAM::CopyToRDRAM(u32 _address)
 #ifndef GLES2
 	PBOBinder binder(GL_PIXEL_PACK_BUFFER, m_PBO);
 	glReadPixels(0, 0, VI.width, VI.height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	isGLError();
 	GLubyte* pixelData = (GLubyte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, VI.width * VI.height * 4, GL_MAP_READ_BIT);
-	isGLError();
 	if(pixelData == NULL)
 		return;
 #else
@@ -986,11 +986,12 @@ void FrameBufferToRDRAM::CopyToRDRAM(u32 _address)
 		}
 	} else {
 		u16 *ptr_dst = (u16*)(RDRAM + _address);
-		RGBA * ptr_src = (RGBA*)pixelData;
+		u32 * ptr_src = (u32*)pixelData;
+		RGBA c;
 
 		for (u32 y = 0; y < height; ++y) {
 			for (u32 x = 0; x < VI.width; ++x) {
-				const RGBA & c = ptr_src[x + (height - y - 1)*VI.width];
+				c.raw = ptr_src[x + (height - y - 1)*VI.width];
 				ptr_dst[(x + y*VI.width)^1] = ((c.r>>3)<<11) | ((c.g>>3)<<6) | ((c.b>>3)<<1) | (c.a == 0 ? 0 : 1);
 			}
 		}
@@ -1096,13 +1097,10 @@ void DepthBufferToRDRAM::Destroy() {
 bool DepthBufferToRDRAM::CopyToRDRAM( u32 _address) {
 	if (VI.width == 0) // H width is zero. Don't copy
 		return false;
-	if (m_lastDList == RSP.DList) // Already read;
-		return true;
 	FrameBuffer *pBuffer = frameBufferList().findBuffer(_address);
 	if (pBuffer == NULL || pBuffer->m_width < VI.width || pBuffer->m_pDepthBuffer == NULL || !pBuffer->m_pDepthBuffer->m_cleared)
 		return false;
 
-	m_lastDList = RSP.DList;
 	DepthBuffer * pDepthBuffer = pBuffer->m_pDepthBuffer;
 	const u32 address = pDepthBuffer->m_address;
 	if (address + VI.width*VI.height*2 > RDRAMSize)

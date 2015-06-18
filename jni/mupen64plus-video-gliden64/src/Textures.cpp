@@ -173,16 +173,14 @@ inline u32 GetCI16IA_RGBA4444(u64 *src, u16 x, u16 i, u8 palette)
 
 inline u32 GetCI16RGBA_RGBA8888(u64 *src, u16 x, u16 i, u8 palette)
 {
-	u16 tex = ((u16*)src)[x^i];
-	tex = (tex >> 8) | ((tex & 0xff) << 8);
-	return RGBA5551_RGBA8888(((u16*)&TMEM[256])[((tex >> 6) & ~3)]);
+	const u16 tex = (((u16*)src)[x^i])&0xFF;
+	return RGBA5551_RGBA8888(((u16*)&TMEM[256])[tex << 2]);
 }
 
 inline u32 GetCI16RGBA_RGBA5551(u64 *src, u16 x, u16 i, u8 palette)
 {
-	u16 tex = ((u16*)src)[x^i];
-	tex = (tex >> 8) | ((tex & 0xff) << 8);
-	return RGBA5551_RGBA5551(((u16*)&TMEM[256])[((tex >> 6) & ~3)]);
+	const u16 tex = (((u16*)src)[x^i]) & 0xFF;
+	return RGBA5551_RGBA5551(((u16*)&TMEM[256])[tex << 2]);
 }
 
 inline u32 GetRGBA5551_RGBA8888(u64 *src, u16 x, u16 i, u8 palette)
@@ -755,7 +753,7 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 	numBytes = bpl * gSP.bgImage.height;
 	pSwapped = (u8*)malloc(numBytes);
 	assert(pSwapped != NULL);
-	UnswapCopy(&RDRAM[gSP.bgImage.address], pSwapped, numBytes);
+	UnswapCopyWrap(RDRAM, gSP.bgImage.address, pSwapped, 0, RDRAMSize, numBytes);
 	pDest = (u32*)malloc(pTexture->textureBytes);
 	assert(pDest != NULL);
 
@@ -1434,6 +1432,9 @@ void getTextureShiftScale(u32 t, const TextureCache & cache, f32 & shiftScaleS, 
 		shiftScaleT = cache.current[t]->shiftScaleT;
 		return;
 	}
+
+	if (gDP.otherMode.textureLOD == G_TL_LOD && gSP.texture.level == gSP.texture.tile)
+		t = 0;
 
 	if (gSP.textureTile[t]->shifts > 10)
 		shiftScaleS = (f32)(1 << (16 - gSP.textureTile[t]->shifts));

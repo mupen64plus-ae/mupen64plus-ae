@@ -236,7 +236,15 @@ struct FBOTextureFormats
 	GLenum depthType;
 	u32 depthFormatBytes;
 
-	u32 pad[4];
+	GLint depthImageInternalFormat;
+	GLenum depthImageFormat;
+	GLenum depthImageType;
+	u32 depthImageFormatBytes;
+
+	GLint lutInternalFormat;
+	GLenum lutFormat;
+	GLenum lutType;
+	u32 lutFormatBytes;
 
 	void init();
 };

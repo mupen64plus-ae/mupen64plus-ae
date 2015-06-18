@@ -1,6 +1,6 @@
 #include <assert.h>
-#include <math.h>
 #include <stdio.h>
+#include <math.h>
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
 //// paulscode, added for SDL linkage:
@@ -877,15 +877,21 @@ bool texturedRectDepthBufferCopy(const OGLRender::TexturedRectParams & _params)
 	// Data from depth buffer loaded into TMEM and then rendered to RDRAM by texrect.
 	// Works only with depth buffer emulation enabled.
 	// Load of arbitrary data to that area causes weird camera rotation in CBFD.
+	static u32 lastDList = 0xFFFFFFFF;
 	const gDPTile * pTile = gSP.textureTile[0];
 	if (pTile->loadType == LOADTYPE_BLOCK && gDP.textureImage.size == 2 && gDP.textureImage.address >= gDP.depthImageAddress &&  gDP.textureImage.address < (gDP.depthImageAddress + gDP.colorImage.width*gDP.colorImage.width * 6 / 4)) {
-		if (config.frameBufferEmulation.enable == 0)
-			return true;
-		frameBufferList().getCurrent()->m_cleared = true;
 		if (config.frameBufferEmulation.copyDepthToRDRAM == 0)
 			return true;
-		if (FrameBuffer_CopyDepthBuffer(gDP.colorImage.address))
-			RDP_RepeatLastLoadBlock();
+		FrameBuffer * pBuffer = frameBufferList().getCurrent();
+		if (pBuffer == NULL)
+			return true;
+		pBuffer->m_cleared = true;
+		if (lastDList != RSP.DList) {
+			lastDList = RSP.DList;
+			if (!FrameBuffer_CopyDepthBuffer(gDP.colorImage.address))
+				return true;
+		}
+		RDP_RepeatLastLoadBlock();
 
 		const u32 width = (u32)(_params.lrx - _params.ulx);
 		const u32 ulx = (u32)_params.ulx;
@@ -1163,51 +1169,21 @@ void FBOTextureFormats::init()
 	monochromeType = GL_UNSIGNED_SHORT_5_6_5;
 	monochromeFormatBytes = 2;
 
-	const char * extensions = (const char *)glGetString(GL_EXTENSIONS);
+	depthInternalFormat = GL_DEPTH_COMPONENT;
+	depthFormat = GL_DEPTH_COMPONENT;
+	depthType = GL_UNSIGNED_INT;
+	depthFormatBytes = 4;
 
-	if (strstr((const char *)glGetString(GL_RENDERER), "Mali-400") != NULL)
-	{
-		if (strstr(extensions, "GL_OES_rgb8_rgba8") != NULL) {
-			colorInternalFormat = GL_RGBA;
-			colorFormat = GL_RGBA;
-			colorType = GL_UNSIGNED_BYTE;
-			colorFormatBytes = 4;
-		} else {
-			colorInternalFormat = GL_RGB;
-			colorFormat = GL_RGB;
-			colorType = GL_UNSIGNED_SHORT_5_6_5;
-			colorFormatBytes = 2;
-		}
-
-		depthInternalFormat = GL_DEPTH_COMPONENT;
-		depthFormat = GL_DEPTH_COMPONENT;
-		depthType = GL_UNSIGNED_INT;
-		depthFormatBytes = 2;
-		return;
-	}
-
-	if (strstr(extensions, "GL_OES_rgb8_rgba8") != NULL) {
-		colorInternalFormat = GL_RGBA8_OES;
+	if (strstr((const char *)glGetString(GL_EXTENSIONS), "GL_OES_rgb8_rgba8") != NULL) {
+		colorInternalFormat = GL_RGBA;
 		colorFormat = GL_RGBA;
 		colorType = GL_UNSIGNED_BYTE;
 		colorFormatBytes = 4;
 	} else {
-		colorInternalFormat = GL_RGB5_A1;
-		colorFormat = GL_RGBA;
-		colorType = GL_UNSIGNED_SHORT_5_5_5_1;
+		colorInternalFormat = GL_RGB;
+		colorFormat = GL_RGB;
+		colorType = GL_UNSIGNED_SHORT_5_6_5;
 		colorFormatBytes = 2;
-	}
-
-	if (strstr(extensions, "GL_OES_depth24") != NULL) {
-		depthInternalFormat = GL_DEPTH_COMPONENT24_OES;
-		depthFormat = GL_DEPTH_COMPONENT;
-		depthType = GL_UNSIGNED_INT;
-		depthFormatBytes = 3;
-	} else {
-		depthInternalFormat = GL_DEPTH_COMPONENT16;
-		depthFormat = GL_DEPTH_COMPONENT;
-		depthType = GL_UNSIGNED_INT;
-		depthFormatBytes = 2;
 	}
 #elif defined(GLES3) || defined (GLES3_1)
 	colorInternalFormat = GL_RGBA;
@@ -1224,6 +1200,16 @@ void FBOTextureFormats::init()
 	depthFormat = GL_DEPTH_COMPONENT;
 	depthType = GL_FLOAT;
 	depthFormatBytes = 4;
+
+	depthImageInternalFormat = GL_RGBA32F;
+	depthImageFormat = GL_RGBA;
+	depthImageType = GL_FLOAT;
+	depthImageFormatBytes = 16;
+
+	lutInternalFormat = GL_R32UI;
+	lutFormat = GL_RED;
+	lutType = GL_UNSIGNED_INT;
+	lutFormatBytes = 4;
 #else
 	colorInternalFormat = GL_RGBA;
 	colorFormat = GL_RGBA;
@@ -1239,6 +1225,17 @@ void FBOTextureFormats::init()
 	depthFormat = GL_DEPTH_COMPONENT;
 	depthType = GL_FLOAT;
 	depthFormatBytes = 4;
+
+	depthImageInternalFormat = GL_RG32F;
+	depthImageFormat = GL_RG;
+	depthImageType = GL_FLOAT;
+	depthImageFormatBytes = 8;
+
+	lutInternalFormat = GL_R16;
+	lutFormat = GL_RED;
+	lutType = GL_UNSIGNED_SHORT;
+	lutFormatBytes = 2;
+
 #endif
 }
 
