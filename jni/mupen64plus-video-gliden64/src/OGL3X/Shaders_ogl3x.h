@@ -365,7 +365,9 @@ AUXILIARY_SHADER_VERSION
 #else
 "  mediump vec2 dx = dFdx(vLodTexCoord);				\n"
 "  dx *= uScreenScale;									\n"
-"  mediump float lod = length(dx);						\n"
+"  mediump vec2 dy = dFdy(vLodTexCoord);				\n"
+"  dy *= uScreenScale;									\n"
+"  mediump float lod = max(length(dx), length(dy));		\n"
 #endif
 "  bool magnify = lod < 1.0;							\n"
 "  mediump float lod_tile = magnify ? 0.0 : floor(log2(floor(lod))); \n"
@@ -385,23 +387,39 @@ AUXILIARY_SHADER_VERSION
 "  lowp vec4 lodT = textureLod(uTex1, vTexCoord1, lod_tile);	\n"
 "  lowp vec4 lodT_m1 = textureLod(uTex1, vTexCoord1, lod_tile_m1);	\n"
 "  lowp vec4 lodT_p1 = textureLod(uTex1, vTexCoord1, lod_tile + 1.0);	\n"
-
-"  if ((uTextureDetail & 2) != 0)	{					\n"
-"    if (magnify)										\n"
-"      readtex1 = lodT;									\n"
-"    else {												\n"
-"      readtex0 = lodT;									\n"
-"      readtex1 = lodT_p1;								\n"
+"  if (lod_tile < 1.0) {								\n"
+"    if (magnify) {									\n"
+//     !sharpen && !detail
+"      if (uTextureDetail == 0) readtex1 = readtex0;	\n"
+"    } else {											\n"
+//     detail
+"      if ((uTextureDetail & 2) != 0 ) {				\n"
+"        readtex0 = lodT;								\n"
+"        readtex1 = lodT_p1;							\n"
+"      }												\n"
 "    }													\n"
 "  } else {												\n"
-"    if (!magnify)										\n"
+"    if ((uTextureDetail & 2) != 0 ) {							\n"
+"      readtex0 = lodT;									\n"
+"      readtex1 = lodT_p1;								\n"
+"    } else {											\n"
 "      readtex0 = lodT_m1;								\n"
-"    if (distant || (((uTextureDetail & 1) != 0) && magnify))	\n"
-"      readtex1 = readtex0;								\n"
-"    else												\n"
 "      readtex1 = lodT;									\n"
+"    }													\n"
 "  }													\n"
 "  return lod_frac;										\n"
+"}														\n"
+;
+
+static const char* fragment_shader_fake_mipmap =
+"uniform lowp int uMaxTile;			\n"
+"uniform mediump float uMinLod;		\n"
+"														\n"
+"mediump float mipmap(out lowp vec4 readtex0, out lowp vec4 readtex1) {	\n"
+"  readtex0 = texture(uTex0, vTexCoord0);				\n"
+"  readtex1 = texture(uTex1, vTexCoord1);				\n"
+"  if (uMaxTile == 0) return 1.0;						\n"
+"  return uMinLod;										\n"
 "}														\n"
 ;
 
