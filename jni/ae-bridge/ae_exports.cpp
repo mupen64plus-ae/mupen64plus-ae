@@ -55,15 +55,20 @@ typedef int         (*pSdlInit)         (JNIEnv* env, jclass cls);
 typedef void        (*pSdlSetScreen)    (int width, int height, Uint32 format);
 typedef void        (*pVoidFunc)        ();
 typedef m64p_error  (*pCoreDoCommand)   (m64p_command, int, void *);
+typedef m64p_error  (*pCoreAddCheat)    (const char *CheatName, m64p_cheat_code *CodeList, int NumCodes);
+typedef m64p_error  (*pCoreCheatEnabled) (const char *CheatName, int Enabled);
 typedef int         (*pFrontMain)       (int argc, char* argv[]);
 
+
 // Function pointers
-static pAeiInit         aeiInit         = NULL;
-static pSdlInit         sdlInit         = NULL;
-static pSdlSetScreen    sdlSetScreen    = NULL;
-static pVoidFunc        sdlMainReady    = NULL;
-static pCoreDoCommand   coreDoCommand   = NULL;
-static pFrontMain       frontMain       = NULL;
+static pAeiInit          aeiInit          = NULL;
+static pSdlInit          sdlInit          = NULL;
+static pSdlSetScreen     sdlSetScreen     = NULL;
+static pVoidFunc         sdlMainReady     = NULL;
+static pCoreDoCommand    coreDoCommand    = NULL;
+static pCoreAddCheat     coreAddCheat     = NULL;
+static pCoreCheatEnabled coreCheatEnabled = NULL;
+static pFrontMain        frontMain        = NULL;
 
 void checkLibraryError(const char* message)
 {
@@ -344,4 +349,14 @@ extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_
     int slot = 0;
     if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SAVESTATE_SLOT, &slot);
     return (jint) slot;
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_cheatAddCode(JNIEnv* env, jclass cls)
+{
+   //TODO: Implement
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_cheatSetEnabled(JNIEnv* env, jclass cls)
+{
+   //TODO: Implement
 }

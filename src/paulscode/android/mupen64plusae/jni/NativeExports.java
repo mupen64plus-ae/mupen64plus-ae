@@ -76,4 +76,8 @@ public class NativeExports
     public static native boolean emuGetFramelimiter();
     
     public static native int emuGetSlot();
+    
+    public static native void cheatAddCode();
+    
+    public static native void cheatSetEnabled();
 }
