@@ -28,7 +28,9 @@ include $(JNI_LOCAL_PATH)/mupen64plus-audio-sdl.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-audio-sles/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-core.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-input-android/Android.mk
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 include $(JNI_LOCAL_PATH)/xperia-touchpad/Android.mk
+endif
 include $(JNI_LOCAL_PATH)/mupen64plus-rsp-hle.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-ui-console.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-glidenhq.mk
