@@ -272,7 +272,8 @@ public class AppData
                 libraryExists( "mupen64plus-video-gln64" )              &&
                 libraryExists( "mupen64plus-video-rice" )               &&
                 libraryExists( "SDL2" )                                 &&
-                libraryExists( "xperia-touchpad" );
+                (hardwareInfo.isXperiaPlay&&libraryExists( "xperia-touchpad" ))      ||
+                (!hardwareInfo.isXperiaPlay);
         // @formatter:on
         
         // Preference object for persisting app data
