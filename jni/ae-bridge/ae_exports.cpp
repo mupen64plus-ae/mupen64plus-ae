@@ -59,7 +59,6 @@ typedef m64p_error  (*pCoreAddCheat)    (const char *CheatName, m64p_cheat_code 
 typedef m64p_error  (*pCoreCheatEnabled) (const char *CheatName, int Enabled);
 typedef int         (*pFrontMain)       (int argc, char* argv[]);
 
-
 // Function pointers
 static pAeiInit          aeiInit          = NULL;
 static pSdlInit          sdlInit          = NULL;
@@ -161,12 +160,14 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     JNI_OnLoad1 = NULL;
 
     // Find library functions
-    aeiInit       = (pAeiInit)       locateFunction(handleAEI,   "ae-imports",             "Android_JNI_InitImports");
-    sdlInit       = (pSdlInit)       locateFunction(handleSDL,   "SDL2",                   "SDL_Android_Init");
-    sdlSetScreen  = (pSdlSetScreen)  locateFunction(handleSDL,   "SDL2",                   "Android_SetScreenResolution");
-    sdlMainReady  = (pVoidFunc)      locateFunction(handleSDL,   "SDL2",                   "SDL_SetMainReady");
-    coreDoCommand = (pCoreDoCommand) locateFunction(handleCore,  "mupen64plus-core",       "CoreDoCommand");
-    frontMain     = (pFrontMain)     locateFunction(handleFront, "mupen64plus-ui-console", "SDL_main");
+    aeiInit          = (pAeiInit)          locateFunction(handleAEI,   "ae-imports",             "Android_JNI_InitImports");
+    sdlInit          = (pSdlInit)          locateFunction(handleSDL,   "SDL2",                   "SDL_Android_Init");
+    sdlSetScreen     = (pSdlSetScreen)     locateFunction(handleSDL,   "SDL2",                   "Android_SetScreenResolution");
+    sdlMainReady     = (pVoidFunc)         locateFunction(handleSDL,   "SDL2",                   "SDL_SetMainReady");
+    coreDoCommand    = (pCoreDoCommand)    locateFunction(handleCore,  "mupen64plus-core",       "CoreDoCommand");
+    coreAddCheat     = (pCoreAddCheat)     locateFunction(handleCore,  "mupen64plus-core",       "CoreAddCheat");
+    coreCheatEnabled = (pCoreCheatEnabled) locateFunction(handleCore,  "mupen64plus-core",       "CoreCheatEnabled");
+    frontMain        = (pFrontMain)        locateFunction(handleFront, "mupen64plus-ui-console", "SDL_main");
 
     // Make sure we don't have any typos
     if (!aeiInit || !sdlInit || !sdlSetScreen || !sdlMainReady || !coreDoCommand || !frontMain)
@@ -351,12 +352,30 @@ extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_
     return (jint) slot;
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_cheatAddCode(JNIEnv* env, jclass cls)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_cheatAddCode(JNIEnv* env, jclass cls, jstring name, jintArray addresses, jintArray values, jint numCodes)
 {
-   //TODO: Implement
+	const char *nativeCheatName = env->GetStringUTFChars(name, 0);
+	jint *nativeAddrs = env->GetIntArrayElements(addresses, 0);
+	jint *nativeValues = env->GetIntArrayElements(values, 0);
+
+	m64p_cheat_code *cheatList = (m64p_cheat_code *) malloc(numCodes * sizeof(m64p_cheat_code));
+	int i;
+	for(i=0; i<numCodes; i++)
+	{
+		cheatList[i].address = (uint32_t) nativeAddrs[i];
+		cheatList[i].value = (int) nativeValues[i];
+	}
+	if(coreAddCheat) coreAddCheat(nativeCheatName, cheatList, numCodes);
+	env->ReleaseIntArrayElements(values, nativeValues, 0);
+	env->ReleaseIntArrayElements(addresses, nativeAddrs, 0);
+	env->ReleaseStringUTFChars(name, nativeCheatName);
+
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_cheatSetEnabled(JNIEnv* env, jclass cls)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_cheatSetEnabled(JNIEnv* env, jclass cls, jstring name, jboolean enabled)
 {
-   //TODO: Implement
+
+	const char *nativeCheatName = env->GetStringUTFChars(name, 0);
+	if(coreCheatEnabled) coreCheatEnabled(nativeCheatName, (enabled==JNI_TRUE));
+	env->ReleaseStringUTFChars(name, nativeCheatName);
 }

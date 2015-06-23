@@ -77,7 +77,7 @@ public class NativeExports
     
     public static native int emuGetSlot();
     
-    public static native void cheatAddCode();
+    public static native void cheatAddCode(String name, int[] addresses, int[] values, int numCodes);
     
-    public static native void cheatSetEnabled();
+    public static native void cheatSetEnabled(String name, boolean enabled);
 }
