@@ -318,6 +318,15 @@ void OGLRender::addTriangle(int _v0, int _v1, int _v2)
 			vtx.z = gDP.primDepth.z * vtx.w;
 		}
 	}
+
+#ifdef GLESX
+	if (GBI.isNoN() && gDP.otherMode.depthCompare == 0 && gDP.otherMode.depthUpdate == 0) {
+		for (u32 i = triangles.num - 3; i < triangles.num; ++i) {
+			SPVertex & vtx = triangles.vertices[triangles.elements[i]];
+			vtx.z = 0.0f;
+		}
+	}
+#endif
 }
 
 void OGLRender::_setBlendMode() const
@@ -1063,10 +1072,10 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 
 			glActiveTexture(GL_TEXTURE0 + t);
 
-			if ((cache.current[t]->mirrorS == 0) && ((texST[t].s0 < texST[t].s1 && texST[t].s0 >= 0.0 && texST[t].s1 <= cache.current[t]->width) || (cache.current[t]->maskS == 0 && (texST[t].s0 < -1024.0f || texST[t].s1 > 1023.99f))))
+			if ((cache.current[t]->mirrorS == 0 && cache.current[t]->maskS == 0 && texST[t].s0 < texST[t].s1 && texST[t].s0 >= 0.0 && texST[t].s1 <= (float)cache.current[t]->width) || (cache.current[t]->maskS == 0 && (texST[t].s0 < -1024.0f || texST[t].s1 > 1023.99f)))
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 
-			if (cache.current[t]->mirrorT == 0 && texST[t].t0 < texST[t].t1 && texST[t].t0 >= 0.0f && texST[t].t1 <= cache.current[t]->height)
+			if (cache.current[t]->mirrorT == 0 && cache.current[t]->maskT == 0 && texST[t].t0 < texST[t].t1 && texST[t].t0 >= 0.0f && texST[t].t1 <= (float)cache.current[t]->height)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 			texST[t].s0 *= cache.current[t]->scaleS;
