@@ -146,7 +146,6 @@ public class EmulationProfileActivity extends ProfileActivity
             boolean isGles31 = GLES31.equals( videoSubPlugin );
             findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 );
             findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
-            findPreference( GLIDEN64_ENABLE_COPY_COLOR_TO_RDRAM ).setEnabled( !isGles20 );
             findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
             findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 );
         }
