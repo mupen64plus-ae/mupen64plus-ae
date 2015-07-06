@@ -163,6 +163,9 @@ public class NativeConfigFiles
         putGliden64( mupen64plus_cfg, game, "bloomBlendMode", "0" );                                                        // Bloom blend mode (0=Strong, 1=Mild, 2=Light)
         putGliden64( mupen64plus_cfg, game, "blurAmount", "10" );                                                           // Blur radius. Values [2, 10]
         putGliden64( mupen64plus_cfg, game, "blurStrength", "20" );                                                         // Blur strength. Values [10, 100]
+        mupen64plus_cfg.put( "Video-GLideN64", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );       // If true, use polygon offset values specified below
+        mupen64plus_cfg.put( "Video-GLideN64", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );        // Specifies a scale factor that is used to create a variable depth offset for each polygon
+        mupen64plus_cfg.put( "Video-GLideN64", "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );         // Is multiplied by an implementation-specific value to create a constant depth offset
         
         mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );           // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );            // Specifies a scale factor that is used to create a variable depth offset for each polygon
