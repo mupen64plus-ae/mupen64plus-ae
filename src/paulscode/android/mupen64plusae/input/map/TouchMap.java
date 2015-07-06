@@ -439,6 +439,38 @@ public class TouchMap
     }
     
     /**
+     * Update the position of a button.
+     * 
+     * @param profile  The name of the layout profile.
+     * @param name     The name of the button.
+     */
+    public void updateButton( Profile profile, String name )
+    {
+        int x = profile.getInt( name + "-x", -1 );
+        int y = profile.getInt( name + "-y", -1 );
+        
+        if( x >= 0 && y >= 0 )
+        {
+            if( name.equals( "analog" ) )
+            {
+                analogBackX = x;
+                analogBackY = y;
+            }
+            else
+            {
+                for( int i = 0; i < buttonNames.size(); i++ )
+                {
+                    if ( buttonNames.get( i ).equals( name ) )
+                    {
+                        buttonX.set( i, x );
+                        buttonY.set( i, y );
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
      * Loads the mask colors from a configuration file.
      * 
      * @param skin_ini The configuration file containing mask info.

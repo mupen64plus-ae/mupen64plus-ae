@@ -456,6 +456,18 @@ public class VisibleTouchMap extends TouchMap
         resize( cacheWidth, cacheHeight, cacheMetrics );
     }
     
+    /**
+     * Refreshes the position of a touchscreen button image.
+     *
+     * @param profile    The name of the touchscreen profile.
+     * @param name       The name of the button.
+     */
+    public void refreshButtonPosition( Profile profile, String name )
+    {
+        super.updateButton( profile, name );
+        resize( cacheWidth, cacheHeight, cacheMetrics );
+    }
+    
     /*
      * (non-Javadoc)
      * 

@@ -483,7 +483,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                     dragY = newDragY;
                     mProfile.put( dragAsset + TAG_X, String.valueOf( newDragX ) );
                     mProfile.put( dragAsset + TAG_Y, String.valueOf( newDragY ) );
-                    refresh();
+                    mTouchscreenMap.refreshButtonPosition( mProfile, dragAsset );
+                    mOverlay.postInvalidate();
                 }
             }
         }
