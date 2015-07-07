@@ -222,6 +222,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
         mSurface.setLayoutParams( params );
         
+        // Update the screen orientation in case global settings changed
+        this.setRequestedOrientation( mGlobalPrefs.displayOrientation );
+        
         // Refresh the touchscreen controls
         refresh();
     }

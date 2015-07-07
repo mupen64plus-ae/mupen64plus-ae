@@ -122,7 +122,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_INPUT );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_DATA );
                 PrefUtil.removePreference( this, SCREEN_ROOT, ACTION_RESET_USER_PREFS );
-                PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_ORIENTATION );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_RESOLUTION );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_FPS_REFRESH );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_HARDWARE_TYPE );
