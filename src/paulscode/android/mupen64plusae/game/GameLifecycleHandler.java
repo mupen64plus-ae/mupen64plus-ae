@@ -261,10 +261,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources() );
             mTouchscreenMap.load( mGlobalPrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
-                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled,
+                    mGamePrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled,
                     mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
             mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden,
-                    mGlobalPrefs.isFpsEnabled, mGlobalPrefs.isTouchscreenAnimated );
+                    mGlobalPrefs.isFpsEnabled, mGamePrefs.isTouchscreenAnimated );
         }
         
         // Initialize user interface devices

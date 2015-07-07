@@ -110,6 +110,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     // Don't enter immersive mode until the ActionBar menus are closed
     private boolean actionBarMenuOpen = false;
     
+    // True if the touchscreen joystick is animated
+    private boolean isTouchscreenAnimated;
+    
     @SuppressLint( "ClickableViewAccessibility" )
     @TargetApi( 11 )
     @Override
@@ -183,10 +186,12 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             });
         }
         
+        isTouchscreenAnimated = mProfile.get( "touchscreenAnimated", "False" ).equals( "True" );
+        
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
-        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, mGlobalPrefs.isTouchscreenAnimated );
+        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, isTouchscreenAnimated );
     }
     
     @TargetApi( 11 )
@@ -194,7 +199,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     {
         // Reposition the assets and refresh the overlay and options menu
         mTouchscreenMap.load( mGlobalPrefs.touchscreenSkin, mProfile,
-                mGlobalPrefs.isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
+                isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
         mOverlay.postInvalidate();
         if( AppData.IS_HONEYCOMB )
@@ -561,6 +566,27 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                         refresh();
                     }
                 } );
+        
+        // Setup the visual feedback checkbox
+        CheckBox feedback = (CheckBox) view.findViewById( R.id.checkBox_feedback );
+        if( assetName.equals("analog") )
+        {
+            feedback.setChecked( isTouchscreenAnimated );
+            feedback.setOnCheckedChangeListener( new OnCheckedChangeListener()
+            {
+                @Override
+                public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
+                {
+                    mProfile.put( "touchscreenAnimated", ( isChecked ? "True" : "False" ) );
+                    isTouchscreenAnimated = isChecked;
+                    refresh();
+                }
+            } );
+        }
+        else
+        {
+            feedback.setVisibility( View.GONE );
+        }
         
         // Setup the auto-holdability checkbox
         CheckBox holdable = (CheckBox) view.findViewById( R.id.checkBox_holdable );

@@ -177,6 +177,9 @@ public class GamePrefs
     /** True if any type of AbstractController is enabled for Player 4. */
     public final boolean isPlugged4;
     
+    /** True if the touchscreen joystick is animated. */
+    public final boolean isTouchscreenAnimated;
+    
     /** Game CRC */
     public final String crc;
     
@@ -265,6 +268,7 @@ public class GamePrefs
         
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null;
+        isTouchscreenAnimated = touchscreenProfile.get( "touchscreenAnimated", "False" ).equals( "True" );
         
         // Determine the touchscreen layout
         boolean isCustom = false;
@@ -287,7 +291,7 @@ public class GamePrefs
                 if( layout.equals( "Mupen64Plus-AE-Analog" )
                         || layout.equals( "Mupen64Plus-AE-All" ) )
                 {
-                    if( globalPrefs.isTouchscreenAnimated )
+                    if( isTouchscreenAnimated )
                         layout += "-Stick";
                     else
                         layout += "-Nostick";

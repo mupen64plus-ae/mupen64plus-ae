@@ -202,12 +202,6 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="touchscreenAnimation"
-            android:summary="@string/touchscreenAnimation_summary"
-            android:title="@string/touchscreenAnimation_title" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
             android:key="touchscreenFeedback"
             android:summary="@string/touchscreenFeedback_summary"
             android:title="@string/touchscreenFeedback_title" />
