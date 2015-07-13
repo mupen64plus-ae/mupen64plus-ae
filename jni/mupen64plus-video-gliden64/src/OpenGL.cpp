@@ -1336,6 +1336,10 @@ void OGLRender::_initData()
 	for (u32 i = 0; i < VERTBUFF_SIZE; ++i)
 		triangles.vertices[i].w = 1.0f;
 	triangles.num = 0;
+
+#ifdef ANDROID
+    __android_log_write(ANDROID_LOG_DEBUG, "GLideN64", "Finish render initialization.\n");
+#endif
 }
 
 void OGLRender::_destroyData()
