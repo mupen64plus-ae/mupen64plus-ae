@@ -25,6 +25,8 @@ import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import tv.ouya.console.api.OuyaFacade;
+import android.app.UiModeManager;
+import android.content.res.Configuration;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -178,6 +180,9 @@ public class AppData
     /** Whether the installation is valid. */
     public final boolean isValidInstallation;
     
+    /** True if this is android TV hardware */
+    public final boolean isAndroidTv;
+    
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
     
@@ -197,7 +202,7 @@ public class AppData
      * 
      * @param context The application context.
      */
-    @TargetApi( 9 )
+    @TargetApi( 13 )
     public AppData( Context context )
     {
         hardwareInfo = new HardwareInfo();
@@ -278,6 +283,16 @@ public class AppData
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
+        
+        if (AppData.IS_ICE_CREAM_SANDWICH)
+        {
+            UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
+            isAndroidTv = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+        }
+        else
+        {
+            isAndroidTv = false;
+        }
     }
     
     /**
