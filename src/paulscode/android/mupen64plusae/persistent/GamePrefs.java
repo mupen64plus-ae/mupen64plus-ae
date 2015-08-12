@@ -203,17 +203,17 @@ public class GamePrefs
         
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, "emulationProfile",
-                GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
+                globalPrefs.getEmulationProfileDefault(),
                 globalPrefs.emulationProfiles_cfg, appData.emulationProfiles_cfg );
         
         // Touchscreen profile
         touchscreenProfile = loadProfile( mPreferences, "touchscreenProfile",
-                GlobalPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT,
+                globalPrefs.getTouchscreenProfileDefault(),
                 globalPrefs.touchscreenProfiles_cfg, appData.touchscreenProfiles_cfg );
         
         // Controller profiles
         controllerProfile1 = loadControllerProfile( mPreferences, "controllerProfile1",
-                GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.getControllerProfileDefault(),
                 globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
         controllerProfile2 = loadControllerProfile( mPreferences, "controllerProfile2",
                 "",
@@ -404,7 +404,7 @@ public class GamePrefs
         final ConfigFile custom = new ConfigFile( customPath );
         final ConfigFile builtin = new ConfigFile( builtinPath );
         final String name = prefs.getString( key, defaultName );
-        
+
         if( TextUtils.isEmpty( name ) )
             return null;
         else if( custom.keySet().contains( name ) )
