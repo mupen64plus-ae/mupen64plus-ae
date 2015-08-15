@@ -192,11 +192,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         if(mLoadRomPath != null)
         {
             mGamePrefs = new GamePrefs( mActivity, mRomMd5, new RomHeader( mLoadRomPath ) );
+            mCheatArgs =  mGamePrefs.getCheatArgs();
         }
 
         mGlobalPrefs.enforceLocale( mActivity );
-        
-        mCheatArgs =  mGamePrefs.getCheatArgs();
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
@@ -259,7 +258,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         }
         
         // Initialize the screen elements
-        if( mGamePrefs.isTouchscreenEnabled || mGlobalPrefs.isFpsEnabled )
+        if( mLoadRomPath != null && (mGamePrefs.isTouchscreenEnabled || mGlobalPrefs.isFpsEnabled ) )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources() );
@@ -398,7 +397,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         }
         
         // Create the touchscreen controls
-        if( mGamePrefs.isTouchscreenEnabled )
+        if( mLoadRomPath != null && mGamePrefs.isTouchscreenEnabled )
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
