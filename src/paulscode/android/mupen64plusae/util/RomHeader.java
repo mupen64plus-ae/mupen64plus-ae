@@ -208,6 +208,11 @@ public final class RomHeader
             Log.w( "RomHeader", "ROM file could not be read" );
             buffer = null;
         }
+        catch( NullPointerException e )
+        {
+            Log.w( "RomHeader", "File does not exist" );
+            buffer = null;
+        }
         finally
         {
             try

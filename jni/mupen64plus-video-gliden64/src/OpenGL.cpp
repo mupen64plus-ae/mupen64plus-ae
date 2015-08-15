@@ -1075,7 +1075,7 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 			if ((cache.current[t]->mirrorS == 0 && cache.current[t]->maskS == 0 && texST[t].s0 < texST[t].s1 && texST[t].s0 >= 0.0 && texST[t].s1 <= (float)cache.current[t]->width) || (cache.current[t]->maskS == 0 && (texST[t].s0 < -1024.0f || texST[t].s1 > 1023.99f)))
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 
-			if (cache.current[t]->mirrorT == 0 && cache.current[t]->maskT == 0 && texST[t].t0 < texST[t].t1 && texST[t].t0 >= 0.0f && texST[t].t1 <= (float)cache.current[t]->height)
+			if (cache.current[t]->mirrorT == 0 && texST[t].t0 < texST[t].t1 && texST[t].t0 >= 0.0f && texST[t].t1 <= (float)cache.current[t]->height)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 			texST[t].s0 *= cache.current[t]->scaleS;
@@ -1298,8 +1298,14 @@ void OGLRender::_initStates()
 		glDisable( GL_POLYGON_OFFSET_FILL );
 		glDepthFunc( GL_ALWAYS );
 		glDepthMask( FALSE );
-	} else
-		glPolygonOffset( -3.0f, -3.0f );
+	} else {
+#ifdef ANDROID
+		if(config.generalEmulation.forcePolygonOffset != 0)
+			glPolygonOffset(config.generalEmulation.polygonOffsetFactor, config.generalEmulation.polygonOffsetUnits);
+		else
+#endif
+			glPolygonOffset(-3.0f, -3.0f);
+	}
 
 	OGLVideo & ogl = video();
 	glViewport(0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
@@ -1336,10 +1342,6 @@ void OGLRender::_initData()
 	for (u32 i = 0; i < VERTBUFF_SIZE; ++i)
 		triangles.vertices[i].w = 1.0f;
 	triangles.num = 0;
-
-#ifdef ANDROID
-    __android_log_write(ANDROID_LOG_DEBUG, "GLideN64", "Finish render initialization.\n");
-#endif
 }
 
 void OGLRender::_destroyData()

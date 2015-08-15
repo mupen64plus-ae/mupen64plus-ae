@@ -38,6 +38,7 @@ import java.util.zip.ZipFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -133,7 +134,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             RomHeader header = new RomHeader( file );
             if( header.isValid )
             {
-                cacheFile( file, database, config );
+                cacheFile( file, database, config, file );
             }
             else if( header.isZip && mSearchZips )
             {
@@ -153,11 +154,16 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
                         try
                         {
                             InputStream zipStream = zipFile.getInputStream( zipEntry );
-                            File extractedFile = extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
+                            mProgress.setMessage( R.string.cacheRomInfo_extractingZip );
+                            File extractedFile = GalleryActivity.extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
                             
                             if( isCancelled() ) break;
                             if( extractedFile != null )
-                                cacheFile( extractedFile, database, config );
+                            {
+                                cacheFile( extractedFile, database, config, file );
+                                extractedFile.delete();
+                            }
+
                             zipStream.close();
                         }
                         catch( IOException e )
@@ -225,7 +231,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         return result;
     }
     
-    private void cacheFile( File file, RomDatabase database, ConfigFile config )
+    private void cacheFile( File file, RomDatabase database, ConfigFile config, File fileLocation )
     {
         if( isCancelled() ) return;
         mProgress.setMessage( R.string.cacheRomInfo_computingMD5 );
@@ -238,7 +244,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         config.put( md5, "goodName", detail.goodName );
         if (detail.baseName != null && detail.baseName.length() != 0)
             config.put( md5, "baseName", detail.baseName );
-        config.put( md5, "romPath", file.getAbsolutePath() );
+        config.put( md5, "romPath", fileLocation.getAbsolutePath() );
         config.put( md5, "artPath", artPath );
         
         if( mDownloadArt )
@@ -251,73 +257,6 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         if( isCancelled() ) return;
         mProgress.setMessage( R.string.cacheRomInfo_refreshingUI );
         this.publishProgress( config.get( md5 ) );
-    }
-    
-    private File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )
-    {
-        if( zipEntry.isDirectory() )
-            return null;
-        
-        // Read the first 4 bytes of the entry
-        byte[] buffer = new byte[1024];
-        try
-        {
-            if( inStream.read( buffer, 0, 4 ) != 4 )
-                return null;
-        }
-        catch( IOException e )
-        {
-            Log.w( "CacheRomInfoTask", e );
-            return null;
-        }
-        
-        // See if this entry is a valid ROM (copy array in case RomHeader mutates it)
-        if( !new RomHeader( new byte[] { buffer[0], buffer[1], buffer[2], buffer[3] } ).isValid )
-            return null;
-        
-        // This entry appears to be a valid ROM, extract it
-        Log.i( "CacheRomInfoTask", "Found zip entry " + zipEntry.getName() );
-        mProgress.setMessage( R.string.cacheRomInfo_extractingZip );
-        String entryName = new File( zipEntry.getName() ).getName();
-        File extractedFile = new File( destDir, entryName );
-        try
-        {
-            // Open the output stream (throws exceptions)
-            OutputStream outStream = new FileOutputStream( extractedFile );
-            try
-            {
-                // Buffer the stream
-                outStream = new BufferedOutputStream( outStream );
-                
-                // Write the first four bytes we already peeked at (throws exceptions)
-                outStream.write( buffer, 0, 4 );
-                
-                // Read/write the remainder of the zip entry (throws exceptions)
-                int n;
-                while( ( n = inStream.read( buffer ) ) >= 0 )
-                {
-                    if( isCancelled() )
-                        return null;
-                    outStream.write( buffer, 0, n );
-                }
-                return extractedFile;
-            }
-            catch( IOException e )
-            {
-                Log.w( "CacheRomInfoTask", e );
-                return null;
-            }
-            finally
-            {
-                // Flush output stream and guarantee no memory leaks
-                outStream.close();
-            }
-        }
-        catch( IOException e )
-        {
-            Log.w( "CacheRomInfoTask", e );
-            return null;
-        }
     }
     
     private static Throwable touchFile( String destPath )
