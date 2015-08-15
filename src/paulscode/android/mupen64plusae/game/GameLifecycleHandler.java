@@ -643,6 +643,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             if(!lbFound)
             {
                 mLoadRomPath = null;
+                mIsExtracted = true;
             }
         }
     }
