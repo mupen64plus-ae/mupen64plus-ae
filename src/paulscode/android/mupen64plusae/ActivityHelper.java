@@ -55,7 +55,6 @@ public class ActivityHelper
         //@formatter:off
         public static final String ROM_PATH             = NAMESPACE + "ROM_PATH";
         public static final String ROM_MD5              = NAMESPACE + "ROM_MD5";
-        public static final String CHEAT_ARGS           = NAMESPACE + "CHEAT_ARGS";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String MENU_DISPLAY_MODE    = NAMESPACE + "MENU_DISPLAY_MODE";
@@ -115,14 +114,13 @@ public class ActivityHelper
     }
     
     public static void startGameActivity( Context context, String romPath, String romMd5,
-            String cheatArgs, boolean doRestart, boolean isXperiaPlay )
+            boolean doRestart, boolean isXperiaPlay )
     {
         Intent intent = isXperiaPlay
                 ? new Intent( context, GameActivityXperiaPlay.class )
                 : new Intent( context, GameActivity.class );
         intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
-        intent.putExtra( ActivityHelper.Keys.CHEAT_ARGS, cheatArgs );
         intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
         context.startActivity( intent );
     }

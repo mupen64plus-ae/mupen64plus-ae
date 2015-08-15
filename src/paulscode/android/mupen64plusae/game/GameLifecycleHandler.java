@@ -20,11 +20,20 @@
  */
 package paulscode.android.mupen64plusae.game;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.GalleryActivity;
+import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
@@ -45,7 +54,10 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
+import paulscode.android.mupen64plusae.task.ComputeMd5Task;
+import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
+import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -123,8 +135,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     
     // Intent data
     private final String mRomPath;
+    private String mLoadRomPath;
+    private boolean mIsZip;
+    private boolean mIsExtracted;
     private final String mRomMd5;
-    private final String mCheatArgs;
+    private String mCheatArgs;
     private final boolean mDoRestart;
     
     // Lifecycle state tracking
@@ -149,10 +164,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
         mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
-        mCheatArgs = extras.getString( ActivityHelper.Keys.CHEAT_ARGS );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
+        
+        mIsZip = false;
+        mIsExtracted = false;
     }
     
     @TargetApi( 11 )
@@ -167,8 +184,19 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // Get app data and user preferences
         mGlobalPrefs = new GlobalPrefs( mActivity );
-        mGamePrefs = new GamePrefs( mActivity, mRomMd5, new RomHeader( mRomPath ) );
+        
+        //This must be called before game preferences are loaded, otherwise the game will not
+        //have been extracted yet
+        ExtractFilesIfNeeded();
+        
+        if(mLoadRomPath != null)
+        {
+            mGamePrefs = new GamePrefs( mActivity, mRomMd5, new RomHeader( mLoadRomPath ) );
+        }
+
         mGlobalPrefs.enforceLocale( mActivity );
+        
+        mCheatArgs =  mGamePrefs.getCheatArgs();
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
@@ -204,7 +232,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
         // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( mActivity, mSurface, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
+        if(mLoadRomPath != null)
+        {
+            CoreInterface.initialize( mActivity, mSurface, mLoadRomPath, mRomMd5, mCheatArgs, mDoRestart );
+        }
+
         
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );
@@ -388,38 +420,73 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             }
         }
         
-        // Create the input providers shared among all peripheral controllers
-        mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
-                mGlobalPrefs.unmappableKeyCodes );
-        MogaProvider mogaProvider = new MogaProvider( mMogaController );
-        AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1
-                ? new AxisProvider( inputSource )
-                : null;
+        //Check for controller configuration
+        boolean needs1 = false;
+        boolean needs2 = false;
+        boolean needs3 = false;
+        boolean needs4 = false;
+        AppData appData = new AppData(mActivity);
         
-        // Create the peripheral controls to handle key/stick presses
-        if( mGamePrefs.isControllerEnabled1 )
+        if(mLoadRomPath != null)
         {
-            ControllerProfile p = mGamePrefs.controllerProfile1;
-            mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
-        }
-        if( mGamePrefs.isControllerEnabled2 )
-        {
-            ControllerProfile p = mGamePrefs.controllerProfile2;
-            mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
-        }
-        if( mGamePrefs.isControllerEnabled3 )
-        {
-            ControllerProfile p = mGamePrefs.controllerProfile3;
-            mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
-        }
-        if( mGamePrefs.isControllerEnabled4 )
-        {
-            ControllerProfile p = mGamePrefs.controllerProfile4;
-            mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+            // Popup the multi-player dialog if necessary and abort if any players are unassigned
+            RomDatabase romDatabase = new RomDatabase( appData.mupen64plus_ini );
+            RomDetail romDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, new File( mLoadRomPath ) );
+            if( romDetail.players > 1 && mGamePrefs.playerMap.isEnabled()
+                    && mGlobalPrefs.getPlayerMapReminder() )
+            {
+                mGamePrefs.playerMap.removeUnavailableMappings();
+                needs1 = mGamePrefs.isControllerEnabled1 && !mGamePrefs.playerMap.isMapped( 1 );
+                needs2 = mGamePrefs.isControllerEnabled2 && !mGamePrefs.playerMap.isMapped( 2 );
+                needs3 = mGamePrefs.isControllerEnabled3 && !mGamePrefs.playerMap.isMapped( 3 )
+                        && romDetail.players > 2;
+                needs4 = mGamePrefs.isControllerEnabled4 && !mGamePrefs.playerMap.isMapped( 4 )
+                        && romDetail.players > 3;
+                
+                if( needs1 || needs2 || needs3 || needs4 )
+                {
+    // TODO FIXME
+//                  @SuppressWarnings( "deprecation" )
+//                  PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
+//                  pref.show();
+//                  return;
+                    Popups.showNeedsPlayerMap( mActivity );
+                }
+            }
+            
+            // Create the input providers shared among all peripheral controllers
+            mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
+                    mGlobalPrefs.unmappableKeyCodes );
+            MogaProvider mogaProvider = new MogaProvider( mMogaController );
+            AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1
+                    ? new AxisProvider( inputSource )
+                    : null;
+            
+            // Create the peripheral controls to handle key/stick presses
+            if( mGamePrefs.isControllerEnabled1 && !needs1)
+            {
+                ControllerProfile p = mGamePrefs.controllerProfile1;
+                mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                        p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+            }
+            if( mGamePrefs.isControllerEnabled2 && !needs2)
+            {
+                ControllerProfile p = mGamePrefs.controllerProfile2;
+                mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                        p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+            }
+            if( mGamePrefs.isControllerEnabled3 && !needs3)
+            {
+                ControllerProfile p = mGamePrefs.controllerProfile3;
+                mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                        p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+            }
+            if( mGamePrefs.isControllerEnabled4 && !needs4)
+            {
+                ControllerProfile p = mGamePrefs.controllerProfile4;
+                mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                        p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+            }
         }
     }
     
@@ -472,8 +539,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     
     private void tryRunning()
     {
+        ExtractFilesIfNeeded();
+        
         int state = NativeExports.emuGetState();
-        if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ) )
+        if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ) && mLoadRomPath != null)
         {
             switch( state )
             {
@@ -504,6 +573,78 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             // Never go directly from running to stopped; always pause (and autosave) first
             tryPausing();
             CoreInterface.shutdownEmulator();
+            
+            //Extracted file is no longer needed
+            if(mIsZip && mLoadRomPath != null)
+            {
+                File romPath = new File(mLoadRomPath);
+                romPath.delete();
+                mIsExtracted = false;
+            }
+        }
+    }
+    
+    private void ExtractFilesIfNeeded()
+    {
+        RomHeader romHeader = new RomHeader( mRomPath );
+
+        mIsZip = romHeader.isZip;
+
+        if(mIsZip && !mIsExtracted)
+        {
+            boolean lbFound = false;
+            
+            try
+            {
+                ZipFile zipFile = new ZipFile( mRomPath );
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while( entries.hasMoreElements() && !lbFound)
+                {
+                    ZipEntry zipEntry = entries.nextElement();
+                    
+                    try
+                    {
+                        InputStream zipStream = zipFile.getInputStream( zipEntry );
+                        File tempRomPath = GalleryActivity.extractRomFile( new File( mGlobalPrefs.unzippedRomsDir ), zipEntry, zipStream );
+                        
+                        String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
+                        lbFound = computedMd5.equals(mRomMd5);
+
+                        if(lbFound)
+                        {
+                            mLoadRomPath = tempRomPath.getAbsolutePath();
+                        }
+                        else
+                        {
+                            tempRomPath.delete();
+                        }
+
+                        zipStream.close();
+                    }
+                    catch( IOException e )
+                    {
+                        Log.w( "CacheRomInfoTask", e );
+                    }
+                }
+                zipFile.close();
+            }
+            catch( ZipException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            catch( IOException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            catch( ArrayIndexOutOfBoundsException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            
+            if(!lbFound)
+            {
+                mLoadRomPath = null;
+            }
         }
     }
 }

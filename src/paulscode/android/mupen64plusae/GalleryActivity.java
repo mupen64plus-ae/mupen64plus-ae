@@ -20,12 +20,21 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -754,35 +763,6 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
     
     public void launchGameActivity( String romPath, String romMd5, boolean isRestarting )
     {
-        RomHeader romHeader = new RomHeader( romPath );
-        GamePrefs gamePrefs = new GamePrefs( this, romMd5, romHeader );
-        
-        // Popup the multi-player dialog if necessary and abort if any players are unassigned
-        RomDatabase romDatabase = new RomDatabase( mAppData.mupen64plus_ini );
-        RomDetail romDetail = romDatabase.lookupByMd5WithFallback( romMd5, new File( romPath ) );
-        if( romDetail.players > 1 && gamePrefs.playerMap.isEnabled()
-                && mGlobalPrefs.getPlayerMapReminder() )
-        {
-            gamePrefs.playerMap.removeUnavailableMappings();
-            boolean needs1 = gamePrefs.isControllerEnabled1 && !gamePrefs.playerMap.isMapped( 1 );
-            boolean needs2 = gamePrefs.isControllerEnabled2 && !gamePrefs.playerMap.isMapped( 2 );
-            boolean needs3 = gamePrefs.isControllerEnabled3 && !gamePrefs.playerMap.isMapped( 3 )
-                    && romDetail.players > 2;
-            boolean needs4 = gamePrefs.isControllerEnabled4 && !gamePrefs.playerMap.isMapped( 4 )
-                    && romDetail.players > 3;
-            
-            if( needs1 || needs2 || needs3 || needs4 )
-            {
-// TODO FIXME
-//              @SuppressWarnings( "deprecation" )
-//              PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
-//              pref.show();
-//              return;
-                Popups.showNeedsPlayerMap( this );
-                return;
-            }
-        }
-        
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
         {
@@ -804,6 +784,73 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         }
         
         // Launch the game activity
-        ActivityHelper.startGameActivity( this, romPath, romMd5, gamePrefs.getCheatArgs(), isRestarting, mGlobalPrefs.isTouchpadEnabled );
+        ActivityHelper.startGameActivity( this, romPath, romMd5, isRestarting, mGlobalPrefs.isTouchpadEnabled );
+    }
+    
+    public static File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )
+    {
+        if( zipEntry.isDirectory() )
+            return null;
+        
+        // Read the first 4 bytes of the entry
+        byte[] buffer = new byte[1024];
+        try
+        {
+            if( inStream.read( buffer, 0, 4 ) != 4 )
+                return null;
+        }
+        catch( IOException e )
+        {
+            Log.w( "GalleryActivity", e );
+            return null;
+        }
+        
+        // See if this entry is a valid ROM (copy array in case RomHeader mutates it)
+        if( !new RomHeader( new byte[] { buffer[0], buffer[1], buffer[2], buffer[3] } ).isValid )
+            return null;
+        
+        // This entry appears to be a valid ROM, extract it
+        Log.i( "GalleryActivity", "Found zip entry " + zipEntry.getName() );
+
+        String entryName = new File( zipEntry.getName() ).getName();
+        File extractedFile = new File( destDir, entryName );
+        try
+        {
+            // Open the output stream (throws exceptions)
+            OutputStream outStream = new FileOutputStream( extractedFile );
+            try
+            {
+                // Buffer the stream
+                outStream = new BufferedOutputStream( outStream );
+                
+                // Write the first four bytes we already peeked at (throws exceptions)
+                outStream.write( buffer, 0, 4 );
+                
+                // Read/write the remainder of the zip entry (throws exceptions)
+                int n;
+                while( ( n = inStream.read( buffer ) ) >= 0 )
+                {
+                    outStream.write( buffer, 0, n );
+                }
+                return extractedFile;
+            }
+            catch( IOException e )
+            {
+                Log.w( "GalleryActivity", e );
+                return null;
+            }
+            finally
+            {
+                // Flush output stream and guarantee no memory leaks
+                outStream.close();
+            }
+        }
+        catch( IOException e )
+        {
+            Log.w( "GalleryActivity", e );
+            return null;
+        }
     }
 }
+
+
