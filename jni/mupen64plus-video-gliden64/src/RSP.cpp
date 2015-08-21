@@ -137,7 +137,7 @@ void RSP_CheckDLCounter()
 
 void RSP_ProcessDList()
 {
-	if (ConfigOpen) {
+	if (ConfigOpen || video().isResizeWindow()) {
 		gDPFullSync();
 		return;
 	}
@@ -204,12 +204,6 @@ void RSP_ProcessDList()
 			RSP_CheckDLCounter();
 		}
 	}
-
-	if (config.frameBufferEmulation.copyToRDRAM)
-		FrameBuffer_CopyToRDRAM( gDP.colorImage.address );
-	if (config.frameBufferEmulation.copyDepthToRDRAM)
-		FrameBuffer_CopyDepthBuffer( gDP.colorImage.address );
-
 	RSP.busy = FALSE;
 	gDP.changed |= CHANGED_COLORBUFFER;
 }
@@ -321,7 +315,8 @@ void RSP_Init()
 	else if (strstr(RSP.romname, (const char *)"Pilot Wings64") != NULL)
 		config.generalEmulation.hacks |= hack_pilotWings;
 	else if (strstr(RSP.romname, (const char *)"THE LEGEND OF ZELDA") != NULL ||
-		strstr(RSP.romname, (const char *)"ZELDA MASTER QUEST") != NULL
+		strstr(RSP.romname, (const char *)"ZELDA MASTER QUEST") != NULL ||
+		strstr(RSP.romname, (const char *)"DOUBUTSUNOMORI") != NULL
 		)
 		config.generalEmulation.hacks |= hack_subscreen;
 	else if (strstr(RSP.romname, (const char *)"LEGORacers") != NULL)
@@ -330,7 +325,9 @@ void RSP_Init()
 		config.generalEmulation.hacks |= hack_blastCorps;
 	else if (strstr(RSP.romname, (const char *)"SPACE INVADERS") != NULL)
 		config.generalEmulation.hacks |= hack_ignoreVIHeightChange;
-	else if (strstr(RSP.romname, (const char *)"QUAKE II") != NULL)
+	else if (strstr(RSP.romname, (const char *)"QUAKE II") != NULL ||
+		strstr(RSP.romname, (const char *)"Quake") != NULL
+		)
 		config.generalEmulation.hacks |= hack_VIUpdateOnCIChange;
 
 	api().FindPluginPath(RSP.pluginpath);
