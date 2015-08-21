@@ -1075,7 +1075,7 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 			if ((cache.current[t]->mirrorS == 0 && cache.current[t]->maskS == 0 && texST[t].s0 < texST[t].s1 && texST[t].s0 >= 0.0 && texST[t].s1 <= (float)cache.current[t]->width) || (cache.current[t]->maskS == 0 && (texST[t].s0 < -1024.0f || texST[t].s1 > 1023.99f)))
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 
-			if (cache.current[t]->mirrorT == 0 && cache.current[t]->maskT == 0 && texST[t].t0 < texST[t].t1 && texST[t].t0 >= 0.0f && texST[t].t1 <= (float)cache.current[t]->height)
+			if (cache.current[t]->mirrorT == 0 && texST[t].t0 < texST[t].t1 && texST[t].t0 >= 0.0f && texST[t].t1 <= (float)cache.current[t]->height)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 			texST[t].s0 *= cache.current[t]->scaleS;
@@ -1298,8 +1298,14 @@ void OGLRender::_initStates()
 		glDisable( GL_POLYGON_OFFSET_FILL );
 		glDepthFunc( GL_ALWAYS );
 		glDepthMask( FALSE );
-	} else
-		glPolygonOffset( -3.0f, -3.0f );
+	} else {
+#ifdef ANDROID
+		if(config.generalEmulation.forcePolygonOffset != 0)
+			glPolygonOffset(config.generalEmulation.polygonOffsetFactor, config.generalEmulation.polygonOffsetUnits);
+		else
+#endif
+			glPolygonOffset(-3.0f, -3.0f);
+	}
 
 	OGLVideo & ogl = video();
 	glViewport(0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
@@ -1336,10 +1342,6 @@ void OGLRender::_initData()
 	for (u32 i = 0; i < VERTBUFF_SIZE; ++i)
 		triangles.vertices[i].w = 1.0f;
 	triangles.num = 0;
-
-#ifdef ANDROID
-    __android_log_write(ANDROID_LOG_DEBUG, "GLideN64", "Finish render initialization.\n");
-#endif
 }
 
 void OGLRender::_destroyData()
@@ -1347,6 +1349,8 @@ void OGLRender::_destroyData()
 	m_renderState = rsNone;
 	if (config.bloomFilter.enable != 0)
 		PostProcessor::get().destroy();
+	if (TFH.optionsChanged())
+		TFH.shutdown();
 	TextDrawer::get().destroy();
 	Combiner_Destroy();
 	FrameBuffer_Destroy();
@@ -1399,7 +1403,8 @@ u32 textureEnhancements[] = {
 	BRZ2X_ENHANCEMENT, //"2XBRZ"
 	BRZ3X_ENHANCEMENT, //"3XBRZ"
 	BRZ4X_ENHANCEMENT, //"4XBRZ"
-	BRZ5X_ENHANCEMENT  //"5XBRZ"
+	BRZ5X_ENHANCEMENT, //"5XBRZ"
+	BRZ6X_ENHANCEMENT  //"6XBRZ"
 };
 
 void displayLoadProgress(const wchar_t *format, ...)
@@ -1441,57 +1446,66 @@ void displayLoadProgress(const wchar_t *format, ...)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, pBuffer->m_FBO);
 }
 
+u32 TextureFilterHandler::_getConfigOptions() const
+{
+	u32 options = textureFilters[config.textureFilter.txFilterMode] | textureEnhancements[config.textureFilter.txEnhancementMode];
+	if (config.textureFilter.txHiresEnable)
+		options |= RICE_HIRESTEXTURES;
+	if (config.textureFilter.txForce16bpp)
+		options |= FORCE16BPP_TEX | FORCE16BPP_HIRESTEX;
+	if (config.textureFilter.txCacheCompression)
+		options |= GZ_TEXCACHE | GZ_HIRESTEXCACHE;
+	if (config.textureFilter.txSaveCache)
+		options |= (DUMP_TEXCACHE | DUMP_HIRESTEXCACHE);
+	if (config.textureFilter.txHiresFullAlphaChannel)
+		options |= LET_TEXARTISTS_FLY;
+	if (config.textureFilter.txDump)
+		options |= DUMP_TEX;
+	return options;
+}
+
 void TextureFilterHandler::init()
 {
-	if (!isInited()) {
-		m_inited = config.textureFilter.txFilterMode | config.textureFilter.txEnhancementMode | config.textureFilter.txHiresEnable;
-		if (m_inited != 0) {
-			u32 options = textureFilters[config.textureFilter.txFilterMode] | textureEnhancements[config.textureFilter.txEnhancementMode];
-			if (config.textureFilter.txHiresEnable)
-				options |= RICE_HIRESTEXTURES;
-			if (config.textureFilter.txForce16bpp)
-				options |= FORCE16BPP_TEX | FORCE16BPP_HIRESTEX;
-			if (config.textureFilter.txCacheCompression)
-				options |= GZ_TEXCACHE | GZ_HIRESTEXCACHE;
-			if (config.textureFilter.txSaveCache)
-				options |= (DUMP_TEXCACHE | DUMP_HIRESTEXCACHE);
-			if (config.textureFilter.txHiresFullAlphaChannel)
-				options |= LET_TEXARTISTS_FLY;
-			if (config.textureFilter.txDump)
-				options |= DUMP_TEX;
+	if (isInited())
+		return;
 
-			GLint maxTextureSize;
-			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-			wchar_t wRomName[32];
-			::mbstowcs(wRomName, RSP.romname, 32);
-			wchar_t txPath[PLUGIN_PATH_SIZE+16];
-			wchar_t * pTexPackPath = config.textureFilter.txPath;
-			if (::wcslen(config.textureFilter.txPath) == 0) {
-				api().GetUserDataPath(txPath);
-				gln_wcscat(txPath, wst("/hires_texture"));
-				pTexPackPath = txPath;
-			}
-			wchar_t txCachePath[PLUGIN_PATH_SIZE];
-			api().GetUserCachePath(txCachePath);
+	m_inited = config.textureFilter.txFilterMode | config.textureFilter.txEnhancementMode | config.textureFilter.txHiresEnable;
+	if (m_inited == 0)
+		return;
 
-			m_inited = txfilter_init(maxTextureSize, // max texture width supported by hardware
-				maxTextureSize, // max texture height supported by hardware
-				32, // max texture bpp supported by hardware
-				options,
-				config.textureFilter.txCacheSize, // cache texture to system memory
-				txCachePath, // path to store cache files
-				pTexPackPath, // path to texture packs folder
-				wRomName, // name of ROM. must be no longer than 256 characters
-				displayLoadProgress);
-		}
+	m_options = _getConfigOptions();
+
+	GLint maxTextureSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+	wchar_t wRomName[32];
+	::mbstowcs(wRomName, RSP.romname, 32);
+	wchar_t txPath[PLUGIN_PATH_SIZE + 16];
+	wchar_t * pTexPackPath = config.textureFilter.txPath;
+	if (::wcslen(config.textureFilter.txPath) == 0) {
+		api().GetUserDataPath(txPath);
+		gln_wcscat(txPath, wst("/hires_texture"));
+		pTexPackPath = txPath;
 	}
+	wchar_t txCachePath[PLUGIN_PATH_SIZE];
+	api().GetUserCachePath(txCachePath);
+
+	m_inited = txfilter_init(maxTextureSize, // max texture width supported by hardware
+		maxTextureSize, // max texture height supported by hardware
+		32, // max texture bpp supported by hardware
+		m_options,
+		config.textureFilter.txCacheSize, // cache texture to system memory
+		txCachePath, // path to store cache files
+		pTexPackPath, // path to texture packs folder
+		wRomName, // name of ROM. must be no longer than 256 characters
+		displayLoadProgress);
+
 }
 
 void TextureFilterHandler::shutdown()
 {
 	if (isInited()) {
 		txfilter_shutdown();
-		m_inited = 0;
+		m_inited = m_options = 0;
 	}
 }
 

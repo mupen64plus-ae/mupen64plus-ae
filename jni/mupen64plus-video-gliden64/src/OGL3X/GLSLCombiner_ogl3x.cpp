@@ -221,6 +221,10 @@ void InitShaderCombiner()
 
 	noiseTex.init();
 	g_monochrome_image_program = createShaderProgram(default_vertex_shader, zelda_monochrome_fragment_shader);
+	glUseProgram(g_monochrome_image_program);
+	const int texLoc = glGetUniformLocation(g_monochrome_image_program, "uColorImage");
+	glUniform1i(texLoc, 0);
+	glUseProgram(0);
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
@@ -719,6 +723,9 @@ void ShaderCombiner::updateAlphaTestInfo(bool _bForce) {
 	} else if (((gDP.otherMode.alphaCompare & G_AC_THRESHOLD) != 0) && (gDP.otherMode.alphaCvgSel == 0) && (gDP.otherMode.forceBlender == 0 || gDP.blendColor.a > 0))	{
 		m_uniforms.uEnableAlphaTest.set(1, _bForce);
 		m_uniforms.uAlphaTestValue.set(max(gDP.blendColor.a, 1.0f / 256.0f), _bForce);
+	} else if ((gDP.otherMode.alphaCompare == G_AC_DITHER) && (gDP.otherMode.alphaCvgSel == 0))	{
+		m_uniforms.uEnableAlphaTest.set(1, _bForce);
+		m_uniforms.uAlphaTestValue.set(0.0f, _bForce);
 	} else if (gDP.otherMode.cvgXAlpha != 0)	{
 		m_uniforms.uEnableAlphaTest.set(1, _bForce);
 		m_uniforms.uAlphaTestValue.set(0.125f, _bForce);
@@ -762,11 +769,6 @@ void SetDepthFogCombiner()
 #endif // GL_IMAGE_TEXTURES_SUPPORT
 
 void SetMonochromeCombiner() {
-	static int texLoc = -1;
-	if (texLoc < 0) {
-		texLoc = glGetUniformLocation(g_monochrome_image_program, "uColorImage");
-		glUniform1i(texLoc, 0);
-	}
 	glUseProgram(g_monochrome_image_program);
 	gDP.changed |= CHANGED_COMBINE;
 }
