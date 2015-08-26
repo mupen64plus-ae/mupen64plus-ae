@@ -240,6 +240,8 @@ void OGLVideo::_setBufferSize()
 		m_width = m_screenWidth;
 		m_height = m_screenHeight;
 	}
+
+	LOG(LOG_NONE, "Screen res=%dX%d, setting=%dX%d\n", m_screenWidth, m_screenHeight, m_width, m_height);
 }
 
 void OGLVideo::readScreen(void **_pDest, long *_pWidth, long *_pHeight )

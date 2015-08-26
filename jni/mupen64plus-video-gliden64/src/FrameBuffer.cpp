@@ -15,6 +15,7 @@
 #include "Config.h"
 #include "Debug.h"
 #include "PostProcessor.h"
+#include "Log.h"
 
 using namespace std;
 
@@ -711,7 +712,7 @@ void FrameBufferList::renderBuffer(u32 _address)
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, pBuffer->m_FBO);
 
 	glBlitFramebuffer(
-		srcCoord[0], srcCoord[1], srcCoord[2], srcCoord[3],
+		srcCoord[0] + 1, srcCoord[1], srcCoord[2], srcCoord[3],
 		dstCoord[0], dstCoord[1], dstCoord[2], dstCoord[3],
 		GL_COLOR_BUFFER_BIT, filter
 	);

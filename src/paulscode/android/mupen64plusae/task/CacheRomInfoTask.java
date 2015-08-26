@@ -236,6 +236,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         if( isCancelled() ) return;
         mProgress.setMessage( R.string.cacheRomInfo_computingMD5 );
         String md5 = ComputeMd5Task.computeMd5( file );
+        RomHeader header = new RomHeader(file);
         
         if( isCancelled() ) return;
         mProgress.setMessage( R.string.cacheRomInfo_searchingDB );
@@ -246,6 +247,9 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             config.put( md5, "baseName", detail.baseName );
         config.put( md5, "romPath", fileLocation.getAbsolutePath() );
         config.put( md5, "artPath", artPath );
+        config.put( md5, "crc", header.crc );
+        config.put( md5, "headerName", header.name );
+        config.put( md5, "countrySymbol", header.countrySymbol );
         
         if( mDownloadArt )
         {

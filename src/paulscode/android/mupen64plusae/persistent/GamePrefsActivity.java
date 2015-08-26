@@ -41,7 +41,6 @@ import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -85,7 +84,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     // ROM info
     private String mRomPath = null;
     private String mRomMd5 = null;
-    private RomHeader mRomHeader = null;
+    private String mRomCrc = null;
+    private String mRomHeaderName = null;
+    private String mRomCountrySymbol = null;
     private RomDatabase mRomDatabase = null;
     private RomDetail mRomDetail = null;
     
@@ -114,6 +115,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
+        mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
+        mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        mRomCountrySymbol = extras.getString( ActivityHelper.Keys.ROM_COUNTRY_SYMBOL );
+
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         
@@ -124,9 +129,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mRomHeader = new RomHeader( mRomPath );
         mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomCountrySymbol );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
@@ -236,7 +240,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Refresh the preferences objects
         mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomCountrySymbol );
         
         // Populate the profile preferences
         mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
@@ -254,7 +258,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomCountrySymbol );
         
         // Set cheats screen summary text
         mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
@@ -285,7 +289,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if( mGamePrefs.isCheatOptionsShown )
         {
             // Populate menu items
-            buildCheatsCategory( mRomHeader.crc );
+            buildCheatsCategory( mRomCrc );
             
             // Show the cheats category
             mScreenCheats.addPreference( mCategoryCheats );

@@ -29,12 +29,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -47,15 +44,12 @@ import paulscode.android.mupen64plusae.dialog.ScanRomsDialog.ScanRomsDialogListe
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -174,7 +168,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onComputeMd5Finished( File file, String md5 )
                     {
-                        launchGameActivity( file.getAbsolutePath(), md5, false );
+                        RomHeader header = new RomHeader(file);
+                        launchGameActivity( file.getAbsolutePath(), md5, header.crc, header.name, header.countrySymbol, false );
                     }
                 } );
                 task.execute();
@@ -481,7 +476,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onAction()
                     {
-                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5, false );
+                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5,
+                                    finalItem.crc, finalItem.headerName, finalItem.countrySymbol, false );
                     }
                 } );
         
@@ -499,7 +495,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                                     @Override
                                     public void onConfirm()
                                     {
-                                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5, true );
+                                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5,
+                                                    finalItem.crc, finalItem.headerName, finalItem.countrySymbol, true );
                                     }
                                 } );
                     }
@@ -511,7 +508,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onAction()
                     {
-                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this,
+                            finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countrySymbol );
                     }
                 } );
     }
@@ -540,7 +538,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
     
     public boolean onGalleryItemLongClick( GalleryItem item )
     {
-        launchGameActivity( item.romFile.getAbsolutePath(), item.md5, false );
+        launchGameActivity( item.romFile.getAbsolutePath(), item.md5, item.crc,
+                    item.headerName, item.countrySymbol, false );
         return true;
     }
     
@@ -682,13 +681,16 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                 {
                     String romPath = config.get( md5, "romPath" );
                     String artPath = config.get( md5, "artPath" );
+                    String crc = config.get( md5, "crc" );
+                    String headerName = config.get( md5, "headerName" );
+                    String countrySymbol = config.get( md5, "countrySymbol" );
                     String lastPlayedStr = config.get( md5, "lastPlayed" );
                     int lastPlayed = 0;
                     if( lastPlayedStr != null )
                         lastPlayed = Integer.parseInt( lastPlayedStr );
                     
-                    GalleryItem item = new GalleryItem( this, md5, goodName, romPath, artPath,
-                            lastPlayed );
+                    GalleryItem item = new GalleryItem( this, md5, crc, headerName, countrySymbol,
+                            goodName, romPath, artPath, lastPlayed );
                     items.add( item );
                     if( mGlobalPrefs.isRecentShown
                             && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
@@ -761,7 +763,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
     }
     
-    public void launchGameActivity( String romPath, String romMd5, boolean isRestarting )
+    public void launchGameActivity( String romPath, String romMd5, String romCrc,
+            String romGoodName, String romCountrySymbol, boolean isRestarting )
     {
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
@@ -784,7 +787,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         }
         
         // Launch the game activity
-        ActivityHelper.startGameActivity( this, romPath, romMd5, isRestarting, mGlobalPrefs.isTouchpadEnabled );
+        ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romGoodName, romCountrySymbol,
+                    isRestarting, mGlobalPrefs.isTouchpadEnabled );
     }
     
     public static File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )

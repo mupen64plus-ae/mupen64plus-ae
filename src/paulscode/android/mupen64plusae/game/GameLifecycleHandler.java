@@ -139,6 +139,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     private boolean mIsZip;
     private boolean mIsExtracted;
     private final String mRomMd5;
+    private final String mRomCrc;
+    private final String mRomHeaderName;
+    private final String mRomCountrySymbol;
     private String mCheatArgs;
     private final boolean mDoRestart;
     
@@ -164,6 +167,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
         mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
+        mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
+        mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        mRomCountrySymbol = extras.getString( ActivityHelper.Keys.ROM_COUNTRY_SYMBOL );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
@@ -191,7 +197,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         if(mLoadRomPath != null)
         {
-            mGamePrefs = new GamePrefs( mActivity, mRomMd5, new RomHeader( mLoadRomPath ) );
+            mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName, mRomCountrySymbol );
             mCheatArgs =  mGamePrefs.getCheatArgs();
         }
 

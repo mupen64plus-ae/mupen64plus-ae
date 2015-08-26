@@ -43,6 +43,9 @@ import android.widget.TextView;
 public class GalleryItem
 {
     public final String md5;
+    public final String crc;
+    public final String headerName;
+    public final String countrySymbol;
     public final String goodName;
     public final String artPath;
     public final int lastPlayed;
@@ -51,10 +54,13 @@ public class GalleryItem
     public final boolean isHeading;
     public BitmapDrawable artBitmap;
     
-    public GalleryItem( Context context, String md5, String goodName, String romPath,
+    public GalleryItem( Context context, String md5, String crc, String headerName, String countrySymbol, String goodName, String romPath,
             String artPath, int lastPlayed )
     {
         this.md5 = md5;
+        this.crc = crc;
+        this.headerName = headerName;
+        this.countrySymbol = countrySymbol;
         this.goodName = goodName;
         this.context = context;
         this.artPath = artPath;
@@ -71,6 +77,9 @@ public class GalleryItem
         this.context = context;
         this.isHeading = true;
         this.md5 = null;
+        this.crc = null;
+        this.headerName = null;
+        this.countrySymbol = null;
         this.artPath = null;
         this.artBitmap = null;
         this.lastPlayed = 0;
