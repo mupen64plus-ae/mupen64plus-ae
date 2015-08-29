@@ -32,6 +32,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -48,7 +49,7 @@ public class GameMenuHandler implements OnStateCallbackListener
     private final String mRomMd5;
     private final String mRomCrc;
     private final String mRomHeaderName;
-    private final String mRomCountrySymbol;
+    private final byte mRomCountryCode;
 
     private GlobalPrefs mGlobalPrefs;
     private GamePrefs mGamePrefs;
@@ -67,7 +68,7 @@ public class GameMenuHandler implements OnStateCallbackListener
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
         mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
-        mRomCountrySymbol = extras.getString( ActivityHelper.Keys.ROM_COUNTRY_SYMBOL );
+        mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
     }
     
     @TargetApi( 11 )
@@ -92,7 +93,7 @@ public class GameMenuHandler implements OnStateCallbackListener
         
         // Get the app data and user prefs after the activity has been created
         mGlobalPrefs = new GlobalPrefs( mActivity );
-        mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName, mRomCountrySymbol );
+        mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         
         // Initialize the pak menus (reverse order since some get hidden)
         initializePakMenu( menu, 4, mGamePrefs.isPlugged4, mGlobalPrefs.getPakType( 4 ) );

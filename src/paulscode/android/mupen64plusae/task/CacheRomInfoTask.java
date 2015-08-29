@@ -134,7 +134,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
             RomHeader header = new RomHeader( file );
             if( header.isValid )
             {
-                cacheFile( file, database, config, file );
+                cacheFile( file, database, config, null );
             }
             else if( header.isZip && mSearchZips )
             {
@@ -231,7 +231,7 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         return result;
     }
     
-    private void cacheFile( File file, RomDatabase database, ConfigFile config, File fileLocation )
+    private void cacheFile( File file, RomDatabase database, ConfigFile config, File zipFileLocation )
     {
         if( isCancelled() ) return;
         mProgress.setMessage( R.string.cacheRomInfo_computingMD5 );
@@ -240,16 +240,21 @@ public class CacheRomInfoTask extends AsyncTask<Void, ConfigSection, ConfigFile>
         
         if( isCancelled() ) return;
         mProgress.setMessage( R.string.cacheRomInfo_searchingDB );
-        RomDetail detail = database.lookupByMd5WithFallback( md5, file );
+        RomDetail detail = database.lookupByMd5WithFallback( md5, file, header.crc );
         String artPath = mArtDir + "/" + detail.artName;
         config.put( md5, "goodName", detail.goodName );
         if (detail.baseName != null && detail.baseName.length() != 0)
             config.put( md5, "baseName", detail.baseName );
-        config.put( md5, "romPath", fileLocation.getAbsolutePath() );
+        config.put( md5, "romPath", file.getAbsolutePath() );
+        config.put( md5, "zipPath", zipFileLocation == null ? "":zipFileLocation.getAbsolutePath() );
         config.put( md5, "artPath", artPath );
         config.put( md5, "crc", header.crc );
         config.put( md5, "headerName", header.name );
-        config.put( md5, "countrySymbol", header.countrySymbol );
+        
+        //String countryCodeString = String.format( "%02x", header.countryCode ).substring( 0, 2 );
+        String countryCodeString = Byte.toString(header.countryCode);
+        config.put( md5, "countryCode",  countryCodeString);
+        config.put( md5, "extracted", "false" );
         
         if( mDownloadArt )
         {

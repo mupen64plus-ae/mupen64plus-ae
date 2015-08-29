@@ -29,9 +29,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -169,7 +172,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     public void onComputeMd5Finished( File file, String md5 )
                     {
                         RomHeader header = new RomHeader(file);
-                        launchGameActivity( file.getAbsolutePath(), md5, header.crc, header.name, header.countrySymbol, false );
+                        launchGameActivity( file.getAbsolutePath(), null, true, md5, header.crc, header.name, header.countryCode, false );
                     }
                 } );
                 task.execute();
@@ -476,8 +479,10 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onAction()
                     {
-                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5,
-                                    finalItem.crc, finalItem.headerName, finalItem.countrySymbol, false );
+                        launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                            finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                            finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName,
+                            finalItem.countryCode, false );
                     }
                 } );
         
@@ -495,8 +500,9 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                                     @Override
                                     public void onConfirm()
                                     {
-                                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5,
-                                                    finalItem.crc, finalItem.headerName, finalItem.countrySymbol, true );
+                                        launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                                            finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                                            finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode, true );
                                     }
                                 } );
                     }
@@ -508,8 +514,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onAction()
                     {
-                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this,
-                            finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countrySymbol );
+                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(),
+                            finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode );
                     }
                 } );
     }
@@ -538,8 +544,10 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
     
     public boolean onGalleryItemLongClick( GalleryItem item )
     {
-        launchGameActivity( item.romFile.getAbsolutePath(), item.md5, item.crc,
-                    item.headerName, item.countrySymbol, false );
+        launchGameActivity( item.romFile.getAbsolutePath(),
+            item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
+            item.isExtracted,
+            item.md5, item.crc, item.headerName, item.countryCode, false );
         return true;
     }
     
@@ -680,24 +688,65 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                 if( matchesSearch )
                 {
                     String romPath = config.get( md5, "romPath" );
+                    String zipPath = config.get( md5, "zipPath" );
                     String artPath = config.get( md5, "artPath" );
                     String crc = config.get( md5, "crc" );
                     String headerName = config.get( md5, "headerName" );
-                    String countrySymbol = config.get( md5, "countrySymbol" );
+                    String countryCodeString = config.get( md5, "countryCode" );
+                    byte countryCode = 0;
+                    
+                    if(countryCodeString != null)
+                    {
+                        countryCode = Byte.parseByte(countryCodeString);
+                    }
                     String lastPlayedStr = config.get( md5, "lastPlayed" );
+                    String extracted = config.get( md5, "extracted" );
+                    
+                    if(zipPath == null || crc == null || headerName == null || countryCodeString == null || extracted == null)
+                    {
+                        File file = new File(romPath);
+                        RomHeader header = new RomHeader(file);
+                        
+                        zipPath = "";
+                        crc = header.crc;
+                        headerName = header.name;
+                        countryCode = header.countryCode;
+                        extracted = "false";
+                        
+                        config.put( md5, "zipPath", zipPath );
+                        config.put( md5, "crc", crc );
+                        config.put( md5, "headerName", headerName );
+                        config.put( md5, "countryCode", Byte.toString(countryCode) );
+                        config.put( md5, "extracted", extracted );
+                    }
+                    
                     int lastPlayed = 0;
                     if( lastPlayedStr != null )
                         lastPlayed = Integer.parseInt( lastPlayedStr );
                     
-                    GalleryItem item = new GalleryItem( this, md5, crc, headerName, countrySymbol,
-                            goodName, romPath, artPath, lastPlayed );
+                    GalleryItem item = new GalleryItem( this, md5, crc, headerName, countryCode,
+                            goodName, romPath, zipPath, extracted.equals("true"), artPath, lastPlayed );
                     items.add( item );
                     if( mGlobalPrefs.isRecentShown
                             && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
+                    {
                         recentItems.add( item );
+                    }
+                    //Delete any old files that already exist inside a zip file
+                    else if(!zipPath.equals("") && extracted.equals("true"))
+                    {
+                        File deleteFile = new File(romPath);
+                        deleteFile.delete();
+                        
+                        config.put( md5, "extracted", "false" );
+                    }
+
                 }
             }
         }
+        
+        config.save();
+
         Collections.sort( items, new GalleryItem.NameComparator() );
         if( recentItems != null )
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
@@ -763,8 +812,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
     }
     
-    public void launchGameActivity( String romPath, String romMd5, String romCrc,
-            String romGoodName, String romCountrySymbol, boolean isRestarting )
+    public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
+            String romGoodName, byte romCountryCode, boolean isRestarting )
     {
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
@@ -783,12 +832,89 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         if( config != null )
         {
             config.put( romMd5, "lastPlayed", lastPlayed );
+            
+            if(zipPath != null)
+            {
+                ExtractFileIfNeeded(romMd5, config, romPath, zipPath, extracted);
+            }
+            
             config.save();
         }
-        
+
         // Launch the game activity
-        ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romGoodName, romCountrySymbol,
+        ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romGoodName, romCountryCode,
                     isRestarting, mGlobalPrefs.isTouchpadEnabled );
+    }
+    
+    private void ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)
+    {
+        File romFile = new File(romPath);
+        RomHeader romHeader = new RomHeader( zipPath );
+
+        boolean isZip = romHeader.isZip;
+
+        if(isZip && (!romFile.exists() || !isExtracted))
+        {
+            boolean lbFound = false;
+            
+            try
+            {
+                ZipFile zipFile = new ZipFile( zipPath );
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while( entries.hasMoreElements() && !lbFound)
+                {
+                    ZipEntry zipEntry = entries.nextElement();
+                    
+                    try
+                    {
+                        InputStream zipStream = zipFile.getInputStream( zipEntry );
+                        
+                        File destDir = new File( mGlobalPrefs.unzippedRomsDir );
+                        String entryName = new File( zipEntry.getName() ).getName();
+                        File tempRomPath = new File( destDir, entryName );
+                        boolean fileExisted = tempRomPath.exists();
+                        
+                        if( !fileExisted )
+                        {
+                            tempRomPath = extractRomFile( destDir, zipEntry, zipStream );
+                        }
+                        
+                        String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
+                        lbFound = computedMd5.equals(md5);
+
+                        //only deleye the file if we extracted our selves
+                        if(!lbFound && !fileExisted)
+                        {
+                            tempRomPath.delete();
+                        }
+
+                        zipStream.close();
+                    }
+                    catch( IOException e )
+                    {
+                        Log.w( "CacheRomInfoTask", e );
+                    }
+                }
+                zipFile.close();
+            }
+            catch( ZipException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            catch( IOException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            catch( ArrayIndexOutOfBoundsException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            
+            if(lbFound || romFile.exists())
+            {
+                config.put(md5, "extracted", "true");
+            }
+        }
     }
     
     public static File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )

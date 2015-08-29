@@ -57,7 +57,7 @@ public class ActivityHelper
         public static final String ROM_MD5              = NAMESPACE + "ROM_MD5";
         public static final String ROM_CRC              = NAMESPACE + "ROM_CRC";
         public static final String ROM_HEADER_NAME      = NAMESPACE + "ROM_HEADER_NAME";
-        public static final String ROM_COUNTRY_SYMBOL   = NAMESPACE + "ROM_COUNTRY_SYMBOL";
+        public static final String ROM_COUNTRY_CODE     = NAMESPACE + "ROM_COUNTRY_CODE";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String MENU_DISPLAY_MODE    = NAMESPACE + "MENU_DISPLAY_MODE";
@@ -117,7 +117,7 @@ public class ActivityHelper
     }
     
     public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,
-            String romHeaderName, String romCountrySymbol, boolean doRestart, boolean isXperiaPlay )
+            String romHeaderName, byte romCountryCode, boolean doRestart, boolean isXperiaPlay )
     {
         Intent intent = isXperiaPlay
                 ? new Intent( context, GameActivityXperiaPlay.class )
@@ -126,7 +126,7 @@ public class ActivityHelper
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
-        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_SYMBOL, romCountrySymbol );
+        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
         intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
         context.startActivity( intent );
     }
@@ -143,14 +143,15 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startGamePrefsActivity( Context context, String romMd5,  String romCrc,
-                    String romHeaderName, String romCountrySymbol )
+    public static void startGamePrefsActivity( Context context, String romPath, String romMd5,
+        String romCrc, String romHeaderName, byte romCountryCode )
     {
         Intent intent = new Intent( context, GamePrefsActivity.class );
+        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
-        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_SYMBOL, romCountrySymbol );
+        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
         context.startActivity( intent );
     }
     

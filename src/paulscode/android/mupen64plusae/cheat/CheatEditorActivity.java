@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.cheat;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,7 +33,6 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -97,7 +95,9 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
     private CheatListAdapter cheatListAdapter = null;
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
-    private RomHeader mRomHeader = null;
+    private String mRomCrc = null;
+    private String mRomHeaderName = null;
+    private byte mRomCountryCode = 0;
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -111,13 +111,13 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "ROM path must be passed via the extras bundle when starting CheatEditorActivity" );
-        String romPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
-        if( TextUtils.isEmpty( romPath ) )
-            throw new Error( "ROM path must be passed via the extras bundle when starting CheatEditorActivity" );
-        mRomHeader = new RomHeader( new File( romPath ) );
+        
+        mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
+        mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
         
         setContentView( R.layout.cheat_editor );
-        reload( mRomHeader.crc );
+        reload( mRomCrc );
         findViewById( R.id.imgBtnChtAdd ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtEdit ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtSave ).setOnClickListener( this );
@@ -145,8 +145,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
     {
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt );
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
-        CheatUtils.save( crc, usrcheat_txt, cheats, mRomHeader, this, false );
-        CheatUtils.save( crc, mupencheat_txt, cheats, mRomHeader, this, true );
+        CheatUtils.save( crc, usrcheat_txt, cheats, mRomHeaderName, mRomCountryCode, this, false );
+        CheatUtils.save( crc, mupencheat_txt, cheats, mRomHeaderName, mRomCountryCode, this, true );
     }
     
     private boolean isHexNumber( String num )
@@ -213,7 +213,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 break;
             
             case R.id.imgBtnChtSave:
-                save( mRomHeader.crc );
+                save( mRomCrc );
                 CheatUtils.reset();
                 CheatEditorActivity.this.finish();
                 break;
@@ -313,7 +313,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        save( mRomHeader.crc );
+                        save( mRomCrc );
                     }
                     CheatUtils.reset();
                     CheatEditorActivity.this.finish();

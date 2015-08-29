@@ -118,13 +118,11 @@ public class RomDatabase
         }
     }
     
-    public RomDetail lookupByMd5WithFallback( String md5, File file )
+    public RomDetail lookupByMd5WithFallback( String md5, File file, String crc )
     {
         RomDetail detail = lookupByMd5( md5 );
         if( detail == null )
         {
-            // MD5 not in the database; lookup by CRC instead
-            String crc = new RomHeader( file ).crc;
             RomDetail[] romDetails = lookupByCrc( crc );
             if( romDetails.length == 0 )
             {
