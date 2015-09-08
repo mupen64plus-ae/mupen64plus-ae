@@ -14,7 +14,6 @@ import paulscode.android.mupen64plusae.preference.MultiSelectListPreference;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Context;
@@ -178,21 +177,21 @@ public class GamePrefs
     /** True if any type of AbstractController is enabled for Player 4. */
     public final boolean isPlugged4;
     
+    /** Game CRC */
+    public final String crc;
+    
     private final SharedPreferences mPreferences;
     
-    private final RomHeader mHeader;
-    
-    public GamePrefs( Context context, String romMd5, RomHeader header )
+    public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol )
     {
         final AppData appData = new AppData( context );
         final GlobalPrefs globalPrefs = new GlobalPrefs( context );
         
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
-        mHeader = header;
         
         // Game-specific data
-        gameDataDir = String.format( "%s/GameData/%s %s %s", globalPrefs.userDataDir, header.name, header.countrySymbol, romMd5 );
+        gameDataDir = String.format( "%s/GameData/%s %s %s", globalPrefs.userDataDir, headerName, countrySymbol, romMd5 );
         sramDataDir = gameDataDir + "/SramData";
         autoSaveDir = gameDataDir + "/AutoSaves";
         slotSaveDir = gameDataDir + "/SlotSaves";
@@ -365,6 +364,7 @@ public class GamePrefs
         isPlugged2 = isControllerEnabled2;
         isPlugged3 = isControllerEnabled3;
         isPlugged4 = isControllerEnabled4;
+        this.crc = crc;
     }
     
     public String getCheatArgs()
@@ -372,7 +372,7 @@ public class GamePrefs
         if( !isCheatOptionsShown )
             return "";
         
-        final Pattern pattern = Pattern.compile( "^" + mHeader.crc + " Cheat(\\d+)" );
+        final Pattern pattern = Pattern.compile( "^" + crc + " Cheat(\\d+)" );
         StringBuilder builder = null;
         Map<String, ?> map = mPreferences.getAll();
         for (String key : map.keySet())

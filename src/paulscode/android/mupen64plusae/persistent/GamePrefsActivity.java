@@ -85,7 +85,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     // ROM info
     private String mRomPath = null;
     private String mRomMd5 = null;
-    private RomHeader mRomHeader = null;
+    private String mRomCrc = null;
+    private String mRomHeaderName = null;
+    private byte mRomCountryCode = 0;
     private RomDatabase mRomDatabase = null;
     private RomDetail mRomDetail = null;
     
@@ -114,8 +116,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
         mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
-        if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
+        mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
+        mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
+
+        if( TextUtils.isEmpty( mRomMd5 ) )
+            throw new Error( "MD5 must be passed via the extras bundle" );
         
         // Initialize MOGA controller API
         // TODO: Remove hack after MOGA SDK is fixed
@@ -124,15 +130,14 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mRomHeader = new RomHeader( mRomPath );
         mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
         // Get the detailed info about the ROM
         mRomDatabase = new RomDatabase( mAppData.mupen64plus_ini );
-        mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ) );
+        mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
         
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );
@@ -236,7 +241,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Refresh the preferences objects
         mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         
         // Populate the profile preferences
         mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
@@ -254,7 +259,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomHeader );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         
         // Set cheats screen summary text
         mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
@@ -285,7 +290,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if( mGamePrefs.isCheatOptionsShown )
         {
             // Populate menu items
-            buildCheatsCategory( mRomHeader.crc );
+            buildCheatsCategory( mRomCrc );
             
             // Show the cheats category
             mScreenCheats.addPreference( mCategoryCheats );
@@ -304,7 +309,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if( key.equals( ACTION_CHEAT_EDITOR ) )
         {
             Intent intent = new Intent( this, CheatEditorActivity.class );
-            intent.putExtra( ActivityHelper.Keys.ROM_PATH, mRomPath );
+            intent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
+            intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
+            intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
             startActivityForResult( intent, 111 );
         }
         else if( key.equals( ACTION_WIKI ) )

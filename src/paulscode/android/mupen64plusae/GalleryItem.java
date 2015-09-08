@@ -43,26 +43,36 @@ import android.widget.TextView;
 public class GalleryItem
 {
     public final String md5;
+    public final String crc;
+    public final String headerName;
+    public final byte countryCode;
     public final String goodName;
     public final String artPath;
     public final int lastPlayed;
     public final File romFile;
+    public final File zipFile;
+    public final boolean isExtracted;
     public final Context context;
     public final boolean isHeading;
     public BitmapDrawable artBitmap;
     
-    public GalleryItem( Context context, String md5, String goodName, String romPath,
-            String artPath, int lastPlayed )
+    public GalleryItem( Context context, String md5, String crc, String headerName, byte countryCode, String goodName, String romPath,
+            String zipPath, boolean extracted, String artPath, int lastPlayed )
     {
         this.md5 = md5;
+        this.crc = crc;
+        this.headerName = headerName;
+        this.countryCode = countryCode;
         this.goodName = goodName;
         this.context = context;
         this.artPath = artPath;
         this.artBitmap = null;
         this.lastPlayed = lastPlayed;
         this.isHeading = false;
+        this.isExtracted = extracted;
         
-        romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
+        this.romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
+        this.zipFile = TextUtils.isEmpty( zipPath ) ? null : new File( zipPath );
     }
     
     public GalleryItem( Context context, String headingName )
@@ -71,10 +81,15 @@ public class GalleryItem
         this.context = context;
         this.isHeading = true;
         this.md5 = null;
+        this.crc = null;
+        this.headerName = null;
+        this.countryCode = 0;
         this.artPath = null;
         this.artBitmap = null;
         this.lastPlayed = 0;
-        romFile = null;
+        this.isExtracted = false;
+        this.romFile = null;
+        this.zipFile = null;
     }
     
     public void loadBitmap()

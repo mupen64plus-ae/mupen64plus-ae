@@ -32,7 +32,6 @@ import paulscode.android.mupen64plusae.cheat.CheatFile.CheatCode;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatOption;
 import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
@@ -222,14 +221,14 @@ public class CheatUtils
     }
     
     public static void save( String crc, CheatFile mupencheat_txt, ArrayList<Cheat> cheats,
-            RomHeader mRomHeader, Context con, boolean isSystemDefault )
+            String headerName, byte countryCode, Context con, boolean isSystemDefault )
     {
         CheatSection c = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
         if( c == null )
         {
             // Game name and country code from header
-            c = new CheatSection( crc.replace( ' ', '-' ), mRomHeader.name, String.format( "%02x",
-                    mRomHeader.countryCode ).substring( 0, 2 ) );
+            c = new CheatSection( crc.replace( ' ', '-' ), headerName, String.format( "%02x",
+                countryCode ).substring( 0, 2 ) );
             mupencheat_txt.add( c );
         }
         {

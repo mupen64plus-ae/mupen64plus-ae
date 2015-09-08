@@ -20,12 +20,21 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -38,15 +47,12 @@ import paulscode.android.mupen64plusae.dialog.ScanRomsDialog.ScanRomsDialogListe
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
 import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -165,7 +171,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onComputeMd5Finished( File file, String md5 )
                     {
-                        launchGameActivity( file.getAbsolutePath(), md5, false );
+                        RomHeader header = new RomHeader(file);
+                        launchGameActivity( file.getAbsolutePath(), null, true, md5, header.crc, header.name, header.countryCode, false );
                     }
                 } );
                 task.execute();
@@ -472,7 +479,10 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onAction()
                     {
-                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5, false );
+                        launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                            finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                            finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName,
+                            finalItem.countryCode, false );
                     }
                 } );
         
@@ -490,7 +500,9 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                                     @Override
                                     public void onConfirm()
                                     {
-                                        launchGameActivity( finalItem.romFile.getAbsolutePath(), finalItem.md5, true );
+                                        launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                                            finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                                            finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode, true );
                                     }
                                 } );
                     }
@@ -502,7 +514,8 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                     @Override
                     public void onAction()
                     {
-                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(), finalItem.md5 );
+                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(),
+                            finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode );
                     }
                 } );
     }
@@ -531,7 +544,10 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
     
     public boolean onGalleryItemLongClick( GalleryItem item )
     {
-        launchGameActivity( item.romFile.getAbsolutePath(), item.md5, false );
+        launchGameActivity( item.romFile.getAbsolutePath(),
+            item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
+            item.isExtracted,
+            item.md5, item.crc, item.headerName, item.countryCode, false );
         return true;
     }
     
@@ -672,21 +688,65 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                 if( matchesSearch )
                 {
                     String romPath = config.get( md5, "romPath" );
+                    String zipPath = config.get( md5, "zipPath" );
                     String artPath = config.get( md5, "artPath" );
+                    String crc = config.get( md5, "crc" );
+                    String headerName = config.get( md5, "headerName" );
+                    String countryCodeString = config.get( md5, "countryCode" );
+                    byte countryCode = 0;
+                    
+                    if(countryCodeString != null)
+                    {
+                        countryCode = Byte.parseByte(countryCodeString);
+                    }
                     String lastPlayedStr = config.get( md5, "lastPlayed" );
+                    String extracted = config.get( md5, "extracted" );
+                    
+                    if(zipPath == null || crc == null || headerName == null || countryCodeString == null || extracted == null)
+                    {
+                        File file = new File(romPath);
+                        RomHeader header = new RomHeader(file);
+                        
+                        zipPath = "";
+                        crc = header.crc;
+                        headerName = header.name;
+                        countryCode = header.countryCode;
+                        extracted = "false";
+                        
+                        config.put( md5, "zipPath", zipPath );
+                        config.put( md5, "crc", crc );
+                        config.put( md5, "headerName", headerName );
+                        config.put( md5, "countryCode", Byte.toString(countryCode) );
+                        config.put( md5, "extracted", extracted );
+                    }
+                    
                     int lastPlayed = 0;
                     if( lastPlayedStr != null )
                         lastPlayed = Integer.parseInt( lastPlayedStr );
                     
-                    GalleryItem item = new GalleryItem( this, md5, goodName, romPath, artPath,
-                            lastPlayed );
+                    GalleryItem item = new GalleryItem( this, md5, crc, headerName, countryCode,
+                            goodName, romPath, zipPath, extracted.equals("true"), artPath, lastPlayed );
                     items.add( item );
                     if( mGlobalPrefs.isRecentShown
                             && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
+                    {
                         recentItems.add( item );
+                    }
+                    //Delete any old files that already exist inside a zip file
+                    else if(!zipPath.equals("") && extracted.equals("true"))
+                    {
+                        File deleteFile = new File(romPath);
+                        deleteFile.delete();
+                        
+                        config.put( md5, "extracted", "false" );
+                    }
+
                 }
             }
         }
+        
+        config.save();
+
         Collections.sort( items, new GalleryItem.NameComparator() );
         if( recentItems != null )
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
@@ -752,37 +812,9 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
     }
     
-    public void launchGameActivity( String romPath, String romMd5, boolean isRestarting )
+    public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
+            String romGoodName, byte romCountryCode, boolean isRestarting )
     {
-        RomHeader romHeader = new RomHeader( romPath );
-        GamePrefs gamePrefs = new GamePrefs( this, romMd5, romHeader );
-        
-        // Popup the multi-player dialog if necessary and abort if any players are unassigned
-        RomDatabase romDatabase = new RomDatabase( mAppData.mupen64plus_ini );
-        RomDetail romDetail = romDatabase.lookupByMd5WithFallback( romMd5, new File( romPath ) );
-        if( romDetail.players > 1 && gamePrefs.playerMap.isEnabled()
-                && mGlobalPrefs.getPlayerMapReminder() )
-        {
-            gamePrefs.playerMap.removeUnavailableMappings();
-            boolean needs1 = gamePrefs.isControllerEnabled1 && !gamePrefs.playerMap.isMapped( 1 );
-            boolean needs2 = gamePrefs.isControllerEnabled2 && !gamePrefs.playerMap.isMapped( 2 );
-            boolean needs3 = gamePrefs.isControllerEnabled3 && !gamePrefs.playerMap.isMapped( 3 )
-                    && romDetail.players > 2;
-            boolean needs4 = gamePrefs.isControllerEnabled4 && !gamePrefs.playerMap.isMapped( 4 )
-                    && romDetail.players > 3;
-            
-            if( needs1 || needs2 || needs3 || needs4 )
-            {
-// TODO FIXME
-//              @SuppressWarnings( "deprecation" )
-//              PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
-//              pref.show();
-//              return;
-                Popups.showNeedsPlayerMap( this );
-                return;
-            }
-        }
-        
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
         {
@@ -800,10 +832,155 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         if( config != null )
         {
             config.put( romMd5, "lastPlayed", lastPlayed );
+            
+            if(zipPath != null)
+            {
+                ExtractFileIfNeeded(romMd5, config, romPath, zipPath, extracted);
+            }
+            
             config.save();
         }
-        
+
         // Launch the game activity
-        ActivityHelper.startGameActivity( this, romPath, romMd5, gamePrefs.getCheatArgs(), isRestarting, mGlobalPrefs.isTouchpadEnabled );
+        ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romGoodName, romCountryCode,
+                    isRestarting, mGlobalPrefs.isTouchpadEnabled );
+    }
+    
+    private void ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)
+    {
+        File romFile = new File(romPath);
+        RomHeader romHeader = new RomHeader( zipPath );
+
+        boolean isZip = romHeader.isZip;
+
+        if(isZip && (!romFile.exists() || !isExtracted))
+        {
+            boolean lbFound = false;
+            
+            try
+            {
+                ZipFile zipFile = new ZipFile( zipPath );
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while( entries.hasMoreElements() && !lbFound)
+                {
+                    ZipEntry zipEntry = entries.nextElement();
+                    
+                    try
+                    {
+                        InputStream zipStream = zipFile.getInputStream( zipEntry );
+                        
+                        File destDir = new File( mGlobalPrefs.unzippedRomsDir );
+                        String entryName = new File( zipEntry.getName() ).getName();
+                        File tempRomPath = new File( destDir, entryName );
+                        boolean fileExisted = tempRomPath.exists();
+                        
+                        if( !fileExisted )
+                        {
+                            tempRomPath = extractRomFile( destDir, zipEntry, zipStream );
+                        }
+                        
+                        String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
+                        lbFound = computedMd5.equals(md5);
+
+                        //only deleye the file if we extracted our selves
+                        if(!lbFound && !fileExisted)
+                        {
+                            tempRomPath.delete();
+                        }
+
+                        zipStream.close();
+                    }
+                    catch( IOException e )
+                    {
+                        Log.w( "CacheRomInfoTask", e );
+                    }
+                }
+                zipFile.close();
+            }
+            catch( ZipException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            catch( IOException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            catch( ArrayIndexOutOfBoundsException e )
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            
+            if(lbFound || romFile.exists())
+            {
+                config.put(md5, "extracted", "true");
+            }
+        }
+    }
+    
+    public static File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )
+    {
+        if( zipEntry.isDirectory() )
+            return null;
+        
+        // Read the first 4 bytes of the entry
+        byte[] buffer = new byte[1024];
+        try
+        {
+            if( inStream.read( buffer, 0, 4 ) != 4 )
+                return null;
+        }
+        catch( IOException e )
+        {
+            Log.w( "GalleryActivity", e );
+            return null;
+        }
+        
+        // See if this entry is a valid ROM (copy array in case RomHeader mutates it)
+        if( !new RomHeader( new byte[] { buffer[0], buffer[1], buffer[2], buffer[3] } ).isValid )
+            return null;
+        
+        // This entry appears to be a valid ROM, extract it
+        Log.i( "GalleryActivity", "Found zip entry " + zipEntry.getName() );
+
+        String entryName = new File( zipEntry.getName() ).getName();
+        File extractedFile = new File( destDir, entryName );
+        try
+        {
+            // Open the output stream (throws exceptions)
+            OutputStream outStream = new FileOutputStream( extractedFile );
+            try
+            {
+                // Buffer the stream
+                outStream = new BufferedOutputStream( outStream );
+                
+                // Write the first four bytes we already peeked at (throws exceptions)
+                outStream.write( buffer, 0, 4 );
+                
+                // Read/write the remainder of the zip entry (throws exceptions)
+                int n;
+                while( ( n = inStream.read( buffer ) ) >= 0 )
+                {
+                    outStream.write( buffer, 0, n );
+                }
+                return extractedFile;
+            }
+            catch( IOException e )
+            {
+                Log.w( "GalleryActivity", e );
+                return null;
+            }
+            finally
+            {
+                // Flush output stream and guarantee no memory leaks
+                outStream.close();
+            }
+        }
+        catch( IOException e )
+        {
+            Log.w( "GalleryActivity", e );
+            return null;
+        }
     }
 }
+
+

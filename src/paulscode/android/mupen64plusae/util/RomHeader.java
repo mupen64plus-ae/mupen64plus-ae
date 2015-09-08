@@ -135,6 +135,24 @@ public final class RomHeader
             crc = String.format( "%08X %08X", crc1, crc2 );
         }
         
+        countrySymbol = countryCodeToSymbol(countryCode);
+
+        
+        isValid = init_PI_BSB_DOM1_LAT_REG == (byte) 0x80
+                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
+                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x12
+                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x40;
+        
+        isZip = init_PI_BSB_DOM1_LAT_REG == (byte) 0x50
+                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x4b
+                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x03
+                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x04;
+    }
+    
+    public static String countryCodeToSymbol(byte countryCode)
+    {
+        String countrySymbol;
+        
         // Symbols match mappings from mupen64plus-core/util.c
         // See also https://code.google.com/p/mupen64plus/wiki/RomBrowserColumns
         switch( countryCode )
@@ -183,15 +201,7 @@ public final class RomHeader
                 break;
         }
         
-        isValid = init_PI_BSB_DOM1_LAT_REG == (byte) 0x80
-                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
-                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x12
-                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x40;
-        
-        isZip = init_PI_BSB_DOM1_LAT_REG == (byte) 0x50
-                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x4b
-                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x03
-                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x04;
+        return countrySymbol;
     }
     
     private static byte[] readFile( File file )
@@ -206,6 +216,11 @@ public final class RomHeader
         catch( IOException e )
         {
             Log.w( "RomHeader", "ROM file could not be read" );
+            buffer = null;
+        }
+        catch( NullPointerException e )
+        {
+            Log.w( "RomHeader", "File does not exist" );
             buffer = null;
         }
         finally

@@ -137,7 +137,8 @@ public class CoreInterface
         sSurface = surface;
         sAppData = new AppData( sActivity );
         sGlobalPrefs = new GlobalPrefs( sActivity );
-        sGamePrefs = new GamePrefs( sActivity, romMd5, new RomHeader( romPath ) );
+        RomHeader romHeader = new RomHeader( romPath );
+        sGamePrefs = new GamePrefs( sActivity, romMd5,  romHeader.crc, romHeader.name, romHeader.countrySymbol);
         NativeConfigFiles.syncConfigFiles( sGamePrefs, sGlobalPrefs, sAppData );
         
         // Make sure various directories exist so that we can write to them
