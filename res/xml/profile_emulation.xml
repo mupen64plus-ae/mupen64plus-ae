@@ -206,11 +206,6 @@
             android:title="EnableN64DepthCompare" />
         <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
             android:defaultValue="0"
-            android:key="ValidityCheckMethod"
-            android:summary="@string/selectedValue"
-            android:title="ValidityCheckMethod" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
-            android:defaultValue="0"
             android:key="txFilterMode"
             android:summary="@string/selectedValue"
             android:title="txFilterMode" />
