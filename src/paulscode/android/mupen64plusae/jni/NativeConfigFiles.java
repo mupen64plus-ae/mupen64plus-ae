@@ -127,7 +127,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
         
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "3" );                                                      // Settings version. Don't touch it.
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "4" );                                                      // Settings version. Don't touch it.
         putGliden64( mupen64plus_cfg, game, "MultiSampling", "0" );                                                         // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
         putGliden64( mupen64plus_cfg, game, "AspectRatio", "1" );                                                           // Screen aspect ratio (0=stretch, 1=force 4:3, 2=force 16:9, 3=adjust)
         putGliden64( mupen64plus_cfg, game, "bilinearMode", "1" );                                                          // Bilinear filtering mode (0=N64 3point, 1=standard)
@@ -143,7 +143,6 @@ public class NativeConfigFiles
         putGliden64( mupen64plus_cfg, game, "EnableCopyColorFromRDRAM", "False" );                                          // Enable color buffer copy from RDRAM.
         putGliden64( mupen64plus_cfg, game, "EnableDetectCFB", "False" );                                                   // Detect CPU writes to frame buffer.
         putGliden64( mupen64plus_cfg, game, "EnableN64DepthCompare", "False" );                                             // Enable N64 depth compare instead of OpenGL standard one. Experimental.
-        putGliden64( mupen64plus_cfg, game, "ValidityCheckMethod", "0" );                                                   // Method to check validity of auxiliary texture frame buffer (0=write fingerprint to the buffer, 1=fill whole buffer in RDRAM with test value)
         putGliden64( mupen64plus_cfg, game, "txFilterMode", "0" );                                                          // Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)
         putGliden64( mupen64plus_cfg, game, "txEnhancementMode", "0" );                                                     // Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ)
         putGliden64( mupen64plus_cfg, game, "txFilterIgnoreBG", "False" );                                                  // Don't filter background textures.
