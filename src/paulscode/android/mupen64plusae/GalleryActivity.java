@@ -48,8 +48,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.task.CacheRomInfoTask;
-import paulscode.android.mupen64plusae.task.CacheRomInfoTask.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -61,6 +59,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
@@ -81,11 +80,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-public class GalleryActivity extends AppCompatActivity implements CacheRomInfoListener
+public class GalleryActivity extends AppCompatActivity
 {
     // Saved instance states
     public static final String STATE_QUERY = "query";
     public static final String STATE_SIDEBAR = "sidebar";
+    public static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -109,13 +109,12 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
     public int galleryColumns = 2;
     public float galleryAspectRatio;
     
-    // Background tasks
-    private CacheRomInfoTask mCacheRomInfoTask = null;
-    
     // Misc.
     private List<GalleryItem> mGalleryItems = null;
     private GalleryItem mSelectedItem = null;
     private boolean mDragging = false;
+    
+    private CacheRomInfoFragment mCacheRomInfoFragment = null;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -182,7 +181,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         // Lay out the content
         setContentView( R.layout.gallery_activity );
         mGridView = (RecyclerView) findViewById( R.id.gridview );
-        refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
+        refreshGrid();
         
         // Update the grid layout
         galleryMaxWidth = (int) getResources().getDimension( R.dimen.galleryImageWidth );
@@ -304,6 +303,10 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
             if( query != null )
                 mSearchQuery = query;
         }
+        
+        // find the retained fragment on activity restarts
+        FragmentManager fm = getSupportFragmentManager();
+        mCacheRomInfoFragment = (CacheRomInfoFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
     }
     
     @Override
@@ -326,19 +329,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
         InputMethodManager imm = (InputMethodManager) getSystemService( Context.INPUT_METHOD_SERVICE );
         imm.hideSoftInputFromWindow( mSearchView.getWindowToken(), 0 );
     }
-    
-    protected void onStop()
-    {
-        super.onStop();
-        
-        // Cancel long-running background tasks
-        if( mCacheRomInfoTask != null )
-        {
-            mCacheRomInfoTask.cancel( false );
-            mCacheRomInfoTask = null;
-        }
-    }
-    
+
     @Override
     protected void onPostCreate( Bundle savedInstanceState )
     {
@@ -365,7 +356,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
             public boolean onMenuItemActionCollapse( MenuItem item )
             {
                 mSearchQuery = "";
-                refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
+                refreshGrid();
                 return true;
             }
             
@@ -388,7 +379,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
             public boolean onQueryTextChange( String query )
             {
                 mSearchQuery = query;
-                refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
+                refreshGrid();
                 return false;
             }
         } );
@@ -623,28 +614,27 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
     
     private void refreshRoms( final File startDir )
     {
-        // Asynchronously search for ROMs
-        mCacheRomInfoTask = new CacheRomInfoTask( this, startDir, mAppData.mupen64plus_ini,
-                mGlobalPrefs.romInfoCache_cfg, mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir,
-                mGlobalPrefs.getSearchZips(), mGlobalPrefs.getDownloadArt(),
-                mGlobalPrefs.getClearGallery(), this );
-        mCacheRomInfoTask.execute();
+        mCacheRomInfoFragment = new CacheRomInfoFragment(startDir, mAppData, mGlobalPrefs);
+        
+        //Retain the fragment
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
+        
+        mCacheRomInfoFragment.refreshRoms();
     }
-    
-    @Override
-    public void onCacheRomInfoProgress( ConfigSection section )
+
+    void refreshGrid( )
     {
-    }
-    
-    @Override
-    public void onCacheRomInfoFinished( ConfigFile config, boolean canceled )
-    {
-        mCacheRomInfoTask = null;
-        refreshGrid( config );
-    }
-    
-    private void refreshGrid( ConfigFile config )
-    {
+        //Get rid of the cache rom info fragment
+        if(mCacheRomInfoFragment != null && !mCacheRomInfoFragment.IsInProgress())
+        {
+            FragmentManager fm = getSupportFragmentManager();
+            fm.beginTransaction().remove(mCacheRomInfoFragment).commitAllowingStateLoss();
+            mCacheRomInfoFragment = null;
+        }
+        
+        ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
+        
         String query = mSearchQuery.toLowerCase( Locale.US );
         String[] searches = null;
         if( query.length() > 0 )
@@ -809,7 +799,7 @@ public class GalleryActivity extends AppCompatActivity implements CacheRomInfoLi
                 mGlobalPrefs.displayActionBarTransparency ) );
         
         // Refresh the gallery
-        refreshGrid( new ConfigFile( mGlobalPrefs.romInfoCache_cfg ) );
+        refreshGrid();
     }
     
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,

@@ -31,10 +31,12 @@ import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
+import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -61,6 +63,14 @@ public class ActivityHelper
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String MENU_DISPLAY_MODE    = NAMESPACE + "MENU_DISPLAY_MODE";
+        public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
+        public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
+        public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
+        public static final String ART_DIR              = NAMESPACE + "GALLERY_ART_PATH";
+        public static final String UNZIP_DIR            = NAMESPACE + "GALLERY_UNZIP_PATH";
+        public static final String SEARCH_ZIPS          = NAMESPACE + "GALLERY_SEARCH_ZIP";
+        public static final String DOWNLOAD_ART         = NAMESPACE + "GALLERY_DOWNLOAD_ART";
+        public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
         //@formatter:on
     }
 
@@ -194,5 +204,31 @@ public class ActivityHelper
     public static void startDiagnosticActivity( Context context )
     {
         context.startActivity( new Intent( context, DiagnosticActivity.class ) );
+    }
+    
+    public static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
+        String searchPath, String databasePath, String configPath, String artDir, String unzipDir,
+        boolean searchZips, boolean downloadArt, boolean clearGallery)
+    {
+        Intent intent = new Intent(context, CacheRomInfoService.class);
+        intent.putExtra(ActivityHelper.Keys.SEARCH_PATH, searchPath);
+        intent.putExtra(ActivityHelper.Keys.DATABASE_PATH, databasePath);
+        intent.putExtra(ActivityHelper.Keys.CONFIG_PATH, configPath);
+        intent.putExtra(ActivityHelper.Keys.ART_DIR, artDir);
+        intent.putExtra(ActivityHelper.Keys.UNZIP_DIR, unzipDir);
+        intent.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, searchZips);
+        intent.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, downloadArt);
+        intent.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, clearGallery);
+
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+    
+    public static void stopCacheRomInfoService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, CacheRomInfoService.class);
+        
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
     }
 }

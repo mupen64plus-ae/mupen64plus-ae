@@ -193,6 +193,7 @@
                 android:name="android.app.lib_name"
                 android:value="xperia-touchpad" />
         </activity>
+        <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
 
         <meta-data
             android:name="xperiaplayoptimized_content"
