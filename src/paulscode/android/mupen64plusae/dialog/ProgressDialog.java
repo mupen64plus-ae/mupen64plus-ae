@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae.dialog;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,7 +10,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -20,37 +21,38 @@ public class ProgressDialog implements OnClickListener
     private static final float PROGRESS_PRECISION = 1000f;
     
     private final Activity mActivity;
-    private final AsyncTask<?, ?, ?> mTask;
     private final TextView mTextProgress;
     private final TextView mTextSubprogress;
     private final TextView mTextMessage;
     private final ProgressBar mProgressSubtotal;
     private final ProgressBar mProgressTotal;
-    private final AlertDialog mDialog;
-    private final AlertDialog mAbortDialog;
+    private AlertDialog mDialog;
+    private AlertDialog mAbortDialog;
     
     private long mMaxProgress = -1;
     private long mMaxSubprogress = -1;
     private long mProgress = 0;
     private long mSubprogress = 0;
+    private CacheRomInfoService mCacheRomInfoService = null;
     
     @SuppressLint( "InflateParams" )
-    public ProgressDialog( Activity activity, AsyncTask<?, ?, ?> task, CharSequence title,
+    public ProgressDialog( Activity activity, CharSequence title,
             CharSequence subtitle, CharSequence message, boolean cancelable )
     {
         mActivity = activity;
-        mTask = task;
         
-        // Create main dialog
-        final LayoutInflater inflater = (LayoutInflater) activity
-                .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final LayoutInflater inflater = (LayoutInflater) mActivity
+            .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         View layout = inflater.inflate( R.layout.progress_dialog, null );
-        Builder builder = getBuilder( activity, title, subtitle, message, cancelable, layout );
+        
         mTextProgress = (TextView) layout.findViewById( R.id.textProgress );
         mTextSubprogress = (TextView) layout.findViewById( R.id.textSubprogress );
         mTextMessage = (TextView) layout.findViewById( R.id.textMessage );
         mProgressSubtotal = (ProgressBar) layout.findViewById( R.id.progressSubtotal );
         mProgressTotal = (ProgressBar) layout.findViewById( R.id.progressTotal );
+        
+        // Create main dialog
+        Builder builder = getBuilder( activity, title, subtitle, message, cancelable, layout );
         mDialog = builder.create();
         
         // Create canceling dialog
@@ -59,6 +61,27 @@ public class ProgressDialog implements OnClickListener
         layout = inflater.inflate( R.layout.progress_dialog, null );
         builder = getBuilder( activity, title, subtitle, message, false, layout );
         mAbortDialog = builder.create();
+    }
+    
+    public ProgressDialog(ProgressDialog original, Activity activity, CharSequence title,
+        CharSequence subtitle, CharSequence message, boolean cancelable)
+    {
+        this(activity, title, subtitle, message, cancelable);
+        
+        if(original != null)
+        {            
+
+            mCacheRomInfoService = original.mCacheRomInfoService;
+            
+            setMaxProgress(original.mMaxProgress);
+            setMaxSubprogress(original.mMaxSubprogress);
+            
+            mProgress = original.mProgress;
+            mSubprogress = original.mMaxSubprogress;
+            
+            incrementProgress(0);
+            incrementSubprogress(0);
+        }
     }
     
     public void show()
@@ -73,12 +96,17 @@ public class ProgressDialog implements OnClickListener
         mDialog.dismiss();
     }
     
+    public void SetCacheRomInfoService(CacheRomInfoService cacheRomInfoService)
+    {
+        mCacheRomInfoService = cacheRomInfoService;
+    }
+    
     @Override
     public void onClick( DialogInterface dlg, int which )
     {
-        if( which == DialogInterface.BUTTON_NEGATIVE )
+        if( which == DialogInterface.BUTTON_NEGATIVE  && mCacheRomInfoService != null)
         {
-            mTask.cancel( true );
+            mCacheRomInfoService.Stop();
         }
     }
     
