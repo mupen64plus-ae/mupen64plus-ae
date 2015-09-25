@@ -231,7 +231,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
                                             renameProfile( profile );
                                             break;
                                         case 4:
-                                            deleteProfile( profile );
+                                            deleteProfile( profile, isDefault );
                                             break;
                                     }
                                 }
@@ -318,7 +318,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
                 } );
     }
     
-    private void deleteProfile( final Profile profile )
+    private void deleteProfile( final Profile profile, final boolean isDefault )
     {
         assert ( !profile.isBuiltin );
         String title = getString( R.string.confirm_title );
@@ -329,6 +329,13 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
             public void onConfirm()
             {
                 assert ( mConfigCustom.keySet().contains( profile.name ) );
+                
+                //If this was the default profile, pick another default profile
+                if(isDefault)
+                {
+                    putDefaultProfile(getNoDefaultProfile());
+                }
+
                 mConfigCustom.remove( profile.name );
                 mConfigCustom.save();
                 refreshList();
