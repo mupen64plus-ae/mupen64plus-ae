@@ -80,6 +80,10 @@ public class ProgressDialog implements OnClickListener
             
             incrementProgress(0);
             incrementSubprogress(0);
+            
+            mTextProgress.setText(original.mTextProgress.getText());
+            mTextSubprogress.setText(original.mTextSubprogress.getText());
+            mTextMessage.setText(original.mTextMessage.getText());
         }
     }
     
