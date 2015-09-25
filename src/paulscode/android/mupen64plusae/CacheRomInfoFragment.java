@@ -60,11 +60,10 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
     
     private boolean mInProgress = false;
     
-    public CacheRomInfoFragment(final File startDir, AppData appData, GlobalPrefs globalPrefs)
+    public CacheRomInfoFragment(AppData appData, GlobalPrefs globalPrefs)
     {
         super();
-        
-        this.mStartDir = startDir;
+
         this.mAppData = appData;
         this.mGlobalPrefs = globalPrefs;
     }
@@ -83,15 +82,17 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
     {
         super.onActivityCreated(savedInstanceState);
         
-        CharSequence title = getString( R.string.scanning_title );
-        CharSequence message = getString( R.string.toast_pleaseWait );
-        mProgress = new ProgressDialog( mProgress, getActivity(), title, mStartDir.getAbsolutePath(), message, true );
-        mProgress.show();
+        if(mInProgress)
+        {
+            CharSequence title = getString( R.string.scanning_title );
+            CharSequence message = getString( R.string.toast_pleaseWait );
+            mProgress = new ProgressDialog( mProgress, getActivity(), title, mStartDir.getAbsolutePath(), message, true );
+            mProgress.show();
+        }
         
-        if (mCachedResult)
+        if (mCachedResult && mInProgress)
         {
             ((GalleryActivity)getActivity()).refreshGrid();
-            mProgress.dismiss();
             mCachedResult = false;
         }
         
@@ -158,8 +159,10 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         return mProgress;
     }
 
-    public void refreshRoms( )
+    public void refreshRoms( File startDir )
     {
+        this.mStartDir = startDir;
+        
         if(getActivity() != null)
         {
             ActuallyRefreshRoms(getActivity());
@@ -173,6 +176,11 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
     private void ActuallyRefreshRoms(Activity activity)
     {
         mInProgress = true;
+        
+        CharSequence title = getString( R.string.scanning_title );
+        CharSequence message = getString( R.string.toast_pleaseWait );
+        mProgress = new ProgressDialog( mProgress, getActivity(), title, mStartDir.getAbsolutePath(), message, true );
+        mProgress.show();
         
         /** Defines callbacks for service binding, passed to bindService() */
         mServiceConnection = new ServiceConnection() {

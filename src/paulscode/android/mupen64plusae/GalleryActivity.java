@@ -42,8 +42,6 @@ import paulscode.android.mupen64plusae.dialog.ChangeLog;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.dialog.ScanRomsDialog;
-import paulscode.android.mupen64plusae.dialog.ScanRomsDialog.ScanRomsDialogListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -54,11 +52,9 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -307,6 +303,12 @@ public class GalleryActivity extends AppCompatActivity
         // find the retained fragment on activity restarts
         FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (CacheRomInfoFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
+        
+        if(mCacheRomInfoFragment == null)
+        {
+            mCacheRomInfoFragment = new CacheRomInfoFragment(mAppData, mGlobalPrefs);
+            fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
+        }
     }
     
     @Override
@@ -400,7 +402,7 @@ public class GalleryActivity extends AppCompatActivity
         switch( item.getItemId() )
         {
             case R.id.menuItem_refreshRoms:
-                promptSearchPath( null );
+                ActivityHelper.StartRomScanService(this);
                 return true;
             case R.id.menuItem_library:
                 mDrawerLayout.closeDrawer( GravityCompat.START );
@@ -575,63 +577,30 @@ public class GalleryActivity extends AppCompatActivity
         }
     }
     
-    private void promptSearchPath( File startDir )
-    {
-        // Prompt for search path, then asynchronously search for ROMs
-        if( startDir == null || !startDir.exists() )
-            startDir = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
-        
-        ScanRomsDialog dialog = new ScanRomsDialog( this, startDir, mGlobalPrefs.getSearchZips(),
-                mGlobalPrefs.getDownloadArt(), mGlobalPrefs.getClearGallery(),
-                new ScanRomsDialogListener()
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == ActivityHelper.SCAN_ROM_REQUEST_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK && data != null)
+            {
+                Bundle extras = data.getExtras();
+                String searchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
+                
+                if (searchPath != null)
                 {
-                    @Override
-                    public void onDialogClosed( File file, int which, boolean searchZips,
-                            boolean downloadArt, boolean clearGallery )
-                    {
-                        mGlobalPrefs.putSearchZips( searchZips );
-                        mGlobalPrefs.putDownloadArt( downloadArt );
-                        mGlobalPrefs.putClearGallery( clearGallery );
-                        if( which == DialogInterface.BUTTON_POSITIVE )
-                        {
-                            // Search this folder for ROMs
-                            refreshRoms( file );
-                        }
-                        else if( file != null )
-                        {
-                            if( file.isDirectory() )
-                                promptSearchPath( file );
-                            else
-                            {
-                                // The user selected an individual file
-                                refreshRoms( file );
-                            }
-                        }
-                    }
-                } );
-        dialog.show();
+                    refreshRoms(new File(searchPath));
+                }
+            }
+        }
     }
     
     private void refreshRoms( final File startDir )
     {
-        mCacheRomInfoFragment = new CacheRomInfoFragment(startDir, mAppData, mGlobalPrefs);
-        
-        //Retain the fragment
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
-        
-        mCacheRomInfoFragment.refreshRoms();
+        mCacheRomInfoFragment.refreshRoms(startDir);
     }
 
-    void refreshGrid( )
-    {
-        //Get rid of the cache rom info fragment
-        if(mCacheRomInfoFragment != null && !mCacheRomInfoFragment.IsInProgress())
-        {
-            FragmentManager fm = getSupportFragmentManager();
-            fm.beginTransaction().remove(mCacheRomInfoFragment).commitAllowingStateLoss();
-            mCacheRomInfoFragment = null;
-        }
+    void refreshGrid( ){
         
         ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
         
