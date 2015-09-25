@@ -835,7 +835,7 @@ public class GalleryActivity extends AppCompatActivity
                         
                         if( !fileExisted )
                         {
-                            tempRomPath = extractRomFile( destDir, zipEntry, zipStream );
+                            tempRomPath = CacheRomInfoFragment.extractRomFile( destDir, zipEntry, zipStream );
                         }
                         
                         String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
@@ -873,71 +873,6 @@ public class GalleryActivity extends AppCompatActivity
             {
                 config.put(md5, "extracted", "true");
             }
-        }
-    }
-    
-    public static File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )
-    {
-        if( zipEntry.isDirectory() )
-            return null;
-        
-        // Read the first 4 bytes of the entry
-        byte[] buffer = new byte[1024];
-        try
-        {
-            if( inStream.read( buffer, 0, 4 ) != 4 )
-                return null;
-        }
-        catch( IOException e )
-        {
-            Log.w( "GalleryActivity", e );
-            return null;
-        }
-        
-        // See if this entry is a valid ROM (copy array in case RomHeader mutates it)
-        if( !new RomHeader( new byte[] { buffer[0], buffer[1], buffer[2], buffer[3] } ).isValid )
-            return null;
-        
-        // This entry appears to be a valid ROM, extract it
-        Log.i( "GalleryActivity", "Found zip entry " + zipEntry.getName() );
-
-        String entryName = new File( zipEntry.getName() ).getName();
-        File extractedFile = new File( destDir, entryName );
-        try
-        {
-            // Open the output stream (throws exceptions)
-            OutputStream outStream = new FileOutputStream( extractedFile );
-            try
-            {
-                // Buffer the stream
-                outStream = new BufferedOutputStream( outStream );
-                
-                // Write the first four bytes we already peeked at (throws exceptions)
-                outStream.write( buffer, 0, 4 );
-                
-                // Read/write the remainder of the zip entry (throws exceptions)
-                int n;
-                while( ( n = inStream.read( buffer ) ) >= 0 )
-                {
-                    outStream.write( buffer, 0, n );
-                }
-                return extractedFile;
-            }
-            catch( IOException e )
-            {
-                Log.w( "GalleryActivity", e );
-                return null;
-            }
-            finally
-            {
-                // Flush output stream and guarantee no memory leaks
-                outStream.close();
-            }
-        }
-        catch( IOException e )
-        {
-            Log.w( "GalleryActivity", e );
-            return null;
         }
     }
 }
