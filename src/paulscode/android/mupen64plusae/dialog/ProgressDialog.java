@@ -76,7 +76,7 @@ public class ProgressDialog implements OnClickListener
             setMaxSubprogress(original.mMaxSubprogress);
             
             mProgress = original.mProgress;
-            mSubprogress = original.mMaxSubprogress;
+            mSubprogress = original.mSubprogress;
             
             incrementProgress(0);
             incrementSubprogress(0);

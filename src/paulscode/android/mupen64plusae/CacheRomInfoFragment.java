@@ -124,8 +124,12 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
     
     @Override
     public void onDetach()
-    {        
-        mProgress.dismiss();
+    {
+        //This can be null if this fragment is never utilized and this will be called on shutdown
+        if(mProgress != null)
+        {
+            mProgress.dismiss();
+        }
         
         super.onDetach();
     }

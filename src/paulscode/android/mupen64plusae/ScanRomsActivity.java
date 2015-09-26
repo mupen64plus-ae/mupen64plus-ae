@@ -21,7 +21,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 
 public class ScanRomsActivity extends AppCompatActivity implements OnItemClickListener
-{
+{    
     private List<CharSequence> mNames;
     private List<String> mPaths;
     private CheckBox mCheckBox1;
@@ -30,16 +30,30 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
     private Button mCancelButton;
     private Button mOkButton;
     
-    private File mCurrentPath;
+    private File mCurrentPath = null;
  
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate(savedInstanceState);
         
-        // Pick the root of the storage directory by default
-        mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+        String currentPath = null;
         
+        if(savedInstanceState != null)
+        {
+            currentPath = savedInstanceState.getString( ActivityHelper.Keys.SEARCH_PATH );
+        }
+
+        if( currentPath != null )
+        {
+            mCurrentPath = new File(currentPath);
+        }
+        else
+        {  
+            // Pick the root of the storage directory by default
+            mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+        }
+         
         setContentView(R.layout.scan_roms_activity);
                 
         // Set checkbox state
@@ -69,13 +83,20 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
         });
 
         PopulateFileList();
-        
-        // Create the dialog
-        setTitle( mCurrentPath.getPath() );
+    }
+    
+    @Override
+    public void onSaveInstanceState( Bundle savedInstanceState )
+    {
+        if( mCurrentPath != null )
+            savedInstanceState.putString( ActivityHelper.Keys.SEARCH_PATH, mCurrentPath.getAbsolutePath() );
+
+        super.onSaveInstanceState( savedInstanceState );
     }
     
     private void PopulateFileList()
     {
+        setTitle( mCurrentPath.getPath() );
         // Populate the file list
         // Get the filenames and absolute paths
         mNames = new ArrayList<CharSequence>();
