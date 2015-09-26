@@ -73,6 +73,8 @@ public class ActivityHelper
         public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
         //@formatter:on
     }
+    
+    public static final int SCAN_ROM_REQUEST_CODE = 1;
 
     public static void launchUri( Context context, int resId )
     {
@@ -230,5 +232,11 @@ public class ActivityHelper
         
         context.unbindService(serviceConnection);
         context.stopService(intent);
+    }
+    
+    public static void StartRomScanService(Activity activity)
+    {
+        Intent intent = new Intent(activity, ScanRomsActivity.class);
+        activity.startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
     }
 }

@@ -16,6 +16,8 @@ tmp/
 *.so
 *.swp
 *.tmp
+gdb.setup
+gdbserver
 
 # Eclipse project files
 .settings/

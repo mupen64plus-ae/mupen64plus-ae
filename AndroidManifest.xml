@@ -64,6 +64,12 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" >
         </activity>
         <activity
+            android:name="paulscode.android.mupen64plusae.ScanRomsActivity"
+            android:exported="false"
+            android:label="@string/ScanRomsActivity_title"
+            android:theme="@style/Theme.AppCompat" >
+        </activity>
+        <activity
             android:name="paulscode.android.mupen64plusae.persistent.GamePrefsActivity"
             android:exported="false"
             android:label="@string/PlayMenuActivity_title"
