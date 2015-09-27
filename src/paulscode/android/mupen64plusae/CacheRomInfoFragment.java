@@ -46,7 +46,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListener
-{
+{    
     //Progress dialog for ROM scan
     private ProgressDialog mProgress = null;
     
@@ -113,7 +113,7 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
 
     @Override
     public void onAttach(Activity activity)
-    {
+    {        
         super.onAttach(activity);
     }
     
@@ -127,6 +127,17 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         }
         
         super.onDetach();
+    }
+    
+    @Override
+    public void onDestroy()
+    {        
+        if(mServiceConnection != null)
+        {
+            ActivityHelper.stopCacheRomInfoService(getActivity().getApplicationContext(), mServiceConnection);
+        }
+        
+        super.onDestroy();
     }
 
     @Override
