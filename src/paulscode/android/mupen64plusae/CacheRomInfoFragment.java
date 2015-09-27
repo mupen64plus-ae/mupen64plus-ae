@@ -46,7 +46,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListener
-{
+{    
     //Progress dialog for ROM scan
     private ProgressDialog mProgress = null;
     
@@ -64,16 +64,11 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
     private boolean mCachedScanFinish = false;
     
     private File mStartDir = null;
+    private boolean mSearchZips = false;
+    private boolean mDownloadArt = false;
+    private boolean mClearGallery = false;
     
     private boolean mInProgress = false;
-    
-    public CacheRomInfoFragment(AppData appData, GlobalPrefs globalPrefs)
-    {
-        super();
-
-        this.mAppData = appData;
-        this.mGlobalPrefs = globalPrefs;
-    }
 
     // this method is only called once for this fragment
     @Override
@@ -118,7 +113,7 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
 
     @Override
     public void onAttach(Activity activity)
-    {
+    {        
         super.onAttach(activity);
     }
     
@@ -132,6 +127,17 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         }
         
         super.onDetach();
+    }
+    
+    @Override
+    public void onDestroy()
+    {        
+        if(mServiceConnection != null)
+        {
+            ActivityHelper.stopCacheRomInfoService(getActivity().getApplicationContext(), mServiceConnection);
+        }
+        
+        super.onDestroy();
     }
 
     @Override
@@ -170,9 +176,15 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         return mProgress;
     }
 
-    public void refreshRoms( File startDir )
+    public void refreshRoms( File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery,
+        AppData appData, GlobalPrefs globalPrefs )
     {
         this.mStartDir = startDir;
+        this.mSearchZips = searchZips;
+        this.mDownloadArt = downloadArt;
+        this.mClearGallery = clearGallery;
+        this.mAppData = appData;
+        this.mGlobalPrefs = globalPrefs;
         
         if(getActivity() != null)
         {
@@ -215,8 +227,8 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         // Asynchronously search for ROMs
         ActivityHelper.startCacheRomInfoService(activity.getApplicationContext(), mServiceConnection,
             mStartDir.getAbsolutePath(), mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCache_cfg,
-            mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mGlobalPrefs.getSearchZips(),
-            mGlobalPrefs.getDownloadArt(), mGlobalPrefs.getClearGallery());
+            mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mSearchZips,
+            mDownloadArt, mClearGallery);
     }
     
     public boolean IsInProgress()
@@ -241,7 +253,7 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         }
         
         // This entry appears to be a valid ROM, extract it
-        Log.i( "GalleryActivity", "Found zip entry " + zipEntry.getName() );
+        Log.i( "CacheRomInfoFragment", "Found zip entry " + zipEntry.getName() );
 
         String entryName = new File( zipEntry.getName() ).getName();
         File extractedFile = new File( destDir, entryName );

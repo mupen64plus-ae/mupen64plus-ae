@@ -77,6 +77,9 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             public void onClick(View v) {
                 Intent data = new Intent();
                 data.putExtra(ActivityHelper.Keys.SEARCH_PATH, mCurrentPath.getPath());
+                data.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, mCheckBox1.isChecked());
+                data.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, mCheckBox2.isChecked());
+                data.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());
                 ScanRomsActivity.this.setResult(RESULT_OK, data);
                 ScanRomsActivity.this.finish();
             }

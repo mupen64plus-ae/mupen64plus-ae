@@ -159,7 +159,7 @@ public class CacheRomInfoService extends Service
                 }
                 else if( header.isZip && mSearchZips )
                 {
-                    Log.i( "CacheRomInfoTask", "Found zip file " + file.getName() );
+                    Log.i( "CacheRomInfoService", "Found zip file " + file.getName() );
                     try
                     {
                         ZipFile zipFile = new ZipFile( file );
@@ -189,7 +189,7 @@ public class CacheRomInfoService extends Service
                             }
                             catch( IOException e )
                             {
-                                Log.w( "CacheRomInfoTask", e );
+                                Log.w( "CacheRomInfoService", e );
                             }
                             mListener.GetProgressDialog().incrementSubprogress( 1 );
                         }
@@ -197,15 +197,15 @@ public class CacheRomInfoService extends Service
                     }
                     catch( ZipException e )
                     {
-                        Log.w( "CacheRomInfoTask", e );
+                        Log.w( "CacheRomInfoService", e );
                     }
                     catch( IOException e )
                     {
-                        Log.w( "CacheRomInfoTask", e );
+                        Log.w( "CacheRomInfoService", e );
                     }
                     catch( ArrayIndexOutOfBoundsException e )
                     {
-                        Log.w( "CacheRomInfoTask", e );
+                        Log.w( "CacheRomInfoService", e );
                     }
                 }
                 mListener.GetProgressDialog().incrementProgress( 1 );
@@ -316,7 +316,9 @@ public class CacheRomInfoService extends Service
         {
             if( mbStopped ) return;
             mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_downloadingArt );
+            Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
             downloadFile( detail.artUrl, artPath );
+            Log.i( "CacheRomInfoService", "End art download: " +  artPath);
         }
         
         if( mbStopped ) return;
@@ -334,13 +336,13 @@ public class CacheRomInfoService extends Service
             }
             catch( IOException e )
             {
-                Log.w( "CacheRomInfoTask", e );
+                Log.w( "CacheRomInfoService", e );
                 return e;
             }
         }
         catch( FileNotFoundException e )
         {
-            Log.w( "CacheRomInfoTask", e );
+            Log.w( "CacheRomInfoService", e );
             return e;
         }
         return null;
@@ -378,7 +380,7 @@ public class CacheRomInfoService extends Service
         }
         catch( Throwable e )
         {
-            Log.w( "CacheRomInfoTask", e );
+            Log.w( "CacheRomInfoService", e );
             return e;
         }
         finally
@@ -391,7 +393,7 @@ public class CacheRomInfoService extends Service
                 }
                 catch( IOException e )
                 {
-                    Log.w( "CacheRomInfoTask", e );
+                    Log.w( "CacheRomInfoService", e );
                 }
             if( inStream != null )
                 try
@@ -400,7 +402,7 @@ public class CacheRomInfoService extends Service
                 }
                 catch( IOException e )
                 {
-                    Log.w( "CacheRomInfoTask", e );
+                    Log.w( "CacheRomInfoService", e );
                 }
         }
     }

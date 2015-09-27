@@ -236,9 +236,6 @@ public class GlobalPrefs
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
-    private static final String KEY_SEARCH_ZIPS = "searchZips";
-    private static final String KEY_DOWNLOAD_ART = "downloadArt";
-    private static final String KEY_CLEAR_GALLERY = "clearGallery";
     // ... add more as needed
     
     // Shared preferences default values
@@ -586,21 +583,6 @@ public class GlobalPrefs
         return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
     }
     
-    public boolean getSearchZips()
-    {
-        return getBoolean( KEY_SEARCH_ZIPS, DEFAULT_SEARCH_ZIPS );
-    }
-    
-    public boolean getDownloadArt()
-    {
-        return getBoolean( KEY_DOWNLOAD_ART, DEFAULT_DOWNLOAD_ART );
-    }
-    
-    public boolean getClearGallery()
-    {
-        return getBoolean( KEY_CLEAR_GALLERY, DEFAULT_CLEAR_GALLERY );
-    }
-    
     public void putEmulationProfileDefault( String value )
     {
         putString( KEY_EMULATION_PROFILE_DEFAULT, value );
@@ -624,21 +606,6 @@ public class GlobalPrefs
     public void putPlayerMapReminder( boolean value )
     {
         putBoolean( KEY_PLAYER_MAP_REMINDER, value );
-    }
-    
-    public void putSearchZips( boolean value )
-    {
-        putBoolean( KEY_SEARCH_ZIPS, value );
-    }
-    
-    public void putDownloadArt( boolean value )
-    {
-        putBoolean( KEY_DOWNLOAD_ART, value );
-    }
-    
-    public void putClearGallery( boolean value )
-    {
-        putBoolean( KEY_CLEAR_GALLERY, value );
     }
     
     private boolean getBoolean( String key, boolean defaultValue )
