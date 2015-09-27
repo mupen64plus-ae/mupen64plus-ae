@@ -64,16 +64,11 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
     private boolean mCachedScanFinish = false;
     
     private File mStartDir = null;
+    private boolean mSearchZips = false;
+    private boolean mDownloadArt = false;
+    private boolean mClearGallery = false;
     
     private boolean mInProgress = false;
-    
-    public CacheRomInfoFragment(AppData appData, GlobalPrefs globalPrefs)
-    {
-        super();
-
-        this.mAppData = appData;
-        this.mGlobalPrefs = globalPrefs;
-    }
 
     // this method is only called once for this fragment
     @Override
@@ -170,9 +165,12 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         return mProgress;
     }
 
-    public void refreshRoms( File startDir )
+    public void refreshRoms( File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery,
+        AppData appData, GlobalPrefs globalPrefs )
     {
         this.mStartDir = startDir;
+        this.mAppData = appData;
+        this.mGlobalPrefs = globalPrefs;
         
         if(getActivity() != null)
         {
@@ -215,8 +213,8 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         // Asynchronously search for ROMs
         ActivityHelper.startCacheRomInfoService(activity.getApplicationContext(), mServiceConnection,
             mStartDir.getAbsolutePath(), mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCache_cfg,
-            mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mGlobalPrefs.getSearchZips(),
-            mGlobalPrefs.getDownloadArt(), mGlobalPrefs.getClearGallery());
+            mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mSearchZips,
+            mDownloadArt, mClearGallery);
     }
     
     public boolean IsInProgress()

@@ -303,7 +303,7 @@ public class GalleryActivity extends AppCompatActivity
         
         if(mCacheRomInfoFragment == null)
         {
-            mCacheRomInfoFragment = new CacheRomInfoFragment(mAppData, mGlobalPrefs);
+            mCacheRomInfoFragment = new CacheRomInfoFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
         }
     }
@@ -583,18 +583,21 @@ public class GalleryActivity extends AppCompatActivity
             {
                 Bundle extras = data.getExtras();
                 String searchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
+                boolean searchZips = extras.getBoolean( ActivityHelper.Keys.SEARCH_ZIPS );
+                boolean downloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
+                boolean clearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
                 
                 if (searchPath != null)
                 {
-                    refreshRoms(new File(searchPath));
+                    refreshRoms(new File(searchPath), searchZips, downloadArt, clearGallery);
                 }
             }
         }
     }
     
-    private void refreshRoms( final File startDir )
+    private void refreshRoms( final File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery )
     {
-        mCacheRomInfoFragment.refreshRoms(startDir);
+        mCacheRomInfoFragment.refreshRoms(startDir, searchZips, downloadArt, clearGallery, mAppData, mGlobalPrefs);
     }
 
     void refreshGrid( ){
