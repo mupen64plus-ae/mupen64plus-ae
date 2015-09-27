@@ -204,7 +204,7 @@ public class RomDatabase
                 baseName = goodName.split( " \\(" )[0].trim();
                 
                 // Generate the cover art URL string
-                artName = baseName.replaceAll( "['\\.]", "" ).replaceAll( "\\W+", "_" ) + ".png";
+                artName = baseName.replaceAll( "['\\.!]", "" ).replaceAll( "\\W+", "_" ) + ".png";
                 artUrl = String.format( ART_URL_TEMPLATE, artName );
                 
                 // Generate wiki page URL string
