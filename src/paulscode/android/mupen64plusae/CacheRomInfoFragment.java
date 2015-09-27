@@ -169,6 +169,9 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         AppData appData, GlobalPrefs globalPrefs )
     {
         this.mStartDir = startDir;
+        this.mSearchZips = searchZips;
+        this.mDownloadArt = downloadArt;
+        this.mClearGallery = clearGallery;
         this.mAppData = appData;
         this.mGlobalPrefs = globalPrefs;
         
