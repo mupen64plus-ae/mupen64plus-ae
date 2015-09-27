@@ -242,7 +242,7 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
         }
         
         // This entry appears to be a valid ROM, extract it
-        Log.i( "GalleryActivity", "Found zip entry " + zipEntry.getName() );
+        Log.i( "CacheRomInfoFragment", "Found zip entry " + zipEntry.getName() );
 
         String entryName = new File( zipEntry.getName() ).getName();
         File extractedFile = new File( destDir, entryName );
