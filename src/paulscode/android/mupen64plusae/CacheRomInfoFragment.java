@@ -132,7 +132,7 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
     @Override
     public void onDestroy()
     {        
-        if(mServiceConnection != null)
+        if(mServiceConnection != null && mInProgress)
         {
             ActivityHelper.stopCacheRomInfoService(getActivity().getApplicationContext(), mServiceConnection);
         }
