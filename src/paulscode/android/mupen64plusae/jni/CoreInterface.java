@@ -35,7 +35,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -124,10 +123,7 @@ public class CoreInterface
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
-    // Save paths - used internally
-    private static String sAutoSavePath = null;
-    
-    public static void initialize( Activity activity, GameSurface surface, String romPath, String romMd5, String cheatArgs, boolean isRestarting )
+    public static void initialize( Activity activity, GameSurface surface, GamePrefs gamePrefs, String romPath, String romMd5, String cheatArgs, boolean isRestarting )
     {
         sRomPath = romPath;
         sCheatOptions = cheatArgs;
@@ -137,8 +133,7 @@ public class CoreInterface
         sSurface = surface;
         sAppData = new AppData( sActivity );
         sGlobalPrefs = new GlobalPrefs( sActivity );
-        RomHeader romHeader = new RomHeader( romPath );
-        sGamePrefs = new GamePrefs( sActivity, romMd5,  romHeader.crc, romHeader.name, romHeader.countrySymbol);
+        sGamePrefs = gamePrefs;
         NativeConfigFiles.syncConfigFiles( sGamePrefs, sGlobalPrefs, sAppData );
         
         // Make sure various directories exist so that we can write to them
@@ -150,7 +145,6 @@ public class CoreInterface
         new File( sGamePrefs.coreUserConfigDir ).mkdirs();
         new File( sGlobalPrefs.coreUserDataDir ).mkdirs();
         new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
-        sAutoSavePath = sGamePrefs.autoSaveDir + "/yyyy-mm-dd-hh-mm-ss.sav";
     }
     
     @TargetApi( 11 )
@@ -188,7 +182,7 @@ public class CoreInterface
         sFpsRecalcPeriod = fpsRecalcPeriod;
     }
     
-    public static synchronized void startupEmulator()
+    public static synchronized void startupEmulator(final String saveToLoad)
     {
         if( sCoreThread == null )
         {
@@ -297,10 +291,11 @@ public class CoreInterface
                     public void onStateCallback( int paramChanged, int newValue )
                     {
                         if( paramChanged == NativeConstants.M64CORE_EMU_STATE
-                                && newValue == NativeConstants.EMULATOR_STATE_RUNNING )
+                                && newValue == NativeConstants.EMULATOR_STATE_RUNNING
+                                && saveToLoad != null)
                         {
                             removeOnStateCallbackListener( this );
-                            NativeExports.emuLoadFile( sAutoSavePath );
+                            NativeExports.emuLoadFile( saveToLoad );
                         }
                     }
                 } );
@@ -345,17 +340,20 @@ public class CoreInterface
         }
     }
     
-    public static synchronized void pauseEmulator( boolean autoSave )
+    public static synchronized void pauseEmulator( boolean autoSave, String latestSave )
     {
         if( sCoreThread != null )
         {
             NativeExports.emuPause();
             
             // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
-            if( autoSave )
-            {
+            if( autoSave && latestSave != null)
+            {                
+                
                 Notifier.showToast( sActivity, R.string.toast_savingSession );
-                NativeExports.emuSaveFile( sAutoSavePath );
+                
+                Log.i("CoreInterface", "Saving file: " + latestSave);
+                NativeExports.emuSaveFile( latestSave );
             }
         }
     }
@@ -404,7 +402,7 @@ public class CoreInterface
     
     public static void saveFileFromPrompt()
     {
-        CoreInterface.pauseEmulator( false );
+        CoreInterface.pauseEmulator( false, null );
         CharSequence title = sActivity.getText( R.string.menuItem_fileSave );
         CharSequence hint = sActivity.getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
@@ -422,9 +420,26 @@ public class CoreInterface
     
     public static void loadFileFromPrompt()
     {
-        CoreInterface.pauseEmulator( false );
+        CoreInterface.pauseEmulator( false, null );
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
         File startPath = new File( sGamePrefs.userSaveDir );
+        Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
+        {
+            @Override
+            public void onDialogClosed( File file, int which )
+            {
+                if( which >= 0 )
+                    loadState( file );
+                CoreInterface.resumeEmulator();
+            }
+        } );
+    }
+    
+    public static void loadAutoSaveFromPrompt()
+    {
+        CoreInterface.pauseEmulator( false, null );
+        CharSequence title = sActivity.getText( R.string.menuItem_fileLoadAutoSave );
+        File startPath = new File( sGamePrefs.autoSaveDir );
         Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
         {
             @Override
