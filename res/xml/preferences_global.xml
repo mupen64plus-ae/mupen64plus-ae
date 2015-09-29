@@ -61,21 +61,6 @@
             android:key="showFullNames"
             android:summary="@string/showFullNames_summary"
             android:title="@string/showFullNames_title" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="searchZips"
-            android:title="@string/scanRomsDialog_searchZips" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="downloadArt"
-            android:title="@string/scanRomsDialog_downloadArt" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="clearGallery"
-            android:title="@string/scanRomsDialog_clearGallery" />
     </PreferenceCategory>
 
     <PreferenceCategory
