@@ -142,6 +142,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     // App data and user preferences
     private GlobalPrefs mGlobalPrefs;
     private GamePrefs mGamePrefs;
+    private GameAutoSaveManager mAutoSaveManager;
     
     public GameLifecycleHandler( Activity activity )
     {
@@ -179,6 +180,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
 
         mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         mCheatArgs =  mGamePrefs.getCheatArgs();
+        
+        mAutoSaveManager = new GameAutoSaveManager(mGamePrefs);
 
         mGlobalPrefs.enforceLocale( mActivity );
         
@@ -216,7 +219,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
         // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( mActivity, mSurface, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
+        CoreInterface.initialize( mActivity, mSurface, mGamePrefs, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
 
         
         // Listen to game surface events (created, changed, destroyed)
@@ -520,10 +523,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         int state = NativeExports.emuGetState();
         if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ))
         {
+            String latestSave = mAutoSaveManager.getLatestAutoSave();
             switch( state )
             {
                 case NativeConstants.EMULATOR_STATE_UNKNOWN:
-                    CoreInterface.startupEmulator();
+                    CoreInterface.startupEmulator(latestSave);
                     break;
                 case NativeConstants.EMULATOR_STATE_PAUSED:
                     CoreInterface.resumeEmulator();
@@ -538,7 +542,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     {
         if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_PAUSED )
         {
-            CoreInterface.pauseEmulator( true );
+            String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+            
+            CoreInterface.pauseEmulator( true, saveFileName );
+            
+            mAutoSaveManager.clearOldest();
         }
     }
     
