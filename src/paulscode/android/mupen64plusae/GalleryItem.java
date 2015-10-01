@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.task.LoadBitmapTask;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
@@ -220,10 +221,6 @@ public class GalleryItem
             if( item != null )
             {
                 ImageView artView = (ImageView) view.findViewById( R.id.imageArt );
-                if( item.artBitmap != null )
-                    artView.setImageDrawable( item.artBitmap );
-                else
-                    artView.setImageResource( R.drawable.default_coverart );
                 
                 TextView tv1 = (TextView) view.findViewById( R.id.text1 );
                 tv1.setText( item.toString() );
@@ -251,11 +248,11 @@ public class GalleryItem
                     tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 13.0f );
                     artView.setVisibility( View.VISIBLE );
                     
-                    item.loadBitmap();
-                    if( item.artBitmap != null )
-                        artView.setImageDrawable( item.artBitmap );
-                    else
-                        artView.setImageResource( R.drawable.default_coverart );
+                    artView.setImageResource( R.drawable.default_coverart );
+
+                    //Load the real cover art in a background task
+                    LoadBitmapTask loadBitmapTask = new LoadBitmapTask(item.context, item.artPath, artView); 
+                    loadBitmapTask.execute((String) null);
                     
                     artView.getLayoutParams().width = activity.galleryWidth;
                     artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
