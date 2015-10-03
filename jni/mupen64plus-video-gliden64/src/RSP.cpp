@@ -141,6 +141,10 @@ void RSP_ProcessDList()
 		gDPFullSync();
 		return;
 	}
+	if (*REG.VI_ORIGIN != VI.lastOrigin) {
+		VI_UpdateSize();
+		video().updateScale();
+	}
 
 	RSP.PC[0] = *(u32*)&DMEM[0x0FF0];
 	RSP.PCi = 0;
@@ -337,6 +341,8 @@ void RSP_Init()
 		strstr(RSP.romname, (const char *)"PERFECT DARK")
 		)
 		config.generalEmulation.hacks |= hack_VIUpdateOnCIChange;
+	else if (strstr(RSP.romname, (const char *)"MASK") != NULL) // Zelda MM
+		config.generalEmulation.hacks |= hack_skipVIChangeCheck | hack_ZeldaCamera;
 
 	api().FindPluginPath(RSP.pluginpath);
 

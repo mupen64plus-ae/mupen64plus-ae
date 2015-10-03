@@ -2058,17 +2058,19 @@ void _copyDepthBuffer()
 	// OpenGL has different format for color and depth buffers, so this trick can't be performed directly
 	// To do that, depth buffer with address of current color buffer created and attached to the current FBO
 	// It will be copy depth buffer
-	depthBufferList().saveBuffer(gDP.colorImage.address);
+	DepthBufferList & dbList = depthBufferList();
+	dbList.saveBuffer(gDP.colorImage.address);
 	// Take any frame buffer and attach source depth buffer to it, to blit it into copy depth buffer
-	FrameBuffer * pTmpBuffer = frameBufferList().findTmpBuffer(frameBufferList().getCurrent()->m_startAddress);
+	FrameBufferList & fbList = frameBufferList();
+	FrameBuffer * pTmpBuffer = fbList.findTmpBuffer(fbList.getCurrent()->m_startAddress);
 	if (pTmpBuffer == NULL)
 		return;
-	DepthBuffer * pCopyBufferDepth = depthBufferList().findBuffer(gSP.bgImage.address);
+	DepthBuffer * pCopyBufferDepth = dbList.findBuffer(gSP.bgImage.address);
 	if (pCopyBufferDepth == NULL)
 		return;
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, pTmpBuffer->m_FBO);
 	pCopyBufferDepth->setDepthAttachment(GL_READ_FRAMEBUFFER);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferList().getCurrent()->m_FBO);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbList.getCurrent()->m_FBO);
 	OGLVideo & ogl = video();
 	glBlitFramebuffer(
 		0, 0, ogl.getWidth(), ogl.getHeight(),
@@ -2080,7 +2082,7 @@ void _copyDepthBuffer()
 		pTmpBuffer->m_pDepthBuffer->setDepthAttachment(GL_READ_FRAMEBUFFER);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	// Set back current depth buffer
-	depthBufferList().saveBuffer(gDP.depthImageAddress);
+	dbList.saveBuffer(gDP.depthImageAddress);
 }
 #endif // GLES2
 
@@ -2112,6 +2114,11 @@ void _loadBGImage(const uObjScaleBg * _bgInfo, bool _loadScale)
 			gDP.tiles[0].textureMode = TEXTUREMODE_FRAMEBUFFER_BG;
 			gDP.tiles[0].loadType = LOADTYPE_TILE;
 			gDP.changed |= CHANGED_TMEM;
+
+			if ((config.generalEmulation.hacks & hack_ZeldaCamera) != 0) {
+				if (gDP.colorImage.address == gDP.depthImageAddress)
+					frameBufferList().setCopyBuffer(frameBufferList().getCurrent());
+			}
 		}
 	}
 }
@@ -2122,13 +2129,13 @@ void gSPBgRect1Cyc( u32 _bg )
 	uObjScaleBg *objScaleBg = (uObjScaleBg*)&RDRAM[address];
 	_loadBGImage(objScaleBg, true);
 
-#ifdef GL_IMAGE_TEXTURES_SUPPORT
+#ifndef GLES2
 	if (gSP.bgImage.address == gDP.depthImageAddress || depthBufferList().findBuffer(gSP.bgImage.address) != NULL)
 		_copyDepthBuffer();
 	// Zelda MM uses depth buffer copy in LoT and in pause screen.
 	// In later case depth buffer is used as temporal color buffer, and usual rendering must be used.
 	// Since both situations are hard to distinguish, do the both depth buffer copy and bg rendering.
-#endif // GL_IMAGE_TEXTURES_SUPPORT
+#endif // GLES2
 
 	gDP.otherMode.cycleType = G_CYC_1CYCLE;
 	gDP.changed |= CHANGED_CYCLETYPE;

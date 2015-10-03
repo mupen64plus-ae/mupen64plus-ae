@@ -129,15 +129,16 @@ void gDPSetColorImage( u32 format, u32 size, u32 width, u32 address )
 	if (gDP.colorImage.address != address || gDP.colorImage.width != width || gDP.colorImage.size != size) {
 		u32 height = 1;
 		if (width == VI.width)
-			height = VI.height;
-		else if (width == gDP.scissor.lrx && width == gSP.viewport.width) {
+			height = VI.height > 0 ? VI.height : gDP.scissor.lry;
+		else if (!RSP.bLLE && width == gDP.scissor.lrx && width == gSP.viewport.width) {
 			height = max(gDP.scissor.lry, gSP.viewport.height);
-			height = min(height, VI.height);
+			if (VI.height > 0)
+				height = min(height, VI.height);
 		} else if (width == gDP.scissor.lrx)
 			height = gDP.scissor.lry;
 		else if (width <= 64)
 			height = width;
-		else if (gSP.viewport.height > 0)
+		else if (!RSP.bLLE && gSP.viewport.height > 0)
 			height = gSP.viewport.height;
 		else
 			height = gDP.scissor.lry;
@@ -374,37 +375,38 @@ bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
 	if (!config.frameBufferEmulation.enable)
 		return false;
 
-	FrameBuffer *pBuffer = frameBufferList().findBuffer(_address);
+	FrameBufferList & fbList = frameBufferList();
+	FrameBuffer *pBuffer = fbList.findBuffer(_address);
 	bool bRes = pBuffer != NULL;
 	if (bRes) {
 		if ((config.generalEmulation.hacks & hack_blurPauseScreen) != 0) {
 			if (gDP.colorImage.address == gDP.depthImageAddress && pBuffer->m_copiedToRdram) {
 				memcpy(RDRAM + gDP.depthImageAddress, RDRAM + pBuffer->m_startAddress, (pBuffer->m_width*pBuffer->m_height) << pBuffer->m_size >> 1);
 				pBuffer->m_copiedToRdram = false;
-				frameBufferList().getCurrent()->m_isPauseScreen = true;
+				fbList.getCurrent()->m_isPauseScreen = true;
 			}
 			if (pBuffer->m_isPauseScreen)
 				bRes = false;
 		}
 
 		if (pBuffer->m_cfb) {
-			frameBufferList().removeBuffer(pBuffer->m_startAddress);
+			fbList.removeBuffer(pBuffer->m_startAddress);
 			bRes = false;
 		}
 
 		if ((config.generalEmulation.hacks & hack_noDepthFrameBuffers) != 0 && pBuffer->m_isDepthBuffer) {
-			frameBufferList().removeBuffer(pBuffer->m_startAddress);
+			fbList.removeBuffer(pBuffer->m_startAddress);
 			bRes = false;
 		}
 
 		const u32 texEndAddress = _address + _bytes - 1;
 		if (_address > pBuffer->m_startAddress && texEndAddress > (pBuffer->m_endAddress + (pBuffer->m_width << pBuffer->m_size >> 1))) {
-			//frameBufferList().removeBuffer(pBuffer->m_startAddress);
+			//fbList.removeBuffer(pBuffer->m_startAddress);
 			bRes = false;
 		}
 
 		if (bRes && gDP.loadTile->loadType == LOADTYPE_TILE && gDP.textureImage.width != pBuffer->m_width && gDP.textureImage.size != pBuffer->m_size) {
-			//frameBufferList().removeBuffer(pBuffer->m_startAddress); // Does not work with Zelda MM
+			//fbList.removeBuffer(pBuffer->m_startAddress); // Does not work with Zelda MM
 			bRes = false;
 		}
 
@@ -413,7 +415,7 @@ bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
 			if (bRes)
 				pBuffer->m_validityChecked = RSP.DList;
 			else
-				frameBufferList().removeBuffer(pBuffer->m_startAddress);
+				fbList.removeBuffer(pBuffer->m_startAddress);
 		}
 
 		if (bRes) {
