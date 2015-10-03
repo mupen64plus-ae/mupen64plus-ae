@@ -420,13 +420,16 @@ void OGLRender::_setBlendMode() const
 
 			case 0x0040: // Fzero
 			case 0xC810: // Blends fog
-			case 0xC811: // Blends fog
 			case 0x0C18: // Standard interpolated blend
-			case 0x0C19: // Used for antialiasing
 			case 0x0050: // Standard interpolated blend
 			case 0x0051: // Standard interpolated blend
 			case 0x0055: // Used for antialiasing
 				glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+				break;
+
+			case 0x0C19: // Used for antialiasing
+			case 0xC811: // Blends fog
+				glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 				break;
 
 			case 0x5000: // V8 explosions
@@ -714,9 +717,14 @@ void OGLRender::_prepareDrawTriangle(bool _dma)
 	}
 }
 
+bool OGLRender::_canDraw() const
+{
+	return config.frameBufferEmulation.enable == 0 || frameBufferList().getCurrent() != NULL;
+}
+
 void OGLRender::drawLLETriangle(u32 _numVtx)
 {
-	if (_numVtx == 0)
+	if (_numVtx == 0 || !_canDraw())
 		return;
 
 	gSP.changed &= ~CHANGED_GEOMETRYMODE; // Don't update cull mode
@@ -756,7 +764,7 @@ void OGLRender::drawLLETriangle(u32 _numVtx)
 
 void OGLRender::drawDMATriangles(u32 _numVtx)
 {
-	if (_numVtx == 0)
+	if (_numVtx == 0 || !_canDraw())
 		return;
 	_prepareDrawTriangle(true);
 	glDrawArrays(GL_TRIANGLES, 0, _numVtx);
@@ -764,7 +772,10 @@ void OGLRender::drawDMATriangles(u32 _numVtx)
 
 void OGLRender::drawTriangles()
 {
-	if (triangles.num == 0) return;
+	if (triangles.num == 0 || !_canDraw()) {
+		triangles.num = 0;
+		return;
+	}
 
 	_prepareDrawTriangle(false);
 	glDrawElements(GL_TRIANGLES, triangles.num, GL_UNSIGNED_BYTE, triangles.elements);
@@ -773,6 +784,9 @@ void OGLRender::drawTriangles()
 
 void OGLRender::drawLine(int _v0, int _v1, float _width)
 {
+	if (!_canDraw())
+		return;
+
 	if (gSP.changed || gDP.changed)
 		_updateStates(rsLine);
 
@@ -799,6 +813,8 @@ void OGLRender::drawLine(int _v0, int _v1, float _width)
 
 void OGLRender::drawRect(int _ulx, int _uly, int _lrx, int _lry, float *_pColor)
 {
+	if (!_canDraw())
+		return;
 	gSP.changed &= ~CHANGED_GEOMETRYMODE; // Don't update cull mode
 	if (gSP.changed || gDP.changed)
 		_updateStates(rsRect);
@@ -1007,7 +1023,7 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 #ifdef RENDERSTATE_TEST
 		StateChanges++;
 #endif
-		glVertexAttrib4f(SC_COLOR, 0, 0, 0, 0);
+		glVertexAttrib4f(SC_COLOR, 0, 0, 0, 1);
 		glVertexAttribPointer(SC_POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].x);
 		glVertexAttribPointer(SC_TEXCOORD0, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].s0);
 		glVertexAttribPointer(SC_TEXCOORD1, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].s1);
@@ -1018,6 +1034,9 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 		gSP.changed |= CHANGED_GEOMETRYMODE;
 		return;
 	}
+
+	if (!_canDraw())
+		return;
 
 	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
 	OGLVideo & ogl = video();
@@ -1142,7 +1161,7 @@ void OGLRender::drawText(const char *_pText, float x, float y)
 
 void OGLRender::clearDepthBuffer(u32 _uly, u32 _lry)
 {
-	if (config.frameBufferEmulation.enable && frameBufferList().getCurrent() == NULL)
+	if (!_canDraw())
 		return;
 
 	depthBufferList().clearBuffer(_uly, _lry);
@@ -1158,7 +1177,10 @@ void OGLRender::clearDepthBuffer(u32 _uly, u32 _lry)
 
 void OGLRender::clearColorBuffer(float *_pColor )
 {
-	glDisable( GL_SCISSOR_TEST );
+	if (!_canDraw())
+		return;
+
+	glDisable(GL_SCISSOR_TEST);
 
 	glClearColor( _pColor[0], _pColor[1], _pColor[2], _pColor[3] );
 	glClear( GL_COLOR_BUFFER_BIT );

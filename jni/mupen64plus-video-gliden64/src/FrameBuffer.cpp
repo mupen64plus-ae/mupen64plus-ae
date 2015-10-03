@@ -229,7 +229,7 @@ void FrameBuffer::init(u32 _address, u32 _endAddress, u16 _format, u16 _size, u1
 void FrameBuffer::reinit(u16 _height)
 {
 	const u16 format = m_pTexture->format;
-	const u32 endAddress = m_startAddress + ((m_width * (_height - 1)) << m_size >> 1) - 1;
+	const u32 endAddress = m_startAddress + ((m_width * _height) << m_size >> 1) - 1;
 	if (m_pTexture != NULL)
 		textureCache().removeFrameBufferTexture(m_pTexture);
 	if (m_resolveFBO != 0)
@@ -357,11 +357,15 @@ FrameBufferList & FrameBufferList::get()
 void FrameBufferList::init()
 {
 	 m_pCurrent = NULL;
+	 m_pCopy = NULL;
+	 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 void FrameBufferList::destroy() {
 	m_list.clear();
 	m_pCurrent = NULL;
+	m_pCopy = NULL;
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 void FrameBufferList::setBufferChanged()
@@ -525,8 +529,10 @@ void FrameBufferList::removeBuffer(u32 _address )
 {
 	for (FrameBuffers::iterator iter = m_list.begin(); iter != m_list.end(); ++iter)
 		if (iter->m_startAddress == _address) {
-			if (&(*iter) == m_pCurrent)
+			if (&(*iter) == m_pCurrent) {
 				m_pCurrent = NULL;
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			}
 			m_list.erase(iter);
 			return;
 		}
@@ -537,8 +543,10 @@ void FrameBufferList::removeBuffers(u32 _width)
 	m_pCurrent = NULL;
 	for (FrameBuffers::iterator iter = m_list.begin(); iter != m_list.end(); ++iter) {
 		while (iter->m_width == _width) {
-			if (&(*iter) == m_pCurrent)
+			if (&(*iter) == m_pCurrent) {
 				m_pCurrent = NULL;
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			}
 			iter = m_list.erase(iter);
 			if (iter == m_list.end())
 				return;
@@ -1184,7 +1192,15 @@ bool DepthBufferToRDRAM::CopyToRDRAM( u32 _address) {
 
 bool FrameBuffer_CopyDepthBuffer( u32 address ) {
 #ifndef GLES2
-	return g_dbToRDRAM.CopyToRDRAM(address);
+	FrameBuffer * pCopyBuffer = frameBufferList().getCopyBuffer();
+	if (pCopyBuffer != NULL) {
+		// This code is mainly to emulate Zelda MM camera.
+		g_fbToRDRAM.CopyToRDRAM(pCopyBuffer->m_startAddress);
+		pCopyBuffer->m_RdramCopy.resize(0); // To disable validity check by RDRAM content. CPU may change content of the buffer for some unknown reason.
+		frameBufferList().setCopyBuffer(NULL);
+		return true;
+	} else
+		return g_dbToRDRAM.CopyToRDRAM(address);
 #else
 	return false;
 #endif
