@@ -60,6 +60,8 @@ public class ActivityHelper
         public static final String ROM_CRC              = NAMESPACE + "ROM_CRC";
         public static final String ROM_HEADER_NAME      = NAMESPACE + "ROM_HEADER_NAME";
         public static final String ROM_COUNTRY_CODE     = NAMESPACE + "ROM_COUNTRY_CODE";
+        public static final String ROM_GOOD_NAME        = NAMESPACE + "ROM_GOOD_NAME";
+        public static final String ROM_ART_PATH         = NAMESPACE + "ROM_ART_PATH";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String MENU_DISPLAY_MODE    = NAMESPACE + "MENU_DISPLAY_MODE";
@@ -129,7 +131,8 @@ public class ActivityHelper
     }
     
     public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,
-            String romHeaderName, byte romCountryCode, boolean doRestart, boolean isXperiaPlay )
+            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName,
+            boolean doRestart, boolean isXperiaPlay )
     {
         Intent intent = isXperiaPlay
                 ? new Intent( context, GameActivityXperiaPlay.class )
@@ -139,6 +142,8 @@ public class ActivityHelper
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
         intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
+        intent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, romArtPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
         intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
         context.startActivity( intent );
     }

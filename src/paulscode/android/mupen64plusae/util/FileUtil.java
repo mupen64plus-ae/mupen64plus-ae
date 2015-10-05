@@ -443,4 +443,62 @@ public final class FileUtil
         
         return newFile;
     }
+
+    public static File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )
+    {        
+        // Read the first 4 bytes of the entry
+        byte[] buffer = new byte[1024];
+        try
+        {
+            if( inStream.read( buffer, 0, 4 ) != 4 )
+                return null;
+        }
+        catch( IOException e )
+        {
+            Log.w( "FileUtil", e );
+            return null;
+        }
+        
+        // This entry appears to be a valid ROM, extract it
+        Log.i( "FileUtil", "Found zip entry " + zipEntry.getName() );
+
+        String entryName = new File( zipEntry.getName() ).getName();
+        File extractedFile = new File( destDir, entryName );
+        try
+        {
+            // Open the output stream (throws exceptions)
+            OutputStream outStream = new FileOutputStream( extractedFile );
+            try
+            {
+                // Buffer the stream
+                outStream = new BufferedOutputStream( outStream );
+                
+                // Write the first four bytes we already peeked at (throws exceptions)
+                outStream.write( buffer, 0, 4 );
+                
+                // Read/write the remainder of the zip entry (throws exceptions)
+                int n;
+                while( ( n = inStream.read( buffer ) ) >= 0 )
+                {
+                    outStream.write( buffer, 0, n );
+                }
+                return extractedFile;
+            }
+            catch( IOException e )
+            {
+                Log.w( "FileUtil", e );
+                return null;
+            }
+            finally
+            {
+                // Flush output stream and guarantee no memory leaks
+                outStream.close();
+            }
+        }
+        catch( IOException e )
+        {
+            Log.w( "FileUtil", e );
+            return null;
+        }
+    }
 }
