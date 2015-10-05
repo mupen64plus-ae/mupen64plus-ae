@@ -226,9 +226,6 @@ public class GlobalPrefs
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
     
-    /** True if the action bar is available. */
-    public final boolean isActionBarAvailable;
-    
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     private static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -392,7 +389,6 @@ public class GlobalPrefs
             isBigScreenMode = false;
         else
             isBigScreenMode = AppData.IS_OUYA_HARDWARE || appData.isAndroidTv; // TODO: Add other systems as they enter market
-        isActionBarAvailable = AppData.IS_HONEYCOMB && !isBigScreenMode;
         
         // Peripheral share mode
         isControllerShared = mPreferences.getBoolean( "inputShareController", false );
