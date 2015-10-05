@@ -39,10 +39,10 @@ import java.util.zip.ZipFile;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.CacheRomInfoFragment;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -176,7 +176,7 @@ public class CacheRomInfoService extends Service
                             {
                                 InputStream zipStream = zipFile.getInputStream( zipEntry );
                                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
-                                File extractedFile = CacheRomInfoFragment.extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
+                                File extractedFile = FileUtil.extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
                                 
                                 if( mbStopped ) break;
                                 if( extractedFile != null )

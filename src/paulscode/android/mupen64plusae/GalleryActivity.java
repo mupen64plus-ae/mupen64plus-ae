@@ -45,8 +45,11 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
+import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -164,7 +167,11 @@ public class GalleryActivity extends AppCompatActivity
                     public void onComputeMd5Finished( File file, String md5 )
                     {
                         RomHeader header = new RomHeader(file);
-                        launchGameActivity( file.getAbsolutePath(), null, true, md5, header.crc, header.name, header.countryCode, false );
+                        
+                        final RomDatabase database = new RomDatabase( mAppData.mupen64plus_ini );
+                        RomDetail detail = database.lookupByMd5WithFallback( md5, file, header.crc );
+                        launchGameActivity( file.getAbsolutePath(), null, true, md5, header.crc, header.name,
+                            header.countryCode, null, detail.goodName, false );
                     }
                 } );
                 task.execute();
@@ -472,7 +479,7 @@ public class GalleryActivity extends AppCompatActivity
                         launchGameActivity( finalItem.romFile.getAbsolutePath(),
                             finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
                             finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName,
-                            finalItem.countryCode, false );
+                            finalItem.countryCode, finalItem.artPath, finalItem.goodName, false );
                     }
                 } );
         
@@ -492,7 +499,9 @@ public class GalleryActivity extends AppCompatActivity
                                     {
                                         launchGameActivity( finalItem.romFile.getAbsolutePath(),
                                             finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                                            finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode, true );
+                                            finalItem.isExtracted, finalItem.md5, finalItem.crc, 
+                                            finalItem.headerName, finalItem.countryCode, finalItem.artPath,
+                                            finalItem.goodName, true );
                                     }
                                 } );
                     }
@@ -536,8 +545,8 @@ public class GalleryActivity extends AppCompatActivity
     {
         launchGameActivity( item.romFile.getAbsolutePath(),
             item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
-            item.isExtracted,
-            item.md5, item.crc, item.headerName, item.countryCode, false );
+            item.isExtracted, item.md5, item.crc, item.headerName, item.countryCode,
+            item.artPath, item.goodName, false );
         return true;
     }
     
@@ -772,7 +781,7 @@ public class GalleryActivity extends AppCompatActivity
     }
     
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
-            String romGoodName, byte romCountryCode, boolean isRestarting )
+            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting )
     {
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
@@ -801,8 +810,8 @@ public class GalleryActivity extends AppCompatActivity
         }
 
         // Launch the game activity
-        ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romGoodName, romCountryCode,
-                    isRestarting, mGlobalPrefs.isTouchpadEnabled );
+        ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
+                    romArtPath, romGoodName, isRestarting, mGlobalPrefs.isTouchpadEnabled );
     }
     
     private void ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)
@@ -835,7 +844,7 @@ public class GalleryActivity extends AppCompatActivity
                         
                         if( !fileExisted )
                         {
-                            tempRomPath = CacheRomInfoFragment.extractRomFile( destDir, zipEntry, zipStream );
+                            tempRomPath = FileUtil.extractRomFile( destDir, zipEntry, zipStream );
                         }
                         
                         String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
@@ -876,5 +885,4 @@ public class GalleryActivity extends AppCompatActivity
         }
     }
 }
-
 
