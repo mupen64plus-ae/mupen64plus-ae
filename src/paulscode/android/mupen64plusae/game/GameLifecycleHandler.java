@@ -412,6 +412,15 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                 CoreInterface.saveFileFromPrompt();
             }
         });
+        
+        mGameSidebar.addRow(0x0, mActivity.getString(R.string.menuItem_fileLoadAutoSave), null, new GameSidebar.Action()
+        {
+            @Override
+            public void onAction()
+            {
+                CoreInterface.loadAutoSaveFromPrompt();
+            }
+        });
 
         int resId = NativeExports.emuGetFramelimiter() ? R.string.menuItem_disableFramelimiter
             : R.string.menuItem_enableFramelimiter;
