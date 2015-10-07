@@ -181,7 +181,12 @@ public class CacheRomInfoService extends Service
                                 if( mbStopped ) break;
                                 if( extractedFile != null )
                                 {
-                                    cacheFile( extractedFile, database, config, file );
+                                    RomHeader extractedHeader = new RomHeader( extractedFile );
+                                    if(extractedHeader.isValid)
+                                    {
+                                        cacheFile( extractedFile, database, config, file );
+                                    }
+                 
                                     extractedFile.delete();
                                 }
 
