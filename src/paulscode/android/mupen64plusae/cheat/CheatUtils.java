@@ -158,13 +158,6 @@ public class CheatUtils
             Log.e( "CheatFile", "Could not read " + filename );
             return null;
         }
-        finally
-        {
-            if( reader != null )
-            {
-
-            }
-        }
         return reader;
     }
     
