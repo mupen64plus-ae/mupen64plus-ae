@@ -191,7 +191,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         AppData appData = new AppData( mActivity );
         mGlobalPrefs = new GlobalPrefs( mActivity, appData );
 
-        mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
+        mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs );
         mCheatArgs =  mGamePrefs.getCheatArgs();
         
         mAutoSaveManager = new GameAutoSaveManager(mGamePrefs);
