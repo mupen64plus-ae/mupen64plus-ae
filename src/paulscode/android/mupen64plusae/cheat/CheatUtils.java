@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -42,12 +43,19 @@ import android.util.Log;
 
 public class CheatUtils
 {
-    public static class Cheat
+    public static class Cheat implements Comparable<Cheat>
     {
         public String name;
         public String desc;
         public String code;
         public String option;
+        
+        
+        @Override
+        public int compareTo(Cheat another)
+        {
+            return this.name.compareTo(another.name);
+        }
     }
     
     public static int numberOfSystemCheats = 0;
@@ -301,9 +309,10 @@ public class CheatUtils
                 }
                 
                 cheats.add( cheat );
-                
             }
         }
+        
+        Collections.sort(cheats);
         return cheats;
     }
     
