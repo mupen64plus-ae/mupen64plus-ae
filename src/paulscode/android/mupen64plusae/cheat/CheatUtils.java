@@ -20,7 +20,11 @@
  */
 package paulscode.android.mupen64plusae.cheat;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -65,9 +69,9 @@ public class CheatUtils
         File cheat_user = new File( userpath );
         if( cheat_user.exists() )
         {
-            CheatFile cheat_v = new CheatFile( volatilepath );
+            CheatFile cheat_v = new CheatFile( volatilepath, true );
             step2 = new Date().getTime();
-            CheatFile cheat_u = new CheatFile( userpath );
+            CheatFile cheat_u = new CheatFile( userpath, true );
             
             for( String key : cheat_u.keySet() )
             {
@@ -106,11 +110,94 @@ public class CheatUtils
         Log.v( "CheatUtils", "Total time: " + ( end - start ) + "ms" );
     }
     
+    public static BufferedReader getCheatsLocation(String regularExpression, String filename)
+    {
+        // Make sure a file was specified in the constructor
+        if( TextUtils.isEmpty( filename ) )
+        {
+            Log.e( "CheatFile", "Filename not specified in method reload()" );
+            return null;
+        }
+        
+        BufferedReader reader = null;
+        try
+        {
+            reader = new BufferedReader( new FileReader( filename ) );
+            boolean done = false;
+            
+            String fullLine = null;
+            while( !done && ( fullLine = reader.readLine() ) != null)
+            {
+                if( fullLine.startsWith( "crc " ) )
+                {
+                    // Start of the next cheat section, return
+                    done = fullLine.substring( 4 ).matches( regularExpression );
+                }
+            }
+            
+            if(fullLine != null)
+            {
+                Log.i("CheatUtils", fullLine);
+            }
+        }
+        catch( FileNotFoundException e )
+        {
+            Log.e( "CheatFile", "Could not open " + filename );
+            return null;
+        }
+        catch( IOException e )
+        {
+            Log.e( "CheatFile", "Could not read " + filename );
+            return null;
+        }
+        finally
+        {
+            if( reader != null )
+            {
+
+            }
+        }
+        return reader;
+    }
+    
+
+    public static ArrayList<Cheat> populateWithPosition( BufferedReader startPosition,
+        String crc, boolean isSystemDefault, Context con )
+    {
+        CheatSection cheatSection;
+        try
+        {
+            cheatSection = new CheatSection( crc, startPosition );
+        }
+        catch (IOException e)
+        {
+            cheatSection = null;
+        }
+        
+        try
+        {
+            startPosition.close();
+        }
+        catch( IOException ignored )
+        {
+        }
+        
+        return populateCommon(cheatSection, crc, isSystemDefault, con);
+    }
+    
     public static ArrayList<Cheat> populate( String crc, CheatFile mupencheat_txt,
             boolean isSystemDefault, Context con )
     {
-        ArrayList<Cheat> cheats = new ArrayList<Cheat>();
+
         CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
+        
+        return populateCommon(cheatSection, crc, isSystemDefault, con);
+    }
+    
+    private static ArrayList<Cheat> populateCommon(CheatSection cheatSection, String crc, boolean isSystemDefault, Context con)
+    {
+        ArrayList<Cheat> cheats = new ArrayList<Cheat>();
+        
         if( cheatSection == null )
         {
             Log.w( "CheatEditorActivity", "No cheat section found for '" + crc + "'" );

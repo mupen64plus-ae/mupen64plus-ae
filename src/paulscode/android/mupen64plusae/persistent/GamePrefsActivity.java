@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -337,15 +338,16 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             return;
         
         // Get the appropriate section of the config file, using CRC as the key
-        CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
-        CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
-        if( cheatSection == null )
+        String regularExpression = "^" + crc.replace( ' ', '-' ) + ".*";
+        
+        BufferedReader cheatLocation = CheatUtils.getCheatsLocation(regularExpression, mAppData.mupencheat_txt);
+        if( cheatLocation == null  )
         {
             Log.w( "GamePrefsActivity", "No cheat section found for '" + crc + "'" );
             return;
         }
         ArrayList<Cheat> cheats = new ArrayList<Cheat>();
-        cheats.addAll( CheatUtils.populate( crc, mupencheat_txt, true, this ) );
+        cheats.addAll( CheatUtils.populateWithPosition( cheatLocation, crc, true, this ) );
         CheatUtils.reset();
         
         // Layout the menu, populating it with appropriate cheat options

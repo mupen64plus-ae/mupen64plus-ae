@@ -133,8 +133,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
             return;
         
         // Get the appropriate section of the config file, using CRC as the key
-        CheatFile mupencheat_default = new CheatFile( mAppData.mupencheat_default );
-        CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt );
+        CheatFile mupencheat_default = new CheatFile( mAppData.mupencheat_default, true );
+        CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
         cheats.addAll( CheatUtils.populate( crc, mupencheat_default, true, this ) );
         cheats.addAll( CheatUtils.populate( crc, usrcheat_txt, false, this ) );
         cheatListAdapter = new CheatListAdapter( this, cheats );
@@ -143,8 +143,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
     
     private void save( String crc )
     {
-        CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt );
-        CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
+        CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
+        CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt, true );
         CheatUtils.save( crc, usrcheat_txt, cheats, mRomHeaderName, mRomCountryCode, this, false );
         CheatUtils.save( crc, mupencheat_txt, cheats, mRomHeaderName, mRomCountryCode, this, true );
     }
