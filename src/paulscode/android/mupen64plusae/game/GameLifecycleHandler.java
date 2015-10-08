@@ -719,6 +719,13 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
 
         // Popup the multi-player dialog if necessary and abort if any players are unassigned
         RomDatabase romDatabase = RomDatabase.getInstance();
+          
+        if(!romDatabase.hasDatabaseFile())
+        {
+            AppData appData = new AppData(mActivity);
+            romDatabase.setDatabaseFile(appData.mupen64plus_ini);
+        }
+        
         RomDetail romDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
         if( romDetail.players > 1 && mGamePrefs.playerMap.isEnabled()
                 && mGlobalPrefs.getPlayerMapReminder() )

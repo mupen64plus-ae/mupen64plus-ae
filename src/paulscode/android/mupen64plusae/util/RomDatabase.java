@@ -129,6 +129,11 @@ public class RomDatabase
         }
     }
     
+    public boolean hasDatabaseFile()
+    {
+        return mConfigFile != null;
+    }
+    
     public RomDetail lookupByMd5WithFallback( String md5, File file, String crc )
     {
         RomDetail detail = lookupByMd5( md5 );

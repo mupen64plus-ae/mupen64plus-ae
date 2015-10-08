@@ -139,6 +139,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Get the detailed info about the ROM
         mRomDatabase = RomDatabase.getInstance();
+        
+        if(!mRomDatabase.hasDatabaseFile())
+        {
+            mRomDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
+        }
+        
         mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
         
         // Load user preference menu structure from XML and update view

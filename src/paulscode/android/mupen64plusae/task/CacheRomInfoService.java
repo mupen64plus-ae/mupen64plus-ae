@@ -139,6 +139,11 @@ public class CacheRomInfoService extends Service
             
             final List<File> files = getAllFiles( searchPathFile );
             final RomDatabase database = RomDatabase.getInstance();
+            if(!database.hasDatabaseFile())
+            {
+                database.setDatabaseFile(mDatabasePath);
+            }
+            
             final ConfigFile config = new ConfigFile( mConfigPath );
             if (mClearGallery)
                 config.clear();

@@ -172,6 +172,12 @@ public class GalleryActivity extends AppCompatActivity
                         RomHeader header = new RomHeader(file);
                         
                         final RomDatabase database = RomDatabase.getInstance();
+                        
+                        if(!database.hasDatabaseFile())
+                        {
+                            database.setDatabaseFile(mAppData.mupen64plus_ini);
+                        }
+                        
                         RomDetail detail = database.lookupByMd5WithFallback( md5, file, header.crc );
                         launchGameActivity( file.getAbsolutePath(), null, true, md5, header.crc, header.name,
                             header.countryCode, null, detail.goodName, false );

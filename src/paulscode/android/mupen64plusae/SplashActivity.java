@@ -167,7 +167,10 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         final Handler handler = new Handler();
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
         
-        RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
+        if(!RomDatabase.getInstance().hasDatabaseFile())
+        {
+            RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
+        }
         
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation() )
