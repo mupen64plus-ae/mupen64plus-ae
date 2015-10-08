@@ -26,6 +26,7 @@ import java.util.List;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
+import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
@@ -167,6 +168,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
         
         RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
+        
+        // Popup a warning if the installation appears to be corrupt
+        if( !mAppData.isValidInstallation() )
+        {
+            Popups.showInvalidInstall( this );
+        }
     }
     
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */

@@ -177,9 +177,6 @@ public class AppData
     /** The path of the built-in emulation profiles file. Deleted on uninstall, sometimes overwritten on update. */
     public final String emulationProfiles_cfg;
     
-    /** Whether the installation is valid. */
-    public final boolean isValidInstallation;
-    
     /** True if this is android TV hardware */
     public final boolean isAndroidTv;
     
@@ -257,28 +254,6 @@ public class AppData
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         touchpadProfiles_cfg = profilesDir + "/touchpad.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
-        
-        // Installation validity
-        // @formatter:off
-        isValidInstallation =
-                libraryExists( "ae-exports" )                           &&
-                libraryExists( "ae-imports" )                           &&
-                libraryExists( "freetype" )                             &&
-                libraryExists( "mupen64plus-audio-sdl" )                &&
-                libraryExists( "mupen64plus-audio-sles" )               &&
-                libraryExists( "mupen64plus-core" )                     &&
-                libraryExists( "mupen64plus-input-android" )            &&
-                libraryExists( "mupen64plus-rsp-hle" )                  &&
-                libraryExists( "mupen64plus-ui-console" )               &&
-                libraryExists( "mupen64plus-video-glide64mk2" )         &&
-                libraryExists( "mupen64plus-video-gliden64-gles20" )    &&
-                libraryExists( "mupen64plus-video-gliden64-gles30" )    &&
-                libraryExists( "mupen64plus-video-gliden64-gles31" )    &&
-                libraryExists( "mupen64plus-video-gln64" )              &&
-                libraryExists( "mupen64plus-video-rice" )               &&
-                libraryExists( "SDL2" )                                 &&
-                libraryExists( "xperia-touchpad" );
-        // @formatter:on
         
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
@@ -359,6 +334,31 @@ public class AppData
     {
         File library = new File( libsDir + "lib" + undecoratedName + ".so" );
         return library.exists();
+    }
+    
+    public boolean isValidInstallation()
+    {
+        // Installation validity
+        // @formatter:off
+        return
+                libraryExists( "ae-exports" )                           &&
+                libraryExists( "ae-imports" )                           &&
+                libraryExists( "freetype" )                             &&
+                libraryExists( "mupen64plus-audio-sdl" )                &&
+                libraryExists( "mupen64plus-audio-sles" )               &&
+                libraryExists( "mupen64plus-core" )                     &&
+                libraryExists( "mupen64plus-input-android" )            &&
+                libraryExists( "mupen64plus-rsp-hle" )                  &&
+                libraryExists( "mupen64plus-ui-console" )               &&
+                libraryExists( "mupen64plus-video-glide64mk2" )         &&
+                libraryExists( "mupen64plus-video-gliden64-gles20" )    &&
+                libraryExists( "mupen64plus-video-gliden64-gles30" )    &&
+                libraryExists( "mupen64plus-video-gliden64-gles31" )    &&
+                libraryExists( "mupen64plus-video-gln64" )              &&
+                libraryExists( "mupen64plus-video-rice" )               &&
+                libraryExists( "SDL2" )                                 &&
+                libraryExists( "xperia-touchpad" );
+        // @formatter:on
     }
     
     /**

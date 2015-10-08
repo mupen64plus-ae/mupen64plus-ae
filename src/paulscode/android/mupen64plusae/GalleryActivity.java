@@ -276,12 +276,6 @@ public class GalleryActivity extends AppCompatActivity
         // Configure the game information drawer
         mGameSidebar = (GameSidebar) findViewById( R.id.gameSidebar );
         
-        // Popup a warning if the installation appears to be corrupt
-        if( !mAppData.isValidInstallation )
-        {
-            Popups.showInvalidInstall( this );
-        }
-        
         if( savedInstanceState != null )
         {
             mSelectedItem = null;
