@@ -109,6 +109,7 @@ public class GalleryActivity extends AppCompatActivity
     private List<GalleryItem> mGalleryItems = null;
     private GalleryItem mSelectedItem = null;
     private boolean mDragging = false;
+    private boolean mOnCreateCalled = false;
     
     private CacheRomInfoFragment mCacheRomInfoFragment = null;
     
@@ -133,6 +134,8 @@ public class GalleryActivity extends AppCompatActivity
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        
+        mOnCreateCalled = true;
         
         // Get app data and user preferences
         mAppData = new AppData( this );
@@ -771,7 +774,12 @@ public class GalleryActivity extends AppCompatActivity
                 mGlobalPrefs.displayActionBarTransparency ) );
         
         // Refresh the gallery
-        refreshGrid();
+        if(!mOnCreateCalled)
+        {
+           refreshGrid();
+        }
+        
+        mOnCreateCalled = false;
     }
     
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
