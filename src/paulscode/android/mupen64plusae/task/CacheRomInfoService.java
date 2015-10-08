@@ -138,7 +138,7 @@ public class CacheRomInfoService extends Service
             touchFile( mArtDir + "/.nomedia" );
             
             final List<File> files = getAllFiles( searchPathFile );
-            final RomDatabase database = new RomDatabase( mDatabasePath );
+            final RomDatabase database = RomDatabase.getInstance();
             final ConfigFile config = new ConfigFile( mConfigPath );
             if (mClearGallery)
                 config.clear();

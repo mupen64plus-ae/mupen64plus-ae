@@ -130,13 +130,13 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
         // Get the detailed info about the ROM
-        mRomDatabase = new RomDatabase( mAppData.mupen64plus_ini );
+        mRomDatabase = RomDatabase.getInstance();
         mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
         
         // Load user preference menu structure from XML and update view
@@ -240,7 +240,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mPrefs.unregisterOnSharedPreferenceChangeListener( this );
         
         // Refresh the preferences objects
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         
         // Populate the profile preferences
@@ -258,7 +258,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 mGlobalPrefs.controllerProfiles_cfg, "" );
         
         // Refresh the preferences objects in case populate* changed a value
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         
         // Set cheats screen summary text

@@ -188,7 +188,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         MogaHack.init( mMogaController, mActivity );
         
         // Get app data and user preferences
-        mGlobalPrefs = new GlobalPrefs( mActivity );
+        AppData appData = new AppData( mActivity );
+        mGlobalPrefs = new GlobalPrefs( mActivity, appData );
 
         mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
         mCheatArgs =  mGamePrefs.getCheatArgs();
@@ -209,7 +210,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mActivity.setRequestedOrientation( mGlobalPrefs.displayOrientation );
         
         // If the orientation changes, the screensize info changes, so we must refresh dependencies
-        mGlobalPrefs = new GlobalPrefs( mActivity );
+        mGlobalPrefs = new GlobalPrefs( mActivity, appData );
     }
     
     @TargetApi( 11 )
@@ -714,10 +715,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         boolean needs2 = false;
         boolean needs3 = false;
         boolean needs4 = false;
-        AppData appData = new AppData(mActivity);
 
         // Popup the multi-player dialog if necessary and abort if any players are unassigned
-        RomDatabase romDatabase = new RomDatabase( appData.mupen64plus_ini );
+        RomDatabase romDatabase = RomDatabase.getInstance();
         RomDetail romDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
         if( romDetail.players > 1 && mGamePrefs.playerMap.isEnabled()
                 && mGlobalPrefs.getPlayerMapReminder() )

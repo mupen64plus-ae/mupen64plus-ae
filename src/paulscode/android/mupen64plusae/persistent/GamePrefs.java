@@ -185,7 +185,7 @@ public class GamePrefs
     public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol )
     {
         final AppData appData = new AppData( context );
-        final GlobalPrefs globalPrefs = new GlobalPrefs( context );
+        final GlobalPrefs globalPrefs = new GlobalPrefs( context, appData );
         
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );

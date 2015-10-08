@@ -50,7 +50,8 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        new GlobalPrefs( this ).enforceLocale( this );
+        AppData appData = new AppData( this );
+        new GlobalPrefs( this, appData ).enforceLocale( this );
         setContentView( R.layout.diagnostic_activity );
         
         // TODO: Remove hack after MOGA SDK is fixed

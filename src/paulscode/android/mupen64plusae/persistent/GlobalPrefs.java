@@ -261,9 +261,8 @@ public class GlobalPrefs
     @SuppressWarnings( "deprecation" )
     @SuppressLint( "InlinedApi" )
     @TargetApi( 17 )
-    public GlobalPrefs( Context context )
+    public GlobalPrefs( Context context, AppData appData )
     {
-        AppData appData = new AppData( context );
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Locale

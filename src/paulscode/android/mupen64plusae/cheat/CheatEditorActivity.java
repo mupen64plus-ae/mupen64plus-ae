@@ -104,7 +104,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
     {
         super.onCreate( savedInstanceState );
         mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
         
         // Get the ROM header info

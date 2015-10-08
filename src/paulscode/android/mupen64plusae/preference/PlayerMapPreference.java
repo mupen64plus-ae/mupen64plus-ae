@@ -27,6 +27,7 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -122,7 +123,8 @@ public class PlayerMapPreference extends DialogPreference implements
         super.onBindDialogView( view );
         
         // Set the member variables
-        GlobalPrefs prefs = new GlobalPrefs( getContext() );
+        AppData appData = new AppData( getContext() );
+        GlobalPrefs prefs = new GlobalPrefs( getContext(), appData );
         mUnmappableKeyCodes = prefs.unmappableKeyCodes;
         mMap.deserialize( mValue );
         
@@ -197,7 +199,8 @@ public class PlayerMapPreference extends DialogPreference implements
     @Override
     public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
     {
-        new GlobalPrefs( getContext() ).putPlayerMapReminder( isChecked );
+        AppData appData = new AppData( getContext() );
+        new GlobalPrefs( getContext(), appData ).putPlayerMapReminder( isChecked );
     }
     
     private void promptPlayer( final int player )

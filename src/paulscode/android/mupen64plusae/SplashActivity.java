@@ -34,6 +34,7 @@ import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListe
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomDatabase;
 import tv.ouya.console.api.OuyaFacade;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -111,7 +112,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
@@ -138,7 +139,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // @formatter:on
         
         // Refresh the preference data wrapper
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         
         // Initialize the OUYA interface if running on OUYA
         if( AppData.IS_OUYA_HARDWARE )
@@ -164,6 +165,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // Handler.postDelayed ensures this runs only after activity has resumed
         final Handler handler = new Handler();
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
+        
+        RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
     }
     
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */

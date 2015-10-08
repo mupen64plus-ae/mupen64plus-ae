@@ -126,7 +126,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     {
         super.onCreate( savedInstanceState );
         mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
         
         // Get the config files from the subclass-specified paths

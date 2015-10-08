@@ -132,7 +132,7 @@ public class CoreInterface
         sActivity = activity;
         sSurface = surface;
         sAppData = new AppData( sActivity );
-        sGlobalPrefs = new GlobalPrefs( sActivity );
+        sGlobalPrefs = new GlobalPrefs( sActivity, sAppData );
         sGamePrefs = gamePrefs;
         NativeConfigFiles.syncConfigFiles( sGamePrefs, sGlobalPrefs, sAppData );
         
