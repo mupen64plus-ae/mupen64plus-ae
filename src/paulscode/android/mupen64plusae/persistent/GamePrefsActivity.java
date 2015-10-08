@@ -131,7 +131,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
@@ -241,7 +242,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Refresh the preferences objects
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs );
         
         // Populate the profile preferences
         mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
@@ -259,7 +261,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode),
+            mAppData, mGlobalPrefs );
         
         // Set cheats screen summary text
         mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
