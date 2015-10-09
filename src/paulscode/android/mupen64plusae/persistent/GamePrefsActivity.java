@@ -21,11 +21,14 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
+import paulscode.android.mupen64plusae.cheat.CheatPreference;
+import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
@@ -34,6 +37,7 @@ import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
+import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -50,7 +54,7 @@ import android.text.TextUtils;
 import com.bda.controller.Controller;
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener
+        OnSharedPreferenceChangeListener, ExtractCheatListener
 {
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_ROOT = "screenRoot";
@@ -290,9 +294,55 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     
     private void refreshCheatsCategory()
     {
-        ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, mAppData, mRomCrc, mScreenCheats, mCategoryCheats,
-            mGamePrefs.isCheatOptionsShown);
-        cheatsTask.execute((String) null);
+        if(mGamePrefs.isCheatOptionsShown)
+        {
+            ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt,
+                mRomCrc);
+            cheatsTask.execute((String) null);
+        }
+        else
+        {
+            mScreenCheats.removePreference( mCategoryCheats );
+        }
+    }
+    
+    @Override
+    public void onExtractFinished(ArrayList<Cheat> cheats)
+    {
+        mCategoryCheats.removeAll();
+        
+        // Layout the menu, populating it with appropriate cheat options
+        for( int i = 0; i < cheats.size(); i++ )
+        {
+            // Get the short title of the cheat (shown in the menu)
+            String title;
+            if( cheats.get( i ).name == null )
+            {
+                // Title not available, just use a default string for the menu
+                title = getString( R.string.cheats_defaultName, i );
+            }
+            else
+            {
+                // Title available, remove the leading/trailing quotation marks
+                title = cheats.get( i ).name;
+            }
+            String notes = cheats.get( i ).desc;
+            String options = cheats.get( i ).option;
+            String[] optionStrings = null;
+            if( !TextUtils.isEmpty( options ) )
+            {
+                optionStrings = options.split( "\n" );
+            }
+            
+            // Create the menu item associated with this cheat
+            CheatPreference pref = new CheatPreference( this, title, notes, optionStrings );
+            pref.setKey( mRomCrc + " Cheat" + i );
+            
+            // Add the preference menu item to the cheats category
+            mCategoryCheats.addPreference( pref );
+        }
+        
+        mScreenCheats.addPreference( mCategoryCheats );
     }
     
     @Override

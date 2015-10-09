@@ -33,6 +33,8 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
+import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -55,7 +57,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CheatEditorActivity extends AppCompatListActivity implements View.OnClickListener, OnItemLongClickListener
+public class CheatEditorActivity extends AppCompatListActivity implements View.OnClickListener, OnItemLongClickListener, ExtractCheatListener
 {
     private static class CheatListAdapter extends ArrayAdapter<Cheat>
     {
@@ -132,14 +134,22 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         if( crc == null )
             return;
         
-        // Get the appropriate section of the config file, using CRC as the key
-        CheatFile mupencheat_default = new CheatFile( mAppData.mupencheat_default, true );
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
-        cheats.addAll( CheatUtils.populate( crc, mupencheat_default, true, this ) );
         cheats.addAll( CheatUtils.populate( crc, usrcheat_txt, false, this ) );
+        
+        //Do this in a separate task since it takes longer
+        ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_default, crc);
+        cheatsTask.execute((String) null);
+    }
+    
+    @Override
+    public void onExtractFinished(ArrayList<Cheat> moreCheats)
+    {
+        cheats.addAll( moreCheats );
+        
         cheatListAdapter = new CheatListAdapter( this, cheats );
         setListAdapter( cheatListAdapter );
-    }
+    }    
     
     private void save( String crc )
     {
@@ -513,5 +523,5 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         builder.setPositiveButton( android.R.string.yes, listener );
         builder.setNegativeButton( android.R.string.no, listener );
         builder.create().show();
-    }    
+    }
 }
