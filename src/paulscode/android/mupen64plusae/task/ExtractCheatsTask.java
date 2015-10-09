@@ -43,10 +43,11 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
     private final PreferenceGroup mPreferenceGroup;
     private final PreferenceGroup mCategoryCheats;
     private final ArrayList<Cheat> mCheats;
+    private final boolean mIsCheatOptionsShown;
 
     
     public ExtractCheatsTask( Context context, AppData appData,
-        String crc, PreferenceGroup preferenceGroup, PreferenceGroup categoryCheats)
+        String crc, PreferenceGroup preferenceGroup, PreferenceGroup categoryCheats, boolean isCheatOptionsShown)
     {
         mContext = context;
         mAppData = appData;
@@ -54,16 +55,33 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
         mPreferenceGroup = preferenceGroup;
         mCategoryCheats = categoryCheats;
         mCheats = new ArrayList<Cheat>();
+        mIsCheatOptionsShown = isCheatOptionsShown;
     }
 
     @Override
     protected String doInBackground(String... params)
     {
+        if(mIsCheatOptionsShown)
+        {
+            buildCheatsCategory();
+            mPreferenceGroup.addPreference( mCategoryCheats );
+        }
+        else
+        {
+            mPreferenceGroup.removePreference( mCategoryCheats );
+        }
+
+        
+        return null;
+    }
+    
+    private void buildCheatsCategory()
+    {
         mCategoryCheats.removeAll();
         
         Log.v( "GamePrefsActivity", "building from CRC = " + mCrc );
         if( mCrc == null )
-            return null;
+            return;
         
         // Get the appropriate section of the config file, using CRC as the key
         String regularExpression = "^" + mCrc.replace( ' ', '-' ) + ".*";
@@ -72,18 +90,12 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
         if( cheatLocation == null  )
         {
             Log.w( "GamePrefsActivity", "No cheat section found for '" + mCrc + "'" );
-            return null;
+            return;
         }
 
         mCheats.addAll( CheatUtils.populateWithPosition( cheatLocation, mCrc, true, mContext ) );
         CheatUtils.reset();
         
-        return null;
-    }
-    
-    @Override
-    protected void onPostExecute( String result )
-    {
         // Layout the menu, populating it with appropriate cheat options
         for( int i = 0; i < mCheats.size(); i++ )
         {
@@ -114,8 +126,12 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
             // Add the preference menu item to the cheats category
             mCategoryCheats.addPreference( pref );
         }
+    }
+    
+    @Override
+    protected void onPostExecute( String result )
+    {        
         
-        mPreferenceGroup.addPreference( mCategoryCheats );
     }
 
 }

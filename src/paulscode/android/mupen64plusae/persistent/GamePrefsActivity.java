@@ -296,16 +296,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     
     private void refreshCheatsCategory()
     {
-        if( mGamePrefs.isCheatOptionsShown )
-        {
-            ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, mAppData, mRomCrc, mScreenCheats, mCategoryCheats);
-            cheatsTask.execute((String) null);
-        }
-        else
-        {
-            // Hide the cheats category
-            mScreenCheats.removePreference( mCategoryCheats );
-        }
+        ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, mAppData, mRomCrc, mScreenCheats, mCategoryCheats,
+            mGamePrefs.isCheatOptionsShown);
+        cheatsTask.execute((String) null);
     }
     
     @Override
