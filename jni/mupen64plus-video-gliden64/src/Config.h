@@ -8,7 +8,8 @@
 #define CONFIG_VERSION_TWO 2U
 #define CONFIG_VERSION_THREE 3U
 #define CONFIG_VERSION_FOUR 4U		// Remove ValidityCheckMethod setting
-#define CONFIG_VERSION_CURRENT CONFIG_VERSION_FOUR
+#define CONFIG_VERSION_FIVE 5U		// Add shader storage option
+#define CONFIG_VERSION_CURRENT CONFIG_VERSION_FIVE
 
 #define BILINEAR_3POINT   0
 #define BILINEAR_STANDARD 1
@@ -45,6 +46,7 @@ struct Config
 		u32 enableLOD;
 		u32 enableHWLighting;
 		u32 enableCustomSettings;
+		u32 enableShadersStorage;
 		u32 hacks;
 #ifdef ANDROID
 		u32 forcePolygonOffset;

@@ -7,7 +7,7 @@ SRCDIR := ./mupen64plus-video-gliden64/src
 
 MY_LOCAL_MODULE := mupen64plus-video-gliden64
 MY_LOCAL_SHARED_LIBRARIES := freetype
-MY_LOCAL_STATIC_LIBRARIES := glidenhq
+MY_LOCAL_STATIC_LIBRARIES := glidenhq osal
 MY_LOCAL_ARM_MODE := arm
 
 MY_LOCAL_C_INCLUDES :=                          \
@@ -15,6 +15,7 @@ MY_LOCAL_C_INCLUDES :=                          \
     $(M64P_API_INCLUDES)                        \
     $(SDL_INCLUDES)                             \
     $(FREETYPE_INCLUDES)                        \
+    $(LOCAL_PATH)/$(SRCDIR)/osal                \
 
 MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/3DMath.cpp                            \

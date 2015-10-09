@@ -127,7 +127,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
         
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "4" );                                                      // Settings version. Don't touch it.
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "5" );                                                      // Settings version. Don't touch it.
         putGliden64( mupen64plus_cfg, game, "MultiSampling", "0" );                                                         // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
         putGliden64( mupen64plus_cfg, game, "AspectRatio", "1" );                                                           // Screen aspect ratio (0=stretch, 1=force 4:3, 2=force 16:9, 3=adjust)
         putGliden64( mupen64plus_cfg, game, "bilinearMode", "1" );                                                          // Bilinear filtering mode (0=N64 3point, 1=standard)
@@ -137,6 +137,7 @@ public class NativeConfigFiles
         putGliden64( mupen64plus_cfg, game, "EnableNoise", "True" );                                                        // Enable color noise emulation.
         putGliden64( mupen64plus_cfg, game, "EnableLOD", "True" );                                                          // Enable LOD emulation.
         putGliden64( mupen64plus_cfg, game, "EnableHWLighting", "False" );                                                  // Enable hardware per-pixel lighting.
+        putGliden64( mupen64plus_cfg, game, "EnableShaderStorage", "True" );                                                // Use persistent storage for compiled shaders.
         putGliden64( mupen64plus_cfg, game, "EnableFBEmulation", "True" );                                                  // Enable frame and|or depth buffer emulation.
         putGliden64( mupen64plus_cfg, game, "EnableCopyColorToRDRAM", "False" );                                            // Enable color buffer copy to RDRAM.
         putGliden64( mupen64plus_cfg, game, "EnableCopyDepthToRDRAM", "False" );                                            // Enable depth buffer copy to RDRAM.
