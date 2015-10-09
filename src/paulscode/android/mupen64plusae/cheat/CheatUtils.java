@@ -27,8 +27,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -49,36 +49,32 @@ public class CheatUtils
         public String desc;
         public String code;
         public String option;
+        public int cheatIndex;
         
         
         @Override
         public int compareTo(Cheat another)
         {
-            return this.name.compareTo(another.name);
+            String lowerCaseName = this.name.toLowerCase(Locale.getDefault());
+            String lowercaseOtherName = another.name.toLowerCase(Locale.getDefault());
+            return lowerCaseName.compareTo(lowercaseOtherName);
         }
     }
     
     public static int numberOfSystemCheats = 0;
     
     public static void mergeCheatFiles( String defaultpath, String userpath, String volatilepath )
-    {
-        long start = new Date().getTime();
-        
+    {        
         // Reset the volatile cheatfile to the default data
         File cheat_volatile = new File( volatilepath );
         File cheat_default = new File( defaultpath );
         FileUtil.copyFile( cheat_default, cheat_volatile );
-        
-        long step1 = new Date().getTime();
-        long step2 = 0;
-        long step3 = 0;
         
         // Merge user cheats if they exist
         File cheat_user = new File( userpath );
         if( cheat_user.exists() )
         {
             CheatFile cheat_v = new CheatFile( volatilepath, true );
-            step2 = new Date().getTime();
             CheatFile cheat_u = new CheatFile( userpath, true );
             
             for( String key : cheat_u.keySet() )
@@ -107,15 +103,8 @@ public class CheatUtils
                     }
                 }
             }
-            step3 = new Date().getTime();
             cheat_v.save();
         }
-        long end = new Date().getTime();
-        Log.v( "CheatUtils", "Copy time: " + ( step1 - start ) + "ms" );
-        Log.v( "CheatUtils", "Load time: " + ( step2 - step1 ) + "ms" );
-        Log.v( "CheatUtils", "Fill time: " + ( step3 - step2 ) + "ms" );
-        Log.v( "CheatUtils", "Save time: " + ( end - step3 ) + "ms" );
-        Log.v( "CheatUtils", "Total time: " + ( end - start ) + "ms" );
     }
     
     public static BufferedReader getCheatsLocation(String regularExpression, String filename)
@@ -215,6 +204,8 @@ public class CheatUtils
             if( cheatBlock != null )
             {
                 Cheat cheat = new Cheat();
+                
+                cheat.cheatIndex = i;
                 
                 // Get the short title of the cheat (shown in the menu)
                 if( cheatBlock.name == null )

@@ -312,22 +312,22 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mCategoryCheats.removeAll();
         
         // Layout the menu, populating it with appropriate cheat options
-        for( int i = 0; i < cheats.size(); i++ )
+        for (Cheat cheat : cheats)
         {
             // Get the short title of the cheat (shown in the menu)
             String title;
-            if( cheats.get( i ).name == null )
+            if( cheat.name == null )
             {
                 // Title not available, just use a default string for the menu
-                title = getString( R.string.cheats_defaultName, i );
+                title = getString( R.string.cheats_defaultName, cheat.cheatIndex );
             }
             else
             {
                 // Title available, remove the leading/trailing quotation marks
-                title = cheats.get( i ).name;
+                title = cheat.name;
             }
-            String notes = cheats.get( i ).desc;
-            String options = cheats.get( i ).option;
+            String notes = cheat.desc;
+            String options = cheat.option;
             String[] optionStrings = null;
             if( !TextUtils.isEmpty( options ) )
             {
@@ -335,8 +335,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             }
             
             // Create the menu item associated with this cheat
-            CheatPreference pref = new CheatPreference( this, title, notes, optionStrings );
-            pref.setKey( mRomCrc + " Cheat" + i );
+            CheatPreference pref = new CheatPreference( this, cheat.cheatIndex, title, notes, optionStrings );
+            
+            //We store the cheat index in the key as a string
+            pref.setKey( mRomCrc + " Cheat" + cheat.cheatIndex );
             
             // Add the preference menu item to the cheats category
             mCategoryCheats.addPreference( pref );

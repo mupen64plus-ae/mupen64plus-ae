@@ -46,10 +46,11 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     private final String mNotes;
     private final String[] mOptions;
     private final OptionDialog mOptionsDialog;
+    private final int mCheatIndex;
     private AlertDialog mNotesDialog;
     private AlertDialog mOptionNoteDialog;
     
-    public CheatPreference( Context context, String title, String notes, String[] options )
+    public CheatPreference( Context context, int cheatIndex, String title, String notes, String[] options )
     {
         super( context );
         
@@ -74,6 +75,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         }
         
         mContext = context;
+        mCheatIndex = cheatIndex;
         mTitle = title;
         mNotes = notes;
         
@@ -155,7 +157,14 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         if( mOptionsDialog == null )
         {
             // Binary cheat
-            setValue( 1 - mValue );
+            if(mValue != 0)
+            {
+               setValue( DEFAULT_VALUE );
+            }
+            else
+            {
+                setValue( 1 );
+            }
             refreshWidgets();
         }
         else
