@@ -15,6 +15,7 @@ MY_LOCAL_C_INCLUDES :=                          \
     $(M64P_API_INCLUDES)                        \
     $(SDL_INCLUDES)                             \
     $(FREETYPE_INCLUDES)                        \
+    $(LOCAL_PATH)/$(SRCDIR)/osal                \
 
 MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/3DMath.cpp                            \
