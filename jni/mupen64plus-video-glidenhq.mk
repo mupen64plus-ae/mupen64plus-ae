@@ -6,12 +6,12 @@ LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./mupen64plus-video-gliden64/src/GLideNHQ
 
 LOCAL_MODULE := glidenhq
-LOCAL_STATIC_LIBRARIES := png
+LOCAL_STATIC_LIBRARIES := png osal
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=                     \
     $(LOCAL_PATH)/$(SRCDIR)             \
-    $(LOCAL_PATH)/$(SRCDIR)/osal        \
+    $(LOCAL_PATH)/$(SRCDIR)/../osal     \
     $(PNG_INCLUDES)                     \
     $(LOCAL_PATH)/GLES3/include/        \
 
@@ -31,8 +31,7 @@ LOCAL_SRC_FILES :=                          \
     $(SRCDIR)/TxReSample.cpp                \
     $(SRCDIR)/TxTexCache.cpp                \
     $(SRCDIR)/TxUtil.cpp                    \
-    $(SRCDIR)/osal/osal_files_unix.c        \
-    $(SRCDIR)/osal/txWidestringWrapper.cpp  \
+    $(SRCDIR)/txWidestringWrapper.cpp       \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \

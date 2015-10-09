@@ -182,6 +182,10 @@
             android:title="EnableHWLighting" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
+            android:key="EnableShaderStorage"
+            android:title="EnableShaderStorage" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="true"
             android:key="EnableFBEmulation"
             android:title="EnableFBEmulation" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
