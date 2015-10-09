@@ -28,8 +28,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
-import paulscode.android.mupen64plusae.cheat.CheatFile;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
@@ -40,6 +38,7 @@ import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
+import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -299,11 +298,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         if( mGamePrefs.isCheatOptionsShown )
         {
-            // Populate menu items
-            buildCheatsCategory( mRomCrc );
-            
-            // Show the cheats category
-            mScreenCheats.addPreference( mCategoryCheats );
+            ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, mAppData, mRomCrc, mScreenCheats, mCategoryCheats);
+            cheatsTask.execute((String) null);
         }
         else
         {
@@ -333,59 +329,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             actionResetGamePrefs();
         }
         return false;
-    }
-    
-    private void buildCheatsCategory( final String crc )
-    {
-        mCategoryCheats.removeAll();
-        
-        Log.v( "GamePrefsActivity", "building from CRC = " + crc );
-        if( crc == null )
-            return;
-        
-        // Get the appropriate section of the config file, using CRC as the key
-        String regularExpression = "^" + crc.replace( ' ', '-' ) + ".*";
-        
-        BufferedReader cheatLocation = CheatUtils.getCheatsLocation(regularExpression, mAppData.mupencheat_txt);
-        if( cheatLocation == null  )
-        {
-            Log.w( "GamePrefsActivity", "No cheat section found for '" + crc + "'" );
-            return;
-        }
-        ArrayList<Cheat> cheats = new ArrayList<Cheat>();
-        cheats.addAll( CheatUtils.populateWithPosition( cheatLocation, crc, true, this ) );
-        CheatUtils.reset();
-        
-        // Layout the menu, populating it with appropriate cheat options
-        for( int i = 0; i < cheats.size(); i++ )
-        {
-            // Get the short title of the cheat (shown in the menu)
-            String title;
-            if( cheats.get( i ).name == null )
-            {
-                // Title not available, just use a default string for the menu
-                title = getString( R.string.cheats_defaultName, i );
-            }
-            else
-            {
-                // Title available, remove the leading/trailing quotation marks
-                title = cheats.get( i ).name;
-            }
-            String notes = cheats.get( i ).desc;
-            String options = cheats.get( i ).option;
-            String[] optionStrings = null;
-            if( !TextUtils.isEmpty( options ) )
-            {
-                optionStrings = options.split( "\n" );
-            }
-            
-            // Create the menu item associated with this cheat
-            CheatPreference pref = new CheatPreference( this, title, notes, optionStrings );
-            pref.setKey( crc + " Cheat" + i );
-            
-            // Add the preference menu item to the cheats category
-            mCategoryCheats.addPreference( pref );
-        }
     }
     
     private void actionResetGamePrefs()
