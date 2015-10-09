@@ -166,16 +166,25 @@ public class AppData
     public final String mupen64plus_ini;
     
     /** The path of the built-in controller profiles file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String controllerProfiles_cfg;
+    private final String controllerProfiles_cfg;
     
     /** The path of the built-in touchscreen profiles file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String touchscreenProfiles_cfg;
+    private final String touchscreenProfiles_cfg;
     
     /** The path of the built-in touchpad profiles file. Deleted on uninstall, sometimes overwritten on update. */
     public final String touchpadProfiles_cfg;
     
     /** The path of the built-in emulation profiles file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String emulationProfiles_cfg;
+    private final String emulationProfiles_cfg;
+    
+    /** The controller profiles config */
+    private ConfigFile mControllerProfilesConfig = null;
+    
+    /** The touchscreen profiles config */
+    private ConfigFile mTouchscreenProfilesConfig = null;
+    
+    /** The emulation profiles config */
+    private ConfigFile mEmulationProfilesConfig = null;
     
     /** True if this is android TV hardware */
     public final boolean isAndroidTv;
@@ -480,4 +489,35 @@ public class AppData
             isXperiaPlay = hardware.contains( "zeus" );
         }
     }
+    
+    public ConfigFile GetEmulationProfilesConfig()
+    {
+        if(mEmulationProfilesConfig == null)
+        {
+            mEmulationProfilesConfig = new ConfigFile( emulationProfiles_cfg );
+        }
+
+        return mEmulationProfilesConfig;
+    }
+    
+    public ConfigFile GetTouchscreenProfilesConfig()
+    {
+        if(mTouchscreenProfilesConfig == null)
+        {
+            mTouchscreenProfilesConfig = new ConfigFile( touchscreenProfiles_cfg );
+        }
+
+        return mTouchscreenProfilesConfig;
+    }
+    
+    public ConfigFile GetControllerProfilesConfig()
+    {
+        if(mControllerProfilesConfig == null)
+        {
+            mControllerProfilesConfig = new ConfigFile( controllerProfiles_cfg );
+        }
+
+        return mControllerProfilesConfig;
+    }
+    
 }

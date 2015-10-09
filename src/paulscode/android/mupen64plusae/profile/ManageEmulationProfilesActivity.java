@@ -21,14 +21,15 @@
 package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 public class ManageEmulationProfilesActivity extends ManageProfilesActivity
 {
     @Override
-    protected String getConfigFilePath( boolean isBuiltin )
+    protected ConfigFile getConfigFile( boolean isBuiltin )
     {
-        return isBuiltin ? mAppData.emulationProfiles_cfg : mGlobalPrefs.emulationProfiles_cfg;
+        return isBuiltin ? mAppData.GetEmulationProfilesConfig() : mGlobalPrefs.GetEmulationProfilesConfig();
     }
     
     @Override

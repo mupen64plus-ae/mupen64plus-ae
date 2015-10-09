@@ -80,10 +80,10 @@ public class ProfilePreference extends CompatibleListPreference
         }
     }
     
-    public void populateProfiles( String builtinPath, String customPath, String defaultValue )
+    public void populateProfiles( ConfigFile configBuiltin, ConfigFile configCustom, String defaultValue )
     {
-        ConfigFile configBuiltin = new ConfigFile( builtinPath );
-        ConfigFile configCustom = new ConfigFile( customPath );
+        //ConfigFile configBuiltin = new ConfigFile( builtinPath );
+        //ConfigFile configCustom = new ConfigFile( customPath );
         List<Profile> profiles = new ArrayList<Profile>();
         profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
         profiles.addAll( Profile.getProfiles( configCustom, false ) );

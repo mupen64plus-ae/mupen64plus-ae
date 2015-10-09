@@ -70,7 +70,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
      *            config file path
      * @return the absolute path of the requested config file
      */
-    abstract protected String getConfigFilePath( boolean isBuiltin );
+    abstract protected ConfigFile getConfigFile( boolean isBuiltin );
     
     /**
      * Gets the name of the profile to use if the user unsets the default. If a profile can be
@@ -130,10 +130,8 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
         mGlobalPrefs.enforceLocale( this );
         
         // Get the config files from the subclass-specified paths
-        String customPath = getConfigFilePath( false );
-        String builtinPath = getConfigFilePath( true );
-        mConfigBuiltin = new ConfigFile( builtinPath );
-        mConfigCustom = new ConfigFile( customPath );
+        mConfigBuiltin = getConfigFile( true );
+        mConfigCustom = getConfigFile( false );
     }
     
     @Override

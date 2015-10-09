@@ -20,17 +20,12 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.util.ArrayList;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
-import paulscode.android.mupen64plusae.cheat.CheatPreference;
-import paulscode.android.mupen64plusae.cheat.CheatUtils;
-import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
@@ -51,7 +46,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.bda.controller.Controller;
 
@@ -252,18 +246,18 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs );
         
         // Populate the profile preferences
-        mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
-                mGlobalPrefs.emulationProfiles_cfg, mGlobalPrefs.getEmulationProfileDefault() );
-        mTouchscreenProfile.populateProfiles( mAppData.touchscreenProfiles_cfg,
-                mGlobalPrefs.touchscreenProfiles_cfg, mGlobalPrefs.getTouchscreenProfileDefault() );
-        mControllerProfile1.populateProfiles( mAppData.controllerProfiles_cfg,
-                mGlobalPrefs.controllerProfiles_cfg, mGlobalPrefs.getControllerProfileDefault() );
-        mControllerProfile2.populateProfiles( mAppData.controllerProfiles_cfg,
-                mGlobalPrefs.controllerProfiles_cfg, "" );
-        mControllerProfile3.populateProfiles( mAppData.controllerProfiles_cfg,
-                mGlobalPrefs.controllerProfiles_cfg, "" );
-        mControllerProfile4.populateProfiles( mAppData.controllerProfiles_cfg,
-                mGlobalPrefs.controllerProfiles_cfg, "" );
+        mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),
+                mGlobalPrefs.GetEmulationProfilesConfig(), mGlobalPrefs.getEmulationProfileDefault() );
+        mTouchscreenProfile.populateProfiles( mAppData.GetTouchscreenProfilesConfig(),
+                mGlobalPrefs.GetTouchscreenProfilesConfig(), mGlobalPrefs.getTouchscreenProfileDefault() );
+        mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault() );
+        mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+        mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+        mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
         
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
