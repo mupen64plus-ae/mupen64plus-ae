@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.cheat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -153,15 +154,20 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
     {
         systemCheats.clear();
         systemCheats.addAll( moreCheats );
-        systemCheats.addAll(userCheats);
     }    
     
     private void save( String crc )
     {
+        ArrayList<Cheat> combinedCheats;
+        combinedCheats = new ArrayList<Cheat>();
+        combinedCheats.addAll(systemCheats);
+        combinedCheats.addAll(userCheats);
+        Collections.sort(combinedCheats);
+        
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt, true );
         CheatUtils.save( crc, usrcheat_txt, userCheats, mRomHeaderName, mRomCountryCode, this, false );
-        CheatUtils.save( crc, mupencheat_txt, systemCheats, mRomHeaderName, mRomCountryCode, this, true );
+        CheatUtils.save( crc, mupencheat_txt, combinedCheats, mRomHeaderName, mRomCountryCode, this, true );
     }
     
     private boolean isHexNumber( String num )
