@@ -167,11 +167,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         final Handler handler = new Handler();
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
         
-        if(!RomDatabase.getInstance().hasDatabaseFile())
-        {
-            RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
-        }
-        
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation() )
         {
@@ -221,6 +216,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             mTextView.setText( R.string.assetExtractor_finished );
             mAppData.putAssetVersion( ASSET_VERSION );
             CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
+            
+            if(!RomDatabase.getInstance().hasDatabaseFile())
+            {
+                RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
+            }
             
             // Launch gallery activity, passing ROM path if it was provided externally
             ActivityHelper.startGalleryActivity( this, getIntent().getData() );

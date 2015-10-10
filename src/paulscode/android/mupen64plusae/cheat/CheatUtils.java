@@ -61,8 +61,6 @@ public class CheatUtils
         }
     }
     
-    public static int numberOfSystemCheats = 0;
-    
     public static void mergeCheatFiles( String defaultpath, String userpath, String volatilepath )
     {        
         // Reset the volatile cheatfile to the default data
@@ -152,7 +150,7 @@ public class CheatUtils
     
 
     public static ArrayList<Cheat> populateWithPosition( BufferedReader startPosition,
-        String crc, boolean isSystemDefault, Context con )
+        String crc, Context con )
     {
         CheatSection cheatSection;
         try
@@ -172,7 +170,7 @@ public class CheatUtils
         {
         }
         
-        return populateCommon(cheatSection, crc, isSystemDefault, con);
+        return populateCommon(cheatSection, crc, con);
     }
     
     public static ArrayList<Cheat> populate( String crc, CheatFile mupencheat_txt,
@@ -181,10 +179,10 @@ public class CheatUtils
 
         CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
         
-        return populateCommon(cheatSection, crc, isSystemDefault, con);
+        return populateCommon(cheatSection, crc, con);
     }
     
-    private static ArrayList<Cheat> populateCommon(CheatSection cheatSection, String crc, boolean isSystemDefault, Context con)
+    private static ArrayList<Cheat> populateCommon(CheatSection cheatSection, String crc, Context con)
     {
         ArrayList<Cheat> cheats = new ArrayList<Cheat>();
         
@@ -192,10 +190,6 @@ public class CheatUtils
         {
             Log.w( "CheatEditorActivity", "No cheat section found for '" + crc + "'" );
             return cheats;
-        }
-        if( isSystemDefault )
-        {
-            numberOfSystemCheats = cheatSection.size();
         }
         
         for( int i = 0; i < cheatSection.size(); i++ )
@@ -314,10 +308,6 @@ public class CheatUtils
         {
             c.clear();
             int start = 0;
-            if( !isSystemDefault )
-            {
-                start = CheatUtils.numberOfSystemCheats;
-            }
             for( int i = start; i < cheats.size(); i++ )
             {
                 Cheat cheat = cheats.get( i );
@@ -371,10 +361,5 @@ public class CheatUtils
             }
             mupencheat_txt.save();
         }
-    }
-    
-    public static void reset()
-    {
-        numberOfSystemCheats = 0;
     }
 }

@@ -80,8 +80,7 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
             return;
         }
 
-        mCheats.addAll( CheatUtils.populateWithPosition( cheatLocation, mCrc, true, mContext ) );
-        CheatUtils.reset();
+        mCheats.addAll( CheatUtils.populateWithPosition( cheatLocation, mCrc, mContext ) );
     }
     
     @Override
