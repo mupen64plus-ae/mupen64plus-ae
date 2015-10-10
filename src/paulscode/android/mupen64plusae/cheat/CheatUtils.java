@@ -294,72 +294,66 @@ public class CheatUtils
         return cheats;
     }
     
-    public static void save( String crc, CheatFile mupencheat_txt, ArrayList<Cheat> cheats,
-            String headerName, byte countryCode, Context con, boolean isSystemDefault )
+    public static void save(String crc, CheatFile mupencheat_txt, ArrayList<Cheat> cheats, String headerName,
+        byte countryCode, Context con, boolean isSystemDefault)
     {
-        CheatSection c = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
-        if( c == null )
+        CheatSection c = mupencheat_txt.match("^" + crc.replace(' ', '-') + ".*");
+        if (c == null)
         {
             // Game name and country code from header
-            c = new CheatSection( crc.replace( ' ', '-' ), headerName, String.format( "%02x",
-                countryCode ).substring( 0, 2 ) );
-            mupencheat_txt.add( c );
+            c = new CheatSection(crc.replace(' ', '-'), headerName, String.format("%02x", countryCode).substring(0, 2));
+            mupencheat_txt.add(c);
         }
+
+        c.clear();
+        int start = 0;
+        for (int i = start; i < cheats.size(); i++)
         {
-            c.clear();
-            int start = 0;
-            for( int i = start; i < cheats.size(); i++ )
+            Cheat cheat = cheats.get(i);
+            CheatBlock b = null;
+            if (TextUtils.isEmpty(cheat.desc) || cheat.desc.equals(con.getString(R.string.cheatNotes_none)))
             {
-                Cheat cheat = cheats.get( i );
-                CheatBlock b = null;
-                if( TextUtils.isEmpty( cheat.desc )
-                        || cheat.desc.equals( con.getString( R.string.cheatNotes_none ) ) )
-                {
-                    b = new CheatBlock( cheat.name, null );
-                }
-                else
-                {
-                    b = new CheatBlock( cheat.name, cheat.desc );
-                }
-                LinkedList<CheatOption> ops = new LinkedList<CheatOption>();
-                if( cheat.option != null )
-                {
-                    if( !TextUtils.isEmpty( cheat.option ) )
-                    {
-                        String[] tmp_ops = cheat.option.split( "\n" );
-                        for( int o = 0; o < tmp_ops.length; o++ )
-                        {
-                            ops.add( new CheatOption( tmp_ops[o].substring( tmp_ops[o]
-                                    .lastIndexOf( ' ' ) + 1 ), tmp_ops[o].substring( 0,
-                                    tmp_ops[o].lastIndexOf( ' ' ) ) ) );
-                        }
-                    }
-                }
-                String[] tmp_lines = cheat.code.split( "\n" );
-                if( tmp_lines.length > 0 )
-                {
-                    for( int o = 0; o < tmp_lines.length; o++ )
-                    {
-                        if( tmp_lines[o].indexOf( ' ' ) != -1 )
-                        {
-                            if( tmp_lines[o].contains( "?" ) )
-                            {
-                                b.add( new CheatCode( tmp_lines[o].substring( 0,
-                                        tmp_lines[o].lastIndexOf( ' ' ) ), tmp_lines[o]
-                                        .substring( tmp_lines[o].lastIndexOf( ' ' ) + 1 ), ops ) );
-                            }
-                            else
-                            {
-                                b.add( new CheatCode( tmp_lines[o].substring( 0,
-                                        tmp_lines[o].lastIndexOf( ' ' ) ), tmp_lines[o]
-                                        .substring( tmp_lines[o].lastIndexOf( ' ' ) + 1 ), null ) );
-                            }
-                        }
-                    }
-                }
-                c.add( b );
+                b = new CheatBlock(cheat.name, null);
             }
-            mupencheat_txt.save();
+            else
+            {
+                b = new CheatBlock(cheat.name, cheat.desc);
+            }
+            LinkedList<CheatOption> ops = new LinkedList<CheatOption>();
+            if (cheat.option != null)
+            {
+                if (!TextUtils.isEmpty(cheat.option))
+                {
+                    String[] tmp_ops = cheat.option.split("\n");
+                    for (int o = 0; o < tmp_ops.length; o++)
+                    {
+                        ops.add(new CheatOption(tmp_ops[o].substring(tmp_ops[o].lastIndexOf(' ') + 1), tmp_ops[o]
+                            .substring(0, tmp_ops[o].lastIndexOf(' '))));
+                    }
+                }
+            }
+            String[] tmp_lines = cheat.code.split("\n");
+            if (tmp_lines.length > 0)
+            {
+                for (int o = 0; o < tmp_lines.length; o++)
+                {
+                    if (tmp_lines[o].indexOf(' ') != -1)
+                    {
+                        if (tmp_lines[o].contains("?"))
+                        {
+                            b.add(new CheatCode(tmp_lines[o].substring(0, tmp_lines[o].lastIndexOf(' ')), tmp_lines[o]
+                                .substring(tmp_lines[o].lastIndexOf(' ') + 1), ops));
+                        }
+                        else
+                        {
+                            b.add(new CheatCode(tmp_lines[o].substring(0, tmp_lines[o].lastIndexOf(' ')), tmp_lines[o]
+                                .substring(tmp_lines[o].lastIndexOf(' ') + 1), null));
+                        }
+                    }
+                }
+            }
+            c.add(b);
         }
+        mupencheat_txt.save();
     }
 }
