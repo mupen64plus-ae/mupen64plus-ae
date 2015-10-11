@@ -21,13 +21,14 @@
 package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 
 public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
 {
     @Override
-    protected String getConfigFilePath( boolean isBuiltin )
+    protected ConfigFile getConfigFile( boolean isBuiltin )
     {
-        return isBuiltin ? mAppData.touchscreenProfiles_cfg : mGlobalPrefs.touchscreenProfiles_cfg;
+        return isBuiltin ? mAppData.GetTouchscreenProfilesConfig() : mGlobalPrefs.GetTouchscreenProfilesConfig();
     }
     
     @Override

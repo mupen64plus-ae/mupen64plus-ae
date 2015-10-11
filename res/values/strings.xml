@@ -197,7 +197,6 @@
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
-    <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
     <string name="touchscreenFeedback_title">Haptic feedback</string>
     <string name="touchscreenFeedback_summary">Vibrate on button press</string>
     <string name="touchpadEnabled_title">Enable touchpad</string>

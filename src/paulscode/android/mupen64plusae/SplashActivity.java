@@ -26,6 +26,7 @@ import java.util.List;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
+import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
@@ -34,6 +35,7 @@ import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListe
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomDatabase;
 import tv.ouya.console.api.OuyaFacade;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -111,7 +113,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
@@ -138,7 +140,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // @formatter:on
         
         // Refresh the preference data wrapper
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         
         // Initialize the OUYA interface if running on OUYA
         if( AppData.IS_OUYA_HARDWARE )
@@ -164,6 +166,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // Handler.postDelayed ensures this runs only after activity has resumed
         final Handler handler = new Handler();
         handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
+        
+        // Popup a warning if the installation appears to be corrupt
+        if( !mAppData.isValidInstallation() )
+        {
+            Popups.showInvalidInstall( this );
+        }
     }
     
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
@@ -208,6 +216,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             mTextView.setText( R.string.assetExtractor_finished );
             mAppData.putAssetVersion( ASSET_VERSION );
             CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
+            
+            if(!RomDatabase.getInstance().hasDatabaseFile())
+            {
+                RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
+            }
             
             // Launch gallery activity, passing ROM path if it was provided externally
             ActivityHelper.startGalleryActivity( this, getIntent().getData() );

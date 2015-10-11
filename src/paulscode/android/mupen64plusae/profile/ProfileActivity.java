@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -112,7 +113,8 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         super.onCreate( savedInstanceState );
         
         // Set locale
-        new GlobalPrefs( this ).enforceLocale( this );
+        AppData appData = new AppData( this );
+        new GlobalPrefs( this, appData ).enforceLocale( this );
         
         // Load the profile; fail fast if there are any programmer usage errors
         Bundle extras = getIntent().getExtras();

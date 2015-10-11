@@ -84,7 +84,7 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
@@ -92,7 +92,7 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         addPreferencesFromResource( R.xml.preferences_global );
         
         // Refresh the preference data wrapper
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
@@ -167,7 +167,7 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private void refreshViews()
     {
         // Refresh the preferences object
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         
         // Enable polygon offset pref if flicker reduction is custom
         PrefUtil.enablePreference( this, VIDEO_POLYGON_OFFSET, mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM );

@@ -98,11 +98,15 @@ public class CheatFile
      * 
      * @param filename the path of the file to load
      */
-    public CheatFile( String filename )
+    public CheatFile( String filename, boolean loadAll )
     {
         mFilename = filename;
         mSections = new LinkedHashMap<String, CheatFile.CheatSection>();
-        reload();
+        
+        if(loadAll)
+        {
+            reload();
+        }
     }
     
     /**
@@ -333,7 +337,7 @@ public class CheatFile
          * @param reader the object providing disk read access
          * @throws IOException if a read error occurs
          */
-        private CheatSection( String key, BufferedReader reader ) throws IOException
+        public CheatSection( String key, BufferedReader reader ) throws IOException
         {
             this.key = key;
             this.blocks = new LinkedList<CheatBlock>();

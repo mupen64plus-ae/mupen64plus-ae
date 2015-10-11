@@ -124,6 +124,18 @@ public class GlobalPrefs
     /** The path of the custom emulation profiles file. */
     public final String emulationProfiles_cfg;
     
+    /** The path of the custom touchpad profile */
+    public final String touchpadProfiles_cfg;
+    
+    /** The controller profiles config */
+    private ConfigFile mControllerProfilesConfig = null;
+    
+    /** The touchscreen profiles config */
+    private ConfigFile mTouchscreenProfilesConfig = null;
+    
+    /** The emulation profiles config */
+    private ConfigFile mEmulationProfilesConfig = null;
+    
     /** The path of the user's custom cheat files. */
     public final String customCheats_txt;
     
@@ -158,7 +170,7 @@ public class GlobalPrefs
     public final String touchpadSkin;
     
     /** The touchpad profile. */
-    public final Profile touchpadProfile;
+    public Profile touchpadProfile;
     
     /** True if a single peripheral device can control multiple players concurrently. */
     public final boolean isControllerShared;
@@ -261,9 +273,8 @@ public class GlobalPrefs
     @SuppressWarnings( "deprecation" )
     @SuppressLint( "InlinedApi" )
     @TargetApi( 17 )
-    public GlobalPrefs( Context context )
+    public GlobalPrefs( Context context, AppData appData )
     {
-        AppData appData = new AppData( context );
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Locale
@@ -328,12 +339,8 @@ public class GlobalPrefs
         isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );
         isTouchpadFeedbackEnabled = mPreferences.getBoolean( "touchpadFeedback", false );
         touchpadSkin = appData.touchpadSkinsDir + "/Xperia-Play";
-        ConfigFile touchpad_cfg = new ConfigFile( appData.touchpadProfiles_cfg );
-        ConfigSection section = touchpad_cfg.get( mPreferences.getString( "touchpadLayout", "" ) );
-        if( section != null )
-            touchpadProfile = new Profile( true, section );
-        else
-            touchpadProfile = null;
+
+        touchpadProfiles_cfg = appData.touchpadProfiles_cfg;
         
         // Video prefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
@@ -672,4 +679,50 @@ public class GlobalPrefs
             return defaultValue;
         }
     }
+
+    public ConfigFile GetEmulationProfilesConfig()
+    {
+        if(mEmulationProfilesConfig == null)
+        {
+            mEmulationProfilesConfig = new ConfigFile( emulationProfiles_cfg );
+        }
+
+        return mEmulationProfilesConfig;
+    }
+    
+    public ConfigFile GetTouchscreenProfilesConfig()
+    {
+        if(mTouchscreenProfilesConfig == null)
+        {
+            mTouchscreenProfilesConfig = new ConfigFile( touchscreenProfiles_cfg );
+        }
+
+        return mTouchscreenProfilesConfig;
+    }
+    
+    public ConfigFile GetControllerProfilesConfig()
+    {
+        if(mControllerProfilesConfig == null)
+        {
+            mControllerProfilesConfig = new ConfigFile( controllerProfiles_cfg );
+        }
+
+        return mControllerProfilesConfig;
+    }
+    
+    public Profile GetTouchpadProfile()
+    {
+        if(touchpadProfile == null)
+        {
+            ConfigFile touchpad_cfg = new ConfigFile(touchpadProfiles_cfg);
+            ConfigSection section = touchpad_cfg.get( mPreferences.getString( "touchpadLayout", "" ) );
+            if( section != null )
+                touchpadProfile = new Profile( true, section );
+            else
+                touchpadProfile = null;
+        }
+        
+        return touchpadProfile;
+    }
+    
 }

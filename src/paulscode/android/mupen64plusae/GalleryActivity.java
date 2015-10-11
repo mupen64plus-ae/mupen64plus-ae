@@ -109,6 +109,7 @@ public class GalleryActivity extends AppCompatActivity
     private List<GalleryItem> mGalleryItems = null;
     private GalleryItem mSelectedItem = null;
     private boolean mDragging = false;
+    private boolean mOnCreateCalled = false;
     
     private CacheRomInfoFragment mCacheRomInfoFragment = null;
     
@@ -134,9 +135,11 @@ public class GalleryActivity extends AppCompatActivity
     {
         super.onCreate( savedInstanceState );
         
+        mOnCreateCalled = true;
+        
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
         
         int lastVer = mAppData.getLastAppVersionCode();
@@ -168,7 +171,13 @@ public class GalleryActivity extends AppCompatActivity
                     {
                         RomHeader header = new RomHeader(file);
                         
-                        final RomDatabase database = new RomDatabase( mAppData.mupen64plus_ini );
+                        final RomDatabase database = RomDatabase.getInstance();
+                        
+                        if(!database.hasDatabaseFile())
+                        {
+                            database.setDatabaseFile(mAppData.mupen64plus_ini);
+                        }
+                        
                         RomDetail detail = database.lookupByMd5WithFallback( md5, file, header.crc );
                         launchGameActivity( file.getAbsolutePath(), null, true, md5, header.crc, header.name,
                             header.countryCode, null, detail.goodName, false );
@@ -275,12 +284,6 @@ public class GalleryActivity extends AppCompatActivity
         
         // Configure the game information drawer
         mGameSidebar = (GameSidebar) findViewById( R.id.gameSidebar );
-        
-        // Popup a warning if the installation appears to be corrupt
-        if( !mAppData.isValidInstallation )
-        {
-            Popups.showInvalidInstall( this );
-        }
         
         if( savedInstanceState != null )
         {
@@ -768,7 +771,7 @@ public class GalleryActivity extends AppCompatActivity
     private void refreshViews()
     {
         // Refresh the preferences object in case another activity changed the data
-        mGlobalPrefs = new GlobalPrefs( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         
         // Set the sidebar opacity on the two sidebars
         mDrawerList.setBackgroundDrawable( new DrawerDrawable(
@@ -777,7 +780,12 @@ public class GalleryActivity extends AppCompatActivity
                 mGlobalPrefs.displayActionBarTransparency ) );
         
         // Refresh the gallery
-        refreshGrid();
+        if(!mOnCreateCalled)
+        {
+           refreshGrid();
+        }
+        
+        mOnCreateCalled = false;
     }
     
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,

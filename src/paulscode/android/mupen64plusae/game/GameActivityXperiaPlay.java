@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.game;
 
 import paulscode.android.mupen64plusae.jni.CoreInterface;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
@@ -80,8 +81,10 @@ public class GameActivityXperiaPlay extends NativeActivity
         //Allow volume keys to control media volume if they are not mapped
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean volKeyMapped = mPreferences.getBoolean("inputVolumeMappable", false);
-        GlobalPrefs mGlobalPrefs = new GlobalPrefs(this);
-        if (!volKeyMapped && mGlobalPrefs.audioPlugin.enabled)
+        
+        AppData appData = new AppData( this );
+        GlobalPrefs globalPrefs = new GlobalPrefs(this, appData);
+        if (!volKeyMapped && globalPrefs.audioPlugin.enabled)
         {
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }

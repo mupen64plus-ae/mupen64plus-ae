@@ -92,8 +92,10 @@ public class GameMenuHandler implements OnStateCallbackListener
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
         
         // Get the app data and user prefs after the activity has been created
-        mGlobalPrefs = new GlobalPrefs( mActivity );
-        mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
+        AppData appData = new AppData( mActivity );
+        mGlobalPrefs = new GlobalPrefs( mActivity, appData );
+        mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs );
         
         // Initialize the pak menus (reverse order since some get hidden)
         initializePakMenu( menu, 4, mGamePrefs.isPlugged4, mGlobalPrefs.getPakType( 4 ) );

@@ -117,7 +117,8 @@ public class ControllerProfileActivity extends AppCompatActivity implements OnIn
         MogaHack.init( mMogaController, this );
         
         // Get the user preferences wrapper
-        mGlobalPrefs = new GlobalPrefs( this );
+        AppData appData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this, appData );
         mGlobalPrefs.enforceLocale( this );
         
         // Get the command info

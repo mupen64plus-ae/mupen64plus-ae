@@ -21,13 +21,14 @@
 package paulscode.android.mupen64plusae.profile;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 
 public class ManageControllerProfilesActivity extends ManageProfilesActivity
 {
     @Override
-    protected String getConfigFilePath( boolean isBuiltin )
+    protected ConfigFile getConfigFile( boolean isBuiltin )
     {
-        return isBuiltin ? mAppData.controllerProfiles_cfg : mGlobalPrefs.controllerProfiles_cfg;
+        return isBuiltin ? mAppData.GetControllerProfilesConfig() : mGlobalPrefs.GetControllerProfilesConfig();
     }
     
     @Override

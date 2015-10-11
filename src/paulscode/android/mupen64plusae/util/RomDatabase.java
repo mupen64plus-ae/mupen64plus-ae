@@ -99,7 +99,18 @@ public class RomDatabase
     private ConfigFile mConfigFile = null;
     private final HashMap<String, ArrayList<ConfigSection>> mCrcMap = new HashMap<String, ArrayList<ConfigSection>>();
     
-    public RomDatabase( String mupen64plusIni )
+    private static RomDatabase instance = null;
+    protected RomDatabase() {
+       // Do not allow creation
+    }
+    public static RomDatabase getInstance() {
+       if(instance == null) {
+          instance = new RomDatabase();
+       }
+       return instance;
+    }
+    
+    public void setDatabaseFile( String mupen64plusIni )
     {
         mConfigFile = new ConfigFile( mupen64plusIni );
         for( String key : mConfigFile.keySet() )
@@ -116,6 +127,11 @@ public class RomDatabase
                 }
             }
         }
+    }
+    
+    public boolean hasDatabaseFile()
+    {
+        return mConfigFile != null;
     }
     
     public RomDetail lookupByMd5WithFallback( String md5, File file, String crc )

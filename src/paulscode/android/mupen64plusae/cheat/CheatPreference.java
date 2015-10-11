@@ -41,12 +41,16 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     
     private int mValue = DEFAULT_VALUE;
     private CheckBox mCheckbox;
+    private final Context mContext;
+    private final String mTitle;
+    private final String mNotes;
     private final String[] mOptions;
     private final OptionDialog mOptionsDialog;
-    private final AlertDialog mNotesDialog;
-    private final AlertDialog mOptionNoteDialog;
+    private final int mCheatIndex;
+    private AlertDialog mNotesDialog;
+    private AlertDialog mOptionNoteDialog;
     
-    public CheatPreference( Context context, String title, String notes, String[] options )
+    public CheatPreference( Context context, int cheatIndex, String title, String notes, String[] options )
     {
         super( context );
         
@@ -69,9 +73,11 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
             System.arraycopy( options, 0, mOptions, 1, options.length );
             mOptionsDialog = new OptionDialog( context, title, mOptions, this );
         }
-        mNotesDialog = new Builder( context ).setTitle( title ).setMessage( notes ).create();
-        mOptionNoteDialog = new Builder( context ).setTitle(
-                context.getString( R.string.cheatOption_title ) ).create();
+        
+        mContext = context;
+        mCheatIndex = cheatIndex;
+        mTitle = title;
+        mNotes = notes;
         
         setTitle( title );
         setWidgetLayoutResource( R.layout.widget_checkbox );
@@ -151,7 +157,14 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         if( mOptionsDialog == null )
         {
             // Binary cheat
-            setValue( 1 - mValue );
+            if(mValue != 0)
+            {
+               setValue( DEFAULT_VALUE );
+            }
+            else
+            {
+                setValue( 1 );
+            }
             refreshWidgets();
         }
         else
@@ -172,6 +185,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     public boolean onLongClick( View v )
     {
         // Popup a dialog to display the cheat notes
+        mNotesDialog = new Builder( mContext ).setTitle( mTitle ).setMessage( mNotes ).create();
         mNotesDialog.show();
         return true;
     }
@@ -183,6 +197,8 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         // If not, then long-pressing on cheat options for full text isn't needed.
         if( item != 0 )
         {
+            mOptionNoteDialog = new Builder( mContext ).setTitle(
+                mContext.getString( R.string.cheatOption_title ) ).create();
             mOptionNoteDialog.setMessage( mOptions[item] );
             mOptionNoteDialog.show();
         }

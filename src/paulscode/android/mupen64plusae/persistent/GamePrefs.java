@@ -182,11 +182,9 @@ public class GamePrefs
     
     private final SharedPreferences mPreferences;
     
-    public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol )
-    {
-        final AppData appData = new AppData( context );
-        final GlobalPrefs globalPrefs = new GlobalPrefs( context );
-        
+    public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol,
+        AppData appData, GlobalPrefs globalPrefs)
+    {        
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
         
@@ -203,26 +201,26 @@ public class GamePrefs
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, "emulationProfile",
                 globalPrefs.getEmulationProfileDefault(),
-                globalPrefs.emulationProfiles_cfg, appData.emulationProfiles_cfg );
+                globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
         
         // Touchscreen profile
         touchscreenProfile = loadProfile( mPreferences, "touchscreenProfile",
                 globalPrefs.getTouchscreenProfileDefault(),
-                globalPrefs.touchscreenProfiles_cfg, appData.touchscreenProfiles_cfg );
+                globalPrefs.GetTouchscreenProfilesConfig(), appData.GetTouchscreenProfilesConfig() );
         
         // Controller profiles
         controllerProfile1 = loadControllerProfile( mPreferences, "controllerProfile1",
                 globalPrefs.getControllerProfileDefault(),
-                globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
+                globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile2 = loadControllerProfile( mPreferences, "controllerProfile2",
                 "",
-                globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
+                globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile3 = loadControllerProfile( mPreferences, "controllerProfile3",
                 "",
-                globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
+                globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile4 = loadControllerProfile( mPreferences, "controllerProfile4",
                 "",
-                globalPrefs.controllerProfiles_cfg, appData.controllerProfiles_cfg );
+                globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         
         // Player map
         playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
@@ -399,10 +397,8 @@ public class GamePrefs
     }
     
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,
-            String customPath, String builtinPath )
+        ConfigFile custom, ConfigFile builtin )
     {
-        final ConfigFile custom = new ConfigFile( customPath );
-        final ConfigFile builtin = new ConfigFile( builtinPath );
         final String name = prefs.getString( key, defaultName );
 
         if( TextUtils.isEmpty( name ) )
@@ -420,10 +416,8 @@ public class GamePrefs
     }
     
     private static ControllerProfile loadControllerProfile( SharedPreferences prefs, String key,
-            String defaultName, String customPath, String builtinPath )
+            String defaultName, ConfigFile custom, ConfigFile builtin )
     {
-        final ConfigFile custom = new ConfigFile( customPath );
-        final ConfigFile builtin = new ConfigFile( builtinPath );
         final String name = prefs.getString( key, defaultName );
         
         if( custom.keySet().contains( name ) )

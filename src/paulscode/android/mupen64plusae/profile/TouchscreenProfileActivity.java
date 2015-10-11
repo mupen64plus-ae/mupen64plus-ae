@@ -118,7 +118,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         super.onCreate( savedInstanceState );
         
         // Get the user preferences wrapper
-        mGlobalPrefs = new GlobalPrefs( this );
+        AppData appData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this, appData );
         mGlobalPrefs.enforceLocale( this );
         
         // Load the profile; fail fast if there are any programmer usage errors
@@ -206,7 +207,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         super.onResume();
         
         // Refresh in case the global settings changed
-        mGlobalPrefs = new GlobalPrefs( this );
+        AppData appData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this, appData );
         
         // Update the dummy GameSurface size in case global settings changed
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();

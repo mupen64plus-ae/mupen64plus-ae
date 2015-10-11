@@ -27,10 +27,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
-import paulscode.android.mupen64plusae.cheat.CheatFile;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
-import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
@@ -39,6 +36,8 @@ import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
+import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
+import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -51,12 +50,11 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.bda.controller.Controller;
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener
+        OnSharedPreferenceChangeListener, ExtractCheatListener
 {
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_ROOT = "screenRoot";
@@ -130,13 +128,20 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
         
         // Get the detailed info about the ROM
-        mRomDatabase = new RomDatabase( mAppData.mupen64plus_ini );
+        mRomDatabase = RomDatabase.getInstance();
+        
+        if(!mRomDatabase.hasDatabaseFile())
+        {
+            mRomDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
+        }
+        
         mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
         
         // Load user preference menu structure from XML and update view
@@ -240,26 +245,28 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mPrefs.unregisterOnSharedPreferenceChangeListener( this );
         
         // Refresh the preferences objects
-        mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs );
         
         // Populate the profile preferences
-        mEmulationProfile.populateProfiles( mAppData.emulationProfiles_cfg,
-                mGlobalPrefs.emulationProfiles_cfg, mGlobalPrefs.getEmulationProfileDefault() );
-        mTouchscreenProfile.populateProfiles( mAppData.touchscreenProfiles_cfg,
-                mGlobalPrefs.touchscreenProfiles_cfg, mGlobalPrefs.getTouchscreenProfileDefault() );
-        mControllerProfile1.populateProfiles( mAppData.controllerProfiles_cfg,
-                mGlobalPrefs.controllerProfiles_cfg, mGlobalPrefs.getControllerProfileDefault() );
-        mControllerProfile2.populateProfiles( mAppData.controllerProfiles_cfg,
-                mGlobalPrefs.controllerProfiles_cfg, "" );
-        mControllerProfile3.populateProfiles( mAppData.controllerProfiles_cfg,
-                mGlobalPrefs.controllerProfiles_cfg, "" );
-        mControllerProfile4.populateProfiles( mAppData.controllerProfiles_cfg,
-                mGlobalPrefs.controllerProfiles_cfg, "" );
+        mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),
+                mGlobalPrefs.GetEmulationProfilesConfig(), mGlobalPrefs.getEmulationProfileDefault() );
+        mTouchscreenProfile.populateProfiles( mAppData.GetTouchscreenProfilesConfig(),
+                mGlobalPrefs.GetTouchscreenProfilesConfig(), mGlobalPrefs.getTouchscreenProfileDefault() );
+        mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault() );
+        mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+        mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+        mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
         
         // Refresh the preferences objects in case populate* changed a value
-        mGlobalPrefs = new GlobalPrefs( this );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode) );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode),
+            mAppData, mGlobalPrefs );
         
         // Set cheats screen summary text
         mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
@@ -287,19 +294,57 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     
     private void refreshCheatsCategory()
     {
-        if( mGamePrefs.isCheatOptionsShown )
+        if(mGamePrefs.isCheatOptionsShown)
         {
-            // Populate menu items
-            buildCheatsCategory( mRomCrc );
-            
-            // Show the cheats category
-            mScreenCheats.addPreference( mCategoryCheats );
+            ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt,
+                mRomCrc);
+            cheatsTask.execute((String) null);
         }
         else
         {
-            // Hide the cheats category
             mScreenCheats.removePreference( mCategoryCheats );
         }
+    }
+    
+    @Override
+    public void onExtractFinished(ArrayList<Cheat> cheats)
+    {
+        mCategoryCheats.removeAll();
+        
+        // Layout the menu, populating it with appropriate cheat options
+        for (Cheat cheat : cheats)
+        {
+            // Get the short title of the cheat (shown in the menu)
+            String title;
+            if( cheat.name == null )
+            {
+                // Title not available, just use a default string for the menu
+                title = getString( R.string.cheats_defaultName, cheat.cheatIndex );
+            }
+            else
+            {
+                // Title available, remove the leading/trailing quotation marks
+                title = cheat.name;
+            }
+            String notes = cheat.desc;
+            String options = cheat.option;
+            String[] optionStrings = null;
+            if( !TextUtils.isEmpty( options ) )
+            {
+                optionStrings = options.split( "\n" );
+            }
+            
+            // Create the menu item associated with this cheat
+            CheatPreference pref = new CheatPreference( this, cheat.cheatIndex, title, notes, optionStrings );
+            
+            //We store the cheat index in the key as a string
+            pref.setKey( mRomCrc + " Cheat" + cheat.cheatIndex );
+            
+            // Add the preference menu item to the cheats category
+            mCategoryCheats.addPreference( pref );
+        }
+        
+        mScreenCheats.addPreference( mCategoryCheats );
     }
     
     @Override
@@ -323,58 +368,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             actionResetGamePrefs();
         }
         return false;
-    }
-    
-    private void buildCheatsCategory( final String crc )
-    {
-        mCategoryCheats.removeAll();
-        
-        Log.v( "GamePrefsActivity", "building from CRC = " + crc );
-        if( crc == null )
-            return;
-        
-        // Get the appropriate section of the config file, using CRC as the key
-        CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt );
-        CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
-        if( cheatSection == null )
-        {
-            Log.w( "GamePrefsActivity", "No cheat section found for '" + crc + "'" );
-            return;
-        }
-        ArrayList<Cheat> cheats = new ArrayList<Cheat>();
-        cheats.addAll( CheatUtils.populate( crc, mupencheat_txt, true, this ) );
-        CheatUtils.reset();
-        
-        // Layout the menu, populating it with appropriate cheat options
-        for( int i = 0; i < cheats.size(); i++ )
-        {
-            // Get the short title of the cheat (shown in the menu)
-            String title;
-            if( cheats.get( i ).name == null )
-            {
-                // Title not available, just use a default string for the menu
-                title = getString( R.string.cheats_defaultName, i );
-            }
-            else
-            {
-                // Title available, remove the leading/trailing quotation marks
-                title = cheats.get( i ).name;
-            }
-            String notes = cheats.get( i ).desc;
-            String options = cheats.get( i ).option;
-            String[] optionStrings = null;
-            if( !TextUtils.isEmpty( options ) )
-            {
-                optionStrings = options.split( "\n" );
-            }
-            
-            // Create the menu item associated with this cheat
-            CheatPreference pref = new CheatPreference( this, title, notes, optionStrings );
-            pref.setKey( crc + " Cheat" + i );
-            
-            // Add the preference menu item to the cheats category
-            mCategoryCheats.addPreference( pref );
-        }
     }
     
     private void actionResetGamePrefs()
