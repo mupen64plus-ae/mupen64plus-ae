@@ -12,7 +12,7 @@ void Config::resetToDefaults()
 {
 	version = CONFIG_VERSION_CURRENT;
 
-#ifdef PANDORA
+#if defined(PANDORA) || defined(VC)
 	video.fullscreen = 1;
 	video.fullscreenWidth = video.windowedWidth = 800;
 #else
@@ -42,10 +42,14 @@ void Config::resetToDefaults()
 	generalEmulation.polygonOffsetUnits = 0.0f;
 #endif
 
+#ifdef VC
+	frameBufferEmulation.enable = 0;
+#else
 	frameBufferEmulation.enable = 1;
-	frameBufferEmulation.copyDepthToRDRAM = 0;
+#endif
+	frameBufferEmulation.copyDepthToRDRAM = ctDisable;
 	frameBufferEmulation.copyFromRDRAM = 0;
-	frameBufferEmulation.copyToRDRAM = 1;
+	frameBufferEmulation.copyToRDRAM = ctSync;
 	frameBufferEmulation.detectCFB = 0;
 	frameBufferEmulation.N64DepthCompare = 0;
 	frameBufferEmulation.aspect = 1;

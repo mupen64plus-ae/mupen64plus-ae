@@ -188,9 +188,10 @@
             android:defaultValue="true"
             android:key="EnableFBEmulation"
             android:title="EnableFBEmulation" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="false"
+        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+            android:defaultValue="2"
             android:key="EnableCopyColorToRDRAM"
+            android:summary="@string/selectedValue"
             android:title="EnableCopyColorToRDRAM" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"

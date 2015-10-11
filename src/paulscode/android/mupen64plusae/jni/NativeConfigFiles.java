@@ -139,7 +139,7 @@ public class NativeConfigFiles
         putGliden64( mupen64plus_cfg, game, "EnableHWLighting", "False" );                                                  // Enable hardware per-pixel lighting.
         putGliden64( mupen64plus_cfg, game, "EnableShaderStorage", "True" );                                                // Use persistent storage for compiled shaders.
         putGliden64( mupen64plus_cfg, game, "EnableFBEmulation", "True" );                                                  // Enable frame and|or depth buffer emulation.
-        putGliden64( mupen64plus_cfg, game, "EnableCopyColorToRDRAM", "False" );                                            // Enable color buffer copy to RDRAM.
+        putGliden64( mupen64plus_cfg, game, "EnableCopyColorToRDRAM", "2" );                                                // Enable color buffer copy to RDRAM (0=do not copy, 1=copy in sync mode, 2=copy in async mode)
         putGliden64( mupen64plus_cfg, game, "EnableCopyDepthToRDRAM", "False" );                                            // Enable depth buffer copy to RDRAM.
         putGliden64( mupen64plus_cfg, game, "EnableCopyColorFromRDRAM", "False" );                                          // Enable color buffer copy from RDRAM.
         putGliden64( mupen64plus_cfg, game, "EnableDetectCFB", "False" );                                                   // Detect CPU writes to frame buffer.
