@@ -53,6 +53,9 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
         int index = mListView.getFirstVisiblePosition();
         View view = mListView.getChildAt(0);
         int top = (view == null) ? 0 : (view.getTop() - mListView.getPaddingTop());
+        
+        //Save selected view
+        int selectedIndex = mListView.getSelectedItemPosition();
 
         final InputMap map = mProfile.getMap();
         for (int i = 0; i < mN64Buttons.length; i++)
@@ -74,7 +77,8 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
 
         mListView.setAdapter(adapter);
         
-        //Restore scroll position
+        //Restore scroll position and selected item
         mListView.setSelectionFromTop(index, top);
+        mListView.setSelection(selectedIndex);
     }
 }
