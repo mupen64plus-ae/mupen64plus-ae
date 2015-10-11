@@ -49,6 +49,11 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
     @Override
     void refreshAllButtons()
     {
+        //First save scroll position
+        int index = mListView.getFirstVisiblePosition();
+        View view = mListView.getChildAt(0);
+        int top = (view == null) ? 0 : (view.getTop() - mListView.getPaddingTop());
+
         final InputMap map = mProfile.getMap();
         for (int i = 0; i < mN64Buttons.length; i++)
         {
@@ -68,5 +73,8 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
             });
 
         mListView.setAdapter(adapter);
+        
+        //Restore scroll position
+        mListView.setSelectionFromTop(index, top);
     }
 }
