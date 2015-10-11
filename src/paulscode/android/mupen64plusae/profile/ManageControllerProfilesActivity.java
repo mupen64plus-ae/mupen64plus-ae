@@ -52,6 +52,13 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     @Override
     protected void onEditProfile( Profile profile )
     {
-        ActivityHelper.startControllerProfileActivity( this, profile.name );
+        if(mGlobalPrefs.isBigScreenMode)
+        {
+            ActivityHelper.startControllerProfileActivityBigScreen( this, profile.name );
+        }
+        else
+        {
+            ActivityHelper.startControllerProfileActivity( this, profile.name );
+        }
     }
 }
