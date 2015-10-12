@@ -220,8 +220,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 cheat.code = "";
                 cheat.option = "";
                 userCheats.add( cheat );
-                cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, userCheats );
-                setListAdapter( cheatListAdapter );
+                Collections.sort(userCheats);
+                cheatListAdapter.notifyDataSetChanged();
                 Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_added ), Toast.LENGTH_SHORT );
                 t.show();
                 break;
@@ -283,6 +283,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     case R.id.btnEditTitle:
                         promptTitle( cheat );
+                        Collections.sort(userCheats);
+                        cheatListAdapter.notifyDataSetChanged();
                         break;
                     case R.id.btnEditNotes:
                         promptNotes( cheat );
@@ -358,8 +360,6 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     String str = text.toString().replace( '\n', ' ' );
                     cheat.name = str;
-                    cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, userCheats );
-                    setListAdapter( cheatListAdapter );
                 }
             }
         } );
@@ -517,8 +517,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
                     userCheats.remove( pos );
-                    cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, userCheats );
-                    setListAdapter( cheatListAdapter );
+                    cheatListAdapter.notifyDataSetChanged();
                 }
             }
         };            
