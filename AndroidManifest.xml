@@ -113,7 +113,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-                <activity
+        <activity
             android:name="paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen"
             android:exported="false"
             android:label="@string/ControllerProfileActivity_title"

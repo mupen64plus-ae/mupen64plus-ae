@@ -144,7 +144,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         initLayout();
         
         // Refresh everything
-        refreshAllButtons();
+        refreshAllButtons(false);
     }
     
     @Override
@@ -217,7 +217,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
                     mProfile.putMap( new InputMap() );
-                    refreshAllButtons();
+                    refreshAllButtons(false);
                 }
             }
         } );
@@ -301,7 +301,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
                             else
                                 map.unmapCommand( index );
                             mProfile.putMap( map );
-                            refreshAllButtons();
+                            refreshAllButtons(true);
                         }
                         
                         // Refresh our MOGA provider since the prompt disconnected it
@@ -389,5 +389,5 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         }
     }
     
-    abstract void refreshAllButtons();
+    abstract void refreshAllButtons(boolean incrementSelection);
 }

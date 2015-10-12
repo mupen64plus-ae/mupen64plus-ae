@@ -130,7 +130,7 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase
     }
     
     @Override
-    void refreshAllButtons()
+    void refreshAllButtons(boolean incrementSelection)
     {
         final InputMap map = mProfile.getMap();
         for( int i = 0; i < mN64Buttons.length; i++ )
