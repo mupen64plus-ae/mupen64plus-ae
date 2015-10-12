@@ -47,21 +47,22 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
     }
     
     @Override
-    void refreshAllButtons()
+    void refreshAllButtons(boolean incrementSelection)
     {
-        //First save scroll position
-        int index = mListView.getFirstVisiblePosition();
-        View view = mListView.getChildAt(0);
-        int top = (view == null) ? 0 : (view.getTop() - mListView.getPaddingTop());
-        
-        //Save selected view
-        int selectedIndex = mListView.getSelectedItemPosition();
-
         final InputMap map = mProfile.getMap();
         for (int i = 0; i < mN64Buttons.length; i++)
         {
             refreshButton(mN64Buttons[i], 0, map.isMapped(i));
         }
+        
+        //First save scroll position
+        int index = mListView.getFirstVisiblePosition();
+        View view = mListView.getChildAt(0);
+        
+        int top = (view == null) ? 0 : (view.getTop() - mListView.getPaddingTop());
+        
+        //Save selected view
+        int selectedIndex = mListView.getSelectedItemPosition();
 
         ArrayAdapter<String> adapter = Prompt.createAdapter(this, Arrays.asList(mCommandNames),
             new ListItemTwoTextIconPopulator<String>()
@@ -76,6 +77,12 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
             });
 
         mListView.setAdapter(adapter);
+        
+        if(incrementSelection)
+        {
+            ++index;
+            ++selectedIndex;
+        }
         
         //Restore scroll position and selected item
         mListView.setSelectionFromTop(index, top);
