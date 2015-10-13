@@ -45,6 +45,7 @@ import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -134,14 +135,19 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         // Set up input listeners
         mUnmappableInputCodes = mGlobalPrefs.unmappableKeyCodes;
         
-        // Set the title of the activity
-        if( TextUtils.isEmpty( mProfile.comment ) )
-            setTitle( mProfile.name );
-        else
-            setTitle( mProfile.name + " : " + mProfile.comment );
-        
         // Initialize the layout
         initLayout();
+        
+        // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
+        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+        
+        // Set the title of the activity
+        if( TextUtils.isEmpty( mProfile.comment ) )
+            toolbar.setTitle( mProfile.name );
+        else
+            toolbar.setTitle( mProfile.name + " : " + mProfile.comment );
+        
+        setSupportActionBar( toolbar );
         
         // Refresh everything
         refreshAllButtons(false);
