@@ -95,7 +95,7 @@
             android:name="paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity"
             android:exported="false"
             android:label="@string/ManageControllerProfilesActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name=".profile.ManageControllerProfilesActivity" />
 
@@ -128,7 +128,7 @@
             android:name="paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity"
             android:exported="false"
             android:label="@string/ManageEmulationProfilesActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name=".profile.ManageEmulationProfilesActivity" />
 
@@ -150,7 +150,7 @@
             android:name="paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity"
             android:exported="false"
             android:label="@string/ManageTouchscreenProfilesActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name=".profile.ManageTouchscreenProfilesActivity" />
 

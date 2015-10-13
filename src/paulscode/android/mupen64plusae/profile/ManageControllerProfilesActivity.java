@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 
@@ -60,5 +62,11 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
         {
             ActivityHelper.startControllerProfileActivity( this, profile.name );
         }
+    }
+
+    @Override
+    protected int getWindowTitleResource()
+    {
+        return R.string.ManageControllerProfilesActivity_title;
     }
 }
