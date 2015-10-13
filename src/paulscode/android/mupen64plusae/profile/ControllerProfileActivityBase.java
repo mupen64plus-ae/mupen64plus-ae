@@ -294,9 +294,15 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
                         if( which != DialogInterface.BUTTON_NEGATIVE )
                         {
                             if( which == DialogInterface.BUTTON_POSITIVE )
-                                map.map( inputCode, index );
-                            else
+                            {
                                 map.unmapCommand( index );
+                                map.map( inputCode, index );
+                            }
+                            else
+                            {
+                                map.unmapCommand( index );
+                            }
+                                
                             mProfile.putMap( map );
                             refreshAllButtons(true);
                         }
