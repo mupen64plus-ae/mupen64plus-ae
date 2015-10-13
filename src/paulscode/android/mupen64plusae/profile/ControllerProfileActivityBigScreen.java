@@ -21,12 +21,14 @@
 package paulscode.android.mupen64plusae.profile;
 
 import java.util.Arrays;
+
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -36,6 +38,7 @@ import android.widget.TextView;
 public class ControllerProfileActivityBigScreen extends ControllerProfileActivityBase
 {
     private ListView mListView;
+    private int mCurrentPosition = 0;;
     
     @Override
     void initLayout()
@@ -44,6 +47,14 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
         setContentView( R.layout.controller_profile_activity_bigscreen );
         mListView = (ListView) findViewById( R.id.input_map_activity_bigscreen );
         mListView.setOnItemClickListener( this );
+    }
+    
+    @Override
+    public void onItemClick( AdapterView<?> parent, View view, int position, long id )
+    {
+        mCurrentPosition = position;
+        
+        super.onItemClick(parent, view, position, id);
     }
     
     @Override
@@ -60,9 +71,6 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
         View view = mListView.getChildAt(0);
         
         int top = (view == null) ? 0 : (view.getTop() - mListView.getPaddingTop());
-        
-        //Save selected view
-        int selectedIndex = mListView.getSelectedItemPosition();
 
         ArrayAdapter<String> adapter = Prompt.createAdapter(this, Arrays.asList(mCommandNames),
             new ListItemTwoTextIconPopulator<String>()
@@ -81,11 +89,11 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
         if(incrementSelection)
         {
             ++index;
-            ++selectedIndex;
+            ++mCurrentPosition;
         }
         
         //Restore scroll position and selected item
         mListView.setSelectionFromTop(index, top);
-        mListView.setSelection(selectedIndex);
+        mListView.setSelection(mCurrentPosition);
     }
 }
