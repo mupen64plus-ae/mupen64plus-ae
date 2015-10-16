@@ -52,6 +52,7 @@ import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -498,13 +499,16 @@ public class GalleryActivity extends AppCompatActivity
                                 new PromptConfirmListener()
                                 {
                                     @Override
-                                    public void onConfirm()
+                                    public void onDialogClosed( int which )
                                     {
-                                        launchGameActivity( finalItem.romFile.getAbsolutePath(),
-                                            finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                                            finalItem.isExtracted, finalItem.md5, finalItem.crc, 
-                                            finalItem.headerName, finalItem.countryCode, finalItem.artPath,
-                                            finalItem.goodName, true );
+                                        if( which == DialogInterface.BUTTON_POSITIVE )
+                                        {
+                                            launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                                                finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                                                finalItem.isExtracted, finalItem.md5, finalItem.crc, 
+                                                finalItem.headerName, finalItem.countryCode, finalItem.artPath,
+                                                finalItem.goodName, true );
+                                        }
                                     }
                                 } );
                     }

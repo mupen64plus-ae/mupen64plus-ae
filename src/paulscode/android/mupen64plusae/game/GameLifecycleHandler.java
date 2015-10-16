@@ -302,7 +302,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                 @Override
                 public void onAction()
                 {
-                    mActivity.finish();
+                    CoreInterface.exit();
                 }
             });
 
@@ -653,7 +653,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
                 mDrawerLayout.closeDrawer( GravityCompat.START );
             else
-                mActivity.finish();
+                CoreInterface.exit();
             return true;
         }
         

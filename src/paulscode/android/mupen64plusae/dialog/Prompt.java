@@ -92,7 +92,7 @@ public final class Prompt
         /**
          * Handle the user's confirmation.
          */
-        public void onConfirm();
+        public void onDialogClosed( int which );
     }
     
     /**
@@ -291,8 +291,7 @@ public final class Prompt
             @Override
             public void onClick( DialogInterface dialog, int which )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                    listener.onConfirm();
+                listener.onDialogClosed(which);
             }
         };
         

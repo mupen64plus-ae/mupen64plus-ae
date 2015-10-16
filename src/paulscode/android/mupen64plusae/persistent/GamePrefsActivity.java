@@ -41,6 +41,7 @@ import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListen
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -377,20 +378,23 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
-            public void onConfirm()
+            public void onDialogClosed( int which )
             {
-                // Reset the user preferences
-                mPrefs.unregisterOnSharedPreferenceChangeListener( GamePrefsActivity.this );
-                mPrefs.edit().clear().commit();
-                PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    // Reset the user preferences
+                    mPrefs.unregisterOnSharedPreferenceChangeListener( GamePrefsActivity.this );
+                    mPrefs.edit().clear().commit();
+                    PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
                 
-                // Also reset any manual overrides the user may have made in the config file
-                File configFile = new File( mGamePrefs.mupen64plus_cfg );
-                if( configFile.exists() )
-                    configFile.delete();
+                    // Also reset any manual overrides the user may have made in the config file
+                    File configFile = new File( mGamePrefs.mupen64plus_cfg );
+                    if( configFile.exists() )
+                        configFile.delete();
                 
-                // Rebuild the menu system by restarting the activity
-                ActivityHelper.restartActivity( GamePrefsActivity.this );
+                    // Rebuild the menu system by restarting the activity
+                    ActivityHelper.restartActivity( GamePrefsActivity.this );
+                }
             }
         } );
     }

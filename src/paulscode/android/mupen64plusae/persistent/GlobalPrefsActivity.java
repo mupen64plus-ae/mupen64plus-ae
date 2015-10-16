@@ -28,6 +28,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -214,15 +215,18 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
-            public void onConfirm()
+            public void onDialogClosed( int which )
             {
-                // Reset the user preferences
-                mPrefs.unregisterOnSharedPreferenceChangeListener( GlobalPrefsActivity.this );
-                mPrefs.edit().clear().commit();
-                PreferenceManager.setDefaultValues( GlobalPrefsActivity.this, R.xml.preferences_global, true );
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    // Reset the user preferences
+                    mPrefs.unregisterOnSharedPreferenceChangeListener( GlobalPrefsActivity.this );
+                    mPrefs.edit().clear().commit();
+                    PreferenceManager.setDefaultValues( GlobalPrefsActivity.this, R.xml.preferences_global, true );
                 
-                // Rebuild the menu system by restarting the activity
-                ActivityHelper.restartActivity( GlobalPrefsActivity.this );
+                    // Rebuild the menu system by restarting the activity
+                    ActivityHelper.restartActivity( GlobalPrefsActivity.this );
+                }
             }
         } );
     }
