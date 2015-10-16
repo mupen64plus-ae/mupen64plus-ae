@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/menuItem_exit"
+        android:icon="@drawable/ic_undo"
+        android:title="@string/menuItem_exit"/>
+    <item
+        android:id="@+id/menuItem_toggle_speed"
+        android:icon="@drawable/ic_clock"
+        android:title="@string/menuItem_toggleSpeed"/>
+    <item
+        android:id="@+id/menuItem_set_speed"
+        android:title="@string/menuItem_setSpeed"/>
+    <item
+        android:id="@+id/menuItem_screenshot"
+        android:icon="@drawable/ic_picture"
+        android:title="@string/menuItem_screenshot"/>
+    <item
+        android:id="@+id/menuItem_set_slot"
+        android:icon="@drawable/ic_storage"
+        android:title="@string/menuItem_setSlot">
+    </item>
+    <item
+        android:id="@+id/menuItem_slot_load"
+        android:icon="@drawable/ic_folder"
+        android:title="@string/menuItem_slotLoad">
+    </item>
+    <item
+        android:id="@+id/menuItem_slot_save"
+        android:icon="@drawable/ic_save"
+        android:title="@string/menuItem_slotSave">
+    </item>
+    <item
+        android:id="@+id/menuItem_file_load"
+        android:title="@string/menuItem_fileLoad">
+    </item>
+    <item
+        android:id="@+id/menuItem_file_save"
+        android:title="@string/menuItem_fileSave">
+    </item>
+    <item
+        android:id="@+id/menuItem_file_load_auto_save"
+        android:title="@string/menuItem_fileLoadAutoSave">
+    </item>
+    <item
+        android:id="@+id/menuItem_disable_frame_limiter"
+        android:title="@string/menuItem_disableFramelimiter">
+    </item>
+    <item
+        android:id="@+id/menuItem_paks"
+        android:title="@string/menuItem_paks"/>
+    <item
+        android:id="@+id/menuItem_setIme"
+        android:title="@string/menuItem_setIme"/>
+
+</menu>

@@ -28,6 +28,7 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
 import paulscode.android.mupen64plusae.GameSidebar;
+import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -44,13 +45,11 @@ import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
-import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
-import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
@@ -67,6 +66,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.Window;
@@ -113,7 +113,7 @@ import com.bda.controller.Controller;
 */
 //@formatter:on
 
-public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.Callback
+public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.Callback, GameSidebarActionHandler
 {
     // Activity and views
     private Activity mActivity;
@@ -151,8 +151,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     private GlobalPrefs mGlobalPrefs;
     private GamePrefs mGamePrefs;
     private GameAutoSaveManager mAutoSaveManager;
-    private boolean mShowSlot = false;
-    private int mShowPak = -1;
     
     public GameLifecycleHandler( Activity activity )
     {
@@ -229,6 +227,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mOverlay = (GameOverlay) mActivity.findViewById(R.id.gameOverlay);
         mDrawerLayout = (GameDrawerLayout) mActivity.findViewById(R.id.drawerLayout);
         mGameSidebar = (GameSidebar) mActivity.findViewById(R.id.gameSidebar);
+        
+        // Handle events from the side bar
+        mGameSidebar.setActionHandler(this, R.menu.game_drawer);
 
         // Don't darken the game screen when the drawer is open
         mDrawerLayout.setScrimColor(0x0);
@@ -240,8 +241,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             mGameSidebar.setImage(new BitmapDrawable(mActivity.getResources(), mArtPath));
 
         mGameSidebar.setTitle(mRomGoodName);
-        updateSidebar();
-
         // Initialize the objects and data files interfacing to the emulator core
         CoreInterface.initialize( mActivity, mSurface, mGamePrefs, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
 
@@ -291,270 +290,158 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             }, 1000);
         }
     }
-
-    @TargetApi(11)
-    protected void updateSidebar()
+    
+    @Override
+    public void onGameSidebarAction(MenuItem menuItem)
     {
-        mGameSidebar.clear();
-
-        // Save & Exit
-        mGameSidebar.addRow(R.drawable.ic_undo, mActivity.getString(R.string.menuItem_exit), null,
-            new GameSidebar.Action()
-            {
-                @Override
-                public void onAction()
-                {
-                    CoreInterface.exit();
-                }
-            });
-
-        // Speed
-        mGameSidebar.addRow(R.drawable.ic_clock,
-            mActivity.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()), null,
-            new GameSidebar.Action()
-            {
-                @Override
-                public void onAction()
-                {
-                    CoreInterface.toggleSpeed();
-                    updateSidebar();
-                }
-            });
-
-        mGameSidebar.addRow(0x0, mActivity.getString(R.string.menuItem_setSpeed), null, new GameSidebar.Action()
+        switch (menuItem.getItemId())
         {
-            @Override
-            public void onAction()
-            {
-                CoreInterface.setCustomSpeedFromPrompt();
-            }
-        });
+        case R.id.menuItem_exit:
+            CoreInterface.exit();
+            break;
+        case R.id.menuItem_toggle_speed:
+            CoreInterface.toggleSpeed();
+            break;
+        case R.id.menuItem_set_speed:
+            CoreInterface.setCustomSpeedFromPrompt();
+            break;
+        case R.id.menuItem_screenshot:
+            CoreInterface.screenshot();
+            break;
+        case R.id.menuItem_set_slot:
+            /*
+             * TODO: if (mShowSlot) { // Expand the Slot selection panel by
+             * adding the custom view to the // sidebar for (int slot = 0; slot
+             * <= 9; slot++) { int icon = R.drawable.ic_box; if (slot ==
+             * NativeExports.emuGetSlot()) icon = R.drawable.ic_check;
+             * 
+             * final int finalSlot = slot; mGameSidebar.addRow(0x0,
+             * mActivity.getString(R.string.menuItem_setSlot, slot), null, new
+             * GameSidebar.Action() {
+             * 
+             * @Override public void onAction() {
+             * CoreInterface.setSlot(finalSlot); mShowSlot = false;
+             * updateSidebar(); } }, icon, 1); } }
+             */
+            break;
+        case R.id.menuItem_slot_load:
+            CoreInterface.loadSlot();
+            break;
+        case R.id.menuItem_slot_save:
+            CoreInterface.saveSlot();
+            break;
+        case R.id.menuItem_file_load:
+            CoreInterface.loadFileFromPrompt();
+            break;
+        case R.id.menuItem_file_save:
+            CoreInterface.saveFileFromPrompt();
+            break;
+        case R.id.menuItem_file_load_auto_save:
+            CoreInterface.loadAutoSaveFromPrompt();
+            break;
+        case R.id.menuItem_disable_frame_limiter:
+            /*
+             * TODO: int resId = NativeExports.emuGetFramelimiter() ?
+             * R.string.menuItem_disableFramelimiter :
+             * R.string.menuItem_enableFramelimiter;
+             */
+            CoreInterface.toggleFramelimiter();
+            break;
+        case R.id.menuItem_paks:
+            // TODO:
+            /*
+             * mGameSidebar.addRow(0x0,
+             * mActivity.getString(R.string.menuItem_paks), null, new
+             * GameSidebar.Action() {
+             * 
+             * @Override public void onAction() { mShowPak = (mShowPak == -1) ?
+             * 0 : -1; updateSidebar(); } }, (mShowPak >= 0) ?
+             * R.drawable.ic_arrow_u : R.drawable.ic_arrow_d, 0);
+             * 
+             * if (mShowPak >= 0) { boolean[] plugged = { mGamePrefs.isPlugged1,
+             * mGamePrefs.isPlugged2, mGamePrefs.isPlugged3,
+             * mGamePrefs.isPlugged4 };
+             * 
+             * final String[][] pakTypes = { {
+             * mActivity.getString(R.string.menuItem_pak1_empty),
+             * mActivity.getString(R.string.menuItem_pak1_mem),
+             * mActivity.getString(R.string.menuItem_pak1_rumble) }, {
+             * mActivity.getString(R.string.menuItem_pak2_empty),
+             * mActivity.getString(R.string.menuItem_pak2_mem),
+             * mActivity.getString(R.string.menuItem_pak2_rumble) }, {
+             * mActivity.getString(R.string.menuItem_pak3_empty),
+             * mActivity.getString(R.string.menuItem_pak3_mem),
+             * mActivity.getString(R.string.menuItem_pak3_rumble) }, {
+             * mActivity.getString(R.string.menuItem_pak4_empty),
+             * mActivity.getString(R.string.menuItem_pak4_mem),
+             * mActivity.getString(R.string.menuItem_pak4_rumble) } };
+             * 
+             * final int[] pakMap = { NativeConstants.PAK_TYPE_NONE,
+             * NativeConstants.PAK_TYPE_MEMORY, NativeConstants.PAK_TYPE_RUMBLE
+             * };
+             * 
+             * // Hide Rumble Pak menu item if not available Vibrator vibrator =
+             * (Vibrator) mActivity.getSystemService(Context.VIBRATOR_SERVICE);
+             * boolean hasPhoneVibrator = AppData.IS_HONEYCOMB ?
+             * vibrator.hasVibrator() : vibrator != null;
+             * 
+             * for (int player = 1; player <= 4; player++) { if (!plugged[player
+             * - 1]) continue;
+             * 
+             * int pakIndex; switch (mGlobalPrefs.getPakType(player)) { default:
+             * case NativeConstants.PAK_TYPE_NONE: pakIndex = 0; break; case
+             * NativeConstants.PAK_TYPE_MEMORY: pakIndex = 1; break; case
+             * NativeConstants.PAK_TYPE_RUMBLE: pakIndex = 2; break; }
+             * 
+             * final String[] pakString = pakTypes[player -
+             * 1][pakIndex].split(": "); final int finalPlayer = player;
+             * 
+             * mGameSidebar.addRow(0x0, pakString[0], pakString[pakString.length
+             * - 1], new GameSidebar.Action() {
+             * 
+             * @Override public void onAction() { mShowPak = (mShowPak ==
+             * finalPlayer) ? 0 : finalPlayer; updateSidebar(); } }, (mShowPak
+             * == player) ? R.drawable.ic_arrow_u : R.drawable.ic_arrow_d, 1);
+             * 
+             * if (mShowPak != player) continue;
+             * 
+             * boolean permitRumble = AppData.IS_JELLY_BEAN || (player == 1 &&
+             * hasPhoneVibrator);
+             * 
+             * // Show the options for this player for (int pak = 0; pak <
+             * pakTypes[0].length; pak++) { if (!permitRumble && pak == 2)
+             * continue;
+             * 
+             * int icon = R.drawable.ic_box; if (pakIndex == pak) icon =
+             * R.drawable.ic_check;
+             * 
+             * final int finalPak = pak; final String[] pakName =
+             * pakTypes[player - 1][pak].split(": ");
+             * 
+             * mGameSidebar.addRow(0x0, pakName[pakName.length - 1], null, new
+             * GameSidebar.Action() {
+             * 
+             * @Override public void onAction() { // Set the new Pak type for
+             * this player int newPakIndex = pakMap[finalPak];
+             * mGlobalPrefs.putPakType(finalPlayer, newPakIndex);
+             * NativeInput.setConfig(finalPlayer - 1, true, newPakIndex);
+             * 
+             * // Send a toast message Notifier.showToast(mActivity,
+             * pakTypes[finalPlayer - 1][finalPak]);
+             * 
+             * // Collapse this section in the sidebar mShowPak = 0;
+             * updateSidebar(); } }, icon, 2); } } }
+             */
 
-        mGameSidebar.addRow(R.drawable.ic_picture, mActivity.getString(R.string.menuItem_screenshot), null,
-            new GameSidebar.Action()
-            {
-                @Override
-                public void onAction()
-                {
-                    CoreInterface.screenshot();
-                }
-            });
-
-        // Set slot
-        mGameSidebar.addRow(R.drawable.ic_storage,
-            mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()), null, new GameSidebar.Action()
-            {
-                @Override
-                public void onAction()
-                {
-                    mShowSlot = !mShowSlot;
-                    updateSidebar();
-                }
-            }, (mShowSlot) ? R.drawable.ic_arrow_u : R.drawable.ic_arrow_d, 0);
-
-        if (mShowSlot)
-        {
-            // Expand the Slot selection panel by adding the custom view to the
-            // sidebar
-            for (int slot = 0; slot <= 9; slot++)
-            {
-                int icon = R.drawable.ic_box;
-                if (slot == NativeExports.emuGetSlot())
-                    icon = R.drawable.ic_check;
-
-                final int finalSlot = slot;
-                mGameSidebar.addRow(0x0, mActivity.getString(R.string.menuItem_setSlot, slot), null,
-                    new GameSidebar.Action()
-                    {
-                        @Override
-                        public void onAction()
-                        {
-                            CoreInterface.setSlot(finalSlot);
-                            mShowSlot = false;
-                            updateSidebar();
-                        }
-                    }, icon, 1);
-            }
+            break;
+        case R.id.menuItem_setIme:
+            InputMethodManager imeManager = (InputMethodManager) mActivity
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imeManager != null)
+                imeManager.showInputMethodPicker();
+            break;
+        default:
         }
-
-        // Slot load
-        mGameSidebar.addRow(R.drawable.ic_folder, mActivity.getString(R.string.menuItem_slotLoad), null,
-            new GameSidebar.Action()
-            {
-                @Override
-                public void onAction()
-                {
-                    CoreInterface.loadSlot();
-                }
-            });
-
-        // Slot save
-        mGameSidebar.addRow(R.drawable.ic_save, mActivity.getString(R.string.menuItem_slotSave), null,
-            new GameSidebar.Action()
-            {
-                @Override
-                public void onAction()
-                {
-                    CoreInterface.saveSlot();
-                }
-            });
-
-        mGameSidebar.addRow(0x0, mActivity.getString(R.string.menuItem_fileLoad), null, new GameSidebar.Action()
-        {
-            @Override
-            public void onAction()
-            {
-                CoreInterface.loadFileFromPrompt();
-            }
-        });
-
-        mGameSidebar.addRow(0x0, mActivity.getString(R.string.menuItem_fileSave), null, new GameSidebar.Action()
-        {
-            @Override
-            public void onAction()
-            {
-                CoreInterface.saveFileFromPrompt();
-            }
-        });
-        
-        mGameSidebar.addRow(0x0, mActivity.getString(R.string.menuItem_fileLoadAutoSave), null, new GameSidebar.Action()
-        {
-            @Override
-            public void onAction()
-            {
-                CoreInterface.loadAutoSaveFromPrompt();
-            }
-        });
-
-        int resId = NativeExports.emuGetFramelimiter() ? R.string.menuItem_disableFramelimiter
-            : R.string.menuItem_enableFramelimiter;
-
-        mGameSidebar.addRow(0x0, mActivity.getString(resId), null, new GameSidebar.Action()
-        {
-            @Override
-            public void onAction()
-            {
-                CoreInterface.toggleFramelimiter();
-                updateSidebar();
-            }
-        });
-
-        mGameSidebar.addRow(0x0, mActivity.getString(R.string.menuItem_paks), null, new GameSidebar.Action()
-        {
-            @Override
-            public void onAction()
-            {
-                mShowPak = (mShowPak == -1) ? 0 : -1;
-                updateSidebar();
-            }
-        }, (mShowPak >= 0) ? R.drawable.ic_arrow_u : R.drawable.ic_arrow_d, 0);
-
-        if (mShowPak >= 0)
-        {
-            boolean[] plugged = { mGamePrefs.isPlugged1, mGamePrefs.isPlugged2, mGamePrefs.isPlugged3,
-                mGamePrefs.isPlugged4 };
-
-            final String[][] pakTypes = {
-                { mActivity.getString(R.string.menuItem_pak1_empty), mActivity.getString(R.string.menuItem_pak1_mem),
-                    mActivity.getString(R.string.menuItem_pak1_rumble) },
-                { mActivity.getString(R.string.menuItem_pak2_empty), mActivity.getString(R.string.menuItem_pak2_mem),
-                    mActivity.getString(R.string.menuItem_pak2_rumble) },
-                { mActivity.getString(R.string.menuItem_pak3_empty), mActivity.getString(R.string.menuItem_pak3_mem),
-                    mActivity.getString(R.string.menuItem_pak3_rumble) },
-                { mActivity.getString(R.string.menuItem_pak4_empty), mActivity.getString(R.string.menuItem_pak4_mem),
-                    mActivity.getString(R.string.menuItem_pak4_rumble) } };
-
-            final int[] pakMap = { NativeConstants.PAK_TYPE_NONE, NativeConstants.PAK_TYPE_MEMORY,
-                NativeConstants.PAK_TYPE_RUMBLE };
-
-            // Hide Rumble Pak menu item if not available
-            Vibrator vibrator = (Vibrator) mActivity.getSystemService(Context.VIBRATOR_SERVICE);
-            boolean hasPhoneVibrator = AppData.IS_HONEYCOMB ? vibrator.hasVibrator() : vibrator != null;
-
-            for (int player = 1; player <= 4; player++)
-            {
-                if (!plugged[player - 1])
-                    continue;
-
-                int pakIndex;
-                switch (mGlobalPrefs.getPakType(player))
-                {
-                default:
-                case NativeConstants.PAK_TYPE_NONE:
-                    pakIndex = 0;
-                    break;
-                case NativeConstants.PAK_TYPE_MEMORY:
-                    pakIndex = 1;
-                    break;
-                case NativeConstants.PAK_TYPE_RUMBLE:
-                    pakIndex = 2;
-                    break;
-                }
-
-                final String[] pakString = pakTypes[player - 1][pakIndex].split(": ");
-                final int finalPlayer = player;
-
-                mGameSidebar.addRow(0x0, pakString[0], pakString[pakString.length - 1], new GameSidebar.Action()
-                {
-                    @Override
-                    public void onAction()
-                    {
-                        mShowPak = (mShowPak == finalPlayer) ? 0 : finalPlayer;
-                        updateSidebar();
-                    }
-                }, (mShowPak == player) ? R.drawable.ic_arrow_u : R.drawable.ic_arrow_d, 1);
-
-                if (mShowPak != player)
-                    continue;
-
-                boolean permitRumble = AppData.IS_JELLY_BEAN || (player == 1 && hasPhoneVibrator);
-
-                // Show the options for this player
-                for (int pak = 0; pak < pakTypes[0].length; pak++)
-                {
-                    if (!permitRumble && pak == 2)
-                        continue;
-
-                    int icon = R.drawable.ic_box;
-                    if (pakIndex == pak)
-                        icon = R.drawable.ic_check;
-
-                    final int finalPak = pak;
-                    final String[] pakName = pakTypes[player - 1][pak].split(": ");
-
-                    mGameSidebar.addRow(0x0, pakName[pakName.length - 1], null, new GameSidebar.Action()
-                    {
-                        @Override
-                        public void onAction()
-                        {
-                            // Set the new Pak type for this player
-                            int newPakIndex = pakMap[finalPak];
-                            mGlobalPrefs.putPakType(finalPlayer, newPakIndex);
-                            NativeInput.setConfig(finalPlayer - 1, true, newPakIndex);
-
-                            // Send a toast message
-                            Notifier.showToast(mActivity, pakTypes[finalPlayer - 1][finalPak]);
-
-                            // Collapse this section in the sidebar
-                            mShowPak = 0;
-                            updateSidebar();
-                        }
-                    }, icon, 2);
-                }
-            }
-        }
-
-        mGameSidebar.addRow(0x0, mActivity.getString(R.string.menuItem_setIme), null, new GameSidebar.Action()
-        {
-            @Override
-            public void onAction()
-            {
-                InputMethodManager imeManager = (InputMethodManager) mActivity
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imeManager != null)
-                    imeManager.showInputMethodPicker();
-            }
-        });
     }
 
     public void onStart()
