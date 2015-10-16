@@ -583,6 +583,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
         Log.i( "GameLifecycleHandler", "surfaceChanged" );
+        NativeExports.notifySDLSurfaceReady();
         mIsSurface = true;
         tryRunning();
     }
@@ -610,8 +611,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     public void surfaceDestroyed( SurfaceHolder holder )
     {
         Log.i( "GameLifecycleHandler", "surfaceDestroyed" );
+        NativeExports.notifySDLSurfaceDestroyed();
         mIsSurface = false;
-        tryStopping();
+        tryPausing();
+        mSurface.destroyGLSurface();
     }
     
     public void onStop()
@@ -622,6 +625,13 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     public void onDestroy()
     {
         Log.i( "GameLifecycleHandler", "onDestroy" );
+        
+        // Never go directly from running to stopped; always pause (and autosave) first
+        String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+        CoreInterface.pauseEmulator( true, saveFileName );
+        mAutoSaveManager.clearOldest();
+        CoreInterface.shutdownEmulator();
+        
         mMogaController.exit();
     }
 
@@ -816,14 +826,15 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         int state = NativeExports.emuGetState();
         if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ))
         {
-            String latestSave = mAutoSaveManager.getLatestAutoSave();
             switch( state )
             {
                 case NativeConstants.EMULATOR_STATE_UNKNOWN:
+                    String latestSave = mAutoSaveManager.getLatestAutoSave();
                     CoreInterface.startupEmulator(latestSave);
                     break;
                 case NativeConstants.EMULATOR_STATE_PAUSED:
-                    CoreInterface.resumeEmulator();
+                    if( mSurface.isEGLContextReady() )
+                        CoreInterface.resumeEmulator();
                     break;
                 default:
                     break;
@@ -834,22 +845,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     private void tryPausing()
     {
         if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_PAUSED )
-        {
-            String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-            
-            CoreInterface.pauseEmulator( true, saveFileName );
-            
-            mAutoSaveManager.clearOldest();
-        }
-    }
-    
-    private void tryStopping()
-    {
-        if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_STOPPED )
-        {
-            // Never go directly from running to stopped; always pause (and autosave) first
-            tryPausing();
-            CoreInterface.shutdownEmulator();
-        }
+            CoreInterface.pauseEmulator( false, null );
     }
 }

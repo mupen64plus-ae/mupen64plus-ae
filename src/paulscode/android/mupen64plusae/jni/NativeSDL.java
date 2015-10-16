@@ -51,7 +51,7 @@ public class NativeSDL extends CoreInterface
      */
     public static boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
     {
-        boolean result = sSurface.createGLContext( majorVersion, minorVersion, configSpec, true );
+        boolean result = sSurface.createGLContext( majorVersion, minorVersion, configSpec, false );
         
         if( !result )
         {
