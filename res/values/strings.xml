@@ -418,7 +418,7 @@
     <!-- Confirmation Dialogs -->
     <string name="confirm_title">Confirmation</string>
     <string name="confirmResetGame_message">Reset game? All progress since your last save will be lost.</string>
-    <string name="confirmExitGame_message">Exit game? All progress since your last save will be lost.</string>
+    <string name="confirmExitGame_message">Are you sure you want to stop playing?</string>
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
