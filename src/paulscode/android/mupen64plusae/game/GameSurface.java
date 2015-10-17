@@ -223,7 +223,6 @@ public class GameSurface extends SurfaceView
         catch(IllegalArgumentException e)
         {
             Log.e("GameSurface", "Exception thrown in flipBuffers, message: " + e.getMessage());
-            Log.e("GameSurface", "backtrace: " + e.getStackTrace());
         }
     }
     
