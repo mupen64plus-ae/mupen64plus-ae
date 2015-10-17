@@ -99,6 +99,11 @@ public class GameSidebar extends ScrollView
         mGameTitle.setText( title );
     }
     
+    public MenuListView getDrawerList()
+    {
+        return mDrawerList;
+    }
+    
     public interface GameSidebarActionHandler
     {
         abstract public void onGameSidebarAction(MenuItem menuItem);
