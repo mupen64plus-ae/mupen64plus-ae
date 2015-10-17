@@ -215,8 +215,16 @@ public class GameSurface extends SurfaceView
      */
     public void flipBuffers()
     {
-        // Uncomment the next line only for debugging; otherwise don't waste the time
-        mEgl.eglSwapBuffers( mEglDisplay, mEglSurface );
+        try
+        {
+            // Uncomment the next line only for debugging; otherwise don't waste the time
+            mEgl.eglSwapBuffers( mEglDisplay, mEglSurface );
+        }
+        catch(IllegalArgumentException e)
+        {
+            Log.e("GameSurface", "Exception thrown in flipBuffers, message: " + e.getMessage());
+            Log.e("GameSurface", "backtrace: " + e.getStackTrace());
+        }
     }
     
     /**
