@@ -61,6 +61,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -228,9 +229,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mDrawerLayout = (GameDrawerLayout) mActivity.findViewById(R.id.drawerLayout);
         mGameSidebar = (GameSidebar) mActivity.findViewById(R.id.gameSidebar);
         
-        // Handle events from the side bar
-        mGameSidebar.setActionHandler(this, R.menu.game_drawer);
-
         // Don't darken the game screen when the drawer is open
         mDrawerLayout.setScrimColor(0x0);
 
@@ -244,6 +242,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         // Initialize the objects and data files interfacing to the emulator core
         CoreInterface.initialize( mActivity, mSurface, mGamePrefs, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
 
+        // Handle events from the side bar
+        mGameSidebar.setActionHandler(this, R.menu.game_drawer);
         
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );
@@ -289,6 +289,44 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                 }
             }, 1000);
         }
+        
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener(){
+
+            @Override
+            public void onDrawerClosed(View arg0)
+            {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onDrawerOpened(View arg0)
+            {
+                MenuItem toggleSpeedItem = 
+                    mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_toggle_speed);
+                toggleSpeedItem.setTitle(mActivity.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
+                
+                MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
+                slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
+                mGameSidebar.getDrawerList().reload();
+                
+            }
+
+            @Override
+            public void onDrawerSlide(View arg0, float arg1)
+            {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onDrawerStateChanged(int arg0)
+            {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
     }
     
     @Override
@@ -301,6 +339,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             break;
         case R.id.menuItem_toggle_speed:
             CoreInterface.toggleSpeed();
+            
+            //Reload the menu with the new speed
+            MenuItem toggleSpeedItem = 
+                mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_toggle_speed);
+            toggleSpeedItem.setTitle(mActivity.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
+            mGameSidebar.getDrawerList().reload();
             break;
         case R.id.menuItem_set_speed:
             CoreInterface.setCustomSpeedFromPrompt();
@@ -309,6 +353,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             CoreInterface.screenshot();
             break;
         case R.id.menuItem_set_slot:
+            MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
+            slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
+            mGameSidebar.getDrawerList().reload();
             /*
              * TODO: if (mShowSlot) { // Expand the Slot selection panel by
              * adding the custom view to the // sidebar for (int slot = 0; slot
