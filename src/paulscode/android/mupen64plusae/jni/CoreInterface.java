@@ -507,6 +507,25 @@ public class CoreInterface
                 } );
     }
     
+    public static void setSlotFromPrompt()
+    {
+        NativeExports.emuPause();
+        final CharSequence title = sActivity.getText( R.string.menuItem_setSlot );
+        Prompt.promptRadioInteger( sActivity, title, NativeExports.emuGetSlot(), 0, 2, 1,
+                new PromptIntegerListener()
+                {
+                    @Override
+                    public void onDialogClosed( Integer value, int which )
+                    {
+                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        {
+                            setSlot( value );
+                        }
+                        NativeExports.emuResume();
+                    }
+                } );
+    }
+    
     public static void incrementCustomSpeed()
     {
         setCustomSpeed( sCustomSpeed + DELTA_SPEED );

@@ -48,7 +48,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -464,6 +466,61 @@ public final class Prompt
             }
         } ).setView( layout ).create().show();
     }
+    
+    /**
+     * Open a dialog to prompt the user for an integer using radio buttons
+     *
+     * @param context  The activity context.
+     * @param title    The title of the dialog.
+     * @param initial  The initial (default) value shown in the dialog.
+     * @param min      The minimum value permitted.
+     * @param max      The maximum value permitted.
+     * @param listener The listener to process the integer, when provided.
+     */
+    @SuppressLint( "InflateParams" )
+    public static void promptRadioInteger( Context context, CharSequence title,
+            final int initial, final int min, final int row, final int columns,
+            final PromptIntegerListener listener )
+    {
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View layout = inflater.inflate( R.layout.save_slot_preference, null );
+        final LinearLayout mainLayout = (LinearLayout) layout.findViewById( R.id.main_layout );
+        
+        ArrayList<LinearLayout> rows = new ArrayList<LinearLayout>(row);
+        Integer radioNumber = min;
+        
+        for(int rowIndex = 0; rowIndex < row; ++rowIndex)
+        {
+            LinearLayout linearLayout = new LinearLayout(context);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+            linearLayout.setLayoutParams(params);
+            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+            
+            for(int columnIndex = 0; columnIndex < row; ++columnIndex)
+            {
+                View radioLayout = inflater.inflate( R.layout.save_slot_selection, null );
+                TextView text = (TextView)radioLayout.findViewById(R.id.radio_number);
+                linearLayout.addView(radioLayout);
+                text.setText(radioNumber.toString());
+                RadioButton radioSelection = (RadioButton) radioLayout.findViewById(R.id.radio_selection);
+                
+                if(radioNumber == initial)
+                {
+                    radioSelection.setSelected(true);
+                }
+                ++radioNumber;
+            }
+            
+            rows.add(linearLayout);
+            mainLayout.addView(linearLayout);
+        }
+
+        new Builder( context ).setTitle( title ).setMessage( null ).setCancelable( false )
+            .setNegativeButton( context.getString( android.R.string.cancel ), null )
+            .setPositiveButton( context.getString( android.R.string.ok ), null ).setView( layout ).create().show();
+    }
+    
     
     /**
      * Open a dialog to prompt the user for an input code.

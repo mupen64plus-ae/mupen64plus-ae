@@ -293,7 +293,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             @Override
             public void onDrawerClosed(View arg0)
             {
-                // TODO Auto-generated method stub
                 
             }
 
@@ -313,14 +312,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             @Override
             public void onDrawerSlide(View arg0, float arg1)
             {
-                // TODO Auto-generated method stub
                 
             }
 
             @Override
             public void onDrawerStateChanged(int arg0)
             {
-                // TODO Auto-generated method stub
                 
             }
             
@@ -351,23 +348,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             CoreInterface.screenshot();
             break;
         case R.id.menuItem_set_slot:
+            CoreInterface.setSlotFromPrompt();
+            
             MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
             slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
             mGameSidebar.getDrawerList().reload();
-            /*
-             * TODO: if (mShowSlot) { // Expand the Slot selection panel by
-             * adding the custom view to the // sidebar for (int slot = 0; slot
-             * <= 9; slot++) { int icon = R.drawable.ic_box; if (slot ==
-             * NativeExports.emuGetSlot()) icon = R.drawable.ic_check;
-             * 
-             * final int finalSlot = slot; mGameSidebar.addRow(0x0,
-             * mActivity.getString(R.string.menuItem_setSlot, slot), null, new
-             * GameSidebar.Action() {
-             * 
-             * @Override public void onAction() {
-             * CoreInterface.setSlot(finalSlot); mShowSlot = false;
-             * updateSidebar(); } }, icon, 1); } }
-             */
             break;
         case R.id.menuItem_slot_load:
             CoreInterface.loadSlot();
