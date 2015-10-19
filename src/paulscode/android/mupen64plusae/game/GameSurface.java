@@ -20,6 +20,9 @@
  */
 package paulscode.android.mupen64plusae.game;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -220,9 +223,16 @@ public class GameSurface extends SurfaceView
             // Uncomment the next line only for debugging; otherwise don't waste the time
             mEgl.eglSwapBuffers( mEglDisplay, mEglSurface );
         }
-        catch(IllegalArgumentException e)
+        catch(IllegalArgumentException exception)
         {
-            Log.e("GameSurface", "Exception thrown in flipBuffers, message: " + e.getMessage());
+            StringWriter writer = new StringWriter();
+            PrintWriter printWriter = new PrintWriter( writer );
+            exception.printStackTrace( printWriter );
+            printWriter.flush();
+            
+            String stackTrace = writer.toString();
+            
+            Log.e("GameSurface", "Exception thrown in flipBuffers, stack trace: " + stackTrace);
         }
     }
     
