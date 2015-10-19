@@ -121,7 +121,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
         
         setContentView( R.layout.cheat_editor );
-        reload( mRomCrc );
+        reload( mRomCrc, mRomCountryCode );
         findViewById( R.id.imgBtnChtAdd ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtEdit ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtSave ).setOnClickListener( this );
@@ -129,7 +129,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         getListView().setOnItemLongClickListener( this );
     }
     
-    private void reload( String crc )
+    private void reload( String crc, byte countryCode )
     {
         Log.v( "CheatEditorActivity", "building from CRC = " + crc );
         
@@ -137,13 +137,13 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
             return;
         
         //Do this in a separate task since it takes longer
-        ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_default, crc);
+        ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_default, crc, countryCode);
         cheatsTask.execute((String) null);
         
         //We don't extract user cheats in a separate task since there aren't as many
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
         userCheats.clear();        
-        userCheats.addAll( CheatUtils.populate( mRomCrc, usrcheat_txt, false, this ) );
+        userCheats.addAll( CheatUtils.populate( mRomCrc, mRomCountryCode, usrcheat_txt, false, this ) );
         
         cheatListAdapter = new CheatListAdapter( this, userCheats );
         setListAdapter( cheatListAdapter );

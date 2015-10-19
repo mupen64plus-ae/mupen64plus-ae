@@ -150,12 +150,15 @@ public class CheatUtils
     
 
     public static ArrayList<Cheat> populateWithPosition( BufferedReader startPosition,
-        String crc, Context con )
+        String crc, byte countryCode, Context con )
     {
         CheatSection cheatSection;
         try
         {
-            cheatSection = new CheatSection( crc, startPosition );
+            String countryString = String.format("%02x", countryCode).substring(0, 2);
+            String key = crc + "-C:" + countryString;
+            
+            cheatSection = new CheatSection( key, startPosition );
         }
         catch (IOException e)
         {
@@ -173,11 +176,11 @@ public class CheatUtils
         return populateCommon(cheatSection, crc, con);
     }
     
-    public static ArrayList<Cheat> populate( String crc, CheatFile mupencheat_txt,
+    public static ArrayList<Cheat> populate( String crc, byte countryCode, CheatFile mupencheat_txt,
             boolean isSystemDefault, Context con )
     {
-
-        CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-' ) + ".*" );
+        String countryString = String.format("%02x", countryCode).substring(0, 2);
+        CheatSection cheatSection = mupencheat_txt.match( "^" + crc.replace( ' ', '-') + "-C:" + countryString + ".*");
         
         return populateCommon(cheatSection, crc, con);
     }
@@ -297,11 +300,12 @@ public class CheatUtils
     public static void save(String crc, CheatFile mupencheat_txt, ArrayList<Cheat> cheats, String headerName,
         byte countryCode, Context con, boolean isSystemDefault)
     {
-        CheatSection c = mupencheat_txt.match("^" + crc.replace(' ', '-') + ".*");
+        String countryString = String.format("%02x", countryCode).substring(0, 2);
+        CheatSection c = mupencheat_txt.match("^" + crc.replace(' ', '-') + "-C:" + countryString + ".*");
         if (c == null)
         {
             // Game name and country code from header
-            c = new CheatSection(crc.replace(' ', '-'), headerName, String.format("%02x", countryCode).substring(0, 2));
+            c = new CheatSection(crc.replace(' ', '-'), headerName, countryString);
             mupencheat_txt.add(c);
         }
 
