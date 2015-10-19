@@ -63,25 +63,6 @@
 
     <string name="touchscreenAutoHold_default" translatable="false">2</string>
 
-    <!-- Touchscreen Auto-Holdable Buttons -->
-
-    <!-- Touchscreen Button Styles -->
-    <string-array name="touchscreenStyle_entries" translatable="false">
-        <item>@string/touchscreenStyle_entryOutline</item>
-        <item>@string/touchscreenStyle_entryShaded</item>
-    </string-array>
-    <string-array name="touchscreenStyle_values" translatable="false">
-        <item>Outline</item>
-        <item>Shaded</item>
-    </string-array>
-
-    <string name="touchscreenStyle_default" translatable="false">Outline</string>
-    
-    <!-- Touchscreen Layout Heights -->
-
-    <!-- Touchscreen Layouts -->
-    <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
-
     <!-- Xperia Play Touchpad Layouts -->
     <string-array name="touchpadLayout_entries" translatable="false">
         <item>@string/touchpadLayout_entryDefault</item>

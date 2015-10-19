@@ -96,7 +96,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String AUDIO_SDL_BUFFER_SIZE = "audioSDLBufferSize";
     private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize";
     private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr";
-    private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String NAVIGATION_MODE = "navigationMode";
@@ -133,7 +132,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SDL_BUFFER_SIZE,    R.string.audioSDLBufferSize_default,    R.array.audioSDLBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_SIZE,   R.string.audioSLESBufferSize_default,   R.array.audioSLESBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_NBR,    R.string.audioSLESBufferNbr_default,    R.array.audioSLESBufferNbr_values );
-        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_STYLE,        R.string.touchscreenStyle_default,      R.array.touchscreenStyle_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHPAD_LAYOUT,          R.string.touchpadLayout_default,        R.array.touchpadLayout_values );
         PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
@@ -141,6 +139,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         
         // Refresh the preference data wrapper
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        
+        // Make sure custom skin directory exist
+        new File( mGlobalPrefs.touchscreenCustomSkinsDir ).mkdirs();
         
         // Initialize the OUYA interface if running on OUYA
         if( AppData.IS_OUYA_HARDWARE )

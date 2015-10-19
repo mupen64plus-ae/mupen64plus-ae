@@ -20,10 +20,14 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import java.io.File;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
 import paulscode.android.mupen64plusae.game.GameOverlay;
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -91,6 +95,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     
     // User preferences wrapper
     private GlobalPrefs mGlobalPrefs;
+    private AppData mAppData;
     
     // Visual elements
     private VisibleTouchMap mTouchscreenMap;
@@ -110,6 +115,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     // Don't enter immersive mode until the ActionBar menus are closed
     private boolean actionBarMenuOpen = false;
     
+    // The directory of the selected touchscreen skin.
+    private String touchscreenSkin;
+    
     // True if the touchscreen joystick is animated
     private boolean isTouchscreenAnimated;
     
@@ -121,8 +129,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         super.onCreate( savedInstanceState );
         
         // Get the user preferences wrapper
-        AppData appData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this, appData );
+        mAppData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
         
         // Load the profile; fail fast if there are any programmer usage errors
@@ -186,7 +194,11 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             });
         }
         
-        isTouchscreenAnimated = mProfile.get( "touchscreenAnimated", "False" ).equals( "True" );
+        String layout = mProfile.get( "touchscreenSkin", "Outline" );
+        if( layout.equals( "Custom" ) )
+            touchscreenSkin =  mProfile.get( "touchscreenCustomSkinPath", "" );
+        else
+            touchscreenSkin = mAppData.touchscreenSkinsDir + layout;
         
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
@@ -198,7 +210,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private void refresh()
     {
         // Reposition the assets and refresh the overlay and options menu
-        mTouchscreenMap.load( mGlobalPrefs.touchscreenSkin, mProfile,
+        mTouchscreenMap.load( touchscreenSkin, mProfile,
                 isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
         mOverlay.postInvalidate();
@@ -318,6 +330,19 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             case R.id.menuItem_buttonS:
                 toggleAsset( BUTTON_S );
                 return true;
+            case R.id.menuItem_outline:
+                touchscreenSkin = mAppData.touchscreenSkinsDir + "Outline";
+                mProfile.put( "touchscreenSkin", "Outline" );
+                refresh();
+                return true;
+            case R.id.menuItem_shaded:
+                touchscreenSkin = mAppData.touchscreenSkinsDir + "Shaded";
+                mProfile.put( "touchscreenSkin", "Shaded" );
+                refresh();
+                return true;
+            case R.id.menuItem_custom:
+                loadCustomSkinFromPrompt();
+                return true;
             default:
                 return super.onOptionsItemSelected( item );
         }
@@ -330,6 +355,26 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mProfile.putInt( assetName + TAG_X, newPosition );
         mProfile.putInt( assetName + TAG_Y, newPosition );
         refresh();
+    }
+    
+    private void loadCustomSkinFromPrompt()
+    {
+        CharSequence title = this.getText( R.string.touchscreenStyle_entryCustom );
+        File startPath = new File( mGlobalPrefs.touchscreenCustomSkinsDir );
+        Prompt.promptDirectory( this, title, null, startPath, new PromptFileListener()
+        {
+            @Override
+            public void onDialogClosed( File file, int which )
+            {
+                if( which >= 0 )
+                {
+                    touchscreenSkin = file.getAbsolutePath();
+                    mProfile.put( "touchscreenSkin", "Custom" );
+                    mProfile.put( "touchscreenCustomSkinPath", touchscreenSkin );
+                    refresh();
+                }
+            }
+        } );
     }
     
     private void setHoldable( int n64Index, boolean holdable )

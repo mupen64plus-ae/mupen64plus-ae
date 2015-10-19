@@ -377,6 +377,21 @@ public final class Prompt
     }
     
     /**
+     * Open a dialog to prompt the user for a directory.
+     * 
+     * @param context   The activity context.
+     * @param title     The title of the dialog.
+     * @param message   The message to be shown inside the dialog.
+     * @param startPath The directory holding the directory to select from.
+     * @param listener  The listener to process the directory, when selected.
+     */
+    public static void promptDirectory( Context context, CharSequence title, CharSequence message,
+            File startPath, final PromptFileListener listener )
+    {
+        promptFile( context, title, message, startPath, false, true, false, false, listener );
+    }
+    
+    /**
      * Open a dialog to prompt the user for text.
      * 
      * @param context   The activity context.

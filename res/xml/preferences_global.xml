@@ -184,14 +184,6 @@
             mupen64:stepSize="1"
             mupen64:units="%" />
 
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
-            android:defaultValue="@string/touchscreenStyle_default"
-            android:entries="@array/touchscreenStyle_entries"
-            android:entryValues="@array/touchscreenStyle_values"
-            android:key="touchscreenStyle"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenStyle_title" />
-
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="100"
             android:key="touchscreenTransparency"

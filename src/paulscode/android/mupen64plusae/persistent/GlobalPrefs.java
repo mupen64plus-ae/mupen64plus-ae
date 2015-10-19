@@ -112,6 +112,9 @@ public class GlobalPrefs
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
     
+    /** The directory containing all custom touchscreen skin folders. */
+    public final String touchscreenCustomSkinsDir;
+    
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
     
@@ -144,9 +147,6 @@ public class GlobalPrefs
     
     /** True if the touchscreen feedback is enabled. */
     public final boolean isTouchscreenFeedbackEnabled;
-    
-    /** The directory of the selected touchscreen skin. */
-    public final String touchscreenSkin;
     
     /** The touchscreen transparency value. */
     public final int touchscreenTransparency;
@@ -316,6 +316,7 @@ public class GlobalPrefs
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         customCheats_txt = profilesDir + "/customCheats.txt";
+        touchscreenCustomSkinsDir = userDataDir + "/CustomSkins";
         
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
@@ -328,7 +329,6 @@ public class GlobalPrefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
         touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
-        touchscreenSkin = appData.touchscreenSkinsDir + "/" + mPreferences.getString( "touchscreenStyle", "Outline" );
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
         
         // Xperia PLAY touchpad prefs

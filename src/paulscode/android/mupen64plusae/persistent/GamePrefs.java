@@ -147,11 +147,8 @@ public class GamePrefs
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
     
-    /** The folder name of the selected touchscreen layout. */
-    public final String touchscreenLayout;
-    
-    /** True if a custom touchscreen is provided. */
-    public final boolean isTouchscreenCustom;
+    /** The directory of the selected touchscreen skin. */
+    public final String touchscreenSkin;
     
     /** True if Player 1's controller is enabled. */
     public final boolean isControllerEnabled1;
@@ -268,84 +265,30 @@ public class GamePrefs
         
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null;
-        isTouchscreenAnimated = touchscreenProfile.get( "touchscreenAnimated", "False" ).equals( "True" );
         
-        // Determine the touchscreen layout
-        boolean isCustom = false;
-        String folder = "";
-        if( isTouchscreenEnabled )
+        if ( isTouchscreenEnabled )
         {
+            isTouchscreenAnimated = touchscreenProfile.get( "touchscreenAnimated", "False" ).equals( "True" );
+            
+            // Determine the touchscreen auto-holdables
             touchscreenAutoHoldables = getSafeIntSet( touchscreenProfile,
                     "touchscreenAutoHoldables" );
-            
-            String layout = touchscreenProfile.get( "touchscreenLayout", "" );
+                
+            // Determine the touchscreen layout
+            String layout = touchscreenProfile.get( "touchscreenSkin", "Outline" );
             if( layout.equals( "Custom" ) )
-            {
-                isCustom = true;
-                folder = touchscreenProfile.get( "pathCustomTouchscreen", "" );
-            }
+                touchscreenSkin =  touchscreenProfile.get( "touchscreenCustomSkinPath", "" );
             else
-            {
-                // Use the "No-stick" skin if analog input is shown but stick ("hat") is not
-                // animated
-                if( layout.equals( "Mupen64Plus-AE-Analog" )
-                        || layout.equals( "Mupen64Plus-AE-All" ) )
-                {
-                    if( isTouchscreenAnimated )
-                        layout += "-Stick";
-                    else
-                        layout += "-Nostick";
-                }
-                
-                String height = touchscreenProfile.get( "touchscreenHeight", "" );
-                if( TextUtils.isEmpty( height ) )
-                {
-                    // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
-                    if( context instanceof Activity )
-                    {
-                        DisplayMetrics metrics = new DisplayMetrics();
-                        ( (Activity) context ).getWindowManager().getDefaultDisplay()
-                                .getMetrics( metrics );
-                        float screenWidthInches = (float) metrics.widthPixels
-                                / (float) metrics.xdpi;
-                        float screenHeightInches = (float) metrics.heightPixels
-                                / (float) metrics.ydpi;
-                        float screenSizeInches = (float) Math
-                                .sqrt( ( screenWidthInches * screenWidthInches )
-                                        + ( screenHeightInches * screenHeightInches ) );
-                        if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE
-                                || globalPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                                || globalPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
-                        {
-                            layout += "-Half-Height";
-                        }
-                        else
-                        {
-                            layout += "-Full-Height";
-                        }
-                    }
-                }
-                else
-                {
-                    layout += height;
-                }
-                
-                folder = appData.touchscreenSkinsDir + layout;
-            }
+                touchscreenSkin = appData.touchscreenSkinsDir + layout;
         }
         else
         {
-            // Touchscreen disabled, profile is null
-            if( globalPrefs.isFpsEnabled )
-            {
-                folder = appData.touchscreenSkinsDir
-                        + context.getString( R.string.touchscreenLayout_fpsOnly );
-            }
+            isTouchscreenAnimated = false;
             touchscreenAutoHoldables = null;
+            touchscreenSkin = "";
         }
+                
         isTouchscreenHidden = !isTouchscreenEnabled || globalPrefs.touchscreenTransparency == 0;
-        isTouchscreenCustom = isCustom;
-        touchscreenLayout = folder;
         
         // Determine which peripheral controllers are enabled
         isControllerEnabled1 = controllerProfile1 != null;
