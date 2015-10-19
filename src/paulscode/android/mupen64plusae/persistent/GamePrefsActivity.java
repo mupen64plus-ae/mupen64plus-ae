@@ -298,7 +298,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(mGamePrefs.isCheatOptionsShown)
         {
             ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt,
-                mRomCrc);
+                mRomCrc, mRomCountryCode);
             cheatsTask.execute((String) null);
         }
         else
