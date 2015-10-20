@@ -89,7 +89,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     // These constants must match the keys used in res/xml/preferences*.xml
     private static final String DISPLAY_ORIENTATION = "displayOrientation";
     private static final String DISPLAY_POSITION = "displayPosition";
-    private static final String DISPLAY_RESOLUTION = "displayResolution";
     private static final String DISPLAY_SCALING = "displayScaling";
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
     private static final String AUDIO_PLUGIN = "audioPlugin";
@@ -125,7 +124,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         Resources res = getResources();
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_ORIENTATION,      R.string.displayOrientation_default,    R.array.displayOrientation_values );
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_POSITION,         R.string.displayPosition_default,       R.array.displayPosition_values );
-        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_RESOLUTION,       R.string.displayResolution_default,     R.array.displayResolution_values );
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING,          R.string.displayScaling_default,        R.array.displayScaling_values );
         PrefUtil.validateListPreference( res, mPrefs, VIDEO_HARDWARE_TYPE,      R.string.videoHardwareType_default,     R.array.videoHardwareType_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_PLUGIN,             R.string.audioPlugin_default,           R.array.audioPlugin_values );

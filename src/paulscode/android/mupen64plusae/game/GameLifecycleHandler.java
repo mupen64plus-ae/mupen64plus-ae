@@ -248,7 +248,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mSurface.getHolder().addCallback( this );
         
         // Update the GameSurface size
-        mSurface.getHolder().setFixedSize( mGlobalPrefs.videoRenderWidth, mGlobalPrefs.videoRenderHeight );
+        mSurface.getHolder().setFixedSize( mGamePrefs.videoRenderWidth, mGamePrefs.videoRenderHeight );
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
         params.width = mGlobalPrefs.videoSurfaceWidth;
         params.height = mGlobalPrefs.videoSurfaceHeight;

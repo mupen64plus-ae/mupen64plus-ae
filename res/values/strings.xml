@@ -278,6 +278,7 @@
     <string name="displayResolution_entry160x120">160 x 120 (highest framerate)</string>
 
     <string name="displayScaling_title">Screen scaling</string>
+    <string name="displayScaling_entryOriginal">Original\n<small>Fill screen, no distortion (adds black bars)</small></string>
     <string name="displayScaling_entryNone">None\n<small>Use exact resolution selected above</small></string>
     <string name="displayScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
     <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>

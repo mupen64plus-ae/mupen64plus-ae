@@ -7,20 +7,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.preference.MultiSelectListPreference;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
-import paulscode.android.mupen64plusae.util.Utility;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 
 public class GamePrefs
 {
@@ -177,6 +171,12 @@ public class GamePrefs
     /** True if the touchscreen joystick is animated. */
     public final boolean isTouchscreenAnimated;
     
+    /** The width of the OpenGL rendering context, in pixels. */
+    public final int videoRenderWidth;
+    
+    /** The height of the OpenGL rendering context, in pixels. */
+    public final int videoRenderHeight;
+    
     /** Game CRC */
     public final String crc;
     
@@ -262,6 +262,11 @@ public class GamePrefs
         maxFrameskip = getSafeInt( emulationProfile, "glide64Frameskip", 0 );
         isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
         glide64MaxFrameskip = Math.abs( maxFrameskip );
+        
+        // Display prefs
+        int resolution = getSafeInt( emulationProfile, "videoResolution", 100 );
+        videoRenderWidth = Math.round( ( float ) ( globalPrefs.videoSurfaceWidth * resolution ) / 100.f );
+        videoRenderHeight = Math.round( ( float ) ( globalPrefs.videoSurfaceHeight * resolution ) / 100.f );
         
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null;

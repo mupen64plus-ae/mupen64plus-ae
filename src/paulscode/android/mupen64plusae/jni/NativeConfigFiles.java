@@ -38,8 +38,8 @@ public class NativeConfigFiles
         
         // gln64 config file
         ConfigFile gln64_conf = new ConfigFile( appData.gln64_conf );
-        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( global.videoRenderWidth ) );
-        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( global.videoRenderHeight ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( game.videoRenderWidth ) );
+        gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( game.videoRenderHeight ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( game.isGln64AutoFrameskipEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "max frameskip", String.valueOf( game.gln64MaxFrameskip ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "polygon offset hack", boolToNum( global.isPolygonOffsetHackEnabled ) );
@@ -114,8 +114,8 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + appData.rspLib + '"' );                                       // Filename of RSP plugin
         
         mupen64plus_cfg.put( "Video-General", "Fullscreen", "False" );                                                      // Use fullscreen mode if True, or windowed mode if False
-        mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( global.videoRenderWidth ) );                   // Width of output window or fullscreen width
-        mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( global.videoRenderHeight ) );                 // Height of output window or fullscreen height
+        mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( game.videoRenderWidth ) );                     // Width of output window or fullscreen width
+        mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( game.videoRenderHeight ) );                   // Height of output window or fullscreen height
         mupen64plus_cfg.put( "Video-General", "VerticalSync", "False" );                                                    // If true, activate the SDL_GL_SWAP_CONTROL attribute
         
         mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );                                                        // Vertical sync

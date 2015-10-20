@@ -10,6 +10,14 @@
         android:key="r4300Emulator"
         android:summary="@string/selectedValue"
         android:title="@string/r4300Emulator_title" />
+    <paulscode.android.mupen64plusae.preference.StringSeekBarPreference
+        android:defaultValue="100"
+        android:key="videoResolution"
+        android:title="@string/displayResolution_title"
+        mupen64:maximumValue="100"
+        mupen64:minimumValue="1"
+        mupen64:stepSize="1"
+        mupen64:units="%" />
     <paulscode.android.mupen64plusae.preference.CompatibleListPreference
         android:defaultValue="@string/videoPlugin_default"
         android:entries="@array/videoPlugin_entries"

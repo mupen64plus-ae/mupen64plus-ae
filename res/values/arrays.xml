@@ -129,19 +129,15 @@
 
     <!-- Screen Scaling List -->
     <string-array name="displayScaling_entries" translatable="false">
-        <item>@string/displayScaling_entryNone</item>
-        <item>@string/displayScaling_entryZoom</item>
-        <item>@string/displayScaling_entryCrop</item>
+        <item>@string/displayScaling_entryOriginal</item>
         <item>@string/displayScaling_entryStretch</item>
     </string-array>
     <string-array name="displayScaling_values" translatable="false">
-        <item>none</item>
-        <item>zoom</item>
-        <item>crop</item>
+        <item>original</item>
         <item>stretch</item>
     </string-array>
 
-    <string name="displayScaling_default" translatable="false">zoom</string>
+    <string name="displayScaling_default" translatable="false">original</string>
 
     <!-- Hardware Profile List -->
     <string-array name="videoHardwareType_entries" translatable="false">

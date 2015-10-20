@@ -187,12 +187,6 @@ public class GlobalPrefs
     /** The vertical screen position. */
     public final int displayPosition;
     
-    /** The width of the OpenGL rendering context, in pixels. */
-    public final int videoRenderWidth;
-    
-    /** The height of the OpenGL rendering context, in pixels. */
-    public final int videoRenderHeight;
-    
     /** The width of the viewing surface, in pixels. */
     public final int videoSurfaceWidth;
     
@@ -439,86 +433,21 @@ public class GlobalPrefs
             
             float aspect = 0.75f; // TODO: Handle PAL
             boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;
-            int zoomWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
-            int zoomHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
-            int cropWidth = isLetterboxed ? Math.round( (float) stretchHeight / aspect ) : stretchWidth;
-            int cropHeight = isLetterboxed ? stretchHeight : Math.round( (float) stretchWidth * aspect );
+            int originalWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
+            int originalHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
             
-            int hResolution = getSafeInt( mPreferences, "displayResolution", 0 );
-            String scaling = mPreferences.getString( "displayScaling", "zoom" );
-            if( hResolution == 0 )
+            String scaling = mPreferences.getString( "displayScaling", "original" );
+
+            // Native resolution
+            if( scaling.equals( "stretch" ) )
             {
-                // Native resolution
-                if( scaling.equals( "stretch" ) )
-                {
-                    videoRenderWidth = videoSurfaceWidth = stretchWidth;
-                    videoRenderHeight = videoSurfaceHeight = stretchHeight;
-                }
-                else if( scaling.equals( "crop" ) )
-                {
-                    videoRenderWidth = videoSurfaceWidth = cropWidth;
-                    videoRenderHeight = videoSurfaceHeight = cropHeight;
-                }
-                else // scaling.equals( "zoom") || scaling.equals( "none" )
-                {
-                    videoRenderWidth = videoSurfaceWidth = zoomWidth;
-                    videoRenderHeight = videoSurfaceHeight = zoomHeight;
-                }
+                videoSurfaceWidth = stretchWidth;
+                videoSurfaceHeight = stretchHeight;
             }
-            else
+            else // scaling.equals( "original")
             {
-                // Non-native resolution
-                switch( hResolution )
-                {
-                    case 720:
-                        videoRenderWidth = 960;
-                        videoRenderHeight = 720;
-                        break;
-                    case 600:
-                        videoRenderWidth = 800;
-                        videoRenderHeight = 600;
-                        break;
-                    case 480:
-                        videoRenderWidth = 640;
-                        videoRenderHeight = 480;
-                        break;
-                    case 360:
-                        videoRenderWidth = 480;
-                        videoRenderHeight = 360;
-                        break;
-                    case 240:
-                        videoRenderWidth = 320;
-                        videoRenderHeight = 240;
-                        break;
-                    case 120:
-                        videoRenderWidth = 160;
-                        videoRenderHeight = 120;
-                        break;
-                    default:
-                        videoRenderWidth = Math.round( (float) hResolution / aspect );
-                        videoRenderHeight = hResolution;
-                        break;
-                }
-                if( scaling.equals( "zoom" ) )
-                {
-                    videoSurfaceWidth = zoomWidth;
-                    videoSurfaceHeight = zoomHeight;
-                }
-                else if( scaling.equals( "crop" ) )
-                {
-                    videoSurfaceWidth = cropWidth;
-                    videoSurfaceHeight = cropHeight;
-                }
-                else if( scaling.equals( "stretch" ) )
-                {
-                    videoSurfaceWidth = stretchWidth;
-                    videoSurfaceHeight = stretchHeight;
-                }
-                else // scaling.equals( "none" )
-                {
-                    videoSurfaceWidth = videoRenderWidth;
-                    videoSurfaceHeight = videoRenderHeight;
-                }
+                videoSurfaceWidth = originalWidth;
+                videoSurfaceHeight = originalHeight;
             }
         }
     }

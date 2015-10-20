@@ -51,7 +51,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private static final String CATEGORY_DATA = "categoryData";
     
     private static final String DISPLAY_ORIENTATION = "displayOrientation";
-    private static final String DISPLAY_RESOLUTION = "displayResolution";
     private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
     private static final String DISPLAY_FPS_REFRESH = "displayFpsRefresh";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
@@ -122,7 +121,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_INPUT );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_DATA );
                 PrefUtil.removePreference( this, SCREEN_ROOT, ACTION_RESET_USER_PREFS );
-                PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_RESOLUTION );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_FPS_REFRESH );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_HARDWARE_TYPE );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_POLYGON_OFFSET );
