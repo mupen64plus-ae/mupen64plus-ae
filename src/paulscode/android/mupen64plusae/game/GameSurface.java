@@ -124,6 +124,15 @@ public class GameSurface extends SurfaceView
      */
     public boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec, boolean forceCreate )
     {
+        if( mEglSurface != null && mEglSurface != EGL10.EGL_NO_SURFACE )
+        {
+            if( !unbindEGLContext() || !destroyEGLSurface() )
+            {
+                Log.e( TAG, "Failed to create GL context" );
+                return false;
+            }
+        }
+        
         Log.i( TAG, "Creating GL context" );
         if( initializeEGL( majorVersion, minorVersion, configSpec ) )
         {
@@ -181,27 +190,6 @@ public class GameSurface extends SurfaceView
     }
     
     /**
-     * Unbind the previously-created rendering context and destroy the window surface.
-     * 
-     * @return True, if successful.
-     * @see GameSurface#destroyGLSurface()
-     */
-    public boolean destroyGLSurface()
-    {
-        Log.i( TAG, "Destroying GL surface" );
-        if( unbindEGLContext() )
-        {
-            if( destroyEGLSurface() )
-            {
-                mIsEGLContextReady = false;
-                return true;
-            }
-        }
-        Log.e( TAG, "Failed to destroy GL surface" );
-        return false;
-    }
-    
-    /**
      * Return the state of the EGL Context
      * 
      * @return True, if ready.
@@ -209,6 +197,15 @@ public class GameSurface extends SurfaceView
     public boolean isEGLContextReady()
     {
         return mIsEGLContextReady;
+    }
+    
+    /**
+     * Set the state of the EGL Context to not ready
+     * 
+     */
+    public void setEGLContextNotReady()
+    {
+        mIsEGLContextReady = false;
     }
     
     /**

@@ -612,9 +612,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     {
         Log.i( "GameLifecycleHandler", "surfaceDestroyed" );
         NativeExports.notifySDLSurfaceDestroyed();
+        mSurface.setEGLContextNotReady();
         mIsSurface = false;
         tryPausing();
-        mSurface.destroyGLSurface();
     }
     
     public void onStop()
