@@ -80,6 +80,16 @@ public class CoreInterface
         public void onFpsChanged( int newValue );
     }
     
+    public interface OnPromptFinishedListener
+    {
+        /**
+         * Called when a prompt is complete
+         * 
+         * @param newValue The new FPS value.
+         */
+        public void onPromptFinished();
+    }
+    
     // Haptic objects - used by NativeInput
     protected static final Vibrator[] sVibrators = new Vibrator[4];
     
@@ -377,7 +387,6 @@ public class CoreInterface
     {
         int slot = value % NUM_SLOTS;
         NativeExports.emuSetSlot( slot );
-        Notifier.showToast( sActivity, R.string.toast_usingSlot, slot );
     }
     
     public static void incrementSlot()
@@ -488,7 +497,7 @@ public class CoreInterface
         NativeExports.emuScreenshot();
     }
     
-    public static void setCustomSpeedFromPrompt()
+    public static void setCustomSpeedFromPrompt(final OnPromptFinishedListener promptFinishedListener)
     {
         NativeExports.emuPause();
         final CharSequence title = sActivity.getText( R.string.menuItem_setSpeed );
@@ -501,17 +510,23 @@ public class CoreInterface
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
                             setCustomSpeed( value );
+                            
+                            if(promptFinishedListener != null)
+                            {
+                                promptFinishedListener.onPromptFinished();
+                            }
                         }
                         NativeExports.emuResume();
                     }
                 } );
     }
     
-    public static void setSlotFromPrompt()
+    public static void setSlotFromPrompt(final OnPromptFinishedListener promptFinishedListener)
     {
         NativeExports.emuPause();
-        final CharSequence title = sActivity.getText( R.string.menuItem_setSlot );
-        Prompt.promptRadioInteger( sActivity, title, NativeExports.emuGetSlot(), 0, 2, 1,
+        final CharSequence title = sActivity.getString(R.string.menuItem_selectSlot, NativeExports.emuGetSlot());
+            
+        Prompt.promptRadioInteger( sActivity, title, NativeExports.emuGetSlot(), 0, 2, 5,
                 new PromptIntegerListener()
                 {
                     @Override
@@ -520,6 +535,11 @@ public class CoreInterface
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
                             setSlot( value );
+                            
+                            if(promptFinishedListener != null)
+                            {
+                                promptFinishedListener.onPromptFinished();
+                            }
                         }
                         NativeExports.emuResume();
                     }

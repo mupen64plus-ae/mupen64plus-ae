@@ -50,7 +50,22 @@
     </item>
     <item
         android:id="@+id/menuItem_paks"
-        android:title="@string/menuItem_paks"/>
+        android:title="@string/menuItem_paks">
+        <menu>
+            <item
+                android:id="@+id/menuItem_player_one"
+                android:title="@string/menuItem_player_one"/>
+            <item
+                android:id="@+id/menuItem_player_two"
+                android:title="@string/menuItem_player_two"/>
+            <item
+                android:id="@+id/menuItem_player_three"
+                android:title="@string/menuItem_player_three"/>
+            <item
+                android:id="@+id/menuItem_player_four"
+                android:title="@string/menuItem_player_four"/>
+        </menu>
+    </item>
     <item
         android:id="@+id/menuItem_setIme"
         android:title="@string/menuItem_setIme"/>
