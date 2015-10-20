@@ -144,11 +144,10 @@
             android:key="MultiSampling"
             android:summary="@string/selectedValue"
             android:title="MultiSampling" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
-            android:defaultValue="1"
-            android:key="AspectRatio"
-            android:summary="@string/selectedValue"
-            android:title="AspectRatio" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="WidescreenHack"
+            android:title="WidescreenHack" />
         <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
             android:defaultValue="1"
             android:key="bilinearMode"
