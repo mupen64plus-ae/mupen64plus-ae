@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.input.map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import paulscode.android.mupen64plusae.game.GameOverlay;
+import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Image;
@@ -198,11 +199,11 @@ public class VisibleTouchMap extends TouchMap
         // Compute analog foreground location (centered)
         if( analogBackImage != null && analogForeImage != null )
         {
-            int cX = analogBackImage.x + (int) ( analogBackImage.hWidth * scale );
-            int cY = analogBackImage.y + (int) ( analogBackImage.hHeight * scale );
-            analogForeImage.setScale( scale );
+            int cX = analogBackImage.x + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) );
+            int cY = analogBackImage.y + (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) );
+            analogForeImage.setScale( ( analogBackScaling * scale ) );
             analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
-                    (int) ( analogBackImage.width * scale ), (int) ( analogBackImage.height * scale ) );
+                    (int) ( analogBackImage.width * ( analogBackScaling * scale ) ), (int) ( analogBackImage.height * ( analogBackScaling * scale ) ) );
         }
         
         // Compute auto-hold overlay locations
@@ -210,7 +211,16 @@ public class VisibleTouchMap extends TouchMap
         {
             if( autoHoldImages[i] != null )
             {
-                autoHoldImages[i].setScale( scale );
+                String name = ASSET_NAMES.get( i );
+                float scaling = 1.f;
+                
+                for( int j = 0; j < buttonNames.size(); j++ )
+                {
+                    if ( buttonNames.get( j ).equals( name ) )
+                        scaling = buttonScaling.get( j );
+                }
+                
+                autoHoldImages[i].setScale( ( scaling * scale ) );
                 autoHoldImages[i].fitPercent( autoHoldX[i], autoHoldY[i], w, h );
             }
         }
@@ -318,20 +328,20 @@ public class VisibleTouchMap extends TouchMap
         if( analogForeImage != null && analogBackImage != null )
         {
             // Get the location of stick center
-            int hX = (int) ( ( analogBackImage.hWidth + ( axisFractionX * analogMaximum ) ) * scale );
-            int hY = (int) ( ( analogBackImage.hHeight - ( axisFractionY * analogMaximum ) ) * scale );
+            int hX = (int) ( ( analogBackImage.hWidth + ( axisFractionX * analogMaximum ) ) * ( analogBackScaling * scale ) );
+            int hY = (int) ( ( analogBackImage.hHeight - ( axisFractionY * analogMaximum ) ) * ( analogBackScaling * scale ) );
             
             // Use other values if invalid
             if( hX < 0 )
-                hX = (int) ( analogBackImage.hWidth * scale );
+                hX = (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) );
             if( hY < 0 )
-                hY = (int) ( analogBackImage.hHeight * scale );
+                hY = (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) );
             
             // Update the position of the stick
             int cX = analogBackImage.x + hX;
             int cY = analogBackImage.y + hY;
             analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
-                    (int) ( analogBackImage.width * scale ), (int) ( analogBackImage.height * scale ) );
+                    (int) ( analogBackImage.width * ( analogBackScaling * scale ) ), (int) ( analogBackImage.height * ( analogBackScaling * scale ) ) );
             return true;
         }
         return false;
@@ -473,8 +483,7 @@ public class VisibleTouchMap extends TouchMap
      */
     public void refreshButtonPosition( Profile profile, String name )
     {
-        super.updateButton( profile, name );
-        resize( cacheWidth, cacheHeight, cacheMetrics );
+        super.updateButton( profile, name, cacheWidth, cacheHeight );
     }
     
     /*

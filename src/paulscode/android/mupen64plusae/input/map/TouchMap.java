@@ -73,6 +73,9 @@ public class TouchMap
     /** Scaling factor to apply to images. */
     protected float scale = 1.0f;
     
+    /** Button scaling factor. */
+    protected ArrayList<Float> buttonScaling;
+    
     /** Button images. */
     protected ArrayList<Image> buttonImages;
     
@@ -86,7 +89,10 @@ public class TouchMap
     private final ArrayList<Integer> buttonY;
     
     /** names of the buttons. */
-    private final ArrayList<String> buttonNames;
+    protected final ArrayList<String> buttonNames;
+    
+    /** Analog background scaling. */
+    protected float analogBackScaling;
     
     /** Analog background image (fixed). */
     protected Image analogBackImage;
@@ -186,6 +192,7 @@ public class TouchMap
         buttonX = new ArrayList<Integer>();
         buttonY = new ArrayList<Integer>();
         buttonNames = new ArrayList<String>();
+        buttonScaling = new ArrayList<Float>();
     }
     
     /**
@@ -193,11 +200,13 @@ public class TouchMap
      */
     public void clear()
     {
+        buttonScaling.clear();
         buttonImages.clear();
         buttonMasks.clear();
         buttonX.clear();
         buttonY.clear();
         buttonNames.clear();
+        analogBackScaling = 0;
         analogBackImage = null;
         analogForeImage = null;
         analogBackX = analogBackY = 0;
@@ -219,16 +228,16 @@ public class TouchMap
         // Recompute button locations
         for( int i = 0; i < buttonImages.size(); i++ )
         {
-            buttonImages.get( i ).setScale( scale );
+            buttonImages.get( i ).setScale( ( buttonScaling.get( i ) * scale ) );
             buttonImages.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
-            buttonMasks.get( i ).setScale( scale );
+            buttonMasks.get( i ).setScale( ( buttonScaling.get( i ) * scale ) );
             buttonMasks.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
         }
         
         // Recompute analog background location
         if( analogBackImage != null )
         {
-            analogBackImage.setScale(  scale );
+            analogBackImage.setScale( ( analogBackScaling * scale ) );
             analogBackImage.fitPercent( analogBackX, analogBackY, w, h );
         }
     }
@@ -246,21 +255,22 @@ public class TouchMap
     public int getButtonPress( int xLocation, int yLocation )
     {
         // Search through every button mask to see if the corresponding button was touched
-        for( Image mask : buttonMasks )
+        for( int i = 0; i < buttonMasks.size(); i++ )
         {
-            if( mask != null )
+            if( buttonMasks.get( i ) != null )
             {
-                int left = mask.x;
-                int right = left + (int) ( mask.width * mask.scale );
-                int bottom = mask.y;
-                int top = bottom + (int) ( mask.height * mask.scale );
+                int left = buttonMasks.get( i ).x;
+                int right = left + (int) ( buttonMasks.get( i ).width * buttonMasks.get( i ).scale );
+                int bottom = buttonMasks.get( i ).y;
+                int top = bottom + (int) ( buttonMasks.get( i ).height * buttonMasks.get( i ).scale );
                 
                 // See if the touch falls in the vicinity of the button (conservative test)
                 if( xLocation >= left && xLocation < right && yLocation >= bottom
                         && yLocation < top )
                 {
                     // Get the mask color at this location
-                    int c = mask.image.getPixel( (int) ( ( xLocation - mask.x ) / scale ), (int) ( ( yLocation - mask.y ) / scale ) );
+                    int c = buttonMasks.get( i ).image.getPixel( (int) ( ( xLocation - buttonMasks.get( i ).x ) / 
+                            ( buttonScaling.get( i ) * scale ) ), (int) ( ( yLocation - buttonMasks.get( i ).y ) / ( buttonScaling.get( i ) * scale ) ) );
                     
                     // Ignore the alpha component if any
                     int rgb = c & 0x00ffffff;
@@ -345,10 +355,10 @@ public class TouchMap
             return new Point( 0, 0 );
         
         // Distance from center along x-axis
-        int dX = xLocation - ( analogBackImage.x + (int) ( analogBackImage.hWidth * scale ) );
+        int dX = xLocation - ( analogBackImage.x + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) ) );
         
         // Distance from center along y-axis
-        int dY = yLocation - ( analogBackImage.y + (int) ( analogBackImage.hHeight * scale ) );
+        int dY = yLocation - ( analogBackImage.y + (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) ) );
         
         return new Point( dX, dY );
     }
@@ -375,7 +385,7 @@ public class TouchMap
      */
     public Point getConstrainedDisplacement( int dX, int dY )
     {
-        final float dC = (int) ( analogMaximum * scale );
+        final float dC = (int) ( analogMaximum * ( analogBackScaling * scale ) );
         final float dA = dC * FloatMath.sqrt( 0.5f );
         final float signX = (dX < 0) ? -1 : 1;
         final float signY = (dY < 0) ? -1 : 1;
@@ -401,7 +411,7 @@ public class TouchMap
      */
     public float getAnalogStrength( float displacement )
     {
-        displacement /= scale;
+        displacement /= ( analogBackScaling * scale );
         float p = ( displacement - analogDeadzone ) / ( analogMaximum - analogDeadzone );
         return Utility.clamp( p, 0.0f, 1.0f );
     }
@@ -415,7 +425,7 @@ public class TouchMap
      */
     public boolean isInCaptureRange( float displacement )
     {
-        displacement /= scale;
+        displacement /= ( analogBackScaling * scale );
         return ( displacement >= analogDeadzone ) && ( displacement < analogMaximum + analogPadding );
     }
     
@@ -462,7 +472,7 @@ public class TouchMap
      * @param profile  The name of the layout profile.
      * @param name     The name of the button.
      */
-    public void updateButton( Profile profile, String name )
+    public void updateButton( Profile profile, String name, int w, int h )
     {
         int x = profile.getInt( name + "-x", -1 );
         int y = profile.getInt( name + "-y", -1 );
@@ -473,6 +483,15 @@ public class TouchMap
             {
                 analogBackX = x;
                 analogBackY = y;
+                analogBackImage.fitPercent( analogBackX, analogBackY, w, h );
+                
+                if( analogForeImage != null )
+                {
+                    int cX = analogBackImage.x + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) );
+                    int cY = analogBackImage.y + (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) );
+                    analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
+                            (int) ( analogBackImage.width * ( analogBackScaling * scale ) ), (int) ( analogBackImage.height * ( analogBackScaling * scale ) ) );
+                }
             }
             else
             {
@@ -482,6 +501,8 @@ public class TouchMap
                     {
                         buttonX.set( i, x );
                         buttonY.set( i, y );
+                        buttonImages.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
+                        buttonMasks.get( i ).fitPercent( buttonX.get( i ), buttonY.get( i ), w, h );
                     }
                 }
             }
@@ -557,6 +578,7 @@ public class TouchMap
     {
         int x = profile.getInt( "analog-x", -1 );
         int y = profile.getInt( "analog-y", -1 );
+        int scaling = profile.getInt("analog-scale", 100);
         
         if( x >= 0 && y >= 0 )
         {
@@ -579,6 +601,7 @@ public class TouchMap
             analogDeadzone = (int) ( analogBackImage.hWidth * ( profile.getFloat( "analog-min", 1 ) / 100.0f ) );
             analogMaximum = (int) ( analogBackImage.hWidth * ( profile.getFloat( "analog-max", 55 ) / 100.0f ) );
             analogPadding = (int) ( analogBackImage.hWidth * ( profile.getFloat( "analog-buff", 55 ) / 100.0f ) );
+            analogBackScaling = (float) scaling / 100.f;
         }
     }
     
@@ -592,6 +615,7 @@ public class TouchMap
     {
         int x = profile.getInt( name + "-x", -1 );
         int y = profile.getInt( name + "-y", -1 );
+        int scaling = profile.getInt( name + "-scale", 100);
         
         if( x >= 0 && y >= 0 )
         {
@@ -603,6 +627,7 @@ public class TouchMap
             // Load the displayed and mask images
             buttonImages.add( new Image( mResources, skinFolder + "/" + name + ".png" ) );
             buttonMasks.add( new Image( mResources, skinFolder + "/" + name + "-mask.png" ) );
+            buttonScaling.add( (float) scaling / 100.f );
         }
     }
 

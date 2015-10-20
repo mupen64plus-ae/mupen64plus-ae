@@ -84,6 +84,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private static final String BUTTON_S = "buttonS";
     private static final String TAG_X = "-x";
     private static final String TAG_Y = "-y";
+    private static final String SCALE = "-scale";
     
     public static final SparseArray<String> READABLE_NAMES = new SparseArray<String>();
     
@@ -605,6 +606,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Get the original position of the asset
         final int initialX = mProfile.getInt( assetName + TAG_X, INITIAL_ASSET_POS );
         final int initialY = mProfile.getInt( assetName + TAG_Y, INITIAL_ASSET_POS );
+        final int initialScale = mProfile.getInt( assetName + SCALE, 100 );
         
         // Inflate the dialog's main view area
         View view = getLayoutInflater().inflate( R.layout.touchscreen_profile_activity_popup, null );
@@ -632,6 +634,19 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                     public void onValueChanged( int value )
                     {
                         mProfile.put( assetName + TAG_Y, String.valueOf( value ) );
+                        refresh();
+                    }
+                } );
+        
+        final SeekBarGroup scale = new SeekBarGroup( initialScale, view, R.id.seekbarScale,
+                R.id.buttonScaleDown, R.id.buttonScaleUp, R.id.textScale,
+                getString( R.string.touchscreenProfileActivity_ScaleSlider ), 5, 1, 0, 200,
+                new SeekBarGroup.Listener()
+                {
+                    @Override
+                    public void onValueChanged( int value )
+                    {
+                        mProfile.put( assetName + SCALE, String.valueOf( value ) );
                         refresh();
                     }
                 } );
@@ -688,6 +703,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                     // Revert asset to original position if user cancels
                     posX.revertValue();
                     posY.revertValue();
+                    scale.revertValue();
                 }
                 else if( which == DialogInterface.BUTTON_NEUTRAL )
                 {

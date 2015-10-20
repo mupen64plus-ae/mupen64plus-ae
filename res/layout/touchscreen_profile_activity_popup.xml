@@ -8,6 +8,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp" >
+        
+        <CheckBox
+            android:id="@+id/checkBox_holdable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/touchscreenProfileActivity_autoHoldable" />
+        
+        <CheckBox
+            android:id="@+id/checkBox_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/touchscreenAnimation_summary" />
+            
         <RelativeLayout
             android:id="@+id/rowX"
             android:layout_width="match_parent"
@@ -59,7 +72,6 @@
             </LinearLayout>
         </RelativeLayout>
     
-    
         <RelativeLayout
             android:id="@+id/rowY"
             android:layout_width="match_parent"
@@ -93,7 +105,7 @@
                 android:paddingLeft="50dp"
                 android:paddingRight="50dp"
                 android:paddingTop="10dp" >
-    
+   
                 <TextView
                     android:id="@+id/textY"
                     android:layout_width="match_parent"
@@ -110,17 +122,56 @@
                     android:progress="50" />
             </LinearLayout>
         </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rowScale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
     
-        <CheckBox
-            android:id="@+id/checkBox_holdable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/touchscreenProfileActivity_autoHoldable" />
-        
-        <CheckBox
-            android:id="@+id/checkBox_feedback"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/touchscreenAnimation_summary" />
+            <Button
+                android:id="@+id/buttonScaleDown"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="-"
+                tools:ignore="HardcodedText,RtlHardcoded" />
+    
+            <Button
+                android:id="@+id/buttonScaleUp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="+"
+                tools:ignore="HardcodedText,RtlHardcoded" />
+    
+            <LinearLayout
+                android:id="@+id/seekgroupScale"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:paddingTop="10dp" >
+    
+                <TextView
+                    android:id="@+id/textScale"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/touchscreenProfileActivity_ScaleSlider"
+                    android:textIsSelectable="false" />
+    
+                <SeekBar
+                    android:id="@+id/seekbarScale"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="200"
+                    android:progress="50" />
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 </ScrollView>

@@ -532,6 +532,7 @@
     <string name="touchscreenProfileActivity_remove">Remove</string>
     <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
     <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
+    <string name="touchscreenProfileActivity_ScaleSlider">Scaling: %1$d %%</string>
     <string name="touchscreenProfileActivity_autoHoldable">Auto-holdable</string>
 
     <!-- Controller button names -->
