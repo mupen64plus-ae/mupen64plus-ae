@@ -45,6 +45,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -500,9 +501,10 @@ public final class Prompt
         final View layout = inflater.inflate( R.layout.save_slot_preference, null );
         final LinearLayout mainLayout = (LinearLayout) layout.findViewById( R.id.main_layout );
         
-        ArrayList<LinearLayout> rows = new ArrayList<LinearLayout>(row);
+        final ArrayList<RadioButton> radioButtons = new ArrayList<RadioButton>(row*columns);
         Integer radioNumber = min;
         
+        //create row of buttons
         for(int rowIndex = 0; rowIndex < row; ++rowIndex)
         {
             LinearLayout linearLayout = new LinearLayout(context);
@@ -511,7 +513,8 @@ public final class Prompt
             linearLayout.setLayoutParams(params);
             linearLayout.setOrientation(LinearLayout.HORIZONTAL);
             
-            for(int columnIndex = 0; columnIndex < row; ++columnIndex)
+            //create all the colums for this row
+            for(int columnIndex = 0; columnIndex < columns; ++columnIndex)
             {
                 View radioLayout = inflater.inflate( R.layout.save_slot_selection, null );
                 TextView text = (TextView)radioLayout.findViewById(R.id.radio_number);
@@ -521,18 +524,67 @@ public final class Prompt
                 
                 if(radioNumber == initial)
                 {
-                    radioSelection.setSelected(true);
+                    radioSelection.setChecked(true);
                 }
+                
+                radioSelection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                    {
+                        //only do this on the button that is checked
+                        if(isChecked)
+                        {
+                            for(RadioButton button:radioButtons)
+                            {
+                                //uncheck all other radio buttons
+                                if(button != buttonView)
+                                {
+                                    button.setChecked(false);
+                                }
+                            }
+                        }
+                    }
+                    
+                });
+                
                 ++radioNumber;
+                
+                radioButtons.add(radioSelection);
             }
             
-            rows.add(linearLayout);
+
             mainLayout.addView(linearLayout);
         }
-
-        new Builder( context ).setTitle( title ).setMessage( null ).setCancelable( false )
-            .setNegativeButton( context.getString( android.R.string.cancel ), null )
-            .setPositiveButton( context.getString( android.R.string.ok ), null ).setView( layout ).create().show();
+        
+        prefillBuilder( context, title, null, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                boolean found = false;
+                int index = 0;
+                for(; index < radioButtons.size() && !found; ++index)
+                {
+                    //uncheck all other radio buttons
+                    if(radioButtons.get(index).isChecked())
+                    {
+                        found = true;
+                    }
+                }
+                
+                //decrement once to get the right index
+                --index;
+                
+                //default to zero if nothing is checked
+                if(!found)
+                {
+                    index = 0;
+                }
+                
+                listener.onDialogClosed( index, which );
+            }
+        } ).setView( layout ).create().show();
     }
     
     

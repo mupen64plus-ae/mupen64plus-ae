@@ -284,7 +284,7 @@ public class GameMenuHandler implements OnStateCallbackListener
                 CoreInterface.screenshot();
                 break;
             case R.id.menuItem_setSpeed:
-                CoreInterface.setCustomSpeedFromPrompt();
+                CoreInterface.setCustomSpeedFromPrompt(null);
                 break;
             case R.id.menuItem_setIme:
                 setIme();

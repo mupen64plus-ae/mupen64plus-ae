@@ -43,6 +43,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
@@ -114,7 +115,7 @@ import com.bda.controller.Controller;
 */
 //@formatter:on
 
-public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.Callback, GameSidebarActionHandler
+public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.Callback, GameSidebarActionHandler, OnPromptFinishedListener
 {
     // Activity and views
     private Activity mActivity;
@@ -245,6 +246,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
         
+        //Set initial speed menu value
+        MenuItem toggleSpeedItem = 
+            mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_toggle_speed);
+        toggleSpeedItem.setTitle(mActivity.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
+        mGameSidebar.getDrawerList().reload();
+        
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );
         
@@ -327,6 +334,21 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     }
     
     @Override
+    public void onPromptFinished()
+    {
+        //reload menu item with new slot
+        MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
+        slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
+        
+        //Reload the menu with the new speed
+        MenuItem toggleSpeedItem = 
+            mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_toggle_speed);
+        toggleSpeedItem.setTitle(mActivity.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
+        
+        mGameSidebar.getDrawerList().reload();
+    }
+    
+    @Override
     public void onGameSidebarAction(MenuItem menuItem)
     {
         switch (menuItem.getItemId())
@@ -336,7 +358,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             break;
         case R.id.menuItem_toggle_speed:
             CoreInterface.toggleSpeed();
-            
+
             //Reload the menu with the new speed
             MenuItem toggleSpeedItem = 
                 mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_toggle_speed);
@@ -344,17 +366,13 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             mGameSidebar.getDrawerList().reload();
             break;
         case R.id.menuItem_set_speed:
-            CoreInterface.setCustomSpeedFromPrompt();
+            CoreInterface.setCustomSpeedFromPrompt(this);
             break;
         case R.id.menuItem_screenshot:
             CoreInterface.screenshot();
             break;
         case R.id.menuItem_set_slot:
-            CoreInterface.setSlotFromPrompt();
-            
-            MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
-            slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
-            mGameSidebar.getDrawerList().reload();
+            CoreInterface.setSlotFromPrompt(this);
             break;
         case R.id.menuItem_slot_load:
             CoreInterface.loadSlot();
