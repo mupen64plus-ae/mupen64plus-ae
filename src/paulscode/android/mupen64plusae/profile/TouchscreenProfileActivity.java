@@ -203,13 +203,13 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
-        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, isTouchscreenAnimated );
     }
     
     @TargetApi( 11 )
     private void refresh()
     {
         // Reposition the assets and refresh the overlay and options menu
+        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, isTouchscreenAnimated );
         mTouchscreenMap.load( touchscreenSkin, mProfile,
                 isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
