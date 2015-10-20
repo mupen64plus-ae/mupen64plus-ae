@@ -177,6 +177,9 @@ public class GamePrefs
     /** The height of the OpenGL rendering context, in pixels. */
     public final int videoRenderHeight;
     
+    /** The zoom value applied to the viewing surface, in percent. */
+    public final int videoSurfaceZoom;
+    
     /** Game CRC */
     public final String crc;
     
@@ -267,6 +270,8 @@ public class GamePrefs
         int resolution = getSafeInt( emulationProfile, "videoResolution", 100 );
         videoRenderWidth = Math.round( ( float ) ( globalPrefs.videoSurfaceWidth * resolution ) / 100.f );
         videoRenderHeight = Math.round( ( float ) ( globalPrefs.videoSurfaceHeight * resolution ) / 100.f );
+        
+        videoSurfaceZoom = getSafeInt( emulationProfile, "displayZoom", 100 );
         
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null;

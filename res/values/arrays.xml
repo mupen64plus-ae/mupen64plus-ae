@@ -382,6 +382,22 @@
     </string-array>
 
     <string name="r4300Emulator_default" translatable="false">2</string>
+    
+    <!-- Display zoom -->
+    <string-array name="displayZoom_entries" translatable="false">
+        <item>@string/displayZoom_entry100</item>
+        <item>@string/displayZoom_entry105</item>
+        <item>@string/displayZoom_entry110</item>
+        <item>@string/displayZoom_entry115</item>
+    </string-array>
+    <string-array name="displayZoom_values" translatable="false">
+        <item>100</item>
+        <item>105</item>
+        <item>110</item>
+        <item>115</item>
+    </string-array>
+
+    <string name="displayZoom_default" translatable="false">100</string>
 
     <!-- Navigation Mode -->
     <string-array name="navigationMode_entries" translatable="false">

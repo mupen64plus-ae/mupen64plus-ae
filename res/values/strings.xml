@@ -355,6 +355,12 @@
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
+    
+    <string name="displayZoom_title">Zoom</string>
+    <string name="displayZoom_entry100">100%</string>
+    <string name="displayZoom_entry105">105%</string>
+    <string name="displayZoom_entry110">110%</string>
+    <string name="displayZoom_entry115">115%</string>
 
     <string name="audioPlugin_title">Audio plugin</string>
     <string name="audioPlugin_entryNone">None (audio disabled)</string>

@@ -19,6 +19,13 @@
         mupen64:stepSize="1"
         mupen64:units="%" />
     <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        android:defaultValue="@string/displayZoom_default"
+        android:entries="@array/displayZoom_entries"
+        android:entryValues="@array/displayZoom_values"
+        android:key="displayZoom"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayZoom_title" />
+    <paulscode.android.mupen64plusae.preference.CompatibleListPreference
         android:defaultValue="@string/videoPlugin_default"
         android:entries="@array/videoPlugin_entries"
         android:entryValues="@array/videoPlugin_values"
