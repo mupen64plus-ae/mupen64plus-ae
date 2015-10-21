@@ -304,7 +304,6 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
                         {
                             if( which == DialogInterface.BUTTON_POSITIVE )
                             {
-                                map.unmapCommand( index );
                                 map.map( inputCode, index );
                             }
                             else
