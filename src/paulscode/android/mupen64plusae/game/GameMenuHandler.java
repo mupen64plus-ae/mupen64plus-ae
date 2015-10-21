@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import android.annotation.TargetApi;
@@ -98,10 +99,10 @@ public class GameMenuHandler implements OnStateCallbackListener
             RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs );
         
         // Initialize the pak menus (reverse order since some get hidden)
-        initializePakMenu( menu, 4, mGamePrefs.isPlugged4, mGlobalPrefs.getPakType( 4 ) );
-        initializePakMenu( menu, 3, mGamePrefs.isPlugged3, mGlobalPrefs.getPakType( 3 ) );
-        initializePakMenu( menu, 2, mGamePrefs.isPlugged2, mGlobalPrefs.getPakType( 2 ) );
-        initializePakMenu( menu, 1, mGamePrefs.isPlugged1, mGlobalPrefs.getPakType( 1 ) );
+        initializePakMenu( menu, 4, mGamePrefs.isPlugged4, mGlobalPrefs.getPakType( 4 ).getNativeValue() );
+        initializePakMenu( menu, 3, mGamePrefs.isPlugged3, mGlobalPrefs.getPakType( 3 ).getNativeValue() );
+        initializePakMenu( menu, 2, mGamePrefs.isPlugged2, mGlobalPrefs.getPakType( 2 ).getNativeValue() );
+        initializePakMenu( menu, 1, mGamePrefs.isPlugged1, mGlobalPrefs.getPakType( 1 ).getNativeValue() );
     }
     
     public void onPrepareOptionsMenu( Menu menu )
@@ -300,7 +301,7 @@ public class GameMenuHandler implements OnStateCallbackListener
     public void setPak( int player, int pakType, MenuItem item )
     {
         // Persist the value
-        mGlobalPrefs.putPakType( player, pakType );
+        mGlobalPrefs.putPakType( player, PakType.getPakTypeFromNativeValue(pakType));
         
         // Set the pak in the core
         NativeInput.setConfig( player - 1, true, pakType );

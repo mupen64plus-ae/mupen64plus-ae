@@ -30,6 +30,8 @@ import paulscode.android.mupen64plusae.DrawerDrawable;
 import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
@@ -50,6 +52,7 @@ import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -58,6 +61,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -312,8 +316,17 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                 
                 MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
                 slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
-                mGameSidebar.getDrawerList().reload();
                 
+                MenuItem player1Item = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_one);
+                player1Item.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(1).getResourceString()));
+                MenuItem player2Item = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_two);
+                player2Item.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(2).getResourceString()));
+                MenuItem player3Item = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_three);
+                player3Item.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(3).getResourceString()));
+                MenuItem player4Item = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_four);
+                player4Item.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(4).getResourceString()));
+                
+                mGameSidebar.getDrawerList().reload();
             }
 
             @Override
@@ -388,100 +401,38 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             CoreInterface.loadAutoSaveFromPrompt();
             break;
         case R.id.menuItem_disable_frame_limiter:
-            /*
-             * TODO: int resId = NativeExports.emuGetFramelimiter() ?
-             * R.string.menuItem_disableFramelimiter :
-             * R.string.menuItem_enableFramelimiter;
-             */
             CoreInterface.toggleFramelimiter();
+            
+            int resId = NativeExports.emuGetFramelimiter() ?
+                R.string.menuItem_disableFramelimiter :
+                R.string.menuItem_enableFramelimiter;
+            
+            //Reload the menu with the new speed
+            MenuItem frameLimiterItem = 
+                mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_disable_frame_limiter);
+            frameLimiterItem.setTitle(mActivity.getString(resId, NativeExports.emuGetSpeed()));
+            mGameSidebar.getDrawerList().reload();
             break;
-        case R.id.menuItem_paks:
-            // TODO:
-            /*
-             * mGameSidebar.addRow(0x0,
-             * mActivity.getString(R.string.menuItem_paks), null, new
-             * GameSidebar.Action() {
-             * 
-             * @Override public void onAction() { mShowPak = (mShowPak == -1) ?
-             * 0 : -1; updateSidebar(); } }, (mShowPak >= 0) ?
-             * R.drawable.ic_arrow_u : R.drawable.ic_arrow_d, 0);
-             * 
-             * if (mShowPak >= 0) { boolean[] plugged = { mGamePrefs.isPlugged1,
-             * mGamePrefs.isPlugged2, mGamePrefs.isPlugged3,
-             * mGamePrefs.isPlugged4 };
-             * 
-             * final String[][] pakTypes = { {
-             * mActivity.getString(R.string.menuItem_pak1_empty),
-             * mActivity.getString(R.string.menuItem_pak1_mem),
-             * mActivity.getString(R.string.menuItem_pak1_rumble) }, {
-             * mActivity.getString(R.string.menuItem_pak2_empty),
-             * mActivity.getString(R.string.menuItem_pak2_mem),
-             * mActivity.getString(R.string.menuItem_pak2_rumble) }, {
-             * mActivity.getString(R.string.menuItem_pak3_empty),
-             * mActivity.getString(R.string.menuItem_pak3_mem),
-             * mActivity.getString(R.string.menuItem_pak3_rumble) }, {
-             * mActivity.getString(R.string.menuItem_pak4_empty),
-             * mActivity.getString(R.string.menuItem_pak4_mem),
-             * mActivity.getString(R.string.menuItem_pak4_rumble) } };
-             * 
-             * final int[] pakMap = { NativeConstants.PAK_TYPE_NONE,
-             * NativeConstants.PAK_TYPE_MEMORY, NativeConstants.PAK_TYPE_RUMBLE
-             * };
-             * 
-             * // Hide Rumble Pak menu item if not available Vibrator vibrator =
-             * (Vibrator) mActivity.getSystemService(Context.VIBRATOR_SERVICE);
-             * boolean hasPhoneVibrator = AppData.IS_HONEYCOMB ?
-             * vibrator.hasVibrator() : vibrator != null;
-             * 
-             * for (int player = 1; player <= 4; player++) { if (!plugged[player
-             * - 1]) continue;
-             * 
-             * int pakIndex; switch (mGlobalPrefs.getPakType(player)) { default:
-             * case NativeConstants.PAK_TYPE_NONE: pakIndex = 0; break; case
-             * NativeConstants.PAK_TYPE_MEMORY: pakIndex = 1; break; case
-             * NativeConstants.PAK_TYPE_RUMBLE: pakIndex = 2; break; }
-             * 
-             * final String[] pakString = pakTypes[player -
-             * 1][pakIndex].split(": "); final int finalPlayer = player;
-             * 
-             * mGameSidebar.addRow(0x0, pakString[0], pakString[pakString.length
-             * - 1], new GameSidebar.Action() {
-             * 
-             * @Override public void onAction() { mShowPak = (mShowPak ==
-             * finalPlayer) ? 0 : finalPlayer; updateSidebar(); } }, (mShowPak
-             * == player) ? R.drawable.ic_arrow_u : R.drawable.ic_arrow_d, 1);
-             * 
-             * if (mShowPak != player) continue;
-             * 
-             * boolean permitRumble = AppData.IS_JELLY_BEAN || (player == 1 &&
-             * hasPhoneVibrator);
-             * 
-             * // Show the options for this player for (int pak = 0; pak <
-             * pakTypes[0].length; pak++) { if (!permitRumble && pak == 2)
-             * continue;
-             * 
-             * int icon = R.drawable.ic_box; if (pakIndex == pak) icon =
-             * R.drawable.ic_check;
-             * 
-             * final int finalPak = pak; final String[] pakName =
-             * pakTypes[player - 1][pak].split(": ");
-             * 
-             * mGameSidebar.addRow(0x0, pakName[pakName.length - 1], null, new
-             * GameSidebar.Action() {
-             * 
-             * @Override public void onAction() { // Set the new Pak type for
-             * this player int newPakIndex = pakMap[finalPak];
-             * mGlobalPrefs.putPakType(finalPlayer, newPakIndex);
-             * NativeInput.setConfig(finalPlayer - 1, true, newPakIndex);
-             * 
-             * // Send a toast message Notifier.showToast(mActivity,
-             * pakTypes[finalPlayer - 1][finalPak]);
-             * 
-             * // Collapse this section in the sidebar mShowPak = 0;
-             * updateSidebar(); } }, icon, 2); } } }
-             */
-
+        case R.id.menuItem_player_one:
+        {
+            setPakTypeFromPrompt(1, mGlobalPrefs.getPakType(1).ordinal(), this);
             break;
+        }
+        case R.id.menuItem_player_two:
+        {
+            setPakTypeFromPrompt(2, mGlobalPrefs.getPakType(2).ordinal(), this);
+            break;
+        }
+        case R.id.menuItem_player_three:
+        {
+            setPakTypeFromPrompt(3, mGlobalPrefs.getPakType(3).ordinal(), this);
+            break;
+        }
+        case R.id.menuItem_player_four:
+        {
+            setPakTypeFromPrompt(4, mGlobalPrefs.getPakType(4).ordinal(), this);
+            break;
+        }
         case R.id.menuItem_setIme:
             InputMethodManager imeManager = (InputMethodManager) mActivity
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -490,6 +441,90 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             break;
         default:
         }
+    }
+    
+    private CharSequence GetPlayerTextFromId(int playerId)
+    {
+        CharSequence title = null;
+
+        switch(playerId)
+        {
+        case 1:
+            title = mActivity.getString(R.string.menuItem_player_one);
+            break;
+        case 2:
+            title = mActivity.getString(R.string.menuItem_player_two);
+            break;
+        case 3:
+            title = mActivity.getString(R.string.menuItem_player_three);
+            break;
+        case 4:
+            title = mActivity.getString(R.string.menuItem_player_four);
+            break;
+        }
+        
+        return title;
+    }
+    
+    private MenuItem GetPlayerMenuItemFromId(int playerId)
+    {
+        MenuItem playerMenuItem = null;
+
+        switch(playerId)
+        {
+        case 1:
+            playerMenuItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_one);
+            break;
+        case 2:
+            playerMenuItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_two);
+            break;
+        case 3:
+            playerMenuItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_three);
+            break;
+        case 4:
+            playerMenuItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_four);
+            break;
+        }
+        
+        return playerMenuItem;
+    }
+    
+    public void setPakTypeFromPrompt(final int player, final int selectedPakType,
+        final OnPromptFinishedListener promptFinishedListener)
+    {
+        NativeExports.emuPause();
+
+        //First get the prompt title
+        CharSequence title = GetPlayerTextFromId(player);
+        final MenuItem playerMenuItem = GetPlayerMenuItemFromId(player);
+        
+        //Get the spinner title
+        final CharSequence spinnerTitle = mActivity.getString(R.string.menuItem_select_pak_type);
+        
+        //Generate possible pak types
+        final ArrayList<CharSequence> selections = new ArrayList<CharSequence>();
+        for(PakType pakType:PakType.values())
+        {
+            selections.add(mActivity.getString(pakType.getResourceString()));
+        }
+            
+        Prompt.promptSpinnerSelection( mActivity, title, spinnerTitle, selections, selectedPakType,
+                new PromptIntegerListener()
+                {
+                    @Override
+                    public void onDialogClosed( Integer value, int which )
+                    {
+                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        {
+                            mGlobalPrefs.putPakType(player, PakType.values()[value]);
+                            
+                            //Update the menu
+                            playerMenuItem.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(player).getResourceString()));
+                            mGameSidebar.getDrawerList().reload();
+                        }
+                        NativeExports.emuResume();
+                    }
+                } );
     }
 
     public void onStart()
