@@ -112,6 +112,9 @@ public class GlobalPrefs
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
     
+    /** The directory containing all custom touchscreen skin folders. */
+    public final String touchscreenCustomSkinsDir;
+    
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
     
@@ -144,12 +147,6 @@ public class GlobalPrefs
     
     /** True if the touchscreen feedback is enabled. */
     public final boolean isTouchscreenFeedbackEnabled;
-    
-    /** True if the touchscreen joystick is animated. */
-    public final boolean isTouchscreenAnimated;
-    
-    /** The directory of the selected touchscreen skin. */
-    public final String touchscreenSkin;
     
     /** The touchscreen transparency value. */
     public final int touchscreenTransparency;
@@ -189,12 +186,6 @@ public class GlobalPrefs
     
     /** The vertical screen position. */
     public final int displayPosition;
-    
-    /** The width of the OpenGL rendering context, in pixels. */
-    public final int videoRenderWidth;
-    
-    /** The height of the OpenGL rendering context, in pixels. */
-    public final int videoRenderHeight;
     
     /** The width of the viewing surface, in pixels. */
     public final int videoSurfaceWidth;
@@ -362,6 +353,7 @@ public class GlobalPrefs
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         customCheats_txt = profilesDir + "/customCheats.txt";
+        touchscreenCustomSkinsDir = userDataDir + "/CustomSkins";
         
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
@@ -372,10 +364,8 @@ public class GlobalPrefs
         
         // Touchscreen prefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
-        isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimation", false );
         touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
-        touchscreenSkin = appData.touchscreenSkinsDir + "/" + mPreferences.getString( "touchscreenStyle", "Outline" );
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
         
         // Xperia PLAY touchpad prefs
@@ -486,86 +476,21 @@ public class GlobalPrefs
             
             float aspect = 0.75f; // TODO: Handle PAL
             boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;
-            int zoomWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
-            int zoomHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
-            int cropWidth = isLetterboxed ? Math.round( (float) stretchHeight / aspect ) : stretchWidth;
-            int cropHeight = isLetterboxed ? stretchHeight : Math.round( (float) stretchWidth * aspect );
+            int originalWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
+            int originalHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
             
-            int hResolution = getSafeInt( mPreferences, "displayResolution", 0 );
-            String scaling = mPreferences.getString( "displayScaling", "zoom" );
-            if( hResolution == 0 )
+            String scaling = mPreferences.getString( "displayScaling", "original" );
+
+            // Native resolution
+            if( scaling.equals( "stretch" ) )
             {
-                // Native resolution
-                if( scaling.equals( "stretch" ) )
-                {
-                    videoRenderWidth = videoSurfaceWidth = stretchWidth;
-                    videoRenderHeight = videoSurfaceHeight = stretchHeight;
-                }
-                else if( scaling.equals( "crop" ) )
-                {
-                    videoRenderWidth = videoSurfaceWidth = cropWidth;
-                    videoRenderHeight = videoSurfaceHeight = cropHeight;
-                }
-                else // scaling.equals( "zoom") || scaling.equals( "none" )
-                {
-                    videoRenderWidth = videoSurfaceWidth = zoomWidth;
-                    videoRenderHeight = videoSurfaceHeight = zoomHeight;
-                }
+                videoSurfaceWidth = stretchWidth;
+                videoSurfaceHeight = stretchHeight;
             }
-            else
+            else // scaling.equals( "original")
             {
-                // Non-native resolution
-                switch( hResolution )
-                {
-                    case 720:
-                        videoRenderWidth = 960;
-                        videoRenderHeight = 720;
-                        break;
-                    case 600:
-                        videoRenderWidth = 800;
-                        videoRenderHeight = 600;
-                        break;
-                    case 480:
-                        videoRenderWidth = 640;
-                        videoRenderHeight = 480;
-                        break;
-                    case 360:
-                        videoRenderWidth = 480;
-                        videoRenderHeight = 360;
-                        break;
-                    case 240:
-                        videoRenderWidth = 320;
-                        videoRenderHeight = 240;
-                        break;
-                    case 120:
-                        videoRenderWidth = 160;
-                        videoRenderHeight = 120;
-                        break;
-                    default:
-                        videoRenderWidth = Math.round( (float) hResolution / aspect );
-                        videoRenderHeight = hResolution;
-                        break;
-                }
-                if( scaling.equals( "zoom" ) )
-                {
-                    videoSurfaceWidth = zoomWidth;
-                    videoSurfaceHeight = zoomHeight;
-                }
-                else if( scaling.equals( "crop" ) )
-                {
-                    videoSurfaceWidth = cropWidth;
-                    videoSurfaceHeight = cropHeight;
-                }
-                else if( scaling.equals( "stretch" ) )
-                {
-                    videoSurfaceWidth = stretchWidth;
-                    videoSurfaceHeight = stretchHeight;
-                }
-                else // scaling.equals( "none" )
-                {
-                    videoSurfaceWidth = videoRenderWidth;
-                    videoSurfaceHeight = videoRenderHeight;
-                }
+                videoSurfaceWidth = originalWidth;
+                videoSurfaceHeight = originalHeight;
             }
         }
     }

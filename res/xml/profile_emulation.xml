@@ -10,6 +10,21 @@
         android:key="r4300Emulator"
         android:summary="@string/selectedValue"
         android:title="@string/r4300Emulator_title" />
+    <paulscode.android.mupen64plusae.preference.StringSeekBarPreference
+        android:defaultValue="100"
+        android:key="videoResolution"
+        android:title="@string/displayResolution_title"
+        mupen64:maximumValue="100"
+        mupen64:minimumValue="1"
+        mupen64:stepSize="1"
+        mupen64:units="%" />
+    <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        android:defaultValue="@string/displayZoom_default"
+        android:entries="@array/displayZoom_entries"
+        android:entryValues="@array/displayZoom_values"
+        android:key="displayZoom"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayZoom_title" />
     <paulscode.android.mupen64plusae.preference.CompatibleListPreference
         android:defaultValue="@string/videoPlugin_default"
         android:entries="@array/videoPlugin_entries"
@@ -144,11 +159,10 @@
             android:key="MultiSampling"
             android:summary="@string/selectedValue"
             android:title="MultiSampling" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
-            android:defaultValue="1"
-            android:key="AspectRatio"
-            android:summary="@string/selectedValue"
-            android:title="AspectRatio" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="WidescreenHack"
+            android:title="WidescreenHack" />
         <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
             android:defaultValue="1"
             android:key="bilinearMode"

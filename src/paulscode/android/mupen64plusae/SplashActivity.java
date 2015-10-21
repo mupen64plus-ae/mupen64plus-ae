@@ -58,7 +58,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 73;
+    private static final int ASSET_VERSION = 74;
     
     /** The total number of assets to be extracted (for computing progress %). */
     private static final int TOTAL_ASSETS = 120;
@@ -89,14 +89,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     // These constants must match the keys used in res/xml/preferences*.xml
     private static final String DISPLAY_ORIENTATION = "displayOrientation";
     private static final String DISPLAY_POSITION = "displayPosition";
-    private static final String DISPLAY_RESOLUTION = "displayResolution";
     private static final String DISPLAY_SCALING = "displayScaling";
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
     private static final String AUDIO_PLUGIN = "audioPlugin";
     private static final String AUDIO_SDL_BUFFER_SIZE = "audioSDLBufferSize";
     private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize";
     private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr";
-    private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String NAVIGATION_MODE = "navigationMode";
@@ -126,14 +124,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         Resources res = getResources();
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_ORIENTATION,      R.string.displayOrientation_default,    R.array.displayOrientation_values );
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_POSITION,         R.string.displayPosition_default,       R.array.displayPosition_values );
-        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_RESOLUTION,       R.string.displayResolution_default,     R.array.displayResolution_values );
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING,          R.string.displayScaling_default,        R.array.displayScaling_values );
         PrefUtil.validateListPreference( res, mPrefs, VIDEO_HARDWARE_TYPE,      R.string.videoHardwareType_default,     R.array.videoHardwareType_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_PLUGIN,             R.string.audioPlugin_default,           R.array.audioPlugin_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SDL_BUFFER_SIZE,    R.string.audioSDLBufferSize_default,    R.array.audioSDLBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_SIZE,   R.string.audioSLESBufferSize_default,   R.array.audioSLESBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_NBR,    R.string.audioSLESBufferNbr_default,    R.array.audioSLESBufferNbr_values );
-        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_STYLE,        R.string.touchscreenStyle_default,      R.array.touchscreenStyle_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHPAD_LAYOUT,          R.string.touchpadLayout_default,        R.array.touchpadLayout_values );
         PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
@@ -141,6 +137,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         
         // Refresh the preference data wrapper
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        
+        // Make sure custom skin directory exist
+        new File( mGlobalPrefs.touchscreenCustomSkinsDir ).mkdirs();
         
         // Initialize the OUYA interface if running on OUYA
         if( AppData.IS_OUYA_HARDWARE )

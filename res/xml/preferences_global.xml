@@ -81,13 +81,6 @@
             android:summary="@string/selectedValue"
             android:title="@string/displayPosition_title" />
         <paulscode.android.mupen64plusae.preference.CompatibleListPreference
-            android:defaultValue="@string/displayResolution_default"
-            android:entries="@array/displayResolution_entries"
-            android:entryValues="@array/displayResolution_values"
-            android:key="displayResolution"
-            android:summary="@string/selectedValue"
-            android:title="@string/displayResolution_title" />
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
             android:defaultValue="@string/displayScaling_default"
             android:entries="@array/displayScaling_entries"
             android:entryValues="@array/displayScaling_values"
@@ -184,14 +177,6 @@
             mupen64:stepSize="1"
             mupen64:units="%" />
 
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
-            android:defaultValue="@string/touchscreenStyle_default"
-            android:entries="@array/touchscreenStyle_entries"
-            android:entryValues="@array/touchscreenStyle_values"
-            android:key="touchscreenStyle"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchscreenStyle_title" />
-
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="100"
             android:key="touchscreenTransparency"
@@ -199,12 +184,6 @@
             mupen64:maximumValue="100"
             mupen64:stepSize="10"
             mupen64:units="%" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="touchscreenAnimation"
-            android:summary="@string/touchscreenAnimation_summary"
-            android:title="@string/touchscreenAnimation_title" />
 
         <CheckBoxPreference
             android:defaultValue="false"

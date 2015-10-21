@@ -53,6 +53,7 @@ import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -489,10 +490,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 CharSequence title = getText( R.string.confirm_title );
                 CharSequence message = getText( R.string.confirmResetGame_message );
                 Prompt.promptConfirm( this, title, message,
-                        new PromptConfirmListener()
+                    new PromptConfirmListener()
+                    {
+                        @Override
+                        public void onDialogClosed( int which )
                         {
-                            @Override
-                            public void onConfirm()
+                            if( which == DialogInterface.BUTTON_POSITIVE )
                             {
                                 launchGameActivity( finalItem.romFile.getAbsolutePath(),
                                     finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
@@ -500,7 +503,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                                     finalItem.headerName, finalItem.countryCode, finalItem.artPath,
                                     finalItem.goodName, true );
                             }
-                        } );
+                        }
+                    } );
                 break;
             case R.id.menuItem_settings:
                 ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(),
@@ -863,4 +867,3 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
     }
 }
-

@@ -291,7 +291,7 @@ public class GameMenuHandler implements OnStateCallbackListener
                 setIme();
                 break;
             case R.id.menuItem_exit:
-                mActivity.finish();
+                CoreInterface.exit();
                 break;
             default:
                 break;

@@ -121,7 +121,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
         
         setContentView( R.layout.cheat_editor );
-        reload( mRomCrc );
+        reload( mRomCrc, mRomCountryCode );
         findViewById( R.id.imgBtnChtAdd ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtEdit ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtSave ).setOnClickListener( this );
@@ -129,7 +129,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         getListView().setOnItemLongClickListener( this );
     }
     
-    private void reload( String crc )
+    private void reload( String crc, byte countryCode )
     {
         Log.v( "CheatEditorActivity", "building from CRC = " + crc );
         
@@ -137,13 +137,13 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
             return;
         
         //Do this in a separate task since it takes longer
-        ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_default, crc);
+        ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_default, crc, countryCode);
         cheatsTask.execute((String) null);
         
         //We don't extract user cheats in a separate task since there aren't as many
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
         userCheats.clear();        
-        userCheats.addAll( CheatUtils.populate( mRomCrc, usrcheat_txt, false, this ) );
+        userCheats.addAll( CheatUtils.populate( mRomCrc, mRomCountryCode, usrcheat_txt, false, this ) );
         
         cheatListAdapter = new CheatListAdapter( this, userCheats );
         setListAdapter( cheatListAdapter );
@@ -220,8 +220,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 cheat.code = "";
                 cheat.option = "";
                 userCheats.add( cheat );
-                cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, userCheats );
-                setListAdapter( cheatListAdapter );
+                Collections.sort(userCheats);
+                cheatListAdapter.notifyDataSetChanged();
                 Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_added ), Toast.LENGTH_SHORT );
                 t.show();
                 break;
@@ -283,6 +283,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     case R.id.btnEditTitle:
                         promptTitle( cheat );
+                        Collections.sort(userCheats);
+                        cheatListAdapter.notifyDataSetChanged();
                         break;
                     case R.id.btnEditNotes:
                         promptNotes( cheat );
@@ -358,8 +360,6 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     String str = text.toString().replace( '\n', ' ' );
                     cheat.name = str;
-                    cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, userCheats );
-                    setListAdapter( cheatListAdapter );
                 }
             }
         } );
@@ -517,8 +517,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
                     userCheats.remove( pos );
-                    cheatListAdapter = new CheatListAdapter( CheatEditorActivity.this, userCheats );
-                    setListAdapter( cheatListAdapter );
+                    cheatListAdapter.notifyDataSetChanged();
                 }
             }
         };            

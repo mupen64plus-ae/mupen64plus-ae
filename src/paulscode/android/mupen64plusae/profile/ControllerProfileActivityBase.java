@@ -218,10 +218,13 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
-            public void onConfirm()
+            public void onDialogClosed( int which )
             {
-                mProfile.putMap( new InputMap() );
-                refreshAllButtons(false);
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    mProfile.putMap( new InputMap() );
+                    refreshAllButtons(false);
+                }
             }
         } );
     }

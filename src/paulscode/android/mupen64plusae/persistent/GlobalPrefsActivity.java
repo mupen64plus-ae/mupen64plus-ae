@@ -28,6 +28,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -50,7 +51,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private static final String CATEGORY_DATA = "categoryData";
     
     private static final String DISPLAY_ORIENTATION = "displayOrientation";
-    private static final String DISPLAY_RESOLUTION = "displayResolution";
     private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
     private static final String DISPLAY_FPS_REFRESH = "displayFpsRefresh";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
@@ -121,13 +121,9 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_INPUT );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_DATA );
                 PrefUtil.removePreference( this, SCREEN_ROOT, ACTION_RESET_USER_PREFS );
-                PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_ORIENTATION );
-                PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_RESOLUTION );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_FPS_REFRESH );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_HARDWARE_TYPE );
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_POLYGON_OFFSET );
-                PrefUtil.removePreference( this, CATEGORY_TOUCHSCREEN, TOUCHSCREEN_FEEDBACK );
-                PrefUtil.removePreference( this, CATEGORY_TOUCHSCREEN, TOUCHSCREEN_AUTO_HOLD );
             }
         }
     }
@@ -214,15 +210,18 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
-            public void onConfirm()
+            public void onDialogClosed( int which )
             {
-                // Reset the user preferences
-                mPrefs.unregisterOnSharedPreferenceChangeListener( GlobalPrefsActivity.this );
-                mPrefs.edit().clear().commit();
-                PreferenceManager.setDefaultValues( GlobalPrefsActivity.this, R.xml.preferences_global, true );
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    // Reset the user preferences
+                    mPrefs.unregisterOnSharedPreferenceChangeListener( GlobalPrefsActivity.this );
+                    mPrefs.edit().clear().commit();
+                    PreferenceManager.setDefaultValues( GlobalPrefsActivity.this, R.xml.preferences_global, true );
                 
-                // Rebuild the menu system by restarting the activity
-                ActivityHelper.restartActivity( GlobalPrefsActivity.this );
+                    // Rebuild the menu system by restarting the activity
+                    ActivityHelper.restartActivity( GlobalPrefsActivity.this );
+                }
             }
         } );
     }

@@ -339,19 +339,22 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
         Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
-            public void onConfirm()
+            public void onDialogClosed( int which )
             {
-                assert ( mConfigCustom.keySet().contains( profile.name ) );
-                
-                //If this was the default profile, pick another default profile
-                if(isDefault)
+                if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    putDefaultProfile(getNoDefaultProfile());
+                    assert ( mConfigCustom.keySet().contains( profile.name ) );
+                
+                    //If this was the default profile, pick another default profile
+                    if(isDefault)
+                    {
+                        putDefaultProfile(getNoDefaultProfile());
+                    }
+    
+                    mConfigCustom.remove( profile.name );
+                    mConfigCustom.save();
+                    refreshList();
                 }
-
-                mConfigCustom.remove( profile.name );
-                mConfigCustom.save();
-                refreshList();
             }
         } );
     }

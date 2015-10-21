@@ -258,10 +258,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mSurface.getHolder().addCallback( this );
         
         // Update the GameSurface size
-        mSurface.getHolder().setFixedSize( mGlobalPrefs.videoRenderWidth, mGlobalPrefs.videoRenderHeight );
+        mSurface.getHolder().setFixedSize( mGamePrefs.videoRenderWidth, mGamePrefs.videoRenderHeight );
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
-        params.width = mGlobalPrefs.videoSurfaceWidth;
-        params.height = mGlobalPrefs.videoSurfaceHeight;
+        params.width = Math.round ( (float) mGlobalPrefs.videoSurfaceWidth * ( (float) mGamePrefs.videoSurfaceZoom / 100.f ) );
+        params.height = Math.round ( (float) mGlobalPrefs.videoSurfaceHeight * ( (float) mGamePrefs.videoSurfaceZoom / 100.f ) );
+
         params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
         mSurface.setLayoutParams( params );
         
@@ -270,11 +271,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources() );
-            mTouchscreenMap.load( mGlobalPrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
-                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled,
+            mTouchscreenMap.load( mGamePrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
+                mGamePrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled,
                     mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
             mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden,
-                    mGlobalPrefs.isFpsEnabled, mGlobalPrefs.isTouchscreenAnimated );
+                    mGlobalPrefs.isFpsEnabled, mGamePrefs.isTouchscreenAnimated );
         }
         
         // Initialize user interface devices
@@ -365,7 +366,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         switch (menuItem.getItemId())
         {
         case R.id.menuItem_exit:
-            mActivity.finish();
+            CoreInterface.exit();
             break;
         case R.id.menuItem_toggle_speed:
             CoreInterface.toggleSpeed();
@@ -555,6 +556,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
         Log.i( "GameLifecycleHandler", "surfaceChanged" );
+        NativeExports.notifySDLSurfaceReady();
         mIsSurface = true;
         tryRunning();
     }
@@ -582,8 +584,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     public void surfaceDestroyed( SurfaceHolder holder )
     {
         Log.i( "GameLifecycleHandler", "surfaceDestroyed" );
+        NativeExports.notifySDLSurfaceDestroyed();
+        mSurface.setEGLContextNotReady();
         mIsSurface = false;
-        tryStopping();
+        tryPausing();
     }
     
     public void onStop()
@@ -593,7 +597,15 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     
     public void onDestroy()
     {
-        Log.i( "GameLifecycleHandler", "onDestroy" );
+        Log.i("GameLifecycleHandler", "onDestroy");
+
+        // Never go directly from running to stopped; always pause (and
+        // autosave) first
+        String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+        CoreInterface.pauseEmulator(true, saveFileName);
+        mAutoSaveManager.clearOldest();
+        CoreInterface.shutdownEmulator();
+
         mMogaController.exit();
     }
 
@@ -615,7 +627,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
                 mDrawerLayout.closeDrawer( GravityCompat.START );
             else
-                mActivity.finish();
+                CoreInterface.exit();
             return true;
         }
         
@@ -788,14 +800,15 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         int state = NativeExports.emuGetState();
         if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ))
         {
-            String latestSave = mAutoSaveManager.getLatestAutoSave();
             switch( state )
             {
                 case NativeConstants.EMULATOR_STATE_UNKNOWN:
+                    String latestSave = mAutoSaveManager.getLatestAutoSave();
                     CoreInterface.startupEmulator(latestSave);
                     break;
                 case NativeConstants.EMULATOR_STATE_PAUSED:
-                    CoreInterface.resumeEmulator();
+                    if( mSurface.isEGLContextReady() )
+                        CoreInterface.resumeEmulator();
                     break;
                 default:
                     break;
@@ -806,22 +819,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     private void tryPausing()
     {
         if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_PAUSED )
-        {
-            String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-            
-            CoreInterface.pauseEmulator( true, saveFileName );
-            
-            mAutoSaveManager.clearOldest();
-        }
-    }
-    
-    private void tryStopping()
-    {
-        if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_STOPPED )
-        {
-            // Never go directly from running to stopped; always pause (and autosave) first
-            tryPausing();
-            CoreInterface.shutdownEmulator();
-        }
+            CoreInterface.pauseEmulator( false, null );
     }
 }

@@ -79,7 +79,7 @@ for i in $COMPONENTS; do
         exit
     fi
     
-    OLD_SYNC_HASH=`git log -1 --grep="${MSG_PREFIX}[0-9a-fA-F]\{7\}" --pretty=format:"%s" | sed -e 's/.*\([0-9a-fA-F]\{7\}\).*/\1/'`
+    OLD_SYNC_HASH=`git log -2 --grep="${MSG_PREFIX}[0-9a-fA-F]\{7\}" --pretty=format:"%s" | sed -e 's/.*\([0-9a-fA-F]\{7\}\).*/\1/'`
     if [ "$OLD_SYNC_HASH" = "" ]; then
         echo
         echo "This script has not yet been used to pull from ${BASE_URL}."
@@ -89,6 +89,7 @@ for i in $COMPONENTS; do
         read OLD_SYNC_HASH
     fi
     echo
+	OLD_SYNC_HASH=`echo "${OLD_SYNC_HASH}" | grep "[0-9a-fA-F]\{7\}"`
     echo "Updating from ${OLD_SYNC_HASH}..."
     
     rm -r -f "${CLONE_DIR}"

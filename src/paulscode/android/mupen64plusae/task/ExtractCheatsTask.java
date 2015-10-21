@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
+import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -35,8 +36,8 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
     private final ExtractCheatListener mExtractCheatListener;
     private final String mCheatPath;
     private final String mCrc;
+    private final byte mCountryCode;
     private final ArrayList<Cheat> mCheats;
-
     
     public interface ExtractCheatListener
     {
@@ -46,12 +47,13 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
 
     
     public ExtractCheatsTask( Context context, ExtractCheatListener extractCheatListener,
-        String cheatPath, String crc)
+        String cheatPath, String crc, byte romCountryCode)
     {
         mContext = context;
         mExtractCheatListener = extractCheatListener;
         mCheatPath = cheatPath;
         mCrc = crc;
+        mCountryCode = romCountryCode;
         mCheats = new ArrayList<Cheat>();
     }
 
@@ -71,7 +73,9 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
             return;
         
         // Get the appropriate section of the config file, using CRC as the key
-        String regularExpression = "^" + mCrc.replace( ' ', '-' ) + ".*";
+        
+        String countryString = String.format("%02x", mCountryCode).substring(0, 2);
+        String regularExpression = "^" + mCrc.replace( ' ', '-') + "-C:" + countryString + ".*";
         
         BufferedReader cheatLocation = CheatUtils.getCheatsLocation(regularExpression, mCheatPath);
         if( cheatLocation == null  )
@@ -80,7 +84,7 @@ public class ExtractCheatsTask extends AsyncTask<String, String, String>
             return;
         }
 
-        mCheats.addAll( CheatUtils.populateWithPosition( cheatLocation, mCrc, mContext ) );
+        mCheats.addAll( CheatUtils.populateWithPosition( cheatLocation, mCrc, mCountryCode, mContext ) );
     }
     
     @Override
