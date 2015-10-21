@@ -55,6 +55,8 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String GLIDEN64_ENABLE_COPY_COLOR_TO_RDRAM = "EnableCopyColorToRDRAM";
     private static final String GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM = "EnableCopyDepthToRDRAM";
     private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
+    private static final String GLIDEN64_ENABLE_FB_EMULATION = "EnableFBEmulation";
+    private static final String GLIDEN64_WIDESCREEN_HACK = "WidescreenHack";
     
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
@@ -152,6 +154,9 @@ public class EmulationProfileActivity extends ProfileActivity
             findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
             findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
             findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 );
+            
+            String enableFBEmulation = mPrefs.getString( GLIDEN64_ENABLE_FB_EMULATION, null );
+            findPreference( GLIDEN64_WIDESCREEN_HACK ).setEnabled( enableFBEmulation.equals("True") );
         }
         else
             mScreenRoot.removePreference( mCategoryGliden64 );
