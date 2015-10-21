@@ -212,6 +212,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // If the orientation changes, the screensize info changes, so we must refresh dependencies
         mGlobalPrefs = new GlobalPrefs( mActivity, appData );
+        mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName,
+                RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs );
     }
     
     @TargetApi( 11 )
