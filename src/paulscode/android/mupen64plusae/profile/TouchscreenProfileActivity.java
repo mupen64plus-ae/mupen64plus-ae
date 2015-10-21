@@ -75,6 +75,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private static final String ANALOG = "analog";
     private static final String DPAD = "dpad";
     private static final String GROUP_AB = "groupAB";
+    private static final String BUTTON_A = "buttonA";
+    private static final String BUTTON_B = "buttonB";
     private static final String GROUP_C = "groupC";
     private static final String BUTTON_L = "buttonL";
     private static final String BUTTON_R = "buttonR";
@@ -271,6 +273,12 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     {
         setCheckState( menu, R.id.menuItem_analog, ANALOG );
         setCheckState( menu, R.id.menuItem_dpad, DPAD );
+        
+        setVisibleState( menu, R.id.menuItem_groupAB, !mTouchscreenMap.isABSplit() );
+        setVisibleState( menu, R.id.menuItem_buttonA, mTouchscreenMap.isABSplit() );
+        setVisibleState( menu, R.id.menuItem_buttonB, mTouchscreenMap.isABSplit() );
+        setCheckState( menu, R.id.menuItem_buttonA, BUTTON_A );
+        setCheckState( menu, R.id.menuItem_buttonB, BUTTON_B );
         setCheckState( menu, R.id.menuItem_groupAB, GROUP_AB );
         setCheckState( menu, R.id.menuItem_groupC, GROUP_C );
         setCheckState( menu, R.id.menuItem_buttonL, BUTTON_L );
@@ -285,6 +293,13 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         MenuItem item = menu.findItem( id );
         if( item != null )
             item.setChecked( hasAsset( assetName ) );
+    }
+    
+    private void setVisibleState( Menu menu, int id, boolean state )
+    {
+        MenuItem item = menu.findItem( id );
+        if( item != null )
+            item.setVisible(state);
     }
     
     private boolean hasAsset( String assetName )
@@ -314,6 +329,12 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 return true;
             case R.id.menuItem_groupAB:
                 toggleAsset( GROUP_AB );
+                return true;
+            case R.id.menuItem_buttonA:
+                toggleAsset( BUTTON_A );
+                return true;
+            case R.id.menuItem_buttonB:
+                toggleAsset( BUTTON_B );
                 return true;
             case R.id.menuItem_groupC:
                 toggleAsset( GROUP_C );

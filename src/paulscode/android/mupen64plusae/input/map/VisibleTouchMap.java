@@ -176,6 +176,15 @@ public class VisibleTouchMap extends TouchMap
         resize( w, h );
     }
     
+    /**
+     * Returns true if A/B buttons are split
+     * 
+     */
+    public boolean isABSplit()
+    {
+        return mSplitAB;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -498,8 +507,16 @@ public class VisibleTouchMap extends TouchMap
         if( profile != null )
         {
             loadFpsIndicator( profile );
-            loadAutoHoldImages( profile, "groupAB-holdA" );
-            loadAutoHoldImages( profile, "groupAB-holdB" );
+            if( mSplitAB  )
+            {
+                loadAutoHoldImages( profile, "buttonA-holdA" );
+                loadAutoHoldImages( profile, "buttonB-holdB" );
+            }
+            else
+            {
+                loadAutoHoldImages( profile, "groupAB-holdA" );
+                loadAutoHoldImages( profile, "groupAB-holdB" );
+            }
             loadAutoHoldImages( profile, "groupC-holdCu" );
             loadAutoHoldImages( profile, "groupC-holdCd" );
             loadAutoHoldImages( profile, "groupC-holdCl" );

@@ -20,6 +20,12 @@
                     android:id="@+id/menuItem_groupAB"
                     android:title="@string/controller_groupAB"/>
                 <item
+                    android:id="@+id/menuItem_buttonA"
+                    android:title="@string/controller_buttonA"/>
+                <item
+                    android:id="@+id/menuItem_buttonB"
+                    android:title="@string/controller_buttonB"/>
+                <item
                     android:id="@+id/menuItem_groupC"
                     android:title="@string/controller_groupC"/>
                 <item

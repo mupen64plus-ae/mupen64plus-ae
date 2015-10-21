@@ -29,6 +29,7 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Image;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -118,10 +119,13 @@ public class TouchMap
     public static final HashMap<String, Integer> MASK_KEYS = new HashMap<String, Integer>();
     
     /** The map from N64 button indices to asset name prefixes in the skin folder. */
-    public static final SparseArray<String> ASSET_NAMES = new SparseArray<String>();
+    public static SparseArray<String> ASSET_NAMES = new SparseArray<String>();
     
     /** The error in RGB (256x256x256) space that we tolerate when matching mask colors. */
     private static final int MATCH_TOLERANCE = 10;
+    
+    /** True if A/B buttons are split */
+    protected boolean mSplitAB;
     
     static
     {
@@ -154,8 +158,8 @@ public class TouchMap
         ASSET_NAMES.put( AbstractController.DPD_U, "dpad" );
         ASSET_NAMES.put( AbstractController.START, "buttonS" );
         ASSET_NAMES.put( AbstractController.BTN_Z, "buttonZ" );
-        ASSET_NAMES.put( AbstractController.BTN_B, "groupAB" );
-        ASSET_NAMES.put( AbstractController.BTN_A, "groupAB" );
+        ASSET_NAMES.put( AbstractController.BTN_B, "" );
+        ASSET_NAMES.put( AbstractController.BTN_A, "" );
         ASSET_NAMES.put( AbstractController.CPD_R, "groupC" );
         ASSET_NAMES.put( AbstractController.CPD_L, "groupC" );
         ASSET_NAMES.put( AbstractController.CPD_D, "groupC" );
@@ -431,11 +435,25 @@ public class TouchMap
         skinFolder = skinDir;
         ConfigFile skin_ini = new ConfigFile( skinFolder + "/skin.ini" );
         
+        mSplitAB = SafeMethods.toBoolean( skin_ini.get( "INFO", "split-AB" ), false);
+        
         // Look up the mask colors
         loadMaskColors( skin_ini );
         
         // Loop through all the configuration sections
         loadAllAssets( profile, animated );
+        
+        
+        if( mSplitAB )
+        {
+            ASSET_NAMES.setValueAt( AbstractController.BTN_B, "buttonB" );
+            ASSET_NAMES.setValueAt( AbstractController.BTN_A, "buttonA" );
+        }
+        else
+        {
+            ASSET_NAMES.setValueAt( AbstractController.BTN_B, "groupAB" );
+            ASSET_NAMES.setValueAt( AbstractController.BTN_A, "groupAB" );
+        }
     }
     
     /**
@@ -514,7 +532,13 @@ public class TouchMap
         {
             loadAnalog( profile, animated );
             loadButton( profile, "dpad" );
-            loadButton( profile, "groupAB" );
+            if( mSplitAB )
+            {
+                loadButton( profile, "buttonA" );
+                loadButton( profile, "buttonB" );
+            }
+            else
+                loadButton( profile, "groupAB" );
             loadButton( profile, "groupC" );
             loadButton( profile, "buttonL" );
             loadButton( profile, "buttonR" );
