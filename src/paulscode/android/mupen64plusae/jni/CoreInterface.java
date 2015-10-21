@@ -207,10 +207,10 @@ public class CoreInterface
                 {
                     // Initialize input-android plugin (even if we aren't going to use it)
                     NativeInput.init();
-                    NativeInput.setConfig( 0, sGamePrefs.isPlugged1, sGlobalPrefs.getPakType( 1 ) );
-                    NativeInput.setConfig( 1, sGamePrefs.isPlugged2, sGlobalPrefs.getPakType( 2 ) );
-                    NativeInput.setConfig( 2, sGamePrefs.isPlugged3, sGlobalPrefs.getPakType( 3 ) );
-                    NativeInput.setConfig( 3, sGamePrefs.isPlugged4, sGlobalPrefs.getPakType( 4 ) );
+                    NativeInput.setConfig( 0, sGamePrefs.isPlugged1, sGlobalPrefs.getPakType( 1 ).getNativeValue() );
+                    NativeInput.setConfig( 1, sGamePrefs.isPlugged2, sGlobalPrefs.getPakType( 2 ).getNativeValue() );
+                    NativeInput.setConfig( 2, sGamePrefs.isPlugged3, sGlobalPrefs.getPakType( 3 ).getNativeValue() );
+                    NativeInput.setConfig( 3, sGamePrefs.isPlugged4, sGlobalPrefs.getPakType( 4 ).getNativeValue() );
                     
                     ArrayList<String> arglist = new ArrayList<String>();
                     arglist.add( "mupen64plus" );

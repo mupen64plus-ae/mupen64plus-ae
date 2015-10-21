@@ -259,10 +259,53 @@ public class GlobalPrefs
     private final String[] mLocaleNames;
     private final String[] mLocaleCodes;
     
+    //Pak Type
+    public enum PakType {
+        NONE(NativeConstants.PAK_TYPE_NONE, R.string.menuItem_pak_empty),
+        MEMORY(NativeConstants.PAK_TYPE_MEMORY, R.string.menuItem_pak_mem),
+        RAMBLE(NativeConstants.PAK_TYPE_RUMBLE, R.string.menuItem_pak_rumble);
+        
+        private final int mNativeValue;
+        private final int mResourceStringName;
+        
+        PakType(int nativeValue, int resourceStringName)
+        {
+            mNativeValue = nativeValue;
+            mResourceStringName = resourceStringName;
+        }
+        
+        public int getNativeValue()
+        {
+            return mNativeValue;
+        }
+
+        public static PakType getPakTypeFromNativeValue(int nativeValue)
+        {
+            switch (nativeValue)
+            {
+            case NativeConstants.PAK_TYPE_NONE:
+                return NONE;
+            case NativeConstants.PAK_TYPE_MEMORY:
+                return MEMORY;
+            case NativeConstants.PAK_TYPE_RUMBLE:
+                return RAMBLE;
+            default:
+                return NONE;
+
+            }
+        }
+        
+        public int getResourceString()
+        {
+            return mResourceStringName;
+        }
+    }
+
     /**
      * Instantiates a new user preferences wrapper.
      * 
-     * @param context The application context.
+     * @param context
+     *            The application context.
      */
     @SuppressWarnings( "deprecation" )
     @SuppressLint( "InlinedApi" )
@@ -506,9 +549,9 @@ public class GlobalPrefs
         return getString( KEY_CONTROLLER_PROFILE_DEFAULT, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
     }
     
-    public int getPakType( int player )
+    public PakType getPakType( int player )
     {
-        return getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE );
+        return PakType.getPakTypeFromNativeValue(getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE ));
     }
     
     public boolean getPlayerMapReminder()
@@ -531,9 +574,9 @@ public class GlobalPrefs
         putString( KEY_CONTROLLER_PROFILE_DEFAULT, value );
     }
     
-    public void putPakType( int player, int value )
+    public void putPakType( int player, PakType pakType )
     {
-        putInt( KEYTEMPLATE_PAK_TYPE, player, value );
+        putInt( KEYTEMPLATE_PAK_TYPE, player, pakType.getNativeValue() );
     }
     
     public void putPlayerMapReminder( boolean value )
