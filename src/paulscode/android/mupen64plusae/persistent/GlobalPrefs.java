@@ -381,7 +381,7 @@ public class GlobalPrefs
         else
             isFramelimiterEnabled = !mPreferences.getString( "audioPlugin", "" ).equals( "nospeedlimit" );
         
-        // User interface modespathGameSaves
+        // User interface modes
         String navMode = mPreferences.getString( "navigationMode", "auto" );
         if( navMode.equals( "bigscreen" ) )
             isBigScreenMode = true;
