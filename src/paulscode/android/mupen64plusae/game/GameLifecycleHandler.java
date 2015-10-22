@@ -195,7 +195,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs );
         mCheatArgs =  mGamePrefs.getCheatArgs();
         
-        mAutoSaveManager = new GameAutoSaveManager(mGamePrefs);
+        mAutoSaveManager = new GameAutoSaveManager(mGamePrefs, mGlobalPrefs.maxAutoSaves);
 
         mGlobalPrefs.enforceLocale( mActivity );
 

@@ -95,7 +95,7 @@
             android:title="@string/displayImmersiveMode_title" />
 
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="50"
+            android:defaultValue="80"
             android:key="displayActionBarTransparency"
             android:title="@string/displayActionBarTransparency_title"
             mupen64:maximumValue="100"
@@ -252,6 +252,14 @@
             android:key="pathGameSaves"
             android:title="@string/pathGameSaves_title"
             mupen64:selectionMode="0" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="4"
+            android:key="gameAutoSaves"
+            android:title="@string/GameAutoSavesMax_title"
+            mupen64:minimumValue="1"
+            mupen64:maximumValue="10"
+            mupen64:stepSize="1"
+            mupen64:units="" />
 
         <Preference
             android:key="actionReloadAssets"

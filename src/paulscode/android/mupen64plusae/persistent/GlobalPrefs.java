@@ -229,6 +229,9 @@ public class GlobalPrefs
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
     
+    /** Maximum number of auto saves */
+    public final int maxAutoSaves;
+    
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     private static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -378,7 +381,7 @@ public class GlobalPrefs
         else
             isFramelimiterEnabled = !mPreferences.getString( "audioPlugin", "" ).equals( "nospeedlimit" );
         
-        // User interface modes
+        // User interface modespathGameSaves
         String navMode = mPreferences.getString( "navigationMode", "auto" );
         if( navMode.equals( "bigscreen" ) )
             isBigScreenMode = true;
@@ -389,6 +392,8 @@ public class GlobalPrefs
         
         // Peripheral share mode
         isControllerShared = mPreferences.getBoolean( "inputShareController", false );
+        
+        maxAutoSaves = mPreferences.getInt( "gameAutoSaves", 5 );
         
         // Determine the key codes that should not be mapped to controls
         boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
