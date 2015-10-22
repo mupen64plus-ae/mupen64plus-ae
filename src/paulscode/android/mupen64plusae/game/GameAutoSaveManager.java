@@ -16,15 +16,16 @@ public class GameAutoSaveManager
 {
     private final GamePrefs mGamePrefs;
     private String mAutoSavePath;
-    private static final int sMaxAutoSave = 10;
+    private final int mMaxAutoSave;
     private static final String sFormatString = "yyyy-MM-dd-HH-mm-ss";
     private static final String sMatcherString = "^\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d\\.sav$";
     private static final String sDefaultString = "yyyy-mm-dd-hh-mm-ss.sav";
     
-    public GameAutoSaveManager(GamePrefs gamePrefs)
+    public GameAutoSaveManager(GamePrefs gamePrefs, int maxAutoSaves)
     {
         mGamePrefs = gamePrefs;
         mAutoSavePath = mGamePrefs.autoSaveDir + "/";
+        mMaxAutoSave = maxAutoSaves;
     }
     
     public String getLatestAutoSave()
@@ -96,7 +97,7 @@ public class GameAutoSaveManager
         //Sort by file name
         Collections.sort(result);
         
-        while(result.size() > (sMaxAutoSave-1))
+        while(result.size() > (mMaxAutoSave-1))
         {
             Log.i("GameAutoSaveManager", "Deleting old autosave file: " + result.get(0).getName());
             result.get(0).delete();
