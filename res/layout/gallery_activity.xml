@@ -52,6 +52,7 @@
             android:id="@+id/gameSidebar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fillViewport="true"
             android:visibility="gone" />
     </RelativeLayout>
 

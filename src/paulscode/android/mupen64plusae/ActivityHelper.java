@@ -26,6 +26,7 @@ import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
 import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
+import paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen;
 import paulscode.android.mupen64plusae.profile.EmulationProfileActivity;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
@@ -204,6 +205,13 @@ public class ActivityHelper
     public static void startControllerProfileActivity( Context context, String profileName )
     {
         Intent intent = new Intent( context, ControllerProfileActivity.class );
+        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
+        context.startActivity( intent );
+    }
+    
+    public static void startControllerProfileActivityBigScreen( Context context, String profileName )
+    {
+        Intent intent = new Intent( context, ControllerProfileActivityBigScreen.class );
         intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }

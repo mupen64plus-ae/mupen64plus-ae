@@ -35,6 +35,7 @@ import java.util.zip.ZipFile;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ChangeLog;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.dialog.Prompt;
@@ -77,7 +78,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-public class GalleryActivity extends AppCompatActivity
+public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler
 {
     // Saved instance states
     public static final String STATE_QUERY = "query";
@@ -110,7 +111,6 @@ public class GalleryActivity extends AppCompatActivity
     private List<GalleryItem> mGalleryItems = null;
     private GalleryItem mSelectedItem = null;
     private boolean mDragging = false;
-    private boolean mOnCreateCalled = false;
     
     private CacheRomInfoFragment mCacheRomInfoFragment = null;
     
@@ -135,8 +135,6 @@ public class GalleryActivity extends AppCompatActivity
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        
-        mOnCreateCalled = true;
         
         // Get app data and user preferences
         mAppData = new AppData( this );
@@ -286,6 +284,9 @@ public class GalleryActivity extends AppCompatActivity
         // Configure the game information drawer
         mGameSidebar = (GameSidebar) findViewById( R.id.gameSidebar );
         
+        // Handle events from the side bar
+        mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
+        
         if( savedInstanceState != null )
         {
             mSelectedItem = null;
@@ -317,6 +318,12 @@ public class GalleryActivity extends AppCompatActivity
             mCacheRomInfoFragment = new CacheRomInfoFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
         }
+        
+        // Set the sidebar opacity on the two sidebars
+        mDrawerList.setBackgroundDrawable( new DrawerDrawable(
+                mGlobalPrefs.displayActionBarTransparency ) );
+        mGameSidebar.setBackgroundDrawable( new DrawerDrawable(
+                mGlobalPrefs.displayActionBarTransparency ) );
     }
     
     @Override
@@ -462,70 +469,51 @@ public class GalleryActivity extends AppCompatActivity
         }
     }
     
-    public void updateSidebar()
+    @Override
+    public void onGameSidebarAction(MenuItem menuItem)
     {
         GalleryItem item = mSelectedItem;
         if( item == null )
             return;
         
-        // Set the game options
-        mGameSidebar.clear();
-        
         final GalleryItem finalItem = item;
-        final Context finalContext = this;
         
-        mGameSidebar.addRow( R.drawable.ic_play, getString( R.string.actionResume_title ),
-                getString( R.string.actionResume_summary ), new GameSidebar.Action()
-                {
-                    @Override
-                    public void onAction()
+        switch( menuItem.getItemId() )
+        {
+            case R.id.menuItem_resume:
+                launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                    finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                    finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName,
+                    finalItem.countryCode, finalItem.artPath, finalItem.goodName, false );
+                break;
+            case R.id.menuItem_restart:
+                CharSequence title = getText( R.string.confirm_title );
+                CharSequence message = getText( R.string.confirmResetGame_message );
+                Prompt.promptConfirm( this, title, message,
+                    new PromptConfirmListener()
                     {
-                        launchGameActivity( finalItem.romFile.getAbsolutePath(),
-                            finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                            finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName,
-                            finalItem.countryCode, finalItem.artPath, finalItem.goodName, false );
-                    }
-                } );
-        
-        mGameSidebar.addRow( R.drawable.ic_undo, getString( R.string.actionRestart_title ),
-                getString( R.string.actionRestart_summary ), new GameSidebar.Action()
-                {
-                    @Override
-                    public void onAction()
-                    {
-                        CharSequence title = getText( R.string.confirm_title );
-                        CharSequence message = getText( R.string.confirmResetGame_message );
-                        Prompt.promptConfirm( finalContext, title, message,
-                                new PromptConfirmListener()
-                                {
-                                    @Override
-                                    public void onDialogClosed( int which )
-                                    {
-                                        if( which == DialogInterface.BUTTON_POSITIVE )
-                                        {
-                                            launchGameActivity( finalItem.romFile.getAbsolutePath(),
-                                                finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                                                finalItem.isExtracted, finalItem.md5, finalItem.crc, 
-                                                finalItem.headerName, finalItem.countryCode, finalItem.artPath,
-                                                finalItem.goodName, true );
-                                        }
-                                    }
-                                } );
-                    }
-                } );
-        
-        mGameSidebar.addRow( R.drawable.ic_settings, getString( R.string.menuItem_settings ), null,
-                new GameSidebar.Action()
-                {
-                    @Override
-                    public void onAction()
-                    {
-                        ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(),
-                            finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode );
-                    }
-                } );
+                        @Override
+                        public void onDialogClosed( int which )
+                        {
+                            if( which == DialogInterface.BUTTON_POSITIVE )
+                            {
+                                launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                                    finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                                    finalItem.isExtracted, finalItem.md5, finalItem.crc, 
+                                    finalItem.headerName, finalItem.countryCode, finalItem.artPath,
+                                    finalItem.goodName, true );
+                            }
+                        }
+                    } );
+                break;
+            case R.id.menuItem_settings:
+                ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(),
+                    finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode );
+                break;
+            default:
+        }
     }
-    
+
     public void onGalleryItemClick( GalleryItem item )
     {
         mSelectedItem = item;
@@ -541,8 +529,6 @@ public class GalleryActivity extends AppCompatActivity
         
         // Set the game title
         mGameSidebar.setTitle( item.goodName );
-        
-        updateSidebar();
         
         // Open the navigation drawer
         mDrawerLayout.openDrawer( GravityCompat.START );
@@ -764,32 +750,14 @@ public class GalleryActivity extends AppCompatActivity
         mGridView.setLayoutManager( layoutManager );
     }
     
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        refreshViews();
-    }
-    
     @TargetApi( 11 )
     private void refreshViews()
     {
         // Refresh the preferences object in case another activity changed the data
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         
-        // Set the sidebar opacity on the two sidebars
-        mDrawerList.setBackgroundDrawable( new DrawerDrawable(
-                mGlobalPrefs.displayActionBarTransparency ) );
-        mGameSidebar.setBackgroundDrawable( new DrawerDrawable(
-                mGlobalPrefs.displayActionBarTransparency ) );
-        
         // Refresh the gallery
-        if(!mOnCreateCalled)
-        {
-           refreshGrid();
-        }
-        
-        mOnCreateCalled = false;
+        refreshGrid();
     }
     
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
@@ -820,6 +788,8 @@ public class GalleryActivity extends AppCompatActivity
             
             config.save();
         }
+        
+        refreshGrid();
 
         // Launch the game activity
         ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
@@ -897,4 +867,3 @@ public class GalleryActivity extends AppCompatActivity
         }
     }
 }
-

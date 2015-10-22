@@ -194,7 +194,7 @@ public class MenuListView extends ExpandableListView
                     Context.LAYOUT_INFLATER_SERVICE );
             View view = convertView;
             if( view == null )
-                view = inflater.inflate( R.layout.list_item_menu, null );
+                view = inflater.inflate( R.layout.list_item_menu, mListView, false );
             
             MenuItem item = getChild( groupPosition, childPosition );
             if( item != null )
@@ -205,7 +205,15 @@ public class MenuListView extends ExpandableListView
                 ImageView indicator = (ImageView) view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
-                text2.setVisibility( View.GONE );
+                if(item.getTitleCondensed().equals(item.getTitle()))
+                {
+                    text2.setVisibility( View.GONE );
+                }
+                else
+                {
+                    text2.setText( item.getTitleCondensed() );
+                }
+
                 icon.setImageDrawable( item.getIcon() );
                 
                 view.setBackgroundColor( 0x0 );
@@ -254,7 +262,7 @@ public class MenuListView extends ExpandableListView
                     Context.LAYOUT_INFLATER_SERVICE );
             View view = convertView;
             if( view == null )
-                view = inflater.inflate( R.layout.list_item_menu, null );
+                view = inflater.inflate( R.layout.list_item_menu, mListView, false );
             
             MenuItem item = getGroup( groupPosition );
             if( item != null )
@@ -265,7 +273,14 @@ public class MenuListView extends ExpandableListView
                 ImageView indicator = (ImageView) view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
-                text2.setVisibility( View.GONE );
+                if(item.getTitleCondensed().equals(item.getTitle()))
+                {
+                    text2.setVisibility( View.GONE );
+                }
+                else
+                {
+                    text2.setText( item.getTitleCondensed() );
+                }
                 icon.setImageDrawable( item.getIcon() );
                 
                 if( item.isChecked() )
@@ -280,6 +295,7 @@ public class MenuListView extends ExpandableListView
                 else
                     indicator.setImageResource( R.drawable.ic_arrow_d );
             }
+            
             return view;
         }
         

@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -54,5 +56,11 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     protected void onEditProfile( Profile profile )
     {
         ActivityHelper.startEmulationProfileActivity( this, profile.name );
+    }
+
+    @Override
+    protected int getWindowTitleResource()
+    {
+        return R.string.ManageEmulationProfilesActivity_title;
     }
 }
