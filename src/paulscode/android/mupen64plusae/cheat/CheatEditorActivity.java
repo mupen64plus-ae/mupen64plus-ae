@@ -283,8 +283,6 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     case R.id.btnEditTitle:
                         promptTitle( cheat );
-                        Collections.sort(userCheats);
-                        cheatListAdapter.notifyDataSetChanged();
                         break;
                     case R.id.btnEditNotes:
                         promptNotes( cheat );
@@ -360,6 +358,9 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     String str = text.toString().replace( '\n', ' ' );
                     cheat.name = str;
+                    
+                    Collections.sort(userCheats);
+                    cheatListAdapter.notifyDataSetChanged();
                 }
             }
         } );
