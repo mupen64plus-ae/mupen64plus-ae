@@ -100,6 +100,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private PreferenceGroup mScreenCheats = null;
     private PreferenceGroup mCategoryCheats = null;
     
+    private boolean mClearCheats = false;
+    
     // MOGA controller interface
     private Controller mMogaController = Controller.getInstance( this );
     
@@ -238,7 +240,14 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     protected void onActivityResult( int requestCode, int resultCode, Intent data )
     {
         if( requestCode == 111 )
-            refreshCheatsCategory();
+        {
+            if( resultCode == RESULT_OK)
+            {
+                //If the user cheats were saved, reset all selected cheatd
+                mClearCheats = true;
+                refreshCheatsCategory();
+            }
+        }
     }
     
     private void refreshViews()
@@ -339,13 +348,23 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             CheatPreference pref = new CheatPreference( this, cheat.cheatIndex, title, notes, optionStrings );
             
             //We store the cheat index in the key as a string
-            pref.setKey( mRomCrc + " Cheat" + cheat.cheatIndex );
+            String key = mRomCrc + " Cheat" + cheat.cheatIndex ;
+            pref.setKey( key );
+            
+            //We reset if the list was changed by the user
+            if(mClearCheats)
+            {
+                mPrefs.edit().putInt( key, 0 ).commit();
+            }
             
             // Add the preference menu item to the cheats category
             mCategoryCheats.addPreference( pref );
         }
         
         mScreenCheats.addPreference( mCategoryCheats );
+        
+        //Reset this to false if it was set
+        mClearCheats = false;
     }
     
     @Override
