@@ -28,6 +28,7 @@ import java.util.Locale;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.ScanRomsActivity;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
@@ -127,6 +128,9 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         findViewById( R.id.imgBtnChtSave ).setOnClickListener( this );
         findViewById( R.id.imgBtnChtInfo ).setOnClickListener( this );
         getListView().setOnItemLongClickListener( this );
+        
+        //default state is cancelled unless we save
+        setResult(RESULT_CANCELED, null);
     }
     
     private void reload( String crc, byte countryCode )
@@ -235,6 +239,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
             
             case R.id.imgBtnChtSave:
                 save( mRomCrc );
+
+                setResult(RESULT_OK, null);
                 CheatEditorActivity.this.finish();
                 break;
                 
@@ -283,8 +289,6 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     case R.id.btnEditTitle:
                         promptTitle( cheat );
-                        Collections.sort(userCheats);
-                        cheatListAdapter.notifyDataSetChanged();
                         break;
                     case R.id.btnEditNotes:
                         promptNotes( cheat );
@@ -360,6 +364,9 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     String str = text.toString().replace( '\n', ' ' );
                     cheat.name = str;
+                    
+                    Collections.sort(userCheats);
+                    cheatListAdapter.notifyDataSetChanged();
                 }
             }
         } );
