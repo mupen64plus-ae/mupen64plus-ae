@@ -172,6 +172,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt, true );
         CheatUtils.save( crc, usrcheat_txt, userCheats, mRomHeaderName, mRomCountryCode, this, false );
         CheatUtils.save( crc, mupencheat_txt, combinedCheats, mRomHeaderName, mRomCountryCode, this, true );
+        
+        setResult(RESULT_OK, null);
     }
     
     private boolean isHexNumber( String num )
@@ -239,8 +241,6 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
             
             case R.id.imgBtnChtSave:
                 save( mRomCrc );
-
-                setResult(RESULT_OK, null);
                 CheatEditorActivity.this.finish();
                 break;
                 
