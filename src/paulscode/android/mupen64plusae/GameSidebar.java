@@ -67,7 +67,12 @@ public class GameSidebar extends ScrollView
         
         // Configure the list in the navigation drawer
         mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
-
+    }
+    
+    public void setActionHandler(GameSidebarActionHandler actionHandler, int menuResource)
+    {
+        mActionHandler = actionHandler;
+        mDrawerList.setMenuResource( menuResource );
         
         // Handle menu item selections
         mDrawerList.setOnClickListener( new MenuListView.OnClickListener()
@@ -78,12 +83,8 @@ public class GameSidebar extends ScrollView
                 mActionHandler.onGameSidebarAction( menuItem );
             }
         } );
-    }
-    
-    public void setActionHandler(GameSidebarActionHandler actionHandler, int menuResource)
-    {
-        mActionHandler = actionHandler;
-        mDrawerList.setMenuResource( menuResource );
+        
+        mDrawerList.setOnKeyListener(actionHandler);
     }
     
     public void setImage( BitmapDrawable image )
@@ -104,7 +105,7 @@ public class GameSidebar extends ScrollView
         return mDrawerList;
     }
     
-    public interface GameSidebarActionHandler
+    public interface GameSidebarActionHandler extends OnKeyListener
     {
         abstract public void onGameSidebarAction(MenuItem menuItem);
     }

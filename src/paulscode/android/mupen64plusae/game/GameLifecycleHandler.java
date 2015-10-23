@@ -119,7 +119,7 @@ import com.bda.controller.Controller;
 */
 //@formatter:on
 
-public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.Callback, GameSidebarActionHandler, OnPromptFinishedListener
+public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebarActionHandler, OnPromptFinishedListener
 {
     // Activity and views
     private Activity mActivity;

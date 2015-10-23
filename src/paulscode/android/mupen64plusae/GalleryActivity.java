@@ -866,5 +866,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
         }
     }
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event)
+    {
+        //Nothing to do
+        return false;
+    }
 }
 
