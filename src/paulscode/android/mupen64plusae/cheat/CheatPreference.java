@@ -212,4 +212,9 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
             mCheckbox.setChecked( isCheatEnabled() );
         }
     }
+    
+    public int getCheatIndex()
+    {
+        return mCheatIndex;
+    }
 }

@@ -562,6 +562,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         Log.i( "GameLifecycleHandler", "onStart" );
     }
     
+    @SuppressWarnings("deprecation")
     public void onResume()
     {
         Log.i("GameLifecycleHandler", "onResume");

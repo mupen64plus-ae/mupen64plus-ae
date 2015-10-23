@@ -24,6 +24,7 @@
         android:name="paulscode.android.mupen64plusae.AppMupen64Plus"
         android:allowBackup="true"
         android:isGame="true"
+        android:supportsRtl="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"

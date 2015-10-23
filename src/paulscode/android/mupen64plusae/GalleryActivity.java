@@ -771,6 +771,7 @@ public class GalleryActivity extends AppCompatActivity
         refreshViews();
     }
     
+    @SuppressWarnings("deprecation")
     @TargetApi( 11 )
     private void refreshViews()
     {

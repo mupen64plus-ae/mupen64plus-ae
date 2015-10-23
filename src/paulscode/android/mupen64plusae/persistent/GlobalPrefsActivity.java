@@ -45,12 +45,12 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private static final String CATEGORY_LIBRARY = "categoryLibrary";
     private static final String CATEGORY_DISPLAY = "categoryDisplay";
     private static final String CATEGORY_AUDIO = "categoryAudio";
-    private static final String CATEGORY_TOUCHSCREEN = "categoryTouchscreen";
+//    private static final String CATEGORY_TOUCHSCREEN = "categoryTouchscreen";
     private static final String CATEGORY_TOUCHPAD = "categoryTouchpad";
     private static final String CATEGORY_INPUT = "categoryInput";
     private static final String CATEGORY_DATA = "categoryData";
     
-    private static final String DISPLAY_ORIENTATION = "displayOrientation";
+//    private static final String DISPLAY_ORIENTATION = "displayOrientation";
     private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
     private static final String DISPLAY_FPS_REFRESH = "displayFpsRefresh";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
@@ -61,8 +61,8 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr";
     private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
-    private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
-    private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
+//    private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
+//    private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String NAVIGATION_MODE = "navigationMode";
     
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
