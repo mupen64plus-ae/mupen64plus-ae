@@ -530,9 +530,6 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         CharSequence title = GetPlayerTextFromId(player);
         final MenuItem playerMenuItem = GetPlayerMenuItemFromId(player);
         
-        //Get the spinner title
-        final CharSequence spinnerTitle = mActivity.getString(R.string.menuItem_select_pak_type);
-        
         //Generate possible pak types
         final ArrayList<CharSequence> selections = new ArrayList<CharSequence>();
         for(PakType pakType:PakType.values())
@@ -540,7 +537,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             selections.add(mActivity.getString(pakType.getResourceString()));
         }
             
-        Prompt.promptSpinnerSelection( mActivity, title, spinnerTitle, selections, selectedPakType,
+        Prompt.promptListSelection( mActivity, title, selections,
                 new PromptIntegerListener()
                 {
                     @Override

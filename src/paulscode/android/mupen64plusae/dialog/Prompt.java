@@ -53,7 +53,6 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bda.controller.Controller;
@@ -604,32 +603,30 @@ public final class Prompt
      * @param listener The listener to process the integer, when provided.
      */
     @SuppressLint( "InflateParams" )
-    public static void promptSpinnerSelection( Context context, CharSequence title, CharSequence spinnerTitle,
-            final ArrayList<CharSequence> selections, int initialSelection, final PromptIntegerListener listener )
-    {
-        final LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View layout = inflater.inflate( R.layout.spinner_preference, null );
-        final Spinner spinner = (Spinner) layout.findViewById( R.id.spinner );
-        final TextView text = (TextView) layout.findViewById(R.id.text);
-
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context,
-            android.R.layout.simple_spinner_item, selections);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-        spinner.setSelection(initialSelection);
-
-        text.setText(spinnerTitle);
-        
-        prefillBuilder( context, title, null, new DialogInterface.OnClickListener()
+    public static void promptListSelection( Context context, CharSequence title,
+            final ArrayList<CharSequence> selections, final PromptIntegerListener listener )
+    {        
+        // When the user clicks a file, notify the downstream listener
+        OnClickListener internalListener = new OnClickListener()
         {
             @Override
             public void onClick( DialogInterface dialog, int which )
             {
-                listener.onDialogClosed( spinner.getSelectedItemPosition(), which );
+                if( which != DialogInterface.BUTTON_NEGATIVE)
+                {
+                    listener.onDialogClosed( which, DialogInterface.BUTTON_POSITIVE );
+                }
             }
-        } ).setView( layout ).create().show();
+        };
+        
+        // Create the dialog builder, removing Ok button and populating list in the process
+        Builder builder = prefillBuilder( context, title, null, internalListener );
+        builder.setPositiveButton( null, null );
+        CharSequence[] items = selections.toArray( new CharSequence[selections.size()] );
+        builder.setItems( items, internalListener );
+        
+        // Create and launch the dialog
+        builder.create().show();
     }
     
     

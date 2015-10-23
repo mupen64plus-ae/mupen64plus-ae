@@ -43,7 +43,6 @@
     <string name="menuItem_player_three">Player 3</string>
     <string name="menuItem_player_four">Player 4</string>
     <string name="menuItem_paks">Controller Paks</string>
-    <string name="menuItem_select_pak_type">Select Pak Type</string>
  <!-- capitalize since trademark -->
     <string name="menuItem_pak_empty">Empty</string>
  <!-- capitalize since trademark -->
