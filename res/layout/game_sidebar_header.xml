@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,6 +12,7 @@
         android:layout_height="193dip" >
 
         <ImageView
+            tools:ignore="ContentDescription"
             android:id="@+id/imageArt"
             android:layout_width="match_parent"
             android:layout_height="193dip"
@@ -21,22 +23,7 @@
         android:id="@+id/gameTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imageLayout"
         android:padding="5dip"
         android:text="@string/galleryItemAdapter_dummyText"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <paulscode.android.mupen64plusae.MenuListView
-        android:id="@+id/drawerNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/gameTitle"
-        android:clipToPadding="false"
-        android:nextFocusDown="@+id/drawerNavigation"
-        android:nextFocusLeft="@+id/drawerNavigation"
-        android:nextFocusRight="@+id/drawerNavigation"
-        android:nextFocusUp="@+id/drawerNavigation"
-        android:paddingTop="20dip" />
-
-</RelativeLayout>
+</LinearLayout>

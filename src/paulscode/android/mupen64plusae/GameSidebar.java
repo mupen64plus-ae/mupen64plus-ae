@@ -27,15 +27,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.ViewTreeObserver.OnScrollChangedListener;
+import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class GameSidebar extends ScrollView
+public class GameSidebar extends MenuListView
 {
-    private MenuListView mDrawerList;
     private ImageView mInfoArt;
     private LinearLayout mImageLayout;
     private TextView mGameTitle;
@@ -46,36 +45,53 @@ public class GameSidebar extends ScrollView
         super( context, attrs );
         
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        inflater.inflate( R.layout.game_sidebar, this );
+        final View header = inflater.inflate( R.layout.game_sidebar_header, this, false );
 
-        mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
-        mInfoArt = (ImageView) findViewById( R.id.imageArt );
-        mImageLayout = (LinearLayout) findViewById( R.id.imageLayout );
-        mGameTitle = (TextView) findViewById( R.id.gameTitle );
+        mInfoArt = (ImageView) header.findViewById( R.id.imageArt );
+        mImageLayout = (LinearLayout) header.findViewById( R.id.imageLayout );
+        mGameTitle = (TextView) header.findViewById( R.id.gameTitle );
         
-        // Have the game cover art scroll at half the speed as the rest of the content
-        final ScrollView scroll = this;
-        getViewTreeObserver().addOnScrollChangedListener( new OnScrollChangedListener()
+        setOnScrollListener(new OnScrollListener()
         {
+
             @Override
-            public void onScrollChanged()
+            public void onScrollStateChanged(AbsListView view, int scrollState)
             {
-                int scrollY = scroll.getScrollY();
-                mImageLayout.setPadding( 0, scrollY / 2, 0, 0 );
+                //Nothing to do here
             }
-        } );
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+            {
+                //int scrollY = GameSidebar.this.getScrollY();
+                
+                if(GameSidebar.this.getChildAt(0) == header)
+                {
+                    int top =  GameSidebar.this.getChildAt(0).getTop();
+                    int scrollY = top*-1;
+                    mImageLayout.setPadding( 0, scrollY / 2, 0, 0 );
+                }
+
+            }
+            
+        });
         
-        // Configure the list in the navigation drawer
-        mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
+        setClipToPadding(true);
+        setNextFocusDownId(getId());
+        setNextFocusLeftId(getId());
+        setNextFocusRightId(getId());
+        setNextFocusUpId(getId());
+        
+        addHeaderView(header);
     }
     
     public void setActionHandler(GameSidebarActionHandler actionHandler, int menuResource)
     {
         mActionHandler = actionHandler;
-        mDrawerList.setMenuResource( menuResource );
+        setMenuResource( menuResource );
         
         // Handle menu item selections
-        mDrawerList.setOnClickListener( new MenuListView.OnClickListener()
+        setOnClickListener( new MenuListView.OnClickListener()
         {
             @Override
             public void onClick( MenuItem menuItem )
@@ -84,7 +100,7 @@ public class GameSidebar extends ScrollView
             }
         } );
         
-        mDrawerList.setOnKeyListener(actionHandler);
+        setOnKeyListener(actionHandler);
     }
     
     public void setImage( BitmapDrawable image )
@@ -98,11 +114,6 @@ public class GameSidebar extends ScrollView
     public void setTitle( String title )
     {
         mGameTitle.setText( title );
-    }
-    
-    public MenuListView getDrawerList()
-    {
-        return mDrawerList;
     }
     
     public interface GameSidebarActionHandler extends OnKeyListener
