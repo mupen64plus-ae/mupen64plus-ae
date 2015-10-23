@@ -250,11 +250,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
         
-        //Set initial speed menu value
-        MenuItem toggleSpeedItem = 
-            mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_toggle_speed);
-        toggleSpeedItem.setTitle(mActivity.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
-        mGameSidebar.getDrawerList().reload();
+        //Reload menus
+        ReloadAllMenus();
         
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );
@@ -312,23 +309,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             @Override
             public void onDrawerOpened(View arg0)
             {
-                MenuItem toggleSpeedItem = 
-                    mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_toggle_speed);
-                toggleSpeedItem.setTitle(mActivity.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
-                
-                MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
-                slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
-                
-                MenuItem player1Item = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_one);
-                player1Item.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(1).getResourceString()));
-                MenuItem player2Item = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_two);
-                player2Item.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(2).getResourceString()));
-                MenuItem player3Item = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_three);
-                player3Item.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(3).getResourceString()));
-                MenuItem player4Item = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_player_four);
-                player4Item.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(4).getResourceString()));
-                
-                mGameSidebar.getDrawerList().reload();
+                ReloadAllMenus();
             }
 
             @Override
@@ -346,9 +327,58 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         });
     }
     
+    private void ReloadAllMenus()
+    {
+        //Reload currently selected speed setting
+        MenuItem toggleSpeedItem = 
+            mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_toggle_speed);
+        toggleSpeedItem.setTitle(mActivity.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
+        
+        //Reload currently selected slot
+        MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
+        slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
+        
+        int resId = NativeExports.emuGetFramelimiter() ?
+            R.string.menuItem_disableFramelimiter :
+            R.string.menuItem_enableFramelimiter;
+        
+        //Reload the menu with the new frame limiter setting
+        MenuItem frameLimiterItem = 
+            mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_disable_frame_limiter);
+        frameLimiterItem.setTitle(mActivity.getString(resId, NativeExports.emuGetSpeed()));
+        
+        //Reload player pak settings
+        UpdateControllerMenu(R.id.menuItem_player_one, mGamePrefs.isPlugged1, 1);
+        UpdateControllerMenu(R.id.menuItem_player_two, mGamePrefs.isPlugged2, 2);
+        UpdateControllerMenu(R.id.menuItem_player_three, mGamePrefs.isPlugged3, 3);
+        UpdateControllerMenu(R.id.menuItem_player_four, mGamePrefs.isPlugged4, 4);
+        
+        mGameSidebar.getDrawerList().reload();
+    }
+    
+    private void UpdateControllerMenu(int menuItemId, boolean isPlugged, int playerNumber)
+    {
+        MenuItem pakGroupItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_paks);
+        
+        if(mGameSidebar.getDrawerList().getMenu().findItem(menuItemId) != null)
+        {
+            if(!isPlugged)
+            {
+                pakGroupItem.getSubMenu().removeItem(menuItemId);
+            }
+            else
+            {
+                MenuItem playerItem = mGameSidebar.getDrawerList().getMenu().findItem(menuItemId);
+                playerItem.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(playerNumber).getResourceString()));
+            }
+        }
+    }
+    
     @Override
     public void onPromptFinished()
     {
+        //In here we only reload things that are updated through prompts
+        
         //reload menu item with new slot
         MenuItem slotItem = mGameSidebar.getDrawerList().getMenu().findItem(R.id.menuItem_set_slot);
         slotItem.setTitle(mActivity.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
