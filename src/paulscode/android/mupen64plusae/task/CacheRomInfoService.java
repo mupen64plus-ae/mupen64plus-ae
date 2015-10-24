@@ -391,6 +391,11 @@ public class CacheRomInfoService extends Service
         catch( Throwable e )
         {
             Log.w( "CacheRomInfoService", e );
+            
+            //Delete any remnants if there was an exception. We don't want a corrupted graphic
+            File destFile = new File(destPath);
+            destFile.delete();
+            
             return e;
         }
         finally
