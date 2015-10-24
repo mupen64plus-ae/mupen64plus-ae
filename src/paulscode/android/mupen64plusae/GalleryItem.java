@@ -141,6 +141,7 @@ public class GalleryItem
     {
         public GalleryItem item;
         private Context mContext;
+        LoadBitmapTask mLoadBitmapTask = null;
         
         public ViewHolder( Context context, View view )
         {
@@ -209,9 +210,16 @@ public class GalleryItem
         
         public void onBindViewHolder( ViewHolder holder, int position )
         {
-            // Clear the now-offscreen bitmap to conserve memory
+            // Clear the now-offscreen bitmap to conserve memory, also cancel any tasks reading the bitmap
             if( holder.item != null )
+            {
+                if(holder.mLoadBitmapTask != null)
+                {
+                    holder.mLoadBitmapTask.cancel(true);
+                    holder.mLoadBitmapTask = null;
+                }
                 holder.item.clearBitmap();
+            }
             
             // Called by RecyclerView to display the data at the specified position.
             View view = holder.itemView;
@@ -251,8 +259,8 @@ public class GalleryItem
                     artView.setImageResource( R.drawable.default_coverart );
 
                     //Load the real cover art in a background task
-                    LoadBitmapTask loadBitmapTask = new LoadBitmapTask(item.context, item.artPath, artView); 
-                    loadBitmapTask.execute((String) null);
+                    holder.mLoadBitmapTask = new LoadBitmapTask(item.context, item.artPath, artView); 
+                    holder.mLoadBitmapTask.execute((String) null);
                     
                     artView.getLayoutParams().width = activity.galleryWidth;
                     artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
