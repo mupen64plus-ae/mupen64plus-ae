@@ -104,7 +104,13 @@ public class ProfilePreference extends CompatibleListPreference
         //Label it as default
         if(defaultProfile != null)
         {
-            defaultProfile.setComment(defaultProfile.getName() + ": " + defaultProfile.getComment());
+            String defaultProfileComment = defaultProfile.getName();
+            
+            if(defaultProfile.getComment() != null)
+            {
+                defaultProfileComment +=  ": " + defaultProfile.getComment();
+            }
+            defaultProfile.setComment(defaultProfileComment);
             defaultProfile.setName(defaultProfileTitle.toString());
             
             //Add it at the beginning
