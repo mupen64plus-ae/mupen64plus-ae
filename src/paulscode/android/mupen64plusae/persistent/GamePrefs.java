@@ -355,17 +355,17 @@ public class GamePrefs
     
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,
         ConfigFile custom, ConfigFile builtin )
-    {
+    {        
         final String name = prefs.getString( key, defaultName );
 
         if( TextUtils.isEmpty( name ) )
             return null;
         else if( custom.keySet().contains( name ) )
             return new Profile( false, custom.get( name ) );
-        else if( custom.keySet().contains( defaultName ) )
-            return new Profile( false, custom.get( defaultName ) );
         else if( builtin.keySet().contains( name ) )
             return new Profile( true, builtin.get( name ) );
+        else if( custom.keySet().contains( defaultName ) )
+            return new Profile( false, custom.get( defaultName ) );
         else if( builtin.keySet().contains( defaultName ) )
             return new Profile( true, builtin.get( defaultName ) );
         else
