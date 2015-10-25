@@ -87,7 +87,26 @@ public class ProfilePreference extends CompatibleListPreference
         List<Profile> profiles = new ArrayList<Profile>();
         profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
         profiles.addAll( Profile.getProfiles( configCustom, false ) );
+        
         Collections.sort( profiles );
+        
+        //Find the default profile and add it
+        Profile defaultProfile = null;
+        if( configCustom.keySet().contains( defaultValue ) )
+            defaultProfile =  new Profile( false, configCustom.get( defaultValue ) );
+        else if( configBuiltin.keySet().contains( defaultValue ) )
+            defaultProfile = new Profile( true, configBuiltin.get( defaultValue ) );
+        CharSequence defaultProfileTitle = getContext().getText( R.string.default_profile_title );
+        
+        //Label it as default
+        if(defaultProfile != null)
+        {
+            defaultProfile.setComment(defaultProfile.getName() + ": " + defaultProfile.getComment());
+            defaultProfile.setName(defaultProfileTitle.toString());
+            
+            //Add it at the beginning
+            profiles.add(0, defaultProfile);
+        }
         
         int offset = mAllowDisable ? 1 : 0;
         int numEntries = profiles.size() + offset;

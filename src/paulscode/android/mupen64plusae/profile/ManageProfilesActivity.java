@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.mupen64plusae.v3.alpha.BuildConfig;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
@@ -259,7 +260,9 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     
     private void editProfile( Profile profile )
     {
-        assert ( !profile.isBuiltin );
+        if(BuildConfig.DEBUG && profile.isBuiltin)
+            throw new RuntimeException();
+        
         onEditProfile( profile );
     }
     
@@ -270,7 +273,9 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
             @Override
             public void onAccept( String name, String comment )
             {
-                assert ( !mConfigCustom.keySet().contains( name ) );
+                if(BuildConfig.DEBUG && mConfigCustom.keySet().contains( name ))
+                    throw new RuntimeException();
+                
                 Profile profile = new Profile( false, name, comment );
                 profile.writeTo( mConfigCustom );
                 mConfigCustom.save();
@@ -288,7 +293,9 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
                     @Override
                     public void onAccept( String name, String comment )
                     {
-                        assert ( !mConfigCustom.keySet().contains( name ) );
+                        if(BuildConfig.DEBUG && mConfigCustom.keySet().contains( name ))
+                            throw new RuntimeException();
+                        
                         Profile newProfile = profile.copy( name, comment );
                         newProfile.writeTo( mConfigCustom );
                         mConfigCustom.save();
@@ -300,7 +307,9 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     
     private void renameProfile( final Profile profile )
     {
-        assert ( !profile.isBuiltin );
+        if(BuildConfig.DEBUG && profile.isBuiltin)
+            throw new RuntimeException();
+        
         promptNameComment( R.string.listItem_rename, profile.name, profile.comment, true,
                 new NameCommentListener()
                 {
@@ -318,7 +327,9 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     
     private void deleteProfile( final Profile profile, final boolean isDefault )
     {
-        assert ( !profile.isBuiltin );
+        if(BuildConfig.DEBUG && profile.isBuiltin)
+            throw new RuntimeException();
+
         String title = getString( R.string.confirm_title );
         String message = getString( R.string.confirmDeleteProfile_message, profile.name );
         Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
@@ -328,7 +339,8 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    assert ( mConfigCustom.keySet().contains( profile.name ) );
+                    if(BuildConfig.DEBUG && !mConfigCustom.keySet().contains( profile.name ))
+                        throw new RuntimeException();
                 
                     //If this was the default profile, pick another default profile
                     if(isDefault)
@@ -488,6 +500,11 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
         // Get all profiles, for validating unique names
         List<Profile> profiles2 = Profile.getProfiles( mConfigCustom, false );
         profiles2.addAll( Profile.getProfiles( mConfigBuiltin, true ) );
+        
+        // Add reserved profile names
+        CharSequence defaultProfileTitle = getText( R.string.default_profile_title );
+        profiles2.add(new Profile( true, defaultProfileTitle.toString(), null));
+        
         mProfileNames.clear();
         for( Profile profile : profiles2 )
             mProfileNames.add( profile.name );
