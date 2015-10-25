@@ -369,6 +369,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
         editName.setText( name );
         editName.setHint( R.string.hint_profileName );
         editName.setRawInputType( InputType.TYPE_CLASS_TEXT );
+        editName.setSingleLine();
         
         // Create the comment editor
         final EditText editComment = new EditText( this );
