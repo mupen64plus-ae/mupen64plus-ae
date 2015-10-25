@@ -96,6 +96,9 @@ public class ProfilePreference extends CompatibleListPreference
             defaultProfile =  new Profile( false, configCustom.get( defaultValue ) );
         else if( configBuiltin.keySet().contains( defaultValue ) )
             defaultProfile = new Profile( true, configBuiltin.get( defaultValue ) );
+        
+        //This is a fake profile that doesn't exist in any config file.
+        //Selecting this profile will make us fall back to the current default profile
         CharSequence defaultProfileTitle = getContext().getText( R.string.default_profile_title );
         
         //Label it as default
@@ -132,7 +135,7 @@ public class ProfilePreference extends CompatibleListPreference
         setEntryValues( values );
         String selectedValue = getPersistedString( null );
         if( !ArrayUtils.contains( values, selectedValue ) )
-            persistString( defaultValue );
+            persistString( defaultProfileTitle.toString() );
         selectedValue = getPersistedString( null );
         setValue( selectedValue );
     }
