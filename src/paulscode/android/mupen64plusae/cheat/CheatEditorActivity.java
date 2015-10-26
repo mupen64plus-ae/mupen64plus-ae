@@ -28,7 +28,6 @@ import java.util.Locale;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.ScanRomsActivity;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
@@ -172,6 +171,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt, true );
         CheatUtils.save( crc, usrcheat_txt, userCheats, mRomHeaderName, mRomCountryCode, this, false );
         CheatUtils.save( crc, mupencheat_txt, combinedCheats, mRomHeaderName, mRomCountryCode, this, true );
+        
+        setResult(RESULT_OK, null);
     }
     
     private boolean isHexNumber( String num )
@@ -239,8 +240,6 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
             
             case R.id.imgBtnChtSave:
                 save( mRomCrc );
-
-                setResult(RESULT_OK, null);
                 CheatEditorActivity.this.finish();
                 break;
                 
