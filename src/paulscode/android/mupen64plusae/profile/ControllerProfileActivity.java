@@ -32,10 +32,12 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class ControllerProfileActivity extends ControllerProfileActivityBase
+public class ControllerProfileActivity extends ControllerProfileActivityBase implements OnClickListener
 {    
     @Override
     void initLayout()
@@ -108,6 +110,22 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase
     }
     
     @Override
+    public void onClick( View view )
+    {
+        // Handle button clicks in the mapping screen
+        for( int i = 0; i < mN64Buttons.length; i++ )
+        {
+            // Find the button that was pressed
+            if( view.equals( mN64Buttons[i] ) )
+            {
+                // Popup a dialog to listen to input codes from user
+                Button button = (Button) view;
+                popupListener( button.getText(), i );
+            }
+        }
+    }
+    
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
         return mKeyProvider.onKey(keyCode, event) || super.onKeyDown(keyCode, event);
@@ -127,15 +145,5 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase
             return false;
 
         return mAxisProvider.onGenericMotion(event) || super.onGenericMotionEvent(event);
-    }
-    
-    @Override
-    void refreshAllButtons(boolean incrementSelection)
-    {
-        final InputMap map = mProfile.getMap();
-        for( int i = 0; i < mN64Buttons.length; i++ )
-        {
-            refreshButton( mN64Buttons[i], 0, map.isMapped( i ) );
-        }
     }
 }

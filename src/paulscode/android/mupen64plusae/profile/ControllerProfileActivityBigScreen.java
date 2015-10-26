@@ -29,16 +29,18 @@ import paulscode.android.mupen64plusae.dialog.Prompt.ListItemTwoTextIconPopulato
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
-public class ControllerProfileActivityBigScreen extends ControllerProfileActivityBase
+public class ControllerProfileActivityBigScreen extends ControllerProfileActivityBase implements OnItemClickListener, OnItemLongClickListener
 {
     private ListView mListView;
-    private int mCurrentPosition = 0;;
+    private ArrayAdapter<String> mListAdapter;
     
     @Override
     void initLayout()
@@ -47,53 +49,63 @@ public class ControllerProfileActivityBigScreen extends ControllerProfileActivit
         setContentView( R.layout.controller_profile_activity_bigscreen );
         mListView = (ListView) findViewById( R.id.input_map_activity_bigscreen );
         mListView.setOnItemClickListener( this );
+        mListView.setOnItemLongClickListener(this);
     }
     
     @Override
     public void onItemClick( AdapterView<?> parent, View view, int position, long id )
-    {
-        mCurrentPosition = position;
-        
-        super.onItemClick(parent, view, position, id);
+    {        
+        popupListener( mCommandNames[position], mCommandIndices[position] );
     }
     
     @Override
-    void refreshAllButtons(boolean incrementSelection)
-    {
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+    {        
         final InputMap map = mProfile.getMap();
+        map.unmapCommand( mCommandIndices[position] );
+        mProfile.putMap( map );
+        refreshAllButtons(false);
+        
+        return true;
+    }
+    
+    private InputMap getMap()
+    {
+        return mProfile.getMap();
+    }
+    
+    @Override
+    protected void refreshAllButtons(boolean incrementSelection)
+    {
+        super.refreshAllButtons(incrementSelection);
+
         for (int i = 0; i < mN64Buttons.length; i++)
         {
-            refreshButton(mN64Buttons[i], 0, map.isMapped(i));
+            refreshButton(mN64Buttons[i], 0, getMap().isMapped(i));
         }
         
-        //First save scroll position
-        int index = mListView.getFirstVisiblePosition();
-        View view = mListView.getChildAt(0);
-        
-        int top = (view == null) ? 0 : (view.getTop() - mListView.getPaddingTop());
-
-        ArrayAdapter<String> adapter = Prompt.createAdapter(this, Arrays.asList(mCommandNames),
-            new ListItemTwoTextIconPopulator<String>()
-            {
-                @Override
-                public void onPopulateListItem(String item, int position, TextView text1, TextView text2, ImageView icon)
-                {
-                    text1.setText(item);
-                    text2.setText(map.getMappedCodeInfo(mCommandIndices[position]));
-                    icon.setVisibility(View.GONE);
-                }
-            });
-
-        mListView.setAdapter(adapter);
-        
-        if(incrementSelection)
+        if(mListAdapter == null)
         {
-            ++index;
-            ++mCurrentPosition;
+            mListAdapter = Prompt.createAdapter(this, Arrays.asList(mCommandNames),
+                new ListItemTwoTextIconPopulator<String>()
+                {
+                    @Override
+                    public void onPopulateListItem(String item, int position, TextView text1, TextView text2, ImageView icon)
+                    {
+                        text1.setText(item);
+                        text2.setText(getMap().getMappedCodeInfo(mCommandIndices[position]));
+                        icon.setVisibility(View.GONE);
+                    }
+                });
+            mListView.setAdapter(mListAdapter);
         }
         
-        //Restore scroll position and selected item
-        mListView.setSelectionFromTop(index, top);
-        mListView.setSelection(mCurrentPosition);
+        mListAdapter.notifyDataSetChanged();
+
+        if(incrementSelection && mListView.getSelectedItemPosition() != AdapterView.INVALID_POSITION )
+        {
+            //Update the selected item
+            mListView.setSelection(mListView.getSelectedItemPosition() + 1);
+        }
     }
 }

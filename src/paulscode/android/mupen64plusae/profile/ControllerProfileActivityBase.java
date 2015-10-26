@@ -49,17 +49,12 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.bda.controller.Controller;
 
-public abstract class ControllerProfileActivityBase extends AppCompatActivity implements OnInputListener,
-        OnClickListener, OnItemClickListener
+public abstract class ControllerProfileActivityBase extends AppCompatActivity implements OnInputListener
 {
     // Slider limits
     protected static final int MIN_DEADZONE = 0;
@@ -264,30 +259,8 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
                     }
                 } );
     }
-    
-    @Override
-    public void onItemClick( AdapterView<?> parent, View view, int position, long id )
-    {
-        popupListener( mCommandNames[position], mCommandIndices[position] );
-    }
-    
-    @Override
-    public void onClick( View view )
-    {
-        // Handle button clicks in the mapping screen
-        for( int i = 0; i < mN64Buttons.length; i++ )
-        {
-            // Find the button that was pressed
-            if( view.equals( mN64Buttons[i] ) )
-            {
-                // Popup a dialog to listen to input codes from user
-                Button button = (Button) view;
-                popupListener( button.getText(), i );
-            }
-        }
-    }
-    
-    private void popupListener( CharSequence title, final int index )
+
+    protected void popupListener( CharSequence title, final int index )
     {
         final InputMap map = mProfile.getMap();
         String message = getString( R.string.inputMapActivity_popupMessage,
@@ -394,6 +367,13 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
             }
         }
     }
-    
-    abstract void refreshAllButtons(boolean incrementSelection);
+
+    protected void refreshAllButtons(boolean incrementSelection)
+    {
+        final InputMap map = mProfile.getMap();
+        for( int i = 0; i < mN64Buttons.length; i++ )
+        {
+            refreshButton( mN64Buttons[i], 0, map.isMapped( i ) );
+        }
+    }
 }
