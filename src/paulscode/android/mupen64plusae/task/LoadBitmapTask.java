@@ -36,7 +36,8 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
     private final String mBitmapPath;
     private final ImageView mArtView;
     private BitmapDrawable mArtBitmap;
-    public final Context mContext;
+    private final Context mContext;
+    private boolean mIsCancelled;
     
     public LoadBitmapTask( Context context, String bitmapPath, ImageView artView)
     {
@@ -44,6 +45,7 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
         mArtView = artView;
         mArtBitmap = null;
         mContext = context;
+        mIsCancelled = false;
     }
 
     @Override
@@ -59,10 +61,20 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
     @Override
     protected void onPostExecute( String result )
     {
-        if( mArtBitmap != null )
-            mArtView.setImageDrawable( mArtBitmap );
-        else
-            mArtView.setImageResource( R.drawable.default_coverart );
+        if(!mIsCancelled)
+        {
+            if( mArtBitmap != null )
+                mArtView.setImageDrawable( mArtBitmap );
+            else
+                mArtView.setImageResource( R.drawable.default_coverart );
+        }
+    }
+    
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        
+        mIsCancelled = true;
     }
 
 }
