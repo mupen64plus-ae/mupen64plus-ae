@@ -35,10 +35,10 @@ import android.text.TextUtils;
 public class Profile implements Comparable<Profile>
 {
     /** The name of the profile, displayed in the UI and used as a unique identifier. */
-    public final String name;
+    public String name;
     
     /** An optional brief description of the profile. Shown in some locations in the UI. */
-    public final String comment;
+    public String comment;
     
     /**
      * Whether this profile is "built-in" to the app (vs. user defined). Built-in profiles are
@@ -90,6 +90,26 @@ public class Profile implements Comparable<Profile>
         this.comment = section.get( KEY_COMMENT );
         for( String key : section.keySet() )
             this.data.put( key, section.get( key ) );
+    }
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    
+    public String getComment()
+    {
+        return comment;
+    }
+    
+    public void setComment(String comment)
+    {
+        this.comment = comment;
     }
     
     /**

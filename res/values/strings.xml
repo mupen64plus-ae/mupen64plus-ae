@@ -400,6 +400,7 @@
     <string name="controllerProfile2_title">Controller 2 profile</string>
     <string name="controllerProfile3_title">Controller 3 profile</string>
     <string name="controllerProfile4_title">Controller 4 profile</string>
+    <string name="default_profile_title">Current Default</string>
     
     <!-- Other Preferences -->
     <string name="GameAutoSavesMax_title">Max auto saves per game</string>

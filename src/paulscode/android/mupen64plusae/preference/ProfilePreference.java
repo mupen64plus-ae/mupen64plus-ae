@@ -87,7 +87,35 @@ public class ProfilePreference extends CompatibleListPreference
         List<Profile> profiles = new ArrayList<Profile>();
         profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
         profiles.addAll( Profile.getProfiles( configCustom, false ) );
+        
         Collections.sort( profiles );
+        
+        //Find the default profile and add it
+        Profile defaultProfile = null;
+        if( configCustom.keySet().contains( defaultValue ) )
+            defaultProfile =  new Profile( false, configCustom.get( defaultValue ) );
+        else if( configBuiltin.keySet().contains( defaultValue ) )
+            defaultProfile = new Profile( true, configBuiltin.get( defaultValue ) );
+        
+        //This is a fake profile that doesn't exist in any config file.
+        //Selecting this profile will make us fall back to the current default profile
+        CharSequence defaultProfileTitle = getContext().getText( R.string.default_profile_title );
+        
+        //Label it as default
+        if(defaultProfile != null)
+        {
+            String defaultProfileComment = defaultProfile.getName();
+            
+            if(defaultProfile.getComment() != null)
+            {
+                defaultProfileComment +=  ": " + defaultProfile.getComment();
+            }
+            defaultProfile.setComment(defaultProfileComment);
+            defaultProfile.setName(defaultProfileTitle.toString());
+            
+            //Add it at the beginning
+            profiles.add(0, defaultProfile);
+        }
         
         int offset = mAllowDisable ? 1 : 0;
         int numEntries = profiles.size() + offset;
@@ -113,7 +141,7 @@ public class ProfilePreference extends CompatibleListPreference
         setEntryValues( values );
         String selectedValue = getPersistedString( null );
         if( !ArrayUtils.contains( values, selectedValue ) )
-            persistString( defaultValue );
+            persistString( defaultProfileTitle.toString() );
         selectedValue = getPersistedString( null );
         setValue( selectedValue );
     }
