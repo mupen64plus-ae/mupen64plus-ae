@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.game;
 
 import paulscode.android.mupen64plusae.input.map.TouchMap;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v4.view.GravityCompat;
@@ -28,7 +29,6 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.MotionEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,13 +148,14 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
         }
     }
     
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
         // Let the parent DrawerLayout deal with it
         try
         {
-            return super.onInterceptTouchEvent( event );
+            return super.onTouchEvent( event );
         }
         catch( Exception ex )
         {
