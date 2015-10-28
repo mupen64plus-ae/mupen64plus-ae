@@ -22,9 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import org.mupen64plusae.v3.alpha.R;
-
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
@@ -41,18 +39,20 @@ import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListen
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-
 import com.bda.controller.Controller;
+
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener, ExtractCheatListener
@@ -316,6 +316,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
     }
     
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void onExtractFinished(ArrayList<Cheat> cheats)
     {
@@ -350,21 +351,33 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             //We store the cheat index in the key as a string
             String key = mRomCrc + " Cheat" + cheat.cheatIndex ;
             pref.setKey( key );
-            
-            //We reset if the list was changed by the user
-            if(mClearCheats)
-            {
-                mPrefs.edit().putInt( key, 0 ).commit();
-            }
-            
+
             // Add the preference menu item to the cheats category
             mCategoryCheats.addPreference( pref );
+            
+            // We reset if the list was changed by the user
+            if (mClearCheats)
+            {
+                pref.onOptionChoice(0);
+            }
         }
         
         mScreenCheats.addPreference( mCategoryCheats );
         
-        //Reset this to false if it was set
-        mClearCheats = false;
+        if(mClearCheats)
+        {
+            //Reset this to false if it was set
+            if (AppData.IS_GINGERBREAD)
+            {
+                mPrefs.edit().apply();
+            }
+            else
+            {
+                mPrefs.edit().commit();
+            }
+            
+            mClearCheats = false;
+        }
     }
     
     @Override
