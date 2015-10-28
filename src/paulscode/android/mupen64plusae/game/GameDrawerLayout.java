@@ -21,7 +21,6 @@
 package paulscode.android.mupen64plusae.game;
 
 import paulscode.android.mupen64plusae.input.map.TouchMap;
-
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v4.view.GravityCompat;
@@ -147,5 +146,24 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
             // https://github.com/android/platform_frameworks_support/blob/master/v4/java/android/support/v4/widget/ViewDragHelper.java
             return false;
         }
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        // Let the parent DrawerLayout deal with it
+        try
+        {
+            return super.onInterceptTouchEvent( event );
+        }
+        catch( Exception ex )
+        {
+            // For some reason this is very prone to crashing here when using multitouch:
+            //  at android.support.v4.widget.ViewDragHelper.clearMotionHistory(ViewDragHelper.java:794)
+            // But fortunately this is very unimportant, so we can safely ignore it
+            // The source code is here if you want to attempt a fix:
+            // https://github.com/android/platform_frameworks_support/blob/master/v4/java/android/support/v4/widget/ViewDragHelper.java
+            return false;
+        }   
     }
 }
