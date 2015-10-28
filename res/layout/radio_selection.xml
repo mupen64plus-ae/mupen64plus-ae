@@ -11,11 +11,13 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white"
         android:textIsSelectable="false" />
 
-    <RadioButton 
+    <android.support.v7.widget.AppCompatRadioButton
         android:id="@+id/radio_selection"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>

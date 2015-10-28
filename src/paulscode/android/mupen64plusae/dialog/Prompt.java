@@ -41,6 +41,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.RadioButton;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -500,8 +501,9 @@ public final class Prompt
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View layout = inflater.inflate( R.layout.radio_preference, null );
         final LinearLayout mainLayout = (LinearLayout) layout.findViewById( R.id.main_layout );
+        mainLayout.setGravity(Gravity.CENTER);
         
-        final ArrayList<RadioButton> radioButtons = new ArrayList<RadioButton>(row*columns);
+        final ArrayList<AppCompatRadioButton> radioButtons = new ArrayList<AppCompatRadioButton>(row*columns);
         Integer radioNumber = min;
         
         //create row of buttons
@@ -520,7 +522,7 @@ public final class Prompt
                 TextView text = (TextView)radioLayout.findViewById(R.id.radio_number);
                 linearLayout.addView(radioLayout);
                 text.setText(radioNumber.toString());
-                RadioButton radioSelection = (RadioButton) radioLayout.findViewById(R.id.radio_selection);
+                AppCompatRadioButton radioSelection = (AppCompatRadioButton) radioLayout.findViewById(R.id.radio_selection);
                 
                 if(radioNumber == initial)
                 {
@@ -538,7 +540,7 @@ public final class Prompt
                         //only do this on the button that is checked
                         if(isChecked)
                         {
-                            for(RadioButton button:radioButtons)
+                            for(AppCompatRadioButton button:radioButtons)
                             {
                                 //uncheck all other radio buttons
                                 if(button != buttonView)
