@@ -261,7 +261,12 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
         params.width = Math.round ( (float) mGlobalPrefs.videoSurfaceWidth * ( (float) mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( (float) mGlobalPrefs.videoSurfaceHeight * ( (float) mGamePrefs.videoSurfaceZoom / 100.f ) );
-        params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
+        
+        if( (mGlobalPrefs.displayOrientation & 1) == 1 ) 
+            params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
+        else
+            params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
+        
         mSurface.setLayoutParams( params );
         
         // Initialize the screen elements

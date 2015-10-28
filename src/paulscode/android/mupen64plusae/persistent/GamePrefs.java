@@ -267,11 +267,41 @@ public class GamePrefs
         glide64MaxFrameskip = Math.abs( maxFrameskip );
         
         // Display prefs
-        int resolution = getSafeInt( emulationProfile, "videoResolution", 100 );
-        videoRenderWidth = Math.round( ( float ) ( globalPrefs.videoSurfaceWidth * resolution ) / 100.f );
-        videoRenderHeight = Math.round( ( float ) ( globalPrefs.videoSurfaceHeight * resolution ) / 100.f );
+        int hResolution = getSafeInt( mPreferences, "displayResolution", 0 );
         
-        videoSurfaceZoom = getSafeInt( emulationProfile, "displayZoom", 100 );
+        switch( hResolution )
+        {
+            case 720:
+                videoRenderWidth = 960;
+                videoRenderHeight = 720;
+                break;
+            case 600:
+                videoRenderWidth = 800;
+                videoRenderHeight = 600;
+                break;
+            case 480:
+                videoRenderWidth = 640;
+                videoRenderHeight = 480;
+                break;
+            case 360:
+                videoRenderWidth = 480;
+                videoRenderHeight = 360;
+                break;
+            case 240:
+                videoRenderWidth = 320;
+                videoRenderHeight = 240;
+                break;
+            case 120:
+                videoRenderWidth = 160;
+                videoRenderHeight = 120;
+                break;
+            default:
+                videoRenderWidth = globalPrefs.videoSurfaceWidth;
+                videoRenderHeight = globalPrefs.videoSurfaceHeight;
+                break;
+        }
+        
+        videoSurfaceZoom = getSafeInt( mPreferences, "displayZoom", 100 );
         
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null;
@@ -392,6 +422,18 @@ public class GamePrefs
         try
         {
             return Integer.parseInt( profile.get( key, String.valueOf( defaultValue ) ) );
+        }
+        catch( NumberFormatException ex )
+        {
+            return defaultValue;
+        }
+    }
+    
+    private static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )
+    {
+        try
+        {
+            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
         }
         catch( NumberFormatException ex )
         {
