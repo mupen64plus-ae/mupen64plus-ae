@@ -42,6 +42,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -107,6 +108,12 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
      */
     abstract protected void onEditProfile( Profile profile );
     
+    /**
+     * Returns the title of the activity resource id
+     * @return title of the activity resource id
+     */
+    abstract protected int getWindowTitleResource();
+    
     /** The back-end store for the built-in profiles, which subclasses should read from. */
     protected ConfigFile mConfigBuiltin;
     
@@ -125,6 +132,14 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        
+        setContentView( R.layout.manage_profiles_activity );
+        
+        // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
+        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+        toolbar.setTitle( getWindowTitleResource() );
+        setSupportActionBar( toolbar );
+        
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );

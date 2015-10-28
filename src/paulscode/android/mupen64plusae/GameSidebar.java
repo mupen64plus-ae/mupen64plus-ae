@@ -22,53 +22,85 @@ package paulscode.android.mupen64plusae;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver.OnScrollChangedListener;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class GameSidebar extends ScrollView
+public class GameSidebar extends MenuListView
 {
-    private LinearLayout mLayout;
     private ImageView mInfoArt;
     private LinearLayout mImageLayout;
     private TextView mGameTitle;
-    private Context mContext;
+    private GameSidebarActionHandler mActionHandler;
     
     public GameSidebar( Context context, AttributeSet attrs )
     {
         super( context, attrs );
         
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        inflater.inflate( R.layout.game_sidebar, this );
+        final View header = inflater.inflate( R.layout.game_sidebar_header, this, false );
+
+        mInfoArt = (ImageView) header.findViewById( R.id.imageArt );
+        mImageLayout = (LinearLayout) header.findViewById( R.id.imageLayout );
+        mGameTitle = (TextView) header.findViewById( R.id.gameTitle );
         
-        mContext = context;
-        mLayout = (LinearLayout) findViewById( R.id.layout );
-        mInfoArt = (ImageView) findViewById( R.id.imageArt );
-        mImageLayout = (LinearLayout) findViewById( R.id.imageLayout );
-        mGameTitle = (TextView) findViewById( R.id.gameTitle );
+        setOnScrollListener(new OnScrollListener()
+        {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState)
+            {
+                //Nothing to do here
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+            {
+                //int scrollY = GameSidebar.this.getScrollY();
+                
+                if(GameSidebar.this.getChildAt(0) == header)
+                {
+                    int top =  GameSidebar.this.getChildAt(0).getTop();
+                    int scrollY = top*-1;
+                    mImageLayout.setPadding( 0, scrollY / 2, 0, 0 );
+                }
+
+            }
+            
+        });
         
-        // Have the game cover art scroll at half the speed as the rest of the content
-        final ScrollView scroll = this;
-        getViewTreeObserver().addOnScrollChangedListener( new OnScrollChangedListener()
+        setClipToPadding(true);
+        setNextFocusDownId(getId());
+        setNextFocusLeftId(getId());
+        setNextFocusRightId(getId());
+        setNextFocusUpId(getId());
+        
+        addHeaderView(header);
+    }
+    
+    public void setActionHandler(GameSidebarActionHandler actionHandler, int menuResource)
+    {
+        mActionHandler = actionHandler;
+        setMenuResource( menuResource );
+        
+        // Handle menu item selections
+        setOnClickListener( new MenuListView.OnClickListener()
         {
             @Override
-            public void onScrollChanged()
+            public void onClick( MenuItem menuItem )
             {
-                int scrollY = scroll.getScrollY();
-                mImageLayout.setPadding( 0, scrollY / 2, 0, 0 );
+                mActionHandler.onGameSidebarAction( menuItem );
             }
         } );
+        
+        setOnKeyListener(actionHandler);
     }
     
     public void setImage( BitmapDrawable image )
@@ -84,80 +116,8 @@ public class GameSidebar extends ScrollView
         mGameTitle.setText( title );
     }
     
-    public void clear()
+    public interface GameSidebarActionHandler extends OnKeyListener
     {
-        mLayout.removeAllViews();
-    }
-    
-    public void addHeading( String heading )
-    {
-        // Perhaps we should just inflate this from XML?
-        TextView headingView = new TextView( mContext );
-        headingView.setText( heading );
-        headingView.setTextSize( TypedValue.COMPLEX_UNIT_SP, 14.0f );
-        
-        DisplayMetrics metrics = new DisplayMetrics();
-        ( (Activity) mContext ).getWindowManager().getDefaultDisplay().getMetrics( metrics );
-        int padding = (int) ( metrics.density * 5 );
-        headingView.setPadding( padding, padding, padding, padding );
-        mLayout.addView( headingView );
-    }
-    
-    public void addRow( int icon, String title, String summary, Action action )
-    {
-        addRow( icon, title, summary, action, 0x0, 0 );
-    }
-    
-    public void addRow( int icon, String title, String summary, Action action, int indicator, int indentation )
-    {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        View view = inflater.inflate( R.layout.list_item_menu, null );
-        
-        if( indentation != 0 )
-        {
-            DisplayMetrics metrics = new DisplayMetrics();
-            ( (Activity) getContext() ).getWindowManager().getDefaultDisplay().getMetrics( metrics );
-            
-            view.setPadding( (int) ( indentation * 15 * metrics.density ), view.getPaddingTop(),
-                    view.getPaddingRight(), view.getPaddingBottom() );
-        }
-        
-        ImageView iconView = (ImageView) view.findViewById( R.id.icon );
-        TextView text1 = (TextView) view.findViewById( R.id.text1 );
-        TextView text2 = (TextView) view.findViewById( R.id.text2 );
-        iconView.setImageResource( icon );
-        text1.setText( title );
-        text2.setText( summary );
-        if( TextUtils.isEmpty( summary ) )
-            text2.setVisibility( View.GONE );
-        
-        ImageView indicatorView = (ImageView) view.findViewById( R.id.indicator );
-        indicatorView.setImageResource( indicator );
-        if( indicator == 0x0 )
-            indicatorView.setVisibility( View.GONE );
-        
-        mLayout.addView( view );
-        
-        if( action == null )
-            return;
-        
-        // Pass the action to the click listener
-        final Action finalAction = action;
-        
-        view.setFocusable( true );
-        view.setBackgroundResource( android.R.drawable.list_selector_background );
-        view.setOnClickListener( new OnClickListener()
-        {
-            @Override
-            public void onClick( View view )
-            {
-                finalAction.onAction();
-            }
-        } );
-    }
-    
-    public abstract static class Action
-    {
-        abstract public void onAction();
+        abstract public void onGameSidebarAction(MenuItem menuItem);
     }
 }

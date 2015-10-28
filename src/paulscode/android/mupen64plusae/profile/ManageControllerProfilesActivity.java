@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 
@@ -52,6 +54,19 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     @Override
     protected void onEditProfile( Profile profile )
     {
-        ActivityHelper.startControllerProfileActivity( this, profile.name );
+        if(mGlobalPrefs.isBigScreenMode)
+        {
+            ActivityHelper.startControllerProfileActivityBigScreen( this, profile.name );
+        }
+        else
+        {
+            ActivityHelper.startControllerProfileActivity( this, profile.name );
+        }
+    }
+
+    @Override
+    protected int getWindowTitleResource()
+    {
+        return R.string.ManageControllerProfilesActivity_title;
     }
 }

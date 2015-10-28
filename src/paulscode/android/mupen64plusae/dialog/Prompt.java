@@ -41,14 +41,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -478,6 +482,155 @@ public final class Prompt
             }
         } ).setView( layout ).create().show();
     }
+    
+    /**
+     * Open a dialog to prompt the user for an integer using radio buttons
+     *
+     * @param context  The activity context.
+     * @param title    The title of the dialog.
+     * @param initial  The initial (default) value shown in the dialog.
+     * @param min      The minimum value permitted.
+     * @param max      The maximum value permitted.
+     * @param listener The listener to process the integer, when provided.
+     */
+    @SuppressLint( "InflateParams" )
+    public static void promptRadioInteger( Context context, CharSequence title,
+            final int initial, final int min, final int row, final int columns,
+            final PromptIntegerListener listener )
+    {
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View layout = inflater.inflate( R.layout.radio_preference, null );
+        final LinearLayout mainLayout = (LinearLayout) layout.findViewById( R.id.main_layout );
+        mainLayout.setGravity(Gravity.CENTER);
+        
+        final ArrayList<AppCompatRadioButton> radioButtons = new ArrayList<AppCompatRadioButton>(row*columns);
+        Integer radioNumber = min;
+        
+        //create row of buttons
+        for(int rowIndex = 0; rowIndex < row; ++rowIndex)
+        {
+            LinearLayout linearLayout = new LinearLayout(context);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+            linearLayout.setLayoutParams(params);
+            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+            
+            //create all the colums for this row
+            for(int columnIndex = 0; columnIndex < columns; ++columnIndex)
+            {
+                View radioLayout = inflater.inflate( R.layout.radio_selection, null );
+                TextView text = (TextView)radioLayout.findViewById(R.id.radio_number);
+                linearLayout.addView(radioLayout);
+                text.setText(radioNumber.toString());
+                AppCompatRadioButton radioSelection = (AppCompatRadioButton) radioLayout.findViewById(R.id.radio_selection);
+                
+                if(radioNumber == initial)
+                {
+                    radioSelection.setChecked(true);
+                }
+                
+                //In here we are trying to mimic RadioGroup behavior across multiple columns/rows
+                //We have to do this because RadioGroup doesn't allow that behavior
+                //So, if one radio button is selected, we have to uncheck all others
+                radioSelection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                    {
+                        //only do this on the button that is checked
+                        if(isChecked)
+                        {
+                            for(AppCompatRadioButton button:radioButtons)
+                            {
+                                //uncheck all other radio buttons
+                                if(button != buttonView)
+                                {
+                                    button.setChecked(false);
+                                }
+                            }
+                        }
+                    }
+                    
+                });
+                
+                ++radioNumber;
+                
+                radioButtons.add(radioSelection);
+            }
+            
+
+            mainLayout.addView(linearLayout);
+        }
+        
+        prefillBuilder( context, title, null, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                //We have to look for the one check radio button
+                boolean found = false;
+                int index = 0;
+                for(; index < radioButtons.size() && !found; ++index)
+                {
+                    //uncheck all other radio buttons
+                    if(radioButtons.get(index).isChecked())
+                    {
+                        found = true;
+                    }
+                }
+                
+                //decrement once to get the right index
+                --index;
+                
+                //default to zero if nothing is checked
+                if(!found)
+                {
+                    index = 0;
+                }
+                
+                listener.onDialogClosed( index, which );
+            }
+        } ).setView( layout ).create().show();
+    }
+    
+    /**
+     * Open a dialog to prompt the user for a selection using a spinner.
+     *
+     * @param context  The activity context.
+     * @param title    The title of the dialog.
+     * @param format   The string format for the displayed value (e.g. "%1$d %%"), or null to display number only.
+     * @param initial  The initial (default) value shown in the dialog.
+     * @param min      The minimum value permitted.
+     * @param max      The maximum value permitted.
+     * @param listener The listener to process the integer, when provided.
+     */
+    @SuppressLint( "InflateParams" )
+    public static void promptListSelection( Context context, CharSequence title,
+            final ArrayList<CharSequence> selections, final PromptIntegerListener listener )
+    {        
+        // When the user clicks a file, notify the downstream listener
+        OnClickListener internalListener = new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which != DialogInterface.BUTTON_NEGATIVE)
+                {
+                    listener.onDialogClosed( which, DialogInterface.BUTTON_POSITIVE );
+                }
+            }
+        };
+        
+        // Create the dialog builder, removing Ok button and populating list in the process
+        Builder builder = prefillBuilder( context, title, null, internalListener );
+        builder.setPositiveButton( null, null );
+        CharSequence[] items = selections.toArray( new CharSequence[selections.size()] );
+        builder.setItems( items, internalListener );
+        
+        // Create and launch the dialog
+        builder.create().show();
+    }
+    
     
     /**
      * Open a dialog to prompt the user for an input code.

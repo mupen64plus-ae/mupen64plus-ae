@@ -21,14 +21,16 @@
 <resources>
 
     <!-- ************************************************************************** -->
-    <!-- Menu Strings                                                               -->
+    <!-- Menu Strings -->
     <!-- ************************************************************************** -->
+
 
     <!-- In-Game Menu -->
     <string name="menuItem_toggleSpeed">Speed %1$d %%</string>
     <string name="menuItem_slotSave">Save slot</string>
     <string name="menuItem_slotLoad">Load slot</string>
     <string name="menuItem_setSlot">Slot %1$d</string>
+    <string name="menuItem_selectSlot">Select Slot</string>
     <string name="menuItem_fileSave">Save to file…</string>
     <string name="menuItem_fileLoad">Load from file…</string>
     <string name="menuItem_fileLoadAutoSave">Load from auto save…</string>
@@ -36,19 +38,18 @@
     <string name="menuItem_setSpeed">Game speed</string>
     <string name="menuItem_enableFramelimiter">Sync audio</string>
     <string name="menuItem_disableFramelimiter">Desync audio</string>
-    <string name="menuItem_paks">Controller Paks</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak1_empty">Player 1: Empty</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak1_mem">Player 1: Memory Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak1_rumble">Player 1: Rumble Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak2_empty">Player 2: Empty</string>
-    <string name="menuItem_pak2_mem">Player 2: Memory Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak2_rumble">Player 2: Rumble Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak3_empty">Player 3: Empty</string>
-    <string name="menuItem_pak3_mem">Player 3: Memory Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak3_rumble">Player 3: Rumble Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak4_empty">Player 4: Empty</string>
-    <string name="menuItem_pak4_mem">Player 4: Memory Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak4_rumble">Player 4: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_player_one">Player 1</string>
+    <string name="menuItem_player_two">Player 2</string>
+    <string name="menuItem_player_three">Player 3</string>
+    <string name="menuItem_player_four">Player 4</string>
+    <string name="menuItem_paks">Controller Paks</string>
+ <!-- capitalize since trademark -->
+    <string name="menuItem_pak_empty">Empty</string>
+ <!-- capitalize since trademark -->
+    <string name="menuItem_pak_mem">Memory Pak</string>
+ <!-- capitalize since trademark -->
+    <string name="menuItem_pak_rumble">Rumble Pak</string>
+ <!-- capitalize since trademark -->
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
 
@@ -110,9 +111,10 @@
     <string name="hint_profileComment">Description (optional)</string>
 
     <!-- ************************************************************************** -->
-    <!-- Toast Messages                                                             -->
-    <!-- Developers: Follow punctuation and grammar as shown below                  -->
+    <!-- Toast Messages -->
+    <!-- Developers: Follow punctuation and grammar as shown below -->
     <!-- ************************************************************************** -->
+
 
     <!-- Something happening (typically use '-ing' and '…') -->
     <string name="toast_rebuildingCheats">Rebuilding cheats database…</string>
@@ -148,10 +150,11 @@
     <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
 
     <!-- ************************************************************************** -->
-    <!-- Preference Menu Strings                                                    -->
-    <!-- Developers: Please follow naming conventions described in preferences.xml  -->
-    <!-- Developers: In general, capitalize first word only and avoid punctuation   -->
+    <!-- Preference Menu Strings -->
+    <!-- Developers: Please follow naming conventions described in preferences.xml -->
+    <!-- Developers: In general, capitalize first word only and avoid punctuation -->
     <!-- ************************************************************************** -->
+
 
     <!-- Actions (simply launch an action, aren't related to persistent data) -->
     <string name="actionResume_title">Resume</string>
@@ -244,10 +247,8 @@
     <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
     <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
     <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
-
     <string name="touchscreenAnimation_title">Visual feedback</string>
     <string name="touchscreenAnimation_summary">Animate joystick</string>
-
     <string name="touchscreenStyle_title">Button style</string>
     <string name="touchscreenStyle_entryOutline">Outlines</string>
     <string name="touchscreenStyle_entryShaded">Shaded</string>
@@ -256,18 +257,15 @@
     <string name="touchpadLayout_title">Touchpad layout</string>
     <string name="touchpadLayout_entryDefault">Left pad: Analog control; Right pad: C buttons</string>
     <string name="touchpadLayout_entryReverse">Left pad: C buttons; Right pad: Analog control</string>
-
     <string name="displayOrientation_title">Screen orientation</string>
     <string name="displayOrientation_entryLandscape">Landscape</string>
     <string name="displayOrientation_entryReverseLandscape">Reverse landscape</string>
     <string name="displayOrientation_entryPortrait">Portrait</string>
     <string name="displayOrientation_entryReversePortrait">Reverse portrait</string>
-
     <string name="displayPosition_title">Vertical screen position</string>
     <string name="displayPosition_entryBottom">Bottom</string>
     <string name="displayPosition_entryMiddle">Middle</string>
     <string name="displayPosition_entryTop">Top</string>
-
     <string name="displayResolution_title">Rendered resolution</string>
     <string name="displayResolution_entryNative">Native (highest quality)</string>
     <string name="displayResolution_entry960x720">960 x 720</string>
@@ -276,29 +274,24 @@
     <string name="displayResolution_entry480x360">480 x 360</string>
     <string name="displayResolution_entry320x240">320 x 240</string>
     <string name="displayResolution_entry160x120">160 x 120 (highest framerate)</string>
-
     <string name="displayScaling_title">Screen scaling</string>
     <string name="displayScaling_entryOriginal">Original\n<small>Fill screen, no distortion (adds black bars)</small></string>
     <string name="displayScaling_entryNone">None\n<small>Use exact resolution selected above</small></string>
     <string name="displayScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
     <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
     <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
-
     <string name="displayFps_title">Framerate</string>
     <string name="displayFps_summary">Display FPS on screen</string>
-
     <string name="videoPlugin_title">Video plugin</string>
     <string name="videoPlugin_entryNone">None (video disabled)</string>
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
     <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
     <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 alpha)</small></string>
-
     <string name="videoSubPlugin_title">Video plugin variant</string>
     <string name="videoSubPlugin_entryGles20">OpenGL ES 2.0</string>
     <string name="videoSubPlugin_entryGles30">OpenGL ES 3.0\n<small>(requires Android 4.3+ and device support)</small></string>
     <string name="videoSubPlugin_entryGles31">OpenGL ES 3.1\n<small>(requires Android 5.0+ and device support)</small></string>
-
     <string name="videoHardwareType_title">Flicker reduction</string>
     <string name="videoHardwareType_entryDisableHack">Disable flicker reduction hack</string>
     <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
@@ -311,7 +304,6 @@
     <string name="videoHardwareType_entryCustom">Custom profile</string>
     <string name="videoPolygonOffset_title">Polygon offset</string>
     <string name="videoPolygonOffset_summary">Custom flicker reduction bias</string>
-
     <string name="gln64Frameskip_title">Frameskip</string>
     <string name="gln64Frameskip_entryNever">Never skip frames</string>
     <string name="gln64Frameskip_entryUpTo1">No more than 1 frame</string>
@@ -324,7 +316,6 @@
     <string name="gln64Frameskip_entryExactly3">Exactly 3 frames</string>
     <string name="gln64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gln64Frameskip_entryExactly5">Exactly 5 frames</string>
-
     <string name="riceScreenUpdate_title">Screen update method</string>
     <string name="riceScreenUpdate_entryRomDefault">ROM default</string>
     <string name="riceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
@@ -334,7 +325,6 @@
     <string name="riceScreenUpdate_entryFirstPrimDraw">First primitive draw</string>
     <string name="riceScreenUpdate_entryBeforeScreenClear">Before screen clear</string>
     <string name="riceScreenUpdate_entryAfterScreenDrawn">After screen drawn</string>
-
     <string name="riceTextureEnhancement_title">Texture upscaling/enhancement</string>
     <string name="riceTextureEnhancement_entryNone">None</string>
     <string name="riceTextureEnhancement_entryScale2x">Scale 2x</string>
@@ -344,13 +334,11 @@
     <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
     <string name="riceTextureEnhancement_entrySharpen">Sharpen</string>
     <string name="riceTextureEnhancement_entrySharpen_more">Sharpen more</string>
-
     <string name="navigationMode_title">Accessibility</string>
     <string name="navigationMode_summary">Menu navigation mode: %1$s</string>
     <string name="navigationMode_entryAuto">Auto-select from device configuration</string>
     <string name="navigationMode_entryStandard">Standard mode</string>
     <string name="navigationMode_entryBigScreen">Big-screen mode (no touchscreen; gamepad/keyboard input only)</string>
-
     <string name="r4300Emulator_title">R4300 emulator</string>
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
@@ -361,31 +349,27 @@
     <string name="displayZoom_entry105">105%</string>
     <string name="displayZoom_entry110">110%</string>
     <string name="displayZoom_entry115">115%</string>
-
+    
     <string name="audioPlugin_title">Audio plugin</string>
     <string name="audioPlugin_entryNone">None (audio disabled)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
     <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-
     <string name="audioSDLBufferSize_title">Audio buffer size</string>
     <string name="audioSDLBufferSize_entry2048">Default</string>
     <string name="audioSDLBufferSize_entry128">Low-latency (experimental)</string>
     <string name="audioSDLBufferSize_entry8">Ultra-low latency (experimental)</string>
-    
     <string name="audioSLESBufferSize_title">Audio buffer size</string>
     <string name="audioSLESBufferSize_entry2048">2048</string>
     <string name="audioSLESBufferSize_entry1024">1024</string>
     <string name="audioSLESBufferSize_entry512">512</string>
     <string name="audioSLESBufferSize_entry256">256</string>
     <string name="audioSLESBufferSize_entry128">128</string>
-    
     <string name="audioSLESBufferNbr_title">Audio buffer number</string>
     <string name="audioSLESBufferNbr_entry2">2</string>
     <string name="audioSLESBufferNbr_entry3">3</string>
     <string name="audioSLESBufferNbr_entry4">4</string>
     <string name="audioSLESBufferNbr_entry5">5</string>
-
     <string name="localeOverride_entrySystemDefault">System default</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
@@ -422,10 +406,11 @@
     
 
     <!-- ************************************************************************** -->
-    <!-- Dialogs and Other Feedback                                                 -->
-    <!-- Developers: Use formatting arguments rather than string concatenation:     -->
-    <!-- http://developer.android.com/guide/topics/resources/string-resource.html   -->
+    <!-- Dialogs and Other Feedback -->
+    <!-- Developers: Use formatting arguments rather than string concatenation: -->
+    <!-- http://developer.android.com/guide/topics/resources/string-resource.html -->
     <!-- ************************************************************************** -->
+
 
     <!-- Confirmation Dialogs -->
     <string name="confirm_title">Confirmation</string>
