@@ -360,8 +360,13 @@ public class CacheRomInfoService extends Service
     
     private Throwable downloadFile( String sourceUrl, String destPath )
     {
+        File destFile = new File(destPath);
+        boolean fileCreationSuccess = true;
+        
+        Throwable returnThrowable = null;
+
         // Be sure destination directory exists
-        new File( destPath ).getParentFile().mkdirs();
+        destFile.getParentFile().mkdirs();
         
         // Download file
         InputStream inStream = null;
@@ -380,18 +385,17 @@ public class CacheRomInfoService extends Service
             // Read/write the streams (throws exceptions)
             byte[] buffer = new byte[1024];
             int n;
-            while( ( n = inStream.read( buffer ) ) >= 0 )
+            while( ( n = inStream.read( buffer ) ) >= 0 && !mbStopped)
             {
-                if( mbStopped )
-                    return null;
                 outStream.write( buffer, 0, n );
             }
-            return null;
         }
         catch( Throwable e )
         {
             Log.w( "CacheRomInfoService", e );
-            return e;
+            fileCreationSuccess = false;
+            
+            returnThrowable = e;
         }
         finally
         {
@@ -415,6 +419,15 @@ public class CacheRomInfoService extends Service
                     Log.w( "CacheRomInfoService", e );
                 }
         }
+        
+        if (!fileCreationSuccess)
+        {
+            // Delete any remnants if there was an exception. We don't want a
+            // corrupted graphic
+            destFile.delete();
+        }
+        
+        return returnThrowable;
     }
     
     @Override
