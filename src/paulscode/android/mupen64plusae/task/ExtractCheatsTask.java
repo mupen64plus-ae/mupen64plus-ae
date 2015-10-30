@@ -24,7 +24,6 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
-import paulscode.android.mupen64plusae.cheat.CheatFile.CheatSection;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import android.content.Context;
 import android.os.AsyncTask;
