@@ -184,6 +184,15 @@
             android:key="EnableShaderStorage"
             android:title="EnableShaderStorage" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="ForceGammaCorrection"
+            android:title="ForceGammaCorrection" />
+        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+            android:defaultValue="2.0"
+            android:key="GammaCorrectionLevel"
+            android:summary="@string/selectedValue"
+            android:title="GammaCorrectionLevel" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="EnableFBEmulation"
             android:title="EnableFBEmulation" />
