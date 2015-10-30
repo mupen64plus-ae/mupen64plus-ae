@@ -131,6 +131,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         setIntent( intent );
     }
     
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {

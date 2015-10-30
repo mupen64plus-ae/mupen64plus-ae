@@ -23,7 +23,6 @@ package paulscode.android.mupen64plusae.input.map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import paulscode.android.mupen64plusae.game.GameOverlay;
-import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Image;
