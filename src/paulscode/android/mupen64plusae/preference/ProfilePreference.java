@@ -104,7 +104,6 @@ public class ProfilePreference extends CompatibleListPreference
         //This is a fake profile that doesn't exist in any config file.
         //Selecting this profile will make us fall back to the current default profile
         CharSequence defaultProfileTitle = getContext().getText( R.string.default_profile_title );
-        boolean noDefaultSelected = false;
         
         //Label it as default
         if(defaultProfile != null)
@@ -127,7 +126,6 @@ public class ProfilePreference extends CompatibleListPreference
                 R.string.listItem_disabled).toString());
             // Add it at the beginning
             profiles.add(0, defaultProfile);
-            noDefaultSelected = true;
         }
         
         int offset = mAllowDisable ? 1 : 0;
@@ -147,13 +145,6 @@ public class ProfilePreference extends CompatibleListPreference
                 entryHtml += "<br><small>" + profile.comment + "</small>";
             entries[i + offset] = Html.fromHtml( entryHtml );
             values[i + offset] = profile.name;
-        }
-        
-        //Make the value of the "Current Default" profile be an empty string
-        //if there is no default selected
-        if(noDefaultSelected)
-        {
-            values[1] = "";
         }
         
         // Set the list entries and values; select default if persisted selection no longer exists
