@@ -421,6 +421,8 @@ public class GamePrefs
             return new ControllerProfile( false, custom.get( name ) );
         else if( builtin.keySet().contains( name ) )
             return new ControllerProfile( true, builtin.get( name ) );
+        if( custom.keySet().contains( name ) )
+            return new ControllerProfile( false, custom.get( defaultName ) );
         else if( builtin.keySet().contains( defaultName ) )
             return new ControllerProfile( true, builtin.get( defaultName ) );
         else
