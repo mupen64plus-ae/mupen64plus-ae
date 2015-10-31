@@ -46,6 +46,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
+            android:nextFocusLeft="@+id/drawerNavigation"
+            android:nextFocusRight="@+id/drawerNavigation"
+            android:nextFocusDown="@+id/drawerNavigation"
+            android:nextFocusUp="@+id/drawerNavigation"
             android:paddingTop="20dip" />
 
         <paulscode.android.mupen64plusae.GameSidebar
