@@ -264,6 +264,13 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
                 mGlobalPrefs.GetControllerProfilesConfig(), "" );
         
+        mEmulationProfile.setSummary(mEmulationProfile.getCurrentValue());
+        mTouchscreenProfile.setSummary(mTouchscreenProfile.getCurrentValue());
+        mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
+        mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
+        mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue());
+        mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
+        
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode),

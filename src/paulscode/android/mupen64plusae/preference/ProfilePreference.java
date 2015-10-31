@@ -150,6 +150,7 @@ public class ProfilePreference extends CompatibleListPreference
         }
         
         //Make the value of the "Current Default" profile be an empty string
+        //if there is no default selected
         if(noDefaultSelected)
         {
             values[1] = "";
@@ -163,5 +164,10 @@ public class ProfilePreference extends CompatibleListPreference
             persistString( defaultProfileTitle.toString() );
         selectedValue = getPersistedString( null );
         setValue( selectedValue );
+    }
+    
+    public String getCurrentValue()
+    {
+        return getPersistedString( null );
     }
 }
