@@ -129,6 +129,12 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     
     private final List<String> mProfileNames = new ArrayList<String>();
     
+    /** Profile list adapter */
+    private ProfileListAdapter mProfileListAdapter = null;
+    
+    /** Profile list **/
+    List<Profile> mProfileList = new ArrayList<Profile>();
+    
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -507,11 +513,19 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     private void refreshList()
     {
         // Get the profiles to be shown to the user
-        List<Profile> profiles1 = Profile.getProfiles( mConfigCustom, false );
+        mProfileList.clear();
+        mProfileList.addAll( Profile.getProfiles( mConfigCustom, false ));
         if( getBuiltinVisibility() )
-            profiles1.addAll( Profile.getProfiles( mConfigBuiltin, true ) );
-        Collections.sort( profiles1 );
-        setListAdapter( new ProfileListAdapter( this, profiles1 ) );
+            mProfileList.addAll( Profile.getProfiles( mConfigBuiltin, true ) );
+        Collections.sort( mProfileList );
+        
+        if(mProfileListAdapter == null)
+        {
+            mProfileListAdapter = new ProfileListAdapter( this, mProfileList );
+            setListAdapter( mProfileListAdapter );
+        }
+
+        mProfileListAdapter.notifyDataSetChanged();
         
         // Get all profiles, for validating unique names
         List<Profile> profiles2 = Profile.getProfiles( mConfigCustom, false );
