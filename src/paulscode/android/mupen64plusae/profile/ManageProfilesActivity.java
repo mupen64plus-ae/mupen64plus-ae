@@ -135,6 +135,10 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     /** Profile list **/
     List<Profile> mProfileList = new ArrayList<Profile>();
     
+    /**Alert dialogs **/
+    AlertDialog mAlertDialogMenu = null;
+    AlertDialog mAlertDialogEditName = null;
+    
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -165,6 +169,24 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
         mConfigCustom.reload();
         refreshList();
     }
+    
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        
+        if(mAlertDialogMenu != null)
+        {
+            mAlertDialogMenu.dismiss();
+        }
+        
+        if(mAlertDialogEditName != null)
+        {
+            mAlertDialogEditName.dismiss();
+        }
+    }
+    
+
     
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
@@ -274,7 +296,8 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
                             }
                         }
                     } );
-            builder.create().show();
+            mAlertDialogMenu = builder.create();
+            mAlertDialogMenu.show();
         }
         super.onListItemClick( l, v, position, id );
     }
@@ -432,13 +455,14 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
         builder.setView( layout );
         builder.setPositiveButton( android.R.string.ok, clickListener );
         builder.setNegativeButton( android.R.string.cancel, clickListener );
-        final AlertDialog dialog = builder.create();
+        
+        mAlertDialogEditName = builder.create();
         
         // Show the dialog
-        dialog.show();
+        mAlertDialogEditName.show();
         
         // Dynamically disable the OK button if the name is not unique
-        final Button okButton = dialog.getButton( DialogInterface.BUTTON_POSITIVE );
+        final Button okButton = mAlertDialogEditName.getButton( DialogInterface.BUTTON_POSITIVE );
         String warning = isValidName( name, name, allowSameName );
         textWarning.setText( warning );
         okButton.setEnabled( TextUtils.isEmpty( warning ) );
