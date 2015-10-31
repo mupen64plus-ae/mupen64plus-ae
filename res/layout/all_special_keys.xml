@@ -122,6 +122,10 @@
             android:id="@+id/buttonScreenshot"
             style="@style/btnSpecialMappable"
             android:text="@string/inputMapActivity_screenshot" />
+        <Button
+            android:id="@+id/buttonReset"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapActivity_reset" />
     </TableRow>
 
 </TableLayout>

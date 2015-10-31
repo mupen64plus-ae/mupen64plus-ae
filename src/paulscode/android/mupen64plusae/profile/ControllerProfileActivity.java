@@ -90,6 +90,7 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
         setupButton( R.id.buttonSaveSlot,      InputMap.FUNC_SAVE_SLOT );
         setupButton( R.id.buttonLoadSlot,      InputMap.FUNC_LOAD_SLOT );
         setupButton( R.id.buttonPause,         InputMap.FUNC_PAUSE );
+        setupButton( R.id.buttonReset,         InputMap.FUNC_RESET );
         setupButton( R.id.buttonStop,          InputMap.FUNC_STOP );
         setupButton( R.id.buttonSpeedDown,     InputMap.FUNC_SPEED_DOWN );
         setupButton( R.id.buttonSpeedUp,       InputMap.FUNC_SPEED_UP );
