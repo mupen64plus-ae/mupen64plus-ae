@@ -185,6 +185,16 @@ public class GamePrefs
     
     private final SharedPreferences mPreferences;
     
+    /** Profile keys */
+    public static final String EMULATION_PROFILE = "emulationProfile";
+    public static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
+    public static final String CONTROLLER_PROFILE1 = "controllerProfile1";
+    public static final String CONTROLLER_PROFILE2 = "controllerProfile2";
+    public static final String CONTROLLER_PROFILE3 = "controllerProfile3";
+    public static final String CONTROLLER_PROFILE4 = "controllerProfile4";
+    public static final String PLAYER_MAP = "playerMap";
+    public static final String PLAY_SHOW_CHEATS = "playShowCheats";
+    
     public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol,
         AppData appData, GlobalPrefs globalPrefs)
     {        
@@ -202,34 +212,34 @@ public class GamePrefs
         mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         
         // Emulation profile
-        emulationProfile = loadProfile( mPreferences, "emulationProfile",
+        emulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
                 globalPrefs.getEmulationProfileDefault(),
                 globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
         
         // Touchscreen profile
-        touchscreenProfile = loadProfile( mPreferences, "touchscreenProfile",
+        touchscreenProfile = loadProfile( mPreferences, TOUCHSCREEN_PROFILE,
                 globalPrefs.getTouchscreenProfileDefault(),
                 globalPrefs.GetTouchscreenProfilesConfig(), appData.GetTouchscreenProfilesConfig() );
         
         // Controller profiles
-        controllerProfile1 = loadControllerProfile( mPreferences, "controllerProfile1",
+        controllerProfile1 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
                 globalPrefs.getControllerProfileDefault(),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile2 = loadControllerProfile( mPreferences, "controllerProfile2",
+        controllerProfile2 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
                 "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile3 = loadControllerProfile( mPreferences, "controllerProfile3",
+        controllerProfile3 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
                 "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile4 = loadControllerProfile( mPreferences, "controllerProfile4",
+        controllerProfile4 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
                 "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         
         // Player map
-        playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
+        playerMap = new PlayerMap( mPreferences.getString( PLAYER_MAP, "" ) );
         
         // Cheats menu
-        isCheatOptionsShown = mPreferences.getBoolean( "playShowCheats", false );
+        isCheatOptionsShown = mPreferences.getBoolean( PLAY_SHOW_CHEATS, false );
         
         // Emulation prefs
         r4300Emulator = emulationProfile.get( "r4300Emulator", "2" );

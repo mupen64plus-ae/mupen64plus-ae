@@ -93,9 +93,13 @@ public class ProfilePreference extends CompatibleListPreference
         //Find the default profile and add it
         Profile defaultProfile = null;
         if( configCustom.keySet().contains( defaultValue ) )
+        {
             defaultProfile =  new Profile( false, configCustom.get( defaultValue ) );
+        }
         else if( configBuiltin.keySet().contains( defaultValue ) )
+        {
             defaultProfile = new Profile( true, configBuiltin.get( defaultValue ) );
+        }
         
         //This is a fake profile that doesn't exist in any config file.
         //Selecting this profile will make us fall back to the current default profile
@@ -114,6 +118,13 @@ public class ProfilePreference extends CompatibleListPreference
             defaultProfile.setName(defaultProfileTitle.toString());
             
             //Add it at the beginning
+            profiles.add(0, defaultProfile);
+        }
+        else if (mAllowDisable)
+        {
+            defaultProfile = new Profile(true, defaultProfileTitle.toString(), getContext().getText(
+                R.string.listItem_disabled).toString());
+            // Add it at the beginning
             profiles.add(0, defaultProfile);
         }
         

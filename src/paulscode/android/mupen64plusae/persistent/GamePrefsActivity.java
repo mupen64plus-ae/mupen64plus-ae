@@ -66,15 +66,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private static final String ACTION_WIKI = "actionWiki";
     private static final String ACTION_RESET_GAME_PREFS = "actionResetGamePrefs";
     
-    private static final String EMULATION_PROFILE = "emulationProfile";
-    private static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
-    private static final String CONTROLLER_PROFILE1 = "controllerProfile1";
-    private static final String CONTROLLER_PROFILE2 = "controllerProfile2";
-    private static final String CONTROLLER_PROFILE3 = "controllerProfile3";
-    private static final String CONTROLLER_PROFILE4 = "controllerProfile4";
-    private static final String PLAYER_MAP = "playerMap";
-    private static final String PLAY_SHOW_CHEATS = "playShowCheats";
-    
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
@@ -150,12 +141,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Load user preference menu structure from XML and update view
         getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );
         addPreferencesFromResource( R.xml.preferences_game );
-        mEmulationProfile = (ProfilePreference) findPreference( EMULATION_PROFILE );
-        mTouchscreenProfile = (ProfilePreference) findPreference( TOUCHSCREEN_PROFILE );
-        mControllerProfile1 = (ProfilePreference) findPreference( CONTROLLER_PROFILE1 );
-        mControllerProfile2 = (ProfilePreference) findPreference( CONTROLLER_PROFILE2 );
-        mControllerProfile3 = (ProfilePreference) findPreference( CONTROLLER_PROFILE3 );
-        mControllerProfile4 = (ProfilePreference) findPreference( CONTROLLER_PROFILE4 );
+        mEmulationProfile = (ProfilePreference) findPreference( GamePrefs.EMULATION_PROFILE );
+        mTouchscreenProfile = (ProfilePreference) findPreference( GamePrefs.TOUCHSCREEN_PROFILE );
+        mControllerProfile1 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE1 );
+        mControllerProfile2 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE2 );
+        mControllerProfile3 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE3 );
+        mControllerProfile4 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE4 );
         mScreenCheats = (PreferenceGroup) findPreference( SCREEN_CHEATS );
         mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
         
@@ -177,24 +168,24 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if( mRomDetail.players == 1 )
         {
             // Simplify name of "controller 1" to just "controller" to eliminate confusion
-            findPreference( CONTROLLER_PROFILE1 ).setTitle( R.string.controllerProfile_title );
+            findPreference( GamePrefs.CONTROLLER_PROFILE1 ).setTitle( R.string.controllerProfile_title );
             
             // Remove unneeded preference items
-            PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE2 );
-            PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE3 );
-            PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE4 );
-            PrefUtil.removePreference( this, SCREEN_ROOT, PLAYER_MAP );
+            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE2 );
+            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE3 );
+            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE4 );
+            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.PLAYER_MAP );
         }
         else
         {
             // Remove unneeded preference items
             if( mRomDetail.players < 4 )
-                PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE4 );
+                PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE4 );
             if( mRomDetail.players < 3 )
-                PrefUtil.removePreference( this, SCREEN_ROOT, CONTROLLER_PROFILE3 );
+                PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE3 );
             
             // Configure the player map preference
-            PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( PLAYER_MAP );
+            PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
             playerPref.setMogaController( mMogaController );
         }
         
@@ -230,7 +221,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         refreshViews();
-        if( key.equals( PLAY_SHOW_CHEATS ) )
+        if( key.equals( GamePrefs.PLAY_SHOW_CHEATS ) )
         {
             refreshCheatsCategory();
         }
@@ -284,11 +275,11 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 : R.string.screenCheats_summaryDisabled );
         
         // Enable/disable player map item as necessary
-        PrefUtil.enablePreference( this, PLAYER_MAP, mGamePrefs.playerMap.isEnabled() );
+        PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP, mGamePrefs.playerMap.isEnabled() );
         
         // Define which buttons to show in player map dialog
         @SuppressWarnings( "deprecation" )
-        PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( PLAYER_MAP );
+        PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
         if( playerPref != null )
         {
             // Check null in case preference has been removed
