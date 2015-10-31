@@ -158,15 +158,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
         // Get the config files from the subclass-specified paths
         mConfigBuiltin = getConfigFile( true );
         mConfigCustom = getConfigFile( false );
-    }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
         
-        // Reload in case we're returning from an editor
-        mConfigCustom.reload();
         refreshList();
     }
     
@@ -185,8 +177,6 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
             mAlertDialogEditName.dismiss();
         }
     }
-    
-
     
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
