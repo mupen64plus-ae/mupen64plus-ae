@@ -43,6 +43,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
@@ -113,6 +114,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private boolean mDragging = false;
     
     private CacheRomInfoFragment mCacheRomInfoFragment = null;
+    
+    //True if the restart promp is enabled
+    boolean mRestartPromptEnabled = true;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -483,29 +487,42 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             case R.id.menuItem_resume:
                 launchGameActivity( finalItem.romFile.getAbsolutePath(),
-                    finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                    finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName,
-                    finalItem.countryCode, finalItem.artPath, finalItem.goodName, false );
+                       finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                       finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName,
+                       finalItem.countryCode, finalItem.artPath, finalItem.goodName, false );
                 break;
             case R.id.menuItem_restart:
-                CharSequence title = getText( R.string.confirm_title );
-                CharSequence message = getText( R.string.confirmResetGame_message );
-                Prompt.promptConfirm( this, title, message,
-                        new PromptConfirmListener()
-                        {
-                            @Override
-                            public void onDialogClosed(int which)
+                //Don't show the prompt if this is the first time we start a game
+                if(mRestartPromptEnabled)
+                {
+                    CharSequence title = getText( R.string.confirm_title );
+                    CharSequence message = getText( R.string.confirmResetGame_message );
+                    Prompt.promptConfirm( this, title, message,
+                            new PromptConfirmListener()
                             {
-                                if( which == DialogInterface.BUTTON_POSITIVE )
+                                @Override
+                                public void onDialogClosed(int which)
                                 {
-                                    launchGameActivity( finalItem.romFile.getAbsolutePath(),
-                                            finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                                            finalItem.isExtracted, finalItem.md5, finalItem.crc, 
-                                            finalItem.headerName, finalItem.countryCode, finalItem.artPath,
-                                            finalItem.goodName, true );
+                                    if( which == DialogInterface.BUTTON_POSITIVE )
+                                    {
+                                        launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                                                finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                                                finalItem.isExtracted, finalItem.md5, finalItem.crc, 
+                                                finalItem.headerName, finalItem.countryCode, finalItem.artPath,
+                                                finalItem.goodName, true );
+                                    }
                                 }
-                            }
-                        } );
+                            } );
+                }
+                else
+                {
+                    launchGameActivity( finalItem.romFile.getAbsolutePath(),
+                        finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
+                        finalItem.isExtracted, finalItem.md5, finalItem.crc, 
+                        finalItem.headerName, finalItem.countryCode, finalItem.artPath,
+                        finalItem.goodName, true );
+                }
+
                 break;
             case R.id.menuItem_settings:
                 ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(),
@@ -515,26 +532,52 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
     }
 
-    public void onGalleryItemClick( GalleryItem item )
+    public void onGalleryItemClick(GalleryItem item)
     {
         mSelectedItem = item;
-        
+
         // Show the game info sidebar
-        mDrawerList.setVisibility( View.GONE );
-        mGameSidebar.setVisibility( View.VISIBLE );
-        mGameSidebar.scrollTo( 0, 0 );
-        
+        mDrawerList.setVisibility(View.GONE);
+        mGameSidebar.setVisibility(View.VISIBLE);
+        mGameSidebar.scrollTo(0, 0);
+
         // Set the cover art in the sidebar
         item.loadBitmap();
-        mGameSidebar.setImage( item.artBitmap );
-        
+        mGameSidebar.setImage(item.artBitmap);
+
         // Set the game title
-        mGameSidebar.setTitle( item.goodName );
+        mGameSidebar.setTitle(item.goodName);
         
+        // If there are no saves for this game, disable the resume
+        // option
+        String gameDataPath = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
+            RomHeader.countryCodeToSymbol(mSelectedItem.countryCode), mGlobalPrefs);
+        String autoSavePath = gameDataPath + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+
+        File autoSavePathFile = new File(autoSavePath);
+        File[] allFilesInSavePath = autoSavePathFile.listFiles();
+
+        //No saves, go ahead and remove it
+        boolean visible = allFilesInSavePath != null && allFilesInSavePath.length != 0;
+        
+        if (visible)
+        {
+            // Restore the menu
+            mGameSidebar.setActionHandler(GalleryActivity.this, R.menu.gallery_game_drawer);
+            mRestartPromptEnabled = true;
+        }
+        else
+        {
+            // Disable the action handler
+            mGameSidebar.getMenu().removeItem(R.id.menuItem_resume);
+            mGameSidebar.reload();
+            mRestartPromptEnabled = false;
+        }
+
         // Open the navigation drawer
-        mDrawerLayout.openDrawer( GravityCompat.START );
+        mDrawerLayout.openDrawer(GravityCompat.START);
     }
-    
+
     public boolean onGalleryItemLongClick( GalleryItem item )
     {
         launchGameActivity( item.romFile.getAbsolutePath(),

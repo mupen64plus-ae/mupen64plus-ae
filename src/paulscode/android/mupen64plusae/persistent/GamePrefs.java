@@ -194,6 +194,17 @@ public class GamePrefs
     public static final String CONTROLLER_PROFILE4 = "controllerProfile4";
     public static final String PLAYER_MAP = "playerMap";
     public static final String PLAY_SHOW_CHEATS = "playShowCheats";
+
+    /**
+     * Directories and file names
+     */
+    public static final String SRAM_DATA_DIR = "SramData";
+    public static final String AUTO_SAVES_DIR = "AutoSaves";
+    public static final String SLOT_SAVES_DIR = "SlotSaves";
+    public static final String USER_SAVES_DIR = "UserSaves";
+    public static final String SCREENSHOTS_DIR = "Screenshots";
+    public static final String CORE_CONFIG_DIR = "CoreConfig";
+    public static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
     
     public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol,
         AppData appData, GlobalPrefs globalPrefs)
@@ -202,14 +213,14 @@ public class GamePrefs
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
         
         // Game-specific data
-        gameDataDir = String.format( "%s/GameData/%s %s %s", globalPrefs.userDataDir, headerName, countrySymbol, romMd5 );
-        sramDataDir = gameDataDir + "/SramData";
-        autoSaveDir = gameDataDir + "/AutoSaves";
-        slotSaveDir = gameDataDir + "/SlotSaves";
-        userSaveDir = gameDataDir + "/UserSaves";
-        screenshotDir = gameDataDir + "/Screenshots";
-        coreUserConfigDir = gameDataDir + "/CoreConfig";
-        mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
+        gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol, globalPrefs);
+        sramDataDir = gameDataDir + "/" + SRAM_DATA_DIR;
+        autoSaveDir = gameDataDir + "/" + AUTO_SAVES_DIR;
+        slotSaveDir = gameDataDir + "/" + SLOT_SAVES_DIR;
+        userSaveDir = gameDataDir + "/" + USER_SAVES_DIR;
+        screenshotDir = gameDataDir + "/" + SCREENSHOTS_DIR;
+        coreUserConfigDir = gameDataDir + "/" + CORE_CONFIG_DIR;
+        mupen64plus_cfg = coreUserConfigDir + "/" + MUPEN_CONFIG_FILE;
         
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
@@ -391,6 +402,12 @@ public class GamePrefs
             }
         }
         return builder == null ? "" : builder.toString();
+    }
+    
+    public static String getGameDataPath( String romMd5, String headerName, String countrySymbol,
+        GlobalPrefs globalPrefs)
+    {
+        return String.format( "%s/GameData/%s %s %s", globalPrefs.userDataDir, headerName, countrySymbol, romMd5 );
     }
     
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,
