@@ -667,11 +667,14 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         // Let the PeripheralControllers and Android handle everything else
         else
         {
-            // If PeripheralControllers exist and handle the event,
-            // they return true. Else they return false, signaling
-            // Android to handle the event (menu button, vol keys).
-            if( mKeyProvider != null )
-                return mKeyProvider.onKey( view, keyCode, event );
+            if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            {
+                // If PeripheralControllers exist and handle the event,
+                // they return true. Else they return false, signaling
+                // Android to handle the event (menu button, vol keys).
+                if( mKeyProvider != null )
+                    return mKeyProvider.onKey( view, keyCode, event );
+            }
             
             return false;
         }

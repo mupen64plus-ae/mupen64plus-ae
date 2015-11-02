@@ -77,11 +77,8 @@ public class GameSidebar extends MenuListView
         });
         
         setClipToPadding(true);
-        setNextFocusDownId(getId());
-        setNextFocusLeftId(getId());
-        setNextFocusRightId(getId());
-        setNextFocusUpId(getId());
         
+        header.setFocusable(false);
         addHeaderView(header);
     }
     
@@ -89,6 +86,11 @@ public class GameSidebar extends MenuListView
     {
         mActionHandler = actionHandler;
         setMenuResource( menuResource );
+        
+        setNextFocusDownId(getId());
+        setNextFocusLeftId(getId());
+        setNextFocusRightId(getId());
+        setNextFocusUpId(getId());
         
         // Handle menu item selections
         setOnClickListener( new MenuListView.OnClickListener()

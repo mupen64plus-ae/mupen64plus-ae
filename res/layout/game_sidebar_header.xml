@@ -9,21 +9,25 @@
     <LinearLayout
         android:id="@+id/imageLayout"
         android:layout_width="279dip"
-        android:layout_height="193dip" >
+        android:layout_height="193dip"
+        android:focusable="false" >
 
         <ImageView
-            tools:ignore="ContentDescription"
             android:id="@+id/imageArt"
             android:layout_width="match_parent"
             android:layout_height="193dip"
-            android:src="@drawable/default_coverart" />
+            android:focusable="false"
+            android:src="@drawable/default_coverart"
+            tools:ignore="ContentDescription" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/gameTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="false"
         android:padding="5dip"
         android:text="@string/galleryItemAdapter_dummyText"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </LinearLayout>
