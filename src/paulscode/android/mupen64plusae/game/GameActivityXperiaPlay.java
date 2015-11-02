@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.game;
 
-import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.TargetApi;
@@ -29,39 +28,15 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.Menu;
-import android.view.MenuItem;
 
 @TargetApi( 9 )
 public class GameActivityXperiaPlay extends NativeActivity
 {
     private GameLifecycleHandler mLifecycleHandler;
-    private GameMenuHandler mMenuHandler;
     
     public GameActivityXperiaPlay()
     {
         System.loadLibrary( "xperia-touchpad" );
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu( Menu menu )
-    {
-        mMenuHandler.onCreateOptionsMenu( menu );
-        return super.onCreateOptionsMenu( menu );
-    }
-    
-    @Override
-    public boolean onPrepareOptionsMenu( Menu menu )
-    {
-        mMenuHandler.onPrepareOptionsMenu( menu );
-        return super.onPrepareOptionsMenu( menu );
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected( MenuItem item )
-    {
-        mMenuHandler.onOptionsItemSelected( item );
-        return super.onOptionsItemSelected( item );
     }
     
     @Override
@@ -75,8 +50,6 @@ public class GameActivityXperiaPlay extends NativeActivity
     protected void onCreate( Bundle savedInstanceState )
     {
         super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat_NoActionBar );
-        mMenuHandler = new GameMenuHandler( this );
-        CoreInterface.addOnStateCallbackListener( mMenuHandler  );
         
         //Allow volume keys to control media volume if they are not mapped
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -125,9 +98,7 @@ public class GameActivityXperiaPlay extends NativeActivity
     
     @Override
     protected void onDestroy()
-    {
-        CoreInterface.removeOnStateCallbackListener( mMenuHandler  );
-        
+    {        
         super.onDestroy();
         mLifecycleHandler.onDestroy();
     }
