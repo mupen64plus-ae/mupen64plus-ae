@@ -29,8 +29,6 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import paulscode.android.mupen64plusae.jni.NativeConstants;
-import paulscode.android.mupen64plusae.jni.NativeExports;
 import android.content.Context;
 import android.opengl.GLES10;
 import android.util.AttributeSet;
@@ -42,6 +40,13 @@ import android.view.SurfaceView;
  */
 public class GameSurface extends SurfaceView
 {
+    //Listener for a game surface created event
+    public interface GameSurfaceCreatedListener
+    {
+        //This is called every time the game surface is created
+        public void onGameSurfaceCreated();
+    }
+    
     // LogCat strings for debugging, defined here to simplify maintenance/lookup
     private static final String TAG = "GameSurface";
     
@@ -96,6 +101,9 @@ public class GameSurface extends SurfaceView
     
     private boolean mIsEGLContextReady = false;     // true if the context is ready
     
+    //Game surface created listener
+    GameSurfaceCreatedListener mGameSurfaceCreatedListener = null;
+    
     /**
      * Constructor that is called when inflating a view from XML. This is called when a view is
      * being constructed from an XML file, supplying attributes that were specified in the XML file.
@@ -110,6 +118,15 @@ public class GameSurface extends SurfaceView
     public GameSurface( Context context, AttributeSet attribs )
     {
         super( context, attribs );
+    }
+    
+    /**
+     * Set the game surface created listener
+     * @param gameSurfaceCreatedListener Game surface created listener
+     */
+    public void SetGameSurfaceCreatedListener(GameSurfaceCreatedListener gameSurfaceCreatedListener)
+    {
+        mGameSurfaceCreatedListener = gameSurfaceCreatedListener;
     }
     
     /**
@@ -145,8 +162,10 @@ public class GameSurface extends SurfaceView
                         String version = GLES10.glGetString( GLES10.GL_VERSION );
                         Log.i( TAG, "Created GL context " + version );
                         
-                        if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_RUNNING )
-                            NativeExports.emuResume();
+                        if(mGameSurfaceCreatedListener != null)
+                        {
+                            mGameSurfaceCreatedListener.onGameSurfaceCreated();
+                        }
                         
                         mIsEGLContextReady = true;
                         return true;
