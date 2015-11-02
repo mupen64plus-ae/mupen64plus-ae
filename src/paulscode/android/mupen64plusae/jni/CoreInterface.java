@@ -194,6 +194,7 @@ public class CoreInterface
     
     public static synchronized void startupEmulator(final String saveToLoad)
     {
+        Log.i("CoreInterface", "Startup emulator");
         if( sCoreThread == null )
         {
             // Load the native libraries
@@ -292,7 +293,7 @@ public class CoreInterface
             }, "CoreThread" );
             
             // Auto-load state if desired
-            if( !sIsRestarting )
+            if( !sIsRestarting)
             {
                 Notifier.showToast( sActivity, R.string.toast_loadingSession );
                 addOnStateCallbackListener( new OnStateCallbackListener()
@@ -340,6 +341,12 @@ public class CoreInterface
             // Unload the native libraries
             NativeExports.unloadLibraries();
         }
+    }
+    
+    public static synchronized void restartEmulator()
+    {
+        shutdownEmulator();
+        startupEmulator(null);
     }
     
     public static synchronized void resumeEmulator()
