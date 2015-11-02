@@ -27,6 +27,7 @@ import android.content.Context;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -150,15 +151,22 @@ public class MenuListView extends ExpandableListView
         return mListener;
     }
     
+    public View getViewFromMenuId(int menuId)
+    {
+        return mAdapter.getViewFromMenuId(menuId);
+    }
+    
     public static class MenuListAdapter extends BaseExpandableListAdapter
     {
         private MenuListView mListView;
         private Menu mListData;
+        private SparseArray<View> mMenuViews;
         
         public MenuListAdapter( MenuListView listView, Menu listData )
         {
             mListView = listView;
             mListData = listData;
+            mMenuViews = new SparseArray<View>();
         }
         
         @Override
@@ -197,6 +205,7 @@ public class MenuListView extends ExpandableListView
                 view = inflater.inflate( R.layout.list_item_menu, mListView, false );
             
             MenuItem item = getChild( groupPosition, childPosition );
+
             if( item != null )
             {
                 TextView text1 = (TextView) view.findViewById( R.id.text1 );
@@ -233,6 +242,9 @@ public class MenuListView extends ExpandableListView
                 else
                     indicator.setImageResource( R.drawable.ic_box );
             }
+            
+            mMenuViews.put(item.getItemId(), view);
+            
             return view;
         }
         
@@ -296,6 +308,8 @@ public class MenuListView extends ExpandableListView
                     indicator.setImageResource( R.drawable.ic_arrow_d );
             }
             
+            mMenuViews.put(item.getItemId(), view);
+            
             return view;
         }
         
@@ -303,6 +317,11 @@ public class MenuListView extends ExpandableListView
         public boolean hasStableIds()
         {
             return true;
+        }
+        
+        protected View getViewFromMenuId(int menuId)
+        {
+            return mMenuViews.get(menuId);
         }
     }
     
