@@ -295,7 +295,6 @@ public class CoreInterface
             // Auto-load state if desired
             if( !sIsRestarting)
             {
-                Notifier.showToast( sActivity, R.string.toast_loadingSession );
                 addOnStateCallbackListener( new OnStateCallbackListener()
                 {
                     @Override
@@ -306,6 +305,7 @@ public class CoreInterface
                                 && saveToLoad != null)
                         {
                             removeOnStateCallbackListener( this );
+                            Notifier.showToast( sActivity, R.string.toast_loadingSession );
                             NativeExports.emuLoadFile( saveToLoad );
                         }
                     }
