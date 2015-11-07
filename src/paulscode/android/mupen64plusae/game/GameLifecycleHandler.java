@@ -48,6 +48,7 @@ import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnExitListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnRestartListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnSaveLoadListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
@@ -124,7 +125,7 @@ import com.bda.controller.Controller;
 //@formatter:on
 
 public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebarActionHandler,
-    OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExitListener
+    OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExitListener, OnRestartListener
 {
     // Activity and views
     private Activity mActivity;
@@ -162,7 +163,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     private GamePrefs mGamePrefs;
     private GameAutoSaveManager mAutoSaveManager;
     private boolean mFirstStart;
-    private boolean mWaitingOnExitConfirmation = false;
+    private boolean mWaitingOnConfirmation = false;
     
     public GameLifecycleHandler( Activity activity )
     {
@@ -421,7 +422,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         switch (menuItem.getItemId())
         {
         case R.id.menuItem_exit:
-            mWaitingOnExitConfirmation = true;
+            mWaitingOnConfirmation = true;
             CoreInterface.exit(this);
             break;
         case R.id.menuItem_toggle_speed:
@@ -491,6 +492,10 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imeManager != null)
                 imeManager.showInputMethodPicker();
+            break;
+        case R.id.menuItem_reset:
+            mWaitingOnConfirmation = true;
+            CoreInterface.restart(this);
             break;
         default:
         }
@@ -587,12 +592,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     {
         Log.i("GameLifecycleHandler", "onResume");
         mIsResumed = true;
-        
-        if(mFirstStart)
-        {
-            tryRunning();
-            mFirstStart = false;
-        }
+
+        tryRunning();
 
         // Set the sidebar opacity
         mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
@@ -658,10 +659,28 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     }
     
     @Override
-    public void onExit(boolean shouldExit)
+    public void onRestart(boolean shouldRestart)
     {        
-        Log.i( "GameLifecycleHandler", "onExit" );
+        if(shouldRestart)
+        {
+            CoreInterface.restart();
+            
+            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            {
+                mDrawerLayout.closeDrawer( GravityCompat.START );
+            }
+        }
+        else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
+        {
+            NativeExports.emuResume();
+        }
         
+        mWaitingOnConfirmation = false;
+    }
+    
+    @Override
+    public void onExit(boolean shouldExit)
+    {
         if(shouldExit)
         {
             // Never go directly from running to stopped; always pause (and autosave) first
@@ -679,7 +698,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             NativeExports.emuResume();
         }
         
-        mWaitingOnExitConfirmation = false;
+        mWaitingOnConfirmation = false;
     }
 
     @Override
@@ -703,7 +722,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             }
             else
             {
-                mWaitingOnExitConfirmation = true;
+                mWaitingOnConfirmation = true;
                 CoreInterface.exit(this);
             }
             return true;
@@ -889,7 +908,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
                     break;
                 case NativeConstants.EMULATOR_STATE_PAUSED:
                     if( mSurface.isEGLContextReady() && !mDrawerLayout.isDrawerOpen( GravityCompat.START )
-                        && !mWaitingOnExitConfirmation)
+                        && !mWaitingOnConfirmation)
                         CoreInterface.resumeEmulator();
                     break;
                 default:
@@ -907,7 +926,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     @Override
     public void onGameSurfaceCreated()
     {
-        if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnExitConfirmation)
+        if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation)
         {
             NativeExports.emuResume();
         }

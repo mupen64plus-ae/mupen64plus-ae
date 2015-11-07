@@ -105,6 +105,15 @@ public class CoreInterface
         public void onExit(boolean shouldExit);
     }
     
+    public interface OnRestartListener
+    {
+        /**
+         * Called when a game is restarted
+         * @param True if we want to restart
+         */
+        public void onRestart(boolean shouldRestart);
+    }
+    
     // Haptic objects - used by NativeInput
     protected static final Vibrator[] sVibrators = new Vibrator[4];
     
@@ -366,12 +375,6 @@ public class CoreInterface
             // Unload the native libraries
             NativeExports.unloadLibraries();
         }
-    }
-    
-    public static synchronized void restartEmulator()
-    {
-        shutdownEmulator();
-        startupEmulator(null);
     }
     
     public static synchronized void resumeEmulator()
@@ -643,6 +646,30 @@ public class CoreInterface
     {
         NativeExports.emuPause();
         NativeExports.emuAdvanceFrame();
+    }
+    
+    public static synchronized void restart()
+    {
+        CoreInterface.shutdownEmulator();
+        CoreInterface.startupEmulator(null);
+    }
+    
+    public static synchronized void restart(final OnRestartListener onRestartListener)
+    {        
+        NativeExports.emuPause();
+        String title = sActivity.getString( R.string.confirm_title );
+        String message = sActivity.getString( R.string.confirmResetGame_message );
+        Prompt.promptConfirm( sActivity, title, message, new PromptConfirmListener()
+        {
+            @Override
+            public void onDialogClosed( int which )
+            {
+                if(onRestartListener != null)
+                {
+                    onRestartListener.onRestart( which == DialogInterface.BUTTON_POSITIVE );
+                }
+            }
+        } );
     }
     
     public static void exit(final OnExitListener onExitListener)
