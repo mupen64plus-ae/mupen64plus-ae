@@ -51,6 +51,7 @@ import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListene
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnSaveLoadListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
+import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -564,6 +565,9 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
                             mGlobalPrefs.putPakType(player, PakType.values()[value]);
+                            
+                            // Set the pak in the core
+                            NativeInput.setConfig( player - 1, true, PakType.values()[value].getNativeValue() );
                             
                             //Update the menu
                             playerMenuItem.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(player).getResourceString()));
