@@ -84,10 +84,34 @@ public class CoreInterface
     {
         /**
          * Called when a prompt is complete
-         * 
-         * @param newValue The new FPS value.
          */
         public void onPromptFinished();
+    }
+    
+    public interface OnSaveLoadListener
+    {
+        /**
+         * Called when a game is saved or a save is loaded
+         */
+        public void onSaveLoad();
+    }
+    
+    public interface OnExitListener
+    {
+        /**
+         * Called when a game is exited
+         * @param True if we want to exit
+         */
+        public void onExit(boolean shouldExit);
+    }
+    
+    public interface OnRestartListener
+    {
+        /**
+         * Called when a game is restarted
+         * @param True if we want to restart
+         */
+        public void onRestart(boolean shouldRestart);
     }
     
     // Haptic objects - used by NativeInput
@@ -133,7 +157,8 @@ public class CoreInterface
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
-    public static void initialize( Activity activity, GameSurface surface, GamePrefs gamePrefs, String romPath, String romMd5, String cheatArgs, boolean isRestarting )
+    public static void initialize( Activity activity, GameSurface surface, GamePrefs gamePrefs,
+        String romPath, String romMd5, String cheatArgs, boolean isRestarting )
     {
         sRomPath = romPath;
         sCheatOptions = cheatArgs;
@@ -295,7 +320,6 @@ public class CoreInterface
             // Auto-load state if desired
             if( !sIsRestarting)
             {
-                Notifier.showToast( sActivity, R.string.toast_loadingSession );
                 addOnStateCallbackListener( new OnStateCallbackListener()
                 {
                     @Override
@@ -307,6 +331,16 @@ public class CoreInterface
                         {
                             removeOnStateCallbackListener( this );
                             NativeExports.emuLoadFile( saveToLoad );
+
+                            sActivity.runOnUiThread(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    Notifier.showToast(sActivity, R.string.toast_loadingSession);
+
+                                }
+                            });
                         }
                     }
                 } );
@@ -341,12 +375,6 @@ public class CoreInterface
             // Unload the native libraries
             NativeExports.unloadLibraries();
         }
-    }
-    
-    public static synchronized void restartEmulator()
-    {
-        shutdownEmulator();
-        startupEmulator(null);
     }
     
     public static synchronized void resumeEmulator()
@@ -402,23 +430,32 @@ public class CoreInterface
         setSlot( slot + 1 );
     }
     
-    public static void saveSlot()
+    public static void saveSlot(final OnSaveLoadListener onSaveLoadListener)
     {
         int slot = NativeExports.emuGetSlot();
         Notifier.showToast( sActivity, R.string.toast_savingSlot, slot );
         NativeExports.emuSaveSlot();
+        
+        if(onSaveLoadListener != null)
+        {
+            onSaveLoadListener.onSaveLoad();
+        }
     }
     
-    public static void loadSlot()
+    public static void loadSlot(final OnSaveLoadListener onSaveLoadListener)
     {
         int slot = NativeExports.emuGetSlot();
         Notifier.showToast( sActivity, R.string.toast_loadingSlot, slot );
         NativeExports.emuLoadSlot();
+        
+        if(onSaveLoadListener != null)
+        {
+            onSaveLoadListener.onSaveLoad();
+        }
     }
     
-    public static void saveFileFromPrompt()
+    public static void saveFileFromPrompt(final OnSaveLoadListener onSaveLoadListener)
     {
-        CoreInterface.pauseEmulator( false, null );
         CharSequence title = sActivity.getText( R.string.menuItem_fileSave );
         CharSequence hint = sActivity.getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
@@ -428,15 +465,15 @@ public class CoreInterface
             public void onDialogClosed( CharSequence text, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
-                    saveState( text.toString() );
-                CoreInterface.resumeEmulator();
+                {
+                    saveState( text.toString(), onSaveLoadListener );
+                }
             }
         } );
     }
     
-    public static void loadFileFromPrompt()
+    public static void loadFileFromPrompt(final OnSaveLoadListener onSaveLoadListener)
     {
-        CoreInterface.pauseEmulator( false, null );
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
         File startPath = new File( sGamePrefs.userSaveDir );
         Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
@@ -445,15 +482,21 @@ public class CoreInterface
             public void onDialogClosed( File file, int which )
             {
                 if( which >= 0 )
+                {
                     loadState( file );
-                CoreInterface.resumeEmulator();
+                    
+                    if(onSaveLoadListener != null)
+                    {
+                        onSaveLoadListener.onSaveLoad();
+                    }
+                }
+
             }
         } );
     }
     
-    public static void loadAutoSaveFromPrompt()
+    public static void loadAutoSaveFromPrompt(final OnSaveLoadListener onSaveLoadListener)
     {
-        CoreInterface.pauseEmulator( false, null );
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoadAutoSave );
         File startPath = new File( sGamePrefs.autoSaveDir );
         Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
@@ -462,13 +505,20 @@ public class CoreInterface
             public void onDialogClosed( File file, int which )
             {
                 if( which >= 0 )
+                {
                     loadState( file );
-                CoreInterface.resumeEmulator();
+                    
+                    if(onSaveLoadListener != null)
+                    {
+                        onSaveLoadListener.onSaveLoad();
+                    }
+                }
+
             }
         } );
     }
     
-    public static void saveState( final String filename )
+    public static void saveState( final String filename, final OnSaveLoadListener onSaveLoadListener )
     {
         final File file = new File( sGamePrefs.userSaveDir + "/" + filename );
         if( file.exists() )
@@ -484,6 +534,11 @@ public class CoreInterface
                     {
                         Notifier.showToast( sActivity, R.string.toast_overwritingFile, file.getName() );
                         NativeExports.emuSaveFile( file.getAbsolutePath() );
+                        
+                        if(onSaveLoadListener != null)
+                        {
+                            onSaveLoadListener.onSaveLoad();
+                        }
                     }
                 }
             } );
@@ -492,6 +547,11 @@ public class CoreInterface
         {
             Notifier.showToast( sActivity, R.string.toast_savingFile, file.getName() );
             NativeExports.emuSaveFile( file.getAbsolutePath() );
+            
+            if(onSaveLoadListener != null)
+            {
+                onSaveLoadListener.onSaveLoad();
+            }
         }
     }
     
@@ -509,7 +569,6 @@ public class CoreInterface
     
     public static void setCustomSpeedFromPrompt(final OnPromptFinishedListener promptFinishedListener)
     {
-        NativeExports.emuPause();
         final CharSequence title = sActivity.getText( R.string.menuItem_setSpeed );
         Prompt.promptInteger( sActivity, title, "%1$d %%", sCustomSpeed, MIN_SPEED, MAX_SPEED,
                 new PromptIntegerListener()
@@ -526,14 +585,12 @@ public class CoreInterface
                                 promptFinishedListener.onPromptFinished();
                             }
                         }
-                        NativeExports.emuResume();
                     }
                 } );
     }
     
     public static void setSlotFromPrompt(final OnPromptFinishedListener promptFinishedListener)
     {
-        NativeExports.emuPause();
         final CharSequence title = sActivity.getString(R.string.menuItem_selectSlot, NativeExports.emuGetSlot());
             
         Prompt.promptRadioInteger( sActivity, title, NativeExports.emuGetSlot(), 0, 2, 5,
@@ -551,7 +608,6 @@ public class CoreInterface
                                 promptFinishedListener.onPromptFinished();
                             }
                         }
-                        NativeExports.emuResume();
                     }
                 } );
     }
@@ -592,7 +648,31 @@ public class CoreInterface
         NativeExports.emuAdvanceFrame();
     }
     
-    public static void exit()
+    public static synchronized void restart()
+    {
+        CoreInterface.shutdownEmulator();
+        CoreInterface.startupEmulator(null);
+    }
+    
+    public static synchronized void restart(final OnRestartListener onRestartListener)
+    {        
+        NativeExports.emuPause();
+        String title = sActivity.getString( R.string.confirm_title );
+        String message = sActivity.getString( R.string.confirmResetGame_message );
+        Prompt.promptConfirm( sActivity, title, message, new PromptConfirmListener()
+        {
+            @Override
+            public void onDialogClosed( int which )
+            {
+                if(onRestartListener != null)
+                {
+                    onRestartListener.onRestart( which == DialogInterface.BUTTON_POSITIVE );
+                }
+            }
+        } );
+    }
+    
+    public static void exit(final OnExitListener onExitListener)
     {
         NativeExports.emuPause();
         String title = sActivity.getString( R.string.confirm_title );
@@ -602,10 +682,7 @@ public class CoreInterface
             @Override
             public void onDialogClosed( int which )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                    sActivity.finish();
-                else
-                    NativeExports.emuResume();
+                onExitListener.onExit( which == DialogInterface.BUTTON_POSITIVE );
             }
         } );
     }

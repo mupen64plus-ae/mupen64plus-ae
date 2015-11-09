@@ -32,9 +32,7 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
 import org.mupen64plusae.v3.alpha.R;
-
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ChangeLog;
 import paulscode.android.mupen64plusae.dialog.Popups;
@@ -57,6 +55,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -77,6 +76,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler
@@ -85,6 +85,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public static final String STATE_QUERY = "query";
     public static final String STATE_SIDEBAR = "sidebar";
     public static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
+    public static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -117,6 +118,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     
     //True if the restart promp is enabled
     boolean mRestartPromptEnabled = true;
+    
+    //If this is set to true, the gallery will be refreshed next time this activity is resumed
+    boolean mRefreshNeeded = false;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -312,6 +316,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             String query = savedInstanceState.getString( STATE_QUERY );
             if( query != null )
                 mSearchQuery = query;
+            
+            mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
         }
         
         // find the retained fragment on activity restarts
@@ -332,12 +338,58 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
     
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        
+        //mRefreshNeeded will be set to true whenever a game is launched
+        if(mRefreshNeeded)
+        {            
+            mRefreshNeeded = false;
+            refreshGrid();
+            
+            mGameSidebar.setVisibility( View.GONE );
+            mDrawerList.setVisibility( View.VISIBLE );
+            
+            //Close the drawer without an animation
+            final View view = mDrawerLayout.getChildAt(mDrawerLayout.getChildCount() - 1);
+            ViewTreeObserver vto = view.getViewTreeObserver();
+
+            vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
+            {
+                @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+                @Override
+                public boolean onPreDraw()
+                {
+                    if (AppData.IS_HONEYCOMB)
+                    {
+                        final DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(view.getWidth(), view
+                            .getHeight());
+                        lp.gravity = GravityCompat.START;
+                        view.setLayoutParams(lp);
+                        view.setLeft(-view.getMeasuredWidth());
+                        view.getViewTreeObserver().removeOnPreDrawListener(this);
+                    }
+                    else
+                    {
+                        // For anything less than HONEYCOMB API level, we will still show the animation
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                    }
+                    
+                    return true;
+                }
+            });
+        }
+    }
+    
+    @Override
     public void onSaveInstanceState( Bundle savedInstanceState )
     {
         if( mSearchView != null )
             savedInstanceState.putString( STATE_QUERY, mSearchView.getQuery().toString() );
         if( mSelectedItem != null )
             savedInstanceState.putString( STATE_SIDEBAR, mSelectedItem.md5 );
+        savedInstanceState.putBoolean(STATE_GALLERY_REFRESH_NEEDED, mRefreshNeeded);
         
         super.onSaveInstanceState( savedInstanceState );
     }
@@ -806,7 +858,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting )
-    {
+    {        
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
         {
@@ -833,7 +885,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             config.save();
         }
         
-        refreshGrid();
+        mRefreshNeeded = true;
+        mSelectedItem = null;
 
         // Launch the game activity
         ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,

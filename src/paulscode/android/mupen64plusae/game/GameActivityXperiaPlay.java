@@ -95,11 +95,4 @@ public class GameActivityXperiaPlay extends NativeActivity
         super.onStop();
         mLifecycleHandler.onStop();
     }
-    
-    @Override
-    protected void onDestroy()
-    {        
-        super.onDestroy();
-        mLifecycleHandler.onDestroy();
-    }
 }

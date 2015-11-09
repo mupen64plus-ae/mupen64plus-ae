@@ -32,6 +32,7 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
+import paulscode.android.mupen64plusae.game.GameSurface.GameSurfaceCreatedListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
@@ -45,9 +46,13 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnExitListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnRestartListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnSaveLoadListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
+import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -119,7 +124,8 @@ import com.bda.controller.Controller;
 */
 //@formatter:on
 
-public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebarActionHandler, OnPromptFinishedListener
+public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebarActionHandler,
+    OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExitListener, OnRestartListener
 {
     // Activity and views
     private Activity mActivity;
@@ -149,7 +155,6 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     private final String mRomGoodName;
     
     // Lifecycle state tracking
-    private boolean mIsFocused = false;     // true if the window is focused
     private boolean mIsResumed = false;     // true if the activity is resumed
     private boolean mIsSurface = false;     // true if the surface is available
     
@@ -157,6 +162,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     private GlobalPrefs mGlobalPrefs;
     private GamePrefs mGamePrefs;
     private GameAutoSaveManager mAutoSaveManager;
+    private boolean mFirstStart;
+    private boolean mWaitingOnConfirmation = false;
     
     public GameLifecycleHandler( Activity activity )
     {
@@ -218,6 +225,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         mGlobalPrefs = new GlobalPrefs( mActivity, appData );
         mGamePrefs = new GamePrefs( mActivity, mRomMd5, mRomCrc, mRomHeaderName,
                 RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs );
+        
+        mFirstStart = true;
     }
     
     @TargetApi( 11 )
@@ -239,6 +248,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
 
         // Make the background solid black
         mSurface.getRootView().setBackgroundColor(0xFF000000);
+        mSurface.SetGameSurfaceCreatedListener(this);
 
         if (!TextUtils.isEmpty(mArtPath) && new File(mArtPath).exists())
             mGameSidebar.setImage(new BitmapDrawable(mActivity.getResources(), mArtPath));
@@ -308,25 +318,26 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             @Override
             public void onDrawerClosed(View arg0)
             {
-                
+                NativeExports.emuResume();
             }
 
             @Override
             public void onDrawerOpened(View arg0)
             {
+                NativeExports.emuPause();
                 ReloadAllMenus();
             }
 
             @Override
             public void onDrawerSlide(View arg0, float arg1)
             {
-                
+
             }
 
             @Override
-            public void onDrawerStateChanged(int arg0)
+            public void onDrawerStateChanged(int newState)
             {
-                
+
             }
             
         });
@@ -397,12 +408,22 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     }
     
     @Override
+    public void onSaveLoad()
+    {
+        if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+        {
+            mDrawerLayout.closeDrawer( GravityCompat.START );
+        }
+    }
+    
+    @Override
     public void onGameSidebarAction(MenuItem menuItem)
     {
         switch (menuItem.getItemId())
         {
         case R.id.menuItem_exit:
-            CoreInterface.exit();
+            mWaitingOnConfirmation = true;
+            CoreInterface.exit(this);
             break;
         case R.id.menuItem_toggle_speed:
             CoreInterface.toggleSpeed();
@@ -423,19 +444,23 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             CoreInterface.setSlotFromPrompt(this);
             break;
         case R.id.menuItem_slot_load:
-            CoreInterface.loadSlot();
+            CoreInterface.loadSlot(this);
             break;
         case R.id.menuItem_slot_save:
-            CoreInterface.saveSlot();
+            CoreInterface.saveSlot(this);
+            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            {
+                mDrawerLayout.closeDrawer( GravityCompat.START );
+            }
             break;
         case R.id.menuItem_file_load:
-            CoreInterface.loadFileFromPrompt();
+            CoreInterface.loadFileFromPrompt(this);
             break;
         case R.id.menuItem_file_save:
-            CoreInterface.saveFileFromPrompt();
+            CoreInterface.saveFileFromPrompt(this);
             break;
         case R.id.menuItem_file_load_auto_save:
-            CoreInterface.loadAutoSaveFromPrompt();
+            CoreInterface.loadAutoSaveFromPrompt(this);
             break;
         case R.id.menuItem_disable_frame_limiter:
             CoreInterface.toggleFramelimiter();
@@ -451,30 +476,26 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             mGameSidebar.reload();
             break;
         case R.id.menuItem_player_one:
-        {
             setPakTypeFromPrompt(1, mGlobalPrefs.getPakType(1).ordinal(), this);
             break;
-        }
         case R.id.menuItem_player_two:
-        {
             setPakTypeFromPrompt(2, mGlobalPrefs.getPakType(2).ordinal(), this);
             break;
-        }
         case R.id.menuItem_player_three:
-        {
             setPakTypeFromPrompt(3, mGlobalPrefs.getPakType(3).ordinal(), this);
             break;
-        }
         case R.id.menuItem_player_four:
-        {
             setPakTypeFromPrompt(4, mGlobalPrefs.getPakType(4).ordinal(), this);
             break;
-        }
         case R.id.menuItem_setIme:
             InputMethodManager imeManager = (InputMethodManager) mActivity
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imeManager != null)
                 imeManager.showInputMethodPicker();
+            break;
+        case R.id.menuItem_reset:
+            mWaitingOnConfirmation = true;
+            CoreInterface.restart(this);
             break;
         default:
         }
@@ -529,8 +550,6 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     public void setPakTypeFromPrompt(final int player, final int selectedPakType,
         final OnPromptFinishedListener promptFinishedListener)
     {
-        NativeExports.emuPause();
-
         //First get the prompt title
         CharSequence title = GetPlayerTextFromId(player);
         final MenuItem playerMenuItem = GetPlayerMenuItemFromId(player);
@@ -552,11 +571,13 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
                         {
                             mGlobalPrefs.putPakType(player, PakType.values()[value]);
                             
+                            // Set the pak in the core
+                            NativeInput.setConfig( player - 1, true, PakType.values()[value].getNativeValue() );
+                            
                             //Update the menu
                             playerMenuItem.setTitleCondensed(mActivity.getString(mGlobalPrefs.getPakType(player).getResourceString()));
                             mGameSidebar.reload();
                         }
-                        NativeExports.emuResume();
                     }
                 } );
     }
@@ -571,6 +592,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     {
         Log.i("GameLifecycleHandler", "onResume");
         mIsResumed = true;
+
         tryRunning();
 
         // Set the sidebar opacity
@@ -599,10 +621,17 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     {
         // Only try to run; don't try to pause. User may just be touching the in-game menu.
         Log.i( "GameLifecycleHandler", "onWindowFocusChanged: " + hasFocus );
-        mIsFocused = hasFocus;
         if( hasFocus )
             hideSystemBars();
-        tryRunning();
+        
+        //We don't want to do this every time the user uses a dialog,
+        //only do it when the activity is first created.
+        if(mFirstStart)
+        {
+            tryRunning();
+            mFirstStart = false;
+        }
+        
     }
     
     public void onPause()
@@ -629,17 +658,47 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         Log.i( "GameLifecycleHandler", "onStop" );
     }
     
-    public void onDestroy()
+    @Override
+    public void onRestart(boolean shouldRestart)
+    {        
+        if(shouldRestart)
+        {
+            CoreInterface.restart();
+            
+            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            {
+                mDrawerLayout.closeDrawer( GravityCompat.START );
+            }
+        }
+        else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
+        {
+            NativeExports.emuResume();
+        }
+        
+        mWaitingOnConfirmation = false;
+    }
+    
+    @Override
+    public void onExit(boolean shouldExit)
     {
-        Log.i( "GameLifecycleHandler", "onDestroy" );
+        if(shouldExit)
+        {
+            // Never go directly from running to stopped; always pause (and autosave) first
+            String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+            CoreInterface.pauseEmulator( true, saveFileName );
+            mAutoSaveManager.clearOldest();
+            CoreInterface.shutdownEmulator();
+            
+            mMogaController.exit();
+            
+            mActivity.finish();
+        }
+        else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
+        {
+            NativeExports.emuResume();
+        }
         
-        // Never go directly from running to stopped; always pause (and autosave) first
-        String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-        CoreInterface.pauseEmulator( true, saveFileName );
-        mAutoSaveManager.clearOldest();
-        CoreInterface.shutdownEmulator();
-        
-        mMogaController.exit();
+        mWaitingOnConfirmation = false;
     }
 
     @Override
@@ -658,9 +717,14 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         else if( keyDown && keyCode == KeyEvent.KEYCODE_BACK )
         {
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            {
                 mDrawerLayout.closeDrawer( GravityCompat.START );
+            }
             else
-                CoreInterface.exit();
+            {
+                mWaitingOnConfirmation = true;
+                CoreInterface.exit(this);
+            }
             return true;
         }
         
@@ -828,7 +892,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     
     private boolean isSafeToRender()
     {
-        return mIsFocused && mIsResumed && mIsSurface;
+        return mIsResumed && mIsSurface;
     }
     
     private void tryRunning()
@@ -843,7 +907,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
                     CoreInterface.startupEmulator(latestSave);
                     break;
                 case NativeConstants.EMULATOR_STATE_PAUSED:
-                    if( mSurface.isEGLContextReady() )
+                    if( mSurface.isEGLContextReady() && !mDrawerLayout.isDrawerOpen( GravityCompat.START )
+                        && !mWaitingOnConfirmation)
                         CoreInterface.resumeEmulator();
                     break;
                 default:
@@ -856,5 +921,19 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     {
         if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_PAUSED )
             CoreInterface.pauseEmulator( false, null );
+    }
+
+    @Override
+    public void onGameSurfaceCreated()
+    {
+        if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation)
+        {
+            NativeExports.emuResume();
+        }
+        else
+        {
+            //Advance 1 frame so that something is shown instead of a black screen
+            CoreInterface.advanceFrame();
+        }
     }
 }
