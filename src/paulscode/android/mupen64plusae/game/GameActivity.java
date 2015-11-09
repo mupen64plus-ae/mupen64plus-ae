@@ -87,11 +87,4 @@ public class GameActivity extends Activity
         super.onStop();
         mLifecycleHandler.onStop();
     }
-    
-    @Override
-    protected void onDestroy()
-    {        
-        super.onDestroy();
-        mLifecycleHandler.onDestroy();
-    }
 }

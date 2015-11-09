@@ -46,6 +46,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnExitListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnSaveLoadListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
@@ -121,7 +122,8 @@ import com.bda.controller.Controller;
 */
 //@formatter:on
 
-public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebarActionHandler, OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener
+public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebarActionHandler,
+    OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExitListener
 {
     // Activity and views
     private Activity mActivity;
@@ -419,7 +421,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         {
         case R.id.menuItem_exit:
             mWaitingOnExitConfirmation = true;
-            CoreInterface.exit(!mDrawerLayout.isDrawerOpen( GravityCompat.START ));
+            CoreInterface.exit(this);
             break;
         case R.id.menuItem_toggle_speed:
             CoreInterface.toggleSpeed();
@@ -651,17 +653,29 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         Log.i( "GameLifecycleHandler", "onStop" );
     }
     
-    public void onDestroy()
-    {
-        Log.i( "GameLifecycleHandler", "onDestroy" );
+    @Override
+    public void onExit(boolean shouldExit)
+    {        
+        Log.i( "GameLifecycleHandler", "onExit" );
         
-        // Never go directly from running to stopped; always pause (and autosave) first
-        String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-        CoreInterface.pauseEmulator( true, saveFileName );
-        mAutoSaveManager.clearOldest();
-        CoreInterface.shutdownEmulator();
+        if(shouldExit)
+        {
+            // Never go directly from running to stopped; always pause (and autosave) first
+            String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+            CoreInterface.pauseEmulator( true, saveFileName );
+            mAutoSaveManager.clearOldest();
+            CoreInterface.shutdownEmulator();
+            
+            mMogaController.exit();
+            
+            mActivity.finish();
+        }
+        else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
+        {
+            NativeExports.emuResume();
+        }
         
-        mMogaController.exit();
+        mWaitingOnExitConfirmation = false;
     }
 
     @Override
@@ -686,7 +700,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             else
             {
                 mWaitingOnExitConfirmation = true;
-                CoreInterface.exit(true);
+                CoreInterface.exit(this);
             }
             return true;
         }
@@ -889,7 +903,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     @Override
     public void onGameSurfaceCreated()
     {
-        if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+        if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnExitConfirmation)
         {
             NativeExports.emuResume();
         }

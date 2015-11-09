@@ -84,8 +84,6 @@ public class CoreInterface
     {
         /**
          * Called when a prompt is complete
-         * 
-         * @param newValue The new FPS value.
          */
         public void onPromptFinished();
     }
@@ -93,9 +91,18 @@ public class CoreInterface
     public interface OnSaveLoadListener
     {
         /**
-         * Called when a save is loaded
+         * Called when a game is saved or a save is loaded
          */
         public void onSaveLoad();
+    }
+    
+    public interface OnExitListener
+    {
+        /**
+         * Called when a game is exited
+         * @param True if we want to exit
+         */
+        public void onExit(boolean shouldExit);
     }
     
     // Haptic objects - used by NativeInput
@@ -638,7 +645,7 @@ public class CoreInterface
         NativeExports.emuAdvanceFrame();
     }
     
-    public static void exit(final boolean mResumeOnCancel)
+    public static void exit(final OnExitListener onExitListener)
     {
         NativeExports.emuPause();
         String title = sActivity.getString( R.string.confirm_title );
@@ -648,14 +655,7 @@ public class CoreInterface
             @Override
             public void onDialogClosed( int which )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    sActivity.finish();
-                }
-                else if (mResumeOnCancel)
-                {
-                    NativeExports.emuResume();
-                }
+                onExitListener.onExit( which == DialogInterface.BUTTON_POSITIVE );
             }
         } );
     }
