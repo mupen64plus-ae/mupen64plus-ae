@@ -202,6 +202,10 @@
             android:summary="@string/selectedValue"
             android:title="EnableCopyColorToRDRAM" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="EnableCopyAuxiliaryToRDRAM"
+            android:title="EnableCopyAuxiliaryToRDRAM" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="EnableCopyDepthToRDRAM"
             android:title="EnableCopyDepthToRDRAM" />
