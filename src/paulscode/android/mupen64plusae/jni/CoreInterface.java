@@ -385,24 +385,37 @@ public class CoreInterface
         }
     }
     
-    public static synchronized void pauseEmulator( boolean autoSave, String latestSave )
+    public static synchronized void pauseEmulator(boolean autoSave, String latestSave)
     {
-        if( sCoreThread != null )
+        if (sCoreThread != null)
         {
-            NativeExports.emuPause();
-            
-            // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
-            if( autoSave && latestSave != null)
-            {                
+
+            // Auto-save in case device doesn't resume properly (e.g. OS kills
+            // process, battery dies, etc.)
+            if (autoSave && latestSave != null)
+            {
+                NativeExports.emuSaveFile(latestSave);
                 
-                Notifier.showToast( sActivity, R.string.toast_savingSession );
-                
+                //For some reason, the core refuses to save unless
+                //it's running for at least a small amount of time
+                NativeExports.emuResume();
+                try
+                {
+                    Thread.sleep(100);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                Notifier.showToast(sActivity, R.string.toast_savingSession);
+
                 Log.i("CoreInterface", "Saving file: " + latestSave);
-                NativeExports.emuSaveFile( latestSave );
             }
+
+            NativeExports.emuPause();
         }
     }
-    
+
     public static void togglePause()
     {
         int state = NativeExports.emuGetState();
