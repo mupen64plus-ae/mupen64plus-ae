@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.profile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -29,6 +30,7 @@ import org.mupen64plusae.v3.alpha.BuildConfig;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -43,6 +45,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -61,7 +64,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-abstract public class ManageProfilesActivity extends AppCompatListActivity
+abstract public class ManageProfilesActivity extends AppCompatListActivity implements DialogInterface.OnClickListener
 {
     /**
      * Gets the absolute path of the {@link ConfigFile} that backs this profile. Subclasses should
@@ -115,6 +118,8 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
      */
     abstract protected int getWindowTitleResource();
     
+    private static final String STATE_MENU_DIALOG_FRAGMENT = "STATE_MENU_DIALOG_FRAGMENT";
+    
     /** The back-end store for the built-in profiles, which subclasses should read from. */
     protected ConfigFile mConfigBuiltin;
     
@@ -136,8 +141,10 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     List<Profile> mProfileList = new ArrayList<Profile>();
     
     /**Alert dialogs **/
-    AlertDialog mAlertDialogMenu = null;
     AlertDialog mAlertDialogEditName = null;
+    
+    /** Current listview position */
+    private int mListViewPosition = 0;
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -166,11 +173,6 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     protected void onPause()
     {
         super.onPause();
-        
-        if(mAlertDialogMenu != null)
-        {
-            mAlertDialogMenu.dismiss();
-        }
         
         if(mAlertDialogEditName != null)
         {
@@ -218,6 +220,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
     @Override
     protected void onListItemClick( ListView l, View v, int position, long id )
     {
+        mListViewPosition = position;
         // Popup a dialog with a context-sensitive list of options for the profile
         final Profile profile = (Profile) getListView().getItemAtPosition( position );
         if( profile != null )
@@ -230,66 +233,72 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity
             if( isDefault )
                 items[0] = getString( R.string.listItem_unsetDefault );
             
-            Builder builder = new Builder( this );
+            List<CharSequence> itemList = Arrays.asList(items);
+
             int stringId = profile.isBuiltin
                     ? R.string.popup_titleBuiltin
                     : R.string.popup_titleCustom;
-            builder.setTitle( getString( stringId, profile.name ) );
-            builder.setItems( items, new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick( DialogInterface dialog, int which )
-                        {
-                            if( which >= 0 )
-                            {
-                                if( !profile.isBuiltin )
-                                {
-                                    // Custom profiles are writable
-                                    switch( which )
-                                    {
-                                        case 0:
-                                            putDefaultProfile( isDefault
-                                                    ? getNoDefaultProfile()
-                                                    : profile.name );
-                                            refreshList();
-                                            break;
-                                        case 1:
-                                            editProfile( profile );
-                                            break;
-                                        case 2:
-                                            copyProfile( profile );
-                                            break;
-                                        case 3:
-                                            renameProfile( profile );
-                                            break;
-                                        case 4:
-                                            deleteProfile( profile, isDefault );
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    // Built-in profiles are read-only
-                                    switch( which )
-                                    {
-                                        case 0:
-                                            putDefaultProfile( isDefault
-                                                    ? getNoDefaultProfile()
-                                                    : profile.name );
-                                            refreshList();
-                                            break;
-                                        case 1:
-                                            copyProfile( profile );
-                                            break;
-                                    }
-                                }
-                            }
-                        }
-                    } );
-            mAlertDialogMenu = builder.create();
-            mAlertDialogMenu.show();
+            
+            MenuDialogFragment menuDialogFragment = MenuDialogFragment.newInstance(
+                getString( stringId, profile.name ), itemList);
+            
+            FragmentManager fm = getSupportFragmentManager();
+            menuDialogFragment.show(fm, STATE_MENU_DIALOG_FRAGMENT);
         }
         super.onListItemClick( l, v, position, id );
+    }
+    
+    @Override
+    public void onClick(DialogInterface dialog, int which)
+    {
+        //We can only get here if mListViewPosition is valid, so profile shouldn't be null
+        final Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
+        final boolean isDefault = profile.name.equals( getDefaultProfile() );
+        
+        if( which >= 0 )
+        {
+            if( !profile.isBuiltin )
+            {
+                // Custom profiles are writable
+                switch( which )
+                {
+                    case 0:
+                        putDefaultProfile( isDefault
+                                ? getNoDefaultProfile()
+                                : profile.name );
+                        refreshList();
+                        break;
+                    case 1:
+                        editProfile( profile );
+                        break;
+                    case 2:
+                        copyProfile( profile );
+                        break;
+                    case 3:
+                        renameProfile( profile );
+                        break;
+                    case 4:
+                        deleteProfile( profile, isDefault );
+                        break;
+                }
+            }
+            else
+            {
+                // Built-in profiles are read-only
+                switch( which )
+                {
+                    case 0:
+                        putDefaultProfile( isDefault
+                                ? getNoDefaultProfile()
+                                : profile.name );
+                        refreshList();
+                        break;
+                    case 1:
+                        copyProfile( profile );
+                        break;
+                }
+            }
+        }
     }
     
     private void editProfile( Profile profile )
