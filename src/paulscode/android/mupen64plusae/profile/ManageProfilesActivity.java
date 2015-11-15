@@ -21,50 +21,43 @@
 package paulscode.android.mupen64plusae.profile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.mupen64plusae.v3.alpha.BuildConfig;
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.MenuListView;
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
 import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog;
+import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog.OnProfileNameDialogButtonListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-abstract public class ManageProfilesActivity extends AppCompatListActivity implements DialogInterface.OnClickListener
+abstract public class ManageProfilesActivity extends AppCompatListActivity implements OnDialogMenuItemSelectedListener, OnProfileNameDialogButtonListener
 {
     /**
      * Gets the absolute path of the {@link ConfigFile} that backs this profile. Subclasses should
@@ -119,6 +112,9 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     abstract protected int getWindowTitleResource();
     
     private static final String STATE_MENU_DIALOG_FRAGMENT = "STATE_MENU_DIALOG_FRAGMENT";
+    private static final String STATE_PROFILE_EDIT_DIALOG_FRAGMENT = "STATE_PROFILE_EDIT_DIALOG_FRAGMENT";
+    private static final String STATE_CURRENT_SELECTED_ITEM = "STATE_CURRENT_SELECTED_ITEM";
+    private static final String STATE_CURRENT_SELECTED_OPERATION = "STATE_CURRENT_SELECTED_OPERATION";
     
     /** The back-end store for the built-in profiles, which subclasses should read from. */
     protected ConfigFile mConfigBuiltin;
@@ -140,17 +136,17 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     /** Profile list **/
     List<Profile> mProfileList = new ArrayList<Profile>();
     
-    /**Alert dialogs **/
-    AlertDialog mAlertDialogEditName = null;
-    
     /** Current listview position */
     private int mListViewPosition = 0;
+    
+    /** Current selectedOperation */
+    private int mSelectedOperation = 0;
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        
+         
         setContentView( R.layout.manage_profiles_activity );
         
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
@@ -166,18 +162,22 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         mConfigBuiltin = getConfigFile( true );
         mConfigCustom = getConfigFile( false );
         
+        if( savedInstanceState != null )
+        {
+            mListViewPosition = savedInstanceState.getInt(STATE_CURRENT_SELECTED_ITEM);
+            mSelectedOperation = savedInstanceState.getInt(STATE_CURRENT_SELECTED_OPERATION);
+        }
+        
         refreshList();
     }
     
     @Override
-    protected void onPause()
+    public void onSaveInstanceState( Bundle savedInstanceState )
     {
-        super.onPause();
+        savedInstanceState.putInt(STATE_CURRENT_SELECTED_ITEM, mListViewPosition);
+        savedInstanceState.putInt(STATE_CURRENT_SELECTED_OPERATION, mSelectedOperation);
         
-        if(mAlertDialogEditName != null)
-        {
-            mAlertDialogEditName.dismiss();
-        }
+        super.onSaveInstanceState( savedInstanceState );
     }
     
     @Override
@@ -197,14 +197,16 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         return super.onPrepareOptionsMenu( menu );
     }
     
-    @TargetApi( 11 )
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
+        mSelectedOperation = item.getItemId();
+        
         switch( item.getItemId() )
         {
             case R.id.menuItem_new:
-                addProfile();
+                promptNameComment( R.string.menuItem_new, "", "", false);
                 return true;
             case R.id.menuItem_toggleBuiltins:
                 setBuiltinVisibility( !getBuiltinVisibility() );
@@ -225,22 +227,16 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         final Profile profile = (Profile) getListView().getItemAtPosition( position );
         if( profile != null )
         {
-            final boolean isDefault = profile.name.equals( getDefaultProfile() );
             int resId = profile.isBuiltin
-                    ? R.array.profileClickBuiltin_entries
-                    : R.array.profileClickCustom_entries;
-            CharSequence[] items = getResources().getTextArray( resId );
-            if( isDefault )
-                items[0] = getString( R.string.listItem_unsetDefault );
-            
-            List<CharSequence> itemList = Arrays.asList(items);
+                    ? R.menu.profile_click_menu_builtin
+                    : R.menu.profile_click_menu_custom;
 
             int stringId = profile.isBuiltin
                     ? R.string.popup_titleBuiltin
                     : R.string.popup_titleCustom;
             
-            MenuDialogFragment menuDialogFragment = MenuDialogFragment.newInstance(
-                getString( stringId, profile.name ), itemList);
+            MenuDialogFragment menuDialogFragment = MenuDialogFragment.newInstance(0,
+                getString( stringId, profile.name ), resId);
             
             FragmentManager fm = getSupportFragmentManager();
             menuDialogFragment.show(fm, STATE_MENU_DIALOG_FRAGMENT);
@@ -249,55 +245,59 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     }
     
     @Override
-    public void onClick(DialogInterface dialog, int which)
+    public void onPrepareMenuList(MenuListView listView)
+    {
+
+        // Popup a dialog with a context-sensitive list of options for the profile
+        final Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
+
+        if( profile.name.equals( getDefaultProfile() ) )
+        {
+            MenuItem defaultProfileItem = profile.isBuiltin ?
+                listView.getMenu().findItem(R.id.menuItem_setUnsetDefaultBuiltinProfile) :
+                listView.getMenu().findItem(R.id.menuItem_setUnsetDefaultCustomProfile);
+                defaultProfileItem.setTitle(getString( R.string.listItem_unsetDefault ));
+        }
+    }
+    
+    @Override
+    public void onDialogMenuItemSelected( int dialogId, MenuItem item)
     {
         //We can only get here if mListViewPosition is valid, so profile shouldn't be null
         final Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
         final boolean isDefault = profile.name.equals( getDefaultProfile() );
         
-        if( which >= 0 )
+        mSelectedOperation = item.getItemId();
+        
+        switch (mSelectedOperation)
         {
-            if( !profile.isBuiltin )
-            {
-                // Custom profiles are writable
-                switch( which )
-                {
-                    case 0:
-                        putDefaultProfile( isDefault
-                                ? getNoDefaultProfile()
-                                : profile.name );
-                        refreshList();
-                        break;
-                    case 1:
-                        editProfile( profile );
-                        break;
-                    case 2:
-                        copyProfile( profile );
-                        break;
-                    case 3:
-                        renameProfile( profile );
-                        break;
-                    case 4:
-                        deleteProfile( profile, isDefault );
-                        break;
-                }
-            }
-            else
-            {
-                // Built-in profiles are read-only
-                switch( which )
-                {
-                    case 0:
-                        putDefaultProfile( isDefault
-                                ? getNoDefaultProfile()
-                                : profile.name );
-                        refreshList();
-                        break;
-                    case 1:
-                        copyProfile( profile );
-                        break;
-                }
-            }
+        case R.id.menuItem_setUnsetDefaultCustomProfile:
+            putDefaultProfile( isDefault
+                ? getNoDefaultProfile()
+                : profile.name );
+            refreshList();
+            break;
+        case R.id.menuItem_editCustomProfile:
+            editProfile( profile );
+            break;
+        case R.id.menuItem_copyCustomProfile:
+            promptNameComment( R.string.listItem_copy, profile.name, profile.comment, false);
+            break;
+        case R.id.menuItem_renameCustomProfile:
+            promptNameComment( R.string.listItem_rename, profile.name, profile.comment, true);
+            break;
+        case R.id.menuItem_deleteCustomProfile:
+            deleteProfile( profile, isDefault );
+            break;
+        case R.id.menuItem_setUnsetDefaultBuiltinProfile:
+            putDefaultProfile( isDefault
+                ? getNoDefaultProfile()
+                : profile.name );
+            refreshList();
+            break;
+        case R.id.menuItem_copyBUiltinProfile:
+            promptNameComment( R.string.listItem_copy, profile.name, profile.comment, false);
+            break;
         }
     }
     
@@ -309,63 +309,41 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         onEditProfile( profile );
     }
     
-    private void addProfile()
+    private void addProfile(String name, String comment)
     {
-        promptNameComment( R.string.menuItem_new, "", "", false, new NameCommentListener()
-        {
-            @Override
-            public void onAccept( String name, String comment )
-            {
-                if(BuildConfig.DEBUG && mConfigCustom.keySet().contains( name ))
-                    throw new RuntimeException();
-                
-                Profile profile = new Profile( false, name, comment );
-                profile.writeTo( mConfigCustom );
-                mConfigCustom.save();
-                refreshList();
-                editProfile( profile );
-            }
-        } );
-    }
-    
-    private void copyProfile( final Profile profile )
-    {
-        promptNameComment( R.string.listItem_copy, profile.name, profile.comment, false,
-                new NameCommentListener()
-                {
-                    @Override
-                    public void onAccept( String name, String comment )
-                    {
-                        if(BuildConfig.DEBUG && mConfigCustom.keySet().contains( name ))
-                            throw new RuntimeException();
-                        
-                        Profile newProfile = profile.copy( name, comment );
-                        newProfile.writeTo( mConfigCustom );
-                        mConfigCustom.save();
-                        refreshList();
-                        editProfile( newProfile );
-                    }
-                } );
-    }
-    
-    private void renameProfile( final Profile profile )
-    {
-        if(BuildConfig.DEBUG && profile.isBuiltin)
+        if (BuildConfig.DEBUG && mConfigCustom.keySet().contains(name))
             throw new RuntimeException();
-        
-        promptNameComment( R.string.listItem_rename, profile.name, profile.comment, true,
-                new NameCommentListener()
-                {
-                    @Override
-                    public void onAccept( String name, String comment )
-                    {
-                        mConfigCustom.remove( profile.name );
-                        Profile newProfile = profile.copy( name, comment );
-                        newProfile.writeTo( mConfigCustom );
-                        mConfigCustom.save();
-                        refreshList();
-                    }
-                } );
+
+        Profile profile = new Profile(false, name, comment);
+        profile.writeTo(mConfigCustom);
+        mConfigCustom.save();
+        refreshList();
+        editProfile(profile);
+    }
+    
+    private void copyProfile(String name, String comment)
+    {
+        final Profile profile = (Profile) getListView().getItemAtPosition(mListViewPosition);
+
+        if (BuildConfig.DEBUG && mConfigCustom.keySet().contains(name))
+            throw new RuntimeException();
+
+        Profile newProfile = profile.copy(name, comment);
+        newProfile.writeTo(mConfigCustom);
+        mConfigCustom.save();
+        refreshList();
+        editProfile(newProfile);
+    }
+    
+    private void renameProfile(String name, String comment)
+    {
+        Profile profile = (Profile) getListView().getItemAtPosition(mListViewPosition);
+
+        mConfigCustom.remove(profile.name);
+        Profile newProfile = profile.copy(name, comment);
+        newProfile.writeTo(mConfigCustom);
+        mConfigCustom.save();
+        refreshList();
     }
     
     private void deleteProfile( final Profile profile, final boolean isDefault )
@@ -399,118 +377,37 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         } );
     }
     
-    private interface NameCommentListener
-    {
-        void onAccept( String name, String comment );
-    }
-    
     private void promptNameComment( int titleId, final String name, String comment,
-            final boolean allowSameName, final NameCommentListener listener )
+            final boolean allowSameName )
     {
-        // Create the name editor
-        final EditText editName = new EditText( this );
-        editName.setText( name );
-        editName.setHint( R.string.hint_profileName );
-        editName.setRawInputType( InputType.TYPE_CLASS_TEXT );
-        editName.setSingleLine();
         
-        // Create the comment editor
-        final EditText editComment = new EditText( this );
-        editComment.setText( comment );
-        editComment.setHint( R.string.hint_profileComment );
-        editComment.setRawInputType( InputType.TYPE_CLASS_TEXT );
+        ProfileNameEditDialog profileNameEditDialogFragment = ProfileNameEditDialog.newInstance(0,
+            getString(titleId), name, comment, mProfileNames, allowSameName);
         
-        // Create the warning label
-        final TextView textWarning = new TextView( this );
-        int dp = 10;
-        int px = Math.round( dp * getResources().getDisplayMetrics().density );
-        textWarning.setPadding( px, 0, px, 0 );
-        
-        // Put the editors in a container
-        final LinearLayout layout = new LinearLayout( this );
-        layout.setOrientation( LinearLayout.VERTICAL );
-        layout.addView( textWarning );
-        layout.addView( editName );
-        layout.addView( editComment );
-        
-        // Create listener for OK/cancel button clicks
-        OnClickListener clickListener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    String name = editName.getText().toString();
-                    String comment = editComment.getText().toString();
-                    listener.onAccept( name, comment );
-                }
-            }
-        };
-        
-        // Create the alert dialog
-        Builder builder = new Builder( this );
-        builder.setTitle( titleId );
-        builder.setView( layout );
-        builder.setPositiveButton( android.R.string.ok, clickListener );
-        builder.setNegativeButton( android.R.string.cancel, clickListener );
-        
-        mAlertDialogEditName = builder.create();
-        
-        // Show the dialog
-        mAlertDialogEditName.show();
-        
-        // Dynamically disable the OK button if the name is not unique
-        final Button okButton = mAlertDialogEditName.getButton( DialogInterface.BUTTON_POSITIVE );
-        String warning = isValidName( name, name, allowSameName );
-        textWarning.setText( warning );
-        okButton.setEnabled( TextUtils.isEmpty( warning ) );
-        editName.addTextChangedListener( new TextWatcher()
-        {
-            @Override
-            public void onTextChanged( CharSequence s, int start, int before, int count )
-            {
-            }
-            
-            @Override
-            public void beforeTextChanged( CharSequence s, int start, int count, int after )
-            {
-            }
-            
-            @Override
-            public void afterTextChanged( Editable s )
-            {
-                String warning = isValidName( name, s.toString(), allowSameName );
-                textWarning.setText( warning );
-                okButton.setEnabled( TextUtils.isEmpty( warning ) );
-            }
-        } );
+        FragmentManager fm = getSupportFragmentManager();
+        profileNameEditDialogFragment.show(fm, STATE_PROFILE_EDIT_DIALOG_FRAGMENT);
     }
     
-    /**
-     * Checks whether a candidate name is unique, non-empty, and contains only safe characters.
-     * Unsafe characters are: '[', ']'.
-     * 
-     * @param oldName the old name
-     * @param newName the new name
-     * @param allowSameName set true to permit old and new names to be the same
-     * @return empty string if the profile name is safe to use, otherwise a warning message
-     */
-    private String isValidName( String oldName, String newName, boolean allowSameName )
+    public void onProfileNameDialogButton( int dialogId, int selectedButton, String name, String comment )
     {
-        boolean isNotEmpty = !TextUtils.isEmpty( newName );
-        boolean isLegal = !Pattern.matches( ".*[\\[\\]].*", newName );
-        boolean isSameName = oldName.equals( newName );
-        boolean isUnique = !mProfileNames.contains( newName ) || ( isSameName && allowSameName );
-        
-        if( !isNotEmpty )
-            return getString( R.string.profile_name_cannot_be_empty );
-        else if( !isLegal )
-            return getString( R.string.profile_name_cannot_contain_brackets );
-        else if( !isUnique )
-            return getString( R.string.profile_name_must_be_unique );
-        else
-            return "";
+        if( selectedButton == DialogInterface.BUTTON_POSITIVE )
+        {            
+            switch (mSelectedOperation)
+            {
+            case R.id.menuItem_new:
+                addProfile(name, comment);
+                break;
+            case R.id.menuItem_copyCustomProfile:
+                copyProfile(name, comment);
+                break;
+            case R.id.menuItem_renameCustomProfile:
+                renameProfile(name, comment);
+                break;
+            case R.id.menuItem_copyBUiltinProfile:
+                copyProfile(name, comment);
+                break;
+            }
+        }
     }
     
     private void setBuiltinVisibility( boolean visible )

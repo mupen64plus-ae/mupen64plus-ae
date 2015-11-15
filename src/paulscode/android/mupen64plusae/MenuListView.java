@@ -325,14 +325,8 @@ public class MenuListView extends ExpandableListView
         }
     }
     
-    public static class OnClickListener
-    {
-        OnClickListener()
-        {
-        }
-        
-        public void onClick( MenuItem menuItem )
-        {
-        }
+    public interface OnClickListener
+    {        
+        public void onClick( MenuItem menuItem );
     }
 }

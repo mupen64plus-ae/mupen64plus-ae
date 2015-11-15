@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <item
+        android:id="@+id/menuItem_setUnsetDefaultCustomProfile"
+        android:title="@string/listItem_setDefault"/>
+    <item
+        android:id="@+id/menuItem_editCustomProfile"
+        android:title="@string/listItem_edit"/>
+    <item
+        android:id="@+id/menuItem_copyCustomProfile"
+        android:title="@string/listItem_copy"/>
+    <item
+        android:id="@+id/menuItem_renameCustomProfile"
+        android:title="@string/listItem_rename"/>
+    <item
+        android:id="@+id/menuItem_deleteCustomProfile"
+        android:title="@string/listItem_delete"/>
+
+</menu>
