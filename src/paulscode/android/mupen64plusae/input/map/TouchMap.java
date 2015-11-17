@@ -34,7 +34,6 @@ import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.util.FloatMath;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -386,7 +385,7 @@ public class TouchMap
     public Point getConstrainedDisplacement( int dX, int dY )
     {
         final float dC = (int) ( analogMaximum * ( analogBackScaling * scale ) );
-        final float dA = dC * FloatMath.sqrt( 0.5f );
+        final float dA = (float) (dC * Math.sqrt( 0.5f ));
         final float signX = (dX < 0) ? -1 : 1;
         final float signY = (dY < 0) ? -1 : 1;
         

@@ -31,7 +31,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -194,7 +193,7 @@ public class PeripheralController extends AbstractController implements
             // Calculate the net position of the analog stick
             float rawX = mSensitivityFraction * ( mStrengthXpos - mStrengthXneg );
             float rawY = mSensitivityFraction * ( mStrengthYpos - mStrengthYneg );
-            float magnitude = FloatMath.sqrt( ( rawX * rawX ) + ( rawY * rawY ) );
+            float magnitude = (float) Math.sqrt( ( rawX * rawX ) + ( rawY * rawY ) );
             
             // Update controller state
             if( magnitude > mDeadzoneFraction )
