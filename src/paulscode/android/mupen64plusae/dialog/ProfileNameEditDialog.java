@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog.Builder;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -113,6 +114,10 @@ public class ProfileNameEditDialog extends DialogFragment
                 {
                     ((OnProfileNameDialogButtonListener) getActivity()).onProfileNameDialogButton(dialogId, which,
                         editName.getText().toString(), editComment.getText().toString());
+                }
+                else
+                {
+                    Log.e("ProfileNameEditDialog", "Activity doesn't implement OnProfileNameDialogButtonListener");
                 }
             }
         };

@@ -22,17 +22,16 @@ package paulscode.android.mupen64plusae.preference;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceGroup;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.Preference.OnPreferenceClickListener;
+import android.support.v7.preference.PreferenceGroup;
 
 public final class PrefUtil
 {
-    @SuppressWarnings( "deprecation" )
-    public static void setOnPreferenceClickListener( PreferenceActivity activity, String key,
+    public static void setOnPreferenceClickListener( AppCompatPreferenceActivity activity, String key,
             OnPreferenceClickListener listener )
     {
         Preference preference = activity.findPreference( key );
@@ -40,16 +39,14 @@ public final class PrefUtil
             preference.setOnPreferenceClickListener( listener );
     }
     
-    @SuppressWarnings( "deprecation" )
-    public static void enablePreference( PreferenceActivity activity, String key, boolean enabled )
+    public static void enablePreference( AppCompatPreferenceActivity activity, String key, boolean enabled )
     {
         Preference preference = activity.findPreference( key );
         if( preference != null )
             preference.setEnabled( enabled );
     }
     
-    @SuppressWarnings( "deprecation" )
-    public static void removePreference( PreferenceActivity activity, String keyParent,
+    public static void removePreference( AppCompatPreferenceActivity activity, String keyParent,
             String keyChild )
     {
         Preference parent = activity.findPreference( keyParent );

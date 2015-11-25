@@ -27,14 +27,13 @@ import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
-import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.Preference.OnPreferenceClickListener;
+import android.support.v7.preference.PreferenceManager;
 
 public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
@@ -72,7 +71,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
     
-    @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -81,11 +79,12 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        
         mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         // Load user preference menu structure from XML and update view
-        addPreferencesFromResource( R.xml.preferences_global );
+        addPreferencesFromResource( null, R.xml.preferences_global );
         
         // Refresh the preference data wrapper
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
@@ -94,6 +93,45 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_USER_PREFS, this );
         
+    }
+    
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        
+        mPrefs.unregisterOnSharedPreferenceChangeListener( this );
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        mPrefs.registerOnSharedPreferenceChangeListener( this );
+    }
+    
+    @Override
+    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
+    {
+        if( key.equals( NAVIGATION_MODE ) )
+        {
+            // Sometimes one preference change affects the hierarchy or layout of the views. In this
+            // case it's easier just to restart the activity than try to figure out what to fix.
+            ActivityHelper.restartActivity( this );
+        }
+        else
+        {
+            // Just refresh the preference screens in place
+            refreshViews();
+        }
+    }
+    
+    private void refreshViews()
+    {
+        // Refresh the preferences object
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
@@ -122,44 +160,7 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_POLYGON_OFFSET );
             }
         }
-    }
-    
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-        mPrefs.unregisterOnSharedPreferenceChangeListener( this );
-    }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        mPrefs.registerOnSharedPreferenceChangeListener( this );
-        refreshViews();
-    }
-    
-    @Override
-    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
-    {
-        if( key.equals( NAVIGATION_MODE ) )
-        {
-            // Sometimes one preference change affects the hierarchy or layout of the views. In this
-            // case it's easier just to restart the activity than try to figure out what to fix.
-            ActivityHelper.restartActivity( this );
-        }
-        else
-        {
-            // Just refresh the preference screens in place
-            refreshViews();
-        }
-    }
-    
-    @TargetApi( 9 )
-    private void refreshViews()
-    {
-        // Refresh the preferences object
-        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        
         
         // Enable polygon offset pref if flicker reduction is custom
         PrefUtil.enablePreference( this, VIDEO_POLYGON_OFFSET, mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM );
@@ -220,5 +221,11 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
                 }
             }
         } );
+    }
+    
+    @Override
+    protected void OnPreferenceScreenChange(String key)
+    {
+        refreshViews();
     }
 }

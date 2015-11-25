@@ -26,19 +26,24 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.profile.Profile;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.preference.ListPreference;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.ArrayAdapter;
 
-public class ProfilePreference extends CompatibleListPreference
+public class ProfilePreference extends ListPreference implements OnPreferenceDialogListener
 {
     private static final boolean DEFAULT_ALLOW_DISABLE = false;
     
@@ -63,11 +68,25 @@ public class ProfilePreference extends CompatibleListPreference
     }
     
     @Override
-    protected void onPrepareDialogBuilder( Builder builder )
+    public void onPrepareDialogBuilder( Context context, Builder builder )
     {
-        super.onPrepareDialogBuilder( builder );
         if( !TextUtils.isEmpty( mManagerAction ) )
         {
+            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
+                context, R.layout.profile_preference, getEntries());
+            
+            int currentIndex = findIndexOfValue(getCurrentValue());
+            builder.setTitle(getTitle());
+            builder.setPositiveButton(null, null);
+            builder.setSingleChoiceItems(adapter, currentIndex, new OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int item)
+                {
+                    setValue(getEntryValues()[item].toString());
+                    dialog.dismiss();
+                }
+            } );
             builder.setNeutralButton( R.string.profile_manage_profiles, new OnClickListener()
             {
                 @Override
@@ -160,5 +179,17 @@ public class ProfilePreference extends CompatibleListPreference
     public String getCurrentValue()
     {
         return getPersistedString( null );
+    }
+
+    @Override
+    public void onBindDialogView(View view, FragmentActivity associatedActivity)
+    {
+        //Nothing to do here
+    }
+
+    @Override
+    public void onDialogClosed(boolean result)
+    {
+        //Nothing to do here
     }
 }

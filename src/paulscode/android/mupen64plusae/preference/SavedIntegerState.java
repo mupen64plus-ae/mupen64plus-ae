@@ -24,8 +24,8 @@ package paulscode.android.mupen64plusae.preference;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.Preference;
-import android.preference.Preference.BaseSavedState;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.Preference.BaseSavedState;
 
 public class SavedIntegerState extends BaseSavedState
 {

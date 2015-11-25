@@ -33,8 +33,9 @@ import android.app.AlertDialog.Builder;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceGroup;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceGroup;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -88,7 +89,6 @@ public class EmulationProfileActivity extends ProfileActivity
         return new GlobalPrefs( this, appData ).emulationProfiles_cfg;
     }
     
-    @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -115,8 +115,7 @@ public class EmulationProfileActivity extends ProfileActivity
         if( key.equals( PATH_HI_RES_TEXTURES ) )
             processTexturePak( sharedPreferences.getString( PATH_HI_RES_TEXTURES, "" ) );
     }
-    
-    @SuppressWarnings( "deprecation" )
+
     @Override
     protected void refreshViews()
     {
@@ -198,5 +197,12 @@ public class EmulationProfileActivity extends ProfileActivity
                             R.string.pathHiResTexturesTask_errorMessage );
             }
         } ).execute();
+    }
+
+    @Override
+    public DialogFragment getPreferenceDialogFragment(Preference preference)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

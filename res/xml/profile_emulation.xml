@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
-    <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+    <android.support.v7.preference.ListPreference
         android:defaultValue="@string/r4300Emulator_default"
         android:entries="@array/r4300Emulator_entries"
         android:entryValues="@array/r4300Emulator_values"
         android:key="r4300Emulator"
         android:summary="@string/selectedValue"
         android:title="@string/r4300Emulator_title" />
-    <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+    <android.support.v7.preference.ListPreference
         android:defaultValue="@string/videoPlugin_default"
         android:entries="@array/videoPlugin_entries"
         android:entryValues="@array/videoPlugin_values"
         android:key="videoPlugin"
         android:summary="@string/selectedValue"
         android:title="@string/videoPlugin_title" />
-    <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+    <android.support.v7.preference.ListPreference
         android:defaultValue="@string/videoSubPlugin_default"
         android:entries="@array/videoSubPlugin_entries"
         android:entryValues="@array/videoSubPlugin_values"
@@ -25,10 +25,10 @@
         android:summary="@string/selectedValue"
         android:title="@string/videoSubPlugin_title" />
 
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryGln64"
         android:title="@string/categoryGln64_title" >
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/gln64Frameskip_default"
             android:entries="@array/gln64Frameskip_entries"
             android:entryValues="@array/gln64Frameskip_values"
@@ -69,8 +69,8 @@
             android:title="@string/gln64HackDepth_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryRice"
         android:title="@string/categoryRice_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
@@ -94,14 +94,14 @@
             android:summary="@string/riceForceTextureFilter_summary"
             android:title="@string/riceForceTextureFilter_title" />
 
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/riceScreenUpdate_default"
             android:entries="@array/riceScreenUpdate_entries"
             android:entryValues="@array/riceScreenUpdate_values"
             android:key="riceScreenUpdate"
             android:summary="@string/selectedValue"
             android:title="@string/riceScreenUpdate_title" />
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/riceTextureEnhancement_default"
             android:entries="@array/riceTextureEnhancement_entries"
             android:entryValues="@array/riceTextureEnhancement_values"
@@ -122,24 +122,24 @@
             android:summary="@string/pathHiResTextures_summary"
             android:title="@string/pathHiResTextures_title"
             mupen64:selectionMode="1" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryGlide64"
         android:title="@string/categoryGlide64_title" >
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/glide64Frameskip_default"
             android:entries="@array/glide64Frameskip_entries"
             android:entryValues="@array/glide64Frameskip_values"
             android:key="glide64Frameskip"
             android:summary="@string/selectedValue"
             android:title="@string/glide64Frameskip_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryGliden64"
         android:title="@string/categoryGliden64_title" >
         <!-- This is just a temporary implementation for GLideN64. -->
         <!-- This list will be pruned and remaining preferences will be switched to more appropriate types (e.g. list preference rather than text) -->
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="0"
             android:key="MultiSampling"
             android:summary="@string/selectedValue"
@@ -148,17 +148,17 @@
             android:defaultValue="false"
             android:key="WidescreenHack"
             android:title="WidescreenHack" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="1"
             android:key="bilinearMode"
             android:summary="@string/selectedValue"
             android:title="bilinearMode" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="0"
             android:key="MaxAnisotropy"
             android:summary="@string/selectedValue"
             android:title="MaxAnisotropy" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="500"
             android:key="CacheSize"
             android:summary="@string/selectedValue"
@@ -187,7 +187,7 @@
             android:defaultValue="false"
             android:key="ForceGammaCorrection"
             android:title="ForceGammaCorrection" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="2.0"
             android:key="GammaCorrectionLevel"
             android:summary="@string/selectedValue"
@@ -196,7 +196,7 @@
             android:defaultValue="true"
             android:key="EnableFBEmulation"
             android:title="EnableFBEmulation" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="2"
             android:key="EnableCopyColorToRDRAM"
             android:summary="@string/selectedValue"
@@ -217,12 +217,12 @@
             android:defaultValue="false"
             android:key="EnableN64DepthCompare"
             android:title="EnableN64DepthCompare" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="0"
             android:key="txFilterMode"
             android:summary="@string/selectedValue"
             android:title="txFilterMode" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="0"
             android:key="txEnhancementMode"
             android:summary="@string/selectedValue"
@@ -231,7 +231,7 @@
             android:defaultValue="false"
             android:key="txFilterIgnoreBG"
             android:title="txFilterIgnoreBG" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="100"
             android:key="txCacheSize"
             android:summary="@string/selectedValue"
@@ -260,46 +260,46 @@
             android:defaultValue="true"
             android:key="txSaveCache"
             android:title="txSaveCache" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="DroidSans.ttf"
             android:key="fontName"
             android:summary="@string/selectedValue"
             android:title="fontName" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="18"
             android:key="fontSize"
             android:summary="@string/selectedValue"
             android:title="fontSize" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="B5E61D"
             android:key="fontColor"
             android:summary="@string/selectedValue"
             android:title="fontColor" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="0"
             android:key="EnableBloom"
             android:summary="@string/selectedValue"
             android:title="EnableBloom" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="4"
             android:key="bloomThresholdLevel"
             android:summary="@string/selectedValue"
             android:title="bloomThresholdLevel" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="0"
             android:key="bloomBlendMode"
             android:summary="@string/selectedValue"
             android:title="bloomBlendMode" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="10"
             android:key="blurAmount"
             android:summary="@string/selectedValue"
             android:title="blurAmount" />
-        <paulscode.android.mupen64plusae.preference.CompatibleEditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="20"
             android:key="blurStrength"
             android:summary="@string/selectedValue"
             android:title="blurStrength" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-</PreferenceScreen>
+</android.support.v7.preference.PreferenceScreen>

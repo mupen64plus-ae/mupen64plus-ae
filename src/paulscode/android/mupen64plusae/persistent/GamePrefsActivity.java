@@ -22,7 +22,9 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
@@ -30,6 +32,7 @@ import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
@@ -46,16 +49,18 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.Preference.OnPreferenceClickListener;
+import android.support.v7.preference.PreferenceGroup;
+import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
+
 import com.bda.controller.Controller;
 
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener, ExtractCheatListener
+        OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener
 {
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_ROOT = "screenRoot";
@@ -88,7 +93,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private ProfilePreference mControllerProfile2 = null;
     private ProfilePreference mControllerProfile3 = null;
     private ProfilePreference mControllerProfile4 = null;
-    private PreferenceGroup mScreenCheats = null;
+    private PreferenceScreen mScreenCheats = null;
     private PreferenceGroup mCategoryCheats = null;
     
     private boolean mClearCheats = false;
@@ -96,7 +101,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     // MOGA controller interface
     private Controller mMogaController = Controller.getInstance( this );
     
-    @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -139,22 +143,31 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
         
         // Load user preference menu structure from XML and update view
-        getPreferenceManager().setSharedPreferencesName( mGamePrefs.sharedPrefsName );
-        addPreferencesFromResource( R.xml.preferences_game );
+        addPreferencesFromResource( mGamePrefs.sharedPrefsName, R.xml.preferences_game );
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        
+        mPrefs.registerOnSharedPreferenceChangeListener( this );
+        mMogaController.onResume();
+    }
+    
+    protected void updateActivity()
+    {
         mEmulationProfile = (ProfilePreference) findPreference( GamePrefs.EMULATION_PROFILE );
         mTouchscreenProfile = (ProfilePreference) findPreference( GamePrefs.TOUCHSCREEN_PROFILE );
         mControllerProfile1 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE1 );
         mControllerProfile2 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE2 );
         mControllerProfile3 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE3 );
         mControllerProfile4 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE4 );
-        mScreenCheats = (PreferenceGroup) findPreference( SCREEN_CHEATS );
-        mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
         
         // Set some game-specific strings
         setTitle( mRomDetail.goodName );
         
         // Handle certain menu items that require extra processing or aren't actually preferences
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_CHEAT_EDITOR, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_GAME_PREFS, this );
         
@@ -168,7 +181,13 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if( mRomDetail.players == 1 )
         {
             // Simplify name of "controller 1" to just "controller" to eliminate confusion
-            findPreference( GamePrefs.CONTROLLER_PROFILE1 ).setTitle( R.string.controllerProfile_title );
+            Preference player1Pref = findPreference( GamePrefs.CONTROLLER_PROFILE1 );
+            
+            ///This can be null if we are at preference sub screen
+            if(player1Pref != null)
+            {
+                player1Pref.setTitle( R.string.controllerProfile_title );
+            }
             
             // Remove unneeded preference items
             PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE2 );
@@ -183,22 +202,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE4 );
             if( mRomDetail.players < 3 )
                 PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE3 );
-            
-            // Configure the player map preference
-            PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
-            playerPref.setMogaController( mMogaController );
-        }
-        
-        // Build the cheats category as needed
-        refreshCheatsCategory();
-    }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        mPrefs.registerOnSharedPreferenceChangeListener( this );
-        mMogaController.onResume();
+            if( mRomDetail.players < 2 )
+                PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE2 );
+        }        
+
         refreshViews();
     }
     
@@ -251,25 +258,47 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs );
         
         // Populate the profile preferences
-        mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),
+        if(mEmulationProfile != null)
+        {
+            mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),
                 mGlobalPrefs.GetEmulationProfilesConfig(), mGlobalPrefs.getEmulationProfileDefault() );
-        mTouchscreenProfile.populateProfiles( mAppData.GetTouchscreenProfilesConfig(),
-                mGlobalPrefs.GetTouchscreenProfilesConfig(), mGlobalPrefs.getTouchscreenProfileDefault() );
-        mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault() );
-        mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), "" );
-        mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), "" );
-        mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+            mEmulationProfile.setSummary(mEmulationProfile.getCurrentValue());
+        }
         
-        mEmulationProfile.setSummary(mEmulationProfile.getCurrentValue());
-        mTouchscreenProfile.setSummary(mTouchscreenProfile.getCurrentValue());
-        mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
-        mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
-        mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue());
-        mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
+        if(mTouchscreenProfile != null)
+        {
+            mTouchscreenProfile.populateProfiles( mAppData.GetTouchscreenProfilesConfig(),
+                mGlobalPrefs.GetTouchscreenProfilesConfig(), mGlobalPrefs.getTouchscreenProfileDefault() );
+            mTouchscreenProfile.setSummary(mTouchscreenProfile.getCurrentValue());
+        }
+        
+        if(mControllerProfile1 != null)
+        {
+            mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault() );
+            mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
+        }
+        
+        if(mControllerProfile2 != null)
+        {
+            mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+            mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
+        }
+
+        if(mControllerProfile3 != null)
+        {
+            mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+            mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue()); 
+        }
+        
+        if(mControllerProfile4 != null)
+        {
+            mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+            mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
+        }
         
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
@@ -277,6 +306,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mAppData, mGlobalPrefs );
         
         // Set cheats screen summary text
+        mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );
         mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
                 ? R.string.screenCheats_summaryEnabled
                 : R.string.screenCheats_summaryDisabled );
@@ -285,7 +315,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP, mGamePrefs.playerMap.isEnabled() );
         
         // Define which buttons to show in player map dialog
-        @SuppressWarnings( "deprecation" )
         PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
         if( playerPref != null )
         {
@@ -301,16 +330,20 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     }
     
     private void refreshCheatsCategory()
-    {
+    {        
         if(mGamePrefs.isCheatOptionsShown)
         {
-            ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt,
-                mRomCrc, mRomCountryCode);
-            cheatsTask.execute((String) null);
+            if(mCategoryCheats.getPreferenceCount() == 0 || mClearCheats)
+            {
+                ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt,
+                    mRomCrc, mRomCountryCode);
+                cheatsTask.execute((String) null);
+            }
         }
-        else
+        else if(mCategoryCheats != null)
         {
             mScreenCheats.removePreference( mCategoryCheats );
+            mCategoryCheats.removeAll();
         }
     }
     
@@ -344,7 +377,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             }
             
             // Create the menu item associated with this cheat
-            CheatPreference pref = new CheatPreference( this, cheat.cheatIndex, title, notes, optionStrings );
+            CheatPreference pref = new CheatPreference( getPreferenceManagerContext(),
+                cheat.cheatIndex, title, notes, optionStrings );
             
             //We store the cheat index in the key as a string
             String key = mRomCrc + " Cheat" + cheat.cheatIndex ;
@@ -360,21 +394,26 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             }
         }
         
-        mScreenCheats.addPreference( mCategoryCheats );
-        
-        if(mClearCheats)
+        //Check again because the user could had disabled cheats before
+        //cheats finished displaying
+        if(mGamePrefs.isCheatOptionsShown)
         {
-            //Reset this to false if it was set
-            if (AppData.IS_GINGERBREAD)
-            {
-                mPrefs.edit().apply();
-            }
-            else
-            {
-                mPrefs.edit().commit();
-            }
+            mScreenCheats.addPreference( mCategoryCheats );
             
-            mClearCheats = false;
+            if(mClearCheats)
+            {
+                //Reset this to false if it was set
+                if (AppData.IS_GINGERBREAD)
+                {
+                    mPrefs.edit().apply();
+                }
+                else
+                {
+                    mPrefs.edit().commit();
+                }
+                
+                mClearCheats = false;
+            }
         }
     }
     
@@ -427,5 +466,41 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 }
             }
         } );
+    }
+    
+    @Override
+    protected void OnPreferenceScreenChange(String key)
+    {
+        if(key.equals(SCREEN_CHEATS))
+        {
+            mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );
+            
+            if(mCategoryCheats == null)
+            {
+                mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
+            }
+            
+            // Handle certain menu items that require extra processing or aren't actually preferences
+            PrefUtil.setOnPreferenceClickListener( this, ACTION_CHEAT_EDITOR, this );
+            
+            refreshCheatsCategory();
+        }
+        else //then we are the root view
+        {
+            updateActivity();
+        }
+    }
+
+    @Override
+    public void onDialogClosed(int inputCode, int hardwareId, int which)
+    {
+        PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
+        playerPref.onDialogClosed(inputCode, hardwareId, which);
+    }
+
+    @Override
+    public Controller getMogaController()
+    {
+        return mMogaController;
     }
 }

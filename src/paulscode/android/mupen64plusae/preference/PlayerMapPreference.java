@@ -24,8 +24,8 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptInputCodeListener;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
+import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -33,7 +33,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Parcelable;
-import android.preference.DialogPreference;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -41,11 +44,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.bda.controller.Controller;
-
 public class PlayerMapPreference extends DialogPreference implements
-        DialogInterface.OnClickListener, View.OnClickListener, OnCheckedChangeListener
+        View.OnClickListener, OnCheckedChangeListener, OnPreferenceDialogListener
 {
+    public static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
+    public static final String STATE_SELECTED_POPUP_INDEX = "STATE_SELECTED_POPUP_INDEX";
+
     private final PlayerMap mMap = new PlayerMap();
     private List<Integer> mUnmappableKeyCodes;
     
@@ -56,11 +60,13 @@ public class PlayerMapPreference extends DialogPreference implements
     private CheckBox checkBoxReminder;
     
     private String mValue = "";
-    private Controller mMogaController;
     private boolean isControllerEnabled1 = true;
     private boolean isControllerEnabled2 = true;
     private boolean isControllerEnabled3 = true;
     private boolean isControllerEnabled4 = true;
+    
+    private int mSelectedPlayer = 0;
+    private FragmentActivity mAssociatedActivity = null;
     
     public PlayerMapPreference( Context context, AttributeSet attrs )
     {
@@ -81,27 +87,12 @@ public class PlayerMapPreference extends DialogPreference implements
         return mValue;
     }
     
-    public void show()
-    {
-        showDialog( null );
-    }
-    
     public void setControllersEnabled( boolean player1, boolean player2, boolean player3, boolean player4 )
     {
         isControllerEnabled1 = player1;
         isControllerEnabled2 = player2;
         isControllerEnabled3 = player3;
         isControllerEnabled4 = player4;
-    }
-    
-    public void setMogaController( Controller mogaController )
-    {
-        mMogaController = mogaController;
-    }
-
-    public Controller getMogaController()
-    {
-        return mMogaController;
     }
 
     @Override
@@ -117,12 +108,10 @@ public class PlayerMapPreference extends DialogPreference implements
     }
     
     @Override
-    protected void onBindDialogView( View view )
+    public void onBindDialogView( View view, FragmentActivity associatedActivity )
     {
-        // Set up the dialog view seen when the preference menu item is clicked
-        super.onBindDialogView( view );
-        
         // Set the member variables
+        mAssociatedActivity = associatedActivity;
         AppData appData = new AppData( getContext() );
         GlobalPrefs prefs = new GlobalPrefs( getContext(), appData );
         mUnmappableKeyCodes = prefs.unmappableKeyCodes;
@@ -140,10 +129,8 @@ public class PlayerMapPreference extends DialogPreference implements
     }
     
     @Override
-    protected void onDialogClosed( boolean positiveResult )
-    {
-        super.onDialogClosed( positiveResult );
-        
+    public void onDialogClosed( boolean positiveResult )
+    {        
         if( positiveResult )
         {
             String value = mMap.serialize();
@@ -205,28 +192,32 @@ public class PlayerMapPreference extends DialogPreference implements
     
     private void promptPlayer( final int player )
     {
+        mSelectedPlayer = player;
+        
         Context context = getContext();
         String title = context.getString( R.string.playerMapPreference_popupTitle, player );
         String message = context.getString( R.string.playerMapPreference_popupMessage, player,
                 mMap.getDeviceSummary( context, player ) );
         String btnText = context.getString( R.string.playerMapPreference_popupUnmap );
         
-        Prompt.promptInputCode( getContext(), mMogaController, title, message, btnText, mUnmappableKeyCodes,
-                new PromptInputCodeListener()
-                {
-                    @Override
-                    public void onDialogClosed( int inputCode, int hardwareId, int which )
-                    {
-                        if( which != DialogInterface.BUTTON_NEGATIVE )
-                        {
-                            if( which == DialogInterface.BUTTON_POSITIVE )
-                                mMap.map( hardwareId, player );
-                            else
-                                mMap.unmapPlayer( player );
-                            updateViews();
-                        }
-                    }
-                } );
+        
+        PromptInputCodeDialog promptInputCodeDialog = PromptInputCodeDialog.newInstance(
+            title, message, btnText, mUnmappableKeyCodes);
+        
+        FragmentManager fm = mAssociatedActivity.getSupportFragmentManager();
+        promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);
+    }
+
+    public void onDialogClosed( int inputCode, int hardwareId, int which )
+    {
+        if( which != DialogInterface.BUTTON_NEGATIVE )
+        {
+            if( which == DialogInterface.BUTTON_POSITIVE )
+                mMap.map( hardwareId, mSelectedPlayer );
+            else
+                mMap.unmapPlayer( mSelectedPlayer );
+            updateViews();
+        }
     }
     
     private void updateViews()
@@ -255,5 +246,11 @@ public class PlayerMapPreference extends DialogPreference implements
         button.setVisibility( isEnabled ? View.VISIBLE : View.GONE );
         button.setOnClickListener( this );
         return button;
+    }
+
+    @Override
+    public void onPrepareDialogBuilder(Context context, Builder builder)
+    {
+        //Nothing to do here
     }
 }

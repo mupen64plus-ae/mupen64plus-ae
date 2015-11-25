@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
-    
-    <PreferenceScreen
+
+    <android.support.v7.preference.ListPreference
+        android:defaultValue="@string/displayResolution_default"
+        android:entries="@array/displayResolution_entries"
+        android:entryValues="@array/displayResolution_values"
         android:icon="@drawable/ic_display"
-        android:key="screenDisplay"
-        android:title="@string/categoryDisplay_title" >
-        
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
-            android:defaultValue="@string/displayResolution_default"
-            android:entries="@array/displayResolution_entries"
-            android:entryValues="@array/displayResolution_values"
-            android:key="displayResolution"
-            android:summary="@string/selectedValue"
-            android:title="@string/displayResolution_title" />
-        
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
-            android:defaultValue="@string/displayZoom_default"
-            android:entries="@array/displayZoom_entries"
-            android:entryValues="@array/displayZoom_values"
-            android:key="displayZoom"
-            android:summary="@string/selectedValue"
-            android:title="@string/displayZoom_title" />
-    </PreferenceScreen>
-     
+        android:key="displayResolution"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayResolution_title" />
+    <android.support.v7.preference.ListPreference
+        android:defaultValue="@string/displayZoom_default"
+        android:entries="@array/displayZoom_entries"
+        android:entryValues="@array/displayZoom_values"
+        android:icon="@drawable/ic_display"
+        android:key="displayZoom"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayZoom_title" />
+
     <paulscode.android.mupen64plusae.preference.ProfilePreference
         android:icon="@drawable/ic_circuit"
         android:key="emulationProfile"
@@ -74,35 +69,38 @@
         android:summary="@string/playerMap_summary"
         android:title="@string/playerMap_title" />
 
-    <PreferenceScreen
+    <android.support.v7.preference.PreferenceScreen
         android:icon="@drawable/ic_key"
         android:key="screenCheats"
         android:title="@string/screenCheats_title" >
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="playShowCheats"
             android:title="@string/playShowCheats_title" />
 
-        <Preference
+        <android.support.v7.preference.Preference
             android:key="actionCheatEditor"
             android:summary="@string/actionCheatEditor_summary"
             android:title="@string/actionCheatEditor_title" >
-        </Preference>
+        </android.support.v7.preference.Preference>
 
-        <PreferenceCategory
+        <android.support.v7.preference.PreferenceCategory
             android:key="categoryCheats"
             android:title="@string/categoryCheats_title" />
-    </PreferenceScreen>
+    </android.support.v7.preference.PreferenceScreen>
 
-    <Preference
+    <android.support.v7.preference.Preference
         android:icon="@drawable/ic_help"
         android:key="actionWiki"
         android:summary="@string/actionWiki_summary"
         android:title="@string/actionWiki_title" />
-    <Preference
+    <android.support.v7.preference.Preference
         android:icon="@drawable/ic_undo"
         android:key="actionResetGamePrefs"
         android:summary="@string/actionResetGamePrefs_summary"
         android:title="@string/actionResetGamePrefs_title" />
 
-</PreferenceScreen>
+    <android.support.v7.preference.PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

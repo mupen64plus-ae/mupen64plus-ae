@@ -26,7 +26,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceManager;
 
 public class GameActivity extends Activity
 {

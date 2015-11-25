@@ -26,20 +26,23 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import android.app.AlertDialog.Builder;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.res.TypedArray;
-import android.preference.ListPreference;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.preference.ListPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
 
 /**
  * Multi-select list preference. Honeycomb and above provide this functionality natively, but we
  * need backwards-compatibility and some custom features. This gets the job done without much fuss.
  */
-public class MultiSelectListPreference extends ListPreference implements OnMultiChoiceClickListener
+public class MultiSelectListPreference extends ListPreference implements OnMultiChoiceClickListener, OnPreferenceDialogListener
 {
     /** The default delimiter for internal serialization/deserialization. */
     private static final String DEFAULT_DELIMITER = "~";
@@ -151,7 +154,7 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
      * android.preference.ListPreference#onPrepareDialogBuilder(android.app.AlertDialog.Builder)
      */
     @Override
-    protected void onPrepareDialogBuilder( Builder builder )
+    public void onPrepareDialogBuilder( Context context, Builder builder )
     {
         synchronizeState( getValue() );
         builder.setMultiChoiceItems( getEntries(), mCheckedStates, this );
@@ -175,7 +178,7 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
      * @see android.preference.ListPreference#onDialogClosed(boolean)
      */
     @Override
-    protected void onDialogClosed( boolean positiveResult )
+    public void onDialogClosed( boolean positiveResult )
     {
         // super.onDialogClosed(positiveResult);
         String newValue = serialize( getSelectedValues(), mDelimiter );
@@ -249,5 +252,11 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
     public static String serialize( List<String> selectedValues )
     {
         return serialize( selectedValues, DEFAULT_DELIMITER );
+    }
+
+    @Override
+    public void onBindDialogView(View view, FragmentActivity associatedActivity)
+    {
+        //Nothing to do here
     }
 }

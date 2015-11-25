@@ -30,10 +30,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 
 /**
@@ -106,7 +103,6 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
     private ConfigFile mConfigFile;
     private String mProfileName;
     
-    @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -126,6 +122,12 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         
         // Set the title of the activity
         setTitle( mProfileName );
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
         
         // Get the subclass-specific information
         final int resId = getPrefsResId();
@@ -133,6 +135,7 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         
         // Load the config file and working cache
         mConfigFile = new ConfigFile( configPath );
+        
         mPrefs = getSharedPreferences( PREFS_NAME, MODE_PRIVATE );
         transcribe( mConfigFile, mPrefs, mProfileName );
         
@@ -140,14 +143,8 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         PreferenceManager.setDefaultValues( this, PREFS_NAME, MODE_PRIVATE, resId, false );
         
         // Load user preference menu structure from XML
-        getPreferenceManager().setSharedPreferencesName( PREFS_NAME );
-        addPreferencesFromResource( resId );
-    }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
+        addPreferencesFromResource( PREFS_NAME, resId );
+        
         mPrefs.registerOnSharedPreferenceChangeListener( this );
         refreshViews();
     }
