@@ -122,12 +122,6 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         
         // Set the title of the activity
         setTitle( mProfileName );
-    }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
         
         // Get the subclass-specific information
         final int resId = getPrefsResId();
@@ -144,9 +138,14 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         
         // Load user preference menu structure from XML
         addPreferencesFromResource( PREFS_NAME, resId );
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
         
         mPrefs.registerOnSharedPreferenceChangeListener( this );
-        refreshViews();
     }
     
     @Override
@@ -172,7 +171,10 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
             Editor editor = target.edit();
             editor.clear();
             for( String key : section.keySet() )
+            {
                 editor.putString( key, section.get( key ) );
+            }
+
             editor.commit();
         }
     }
@@ -184,5 +186,11 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         for( String key : source.getAll().keySet() )
             target.put( sectionName, key, source.getString( key, null ) );
         target.save();
+    }
+    
+    @Override
+    protected void OnPreferenceScreenChange(String key)
+    {
+        refreshViews();
     }
 }

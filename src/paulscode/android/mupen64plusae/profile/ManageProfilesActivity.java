@@ -346,7 +346,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         refreshList();
     }
     
-    private void deleteProfile( final Profile profile, final boolean isDefault )
+    private void deleteProfile( Profile profile, final boolean isDefault )
     {
         if(BuildConfig.DEBUG && profile.isBuiltin)
             throw new RuntimeException();
@@ -360,6 +360,8 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
+                    Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
+                    
                     if(BuildConfig.DEBUG && !mConfigCustom.keySet().contains( profile.name ))
                         throw new RuntimeException();
                 

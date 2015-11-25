@@ -182,6 +182,15 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
                 .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
         }
     }
+    
+    public void resetPreferences()
+    {        
+        getSupportFragmentManager().beginTransaction().remove(mPrefFrag);
+        mPrefFrag = AppCompatPreferenceFragment.newInstance(mSharedPrefsName, mPreferencesResId, null);
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
+    }
+
 
     public Preference findPreference(CharSequence key)
     {

@@ -34,7 +34,9 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceGroup;
 import android.text.TextUtils;
 import android.util.Log;
@@ -70,10 +72,10 @@ public class EmulationProfileActivity extends ProfileActivity
     
     // Preference menu items
     private PreferenceGroup mScreenRoot = null;
-    private Preference mCategoryN64 = null;
-    private Preference mCategoryRice = null;
-    private Preference mCategoryGlide64 = null;
-    private Preference mCategoryGliden64 = null;
+    private PreferenceCategory mCategoryN64 = null;
+    private PreferenceCategory mCategoryRice = null;
+    private PreferenceCategory mCategoryGlide64 = null;
+    private PreferenceCategory mCategoryGliden64 = null;
     private Preference mPreferenceVideoSubPlugin = null;
     
     @Override
@@ -98,19 +100,24 @@ public class EmulationProfileActivity extends ProfileActivity
         Resources res = getResources();
         PrefUtil.validateListPreference( res, mPrefs, VIDEO_PLUGIN, R.string.videoPlugin_default,
                 R.array.videoPlugin_values );
-        
-        // Get some menu items for use later
-        mScreenRoot = (PreferenceGroup) findPreference( SCREEN_ROOT );
-        mCategoryN64 = findPreference( CATEGORY_GLN64 );
-        mCategoryRice = findPreference( CATEGORY_RICE );
-        mCategoryGlide64 = findPreference( CATEGORY_GLIDE64 );
-        mCategoryGliden64 = findPreference( CATEGORY_GLIDEN64 );
-        mPreferenceVideoSubPlugin = findPreference( VIDEO_SUB_PLUGIN );
     }
     
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
+        if(key.equals("videoPlugin") || key.equals("videoSubPlugin"))
+        {
+            resetPreferences();
+        }
+
+        Preference pref = findPreference(key);
+        
+        if (pref instanceof EditTextPreference)
+        {
+            EditTextPreference editTextPref = (EditTextPreference) pref;
+            pref.setSummary(editTextPref.getText());
+        }
+
         super.onSharedPreferenceChanged( sharedPreferences, key );
         if( key.equals( PATH_HI_RES_TEXTURES ) )
             processTexturePak( sharedPreferences.getString( PATH_HI_RES_TEXTURES, "" ) );
@@ -118,7 +125,17 @@ public class EmulationProfileActivity extends ProfileActivity
 
     @Override
     protected void refreshViews()
-    {
+    {        
+        // Get some menu items for use later
+        mScreenRoot = (PreferenceGroup) findPreference( SCREEN_ROOT );
+        mCategoryN64 = (PreferenceCategory) findPreference( CATEGORY_GLN64 );
+        mCategoryRice = (PreferenceCategory) findPreference( CATEGORY_RICE );
+        mCategoryGlide64 = (PreferenceCategory) findPreference( CATEGORY_GLIDE64 );
+        mCategoryGliden64 = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64 );
+        mPreferenceVideoSubPlugin = findPreference( VIDEO_SUB_PLUGIN );
+        
+        PreferenceCategory currentCategory = null;
+        
         // Get the current values
         String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
         String videoSubPlugin = mPrefs.getString( VIDEO_SUB_PLUGIN, null );
@@ -127,45 +144,93 @@ public class EmulationProfileActivity extends ProfileActivity
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
         
-        if( LIBGLN64_SO.equals( videoPlugin ) )
-            mScreenRoot.addPreference( mCategoryN64 );
-        else
-            mScreenRoot.removePreference( mCategoryN64 );
-        
-        if( LIBRICE_SO.equals( videoPlugin ) )
-            mScreenRoot.addPreference( mCategoryRice );
-        else
-            mScreenRoot.removePreference( mCategoryRice );
-        
-        if( LIBGLIDE64_SO.equals( videoPlugin ) )
-            mScreenRoot.addPreference( mCategoryGlide64 );
-        else
-            mScreenRoot.removePreference( mCategoryGlide64 );
-        
-        if( LIBGLIDEN64_SO.equals( videoPlugin ) )
+        if(mCategoryN64 != null)
         {
-            mScreenRoot.addPreference( mCategoryGliden64 );
-            boolean isGles20 = GLES20.equals( videoSubPlugin );
-            boolean isGles31 = GLES31.equals( videoSubPlugin );
-            findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 );
-            findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
-            findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
-            findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
-            findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 );
-            
-            String enableFBEmulation = mPrefs.getString( GLIDEN64_ENABLE_FB_EMULATION, null );
-            findPreference( GLIDEN64_WIDESCREEN_HACK ).setEnabled( enableFBEmulation.equals("True") );
-            
-            String forceGammaCorrection = mPrefs.getString( GLIDEN64_FORCE_GAMMA_CORRECTION, null );
-            findPreference( GLIDEN64_GAMMA_CORRECTION_LEVEL ).setEnabled( forceGammaCorrection.equals("True") );
+            if( LIBGLN64_SO.equals( videoPlugin ) )
+            {
+                currentCategory = mCategoryN64;
+                mScreenRoot.addPreference( mCategoryN64 );
+            }
+            else
+            {
+                mScreenRoot.removePreference( mCategoryN64 );
+            }
         }
-        else
-            mScreenRoot.removePreference( mCategoryGliden64 );
+
+        if(mCategoryRice != null)
+        {
+            if( LIBRICE_SO.equals( videoPlugin ) )
+            {
+                currentCategory = mCategoryRice;
+                mScreenRoot.addPreference( mCategoryRice );
+            }
+            else
+            {
+                mScreenRoot.removePreference( mCategoryRice );
+            }
+
+        }
+
+        if(mCategoryGlide64 != null)
+        {
+            if( LIBGLIDE64_SO.equals( videoPlugin ) )
+            {
+                currentCategory = mCategoryGlide64;
+                mScreenRoot.addPreference( mCategoryGlide64 );
+            }
+            else
+            {
+                mScreenRoot.removePreference( mCategoryGlide64 );
+            }
+        }
         
-        if( videoPlugin.contains( "%1$s" ) )
-            mScreenRoot.addPreference( mPreferenceVideoSubPlugin );
-        else
-            mScreenRoot.removePreference( mPreferenceVideoSubPlugin );
+        if(mCategoryGliden64 != null)
+        {
+            if( LIBGLIDEN64_SO.equals( videoPlugin ) )
+            {
+                currentCategory = mCategoryGliden64;
+                mScreenRoot.addPreference( mCategoryGliden64 );
+                boolean isGles20 = GLES20.equals( videoSubPlugin );
+                boolean isGles31 = GLES31.equals( videoSubPlugin );
+                findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 );
+                findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
+                findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
+                findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
+                findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 );
+                
+                String enableFBEmulation = mPrefs.getString( GLIDEN64_ENABLE_FB_EMULATION, null );
+                findPreference( GLIDEN64_WIDESCREEN_HACK ).setEnabled( enableFBEmulation.equals("True") );
+                
+                String forceGammaCorrection = mPrefs.getString( GLIDEN64_FORCE_GAMMA_CORRECTION, null );
+                findPreference( GLIDEN64_GAMMA_CORRECTION_LEVEL ).setEnabled( forceGammaCorrection.equals("True") );
+            }
+            else
+            {
+                mScreenRoot.removePreference( mCategoryGliden64 );
+            }
+        }
+
+        //Update the EditTextPreference summaries.
+        if(currentCategory != null)
+        {
+            for(int index = 0; index < currentCategory.getPreferenceCount(); ++index)
+            {
+                Preference pref = currentCategory.getPreference(index);
+                
+                if(pref instanceof EditTextPreference)
+                {
+                    pref.setSummary(mPrefs.getString(pref.getKey(), ""));
+                }
+            }
+        }
+        
+        if(mPreferenceVideoSubPlugin != null)
+        {
+            if( videoPlugin.contains( "%1$s" ) )
+                mScreenRoot.addPreference( mPreferenceVideoSubPlugin );
+            else
+                mScreenRoot.removePreference( mPreferenceVideoSubPlugin );
+        }
     }
     
     private void processTexturePak( final String filename )
