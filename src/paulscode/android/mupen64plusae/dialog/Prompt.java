@@ -76,19 +76,6 @@ public final class Prompt
     }
     
     /**
-     * The listener interface for handling confirmations.
-     * 
-     * @see Prompt#promptConfirm
-     */
-    public interface PromptConfirmListener
-    {
-        /**
-         * Handle the user's confirmation.
-         */
-        public void onDialogClosed( int which );
-    }
-    
-    /**
      * The listener interface for receiving a file selected by the user.
      * 
      * @see Prompt#promptFile
@@ -245,31 +232,6 @@ public final class Prompt
                 }
             }
         } );
-    }
-    
-    /**
-     * Open a dialog to prompt the user for a confirmation (Ok/Cancel).
-     * 
-     * @param context  The activity context.
-     * @param title    The title of the dialog.
-     * @param message  The message to be shown inside the dialog.
-     * @param listener The listener to process the confirmation.
-     */
-    public static void promptConfirm( Context context, CharSequence title, CharSequence message,
-            final PromptConfirmListener listener )
-    {
-        // When the user clicks Ok, notify the downstream listener
-        OnClickListener internalListener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                listener.onDialogClosed(which);
-            }
-        };
-        
-        // Create and launch a simple confirmation dialog
-        prefillBuilder( context, title, message, internalListener ).create().show();
     }
     
     /**

@@ -30,8 +30,8 @@ import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
 import paulscode.android.mupen64plusae.cheat.CheatPreference;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
@@ -49,6 +49,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.support.v7.preference.PreferenceGroup;
@@ -60,8 +61,11 @@ import com.bda.controller.Controller;
 
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener
+        OnSharedPreferenceChangeListener, ExtractCheatListener, PromptInputCodeListener, PromptConfirmListener
 {
+    private static final int RESET_GAME_PREFS_CONFIRM_DIALOG_ID = 0;
+    private static final String RESET_GAME_PREFS_CONFIRM_DIALOG_STATE = "RESET_GAME_PREFS_CONFIRM_DIALOG_STATE";
+    
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_ROOT = "screenRoot";
     private static final String SCREEN_CHEATS = "screenCheats";
@@ -444,28 +448,33 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         String title = getString( R.string.confirm_title );
         String message = getString( R.string.actionResetGamePrefs_popupMessage );
-        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
+        
+        ConfirmationDialog confirmationDialog =
+            ConfirmationDialog.newInstance(RESET_GAME_PREFS_CONFIRM_DIALOG_ID, title, message);
+        
+        FragmentManager fm = getSupportFragmentManager();
+        confirmationDialog.show(fm, RESET_GAME_PREFS_CONFIRM_DIALOG_STATE);
+    }
+    
+    @Override
+    public void onPromptDialogClosed(int id, int which)
+    {
+        if( id == RESET_GAME_PREFS_CONFIRM_DIALOG_ID &&
+            which == DialogInterface.BUTTON_POSITIVE )
         {
-            @Override
-            public void onDialogClosed( int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    // Reset the user preferences
-                    mPrefs.unregisterOnSharedPreferenceChangeListener( GamePrefsActivity.this );
-                    mPrefs.edit().clear().commit();
-                    PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
-                
-                    // Also reset any manual overrides the user may have made in the config file
-                    File configFile = new File( mGamePrefs.mupen64plus_cfg );
-                    if( configFile.exists() )
-                        configFile.delete();
-                
-                    // Rebuild the menu system by restarting the activity
-                    ActivityHelper.restartActivity( GamePrefsActivity.this );
-                }
-            }
-        } );
+            // Reset the user preferences
+            mPrefs.unregisterOnSharedPreferenceChangeListener( GamePrefsActivity.this );
+            mPrefs.edit().clear().commit();
+            PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
+        
+            // Also reset any manual overrides the user may have made in the config file
+            File configFile = new File( mGamePrefs.mupen64plus_cfg );
+            if( configFile.exists() )
+                configFile.delete();
+        
+            // Rebuild the menu system by restarting the activity
+            ActivityHelper.restartActivity( GamePrefsActivity.this );
+        }
     }
     
     @Override

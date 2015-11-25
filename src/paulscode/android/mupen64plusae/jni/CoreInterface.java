@@ -25,11 +25,12 @@ import java.util.ArrayList;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
+import paulscode.android.mupen64plusae.game.GameLifecycleHandler;
 import paulscode.android.mupen64plusae.game.GameSurface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -37,10 +38,11 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.media.AudioTrack;
 import android.os.Vibrator;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 
@@ -114,6 +116,15 @@ public class CoreInterface
         public void onRestart(boolean shouldRestart);
     }
     
+    private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 0;
+    private static final String SAVE_STATE_FILE_CONFIRM_DIALOG_STATE = "SAVE_STATE_FILE_CONFIRM_DIALOG_STATE";
+    
+    private static final int RESTART_CONFIRM_DIALOG_ID = 1;
+    private static final String RESTART_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
+    
+    private static final int EXIT_CONFIRM_DIALOG_ID = 2;
+    private static final String EXIT_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
+    
     // Haptic objects - used by NativeInput
     protected static final Vibrator[] sVibrators = new Vibrator[4];
     
@@ -137,7 +148,8 @@ public class CoreInterface
     protected static long sLastFpsTime = 0;
     
     // Activity and threading objects - used internally
-    private static Activity sActivity = null;
+    private static AppCompatActivity sActivity = null;
+    private static GameLifecycleHandler sLifeCycleHandler = null;
     private static Thread sCoreThread;
     
     // Startup info - used internally
@@ -154,17 +166,21 @@ public class CoreInterface
     private static boolean sUseCustomSpeed = false;
     private static int sCustomSpeed = DEFAULT_SPEED;
     
+    private static File sCurrentSaveStateFile = null;
+    
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
-    public static void initialize( Activity activity, GameSurface surface, GamePrefs gamePrefs,
-        String romPath, String romMd5, String cheatArgs, boolean isRestarting )
+    public static void initialize( AppCompatActivity activity, GameLifecycleHandler lifeCycleHandler,
+        GameSurface surface, GamePrefs gamePrefs, String romPath, String romMd5,
+        String cheatArgs, boolean isRestarting )
     {
         sRomPath = romPath;
         sCheatOptions = cheatArgs;
         sIsRestarting = isRestarting;
         
         sActivity = activity;
+        sLifeCycleHandler = lifeCycleHandler;
         sSurface = surface;
         sAppData = new AppData( sActivity );
         sGlobalPrefs = new GlobalPrefs( sActivity, sAppData );
@@ -454,7 +470,7 @@ public class CoreInterface
         }
     }
     
-    public static void saveFileFromPrompt(final OnSaveLoadListener onSaveLoadListener)
+    public static void saveFileFromPrompt()
     {
         CharSequence title = sActivity.getText( R.string.menuItem_fileSave );
         CharSequence hint = sActivity.getText( R.string.hintFileSave );
@@ -466,7 +482,7 @@ public class CoreInterface
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    saveState( text.toString(), onSaveLoadListener );
+                    saveState( text.toString() );
                 }
             }
         } );
@@ -518,39 +534,29 @@ public class CoreInterface
         } );
     }
     
-    public static void saveState( final String filename, final OnSaveLoadListener onSaveLoadListener )
+    public static void saveState( final String filename )
     {
-        final File file = new File( sGamePrefs.userSaveDir + "/" + filename );
-        if( file.exists() )
+        sCurrentSaveStateFile = new File( sGamePrefs.userSaveDir + "/" + filename );
+        
+        if( sCurrentSaveStateFile.exists() )
         {
             String title = sActivity.getString( R.string.confirm_title );
             String message = sActivity.getString( R.string.confirmOverwriteFile_message, filename );
-            Prompt.promptConfirm( sActivity, title, message, new PromptConfirmListener()
-            {
-                @Override
-                public void onDialogClosed( int which )
-                {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        Notifier.showToast( sActivity, R.string.toast_overwritingFile, file.getName() );
-                        NativeExports.emuSaveFile( file.getAbsolutePath() );
-                        
-                        if(onSaveLoadListener != null)
-                        {
-                            onSaveLoadListener.onSaveLoad();
-                        }
-                    }
-                }
-            } );
+            
+            ConfirmationDialog confirmationDialog =
+                ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
+            
+            FragmentManager fm = sActivity.getSupportFragmentManager();
+            confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
         }
         else
         {
-            Notifier.showToast( sActivity, R.string.toast_savingFile, file.getName() );
-            NativeExports.emuSaveFile( file.getAbsolutePath() );
+            Notifier.showToast( sActivity, R.string.toast_savingFile, sCurrentSaveStateFile.getName() );
+            NativeExports.emuSaveFile( sCurrentSaveStateFile.getAbsolutePath() );
             
-            if(onSaveLoadListener != null)
+            if(sActivity instanceof OnSaveLoadListener)
             {
-                onSaveLoadListener.onSaveLoad();
+                ((OnSaveLoadListener)sLifeCycleHandler).onSaveLoad();
             }
         }
     }
@@ -648,42 +654,66 @@ public class CoreInterface
         NativeExports.emuAdvanceFrame();
     }
     
-    public static synchronized void restart()
+    public static synchronized void restartEmulator()
     {
         CoreInterface.shutdownEmulator();
         CoreInterface.startupEmulator(null);
     }
     
-    public static synchronized void restart(final OnRestartListener onRestartListener)
+    public static synchronized void restart()
     {        
         NativeExports.emuPause();
         String title = sActivity.getString( R.string.confirm_title );
         String message = sActivity.getString( R.string.confirmResetGame_message );
-        Prompt.promptConfirm( sActivity, title, message, new PromptConfirmListener()
-        {
-            @Override
-            public void onDialogClosed( int which )
-            {
-                if(onRestartListener != null)
-                {
-                    onRestartListener.onRestart( which == DialogInterface.BUTTON_POSITIVE );
-                }
-            }
-        } );
+        
+        ConfirmationDialog confirmationDialog =
+            ConfirmationDialog.newInstance(RESTART_CONFIRM_DIALOG_ID, title, message);
+        
+        FragmentManager fm = sActivity.getSupportFragmentManager();
+        confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
     }
     
-    public static void exit(final OnExitListener onExitListener)
+    public static void exit()
     {
         NativeExports.emuPause();
         String title = sActivity.getString( R.string.confirm_title );
         String message = sActivity.getString( R.string.confirmExitGame_message );
-        Prompt.promptConfirm( sActivity, title, message, new PromptConfirmListener()
+        
+        ConfirmationDialog confirmationDialog =
+            ConfirmationDialog.newInstance(EXIT_CONFIRM_DIALOG_ID, title, message);
+        
+        FragmentManager fm = sActivity.getSupportFragmentManager();
+        confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
+    }
+
+    public static void onPromptDialogClosed(int id, int which)
+    {
+        if (id == SAVE_STATE_FILE_CONFIRM_DIALOG_ID)
         {
-            @Override
-            public void onDialogClosed( int which )
+            if (which == DialogInterface.BUTTON_POSITIVE)
             {
-                onExitListener.onExit( which == DialogInterface.BUTTON_POSITIVE );
+                Notifier.showToast(sActivity, R.string.toast_overwritingFile, sCurrentSaveStateFile.getName());
+                NativeExports.emuSaveFile(sCurrentSaveStateFile.getAbsolutePath());
+
+                if(sLifeCycleHandler instanceof OnSaveLoadListener)
+                {
+                    ((OnSaveLoadListener)sLifeCycleHandler).onSaveLoad();
+                }
             }
-        } );
+
+        }
+        else if (id == RESTART_CONFIRM_DIALOG_ID)
+        {            
+            if(sLifeCycleHandler instanceof OnRestartListener)
+            {
+                ((OnRestartListener)sLifeCycleHandler).onRestart( which == DialogInterface.BUTTON_POSITIVE );
+            }
+        }
+        else if (id == EXIT_CONFIRM_DIALOG_ID)
+        {
+            if(sLifeCycleHandler instanceof OnExitListener)
+                ((OnExitListener)sLifeCycleHandler).onExit( which == DialogInterface.BUTTON_POSITIVE );
+        }
+
     }
 }

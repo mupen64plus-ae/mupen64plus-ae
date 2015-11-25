@@ -64,7 +64,6 @@ import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.BitmapDrawable;
@@ -72,6 +71,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -128,7 +128,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExitListener, OnRestartListener
 {
     // Activity and views
-    private Activity mActivity;
+    private AppCompatActivity mActivity;
     private GameSurface mSurface;
     private GameOverlay mOverlay;
     private GameDrawerLayout mDrawerLayout;
@@ -165,7 +165,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     private boolean mFirstStart;
     private boolean mWaitingOnConfirmation = false;
     
-    public GameLifecycleHandler( Activity activity )
+    public GameLifecycleHandler( AppCompatActivity activity )
     {
         mActivity = activity;
         mControllers = new ArrayList<AbstractController>();
@@ -255,7 +255,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
 
         mGameSidebar.setTitle(mRomGoodName);
         // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( mActivity, mSurface, mGamePrefs, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
+        CoreInterface.initialize( mActivity, this, mSurface, mGamePrefs, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
@@ -423,7 +423,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         {
         case R.id.menuItem_exit:
             mWaitingOnConfirmation = true;
-            CoreInterface.exit(this);
+            CoreInterface.exit();
             break;
         case R.id.menuItem_toggle_speed:
             CoreInterface.toggleSpeed();
@@ -457,7 +457,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             CoreInterface.loadFileFromPrompt(this);
             break;
         case R.id.menuItem_file_save:
-            CoreInterface.saveFileFromPrompt(this);
+            CoreInterface.saveFileFromPrompt();
             break;
         case R.id.menuItem_file_load_auto_save:
             CoreInterface.loadAutoSaveFromPrompt(this);
@@ -495,7 +495,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             break;
         case R.id.menuItem_reset:
             mWaitingOnConfirmation = true;
-            CoreInterface.restart(this);
+            CoreInterface.restart();
             break;
         default:
         }
@@ -663,7 +663,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     {        
         if(shouldRestart)
         {
-            CoreInterface.restart();
+            CoreInterface.restartEmulator();
             
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
@@ -723,7 +723,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             else
             {
                 mWaitingOnConfirmation = true;
-                CoreInterface.exit(this);
+                CoreInterface.exit();
             }
             return true;
         }

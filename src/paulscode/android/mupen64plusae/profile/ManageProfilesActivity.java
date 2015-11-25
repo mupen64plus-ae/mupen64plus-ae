@@ -29,10 +29,10 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.MenuListView;
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
 import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog;
 import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog.OnProfileNameDialogButtonListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -57,7 +57,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-abstract public class ManageProfilesActivity extends AppCompatListActivity implements OnDialogMenuItemSelectedListener, OnProfileNameDialogButtonListener
+abstract public class ManageProfilesActivity extends AppCompatListActivity implements OnDialogMenuItemSelectedListener, OnProfileNameDialogButtonListener,
+    PromptConfirmListener
 {
     /**
      * Gets the absolute path of the {@link ConfigFile} that backs this profile. Subclasses should
@@ -115,6 +116,8 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     private static final String STATE_PROFILE_EDIT_DIALOG_FRAGMENT = "STATE_PROFILE_EDIT_DIALOG_FRAGMENT";
     private static final String STATE_CURRENT_SELECTED_ITEM = "STATE_CURRENT_SELECTED_ITEM";
     private static final String STATE_CURRENT_SELECTED_OPERATION = "STATE_CURRENT_SELECTED_OPERATION";
+    private static final int DELETE_PROFILE_CONFIRM_DIALOG_ID = 0;
+    private static final String DELETE_PROFILE_CONFIRM_DIALOG_STATE = "DELETE_PROFILE_CONFIRM_DIALOG_STATE";
     
     /** The back-end store for the built-in profiles, which subclasses should read from. */
     protected ConfigFile mConfigBuiltin;
@@ -353,30 +356,36 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
 
         String title = getString( R.string.confirm_title );
         String message = getString( R.string.confirmDeleteProfile_message, profile.name );
-        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
-        {
-            @Override
-            public void onDialogClosed( int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
-                    
-                    if(BuildConfig.DEBUG && !mConfigCustom.keySet().contains( profile.name ))
-                        throw new RuntimeException();
-                
-                    //If this was the default profile, pick another default profile
-                    if(isDefault)
-                    {
-                        putDefaultProfile(getNoDefaultProfile());
-                    }
+        
+        ConfirmationDialog confirmationDialog =
+            ConfirmationDialog.newInstance(DELETE_PROFILE_CONFIRM_DIALOG_ID, title, message);
+        
+        FragmentManager fm = getSupportFragmentManager();
+        confirmationDialog.show(fm, DELETE_PROFILE_CONFIRM_DIALOG_STATE);
+    }
     
-                    mConfigCustom.remove( profile.name );
-                    mConfigCustom.save();
-                    refreshList();
-                }
+    @Override
+    public void onPromptDialogClosed(int id, int which)
+    {        
+        if( id == DELETE_PROFILE_CONFIRM_DIALOG_ID &&
+            which == DialogInterface.BUTTON_POSITIVE )
+        {
+            Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
+            boolean isDefault = profile.name.equals( getDefaultProfile() );
+            
+            if(BuildConfig.DEBUG && !mConfigCustom.keySet().contains( profile.name ))
+                throw new RuntimeException();
+        
+            //If this was the default profile, pick another default profile
+            if(isDefault)
+            {
+                putDefaultProfile(getNoDefaultProfile());
             }
-        } );
+
+            mConfigCustom.remove( profile.name );
+            mConfigCustom.save();
+            refreshList();
+        }
     }
     
     private void promptNameComment( int titleId, final String name, String comment,

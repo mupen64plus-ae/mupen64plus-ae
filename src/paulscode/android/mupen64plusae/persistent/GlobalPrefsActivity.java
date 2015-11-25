@@ -24,20 +24,24 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.support.v7.preference.PreferenceManager;
 
 public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener
+        OnSharedPreferenceChangeListener, PromptConfirmListener
 {
+    private static final int RESET_GLOBAL_PREFS_CONFIRM_DIALOG_ID = 0;
+    private static final String RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE = "RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE";
+    
     // These constants must match the keys used in res/xml/preferences.xml
     
     private static final String SCREEN_ROOT = "screenRoot";
@@ -88,11 +92,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         
         // Refresh the preference data wrapper
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        
-        // Handle certain menu items that require extra processing or aren't actually preferences
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_USER_PREFS, this );
-        
     }
     
     @Override
@@ -171,6 +170,10 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         PrefUtil.enablePreference( this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
         PrefUtil.enablePreference( this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled );
         PrefUtil.enablePreference( this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled );
+        
+        // Handle certain menu items that require extra processing or aren't actually preferences
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_USER_PREFS, this );
     }
     
     @Override
@@ -204,23 +207,28 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     {
         String title = getString( R.string.confirm_title );
         String message = getString( R.string.actionResetUserPrefs_popupMessage );
-        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
+        
+        ConfirmationDialog confirmationDialog =
+            ConfirmationDialog.newInstance(RESET_GLOBAL_PREFS_CONFIRM_DIALOG_ID, title, message);
+        
+        FragmentManager fm = getSupportFragmentManager();
+        confirmationDialog.show(fm, RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE);
+    }
+    
+    @Override
+    public void onPromptDialogClosed(int id, int which)
+    {
+        if( id == RESET_GLOBAL_PREFS_CONFIRM_DIALOG_ID &&
+            which == DialogInterface.BUTTON_POSITIVE )
         {
-            @Override
-            public void onDialogClosed( int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    // Reset the user preferences
-                    mPrefs.unregisterOnSharedPreferenceChangeListener( GlobalPrefsActivity.this );
-                    mPrefs.edit().clear().commit();
-                    PreferenceManager.setDefaultValues( GlobalPrefsActivity.this, R.xml.preferences_global, true );
-                
-                    // Rebuild the menu system by restarting the activity
-                    ActivityHelper.restartActivity( GlobalPrefsActivity.this );
-                }
-            }
-        } );
+            // Reset the user preferences
+            mPrefs.unregisterOnSharedPreferenceChangeListener( GlobalPrefsActivity.this );
+            mPrefs.edit().clear().commit();
+            PreferenceManager.setDefaultValues( GlobalPrefsActivity.this, R.xml.preferences_global, true );
+        
+            // Rebuild the menu system by restarting the activity
+            ActivityHelper.restartActivity( GlobalPrefsActivity.this );
+        }
     }
     
     @Override

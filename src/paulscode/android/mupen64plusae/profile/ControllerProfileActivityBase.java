@@ -25,8 +25,9 @@ import java.util.List;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
@@ -61,10 +62,13 @@ import android.widget.TextView;
 
 import com.bda.controller.Controller;
 
-public abstract class ControllerProfileActivityBase extends AppCompatActivity implements OnInputListener, PromptInputCodeListener
+public abstract class ControllerProfileActivityBase extends AppCompatActivity implements OnInputListener, PromptInputCodeListener,
+    PromptConfirmListener
 {
     public static final String STATE_SELECTED_POPUP_INDEX = "STATE_SELECTED_POPUP_INDEX";
     public static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
+    private static final int UNMAP_ALL_CONFIRM_DIALOG_ID = 0;
+    private static final String UNMAP_ALL_CONFIRM_DIALOG_STATE = "UNMAP_ALL_CONFIRM_DIALOG_STATE";
 
     // Slider limits
     protected static final int MIN_DEADZONE = 0;
@@ -244,18 +248,22 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         CharSequence title = getString( R.string.confirm_title );
         CharSequence message = getString( R.string.confirmUnmapAll_message, mProfile.name );
         
-        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
+        ConfirmationDialog confirmationDialog =
+            ConfirmationDialog.newInstance(UNMAP_ALL_CONFIRM_DIALOG_ID, title.toString(), message.toString());
+        
+        FragmentManager fm = getSupportFragmentManager();
+        confirmationDialog.show(fm, UNMAP_ALL_CONFIRM_DIALOG_STATE);
+    }
+    
+    @Override
+    public void onPromptDialogClosed(int id, int which)
+    {
+        if( id == UNMAP_ALL_CONFIRM_DIALOG_ID &&
+            which == DialogInterface.BUTTON_POSITIVE )
         {
-            @Override
-            public void onDialogClosed(int which)
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    mProfile.putMap( new InputMap() );
-                    refreshAllButtons(false);
-                }
-            }
-        } );
+            mProfile.putMap( new InputMap() );
+            refreshAllButtons(false);
+        }
     }
     
     private void setDeadzone()
