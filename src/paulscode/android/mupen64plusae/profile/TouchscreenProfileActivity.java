@@ -611,7 +611,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         return false;
     }
     
-    @SuppressLint( "InflateParams" )
     private void popupDialog( final String assetName, String title, final int holdableIndex )
     {
         // Get the original position of the asset
@@ -620,7 +619,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         final int initialScale = mProfile.getInt( assetName + SCALE, 100 );
         
         // Inflate the dialog's main view area
-        View view = getLayoutInflater().inflate( R.layout.touchscreen_profile_activity_popup, null );
+        View view = View.inflate( this, R.layout.touchscreen_profile_activity_popup, null );
         
         // Setup the dialog's compound seekbar widgets
         final SeekBarGroup posX = new SeekBarGroup( initialX, view, R.id.seekbarX,

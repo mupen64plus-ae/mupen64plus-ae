@@ -28,7 +28,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -414,12 +413,10 @@ public final class Prompt
      * @param max      The maximum value permitted.
      * @param listener The listener to process the integer, when provided.
      */
-    @SuppressLint( "InflateParams" )
     public static void promptInteger( Context context, CharSequence title, String format,
             final int initial, final int min, final int max, final PromptIntegerListener listener )
     {
-        final LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View layout = inflater.inflate( R.layout.seek_bar_preference, null );
+        final View layout = View.inflate( context, R.layout.seek_bar_preference, null );
         final SeekBar seek = (SeekBar) layout.findViewById( R.id.seekbar );
         final TextView text = (TextView) layout.findViewById( R.id.textFeedback );        
         final String finalFormat = TextUtils.isEmpty( format ) ? "%1$d" : format;
@@ -463,13 +460,11 @@ public final class Prompt
      * @param max      The maximum value permitted.
      * @param listener The listener to process the integer, when provided.
      */
-    @SuppressLint( "InflateParams" )
     public static void promptRadioInteger( Context context, CharSequence title,
             final int initial, final int min, final int row, final int columns,
             final PromptIntegerListener listener )
     {
-        final LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View layout = inflater.inflate( R.layout.radio_preference, null );
+        final View layout = View.inflate( context, R.layout.radio_preference, null );
         final LinearLayout mainLayout = (LinearLayout) layout.findViewById( R.id.main_layout );
         mainLayout.setGravity(Gravity.CENTER);
         
@@ -488,7 +483,7 @@ public final class Prompt
             //create all the colums for this row
             for(int columnIndex = 0; columnIndex < columns; ++columnIndex)
             {
-                View radioLayout = inflater.inflate( R.layout.radio_selection, null );
+                View radioLayout = View.inflate( context, R.layout.radio_selection, null );
                 TextView text = (TextView)radioLayout.findViewById(R.id.radio_number);
                 linearLayout.addView(radioLayout);
                 text.setText(radioNumber.toString());
@@ -574,7 +569,6 @@ public final class Prompt
      * @param max      The maximum value permitted.
      * @param listener The listener to process the integer, when provided.
      */
-    @SuppressLint( "InflateParams" )
     public static void promptListSelection( Context context, CharSequence title,
             final ArrayList<CharSequence> selections, final PromptIntegerListener listener )
     {        

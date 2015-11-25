@@ -3,14 +3,11 @@ package paulscode.android.mupen64plusae.dialog;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,15 +31,11 @@ public class ProgressDialog implements OnClickListener
     private long mSubprogress = 0;
     private CacheRomInfoService mCacheRomInfoService = null;
     
-    @SuppressLint( "InflateParams" )
     public ProgressDialog( Activity activity, CharSequence title,
             CharSequence subtitle, CharSequence message, boolean cancelable )
     {
         mActivity = activity;
-        
-        final LayoutInflater inflater = (LayoutInflater) mActivity
-            .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        View layout = inflater.inflate( R.layout.progress_dialog, null );
+        View layout = View.inflate(activity, R.layout.progress_dialog, null );
         
         mTextProgress = (TextView) layout.findViewById( R.id.textProgress );
         mTextSubprogress = (TextView) layout.findViewById( R.id.textSubprogress );
@@ -57,7 +50,7 @@ public class ProgressDialog implements OnClickListener
         // Create canceling dialog
         subtitle = mActivity.getString( R.string.toast_canceling );
         message = mActivity.getString( R.string.toast_pleaseWait );
-        layout = inflater.inflate( R.layout.progress_dialog, null );
+        layout = View.inflate( activity, R.layout.progress_dialog, null );
         builder = getBuilder( activity, title, subtitle, message, false, layout );
         mAbortDialog = builder.create();
     }

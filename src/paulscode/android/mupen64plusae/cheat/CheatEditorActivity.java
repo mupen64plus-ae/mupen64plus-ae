@@ -36,7 +36,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -260,15 +259,13 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         }
     }
 
-    @SuppressLint( "InflateParams" )
     @Override
     public boolean onItemLongClick( AdapterView<?> av, View v, final int pos, long id )
     {
         final Cheat cheat = userCheats.get( pos );
         
         // Inflate the long-click dialog
-        LayoutInflater inflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        View ll = inflater.inflate( R.layout.cheat_editor_longclick_dialog, null );
+        final View ll = View.inflate( this, R.layout.cheat_editor_longclick_dialog, null );
         
         // Build the alert dialog
         Builder builder = new Builder( this );

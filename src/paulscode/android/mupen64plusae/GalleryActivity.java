@@ -32,7 +32,9 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ChangeLog;
 import paulscode.android.mupen64plusae.dialog.Popups;
@@ -50,6 +52,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -70,6 +73,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -82,10 +86,10 @@ import android.view.inputmethod.InputMethodManager;
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler
 {
     // Saved instance states
-    public static final String STATE_QUERY = "query";
-    public static final String STATE_SIDEBAR = "sidebar";
-    public static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
-    public static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
+    private static final String STATE_QUERY = "query";
+    private static final String STATE_SIDEBAR = "sidebar";
+    private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
+    private static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -335,6 +339,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mGlobalPrefs.displayActionBarTransparency ) );
         mGameSidebar.setBackgroundDrawable( new DrawerDrawable(
                 mGlobalPrefs.displayActionBarTransparency ) );
+    }
+    
+    @SuppressLint("NewApi")
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
+    {
+        if (Build.VERSION.SDK_INT >= 11)
+            return super.onCreateView(parent, name, context, attrs);
+        return null;
     }
     
     @Override
