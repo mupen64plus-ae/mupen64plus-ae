@@ -33,7 +33,6 @@ import android.app.AlertDialog.Builder;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
@@ -262,12 +261,5 @@ public class EmulationProfileActivity extends ProfileActivity
                             R.string.pathHiResTexturesTask_errorMessage );
             }
         } ).execute();
-    }
-
-    @Override
-    public DialogFragment getPreferenceDialogFragment(Preference preference)
-    {
-        // TODO Auto-generated method stub
-        return null;
     }
 }
