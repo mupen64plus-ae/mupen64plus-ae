@@ -322,11 +322,12 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     {
         if( which != DialogInterface.BUTTON_NEGATIVE )
         {
+            InputMap map = mProfile.getMap();
             if( which == DialogInterface.BUTTON_POSITIVE )
-                mProfile.getMap().map( inputCode, mSelectedPopupIndex );
+                map.map( inputCode, mSelectedPopupIndex );
             else
-                mProfile.getMap().unmapCommand( mSelectedPopupIndex );
-            mProfile.putMap( mProfile.getMap() );
+                map.unmapCommand( mSelectedPopupIndex );
+            mProfile.putMap( map );
             refreshAllButtons(true);
         }
         
