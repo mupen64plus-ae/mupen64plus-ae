@@ -283,6 +283,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
         mDrawerList.setMenuResource( R.menu.gallery_drawer );
         
+        //Remove touch screen profile configuration if in TV mode
+        if(mGlobalPrefs.isBigScreenMode)
+        {
+            MenuItem profileGroupItem = mDrawerList.getMenu().findItem(R.id.menuItem_profiles);
+            profileGroupItem.getSubMenu().removeItem(R.id.menuItem_touchscreenProfiles);
+        }
+        
         // Select the Library section
         mDrawerList.getMenu().getItem( 0 ).setChecked( true );
         

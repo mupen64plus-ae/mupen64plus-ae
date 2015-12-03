@@ -208,7 +208,13 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
                 PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE3 );
             if( mRomDetail.players < 2 )
                 PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE2 );
-        }        
+        }
+        
+        //Remove touch screen profile if TV mode
+        if(mGlobalPrefs.isBigScreenMode)
+        {
+            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.TOUCHSCREEN_PROFILE);
+        }
 
         refreshViews();
     }
