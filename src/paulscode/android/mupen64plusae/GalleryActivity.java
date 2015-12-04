@@ -842,10 +842,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             combinedItems = new ArrayList<GalleryItem>();
             
             combinedItems
-                    .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
+                    .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ), true ) );
             combinedItems.addAll( recentItems );
             
-            combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ) ) );
+            combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ), false ) );
             combinedItems.addAll( items );
             
             items = combinedItems;

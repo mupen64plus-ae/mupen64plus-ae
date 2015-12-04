@@ -71,15 +71,12 @@ public class GameSidebar extends MenuListView
                     int scrollY = top*-1;
                     mImageLayout.setPadding( 0, scrollY / 2, 0, 0 );
                 }
-
             }
             
         });
         
         setClipToPadding(true);
-        
-        header.setFocusable(false);
-        addHeaderView(header);
+        addHeaderView(header, null, false);
     }
     
     public void setActionHandler(GameSidebarActionHandler actionHandler, int menuResource)

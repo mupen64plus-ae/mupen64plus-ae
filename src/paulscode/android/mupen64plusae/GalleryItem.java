@@ -56,6 +56,7 @@ public class GalleryItem
     public final Context context;
     public final boolean isHeading;
     public BitmapDrawable artBitmap;
+    public final boolean isFocusable;
     
     public GalleryItem( Context context, String md5, String crc, String headerName, byte countryCode, String goodName, String romPath,
             String zipPath, boolean extracted, String artPath, int lastPlayed )
@@ -74,9 +75,10 @@ public class GalleryItem
         
         this.romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
         this.zipFile = TextUtils.isEmpty( zipPath ) ? null : new File( zipPath );
+        this.isFocusable = true;
     }
     
-    public GalleryItem( Context context, String headingName )
+    public GalleryItem( Context context, String headingName, boolean isFocusable )
     {
         this.goodName = headingName;
         this.context = context;
@@ -91,6 +93,7 @@ public class GalleryItem
         this.isExtracted = false;
         this.romFile = null;
         this.zipFile = null;
+        this.isFocusable = isFocusable;
     }
     
     public void loadBitmap()
@@ -244,6 +247,8 @@ public class GalleryItem
                     tv1.setPadding( 5, 10, 0, 0 );
                     tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 18.0f );
                     artView.setVisibility( View.GONE );
+                    view.setFocusable(item.isFocusable);
+                    view.setFocusableInTouchMode(item.isFocusable);
                 }
                 else
                 {
