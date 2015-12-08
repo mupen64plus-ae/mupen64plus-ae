@@ -842,10 +842,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             combinedItems = new ArrayList<GalleryItem>();
             
             combinedItems
-                    .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ), true ) );
+                    .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
             combinedItems.addAll( recentItems );
             
-            combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ), false ) );
+            combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ) ) );
             combinedItems.addAll( items );
             
             items = combinedItems;
@@ -856,7 +856,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         
         // Allow the headings to take up the entire width of the layout
         final List<GalleryItem> finalItems = items;
-        GridLayoutManager layoutManager = new GridLayoutManager( this, galleryColumns );
+        GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
         layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup()
         {
             @Override
