@@ -223,10 +223,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
         layoutManager.setSpanCount( galleryColumns );
         mGridView.getAdapter().notifyDataSetChanged();
+        mGridView.setFocusable(false);
+        mGridView.setFocusableInTouchMode(false);
         
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         toolbar.setTitle( R.string.app_name );
+        View firstGridChild = mGridView.getChildAt(0);
+        
+        if(firstGridChild != null)
+        {
+            toolbar.setNextFocusDownId(firstGridChild.getId());
+        }
+
+        
         setSupportActionBar( toolbar );
         
         // Configure the navigation drawer
