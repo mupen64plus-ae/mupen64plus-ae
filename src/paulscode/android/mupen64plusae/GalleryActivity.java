@@ -917,7 +917,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Update the ConfigSection with the new value for lastPlayed
         String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
         ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-        if( config != null )
+        if( config != null && config.get(romMd5) != null)
         {
             config.put( romMd5, "lastPlayed", lastPlayed );
             
