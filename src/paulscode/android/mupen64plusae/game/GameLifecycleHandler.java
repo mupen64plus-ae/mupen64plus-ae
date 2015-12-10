@@ -656,6 +656,10 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     public void onStop()
     {
         Log.i( "GameLifecycleHandler", "onStop" );
+        
+        String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+        CoreInterface.pauseEmulator( true, saveFileName );
+        mAutoSaveManager.clearOldest();
     }
     
     @Override
