@@ -26,6 +26,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:gravity="center"
+            android:nextFocusUp="@+id/toolbar"
             android:paddingBottom="40dip"
             android:paddingLeft="@dimen/galleryHalfSpacing"
             android:paddingRight="@dimen/galleryHalfSpacing"
@@ -46,9 +47,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
+            android:nextFocusDown="@+id/drawerNavigation"
             android:nextFocusLeft="@+id/drawerNavigation"
             android:nextFocusRight="@+id/drawerNavigation"
-            android:nextFocusDown="@+id/drawerNavigation"
             android:nextFocusUp="@+id/drawerNavigation"
             android:paddingTop="20dip" />
 

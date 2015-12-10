@@ -54,7 +54,9 @@ for currentBranch in "${remoteBranches[@]}"; do
         # Configure build dependencies
         echo "Configuring build dependencies"
         android update project -s -p libs/extras/android/support/v7/appcompat
-        android update project -s -p libs/extras/android/support/v7/gridlayout
+        android update project -s -p libs/extras/android/support/v7/preference
+        android update project -s -p libs/extras/android/support/v7/recyclerview
+        android update project -s -p libs/extras/android/support/v14/preference
         android update project -s -p .
         
         echo "Cleaning previous build"

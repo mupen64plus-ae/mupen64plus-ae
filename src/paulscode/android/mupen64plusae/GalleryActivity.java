@@ -223,10 +223,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
         layoutManager.setSpanCount( galleryColumns );
         mGridView.getAdapter().notifyDataSetChanged();
+        mGridView.setFocusable(false);
+        mGridView.setFocusableInTouchMode(false);
         
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         toolbar.setTitle( R.string.app_name );
+        View firstGridChild = mGridView.getChildAt(0);
+        
+        if(firstGridChild != null)
+        {
+            toolbar.setNextFocusDownId(firstGridChild.getId());
+        }
+
+        
         setSupportActionBar( toolbar );
         
         // Configure the navigation drawer
@@ -282,6 +292,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Configure the list in the navigation drawer
         mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
         mDrawerList.setMenuResource( R.menu.gallery_drawer );
+        
+        //Remove touch screen profile configuration if in TV mode
+        if(mGlobalPrefs.isBigScreenMode)
+        {
+            MenuItem profileGroupItem = mDrawerList.getMenu().findItem(R.id.menuItem_profiles);
+            profileGroupItem.getSubMenu().removeItem(R.id.menuItem_touchscreenProfiles);
+        }
         
         // Select the Library section
         mDrawerList.getMenu().getItem( 0 ).setChecked( true );
@@ -773,52 +790,58 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     String countryCodeString = config.get( md5, "countryCode" );
                     byte countryCode = 0;
                     
-                    if(countryCodeString != null)
+                    //We can't really do much if the rompath is null
+                    if (romPath != null)
                     {
-                        countryCode = Byte.parseByte(countryCodeString);
-                    }
-                    String lastPlayedStr = config.get( md5, "lastPlayed" );
-                    String extracted = config.get( md5, "extracted" );
-                    
-                    if(zipPath == null || crc == null || headerName == null || countryCodeString == null || extracted == null)
-                    {
-                        File file = new File(romPath);
-                        RomHeader header = new RomHeader(file);
-                        
-                        zipPath = "";
-                        crc = header.crc;
-                        headerName = header.name;
-                        countryCode = header.countryCode;
-                        extracted = "false";
-                        
-                        config.put( md5, "zipPath", zipPath );
-                        config.put( md5, "crc", crc );
-                        config.put( md5, "headerName", headerName );
-                        config.put( md5, "countryCode", Byte.toString(countryCode) );
-                        config.put( md5, "extracted", extracted );
-                    }
-                    
-                    int lastPlayed = 0;
-                    if( lastPlayedStr != null )
-                        lastPlayed = Integer.parseInt( lastPlayedStr );
-                    
-                    GalleryItem item = new GalleryItem( this, md5, crc, headerName, countryCode,
-                            goodName, romPath, zipPath, extracted.equals("true"), artPath, lastPlayed );
-                    items.add( item );
-                    if( mGlobalPrefs.isRecentShown
-                            && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7 ) // 7 days
-                    {
-                        recentItems.add( item );
-                    }
-                    //Delete any old files that already exist inside a zip file
-                    else if(!zipPath.equals("") && extracted.equals("true"))
-                    {
-                        File deleteFile = new File(romPath);
-                        deleteFile.delete();
-                        
-                        config.put( md5, "extracted", "false" );
-                    }
 
+                        if (countryCodeString != null)
+                        {
+                            countryCode = Byte.parseByte(countryCodeString);
+                        }
+                        String lastPlayedStr = config.get(md5, "lastPlayed");
+                        String extracted = config.get(md5, "extracted");
+
+                        if (zipPath == null || crc == null || headerName == null || countryCodeString == null
+                            || extracted == null)
+                        {
+                            File file = new File(romPath);
+                            RomHeader header = new RomHeader(file);
+
+                            zipPath = "";
+                            crc = header.crc;
+                            headerName = header.name;
+                            countryCode = header.countryCode;
+                            extracted = "false";
+
+                            config.put(md5, "zipPath", zipPath);
+                            config.put(md5, "crc", crc);
+                            config.put(md5, "headerName", headerName);
+                            config.put(md5, "countryCode", Byte.toString(countryCode));
+                            config.put(md5, "extracted", extracted);
+                        }
+
+                        int lastPlayed = 0;
+                        if (lastPlayedStr != null)
+                            lastPlayed = Integer.parseInt(lastPlayedStr);
+
+                        GalleryItem item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
+                            zipPath, extracted.equals("true"), artPath, lastPlayed);
+                        items.add(item);
+                        if (mGlobalPrefs.isRecentShown && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7) // 7
+                                                                                                             // days
+                        {
+                            recentItems.add(item);
+                        }
+                        // Delete any old files that already exist inside a zip
+                        // file
+                        else if (!zipPath.equals("") && extracted.equals("true"))
+                        {
+                            File deleteFile = new File(romPath);
+                            deleteFile.delete();
+
+                            config.put(md5, "extracted", "false");
+                        }
+                    }
                 }
             }
         }
@@ -849,7 +872,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         
         // Allow the headings to take up the entire width of the layout
         final List<GalleryItem> finalItems = items;
-        GridLayoutManager layoutManager = new GridLayoutManager( this, galleryColumns );
+        GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
         layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup()
         {
             @Override
@@ -894,7 +917,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Update the ConfigSection with the new value for lastPlayed
         String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
         ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-        if( config != null )
+        if( config != null && config.get(romMd5) != null)
         {
             config.put( romMd5, "lastPlayed", lastPlayed );
             
