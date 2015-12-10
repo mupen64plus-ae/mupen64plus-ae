@@ -22,10 +22,13 @@ package paulscode.android.mupen64plusae.preference;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcelable;
-import android.preference.DialogPreference;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
@@ -35,7 +38,7 @@ import android.widget.TextView;
 /**
  * A type of {@link DialogPreference} that uses a {@link SeekBar} as a means of selecting a desired option.
  */
-public class SeekBarPreference extends DialogPreference implements OnSeekBarChangeListener
+public class SeekBarPreference extends DialogPreference implements OnSeekBarChangeListener, OnPreferenceDialogListener
 {
     private static final int DEFAULT_VALUE = 50;
     private static final int DEFAULT_MIN = 0;
@@ -92,6 +95,9 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     public void setValue( int value )
     {
         mValue = validate( value );
+        
+        setSummary( getValueString( mValue ) );
+
         if( shouldPersist() )
             persistInt( mValue );
         notifyChanged();
@@ -212,17 +218,9 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     }
     
     @Override
-    protected void onBindView( View view )
-    {
-        setSummary( getValueString( mValue ) );
-        super.onBindView( view );
-    }
-    
-    @Override
-    protected void onBindDialogView( View view )
+    public void onBindDialogView( View view, FragmentActivity associatedActivity )
     {
         // Setup the dialog that is shown when the menu item is clicked
-        super.onBindDialogView( view );
         
         // Grab the widget references
         mTextView = (TextView) view.findViewById( R.id.textFeedback );
@@ -236,10 +234,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     }
     
     @Override
-    protected void onDialogClosed( boolean positiveResult )
+    public void onDialogClosed( boolean positiveResult )
     {
-        super.onDialogClosed( positiveResult );
-        
         if( positiveResult )
         {
             int value = mSeekBar.getProgress() + mMinValue;
@@ -306,5 +302,11 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
             newValue = mMaxValue;
         
         return newValue;
+    }
+    
+    @Override
+    public void onPrepareDialogBuilder(Context context, Builder builder)
+    {
+        //Nothing to do here
     }
 }

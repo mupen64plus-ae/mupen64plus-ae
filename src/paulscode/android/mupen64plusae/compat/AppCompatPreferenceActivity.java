@@ -20,121 +20,223 @@
  */
 package paulscode.android.mupen64plusae.compat;
 
-import android.content.res.Configuration;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuInflater;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceDialogFragmentCompat;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
+import android.support.v7.preference.PreferenceScreen;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 
-public class AppCompatPreferenceActivity extends PreferenceActivity
+public class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
 {
-    // Material Design theming (since we cannot inherit from AppCompatActivity)
-    protected AppCompatDelegate mDelegate;
-    
-    public AppCompatDelegate getDelegate()
+    public interface OnPreferenceDialogListener
     {
-        if( mDelegate == null )
-            mDelegate = AppCompatDelegate.create( this, null );
-        return mDelegate;
+        /**
+         * Called while preparing the dialog builder
+         * @param context
+         * @param builder
+         */
+        public void onPrepareDialogBuilder(Context context, Builder builder);
+
+        /**
+         * Called when the dialog view is binded
+         */
+        public void onBindDialogView(View view, FragmentActivity associatedActivity);
+
+        /**
+         * Called when the dialog is closed
+         */
+        public void onDialogClosed(boolean result);
     }
+
+    //Generic preference dialog to be used for all preference dialog fragments
+    public static class PreferenceDialog extends PreferenceDialogFragmentCompat
+    {
+        public static PreferenceDialog newInstance(Preference preference)
+        {
+            PreferenceDialog frag = new PreferenceDialog();
+            Bundle args = new Bundle();
+            // This has to be the string "key"
+            args.putString("key", preference.getKey());
+            preference.getSummary();
+
+            frag.setArguments(args);
+            return frag;
+        }
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+            
+            setRetainInstance(true);
+        }
+
+        @Override
+        public void onDestroyView()
+        {
+            // This is needed because of this:
+            // https://code.google.com/p/android/issues/detail?id=17423
+
+            if (getDialog() != null && getRetainInstance())
+                getDialog().setDismissMessage(null);
+            super.onDestroyView();
+        }
+
+        @Override
+        public void onPrepareDialogBuilder(Builder builder)
+        {
+            super.onPrepareDialogBuilder(builder);
+
+            if (getPreference() instanceof OnPreferenceDialogListener)
+            {
+                ((OnPreferenceDialogListener) getPreference()).onPrepareDialogBuilder(getActivity(), builder);
+            }
+            else
+            {
+                Log.e("PreferenceDialog", "DialogPreference must implement OnPreferenceDialogListener");
+            }
+        }
+
+        @Override
+        public void onBindDialogView(View view)
+        {
+            super.onBindDialogView(view);
+
+            if (getPreference() instanceof OnPreferenceDialogListener)
+            {
+                ((OnPreferenceDialogListener) getPreference()).onBindDialogView(view, getActivity());
+            }
+            else
+            {
+                Log.e("PreferenceDialog", "DialogPreference must implement OnPreferenceDialogListener");
+            }
+        }
+
+        @Override
+        public void onDialogClosed(boolean result)
+        {
+            if (getPreference() instanceof OnPreferenceDialogListener)
+            {
+
+                ((OnPreferenceDialogListener) getPreference()).onDialogClosed(result);
+            }
+            else
+            {
+                Log.e("PreferenceDialog", "DialogPreference must implement OnPreferenceDialogListener");
+            }
+        }
+    }
+
+    public static final String STATE_PREFERENCE_FRAGMENT = "STATE_PREFERENCE_FRAGMENT";
     
+    private String mSharedPrefsName = null;
+    private int mPreferencesResId;
+
+    // Preference fragment
+    private AppCompatPreferenceFragment mPrefFrag = null;
+
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null)
+        {
+            final FragmentManager fm = getSupportFragmentManager();
+            mPrefFrag = (AppCompatPreferenceFragment) fm.findFragmentById(android.R.id.content);   
+        }
+    }
+
+    @SuppressLint("NewApi")
     @Override
-    public void addContentView( View view, LayoutParams params )
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
     {
-        getDelegate().addContentView( view, params );
+        if (Build.VERSION.SDK_INT >= 11)
+            return super.onCreateView(parent, name, context, attrs);
+        return null;
+    }
+
+    public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)
+    {
+        mSharedPrefsName = sharedPrefsName;
+        mPreferencesResId = preferencesResId;
+        
+        if(mPrefFrag == null)
+        {
+            mPrefFrag = AppCompatPreferenceFragment.newInstance(sharedPrefsName, preferencesResId, null);
+            getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
+        }
     }
     
+    public void resetPreferences()
+    {        
+        getSupportFragmentManager().beginTransaction().remove(mPrefFrag);
+        mPrefFrag = AppCompatPreferenceFragment.newInstance(mSharedPrefsName, mPreferencesResId, null);
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, mPrefFrag, STATE_PREFERENCE_FRAGMENT).commit();
+    }
+
+
+    public Preference findPreference(CharSequence key)
+    {
+        return mPrefFrag.findPreference(key);
+    }
+
     @Override
-    public MenuInflater getMenuInflater()
+    public DialogFragment getPreferenceDialogFragment(Preference preference)
     {
-        return getDelegate().getMenuInflater();
+        DialogFragment returnFragment = null;
+
+        if (preference instanceof OnPreferenceDialogListener)
+        {
+            returnFragment = PreferenceDialog.newInstance(preference);
+        }
+        return returnFragment;
     }
-    
-    public ActionBar getSupportActionBar()
-    {
-        return getDelegate().getSupportActionBar();
-    }
-    
+
     @Override
-    public void invalidateOptionsMenu()
+    public boolean onPreferenceStartScreen(PreferenceFragmentCompat preferenceFragmentCompat,
+        PreferenceScreen preferenceScreen)
     {
-        getDelegate().invalidateOptionsMenu();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        AppCompatPreferenceFragment fragment = AppCompatPreferenceFragment.newInstance(mSharedPrefsName,
+            mPreferencesResId, preferenceScreen.getKey());
+        ft.replace(android.R.id.content, fragment, preferenceScreen.getKey());
+        ft.addToBackStack(null);
+        ft.commit();
+        
+        return true;
     }
     
+    protected void OnPreferenceScreenChange(String key)
+    {
+        //Nothing to do by default
+    }
+
     @Override
-    public void onConfigurationChanged( Configuration newConfig )
+    public void onFragmentCreation(AppCompatPreferenceFragment currentFragment)
     {
-        super.onConfigurationChanged( newConfig );
-        getDelegate().onConfigurationChanged( newConfig );
+        mPrefFrag = currentFragment;
+        OnPreferenceScreenChange(mPrefFrag.getTag());
     }
     
-    @Override
-    protected void onCreate( Bundle savedInstanceState )
+    protected Context getPreferenceManagerContext()
     {
-        getDelegate().installViewFactory();
-        getDelegate().onCreate( savedInstanceState );
-        super.onCreate( savedInstanceState );
-    }
-    
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        getDelegate().onDestroy();
-    }
-    
-    @Override
-    protected void onPostCreate( Bundle savedInstanceState )
-    {
-        super.onPostCreate( savedInstanceState );
-        getDelegate().onPostCreate( savedInstanceState );
-    }
-    
-    @Override
-    protected void onPostResume()
-    {
-        super.onPostResume();
-        getDelegate().onPostResume();
-    }
-    
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-        getDelegate().onStop();
-    }
-    
-    @Override
-    protected void onTitleChanged( CharSequence title, int color )
-    {
-        super.onTitleChanged( title, color );
-        getDelegate().setTitle( title );
-    }
-    
-    @Override
-    public void setContentView( int layoutResID )
-    {
-        getDelegate().setContentView( layoutResID );
-    }
-    
-    @Override
-    public void setContentView( View view )
-    {
-        getDelegate().setContentView( view );
-    }
-    
-    @Override
-    public void setContentView( View view, LayoutParams params )
-    {
-        getDelegate().setContentView( view, params );
-    }
-    
-    public void setSupportActionBar( Toolbar toolbar )
-    {
-        getDelegate().setSupportActionBar( toolbar );
+        return mPrefFrag.getPreferenceManager().getContext();
     }
 }

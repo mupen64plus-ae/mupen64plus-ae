@@ -24,7 +24,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.CheckBoxPreference;
+import android.support.v7.preference.CheckBoxPreference;
 import android.util.AttributeSet;
 
 /**

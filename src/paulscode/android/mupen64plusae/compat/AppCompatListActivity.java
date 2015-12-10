@@ -20,121 +20,64 @@
  */
 package paulscode.android.mupen64plusae.compat;
 
-import android.app.ListActivity;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuInflater;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Build;
+import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
-public class AppCompatListActivity extends ListActivity
+public abstract class AppCompatListActivity extends AppCompatActivity
 {
-    // Material Design theming (since we cannot inherit from AppCompatActivity)
-    protected AppCompatDelegate mDelegate;
     
-    public AppCompatDelegate getDelegate()
+    /**
+     * List view
+     */
+    private ListView mListView;
+    
+    @SuppressLint("NewApi")
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
     {
-        if( mDelegate == null )
-            mDelegate = AppCompatDelegate.create( this, null );
-        return mDelegate;
+        if (Build.VERSION.SDK_INT >= 11)
+            return super.onCreateView(parent, name, context, attrs);
+        return null;
     }
     
     @Override
-    public void addContentView( View view, LayoutParams params )
+    public void setContentView(int layoutResID)
     {
-        getDelegate().addContentView( view, params );
+        super.setContentView(layoutResID);
+        
+        mListView = (ListView) findViewById(android.R.id.list);
+        
+        mListView.setOnItemClickListener(new ListView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                AppCompatListActivity.this.onListItemClick( mListView, view, position, id );
+            }
+        });
+        
+        mListView.setEmptyView(findViewById(android.R.id.empty));
     }
     
-    @Override
-    public MenuInflater getMenuInflater()
+    protected ListView getListView()
     {
-        return getDelegate().getMenuInflater();
+        return mListView;
     }
     
-    public ActionBar getSupportActionBar()
+    protected void onListItemClick( ListView l, View v, int position, long id )
     {
-        return getDelegate().getSupportActionBar();
+        
     }
     
-    @Override
-    public void invalidateOptionsMenu()
+    protected void setListAdapter(ListAdapter adapter)
     {
-        getDelegate().invalidateOptionsMenu();
-    }
-    
-    @Override
-    public void onConfigurationChanged( Configuration newConfig )
-    {
-        super.onConfigurationChanged( newConfig );
-        getDelegate().onConfigurationChanged( newConfig );
-    }
-    
-    @Override
-    protected void onCreate( Bundle savedInstanceState )
-    {
-        getDelegate().installViewFactory();
-        getDelegate().onCreate( savedInstanceState );
-        super.onCreate( savedInstanceState );
-    }
-    
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        getDelegate().onDestroy();
-    }
-    
-    @Override
-    protected void onPostCreate( Bundle savedInstanceState )
-    {
-        super.onPostCreate( savedInstanceState );
-        getDelegate().onPostCreate( savedInstanceState );
-    }
-    
-    @Override
-    protected void onPostResume()
-    {
-        super.onPostResume();
-        getDelegate().onPostResume();
-    }
-    
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-        getDelegate().onStop();
-    }
-    
-    @Override
-    protected void onTitleChanged( CharSequence title, int color )
-    {
-        super.onTitleChanged( title, color );
-        getDelegate().setTitle( title );
-    }
-    
-    @Override
-    public void setContentView( int layoutResID )
-    {
-        getDelegate().setContentView( layoutResID );
-    }
-    
-    @Override
-    public void setContentView( View view )
-    {
-        getDelegate().setContentView( view );
-    }
-    
-    @Override
-    public void setContentView( View view, LayoutParams params )
-    {
-        getDelegate().setContentView( view, params );
-    }
-    
-    public void setSupportActionBar( Toolbar toolbar )
-    {
-        getDelegate().setSupportActionBar( toolbar );
+        mListView.setAdapter(adapter);        
     }
 }

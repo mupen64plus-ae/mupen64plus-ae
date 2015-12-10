@@ -25,10 +25,12 @@ import java.util.List;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
+import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
+import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -40,22 +42,34 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.bda.controller.Controller;
 
-public abstract class ControllerProfileActivityBase extends AppCompatActivity implements OnInputListener
+public abstract class ControllerProfileActivityBase extends AppCompatActivity implements OnInputListener, PromptInputCodeListener,
+    PromptConfirmListener
 {
+    public static final String STATE_SELECTED_POPUP_INDEX = "STATE_SELECTED_POPUP_INDEX";
+    public static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
+    private static final int UNMAP_ALL_CONFIRM_DIALOG_ID = 0;
+    private static final String UNMAP_ALL_CONFIRM_DIALOG_STATE = "UNMAP_ALL_CONFIRM_DIALOG_STATE";
+
     // Slider limits
     protected static final int MIN_DEADZONE = 0;
     protected static final int MAX_DEADZONE = 20;
@@ -89,6 +103,8 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     protected final Button[] mN64Buttons = new Button[InputMap.NUM_MAPPABLES];
     protected TextView mFeedbackText;
     protected boolean mExitMenuItemVisible = false;
+    
+    private int mSelectedPopupIndex = 0;
     
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -130,6 +146,11 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         // Set up input listeners
         mUnmappableInputCodes = mGlobalPrefs.unmappableKeyCodes;
         
+        if( savedInstanceState != null )
+        {
+            mSelectedPopupIndex = savedInstanceState.getInt(STATE_SELECTED_POPUP_INDEX);
+        }
+        
         // Initialize the layout
         initLayout();
         
@@ -146,6 +167,23 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         
         // Refresh everything
         refreshAllButtons(false);
+    }
+    
+    @SuppressLint("NewApi")
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
+    {
+        if (Build.VERSION.SDK_INT >= 11)
+            return super.onCreateView(parent, name, context, attrs);
+        return null;
+    }
+    
+    @Override
+    public void onSaveInstanceState( Bundle savedInstanceState )
+    {
+        savedInstanceState.putInt(STATE_SELECTED_POPUP_INDEX, mSelectedPopupIndex);
+        
+        super.onSaveInstanceState( savedInstanceState );
     }
     
     @Override
@@ -210,18 +248,22 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         CharSequence title = getString( R.string.confirm_title );
         CharSequence message = getString( R.string.confirmUnmapAll_message, mProfile.name );
         
-        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
+        ConfirmationDialog confirmationDialog =
+            ConfirmationDialog.newInstance(UNMAP_ALL_CONFIRM_DIALOG_ID, title.toString(), message.toString());
+        
+        FragmentManager fm = getSupportFragmentManager();
+        confirmationDialog.show(fm, UNMAP_ALL_CONFIRM_DIALOG_STATE);
+    }
+    
+    @Override
+    public void onPromptDialogClosed(int id, int which)
+    {
+        if( id == UNMAP_ALL_CONFIRM_DIALOG_ID &&
+            which == DialogInterface.BUTTON_POSITIVE )
         {
-            @Override
-            public void onDialogClosed(int which)
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    mProfile.putMap( new InputMap() );
-                    refreshAllButtons(false);
-                }
-            }
-        } );
+            mProfile.putMap( new InputMap() );
+            refreshAllButtons(false);
+        }
     }
     
     private void setDeadzone()
@@ -263,31 +305,41 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     protected void popupListener( CharSequence title, final int index )
     {
         final InputMap map = mProfile.getMap();
+        mSelectedPopupIndex = index;
         String message = getString( R.string.inputMapActivity_popupMessage,
                 map.getMappedCodeInfo( index ) );
         String btnText = getString( R.string.inputMapActivity_popupUnmap );
         
-        Prompt.promptInputCode( this, mMogaController, title, message, btnText,
-                mUnmappableInputCodes, new PromptInputCodeListener()
-                {
-                    @Override
-                    public void onDialogClosed( int inputCode, int hardwareId, int which )
-                    {
-                        if( which != DialogInterface.BUTTON_NEGATIVE )
-                        {
-                            if( which == DialogInterface.BUTTON_POSITIVE )
-                                map.map( inputCode, index );
-                            else
-                                map.unmapCommand( index );
-                            mProfile.putMap( map );
-                            refreshAllButtons(true);
-                        }
-                        
-                        // Refresh our MOGA provider since the prompt disconnected it
-                        mMogaProvider = new MogaProvider( mMogaController );
-                        mMogaProvider.registerListener( ControllerProfileActivityBase.this );
-                    }
-                } );
+        PromptInputCodeDialog promptInputCodeDialog = PromptInputCodeDialog.newInstance(
+            title.toString(), message, btnText, mUnmappableInputCodes);
+        
+        FragmentManager fm = getSupportFragmentManager();
+        promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);
+    }
+    
+    @Override
+    public void onDialogClosed( int inputCode, int hardwareId, int which )
+    {
+        if( which != DialogInterface.BUTTON_NEGATIVE )
+        {
+            InputMap map = mProfile.getMap();
+            if( which == DialogInterface.BUTTON_POSITIVE )
+                map.map( inputCode, mSelectedPopupIndex );
+            else
+                map.unmapCommand( mSelectedPopupIndex );
+            mProfile.putMap( map );
+            refreshAllButtons(true);
+        }
+        
+        // Refresh our MOGA provider since the prompt disconnected it
+        mMogaProvider = new MogaProvider( mMogaController );
+        mMogaProvider.registerListener( ControllerProfileActivityBase.this );
+    }
+    
+    @Override
+    public Controller getMogaController()
+    {
+        return mMogaController;
     }
     
     @Override

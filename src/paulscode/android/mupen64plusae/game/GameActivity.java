@@ -20,15 +20,22 @@
  */
 package paulscode.android.mupen64plusae.game;
 
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import android.app.Activity;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
+import android.util.AttributeSet;
+import android.view.View;
 
-public class GameActivity extends Activity
+public class GameActivity extends AppCompatActivity implements PromptConfirmListener
 {
     private GameLifecycleHandler mLifecycleHandler;
     
@@ -60,6 +67,15 @@ public class GameActivity extends Activity
         mLifecycleHandler.onCreateEnd( savedInstanceState );
     }
     
+    @SuppressLint("NewApi")
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
+    {
+        if (Build.VERSION.SDK_INT >= 11)
+            return super.onCreateView(parent, name, context, attrs);
+        return null;
+    }
+    
     @Override
     protected void onStart()
     {
@@ -87,4 +103,10 @@ public class GameActivity extends Activity
         super.onStop();
         mLifecycleHandler.onStop();
     }
+
+    @Override
+    public void onPromptDialogClosed(int id, int which)
+    {
+        CoreInterface.onPromptDialogClosed(id, which);
+    }   
 }

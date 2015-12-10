@@ -32,12 +32,14 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
 import org.mupen64plusae.v3.alpha.R;
+
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ChangeLog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -50,6 +52,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -70,6 +73,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -79,13 +83,15 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
-public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler
+public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener
 {
     // Saved instance states
-    public static final String STATE_QUERY = "query";
-    public static final String STATE_SIDEBAR = "sidebar";
-    public static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
-    public static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
+    private static final String STATE_QUERY = "query";
+    private static final String STATE_SIDEBAR = "sidebar";
+    private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
+    private static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
+    private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
+    private static final int RESTART_CONFIRM_DIALOG_ID = 0;
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -337,6 +343,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mGlobalPrefs.displayActionBarTransparency ) );
     }
     
+    @SuppressLint("NewApi")
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
+    {
+        if (Build.VERSION.SDK_INT >= 11)
+            return super.onCreateView(parent, name, context, attrs);
+        return null;
+    }
+    
     @Override
     public void onResume()
     {
@@ -549,22 +564,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 {
                     CharSequence title = getText( R.string.confirm_title );
                     CharSequence message = getText( R.string.confirmResetGame_message );
-                    Prompt.promptConfirm( this, title, message,
-                            new PromptConfirmListener()
-                            {
-                                @Override
-                                public void onDialogClosed(int which)
-                                {
-                                    if( which == DialogInterface.BUTTON_POSITIVE )
-                                    {
-                                        launchGameActivity( finalItem.romFile.getAbsolutePath(),
-                                                finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                                                finalItem.isExtracted, finalItem.md5, finalItem.crc, 
-                                                finalItem.headerName, finalItem.countryCode, finalItem.artPath,
-                                                finalItem.goodName, true );
-                                    }
-                                }
-                            } );
+                    
+                    ConfirmationDialog confirmationDialog =
+                        ConfirmationDialog.newInstance(RESTART_CONFIRM_DIALOG_ID, title.toString(), message.toString());
+                    
+                    FragmentManager fm = getSupportFragmentManager();
+                    confirmationDialog.show(fm, STATE_RESTART_CONFIRM_DIALOG);
                 }
                 else
                 {
@@ -581,6 +586,22 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode );
                 break;
             default:
+        }
+    }
+    
+    @Override
+    public void onPromptDialogClosed(int id, int which)
+    {
+        if( which == DialogInterface.BUTTON_POSITIVE )
+        {
+            if(id == RESTART_CONFIRM_DIALOG_ID && mSelectedItem != null)
+            {
+                launchGameActivity( mSelectedItem.romFile.getAbsolutePath(),
+                    mSelectedItem.zipFile == null ? null : mSelectedItem.zipFile.getAbsolutePath(),
+                    mSelectedItem.isExtracted, mSelectedItem.md5, mSelectedItem.crc, 
+                    mSelectedItem.headerName, mSelectedItem.countryCode, mSelectedItem.artPath,
+                    mSelectedItem.goodName, true );
+            }
         }
     }
 

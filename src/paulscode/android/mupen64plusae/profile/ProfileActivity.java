@@ -30,10 +30,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 
 /**
@@ -106,7 +103,6 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
     private ConfigFile mConfigFile;
     private String mProfileName;
     
-    @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -133,6 +129,7 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         
         // Load the config file and working cache
         mConfigFile = new ConfigFile( configPath );
+        
         mPrefs = getSharedPreferences( PREFS_NAME, MODE_PRIVATE );
         transcribe( mConfigFile, mPrefs, mProfileName );
         
@@ -140,16 +137,15 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         PreferenceManager.setDefaultValues( this, PREFS_NAME, MODE_PRIVATE, resId, false );
         
         // Load user preference menu structure from XML
-        getPreferenceManager().setSharedPreferencesName( PREFS_NAME );
-        addPreferencesFromResource( resId );
+        addPreferencesFromResource( PREFS_NAME, resId );
     }
     
     @Override
     protected void onResume()
     {
         super.onResume();
+        
         mPrefs.registerOnSharedPreferenceChangeListener( this );
-        refreshViews();
     }
     
     @Override
@@ -175,7 +171,10 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
             Editor editor = target.edit();
             editor.clear();
             for( String key : section.keySet() )
+            {
                 editor.putString( key, section.get( key ) );
+            }
+
             editor.commit();
         }
     }
@@ -187,5 +186,11 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
         for( String key : source.getAll().keySet() )
             target.put( sectionName, key, source.getString( key, null ) );
         target.save();
+    }
+    
+    @Override
+    protected void OnPreferenceScreenChange(String key)
+    {
+        refreshViews();
     }
 }

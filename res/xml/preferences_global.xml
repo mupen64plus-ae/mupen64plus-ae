@@ -9,13 +9,13 @@
         http://developer.android.com/design/patterns/settings.html
     
     Please follow our naming convention (casing and underscores) for all Preferences:
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:key="myKey"
             android:title="@string/myKey_title"
             android:summary="@string/myKey_summary"
             ...
             />
-        <ListPreference
+        <android.support.v7.preference.ListPreference
             ...
             android:entries="@array/myKey_entries"
             android:entryValues="@array/myKey_values"
@@ -43,44 +43,44 @@
     resources in "@drawable/...".       
     ***********************************************************************************
 -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryLibrary"
         android:title="@string/categoryLibrary_title" >
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="true"
             android:key="showRecentlyPlayed"
             android:summary="@string/showRecentlyPlayed_summary"
             android:title="@string/showRecentlyPlayed_title" />
 
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="true"
             android:key="showFullNames"
             android:summary="@string/showFullNames_summary"
             android:title="@string/showFullNames_title" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryDisplay"
         android:title="@string/categoryDisplay_title" >
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/displayOrientation_default"
             android:entries="@array/displayOrientation_entries"
             android:entryValues="@array/displayOrientation_values"
             android:key="displayOrientation"
             android:summary="@string/selectedValue"
             android:title="@string/displayOrientation_title" />
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/displayPosition_default"
             android:entries="@array/displayPosition_entries"
             android:entryValues="@array/displayPosition_values"
             android:key="displayPosition"
             android:summary="@string/selectedValue"
             android:title="@string/displayPosition_title" />
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/displayScaling_default"
             android:entries="@array/displayScaling_entries"
             android:entryValues="@array/displayScaling_values"
@@ -88,7 +88,7 @@
             android:summary="@string/selectedValue"
             android:title="@string/displayScaling_title" />
 
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="displayImmersiveMode"
             android:summary="@string/displayImmersiveMode_summary"
@@ -102,12 +102,12 @@
             mupen64:stepSize="10"
             mupen64:units="%" />
 
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="displayFps"
             android:summary="@string/displayFps_summary"
             android:title="@string/displayFps_title" />
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/videoHardwareType_default"
             android:entries="@array/videoHardwareType_entries"
             android:entryValues="@array/videoHardwareType_values"
@@ -115,38 +115,38 @@
             android:summary="@string/selectedValue"
             android:title="@string/videoHardwareType_title" />
 
-        <EditTextPreference
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="-1.5"
             android:inputType="numberDecimal|numberSigned"
             android:key="videoPolygonOffset"
             android:summary="@string/videoPolygonOffset_summary"
             android:title="@string/videoPolygonOffset_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryAudio"
         android:title="@string/categoryAudio_title" >
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/audioPlugin_default"
             android:entries="@array/audioPlugin_entries"
             android:entryValues="@array/audioPlugin_values"
             android:key="audioPlugin"
             android:summary="@string/selectedValue"
             android:title="@string/audioPlugin_title" />
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/audioSDLBufferSize_default"
             android:entries="@array/audioSDLBufferSize_entries"
             android:entryValues="@array/audioSDLBufferSize_values"
             android:key="audioSDLBufferSize"
             android:summary="@string/selectedValue"
             android:title="@string/audioSDLBufferSize_title" />
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/audioSLESBufferSize_default"
             android:entries="@array/audioSLESBufferSize_entries"
             android:entryValues="@array/audioSLESBufferSize_values"
             android:key="audioSLESBufferSize"
             android:summary="@string/selectedValue"
             android:title="@string/audioSLESBufferSize_title" />
-         <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+         <android.support.v7.preference.ListPreference
             android:defaultValue="@string/audioSLESBufferNbr_default"
             android:entries="@array/audioSLESBufferNbr_entries"
             android:entryValues="@array/audioSLESBufferNbr_values"
@@ -154,18 +154,18 @@
             android:summary="@string/selectedValue"
             android:title="@string/audioSLESBufferNbr_title" />
 
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="true"
             android:key="audioSynchronize"
             android:summary="@string/audioSynchronize_summary"
             android:title="@string/audioSynchronize_title" />
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="audioSwapChannels"
             android:summary="@string/audioSwapChannels_summary"
             android:title="@string/audioSwapChannels_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryTouchscreen"
         android:title="@string/categoryTouchscreen_title" >
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
@@ -185,35 +185,35 @@
             mupen64:stepSize="10"
             mupen64:units="%" />
 
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="touchscreenFeedback"
             android:summary="@string/touchscreenFeedback_summary"
             android:title="@string/touchscreenFeedback_title" />
 
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/touchscreenAutoHold_default"
             android:entries="@array/touchscreenAutoHold_entries"
             android:entryValues="@array/touchscreenAutoHold_values"
             android:key="touchscreenAutoHold"
             android:summary="@string/selectedValue"
             android:title="@string/touchscreenAutoHold_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryTouchpad"
         android:title="@string/categoryTouchpad_title" >
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="true"
             android:key="touchpadEnabled"
             android:title="@string/touchpadEnabled_title" />
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:dependency="touchpadEnabled"
             android:key="touchpadFeedback"
             android:summary="@string/touchpadFeedback_summary"
             android:title="@string/touchpadFeedback_title" />
 
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/touchpadLayout_default"
             android:dependency="touchpadEnabled"
             android:entries="@array/touchpadLayout_entries"
@@ -221,11 +221,11 @@
             android:key="touchpadLayout"
             android:summary="@string/selectedValue"
             android:title="@string/touchpadLayout_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryInput"
         android:title="@string/categoryInput_title" >
-        <paulscode.android.mupen64plusae.preference.CompatibleListPreference
+        <android.support.v7.preference.ListPreference
             android:defaultValue="@string/navigationMode_default"
             android:entries="@array/navigationMode_entries"
             android:entryValues="@array/navigationMode_values"
@@ -233,18 +233,18 @@
             android:summary="@string/navigationMode_summary"
             android:title="@string/navigationMode_title" />
 
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="inputVolumeMappable"
             android:summary="@string/inputVolumeMappable_summary"
             android:title="@string/inputVolumeMappable_title" />
-        <CheckBoxPreference
+        <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="inputShareController"
             android:summary="@string/inputShareController_summary"
             android:title="@string/inputShareController_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryData"
         android:title="@string/categoryData_title" >
         <paulscode.android.mupen64plusae.preference.PathPreference
@@ -261,16 +261,16 @@
             mupen64:stepSize="1"
             mupen64:units="" />
 
-        <Preference
+        <android.support.v7.preference.Preference
             android:key="actionReloadAssets"
             android:summary="@string/actionReloadAssets_summary"
             android:title="@string/actionReloadAssets_title" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-    <Preference
+    <android.support.v7.preference.Preference
         android:icon="@drawable/ic_undo"
         android:key="actionResetUserPrefs"
         android:summary="@string/actionResetUserPrefs_summary"
         android:title="@string/actionResetUserPrefs_title" />
 
-</PreferenceScreen>
+</android.support.v7.preference.PreferenceScreen>

@@ -26,24 +26,27 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.preference.DialogPreference;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.preference.DialogPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ArrayAdapter;
 
 /**
  * A {@link DialogPreference} that is specifically for choosing a directory path or file on a device.
  */
-public class PathPreference extends DialogPreference
+public class PathPreference extends DialogPreference implements OnPreferenceDialogListener, DialogInterface.OnClickListener 
 {
     /** The user must select a directory. No files will be shown in the list. */
     public static final int SELECTION_MODE_DIRECTORY = 0;
@@ -147,10 +150,8 @@ public class PathPreference extends DialogPreference
     }
     
     @Override
-    protected void onPrepareDialogBuilder( Builder builder )
-    {
-        super.onPrepareDialogBuilder( builder );
-        
+    public void onPrepareDialogBuilder( Context context, Builder builder )
+    {        
         // Add the list entries
         if( AppData.IS_HONEYCOMB )
         {
@@ -190,16 +191,11 @@ public class PathPreference extends DialogPreference
                 which = DialogInterface.BUTTON_POSITIVE;
             }
         }
-        
-        // Call super last, parameters may have changed above
-        super.onClick( dialog, which );
     }
     
     @Override
-    protected void onDialogClosed( boolean positiveResult )
-    {
-        super.onDialogClosed( positiveResult );
-        
+    public void onDialogClosed( boolean positiveResult )
+    {        
         if( positiveResult && callChangeListener( mNewValue ) )
         {
             // User clicked Ok: clean the state by persisting value
@@ -242,11 +238,12 @@ public class PathPreference extends DialogPreference
         
         // If the dialog is already showing, we must close and reopen to refresh the contents
         // TODO: Find a less hackish solution, if one exists
+        /*
         if( getDialog() != null )
         {
             mDoReclick = true;
             getDialog().dismiss();
-        }
+        }*/
     }
 
     // Populates the dialog view with files and folders on the device.
@@ -313,5 +310,11 @@ public class PathPreference extends DialogPreference
                 value = STORAGE_DIR;
         }
         return value;
+    }
+
+    @Override
+    public void onBindDialogView(View view, FragmentActivity associatedActivity)
+    {
+        //Nothing to do here
     }
 }

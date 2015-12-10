@@ -40,18 +40,20 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.OnMenuVisibilityListener;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.FloatMath;
+import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
@@ -206,6 +208,15 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
+    }
+    
+    @SuppressLint("NewApi")
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
+    {
+        if(Build.VERSION.SDK_INT >= 11)
+          return super.onCreateView(parent, name, context, attrs);
+        return null;
     }
     
     @TargetApi( 11 )
@@ -514,7 +525,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 Point point = mTouchscreenMap.getAnalogDisplacement( x, y );
                 int dX = point.x;
                 int dY = point.y;
-                float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
+                float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
                 if( mTouchscreenMap.isInCaptureRange( displacement ) )
                 {
                     dragAsset = ANALOG;
@@ -535,7 +546,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 {
                     int dX = x - initialX;
                     int dY = y - initialY;
-                    float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
+                    float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
                     if ( displacement >= 10 )
                         dragging = true;
                 }
@@ -600,7 +611,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         return false;
     }
     
-    @SuppressLint( "InflateParams" )
     private void popupDialog( final String assetName, String title, final int holdableIndex )
     {
         // Get the original position of the asset
@@ -609,7 +619,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         final int initialScale = mProfile.getInt( assetName + SCALE, 100 );
         
         // Inflate the dialog's main view area
-        View view = getLayoutInflater().inflate( R.layout.touchscreen_profile_activity_popup, null );
+        View view = View.inflate( this, R.layout.touchscreen_profile_activity_popup, null );
         
         // Setup the dialog's compound seekbar widgets
         final SeekBarGroup posX = new SeekBarGroup( initialX, view, R.id.seekbarX,

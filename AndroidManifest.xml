@@ -13,8 +13,8 @@
         android:required="false" />
 
     <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="21" />
+        android:minSdkVersion="15"
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -68,13 +68,13 @@
             android:name="paulscode.android.mupen64plusae.ScanRomsActivity"
             android:exported="false"
             android:label="@string/ScanRomsActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
         </activity>
         <activity
             android:name="paulscode.android.mupen64plusae.persistent.GamePrefsActivity"
             android:exported="false"
             android:label="@string/PlayMenuActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.GamePrefsActivity" />
 
@@ -85,7 +85,7 @@
             android:name="paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity"
             android:exported="false"
             android:label="@string/SettingsGlobalActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.GlobalPrefsActivity" />
 
@@ -140,7 +140,7 @@
             android:name="paulscode.android.mupen64plusae.profile.EmulationProfileActivity"
             android:exported="false"
             android:label="@string/EmulationProfileActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".profile.EmulationProfileActivity" />
 
@@ -173,7 +173,7 @@
             android:name="paulscode.android.mupen64plusae.input.DiagnosticActivity"
             android:exported="false"
             android:label="@string/DiagnosticActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".input.DiagnosticActivity" />
 
@@ -184,7 +184,7 @@
             android:name="paulscode.android.mupen64plusae.cheat.CheatEditorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/CheatEditorActivity_title"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".cheat.CheatEditorActivity" />
 

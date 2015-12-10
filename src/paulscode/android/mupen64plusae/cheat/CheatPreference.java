@@ -27,7 +27,8 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -133,16 +134,16 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     }
     
     @Override
-    protected void onBindView( View view )
+    public void onBindViewHolder(PreferenceViewHolder holder)
     {
-        super.onBindView( view );
-        
+        super.onBindViewHolder( holder );
+               
         // Setup the click handling
-        view.setOnLongClickListener( this );
-        view.setOnClickListener( this );
+        holder.itemView.setOnLongClickListener( this );
+        holder.itemView.setOnClickListener( this );
         
         // Find and initialize the widgets
-        mCheckbox = (CheckBox) view.findViewById( R.id.widgetCheckbox );
+        mCheckbox = (CheckBox) holder.findViewById( R.id.widgetCheckbox );
         mCheckbox.setFocusable( false );
         mCheckbox.setFocusableInTouchMode( false );
         mCheckbox.setClickable( false );

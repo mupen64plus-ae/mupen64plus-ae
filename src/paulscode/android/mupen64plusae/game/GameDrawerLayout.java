@@ -27,7 +27,6 @@ import android.graphics.Point;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.MotionEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +117,7 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
                 
                 int dX = point.x;
                 int dY = point.y;
-                float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
+                float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
                 
                 // Add a slightly larger hit area around the analog stick,
                 // by artificially shrinking the size of the displacement
