@@ -223,10 +223,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
         layoutManager.setSpanCount( galleryColumns );
         mGridView.getAdapter().notifyDataSetChanged();
+        mGridView.setFocusable(false);
+        mGridView.setFocusableInTouchMode(false);
         
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         toolbar.setTitle( R.string.app_name );
+        View firstGridChild = mGridView.getChildAt(0);
+        
+        if(firstGridChild != null)
+        {
+            toolbar.setNextFocusDownId(firstGridChild.getId());
+        }
+
+        
         setSupportActionBar( toolbar );
         
         // Configure the navigation drawer
@@ -282,6 +292,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Configure the list in the navigation drawer
         mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
         mDrawerList.setMenuResource( R.menu.gallery_drawer );
+        
+        //Remove touch screen profile configuration if in TV mode
+        if(mGlobalPrefs.isBigScreenMode)
+        {
+            MenuItem profileGroupItem = mDrawerList.getMenu().findItem(R.id.menuItem_profiles);
+            profileGroupItem.getSubMenu().removeItem(R.id.menuItem_touchscreenProfiles);
+        }
         
         // Select the Library section
         mDrawerList.getMenu().getItem( 0 ).setChecked( true );
@@ -849,7 +866,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         
         // Allow the headings to take up the entire width of the layout
         final List<GalleryItem> finalItems = items;
-        GridLayoutManager layoutManager = new GridLayoutManager( this, galleryColumns );
+        GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
         layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup()
         {
             @Override

@@ -76,7 +76,7 @@ public class GalleryItem
         this.zipFile = TextUtils.isEmpty( zipPath ) ? null : new File( zipPath );
     }
     
-    public GalleryItem( Context context, String headingName )
+    public GalleryItem( Context context, String headingName)
     {
         this.goodName = headingName;
         this.context = context;

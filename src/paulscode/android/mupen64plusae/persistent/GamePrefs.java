@@ -228,9 +228,16 @@ public class GamePrefs
                 globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
         
         // Touchscreen profile
-        touchscreenProfile = loadProfile( mPreferences, TOUCHSCREEN_PROFILE,
+        if(globalPrefs.isBigScreenMode)
+        {
+            touchscreenProfile = null;
+        }
+        else
+        {
+            touchscreenProfile = loadProfile( mPreferences, TOUCHSCREEN_PROFILE,
                 globalPrefs.getTouchscreenProfileDefault(),
                 globalPrefs.GetTouchscreenProfilesConfig(), appData.GetTouchscreenProfilesConfig() );
+        }
         
         // Controller profiles
         controllerProfile1 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
