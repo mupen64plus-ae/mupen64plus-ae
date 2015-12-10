@@ -48,7 +48,7 @@ for currentBranch in "${remoteBranches[@]}"; do
         echo "Nothing new to build"
     else
         if [ "$forceBuild" == true ]; then
-            "Forcing auto-build"
+            echo "Forcing auto-build"
         fi
         
         # Configure build dependencies
