@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -279,19 +278,11 @@ public final class Prompt
         Builder builder = prefillBuilder( context, title, message, internalListener );
         if( !dirsSelectable )
             builder.setPositiveButton( null, null );
-        if( AppData.IS_HONEYCOMB )
-        {
-            // Holo theme has folder icons and "Parent folder" text
-            ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( context, paths, names );
-            builder.setAdapter( adapter, internalListener );
-        }
-        else
-        {
-            // Basic theme uses bold text for folders and ".." for the parent
-            CharSequence[] items = names.toArray( new CharSequence[names.size()] );
-            builder.setItems( items, internalListener );
-        }
-        
+
+        // Holo theme has folder icons and "Parent folder" text
+        ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( context, paths, names );
+        builder.setAdapter( adapter, internalListener );
+            
         // Create and launch the dialog
         builder.create().show();
     }

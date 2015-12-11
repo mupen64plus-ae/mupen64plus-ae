@@ -63,7 +63,6 @@ import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.BitmapDrawable;
@@ -188,7 +187,6 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
     }
     
-    @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
         Log.i( "GameLifecycleHandler", "onCreate" );
@@ -229,7 +227,6 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         mFirstStart = true;
     }
     
-    @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
     {
         // Take control of the GameSurface if necessary
@@ -837,9 +834,7 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
         mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
                 mGlobalPrefs.unmappableKeyCodes );
         MogaProvider mogaProvider = new MogaProvider( mMogaController );
-        AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1
-                ? new AxisProvider( inputSource )
-                : null;
+        AbstractProvider axisProvider = new AxisProvider( inputSource );
         
         // Create the peripheral controls to handle key/stick presses
         if( mGamePrefs.isControllerEnabled1 && !needs1)
@@ -869,13 +864,8 @@ public class GameLifecycleHandler implements SurfaceHolder.Callback, GameSidebar
     }
     
     @SuppressLint( "InlinedApi" )
-    @TargetApi( 11 )
     private void hideSystemBars()
     {
-        // Only applies to Honeycomb devices
-        if( !AppData.IS_HONEYCOMB )
-            return;
-        
         View view = mSurface.getRootView();
         if( view != null )
         {

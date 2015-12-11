@@ -36,7 +36,6 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -308,7 +307,6 @@ public class GlobalPrefs
      *            The application context.
      */
     @SuppressWarnings( "deprecation" )
-    @SuppressLint( "InlinedApi" )
     @TargetApi( 17 )
     public GlobalPrefs( Context context, AppData appData )
     {
@@ -442,11 +440,10 @@ public class GlobalPrefs
         boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
         List<Integer> unmappables = new ArrayList<Integer>();
         unmappables.add( KeyEvent.KEYCODE_MENU );
-        if( AppData.IS_HONEYCOMB )
-        {
+
             // Back key is needed to show/hide the action bar in HC+
             unmappables.add( KeyEvent.KEYCODE_BACK );
-        }
+
         if( !volKeysMappable )
         {
             unmappables.add( KeyEvent.KEYCODE_VOLUME_UP );

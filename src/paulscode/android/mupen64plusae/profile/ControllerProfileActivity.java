@@ -28,8 +28,6 @@ import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import android.annotation.TargetApi;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,11 +45,8 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
         mKeyProvider.registerListener(this);
         mMogaProvider = new MogaProvider(mMogaController);
         mMogaProvider.registerListener(this);
-        if (AppData.IS_HONEYCOMB_MR1)
-        {
-            mAxisProvider = new AxisProvider();
-            mAxisProvider.registerListener(this);
-        }
+        mAxisProvider = new AxisProvider();
+        mAxisProvider.registerListener(this);
 
         // For narrow screens, use an alternate layout
         setContentView(R.layout.controller_profile_activity);
@@ -138,13 +133,9 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
         return mKeyProvider.onKey(keyCode, event) || super.onKeyUp(keyCode, event);
     }
 
-    @TargetApi(12)
     @Override
     public boolean onGenericMotionEvent(MotionEvent event)
     {
-        if (!AppData.IS_HONEYCOMB_MR1)
-            return false;
-
         return mAxisProvider.onGenericMotion(event) || super.onGenericMotionEvent(event);
     }
 }

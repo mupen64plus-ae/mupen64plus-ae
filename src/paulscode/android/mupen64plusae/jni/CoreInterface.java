@@ -37,7 +37,6 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.media.AudioTrack;
 import android.os.Vibrator;
@@ -198,10 +197,9 @@ public class CoreInterface
         new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
     }
     
-    @TargetApi( 11 )
     public static void registerVibrator( int player, Vibrator vibrator )
     {
-        boolean hasVibrator = AppData.IS_HONEYCOMB ? vibrator.hasVibrator() : true;
+        boolean hasVibrator = vibrator.hasVibrator();
         
         if( hasVibrator && player > 0 && player < 5 )
         {

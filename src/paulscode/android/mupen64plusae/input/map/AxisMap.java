@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import android.annotation.TargetApi;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 
-@TargetApi( 9 )
 public class AxisMap extends SerializableMap
 {
     public static final int AXIS_CLASS_UNKNOWN = 0;
@@ -48,7 +46,6 @@ public class AxisMap extends SerializableMap
         return map;
     }
     
-    @TargetApi( 12 )
     public AxisMap( InputDevice device )
     {
         // Auto-classify the axes
@@ -178,7 +175,6 @@ public class AxisMap extends SerializableMap
         return mSignatureName;
     }
     
-    @TargetApi( 12 )
     private static int detectClass( MotionRange motionRange )
     {
         if( motionRange != null )

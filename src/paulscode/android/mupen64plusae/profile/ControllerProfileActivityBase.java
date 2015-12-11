@@ -42,21 +42,14 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -167,15 +160,6 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         
         // Refresh everything
         refreshAllButtons(false);
-    }
-    
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if (Build.VERSION.SDK_INT >= 11)
-            return super.onCreateView(parent, name, context, attrs);
-        return null;
     }
     
     @Override
@@ -392,31 +376,17 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         }
     }
     
-    @TargetApi( 11 )
     protected void refreshButton( Button button, float strength, boolean isMapped )
     {
         if( button != null )
         {
-            button.setPressed( strength > AbstractProvider.STRENGTH_THRESHOLD );
-            
+            button.setPressed(strength > AbstractProvider.STRENGTH_THRESHOLD);
+
             // Fade any buttons that aren't mapped
-            if( AppData.IS_HONEYCOMB )
-            {
-                if( isMapped )
-                    button.setAlpha( 1 );
-                else
-                    button.setAlpha( UNMAPPED_BUTTON_ALPHA );
-            }
+            if (isMapped)
+                button.setAlpha(1);
             else
-            {
-                // For older APIs try something similar (not quite the same)
-                if( isMapped )
-                    button.getBackground().clearColorFilter();
-                else
-                    button.getBackground().setColorFilter( UNMAPPED_BUTTON_FILTER,
-                            PorterDuff.Mode.MULTIPLY );
-                button.invalidate();
-            }
+                button.setAlpha(UNMAPPED_BUTTON_ALPHA);
         }
     }
 

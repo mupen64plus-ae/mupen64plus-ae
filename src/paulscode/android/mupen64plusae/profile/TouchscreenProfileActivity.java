@@ -38,22 +38,18 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.OnMenuVisibilityListener;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
@@ -127,7 +123,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private boolean isTouchscreenAnimated;
     
     @SuppressLint( "ClickableViewAccessibility" )
-    @TargetApi( 11 )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -210,16 +205,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mOverlay.setOnTouchListener( this );
     }
     
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if(Build.VERSION.SDK_INT >= 11)
-          return super.onCreateView(parent, name, context, attrs);
-        return null;
-    }
-    
-    @TargetApi( 11 )
     private void refresh()
     {
         // Reposition the assets and refresh the overlay and options menu
@@ -228,8 +213,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
         mOverlay.postInvalidate();
-        if( AppData.IS_HONEYCOMB )
-            invalidateOptionsMenu();
+        invalidateOptionsMenu();
     }
     
     @Override
@@ -440,15 +424,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         return ArrayUtils.contains( holdables, String.valueOf( n64Index ) );
     }
     
-    @SuppressLint( "InlinedApi" )
-    @TargetApi( 11 )
     @Override
     public void onBackPressed()
     {
-        // Only applies to Honeycomb devices
-        if( !AppData.IS_HONEYCOMB )
-            return;
-        
         // Toggle the action bar
         ActionBar actionBar = getSupportActionBar();
         if( actionBar.isShowing() )
@@ -462,13 +440,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     }
     
     @SuppressLint( "InlinedApi" )
-    @TargetApi( 11 )
     private void hideSystemBars()
     {
-        // Only applies to Honeycomb devices
-        if( !AppData.IS_HONEYCOMB )
-            return;
-        
         getSupportActionBar().hide();
         View view = mSurface.getRootView();
         if( view != null )

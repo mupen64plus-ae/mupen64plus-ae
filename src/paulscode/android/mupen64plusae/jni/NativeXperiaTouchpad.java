@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.SystemClock;
 import android.view.KeyEvent;
@@ -79,7 +78,6 @@ public class NativeXperiaTouchpad extends View
      *            
      * @return True if the event was handled, false otherwise.
      */
-    @TargetApi( 9 )
     public boolean onNativeTouch( int source, int action, int pointerCount, int[] pointerIds,
             float[] pointerX, float[] pointerY )
     {
@@ -120,7 +118,6 @@ public class NativeXperiaTouchpad extends View
      * 
      * @return True if the event was handled, false otherwise.
      */
-    @TargetApi( 9 )
     @SuppressWarnings( "deprecation" )
     public boolean onNativeTouch( long downTime, long eventTime, int action, int pointerCount,
             int[] pointerIds, PointerCoords[] pointerCoords, int metaState, float xPrecision,

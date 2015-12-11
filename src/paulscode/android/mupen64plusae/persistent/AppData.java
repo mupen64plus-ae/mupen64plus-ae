@@ -27,7 +27,6 @@ import paulscode.android.mupen64plusae.util.DeviceUtil;
 import tv.ouya.console.api.OuyaFacade;
 import android.app.UiModeManager;
 import android.content.res.Configuration;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -77,20 +76,7 @@ import android.util.Log;
  * </pre>
  */
 public class AppData
-{
-    /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
-    public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
-    
-    /** True if device is running Honeycomb or later (11 - Android 3.0.x) */
-    public static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    
-    /** True if device is running Honeycomb MR1 or later (12 - Android 3.1.x) */
-    public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
-    
-    /** True if device is running Ice Cream Sandwich or later (14 - Android 4.0.x) */
-    public static final boolean IS_ICE_CREAM_SANDWICH = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-    
-    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
+{    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
     /** True if device is running KitKat or later (19 - Android 4.4.x) */
@@ -208,7 +194,6 @@ public class AppData
      * 
      * @param context The application context.
      */
-    @TargetApi( 13 )
     public AppData( Context context )
     {
         hardwareInfo = new HardwareInfo();
@@ -243,7 +228,7 @@ public class AppData
         }
         tempDir = coreSharedDataDir + "/tmp";
         String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
-        if( !( new File( _libsDir ) ).exists() && IS_GINGERBREAD )
+        if( !( new File( _libsDir ) ).exists() )
             _libsDir = context.getApplicationInfo().nativeLibraryDir;
         libsDir = _libsDir;
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
@@ -268,15 +253,8 @@ public class AppData
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
-        if (AppData.IS_ICE_CREAM_SANDWICH)
-        {
-            UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
-            isAndroidTv = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
-        }
-        else
-        {
-            isAndroidTv = false;
-        }
+        UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
+        isAndroidTv = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
     }
     
     /**

@@ -79,41 +79,37 @@ public final class DeviceUtil
         Utility.executeShellCommand( "logcat", "-c" );
     }
     
-    @TargetApi( 12 )
     public static String getAxisInfo()
     {
         StringBuilder builder = new StringBuilder();
-        
-        if( AppData.IS_HONEYCOMB_MR1 )
+
+        int[] ids = InputDevice.getDeviceIds();
+        for (int i = 0; i < ids.length; i++)
         {
-            int[] ids = InputDevice.getDeviceIds();
-            for( int i = 0; i < ids.length; i++ )
+            InputDevice device = InputDevice.getDevice(ids[i]);
+            AxisMap axisMap = AxisMap.getMap(device);
+            if (!TextUtils.isEmpty(axisMap.getSignature()))
             {
-                InputDevice device = InputDevice.getDevice( ids[i] );
-                AxisMap axisMap = AxisMap.getMap( device );
-                if( !TextUtils.isEmpty( axisMap.getSignature() ) )
+                builder.append("Device: " + device.getName() + "\n");
+                builder.append("Type: " + axisMap.getSignatureName() + "\n");
+                builder.append("Signature: " + axisMap.getSignature() + "\n");
+                builder.append("Hash: " + axisMap.getSignature().hashCode() + "\n");
+
+                List<MotionRange> ranges = getPeripheralMotionRanges(device);
+                for (MotionRange range : ranges)
                 {
-                    builder.append( "Device: " + device.getName() + "\n" );
-                    builder.append( "Type: " + axisMap.getSignatureName() + "\n" );
-                    builder.append( "Signature: " + axisMap.getSignature() + "\n" );
-                    builder.append( "Hash: " + axisMap.getSignature().hashCode() + "\n" );
-                    
-                    List<MotionRange> ranges = getPeripheralMotionRanges( device );
-                    for( MotionRange range : ranges )
+                    if (range.getSource() == InputDevice.SOURCE_JOYSTICK)
                     {
-                        if( range.getSource() == InputDevice.SOURCE_JOYSTICK )
-                        {
-                            int axisCode = range.getAxis();
-                            String axisName = MotionEvent.axisToString( axisCode );
-                            String className = getAxisClassName( axisMap.getClass( axisCode ) );
-                            builder.append( "  " + axisName + ": " + className + "\n" );
-                        }
+                        int axisCode = range.getAxis();
+                        String axisName = MotionEvent.axisToString(axisCode);
+                        String className = getAxisClassName(axisMap.getClass(axisCode));
+                        builder.append("  " + axisName + ": " + className + "\n");
                     }
-                    builder.append( "\n" );
                 }
+                builder.append("\n");
             }
         }
-        
+
         return builder.toString();
     }
     
@@ -122,58 +118,46 @@ public final class DeviceUtil
      * 
      * @return The peripheral info string.
      */
-    @TargetApi( 16 )
+    @TargetApi(16)
     public static String getPeripheralInfo()
     {
         StringBuilder builder = new StringBuilder();
-        
-        if( AppData.IS_GINGERBREAD )
+
+        int[] ids = InputDevice.getDeviceIds();
+        for (int i = 0; i < ids.length; i++)
         {
-            int[] ids = InputDevice.getDeviceIds();
-            for( int i = 0; i < ids.length; i++ )
+            InputDevice device = InputDevice.getDevice(ids[i]);
+            if (device != null)
             {
-                InputDevice device = InputDevice.getDevice( ids[i] );
-                if( device != null )
+                if (0 < (device.getSources() & (InputDevice.SOURCE_CLASS_BUTTON | InputDevice.SOURCE_CLASS_JOYSTICK)))
                 {
-                    if( 0 < ( device.getSources() & ( InputDevice.SOURCE_CLASS_BUTTON | InputDevice.SOURCE_CLASS_JOYSTICK ) ) )
+                    builder.append("Device: " + device.getName() + "\n");
+                    builder.append("Id: " + device.getId() + "\n");
+                    if (AppData.IS_JELLY_BEAN)
                     {
-                        builder.append( "Device: " + device.getName() + "\n" );
-                        builder.append( "Id: " + device.getId() + "\n" );
-                        if( AppData.IS_JELLY_BEAN )
-                        {
-                            builder.append( "Descriptor: " + device.getDescriptor() + "\n" );
-                            if( device.getVibrator().hasVibrator() )
-                                builder.append( "Vibrator: true\n" );
-                        }
-                        builder.append( "Class: " + getSourceClassesString( device.getSources() )
-                                + "\n" );
-                        
-                        List<MotionRange> ranges = getPeripheralMotionRanges( device );
-                        if( ranges.size() > 0 )
-                        {
-                            builder.append( "Axes: " + ranges.size() + "\n" );
-                            for( MotionRange range : ranges )
-                            {
-                                if( AppData.IS_HONEYCOMB_MR1 )
-                                {
-                                    String axisName = MotionEvent.axisToString( range.getAxis() );
-                                    String source = getSourceName( range.getSource() );
-                                    builder.append( "  " + axisName + " (" + source + ")" );
-                                }
-                                else
-                                {
-                                    builder.append( "  Axis" );
-                                }
-                                builder.append( ": ( " + range.getMin() + " , " + range.getMax()
-                                        + " )\n" );
-                            }
-                        }
-                        builder.append( "\n" );
+                        builder.append("Descriptor: " + device.getDescriptor() + "\n");
+                        if (device.getVibrator().hasVibrator())
+                            builder.append("Vibrator: true\n");
                     }
+                    builder.append("Class: " + getSourceClassesString(device.getSources()) + "\n");
+
+                    List<MotionRange> ranges = getPeripheralMotionRanges(device);
+                    if (ranges.size() > 0)
+                    {
+                        builder.append("Axes: " + ranges.size() + "\n");
+                        for (MotionRange range : ranges)
+                        {
+                            String axisName = MotionEvent.axisToString(range.getAxis());
+                            String source = getSourceName(range.getSource());
+                            builder.append("  " + axisName + " (" + source + ")");
+                            builder.append(": ( " + range.getMin() + " , " + range.getMax() + " )\n");
+                        }
+                    }
+                    builder.append("\n");
                 }
             }
         }
-        
+
         return builder.toString();
     }
     
@@ -182,37 +166,10 @@ public final class DeviceUtil
      * 
      * @return The motion ranges associated with the peripheral.
      */
-    @TargetApi( 12 )
     public static List<MotionRange> getPeripheralMotionRanges( InputDevice device )
     {
         List<MotionRange> ranges;
-        if( AppData.IS_HONEYCOMB_MR1 )
-        {
-            ranges = device.getMotionRanges();
-        }
-        else if( AppData.IS_GINGERBREAD )
-        {
-            // Earlier APIs we have to do it the hard way
-            ranges = new ArrayList<MotionRange>();
-            boolean finished = false;
-            for( int j = 0; j < 256 && !finished; j++ )
-            {
-                // TODO: Eliminate reliance on try-catch
-                try
-                {
-                    if( device.getMotionRange( j ) != null )
-                        ranges.add( device.getMotionRange( j ) );
-                }
-                catch( Exception e )
-                {
-                    finished = true;
-                }
-            }
-        }
-        else
-        {
-            ranges = new ArrayList<InputDevice.MotionRange>();
-        }
+        ranges = device.getMotionRanges();
         
         return ranges;
     }

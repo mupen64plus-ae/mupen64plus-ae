@@ -20,11 +20,7 @@
  */
 package paulscode.android.mupen64plusae.compat;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -37,15 +33,6 @@ public abstract class AppCompatListActivity extends AppCompatActivity
      * List view
      */
     private ListView mListView;
-    
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if (Build.VERSION.SDK_INT >= 11)
-            return super.onCreateView(parent, name, context, attrs);
-        return null;
-    }
     
     @Override
     public void setContentView(int layoutResID)

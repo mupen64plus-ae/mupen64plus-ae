@@ -37,18 +37,13 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import tv.ouya.console.api.OuyaFacade;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
-import android.util.AttributeSet;
-import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -176,15 +171,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         {
             Popups.showInvalidInstall( this );
         }
-    }
-    
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if(Build.VERSION.SDK_INT >= 11)
-          return super.onCreateView(parent, name, context, attrs);
-        return null;
     }
     
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */

@@ -22,9 +22,7 @@ package paulscode.android.mupen64plusae.compat;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnDisplayDialogListener;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceFragment.OnFragmentCreationListener;
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -37,7 +35,6 @@ import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import android.support.v7.preference.PreferenceScreen;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
@@ -159,15 +156,6 @@ public class AppCompatPreferenceActivity extends AppCompatActivity implements On
             final FragmentManager fm = getSupportFragmentManager();
             mPrefFrag = (AppCompatPreferenceFragment) fm.findFragmentById(android.R.id.content);   
         }
-    }
-
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if (Build.VERSION.SDK_INT >= 11)
-            return super.onCreateView(parent, name, context, attrs);
-        return null;
     }
 
     public void addPreferencesFromResource(String sharedPrefsName, int preferencesResId)

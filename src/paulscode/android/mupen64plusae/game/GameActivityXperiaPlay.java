@@ -24,16 +24,11 @@ import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmLi
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
-import android.util.AttributeSet;
-import android.view.View;
 
 public class GameActivityXperiaPlay extends AppCompatActivity implements PromptConfirmListener
 {
@@ -71,15 +66,6 @@ public class GameActivityXperiaPlay extends AppCompatActivity implements PromptC
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
         mLifecycleHandler.onCreateEnd( savedInstanceState );
-    }
-    
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if (Build.VERSION.SDK_INT >= 11)
-            return super.onCreateView(parent, name, context, attrs);
-        return null;
     }
     
     @Override

@@ -28,7 +28,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -153,18 +152,10 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
     public void onPrepareDialogBuilder( Context context, Builder builder )
     {        
         // Add the list entries
-        if( AppData.IS_HONEYCOMB )
-        {
-            // Holo theme has folder icons and "Parent folder" text
-            ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( getContext(), mPaths, mNames );
-            builder.setAdapter( adapter, this );
-        }
-        else
-        {
-            // Basic theme uses bold text for folders and ".." for the parent
-            CharSequence[] items = mNames.toArray( new CharSequence[mNames.size()] );
-            builder.setItems( items, this );
-        }
+
+        // Holo theme has folder icons and "Parent folder" text
+        ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( getContext(), mPaths, mNames );
+        builder.setAdapter( adapter, this );
         
         // Remove the Ok button when user must choose a file
         if( mSelectionMode == SELECTION_MODE_FILE )

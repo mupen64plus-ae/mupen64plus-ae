@@ -23,9 +23,7 @@ package paulscode.android.mupen64plusae.input;
 import java.util.Set;
 
 import paulscode.android.mupen64plusae.input.map.TouchMap;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.os.Vibrator;
 import android.util.SparseIntArray;
@@ -158,11 +156,10 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     @SuppressLint( "ClickableViewAccessibility" )
     @Override
-    @TargetApi( 9 )
     public boolean onTouch( View view, MotionEvent event )
     {
         // Filter by source, if applicable
-        int source = AppData.IS_GINGERBREAD ? event.getSource() : 0;
+        int source = event.getSource();
         if( mSourceFilter != 0 && mSourceFilter != source )
             return false;
         

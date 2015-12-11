@@ -13,7 +13,6 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -132,8 +131,7 @@ public class PromptInputCodeDialog extends DialogFragment
             Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
         }
         
-        if (AppData.IS_HONEYCOMB_MR1)
-            providers.add(new AxisProvider(view));
+        providers.add(new AxisProvider(view));
 
         // Notify the client when the user clicks the dialog's positive button
         DialogInterface.OnClickListener clickListener = new OnClickListener()
