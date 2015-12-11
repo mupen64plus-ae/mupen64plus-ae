@@ -50,18 +50,6 @@
 
     <string name="touchscreenAutoHold_default" translatable="false">2</string>
 
-    <!-- Xperia Play Touchpad Layouts -->
-    <string-array name="touchpadLayout_entries" translatable="false">
-        <item>@string/touchpadLayout_entryDefault</item>
-        <item>@string/touchpadLayout_entryReverse</item>
-    </string-array>
-    <string-array name="touchpadLayout_values" translatable="false">
-        <item>Xperia-Play</item>
-        <item>Xperia-Play-Swapped</item>
-    </string-array>
-
-    <string name="touchpadLayout_default" translatable="false">Xperia-Play</string>
-
     <!-- Screen Orientation List -->
     <string-array name="displayOrientation_entries" translatable="false">
         <item>@string/displayOrientation_entryLandscape</item>

@@ -192,7 +192,6 @@
     <string name="categoryDisplay_title">Display</string>
     <string name="categoryAudio_title">Audio</string>
     <string name="categoryTouchscreen_title">Touchscreen</string>
-    <string name="categoryTouchpad_title">Touchpad</string>
     <string name="categoryInput_title">Input</string>
     <string name="categoryData_title">Data</string>
     <string name="categoryGameSettings_title">Game-specific settings</string>
@@ -202,7 +201,6 @@
     <string name="playShowCheats_title">Enable cheats</string>
     <string name="touchscreenFeedback_title">Haptic feedback</string>
     <string name="touchscreenFeedback_summary">Vibrate on button press</string>
-    <string name="touchpadEnabled_title">Enable touchpad</string>
     <string name="inputVolumeMappable_title">Mappable volume keys</string>
     <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
     <string name="inputShareController_title">Share controller</string>
@@ -254,9 +252,6 @@
     <string name="touchscreenStyle_entryShaded">Shaded</string>
     <string name="touchscreenStyle_entryCustom">Custom</string>
 
-    <string name="touchpadLayout_title">Touchpad layout</string>
-    <string name="touchpadLayout_entryDefault">Left pad: Analog control; Right pad: C buttons</string>
-    <string name="touchpadLayout_entryReverse">Left pad: C buttons; Right pad: Analog control</string>
     <string name="displayOrientation_title">Screen orientation</string>
     <string name="displayOrientation_entryLandscape">Landscape</string>
     <string name="displayOrientation_entryReverseLandscape">Reverse landscape</string>

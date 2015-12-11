@@ -32,8 +32,6 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
-import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
@@ -126,9 +124,6 @@ public class GlobalPrefs
     /** The path of the custom emulation profiles file. */
     public final String emulationProfiles_cfg;
     
-    /** The path of the custom touchpad profile */
-    public final String touchpadProfiles_cfg;
-    
     /** The controller profiles config */
     private ConfigFile mControllerProfilesConfig = null;
     
@@ -155,18 +150,6 @@ public class GlobalPrefs
     
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
-    
-    /** True if Xperia Play touchpad is enabled. */
-    public final boolean isTouchpadEnabled;
-    
-    /** True if Xperia Play touchpad feedback is enabled. */
-    public final boolean isTouchpadFeedbackEnabled;
-    
-    /** The directory of the selected Xperia Play skin. */
-    public final String touchpadSkin;
-    
-    /** The touchpad profile. */
-    public Profile touchpadProfile;
     
     /** True if a single peripheral device can control multiple players concurrently. */
     public final boolean isControllerShared;
@@ -368,13 +351,6 @@ public class GlobalPrefs
         touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
-        
-        // Xperia PLAY touchpad prefs
-        isTouchpadEnabled = appData.hardwareInfo.isXperiaPlay && mPreferences.getBoolean( "touchpadEnabled", true );
-        isTouchpadFeedbackEnabled = mPreferences.getBoolean( "touchpadFeedback", false );
-        touchpadSkin = appData.touchpadSkinsDir + "/Xperia-Play";
-
-        touchpadProfiles_cfg = appData.touchpadProfiles_cfg;
         
         // Video prefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
@@ -678,21 +654,6 @@ public class GlobalPrefs
         }
 
         return mControllerProfilesConfig;
-    }
-    
-    public Profile GetTouchpadProfile()
-    {
-        if(touchpadProfile == null)
-        {
-            ConfigFile touchpad_cfg = new ConfigFile(touchpadProfiles_cfg);
-            ConfigSection section = touchpad_cfg.get( mPreferences.getString( "touchpadLayout", "" ) );
-            if( section != null )
-                touchpadProfile = new Profile( true, section );
-            else
-                touchpadProfile = null;
-        }
-        
-        return touchpadProfile;
     }
     
 }

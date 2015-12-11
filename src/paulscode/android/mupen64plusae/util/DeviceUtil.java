@@ -270,8 +270,6 @@ public final class DeviceUtil
                 return "mouse";
             case InputDevice.SOURCE_STYLUS:
                 return "stylus";
-            case InputDevice.SOURCE_TOUCHPAD:
-                return "touchpad";
             case InputDevice.SOURCE_TOUCHSCREEN:
                 return "touchscreen";
             case InputDevice.SOURCE_TRACKBALL:
@@ -293,7 +291,6 @@ public final class DeviceUtil
         addString( sources, InputDevice.SOURCE_TOUCHSCREEN, names );
         addString( sources, InputDevice.SOURCE_MOUSE, names );
         addString( sources, InputDevice.SOURCE_STYLUS, names );
-        addString( sources, InputDevice.SOURCE_TOUCHPAD, names );
         addString( sources, InputDevice.SOURCE_JOYSTICK, names );
         return TextUtils.join( ", ", names );
     }

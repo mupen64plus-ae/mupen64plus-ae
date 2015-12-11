@@ -30,7 +30,6 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
-import paulscode.android.mupen64plusae.game.GameLifecycleHandler;
 import paulscode.android.mupen64plusae.game.GameSurface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -148,7 +147,6 @@ public class CoreInterface
     
     // Activity and threading objects - used internally
     private static AppCompatActivity sActivity = null;
-    private static GameLifecycleHandler sLifeCycleHandler = null;
     private static Thread sCoreThread;
     
     // Startup info - used internally
@@ -170,7 +168,7 @@ public class CoreInterface
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
-    public static void initialize( AppCompatActivity activity, GameLifecycleHandler lifeCycleHandler,
+    public static void initialize( AppCompatActivity activity,
         GameSurface surface, GamePrefs gamePrefs, String romPath, String romMd5,
         String cheatArgs, boolean isRestarting )
     {
@@ -179,7 +177,6 @@ public class CoreInterface
         sIsRestarting = isRestarting;
         
         sActivity = activity;
-        sLifeCycleHandler = lifeCycleHandler;
         sSurface = surface;
         sAppData = new AppData( sActivity );
         sGlobalPrefs = new GlobalPrefs( sActivity, sAppData );
@@ -554,7 +551,7 @@ public class CoreInterface
             
             if(sActivity instanceof OnSaveLoadListener)
             {
-                ((OnSaveLoadListener)sLifeCycleHandler).onSaveLoad();
+                ((OnSaveLoadListener)sActivity).onSaveLoad();
             }
         }
     }
@@ -693,24 +690,24 @@ public class CoreInterface
                 Notifier.showToast(sActivity, R.string.toast_overwritingFile, sCurrentSaveStateFile.getName());
                 NativeExports.emuSaveFile(sCurrentSaveStateFile.getAbsolutePath());
 
-                if(sLifeCycleHandler instanceof OnSaveLoadListener)
+                if(sActivity instanceof OnSaveLoadListener)
                 {
-                    ((OnSaveLoadListener)sLifeCycleHandler).onSaveLoad();
+                    ((OnSaveLoadListener)sActivity).onSaveLoad();
                 }
             }
 
         }
         else if (id == RESTART_CONFIRM_DIALOG_ID)
         {            
-            if(sLifeCycleHandler instanceof OnRestartListener)
+            if(sActivity instanceof OnRestartListener)
             {
-                ((OnRestartListener)sLifeCycleHandler).onRestart( which == DialogInterface.BUTTON_POSITIVE );
+                ((OnRestartListener)sActivity).onRestart( which == DialogInterface.BUTTON_POSITIVE );
             }
         }
         else if (id == EXIT_CONFIRM_DIALOG_ID)
         {
-            if(sLifeCycleHandler instanceof OnExitListener)
-                ((OnExitListener)sLifeCycleHandler).onExit( which == DialogInterface.BUTTON_POSITIVE );
+            if(sActivity instanceof OnExitListener)
+                ((OnExitListener)sActivity).onExit( which == DialogInterface.BUTTON_POSITIVE );
         }
 
     }

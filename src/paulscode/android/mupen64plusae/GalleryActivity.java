@@ -902,7 +902,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Launch the game activity
         ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                    romArtPath, romGoodName, isRestarting, mGlobalPrefs.isTouchpadEnabled );
+                    romArtPath, romGoodName, isRestarting );
     }
     
     private void ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)

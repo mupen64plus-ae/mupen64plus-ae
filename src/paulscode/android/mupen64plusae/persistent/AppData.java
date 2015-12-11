@@ -121,9 +121,6 @@ public class AppData
     /** The directory containing all touchscreen skin folders. Contents deleted on uninstall. */
     public final String touchscreenSkinsDir;
     
-    /** The directory containing all Xperia Play skin folders. Contents deleted on uninstall. */
-    public final String touchpadSkinsDir;
-    
     /** The directory contaiing all built-in profiles. Contents deleted on uninstall. */
     public final String profilesDir;
     
@@ -156,9 +153,6 @@ public class AppData
     
     /** The path of the built-in touchscreen profiles file. Deleted on uninstall, sometimes overwritten on update. */
     private final String touchscreenProfiles_cfg;
-    
-    /** The path of the built-in touchpad profiles file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String touchpadProfiles_cfg;
     
     /** The path of the built-in emulation profiles file. Deleted on uninstall, sometimes overwritten on update. */
     private final String emulationProfiles_cfg;
@@ -232,7 +226,6 @@ public class AppData
             _libsDir = context.getApplicationInfo().nativeLibraryDir;
         libsDir = _libsDir;
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
-        touchpadSkinsDir = coreSharedDataDir + "/skins/touchpad/";
         profilesDir = coreSharedDataDir + "/profiles";
         
         // Files
@@ -246,7 +239,6 @@ public class AppData
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
-        touchpadProfiles_cfg = profilesDir + "/touchpad.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         
         // Preference object for persisting app data
@@ -343,8 +335,7 @@ public class AppData
                 libraryExists( "mupen64plus-video-gliden64-gles31" )    &&
                 libraryExists( "mupen64plus-video-gln64" )              &&
                 libraryExists( "mupen64plus-video-rice" )               &&
-                libraryExists( "SDL2" )                                 &&
-                libraryExists( "xperia-touchpad" );
+                libraryExists( "SDL2" );
         // @formatter:on
     }
     
@@ -381,7 +372,6 @@ public class AppData
         public final String processor;
         public final String features;
         public final int hardwareType;
-        public final boolean isXperiaPlay;
         
         public HardwareInfo()
         {
@@ -462,9 +452,6 @@ public class AppData
             else
                 hardwareType = DEFAULT_HARDWARE_TYPE;
             //@formatter:on
-            
-            // Identify whether this is an Xperia PLAY
-            isXperiaPlay = hardware.contains( "zeus" );
         }
     }
     

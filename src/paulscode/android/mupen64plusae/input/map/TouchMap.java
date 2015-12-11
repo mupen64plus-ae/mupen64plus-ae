@@ -543,7 +543,7 @@ public class TouchMap
     /**
      * Loads all assets and properties specified in a profile.
      * 
-     * @param profile  The touchscreen/touchpad profile.
+     * @param profile  The touchscreen profile.
      * @param animated True to load the analog assets in two parts for animation.
      */
     protected void loadAllAssets( Profile profile, boolean animated )
@@ -570,7 +570,7 @@ public class TouchMap
     /**
      * Loads analog assets and properties from the filesystem.
      * 
-     * @param profile  The touchscreen/touchpad profile containing the analog properties.
+     * @param profile  The touchscreen profile containing the analog properties.
      * @param animated True to load the assets in two parts for animation.
      */
     protected void loadAnalog( Profile profile, boolean animated )
@@ -607,7 +607,7 @@ public class TouchMap
     /**
      * Loads button assets and properties from the filesystem.
      * 
-     * @param profile The touchscreen/touchpad profile containing the button properties.
+     * @param profile The touchscreen profile containing the button properties.
      * @param name    The name of the button/group to load.
      */
     protected void loadButton( Profile profile, String name )
