@@ -11,6 +11,7 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
+    <uses-feature android:name="android.hardware.gamepad" android:required="false" />
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -27,6 +28,8 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
+        android:logo="@drawable/hireslogo"
+        android:banner="@drawable/banner"
         android:theme="@style/appTheme"
         android:supportsRtl="true"
         tools:ignore="UnusedAttribute" >
