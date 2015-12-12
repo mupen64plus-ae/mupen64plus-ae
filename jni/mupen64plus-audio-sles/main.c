@@ -851,14 +851,24 @@ EXPORT void CALL AiLenChanged(void)
         while (lock.value == 0)
             pthread_cond_wait(&(lock.cond), &(lock.mutex));
 
-        lock.value--;
+        --lock.value;
     
         pthread_mutex_unlock(&(lock.mutex));
 
         // TODO: don't resample if speed_factor = 100 and newsamplerate ~= oldsamplerate
         int input_used = resample(primaryBuffer, primaryBufferPos, oldsamplerate, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes, newsamplerate);
 
-        (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes);
+        SLresult result = (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes);
+
+        if( result != SL_RESULT_SUCCESS )
+        {
+           pthread_mutex_lock(&(lock.mutex));
+
+           if(lock.value < lock.limit)
+               ++lock.value;
+
+           pthread_mutex_unlock(&(lock.mutex));
+        }
 
         memmove(primaryBuffer, &primaryBuffer[input_used], primaryBufferPos - input_used);
         primaryBufferPos -= input_used;
