@@ -52,13 +52,10 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -73,7 +70,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -360,15 +356,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mGlobalPrefs.displayActionBarTransparency ) );
     }
     
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if (Build.VERSION.SDK_INT >= 11)
-            return super.onCreateView(parent, name, context, attrs);
-        return null;
-    }
-    
     @Override
     public void onResume()
     {
@@ -389,25 +376,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
             {
-                @TargetApi(Build.VERSION_CODES.HONEYCOMB)
                 @Override
                 public boolean onPreDraw()
                 {
-                    if (AppData.IS_HONEYCOMB)
-                    {
-                        final DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(view.getWidth(), view
-                            .getHeight());
-                        lp.gravity = GravityCompat.START;
-                        view.setLayoutParams(lp);
-                        view.setLeft(-view.getMeasuredWidth());
-                        view.getViewTreeObserver().removeOnPreDrawListener(this);
-                    }
-                    else
-                    {
-                        // For anything less than HONEYCOMB API level, we will still show the animation
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                    }
-                    
+                    final DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(view.getWidth(), view
+                        .getHeight());
+                    lp.gravity = GravityCompat.START;
+                    view.setLayoutParams(lp);
+                    view.setLeft(-view.getMeasuredWidth());
+                    view.getViewTreeObserver().removeOnPreDrawListener(this);
+
                     return true;
                 }
             });
@@ -890,16 +868,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGridView.setLayoutManager( layoutManager );
     }
     
-    @TargetApi( 11 )
-    private void refreshViews()
-    {
-        // Refresh the preferences object in case another activity changed the data
-        mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        
-        // Refresh the gallery
-        refreshGrid();
-    }
-    
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting )
     {        
@@ -934,7 +902,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Launch the game activity
         ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                    romArtPath, romGoodName, isRestarting, mGlobalPrefs.isTouchpadEnabled );
+                    romArtPath, romGoodName, isRestarting );
     }
     
     private void ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)

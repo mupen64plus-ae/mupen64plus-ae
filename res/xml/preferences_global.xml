@@ -200,29 +200,6 @@
             android:title="@string/touchscreenAutoHold_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
-        android:key="categoryTouchpad"
-        android:title="@string/categoryTouchpad_title" >
-        <android.support.v7.preference.CheckBoxPreference
-            android:defaultValue="true"
-            android:key="touchpadEnabled"
-            android:title="@string/touchpadEnabled_title" />
-        <android.support.v7.preference.CheckBoxPreference
-            android:defaultValue="false"
-            android:dependency="touchpadEnabled"
-            android:key="touchpadFeedback"
-            android:summary="@string/touchpadFeedback_summary"
-            android:title="@string/touchpadFeedback_title" />
-
-        <android.support.v7.preference.ListPreference
-            android:defaultValue="@string/touchpadLayout_default"
-            android:dependency="touchpadEnabled"
-            android:entries="@array/touchpadLayout_entries"
-            android:entryValues="@array/touchpadLayout_values"
-            android:key="touchpadLayout"
-            android:summary="@string/selectedValue"
-            android:title="@string/touchpadLayout_title" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory
         android:key="categoryInput"
         android:title="@string/categoryInput_title" >
         <android.support.v7.preference.ListPreference
@@ -232,7 +209,6 @@
             android:key="navigationMode"
             android:summary="@string/navigationMode_summary"
             android:title="@string/navigationMode_title" />
-
         <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="inputVolumeMappable"

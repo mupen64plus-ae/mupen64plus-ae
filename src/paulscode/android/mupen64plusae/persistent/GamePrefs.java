@@ -373,7 +373,7 @@ public class GamePrefs
         playerMap.setEnabled( numControllers > 1 && !globalPrefs.isControllerShared );
         
         // Determine which players are "plugged in"
-        isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled || globalPrefs.isTouchpadEnabled;
+        isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled;
         isPlugged2 = isControllerEnabled2;
         isPlugged3 = isControllerEnabled3;
         isPlugged4 = isControllerEnabled4;

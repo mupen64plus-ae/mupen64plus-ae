@@ -8,14 +8,10 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -90,15 +86,6 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
         });
 
         PopulateFileList();
-    }
-    
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if (Build.VERSION.SDK_INT >= 11)
-            return super.onCreateView(parent, name, context, attrs);
-        return null;
     }
     
     @Override

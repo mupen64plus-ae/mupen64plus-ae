@@ -32,8 +32,6 @@
     
     <!-- Aliases to other strings -->
     <string name="selectedValue" translatable="false">%1$s</string>
-    <string name="touchpadFeedback_title" translatable="false">@string/touchscreenFeedback_title</string>
-    <string name="touchpadFeedback_summary" translatable="false">@string/touchscreenFeedback_summary</string>
     <string name="inputMapActivity_saveSlot" translatable="false">@string/menuItem_slotSave</string>
     <string name="inputMapActivity_loadSlot" translatable="false">@string/menuItem_slotLoad</string>
     <string name="glide64Frameskip_title" translatable="false">@string/gln64Frameskip_title</string>

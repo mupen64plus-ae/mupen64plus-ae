@@ -37,18 +37,13 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import tv.ouya.console.api.OuyaFacade;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
-import android.util.AttributeSet;
-import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -101,7 +96,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize";
     private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
-    private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String NAVIGATION_MODE = "navigationMode";
     
     /*
@@ -136,7 +130,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_SIZE,   R.string.audioSLESBufferSize_default,   R.array.audioSLESBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_NBR,    R.string.audioSLESBufferNbr_default,    R.array.audioSLESBufferNbr_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
-        PrefUtil.validateListPreference( res, mPrefs, TOUCHPAD_LAYOUT,          R.string.touchpadLayout_default,        R.array.touchpadLayout_values );
         PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
         // @formatter:on
         
@@ -176,15 +169,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         {
             Popups.showInvalidInstall( this );
         }
-    }
-    
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if(Build.VERSION.SDK_INT >= 11)
-          return super.onCreateView(parent, name, context, attrs);
-        return null;
     }
     
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */

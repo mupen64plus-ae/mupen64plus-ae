@@ -11,6 +11,7 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
+    <uses-feature android:name="android.hardware.gamepad" android:required="false" />
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -27,6 +28,8 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
+        android:logo="@drawable/hireslogo"
+        android:banner="@drawable/banner"
         android:theme="@style/appTheme"
         android:supportsRtl="true"
         tools:ignore="UnusedAttribute" >
@@ -202,20 +205,8 @@
             android:label="@string/GameActivity_title"
             android:theme="@style/appTheme.Black" >
         </activity>
-        <activity
-            android:name="paulscode.android.mupen64plusae.game.GameActivityXperiaPlay"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/GameActivity_title"
-            android:theme="@style/appTheme.Black" >
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="xperia-touchpad" />
-        </activity>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
 
-        <meta-data
-            android:name="xperiaplayoptimized_content"
-            android:resource="@drawable/hireslogo" />
         <meta-data
             android:name="game_display_name"
             android:resource="@string/app_name" />

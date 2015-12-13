@@ -21,8 +21,6 @@
 package paulscode.android.mupen64plusae.input.provider;
 
 import paulscode.android.mupen64plusae.input.map.AxisMap;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import android.annotation.TargetApi;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
@@ -42,7 +40,6 @@ public class AxisProvider extends AbstractProvider
     /**
      * Instantiates a new axis provider.
      */
-    @TargetApi( 12 )
     public AxisProvider()
     {
         // By default, provide data from all possible axes
@@ -56,7 +53,6 @@ public class AxisProvider extends AbstractProvider
      * 
      * @param view The view receiving MotionEvent data.
      */
-    @TargetApi( 12 )
     public AxisProvider( View view )
     {
         this();
@@ -87,10 +83,7 @@ public class AxisProvider extends AbstractProvider
      */
     public boolean onGenericMotion( MotionEvent event )
     {
-        if( AppData.IS_HONEYCOMB_MR1 )
-            return new GenericMotionListener().onGenericMotion( null, event );
-        else
-            return false;
+        return new GenericMotionListener().onGenericMotion( null, event );
     }
     
     /**
@@ -102,7 +95,6 @@ public class AxisProvider extends AbstractProvider
      * For a detailed explanation, see <a href=http://stackoverflow.com/questions/13103902/
      * android-recommended-way-of-safely-supporting-newer-apis-has-error-if-the-class-i>here</a>.
      */
-    @TargetApi( 12 )
     public class GenericMotionListener implements View.OnGenericMotionListener
     {
         /*

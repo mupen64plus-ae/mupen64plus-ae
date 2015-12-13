@@ -42,12 +42,10 @@ import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListen
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
-import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.Preference;
@@ -357,7 +355,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
     }
     
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void onExtractFinished(ArrayList<Cheat> cheats)
     {
@@ -413,14 +410,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             if(mClearCheats)
             {
                 //Reset this to false if it was set
-                if (AppData.IS_GINGERBREAD)
-                {
-                    mPrefs.edit().apply();
-                }
-                else
-                {
-                    mPrefs.edit().commit();
-                }
+                mPrefs.edit().apply();
                 
                 mClearCheats = false;
             }

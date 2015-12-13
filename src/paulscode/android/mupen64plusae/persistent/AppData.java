@@ -27,7 +27,6 @@ import paulscode.android.mupen64plusae.util.DeviceUtil;
 import tv.ouya.console.api.OuyaFacade;
 import android.app.UiModeManager;
 import android.content.res.Configuration;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -77,20 +76,7 @@ import android.util.Log;
  * </pre>
  */
 public class AppData
-{
-    /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
-    public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
-    
-    /** True if device is running Honeycomb or later (11 - Android 3.0.x) */
-    public static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    
-    /** True if device is running Honeycomb MR1 or later (12 - Android 3.1.x) */
-    public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
-    
-    /** True if device is running Ice Cream Sandwich or later (14 - Android 4.0.x) */
-    public static final boolean IS_ICE_CREAM_SANDWICH = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-    
-    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
+{    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
     /** True if device is running KitKat or later (19 - Android 4.4.x) */
@@ -135,9 +121,6 @@ public class AppData
     /** The directory containing all touchscreen skin folders. Contents deleted on uninstall. */
     public final String touchscreenSkinsDir;
     
-    /** The directory containing all Xperia Play skin folders. Contents deleted on uninstall. */
-    public final String touchpadSkinsDir;
-    
     /** The directory contaiing all built-in profiles. Contents deleted on uninstall. */
     public final String profilesDir;
     
@@ -170,9 +153,6 @@ public class AppData
     
     /** The path of the built-in touchscreen profiles file. Deleted on uninstall, sometimes overwritten on update. */
     private final String touchscreenProfiles_cfg;
-    
-    /** The path of the built-in touchpad profiles file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String touchpadProfiles_cfg;
     
     /** The path of the built-in emulation profiles file. Deleted on uninstall, sometimes overwritten on update. */
     private final String emulationProfiles_cfg;
@@ -208,7 +188,6 @@ public class AppData
      * 
      * @param context The application context.
      */
-    @TargetApi( 13 )
     public AppData( Context context )
     {
         hardwareInfo = new HardwareInfo();
@@ -243,11 +222,10 @@ public class AppData
         }
         tempDir = coreSharedDataDir + "/tmp";
         String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
-        if( !( new File( _libsDir ) ).exists() && IS_GINGERBREAD )
+        if( !( new File( _libsDir ) ).exists() )
             _libsDir = context.getApplicationInfo().nativeLibraryDir;
         libsDir = _libsDir;
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
-        touchpadSkinsDir = coreSharedDataDir + "/skins/touchpad/";
         profilesDir = coreSharedDataDir + "/profiles";
         
         // Files
@@ -261,22 +239,14 @@ public class AppData
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
-        touchpadProfiles_cfg = profilesDir + "/touchpad.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
-        if (AppData.IS_ICE_CREAM_SANDWICH)
-        {
-            UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
-            isAndroidTv = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
-        }
-        else
-        {
-            isAndroidTv = false;
-        }
+        UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
+        isAndroidTv = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
     }
     
     /**
@@ -365,8 +335,7 @@ public class AppData
                 libraryExists( "mupen64plus-video-gliden64-gles31" )    &&
                 libraryExists( "mupen64plus-video-gln64" )              &&
                 libraryExists( "mupen64plus-video-rice" )               &&
-                libraryExists( "SDL2" )                                 &&
-                libraryExists( "xperia-touchpad" );
+                libraryExists( "SDL2" );
         // @formatter:on
     }
     
@@ -403,7 +372,6 @@ public class AppData
         public final String processor;
         public final String features;
         public final int hardwareType;
-        public final boolean isXperiaPlay;
         
         public HardwareInfo()
         {
@@ -484,9 +452,6 @@ public class AppData
             else
                 hardwareType = DEFAULT_HARDWARE_TYPE;
             //@formatter:on
-            
-            // Identify whether this is an Xperia PLAY
-            isXperiaPlay = hardware.contains( "zeus" );
         }
     }
     

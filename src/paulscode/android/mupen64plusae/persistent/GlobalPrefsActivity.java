@@ -48,7 +48,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private static final String CATEGORY_LIBRARY = "categoryLibrary";
     private static final String CATEGORY_DISPLAY = "categoryDisplay";
     private static final String CATEGORY_AUDIO = "categoryAudio";
-    private static final String CATEGORY_TOUCHPAD = "categoryTouchpad";
     private static final String CATEGORY_INPUT = "categoryInput";
     private static final String CATEGORY_DATA = "categoryData";
     
@@ -136,9 +135,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         // provides a better user experience.
         if( !AppData.IS_KITKAT )
             PrefUtil.removePreference( this, CATEGORY_DISPLAY, DISPLAY_IMMERSIVE_MODE );
-
-        if( !mAppData.hardwareInfo.isXperiaPlay )
-            PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_TOUCHPAD );
         
         // Remove some menu items in some cases
         Bundle extras = getIntent().getExtras();
@@ -150,7 +146,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
                 // Remove distractions if this was launched from TouchscreenProfileActivity
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_LIBRARY );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_AUDIO );
-                PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_TOUCHPAD );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_INPUT );
                 PrefUtil.removePreference( this, SCREEN_ROOT, CATEGORY_DATA );
                 PrefUtil.removePreference( this, SCREEN_ROOT, ACTION_RESET_USER_PREFS );

@@ -38,11 +38,9 @@ import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog.OnProfileNam
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.PreferenceManager;
@@ -200,7 +198,6 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         return super.onPrepareOptionsMenu( menu );
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
@@ -213,8 +210,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
                 return true;
             case R.id.menuItem_toggleBuiltins:
                 setBuiltinVisibility( !getBuiltinVisibility() );
-                if( AppData.IS_HONEYCOMB )
-                    invalidateOptionsMenu();
+                invalidateOptionsMenu();
                 refreshList();
                 return true;
             default:

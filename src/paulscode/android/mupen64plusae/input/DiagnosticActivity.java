@@ -29,18 +29,12 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.view.InputDevice.MotionRange;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 
 import com.bda.controller.Controller;
@@ -63,15 +57,6 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         // mMogaController.init();
         MogaHack.init( mMogaController, this );
         mMogaController.setListener( this, new Handler() );
-    }
-    
-    @SuppressLint("NewApi")
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-    {
-        if (Build.VERSION.SDK_INT >= 11)
-            return super.onCreateView(parent, name, context, attrs);
-        return null;
     }
     
     @Override
@@ -118,7 +103,6 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         return true;
     }
     
-    @TargetApi( 12 )
     private void onKey( KeyEvent event )
     {
         int keyCode = event.getKeyCode();
@@ -127,18 +111,13 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         message += "\nDevice: " + getHardwareSummary( AbstractProvider.getHardwareId( event ) );
         message += "\nAction: " + DeviceUtil.getActionName( event.getAction(), false );
         message += "\nKeyCode: " + keyCode;
-        
-        if( AppData.IS_HONEYCOMB_MR1 )
-        {
-            message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
-        }
+        message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
         
         TextView view = (TextView) findViewById( R.id.textKey );
         view.setText( message );
     }
     
     @Override
-    @TargetApi( 12 )
     public void onKeyEvent( com.bda.controller.KeyEvent event )
     {
         int keyCode = event.getKeyCode();
@@ -147,11 +126,7 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         message += "\nDevice: " + getHardwareSummary( AbstractProvider.getHardwareId( event ) );
         message += "\nAction: MOGA_" + DeviceUtil.getActionName( event.getAction(), false );
         message += "\nKeyCode: " + keyCode;
-        
-        if( AppData.IS_HONEYCOMB_MR1 )
-        {
-            message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
-        }        
+        message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
         
         TextView view = (TextView) findViewById( R.id.textKey );
         view.setText( message );
@@ -164,7 +139,6 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         return true;
     }
     
-    @TargetApi( 12 )
     @Override
     public boolean onGenericMotionEvent( MotionEvent event )
     {
@@ -172,36 +146,24 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         return true;
     }
     
-    @TargetApi( 12 )
-    private void onMotion( MotionEvent event )
+    private void onMotion(MotionEvent event)
     {
         String message = "MotionEvent:";
-        message += "\nDevice: " + getHardwareSummary( AbstractProvider.getHardwareId( event ) );
-        message += "\nAction: " + DeviceUtil.getActionName( event.getAction(), true );
+        message += "\nDevice: " + getHardwareSummary(AbstractProvider.getHardwareId(event));
+        message += "\nAction: " + DeviceUtil.getActionName(event.getAction(), true);
         message += "\n";
         
-        if( AppData.IS_GINGERBREAD )
+        for (MotionRange range : event.getDevice().getMotionRanges())
         {
-            for( MotionRange range : DeviceUtil.getPeripheralMotionRanges( event.getDevice() ) )
-            {
-                if( AppData.IS_HONEYCOMB_MR1 )
-                {
-                    int axis = range.getAxis();
-                    String name = MotionEvent.axisToString( axis );
-                    String source = DeviceUtil.getSourceName( range.getSource() ).toLowerCase(
-                            Locale.US );
-                    float value = event.getAxisValue( axis );
-                    message += String.format( "\n%s (%s): %+.2f", name, source, value );
-                }
-                else
-                {
-                    // TODO Something for Gingerbread devices
-                }
-            }
+            int axis = range.getAxis();
+            String name = MotionEvent.axisToString(axis);
+            String source = DeviceUtil.getSourceName(range.getSource()).toLowerCase(Locale.US);
+            float value = event.getAxisValue(axis);
+            message += String.format("\n%s (%s): %+.2f", name, source, value);
         }
-        
-        TextView view = (TextView) findViewById( R.id.textMotion );
-        view.setText( message );
+
+        TextView view = (TextView) findViewById(R.id.textMotion);
+        view.setText(message);
     }
     
     @Override
