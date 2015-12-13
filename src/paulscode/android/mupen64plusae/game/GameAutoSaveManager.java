@@ -46,10 +46,15 @@ public class GameAutoSaveManager
             
         };
         
+        File[] fileList = savePath.listFiles(fileFilter);
+        
         //Add all files found
-        for( File file : savePath.listFiles(fileFilter) )
-        {            
-            result.add( file.getPath() );
+        if(fileList != null)
+        {
+            for( File file : fileList )
+            {            
+                result.add( file.getPath() );
+            }
         }
         
         //Sort by file name
