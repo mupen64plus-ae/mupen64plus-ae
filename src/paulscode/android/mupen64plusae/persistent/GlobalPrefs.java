@@ -41,9 +41,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -289,7 +289,6 @@ public class GlobalPrefs
      * @param context
      *            The application context.
      */
-    @SuppressWarnings( "deprecation" )
     @TargetApi( 17 )
     public GlobalPrefs( Context context, AppData appData )
     {
@@ -439,17 +438,20 @@ public class GlobalPrefs
             {
                 stretchWidth = stretchHeight = 0;
             }
+            //Kit Kat (19) adds support for immersive mode
             else if( AppData.IS_KITKAT && isImmersiveModeEnabled )
             {
-                DisplayMetrics metrics = new DisplayMetrics();
-                display.getRealMetrics( metrics );
-                stretchWidth = metrics.widthPixels;
-                stretchHeight = metrics.heightPixels;
+                Point dimensions = new Point();
+                display.getRealSize(dimensions);
+                stretchWidth = dimensions.x;
+                stretchHeight = dimensions.y;                
             }
             else
             {
-                stretchWidth = display.getWidth();
-                stretchHeight = display.getHeight();
+                Point dimensions = new Point();
+                display.getSize(dimensions);
+                stretchWidth = dimensions.x;
+                stretchHeight = dimensions.y;
             }
             
             float aspect = 0.75f; // TODO: Handle PAL

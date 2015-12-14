@@ -214,6 +214,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         
         // Enable full-screen mode
         window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
+        window.setFlags(LayoutParams.FLAG_LAYOUT_IN_SCREEN, LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         
         // Keep screen from going to sleep
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
@@ -266,7 +267,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
         params.width = Math.round ( (float) mGlobalPrefs.videoSurfaceWidth * ( (float) mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( (float) mGlobalPrefs.videoSurfaceHeight * ( (float) mGamePrefs.videoSurfaceZoom / 100.f ) );
-        
+
         if( (mGlobalPrefs.displayOrientation & 1) == 1 ) 
             params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
         else
@@ -835,17 +836,20 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     @SuppressLint( "InlinedApi" )
     private void hideSystemBars()
     {
-        View view = mSurface.getRootView();
-        if( view != null )
+        if( mDrawerLayout != null )
         {
             if( AppData.IS_KITKAT && mGlobalPrefs.isImmersiveModeEnabled )
-                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
+            {
+                mDrawerLayout.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
+            }
             else
-                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
+            {
+                mDrawerLayout.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
+            }
         }
     }
     

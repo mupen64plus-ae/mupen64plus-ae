@@ -79,6 +79,12 @@ public class AppData
 {    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
+    /** True if device is running Jellybean or later (17 - Android 4.1.x) */
+    public static final boolean IS_JELLY_BEAN_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
+
+    /** True if device is running Jellybean or later (18 - Android 4.1.x) */
+    public static final boolean IS_JELLY_BEAN_MR2 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
+    
     /** True if device is running KitKat or later (19 - Android 4.4.x) */
     public static final boolean IS_KITKAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     
