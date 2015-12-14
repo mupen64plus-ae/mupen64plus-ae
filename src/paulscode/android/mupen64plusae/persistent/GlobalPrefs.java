@@ -175,6 +175,12 @@ public class GlobalPrefs
     /** The height of the viewing surface, in pixels. */
     public final int videoSurfaceHeight;
     
+    /** The width of the viewing surface, in pixels with the correct aspect ratio. */
+    public final int videoSurfaceWidthOriginal;
+    
+    /** The height of the viewing surface, in pixels with the correct aspect ratio. */
+    public final int videoSurfaceHeightOriginal;
+    
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
     
@@ -460,6 +466,9 @@ public class GlobalPrefs
             int originalHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
             
             String scaling = mPreferences.getString( "displayScaling", "original" );
+            
+            videoSurfaceWidthOriginal = originalWidth;
+            videoSurfaceHeightOriginal = originalHeight;
 
             // Native resolution
             if( scaling.equals( "stretch" ) )
@@ -469,8 +478,8 @@ public class GlobalPrefs
             }
             else // scaling.equals( "original")
             {
-                videoSurfaceWidth = originalWidth;
-                videoSurfaceHeight = originalHeight;
+                videoSurfaceWidth = videoSurfaceWidthOriginal;
+                videoSurfaceHeight = videoSurfaceHeightOriginal;
             }
         }
     }

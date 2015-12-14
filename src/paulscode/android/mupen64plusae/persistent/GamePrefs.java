@@ -324,8 +324,8 @@ public class GamePrefs
                 videoRenderHeight = 120;
                 break;
             default:
-                videoRenderWidth = globalPrefs.videoSurfaceWidth;
-                videoRenderHeight = globalPrefs.videoSurfaceHeight;
+                videoRenderWidth = globalPrefs.videoSurfaceWidthOriginal;
+                videoRenderHeight = globalPrefs.videoSurfaceHeightOriginal;
                 break;
         }
         
