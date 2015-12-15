@@ -73,7 +73,7 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
         if( !TextUtils.isEmpty( mManagerAction ) )
         {
             ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
-                context, R.layout.profile_preference, getEntries());
+                context, R.layout.list_preference, getEntries());
             
             int currentIndex = findIndexOfValue(getCurrentValue());
             builder.setTitle(getTitle());

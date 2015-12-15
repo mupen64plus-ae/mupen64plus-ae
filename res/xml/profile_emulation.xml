@@ -3,21 +3,21 @@
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
-    <android.support.v7.preference.ListPreference
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/r4300Emulator_default"
         android:entries="@array/r4300Emulator_entries"
         android:entryValues="@array/r4300Emulator_values"
         android:key="r4300Emulator"
         android:summary="@string/selectedValue"
         android:title="@string/r4300Emulator_title" />
-    <android.support.v7.preference.ListPreference
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/videoPlugin_default"
         android:entries="@array/videoPlugin_entries"
         android:entryValues="@array/videoPlugin_values"
         android:key="videoPlugin"
         android:summary="@string/selectedValue"
         android:title="@string/videoPlugin_title" />
-    <android.support.v7.preference.ListPreference
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/videoSubPlugin_default"
         android:entries="@array/videoSubPlugin_entries"
         android:entryValues="@array/videoSubPlugin_values"
@@ -28,7 +28,7 @@
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryGln64"
         android:title="@string/categoryGln64_title" >
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/gln64Frameskip_default"
             android:entries="@array/gln64Frameskip_entries"
             android:entryValues="@array/gln64Frameskip_values"
@@ -94,14 +94,14 @@
             android:summary="@string/riceForceTextureFilter_summary"
             android:title="@string/riceForceTextureFilter_title" />
 
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/riceScreenUpdate_default"
             android:entries="@array/riceScreenUpdate_entries"
             android:entryValues="@array/riceScreenUpdate_values"
             android:key="riceScreenUpdate"
             android:summary="@string/selectedValue"
             android:title="@string/riceScreenUpdate_title" />
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/riceTextureEnhancement_default"
             android:entries="@array/riceTextureEnhancement_entries"
             android:entryValues="@array/riceTextureEnhancement_values"
@@ -126,7 +126,7 @@
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryGlide64"
         android:title="@string/categoryGlide64_title" >
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/glide64Frameskip_default"
             android:entries="@array/glide64Frameskip_entries"
             android:entryValues="@array/glide64Frameskip_values"

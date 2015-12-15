@@ -3,7 +3,7 @@
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
-    <android.support.v7.preference.ListPreference
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/displayResolution_default"
         android:entries="@array/displayResolution_entries"
         android:entryValues="@array/displayResolution_values"
@@ -11,7 +11,7 @@
         android:key="displayResolution"
         android:summary="@string/selectedValue"
         android:title="@string/displayResolution_title" />
-    <android.support.v7.preference.ListPreference
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/displayZoom_default"
         android:entries="@array/displayZoom_entries"
         android:entryValues="@array/displayZoom_values"
