@@ -15,7 +15,7 @@
             android:summary="@string/myKey_summary"
             ...
             />
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             ...
             android:entries="@array/myKey_entries"
             android:entryValues="@array/myKey_values"
@@ -66,21 +66,21 @@
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryDisplay"
         android:title="@string/categoryDisplay_title" >
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/displayOrientation_default"
             android:entries="@array/displayOrientation_entries"
             android:entryValues="@array/displayOrientation_values"
             android:key="displayOrientation"
             android:summary="@string/selectedValue"
             android:title="@string/displayOrientation_title" />
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/displayPosition_default"
             android:entries="@array/displayPosition_entries"
             android:entryValues="@array/displayPosition_values"
             android:key="displayPosition"
             android:summary="@string/selectedValue"
             android:title="@string/displayPosition_title" />
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/displayScaling_default"
             android:entries="@array/displayScaling_entries"
             android:entryValues="@array/displayScaling_values"
@@ -107,7 +107,7 @@
             android:key="displayFps"
             android:summary="@string/displayFps_summary"
             android:title="@string/displayFps_title" />
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/videoHardwareType_default"
             android:entries="@array/videoHardwareType_entries"
             android:entryValues="@array/videoHardwareType_values"
@@ -125,28 +125,28 @@
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryAudio"
         android:title="@string/categoryAudio_title" >
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/audioPlugin_default"
             android:entries="@array/audioPlugin_entries"
             android:entryValues="@array/audioPlugin_values"
             android:key="audioPlugin"
             android:summary="@string/selectedValue"
             android:title="@string/audioPlugin_title" />
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/audioSDLBufferSize_default"
             android:entries="@array/audioSDLBufferSize_entries"
             android:entryValues="@array/audioSDLBufferSize_values"
             android:key="audioSDLBufferSize"
             android:summary="@string/selectedValue"
             android:title="@string/audioSDLBufferSize_title" />
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/audioSLESBufferSize_default"
             android:entries="@array/audioSLESBufferSize_entries"
             android:entryValues="@array/audioSLESBufferSize_values"
             android:key="audioSLESBufferSize"
             android:summary="@string/selectedValue"
             android:title="@string/audioSLESBufferSize_title" />
-         <android.support.v7.preference.ListPreference
+         <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/audioSLESBufferNbr_default"
             android:entries="@array/audioSLESBufferNbr_entries"
             android:entryValues="@array/audioSLESBufferNbr_values"
@@ -191,7 +191,7 @@
             android:summary="@string/touchscreenFeedback_summary"
             android:title="@string/touchscreenFeedback_title" />
 
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/touchscreenAutoHold_default"
             android:entries="@array/touchscreenAutoHold_entries"
             android:entryValues="@array/touchscreenAutoHold_values"
@@ -202,7 +202,7 @@
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryInput"
         android:title="@string/categoryInput_title" >
-        <android.support.v7.preference.ListPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/navigationMode_default"
             android:entries="@array/navigationMode_entries"
             android:entryValues="@array/navigationMode_values"
