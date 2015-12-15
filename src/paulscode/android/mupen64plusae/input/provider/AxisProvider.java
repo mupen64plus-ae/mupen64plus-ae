@@ -106,8 +106,11 @@ public class AxisProvider extends AbstractProvider
         @Override
         public boolean onGenericMotion( View v, MotionEvent event )
         {
+            boolean isJoystick = (event.getSource() & InputDevice.SOURCE_JOYSTICK) ==
+                InputDevice.SOURCE_JOYSTICK;
+                
             // Ignore motion events from non-joysticks (mice are a problem)
-            if( event.getSource() != InputDevice.SOURCE_JOYSTICK )
+            if(!isJoystick)
                 return false;
             
             InputDevice device = event.getDevice();

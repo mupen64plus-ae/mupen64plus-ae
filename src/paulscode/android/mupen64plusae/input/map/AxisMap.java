@@ -53,7 +53,10 @@ public class AxisMap extends SerializableMap
         List<Integer> axisCodes = new ArrayList<Integer>();
         for( MotionRange motionRange : motionRanges )
         {
-            if( motionRange.getSource() == InputDevice.SOURCE_JOYSTICK )
+            boolean isJoystick = (motionRange.getSource() & InputDevice.SOURCE_JOYSTICK) ==
+                InputDevice.SOURCE_JOYSTICK;
+            
+            if( isJoystick)
             {
                 int axisCode = motionRange.getAxis();
                 int axisClass = detectClass( motionRange );
