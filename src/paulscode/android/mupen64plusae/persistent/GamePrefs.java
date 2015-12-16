@@ -172,7 +172,7 @@ public class GamePrefs
     public final boolean isTouchscreenAnimated;
     
     /** The width of the OpenGL rendering context, in pixels. */
-    public final int videoRenderWidth;
+    public int videoRenderWidth;
     
     /** The height of the OpenGL rendering context, in pixels. */
     public final int videoRenderHeight;
@@ -327,6 +327,12 @@ public class GamePrefs
                 videoRenderWidth = globalPrefs.videoSurfaceWidthOriginal;
                 videoRenderHeight = globalPrefs.videoSurfaceHeightOriginal;
                 break;
+        }
+        
+        if(globalPrefs.mStretch)
+        {
+            float newWidth = videoRenderWidth * 1.333333f;
+            videoRenderWidth = Math.round(newWidth);
         }
         
         videoSurfaceZoom = getSafeInt( mPreferences, "displayZoom", 100 );

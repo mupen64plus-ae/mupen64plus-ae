@@ -133,7 +133,7 @@ public class NativeConfigFiles
         
         mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "5" );                                                      // Settings version. Don't touch it.
         putGliden64( mupen64plus_cfg, game, "MultiSampling", "0" );                                                         // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
-        putGliden64( mupen64plus_cfg, game, "AspectRatio", aspectRatio );                                                   // Screen aspect ratio (0=stretch, 1=force 4:3, 2=force 16:9, 3=adjust)
+        mupen64plus_cfg.put( "Video-GLideN64", "AspectRatio", aspectRatio);                                                 // Screen aspect ratio (0=stretch, 1=force 4:3, 2=force 16:9, 3=adjust)
         putGliden64( mupen64plus_cfg, game, "bilinearMode", "1" );                                                          // Bilinear filtering mode (0=N64 3point, 1=standard)
         putGliden64( mupen64plus_cfg, game, "MaxAnisotropy", "0" );                                                         // Max level of Anisotropic Filtering, 0 for off
         putGliden64( mupen64plus_cfg, game, "CacheSize", "500" );                                                           // Size of texture cache in megabytes. Good value is VRAM*3/4

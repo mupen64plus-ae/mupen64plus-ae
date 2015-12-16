@@ -220,6 +220,9 @@ public class GlobalPrefs
     /** Maximum number of auto saves */
     public final int maxAutoSaves;
     
+    /** If display mode is stretch*/
+    public final boolean mStretch;
+    
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     private static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -470,8 +473,10 @@ public class GlobalPrefs
             videoSurfaceWidthOriginal = originalWidth;
             videoSurfaceHeightOriginal = originalHeight;
 
+            mStretch = scaling.equals( "stretch" );
+            
             // Native resolution
-            if( scaling.equals( "stretch" ) )
+            if( mStretch )
             {
                 videoSurfaceWidth = stretchWidth;
                 videoSurfaceHeight = stretchHeight;
