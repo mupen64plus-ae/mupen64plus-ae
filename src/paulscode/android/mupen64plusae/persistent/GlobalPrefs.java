@@ -181,6 +181,12 @@ public class GlobalPrefs
     /** The height of the viewing surface, in pixels with the correct aspect ratio. */
     public final int videoSurfaceHeightOriginal;
     
+    /** Screen width ratio from 16:9 to 4:3*/
+    public final float widthRatio;
+    
+    /** Screen width ratio from 16:9 to 4:3*/
+    public final float heightRatio;
+    
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
     
@@ -462,13 +468,15 @@ public class GlobalPrefs
                 stretchWidth = dimensions.x;
                 stretchHeight = dimensions.y;
             }
-            
+                        
             float aspect = 0.75f; // TODO: Handle PAL
             boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;
             int originalWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
             int originalHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
             
             String scaling = mPreferences.getString( "displayScaling", "original" );
+            widthRatio = (float)stretchWidth/(float)originalWidth;
+            heightRatio = (float)stretchHeight/(float)originalHeight;
             
             videoSurfaceWidthOriginal = originalWidth;
             videoSurfaceHeightOriginal = originalHeight;

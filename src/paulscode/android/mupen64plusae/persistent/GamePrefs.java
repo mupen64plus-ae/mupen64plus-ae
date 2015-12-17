@@ -14,6 +14,7 @@ import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.text.TextUtils;
 
 public class GamePrefs
@@ -175,7 +176,7 @@ public class GamePrefs
     public int videoRenderWidth;
     
     /** The height of the OpenGL rendering context, in pixels. */
-    public final int videoRenderHeight;
+    public int videoRenderHeight;
     
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
@@ -331,8 +332,20 @@ public class GamePrefs
         
         if(globalPrefs.mStretch)
         {
-            float newWidth = videoRenderWidth * 1.333333f;
-            videoRenderWidth = Math.round(newWidth);
+            //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
+            //ratio to make it full screen
+            if(globalPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                globalPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)
+            {
+                
+                float newWidth = videoRenderHeight * globalPrefs.heightRatio;
+                videoRenderHeight = Math.round(newWidth);
+            }
+            else
+            {
+                float newWidth = videoRenderWidth * globalPrefs.widthRatio;
+                videoRenderWidth = Math.round(newWidth);
+            }
         }
         
         videoSurfaceZoom = getSafeInt( mPreferences, "displayZoom", 100 );
