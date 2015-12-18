@@ -26,7 +26,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.MenuListView;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
 import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
 import paulscode.android.mupen64plusae.game.GameOverlay;
@@ -41,13 +44,10 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.OnMenuVisibilityListener;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.SparseArray;
@@ -65,10 +65,11 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener
+public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener, OnDialogMenuItemSelectedListener
 {
     private static final String TOUCHSCREEN_AUTOHOLDABLES = "touchscreenAutoHoldables";
     private static final String AUTOHOLDABLES_DELIMITER = "~";
+    private static final String STATE_MENU_DIALOG_FRAGMENT = "STATE_MENU_DIALOG_FRAGMENT";
     
     private static final String ANALOG = "analog";
     private static final String DPAD = "dpad";
@@ -112,9 +113,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private int dragX;
     private int dragY;
     private Rect dragFrame;
-    
-    // Don't enter immersive mode until the ActionBar menus are closed
-    private boolean actionBarMenuOpen = false;
     
     // The directory of the selected touchscreen skin.
     private String touchscreenSkin;
@@ -177,26 +175,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mSurface = (ImageView) findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) findViewById( R.id.gameOverlay );
         
-        // Configure the action bar
-        {
-            getSupportActionBar().hide();
-            ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
-            color.setAlpha( mGlobalPrefs.displayActionBarTransparency );
-            getSupportActionBar().setBackgroundDrawable( color );
-            
-            // onOptionsMenuClosed is not called due to a bug in Android:
-            // http://stackoverflow.com/questions/3688077/android-onoptionsmenuclosed-not-being-called-for-submenu
-            // so add a menu visibility listener instead
-            getSupportActionBar().addOnMenuVisibilityListener( new OnMenuVisibilityListener()
-            {
-                @Override
-                public void onMenuVisibilityChanged( boolean isVisible )
-                {
-                    actionBarMenuOpen = isVisible;
-                }
-            });
-        }
-        
         String layout = mProfile.get( "touchscreenSkin", "Outline" );
         if( layout.equals( "Custom" ) )
             touchscreenSkin =  mProfile.get( "touchscreenCustomSkinPath", "" );
@@ -248,8 +226,10 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     public void onWindowFocusChanged( boolean hasFocus )
     {
         super.onWindowFocusChanged( hasFocus );
-        if( hasFocus && !actionBarMenuOpen )
+        if( hasFocus )
+        {
             hideSystemBars();
+        }
     }
     
     @Override
@@ -270,14 +250,22 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     }
     
     @Override
-    public boolean onPrepareOptionsMenu( Menu menu )
+    public void onPrepareMenuList(MenuListView listView)
     {
+        Menu menu = listView.getMenu();
         setCheckState( menu, R.id.menuItem_analog, ANALOG );
         setCheckState( menu, R.id.menuItem_dpad, DPAD );
         
-        setVisibleState( menu, R.id.menuItem_groupAB, !mTouchscreenMap.isABSplit() );
-        setVisibleState( menu, R.id.menuItem_buttonA, mTouchscreenMap.isABSplit() );
-        setVisibleState( menu, R.id.menuItem_buttonB, mTouchscreenMap.isABSplit() );
+        if(mTouchscreenMap.isABSplit())
+        {
+            UpdateButtonMenu(listView, R.id.menuItem_groupAB);
+        }
+        else
+        {
+            UpdateButtonMenu(listView, R.id.menuItem_buttonA);
+            UpdateButtonMenu(listView, R.id.menuItem_buttonB);
+        }        
+        
         setCheckState( menu, R.id.menuItem_buttonA, BUTTON_A );
         setCheckState( menu, R.id.menuItem_buttonB, BUTTON_B );
         setCheckState( menu, R.id.menuItem_groupAB, GROUP_AB );
@@ -286,7 +274,75 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         setCheckState( menu, R.id.menuItem_buttonR, BUTTON_R );
         setCheckState( menu, R.id.menuItem_buttonZ, BUTTON_Z );
         setCheckState( menu, R.id.menuItem_buttonS, BUTTON_S );
-        return super.onPrepareOptionsMenu( menu );
+    }
+    
+    private void UpdateButtonMenu(MenuListView listView, int menuItemId)
+    {
+        MenuItem buttonGroupItem = listView.getMenu().findItem(R.id.menuItem_buttons);
+        
+        if(buttonGroupItem != null && listView.getMenu().findItem(menuItemId) != null)
+        {
+            buttonGroupItem.getSubMenu().removeItem(menuItemId);
+        }
+    }
+    
+    @Override
+    public void onDialogMenuItemSelected( int dialogId, MenuItem item)
+    {        
+        switch( item.getItemId() )
+        {
+            case R.id.menuItem_globalSettings:
+                ActivityHelper.startGlobalPrefsActivity( this, 1 );
+                return;
+            case R.id.menuItem_exit:
+                finish();
+                return;
+            case R.id.menuItem_analog:
+                toggleAsset( ANALOG );
+                return;
+            case R.id.menuItem_dpad:
+                toggleAsset( DPAD );
+                return;
+            case R.id.menuItem_groupAB:
+                toggleAsset( GROUP_AB );
+                return;
+            case R.id.menuItem_buttonA:
+                toggleAsset( BUTTON_A );
+                return;
+            case R.id.menuItem_buttonB:
+                toggleAsset( BUTTON_B );
+                return;
+            case R.id.menuItem_groupC:
+                toggleAsset( GROUP_C );
+                return;
+            case R.id.menuItem_buttonL:
+                toggleAsset( BUTTON_L );
+                return;
+            case R.id.menuItem_buttonR:
+                toggleAsset( BUTTON_R );
+                return;
+            case R.id.menuItem_buttonZ:
+                toggleAsset( BUTTON_Z );
+                return;
+            case R.id.menuItem_buttonS:
+                toggleAsset( BUTTON_S );
+                return;
+            case R.id.menuItem_outline:
+                touchscreenSkin = mAppData.touchscreenSkinsDir + "Outline";
+                mProfile.put( "touchscreenSkin", "Outline" );
+                refresh();
+                return;
+            case R.id.menuItem_shaded:
+                touchscreenSkin = mAppData.touchscreenSkinsDir + "Shaded";
+                mProfile.put( "touchscreenSkin", "Shaded" );
+                refresh();
+                return;
+            case R.id.menuItem_custom:
+                loadCustomSkinFromPrompt();
+                return;
+            default:
+                return;
+        }
     }
     
     private void setCheckState( Menu menu, int id, String assetName )
@@ -296,78 +352,12 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             item.setChecked( hasAsset( assetName ) );
     }
     
-    private void setVisibleState( Menu menu, int id, boolean state )
-    {
-        MenuItem item = menu.findItem( id );
-        if( item != null )
-            item.setVisible(state);
-    }
-    
     private boolean hasAsset( String assetName )
     {
         // Get the asset position from the profile and see if it's valid
         int x = mProfile.getInt( assetName + TAG_X, DISABLED_ASSET_POS );
         int y = mProfile.getInt( assetName + TAG_Y, DISABLED_ASSET_POS );
         return ( x > DISABLED_ASSET_POS ) && ( y > DISABLED_ASSET_POS );
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected( MenuItem item )
-    {
-        switch( item.getItemId() )
-        {
-            case R.id.menuItem_globalSettings:
-                ActivityHelper.startGlobalPrefsActivity( this, 1 );
-                return true;
-            case R.id.menuItem_exit:
-                finish();
-                return true;
-            case R.id.menuItem_analog:
-                toggleAsset( ANALOG );
-                return true;
-            case R.id.menuItem_dpad:
-                toggleAsset( DPAD );
-                return true;
-            case R.id.menuItem_groupAB:
-                toggleAsset( GROUP_AB );
-                return true;
-            case R.id.menuItem_buttonA:
-                toggleAsset( BUTTON_A );
-                return true;
-            case R.id.menuItem_buttonB:
-                toggleAsset( BUTTON_B );
-                return true;
-            case R.id.menuItem_groupC:
-                toggleAsset( GROUP_C );
-                return true;
-            case R.id.menuItem_buttonL:
-                toggleAsset( BUTTON_L );
-                return true;
-            case R.id.menuItem_buttonR:
-                toggleAsset( BUTTON_R );
-                return true;
-            case R.id.menuItem_buttonZ:
-                toggleAsset( BUTTON_Z );
-                return true;
-            case R.id.menuItem_buttonS:
-                toggleAsset( BUTTON_S );
-                return true;
-            case R.id.menuItem_outline:
-                touchscreenSkin = mAppData.touchscreenSkinsDir + "Outline";
-                mProfile.put( "touchscreenSkin", "Outline" );
-                refresh();
-                return true;
-            case R.id.menuItem_shaded:
-                touchscreenSkin = mAppData.touchscreenSkinsDir + "Shaded";
-                mProfile.put( "touchscreenSkin", "Shaded" );
-                refresh();
-                return true;
-            case R.id.menuItem_custom:
-                loadCustomSkinFromPrompt();
-                return true;
-            default:
-                return super.onOptionsItemSelected( item );
-        }
     }
     
     private void toggleAsset( String assetName )
@@ -427,21 +417,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         String serialized = mProfile.get( TOUCHSCREEN_AUTOHOLDABLES, "" );
         String[] holdables = serialized.split( AUTOHOLDABLES_DELIMITER );
         return ArrayUtils.contains( holdables, String.valueOf( n64Index ) );
-    }
-    
-    @Override
-    public void onBackPressed()
-    {
-        // Toggle the action bar
-        ActionBar actionBar = getSupportActionBar();
-        if( actionBar.isShowing() )
-        {
-            hideSystemBars();
-        }
-        else
-        {
-            actionBar.show();
-        }
     }
     
     @SuppressLint( "InlinedApi" )
@@ -508,6 +483,17 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 {
                     dragAsset = ANALOG;
                     dragFrame = mTouchscreenMap.getAnalogFrame();
+                }
+                else
+                {
+                    int resId = R.menu.touchscreen_profile_activity;
+                    int stringId = R.string.touchscreenProfileActivity_menuTitle;
+                    
+                    MenuDialogFragment menuDialogFragment = MenuDialogFragment.newInstance(0,
+                       getString(stringId), resId);
+                    
+                    FragmentManager fm = getSupportFragmentManager();
+                    menuDialogFragment.show(fm, STATE_MENU_DIALOG_FRAGMENT);
                 }
             }
             

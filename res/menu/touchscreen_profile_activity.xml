@@ -9,7 +9,9 @@
         android:id="@+id/menuItem_buttons"
         android:title="@string/touchscreenProfileActivity_buttons">
         <menu>
-            <group android:checkableBehavior="all" >
+            <group
+                android:id="@+id/menuGroup_buttons"
+                android:checkableBehavior="all" >
                 <item
                     android:id="@+id/menuItem_analog"
                     android:title="@string/controller_analog"/>
