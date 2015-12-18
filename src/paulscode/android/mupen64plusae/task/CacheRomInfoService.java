@@ -284,10 +284,14 @@ public class CacheRomInfoService extends Service
         List<File> result = new ArrayList<File>();
         if( searchPath.isDirectory() )
         {
-            for( File file : searchPath.listFiles() )
+            File[] allFiles = searchPath.listFiles();
+            if(allFiles != null)
             {
-                if( mbStopped ) break;
-                result.addAll( getAllFiles( file ) );
+                for( File file : allFiles )
+                {
+                    if( mbStopped ) break;
+                    result.addAll( getAllFiles( file ) );
+                }
             }
         }
         else
