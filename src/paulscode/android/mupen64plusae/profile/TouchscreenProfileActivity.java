@@ -122,6 +122,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     // True if the touchscreen joystick is animated
     private boolean isTouchscreenAnimated;
     
+    // This is to prevent more than one popup appearing at once
+    private boolean mPopupBeingShown;
+    
     @SuppressLint( "ClickableViewAccessibility" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -203,6 +206,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
         mOverlay.setOnTouchListener( this );
+        
+        mPopupBeingShown = false;
     }
     
     private void refresh()
@@ -586,6 +591,14 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     
     private void popupDialog( final String assetName, String title, final int holdableIndex )
     {
+        //Prevent more than one pop at a time
+        if(mPopupBeingShown)
+        {
+            return;
+        }
+
+        mPopupBeingShown = true;
+        
         // Get the original position of the asset
         final int initialX = mProfile.getInt( assetName + TAG_X, INITIAL_ASSET_POS );
         final int initialY = mProfile.getInt( assetName + TAG_Y, INITIAL_ASSET_POS );
@@ -693,6 +706,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                     // Remove the asset from this profile
                     toggleAsset( assetName );
                 }
+                
+                mPopupBeingShown = false;
             }
         };
         
