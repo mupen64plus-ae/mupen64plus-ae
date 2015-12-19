@@ -12,10 +12,14 @@ import paulscode.android.mupen64plusae.preference.MultiSelectListPreference;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Point;
 import android.text.TextUtils;
+import android.view.Display;
+import android.view.WindowManager;
 
 public class GamePrefs
 {
@@ -173,13 +177,34 @@ public class GamePrefs
     public final boolean isTouchscreenAnimated;
     
     /** The width of the OpenGL rendering context, in pixels. */
-    public int videoRenderWidth;
+    public final int videoRenderWidth;
     
     /** The height of the OpenGL rendering context, in pixels. */
-    public int videoRenderHeight;
+    public final int videoRenderHeight;
     
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
+
+    /** The width of the viewing surface, in pixels. */
+    public final int videoSurfaceWidth;
+    
+    /** The height of the viewing surface, in pixels. */
+    public final int videoSurfaceHeight;
+    
+    /** The width of the viewing surface, in pixels with the correct aspect ratio. */
+    public final int videoSurfaceWidthOriginal;
+    
+    /** The height of the viewing surface, in pixels with the correct aspect ratio. */
+    public final int videoSurfaceHeightOriginal;
+    
+    /** Screen width ratio from 16:9 to 4:3*/
+    public final float widthRatio;
+    
+    /** Screen width ratio from 16:9 to 4:3*/
+    public final float heightRatio;
+    
+    /** If display mode is stretch*/
+    public final boolean mStretch;
     
     /** Game CRC */
     public final String crc;
@@ -207,6 +232,7 @@ public class GamePrefs
     public static final String CORE_CONFIG_DIR = "CoreConfig";
     public static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
     
+    @TargetApi( 17 )
     public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol,
         AppData appData, GlobalPrefs globalPrefs)
     {        
@@ -295,42 +321,98 @@ public class GamePrefs
         isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
         glide64MaxFrameskip = Math.abs( maxFrameskip );
         
+        // Determine the pixel dimensions of the rendering context and view surface
+        {
+            // Screen size
+            final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
+            Display display = windowManager.getDefaultDisplay();
+            int stretchWidth;
+            int stretchHeight;
+            if( display == null )
+            {
+                stretchWidth = stretchHeight = 0;
+            }
+            //Kit Kat (19) adds support for immersive mode
+            else if( AppData.IS_KITKAT && globalPrefs.isImmersiveModeEnabled )
+            {
+                Point dimensions = new Point();
+                display.getRealSize(dimensions);
+                stretchWidth = dimensions.x;
+                stretchHeight = dimensions.y;                
+            }
+            else
+            {
+                Point dimensions = new Point();
+                display.getSize(dimensions);
+                stretchWidth = dimensions.x;
+                stretchHeight = dimensions.y;
+            }
+                        
+            float aspect = 0.75f; // TODO: Handle PAL
+            boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;
+            int originalWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
+            int originalHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
+            
+            String scaling = mPreferences.getString( "displayScaling", "original" );
+            widthRatio = (float)stretchWidth/(float)originalWidth;
+            heightRatio = (float)stretchHeight/(float)originalHeight;
+            
+            videoSurfaceWidthOriginal = originalWidth;
+            videoSurfaceHeightOriginal = originalHeight;
+
+            mStretch = scaling.equals( "stretch" );
+            
+            // Native resolution
+            if( mStretch )
+            {
+                videoSurfaceWidth = stretchWidth;
+                videoSurfaceHeight = stretchHeight;
+            }
+            else // scaling.equals( "original")
+            {
+                videoSurfaceWidth = videoSurfaceWidthOriginal;
+                videoSurfaceHeight = videoSurfaceHeightOriginal;
+            }
+        }
+        
         // Display prefs
         int hResolution = getSafeInt( mPreferences, "displayResolution", 0 );
+        int tempVideoRenderWidth = 0;
+        int tempVideoRenderHeight = 0;
         
         switch( hResolution )
         {
             case 720:
-                videoRenderWidth = 960;
-                videoRenderHeight = 720;
+                tempVideoRenderWidth = 960;
+                tempVideoRenderHeight = 720;
                 break;
             case 600:
-                videoRenderWidth = 800;
-                videoRenderHeight = 600;
+                tempVideoRenderWidth = 800;
+                tempVideoRenderHeight = 600;
                 break;
             case 480:
-                videoRenderWidth = 640;
-                videoRenderHeight = 480;
+                tempVideoRenderWidth = 640;
+                tempVideoRenderHeight = 480;
                 break;
             case 360:
-                videoRenderWidth = 480;
-                videoRenderHeight = 360;
+                tempVideoRenderWidth = 480;
+                tempVideoRenderHeight = 360;
                 break;
             case 240:
-                videoRenderWidth = 320;
-                videoRenderHeight = 240;
+                tempVideoRenderWidth = 320;
+                tempVideoRenderHeight = 240;
                 break;
             case 120:
-                videoRenderWidth = 160;
-                videoRenderHeight = 120;
+                tempVideoRenderWidth = 160;
+                tempVideoRenderHeight = 120;
                 break;
             default:
-                videoRenderWidth = globalPrefs.videoSurfaceWidthOriginal;
-                videoRenderHeight = globalPrefs.videoSurfaceHeightOriginal;
+                tempVideoRenderWidth = videoSurfaceWidthOriginal;
+                tempVideoRenderHeight = videoSurfaceHeightOriginal;
                 break;
         }
         
-        if(globalPrefs.mStretch)
+        if(mStretch)
         {
             //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
             //ratio to make it full screen
@@ -338,15 +420,18 @@ public class GamePrefs
                 globalPrefs.displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)
             {
                 
-                float newWidth = videoRenderHeight * globalPrefs.heightRatio;
-                videoRenderHeight = Math.round(newWidth);
+                float newWidth = tempVideoRenderHeight * heightRatio;
+                tempVideoRenderHeight = Math.round(newWidth);
             }
             else
             {
-                float newWidth = videoRenderWidth * globalPrefs.widthRatio;
-                videoRenderWidth = Math.round(newWidth);
+                float newWidth = tempVideoRenderWidth * widthRatio;
+                tempVideoRenderWidth = Math.round(newWidth);
             }
         }
+        
+        videoRenderWidth = tempVideoRenderWidth;
+        videoRenderHeight = tempVideoRenderHeight;
         
         videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
         

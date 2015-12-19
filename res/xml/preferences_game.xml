@@ -22,6 +22,15 @@
         mupen64:stepSize="1"
         mupen64:units="%" />
 
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/displayScaling_default"
+        android:entries="@array/displayScaling_entries"
+        android:entryValues="@array/displayScaling_values"
+        android:icon="@drawable/ic_display"
+        android:key="displayScaling"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayScaling_title" />
+
     <paulscode.android.mupen64plusae.preference.ProfilePreference
         android:icon="@drawable/ic_circuit"
         android:key="emulationProfile"

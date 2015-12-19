@@ -34,20 +34,16 @@ import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Point;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
@@ -169,24 +165,6 @@ public class GlobalPrefs
     /** The vertical screen position. */
     public final int displayPosition;
     
-    /** The width of the viewing surface, in pixels. */
-    public final int videoSurfaceWidth;
-    
-    /** The height of the viewing surface, in pixels. */
-    public final int videoSurfaceHeight;
-    
-    /** The width of the viewing surface, in pixels with the correct aspect ratio. */
-    public final int videoSurfaceWidthOriginal;
-    
-    /** The height of the viewing surface, in pixels with the correct aspect ratio. */
-    public final int videoSurfaceHeightOriginal;
-    
-    /** Screen width ratio from 16:9 to 4:3*/
-    public final float widthRatio;
-    
-    /** Screen width ratio from 16:9 to 4:3*/
-    public final float heightRatio;
-    
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
     
@@ -225,9 +203,6 @@ public class GlobalPrefs
     
     /** Maximum number of auto saves */
     public final int maxAutoSaves;
-    
-    /** If display mode is stretch*/
-    public final boolean mStretch;
     
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
@@ -304,7 +279,6 @@ public class GlobalPrefs
      * @param context
      *            The application context.
      */
-    @TargetApi( 17 )
     public GlobalPrefs( Context context, AppData appData )
     {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
@@ -441,60 +415,6 @@ public class GlobalPrefs
             unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
-        
-        // Determine the pixel dimensions of the rendering context and view surface
-        {
-            // Screen size
-            final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
-            Display display = windowManager.getDefaultDisplay();
-            int stretchWidth;
-            int stretchHeight;
-            if( display == null )
-            {
-                stretchWidth = stretchHeight = 0;
-            }
-            //Kit Kat (19) adds support for immersive mode
-            else if( AppData.IS_KITKAT && isImmersiveModeEnabled )
-            {
-                Point dimensions = new Point();
-                display.getRealSize(dimensions);
-                stretchWidth = dimensions.x;
-                stretchHeight = dimensions.y;                
-            }
-            else
-            {
-                Point dimensions = new Point();
-                display.getSize(dimensions);
-                stretchWidth = dimensions.x;
-                stretchHeight = dimensions.y;
-            }
-                        
-            float aspect = 0.75f; // TODO: Handle PAL
-            boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;
-            int originalWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
-            int originalHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
-            
-            String scaling = mPreferences.getString( "displayScaling", "original" );
-            widthRatio = (float)stretchWidth/(float)originalWidth;
-            heightRatio = (float)stretchHeight/(float)originalHeight;
-            
-            videoSurfaceWidthOriginal = originalWidth;
-            videoSurfaceHeightOriginal = originalHeight;
-
-            mStretch = scaling.equals( "stretch" );
-            
-            // Native resolution
-            if( mStretch )
-            {
-                videoSurfaceWidth = stretchWidth;
-                videoSurfaceHeight = stretchHeight;
-            }
-            else // scaling.equals( "original")
-            {
-                videoSurfaceWidth = videoSurfaceWidthOriginal;
-                videoSurfaceHeight = videoSurfaceHeightOriginal;
-            }
-        }
     }
     
     public void enforceLocale( Activity activity )

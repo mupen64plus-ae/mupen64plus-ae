@@ -210,8 +210,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         
         // Update the dummy GameSurface size in case global settings changed
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
-        params.width = mGlobalPrefs.videoSurfaceWidth;
-        params.height = mGlobalPrefs.videoSurfaceHeight;
         params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
         mSurface.setLayoutParams( params );
         
