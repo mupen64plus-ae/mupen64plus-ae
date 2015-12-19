@@ -348,7 +348,7 @@ public class GamePrefs
             }
         }
         
-        videoSurfaceZoom = getSafeInt( mPreferences, "displayZoom", 100 );
+        videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
         
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null;
