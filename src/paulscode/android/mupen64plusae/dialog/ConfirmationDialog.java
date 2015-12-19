@@ -15,6 +15,8 @@ public class ConfirmationDialog extends DialogFragment
     private static final String STATE_TITLE = "STATE_TITLE";
     private static final String STATE_MESSAGE = "STATE_MESSAGE";
     
+    private int mId = 0;
+    
     /**
      * The listener interface for handling confirmations.
      * 
@@ -47,7 +49,7 @@ public class ConfirmationDialog extends DialogFragment
 
         final String title = getArguments().getString(STATE_TITLE);
         final String message = getArguments().getString(STATE_MESSAGE);
-        final int id = getArguments().getInt(STATE_ID);
+        mId = getArguments().getInt(STATE_ID);
 
         // When the user clicks Ok, notify the downstream listener
         OnClickListener internalListener = new OnClickListener()
@@ -57,7 +59,7 @@ public class ConfirmationDialog extends DialogFragment
             {
                 if (getActivity() instanceof PromptConfirmListener)
                 {
-                    ((PromptConfirmListener) getActivity()).onPromptDialogClosed(id, which);
+                    ((PromptConfirmListener) getActivity()).onPromptDialogClosed(mId, which);
                 }
                 else
                 {
@@ -76,6 +78,19 @@ public class ConfirmationDialog extends DialogFragment
         final AlertDialog promptInputCodeDialog = builder.create();
         
         return promptInputCodeDialog;
+    }
+    
+    @Override
+    public void onCancel(DialogInterface dialog)
+    {
+        if (getActivity() instanceof PromptConfirmListener)
+        {
+            ((PromptConfirmListener) getActivity()).onPromptDialogClosed(mId, DialogInterface.BUTTON_NEGATIVE);
+        }
+        else
+        {
+            Log.e("ConfirmationDialog", "Activity doesn't implement PromptConfirmListener");
+        }
     }
 
     @Override
