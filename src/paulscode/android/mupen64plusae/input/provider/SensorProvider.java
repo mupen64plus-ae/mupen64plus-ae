@@ -20,11 +20,12 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import com.bda.controller.MotionEvent;
+
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import com.bda.controller.MotionEvent;
 
 public class SensorProvider extends AbstractProvider implements SensorEventListener {
 	private final int[] mInputCodes;
@@ -54,11 +55,13 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		float[] strengths = new float[mInputCodes.length];
-		// strengths doit être entre 0 et 1
 
-		float xStrength = event.values[1];
+		float gX = event.values[0];
+		float gY = event.values[1];
+		float gZ = event.values[2];
+		float yAngle = (float) calculateAngle(gY, (float) Math.sqrt(gX * gX + gZ * gZ));
+		float xStrength = angleToStrength(yAngle);// Range is now [-5, 5]
 		boolean isPositive = xStrength > 0;
-		xStrength = Math.min(xStrength / 2.5f, 1);
 		if (isPositive) {
 			strengths[0] = xStrength;
 			strengths[1] = 0;
@@ -67,23 +70,33 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
 			strengths[1] = -xStrength;
 		}
 
-		float yStrength = event.values[2];
-		yStrength = yStrength / (SensorManager.GRAVITY_EARTH - event.values[1]);
-		if (yStrength < -1) {
-			yStrength = -1;
-		} else if (yStrength > 1) {
-			yStrength = 1;
-		}
-		yStrength = (float) Math.asin(yStrength);
-		yStrength = yStrength / (float) Math.PI * 20f - 2.5f;
+		// TODO: make AXIS_Y configurable and disablable or remove this feature
+		float xAngle = (float) calculateAngle(gX, gZ);
+		xAngle = xAngle - (float) Math.PI / 3;
+		float yStrength = -angleToStrength(xAngle);
 		if (yStrength > 0) {
 			strengths[2] = 0;
-			strengths[3] = Math.min(yStrength, 1);
+			strengths[3] = yStrength;
 		} else {
-			strengths[2] = Math.min(-yStrength, 1);
+			strengths[2] = -yStrength;
 			strengths[3] = 0;
 		}
 
 		notifyListeners(mInputCodes, strengths, 0);
+	}
+
+	private float calculateAngle(float value, float adjacentValue) {
+		if (Math.abs(value) <= Math.abs(adjacentValue)) {
+			return (float) Math.atan(value / adjacentValue);
+		} else {
+			return (float) (Math.signum(value) * Math.PI / 2 - Math.atan(adjacentValue / value));
+		}
+	}
+
+	private float angleToStrength(float angle) {
+		// Angle which corresponds to strength=1 (with a factor of magnitude,
+		// which is configured on the controller)
+		float amplitudeMaxDegree = 15; // 15°
+		return angle / (float) Math.PI * 180 / amplitudeMaxDegree;
 	}
 }
