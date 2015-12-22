@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -139,6 +140,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     private VisibleTouchMap mTouchscreenMap;
     private KeyProvider mKeyProvider;
     private Controller mMogaController;
+    private SensorManager mSensorManager;
+    private SensorProvider mSensorProvider;
     
     // Intent data
     private String mRomPath;
@@ -345,7 +348,10 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     protected void onResume()
     {
         super.onResume();
-        
+
+        mSensorManager.registerListener(mSensorProvider, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_GAME);
+
         Log.i("GameActivity", "onResume");
         mIsResumed = true;
 
@@ -362,7 +368,9 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     protected void onPause()
     {
         super.onPause();
-        
+
+        mSensorManager.unregisterListener(mSensorProvider);
+
         Log.i( "GameActivity", "onPause" );
         mIsResumed = false;
         tryPausing();
@@ -807,32 +815,33 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
                 mGlobalPrefs.unmappableKeyCodes );
         MogaProvider mogaProvider = new MogaProvider( mMogaController );
         AbstractProvider axisProvider = new AxisProvider( inputSource );
-        SensorProvider mSensorProvider = new SensorProvider((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorProvider = new SensorProvider(mSensorManager);
         
         // Create the peripheral controls to handle key/stick presses
         if( mGamePrefs.isControllerEnabled1 && !needs1)
         {
             ControllerProfile p = mGamePrefs.controllerProfile1;
             mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider, mSensorProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             ControllerProfile p = mGamePrefs.controllerProfile2;
             mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider, mSensorProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             ControllerProfile p = mGamePrefs.controllerProfile3;
             mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider, mSensorProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             ControllerProfile p = mGamePrefs.controllerProfile4;
             mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider, mSensorProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
     }
     

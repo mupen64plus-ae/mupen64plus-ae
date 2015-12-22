@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: TODO: Implement sensor provider, if desired.
+ * Authors: Pierre Renié
  */
 package paulscode.android.mupen64plusae.input.provider;
 
@@ -44,8 +44,6 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
         // mInputCodes[8] = axisToInputCode( MotionEvent.AXIS_LTRIGGER, true );
         // mInputCodes[9] = axisToInputCode( MotionEvent.AXIS_RTRIGGER, true );
         // @formatter:on
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
