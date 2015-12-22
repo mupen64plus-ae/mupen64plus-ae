@@ -27,46 +27,13 @@ import org.mupen64plusae.v3.alpha.R;
 
 import com.bda.controller.Controller;
 
-import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.DrawerDrawable;
-import paulscode.android.mupen64plusae.GameSidebar;
-import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
-import paulscode.android.mupen64plusae.dialog.Popups;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
-import paulscode.android.mupen64plusae.game.GameSurface.GameSurfaceCreatedListener;
-import paulscode.android.mupen64plusae.hack.MogaHack;
-import paulscode.android.mupen64plusae.input.AbstractController;
-import paulscode.android.mupen64plusae.input.PeripheralController;
-import paulscode.android.mupen64plusae.input.TouchController;
-import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
-import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import paulscode.android.mupen64plusae.input.provider.AxisProvider;
-import paulscode.android.mupen64plusae.input.provider.KeyProvider;
-import paulscode.android.mupen64plusae.input.provider.MogaProvider;
-import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
-import paulscode.android.mupen64plusae.jni.CoreInterface;
-import paulscode.android.mupen64plusae.jni.NativeConstants;
-import paulscode.android.mupen64plusae.jni.NativeExports;
-import paulscode.android.mupen64plusae.jni.NativeInput;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnExitListener;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListener;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnRestartListener;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnSaveLoadListener;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
-import paulscode.android.mupen64plusae.profile.ControllerProfile;
-import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomHeader;
-import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -85,6 +52,42 @@ import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.DrawerDrawable;
+import paulscode.android.mupen64plusae.GameSidebar;
+import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
+import paulscode.android.mupen64plusae.game.GameSurface.GameSurfaceCreatedListener;
+import paulscode.android.mupen64plusae.hack.MogaHack;
+import paulscode.android.mupen64plusae.input.AbstractController;
+import paulscode.android.mupen64plusae.input.PeripheralController;
+import paulscode.android.mupen64plusae.input.TouchController;
+import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.input.provider.AxisProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import paulscode.android.mupen64plusae.input.provider.MogaProvider;
+import paulscode.android.mupen64plusae.input.provider.SensorProvider;
+import paulscode.android.mupen64plusae.jni.CoreInterface;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnExitListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnRestartListener;
+import paulscode.android.mupen64plusae.jni.CoreInterface.OnSaveLoadListener;
+import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.jni.NativeExports;
+import paulscode.android.mupen64plusae.jni.NativeInput;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
+import paulscode.android.mupen64plusae.profile.ControllerProfile;
+import paulscode.android.mupen64plusae.util.RomDatabase;
+import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 
 //@formatter:off
 /**
@@ -137,6 +140,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     private VisibleTouchMap mTouchscreenMap;
     private KeyProvider mKeyProvider;
     private Controller mMogaController;
+    private SensorManager mSensorManager;
+    private SensorProvider mSensorProvider;
     
     // Intent data
     private String mRomPath;
@@ -343,11 +348,16 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     protected void onResume()
     {
         super.onResume();
-        
+
         Log.i("GameActivity", "onResume");
         mIsResumed = true;
 
         tryRunning();
+
+        if (mSensorManager != null && mSensorProvider != null) {
+            mSensorManager.registerListener(mSensorProvider, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                    SensorManager.SENSOR_DELAY_GAME);
+        }
 
         // Set the sidebar opacity
         mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
@@ -360,11 +370,15 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     protected void onPause()
     {
         super.onPause();
-        
+
         Log.i( "GameActivity", "onPause" );
         mIsResumed = false;
         tryPausing();
-        
+
+        if (mSensorManager != null && mSensorProvider != null) {
+            mSensorManager.unregisterListener(mSensorProvider);
+        }
+
         mMogaController.onPause();
     }
     
@@ -808,31 +822,34 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
                 mGlobalPrefs.unmappableKeyCodes );
         MogaProvider mogaProvider = new MogaProvider( mMogaController );
         AbstractProvider axisProvider = new AxisProvider( inputSource );
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorProvider = new SensorProvider(mSensorManager);
         
         // Create the peripheral controls to handle key/stick presses
         if( mGamePrefs.isControllerEnabled1 && !needs1)
         {
             ControllerProfile p = mGamePrefs.controllerProfile1;
             mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             ControllerProfile p = mGamePrefs.controllerProfile2;
             mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             ControllerProfile p = mGamePrefs.controllerProfile3;
             mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             ControllerProfile p = mGamePrefs.controllerProfile4;
             mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
     }
     

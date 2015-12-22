@@ -406,6 +406,8 @@
         <item>@string/inputMapActivity_simulateBack</item>
         <item>@string/inputMapActivity_simulateMenu</item>
         <item>@string/inputMapActivity_screenshot</item>
+        <item>@string/inputMapActivity_enable_sensor</item>
+        <item>@string/inputMapActivity_disable_sensor</item>
     </string-array>
     <string-array name="inputMapActivity_values" translatable="false">
         <item>13</item>
@@ -440,6 +442,8 @@
         <item>31</item>
         <item>32</item>
         <item>33</item>
+        <item>34</item>
+        <item>35</item>
     </string-array>
 
 </resources>
