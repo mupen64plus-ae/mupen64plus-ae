@@ -52,13 +52,14 @@ public class PeripheralController extends AbstractController implements
     /** The analog deadzone, between 0 and 1, inclusive. */
     private final float mDeadzoneFraction;
 
-    private SensorProvider mSensorProvider;
-    
     /** The analog sensitivity, the amount by which to scale stick values, nominally 1. */
     private final float mSensitivityFraction;
     
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
+
+    /** The sensor provider, which is also added on {@link #mProviders} */
+    private SensorProvider mSensorProvider;
     
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
