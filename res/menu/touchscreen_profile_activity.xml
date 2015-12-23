@@ -42,6 +42,9 @@
                 <item
                     android:id="@+id/menuItem_buttonS"
                     android:title="@string/controller_buttonS"/>
+                <item
+                    android:id="@+id/menuItem_buttonSensor"
+                    android:title="@string/controller_buttonSensor"/>
             </group>
         </menu>
     </item>

@@ -13,6 +13,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -139,17 +140,7 @@ public class PromptInputCodeDialog extends DialogFragment
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-                for (AbstractProvider provider : providers)
-                    provider.unregisterAllListeners();
-                
-                if (getActivity() instanceof PromptInputCodeListener)
-                {
-                    ((PromptInputCodeListener) getActivity()).onDialogClosed(0, 0, which);
-                }
-                else
-                {
-                    Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
-                }
+                onInputCommon(providers, getActivity(), 0, 0, which);
             }
         };
 
@@ -195,17 +186,7 @@ public class PromptInputCodeDialog extends DialogFragment
             {
                 if (inputCode != 0 && strength > AbstractProvider.STRENGTH_THRESHOLD)
                 {
-                    for (AbstractProvider provider : providers)
-                        provider.unregisterAllListeners();
-                    
-                    if (getActivity() instanceof PromptInputCodeListener)
-                    {                        
-                        ((PromptInputCodeListener) getActivity()).onDialogClosed(inputCode, hardwareId, DialogInterface.BUTTON_POSITIVE);
-                    }
-                    else
-                    {
-                        Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
-                    }
+                    onInputCommon(providers, getActivity(), inputCode, hardwareId, DialogInterface.BUTTON_POSITIVE);
 
                     promptInputCodeDialog.dismiss();
                 }
@@ -229,5 +210,17 @@ public class PromptInputCodeDialog extends DialogFragment
         if (getDialog() != null && getRetainInstance())
             getDialog().setDismissMessage(null);
         super.onDestroyView();
+    }
+
+    void onInputCommon(final ArrayList<AbstractProvider> providers, Activity activity, int inputCode, int hardwareId,
+            int which) {
+        for (AbstractProvider provider : providers)
+            provider.unregisterAllListeners();
+
+        if (activity instanceof PromptInputCodeListener) {
+            ((PromptInputCodeListener) activity).onDialogClosed(inputCode, hardwareId, which);
+        } else {
+            Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
+        }
     }
 }

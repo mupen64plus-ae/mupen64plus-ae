@@ -34,7 +34,6 @@ import android.view.MotionEvent;
  * 
  * @see KeyProvider
  * @see AxisProvider
- * @see SensorProvider
  * @see InputMap
  */
 public abstract class AbstractProvider

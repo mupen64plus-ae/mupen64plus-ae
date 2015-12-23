@@ -533,9 +533,28 @@ public class VisibleTouchMap extends TouchMap
             loadAutoHoldImages( profile, "buttonR-holdR" );
             loadAutoHoldImages( profile, "buttonZ-holdZ" );
             loadAutoHoldImages( profile, "buttonS-holdS" );
+            loadAutoHoldImages( profile, "buttonSen-holdSen" );
         }
     }
-    
+    @Override
+    public void setAnalogEnabled(boolean enabled) {
+        super.setAnalogEnabled(enabled);
+        if (analogBackImage != null) {
+            if (enabled) {
+                analogBackImage.setAlpha(mTouchscreenTransparency);
+            } else {
+                analogBackImage.setAlpha(0);
+            }
+        }
+        if (analogForeImage != null) {
+            if (enabled) {
+                analogForeImage.setAlpha(mTouchscreenTransparency);
+            } else {
+                analogForeImage.setAlpha(0);
+            }
+        }
+    }
+
     /**
      * Loads FPS indicator assets and properties from the filesystem.
      * 

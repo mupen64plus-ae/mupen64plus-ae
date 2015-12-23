@@ -81,6 +81,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private static final String BUTTON_R = "buttonR";
     private static final String BUTTON_Z = "buttonZ";
     private static final String BUTTON_S = "buttonS";
+    private static final String BUTTON_SENSOR = "buttonSen";
     private static final String TAG_X = "-x";
     private static final String TAG_Y = "-y";
     private static final String SCALE = "-scale";
@@ -116,9 +117,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     
     // The directory of the selected touchscreen skin.
     private String touchscreenSkin;
-    
-    // True if the touchscreen joystick is animated
-    private boolean isTouchscreenAnimated;
     
     // This is to prevent more than one popup appearing at once
     private boolean mPopupBeingShown;
@@ -166,6 +164,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         READABLE_NAMES.put( TouchMap.DPD_LD, getString( R.string.controller_dpad ) );
         READABLE_NAMES.put( TouchMap.DPD_RD, getString( R.string.controller_dpad ) );
         READABLE_NAMES.put( TouchMap.DPD_RU, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( TouchMap.TOGGLE_SENSOR, getString( R.string.controller_buttonSensor ) );
         
         // Enable full-screen mode
         getWindow().setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
@@ -191,7 +190,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private void refresh()
     {
         // Reposition the assets and refresh the overlay and options menu
-        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, isTouchscreenAnimated );
+        boolean isTouchscreenAnimated = Boolean.valueOf(mProfile.get( "touchscreenAnimated", "False" ));
+        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, isTouchscreenAnimated);
         mTouchscreenMap.load( touchscreenSkin, mProfile,
                 isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
@@ -265,6 +265,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         setCheckState( menu, R.id.menuItem_buttonR, BUTTON_R );
         setCheckState( menu, R.id.menuItem_buttonZ, BUTTON_Z );
         setCheckState( menu, R.id.menuItem_buttonS, BUTTON_S );
+        setCheckState( menu, R.id.menuItem_buttonSensor, BUTTON_SENSOR );
     }
     
     private void UpdateButtonMenu(MenuListView listView, int menuItemId)
@@ -317,6 +318,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 return;
             case R.id.menuItem_buttonS:
                 toggleAsset( BUTTON_S );
+                return;
+            case R.id.menuItem_buttonSensor:
+                toggleAsset( BUTTON_SENSOR );
                 return;
             case R.id.menuItem_outline:
                 touchscreenSkin = mAppData.touchscreenSkinsDir + "Outline";
@@ -549,8 +553,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 int index = dragIndex;
                 String title = READABLE_NAMES.get( dragIndex );
                 
-                // D-pad buttons are not holdable
-                if( DPAD.equals( dragAsset ) )
+                // D-pad buttons and TOGGLE_SENSOR are not holdable
+                if( DPAD.equals( dragAsset ) || TouchMap.TOGGLE_SENSOR == index )
                     index = -1;
                 
                 // play the standard button sound effect
@@ -628,14 +632,13 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         CheckBox feedback = (CheckBox) view.findViewById( R.id.checkBox_feedback );
         if( assetName.equals("analog") )
         {
-            feedback.setChecked( isTouchscreenAnimated );
+            feedback.setChecked(Boolean.valueOf(mProfile.get("touchscreenAnimated", "False")));
             feedback.setOnCheckedChangeListener( new OnCheckedChangeListener()
             {
                 @Override
                 public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
                 {
                     mProfile.put( "touchscreenAnimated", ( isChecked ? "True" : "False" ) );
-                    isTouchscreenAnimated = isChecked;
                     refresh();
                 }
             } );

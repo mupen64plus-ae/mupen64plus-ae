@@ -134,13 +134,9 @@
         android:layout_marginTop="5dp" >
 
         <Button
-            android:id="@+id/buttonSensorOn"
+            android:id="@+id/buttonSensorToggle"
             style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_enable_sensor" />
-        <Button
-            android:id="@+id/buttonSensorOff"
-            style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_disable_sensor" />
+            android:text="@string/inputMapActivity_toggle_sensor" />
     </TableRow>
 
 </TableLayout>

@@ -63,8 +63,11 @@ public class TouchMap
     /** N64 pseudo-button: dpad-left-up. */
     public static final int DPD_LU = OFFSET_EXTRAS + 3;
     
+    /** N64 pseudo-button: enable/disable the accelerometer sensor. */
+    public static final int TOGGLE_SENSOR = OFFSET_EXTRAS + 4;
+    
     /** Total number of N64 (pseudo-)buttons. */
-    public static final int NUM_N64_PSEUDOBUTTONS = OFFSET_EXTRAS + 4;
+    public static final int NUM_N64_PSEUDOBUTTONS = OFFSET_EXTRAS + 5;
     
     /** Folder containing the images. */
     protected String skinFolder;
@@ -154,6 +157,7 @@ public class TouchMap
         MASK_KEYS.put( "Drd", DPD_RD );
         MASK_KEYS.put( "Dld", DPD_LD );
         MASK_KEYS.put( "Dlu", DPD_LU );
+        MASK_KEYS.put( "Sen", TOGGLE_SENSOR );
         // @formatter:on
         
         // Define the map from N64 button indices to profile key prefixes
@@ -175,6 +179,7 @@ public class TouchMap
         ASSET_NAMES.put( DPD_LD, "dpad" );
         ASSET_NAMES.put( DPD_RD, "dpad" );
         ASSET_NAMES.put( DPD_RU, "dpad" );
+        ASSET_NAMES.put( TOGGLE_SENSOR, "buttonSen" );
     }
     
     /**
@@ -508,6 +513,10 @@ public class TouchMap
         }
     }
     
+    public void setAnalogEnabled(boolean enabled) {
+        analogIsEnabled = enabled;
+    }
+
     /**
      * Loads the mask colors from a configuration file.
      * 
@@ -564,6 +573,7 @@ public class TouchMap
             loadButton( profile, "buttonR" );
             loadButton( profile, "buttonZ" );
             loadButton( profile, "buttonS" );
+            loadButton( profile, "buttonSen" );
         }
     }
     
