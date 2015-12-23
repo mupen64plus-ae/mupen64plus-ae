@@ -6,12 +6,12 @@ import java.util.List;
 import org.mupen64plusae.v3.alpha.R;
 
 import com.bda.controller.Controller;
-import com.bda.controller.MotionEvent;
 
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
+import paulscode.android.mupen64plusae.input.provider.SensorProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import android.app.Activity;
@@ -159,11 +159,7 @@ public class PromptInputCodeDialog extends DialogFragment
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO:change input codes
-                final int[] inputCodes = new int[] { AbstractProvider.axisToInputCode(MotionEvent.AXIS_X, true),
-                        AbstractProvider.axisToInputCode(MotionEvent.AXIS_X, false),
-                        AbstractProvider.axisToInputCode(MotionEvent.AXIS_Y, true),
-                        AbstractProvider.axisToInputCode(MotionEvent.AXIS_Y, false) };
+                final int[] inputCodes = SensorProvider.getEmulatedJoystickCodes();
                 CharSequence[] items = new CharSequence[inputCodes.length];
                 for (int i = 0; i < inputCodes.length; i++) {
                     items[i] = AbstractProvider.getInputName(inputCodes[i]);

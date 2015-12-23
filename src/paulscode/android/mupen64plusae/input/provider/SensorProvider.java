@@ -27,23 +27,23 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+/**
+ * Emulates a joystick using accelerometer sensor
+ */
 public class SensorProvider extends AbstractProvider implements SensorEventListener {
     private final int[] mInputCodes;
 
     public SensorProvider(SensorManager sensorManager) {
-        mInputCodes = new int[10];
-        // @formatter:off
-        mInputCodes[0] = axisToInputCode(MotionEvent.AXIS_X, true);
-        mInputCodes[1] = axisToInputCode(MotionEvent.AXIS_X, false);
-        mInputCodes[2] = axisToInputCode(MotionEvent.AXIS_Y, true);
-        mInputCodes[3] = axisToInputCode(MotionEvent.AXIS_Y, false);
-        // mInputCodes[4] = axisToInputCode( MotionEvent.AXIS_Z, true );
-        // mInputCodes[5] = axisToInputCode( MotionEvent.AXIS_Z, false );
-        // mInputCodes[6] = axisToInputCode( MotionEvent.AXIS_RZ, true );
-        // mInputCodes[7] = axisToInputCode( MotionEvent.AXIS_RZ, false );
-        // mInputCodes[8] = axisToInputCode( MotionEvent.AXIS_LTRIGGER, true );
-        // mInputCodes[9] = axisToInputCode( MotionEvent.AXIS_RTRIGGER, true );
-        // @formatter:on
+        mInputCodes = getEmulatedJoystickCodes();
+    }
+
+    public static int[] getEmulatedJoystickCodes() {
+        int[] inputCodes = new int[4];
+        inputCodes[0] = axisToInputCode(MotionEvent.AXIS_X, true);
+        inputCodes[1] = axisToInputCode(MotionEvent.AXIS_X, false);
+        inputCodes[2] = axisToInputCode(MotionEvent.AXIS_Y, true);
+        inputCodes[3] = axisToInputCode(MotionEvent.AXIS_Y, false);
+        return inputCodes;
     }
 
     @Override
