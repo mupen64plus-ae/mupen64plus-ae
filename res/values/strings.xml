@@ -537,6 +537,7 @@
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
     <string name="inputMapActivity_popupUnmap">Unmap</string>
+    <string name="inputMapActivity_popupSensor">Sensor</string>
     <string name="inputMapActivity_btnA">A</string>
     <string name="inputMapActivity_btnB">B</string>
     <string name="inputMapActivity_btnC">C</string>

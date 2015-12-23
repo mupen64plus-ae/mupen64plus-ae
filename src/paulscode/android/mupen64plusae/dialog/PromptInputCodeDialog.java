@@ -6,6 +6,7 @@ import java.util.List;
 import org.mupen64plusae.v3.alpha.R;
 
 import com.bda.controller.Controller;
+import com.bda.controller.MotionEvent;
 
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
@@ -13,11 +14,13 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
 import android.util.Log;
@@ -31,6 +34,7 @@ public class PromptInputCodeDialog extends DialogFragment
     private static final String STATE_TITLE = "STATE_TITLE";
     private static final String STATE_MESSAGE = "STATE_MESSAGE";
     private static final String STATE_NEUTRAL_BUTTON_TEXT = "STATE_NEUTRAL_BUTTON_TEXT";
+    private static final String STATE_SENSOR_BUTTON_TEXT = "STATE_SENSOR_BUTTON_TEXT";
     private static final String STATE_NUM_ITEMS = "STATE_NUM_ITEMS";
     private static final String STATE_ITEMS = "STATE_ITEMS";
 
@@ -64,13 +68,14 @@ public class PromptInputCodeDialog extends DialogFragment
     }
 
     public static PromptInputCodeDialog newInstance(String title, String message,
-        String neutralButtonText, List<Integer> ignoredKeyCodes)
+        String neutralButtonText,String sensorButtonText, List<Integer> ignoredKeyCodes)
     {
         PromptInputCodeDialog frag = new PromptInputCodeDialog();
         Bundle args = new Bundle();
         args.putString(STATE_TITLE, title);
         args.putString(STATE_MESSAGE, message);
         args.putString(STATE_NEUTRAL_BUTTON_TEXT, neutralButtonText);
+        args.putString(STATE_SENSOR_BUTTON_TEXT, sensorButtonText);
 
         args.putInt(STATE_NUM_ITEMS, ignoredKeyCodes.size());
 
@@ -92,6 +97,7 @@ public class PromptInputCodeDialog extends DialogFragment
         final String title = getArguments().getString(STATE_TITLE);
         final String message = getArguments().getString(STATE_MESSAGE);
         final String neutralButtonText = getArguments().getString(STATE_NEUTRAL_BUTTON_TEXT);
+        final String sensorButtonText = getArguments().getString(STATE_SENSOR_BUTTON_TEXT);
         final int numItems = getArguments().getInt(STATE_NUM_ITEMS);
 
         List<Integer> ignoredKeyCodes = new ArrayList<Integer>();
@@ -139,17 +145,7 @@ public class PromptInputCodeDialog extends DialogFragment
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-                for (AbstractProvider provider : providers)
-                    provider.unregisterAllListeners();
-                
-                if (getActivity() instanceof PromptInputCodeListener)
-                {
-                    ((PromptInputCodeListener) getActivity()).onDialogClosed(0, 0, which);
-                }
-                else
-                {
-                    Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
-                }
+                onInputCommon(providers, getActivity(), 0, 0, which);
             }
         };
 
@@ -159,7 +155,32 @@ public class PromptInputCodeDialog extends DialogFragment
         builder.setCancelable(false);
         builder.setNegativeButton(getActivity().getString(android.R.string.cancel), clickListener);
         builder.setNeutralButton(neutralButtonText, clickListener);
-        builder.setPositiveButton(null, null);
+        builder.setPositiveButton(sensorButtonText, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO:change input codes
+                final int[] inputCodes = new int[] { AbstractProvider.axisToInputCode(MotionEvent.AXIS_X, true),
+                        AbstractProvider.axisToInputCode(MotionEvent.AXIS_X, false),
+                        AbstractProvider.axisToInputCode(MotionEvent.AXIS_Y, true),
+                        AbstractProvider.axisToInputCode(MotionEvent.AXIS_Y, false) };
+                CharSequence[] items = new CharSequence[inputCodes.length];
+                for (int i = 0; i < inputCodes.length; i++) {
+                    items[i] = AbstractProvider.getInputName(inputCodes[i]);
+                }
+                final FragmentActivity activity = getActivity();
+                Builder b = new AlertDialog.Builder(activity);
+                b.setTitle(sensorButtonText).setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface d, int which) {
+
+                        onInputCommon(providers, activity, inputCodes[which], 0, DialogInterface.BUTTON_POSITIVE);
+
+                        d.dismiss();
+                    }
+                });
+                b.create().show();
+            }
+        });
         builder.setView(view);
         
         final AlertDialog promptInputCodeDialog = builder.create();
@@ -195,17 +216,7 @@ public class PromptInputCodeDialog extends DialogFragment
             {
                 if (inputCode != 0 && strength > AbstractProvider.STRENGTH_THRESHOLD)
                 {
-                    for (AbstractProvider provider : providers)
-                        provider.unregisterAllListeners();
-                    
-                    if (getActivity() instanceof PromptInputCodeListener)
-                    {                        
-                        ((PromptInputCodeListener) getActivity()).onDialogClosed(inputCode, hardwareId, DialogInterface.BUTTON_POSITIVE);
-                    }
-                    else
-                    {
-                        Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
-                    }
+                    onInputCommon(providers, getActivity(), inputCode, hardwareId, DialogInterface.BUTTON_POSITIVE);
 
                     promptInputCodeDialog.dismiss();
                 }
@@ -229,5 +240,17 @@ public class PromptInputCodeDialog extends DialogFragment
         if (getDialog() != null && getRetainInstance())
             getDialog().setDismissMessage(null);
         super.onDestroyView();
+    }
+
+    void onInputCommon(final ArrayList<AbstractProvider> providers, Activity activity, int inputCode, int hardwareId,
+            int which) {
+        for (AbstractProvider provider : providers)
+            provider.unregisterAllListeners();
+
+        if (activity instanceof PromptInputCodeListener) {
+            ((PromptInputCodeListener) activity).onDialogClosed(inputCode, hardwareId, which);
+        } else {
+            Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
+        }
     }
 }
