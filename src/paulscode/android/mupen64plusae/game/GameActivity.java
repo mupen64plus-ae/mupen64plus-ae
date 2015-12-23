@@ -349,13 +349,15 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     {
         super.onResume();
 
-        mSensorManager.registerListener(mSensorProvider, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_GAME);
-
         Log.i("GameActivity", "onResume");
         mIsResumed = true;
 
         tryRunning();
+
+        if (mSensorManager != null && mSensorProvider != null) {
+            mSensorManager.registerListener(mSensorProvider, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                    SensorManager.SENSOR_DELAY_GAME);
+        }
 
         // Set the sidebar opacity
         mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
@@ -369,12 +371,14 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     {
         super.onPause();
 
-        mSensorManager.unregisterListener(mSensorProvider);
-
         Log.i( "GameActivity", "onPause" );
         mIsResumed = false;
         tryPausing();
-        
+
+        if (mSensorManager != null && mSensorProvider != null) {
+            mSensorManager.unregisterListener(mSensorProvider);
+        }
+
         mMogaController.onPause();
     }
     
@@ -815,6 +819,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
                 mGlobalPrefs.unmappableKeyCodes );
         MogaProvider mogaProvider = new MogaProvider( mMogaController );
         AbstractProvider axisProvider = new AxisProvider( inputSource );
+
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorProvider = new SensorProvider(mSensorManager);
         
