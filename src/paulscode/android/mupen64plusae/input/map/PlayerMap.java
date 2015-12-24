@@ -39,6 +39,20 @@ public class PlayerMap extends SerializableMap
      *  this map allows the old id to be looked up so it can be replaced with the new id. */
     private HashMap<String, Integer> deviceNameToId = new HashMap<String, Integer>();
     
+    public static boolean isDeviceId( String deviceName )
+    {
+        try
+        {
+            if( Integer.parseInt( deviceName ) != 0 )
+                return true;
+        }
+        catch( NumberFormatException ignored )
+        {
+        }
+        
+        return false;
+    }
+    
     /**
      * Instantiates a new player map.
      */
@@ -206,7 +220,7 @@ public class PlayerMap extends SerializableMap
         for( Entry<String, Integer> entry : deviceNameToId.entrySet() )
         {
             // If the device name is the id, then store the latest id, otherwise the device's unique name
-            String device = ( Integer.getInteger( entry.getKey(), 0 ) != 0 ) ?
+            String device = ( isDeviceId( entry.getKey() ) ) ?
                     entry.getValue().toString() :
                     entry.getKey();
             int player = mMap.get( entry.getValue() );
@@ -216,6 +230,7 @@ public class PlayerMap extends SerializableMap
                 result += player + ":" + device + ",";
         }
         
+        Log.v("PlayerMap", "Serializing: " + result);
         return result;
     }
     
@@ -234,6 +249,7 @@ public class PlayerMap extends SerializableMap
         if( s != null )
         {
             int psuedoId = -100;
+            Log.v("PlayerMap", "Deserializing: " + s);
             
             // Read the input mappings
             String[] pairs = s.split( "," );
@@ -245,23 +261,25 @@ public class PlayerMap extends SerializableMap
                     try
                     {
                         int player = Integer.parseInt( elements[0] );
+                        String deviceName = elements[1];
                         int id = AbstractProvider.getHardwareId( elements[1] );
                         
                         // If the specified device is not currently connected.
                         if( id == 0 )
                         {
                             // Do not add disconnected devices if the key specified is a device id.
-                            if( Integer.getInteger( elements[1], 0 ) != 0 )
+                            if( isDeviceId( deviceName ) )
                                 continue;
                             
                             id = psuedoId;
                             psuedoId--;
                         }
+                        else
+                        {
+                            // This will update the device name when transitioning from device ids and add it to the map.
+                            deviceName = AbstractProvider.getUniqueName( id );
+                        }
                         
-                        // This will update the device name when transitioning from device ids and add it to the map.
-                        String deviceName = id > 0 ?
-                                AbstractProvider.getUniqueName( id ) :
-                                elements[1];
                         deviceNameToId.put( deviceName , id );
                         mMap.put( id, player );
                     }
