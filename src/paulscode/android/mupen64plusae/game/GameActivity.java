@@ -706,7 +706,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
         
         // Attempt to reconnect any disconnected devices
-        // TODO: Show message on screen when reconnection was successful?
         mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( event ) );
         
         if( keyDown && keyCode == KeyEvent.KEYCODE_MENU )

@@ -104,7 +104,7 @@ public class PlayerMap extends SerializableMap
                 int deviceId = mMap.keyAt( i );
                 String name = AbstractProvider.isHardwareAvailable( deviceId ) ?
                         AbstractProvider.getHardwareName( deviceId ) :
-                        "Not Connected";
+                        context.getString( R.string.playerMap_deviceNotConnected );
                 if( name == null )
                     result += context.getString( R.string.playerMap_deviceWithoutName, deviceId );
                 else
