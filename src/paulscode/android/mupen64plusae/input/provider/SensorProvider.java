@@ -57,8 +57,25 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
         float gX = event.values[0];
         float gY = event.values[1];
         float gZ = event.values[2];
-        float yAngle = (float) calculateAngle(gY, (float) Math.sqrt(gX * gX + gZ * gZ));
-        float xStrength = angleToStrength(yAngle);// Range is now [-5, 5]
+
+        // Assuming we are in landcape mode
+
+        // The most common axe used by the accelerometer: left-right
+        updateStrengthAxisX(strengths, gX, gY, gZ);
+
+        // A less common axe used by the accelerometer: the other axe up-down
+        updateStrengthAxisY(strengths, gX, gZ);
+
+        notifyListeners(mInputCodes, strengths, 0);
+    }
+
+    private void updateStrengthAxisX(float[] strengths, float gX, float gY, float gZ) {
+        // Acceleration value of XZ
+        float gXZ = (float) Math.sqrt(gX * gX + gZ * gZ);
+        float yAngle = (float) calculateAngle(gY, gXZ);
+
+        // Accelerometer's Y axis is mapped to joystick's AXIS_X
+        float xStrength = angleToStrength(yAngle);
         boolean isPositive = xStrength > 0;
         if (isPositive) {
             strengths[0] = xStrength;
@@ -67,10 +84,14 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
             strengths[0] = 0;
             strengths[1] = -xStrength;
         }
+    }
 
-        // TODO: make AXIS_Y configurable and disablable or remove this feature
+    private void updateStrengthAxisY(float[] strengths, float gX, float gZ) {
         float xAngle = (float) calculateAngle(gX, gZ);
-        xAngle = xAngle - (float) Math.PI / 3;
+
+        // Default angle for strength=0: Pi/3 (=60°, more vertical than
+        // horizontal)
+        xAngle = xAngle - (float) Math.PI / 3;// TODO: make it configurable
         float yStrength = -angleToStrength(xAngle);
         if (yStrength > 0) {
             strengths[2] = 0;
@@ -79,14 +100,18 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
             strengths[2] = -yStrength;
             strengths[3] = 0;
         }
-
-        notifyListeners(mInputCodes, strengths, 0);
     }
 
+    /**
+     * @return arc tangent of the ratio of the 2 args, avoiding to divide by 0
+     */
     private float calculateAngle(float value, float adjacentValue) {
         if (Math.abs(value) <= Math.abs(adjacentValue)) {
+            // Classic arc tangent
             return (float) Math.atan(value / adjacentValue);
         } else {
+            // Calculating arc tangent with the opposite ratio. Result is the
+            // same as above, unless if adjacentValue=0 (avoiding error).
             return (float) (Math.signum(value) * Math.PI / 2 - Math.atan(adjacentValue / value));
         }
     }
@@ -94,7 +119,7 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
     private float angleToStrength(float angle) {
         // Angle which corresponds to strength=1 (with a factor of magnitude,
         // which is configured on the controller)
-        float amplitudeMaxDegree = 15; // 15°
-        return angle / (float) Math.PI * 180 / amplitudeMaxDegree;
+        float strengthMaxDegree = 15; // 15°
+        return angle / (float) Math.PI * 180 / strengthMaxDegree;
     }
 }
