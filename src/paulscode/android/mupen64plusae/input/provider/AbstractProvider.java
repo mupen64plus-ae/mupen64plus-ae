@@ -187,11 +187,13 @@ public abstract class AbstractProvider
             }
         }
         
+        // Check all the connected devices
         int[] deviceIds = InputDevice.getDeviceIds();
         
         for( int i = 0; i < deviceIds.length; i++ )
         {
-            if( uniqueName.equals( getUniqueName( deviceIds[i] ) ) )
+            if( uniqueName.equals( getUniqueName( deviceIds[i] ) ) ||
+                    uniqueName.equals( Integer.toString( deviceIds[i] ) ) )
             {
                 return deviceIds[i];
             }
