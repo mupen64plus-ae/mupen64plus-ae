@@ -56,7 +56,10 @@ public class PeripheralController extends AbstractController implements
     
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
-    
+
+    /** The sensor provider, which is also added on {@link #mProviders} */
+    private SensorProvider mSensorController;
+
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
     
@@ -80,7 +83,7 @@ public class PeripheralController extends AbstractController implements
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
-            int inputDeadzone, int inputSensitivity, AbstractProvider... providers )
+            int inputDeadzone, int inputSensitivity, SensorProvider sensorController, AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
@@ -89,6 +92,7 @@ public class PeripheralController extends AbstractController implements
         mInputMap = inputMap;
         mDeadzoneFraction = ( (float) inputDeadzone ) / 100f;
         mSensitivityFraction = ( (float) inputSensitivity ) / 100f;
+        mSensorController = sensorController;
         
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
@@ -274,6 +278,12 @@ public class PeripheralController extends AbstractController implements
                 case InputMap.FUNC_SCREENSHOT:
                     Log.v( "PeripheralController", "FUNC_SCREENSHOT" );
                     CoreInterface.screenshot();
+                    break;
+                case InputMap.FUNC_SENSOR_TOGGLE:
+                    Log.v("PeripheralController", "FUNC_SENSOR_TOGGLE");
+                    if (mSensorController != null) {
+                        mSensorController.setSensorEnabled(mSensorController.isSensorEnabled());
+                    }
                     break;
                 default:
                     return false;

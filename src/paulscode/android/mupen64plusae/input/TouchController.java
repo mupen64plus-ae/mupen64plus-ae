@@ -22,8 +22,6 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.Set;
 
-import paulscode.android.mupen64plusae.input.map.TouchMap;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.graphics.Point;
 import android.os.Vibrator;
@@ -31,11 +29,12 @@ import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 
 /**
  * A class for generating N64 controller commands from a touchscreen.
  */
-public class TouchController extends AbstractController implements OnTouchListener, SensorProvider.OnInputListener
+public class TouchController extends AbstractController implements OnTouchListener
 {
     public interface OnStateChangedListener
     {
@@ -152,24 +151,6 @@ public class TouchController extends AbstractController implements OnTouchListen
     public void setSourceFilter( int source )
     {
         mSourceFilter = source;
-    }
-
-    @Override
-    public void onAxisChanged(float rawX, float rawY) {
-
-        float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
-
-        // TODO:add a configurable sensitivityFraction
-        // Copy-paste from PeripheralController
-        // Normalize the vector
-        float normalizedX = rawX / magnitude;
-        float normalizedY = rawY / magnitude;
-
-        magnitude = Utility.clamp(magnitude, 0f, 1f);
-        
-        mState.axisFractionX = normalizedX * magnitude;
-        mState.axisFractionY = normalizedY * magnitude;
-        notifyChanged();
     }
 
     /*
@@ -507,13 +488,13 @@ public class TouchController extends AbstractController implements OnTouchListen
                     break;
                 case TouchMap.TOGGLE_SENSOR:
                     if (touched == false && mProvider != null) {
-                        if (mProvider.isListenerRegistered(this)) {
-                            mProvider.unregisterListener(this);
+                        if (mProvider.isSensorEnabled()) {
+                            mProvider.setSensorEnabled(false);
                             mState.axisFractionX = 0;
                             mState.axisFractionY = 0;
                             mListener.onAutoHold( false, index );
                         } else {
-                            mProvider.registerListener(this);
+                            mProvider.setSensorEnabled(true);
                             mListener.onAutoHold( true, index );
                         }
                     }

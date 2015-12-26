@@ -32,7 +32,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
-import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -140,7 +139,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     private VisibleTouchMap mTouchscreenMap;
     private KeyProvider mKeyProvider;
     private Controller mMogaController;
-    private SensorManager mSensorManager;
     private SensorProvider mSensorProvider;
     
     // Intent data
@@ -354,10 +352,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
 
         tryRunning();
 
-        if (mSensorManager != null && mSensorProvider != null) {
-            mSensorManager.registerListener(mSensorProvider, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                    SensorManager.SENSOR_DELAY_GAME);
-        }
+        mSensorProvider.onResume();
 
         // Set the sidebar opacity
         mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
@@ -375,10 +370,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         mIsResumed = false;
         tryPausing();
 
-        if (mSensorManager != null && mSensorProvider != null) {
-            mSensorManager.unregisterListener(mSensorProvider);
-        }
-
+        mSensorProvider.onPause();
         mMogaController.onPause();
     }
     
@@ -764,12 +756,13 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
         CoreInterface.registerVibrator( 1, vibrator );
         
+        // Always creating the SensorProvider, but it's inactive, and it's actived when needed.
+        mSensorProvider = new SensorProvider((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+        mControllers.add(mSensorProvider);
+        
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
         {
-            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            mSensorProvider = new SensorProvider();
-
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
                     inputSource, mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,
@@ -829,25 +822,25 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         {
             ControllerProfile p = mGamePrefs.controllerProfile1;
             mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             ControllerProfile p = mGamePrefs.controllerProfile2;
             mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), null, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             ControllerProfile p = mGamePrefs.controllerProfile3;
             mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), null, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             ControllerProfile p = mGamePrefs.controllerProfile4;
             mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), null, mKeyProvider, axisProvider, mogaProvider ) );
         }
     }
     

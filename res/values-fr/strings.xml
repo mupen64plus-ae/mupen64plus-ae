@@ -475,8 +475,7 @@
   <string name="inputMapActivity_simulateBack">Touche retour</string>
   <string name="inputMapActivity_simulateMenu">Touche menu</string>
   <string name="inputMapActivity_screenshot">Capture d\'écran</string>
-  <string name="inputMapActivity_enable_sensor">Activer l\'accéléromètre</string>
-  <string name="inputMapActivity_disable_sensor">Désactiver l\'accéléromètre</string>
+  <string name="inputMapActivity_toggle_sensor">Activer/Désactiver l\'accéléromètre</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Appuyez sur un bouton ou une touche…</string>
   <string name="diagnosticActivity_textMotion_text">Touchez l\'écran ou un joystick…</string>

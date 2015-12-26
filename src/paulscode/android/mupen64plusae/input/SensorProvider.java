@@ -23,51 +23,47 @@ package paulscode.android.mupen64plusae.input;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import paulscode.android.mupen64plusae.util.SubscriptionManager;
+import android.hardware.SensorManager;
+import paulscode.android.mupen64plusae.util.Utility;
 
 /**
  * Emulates a joystick using accelerometer sensor
  */
-public class SensorProvider implements SensorEventListener {
-    public interface OnInputListener {
+public class SensorProvider extends AbstractController implements SensorEventListener {
+    private SensorManager mSensorManager;
+    private boolean isPaused = true;
+    private boolean mSensorEnabled = false;
 
-        /**
-         * Called when a single input has been dispatched.
-         * 
-         * @param xStrength
-         *            The raw X input strength
-         * @param yStrength
-         *            The raw Y input strength
-         */
-        public void onAxisChanged(float xStrength, float yStrength);
-
+    public SensorProvider(SensorManager sensorManager) {
+        mSensorManager = sensorManager;
     }
 
-    /** Listener management. */
-    private final SubscriptionManager<OnInputListener> mPublisher = new SubscriptionManager<OnInputListener>();
-
-    /**
-     * Registers a listener to start receiving input notifications.
-     * 
-     * @param listener
-     *            The listener to register. Null values are safe.
-     */
-    public void registerListener(OnInputListener listener) {
-        mPublisher.subscribe(listener);
+    public boolean isSensorEnabled() {
+        return mSensorEnabled;
     }
 
-    /**
-     * Unregisters a listener to stop receiving input notifications.
-     * 
-     * @param listener
-     *            The listener to unregister. Null values are safe.
-     */
-    public void unregisterListener(OnInputListener listener) {
-        mPublisher.unsubscribe(listener);
+    public void setSensorEnabled(boolean sensorEnabled) {
+        mSensorEnabled = sensorEnabled;
+        updateListener();
     }
 
-    public boolean isListenerRegistered(OnInputListener listener) {
-        return mPublisher.getSubscribers().contains(listener);
+    public void onResume() {
+        isPaused = false;
+        updateListener();
+    }
+
+    public void onPause() {
+        isPaused = true;
+        updateListener();
+    }
+
+    private void updateListener() {
+        if (mSensorEnabled && isPaused == false) {
+            mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                    SensorManager.SENSOR_DELAY_GAME);
+        } else {
+            mSensorManager.unregisterListener(this);
+        }
     }
 
     @Override
@@ -88,8 +84,19 @@ public class SensorProvider implements SensorEventListener {
         // A less common axe used by the accelerometer: the other axe up-down
         float rawY = getStrengthAxisY(gX, gZ);
 
-        for (OnInputListener listener : mPublisher.getSubscribers())
-            listener.onAxisChanged(rawX, rawY);
+        float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
+
+        // TODO:add a configurable sensitivityFraction
+        // Copy-paste from PeripheralController
+        // Normalize the vector
+        float normalizedX = rawX / magnitude;
+        float normalizedY = rawY / magnitude;
+
+        magnitude = Utility.clamp(magnitude, 0f, 1f);
+
+        mState.axisFractionX = normalizedX * magnitude;
+        mState.axisFractionY = normalizedY * magnitude;
+        notifyChanged();
     }
 
     private float getStrengthAxisX(float gX, float gY, float gZ) {

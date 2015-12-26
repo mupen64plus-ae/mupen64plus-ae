@@ -128,4 +128,15 @@
             android:text="@string/inputMapActivity_reset" />
     </TableRow>
 
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonSensorToggle"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapActivity_toggle_sensor" />
+    </TableRow>
+
 </TableLayout>
