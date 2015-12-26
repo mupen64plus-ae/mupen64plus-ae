@@ -116,7 +116,7 @@ public class TouchController extends AbstractController implements OnTouchListen
     private Vibrator mVibrator = null;
 
     /** The user sensor input provider. */
-    private SensorProvider mProvider;
+    private SensorController mProvider;
     
     /**
      * Instantiates a new touch controller.
@@ -131,7 +131,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
             Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
-            Set<Integer> autoHoldableButtons, SensorProvider provider )
+            Set<Integer> autoHoldableButtons, SensorController provider )
     {
         mListener = listener;
         mTouchMap = touchMap;

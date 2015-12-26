@@ -63,7 +63,7 @@ import paulscode.android.mupen64plusae.game.GameSurface.GameSurfaceCreatedListen
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
-import paulscode.android.mupen64plusae.input.SensorProvider;
+import paulscode.android.mupen64plusae.input.SensorController;
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -139,7 +139,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     private VisibleTouchMap mTouchscreenMap;
     private KeyProvider mKeyProvider;
     private Controller mMogaController;
-    private SensorProvider mSensorProvider;
+    private SensorController mSensorController;
     
     // Intent data
     private String mRomPath;
@@ -352,7 +352,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
 
         tryRunning();
 
-        mSensorProvider.onResume();
+        mSensorController.onResume();
 
         // Set the sidebar opacity
         mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
@@ -370,7 +370,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         mIsResumed = false;
         tryPausing();
 
-        mSensorProvider.onPause();
+        mSensorController.onPause();
         mMogaController.onPause();
     }
     
@@ -756,9 +756,9 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
         CoreInterface.registerVibrator( 1, vibrator );
         
-        // Always creating the SensorProvider, but it's inactive, and it's actived when needed.
-        mSensorProvider = new SensorProvider((SensorManager) getSystemService(Context.SENSOR_SERVICE));
-        mControllers.add(mSensorProvider);
+        // Always creating the SensorController, but it's inactive, and it's actived when needed.
+        mSensorController = new SensorController((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+        mControllers.add(mSensorController);
         
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
@@ -767,7 +767,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
                     inputSource, mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,
                     mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables,
-                    mSensorProvider );
+                    mSensorController );
             mControllers.add( touchscreenController );
             
             mDrawerLayout.setTouchMap( mTouchscreenMap );
@@ -822,7 +822,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         {
             ControllerProfile p = mGamePrefs.controllerProfile1;
             mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mSensorController, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {

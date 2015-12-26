@@ -58,7 +58,7 @@ public class PeripheralController extends AbstractController implements
     private final ArrayList<AbstractProvider> mProviders;
 
     /** The sensor provider, which is also added on {@link #mProviders} */
-    private SensorProvider mSensorController;
+    private SensorController mSensorController;
 
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
@@ -83,7 +83,7 @@ public class PeripheralController extends AbstractController implements
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
-            int inputDeadzone, int inputSensitivity, SensorProvider sensorController, AbstractProvider... providers )
+            int inputDeadzone, int inputSensitivity, SensorController sensorController, AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
@@ -282,7 +282,7 @@ public class PeripheralController extends AbstractController implements
                 case InputMap.FUNC_SENSOR_TOGGLE:
                     Log.v("PeripheralController", "FUNC_SENSOR_TOGGLE");
                     if (mSensorController != null) {
-                        mSensorController.setSensorEnabled(mSensorController.isSensorEnabled());
+                    	mSensorController.setSensorEnabled(!mSensorController.isSensorEnabled());
                     }
                     break;
                 default:

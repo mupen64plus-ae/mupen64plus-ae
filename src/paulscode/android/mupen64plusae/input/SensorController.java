@@ -29,12 +29,12 @@ import paulscode.android.mupen64plusae.util.Utility;
 /**
  * Emulates a joystick using accelerometer sensor
  */
-public class SensorProvider extends AbstractController implements SensorEventListener {
+public class SensorController extends AbstractController implements SensorEventListener {
     private SensorManager mSensorManager;
     private boolean isPaused = true;
     private boolean mSensorEnabled = false;
 
-    public SensorProvider(SensorManager sensorManager) {
+    public SensorController(SensorManager sensorManager) {
         mSensorManager = sensorManager;
     }
 
