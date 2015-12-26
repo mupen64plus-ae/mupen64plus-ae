@@ -218,7 +218,7 @@ public class GamePrefs
     public static final String CONTROLLER_PROFILE2 = "controllerProfile2";
     public static final String CONTROLLER_PROFILE3 = "controllerProfile3";
     public static final String CONTROLLER_PROFILE4 = "controllerProfile4";
-    public static final String PLAYER_MAP = "playerMap";
+    public static final String PLAYER_MAP = "playerMapV2";
     public static final String PLAY_SHOW_CHEATS = "playShowCheats";
 
     /**
