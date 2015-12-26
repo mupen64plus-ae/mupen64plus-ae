@@ -293,10 +293,9 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         String message = getString( R.string.inputMapActivity_popupMessage,
                 map.getMappedCodeInfo( index ) );
         String btnText = getString( R.string.inputMapActivity_popupUnmap );
-        String sensorBtn = getString( R.string.inputMapActivity_popupSensor );
-
+        
         PromptInputCodeDialog promptInputCodeDialog = PromptInputCodeDialog.newInstance(
-            title.toString(), message, btnText, sensorBtn, mUnmappableInputCodes);
+            title.toString(), message, btnText, mUnmappableInputCodes);
         
         FragmentManager fm = getSupportFragmentManager();
         promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);

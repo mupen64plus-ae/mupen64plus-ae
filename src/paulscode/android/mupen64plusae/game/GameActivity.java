@@ -64,6 +64,7 @@ import paulscode.android.mupen64plusae.game.GameSurface.GameSurfaceCreatedListen
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
+import paulscode.android.mupen64plusae.input.SensorProvider;
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -71,7 +72,6 @@ import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
-import paulscode.android.mupen64plusae.input.provider.SensorProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnExitListener;
 import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListener;
@@ -767,10 +767,14 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
         {
+            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            mSensorProvider = new SensorProvider();
+
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
                     inputSource, mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,
-                    mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables );
+                    mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables,
+                    mSensorProvider );
             mControllers.add( touchscreenController );
             
             mDrawerLayout.setTouchMap( mTouchscreenMap );
@@ -819,34 +823,31 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
                 mGlobalPrefs.unmappableKeyCodes );
         MogaProvider mogaProvider = new MogaProvider( mMogaController );
         AbstractProvider axisProvider = new AxisProvider( inputSource );
-
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mSensorProvider = new SensorProvider(mSensorManager);
         
         // Create the peripheral controls to handle key/stick presses
         if( mGamePrefs.isControllerEnabled1 && !needs1)
         {
             ControllerProfile p = mGamePrefs.controllerProfile1;
             mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             ControllerProfile p = mGamePrefs.controllerProfile2;
             mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             ControllerProfile p = mGamePrefs.controllerProfile3;
             mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             ControllerProfile p = mGamePrefs.controllerProfile4;
             mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mSensorProvider, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mKeyProvider, axisProvider, mogaProvider ) );
         }
     }
     

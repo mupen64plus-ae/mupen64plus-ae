@@ -309,7 +309,7 @@ public abstract class AbstractProvider
      * 
      * @return The corresponding universal input code.
      */
-    public static int axisToInputCode( int axisCode, boolean positiveDirection )
+    protected static int axisToInputCode( int axisCode, boolean positiveDirection )
     {
         // Axis codes are encoded to negative values (versus buttons which are positive). Axis codes
         // are bit shifted by one so that the lowest bit can encode axis direction.

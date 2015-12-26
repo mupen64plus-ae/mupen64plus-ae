@@ -95,8 +95,6 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
         setupButton( R.id.buttonSimulateBack,  InputMap.FUNC_SIMULATE_BACK );
         setupButton( R.id.buttonSimulateMenu,  InputMap.FUNC_SIMULATE_MENU );
         setupButton( R.id.buttonScreenshot,    InputMap.FUNC_SCREENSHOT );
-        setupButton( R.id.buttonSensorOn,      InputMap.FUNC_SENSOR_ON );
-        setupButton( R.id.buttonSensorOff,     InputMap.FUNC_SENSOR_OFF );
         // @formatter:on
     }
     

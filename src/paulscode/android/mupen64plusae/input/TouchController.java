@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.input;
 import java.util.Set;
 
 import paulscode.android.mupen64plusae.input.map.TouchMap;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.graphics.Point;
 import android.os.Vibrator;
@@ -34,7 +35,7 @@ import android.view.View.OnTouchListener;
 /**
  * A class for generating N64 controller commands from a touchscreen.
  */
-public class TouchController extends AbstractController implements OnTouchListener
+public class TouchController extends AbstractController implements OnTouchListener, SensorProvider.OnInputListener
 {
     public interface OnStateChangedListener
     {
@@ -114,6 +115,9 @@ public class TouchController extends AbstractController implements OnTouchListen
     private int mSourceFilter = 0;
     
     private Vibrator mVibrator = null;
+
+    /** The user sensor input provider. */
+    private SensorProvider mProvider;
     
     /**
      * Instantiates a new touch controller.
@@ -128,7 +132,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
             Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
-            Set<Integer> autoHoldableButtons )
+            Set<Integer> autoHoldableButtons, SensorProvider provider )
     {
         mListener = listener;
         mTouchMap = touchMap;
@@ -136,6 +140,7 @@ public class TouchController extends AbstractController implements OnTouchListen
         mAutoHoldMethod = autoHoldMethod;
         mTouchscreenFeedback = touchscreenFeedback;
         mAutoHoldables = autoHoldableButtons;
+        mProvider = provider;
         view.setOnTouchListener( this );
     }
     
@@ -148,7 +153,25 @@ public class TouchController extends AbstractController implements OnTouchListen
     {
         mSourceFilter = source;
     }
-    
+
+    @Override
+    public void onAxisChanged(float rawX, float rawY) {
+
+        float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
+
+        // TODO:add a configurable sensitivityFraction
+        // Copy-paste from PeripheralController
+        // Normalize the vector
+        float normalizedX = rawX / magnitude;
+        float normalizedY = rawY / magnitude;
+
+        magnitude = Utility.clamp(magnitude, 0f, 1f);
+        
+        mState.axisFractionX = normalizedX * magnitude;
+        mState.axisFractionY = normalizedY * magnitude;
+        notifyChanged();
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -481,6 +504,19 @@ public class TouchController extends AbstractController implements OnTouchListen
                 case TouchMap.DPD_LU:
                     mState.buttons[DPD_L] = touched;
                     mState.buttons[DPD_U] = touched;
+                    break;
+                case TouchMap.TOGGLE_SENSOR:
+                    if (touched == false && mProvider != null) {
+                        if (mProvider.isListenerRegistered(this)) {
+                            mProvider.unregisterListener(this);
+                            mState.axisFractionX = 0;
+                            mState.axisFractionY = 0;
+                            mListener.onAutoHold( false, index );
+                        } else {
+                            mProvider.registerListener(this);
+                            mListener.onAutoHold( true, index );
+                        }
+                    }
                     break;
                 default:
                     break;

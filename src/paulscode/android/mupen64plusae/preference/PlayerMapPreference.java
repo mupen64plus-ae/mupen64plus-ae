@@ -199,11 +199,10 @@ public class PlayerMapPreference extends DialogPreference implements
         String message = context.getString( R.string.playerMapPreference_popupMessage, player,
                 mMap.getDeviceSummary( context, player ) );
         String btnText = context.getString( R.string.playerMapPreference_popupUnmap );
-        String sensorBtn = context.getString( R.string.inputMapActivity_popupSensor );
         
         
         PromptInputCodeDialog promptInputCodeDialog = PromptInputCodeDialog.newInstance(
-            title, message, btnText, sensorBtn, mUnmappableKeyCodes);
+            title, message, btnText, mUnmappableKeyCodes);
         
         FragmentManager fm = mAssociatedActivity.getSupportFragmentManager();
         promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);

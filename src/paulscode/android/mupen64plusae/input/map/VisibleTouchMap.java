@@ -533,6 +533,7 @@ public class VisibleTouchMap extends TouchMap
             loadAutoHoldImages( profile, "buttonR-holdR" );
             loadAutoHoldImages( profile, "buttonZ-holdZ" );
             loadAutoHoldImages( profile, "buttonS-holdS" );
+            loadAutoHoldImages( profile, "buttonSen-holdSen" );
         }
     }
     

@@ -16,34 +16,58 @@
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: Pierre Renié
+ * Authors: javaxubuntu
  */
-package paulscode.android.mupen64plusae.input.provider;
-
-import com.bda.controller.MotionEvent;
+package paulscode.android.mupen64plusae.input;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import paulscode.android.mupen64plusae.util.SubscriptionManager;
 
 /**
  * Emulates a joystick using accelerometer sensor
  */
-public class SensorProvider extends AbstractProvider implements SensorEventListener {
-    private final int[] mInputCodes;
+public class SensorProvider implements SensorEventListener {
+    public interface OnInputListener {
 
-    public SensorProvider(SensorManager sensorManager) {
-        mInputCodes = getEmulatedJoystickCodes();
+        /**
+         * Called when a single input has been dispatched.
+         * 
+         * @param xStrength
+         *            The raw X input strength
+         * @param yStrength
+         *            The raw Y input strength
+         */
+        public void onAxisChanged(float xStrength, float yStrength);
+
     }
 
-    public static int[] getEmulatedJoystickCodes() {
-        int[] inputCodes = new int[4];
-        inputCodes[0] = axisToInputCode(MotionEvent.AXIS_X, true);
-        inputCodes[1] = axisToInputCode(MotionEvent.AXIS_X, false);
-        inputCodes[2] = axisToInputCode(MotionEvent.AXIS_Y, true);
-        inputCodes[3] = axisToInputCode(MotionEvent.AXIS_Y, false);
-        return inputCodes;
+    /** Listener management. */
+    private final SubscriptionManager<OnInputListener> mPublisher = new SubscriptionManager<OnInputListener>();
+
+    /**
+     * Registers a listener to start receiving input notifications.
+     * 
+     * @param listener
+     *            The listener to register. Null values are safe.
+     */
+    public void registerListener(OnInputListener listener) {
+        mPublisher.subscribe(listener);
+    }
+
+    /**
+     * Unregisters a listener to stop receiving input notifications.
+     * 
+     * @param listener
+     *            The listener to unregister. Null values are safe.
+     */
+    public void unregisterListener(OnInputListener listener) {
+        mPublisher.unsubscribe(listener);
+    }
+
+    public boolean isListenerRegistered(OnInputListener listener) {
+        return mPublisher.getSubscribers().contains(listener);
     }
 
     @Override
@@ -52,8 +76,6 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float[] strengths = new float[mInputCodes.length];
-
         float gX = event.values[0];
         float gY = event.values[1];
         float gZ = event.values[2];
@@ -61,45 +83,32 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
         // Assuming we are in landcape mode
 
         // The most common axe used by the accelerometer: left-right
-        updateStrengthAxisX(strengths, gX, gY, gZ);
+        float rawX = getStrengthAxisX(gX, gY, gZ);
 
         // A less common axe used by the accelerometer: the other axe up-down
-        updateStrengthAxisY(strengths, gX, gZ);
+        float rawY = getStrengthAxisY(gX, gZ);
 
-        notifyListeners(mInputCodes, strengths, 0);
+        for (OnInputListener listener : mPublisher.getSubscribers())
+            listener.onAxisChanged(rawX, rawY);
     }
 
-    private void updateStrengthAxisX(float[] strengths, float gX, float gY, float gZ) {
+    private float getStrengthAxisX(float gX, float gY, float gZ) {
         // Acceleration value of XZ
         float gXZ = (float) Math.sqrt(gX * gX + gZ * gZ);
         float yAngle = (float) calculateAngle(gY, gXZ);
 
         // Accelerometer's Y axis is mapped to joystick's AXIS_X
-        float xStrength = angleToStrength(yAngle);
-        boolean isPositive = xStrength > 0;
-        if (isPositive) {
-            strengths[0] = xStrength;
-            strengths[1] = 0;
-        } else {
-            strengths[0] = 0;
-            strengths[1] = -xStrength;
-        }
+        return angleToStrength(yAngle);
     }
 
-    private void updateStrengthAxisY(float[] strengths, float gX, float gZ) {
+    private float getStrengthAxisY(float gX, float gZ) {
         float xAngle = (float) calculateAngle(gX, gZ);
 
         // Default angle for strength=0: Pi/3 (=60°, more vertical than
         // horizontal)
-        xAngle = xAngle - (float) Math.PI / 3;// TODO: make it configurable
-        float yStrength = -angleToStrength(xAngle);
-        if (yStrength > 0) {
-            strengths[2] = 0;
-            strengths[3] = yStrength;
-        } else {
-            strengths[2] = -yStrength;
-            strengths[3] = 0;
-        }
+        // TODO: make it configurable and disablable
+        xAngle = xAngle - (float) Math.PI / 3;
+        return -angleToStrength(xAngle);
     }
 
     /**

@@ -100,15 +100,9 @@ public class InputMap extends SerializableMap
     
     /** Mupen64Plus function: Screenshot. */
     public static final int FUNC_SCREENSHOT             = OFFSET_GLOBAL_FUNCS + 13;
-
-    /** Mupen64Plus function: activate sensor. */
-    public static final int FUNC_SENSOR_ON              = OFFSET_GLOBAL_FUNCS + 14;
-
-    /** Mupen64Plus function: deactivate sensor. */
-    public static final int FUNC_SENSOR_OFF             = OFFSET_GLOBAL_FUNCS + 15;
     
     /** Total number of mappable controls/functions. */
-    public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 16;
+    public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 14;
     // @formatter:on
     
     /**

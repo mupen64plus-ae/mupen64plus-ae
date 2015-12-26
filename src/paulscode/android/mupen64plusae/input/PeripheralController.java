@@ -22,19 +22,18 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
-import android.annotation.TargetApi;
-import android.util.Log;
-import android.view.InputDevice;
-import android.view.KeyEvent;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import paulscode.android.mupen64plusae.input.provider.SensorProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.TargetApi;
+import android.util.Log;
+import android.view.InputDevice;
+import android.view.KeyEvent;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
@@ -51,15 +50,12 @@ public class PeripheralController extends AbstractController implements
     
     /** The analog deadzone, between 0 and 1, inclusive. */
     private final float mDeadzoneFraction;
-
+    
     /** The analog sensitivity, the amount by which to scale stick values, nominally 1. */
     private final float mSensitivityFraction;
     
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
-
-    /** The sensor provider, which is also added on {@link #mProviders} */
-    private SensorProvider mSensorProvider;
     
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
@@ -84,7 +80,7 @@ public class PeripheralController extends AbstractController implements
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
-            int inputDeadzone, int inputSensitivity, SensorProvider sensorProvider, AbstractProvider... providers )
+            int inputDeadzone, int inputSensitivity, AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
@@ -96,10 +92,6 @@ public class PeripheralController extends AbstractController implements
         
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
-        if (sensorProvider != null) {
-            mSensorProvider = sensorProvider;
-            mProviders.add( sensorProvider );
-        }
         for( AbstractProvider provider : providers )
         {
             if( provider != null )
@@ -282,16 +274,6 @@ public class PeripheralController extends AbstractController implements
                 case InputMap.FUNC_SCREENSHOT:
                     Log.v( "PeripheralController", "FUNC_SCREENSHOT" );
                     CoreInterface.screenshot();
-                    break;
-                case InputMap.FUNC_SENSOR_ON:
-                    Log.v("PeripheralController", "FUNC_SENSOR_ON");
-                    mSensorProvider.registerListener(this);
-                    break;
-                case InputMap.FUNC_SENSOR_OFF:
-                    Log.v("PeripheralController", "FUNC_SENSOR_OFF");
-                    mSensorProvider.unregisterListener(this);
-                    mState.axisFractionX = 0;
-                    mState.axisFractionY = 0;
                     break;
                 default:
                     return false;

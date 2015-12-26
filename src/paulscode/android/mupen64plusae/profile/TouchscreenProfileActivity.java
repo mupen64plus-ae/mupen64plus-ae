@@ -81,6 +81,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private static final String BUTTON_R = "buttonR";
     private static final String BUTTON_Z = "buttonZ";
     private static final String BUTTON_S = "buttonS";
+    private static final String BUTTON_SENSOR = "buttonSen";
     private static final String TAG_X = "-x";
     private static final String TAG_Y = "-y";
     private static final String SCALE = "-scale";
@@ -166,6 +167,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         READABLE_NAMES.put( TouchMap.DPD_LD, getString( R.string.controller_dpad ) );
         READABLE_NAMES.put( TouchMap.DPD_RD, getString( R.string.controller_dpad ) );
         READABLE_NAMES.put( TouchMap.DPD_RU, getString( R.string.controller_dpad ) );
+        READABLE_NAMES.put( TouchMap.TOGGLE_SENSOR, getString( R.string.controller_buttonSensor ) );
         
         // Enable full-screen mode
         getWindow().setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
@@ -265,6 +267,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         setCheckState( menu, R.id.menuItem_buttonR, BUTTON_R );
         setCheckState( menu, R.id.menuItem_buttonZ, BUTTON_Z );
         setCheckState( menu, R.id.menuItem_buttonS, BUTTON_S );
+        setCheckState( menu, R.id.menuItem_buttonSensor, BUTTON_SENSOR );
     }
     
     private void UpdateButtonMenu(MenuListView listView, int menuItemId)
@@ -317,6 +320,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 return;
             case R.id.menuItem_buttonS:
                 toggleAsset( BUTTON_S );
+                return;
+            case R.id.menuItem_buttonSensor:
+                toggleAsset( BUTTON_SENSOR );
                 return;
             case R.id.menuItem_outline:
                 touchscreenSkin = mAppData.touchscreenSkinsDir + "Outline";
