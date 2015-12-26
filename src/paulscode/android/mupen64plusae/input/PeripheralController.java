@@ -282,7 +282,13 @@ public class PeripheralController extends AbstractController implements
                 case InputMap.FUNC_SENSOR_TOGGLE:
                     Log.v("PeripheralController", "FUNC_SENSOR_TOGGLE");
                     if (mSensorController != null) {
-                    	mSensorController.setSensorEnabled(!mSensorController.isSensorEnabled());
+                    	//TODO:update touchscreen button toggle
+                    	boolean sensorWasEnabled = mSensorController.isSensorEnabled();
+                    	if (sensorWasEnabled) {
+                            mState.axisFractionX = 0;
+                            mState.axisFractionY = 0;
+                    	}
+						mSensorController.setSensorEnabled(!sensorWasEnabled);
                     }
                     break;
                 default:
