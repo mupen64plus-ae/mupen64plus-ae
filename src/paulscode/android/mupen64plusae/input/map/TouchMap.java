@@ -63,6 +63,7 @@ public class TouchMap
     /** N64 pseudo-button: dpad-left-up. */
     public static final int DPD_LU = OFFSET_EXTRAS + 3;
     
+    /** N64 pseudo-button: enable/disable the accelerometer sensor. */
     public static final int TOGGLE_SENSOR = OFFSET_EXTRAS + 4;
     
     /** Total number of N64 (pseudo-)buttons. */
