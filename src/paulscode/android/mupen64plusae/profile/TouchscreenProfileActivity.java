@@ -118,9 +118,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     // The directory of the selected touchscreen skin.
     private String touchscreenSkin;
     
-    // True if the touchscreen joystick is animated
-    private boolean isTouchscreenAnimated;
-    
     // This is to prevent more than one popup appearing at once
     private boolean mPopupBeingShown;
     
@@ -193,7 +190,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private void refresh()
     {
         // Reposition the assets and refresh the overlay and options menu
-        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, isTouchscreenAnimated );
+        boolean isTouchscreenAnimated = Boolean.valueOf(mProfile.get( "touchscreenAnimated", "False" ));
+        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, isTouchscreenAnimated);
         mTouchscreenMap.load( touchscreenSkin, mProfile,
                 isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
@@ -634,14 +632,13 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         CheckBox feedback = (CheckBox) view.findViewById( R.id.checkBox_feedback );
         if( assetName.equals("analog") )
         {
-            feedback.setChecked( isTouchscreenAnimated );
+            feedback.setChecked(Boolean.valueOf(mProfile.get("touchscreenAnimated", "False")));
             feedback.setOnCheckedChangeListener( new OnCheckedChangeListener()
             {
                 @Override
                 public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
                 {
                     mProfile.put( "touchscreenAnimated", ( isChecked ? "True" : "False" ) );
-                    isTouchscreenAnimated = isChecked;
                     refresh();
                 }
             } );
