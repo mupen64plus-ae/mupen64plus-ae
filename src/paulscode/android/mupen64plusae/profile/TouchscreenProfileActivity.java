@@ -555,8 +555,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 int index = dragIndex;
                 String title = READABLE_NAMES.get( dragIndex );
                 
-                // D-pad buttons are not holdable
-                if( DPAD.equals( dragAsset ) )
+                // D-pad buttons and TOGGLE_SENSOR are not holdable
+                if( DPAD.equals( dragAsset ) || TouchMap.TOGGLE_SENSOR == index )
                     index = -1;
                 
                 // play the standard button sound effect
