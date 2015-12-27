@@ -22,8 +22,10 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeExports;
@@ -53,12 +55,15 @@ public class PeripheralController extends AbstractController implements
     
     /** The analog sensitivity, the amount by which to scale stick values, nominally 1. */
     private final float mSensitivityFraction;
-    
-    /** The user input providers. */
-    private final ArrayList<AbstractProvider> mProviders;
+
+    /** The state change listener. */
+    private final OnStateChangedListener mListener;
 
     /** The sensor provider, which is also added on {@link #mProviders} */
     private SensorController mSensorController;
+
+    /** The user input providers. */
+    private final ArrayList<AbstractProvider> mProviders;
 
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
@@ -83,7 +88,7 @@ public class PeripheralController extends AbstractController implements
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
-            int inputDeadzone, int inputSensitivity, SensorController sensorController, AbstractProvider... providers )
+            int inputDeadzone, int inputSensitivity, OnStateChangedListener listener, SensorController sensorController, AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
@@ -92,6 +97,7 @@ public class PeripheralController extends AbstractController implements
         mInputMap = inputMap;
         mDeadzoneFraction = ( (float) inputDeadzone ) / 100f;
         mSensitivityFraction = ( (float) inputSensitivity ) / 100f;
+        mListener = listener;
         mSensorController = sensorController;
         
         // Assign the non-null input providers
@@ -282,13 +288,18 @@ public class PeripheralController extends AbstractController implements
                 case InputMap.FUNC_SENSOR_TOGGLE:
                     Log.v("PeripheralController", "FUNC_SENSOR_TOGGLE");
                     if (mSensorController != null) {
-                    	//TODO:update touchscreen button toggle
-                    	boolean sensorWasEnabled = mSensorController.isSensorEnabled();
-                    	if (sensorWasEnabled) {
+                        boolean sensorEnabled = !mSensorController.isSensorEnabled();
+                        if (!sensorEnabled) {
                             mState.axisFractionX = 0;
                             mState.axisFractionY = 0;
-                    	}
-						mSensorController.setSensorEnabled(!sensorWasEnabled);
+                            if (mListener != null) {
+                                mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
+                            }
+                        }
+                        mSensorController.setSensorEnabled(sensorEnabled);
+                        if (mListener != null) {
+                            mListener.onAutoHold(sensorEnabled, TouchMap.TOGGLE_SENSOR);
+                        }
                     }
                     break;
                 default:

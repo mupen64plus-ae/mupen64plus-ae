@@ -757,7 +757,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         CoreInterface.registerVibrator( 1, vibrator );
         
         // Always creating the SensorController, but it's inactive, and it's actived when needed.
-        mSensorController = new SensorController((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+        mSensorController = new SensorController((SensorManager) getSystemService(Context.SENSOR_SERVICE), mOverlay);
         mControllers.add(mSensorController);
         
         // Create the touchscreen controls
@@ -822,25 +822,25 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         {
             ControllerProfile p = mGamePrefs.controllerProfile1;
             mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), mSensorController, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mOverlay, mSensorController, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             ControllerProfile p = mGamePrefs.controllerProfile2;
             mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), null, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mOverlay, null, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             ControllerProfile p = mGamePrefs.controllerProfile3;
             mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), null, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mOverlay, null, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             ControllerProfile p = mGamePrefs.controllerProfile4;
             mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivity(), null, mKeyProvider, axisProvider, mogaProvider ) );
+                    p.getSensitivity(), mOverlay, null, mKeyProvider, axisProvider, mogaProvider ) );
         }
     }
     

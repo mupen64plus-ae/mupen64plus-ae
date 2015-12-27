@@ -116,7 +116,7 @@ public class TouchController extends AbstractController implements OnTouchListen
     private Vibrator mVibrator = null;
 
     /** The user sensor input provider. */
-    private SensorController mProvider;
+    private SensorController mSensorController;
     
     /**
      * Instantiates a new touch controller.
@@ -131,7 +131,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
             Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
-            Set<Integer> autoHoldableButtons, SensorController provider )
+            Set<Integer> autoHoldableButtons, SensorController sensorController )
     {
         mListener = listener;
         mTouchMap = touchMap;
@@ -139,7 +139,7 @@ public class TouchController extends AbstractController implements OnTouchListen
         mAutoHoldMethod = autoHoldMethod;
         mTouchscreenFeedback = touchscreenFeedback;
         mAutoHoldables = autoHoldableButtons;
-        mProvider = provider;
+        mSensorController = sensorController;
         view.setOnTouchListener( this );
     }
     
@@ -223,7 +223,7 @@ public class TouchController extends AbstractController implements OnTouchListen
         }
         
         // Process each touch
-        processTouches( mTouchState, mPointerX, mPointerY, mElapsedTime, maxPid );
+        processTouches( mTouchState, mPointerX, mPointerY, mElapsedTime, maxPid, actionCode );
         
         return true;
     }
@@ -236,9 +236,10 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param pointerX   The x-coordinate of each pointer, between 0 and (screenwidth-1), inclusive.
      * @param pointerY   The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive.
      * @param maxPid     Maximum ID of the pointers that have changed (speed optimization).
+     * @param actionCode The the action code
      */
     private void processTouches( boolean[] touchstate, int[] pointerX, int[] pointerY,
-            long[] elapsedTime, int maxPid )
+            long[] elapsedTime, int maxPid, int actionCode )
     {
         boolean analogMoved = false;
         
@@ -257,7 +258,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             // Process button inputs
             if( pid != mAnalogPid )
                 processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid],
-                        elapsedTime[pid], pid );
+                        elapsedTime[pid], pid, actionCode );
             
             // Process analog inputs
             if( touchstate[pid] && processAnalogTouch( pid, pointerX[pid], pointerY[pid] ) )
@@ -279,9 +280,10 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param xLocation The x-coordinate of the touch, between 0 and (screenwidth-1), inclusive.
      * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
      * @param pid       The identifier of the touch pointer.
+     * @param actionCode The the action code
      */
     private void processButtonTouch( boolean touched, int xLocation, int yLocation,
-            long timeElapsed, int pid )
+            long timeElapsed, int pid, int actionCode )
     {
         // Determine the index of the button that was pressed
         int index = touched
@@ -353,7 +355,22 @@ public class TouchController extends AbstractController implements OnTouchListen
         if( index != TouchMap.UNMAPPED )
         {
             // Finger is on a valid button
-            
+            if (index == TouchMap.TOGGLE_SENSOR && mSensorController != null
+                    && (actionCode == MotionEvent.ACTION_DOWN || actionCode == MotionEvent.ACTION_POINTER_DOWN)) {
+                boolean sensorEnabled = !mSensorController.isSensorEnabled();
+                if (!sensorEnabled) {
+                    mState.axisFractionX = 0;
+                    mState.axisFractionY = 0;
+                    if (mListener != null) {
+                        mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
+                    }
+                }
+                mSensorController.setSensorEnabled(sensorEnabled);
+                if (mListener != null) {
+                    mListener.onAutoHold(sensorEnabled, index);
+                }
+            }
+
             // Provide simple vibration feedback for any valid button when first touched
             if( touched && mTouchscreenFeedback && mVibrator != null )
             {
@@ -485,19 +502,6 @@ public class TouchController extends AbstractController implements OnTouchListen
                 case TouchMap.DPD_LU:
                     mState.buttons[DPD_L] = touched;
                     mState.buttons[DPD_U] = touched;
-                    break;
-                case TouchMap.TOGGLE_SENSOR:
-                    if (touched == false && mProvider != null) {
-                        if (mProvider.isSensorEnabled()) {
-                            mProvider.setSensorEnabled(false);
-                            mState.axisFractionX = 0;
-                            mState.axisFractionY = 0;
-                            mListener.onAutoHold( false, index );
-                        } else {
-                            mProvider.setSensorEnabled(true);
-                            mListener.onAutoHold( true, index );
-                        }
-                    }
                     break;
                 default:
                     break;
