@@ -47,6 +47,7 @@
   <string name="menuItem_refreshRoms">Rafraîchir les ROMs</string>
   <string name="menuItem_settings">Paramètres</string>
   <string name="menuItem_globalSettings">Paramètres généraux</string>
+  <string name="menuItem_sensorConfiguration">Configurer l\'accéléromètre</string>
   <string name="menuItem_emulationProfiles">Profiles d\'émulation</string>
   <string name="menuItem_touchscreenProfiles">Profiles d\'écran tactile</string>
   <string name="menuItem_controllerProfiles">Profiles de manette</string>
@@ -425,6 +426,16 @@
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal : %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertical : %1$d %%</string>
   <string name="touchscreenProfileActivity_autoHoldable">Auto-maintenable</string>
+  <!-- Sensor configuration -->
+  <string name="sensorConfig_activateOnStart">Activer au lancement d\'un jeu</string>
+  <string name="sensorConfig_joystickXEmulation">Émulation de l\'axe X du joystick</string>
+  <string name="sensorConfig_joystickYEmulation">Émulation de l\'axe Y du joystick</string>
+  <string name="sensorConfig_sensorX">Axe X de l\'accéléromètre en mode paysage</string>
+  <string name="sensorConfig_sensorY">Axe Y de l\'accéléromètre en mode paysage</string>
+  <string name="sensorConfig_sensitivity">Sensibilité</string>
+  <string name="sensorConfig_invertAxis">Inverser l\'axe</string>
+  <string name="sensorConfig_axisCustom">Personnalisé</string>
+  <string name="sensorConfig_axisDisabled">Désactivé</string>
   <!--Controller button names-->
   <string name="controller_analog">Stick analogique</string>
   <string name="controller_dpad">Flèches directionelles</string>

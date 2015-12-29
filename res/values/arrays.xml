@@ -49,6 +49,20 @@
     </string-array>
 
     <string name="touchscreenAutoHold_default" translatable="false">2</string>
+    
+    <!-- Sensor configuration axis List -->
+    <string-array name="sensorConfig_axis_entries" translatable="false">
+        <item>@string/sensorConfig_sensorX</item>
+        <item>@string/sensorConfig_sensorY</item>
+        <item>@string/sensorConfig_axisCustom</item>
+        <item>@string/sensorConfig_axisDisabled</item>
+    </string-array>
+    <string-array name="sensorConfig_axis_values" translatable="false">
+        <item>Y/xz</item>
+        <item>X/z</item>
+        <item></item>
+        <item></item>
+    </string-array>
 
     <!-- Screen Orientation List -->
     <string-array name="displayOrientation_entries" translatable="false">

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <CheckBox
+            android:id="@+id/sensorConfig_activateOnStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sensorConfig_activateOnStart" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:columnCount="2"
+            android:padding="2dip" >
+
+            <TextView
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:text="@string/sensorConfig_joystickXEmulation" />
+
+            <Spinner
+                android:id="@+id/sensorConfig_sensorX"
+                android:layout_gravity="fill"
+                android:entries="@array/sensorConfig_axis_entries" />
+
+            <EditText
+                android:id="@+id/sensorConfig_customX"
+                android:layout_gravity="fill"
+                android:inputType="text|textNoSuggestions"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:text="@string/sensorConfig_sensitivity" />
+
+            <Button
+                android:id="@+id/sensorConfig_sensitivityX"
+                android:layout_gravity="fill" />
+
+            <CheckBox
+                android:id="@+id/sensorConfig_invertX"
+                android:layout_gravity="fill"
+                android:text="@string/sensorConfig_invertAxis" />
+
+            <SeekBar
+                android:id="@+id/sensorConfig_xSensitivity"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:max="300"
+                android:progress="30" />
+        </GridLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:background="@drawable/border"
+            android:columnCount="2"
+            android:padding="2dip" >
+
+            <TextView
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:text="@string/sensorConfig_joystickYEmulation" />
+
+            <Spinner
+                android:id="@+id/sensorConfig_sensorY"
+                android:layout_gravity="fill"
+                android:entries="@array/sensorConfig_axis_entries" />
+
+            <EditText
+                android:id="@+id/sensorConfig_customY"
+                android:layout_gravity="fill"
+                android:inputType="text|textNoSuggestions"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:text="@string/sensorConfig_sensitivity" />
+
+            <Button
+                android:id="@+id/sensorConfig_sensitivityY"
+                android:layout_gravity="fill" />
+
+            <CheckBox
+                android:id="@+id/sensorConfig_invertY"
+                android:layout_gravity="fill"
+                android:text="@string/sensorConfig_invertAxis" />
+            
+            <SeekBar
+                android:id="@+id/sensorConfig_ySensitivity"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:max="300"
+                android:progress="30" />
+        </GridLayout>
+    </LinearLayout>
+
+</ScrollView>

@@ -6,6 +6,9 @@
         android:icon="@drawable/ic_settings"
         android:title="@string/menuItem_globalSettings"/>
     <item
+        android:id="@+id/menuItem_sensorConfiguration"
+        android:title="@string/menuItem_sensorConfiguration"/>
+    <item
         android:id="@+id/menuItem_buttons"
         android:title="@string/touchscreenProfileActivity_buttons">
         <menu>
