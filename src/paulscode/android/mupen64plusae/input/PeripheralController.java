@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
-import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeExports;
@@ -299,7 +298,6 @@ public class PeripheralController extends AbstractController implements
                         mSensorController.setSensorEnabled(sensorEnabled);
                         if (mListener != null) {
                             mListener.onSensorEnabled(sensorEnabled);
-                            mListener.onAutoHold(sensorEnabled, TouchMap.TOGGLE_SENSOR);
                         }
                     }
                     break;
