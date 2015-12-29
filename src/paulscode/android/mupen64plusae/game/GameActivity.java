@@ -766,8 +766,10 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
                         mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAngleX, mGamePrefs.sensorAxisY,
                         mGamePrefs.sensorSensitivityY, mGamePrefs.sensorAngleY);
                 mControllers.add(mSensorController);
-                mSensorController.setSensorEnabled(mGamePrefs.sensorActivateOnStart);
-                mOverlay.onSensorEnabled(mGamePrefs.sensorActivateOnStart);
+                if (mGamePrefs.sensorActivateOnStart) {
+                    mSensorController.setSensorEnabled(true);
+                    mOverlay.onSensorEnabled(true);
+                }
             }
 
             // Create the touchscreen controller

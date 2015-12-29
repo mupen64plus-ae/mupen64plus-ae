@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.game;
 
 import paulscode.android.mupen64plusae.input.TouchController;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
@@ -134,5 +135,6 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         if (mTouchMap != null && mIsAnalogHiddenWhenSensor) {
             mTouchMap.setAnalogEnabled(!sensorEnabled);
         }
+        onAutoHold(sensorEnabled, TouchMap.TOGGLE_SENSOR);
     }
 }
