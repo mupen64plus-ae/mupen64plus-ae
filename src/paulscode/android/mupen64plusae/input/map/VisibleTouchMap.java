@@ -536,6 +536,7 @@ public class VisibleTouchMap extends TouchMap
             loadAutoHoldImages( profile, "buttonSen-holdSen" );
         }
     }
+    
     @Override
     public void setAnalogEnabled(boolean enabled) {
         super.setAnalogEnabled(enabled);

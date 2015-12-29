@@ -21,6 +21,12 @@
             android:layout_height="wrap_content"
             android:text="@string/touchscreenAnimation_summary" />
             
+        <CheckBox
+            android:id="@+id/checkBox_hideJoystick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sensorConfig_hideJoystick" />
+            
         <RelativeLayout
             android:id="@+id/rowX"
             android:layout_width="match_parent"

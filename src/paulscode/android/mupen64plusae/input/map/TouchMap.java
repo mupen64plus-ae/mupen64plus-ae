@@ -102,6 +102,8 @@ public class TouchMap
     /** Analog foreground image (movable). */
     protected Image analogForeImage;
     
+    protected boolean analogIsEnabled = true;
+    
     /** X-coordinate of the analog background, in percent. */
     private int analogBackX;
     
@@ -355,7 +357,7 @@ public class TouchMap
      */
     public Point getAnalogDisplacement( int xLocation, int yLocation )
     {
-        if( analogBackImage == null )
+        if( analogBackImage == null || !analogIsEnabled )
             return new Point( 0, 0 );
         
         // Distance from center along x-axis

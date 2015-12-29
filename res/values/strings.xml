@@ -520,6 +520,7 @@
     <string name="touchscreenProfileActivity_autoHoldable">Auto-holdable</string>
 
     <!-- Sensor configuration -->
+    <string name="sensorConfig_hideJoystick">Hide when sensor active</string>
     <string name="sensorConfig_activateOnStart">Activate on game start</string>
     <string name="sensorConfig_joystickXEmulation">Joystick X axis emulation</string>
     <string name="sensorConfig_joystickYEmulation">Joystick Y axis emulation</string>

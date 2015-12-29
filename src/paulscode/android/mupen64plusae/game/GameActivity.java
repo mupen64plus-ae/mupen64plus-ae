@@ -286,8 +286,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             mTouchscreenMap.load( mGamePrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
                     mGamePrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled,
                     mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
-            mOverlay.initialize( mTouchscreenMap, !mGamePrefs.isTouchscreenHidden,
-                    mGlobalPrefs.isFpsEnabled, mGamePrefs.isTouchscreenAnimated );
+            mOverlay.initialize(mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGlobalPrefs.isFpsEnabled,
+                    mGamePrefs.isAnalogHiddenWhenSensor, mGamePrefs.isTouchscreenAnimated);
         }
         
         // Initialize user interface devices
@@ -773,6 +773,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
                         mGamePrefs.sensorSensitivityY, mGamePrefs.sensorAngleY);
                 mControllers.add(mSensorController);
                 mSensorController.setSensorEnabled(mGamePrefs.sensorActivateOnStart);
+                mOverlay.onSensorEnabled(mGamePrefs.sensorActivateOnStart);
             }
 
             // Create the touchscreen controller

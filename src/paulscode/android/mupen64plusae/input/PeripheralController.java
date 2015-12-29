@@ -298,6 +298,7 @@ public class PeripheralController extends AbstractController implements
                         }
                         mSensorController.setSensorEnabled(sensorEnabled);
                         if (mListener != null) {
+                            mListener.onSensorEnabled(sensorEnabled);
                             mListener.onAutoHold(sensorEnabled, TouchMap.TOGGLE_SENSOR);
                         }
                     }
