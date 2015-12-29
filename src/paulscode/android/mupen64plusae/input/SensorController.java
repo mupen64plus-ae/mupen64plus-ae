@@ -25,7 +25,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
-import paulscode.android.mupen64plusae.util.Utility;
 
 /**
  * Emulates a joystick using accelerometer sensor
@@ -35,12 +34,39 @@ public class SensorController extends AbstractController implements SensorEventL
 
     /** The state change listener. */
     private final OnStateChangedListener mListener;
+    private final int[] sensorEventValuesRefX, sensorEventAdjacentValuesRefX, sensorEventValuesRefY,
+            sensorEventAdjacentValuesRefY;
+    private final float angleX, angleY;
+    private final float sensitivityX, sensitivityY;
     private boolean isPaused = true;
     private boolean mSensorEnabled = false;
 
-    public SensorController(SensorManager sensorManager, OnStateChangedListener listener) {
+    public SensorController(SensorManager sensorManager, OnStateChangedListener listener, String sensorAxisX,
+            int sensorSensitivityX, float sensorAngleX, String sensorAxisY, int sensorSensitivityY,
+            float sensorAngleY) {
         mSensorManager = sensorManager;
         mListener = listener;
+
+        String[] x = sensorAxisX.split("/");
+        if (x.length == 2 && !x[0].isEmpty() && !x[1].isEmpty()) {
+            sensorEventValuesRefX = xyzToSensorEventValuesRef(x[0]);
+            sensorEventAdjacentValuesRefX = xyzToSensorEventValuesRef(x[1]);
+        } else {
+            sensorEventValuesRefX = new int[0];
+            sensorEventAdjacentValuesRefX = sensorEventValuesRefX;
+        }
+        String[] y = sensorAxisY.split("/");
+        if (y.length == 2 && !y[0].isEmpty() && !y[1].isEmpty()) {
+            sensorEventValuesRefY = xyzToSensorEventValuesRef(y[0]);
+            sensorEventAdjacentValuesRefY = xyzToSensorEventValuesRef(y[1]);
+        } else {
+            sensorEventValuesRefY = new int[0];
+            sensorEventAdjacentValuesRefY = sensorEventValuesRefY;
+        }
+        angleX = sensorAngleX;
+        angleY = sensorAngleY;
+        this.sensitivityX = sensorSensitivityX / 100f;
+        this.sensitivityY = sensorSensitivityY / 100f;
     }
 
     public boolean isSensorEnabled() {
@@ -77,51 +103,48 @@ public class SensorController extends AbstractController implements SensorEventL
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float gX = event.values[0];
-        float gY = event.values[1];
-        float gZ = event.values[2];
-
-        // Assuming we are in landcape mode
-
-        // The most common axe used by the accelerometer: left-right
-        float rawX = getStrengthAxisX(gX, gY, gZ);
-
-        // A less common axe used by the accelerometer: the other axe up-down
-        float rawY = getStrengthAxisY(gX, gZ);
+        float rawX = getStrength(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX, angleX)
+                * sensitivityX;
+        float rawY = getStrength(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY, angleY)
+                * sensitivityY;
 
         float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
-
-        // TODO:add a configurable sensitivityFraction
-        // Copy-paste from PeripheralController
-        // Normalize the vector
-        float normalizedX = rawX / magnitude;
-        float normalizedY = rawY / magnitude;
-
-        magnitude = Utility.clamp(magnitude, 0f, 1f);
-
-        mState.axisFractionX = normalizedX * magnitude;
-        mState.axisFractionY = normalizedY * magnitude;
+        float factor = magnitude > 1 ? magnitude : 1;
+        mState.axisFractionX = rawX / factor;
+        mState.axisFractionY = rawY / factor;
         notifyChanged();
         mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
     }
 
-    private float getStrengthAxisX(float gX, float gY, float gZ) {
-        // Acceleration value of XZ
-        float gXZ = (float) Math.sqrt(gX * gX + gZ * gZ);
-        float yAngle = (float) calculateAngle(gY, gXZ);
-
-        // Accelerometer's Y axis is mapped to joystick's AXIS_X
-        return angleToStrength(yAngle);
+    private float getStrength(float[] sensorEventValues, int[] valuesRef, int[] adjacentValuesRef,
+            float idleAngleDegree) {
+        if (valuesRef.length == 0 || adjacentValuesRef.length == 0) {
+            return 0; // This axis is disabled
+        }
+        float value = calculateAcceleration(sensorEventValues, valuesRef);
+        float adjacentValue = calculateAcceleration(sensorEventValues, adjacentValuesRef);
+        float angle = (float) calculateAngle(value, adjacentValue) - idleAngleDegree / 180 * (float) Math.PI;
+        return angleToStrength(angle);
     }
 
-    private float getStrengthAxisY(float gX, float gZ) {
-        float xAngle = (float) calculateAngle(gX, gZ);
-
-        // Default angle for strength=0: Pi/3 (=60°, more vertical than
-        // horizontal)
-        // TODO: make it configurable and disablable
-        xAngle = xAngle - (float) Math.PI / 3;
-        return -angleToStrength(xAngle);
+    /**
+     * Calculates the total acceleration of some axis
+     * 
+     * @param sensorEventValues
+     *            the sensor acceleration on each axis
+     * @param valuesRef
+     *            the ref of the axis we want to take into account
+     * @return the total acceleration value
+     */
+    private float calculateAcceleration(float[] sensorEventValues, int[] valuesRef) {
+        if (valuesRef.length == 1) {
+            return sensorEventValues[valuesRef[0]];
+        }
+        float value = 0;
+        for (int ref : valuesRef) {
+            value += sensorEventValues[ref] * sensorEventValues[ref];
+        }
+        return (float) Math.sqrt(value);
     }
 
     /**
@@ -143,5 +166,28 @@ public class SensorController extends AbstractController implements SensorEventL
         // which is configured on the controller)
         float strengthMaxDegree = 15; // 15°
         return angle / (float) Math.PI * 180 / strengthMaxDegree;
+    }
+
+    private static int[] xyzToSensorEventValuesRef(String string) {
+        int[] sensorEventValuesRef = new int[string.length()];
+        for (int i = 0; i < sensorEventValuesRef.length; i++) {
+            switch (string.charAt(i)) {
+            case 'x':
+            case 'X':
+                sensorEventValuesRef[i] = 0;
+                break;
+            case 'y':
+            case 'Y':
+                sensorEventValuesRef[i] = 1;
+                break;
+            case 'z':
+            case 'Z':
+                sensorEventValuesRef[i] = 2;
+                break;
+            default:
+                throw new RuntimeException("Invalid axis definition: " + string);
+            }
+        }
+        return sensorEventValuesRef;
     }
 }

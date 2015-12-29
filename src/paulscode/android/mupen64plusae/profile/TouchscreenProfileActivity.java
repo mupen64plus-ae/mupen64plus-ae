@@ -286,6 +286,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             case R.id.menuItem_globalSettings:
                 ActivityHelper.startGlobalPrefsActivity( this, 1 );
                 return;
+            case R.id.menuItem_sensorConfiguration:
+                new SensorConfigurationDialog(this, mProfile).show();
+                return;
             case R.id.menuItem_exit:
                 finish();
                 return;

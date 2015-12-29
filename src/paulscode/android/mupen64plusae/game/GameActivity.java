@@ -762,13 +762,19 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
         CoreInterface.registerVibrator( 1, vibrator );
         
-        // Always creating the SensorController, but it's inactive, and it's actived when needed.
-        mSensorController = new SensorController((SensorManager) getSystemService(Context.SENSOR_SERVICE), mOverlay);
-        mControllers.add(mSensorController);
-        
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
         {
+            if (!mGamePrefs.sensorAxisX.isEmpty() || !mGamePrefs.sensorAxisY.isEmpty()) {
+                // Create the sensor controller
+                SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+                mSensorController = new SensorController(sensorManager, mOverlay, mGamePrefs.sensorAxisX,
+                        mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAngleX, mGamePrefs.sensorAxisY,
+                        mGamePrefs.sensorSensitivityY, mGamePrefs.sensorAngleY);
+                mControllers.add(mSensorController);
+                mSensorController.setSensorEnabled(mGamePrefs.sensorActivateOnStart);
+            }
+
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
                     inputSource, mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,

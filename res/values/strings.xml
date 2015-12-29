@@ -64,6 +64,7 @@
     <string name="menuItem_refreshRoms">Refresh ROMs</string>
     <string name="menuItem_settings">Settings</string>
     <string name="menuItem_globalSettings">Global settings</string>
+    <string name="menuItem_sensorConfiguration">Sensor configuration</string>
     <string name="menuItem_profiles">Profiles</string>
     <string name="menuItem_emulationProfiles">Emulation profiles</string>
     <string name="menuItem_touchscreenProfiles">Touchscreen profiles</string>
@@ -517,6 +518,17 @@
     <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
     <string name="touchscreenProfileActivity_ScaleSlider">Scaling: %1$d %%</string>
     <string name="touchscreenProfileActivity_autoHoldable">Auto-holdable</string>
+
+    <!-- Sensor configuration -->
+    <string name="sensorConfig_activateOnStart">Activate on game start</string>
+    <string name="sensorConfig_joystickXEmulation">Joystick X axis emulation</string>
+    <string name="sensorConfig_joystickYEmulation">Joystick Y axis emulation</string>
+    <string name="sensorConfig_sensorX">Usual sensor\'s X axis in landscape mode</string>
+    <string name="sensorConfig_sensorY">Usual sensor\'s Y axis in landscape mode</string>
+    <string name="sensorConfig_angle">IDLE angle (°)</string>
+    <string name="sensorConfig_invertAxis">Invert axis</string>
+    <string name="sensorConfig_axisCustom">Custom</string>
+    <string name="sensorConfig_axisDisabled">Disabled</string>
 
     <!-- Controller button names -->
     <string name="controller_analog">Analog stick</string>
