@@ -467,7 +467,8 @@ public class GamePrefs
                 touchscreenSkin =  touchscreenProfile.get( "touchscreenCustomSkinPath", "" );
             else
                 touchscreenSkin = appData.touchscreenSkinsDir + layout;
-            
+
+            // Sensor prefs
             sensorActivateOnStart = Boolean.valueOf(touchscreenProfile.get("sensorActivateOnStart"));
             sensorAxisX = touchscreenProfile.get("sensorAxisX", "");
             int sensitivity;
