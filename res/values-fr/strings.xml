@@ -427,6 +427,7 @@
   <string name="touchscreenProfileActivity_verticalSlider">Vertical : %1$d %%</string>
   <string name="touchscreenProfileActivity_autoHoldable">Auto-maintenable</string>
   <!-- Sensor configuration -->
+  <string name="sensorConfig_hideJoystick">Masquer quand l\'accéléromètre est activé</string>
   <string name="sensorConfig_activateOnStart">Activer au lancement d\'un jeu</string>
   <string name="sensorConfig_joystickXEmulation">Émulation de l\'axe X du joystick</string>
   <string name="sensorConfig_joystickYEmulation">Émulation de l\'axe Y du joystick</string>

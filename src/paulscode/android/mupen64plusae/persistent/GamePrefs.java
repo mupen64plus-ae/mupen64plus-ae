@@ -197,6 +197,9 @@ public class GamePrefs
     
     /** True if the touchscreen joystick is animated. */
     public final boolean isTouchscreenAnimated;
+
+    /** True if the touchscreen joystick is hidden when sensor is enabled. */
+    public final boolean isAnalogHiddenWhenSensor;
     
     /** The width of the OpenGL rendering context, in pixels. */
     public final int videoRenderWidth;
@@ -476,6 +479,7 @@ public class GamePrefs
                 touchscreenSkin = appData.touchscreenSkinsDir + layout;
 
             // Sensor prefs
+            isAnalogHiddenWhenSensor = Boolean.valueOf(touchscreenProfile.get("touchscreenHideAnalogWhenSensor"));
             sensorActivateOnStart = Boolean.valueOf(touchscreenProfile.get("sensorActivateOnStart"));
             sensorAxisX = touchscreenProfile.get("sensorAxisX", "");
             sensorAngleX = SafeMethods.toFloat(touchscreenProfile.get("sensorAngleX"), 0);
@@ -507,6 +511,7 @@ public class GamePrefs
             touchscreenAutoHoldables = null;
             touchscreenSkin = "";
 
+            isAnalogHiddenWhenSensor = false;
             sensorActivateOnStart = false;
             sensorAxisX = null;
             sensorAngleX = 0;

@@ -34,6 +34,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     private VisibleTouchMap mTouchMap;
     private boolean mDrawingEnabled = true;
     private boolean mFpsEnabled = false;
+    private boolean mIsAnalogHiddenWhenSensor = false;
     private int mHatRefreshPeriod = 0;
     private int mHatRefreshCount = 0;
     
@@ -43,11 +44,13 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         requestFocus();
     }
     
-    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, boolean fpsEnabled, boolean joystickAnimated )
+    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, boolean fpsEnabled,
+            boolean isAnalogHiddenWhenSensor, boolean joystickAnimated )
     {
         mTouchMap = touchMap;
         mDrawingEnabled = drawingEnabled;
         mFpsEnabled = fpsEnabled;
+        mIsAnalogHiddenWhenSensor = isAnalogHiddenWhenSensor;
         mHatRefreshPeriod = joystickAnimated ? 3 : 0;
         
         CoreInterface.setOnFpsChangedListener( this, fpsEnabled ? 15 : 0 );
@@ -123,6 +126,13 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         {
             // Redraw the dynamic frame rate info
             mTouchMap.drawFps( canvas );
+        }
+    }
+
+    @Override
+    public void onSensorEnabled(boolean sensorEnabled) {
+        if (mTouchMap != null && mIsAnalogHiddenWhenSensor) {
+            mTouchMap.setAnalogEnabled(!sensorEnabled);
         }
     }
 }

@@ -191,7 +191,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     {
         // Reposition the assets and refresh the overlay and options menu
         boolean isTouchscreenAnimated = Boolean.valueOf(mProfile.get( "touchscreenAnimated", "False" ));
-        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, isTouchscreenAnimated);
+        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, false, isTouchscreenAnimated);
         mTouchscreenMap.load( touchscreenSkin, mProfile,
                 isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
@@ -633,9 +633,11 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         
         // Setup the visual feedback checkbox
         CheckBox feedback = (CheckBox) view.findViewById( R.id.checkBox_feedback );
+        CheckBox hide = (CheckBox) view.findViewById( R.id.checkBox_hideJoystick );
         if( assetName.equals("analog") )
         {
             feedback.setChecked(Boolean.valueOf(mProfile.get("touchscreenAnimated", "False")));
+            hide.setChecked(Boolean.valueOf(mProfile.get("touchscreenHideAnalogWhenSensor")));
             feedback.setOnCheckedChangeListener( new OnCheckedChangeListener()
             {
                 @Override
@@ -645,10 +647,17 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                     refresh();
                 }
             } );
+            hide.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mProfile.put("touchscreenHideAnalogWhenSensor", String.valueOf(isChecked));
+                }
+            } );
         }
         else
         {
-            feedback.setVisibility( View.GONE );
+            feedback.setVisibility( View.GONE);
+            hide.setVisibility(View.GONE);
         }
         
         // Setup the auto-holdability checkbox

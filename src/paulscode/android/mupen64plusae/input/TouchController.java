@@ -53,6 +53,8 @@ public class TouchController extends AbstractController implements OnTouchListen
          * @param index The index of the auto-hold mask.
          */
         public void onAutoHold( boolean pressed, int index );
+        
+        void onSensorEnabled(boolean enabled);
     }
     
     public static final int AUTOHOLD_METHOD_DISABLED = 0;
@@ -367,6 +369,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 }
                 mSensorController.setSensorEnabled(sensorEnabled);
                 if (mListener != null) {
+                    mListener.onSensorEnabled(sensorEnabled);
                     mListener.onAutoHold(sensorEnabled, index);
                 }
             }
