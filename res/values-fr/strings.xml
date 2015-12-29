@@ -432,7 +432,7 @@
   <string name="sensorConfig_joystickYEmulation">Émulation de l\'axe Y du joystick</string>
   <string name="sensorConfig_sensorX">Axe X de l\'accéléromètre en mode paysage</string>
   <string name="sensorConfig_sensorY">Axe Y de l\'accéléromètre en mode paysage</string>
-  <string name="sensorConfig_sensitivity">Sensibilité</string>
+  <string name="sensorConfig_angle">Angle au repos (°)</string>
   <string name="sensorConfig_invertAxis">Inverser l\'axe</string>
   <string name="sensorConfig_axisCustom">Personnalisé</string>
   <string name="sensorConfig_axisDisabled">Désactivé</string>

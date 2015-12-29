@@ -19,16 +19,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border"
-            android:columnCount="2"
+            android:columnCount="3"
             android:padding="2dip" >
 
             <TextView
-                android:layout_columnSpan="2"
-                android:layout_gravity="fill"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
                 android:text="@string/sensorConfig_joystickXEmulation" />
 
             <Spinner
                 android:id="@+id/sensorConfig_sensorX"
+                android:layout_columnSpan="2"
                 android:layout_gravity="fill"
                 android:entries="@array/sensorConfig_axis_entries" />
 
@@ -40,41 +41,44 @@
 
             <TextView
                 android:layout_columnSpan="2"
-                android:layout_gravity="fill"
-                android:text="@string/sensorConfig_sensitivity" />
+                android:layout_gravity="center|right"
+                android:text="@string/sensorConfig_angle" />
 
-            <Button
-                android:id="@+id/sensorConfig_sensitivityX"
-                android:layout_gravity="fill" />
+            <EditText
+                android:id="@+id/sensorConfig_angleX"
+                android:layout_gravity="fill"
+                android:inputType="numberDecimal" />
 
             <CheckBox
                 android:id="@+id/sensorConfig_invertX"
                 android:layout_gravity="fill"
+                android:layout_marginRight="5dip"
                 android:text="@string/sensorConfig_invertAxis" />
 
-            <SeekBar
-                android:id="@+id/sensorConfig_xSensitivity"
-                android:layout_columnSpan="2"
-                android:layout_gravity="fill"
-                android:max="300"
-                android:progress="30" />
+            <TextView
+                android:layout_gravity="center|right"
+                android:text="@string/menuItem_sensitivity" />
+
+            <Button
+                android:id="@+id/sensorConfig_sensitivityX"
+                android:layout_gravity="fill" />
         </GridLayout>
 
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
             android:background="@drawable/border"
-            android:columnCount="2"
+            android:columnCount="3"
             android:padding="2dip" >
 
             <TextView
-                android:layout_columnSpan="2"
-                android:layout_gravity="fill"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
                 android:text="@string/sensorConfig_joystickYEmulation" />
 
             <Spinner
                 android:id="@+id/sensorConfig_sensorY"
+                android:layout_columnSpan="2"
                 android:layout_gravity="fill"
                 android:entries="@array/sensorConfig_axis_entries" />
 
@@ -86,24 +90,27 @@
 
             <TextView
                 android:layout_columnSpan="2"
-                android:layout_gravity="fill"
-                android:text="@string/sensorConfig_sensitivity" />
+                android:layout_gravity="center|right"
+                android:text="@string/sensorConfig_angle" />
 
-            <Button
-                android:id="@+id/sensorConfig_sensitivityY"
-                android:layout_gravity="fill" />
+            <EditText
+                android:id="@+id/sensorConfig_angleY"
+                android:layout_gravity="fill"
+                android:inputType="numberDecimal" />
 
             <CheckBox
                 android:id="@+id/sensorConfig_invertY"
                 android:layout_gravity="fill"
+                android:layout_marginRight="5dip"
                 android:text="@string/sensorConfig_invertAxis" />
-            
-            <SeekBar
-                android:id="@+id/sensorConfig_ySensitivity"
-                android:layout_columnSpan="2"
-                android:layout_gravity="fill"
-                android:max="300"
-                android:progress="30" />
+
+            <TextView
+                android:layout_gravity="center|right"
+                android:text="@string/menuItem_sensitivity" />
+
+            <Button
+                android:id="@+id/sensorConfig_sensitivityY"
+                android:layout_gravity="fill" />
         </GridLayout>
     </LinearLayout>
 

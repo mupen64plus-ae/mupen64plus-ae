@@ -763,7 +763,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
                 // Create the sensor controller
                 SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
                 mSensorController = new SensorController(sensorManager, mOverlay, mGamePrefs.sensorAxisX,
-                        mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAxisY, mGamePrefs.sensorSensitivityY);
+                        mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAngleX, mGamePrefs.sensorAxisY,
+                        mGamePrefs.sensorSensitivityY, mGamePrefs.sensorAngleY);
                 mControllers.add(mSensorController);
                 mSensorController.setSensorEnabled(mGamePrefs.sensorActivateOnStart);
             }

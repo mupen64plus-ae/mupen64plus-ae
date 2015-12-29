@@ -12,6 +12,7 @@ import paulscode.android.mupen64plusae.preference.MultiSelectListPreference;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -155,11 +156,17 @@ public class GamePrefs
     /** The sensor values used for X axis emulation */
     public final String sensorAxisX;
 
+    /** The phone's orientation angle for X axis value=0 */
+    public final float sensorAngleX;
+
     /** The sensor's X axis sensitivity (%), may be negative to invert axes */
     public final int sensorSensitivityX;
 
     /** The sensor values used for Y axis emulation */
     public final String sensorAxisY;
+
+    /** The phone's orientation angle for Y axis value=0 */
+    public final float sensorAngleY;
 
     /** The sensor's Y axis sensitivity (%), may be negative to invert axes */
     public final int sensorSensitivityY;
@@ -471,6 +478,7 @@ public class GamePrefs
             // Sensor prefs
             sensorActivateOnStart = Boolean.valueOf(touchscreenProfile.get("sensorActivateOnStart"));
             sensorAxisX = touchscreenProfile.get("sensorAxisX", "");
+            sensorAngleX = SafeMethods.toFloat(touchscreenProfile.get("sensorAngleX"), 0);
             int sensitivity;
             try {
                 sensitivity = Integer.valueOf(touchscreenProfile.get("sensorSensitivityX"));
@@ -482,6 +490,7 @@ public class GamePrefs
             }
             sensorSensitivityX = sensitivity;
             sensorAxisY = touchscreenProfile.get("sensorAxisY", "");
+            sensorAngleY = SafeMethods.toFloat(touchscreenProfile.get("sensorAngleY"), 0);
             try {
                 sensitivity = Integer.valueOf(touchscreenProfile.get("sensorSensitivityY"));
             } catch (NumberFormatException ex) {
@@ -500,8 +509,10 @@ public class GamePrefs
 
             sensorActivateOnStart = false;
             sensorAxisX = null;
+            sensorAngleX = 0;
             sensorSensitivityX = 100;
             sensorAxisY = null;
+            sensorAngleY = 0;
             sensorSensitivityY = 100;
         }
                 

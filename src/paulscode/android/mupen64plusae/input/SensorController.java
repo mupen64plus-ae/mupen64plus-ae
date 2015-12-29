@@ -25,7 +25,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
-import paulscode.android.mupen64plusae.util.Utility;
 
 /**
  * Emulates a joystick using accelerometer sensor
@@ -37,12 +36,14 @@ public class SensorController extends AbstractController implements SensorEventL
     private final OnStateChangedListener mListener;
     private final int[] sensorEventValuesRefX, sensorEventAdjacentValuesRefX, sensorEventValuesRefY,
             sensorEventAdjacentValuesRefY;
-    private final float sensorSensitivityX, sensorSensitivityY;
+    private final float angleX, angleY;
+    private final float sensitivityX, sensitivityY;
     private boolean isPaused = true;
     private boolean mSensorEnabled = false;
 
     public SensorController(SensorManager sensorManager, OnStateChangedListener listener, String sensorAxisX,
-            int sensorSensitivityX, String sensorAxisY, int sensorSensitivityY) {
+            int sensorSensitivityX, float sensorAngleX, String sensorAxisY, int sensorSensitivityY,
+            float sensorAngleY) {
         mSensorManager = sensorManager;
         mListener = listener;
 
@@ -62,8 +63,10 @@ public class SensorController extends AbstractController implements SensorEventL
             sensorEventValuesRefY = new int[0];
             sensorEventAdjacentValuesRefY = sensorEventValuesRefY;
         }
-        this.sensorSensitivityX = sensorSensitivityX / 100f;
-        this.sensorSensitivityY = sensorSensitivityY / 100f;
+        angleX = sensorAngleX;
+        angleY = sensorAngleY;
+        this.sensitivityX = sensorSensitivityX / 100f;
+        this.sensitivityY = sensorSensitivityY / 100f;
     }
 
     public boolean isSensorEnabled() {
@@ -100,12 +103,10 @@ public class SensorController extends AbstractController implements SensorEventL
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // TODO: make angle configurable
-
-        float rawX = getStrength(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX, 0)
-                * sensorSensitivityX;
-        float rawY = getStrength(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY, 60)
-                * sensorSensitivityY;
+        float rawX = getStrength(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX, angleX)
+                * sensitivityX;
+        float rawY = getStrength(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY, angleY)
+                * sensitivityY;
 
         float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
         float factor = magnitude > 1 ? magnitude : 1;

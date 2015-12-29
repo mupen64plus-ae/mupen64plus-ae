@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 
 class SensorConfigurationDialog implements OnClickListener {
 
@@ -32,6 +33,7 @@ class SensorConfigurationDialog implements OnClickListener {
     private final CheckBox activateOnStart;
     private final Spinner xAxisSpinner, yAxisSpinner;
     private final EditText xAxisEditText, yAxisEditText;
+    private final EditText xAngleEditText, yAngleEditText;
     private final Button xSensitivityButton, ySensitivityButton;
     private final CheckBox xInvertCheckbox, yInvertCheckbox;
 
@@ -44,10 +46,12 @@ class SensorConfigurationDialog implements OnClickListener {
 
         xAxisSpinner = (Spinner) view.findViewById(R.id.sensorConfig_sensorX);
         xAxisEditText = (EditText) view.findViewById(R.id.sensorConfig_customX);
+        xAngleEditText = (EditText) view.findViewById(R.id.sensorConfig_angleX);
         xSensitivityButton = (Button) view.findViewById(R.id.sensorConfig_sensitivityX);
         xInvertCheckbox = (CheckBox) view.findViewById(R.id.sensorConfig_invertX);
         yAxisSpinner = (Spinner) view.findViewById(R.id.sensorConfig_sensorY);
         yAxisEditText = (EditText) view.findViewById(R.id.sensorConfig_customY);
+        yAngleEditText = (EditText) view.findViewById(R.id.sensorConfig_angleY);
         ySensitivityButton = (Button) view.findViewById(R.id.sensorConfig_sensitivityY);
         yInvertCheckbox = (CheckBox) view.findViewById(R.id.sensorConfig_invertY);
 
@@ -56,12 +60,14 @@ class SensorConfigurationDialog implements OnClickListener {
         String xAxisValue = mProfile.get("sensorAxisX", "");
         updateSpinner(xAxisSpinner, xAxisValue);
         xAxisEditText.setText(xAxisValue);
-        xSensitivityButton.setText(mProfile.get("sensorSensitivityX", "100"));
+        xAngleEditText.setText(mProfile.get("sensorAngleX"));
+        xSensitivityButton.setText(mProfile.get("sensorSensitivityX", "100") + "%");
         xInvertCheckbox.setChecked(Boolean.valueOf(mProfile.get("sensorInvertX")));
         String yAxisValue = mProfile.get("sensorAxisY", "");
         updateSpinner(yAxisSpinner, yAxisValue);
         yAxisEditText.setText(yAxisValue);
-        ySensitivityButton.setText(mProfile.get("sensorSensitivityY", "100"));
+        yAngleEditText.setText(mProfile.get("sensorAngleY"));
+        ySensitivityButton.setText(mProfile.get("sensorSensitivityY", "100") + "%");
         yInvertCheckbox.setChecked(Boolean.valueOf(mProfile.get("sensorInvertY")));
 
         // Registering listeners
@@ -81,6 +87,8 @@ class SensorConfigurationDialog implements OnClickListener {
             mProfile.put("sensorActivateOnStart", String.valueOf(activateOnStart.isChecked()));
             mProfile.put("sensorAxisX", fixSensorAxisString(xAxisEditText.getText().toString()));
             mProfile.put("sensorAxisY", fixSensorAxisString(yAxisEditText.getText().toString()));
+            mProfile.put("sensorAngleX", String.valueOf(SafeMethods.toFloat(xAngleEditText.getText().toString(), 0)));
+            mProfile.put("sensorAngleY", String.valueOf(SafeMethods.toFloat(yAngleEditText.getText().toString(), 0)));
             mProfile.put("sensorSensitivityX", String.valueOf(getSensitivity(xSensitivityButton)));
             mProfile.put("sensorSensitivityY", String.valueOf(getSensitivity(ySensitivityButton)));
             mProfile.put("sensorInvertX", String.valueOf(xInvertCheckbox.isChecked()));
@@ -224,7 +232,7 @@ class SensorConfigurationDialog implements OnClickListener {
                     @Override
                     public void onDialogClosed(Integer value, int which) {
                         if (which == DialogInterface.BUTTON_POSITIVE) {
-                            sensitivityButton.setText(String.valueOf(value));
+                            sensitivityButton.setText(String.valueOf(value) + "%");
                         }
                     }
                 });
@@ -234,7 +242,11 @@ class SensorConfigurationDialog implements OnClickListener {
 
     int getSensitivity(Button sensitivityButton) {
         try {
-            return Integer.valueOf(String.valueOf(sensitivityButton.getText()));
+            CharSequence text = sensitivityButton.getText();
+            if (text.charAt(text.length() - 1) == '%') {
+                text = text.subSequence(0, text.length() - 1);
+            }
+            return Integer.valueOf(String.valueOf(text));
         } catch (NumberFormatException ex) {
             return 100;
         }
