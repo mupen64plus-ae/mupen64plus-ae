@@ -149,6 +149,21 @@ public class GamePrefs
     /** The directory of the selected touchscreen skin. */
     public final String touchscreenSkin;
     
+    /** True to activate sensor on game start */
+    public final boolean sensorActivateOnStart;
+
+    /** The sensor values used for X axis emulation */
+    public final String sensorAxisX;
+
+    /** The sensor's X axis sensitivity (%), may be negative to invert axes */
+    public final int sensorSensitivityX;
+
+    /** The sensor values used for Y axis emulation */
+    public final String sensorAxisY;
+
+    /** The sensor's Y axis sensitivity (%), may be negative to invert axes */
+    public final int sensorSensitivityY;
+
     /** True if Player 1's controller is enabled. */
     public final boolean isControllerEnabled1;
     
@@ -452,12 +467,41 @@ public class GamePrefs
                 touchscreenSkin =  touchscreenProfile.get( "touchscreenCustomSkinPath", "" );
             else
                 touchscreenSkin = appData.touchscreenSkinsDir + layout;
+            
+            sensorActivateOnStart = Boolean.valueOf(touchscreenProfile.get("sensorActivateOnStart"));
+            sensorAxisX = touchscreenProfile.get("sensorAxisX", "");
+            int sensitivity;
+            try {
+                sensitivity = Integer.valueOf(touchscreenProfile.get("sensorSensitivityX"));
+            } catch (NumberFormatException ex) {
+                sensitivity = 100;
+            }
+            if (Boolean.valueOf(touchscreenProfile.get("sensorInvertX"))) {
+                sensitivity = -sensitivity;
+            }
+            sensorSensitivityX = sensitivity;
+            sensorAxisY = touchscreenProfile.get("sensorAxisY", "");
+            try {
+                sensitivity = Integer.valueOf(touchscreenProfile.get("sensorSensitivityY"));
+            } catch (NumberFormatException ex) {
+                sensitivity = 100;
+            }
+            if (Boolean.valueOf(touchscreenProfile.get("sensorInvertY"))) {
+                sensitivity = -sensitivity;
+            }
+            sensorSensitivityY = sensitivity;
         }
         else
         {
             isTouchscreenAnimated = false;
             touchscreenAutoHoldables = null;
             touchscreenSkin = "";
+
+            sensorActivateOnStart = false;
+            sensorAxisX = null;
+            sensorSensitivityX = 100;
+            sensorAxisY = null;
+            sensorSensitivityY = 100;
         }
                 
         isTouchscreenHidden = !isTouchscreenEnabled || globalPrefs.touchscreenTransparency == 0;
