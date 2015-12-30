@@ -53,7 +53,13 @@ public class TouchController extends AbstractController implements OnTouchListen
          * @param index The index of the auto-hold mask.
          */
         public void onAutoHold( boolean pressed, int index );
-        
+
+        /**
+         * Called after the sensor has been enabled or disabled
+         * 
+         * @param enabled
+         *            true if enabled, false if disabled
+         */
         void onSensorEnabled(boolean enabled);
     }
     

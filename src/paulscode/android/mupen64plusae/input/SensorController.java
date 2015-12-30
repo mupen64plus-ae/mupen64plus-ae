@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -34,8 +35,11 @@ public class SensorController extends AbstractController implements SensorEventL
 
     /** The state change listener. */
     private final OnStateChangedListener mListener;
+
+    // Index values to be used by calculateAcceleration
     private final int[] sensorEventValuesRefX, sensorEventAdjacentValuesRefX, sensorEventValuesRefY,
             sensorEventAdjacentValuesRefY;
+
     private final float angleX, angleY;
     private final float sensitivityX, sensitivityY;
     private boolean isPaused = true;
@@ -78,11 +82,17 @@ public class SensorController extends AbstractController implements SensorEventL
         updateListener();
     }
 
+    /**
+     * Should be called on {@link Activity#onResume()}
+     */
     public void onResume() {
         isPaused = false;
         updateListener();
     }
 
+    /**
+     * Should be called on {@link Activity#onPause()}
+     */
     public void onPause() {
         isPaused = true;
         updateListener();
@@ -103,10 +113,10 @@ public class SensorController extends AbstractController implements SensorEventL
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float rawX = getStrength(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX, angleX)
-                * sensitivityX;
-        float rawY = getStrength(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY, angleY)
-                * sensitivityY;
+        float rawX = getStrength(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX, angleX);
+        rawX *= sensitivityX;
+        float rawY = getStrength(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY, angleY);
+        rawY *= sensitivityY;
 
         float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
         float factor = magnitude > 1 ? magnitude : 1;
@@ -116,6 +126,24 @@ public class SensorController extends AbstractController implements SensorEventL
         mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
     }
 
+    /**
+     * Converts sensor event to strength, using the {@link SensorEvent#values}
+     * defined in the valuesRef and adjacentValuesRef arguments
+     * 
+     * @see #calculateAcceleration(float[], int[])
+     * 
+     * @param sensorEventValues
+     *            the {@link SensorEvent#values}
+     * @param valuesRef
+     *            the indexes of the {@link SensorEvent#values} to be used to
+     *            calculate the strength
+     * @param adjacentValuesRef
+     *            the indexes of the {@link SensorEvent#values} to be used as
+     *            adjacent value
+     * @param idleAngleDegree
+     *            the angle that defines joystick IDLE state
+     * @return the strength
+     */
     private float getStrength(float[] sensorEventValues, int[] valuesRef, int[] adjacentValuesRef,
             float idleAngleDegree) {
         if (valuesRef.length == 0 || adjacentValuesRef.length == 0) {
@@ -142,10 +170,11 @@ public class SensorController extends AbstractController implements SensorEventL
      * Calculates the total acceleration of some axis
      * 
      * @param sensorEventValues
-     *            the sensor acceleration on each axis
+     *            the {@link SensorEvent#values}
      * @param valuesRef
-     *            the ref of the axis we want to take into account
-     * @return the total acceleration value
+     *            the indexes of the {@link SensorEvent#values} we want to take
+     *            into account
+     * @return the total acceleration value of the axes defined in valuesRef
      */
     private float calculateAcceleration(float[] sensorEventValues, int[] valuesRef) {
         if (valuesRef.length == 1) {
@@ -160,7 +189,8 @@ public class SensorController extends AbstractController implements SensorEventL
 
     /**
      * Calculates arc tangent of the ratio of the 2 args, avoiding to divide by
-     * 0
+     * 0, and returning a result that is not clamped to [-Pi/2,Pi/2] (in case 1
+     * or 2 parameters are negative). This method can return any angle's value
      * 
      * @return an angle, which should be fixed if its absolute value > Pi/2
      */
@@ -183,9 +213,14 @@ public class SensorController extends AbstractController implements SensorEventL
         // Angle which corresponds to strength=1 (with a factor of magnitude,
         // which is configured on the controller)
         float strengthMaxDegree = 15; // 15°
+
         return angle / (float) Math.PI * 180 / strengthMaxDegree;
     }
 
+    /**
+     * Converts an XYZ String to an array of index of {@link SensorEvent#values}
+     * ready to be used by {@link #calculateAcceleration(float[], int[])}
+     */
     private static int[] xyzToSensorEventValuesRef(String string) {
         int[] sensorEventValuesRef = new int[string.length()];
         for (int i = 0; i < sensorEventValuesRef.length; i++) {
@@ -203,6 +238,8 @@ public class SensorController extends AbstractController implements SensorEventL
                 sensorEventValuesRef[i] = 2;
                 break;
             default:
+                // Should not happen because the SensorConfigurationDialog
+                // filters the String value
                 throw new RuntimeException("Invalid axis definition: " + string);
             }
         }
