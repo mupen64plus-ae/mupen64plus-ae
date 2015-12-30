@@ -352,7 +352,9 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
 
         tryRunning();
 
-        mSensorController.onResume();
+        if (mSensorController != null) {
+            mSensorController.onResume();
+        }
 
         // Set the sidebar opacity
         mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
