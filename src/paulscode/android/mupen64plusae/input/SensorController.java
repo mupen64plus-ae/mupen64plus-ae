@@ -124,6 +124,17 @@ public class SensorController extends AbstractController implements SensorEventL
         float value = calculateAcceleration(sensorEventValues, valuesRef);
         float adjacentValue = calculateAcceleration(sensorEventValues, adjacentValuesRef);
         float angle = (float) calculateAngle(value, adjacentValue) - idleAngleDegree / 180 * (float) Math.PI;
+        // Fixing angle to have range in [-Pi,Pi]
+        while (Math.abs(angle) > Math.PI) {
+            angle -= Math.signum(angle) * 2 * Math.PI;
+        }
+        // If abs(angle)>Pi/2 (90°), decreasing it (135°=> 45°, 180° => 0°)
+        if (angle > Math.PI / 2) {
+            angle = (float) Math.PI - angle;
+        } else if (angle < -Math.PI / 2) {
+            angle = -(float) Math.PI - angle;
+        }
+        // angle's range is now [-Pi/2,Pi/2] (max 90°)
         return angleToStrength(angle);
     }
 
@@ -148,12 +159,19 @@ public class SensorController extends AbstractController implements SensorEventL
     }
 
     /**
-     * @return arc tangent of the ratio of the 2 args, avoiding to divide by 0
+     * Calculates arc tangent of the ratio of the 2 args, avoiding to divide by
+     * 0
+     * 
+     * @return an angle, which should be fixed if its absolute value > Pi/2
      */
-    private float calculateAngle(float value, float adjacentValue) {
+    private static float calculateAngle(float value, float adjacentValue) {
         if (Math.abs(value) <= Math.abs(adjacentValue)) {
-            // Classic arc tangent
-            return (float) Math.atan(value / adjacentValue);
+            if (adjacentValue > 0) {
+                // Classic arc tangent
+                return (float) Math.atan(value / adjacentValue);
+            } else {
+                return (float) Math.PI + (float) Math.atan(value / adjacentValue);
+            }
         } else {
             // Calculating arc tangent with the opposite ratio. Result is the
             // same as above, unless if adjacentValue=0 (avoiding error).
