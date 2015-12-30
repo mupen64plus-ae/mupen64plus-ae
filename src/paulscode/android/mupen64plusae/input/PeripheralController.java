@@ -54,16 +54,16 @@ public class PeripheralController extends AbstractController implements
     
     /** The analog sensitivity, the amount by which to scale stick values, nominally 1. */
     private final float mSensitivityFraction;
-
+    
     /** The state change listener. */
     private final OnStateChangedListener mListener;
 
     /** The sensor provider, which is also added on {@link #mProviders} */
     private SensorController mSensorController;
-
+    
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
-
+    
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
     

@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 import android.annotation.SuppressLint;
 import android.graphics.Point;
 import android.os.Vibrator;
@@ -29,7 +30,6 @@ import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import paulscode.android.mupen64plusae.input.map.TouchMap;
 
 /**
  * A class for generating N64 controller commands from a touchscreen.
@@ -154,7 +154,7 @@ public class TouchController extends AbstractController implements OnTouchListen
     {
         mSourceFilter = source;
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -357,6 +357,8 @@ public class TouchController extends AbstractController implements OnTouchListen
         if( index != TouchMap.UNMAPPED )
         {
             // Finger is on a valid button
+            
+            // process the TOGGLE_SENSOR button
             if (index == TouchMap.TOGGLE_SENSOR && mSensorController != null
                     && (actionCode == MotionEvent.ACTION_DOWN || actionCode == MotionEvent.ACTION_POINTER_DOWN)) {
                 boolean sensorEnabled = !mSensorController.isSensorEnabled();

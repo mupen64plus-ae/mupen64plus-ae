@@ -514,7 +514,7 @@ public class TouchMap
             }
         }
     }
-
+    
     public void setAnalogEnabled(boolean enabled) {
         analogIsEnabled = enabled;
     }
