@@ -47,7 +47,7 @@
             <EditText
                 android:id="@+id/sensorConfig_angleX"
                 android:layout_gravity="fill"
-                android:inputType="numberDecimal" />
+                android:inputType="numberSigned|numberDecimal" />
 
             <CheckBox
                 android:id="@+id/sensorConfig_invertX"
@@ -96,7 +96,7 @@
             <EditText
                 android:id="@+id/sensorConfig_angleY"
                 android:layout_gravity="fill"
-                android:inputType="numberDecimal" />
+                android:inputType="numberSigned|numberDecimal" />
 
             <CheckBox
                 android:id="@+id/sensorConfig_invertY"
