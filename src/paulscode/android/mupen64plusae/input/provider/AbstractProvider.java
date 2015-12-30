@@ -24,6 +24,7 @@ import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import tv.ouya.console.api.OuyaController;
+import android.annotation.SuppressLint;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -70,6 +71,9 @@ public abstract class AbstractProvider
     
     /** The strength threshold above which an input is said to be "on". */
     public static final float STRENGTH_THRESHOLD = 0.5f;
+    
+    /** The prefix used for Moga devices. */
+    private static final String mogaPrefix = "moga-";
     
     /** Listener management. */
     private final SubscriptionManager<AbstractProvider.OnInputListener> mPublisher;
@@ -163,6 +167,42 @@ public abstract class AbstractProvider
     }
     
     /**
+     * Obtains unique hardware id from a unique device name.
+     * 
+     * @param uniqueName The unique name of the device.
+     * 
+     * @return The unique identifier of the hardware.
+     */
+    public static int getHardwareId( String uniqueName )
+    {
+        if( uniqueName.startsWith( mogaPrefix ) )
+        {
+            try
+            {
+                return Integer.parseInt( uniqueName.substring( mogaPrefix.length() ) ) +
+                        HARDWARE_ID_MOGA_OFFSET;
+            }
+            catch( NumberFormatException ignored )
+            {
+            }
+        }
+        
+        // Check all the connected devices
+        int[] deviceIds = InputDevice.getDeviceIds();
+        
+        for( int i = 0; i < deviceIds.length; i++ )
+        {
+            if( uniqueName.equals( getUniqueName( deviceIds[i] ) ) ||
+                    uniqueName.equals( Integer.toString( deviceIds[i] ) ) )
+            {
+                return deviceIds[i];
+            }
+        }
+        
+        return 0;
+    }
+    
+    /**
      * Determines whether the hardware is available. This is a conservative test in that it will
      * return true if the availability cannot be conclusively determined.
      * 
@@ -196,13 +236,41 @@ public abstract class AbstractProvider
     {
         if( id > HARDWARE_ID_MOGA_OFFSET && id <= HARDWARE_ID_MOGA_MAX )
         {
-            return "moga-" + ( id - HARDWARE_ID_MOGA_OFFSET );
+            return mogaPrefix + ( id - HARDWARE_ID_MOGA_OFFSET );
         }
         else
         {
             InputDevice device = InputDevice.getDevice( id );
             return device == null ? null : device.getName();
         }
+    }
+    
+    /**
+     * Gets the unique name of the device.
+     * 
+     * @param id The unique hardware identifier.
+     * 
+     * @return The unique name of the device, or null if hardware not found.
+     */
+
+    @SuppressLint("NewApi")
+	public static String getUniqueName( int id )
+    {
+        if( id > HARDWARE_ID_MOGA_OFFSET && id <= HARDWARE_ID_MOGA_MAX )
+        {
+            return mogaPrefix + ( id - HARDWARE_ID_MOGA_OFFSET );
+        }
+        else if( AppData.IS_JELLY_BEAN )
+        {
+            InputDevice device = InputDevice.getDevice( id );
+            
+            if( device != null )
+            {
+                return device.getDescriptor();
+            }
+        }
+        
+        return String.valueOf( id );
     }
     
     /**

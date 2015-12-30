@@ -76,7 +76,8 @@ public class AxisMap extends SerializableMap
         {
             case SIGNATURE_HASH_XBOX360:
                 // Resting value is -1 on the analog triggers; fix that
-                if( deviceName.contains( "Sony Computer Entertainment Wireless Controller" ) )
+                if( deviceName.contains( "Sony Computer Entertainment Wireless Controller" ) || 
+                    deviceName.contains( "Wireless Controller" ))
                 {
                     // Note that the PS4 controller uses the same axes but uses different ones for
                     // the triggers, so we have to differentiate them.

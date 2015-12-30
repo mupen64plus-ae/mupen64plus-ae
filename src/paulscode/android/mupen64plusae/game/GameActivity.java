@@ -715,6 +715,9 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     {
         boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
         
+        // Attempt to reconnect any disconnected devices
+        mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( event ) );
+        
         if( keyDown && keyCode == KeyEvent.KEYCODE_MENU )
         {
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
