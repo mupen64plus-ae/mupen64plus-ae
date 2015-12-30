@@ -123,6 +123,10 @@ class SensorConfigurationDialog implements OnClickListener {
         return sensorAxis;
     }
 
+    /**
+     * @return a new listener that calls {@link #updateSpinner(Spinner, String)}
+     *         on text change
+     */
     private TextWatcher updateSpinnerOnTextChanged(final Spinner spinner) {
         return new TextWatcher() {
 
@@ -148,12 +152,13 @@ class SensorConfigurationDialog implements OnClickListener {
         int index = axes.length - 1;// @string/sensorConfig_axisDisabled
         if (value != null && !value.isEmpty()) {
             index = axes.length - 2;// @string/sensorConfig_axisCustom
+            // Searching for predefined values on spinner
             for (int i = 0; i < axes.length; i++) {
                 if (value.equalsIgnoreCase(axes[i])) {
-                    index = i;
+                    index = i;// Found
                 }
             }
-            if (index == -1) {
+            if (index == -1) {// Dead code?
                 index = axes.length - 2;
             }
         }
@@ -221,6 +226,10 @@ class SensorConfigurationDialog implements OnClickListener {
         return new InputFilter[] { filter };
     }
 
+    /**
+     * Adds a listener to the button, to prompt for the sensitivity using a
+     * SeekBar
+     */
     private void openSeekBarOnClick(final Button sensitivityButton) {
         final CharSequence title = mContext.getText(R.string.menuItem_sensitivity);
         sensitivityButton.setOnClickListener(new View.OnClickListener() {
@@ -240,6 +249,12 @@ class SensorConfigurationDialog implements OnClickListener {
         });
     }
 
+    /**
+     * Removes the '%' from the end of the String and returns the int value
+     * 
+     * @param sensitivityButton
+     *            the button that contains the String to read
+     */
     int getSensitivity(Button sensitivityButton) {
         try {
             CharSequence text = sensitivityButton.getText();
@@ -252,7 +267,7 @@ class SensorConfigurationDialog implements OnClickListener {
         }
     }
 
-    /** Create and show the popup dialog */
+    /** Create and show this popup dialog */
     void show() {
         Builder builder = new Builder(mContext);
         builder.setTitle(mContext.getString(R.string.menuItem_sensorConfiguration));
