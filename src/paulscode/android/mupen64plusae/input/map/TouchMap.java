@@ -93,6 +93,9 @@ public class TouchMap
     /** names of the buttons. */
     protected final ArrayList<String> buttonNames;
     
+    /** true if analog is enabled */
+    protected boolean isAnalogEnabled = true;
+    
     /** Analog background scaling. */
     protected float analogBackScaling;
     
@@ -101,8 +104,6 @@ public class TouchMap
     
     /** Analog foreground image (movable). */
     protected Image analogForeImage;
-    
-    protected boolean analogIsEnabled = true;
     
     /** X-coordinate of the analog background, in percent. */
     private int analogBackX;
@@ -357,7 +358,7 @@ public class TouchMap
      */
     public Point getAnalogDisplacement( int xLocation, int yLocation )
     {
-        if( analogBackImage == null || !analogIsEnabled )
+        if( analogBackImage == null || !isAnalogEnabled )
             return new Point( 0, 0 );
         
         // Distance from center along x-axis
@@ -516,7 +517,7 @@ public class TouchMap
     }
     
     public void setAnalogEnabled(boolean enabled) {
-        analogIsEnabled = enabled;
+        isAnalogEnabled = enabled;
     }
 
     /**
