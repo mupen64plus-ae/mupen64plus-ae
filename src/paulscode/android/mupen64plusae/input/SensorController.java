@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -81,11 +82,17 @@ public class SensorController extends AbstractController implements SensorEventL
         updateListener();
     }
 
+    /**
+     * Should be called on {@link Activity#onResume()}
+     */
     public void onResume() {
         isPaused = false;
         updateListener();
     }
 
+    /**
+     * Should be called on {@link Activity#onPause()}
+     */
     public void onPause() {
         isPaused = true;
         updateListener();
@@ -106,10 +113,10 @@ public class SensorController extends AbstractController implements SensorEventL
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float rawX = getStrength(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX, angleX)
-                * sensitivityX;
-        float rawY = getStrength(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY, angleY)
-                * sensitivityY;
+        float rawX = getStrength(event.values, sensorEventValuesRefX, sensorEventAdjacentValuesRefX, angleX);
+        rawX *= sensitivityX;
+        float rawY = getStrength(event.values, sensorEventValuesRefY, sensorEventAdjacentValuesRefY, angleY);
+        rawY *= sensitivityY;
 
         float magnitude = (float) Math.sqrt((rawX * rawX) + (rawY * rawY));
         float factor = magnitude > 1 ? magnitude : 1;
