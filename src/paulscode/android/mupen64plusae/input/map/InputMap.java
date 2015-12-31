@@ -109,6 +109,16 @@ public class InputMap extends SerializableMap
     // @formatter:on
     
     /**
+     * Returns true if the given input code is an analog input and false otherwise.
+     * 
+     * @param inputCode The standardized input code.
+     */
+    public static final boolean isAnalogInput( int inputCode )
+    {
+        return inputCode < 0;
+    }
+    
+    /**
      * Instantiates a new input map.
      */
     public InputMap()
@@ -151,20 +161,6 @@ public class InputMap extends SerializableMap
         // Map the input if a valid index was given
         if( command >= 0 && command < NUM_MAPPABLES && inputCode != 0 )
         {
-            if( inputCode < 0 )
-            {
-                // If an analog input is mapped, it should be the only thing mapped to this command
-                unmapCommand( command );
-            }
-            else
-            {
-                // If a digital input is mapped, no analog inputs can be mapped to this command
-                for( int i = mMap.size() - 1; i >= 0; i-- )
-                {
-                    if( mMap.valueAt( i ) == command && mMap.keyAt( i ) < 0 )
-                        mMap.removeAt( i );
-                }                
-            }
             mMap.put( inputCode, command );
         }
     }
@@ -224,5 +220,35 @@ public class InputMap extends SerializableMap
             }
         }
         return result.trim();
+    }
+    
+    /**
+     * Gets the size of the map.
+     * 
+     * @return The size of the map.
+     */
+    public int size()
+    {
+        return mMap.size();
+    }
+    
+    /**
+     * Gets the key at the specified index in the map.
+     * 
+     * @return The key at the specified index of the map.
+     */
+    public int keyAt( int index )
+    {
+        return mMap.keyAt( index );
+    }
+    
+    /**
+     * Gets the value at the specified index in the map.
+     * 
+     * @return The value at the specified index of the map.
+     */
+    public int valueAt( int index )
+    {
+        return mMap.valueAt( index );
     }
 }
