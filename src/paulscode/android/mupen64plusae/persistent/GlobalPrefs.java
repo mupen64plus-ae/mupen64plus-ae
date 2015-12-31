@@ -30,8 +30,10 @@ import org.apache.commons.lang.WordUtils;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
+import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.app.Activity;
@@ -203,6 +205,21 @@ public class GlobalPrefs
     
     /** Maximum number of auto saves */
     public final int maxAutoSaves;
+    
+    /** The input profile for Player 1. */
+    public final ControllerProfile controllerProfile1;
+    
+    /** The input profile for Player 2. */
+    public final ControllerProfile controllerProfile2;
+    
+    /** The input profile for Player 3. */
+    public final ControllerProfile controllerProfile3;
+    
+    /** The input profile for Player 4. */
+    public final ControllerProfile controllerProfile4;
+    
+    /** The player map for multi-player gaming. */
+    public final PlayerMap playerMap;
     
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
@@ -415,6 +432,32 @@ public class GlobalPrefs
             unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
+        
+        // Controller profiles
+        controllerProfile1 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE1,
+                getControllerProfileDefault(1),
+                GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
+        controllerProfile2 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE2,
+                getControllerProfileDefault(2),
+                GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
+        controllerProfile3 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE3,
+                getControllerProfileDefault(3),
+                GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
+        controllerProfile4 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE4,
+                getControllerProfileDefault(4),
+                GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
+        
+        // Player map
+        playerMap = new PlayerMap( mPreferences.getString( GamePrefs.PLAYER_MAP, "" ) );
+        
+        // Determine whether controller deconfliction is needed
+        int numControllers = 0;
+        numControllers += controllerProfile1 != null ? 1 : 0;
+        numControllers += controllerProfile2 != null ? 1 : 0;
+        numControllers += controllerProfile3 != null ? 1 : 0;
+        numControllers += controllerProfile4 != null ? 1 : 0;
+        
+        playerMap.setEnabled( numControllers > 1 && !isControllerShared );
     }
     
     public void enforceLocale( Activity activity )
@@ -461,9 +504,17 @@ public class GlobalPrefs
         return getString( KEY_TOUCHSCREEN_PROFILE_DEFAULT, DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT );
     }
     
-    public String getControllerProfileDefault()
+    public String getControllerProfileDefault( int player )
     {
-        return getString( KEY_CONTROLLER_PROFILE_DEFAULT, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+        switch( player )
+        {
+        case 2: return getString( GamePrefs.CONTROLLER_PROFILE2, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+        case 3: return getString( GamePrefs.CONTROLLER_PROFILE3, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+        case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+        default: break;
+        }
+        
+        return getString( GamePrefs.CONTROLLER_PROFILE1, getString( KEY_CONTROLLER_PROFILE_DEFAULT, DEFAULT_CONTROLLER_PROFILE_DEFAULT ) );
     }
     
     public PakType getPakType( int player )
@@ -488,7 +539,7 @@ public class GlobalPrefs
     
     public void putControllerProfileDefault( String value )
     {
-        putString( KEY_CONTROLLER_PROFILE_DEFAULT, value );
+        putString( GamePrefs.CONTROLLER_PROFILE1, value );
     }
     
     public void putPakType( int player, PakType pakType )
@@ -501,18 +552,18 @@ public class GlobalPrefs
         putBoolean( KEY_PLAYER_MAP_REMINDER, value );
     }
     
-    private boolean getBoolean( String key, boolean defaultValue )
+    public boolean getBoolean( String key, boolean defaultValue )
     {
         return mPreferences.getBoolean( key, defaultValue );
     }
     
-    private int getInt( String keyTemplate, int index, int defaultValue )
+    public int getInt( String keyTemplate, int index, int defaultValue )
     {
         String key = String.format( Locale.US, keyTemplate, index );
         return mPreferences.getInt( key, defaultValue );
     }
     
-    private String getString( String key, String defaultValue )
+    public String getString( String key, String defaultValue )
     {
         return mPreferences.getString( key, defaultValue );
     }
@@ -600,4 +651,20 @@ public class GlobalPrefs
         return mControllerProfilesConfig;
     }
     
+    private static ControllerProfile loadControllerProfile( SharedPreferences prefs, String key,
+            String defaultName, ConfigFile custom, ConfigFile builtin )
+    {
+        final String name = prefs.getString( key, defaultName );
+        
+        if( custom.keySet().contains( name ) )
+            return new ControllerProfile( false, custom.get( name ) );
+        else if( builtin.keySet().contains( name ) )
+            return new ControllerProfile( true, builtin.get( name ) );
+        else if( custom.keySet().contains( defaultName ) )
+            return new ControllerProfile( false, custom.get( defaultName ) );
+        else if( builtin.keySet().contains( defaultName ) )
+            return new ControllerProfile( true, builtin.get( defaultName ) );
+        else
+            return null;
+    }
 }

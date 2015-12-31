@@ -283,28 +283,28 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(mControllerProfile1 != null)
         {
             mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault() );
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(1) );
             mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
         }
         
         if(mControllerProfile2 != null)
         {
             mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(2) );
             mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
         }
 
         if(mControllerProfile3 != null)
         {
             mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(3) );
             mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue()); 
         }
         
         if(mControllerProfile4 != null)
         {
             mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), "" );
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(4) );
             mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
         }
         
@@ -332,6 +332,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             boolean enable3 = mGamePrefs.isControllerEnabled3 && mRomDetail.players > 2;
             boolean enable4 = mGamePrefs.isControllerEnabled4 && mRomDetail.players > 3;
             playerPref.setControllersEnabled( enable1, enable2, enable3, enable4 );
+            
+            // Set the initial value
+            playerPref.setValue( mGamePrefs.playerMap.serialize() );
         }
         
         mPrefs.registerOnSharedPreferenceChangeListener( this );
@@ -501,6 +504,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
         playerPref.onDialogClosed(inputCode, hardwareId, which);
+        
+        if( playerPref.getValue().equals( mGlobalPrefs.getString( GamePrefs.PLAYER_MAP, "" ) ) )
+            playerPref.setValue( "" );
     }
 
     @Override
