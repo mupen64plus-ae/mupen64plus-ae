@@ -218,7 +218,7 @@ public class SensorController extends AbstractController implements SensorEventL
      * 0, and returning a result that is not clamped to [-Pi/2,Pi/2] (in case 1
      * or 2 parameters are negative). This method can return any angle's value
      * 
-     * @return an angle, which should be fixed if its absolute value > Pi/2
+     * @return an angle, which should be fixed if its absolute value > Pi
      */
     private static float calculateAngle(float value, float adjacentValue) {
         if (Math.abs(value) <= Math.abs(adjacentValue)) {
@@ -236,6 +236,7 @@ public class SensorController extends AbstractController implements SensorEventL
     }
 
     private float angleToStrength(float angle) {
+
         // Angle which corresponds to strength=1 (with a factor of magnitude,
         // which is configured on the controller)
         float strengthMaxDegree = 15; // 15°
