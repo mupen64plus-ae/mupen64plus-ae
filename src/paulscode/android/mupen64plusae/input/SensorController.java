@@ -45,6 +45,32 @@ public class SensorController extends AbstractController implements SensorEventL
     private boolean isPaused = true;
     private boolean mSensorEnabled = false;
 
+    /**
+     * Instantiates a new sensor controller. The sensorAxisX and sensorAxisY
+     * values must match the pattern [XYZ]+/[XYZ]+ or be empty (to disable the
+     * axis). They are case insensitive. Typical values are
+     * <ul>
+     * <li>in landscape mode: Y/xz for X axis, X/Z for Y axis,</li>
+     * <li>in portrait mode: X/yz for X axis, Y/Z for Y axis.</li>
+     * </ul>
+     * 
+     * @param sensorManager
+     *            The {@link SensorManager}
+     * @param listener
+     *            The listener for controller state changes.
+     * @param sensorAxisX
+     *            The [XYZ]+/[XYZ]+ String that defines strength calculation
+     * @param sensorSensitivityX
+     *            The sensitivity (%)
+     * @param sensorAngleX
+     *            The IDLE angle (angle at which X axis is IDLE)
+     * @param sensorAxisY
+     *            The [XYZ]+/[XYZ]+ String that defines strength calculation
+     * @param sensorSensitivityY
+     *            The sensitivity (%)
+     * @param sensorAngleY
+     *            The IDLE angle (angle at which Y axis is IDLE)
+     */
     public SensorController(SensorManager sensorManager, OnStateChangedListener listener, String sensorAxisX,
             int sensorSensitivityX, float sensorAngleX, String sensorAxisY, int sensorSensitivityY,
             float sensorAngleY) {
