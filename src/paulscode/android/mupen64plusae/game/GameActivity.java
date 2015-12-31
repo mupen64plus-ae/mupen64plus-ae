@@ -375,6 +375,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         if (mSensorController != null) {
             mSensorController.onPause();
         }
+        
         mMogaController.onPause();
     }
     
