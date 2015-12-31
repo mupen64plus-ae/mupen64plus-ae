@@ -42,7 +42,7 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     @Override
     protected String getDefaultProfile()
     {
-        return mGlobalPrefs.getControllerProfileDefault();
+        return mGlobalPrefs.getControllerProfileDefault( 1 );
     }
     
     @Override

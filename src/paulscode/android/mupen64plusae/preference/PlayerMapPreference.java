@@ -45,7 +45,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class PlayerMapPreference extends DialogPreference implements
-        View.OnClickListener, OnCheckedChangeListener, OnPreferenceDialogListener
+        View.OnClickListener, OnCheckedChangeListener, OnPreferenceDialogListener, View.OnLongClickListener
 {
     public static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
     public static final String STATE_SELECTED_POPUP_INDEX = "STATE_SELECTED_POPUP_INDEX";
@@ -126,6 +126,35 @@ public class PlayerMapPreference extends DialogPreference implements
         checkBoxReminder.setChecked( prefs.getPlayerMapReminder() );
         checkBoxReminder.setOnCheckedChangeListener( this );
         updateViews();
+        
+        buttonPlayer1.setOnLongClickListener( this );
+        buttonPlayer2.setOnLongClickListener( this );
+        buttonPlayer3.setOnLongClickListener( this );
+        buttonPlayer4.setOnLongClickListener( this );
+    }
+    
+    @Override
+    public boolean onLongClick(View view)
+    {        
+        switch( view.getId() )
+        {
+            case R.id.btnPlayer1:
+                mMap.unmapPlayer( 1 );
+                break;
+            case R.id.btnPlayer2:
+                mMap.unmapPlayer( 2 );
+                break;
+            case R.id.btnPlayer3:
+                mMap.unmapPlayer( 3 );
+                break;
+            case R.id.btnPlayer4:
+                mMap.unmapPlayer( 4 );
+                break;
+            default: return false;
+        }
+        
+        updateViews();
+        return true;
     }
     
     @Override
