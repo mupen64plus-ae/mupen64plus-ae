@@ -524,8 +524,8 @@
     <string name="sensorConfig_activateOnStart">Activate on game start</string>
     <string name="sensorConfig_joystickXEmulation">Joystick X axis emulation</string>
     <string name="sensorConfig_joystickYEmulation">Joystick Y axis emulation</string>
-    <string name="sensorConfig_sensorX">Usual sensor\'s X axis in landscape mode</string>
-    <string name="sensorConfig_sensorY">Usual sensor\'s Y axis in landscape mode</string>
+    <string name="sensorConfig_sensorX">Use accelerometer\'s X axis</string>
+    <string name="sensorConfig_sensorY">Use accelerometer\'s Y axis</string>
     <string name="sensorConfig_angle">IDLE angle (°)</string>
     <string name="sensorConfig_invertAxis">Invert axis</string>
     <string name="sensorConfig_axisCustom">Custom</string>
