@@ -22,11 +22,17 @@ package paulscode.android.mupen64plusae.persistent;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import com.bda.controller.Controller;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
+import paulscode.android.mupen64plusae.hack.MogaHack;
+import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.preference.ProfilePreference;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -37,7 +43,7 @@ import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.support.v7.preference.PreferenceManager;
 
 public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener, PromptConfirmListener
+        OnSharedPreferenceChangeListener, PromptConfirmListener, PromptInputCodeListener
 {
     private static final int RESET_GLOBAL_PREFS_CONFIRM_DIALOG_ID = 0;
     private static final String RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE = "RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE";
@@ -74,6 +80,9 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
     
+    // MOGA controller interface
+    private Controller mMogaController = Controller.getInstance( this );
+    
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -85,6 +94,11 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         
         mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
+        
+        // Initialize MOGA controller API
+        // TODO: Remove hack after MOGA SDK is fixed
+        // mMogaController.init();
+        MogaHack.init( mMogaController, this );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( null, R.xml.preferences_global );
@@ -99,6 +113,7 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         super.onPause();
         
         mPrefs.unregisterOnSharedPreferenceChangeListener( this );
+        mMogaController.onPause();
     }
     
     @Override
@@ -107,6 +122,14 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         super.onResume();
 
         mPrefs.registerOnSharedPreferenceChangeListener( this );
+        mMogaController.onResume();
+    }
+    
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        mMogaController.exit();
     }
     
     @Override
@@ -130,6 +153,55 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
         // Refresh the preferences object
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
+        // Get and update the controller profile information
+        ProfilePreference mControllerProfile1 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE1 );
+        ProfilePreference mControllerProfile2 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE2 );
+        ProfilePreference mControllerProfile3 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE3 );
+        ProfilePreference mControllerProfile4 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE4 );
+        
+        if(mControllerProfile1 != null)
+        {
+            mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault( 1 ) );
+            mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
+        }
+        
+        if(mControllerProfile2 != null)
+        {
+            mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault( 2 ) );
+            mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
+        }
+
+        if(mControllerProfile3 != null)
+        {
+            mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault( 3 ) );
+            mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue()); 
+        }
+        
+        if(mControllerProfile4 != null)
+        {
+            mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault( 4 ) );
+            mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
+        }
+        
+        // Enable/disable player map item as necessary
+        PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP, mGlobalPrefs.playerMap.isEnabled() );
+        
+        // Define which buttons to show in player map dialog
+        PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
+        if( playerPref != null )
+        {
+            // Check null in case preference has been removed
+            boolean enable1 = mGlobalPrefs.controllerProfile1 != null;
+            boolean enable2 = mGlobalPrefs.controllerProfile2 != null;
+            boolean enable3 = mGlobalPrefs.controllerProfile3 != null;
+            boolean enable4 = mGlobalPrefs.controllerProfile4 != null;
+            playerPref.setControllersEnabled( enable1, enable2, enable3, enable4 );
+        }
+        
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
@@ -154,7 +226,6 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
                 PrefUtil.removePreference( this, CATEGORY_DISPLAY, VIDEO_POLYGON_OFFSET );
             }
         }
-        
         
         // Enable polygon offset pref if flicker reduction is custom
         PrefUtil.enablePreference( this, VIDEO_POLYGON_OFFSET, mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM );
@@ -230,5 +301,18 @@ public class GlobalPrefsActivity extends AppCompatPreferenceActivity implements 
     protected void OnPreferenceScreenChange(String key)
     {
         refreshViews();
+    }
+
+    @Override
+    public void onDialogClosed(int inputCode, int hardwareId, int which)
+    {
+        PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
+        playerPref.onDialogClosed(inputCode, hardwareId, which);
+    }
+
+    @Override
+    public Controller getMogaController()
+    {
+        return mMogaController;
     }
 }

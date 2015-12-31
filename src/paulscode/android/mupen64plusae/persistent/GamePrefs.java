@@ -292,21 +292,26 @@ public class GamePrefs
         }
         
         // Controller profiles
-        controllerProfile1 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
-                globalPrefs.getControllerProfileDefault(),
+        controllerProfile1 = loadControllerProfile( mPreferences, globalPrefs, CONTROLLER_PROFILE1,
+                globalPrefs.getControllerProfileDefault(1),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile2 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
-                "",
+        controllerProfile2 = loadControllerProfile( mPreferences, globalPrefs, CONTROLLER_PROFILE2,
+                globalPrefs.getControllerProfileDefault(2),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile3 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
-                "",
+        controllerProfile3 = loadControllerProfile( mPreferences, globalPrefs, CONTROLLER_PROFILE3,
+                globalPrefs.getControllerProfileDefault(3),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile4 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
-                "",
+        controllerProfile4 = loadControllerProfile( mPreferences, globalPrefs, CONTROLLER_PROFILE4,
+                globalPrefs.getControllerProfileDefault(4),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         
         // Player map
-        playerMap = new PlayerMap( mPreferences.getString( PLAYER_MAP, "" ) );
+        String playerMapString = mPreferences.getString( PLAYER_MAP, "" );
+        
+        if( playerMapString.isEmpty() )
+            playerMapString = globalPrefs.getString( PLAYER_MAP, "" );
+        
+        playerMap = new PlayerMap( playerMapString );
         
         // Cheats menu
         isCheatOptionsShown = mPreferences.getBoolean( PLAY_SHOW_CHEATS, false );
@@ -601,10 +606,11 @@ public class GamePrefs
             return null;
     }
     
-    private static ControllerProfile loadControllerProfile( SharedPreferences prefs, String key,
-            String defaultName, ConfigFile custom, ConfigFile builtin )
+    private static ControllerProfile loadControllerProfile( SharedPreferences prefs, GlobalPrefs globalPrefs,
+            String key, String defaultName, ConfigFile custom, ConfigFile builtin )
     {
-        final String name = prefs.getString( key, defaultName );
+        String globalName = globalPrefs.getString( key, defaultName );
+        final String name = prefs.getString( key, globalName );
         
         if( custom.keySet().contains( name ) )
             return new ControllerProfile( false, custom.get( name ) );
