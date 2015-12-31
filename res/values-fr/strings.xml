@@ -452,6 +452,7 @@
   <string name="controller_buttonR">Bouton R</string>
   <string name="controller_buttonZ">Bouton Z</string>
   <string name="controller_buttonS">Bouton start</string>
+  <string name="controller_buttonSensor">Bouton (dés)activer l\'accéléromètre</string>
   <string name="controller_fps">Affichage d\'images par seconde (FPS)</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Veuillez appuyer sur un bouton, une touche ou le joystick pour assigner cette fonction…\n\nTouche(s) actuellement assignée(s) :\n%1$s</string>
@@ -487,7 +488,7 @@
   <string name="inputMapActivity_simulateBack">Touche retour</string>
   <string name="inputMapActivity_simulateMenu">Touche menu</string>
   <string name="inputMapActivity_screenshot">Capture d\'écran</string>
-  <string name="inputMapActivity_toggle_sensor">Activer/Désactiver l\'accéléromètre</string>
+  <string name="inputMapActivity_toggle_sensor">(Dés)Activer l\'accéléromètre</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Appuyez sur un bouton ou une touche…</string>
   <string name="diagnosticActivity_textMotion_text">Touchez l\'écran ou un joystick…</string>
