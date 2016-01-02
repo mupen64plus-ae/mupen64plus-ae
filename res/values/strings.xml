@@ -428,6 +428,10 @@
     <string name="assetExtractor_progress">%1$.0f%% done: %2$s</string>
     <string name="assetExtractor_finished">Finished</string>
     <string name="assetExtractor_failed">Error extracting app data.\nPlease unplug USB cable, reboot device, and re-launch app.\nFor help, please visit %1$s.</string>
+    <string name="assetExtractor_error">Error</string>
+    <string name="assetExtractor_failed_permissions">This app cannot proceed without these permissions</string>
+    <string name="assetExtractor_permissions_title">Permissions</string>
+    <string name="assetExtractor_permissions_rationale">Mupen64Plus AE needs to be able to: \nRead your storage to read ROM files, save states, and configuration.\nWrite to your storage to write configuration and save data.</string>
 
     <!-- Cheats Configuration -->
     <string name="cheats_defaultName">Cheat %1$d</string>

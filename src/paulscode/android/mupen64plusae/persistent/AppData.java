@@ -91,6 +91,12 @@ public class AppData
     /** True if device is running Lollipop or later (21 - Android 5.0.x) */
     public static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     
+    /** True if device is running Lollipop MR1 or later (22 - Android 5.1.x) */
+    public static final boolean IS_LOLLIPOP_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+    
+    /** True if device is running marshmallow or later (23 - Android 6.0.x) */
+    public static final boolean IS_MARSHMELLOW = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    
     /** True if device is an OUYA. */
     public static final boolean IS_OUYA_HARDWARE = OuyaFacade.getInstance().isRunningOnOUYAHardware();
     

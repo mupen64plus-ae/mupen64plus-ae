@@ -37,10 +37,19 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import tv.ouya.console.api.OuyaFacade;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
@@ -52,8 +61,14 @@ import android.widget.TextView;
  * The main activity that presents the splash screen, extracts the assets if necessary, and launches
  * the main menu activity.
  */
-public class SplashActivity extends AppCompatActivity implements ExtractAssetsListener
+public class SplashActivity extends AppCompatActivity implements ExtractAssetsListener, OnRequestPermissionsResultCallback
 {
+    //Permission request ID
+    static final int PERMISSION_REQUEST = 177;
+    
+    //Total number of permissions requested
+    static final int NUM_PERMISSIONS = 2;
+    
     /**
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
@@ -170,6 +185,119 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             Popups.showInvalidInstall( this );
         }
     }
+
+    public void requestPermissions()
+    {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            {
+                //Show dialog asking for permissions
+                new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.assetExtractor_permissions_title))
+                    .setMessage(getString(R.string.assetExtractor_permissions_rationale))
+                    .setPositiveButton(getString(android.R.string.ok), new OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            actuallyRequestPermissions();
+                        }
+
+                    }).setNegativeButton(getString(android.R.string.cancel), new OnClickListener()
+                    {
+                        //Show dialog stating that the app can't continue without proper permissions
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
+                                .setMessage(getString(R.string.assetExtractor_failed_permissions))
+                                .setPositiveButton(getString( android.R.string.ok ), new OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which)
+                                    {
+                                        SplashActivity.this.finish();
+                                    }
+
+                                }).setCancelable(false).show();
+                        }
+                    }).setCancelable(false).show();
+            }
+            else
+            {
+                // No explanation needed, we can request the permission.
+                actuallyRequestPermissions();
+            }
+        }
+        else
+        {
+            //Permissions already granted, continue
+            extractAssets();
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    public void actuallyRequestPermissions()
+    {
+        ActivityCompat.requestPermissions(this, new String[] {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSION_REQUEST);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+    {
+        switch (requestCode)
+        {
+        case PERMISSION_REQUEST:
+        {
+            // If request is cancelled, the result arrays are empty.
+            boolean good = true;
+            if (permissions.length != NUM_PERMISSIONS || grantResults.length != NUM_PERMISSIONS)
+            {
+                good = false;
+            }
+
+            for (int i = 0; i < grantResults.length && good; i++)
+            {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
+                {
+                    good = false;
+                }
+            }
+            
+            if (!good)
+            {
+                // permission denied, boo! Disable the app.
+                new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
+                    .setMessage(getString(R.string.assetExtractor_failed_permissions))
+                    .setPositiveButton(getString( android.R.string.ok ), new OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            SplashActivity.this.finish();
+                        }
+
+                    }).setCancelable(false).show();
+            }
+            else
+            {
+                //Permissions already granted, continue
+                extractAssets();
+            }
+            return;
+        }
+
+        // other 'case' lines to check for other
+        // permissions this app might request
+        }
+    }
     
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
     private final Runnable extractAssetsTaskLauncher = new Runnable()
@@ -179,10 +307,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         {
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
-                // Extract and merge the assets if they are out of date
-                FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
-                mAssetsExtracted = 0;
-                new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
+                requestPermissions();
             }
             else
             {
@@ -194,6 +319,17 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             }
         }
     };
+    
+    /**
+     * Extract assets
+     */
+    private void extractAssets()
+    {
+        // Extract and merge the assets if they are out of date
+        FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
+        mAssetsExtracted = 0;
+        new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
+    }
     
     @Override
     public void onExtractAssetsProgress( String nextFileToExtract )
