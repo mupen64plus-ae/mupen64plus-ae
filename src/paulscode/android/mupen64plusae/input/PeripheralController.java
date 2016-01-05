@@ -44,62 +44,11 @@ import android.view.KeyEvent;
 public class PeripheralController extends AbstractController implements
         AbstractProvider.OnInputListener
 {
-    /**
-     * An object wrapping a float that can be changed.
-     */
-    private static class MutableFloat
-    {
-        /** The value of the mutable float object. */
-        public float mValue;
-        
-        /**
-         * Gets the float value of the object.
-         * 
-         * @return The float value of the object.
-         */
-        public float get()
-        {
-            return mValue;
-        }
-        
-        /**
-         * Sets the float value of the object.
-         * 
-         * @param value The float value to set the object to.
-         */
-        public void set( float value )
-        {
-            mValue = value;
-        }
-    }
-    
-    /**
-     * A class for getting the N64 index and specifying the strength of the input.
-     */
-    private static class InputEntry
-    {
-        /** The index of the N64 control that is affected by this input. */
-        public final int mN64Index;
-        
-        /** The strength of the last detected input. */
-        public MutableFloat nInputStrength = new MutableFloat();
-        
-        /**
-         * Instantiates a new input entry.
-         * 
-         * @param n64Index The index of the N64 control that will be affected by the input.
-         */
-        public InputEntry(int n64Index)
-        {
-            mN64Index = n64Index;
-        }
-    }
-    
     /** The map from hardware identifiers to players. */
     private final PlayerMap mPlayerMap;
     
     /** The map from input codes to entries w/ the N64 command index. */
-    private final SparseArray<InputEntry> mInputMap = new SparseArray<InputEntry>();
+    private final SparseArray<InputEntry> mEntryMap = new SparseArray<InputEntry>();
     
     /** The analog deadzone, between 0 and 1, inclusive. */
     private final float mDeadzoneFraction;
@@ -116,8 +65,8 @@ public class PeripheralController extends AbstractController implements
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
     
-    /** The strength from the last inputs. */
-    private final MutableFloat[][] mLastInputStrengths = new MutableFloat[InputMap.NUM_N64_CONTROLS][];
+    /** The calculator for the strength of an input. */
+    private final InputStrengthCalculator mStrengthCalculator;
     
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
@@ -153,38 +102,8 @@ public class PeripheralController extends AbstractController implements
         mListener = listener;
         mSensorController = sensorController;
         
-        // Create the input map
-        int[] entryCount = new int[InputMap.NUM_N64_CONTROLS];
-        
-        for( int i = 0; i < inputMap.size(); i++ )
-        {
-            int n64Index = inputMap.valueAt( i );
-            
-            mInputMap.put( inputMap.keyAt( i ), new InputEntry( n64Index ) );
-            
-            if( n64Index >= 0 && n64Index < entryCount.length )
-                entryCount[n64Index]++;
-        }
-        
-        // Organize the input entries by N64 control index for fast iteration.
-        for( int i = 0; i < entryCount.length; i++ )
-        {
-            mLastInputStrengths[i] = new MutableFloat[entryCount[i]];
-        }
-        
-        int[] entryIndex = new int[InputMap.NUM_N64_CONTROLS];
-        
-        for( int i = 0; i < inputMap.size(); i++ )
-        {
-            int n64Index = inputMap.valueAt( i );
-            
-            if( n64Index >= 0 && n64Index < entryIndex.length )
-            {
-                mLastInputStrengths[n64Index][entryIndex[n64Index]] =
-                        mInputMap.get( inputMap.keyAt( i ) ).nInputStrength;
-                entryIndex[n64Index]++;
-            }
-        }
+        // Populate the entry map
+        mStrengthCalculator = new InputStrengthCalculator( inputMap, mEntryMap );
         
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
@@ -258,27 +177,19 @@ public class PeripheralController extends AbstractController implements
      */
     private boolean apply( int inputCode, float strength )
     {
-        InputEntry entry = mInputMap.get( inputCode );
+        InputEntry entry = mEntryMap.get( inputCode );
         
         if( entry == null )
             return false;
         
-        boolean keyDown = strength > AbstractProvider.STRENGTH_THRESHOLD;
+        // Evaluate the strengths of the inputs that map to the control.
+        entry.getStrength().set( strength );
         int n64Index = entry.mN64Index;
+        strength = mStrengthCalculator.calculate( n64Index );
+        boolean keyDown = strength > AbstractProvider.STRENGTH_THRESHOLD;
         
         if( n64Index >= 0 && n64Index < InputMap.NUM_N64_CONTROLS )
         {
-            MutableFloat[] inputStrengths = mLastInputStrengths[n64Index];
-            
-            // Determine the maximum strength from all possible inputs that map to the control.
-            entry.nInputStrength.set( strength );
-            strength = inputStrengths[0].get();
-            
-            for( int i = 1; i < inputStrengths.length; i++ )
-            {
-                strength = Math.max( strength, inputStrengths[i].get() );
-            }
-            
             if( n64Index < NUM_N64_BUTTONS )
             {
                 mState.buttons[n64Index] = strength > AbstractProvider.STRENGTH_THRESHOLD;
