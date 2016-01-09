@@ -20,7 +20,9 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -37,7 +39,7 @@ public class PlayerMap extends SerializableMap
     /** A map where the device unique name maps to an id.
      *  When the device reconnects and it is given a new id,
      *  this map allows the old id to be looked up so it can be replaced with the new id. */
-    private HashMap<String, Integer> deviceNameToId = new HashMap<String, Integer>();
+    private HashMap<String, Collection<Integer>> deviceNameToId = new HashMap<String, Collection<Integer>>();
     
     public static boolean isDeviceId( String deviceName )
     {
@@ -125,20 +127,27 @@ public class PlayerMap extends SerializableMap
         {
             // ...and if the device was previously mapped to a player...
             String uniqueName = AbstractProvider.getUniqueName( hardwareId );
-            Integer oldId = deviceNameToId.get( uniqueName );
+            Collection<Integer> ids = deviceNameToId.get( uniqueName );
             
-            if( oldId != null && !AbstractProvider.isHardwareAvailable( oldId ) )
+            if( ids != null )
             {
-                int player = mMap.get( oldId );
-                
-                if( player > 0 )
+                for( Integer oldId : ids )
                 {
-                    // ...then replace the old id with the new one.
-                    Log.v( "PlayerMap", "Reconnecting device " + oldId + " as " + hardwareId + " for player " + player );
-                    mMap.delete( oldId );
-                    mMap.append( hardwareId, player );
-                    deviceNameToId.put( uniqueName, hardwareId );
-                    return true;
+                    if( oldId != null && !AbstractProvider.isHardwareAvailable( oldId ) )
+                    {
+                        int player = mMap.get( oldId );
+                        
+                        if( player > 0 )
+                        {
+                            // ...then replace the old id with the new one.
+                            Log.v( "PlayerMap", "Reconnecting device " + oldId + " as " + hardwareId + " for player " + player );
+                            mMap.delete( oldId );
+                            mMap.append( hardwareId, player );
+                            ids.remove( oldId );
+                            ids.add( hardwareId );
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -157,7 +166,17 @@ public class PlayerMap extends SerializableMap
         {
             unmap( hardwareId );
             mMap.put( hardwareId, player );
-            deviceNameToId.put( AbstractProvider.getUniqueName( hardwareId ), hardwareId );
+            
+            String name = AbstractProvider.getUniqueName( hardwareId );
+            Collection<Integer> ids = deviceNameToId.get( name );
+            
+            if( ids == null )
+            {
+                ids = new HashSet<Integer>();
+                deviceNameToId.put( name, ids );
+            }
+            
+            ids.add( hardwareId );
         }
         else
             Log.w( "InputMap", "Invalid player specified in map(.,.): " + player );
@@ -167,12 +186,15 @@ public class PlayerMap extends SerializableMap
     {
         mMap.delete( hardwareId );
         
-        for( Entry<String, Integer> entry : deviceNameToId.entrySet() )
+        for( Entry<String, Collection<Integer>> entry : deviceNameToId.entrySet() )
         {
-            if( entry.getValue() == hardwareId )
+            for( Integer id : entry.getValue() )
             {
-                deviceNameToId.remove( entry.getKey() );
-                break;
+                if( id == hardwareId )
+                {
+                    entry.getValue().remove( hardwareId );
+                    return;
+                }
             }
         }
     }
@@ -217,17 +239,20 @@ public class PlayerMap extends SerializableMap
         // Serialize the map data to a multi-delimited string
         String result = "";
         
-        for( Entry<String, Integer> entry : deviceNameToId.entrySet() )
+        for( Entry<String, Collection<Integer>> entry : deviceNameToId.entrySet() )
         {
-            // If the device name is the id, then store the latest id, otherwise the device's unique name
-            String device = ( isDeviceId( entry.getKey() ) ) ?
-                    entry.getValue().toString() :
-                    entry.getKey();
-            int player = mMap.get( entry.getValue() );
-            
-            // Putting the value first makes the string a bit more human readable IMO
-            if( player > 0 && device != null )
-                result += player + ":" + device + ",";
+            for( Integer id : entry.getValue() )
+            {
+                // If the device name is the id, then store the latest id, otherwise the device's unique name
+                String device = ( isDeviceId( entry.getKey() ) ) ?
+                        id.toString() :
+                        ( entry.getKey() + "#" + id.toString() );
+                int player = mMap.get( id );
+                
+                // Putting the value first makes the string a bit more human readable IMO
+                if( player > 0 && device != null )
+                    result += player + ":" + device + ",";
+            }
         }
         
         Log.v("PlayerMap", "Serializing: " + result);
@@ -261,8 +286,28 @@ public class PlayerMap extends SerializableMap
                     try
                     {
                         int player = Integer.parseInt( elements[0] );
+                        String[] deviceProperties = elements[1].split("#");
                         String deviceName = elements[1];
-                        int id = AbstractProvider.getHardwareId( elements[1] );
+                        int id = 0;
+                        
+                        // Try to parse the hardware id and determine if the same name 
+                        // is still at that id (some devices share the name and can
+                        // only be distinguished from each other by id)
+                        if( deviceProperties.length == 2 )
+                        {
+                            deviceName = deviceProperties[0];
+                            
+                            try { id = Integer.parseInt( deviceProperties[1] ); }
+                            catch( NumberFormatException ignored ) { }
+                            
+                            // Check to make sure the device is valid
+                            if( !deviceName.equals( AbstractProvider.getUniqueName( id ) ) )
+                                id = AbstractProvider.getHardwareId( deviceName );
+                        }
+                        
+                        // Try to get the hardware id from the device name (for backwards compatibility)
+                        else
+                            id = AbstractProvider.getHardwareId( deviceName );
                         
                         // If the specified device is not currently connected.
                         if( id == 0 )
@@ -280,7 +325,16 @@ public class PlayerMap extends SerializableMap
                             deviceName = AbstractProvider.getUniqueName( id );
                         }
                         
-                        deviceNameToId.put( deviceName , id );
+                        // Add the device to the appropriate places in the lists
+                        Collection<Integer> ids = deviceNameToId.get( deviceName );
+                        
+                        if( ids == null )
+                        {
+                            ids = new HashSet<Integer>();
+                            deviceNameToId.put( deviceName, ids );
+                        }
+                        
+                        ids.add( id );
                         mMap.put( id, player );
                     }
                     catch( NumberFormatException ignored )
