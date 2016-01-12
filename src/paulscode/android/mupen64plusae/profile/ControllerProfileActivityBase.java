@@ -32,6 +32,8 @@ import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
+import paulscode.android.mupen64plusae.input.InputEntry;
+import paulscode.android.mupen64plusae.input.InputStrengthCalculator;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
@@ -48,6 +50,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -84,6 +87,8 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     // Command information
     protected String[] mCommandNames;
     protected int[] mCommandIndices;
+    private SparseArray<InputEntry> mEntryMap = new SparseArray<InputEntry>();
+    private InputStrengthCalculator mStrengthCalculator;
     
     // Input listening
     protected KeyProvider mKeyProvider;
@@ -371,6 +376,15 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         int command = mProfile.getMap().get( inputCode );
         if( command != InputMap.UNMAPPED )
         {
+            InputEntry entry = mEntryMap.get( inputCode );
+            
+            if( entry != null )
+            {
+                // Calculate the strength from all possible inputs that map to the control.
+                entry.getStrength().set( strength );
+                strength = mStrengthCalculator.calculate( entry.mN64Index );
+            }
+            
             Button button = mN64Buttons[command];
             refreshButton( button, strength, true );
         }
@@ -393,6 +407,7 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     protected void refreshAllButtons(boolean incrementSelection)
     {
         final InputMap map = mProfile.getMap();
+        mStrengthCalculator = new InputStrengthCalculator( map, mEntryMap );
         for( int i = 0; i < mN64Buttons.length; i++ )
         {
             refreshButton( mN64Buttons[i], 0, map.isMapped( i ) );

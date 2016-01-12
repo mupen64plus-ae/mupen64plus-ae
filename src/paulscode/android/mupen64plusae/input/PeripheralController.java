@@ -33,6 +33,7 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 
@@ -46,8 +47,8 @@ public class PeripheralController extends AbstractController implements
     /** The map from hardware identifiers to players. */
     private final PlayerMap mPlayerMap;
     
-    /** The map from input codes to N64/Mupen commands. */
-    private final InputMap mInputMap;
+    /** The map from input codes to entries w/ the N64 command index. */
+    private final SparseArray<InputEntry> mEntryMap = new SparseArray<InputEntry>();
     
     /** The analog deadzone, between 0 and 1, inclusive. */
     private final float mDeadzoneFraction;
@@ -63,6 +64,9 @@ public class PeripheralController extends AbstractController implements
     
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
+    
+    /** The calculator for the strength of an input. */
+    private final InputStrengthCalculator mStrengthCalculator;
     
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
@@ -93,11 +97,13 @@ public class PeripheralController extends AbstractController implements
         
         // Assign the maps
         mPlayerMap = playerMap;
-        mInputMap = inputMap;
         mDeadzoneFraction = ( (float) inputDeadzone ) / 100f;
         mSensitivityFraction = ( (float) inputSensitivity ) / 100f;
         mListener = listener;
         mSensorController = sensorController;
+        
+        // Populate the entry map
+        mStrengthCalculator = new InputStrengthCalculator( inputMap, mEntryMap );
         
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
@@ -171,16 +177,25 @@ public class PeripheralController extends AbstractController implements
      */
     private boolean apply( int inputCode, float strength )
     {
-        boolean keyDown = strength > AbstractProvider.STRENGTH_THRESHOLD;
-        int n64Index = mInputMap.get( inputCode );
+        InputEntry entry = mEntryMap.get( inputCode );
         
-        if( n64Index >= 0 && n64Index < NUM_N64_BUTTONS )
+        if( entry == null )
+            return false;
+        
+        // Evaluate the strengths of the inputs that map to the control.
+        entry.getStrength().set( strength );
+        int n64Index = entry.mN64Index;
+        strength = mStrengthCalculator.calculate( n64Index );
+        boolean keyDown = strength > AbstractProvider.STRENGTH_THRESHOLD;
+        
+        if( n64Index >= 0 && n64Index < InputMap.NUM_N64_CONTROLS )
         {
-            mState.buttons[n64Index] = keyDown;
-            return true;
-        }
-        else if( n64Index < InputMap.NUM_N64_CONTROLS )
-        {
+            if( n64Index < NUM_N64_BUTTONS )
+            {
+                mState.buttons[n64Index] = strength > AbstractProvider.STRENGTH_THRESHOLD;
+                return true;
+            }
+            
             switch( n64Index )
             {
                 case InputMap.AXIS_R:
