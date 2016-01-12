@@ -112,6 +112,8 @@ LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
 LOCAL_LDLIBS            := $(MY_LOCAL_LDLIBS) -lGLESv2
 include $(BUILD_SHARED_LIBRARY)
 
+ifneq ($(TARGET_ARCH_ABI), armeabi)
+
 ###########
 # gles 3.0
 ###########
@@ -127,8 +129,6 @@ LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
 LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -lGLESv3
-else ifeq ($(TARGET_ARCH_ABI), armeabi)
     LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -lGLESv3
 else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/x86/ -lGLESv3
@@ -154,8 +154,6 @@ LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -lGLESv3
-else ifeq ($(TARGET_ARCH_ABI), armeabi)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -lGLESv3
 else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/x86/ -lGLESv3
 else
@@ -163,3 +161,5 @@ else
 endif
 
 include $(BUILD_SHARED_LIBRARY)
+
+endif #not armebi
