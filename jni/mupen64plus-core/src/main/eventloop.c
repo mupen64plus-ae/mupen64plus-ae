@@ -21,6 +21,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <SDL.h>
+#include <SDL_syswm.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -319,13 +320,18 @@ static int SDLCALL event_sdl_filter(void *userdata, SDL_Event *event)
 #endif
             return 0;
 
-#if SDL_VERSION_ATLEAST(2,0,0)
+#if SDL_VERSION_ATLEAST(1,3,0)
         case SDL_WINDOWEVENT:
             switch (event->window.event) {
                 case SDL_WINDOWEVENT_RESIZED:
                     // call the video plugin.  if the video plugin supports resizing, it will resize its viewport and call
                     // VidExt_ResizeWindow to update the window manager handling our opengl output window
                     gfx.resizeVideoOutput(event->window.data1, event->window.data2);
+                    return 0;  // consumed the event
+                    break;
+
+                case SDL_WINDOWEVENT_MOVED:
+                    gfx.moveScreen(event->window.data1, event->window.data2);
                     return 0;  // consumed the event
                     break;
             }
@@ -337,6 +343,14 @@ static int SDLCALL event_sdl_filter(void *userdata, SDL_Event *event)
             gfx.resizeVideoOutput(event->resize.w, event->resize.h);
             return 0;  // consumed the event
             break;
+
+#ifdef WIN32
+        case SDL_SYSWMEVENT:
+            if(event->syswm.msg->msg == WM_MOVE)
+                gfx.moveScreen(0,0); // The video plugin is responsible for getting the new window position
+            return 0;  // consumed the event
+            break;
+#endif
 #endif
 
         // if joystick action is detected, check if it's mapped to a special function
@@ -468,6 +482,13 @@ void event_initialize(void)
     SDL_EnableKeyRepeat(0, 0);
 #endif
     SDL_SetEventFilter(event_sdl_filter, NULL);
+    
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(1,3,0)
+    SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
+
+    if (SDL_EventState(SDL_SYSWMEVENT, SDL_QUERY) != SDL_ENABLE)
+        DebugMessage(M64MSG_WARNING, "Failed to change event state: %s", SDL_GetError());
+#endif
 }
 
 int event_set_core_defaults(void)
