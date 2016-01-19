@@ -131,9 +131,10 @@ public class NativeConfigFiles
         if( game.emulationProfile.get( "WidescreenHack", "False" ).equals("True") )
             aspectRatio = "3";
         
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "5" );                                                      // Settings version. Don't touch it.
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "6" );                                                      // Settings version. Don't touch it.
         putGliden64( mupen64plus_cfg, game, "MultiSampling", "0" );                                                         // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
         mupen64plus_cfg.put( "Video-GLideN64", "AspectRatio", aspectRatio);                                                 // Screen aspect ratio (0=stretch, 1=force 4:3, 2=force 16:9, 3=adjust)
+        putGliden64( mupen64plus_cfg, game, "BufferSwapMode", "2" );                                                        // Swap frame buffers (0=On VI update call, 1=On VI origin change, 2=On buffer update)
         putGliden64( mupen64plus_cfg, game, "bilinearMode", "1" );                                                          // Bilinear filtering mode (0=N64 3point, 1=standard)
         putGliden64( mupen64plus_cfg, game, "MaxAnisotropy", "0" );                                                         // Max level of Anisotropic Filtering, 0 for off
         putGliden64( mupen64plus_cfg, game, "CacheSize", "500" );                                                           // Size of texture cache in megabytes. Good value is VRAM*3/4
@@ -142,14 +143,14 @@ public class NativeConfigFiles
         putGliden64( mupen64plus_cfg, game, "EnableLOD", "True" );                                                          // Enable LOD emulation.
         putGliden64( mupen64plus_cfg, game, "EnableHWLighting", "False" );                                                  // Enable hardware per-pixel lighting.
         putGliden64( mupen64plus_cfg, game, "EnableShaderStorage", "True" );                                                // Use persistent storage for compiled shaders.
-        putGliden64( mupen64plus_cfg, game, "ForceGammaCorrection", "False" );                                              // Force gamma correction.
-        putGliden64( mupen64plus_cfg, game, "GammaCorrectionLevel", "1.0" );                                                // Gamma correction value.
+        mupen64plus_cfg.put( "Video-GLideN64", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );       // If true, use polygon offset values specified below
+        mupen64plus_cfg.put( "Video-GLideN64", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );        // Specifies a scale factor that is used to create a variable depth offset for each polygon
+        mupen64plus_cfg.put( "Video-GLideN64", "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );         // Is multiplied by an implementation-specific value to create a constant depth offset
         putGliden64( mupen64plus_cfg, game, "EnableFBEmulation", "True" );                                                  // Enable frame and|or depth buffer emulation.
         putGliden64( mupen64plus_cfg, game, "EnableCopyColorToRDRAM", "2" );                                                // Enable color buffer copy to RDRAM (0=do not copy, 1=copy in sync mode, 2=copy in async mode)
-        putGliden64( mupen64plus_cfg, game, "EnableCopyAuxiliaryToRDRAM", "False" );                                         // Enable auxiliary buffer copy to RDRAM.
+        putGliden64( mupen64plus_cfg, game, "EnableCopyAuxiliaryToRDRAM", "False" );                                        // Copy auxiliary buffers to RDRAM
         putGliden64( mupen64plus_cfg, game, "EnableCopyDepthToRDRAM", "False" );                                            // Enable depth buffer copy to RDRAM.
         putGliden64( mupen64plus_cfg, game, "EnableCopyColorFromRDRAM", "False" );                                          // Enable color buffer copy from RDRAM.
-        putGliden64( mupen64plus_cfg, game, "EnableDetectCFB", "False" );                                                   // Detect CPU writes to frame buffer.
         putGliden64( mupen64plus_cfg, game, "EnableN64DepthCompare", "False" );                                             // Enable N64 depth compare instead of OpenGL standard one. Experimental.
         putGliden64( mupen64plus_cfg, game, "txFilterMode", "0" );                                                          // Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)
         putGliden64( mupen64plus_cfg, game, "txEnhancementMode", "0" );                                                     // Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ)
@@ -170,9 +171,8 @@ public class NativeConfigFiles
         putGliden64( mupen64plus_cfg, game, "bloomBlendMode", "0" );                                                        // Bloom blend mode (0=Strong, 1=Mild, 2=Light)
         putGliden64( mupen64plus_cfg, game, "blurAmount", "10" );                                                           // Blur radius. Values [2, 10]
         putGliden64( mupen64plus_cfg, game, "blurStrength", "20" );                                                         // Blur strength. Values [10, 100]
-        mupen64plus_cfg.put( "Video-GLideN64", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );       // If true, use polygon offset values specified below
-        mupen64plus_cfg.put( "Video-GLideN64", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );        // Specifies a scale factor that is used to create a variable depth offset for each polygon
-        mupen64plus_cfg.put( "Video-GLideN64", "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );         // Is multiplied by an implementation-specific value to create a constant depth offset
+        putGliden64( mupen64plus_cfg, game, "ForceGammaCorrection", "False" );                                              // Force gamma correction.
+        putGliden64( mupen64plus_cfg, game, "GammaCorrectionLevel", "1.0" );                                                // Gamma correction value.
         
         mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );           // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );            // Specifies a scale factor that is used to create a variable depth offset for each polygon

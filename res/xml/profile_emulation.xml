@@ -149,6 +149,11 @@
             android:key="WidescreenHack"
             android:title="WidescreenHack" />
         <android.support.v7.preference.EditTextPreference
+            android:defaultValue="2"
+            android:key="BufferSwapMode"
+            android:summary="@string/selectedValue"
+            android:title="BufferSwapMode" />
+        <android.support.v7.preference.EditTextPreference
             android:defaultValue="1"
             android:key="bilinearMode"
             android:summary="@string/selectedValue"
@@ -188,7 +193,7 @@
             android:key="ForceGammaCorrection"
             android:title="ForceGammaCorrection" />
         <android.support.v7.preference.EditTextPreference
-            android:defaultValue="2.0"
+            android:defaultValue="1.0"
             android:key="GammaCorrectionLevel"
             android:summary="@string/selectedValue"
             android:title="GammaCorrectionLevel" />
@@ -213,10 +218,6 @@
             android:defaultValue="false"
             android:key="EnableCopyColorFromRDRAM"
             android:title="EnableCopyColorFromRDRAM" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="false"
-            android:key="EnableDetectCFB"
-            android:title="EnableDetectCFB" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="EnableN64DepthCompare"
