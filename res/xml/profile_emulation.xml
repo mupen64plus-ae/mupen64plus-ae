@@ -149,11 +149,6 @@
             android:key="WidescreenHack"
             android:title="WidescreenHack" />
         <android.support.v7.preference.EditTextPreference
-            android:defaultValue="2"
-            android:key="BufferSwapMode"
-            android:summary="@string/selectedValue"
-            android:title="BufferSwapMode" />
-        <android.support.v7.preference.EditTextPreference
             android:defaultValue="1"
             android:key="bilinearMode"
             android:summary="@string/selectedValue"
@@ -201,6 +196,11 @@
             android:defaultValue="true"
             android:key="EnableFBEmulation"
             android:title="EnableFBEmulation" />
+        <android.support.v7.preference.EditTextPreference
+            android:defaultValue="2"
+            android:key="BufferSwapMode"
+            android:summary="@string/selectedValue"
+            android:title="BufferSwapMode" />
         <android.support.v7.preference.EditTextPreference
             android:defaultValue="2"
             android:key="EnableCopyColorToRDRAM"
