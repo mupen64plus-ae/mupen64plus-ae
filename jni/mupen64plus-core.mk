@@ -129,6 +129,46 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=1
 
+    include $(BUILD_SHARED_LIBRARY)
+
+    # Build PIC-compliant library
+    SAVED_PATH := $(LOCAL_PATH)
+    SAVED_SHARED_LIBRARIES := $(LOCAL_SHARED_LIBRARIES)
+    SAVED_STATIC_LIBRARIES := $(LOCAL_STATIC_LIBRARIES)
+    SAVED_C_INCLUDES := $(LOCAL_C_INCLUDES)
+    SAVED_SRC_FILES := $(LOCAL_SRC_FILES)
+    SAVED_CFLAGS := $(LOCAL_CFLAGS)
+    SAVED_LDFLAGS := $(LOCAL_LDFLAGS)
+
+    include $(CLEAR_VARS)
+    LOCAL_PATH := $(SAVED_PATH)
+    LOCAL_SHARED_LIBRARIES := $(SAVED_SHARED_LIBRARIES)
+    LOCAL_STATIC_LIBRARIES := $(SAVED_STATIC_LIBRARIES)
+    LOCAL_C_INCLUDES := $(SAVED_C_INCLUDES)
+    LOCAL_MODULE := mupen64plus-core-pic
+
+    LOCAL_SRC_FILES := $(filter-out $(SRCDIR)/r4300/empty_dynarec.c \
+            $(SRCDIR)/r4300/new_dynarec/new_dynarec.c \
+            $(SRCDIR)/r4300/new_dynarec/x86/linkage_x86.asm \
+            , $(SAVED_SRC_FILES)) \
+        $(SRCDIR)/r4300/x86/assemble.c \
+        $(SRCDIR)/r4300/x86/gbc.c \
+        $(SRCDIR)/r4300/x86/gcop0.c \
+        $(SRCDIR)/r4300/x86/gcop1.c \
+        $(SRCDIR)/r4300/x86/gcop1_d.c \
+        $(SRCDIR)/r4300/x86/gcop1_l.c \
+        $(SRCDIR)/r4300/x86/gcop1_s.c \
+        $(SRCDIR)/r4300/x86/gcop1_w.c \
+        $(SRCDIR)/r4300/x86/gr4300.c \
+        $(SRCDIR)/r4300/x86/gregimm.c \
+        $(SRCDIR)/r4300/x86/gspecial.c \
+        $(SRCDIR)/r4300/x86/gtlb.c \
+        $(SRCDIR)/r4300/x86/regcache.c \
+        $(SRCDIR)/r4300/x86/rjump.c
+    LOCAL_CFLAGS := $(filter-out -DNEW_DYNAREC=1, $(SAVED_CFLAGS))  \
+        -ffast-math -mtune=atom -mssse3 -mfpmath=sse -fPIC
+    LOCAL_LDFLAGS := $(SAVED_LDFLAGS)
+
 else ifeq ($(TARGET_ARCH_ABI), mips)
     # Use for MIPS:
     #TODO: Possible to port dynarec from Daedalus? 

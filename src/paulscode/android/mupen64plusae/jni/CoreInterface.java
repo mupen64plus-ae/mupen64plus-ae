@@ -38,6 +38,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.DialogInterface;
 import android.media.AudioTrack;
+import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -234,7 +235,7 @@ public class CoreInterface
         if( sCoreThread == null )
         {
             // Load the native libraries
-            NativeExports.loadLibraries( sAppData.libsDir );
+            NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
             
             // Start the core thread if not already running
             sCoreThread = new Thread( new Runnable()
