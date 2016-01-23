@@ -241,7 +241,14 @@ public class AppData
         profilesDir = coreSharedDataDir + "/profiles";
         
         // Files
-        coreLib = libsDir + "/libmupen64plus-core.so";
+        String arch = System.getProperty("os.arch");
+        
+        // Check for x86, ignore 'arch64' or 'x86_64' for now
+        if( arch.equals( "i686" ) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+            coreLib = libsDir + "/libmupen64plus-core-pic.so";
+        else
+            coreLib = libsDir + "/libmupen64plus-core.so";
+        
         rspLib = libsDir + "/libmupen64plus-rsp-hle.so";
         inputLib = libsDir + "/libmupen64plus-input-android.so";
         gln64_conf = coreSharedDataDir + "/gln64.conf";

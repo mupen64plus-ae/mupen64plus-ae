@@ -37,7 +37,7 @@ public class NativeExports
     
     // TODO: Add javadoc
     
-    public static native void loadLibraries( String libPath );
+    public static native void loadLibraries( String libPath, int androidSDK );
     
     public static native void unloadLibraries();
     
