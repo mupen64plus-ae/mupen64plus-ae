@@ -22,6 +22,8 @@ package paulscode.android.mupen64plusae.jni;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -344,7 +346,24 @@ public class CoreInterface
                                 && saveToLoad != null)
                         {
                             removeOnStateCallbackListener( this );
-                            NativeExports.emuLoadFile( saveToLoad );
+                            
+                            if( sAppData.useX86PicLibrary )
+                            {
+                                // This is a hack to get "Resume" to work on x86 with the old
+                                // dynamic recompiler. Remove it once the new dynamic recompiler
+                                // works on x86 Marshmallow and later.
+                                new Timer("Resume Game").schedule(
+                                    new TimerTask()
+                                    {
+                                        @Override
+                                        public void run()
+                                        {
+                                            NativeExports.emuLoadFile( saveToLoad );
+                                        }
+                                    }, 1000);
+                            }
+                            else
+                                NativeExports.emuLoadFile( saveToLoad );
 
                             sActivity.runOnUiThread(new Runnable()
                             {
