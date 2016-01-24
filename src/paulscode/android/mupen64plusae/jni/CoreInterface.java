@@ -243,6 +243,8 @@ public class CoreInterface
                 @Override
                 public void run()
                 {
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+
                     // Initialize input-android plugin (even if we aren't going to use it)
                     NativeInput.init();
                     NativeInput.setConfig( 0, sGamePrefs.isPlugged1, sGlobalPrefs.getPakType( 1 ).getNativeValue() );
