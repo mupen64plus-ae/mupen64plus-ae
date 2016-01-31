@@ -776,8 +776,6 @@ static void apply_speed_limiter(void)
             TimeToWait = (IntegratedDelta > ThisFrameDelta) ? -IntegratedDelta : -ThisFrameDelta;
             DebugMessage(M64MSG_VERBOSE, "    apply_speed_limiter(): Waiting %ims", (int) TimeToWait);
 
-            //SDL_Delay((int) TimeToWait);
-
             int StartTime =  SDL_GetTicks();
             int EndTime = StartTime + TimeToWait;
             while(SDL_GetTicks() <= EndTime);
