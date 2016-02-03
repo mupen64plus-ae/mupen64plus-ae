@@ -34,5 +34,6 @@ include $(JNI_LOCAL_PATH)/mupen64plus-video-osal.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-glidenhq.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-gliden64.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-glide64mk2.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-video-glide2gl.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-gln64/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-rice.mk
