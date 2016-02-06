@@ -23,10 +23,7 @@
 
 #include <m64p_types.h>
 #include <m64p_config.h>
-#include <libretro.h>
 #include "boolean.h"
-
-extern retro_log_printf_t log_cb;
 
 //#define DEBUGLOG
 //#define TEXTUREMANAGEMENT_LOG

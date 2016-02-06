@@ -24,6 +24,7 @@
 #include "glide.h"
 #include "glitchmain.h"
 #include "../Glide64/rdp.h"
+#include <android/log.h>
 
 /* TODO: get rid of glitch_vbo */
 /* TODO: try glDrawElements */
@@ -58,7 +59,7 @@ static GLuint     vbuf_vbo       = 0;
 static size_t     vbuf_vbo_size  = 0;
 static bool       vbuf_drawing   = false;
 
-extern retro_environment_t environ_cb;
+//extern retro_environment_t environ_cb;
 
 #ifdef EMSCRIPTEN
 static struct draw_buffer *gli_vbo;
@@ -70,13 +71,13 @@ void vbo_init(void)
 #ifdef EMSCRIPTEN
    struct retro_variable var = { "mupen64-vcache-vbo", "on" };
 #else
-   struct retro_variable var = { "mupen64-vcache-vbo", 0 };
+   //struct retro_variable var = { "mupen64-vcache-vbo", 0 };
 #endif
-   vbuf_use_vbo = false;
+   vbuf_use_vbo = true;
    vbuf_length = 0;
 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      vbuf_use_vbo = (strcmp(var.value, "on") == 0);
+   /*if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+      vbuf_use_vbo = (strcmp(var.value, "on") == 0);*/
 
    if (vbuf_use_vbo)
    {
@@ -84,11 +85,11 @@ void vbo_init(void)
 
       if (!vbuf_vbo)
       {
-         log_cb(RETRO_LOG_ERROR, "Failed to create the VBO.");
+         __android_log_print(ANDROID_LOG_ERROR, "glide2gl", "Failed to create the VBO.\n");
          vbuf_use_vbo = false;
       }
       else
-         log_cb(RETRO_LOG_INFO, "Vertex cache VBO enabled.\n");
+         __android_log_print(ANDROID_LOG_ERROR, "glide2gl", "Vertex cache VBO enabled.\n");
    }
 }
 
@@ -126,7 +127,7 @@ void vbo_buffer_data(void *data, size_t size)
          glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
 
          if (size > VERTEX_BUFFER_SIZE)
-            log_cb(RETRO_LOG_INFO, "Extending vertex cache VBO.\n");
+            __android_log_print(ANDROID_LOG_INFO, "glide2gl", "Extending vertex cache VBO.\n");
 
          vbuf_vbo_size = size;
       }
@@ -265,9 +266,6 @@ void FindBestDepthBias(void)
       return;
 
    renderer = (const char*)glGetString(GL_RENDERER);
-
-   if (log_cb)
-      log_cb(RETRO_LOG_INFO, "GL_RENDERER: %s\n", renderer);
 
    biasFound = true;
 #else

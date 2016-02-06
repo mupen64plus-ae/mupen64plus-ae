@@ -46,10 +46,10 @@
 #include "FBtoScreen.h"
 #include "DepthBufferRender.h"
 #include "Glide64_Ini.h"
-#include "api/libretro.h"
+#include "libretro/libretro.h"
+#include <android/log.h>
 
 extern void CRC_BuildTable();
-extern retro_log_printf_t log_cb;
 extern uint32_t screen_aspectmodehint;
 
 #if defined(__GNUC__)
@@ -95,6 +95,8 @@ extern uint32_t screen_aspectmodehint;
 #endif
 
 void (*_gSPVertex)(uint32_t addr, uint32_t n, uint32_t v0);
+
+GFX_INFO gfx_info;
 
 int romopen = false;
 int exception = false;
@@ -491,6 +493,8 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
 
    rdp_new();
 
+   gfx_info = Gfx_Info;
+
    // Assume scale of 1 for debug purposes
    rdp.scale_x = 1.0f;
    rdp.scale_y = 1.0f;
@@ -544,8 +548,8 @@ static void CheckDRAMSize(void)
    else
       BMASK = 0x3FFFFF;
 
-   if (log_cb)
-      log_cb(RETRO_LOG_INFO, "Detected RDRAM size: %08lx\n", BMASK);
+
+   __android_log_print(ANDROID_LOG_ERROR, "glide2gl","Detected RDRAM size: %08lx\n", BMASK);
 }
 
 /******************************************************************

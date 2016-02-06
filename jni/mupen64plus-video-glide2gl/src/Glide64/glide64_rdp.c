@@ -47,7 +47,7 @@
 #include "CRC.h"
 #include "GBI.h"
 #include "Glide64_UCode.h"
-#include "../../libretro/SDL.h"
+#include "libretro/SDL.h"
 
 #ifdef __LIBRETRO__ // Prefix API
 #define VIDEO_TAG(X) glide64##X
@@ -226,8 +226,8 @@ void rdp_new(void)
       rdp.cur_cache[i]   = 0;
    }
 
-   if (perf_get_cpu_features_cb)
-      cpu = perf_get_cpu_features_cb();
+   //if (perf_get_cpu_features_cb)
+   //   cpu = perf_get_cpu_features_cb();
 
    _gSPVertex = gSPVertex_G64;
 }
@@ -236,8 +236,8 @@ void rdp_setfuncs(void)
 {
    if (settings.hacks & hack_Makers)
    {
-      if (log_cb)
-         log_cb(RETRO_LOG_INFO, "Applying Mischief Makers function pointer table tweak...\n");
+      //if (log_cb)
+      //   log_cb(RETRO_LOG_INFO, "Applying Mischief Makers function pointer table tweak...\n");
       gfx_instruction[0][191] = uc0_tri1_mischief;
    }
 }

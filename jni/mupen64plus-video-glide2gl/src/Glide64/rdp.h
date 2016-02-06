@@ -40,7 +40,7 @@
 #ifndef RDP_H
 #define RDP_H
 
-#include "rdp_common/gdp.h"
+#include "gdp.h"
 #include "Gfx_1.3.h"
 
 extern uint32_t frame_count; // frame counter

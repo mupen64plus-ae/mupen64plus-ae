@@ -23,6 +23,7 @@
 #include "glide.h"
 #include "glitchmain.h"
 #include "uthash.h"
+#include "glext.h"
 
 /* Napalm extensions to GrTextureFormat_t */
 #define GR_TEXFMT_ARGB_8888               0x12

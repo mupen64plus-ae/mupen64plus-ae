@@ -5,7 +5,7 @@
 #include <SDL_opengles2.h>
 #include "boolean.h"
 
-#include "../../../mupen64plus-core/src/rdp_common/gdp.h"
+#include "gdp.h"
 
 #ifdef __cplusplus
 extern "C" {
