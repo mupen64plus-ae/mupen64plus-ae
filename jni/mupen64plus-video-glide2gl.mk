@@ -11,7 +11,10 @@ LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=                             \
-    $(LOCAL_PATH)/$(SRCDIR)/Glitch64/inc        \
+    $(LOCAL_PATH)/$(SRCDIR)/Glitch64            \
+    $(LOCAL_PATH)/$(SRCDIR)/Glide64             \
+    $(LOCAL_PATH)/$(SRCDIR)/libretro            \
+    $(LOCAL_PATH)/$(SRCDIR)                     \
     $(M64P_API_INCLUDES)                        \
     $(PNG_INCLUDES)                             \
     $(SDL_INCLUDES)                             \
@@ -21,8 +24,8 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glitch64/glitch64_combiner.c      \
     $(SRCDIR)/Glitch64/glitch64_textures.c      \
     $(SRCDIR)/Glitch64/glitchmain.c             \
-    $(SRCDIR)/Glide64/osal_dynamiclib_unix.c    \
     $(SRCDIR)/Glide64/Combine.c                 \
+    $(SRCDIR)/Glide64/DepthBufferRender.c       \
     $(SRCDIR)/Glide64/FBtoScreen.c              \
     $(SRCDIR)/Glide64/glide64_3dmath.c          \
     $(SRCDIR)/Glide64/Glide64_Ini.c             \
@@ -33,6 +36,15 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glide64/MiClWr.c                  \
     $(SRCDIR)/Glide64/TexCache.c                \
     $(SRCDIR)/Glide64/TexLoad.c                 \
+    $(SRCDIR)/libretro/gdp.c                    \
+    $(SRCDIR)/libretro/opengl_state_machine.c   \
+    $(SRCDIR)/libretro/libretro.c               \
+    $(SRCDIR)/libretro/libretro_crc.c           \
+    $(SRCDIR)/libretro/glsym/rglgen.c           \
+    $(SRCDIR)/libretro/glsym/glsym_es2.c        \
+    
+
+    
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
@@ -56,7 +68,8 @@ LOCAL_LDLIBS :=         \
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
-    LOCAL_CFLAGS += -mfpu=vfp
+    LOCAL_CFLAGS += -D__ARM_NEON__
+    LOCAL_CFLAGS += -mfpu=neon
     LOCAL_CFLAGS += -mfloat-abi=softfp
     
 else ifeq ($(TARGET_ARCH_ABI), x86)
@@ -67,6 +80,6 @@ else
     
 endif
 
-LOCAL_CFLAGS += -DM64P_CORE_PROTOTYPES -D_ENDUSER_RELEASE -DM64P_PLUGIN_API -D__LIBRETRO__ -DINLINE="inline" -DSDL_VIDEO_OPENGL_ES2=1 -DANDROID -DSINC_LOWER_QUALITY -DHAVE_LOGGER -DHAVE_COMBINE_EXT -fexceptions $(GLFLAGS) -DGLES
+LOCAL_CFLAGS += -DM64P_CORE_PROTOTYPES -D_ENDUSER_RELEASE -DM64P_PLUGIN_API -D__LIBRETRO__ -DINLINE="inline" -DSDL_VIDEO_OPENGL_ES2=1 -DANDROID -DSINC_LOWER_QUALITY -DHAVE_LOGGER -DHAVE_COMBINE_EXT -fexceptions -DGLES -DHAVE_OPENGLES2 -DDISABLE_3POINT -DUSE_GLES
 
 include $(BUILD_SHARED_LIBRARY)

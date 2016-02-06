@@ -346,7 +346,8 @@ public class GamePrefs
         isRiceFogEnabled = emulationProfile.get( "riceFog", "False" ).equals( "True" );
         
         // Video prefs - glide64
-        isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
+        isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" ) || 
+            videoPlugin.name.equals( "libmupen64plus-video-glide2gl.so" );
         maxFrameskip = getSafeInt( emulationProfile, "glide64Frameskip", 0 );
         isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
         glide64MaxFrameskip = Math.abs( maxFrameskip );

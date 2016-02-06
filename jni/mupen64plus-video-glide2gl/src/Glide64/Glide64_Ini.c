@@ -4,8 +4,8 @@
 #include "rdp.h"
 #include "DepthBufferRender.h"
 
-#include "api/libretro.h"
-#include "../../libretro/SDL.h"
+#include "libretro/libretro.h"
+#include "libretro/SDL.h"
 
 extern bool no_audio;
 extern uint8_t microcode[4096];
@@ -178,7 +178,7 @@ void ReadSpecialSettings (const char * name)
       //depthmode = 0
    }
    // ;Bakushou Jinsei 64 - Mezease! Resort Ou.
-   else if (strstr(name, (const char *)"ÊÞ¸¼®³¼ÞÝ¾²64"))
+   else if (strstr(name, (const char *)"ÃŠÃžÂ¸Â¼Â®Â³Â¼ÃžÃ�Â¾Â²64"))
    {
       //fb_info_disable = 1
       //depthmode = 0
@@ -484,7 +484,7 @@ void ReadSpecialSettings (const char * name)
       hires = 1;
 #endif
    }
-   else if (strstr(name, (const char *)"´¸½ÄØ°ÑG2"))
+   else if (strstr(name, (const char *)"Â´Â¸Â½Ã„Ã˜Â°Ã‘G2"))
    {
       //depthmode = 0
       smart_read = 0;
@@ -526,7 +526,7 @@ void ReadSpecialSettings (const char * name)
       hires = 1;
 #endif
    }
-   else if (strstr(name, (const char *)"´²º³É¾ÝÄ±ÝÄÞØ­°½"))
+   else if (strstr(name, (const char *)"Â´Â²ÂºÂ³Ã‰Â¾Ã�Ã„Â±Ã�Ã„ÃžÃ˜Â­Â°Â½"))
    {
       //;Eikou no Saint Andrew
       settings.correct_viewport = 1;
@@ -604,7 +604,7 @@ void ReadSpecialSettings (const char * name)
       cpu_write_hack = 1;
       //depthmode = 0
    }
-   else if (strstr(name, (const char*)"ÄÞ×´ÓÝ3 ÉËÞÀÉÏÁSOS!"))
+   else if (strstr(name, (const char*)"Ã„ÃžÃ—Â´Ã“Ã�3 Ã‰Ã‹ÃžÃ€Ã‰Ã�Ã�SOS!"))
    {
       //;Doraemon 3 - Nobita no Machi SOS! (J)
       settings.clip_zmin = 1;
@@ -645,7 +645,7 @@ void ReadSpecialSettings (const char * name)
       //depthmode = 0
       settings.buff_clear = 0;
    }
-   else if (strstr(name, (const char*)"F3 Ì³×²É¼ÚÝ2"))
+   else if (strstr(name, (const char*)"F3 ÃŒÂ³Ã—Â²Ã‰Â¼ÃšÃ�2"))
    {
       //;Fushigi no Dungeon - Furai no Shiren 2 (J) 
       settings.decrease_fillrect_edge = 1;
@@ -706,7 +706,7 @@ void ReadSpecialSettings (const char * name)
       settings.swapmode = 0;
    }
    else if (strstr(name, (const char*)"GANBAKE GOEMON") 
-         //|| strstr(name, (const char*)"¶ÞÝÊÞÚ\ ºÞ´ÓÝ") */ TODO: illegal characters - find by ucode CRC */
+         //|| strstr(name, (const char*)"Â¶ÃžÃ�ÃŠÃžÃš\ ÂºÃžÂ´Ã“Ã�") */ TODO: illegal characters - find by ucode CRC */
          || strstr(name, (const char*)"MYSTICAL NINJA")
          || strstr(name, (const char*)"MYSTICAL NINJA2 SG")
          )
@@ -753,14 +753,14 @@ void ReadSpecialSettings (const char * name)
       settings.filtering = 1;
       //depthmode = 1
    }
-   else if (strstr(name, (const char*)"ÊÑ½À°ÓÉ¶ÞÀØ64")
+   else if (strstr(name, (const char*)"ÃŠÃ‘Â½Ã€Â°Ã“Ã‰Â¶ÃžÃ€Ã˜64")
          )
    {
       settings.force_microcheck = 1;
       //depthmode = 0
    }
    else if (strstr(name, (const char*)"HARVESTMOON64")
-         || strstr(name, (const char*)"ÎÞ¸¼Þ®³ÓÉ¶ÞÀØ2")
+         || strstr(name, (const char*)"ÃŽÃžÂ¸Â¼ÃžÂ®Â³Ã“Ã‰Â¶ÃžÃ€Ã˜2")
          )
    {
       settings.zmode_compare_less = 1;
@@ -819,7 +819,7 @@ void ReadSpecialSettings (const char * name)
       //depthmode = 0
       settings.buff_clear = 0;
    }
-   else if (strstr(name, (const char*)"ÓØÀ¼®³·Þ64"))
+   else if (strstr(name, (const char*)"Ã“Ã˜Ã€Â¼Â®Â³Â·Ãž64"))
    {
       //;Morita Shogi 64
       settings.correct_viewport = 1;
@@ -911,7 +911,7 @@ void ReadSpecialSettings (const char * name)
       hires = 1;
 #endif
    }
-   else if (strstr(name, (const char*)"ÄÞ×´ÓÝ Ð¯ÂÉ¾²Ú²¾·"))
+   else if (strstr(name, (const char*)"Ã„ÃžÃ—Â´Ã“Ã� Ã�Â¯Ã‚Ã‰Â¾Â²ÃšÂ²Â¾Â·"))
    {
       //;Doraemon - Mittsu no Seireiseki (J)
       read_back_to_screen = 1;
@@ -921,7 +921,7 @@ void ReadSpecialSettings (const char * name)
       hires = 1;
 #endif
    }
-   else if (strstr(name, (const char*)"HEIWA ÊßÁÝº Ü°ÙÄÞ64"))
+   else if (strstr(name, (const char*)"HEIWA ÃŠÃŸÃ�Ã�Âº ÃœÂ°Ã™Ã„Ãž64"))
    {
       //; Heiwa Pachinko World
       //depthmode = 0
@@ -932,13 +932,13 @@ void ReadSpecialSettings (const char * name)
       hires = 1;
 #endif
    }
-   else if (strstr(name, (const char*)"·×¯Ä¶²¹Â 64ÀÝÃ²ÀÞÝ"))
+   else if (strstr(name, (const char*)"Â·Ã—Â¯Ã„Â¶Â²Â¹Ã‚ 64Ã€Ã�ÃƒÂ²Ã€ÃžÃ�"))
    {
       settings.filtering = 1;
       //depthmode = 0
       settings.buff_clear = 0;
    }
-   else if (strstr(name, (const char*)"½°Êß°ÛÎÞ¯ÄÀ²¾Ý64"))
+   else if (strstr(name, (const char*)"Â½Â°ÃŠÃŸÂ°Ã›ÃŽÃžÂ¯Ã„Ã€Â²Â¾Ã�64"))
    {
       //;Super Robot Taisen 64 (J)
       smart_read = 1;
@@ -957,18 +957,14 @@ void ReadSpecialSettings (const char * name)
       //depthmode = 0
       settings.buff_clear = 0;
    }
-   else if (strstr(name, (const char*)"TOP GEAR RALLY"))
-   {
-      no_audio = true;
-   }
-   else if (strstr(name, (const char*)"½½Ò!À²¾ÝÊß½ÞÙÀÞÏ"))
+   else if (strstr(name, (const char*)"Â½Â½Ã’!Ã€Â²Â¾Ã�ÃŠÃŸÂ½ÃžÃ™Ã€ÃžÃ�"))
    {
       settings.force_microcheck = 1;
       //depthmode = 1
       settings.fog = 0;
       settings.swapmode = 0;
    }
-   else if (strstr(name, (const char*)"ÐÝÅÃÞÀÏºÞ¯ÁÜ°ÙÄÞ"))
+   else if (strstr(name, (const char*)"Ã�Ã�Ã…ÃƒÃžÃ€Ã�ÂºÃžÂ¯Ã�ÃœÂ°Ã™Ã„Ãž"))
    {
       //;Tamagotchi World 64 (J) 
       //depthmode = 0
@@ -1025,7 +1021,7 @@ void ReadSpecialSettings (const char * name)
 #if 0
    // TODO: illegal characters - will have to find this game by ucode CRC
    // later
-   else if (strstr(name, (const char*)"JØ°¸Þ\ ²ÚÌÞÝËÞ°Ä1997"))
+   else if (strstr(name, (const char*)"JÃ˜Â°Â¸Ãž\ Â²ÃšÃŒÃžÃ�Ã‹ÃžÂ°Ã„1997"))
    {
       //;J.League Eleven Beat 1997
       smart_read = 1;
@@ -1062,7 +1058,7 @@ void ReadSpecialSettings (const char * name)
    {
       settings.buff_clear = 0;
    }
-   else if (strstr(name, (const char*)"Ç¼ÂÞØ64"))
+   else if (strstr(name, (const char*)"Ã‡Â¼Ã‚ÃžÃ˜64"))
    {
       //; Nushi Zuri 64
       settings.force_microcheck = 1;

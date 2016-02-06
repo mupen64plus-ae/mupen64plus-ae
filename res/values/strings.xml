@@ -283,6 +283,7 @@
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
     <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
+    <string name="videoPlugin_entryLibretroGlide64">Libretro-glide64\n<small>Port of libretro glide64</small></string>
     <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 alpha)</small></string>
     <string name="videoSubPlugin_title">Video plugin variant</string>
     <string name="videoSubPlugin_entryGles20">OpenGL ES 2.0</string>

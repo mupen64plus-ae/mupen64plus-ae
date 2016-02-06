@@ -28,7 +28,8 @@
 #include <math.h>
 #include "glide.h"
 #include "glitchmain.h"
-#include "../../libretro/SDL.h"
+#include "SDL.h"
+#include <android/log.h>
 
 float glide64_pow(float a, float b);
 
@@ -265,8 +266,7 @@ void check_compile(GLuint shader)
    {
       char log[1024];
       glGetShaderInfoLog(shader,1024,NULL,log);
-      if (log_cb)
-         log_cb(RETRO_LOG_ERROR, log);
+      __android_log_print(ANDROID_LOG_ERROR, "glide2gl", "%s", log);
    }
 }
 
@@ -279,8 +279,7 @@ void check_link(GLuint program)
    {
       char log[1024];
       glGetProgramInfoLog(program,1024,NULL,log);
-      if (log_cb)
-         log_cb(RETRO_LOG_ERROR, log);
+      __android_log_print(ANDROID_LOG_ERROR, "glide2gl", "%s", log);
    }
 }
 

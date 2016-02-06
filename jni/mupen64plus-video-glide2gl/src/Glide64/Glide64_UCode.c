@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "Glide64_UCode.h"
 #include "rdp.h"
-#include "api/libretro.h"
+#include "libretro/libretro.h"
 
 extern uint8_t microcode[4096];
 extern uint32_t uc_crc;
@@ -182,8 +182,8 @@ void microcheck(void)
          )
          {
             settings.ucode = 2;
-            if (log_cb)
-               log_cb(RETRO_LOG_INFO, "Microcode 2 - F3DEX 2.XX (The Legend of Zelda: Ocarina of Time)\n");
+            //if (log_cb)
+            //   log_cb(RETRO_LOG_INFO, "Microcode 2 - F3DEX 2.XX (The Legend of Zelda: Ocarina of Time)\n");
          }
    else if (
          uc_crc == UCODE_WAVERACE_64
