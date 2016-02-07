@@ -47,38 +47,10 @@
 #include "CRC.h"
 #include "GBI.h"
 #include "Glide64_UCode.h"
-#include "libretro/SDL.h"
+#include <SDL.h>
+#include "libretro/libretro.h"
 
-#ifdef __LIBRETRO__ // Prefix API
-#define VIDEO_TAG(X) glide64##X
-
-#define ReadScreen2 VIDEO_TAG(ReadScreen2)
-#define PluginStartup VIDEO_TAG(PluginStartup)
-#define PluginShutdown VIDEO_TAG(PluginShutdown)
-#define PluginGetVersion VIDEO_TAG(PluginGetVersion)
-#define CaptureScreen VIDEO_TAG(CaptureScreen)
-#define ChangeWindow VIDEO_TAG(ChangeWindow)
-#define CloseDLL VIDEO_TAG(CloseDLL)
-#define DllTest VIDEO_TAG(DllTest)
-#define DrawScreen VIDEO_TAG(DrawScreen)
-#define GetDllInfo VIDEO_TAG(GetDllInfo)
-#define InitiateGFX VIDEO_TAG(InitiateGFX)
-#define MoveScreen VIDEO_TAG(MoveScreen)
-#define RomClosed VIDEO_TAG(RomClosed)
-#define RomOpen VIDEO_TAG(RomOpen)
-#define ShowCFB VIDEO_TAG(ShowCFB)
-#define SetRenderingCallback VIDEO_TAG(SetRenderingCallback)
-#define UpdateScreen VIDEO_TAG(UpdateScreen)
-#define ViStatusChanged VIDEO_TAG(ViStatusChanged)
-#define ViWidthChanged VIDEO_TAG(ViWidthChanged)
-#define ReadScreen VIDEO_TAG(ReadScreen)
-#define FBGetFrameBufferInfo VIDEO_TAG(FBGetFrameBufferInfo)
-#define FBRead VIDEO_TAG(FBRead)
-#define FBWrite VIDEO_TAG(FBWrite)
-#define ProcessDList VIDEO_TAG(ProcessDList)
-#define ProcessRDPList VIDEO_TAG(ProcessRDPList)
-#define ResizeVideoOutput VIDEO_TAG(ResizeVideoOutput)
-#endif
+extern retro_log_printf_t log_cb;
 
 //angrylion's macro, helps to cut overflowed values.
 #define SIGN16(x) (int16_t)(x)
@@ -236,8 +208,8 @@ void rdp_setfuncs(void)
 {
    if (settings.hacks & hack_Makers)
    {
-      //if (log_cb)
-      //   log_cb(RETRO_LOG_INFO, "Applying Mischief Makers function pointer table tweak...\n");
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "Applying Mischief Makers function pointer table tweak...\n");
       gfx_instruction[0][191] = uc0_tri1_mischief;
    }
 }

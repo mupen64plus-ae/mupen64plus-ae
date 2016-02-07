@@ -58,6 +58,8 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
     ptr_PluginGetVersion PluginGetVersion = (ptr_PluginGetVersion) osal_dynlib_getproc(handle, "PluginGetVersion");
     if (PluginGetVersion == NULL)
     {
+       DebugMessage(M64MSG_ERROR,"library '%s' is not a Mupen64Plus library.", filepath);
+
         if (g_Verbose)
             DebugMessage(M64MSG_ERROR, "library '%s' is not a Mupen64Plus library.", filepath);
         osal_dynlib_close(handle);
@@ -182,13 +184,17 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
         }
         else /* otherwise search for a plugin specified in the config file */
         {
+           DebugMessage(M64MSG_ERROR, "Searching for plugin in config file");
+
             const char *config_path = (*ConfigGetParamString)(ConfigUI, config_var);
             if (config_path != NULL && strlen(config_path) > 0)
             {
                 /* if full path was given, try loading exactly this file */
                 if (strchr(config_path, OSAL_DIR_SEPARATOR) != NULL)
                 {
-                    PluginLoadTry(config_path, i);
+                   int lnReturn = PluginLoadTry(config_path, i);
+
+                   DebugMessage(M64MSG_ERROR, "Trying this plugin: %s, return=%i", config_path, lnReturn);
                 }
                 else if (strcmp(config_path, "dummy") == 0)
                 {

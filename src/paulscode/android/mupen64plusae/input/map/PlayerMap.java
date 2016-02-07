@@ -274,7 +274,6 @@ public class PlayerMap extends SerializableMap
         if( s != null )
         {
             int psuedoId = -100;
-            Log.v("PlayerMap", "Deserializing: " + s);
             
             // Read the input mappings
             String[] pairs = s.split( "," );

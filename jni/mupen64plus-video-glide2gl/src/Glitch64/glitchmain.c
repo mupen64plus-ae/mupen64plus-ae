@@ -27,7 +27,7 @@
 #include "glide.h"
 #include "glitchmain.h"
 #include "../Glide64/rdp.h"
-#include "../libretro/SDL.h"
+#include "SDL.h"
 
 extern retro_environment_t environ_cb;
 
@@ -337,8 +337,8 @@ grLfbWriteRegion( int32_t dst_buffer,
 void grBufferSwap(uint32_t swap_interval)
 {
    bool swapmode = settings.swapmode_retro && BUFFERSWAP;
-   if (!swapmode)
-      retro_return(true);
+   //if (!swapmode)
+   //   retro_return(true);
 }
 
 void grClipWindow(uint32_t minx, uint32_t miny, uint32_t maxx, uint32_t maxy)
@@ -353,7 +353,7 @@ void grBufferClear(uint32_t color, uint32_t alpha, uint32_t depth)
          ((color >> 16) & 0xFF) / 255.0f,
          (color         & 0xFF) / 255.0f,
          alpha / 255.0f);
-   glClearDepth(depth / 65535.0f);
+   glClearDepthf(depth / 65535.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
