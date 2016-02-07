@@ -38,10 +38,15 @@
 //****************************************************************
 
 #include "Gfx_1.3.h"
-#include "libretro/SDL.h"
+#include <SDL.h>
 
 #include <math.h>
 #include "3dmath.h"
+#include "libretro/libretro.h"
+
+extern retro_log_printf_t log_cb;
+extern retro_get_cpu_features_t perf_get_cpu_features_cb;
+
 
 float DotProductC(float *v0, float *v1)
 {
@@ -208,17 +213,17 @@ void math_init(void)
 {
    unsigned cpu = 0;
 
-   //if (perf_get_cpu_features_cb)
-   //   cpu = perf_get_cpu_features_cb();
+   if (perf_get_cpu_features_cb)
+      cpu = perf_get_cpu_features_cb();
 
 #if defined(__ARM_NEON__)
-   if (/*cpu & */RETRO_SIMD_NEON)
+   //if (cpu & RETRO_SIMD_NEON)
    {
       glide64NormalizeVector = NormalizeVectorNeon;
       glide64MulMatrices = MulMatricesNeon;
       glide64DotProduct = DotProductNeon;
-      //if (log_cb)
-     //    log_cb(RETRO_LOG_INFO, "NEON detected, using (some) optimized math functions.\n");
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "NEON detected, using (some) optimized math functions.\n");
    }
 #endif
 }

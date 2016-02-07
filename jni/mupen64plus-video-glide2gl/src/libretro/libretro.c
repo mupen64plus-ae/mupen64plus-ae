@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <SDL_opengles2.h>
+#include <android/log.h>
 
 #include "libretro/libretro.h"
 #include "libretro/libretro_memory.h"
@@ -58,36 +59,8 @@ unsigned int FAKE_SDL_TICKS;
 static void setup_variables(void)
 {
    struct retro_variable variables[] = {
-      { "mupen64-cpucore",
-#ifdef DYNAREC
-#if defined(IOS) || defined(ANDROID)
-         "CPU Core; cached_interpreter|pure_interpreter|dynamic_recompiler" },
-#else
-         "CPU Core; dynamic_recompiler|cached_interpreter|pure_interpreter" },
-#endif
-#else
-         "CPU Core; cached_interpreter|pure_interpreter" },
-#endif
-      {"mupen64-audio-buffer-size",
-         "Audio Buffer Size (restart); 2048|1024"},
-      {"mupen64-astick-deadzone",
-        "Analog Deadzone (percent); 15|20|25|30|0|5|10"},
-      {"mupen64-pak1",
-        "Player 1 Pak; none|memory|rumble"},
-      {"mupen64-pak2",
-        "Player 2 Pak; none|memory|rumble"},
-      {"mupen64-pak3",
-        "Player 3 Pak; none|memory|rumble"},
-      {"mupen64-pak4",
-        "Player 4 Pak; none|memory|rumble"},
-      { "mupen64-disable_expmem",
-         "Enable Expansion Pak RAM; enabled|disabled" },
       { "mupen64-gfxplugin-accuracy",
          "GFX Accuracy (restart); medium|high|veryhigh|low" },
-      { "mupen64-gfxplugin",
-         "GFX Plugin; auto|glide64|gln64|rice|angrylion" },
-      { "mupen64-rspplugin",
-         "RSP Plugin; auto|hle|cxd4" },
       { "mupen64-screensize",
          "Resolution (restart); 640x480|960x720|1280x960|1600x1200|1920x1440|2240x1680|320x240" },
       { "mupen64-aspectratiohint",
@@ -100,27 +73,17 @@ static void setup_variables(void)
       { "mupen64-polyoffset-units",
        "(Glide64) Polygon Offset Units; -3.0|-2.5|-2.0|-1.5|-1.0|-0.5|0.0|0.5|1.0|1.5|2.0|2.5|3.0|3.5|4.0|4.5|5.0|-3.5|-4.0|-4.5|-5.0"
       },
-      { "mupen64-angrylion-vioverlay",
-       "(Angrylion) VI Overlay; disabled|enabled"
-      },
-      { "mupen64-virefresh",
-         "VI Refresh (Overclock); 1500|2200" },
       { "mupen64-bufferswap",
          "Buffer Swap; on|off" },
       { "mupen64-framerate",
          "Framerate (restart); original|fullspeed" },
       { "mupen64-vcache-vbo",
          "(Glide64) Vertex cache VBO (restart); off|on" },
-      { "mupen64-boot-device",
-         "Boot Device; Default|64DD IPL" },
-      { "mupen64-64dd-hardware",
-         "64DD Hardware; disabled|enabled" },
       { NULL, NULL },
    };
 
    environ_cb(RETRO_ENVIRONMENT_SET_VARIABLES, variables);
 }
-
 
 void update_variables(bool startup)
 {
@@ -142,27 +105,31 @@ void update_variables(bool startup)
       }
    }
 
+   if (startup)
+   {
+
    var.key = "mupen64-filtering";
    var.value = NULL;
 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-          if (!strcmp(var.value, "automatic"))
-                  retro_filtering = 0;
-          else if (!strcmp(var.value, "N64 3-point"))
-#ifdef DISABLE_3POINT
-                  retro_filtering = 3;
-#else
-                  retro_filtering = 1;
-#endif
-          else if (!strcmp(var.value, "nearest"))
-                  retro_filtering = 2;
-          else if (!strcmp(var.value, "bilinear"))
-                  retro_filtering = 3;
-          if (gfx_plugin == GFX_GLIDE64)
+      if (environ_cb (RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       {
-          log_cb(RETRO_LOG_DEBUG, "set glide filtering mode\n");
-                  glide_set_filtering(retro_filtering);
+         if (!strcmp (var.value, "automatic"))
+            retro_filtering = 0;
+         else if (!strcmp (var.value, "N64 3-point"))
+#ifdef DISABLE_3POINT
+            retro_filtering = 3;
+#else
+            retro_filtering = 1;
+#endif
+         else if (!strcmp (var.value, "nearest"))
+            retro_filtering = 2;
+         else if (!strcmp (var.value, "bilinear"))
+            retro_filtering = 3;
+         if (gfx_plugin == GFX_GLIDE64)
+         {
+            log_cb (RETRO_LOG_DEBUG, "set glide filtering mode\n");
+            glide_set_filtering (retro_filtering);
+         }
       }
    }
 
@@ -224,12 +191,6 @@ void update_variables(bool startup)
       polygonOffsetUnits = new_val;
    }
 
-   var.key = "mupen64-astick-deadzone";
-   var.value = NULL;
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      astick_deadzone = (int)(atoi(var.value) * 0.01f * 0x8000);
-
    var.key = "mupen64-gfxplugin-accuracy";
    var.value = NULL;
 
@@ -243,17 +204,6 @@ void update_variables(bool startup)
           gfx_plugin_accuracy = 1;
        else if (var.value && !strcmp(var.value, "low"))
           gfx_plugin_accuracy = 0;
-   }
-
-   var.key = "mupen64-virefresh";
-   var.value = NULL;
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if (!strcmp(var.value, "1500"))
-         VI_REFRESH = 1500;
-      else if (!strcmp(var.value, "2200"))
-         VI_REFRESH = 2200;
    }
 
    var.key = "mupen64-bufferswap";
@@ -277,8 +227,8 @@ void update_variables(bool startup)
       else if (!strcmp(var.value, "fullspeed"))
          frame_dupe = true;
    }
-
 }
+
 
 bool emu_step_render()
 {
@@ -295,3 +245,143 @@ bool emu_step_render()
 
    return false;
 }
+
+void androidLog(enum retro_log_level level, const char *fmt, ...)
+{
+   android_LogPriority logPriority = 0;
+
+   va_list arguments;
+   va_start ( arguments, fmt );
+
+   switch(level){
+      case RETRO_LOG_DEBUG:
+         logPriority = ANDROID_LOG_DEBUG;
+         break;
+      case RETRO_LOG_INFO:
+         logPriority = ANDROID_LOG_INFO;
+         break;
+      case RETRO_LOG_WARN:
+         logPriority = ANDROID_LOG_WARN;
+         break;
+      case RETRO_LOG_ERROR:
+         logPriority = ANDROID_LOG_ERROR;
+         break;
+      default:
+         break;
+   }
+   __android_log_print(logPriority, "glide2gl",fmt, arguments);
+
+   va_end ( arguments );
+}
+
+bool environment(unsigned cmd, void *data)
+{
+   if(cmd == RETRO_ENVIRONMENT_GET_PERF_INTERFACE)
+   {
+      return false;
+   }
+   if(cmd == RETRO_ENVIRONMENT_SET_PIXEL_FORMAT)
+   {
+      return false;
+   }
+
+   if(cmd == RETRO_ENVIRONMENT_GET_VARIABLE)
+   {
+      struct retro_variable* var = (struct retro_variable*)data;
+      static char returnData[256];
+      var->value = returnData;
+
+      if (!strcmp (var->key, "mupen64-gfxplugin-accuracy"))
+      {
+         const char* value = "high";
+         strcpy(returnData, value);
+      }
+      else if(!strcmp (var->key, "mupen64-screensize"))
+      {
+         const char* value = "1440x1080";
+         strcpy(returnData, value);
+      }
+      else if(!strcmp (var->key, "mupen64-aspectratiohint"))
+      {
+         const char* value = "normal";
+         strcpy(returnData, value);
+      }
+      else if(!strcmp (var->key, "mupen64-filtering"))
+      {
+         const char* value = "N64 3-point";
+         strcpy(returnData, value);
+      }
+      else if(!strcmp (var->key, "mupen64-polyoffset-factor"))
+      {
+         const char* value = "-3.0";
+         strcpy(returnData, value);
+      }
+      else if(!strcmp (var->key, "mupen64-polyoffset-units"))
+      {
+         const char* value = "-3.0";
+         strcpy(returnData, value);
+      }
+      else if(!strcmp (var->key, "mupen64-bufferswap"))
+      {
+         const char* value = "on";
+         strcpy(returnData, value);
+      }
+      else if(!strcmp (var->key, "mupen64-framerate"))
+      {
+         const char* value = "original";
+         strcpy(returnData, value);
+      }
+      else if(!strcmp (var->key, "mupen64-vcache-vbo"))
+      {
+         const char* value = "on";
+         strcpy(returnData, value);
+      }
+
+      /*
+      { "mupen64-gfxplugin-accuracy",
+              "GFX Accuracy (restart); medium|high|veryhigh|low" },
+           { "mupen64-screensize",
+              "Resolution (restart); 640x480|960x720|1280x960|1600x1200|1920x1440|2240x1680|320x240" },
+           { "mupen64-aspectratiohint",
+              "Aspect ratio hint (reinit); normal|widescreen" },
+           { "mupen64-filtering",
+                      "Texture Filtering; automatic|N64 3-point|bilinear|nearest" },
+           { "mupen64-polyoffset-factor",
+            "(Glide64) Polygon Offset Factor; -3.0|-2.5|-2.0|-1.5|-1.0|-0.5|0.0|0.5|1.0|1.5|2.0|2.5|3.0|3.5|4.0|4.5|5.0|-3.5|-4.0|-4.5|-5.0"
+           },
+           { "mupen64-polyoffset-units",
+            "(Glide64) Polygon Offset Units; -3.0|-2.5|-2.0|-1.5|-1.0|-0.5|0.0|0.5|1.0|1.5|2.0|2.5|3.0|3.5|4.0|4.5|5.0|-3.5|-4.0|-4.5|-5.0"
+           },
+           { "mupen64-bufferswap",
+              "Buffer Swap; on|off" },
+           { "mupen64-framerate",
+              "Framerate (restart); original|fullspeed" },
+           { "mupen64-vcache-vbo",
+              "(Glide64) Vertex cache VBO (restart); off|on" },*/
+
+      return true;
+   }
+   return false;
+}
+
+
+void retro_init(void)
+{
+   log_cb = androidLog;
+   environ_cb = environment;
+
+   unsigned colorMode = RETRO_PIXEL_FORMAT_XRGB8888;
+   screen_pitch = 0;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_PERF_INTERFACE, &perf_cb))
+      perf_get_cpu_features_cb = perf_cb.get_cpu_features;
+   else
+      perf_get_cpu_features_cb = NULL;
+
+   environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &colorMode);
+
+   //hacky stuff for Glide64
+   polygonOffsetUnits = -3.0f;
+   polygonOffsetFactor =  -3.0f;
+}
+

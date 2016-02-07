@@ -1,6 +1,11 @@
 #ifndef __glext_h_
 #define __glext_h_
 
+#include <GLES2/gl2.h>
+
+typedef GLfloat GLdouble;
+typedef GLclampf GLclampd;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -47,10 +47,11 @@
 #include "DepthBufferRender.h"
 #include "Glide64_Ini.h"
 #include "libretro/libretro.h"
-#include <android/log.h>
+#include "m64p.h"
 
 extern void CRC_BuildTable();
 extern uint32_t screen_aspectmodehint;
+extern retro_log_printf_t log_cb;
 
 #if defined(__GNUC__)
 #include <sys/time.h>
@@ -61,38 +62,6 @@ extern uint32_t screen_aspectmodehint;
 
 #define G64_VERSION "G64 Mk2"
 #define RELTIME "Date: " __DATE__// " Time: " __TIME__
-
-#ifdef __LIBRETRO__ // Prefix API
-#define VIDEO_TAG(X) glide64##X
-
-#define ReadScreen2 VIDEO_TAG(ReadScreen2)
-#define PluginStartup VIDEO_TAG(PluginStartup)
-#define PluginShutdown VIDEO_TAG(PluginShutdown)
-#define PluginGetVersion VIDEO_TAG(PluginGetVersion)
-#define CaptureScreen VIDEO_TAG(CaptureScreen)
-#define ChangeWindow VIDEO_TAG(ChangeWindow)
-#define CloseDLL VIDEO_TAG(CloseDLL)
-#define DllTest VIDEO_TAG(DllTest)
-#define DrawScreen VIDEO_TAG(DrawScreen)
-#define GetDllInfo VIDEO_TAG(GetDllInfo)
-#define InitiateGFX VIDEO_TAG(InitiateGFX)
-#define MoveScreen VIDEO_TAG(MoveScreen)
-#define RomClosed VIDEO_TAG(RomClosed)
-#define RomOpen VIDEO_TAG(RomOpen)
-#define ShowCFB VIDEO_TAG(ShowCFB)
-#define SetRenderingCallback VIDEO_TAG(SetRenderingCallback)
-#define UpdateScreen VIDEO_TAG(UpdateScreen)
-#define ViStatusChanged VIDEO_TAG(ViStatusChanged)
-#define ViWidthChanged VIDEO_TAG(ViWidthChanged)
-#define ReadScreen VIDEO_TAG(ReadScreen)
-#define FBGetFrameBufferInfo VIDEO_TAG(FBGetFrameBufferInfo)
-#define FBRead VIDEO_TAG(FBRead)
-#define FBWrite VIDEO_TAG(FBWrite)
-#define ProcessDList VIDEO_TAG(ProcessDList)
-#define ProcessRDPList VIDEO_TAG(ProcessRDPList)
-#define ResizeVideoOutput VIDEO_TAG(ResizeVideoOutput)
-#define InitGfx VIDEO_TAG(InitGfx)
-#endif
 
 void (*_gSPVertex)(uint32_t addr, uint32_t n, uint32_t v0);
 
@@ -363,9 +332,40 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
    }
 }
 
+/* definitions of pointers to Core video extension functions */
+ptr_VidExt_Init                  CoreVideo_Init = NULL;
+ptr_VidExt_Quit                  CoreVideo_Quit = NULL;
+ptr_VidExt_ListFullscreenModes   CoreVideo_ListFullscreenModes = NULL;
+ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
+ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
+ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
+ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = NULL;
+ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
+ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
+ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
+ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
+
+void(*renderCallback)(int) = NULL;
+
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
                                    void (*DebugCallback)(void *, int, const char *))
 {
+   /* Get the core Video Extension function pointers from the library handle */
+   CoreVideo_Init = (ptr_VidExt_Init) dlsym(CoreLibHandle, "VidExt_Init");
+   CoreVideo_Quit = (ptr_VidExt_Quit) dlsym(CoreLibHandle, "VidExt_Quit");
+   CoreVideo_ListFullscreenModes = (ptr_VidExt_ListFullscreenModes) dlsym(CoreLibHandle, "VidExt_ListFullscreenModes");
+   CoreVideo_SetVideoMode = (ptr_VidExt_SetVideoMode) dlsym(CoreLibHandle, "VidExt_SetVideoMode");
+   CoreVideo_SetCaption = (ptr_VidExt_SetCaption) dlsym(CoreLibHandle, "VidExt_SetCaption");
+   CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) dlsym(CoreLibHandle, "VidExt_ToggleFullScreen");
+   CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) dlsym(CoreLibHandle, "VidExt_ResizeWindow");
+   CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) dlsym(CoreLibHandle, "VidExt_GL_GetProcAddress");
+   CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) dlsym(CoreLibHandle, "VidExt_GL_SetAttribute");
+   CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) dlsym(CoreLibHandle, "VidExt_GL_GetAttribute");
+   CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) dlsym(CoreLibHandle, "VidExt_GL_SwapBuffers");
+
+
+   retro_init();
+
    l_DebugCallback = DebugCallback;
    l_DebugCallContext = Context;
 
@@ -548,8 +548,8 @@ static void CheckDRAMSize(void)
    else
       BMASK = 0x3FFFFF;
 
-
-   __android_log_print(ANDROID_LOG_ERROR, "glide2gl","Detected RDRAM size: %08lx\n", BMASK);
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "Detected RDRAM size: %08lx\n", BMASK);
 }
 
 /******************************************************************
@@ -736,8 +736,8 @@ EXPORT void CALL UpdateScreen (void)
    if (settings.swapmode == 0 || forced_update)
       newSwapBuffers ();
 
-   if (settings.swapmode_retro && BUFFERSWAP)
-      retro_return(true);
+   //if (settings.swapmode_retro && BUFFERSWAP)
+   //   retro_return(true);
 }
 
 static void DrawWholeFrameBufferToScreen(void)

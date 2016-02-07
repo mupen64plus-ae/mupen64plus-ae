@@ -37,14 +37,8 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glide64/TexCache.c                \
     $(SRCDIR)/Glide64/TexLoad.c                 \
     $(SRCDIR)/libretro/gdp.c                    \
-    $(SRCDIR)/libretro/opengl_state_machine.c   \
     $(SRCDIR)/libretro/libretro.c               \
     $(SRCDIR)/libretro/libretro_crc.c           \
-    $(SRCDIR)/libretro/glsym/rglgen.c           \
-    $(SRCDIR)/libretro/glsym/glsym_es2.c        \
-    
-
-    
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
