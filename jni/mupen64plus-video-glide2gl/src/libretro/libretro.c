@@ -269,7 +269,7 @@ void androidLog(enum retro_log_level level, const char *fmt, ...)
       default:
          break;
    }
-   __android_log_print(logPriority, "glide2gl",fmt, arguments);
+   __android_log_vprint(logPriority, "glide2gl",fmt, arguments);
 
    va_end ( arguments );
 }

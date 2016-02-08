@@ -30,6 +30,8 @@
 #include "SDL.h"
 
 extern retro_environment_t environ_cb;
+extern ptr_VidExt_GL_SwapBuffers CoreVideo_GL_SwapBuffers;
+
 
 int width, height;
 int bgra8888_support;
@@ -337,6 +339,13 @@ grLfbWriteRegion( int32_t dst_buffer,
 void grBufferSwap(uint32_t swap_interval)
 {
    bool swapmode = settings.swapmode_retro && BUFFERSWAP;
+
+   if(CoreVideo_GL_SwapBuffers == NULL)
+   {
+      log_cb(RETRO_LOG_INFO, "Invalid SwapByffers function");
+   }
+
+   CoreVideo_GL_SwapBuffers();
    //if (!swapmode)
    //   retro_return(true);
 }

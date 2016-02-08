@@ -39,6 +39,8 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/libretro/gdp.c                    \
     $(SRCDIR)/libretro/libretro.c               \
     $(SRCDIR)/libretro/libretro_crc.c           \
+    $(SRCDIR)/osal/dynamiclib_unix.c    \
+
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
