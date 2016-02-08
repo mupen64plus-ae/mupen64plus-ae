@@ -22,7 +22,7 @@
 #if !defined(OSAL_DYNAMICLIB_H)
 #define OSAL_DYNAMICLIB_H
 
-#include "api/m64p_types.h"
+#include "m64p_types.h"
 
 void *     osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName);
 

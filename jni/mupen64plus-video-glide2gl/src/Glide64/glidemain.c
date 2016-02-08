@@ -347,34 +347,66 @@ ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
 
 void(*renderCallback)(int) = NULL;
 
+static void setAttributes(void)
+{
+   CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MAJOR_VERSION, 2);
+   CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 0);
+
+   CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
+      CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL,false);
+      CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 32);
+      CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, 16);
+      /*if (config.video.multisampling > 0 && config.frameBufferEmulation.enable == 0) {
+              CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLEBUFFERS, 1);
+              if (config.video.multisampling <= 2)
+                      CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 2);
+              else if (config.video.multisampling <= 4)
+                      CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 4);
+              else if (config.video.multisampling <= 8)
+                      CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 8);
+              else
+                      CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 16);
+      }*/
+}
+
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
                                    void (*DebugCallback)(void *, int, const char *))
 {
    /* Get the core Video Extension function pointers from the library handle */
-   CoreVideo_Init = (ptr_VidExt_Init) dlsym(CoreLibHandle, "VidExt_Init");
-   CoreVideo_Quit = (ptr_VidExt_Quit) dlsym(CoreLibHandle, "VidExt_Quit");
-   CoreVideo_ListFullscreenModes = (ptr_VidExt_ListFullscreenModes) dlsym(CoreLibHandle, "VidExt_ListFullscreenModes");
-   CoreVideo_SetVideoMode = (ptr_VidExt_SetVideoMode) dlsym(CoreLibHandle, "VidExt_SetVideoMode");
-   CoreVideo_SetCaption = (ptr_VidExt_SetCaption) dlsym(CoreLibHandle, "VidExt_SetCaption");
-   CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) dlsym(CoreLibHandle, "VidExt_ToggleFullScreen");
-   CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) dlsym(CoreLibHandle, "VidExt_ResizeWindow");
-   CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) dlsym(CoreLibHandle, "VidExt_GL_GetProcAddress");
-   CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) dlsym(CoreLibHandle, "VidExt_GL_SetAttribute");
-   CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) dlsym(CoreLibHandle, "VidExt_GL_GetAttribute");
-   CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) dlsym(CoreLibHandle, "VidExt_GL_SwapBuffers");
+   CoreVideo_Init = (ptr_VidExt_Init) osal_dynlib_getproc(CoreLibHandle, "VidExt_Init");
+   CoreVideo_Quit = (ptr_VidExt_Quit) osal_dynlib_getproc(CoreLibHandle, "VidExt_Quit");
+   CoreVideo_ListFullscreenModes = (ptr_VidExt_ListFullscreenModes) osal_dynlib_getproc(CoreLibHandle, "VidExt_ListFullscreenModes");
+   CoreVideo_SetVideoMode = (ptr_VidExt_SetVideoMode) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetVideoMode");
+   CoreVideo_SetCaption = (ptr_VidExt_SetCaption) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetCaption");
+   CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) osal_dynlib_getproc(CoreLibHandle, "VidExt_ToggleFullScreen");
+   CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) osal_dynlib_getproc(CoreLibHandle, "VidExt_ResizeWindow");
+   CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetProcAddress");
+   CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SetAttribute");
+   CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetAttribute");
+   CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
+   CoreVideo_Init();
 
    retro_init();
-
    l_DebugCallback = DebugCallback;
    l_DebugCallContext = Context;
 
    ReadSettings();
+   setAttributes();
+
+   if(CoreVideo_GL_SwapBuffers == NULL)
+   {
+      log_cb(RETRO_LOG_INFO, "Invalid SwapByffers function");
+   }
+
+   CoreVideo_SetVideoMode(settings.scr_res_x, settings.scr_res_y, 0, M64VIDEO_FULLSCREEN, (m64p_video_flags) 0);
    return M64ERR_SUCCESS;
 }
 
 EXPORT m64p_error CALL PluginShutdown(void)
 {
+   CoreVideo_Quit();
+
    return M64ERR_SUCCESS;
 }
 
