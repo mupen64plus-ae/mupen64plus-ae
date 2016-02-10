@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import android.util.Log;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -109,6 +110,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );                                                         // Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );                                      // Directory in which to search for plugins
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + game.videoPlugin.path + '"' );                              // Filename of video plugin
+        
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + global.audioPlugin.path + '"' );                            // Filename of audio plugin
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + appData.rspLib + '"' );                                       // Filename of RSP plugin
@@ -127,6 +129,16 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
         
+        mupen64plus_cfg.put( "Video-Glide2gl", "polyoffset-factor", String.valueOf( global.videoPolygonOffset ) );
+        mupen64plus_cfg.put( "Video-Glide2gl", "polyoffset-units", String.valueOf( global.videoPolygonOffset ) );
+
+        mupen64plus_cfg.put( "Video-Glide2gl", "accuracy", game.glide2glAccuracy); //Accuracy (restart); medium|high|veryhigh|low
+        mupen64plus_cfg.put( "Video-Glide2gl", "aspect", "normal"); //Aspect ratio hint (reinit); normal|widescreen
+        mupen64plus_cfg.put( "Video-Glide2gl", "filtering", game.glide2glFiltering); //Texture Filtering; automatic|N64 3-point|bilinear|nearest
+        mupen64plus_cfg.put( "Video-Glide2gl", "bufferswap", game.glide2glBufferswap ? "on":"off"); //Buffer Swap; on|off
+        mupen64plus_cfg.put( "Video-Glide2gl", "framerate", game.glide2glFramerate); // Framerate (restart); original|fullspeed
+        mupen64plus_cfg.put( "Video-Glide2gl", "vcache-vbo", game.glide2glVCacheVbo ? "on":"off"); //Vertex cache VBO (restart); off|on
+
         String aspectRatio = "0";
         if( game.emulationProfile.get( "WidescreenHack", "False" ).equals("True") )
             aspectRatio = "3";

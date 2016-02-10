@@ -71,6 +71,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -162,6 +164,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     private GameAutoSaveManager mAutoSaveManager;
     private boolean mFirstStart;
     private boolean mWaitingOnConfirmation = false;
+    WakeLock mWakeLock = null;
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -178,6 +181,11 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         {
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
+        
+        //Attempt to use a wake lock to prevent devices from under clocking
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
         
         mControllers = new ArrayList<AbstractController>();
         mMogaController = Controller.getInstance( this );
@@ -361,6 +369,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             mGlobalPrefs.displayActionBarTransparency));
 
         mMogaController.onResume();
+        mWakeLock.acquire();
     }
     
     @Override
@@ -377,6 +386,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         }
         
         mMogaController.onPause();
+        mWakeLock.release();
     }
     
     @Override

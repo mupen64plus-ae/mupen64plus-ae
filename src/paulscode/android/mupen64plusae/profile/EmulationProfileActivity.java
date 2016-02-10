@@ -48,6 +48,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_GLN64 = "categoryGln64";
     private static final String CATEGORY_GLIDE64 = "categoryGlide64";
     private static final String CATEGORY_GLIDEN64 = "categoryGliden64";
+    private static final String CATEGORY_GLIDE2GL = "categoryGlide2GL";
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
@@ -63,6 +64,7 @@ public class EmulationProfileActivity extends ProfileActivity
     
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
+    private static final String LIBGLIDE2GL_SO = "libmupen64plus-video-glide2gl.so";
     private static final String LIBGLIDEN64_SO = "libmupen64plus-video-gliden64%1$s.so";
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
@@ -75,6 +77,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryRice = null;
     private PreferenceCategory mCategoryGlide64 = null;
     private PreferenceCategory mCategoryGliden64 = null;
+    private PreferenceCategory mCategoryGlide2gl = null;
     private Preference mPreferenceVideoSubPlugin = null;
     
     @Override
@@ -131,6 +134,7 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryRice = (PreferenceCategory) findPreference( CATEGORY_RICE );
         mCategoryGlide64 = (PreferenceCategory) findPreference( CATEGORY_GLIDE64 );
         mCategoryGliden64 = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64 );
+        mCategoryGlide2gl = (PreferenceCategory) findPreference( CATEGORY_GLIDE2GL );
         mPreferenceVideoSubPlugin = findPreference( VIDEO_SUB_PLUGIN );
         
         PreferenceCategory currentCategory = null;
@@ -172,7 +176,7 @@ public class EmulationProfileActivity extends ProfileActivity
 
         if(mCategoryGlide64 != null)
         {
-            if( LIBGLIDE64_SO.equals( videoPlugin ) )
+            if( LIBGLIDE64_SO.equals( videoPlugin ))
             {
                 currentCategory = mCategoryGlide64;
                 mScreenRoot.addPreference( mCategoryGlide64 );
@@ -180,6 +184,19 @@ public class EmulationProfileActivity extends ProfileActivity
             else
             {
                 mScreenRoot.removePreference( mCategoryGlide64 );
+            }
+        }
+        
+        if(mCategoryGlide2gl != null)
+        {
+            if( LIBGLIDE2GL_SO.equals(videoPlugin))
+            {
+                currentCategory = mCategoryGlide2gl;
+                mScreenRoot.addPreference( mCategoryGlide2gl );
+            }
+            else
+            {
+                mScreenRoot.removePreference( mCategoryGlide2gl );
             }
         }
         

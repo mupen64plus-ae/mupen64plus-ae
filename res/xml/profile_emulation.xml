@@ -124,6 +124,40 @@
             mupen64:selectionMode="1" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
+        android:key="categoryGlide2GL"
+        android:title="@string/categoryGlide2GL_title" >
+        
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide2glAccuracy_default"
+            android:entries="@array/glide2glAccuracy_entries"
+            android:entryValues="@array/glide2glAccuracy_values"
+            android:key="glide2glAccuracy"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide2glAccuracy_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide2glFiltering_default"
+            android:entries="@array/glide2glFiltering_entries"
+            android:entryValues="@array/glide2glFiltering_values"
+            android:key="glide2glFiltering"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide2glFiltering_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="glide2glBufferswap"
+            android:title="@string/glide2glBufferswap_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide2glFramerate_default"
+            android:entries="@array/glide2glFramerate_entries"
+            android:entryValues="@array/glide2glFramerate_values"
+            android:key="glide2glFramerate"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide2glFramerate_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="glide2glVCacheVbo"
+            android:title="@string/glide2glVCacheVbo_title" />
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryGlide64"
         android:title="@string/categoryGlide64_title" >
         <paulscode.android.mupen64plusae.preference.CompatListPreference

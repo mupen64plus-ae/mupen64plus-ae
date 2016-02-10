@@ -79,14 +79,12 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
     ptr_PluginStartup PluginStartup = (ptr_PluginStartup) osal_dynlib_getproc(handle, "PluginStartup");
     if (PluginStartup == NULL)
     {
-        DebugMessage(M64MSG_ERROR, "library '%s' broken.  No PluginStartup() function found.", filepath);
         osal_dynlib_close(handle);
         return M64ERR_INCOMPATIBLE;
     }
     rval = (*PluginStartup)(CoreHandle, g_PluginMap[MapIndex].name, DebugCallback);  /* DebugCallback is in main.c */
     if (rval != M64ERR_SUCCESS)
     {
-        DebugMessage(M64MSG_ERROR, "Error: %s plugin library '%s' failed to start.", g_PluginMap[MapIndex].name, filepath);
         osal_dynlib_close(handle);
         return rval;
     }
@@ -188,7 +186,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
                 /* if full path was given, try loading exactly this file */
                 if (strchr(config_path, OSAL_DIR_SEPARATOR) != NULL)
                 {
-                    PluginLoadTry(config_path, i);
+                   PluginLoadTry(config_path, i);
                 }
                 else if (strcmp(config_path, "dummy") == 0)
                 {
