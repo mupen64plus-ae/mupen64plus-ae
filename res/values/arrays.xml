@@ -261,6 +261,45 @@
     </string-array>
 
     <string name="riceTextureEnhancement_default" translatable="false">0</string>
+    
+    <!-- Glide2GL settings -->
+    <string-array name="glide2glAccuracy_entries">
+        <item>@string/glide2glAccuracy_entryVeryHigh</item>
+        <item>@string/glide2glAccuracy_entryHigh</item>
+        <item>@string/glide2glAccuracy_entryMedium</item>
+        <item>@string/glide2glAccuracy_entryLow</item>
+    </string-array>
+    <string-array name="glide2glAccuracy_values" translatable="false">
+        <item>veryhigh</item>
+        <item>high</item>
+        <item>medium</item>
+        <item>low</item>
+    </string-array>
+    <string name="glide2glAccuracy_default" translatable="false">medium</string>
+    
+    <string-array name="glide2glFiltering_entries">
+        <item>@string/glide2glFiltering_entryAutomatic</item>
+        <item>@string/glide2glFiltering_entry3Point</item>
+        <item>@string/glide2glFiltering_entryBilinear</item>
+        <item>@string/glide2glFiltering_entryNearest</item>
+    </string-array>
+    <string-array name="glide2glFiltering_values" translatable="false">
+        <item>automatic</item>
+        <item>N64 3-point</item>
+        <item>bilinear</item>
+        <item>nearest</item>
+    </string-array>
+    <string name="glide2glFiltering_default" translatable="false">automatic</string>
+    
+    <string-array name="glide2glFramerate_entries">
+        <item>@string/glide2glFramerate_entryOriginal</item>
+        <item>@string/glide2glFramerate_entryFullspeed</item>
+    </string-array>
+    <string-array name="glide2glFramerate_values" translatable="false">
+        <item>original</item>
+        <item>fullspeed</item>
+    </string-array>
+    <string name="glide2glFramerate_default" translatable="false">original</string>
 
     <!-- GLideN64 multisampling list-->
     <string-array name="gliden64_multisampling_entries">

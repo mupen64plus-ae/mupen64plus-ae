@@ -48,6 +48,7 @@
 #include "Glide64_Ini.h"
 #include "libretro/libretro.h"
 #include "m64p.h"
+#include "Config.h"
 
 extern void CRC_BuildTable();
 extern uint32_t screen_aspectmodehint;
@@ -345,6 +346,25 @@ ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
 ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
 ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
 
+/* definitions of pointers to Core config functions */
+ptr_ConfigOpenSection      CoreConfig_ConfigOpenSection = NULL;
+ptr_ConfigSetParameter     CoreConfig_ConfigSetParameter = NULL;
+ptr_ConfigGetParameter     CoreConfig_ConfigGetParameter = NULL;
+ptr_ConfigGetParameterHelp CoreConfig_ConfigGetParameterHelp = NULL;
+ptr_ConfigSetDefaultInt    CoreConfig_ConfigSetDefaultInt = NULL;
+ptr_ConfigSetDefaultFloat  CoreConfig_ConfigSetDefaultFloat = NULL;
+ptr_ConfigSetDefaultBool   CoreConfig_ConfigSetDefaultBool = NULL;
+ptr_ConfigSetDefaultString CoreConfig_ConfigSetDefaultString = NULL;
+ptr_ConfigGetParamInt      CoreConfig_ConfigGetParamInt = NULL;
+ptr_ConfigGetParamFloat    CoreConfig_ConfigGetParamFloat = NULL;
+ptr_ConfigGetParamBool     CoreConfig_ConfigGetParamBool = NULL;
+ptr_ConfigGetParamString   CoreConfig_ConfigGetParamString = NULL;
+
+ptr_ConfigGetSharedDataFilepath CoreConfig_ConfigGetSharedDataFilepath = NULL;
+ptr_ConfigGetUserConfigPath     CoreConfig_ConfigGetUserConfigPath = NULL;
+ptr_ConfigGetUserDataPath       CoreConfig_ConfigGetUserDataPath = NULL;
+ptr_ConfigGetUserCachePath      CoreConfig_ConfigGetUserCachePath = NULL;
+
 void(*renderCallback)(int) = NULL;
 
 static void setAttributes(void)
@@ -372,6 +392,24 @@ static void setAttributes(void)
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
                                    void (*DebugCallback)(void *, int, const char *))
 {
+   CoreConfig_ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
+   CoreConfig_ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
+   CoreConfig_ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
+   CoreConfig_ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
+   CoreConfig_ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultFloat");
+   CoreConfig_ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultBool");
+   CoreConfig_ConfigSetDefaultString = (ptr_ConfigSetDefaultString) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultString");
+   CoreConfig_ConfigGetParamInt = (ptr_ConfigGetParamInt) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamInt");
+   CoreConfig_ConfigGetParamFloat = (ptr_ConfigGetParamFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamFloat");
+   CoreConfig_ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
+   CoreConfig_ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
+
+   CoreConfig_ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetSharedDataFilepath");
+   CoreConfig_ConfigGetUserConfigPath = (ptr_ConfigGetUserConfigPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserConfigPath");
+   CoreConfig_ConfigGetUserDataPath = (ptr_ConfigGetUserDataPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserDataPath");
+   CoreConfig_ConfigGetUserCachePath = (ptr_ConfigGetUserCachePath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserCachePath");
+
+
    /* Get the core Video Extension function pointers from the library handle */
    CoreVideo_Init = (ptr_VidExt_Init) osal_dynlib_getproc(CoreLibHandle, "VidExt_Init");
    CoreVideo_Quit = (ptr_VidExt_Quit) osal_dynlib_getproc(CoreLibHandle, "VidExt_Quit");
@@ -386,6 +424,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
    CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
    CoreVideo_Init();
+
+   Config_Open();
 
    retro_init();
    l_DebugCallback = DebugCallback;

@@ -81,15 +81,6 @@ public class GamePrefs
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
     
-    /** True if gln64 video plug-in is enabled. */
-    public final boolean isGln64Enabled;
-    
-    /** True if rice video plug-in is enabled. */
-    public final boolean isRiceEnabled;
-    
-    /** True if glide64 video plug-in is enabled. */
-    public final boolean isGlide64Enabled;
-    
     /** The maximum frameskip in the gln64 library. */
     public final int gln64MaxFrameskip;
     
@@ -138,6 +129,7 @@ public class GamePrefs
     /** True if auto-frameskip is enabled in the glide64 library. */
     public final boolean isGlide64AutoFrameskipEnabled;
     
+<<<<<<< HEAD
     /** Enable/Disable MultiSampling (
      * 0=off,
      * 2,4,8,16=quality) */
@@ -270,6 +262,22 @@ public class GamePrefs
     
     /** Gamma correction value. */
     public final float gliden64GammaCorrectionLevel;    
+=======
+    /** Accuracy (restart); medium|high|veryhigh|low */
+    public final String glide2glAccuracy;
+    
+    /** Texture Filtering; automatic|N64 3-point|bilinear|nearest */
+    public final String glide2glFiltering;
+    
+    /** Buffer Swap; on|off */
+    public final boolean glide2glBufferswap;
+    
+    /** Framerate (restart); original|fullspeed */
+    public final String glide2glFramerate;
+    
+    /** Vertex cache VBO (restart); off|on */
+    public final boolean glide2glVCacheVbo;
+>>>>>>> video: glide2gl is now configurable, port seems complete for the most
     
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
@@ -458,7 +466,6 @@ public class GamePrefs
             videoPlugin = tempVideoPlugin;
         
         // Video prefs - gln64
-        isGln64Enabled = videoPlugin.name.equals( "libmupen64plus-video-gln64.so" );
         int maxFrameskip = getSafeInt( emulationProfile, "gln64Frameskip", 0 );
         isGln64AutoFrameskipEnabled = maxFrameskip < 0;
         gln64MaxFrameskip = Math.abs( maxFrameskip );
@@ -469,7 +476,6 @@ public class GamePrefs
         isGln64HackDepthEnabled = emulationProfile.get( "gln64HackDepth", "1" ).equals( "1" );
         
         // Video prefs - rice
-        isRiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );
         isRiceAutoFrameskipEnabled = emulationProfile.get( "riceAutoFrameskip", "False" ).equals( "True" );
         isRiceFastTextureLoadingEnabled = emulationProfile.get( "riceFastTexture", "False" ).equals( "True" );
         isRiceForceTextureFilterEnabled = emulationProfile.get( "riceForceTextureFilter", "False" ).equals( "True" );
@@ -479,12 +485,11 @@ public class GamePrefs
         isRiceFogEnabled = emulationProfile.get( "riceFog", "False" ).equals( "True" );
         
         // Video prefs - glide64
-        isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" ) || 
-            videoPlugin.name.equals( "libmupen64plus-video-glide2gl.so" );
         maxFrameskip = getSafeInt( emulationProfile, "glide64Frameskip", 0 );
         isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
         glide64MaxFrameskip = Math.abs( maxFrameskip );
         
+<<<<<<< HEAD
         
         // Video prefs - GLideN64
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
@@ -520,6 +525,14 @@ public class GamePrefs
         gliden64BlurStrength = getSafeInt( emulationProfile, "blurStrength", 20);
         gliden64ForceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gliden64GammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;      
+=======
+        // Video prefs - glide2gl
+        glide2glAccuracy = emulationProfile.get( "glide2glAccuracy", "medium" );
+        glide2glFiltering = emulationProfile.get( "glide2glFiltering", "automatic" );
+        glide2glBufferswap = emulationProfile.get( "glide2glBufferswap", "True" ).equals( "True" );
+        glide2glFramerate = emulationProfile.get( "glide2glFramerate", "original" );
+        glide2glVCacheVbo = emulationProfile.get( "glide2glVCacheVbo", "False" ).equals( "True" );
+>>>>>>> video: glide2gl is now configurable, port seems complete for the most
         
         // Determine the pixel dimensions of the rendering context and view surface
         {

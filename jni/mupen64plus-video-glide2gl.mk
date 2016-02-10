@@ -25,6 +25,7 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glitch64/glitch64_textures.c      \
     $(SRCDIR)/Glitch64/glitchmain.c             \
     $(SRCDIR)/Glide64/Combine.c                 \
+    $(SRCDIR)/Glide64/Config.c                  \
     $(SRCDIR)/Glide64/DepthBufferRender.c       \
     $(SRCDIR)/Glide64/FBtoScreen.c              \
     $(SRCDIR)/Glide64/glide64_3dmath.c          \

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <SDL_opengles2.h>
 #include <android/log.h>
+#include <Config.h>
 
 #include "libretro/libretro.h"
 #include "libretro/libretro_memory.h"
@@ -75,8 +76,6 @@ static void setup_variables(void)
       },
       { "mupen64-bufferswap",
          "Buffer Swap; on|off" },
-      { "mupen64-framerate",
-         "Framerate (restart); original|fullspeed" },
       { "mupen64-vcache-vbo",
          "(Glide64) Vertex cache VBO (restart); off|on" },
       { NULL, NULL },
@@ -291,73 +290,60 @@ bool environment(unsigned cmd, void *data)
       static char returnData[256];
       var->value = returnData;
 
-      if (!strcmp (var->key, "mupen64-gfxplugin-accuracy"))
+      if(!strcmp (var->key, "mupen64-screensize"))
       {
-         const char* value = "high";
-         strcpy(returnData, value);
+         int width = Config_ReadScreenInt("ScreenWidth");
+         int height = Config_ReadScreenInt("ScreenHeight");
+         sprintf(returnData, "%dx%d", width, height);
       }
-      else if(!strcmp (var->key, "mupen64-screensize"))
+      else if (!strcmp (var->key, "mupen64-gfxplugin-accuracy"))
       {
-         const char* value = "1440x1080";
+         const char* value = Config_ReadString("accuracy",
+            "FX Accuracy (restart); medium|high|veryhigh|low", "medium");
          strcpy(returnData, value);
       }
       else if(!strcmp (var->key, "mupen64-aspectratiohint"))
       {
-         const char* value = "normal";
+         const char* value = Config_ReadString("aspect",
+            "Aspect ratio hint (reinit); normal|widescreen", "normal");
          strcpy(returnData, value);
       }
       else if(!strcmp (var->key, "mupen64-filtering"))
       {
-         const char* value = "N64 3-point";
+         const char* value = Config_ReadString("filtering",
+            "Texture Filtering; automatic|N64 3-point|bilinear|nearest", "automatic");
          strcpy(returnData, value);
       }
       else if(!strcmp (var->key, "mupen64-polyoffset-factor"))
       {
-         const char* value = "-3.0";
+         const char* value = Config_ReadString("polyoffset-factor",
+            "Polygon Offset Factor; -3.0|-2.5|-2.0|-1.5|-1.0|-0.5|0.0|0.5|1.0|1.5|2.0|2.5|3.0|3.5|4.0|4.5|5.0|-3.5|-4.0|-4.5|-5.0", "-3.0");
          strcpy(returnData, value);
       }
       else if(!strcmp (var->key, "mupen64-polyoffset-units"))
       {
-         const char* value = "-3.0";
+         const char* value = Config_ReadString("polyoffset-units",
+            "Polygon Offset Factor; -3.0|-2.5|-2.0|-1.5|-1.0|-0.5|0.0|0.5|1.0|1.5|2.0|2.5|3.0|3.5|4.0|4.5|5.0|-3.5|-4.0|-4.5|-5.0", "-3.0");
          strcpy(returnData, value);
       }
       else if(!strcmp (var->key, "mupen64-bufferswap"))
       {
-         const char* value = "on";
+         const char* value = Config_ReadString("bufferswap",
+            "Buffer Swap; on|off", "on");
          strcpy(returnData, value);
       }
       else if(!strcmp (var->key, "mupen64-framerate"))
       {
-         const char* value = "original";
+         const char* value = Config_ReadString("framerate",
+            "Framerate (restart); original|fullspeed", "original");
          strcpy(returnData, value);
       }
       else if(!strcmp (var->key, "mupen64-vcache-vbo"))
       {
-         const char* value = "on";
+         const char* value = Config_ReadString("vcache-vbo",
+            "Vertex cache VBO (restart); off|on", "off");
          strcpy(returnData, value);
       }
-
-      /*
-      { "mupen64-gfxplugin-accuracy",
-              "GFX Accuracy (restart); medium|high|veryhigh|low" },
-           { "mupen64-screensize",
-              "Resolution (restart); 640x480|960x720|1280x960|1600x1200|1920x1440|2240x1680|320x240" },
-           { "mupen64-aspectratiohint",
-              "Aspect ratio hint (reinit); normal|widescreen" },
-           { "mupen64-filtering",
-                      "Texture Filtering; automatic|N64 3-point|bilinear|nearest" },
-           { "mupen64-polyoffset-factor",
-            "(Glide64) Polygon Offset Factor; -3.0|-2.5|-2.0|-1.5|-1.0|-0.5|0.0|0.5|1.0|1.5|2.0|2.5|3.0|3.5|4.0|4.5|5.0|-3.5|-4.0|-4.5|-5.0"
-           },
-           { "mupen64-polyoffset-units",
-            "(Glide64) Polygon Offset Units; -3.0|-2.5|-2.0|-1.5|-1.0|-0.5|0.0|0.5|1.0|1.5|2.0|2.5|3.0|3.5|4.0|4.5|5.0|-3.5|-4.0|-4.5|-5.0"
-           },
-           { "mupen64-bufferswap",
-              "Buffer Swap; on|off" },
-           { "mupen64-framerate",
-              "Framerate (restart); original|fullspeed" },
-           { "mupen64-vcache-vbo",
-              "(Glide64) Vertex cache VBO (restart); off|on" },*/
 
       return true;
    }

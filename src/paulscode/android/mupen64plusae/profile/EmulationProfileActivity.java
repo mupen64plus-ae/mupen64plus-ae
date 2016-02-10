@@ -48,6 +48,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_RICE = "categoryRice";
     private static final String CATEGORY_GLN64 = "categoryGln64";
     private static final String CATEGORY_GLIDE64 = "categoryGlide64";
+<<<<<<< HEAD
     private static final String CATEGORY_GLIDEN64_TEXTURE = "categoryGliden64Texture";
     private static final String CATEGORY_GLIDEN64_GENERAL = "categoryGliden64General";
     private static final String CATEGORY_GLIDEN64_FRAME_BUFFER = "categoryGliden64FrameBuffer";
@@ -55,6 +56,10 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_GLIDEN64_BLOOM = "categoryGliden64Bloom";
     private static final String CATEGORY_GLIDEN64_GAMMA = "categoryGliden64Gamma";
     
+=======
+    private static final String CATEGORY_GLIDEN64 = "categoryGliden64";
+    private static final String CATEGORY_GLIDE2GL = "categoryGlide2GL";
+>>>>>>> video: glide2gl is now configurable, port seems complete for the most
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
@@ -82,6 +87,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryN64 = null;
     private PreferenceCategory mCategoryRice = null;
     private PreferenceCategory mCategoryGlide64 = null;
+<<<<<<< HEAD
     private PreferenceCategory mCategoryGliden64Texture = null;
     private PreferenceCategory mCategoryGliden64General = null;
     private PreferenceCategory mCategoryGliden64FrameBuffer = null;
@@ -90,6 +96,11 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryGliden64Gamma = null;
     
     private CompatListPreference mPreferenceVideoSubPlugin = null;
+=======
+    private PreferenceCategory mCategoryGliden64 = null;
+    private PreferenceCategory mCategoryGlide2gl = null;
+    private Preference mPreferenceVideoSubPlugin = null;
+>>>>>>> video: glide2gl is now configurable, port seems complete for the most
     
     @Override
     protected int getPrefsResId()
@@ -144,6 +155,7 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryN64 = (PreferenceCategory) findPreference( CATEGORY_GLN64 );
         mCategoryRice = (PreferenceCategory) findPreference( CATEGORY_RICE );
         mCategoryGlide64 = (PreferenceCategory) findPreference( CATEGORY_GLIDE64 );
+<<<<<<< HEAD
         mCategoryGliden64Texture = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE );
         mCategoryGliden64General = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GENERAL );
         mCategoryGliden64FrameBuffer = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_FRAME_BUFFER );
@@ -152,6 +164,11 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
 
         mPreferenceVideoSubPlugin = (CompatListPreference) findPreference( VIDEO_SUB_PLUGIN );
+=======
+        mCategoryGliden64 = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64 );
+        mCategoryGlide2gl = (PreferenceCategory) findPreference( CATEGORY_GLIDE2GL );
+        mPreferenceVideoSubPlugin = findPreference( VIDEO_SUB_PLUGIN );
+>>>>>>> video: glide2gl is now configurable, port seems complete for the most
         
         String openGlVersion = AppData.getOpenGlEsVersion(this);
         
@@ -208,7 +225,7 @@ public class EmulationProfileActivity extends ProfileActivity
 
         if(mCategoryGlide64 != null)
         {
-            if( LIBGLIDE64_SO.equals( videoPlugin ) || LIBGLIDE2GL_SO.equals(videoPlugin))
+            if( LIBGLIDE64_SO.equals( videoPlugin ))
             {
                 mScreenRoot.addPreference( mCategoryGlide64 );
             }
@@ -217,6 +234,7 @@ public class EmulationProfileActivity extends ProfileActivity
                 mScreenRoot.removePreference( mCategoryGlide64 );
             }
         }
+<<<<<<< HEAD
 
         if(mCategoryGliden64Texture != null &&
             mCategoryGliden64General != null &&
@@ -224,6 +242,23 @@ public class EmulationProfileActivity extends ProfileActivity
             mCategoryGliden64TextureFiltering != null &&
             mCategoryGliden64Bloom != null &&
             mCategoryGliden64Gamma != null)
+=======
+        
+        if(mCategoryGlide2gl != null)
+        {
+            if( LIBGLIDE2GL_SO.equals(videoPlugin))
+            {
+                currentCategory = mCategoryGlide2gl;
+                mScreenRoot.addPreference( mCategoryGlide2gl );
+            }
+            else
+            {
+                mScreenRoot.removePreference( mCategoryGlide2gl );
+            }
+        }
+        
+        if(mCategoryGliden64 != null)
+>>>>>>> video: glide2gl is now configurable, port seems complete for the most
         {
             if( LIBGLIDEN64_SO.equals( videoPlugin ) )
             {
