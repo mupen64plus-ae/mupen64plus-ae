@@ -425,11 +425,18 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
 
    CoreVideo_Init();
 
-   Config_Open();
+   BOOL configResult = Config_Open();
 
    retro_init();
+   update_variables(true);
+
    l_DebugCallback = DebugCallback;
    l_DebugCallContext = Context;
+
+   if(!configResult)
+   {
+      log_cb (RETRO_LOG_ERROR, "Could not open configuration");
+   }
 
    ReadSettings();
    setAttributes();

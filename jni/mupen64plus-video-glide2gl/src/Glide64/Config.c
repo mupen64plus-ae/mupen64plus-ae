@@ -22,6 +22,7 @@
 #include "Config.h"
 #include "m64p.h"
 #include "rdp.h"
+#include "libretro/libretro.h"
 
 extern ptr_ConfigOpenSection      CoreConfig_ConfigOpenSection;
 extern ptr_ConfigSetParameter     CoreConfig_ConfigSetParameter;
@@ -41,6 +42,8 @@ extern ptr_ConfigGetUserConfigPath     CoreConfig_ConfigGetUserConfigPath;
 extern ptr_ConfigGetUserDataPath       CoreConfig_ConfigGetUserDataPath;
 extern ptr_ConfigGetUserCachePath      CoreConfig_ConfigGetUserCachePath;
 
+extern retro_log_printf_t log_cb;
+
 static m64p_handle video_general_section;
 static m64p_handle video_glide2gl_section;
 
@@ -49,7 +52,6 @@ BOOL Config_Open()
     if (CoreConfig_ConfigOpenSection("Video-General", &video_general_section) != M64ERR_SUCCESS ||
           CoreConfig_ConfigOpenSection("Video-Glide2gl", &video_glide2gl_section) != M64ERR_SUCCESS)
     {
-        ERRLOG("Could not open configuration");
         return FALSE;
     }
 
@@ -102,5 +104,13 @@ float Config_ReadFloat(const char *itemname, const char *desc, float def_value)
 const char* Config_ReadString(const char *itemname, const char *desc, const char *def_value)
 {
    CoreConfig_ConfigSetDefaultString(video_glide2gl_section, itemname, def_value, desc);
-   return CoreConfig_ConfigGetParamString(video_glide2gl_section, itemname);
+
+   const char* readValue = CoreConfig_ConfigGetParamString(video_glide2gl_section, itemname);
+
+   if(log_cb)
+   {
+      log_cb (RETRO_LOG_INFO, "Read config string %s with value %s", itemname, readValue);
+   }
+
+   return readValue;
 }
