@@ -188,6 +188,7 @@
     <string name="categoryGln64_title">Gln64 settings</string>
     <string name="categoryRice_title">Rice settings</string>
     <string name="categoryGlide64_title">Glide64 settings</string>
+    <string name="categoryGlide2GL_title">Libretro Glide64 settings</string>
     <string name="categoryGliden64_title">GlideN64 settings</string>
     <string name="categoryLibrary_title">Library</string>
     <string name="categoryDisplay_title">Display</string>
@@ -331,6 +332,23 @@
     <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
     <string name="riceTextureEnhancement_entrySharpen">Sharpen</string>
     <string name="riceTextureEnhancement_entrySharpen_more">Sharpen more</string>
+    
+    <string name="glide2glAccuracy_title">Accuracy</string>
+    <string name="glide2glAccuracy_entryVeryHigh">Very high</string>
+    <string name="glide2glAccuracy_entryHigh">High</string>
+    <string name="glide2glAccuracy_entryMedium">Medium</string>
+    <string name="glide2glAccuracy_entryLow">Low</string>
+    <string name="glide2glFiltering_title">Texture Filtering</string>
+    <string name="glide2glFiltering_entryAutomatic">Automatic</string>
+    <string name="glide2glFiltering_entry3Point">N64 3-point</string>
+    <string name="glide2glFiltering_entryBilinear">Bilinear</string>
+    <string name="glide2glFiltering_entryNearest">Nearest</string>
+    <string name="glide2glBufferswap_title">Buffer swap</string>
+    <string name="glide2glFramerate_title">Framerate</string>
+    <string name="glide2glFramerate_entryOriginal">Original</string>
+    <string name="glide2glFramerate_entryFullspeed">Fullspeed</string>
+    <string name="glide2glVCacheVbo_title">Vertex cache VBO</string>
+
     <string name="navigationMode_title">Accessibility</string>
     <string name="navigationMode_summary">Menu navigation mode: %1$s</string>
     <string name="navigationMode_entryAuto">Auto-select from device configuration</string>
