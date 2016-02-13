@@ -102,6 +102,11 @@ void update_variables(bool startup)
          screen_width = 640;
          screen_height = 480;
       }
+
+      if(log_cb)
+      {
+         log_cb (RETRO_LOG_INFO, "Resolution=%dx%d", screen_width, screen_height);
+      }
    }
 
    if (startup)
@@ -295,6 +300,12 @@ bool environment(unsigned cmd, void *data)
          int width = Config_ReadScreenInt("ScreenWidth");
          int height = Config_ReadScreenInt("ScreenHeight");
          sprintf(returnData, "%dx%d", width, height);
+
+         if(log_cb)
+         {
+            log_cb (RETRO_LOG_INFO, "Setting screen resolution to %s", returnData);
+         }
+
       }
       else if (!strcmp (var->key, "mupen64-gfxplugin-accuracy"))
       {
