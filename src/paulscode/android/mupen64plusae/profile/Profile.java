@@ -260,4 +260,13 @@ public class Profile implements Comparable<Profile>
     {
         return this.name.compareToIgnoreCase( another.name );
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        return this.name.compareToIgnoreCase( ((Profile)obj).name ) == 0;
+    }
 }
