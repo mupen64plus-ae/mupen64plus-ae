@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.profile;
 
+import java.util.Locale;
+
 import org.mupen64plusae.v3.alpha.R;
 
 import android.app.AlertDialog.Builder;
@@ -113,7 +115,7 @@ class SensorConfigurationDialog implements OnClickListener {
             sensorAxis = sensorAxis + '/';
         }
         if (sensorAxis.endsWith("/")) {
-            String begin = sensorAxis.substring(0, sensorAxis.indexOf('/')).toLowerCase();
+            String begin = sensorAxis.substring(0, sensorAxis.indexOf('/')).toLowerCase(Locale.getDefault());
             for (char c : "xyz".toCharArray()) {
                 if (begin.indexOf(c) == -1) {
                     sensorAxis = sensorAxis + c;
@@ -205,7 +207,7 @@ class SensorConfigurationDialog implements OnClickListener {
                         // Allowing each character only once
                         String writtenCharsUnordered = dest.toString().substring(dend) + dest.subSequence(0, dstart)
                                 + modified;
-                        if (writtenCharsUnordered.toLowerCase().indexOf(Character.toLowerCase(c)) == -1) {
+                        if (writtenCharsUnordered.toLowerCase(Locale.getDefault()).indexOf(Character.toLowerCase(c)) == -1) {
                             // Disallowing '/' in the beginning
                             if (c != '/' || modified.length() > 0 || dstart > 0) {
                                 // '/' is required and should not be in the end

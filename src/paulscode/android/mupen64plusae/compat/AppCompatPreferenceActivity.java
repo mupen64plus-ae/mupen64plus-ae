@@ -38,7 +38,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
 
-public class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
+public abstract class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
 {
     public interface OnPreferenceDialogListener
     {
