@@ -154,21 +154,23 @@ public class EmulationProfileActivity extends ProfileActivity
         
         String openGlVersion = AppData.getOpenGlEsVersion(this);
         
-        if(openGlVersion.equals("2.0"))
+        if(mPreferenceVideoSubPlugin != null)
         {
-            mScreenRoot.removePreference(mPreferenceVideoSubPlugin);
+            if(openGlVersion.equals("2.0"))
+            {
+                mScreenRoot.removePreference(mPreferenceVideoSubPlugin);
+            }
+            else if(openGlVersion.equals("3.0"))
+            {
+                mPreferenceVideoSubPlugin.setEntries(new String[]{
+                    getString(R.string.videoSubPlugin_entryGles20),
+                    getString(R.string.videoSubPlugin_entryGles30)
+                });
+                mPreferenceVideoSubPlugin.setEntryValues(new String[]{
+                    "-gles20",
+                    "-gles30"});
+            }
         }
-        else if(openGlVersion.equals("3.0"))
-        {
-            mPreferenceVideoSubPlugin.setEntries(new String[]{
-                getString(R.string.videoSubPlugin_entryGles20),
-                getString(R.string.videoSubPlugin_entryGles30)
-            });
-            mPreferenceVideoSubPlugin.setEntryValues(new String[]{
-                "-gles20",
-                "-gles30"});
-        }
-        
                 
         // Get the current values
         String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
@@ -257,7 +259,7 @@ public class EmulationProfileActivity extends ProfileActivity
             }
         }
         
-        if(mPreferenceVideoSubPlugin != null)
+        if(mPreferenceVideoSubPlugin != null && !openGlVersion.equals("2.0"))
         {
             if( videoPlugin.contains( "%1$s" ) )
                 mScreenRoot.addPreference( mPreferenceVideoSubPlugin );

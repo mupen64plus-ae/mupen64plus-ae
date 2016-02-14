@@ -45,7 +45,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -509,6 +508,6 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     protected void RemoveProfile(String profileName)
     {
         Profile profile = new Profile(true, profileName, null);
-        boolean test = mProfileList.remove(profile);
+        mProfileList.remove(profile);
     }
 }
