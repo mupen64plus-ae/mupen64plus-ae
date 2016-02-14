@@ -25,10 +25,13 @@ import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import tv.ouya.console.api.OuyaFacade;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.UiModeManager;
 import android.content.res.Configuration;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
@@ -507,6 +510,25 @@ public class AppData
         }
 
         return mControllerProfilesConfig;
+    }
+    
+    private static int getMajorVersion(int glEsVersion) {
+        return ((glEsVersion & 0xffff0000) >> 16);
+    }
+
+    private static int getMinorVersion(int glEsVersion) {
+        return glEsVersion & 0xffff;
+    }
+    
+    public static String getOpenGlEsVersion(Activity activity)
+    {
+        final ActivityManager activityManager = 
+            (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
+        final ConfigurationInfo configurationInfo = 
+            activityManager.getDeviceConfigurationInfo();
+        
+        return "" + getMajorVersion(configurationInfo.reqGlEsVersion) +
+            "." + getMinorVersion(configurationInfo.reqGlEsVersion);
     }
     
 }

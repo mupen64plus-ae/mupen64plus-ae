@@ -24,6 +24,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.preference.CompatListPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractTexturesTask;
 import paulscode.android.mupen64plusae.task.ExtractTexturesTask.ExtractTexturesListener;
@@ -87,7 +88,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryGliden64Bloom = null;
     private PreferenceCategory mCategoryGliden64Gamma = null;
     
-    private Preference mPreferenceVideoSubPlugin = null;
+    private CompatListPreference mPreferenceVideoSubPlugin = null;
     
     @Override
     protected int getPrefsResId()
@@ -149,7 +150,25 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryGliden64Bloom = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_BLOOM );
         mCategoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
 
-        mPreferenceVideoSubPlugin = findPreference( VIDEO_SUB_PLUGIN );
+        mPreferenceVideoSubPlugin = (CompatListPreference) findPreference( VIDEO_SUB_PLUGIN );
+        
+        String openGlVersion = AppData.getOpenGlEsVersion(this);
+        
+        if(openGlVersion.equals("2.0"))
+        {
+            mScreenRoot.removePreference(mPreferenceVideoSubPlugin);
+        }
+        else if(openGlVersion.equals("3.0"))
+        {
+            mPreferenceVideoSubPlugin.setEntries(new String[]{
+                getString(R.string.videoSubPlugin_entryGles20),
+                getString(R.string.videoSubPlugin_entryGles30)
+            });
+            mPreferenceVideoSubPlugin.setEntryValues(new String[]{
+                "-gles20",
+                "-gles30"});
+        }
+        
                 
         // Get the current values
         String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
