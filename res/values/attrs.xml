@@ -9,6 +9,7 @@
         <attr name="maximumValue" format="integer" />
         <attr name="stepSize" format="integer" />
         <attr name="units" format="string" />
+        <attr name="saveType" format="string" />
     </declare-styleable>
     <declare-styleable name="MultiSelectListPreference">
         <attr name="delimiter" format="string" />

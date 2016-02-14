@@ -135,176 +135,225 @@
             android:title="@string/glide64Frameskip_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
-        android:key="categoryGliden64"
-        android:title="@string/categoryGliden64_title" >
-        <!-- This is just a temporary implementation for GLideN64. -->
-        <!-- This list will be pruned and remaining preferences will be switched to more appropriate types (e.g. list preference rather than text) -->
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="0"
+        android:key="categoryGliden64Texture"
+        android:title="@string/gliden64_category_texture_title" >
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_multisampling_default"
+            android:entries="@array/gliden64_multisampling_entries"
+            android:entryValues="@array/gliden64_multisampling_values"
             android:key="MultiSampling"
             android:summary="@string/selectedValue"
-            android:title="MultiSampling" />
+            android:title="@string/gliden64_multisampling_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_bilinear_default"
+            android:entries="@array/gliden64_bilinear_entries"
+            android:entryValues="@array/gliden64_bilinear_values"
+            android:key="bilinearMode"
+            android:summary="@string/selectedValue"
+            android:title="@string/gliden64_bilinear_mode_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="MaxAnisotropy"
+            android:title="@string/gliden64_max_anisotropic_filtering_title"
+            mupen64:maximumValue="16"
+            mupen64:minimumValue="0"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="x" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="256"
+            android:key="CacheSize"
+            android:title="@string/gliden64_tx_cache_title"
+            mupen64:maximumValue="512"
+            mupen64:minimumValue="50"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="MB" />
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
+        android:key="categoryGliden64General"
+        android:title="@string/gliden64_category_general_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="WidescreenHack"
-            android:title="WidescreenHack" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="1"
-            android:key="bilinearMode"
-            android:summary="@string/selectedValue"
-            android:title="bilinearMode" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="0"
-            android:key="MaxAnisotropy"
-            android:summary="@string/selectedValue"
-            android:title="MaxAnisotropy" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="500"
-            android:key="CacheSize"
-            android:summary="@string/selectedValue"
-            android:title="CacheSize" />
+            android:title="@string/gliden64_widescreen_hack_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="EnableFog"
-            android:title="EnableFog" />
+            android:title="@string/gliden64_enable_fog_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="EnableNoise"
-            android:title="EnableNoise" />
+            android:title="@string/gliden64_enable_noise_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="EnableLOD"
-            android:title="EnableLOD" />
+            android:title="@string/gliden64_enable_lod_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="EnableHWLighting"
-            android:title="EnableHWLighting" />
+            android:title="@string/gliden64_enable_hw_lighting_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="EnableShaderStorage"
-            android:title="EnableShaderStorage" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="false"
-            android:key="ForceGammaCorrection"
-            android:title="ForceGammaCorrection" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="1.0"
-            android:key="GammaCorrectionLevel"
-            android:summary="@string/selectedValue"
-            android:title="GammaCorrectionLevel" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="true"
-            android:key="EnableFBEmulation"
-            android:title="EnableFBEmulation" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="2"
-            android:key="BufferSwapMode"
-            android:summary="@string/selectedValue"
-            android:title="BufferSwapMode" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="2"
-            android:key="EnableCopyColorToRDRAM"
-            android:summary="@string/selectedValue"
-            android:title="EnableCopyColorToRDRAM" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="false"
-            android:key="EnableCopyAuxiliaryToRDRAM"
-            android:title="EnableCopyAuxiliaryToRDRAM" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="false"
-            android:key="EnableCopyDepthToRDRAM"
-            android:title="EnableCopyDepthToRDRAM" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="false"
-            android:key="EnableCopyColorFromRDRAM"
-            android:title="EnableCopyColorFromRDRAM" />
+            android:title="@string/gliden64_enable_shader_storage_title" />
+
+        
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="EnableN64DepthCompare"
-            android:title="EnableN64DepthCompare" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="0"
+            android:title="@string/gliden64_enable_n64_depth_compare_title" />
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:key="categoryGliden64FrameBuffer"
+        android:title="@string/gliden64_category_fb_title" >
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="EnableFBEmulation"
+            android:title="@string/gliden64_enable_fb_emulation_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_swap_frame_buffer_default"
+            android:entries="@array/gliden64_swap_frame_buffer_entries"
+            android:entryValues="@array/gliden64_swap_frame_buffer_values"
+            android:key="BufferSwapMode"
+            android:summary="@string/selectedValue"
+            android:title="@string/gliden64_swap_frame_buffers_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_color_buffer_copy_to_RDRAM_default"
+            android:entries="@array/gliden64_color_buffer_copy_to_RDRAM_entries"
+            android:entryValues="@array/gliden64_color_buffer_copy_to_RDRAM_values"
+            android:key="EnableCopyColorToRDRAM"
+            android:summary="@string/selectedValue"
+            android:title="@string/gliden64_color_buffer_copy_to_RDRAM_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="EnableCopyAuxiliaryToRDRAM"
+            android:title="@string/gliden64_enable_copy_auxiliary_to_RDRAM_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="EnableCopyDepthToRDRAM"
+            android:title="@string/gliden64_enable_copy_depth_to_RDRAM_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="EnableCopyColorFromRDRAM"
+            android:title="@string/gliden64_enable_color_buffer_from_RDRAM_title" />
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
+        android:key="categoryGliden64TextureFiltering"
+        android:title="@string/gliden64_category_texture_filtering_title" >
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_texture_filter_default"
+            android:entries="@array/gliden64_texture_filter_entries"
+            android:entryValues="@array/gliden64_texture_filter_values"
             android:key="txFilterMode"
             android:summary="@string/selectedValue"
-            android:title="txFilterMode" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="0"
+            android:title="@string/gliden64_tx_filter_mode_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_texture_enhancement_default"
+            android:entries="@array/gliden64_texture_enhancement_entries"
+            android:entryValues="@array/gliden64_texture_enhancement_values"
             android:key="txEnhancementMode"
             android:summary="@string/selectedValue"
-            android:title="txEnhancementMode" />
+            android:title="@string/gliden64_tx_enhancement_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="txFilterIgnoreBG"
-            android:title="txFilterIgnoreBG" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="100"
+            android:title="@string/gliden64_tx_filter_ignore_BG_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="256"
             android:key="txCacheSize"
-            android:summary="@string/selectedValue"
-            android:title="txCacheSize" />
+            android:title="@string/gliden64_tx_cache_size_title"
+            mupen64:maximumValue="512"
+            mupen64:minimumValue="50"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="MB" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="txHiresEnable"
-            android:title="txHiresEnable" />
+            android:title="@string/gliden64_tx_hi_res_enable_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="txHiresFullAlphaChannel"
-            android:title="txHiresFullAlphaChannel" />
+            android:title="@string/gliden64_tx_hi_res_full_alpha_channel_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="txHresAltCRC"
-            android:title="txHresAltCRC" />
+            android:title="@string/gliden64_tx_hi_res_alt_crc_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="true"
             android:key="txCacheCompression"
-            android:title="txCacheCompression" />
+            android:title="@string/gliden64_tx_cache_compression_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
             android:key="txForce16bpp"
-            android:title="txForce16bpp" />
+            android:title="@string/gliden64_tx_force_16bpp_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="txSaveCache"
-            android:title="txSaveCache" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="DroidSans.ttf"
-            android:key="fontName"
-            android:summary="@string/selectedValue"
-            android:title="fontName" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="18"
-            android:key="fontSize"
-            android:summary="@string/selectedValue"
-            android:title="fontSize" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="B5E61D"
-            android:key="fontColor"
-            android:summary="@string/selectedValue"
-            android:title="fontColor" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="0"
+            android:title="@string/gliden64_tx_save_cache_title" />
+    </android.support.v7.preference.PreferenceCategory>
+        
+    <android.support.v7.preference.PreferenceCategory
+        android:key="categoryGliden64Bloom"
+        android:title="@string/gliden64_category_bloom_title" >
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
             android:key="EnableBloom"
-            android:summary="@string/selectedValue"
-            android:title="EnableBloom" />
-        <android.support.v7.preference.EditTextPreference
+            android:title="@string/gliden64_enable_bloom_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="4"
             android:key="bloomThresholdLevel"
-            android:summary="@string/selectedValue"
-            android:title="bloomThresholdLevel" />
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="0"
+            android:title="@string/gliden64_bloom_threshold_level_title"
+            mupen64:maximumValue="6"
+            mupen64:minimumValue="2"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_bloom_blend_mode_default"
+            android:entries="@array/gliden64_bloom_blend_mode_entries"
+            android:entryValues="@array/gliden64_bloom_blend_mode_values"
             android:key="bloomBlendMode"
             android:summary="@string/selectedValue"
-            android:title="bloomBlendMode" />
-        <android.support.v7.preference.EditTextPreference
+            android:title="@string/gliden64_bloom_blend_mode_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="10"
             android:key="blurAmount"
-            android:summary="@string/selectedValue"
-            android:title="blurAmount" />
-        <android.support.v7.preference.EditTextPreference
+            android:title="@string/gliden64_bloom_blur_amount_title"
+            mupen64:maximumValue="10"
+            mupen64:minimumValue="2"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="20"
             android:key="blurStrength"
-            android:summary="@string/selectedValue"
-            android:title="blurStrength" />
+            android:title="@string/gliden64_bloom_blur_strength_title"
+            mupen64:maximumValue="100"
+            mupen64:minimumValue="10"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="" />
     </android.support.v7.preference.PreferenceCategory>
-
+        
+    <android.support.v7.preference.PreferenceCategory
+        android:key="categoryGliden64Gamma"
+        android:title="@string/gliden64_category_gamma_title" >
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="ForceGammaCorrection"
+            android:title="@string/gliden64_force_gamma_correction_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="10"
+            android:key="GammaCorrectionLevel"
+            android:title="@string/gliden64_gamma_correction_level"
+            mupen64:maximumValue="50"
+            mupen64:minimumValue="0"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="" />
+    </android.support.v7.preference.PreferenceCategory>
+       
 </android.support.v7.preference.PreferenceScreen>

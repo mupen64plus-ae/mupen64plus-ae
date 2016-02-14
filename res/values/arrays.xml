@@ -262,6 +262,126 @@
 
     <string name="riceTextureEnhancement_default" translatable="false">0</string>
 
+    <!-- GLideN64 multisampling list-->
+    <string-array name="gliden64_multisampling_entries">
+        <item>@string/gliden64_multisampling_entry_none</item>
+        <item>@string/gliden64_multisampling_entry_two</item>
+        <item>@string/gliden64_multisampling_entry_four</item>
+        <item>@string/gliden64_multisampling_entry_eight</item>
+        <item>@string/gliden64_multisampling_entry_sixteen</item>
+    </string-array>
+    <string-array name="gliden64_multisampling_values" translatable="false">
+        <item>0</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+        <item>16</item>
+    </string-array>
+    <string name="gliden64_multisampling_default" translatable="false">0</string>
+
+    <!-- GLideN64 bilinear filtering list-->
+    <string-array name="gliden64_bilinear_entries">
+        <item>@string/gliden64_bilinear_mode_entry_n64_3point</item>
+        <item>@string/gliden64_bilinear_mode_entry_standard</item>
+    </string-array>
+    <string-array name="gliden64_bilinear_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="gliden64_bilinear_default" translatable="false">1</string>
+
+    <!-- GLideN64 swap frame buffers list-->
+    <string-array name="gliden64_swap_frame_buffer_entries">
+        <item>@string/gliden64_swap_frame_buffers_entry_on_vi_update</item>
+        <item>@string/gliden64_swap_frame_buffers_entry_on_vi_origin_change</item>
+        <item>@string/gliden64_swap_frame_buffers_entry_on_buffer_update</item>
+    </string-array>
+    <string-array name="gliden64_swap_frame_buffer_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="gliden64_swap_frame_buffer_default" translatable="false">2</string>
+
+    <!-- GLideN64 color buffer copy to RDRAM list-->
+    <string-array name="gliden64_color_buffer_copy_to_RDRAM_entries">
+        <item>@string/gliden64_color_buffer_copy_to_RDRAM_off</item>
+        <item>@string/gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode</item>
+        <item>@string/gliden64_color_buffer_copy_to_RDRAM_entry_async_mode</item>
+    </string-array>
+    <string-array name="gliden64_color_buffer_copy_to_RDRAM_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_default" translatable="false">2</string>
+
+    <!-- GLideN64 texture filter list-->
+    <string-array name="gliden64_texture_filter_entries">
+        <item>@string/gliden64_tx_filter_mode_entry_none</item>
+        <item>@string/gliden64_tx_filter_mode_entry_smooth1</item>
+        <item>@string/gliden64_tx_filter_mode_entry_smooth2</item>
+        <item>@string/gliden64_tx_filter_mode_entry_smooth3</item>
+        <item>@string/gliden64_tx_filter_mode_entry_sharp1</item>
+        <item>@string/gliden64_tx_filter_mode_entry_sharp2</item>
+    </string-array>
+    <string-array name="gliden64_texture_filter_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+    <string name="gliden64_texture_filter_default" translatable="false">0</string>
+
+    <!-- GLideN64 texture enhancement list-->
+    <string-array name="gliden64_texture_enhancement_entries">
+        <item>@string/gliden64_tx_enhancement_entry_none</item>
+        <item>@string/gliden64_tx_enhancement_entry_store_as_is</item>
+        <item>@string/gliden64_tx_enhancement_entry_X2</item>
+        <item>@string/gliden64_tx_enhancement_entry_X2SAI</item>
+        <item>@string/gliden64_tx_enhancement_entry_HQ2X</item>
+        <item>@string/gliden64_tx_enhancement_entry_HQ2XS</item>
+        <item>@string/gliden64_tx_enhancement_entry_LQ2X</item>
+        <item>@string/gliden64_tx_enhancement_entry_LQ2XS</item>
+        <item>@string/gliden64_tx_enhancement_entry_HQ4X</item>
+        <item>@string/gliden64_tx_enhancement_entry_2xBRZ</item>
+        <item>@string/gliden64_tx_enhancement_entry_3xBRZ</item>
+        <item>@string/gliden64_tx_enhancement_entry_4xBRZ</item>
+        <item>@string/gliden64_tx_enhancement_entry_5xBRZ</item>
+        <item>@string/gliden64_tx_enhancement_entry_6xBRZ</item>
+    </string-array>
+    <string-array name="gliden64_texture_enhancement_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+    </string-array>
+    <string name="gliden64_texture_enhancement_default" translatable="false">0</string>
+
+    <!-- GLideN64 bloom blend mode list-->
+    <string-array name="gliden64_bloom_blend_mode_entries">
+        <item>@string/gliden64_bloom_blend_mode_entry_strong</item>
+        <item>@string/gliden64_bloom_blend_mode_entry_mild</item>
+        <item>@string/gliden64_bloom_blend_mode_entry_light</item>
+    </string-array>
+    <string-array name="gliden64_bloom_blend_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="gliden64_bloom_blend_mode_default" translatable="false">0</string>
+
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries" translatable="false">
         <item>@string/videoPlugin_entryNone</item>

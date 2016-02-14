@@ -138,6 +138,139 @@ public class GamePrefs
     /** True if auto-frameskip is enabled in the glide64 library. */
     public final boolean isGlide64AutoFrameskipEnabled;
     
+    /** Enable/Disable MultiSampling (
+     * 0=off,
+     * 2,4,8,16=quality) */
+    public final int gliden64MultiSampling;
+    
+    /** Bilinear filtering mode (
+     * 0=N64 3point
+     * 1=standard) */
+    public final int gliden64BilinearMode;
+    
+    /** Max level of Anisotropic Filtering, 0 for off */
+    public final int gliden64MaxAnisotropy;
+    
+    /** Size of texture cache in megabytes. Good value is VRAM*3/4 */
+    public final int gliden64CacheSize;
+    
+    /** Enable fog emulation. */
+    public final boolean gliden64EnableFog;
+    
+    /** Enable color noise emulation. */
+    public final boolean gliden64EnableNoise;
+    
+    /** Enable LOD emulation. */
+    public final boolean gliden64EnableLOD;
+    
+    /** Enable hardware per-pixel lighting. */
+    public final boolean gliden64EnableHWLighting;
+    
+    /** Use persistent storage for compiled shaders. */
+    public final boolean gliden64EnableShaderStorage;
+    
+    /** Enable frame and|or depth buffer emulation. */
+    public final boolean gliden64EnableFBEmulation;
+
+    /** Swap frame buffers (
+     * 0=On VI update call
+     * 1=On VI origin change
+     * 2=On buffer update) */
+    public final int gliden64BufferSwapMode;
+    
+    /** Enable color buffer copy to RDRAM (
+     * 0=do not copy
+     * 1=copy in sync mode
+     * 2=copy in async mode) */
+    public final int gliden64EnableCopyColorToRDRAM;
+    
+    /** Copy auxiliary buffers to RDRAM */
+    public final boolean gliden64EnableCopyAuxiliaryToRDRAM;
+    
+    /** Enable depth buffer copy to RDRAM. */
+    public final boolean gliden64EnableCopyDepthToRDRAM;
+    
+    /** Enable color buffer copy from RDRAM. */
+    public final boolean gliden64EnableCopyColorFromRDRAM;
+    
+    /** Enable N64 depth compare instead of OpenGL standard one. Experimental. */
+    public final boolean gliden64EnableN64DepthCompare;
+    
+    /** Texture filter (
+     * 0=none
+     * 1=Smooth filtering 1
+     * 2=Smooth filtering 2
+     * 3=Smooth filtering 3
+     * 4=Smooth filtering 4
+     * 5=Sharp filtering 1
+     * 6=Sharp filtering 2). */
+    public final int gliden64TxFilterMode;
+    
+    /** Texture Enhancement (
+     * 0=none
+     * 1=store as is
+     * 2=X2
+     * 3=X2SAI
+     * 4=HQ2X
+     * 5=HQ2XS
+     * 6=LQ2X
+     * 7=LQ2XS
+     * 8=HQ4X
+     * 9=2xBRZ
+     * 10=3xBRZ
+     * 11=4xBRZ
+     * 12=5xBRZ
+     * 13=6xBRZ) */
+    public final int gliden64TxEnhancementMode;
+    
+    /** Don't filter background textures. */
+    public final boolean gliden64TxFilterIgnoreBG;
+    
+    /** Size of filtered textures cache in megabytes. */
+    public final int gliden64TxCacheSize;
+    
+    /** Use high-resolution texture packs if available. */
+    public final boolean gliden64TxHiresEnable;
+    
+    /** Allow to use alpha channel of high-res texture fully. */
+    public final boolean gliden64TxHiresFullAlphaChannel;
+    
+    /** Use alternative method of paletted textures CRC calculation. */
+    public final boolean gliden64TxHresAltCRC;
+    
+    /** Zip textures cache. */
+    public final boolean gliden64TxCacheCompression;
+    
+    /** Force use 16bit texture formats for HD textures. */
+    public final boolean gliden64TxForce16bpp;
+    
+    /** Save texture cache to hard disk. */
+    public final boolean gliden64TxSaveCache;
+    
+    /** Enable bloom filter */
+    public final boolean gliden64EnableBloom;
+    
+    /** Brightness threshold level for bloom. Values [2, 6] */
+    public final int gliden64BloomThresholdLevel;
+    
+    /** Bloom blend mode (
+     * 0=Strong
+     * 1=Mild
+     * 2=Light) */
+    public final int gliden64BloomBlendMode;
+    
+    /** Blur radius. Values [2, 10] */
+    public final int gliden64BlurAmount;
+    
+    /** Blur strength. Values [10, 100] */
+    public final int gliden64BlurStrength;
+    
+    /** Force gamma correction. */
+    public final boolean gliden64ForceGammaCorrection;
+    
+    /** Gamma correction value. */
+    public final float gliden64GammaCorrectionLevel;    
+    
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
     
@@ -350,6 +483,42 @@ public class GamePrefs
         maxFrameskip = getSafeInt( emulationProfile, "glide64Frameskip", 0 );
         isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
         glide64MaxFrameskip = Math.abs( maxFrameskip );
+        
+        
+        // Video prefs - GLideN64
+        gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
+        gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);
+        gliden64MaxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
+        gliden64CacheSize = getSafeInt( emulationProfile, "CacheSize", 500);
+        gliden64EnableFog = emulationProfile.get( "EnableFog", "True" ).equals( "True" );
+        gliden64EnableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
+        gliden64EnableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
+        gliden64EnableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
+        gliden64EnableShaderStorage = emulationProfile.get( "EnableShaderStorage", "True" ).equals( "True" );
+        gliden64EnableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
+        gliden64BufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);
+        gliden64EnableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 2);
+        gliden64EnableCopyAuxiliaryToRDRAM = emulationProfile.get( "EnableCopyAuxiliaryToRDRAM", "False" ).equals( "True" );
+        gliden64EnableCopyDepthToRDRAM = emulationProfile.get( "EnableCopyDepthToRDRAM", "False" ).equals( "True" );
+        gliden64EnableCopyColorFromRDRAM = emulationProfile.get( "EnableCopyColorFromRDRAM", "False" ).equals( "True" );
+        gliden64EnableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
+        gliden64TxFilterMode = getSafeInt( emulationProfile, "txFilterMode}]", 0);
+        gliden64TxEnhancementMode = getSafeInt( emulationProfile, "txEnhancementMode", 0);
+        gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "False" ).equals( "True" );
+        gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 100);
+        gliden64TxHiresEnable = emulationProfile.get( "txHiresEnable", "False" ).equals( "True" );
+        gliden64TxHiresFullAlphaChannel = emulationProfile.get( "txHiresFullAlphaChannel", "False" ).equals( "True" );
+        gliden64TxHresAltCRC = emulationProfile.get( "txHresAltCRC", "False" ).equals( "True" );
+        gliden64TxCacheCompression = emulationProfile.get( "txCacheCompression", "True" ).equals( "True" );
+        gliden64TxForce16bpp = emulationProfile.get( "txForce16bpp", "False" ).equals( "True" );
+        gliden64TxSaveCache = emulationProfile.get( "txSaveCache", "False" ).equals( "True" );
+        gliden64EnableBloom = emulationProfile.get( "EnableBloom", "False" ).equals( "True" );
+        gliden64BloomThresholdLevel = getSafeInt( emulationProfile, "bloomThresholdLevel", 4);
+        gliden64BloomBlendMode = getSafeInt( emulationProfile, "bloomBlendMode", 0);
+        gliden64BlurAmount = getSafeInt( emulationProfile, "blurAmount", 10);
+        gliden64BlurStrength = getSafeInt( emulationProfile, "blurStrength", 20);
+        gliden64ForceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
+        gliden64GammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;      
         
         // Determine the pixel dimensions of the rendering context and view surface
         {

@@ -47,7 +47,13 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_RICE = "categoryRice";
     private static final String CATEGORY_GLN64 = "categoryGln64";
     private static final String CATEGORY_GLIDE64 = "categoryGlide64";
-    private static final String CATEGORY_GLIDEN64 = "categoryGliden64";
+    private static final String CATEGORY_GLIDEN64_TEXTURE = "categoryGliden64Texture";
+    private static final String CATEGORY_GLIDEN64_GENERAL = "categoryGliden64General";
+    private static final String CATEGORY_GLIDEN64_FRAME_BUFFER = "categoryGliden64FrameBuffer";
+    private static final String CATEGORY_GLIDEN64_TEXTURE_FILTERING = "categoryGliden64TextureFiltering";
+    private static final String CATEGORY_GLIDEN64_BLOOM = "categoryGliden64Bloom";
+    private static final String CATEGORY_GLIDEN64_GAMMA = "categoryGliden64Gamma";
+    
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
@@ -74,7 +80,13 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryN64 = null;
     private PreferenceCategory mCategoryRice = null;
     private PreferenceCategory mCategoryGlide64 = null;
-    private PreferenceCategory mCategoryGliden64 = null;
+    private PreferenceCategory mCategoryGliden64Texture = null;
+    private PreferenceCategory mCategoryGliden64General = null;
+    private PreferenceCategory mCategoryGliden64FrameBuffer = null;
+    private PreferenceCategory mCategoryGliden64TextureFiltering = null;
+    private PreferenceCategory mCategoryGliden64Bloom = null;
+    private PreferenceCategory mCategoryGliden64Gamma = null;
+    
     private Preference mPreferenceVideoSubPlugin = null;
     
     @Override
@@ -130,11 +142,15 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryN64 = (PreferenceCategory) findPreference( CATEGORY_GLN64 );
         mCategoryRice = (PreferenceCategory) findPreference( CATEGORY_RICE );
         mCategoryGlide64 = (PreferenceCategory) findPreference( CATEGORY_GLIDE64 );
-        mCategoryGliden64 = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64 );
+        mCategoryGliden64Texture = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE );
+        mCategoryGliden64General = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GENERAL );
+        mCategoryGliden64FrameBuffer = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_FRAME_BUFFER );
+        mCategoryGliden64TextureFiltering = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE_FILTERING );
+        mCategoryGliden64Bloom = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_BLOOM );
+        mCategoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
+
         mPreferenceVideoSubPlugin = findPreference( VIDEO_SUB_PLUGIN );
-        
-        PreferenceCategory currentCategory = null;
-        
+                
         // Get the current values
         String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
         String videoSubPlugin = mPrefs.getString( VIDEO_SUB_PLUGIN, null );
@@ -147,7 +163,6 @@ public class EmulationProfileActivity extends ProfileActivity
         {
             if( LIBGLN64_SO.equals( videoPlugin ) )
             {
-                currentCategory = mCategoryN64;
                 mScreenRoot.addPreference( mCategoryN64 );
             }
             else
@@ -160,7 +175,6 @@ public class EmulationProfileActivity extends ProfileActivity
         {
             if( LIBRICE_SO.equals( videoPlugin ) )
             {
-                currentCategory = mCategoryRice;
                 mScreenRoot.addPreference( mCategoryRice );
             }
             else
@@ -174,7 +188,6 @@ public class EmulationProfileActivity extends ProfileActivity
         {
             if( LIBGLIDE64_SO.equals( videoPlugin ) )
             {
-                currentCategory = mCategoryGlide64;
                 mScreenRoot.addPreference( mCategoryGlide64 );
             }
             else
@@ -182,13 +195,23 @@ public class EmulationProfileActivity extends ProfileActivity
                 mScreenRoot.removePreference( mCategoryGlide64 );
             }
         }
-        
-        if(mCategoryGliden64 != null)
+
+        if(mCategoryGliden64Texture != null &&
+            mCategoryGliden64General != null &&
+            mCategoryGliden64FrameBuffer != null &&
+            mCategoryGliden64TextureFiltering != null &&
+            mCategoryGliden64Bloom != null &&
+            mCategoryGliden64Gamma != null)
         {
             if( LIBGLIDEN64_SO.equals( videoPlugin ) )
             {
-                currentCategory = mCategoryGliden64;
-                mScreenRoot.addPreference( mCategoryGliden64 );
+                mScreenRoot.addPreference( mCategoryGliden64Texture );
+                mScreenRoot.addPreference( mCategoryGliden64General );
+                mScreenRoot.addPreference( mCategoryGliden64FrameBuffer );
+                mScreenRoot.addPreference( mCategoryGliden64TextureFiltering );
+                mScreenRoot.addPreference( mCategoryGliden64Bloom );
+                mScreenRoot.addPreference( mCategoryGliden64Gamma );
+
                 boolean isGles20 = GLES20.equals( videoSubPlugin );
                 boolean isGles31 = GLES31.equals( videoSubPlugin );
                 findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 );
@@ -205,21 +228,13 @@ public class EmulationProfileActivity extends ProfileActivity
             }
             else
             {
-                mScreenRoot.removePreference( mCategoryGliden64 );
-            }
-        }
 
-        //Update the EditTextPreference summaries.
-        if(currentCategory != null)
-        {
-            for(int index = 0; index < currentCategory.getPreferenceCount(); ++index)
-            {
-                Preference pref = currentCategory.getPreference(index);
-                
-                if(pref instanceof EditTextPreference)
-                {
-                    pref.setSummary(mPrefs.getString(pref.getKey(), ""));
-                }
+                mScreenRoot.removePreference( mCategoryGliden64Texture );
+                mScreenRoot.removePreference( mCategoryGliden64General );
+                mScreenRoot.removePreference( mCategoryGliden64FrameBuffer );
+                mScreenRoot.removePreference( mCategoryGliden64TextureFiltering );
+                mScreenRoot.removePreference( mCategoryGliden64Bloom );
+                mScreenRoot.removePreference( mCategoryGliden64Gamma );
             }
         }
         

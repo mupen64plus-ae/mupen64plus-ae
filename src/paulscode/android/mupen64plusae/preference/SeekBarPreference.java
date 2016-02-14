@@ -45,12 +45,14 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     private static final int DEFAULT_MAX = 100;
     private static final int DEFAULT_STEP = 10;
     private static final String DEFAULT_UNITS = "%";
+    private static final String DEFAULT_SAVE_TYPE = "int";
     
     private int mValue = DEFAULT_VALUE;
     private int mMinValue = DEFAULT_MIN;
     private int mMaxValue = DEFAULT_MAX;
     private int mStepSize = DEFAULT_STEP;
     private String mUnits = DEFAULT_UNITS;
+    private String mSaveType = DEFAULT_SAVE_TYPE;
     
     private TextView mTextView;
     private SeekBar mSeekBar;
@@ -71,6 +73,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         setMaxValue( a.getInteger( R.styleable.SeekBarPreference_maximumValue, DEFAULT_MAX ) );
         setStepSize( a.getInteger( R.styleable.SeekBarPreference_stepSize, DEFAULT_STEP ) );
         setUnits( a.getString( R.styleable.SeekBarPreference_units ) );
+        setSaveType( a.getString( R.styleable.SeekBarPreference_saveType ) );
+
         a.recycle();
         
         // Setup the layout
@@ -99,7 +103,16 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         setSummary( getValueString( mValue ) );
 
         if( shouldPersist() )
-            persistInt( mValue );
+        {
+            if(mSaveType.equals("int"))
+            {
+                persistInt( mValue );
+            }
+            else if(mSaveType.equals("string"))
+            {
+                persistString( Integer.toString(mValue) );
+            }
+        }
         notifyChanged();
     }
 
@@ -141,6 +154,19 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     public void setUnits( String units )
     {
         mUnits = units;
+    }
+    
+    /**
+     * Sets the type of save object type this SeekBarPreference uses (e.g. "int").
+     * 
+     * @param saveType The save type ("int" or "string") for this SeekBarPreference to use.
+     */
+    public void setSaveType( String saveType )
+    {
+        if(saveType != null)
+        {
+            mSaveType = saveType;
+        }
     }
 
     /**
@@ -214,7 +240,32 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     @Override
     protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
     {
-        setValue( restorePersistedValue ? getPersistedInt( mValue ) : (Integer) defaultValue );
+        int value = mValue;
+        
+        if(restorePersistedValue)
+        {
+            if(mSaveType.equals("int"))
+            {
+                value = getPersistedInt( mValue );
+            }
+            else if(mSaveType.equals("string"))
+            {
+                try
+                {
+                    value = Integer.parseInt(getPersistedString( Integer.toString(mValue) ));
+                }
+                catch(NumberFormatException e)
+                {
+                    value = mValue;
+                }
+            }
+        }
+        else
+        {
+            value = (Integer) defaultValue;
+        }
+
+        setValue( value  );
     }
     
     @Override
