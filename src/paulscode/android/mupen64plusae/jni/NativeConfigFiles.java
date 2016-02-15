@@ -1,26 +1,25 @@
 /**
  * Mupen64PlusAE, an N64 emulator for the Android platform
- * 
+ *
  * Copyright (C) 2013 Paul Lamb
- * 
+ *
  * This file is part of Mupen64PlusAE.
- * 
+ *
  * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Authors: Paul Lamb, littleguy77
  */
 package paulscode.android.mupen64plusae.jni;
 
-import android.util.Log;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -29,16 +28,16 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 public class NativeConfigFiles
 {
     private final static String EMPTY = "\"\"";
-    
+
     /**
      * Populates the core configuration files with the user preferences.
      */
     public static void syncConfigFiles( GamePrefs game, GlobalPrefs global, AppData appData )
     {
         //@formatter:off
-        
+
         // gln64 config file
-        ConfigFile gln64_conf = new ConfigFile( appData.gln64_conf );
+        final ConfigFile gln64_conf = new ConfigFile( appData.gln64_conf );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window width", String.valueOf( game.videoRenderWidth ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "window height", String.valueOf( game.videoRenderHeight ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "auto frameskip", boolToNum( game.isGln64AutoFrameskipEnabled ) );
@@ -51,23 +50,23 @@ public class NativeConfigFiles
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "enable alpha test", boolToNum( game.isGln64AlphaTestEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "force screen clear", boolToNum( game.isGln64ScreenClearEnabled ) );
         gln64_conf.put( ConfigFile.SECTIONLESS_NAME, "hack z", boolToNum( game.isGln64HackDepthEnabled ) );
-        
+
         // glide64 config file
-        ConfigFile glide64_conf = new ConfigFile( appData.glide64mk2_ini );
+        final ConfigFile glide64_conf = new ConfigFile( appData.glide64mk2_ini );
         glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                       // Stretch to GameSurface, Java will manage aspect ratio
-        
+
         // Core and rice config file
-        ConfigFile mupen64plus_cfg = new ConfigFile( game.mupen64plus_cfg );
-        
+        final ConfigFile mupen64plus_cfg = new ConfigFile( game.mupen64plus_cfg );
+
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.000000" );                                                          // Mupen64Plus SDL Audio Plugin config parameter version number
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );                          // Swaps left and right channels
         mupen64plus_cfg.put( "Audio-SDL", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSDLSecondaryBufferSize ) );  // Size of secondary buffer in output samples. This is SDL's hardware buffer.
-        
+
         mupen64plus_cfg.put( "Audio-OpenSLES", "Version", "1.000000" );                                                          // Mupen64Plus OpenSLES Audio Plugin config parameter version number
         mupen64plus_cfg.put( "Audio-OpenSLES", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );                          // Swaps left and right channels
         mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSLESSecondaryBufferSize ) ); // Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.
         mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_NBR", String.valueOf( global.audioSLESSecondaryBufferNbr ) );   // Number of secondary buffer.
-        
+
         mupen64plus_cfg.put( "Core", "Version", "1.010000" );                                                               // Mupen64Plus Core config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );                                                          // Draw on-screen display if True, otherwise don't draw OSD
         mupen64plus_cfg.put( "Core", "R4300Emulator", game.r4300Emulator );                                                 // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
@@ -76,7 +75,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + game.slotSaveDir + '"' );                                       // Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserConfigPath}/save will be used
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.sramDataDir + '"' );                                        // Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used
         mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );                             // Path to a directory to search when looking for shared data files
-        
+
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.000000" );                                                         // Mupen64Plus CoreEvents config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", EMPTY );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Fullscreen", EMPTY );
@@ -106,20 +105,20 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Decrease Volume", EMPTY );
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Fast Forward", EMPTY );
         mupen64plus_cfg.put( "CoreEvents", "Joy Mapping Gameshark", EMPTY );
-        
+
         mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );                                                         // Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );                                      // Directory in which to search for plugins
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + game.videoPlugin.path + '"' );                              // Filename of video plugin
-        
+
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + global.audioPlugin.path + '"' );                            // Filename of audio plugin
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + appData.rspLib + '"' );                                       // Filename of RSP plugin
-        
+
         mupen64plus_cfg.put( "Video-General", "Fullscreen", "False" );                                                      // Use fullscreen mode if True, or windowed mode if False
         mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( game.videoRenderWidth ) );                     // Width of output window or fullscreen width
         mupen64plus_cfg.put( "Video-General", "ScreenHeight", String.valueOf( game.videoRenderHeight ) );                   // Height of output window or fullscreen height
         mupen64plus_cfg.put( "Video-General", "VerticalSync", "False" );                                                    // If true, activate the SDL_GL_SWAP_CONTROL attribute
-        
+
         mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );                                                        // Vertical sync
         mupen64plus_cfg.put( "Video-Glide64mk2", "wrpAnisotropic", "False" );                                               // Wrapper Anisotropic Filtering
         mupen64plus_cfg.put( "Video-Glide64mk2", "fb_read_always", "0" );                                                   // Read framebuffer every frame (may be slow use only for effects that need it e.g. Banjo Kazooie, DK64 transitions)
@@ -128,11 +127,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( global.videoPolygonOffset ) );     // Is multiplied by an implementation-specific value to create a constant depth offset
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
-        
-<<<<<<< HEAD
-        
-        
-=======
+
         mupen64plus_cfg.put( "Video-Glide2gl", "polyoffset-factor", String.valueOf( global.videoPolygonOffset ) );
         mupen64plus_cfg.put( "Video-Glide2gl", "polyoffset-units", String.valueOf( global.videoPolygonOffset ) );
 
@@ -143,11 +138,10 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide2gl", "framerate", game.glide2glFramerate); // Framerate (restart); original|fullspeed
         mupen64plus_cfg.put( "Video-Glide2gl", "vcache-vbo", game.glide2glVCacheVbo ? "on":"off"); //Vertex cache VBO (restart); off|on
 
->>>>>>> video: glide2gl is now configurable, port seems complete for the most
         String aspectRatio = "0";
         if( game.emulationProfile.get( "WidescreenHack", "False" ).equals("True") )
             aspectRatio = "3";
-        
+
         mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "6" );
         mupen64plus_cfg.put( "Video-GLideN64", "AspectRatio", aspectRatio);
         mupen64plus_cfg.put( "Video-GLideN64", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
@@ -190,7 +184,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-GLideN64", "blurStrength", String.valueOf( game.gliden64BlurStrength ) );
         mupen64plus_cfg.put( "Video-GLideN64", "ForceGammaCorrection", boolToNum( game.gliden64ForceGammaCorrection ) );
         mupen64plus_cfg.put( "Video-GLideN64", "GammaCorrectionLevel", String.valueOf( game.gliden64GammaCorrectionLevel ) );
-        
+
         mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );           // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );            // Specifies a scale factor that is used to create a variable depth offset for each polygon
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );             // Is multiplied by an implementation-specific value to create a constant depth offset
@@ -206,19 +200,19 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );                                              // Secondary texture enhancement filter (0 = none, 1-4 = filtered)
         mupen64plus_cfg.put( "Video-Rice", "Mipmapping", "0" );                                                             // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
         mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isRiceFogEnabled ) );                               // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
-        
+
         gln64_conf.save();
         glide64_conf.save();
         mupen64plus_cfg.save();
-        
+
         //@formatter:on
     }
-    
+
     private static String boolToTF( boolean b )
     {
         return b ? "True" : "False";
     }
-    
+
     private static String boolToNum( boolean b )
     {
         return b ? "1" : "0";

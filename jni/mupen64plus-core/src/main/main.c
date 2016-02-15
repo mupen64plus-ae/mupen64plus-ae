@@ -61,7 +61,7 @@
 #include "plugin/get_time_using_C_localtime.h"
 #include "plugin/plugin.h"
 #include "plugin/rumble_via_input_plugin.h"
-#include "profile.h"o
+#include "profile.h"
 #include "r4300/r4300.h"
 #include "r4300/r4300_core.h"
 #include "r4300/reset.h"
@@ -775,10 +775,8 @@ static void apply_speed_limiter(void)
         {
             TimeToWait = (IntegratedDelta > ThisFrameDelta) ? -IntegratedDelta : -ThisFrameDelta;
             DebugMessage(M64MSG_VERBOSE, "    apply_speed_limiter(): Waiting %ims", (int) TimeToWait);
-
-            int StartTime =  SDL_GetTicks();
-            int EndTime = StartTime + TimeToWait;
-            while(SDL_GetTicks() <= EndTime);
+            unsigned int SleepStart = SDL_GetTicks();
+            SDL_Delay((int) TimeToWait);
 
             // recalculate # of milliseconds that have passed since the last video interrupt,
             // taking into account the time we just waited
