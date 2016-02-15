@@ -99,13 +99,19 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
         }
     }
     
-    public void populateProfiles( ConfigFile configBuiltin, ConfigFile configCustom, String defaultValue )
+    public void populateProfiles( ConfigFile configBuiltin, ConfigFile configCustom, String defaultValue,
+        List<Profile> exclusions )
     {
         //ConfigFile configBuiltin = new ConfigFile( builtinPath );
         //ConfigFile configCustom = new ConfigFile( customPath );
         List<Profile> profiles = new ArrayList<Profile>();
         profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
         profiles.addAll( Profile.getProfiles( configCustom, false ) );
+        
+        if(exclusions != null)
+        {
+            profiles.removeAll(exclusions);
+        }
         
         Collections.sort( profiles );
         
