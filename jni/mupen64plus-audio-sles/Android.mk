@@ -32,11 +32,12 @@ LOCAL_C_INCLUDES :=         \
 LOCAL_SRC_FILES :=            \
     main.c                    \
     osal_dynamiclib_unix.c    \
+    threadqueue.c             \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DUSE_SRC           \
 
-LOCAL_LDLIBS := -lOpenSLES
+LOCAL_LDLIBS := -lOpenSLES -L$(SYSROOT)/usr/lib -llog
 
 include $(BUILD_SHARED_LIBRARY)

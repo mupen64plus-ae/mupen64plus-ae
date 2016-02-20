@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <errno.h>
+#include <math.h>
 
 #ifdef USE_SRC
 #include <samplerate.h>
@@ -43,8 +45,10 @@
 #include "m64p_config.h"
 #include "m64p_plugin.h"
 #include "m64p_types.h"
+#include "m64p_frontend.h"
 #include "main.h"
 #include "osal_dynamiclib.h"
+#include "threadqueue.h"
 
 typedef struct threadLock_
 {
@@ -126,6 +130,21 @@ static int OutputFreq;
 /* Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
 static int critical_failure = 0;
 
+typedef struct queueData_
+{
+   unsigned char* data;
+   unsigned int lenght;
+   unsigned int speedFactor;
+} queueData;
+
+void processAudio(const unsigned char* buffer, unsigned int length, unsigned int speedFactor);
+static void* audioConsumer(void*);
+static pthread_t audioConsumerThread;
+static struct threadqueue audioConsumerQueue;
+
+static volatile int shutdown = 1;
+static volatile int matchGameToAudio = 1;
+
 /* Samplerate*/
 #ifdef USE_SRC
 static float *_src = NULL;
@@ -173,6 +192,7 @@ ptr_ConfigGetParamInt      ConfigGetParamInt = NULL;
 ptr_ConfigGetParamFloat    ConfigGetParamFloat = NULL;
 ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
 ptr_ConfigGetParamString   ConfigGetParamString = NULL;
+ptr_CoreDoCommand          CoreDoCommand = NULL;
 
 /* Global functions */
 static void DebugMessage(int level, const char *message, ...)
@@ -208,6 +228,14 @@ void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context)
 
 static void CloseAudio(void)
 {
+    if(shutdown == 0)
+    {
+       shutdown = 1;
+       pthread_join(audioConsumerThread,NULL);
+
+       thread_queue_cleanup(&audioConsumerQueue, 1);
+    }
+
     int i = 0;
     
     primaryBufferPos = 0;
@@ -378,9 +406,7 @@ static void InitializeAudio(int freq)
     /* Create thread Locks to ensure synchronization between callback and processing code */
     if (pthread_mutex_init(&(lock.mutex), (pthread_mutexattr_t*) NULL) != 0) goto failure;
     if (pthread_cond_init(&(lock.cond), (pthread_condattr_t*) NULL) != 0) goto failure;
-    pthread_mutex_lock(&(lock.mutex));
     lock.value = lock.limit = SecondaryBufferNbr;
-    pthread_mutex_unlock(&(lock.mutex));
 
     /* Engine object */
     SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
@@ -436,6 +462,10 @@ static void InitializeAudio(int freq)
     /* set the player's state to playing */
     result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
     if(result != SL_RESULT_SUCCESS) goto failure;
+
+    thread_queue_init(&audioConsumerQueue);
+    shutdown = 0;
+    pthread_create( &audioConsumerThread, NULL, audioConsumer, NULL);
 
     return;
 
@@ -678,10 +708,12 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigGetParamFloat = (ptr_ConfigGetParamFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamFloat");
     ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
     ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
+    CoreDoCommand =  (ptr_CoreDoCommand) osal_dynlib_getproc(CoreLibHandle, "CoreDoCommand");
 
     if (!ConfigOpenSection || !ConfigDeleteSection || !ConfigSetParameter || !ConfigGetParameter ||
         !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
-        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString)
+        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString ||
+        !CoreDoCommand)
         return M64ERR_INCOMPATIBLE;
 
     /* ConfigSaveSection was added in Config API v2.1.0 */
@@ -733,6 +765,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         ConfigSaveSection("Audio-OpenSLES");
 
     l_PluginInit = 1;
+
     return M64ERR_SUCCESS;
 }
 
@@ -794,6 +827,7 @@ EXPORT void CALL AiDacrateChanged( int SystemType )
             f = 48628316 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
     }
+
     InitializeAudio(f);
 }
 
@@ -807,40 +841,193 @@ EXPORT void CALL AiLenChanged(void)
     
     unsigned int LenReg = *AudioInfo.AI_LEN_REG;
     unsigned char * p = AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF);
-
-    if (primaryBufferPos + LenReg < primaryBufferBytes)
-    {
-        unsigned int i;
     
-        for ( i = 0 ; i < LenReg ; i += 4 )
-        {
-            if(SwapChannels == 0)
-            {
-                /* Left channel */
-                primaryBuffer[ primaryBufferPos + i ] = p[ i + 2 ];
-                primaryBuffer[ primaryBufferPos + i + 1 ] = p[ i + 3 ];
+    queueData* theQueueData = malloc(sizeof(queueData));
+    theQueueData->data = malloc(LenReg);
+    theQueueData->lenght = LenReg;
+    theQueueData->speedFactor = speed_factor;
 
-                /* Right channel */
-                primaryBuffer[ primaryBufferPos + i + 2 ] = p[ i ];
-                primaryBuffer[ primaryBufferPos + i + 3 ] = p[ i + 1 ];
-            } 
-            else 
-            {
-                /* Left channel */
-                primaryBuffer[ primaryBufferPos + i ] = p[ i ];
-                primaryBuffer[ primaryBufferPos + i + 1 ] = p[ i + 1 ];
+    memcpy(theQueueData->data, p, LenReg);
 
-                /* Right channel */
-                primaryBuffer[ primaryBufferPos + i + 2 ] = p[ i + 2];
-                primaryBuffer[ primaryBufferPos + i + 3 ] = p[ i + 3 ];
+    thread_queue_add(&audioConsumerQueue, theQueueData, 0);
+}
+
+double TimeDiff(struct timespec* currTime, struct timespec* prevTime)
+{
+   return ((double)currTime->tv_sec+((double)currTime->tv_nsec)/1e9) -
+         ((double)prevTime->tv_sec+((double)prevTime->tv_nsec)/1e9);
+}
+
+void* audioConsumer(void* param)
+{
+   int prevQueueSize = thread_queue_length(&audioConsumerQueue);
+   int currQueueSize = prevQueueSize;
+   int maxQueueSize = 7;
+   static const int fullSpeed = 100;
+
+   //Game is being sped up, speed up audio
+   int matchGameToAudioOffset = 0;
+
+   //Device is running too quickly, these are used to slow down emulation
+   int currentSpeedFactorAdjustment = 0;
+   int desiredGameSpeed = 100;
+
+   //Sound queue ran dry, device is running slow
+   int ranDry = 0;
+
+   //adjustment used when a device running too slow
+   int slowAdjustment = 0;
+   int currAdjustment = 0;
+   const int maxSlowAdjustment = 2;
+   queueData* currQueueData = NULL;
+   queueData* prevQueueData = NULL;
+   struct timespec currTime;
+   struct timespec prevTime;
+
+   //How long to wait for some data
+   struct timespec waitTime;
+   waitTime.tv_sec = 1;
+   waitTime.tv_nsec = 0;
+
+   while(!shutdown)
+   {
+      int queueLength = thread_queue_length(&audioConsumerQueue);
+      ranDry = queueLength <= lock.limit;// && lock.value >= (lock.limit-1);
+
+      prevTime = currTime;
+      clock_gettime(CLOCK_REALTIME, &currTime);
+
+      struct threadmsg msg;
+      int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
+
+      if( result != ETIMEDOUT )
+      {
+         prevQueueData = currQueueData;
+         currQueueData = msg.data;
+
+         if(prevQueueData)
+         {
+            currQueueSize = thread_queue_length(&audioConsumerQueue);
+
+            //If we want to make the game run slower for us
+            if(matchGameToAudio)
+            {
+               //Game is running too fast, slow it down a little
+               if(currQueueSize > maxQueueSize && slowAdjustment == 0)
+               {
+                  ++matchGameToAudioOffset;
+                  desiredGameSpeed = fullSpeed - matchGameToAudioOffset;
+                  CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &desiredGameSpeed);
+               }
+               // Oh no! game is going too slow now, speed it up
+               else if(ranDry && matchGameToAudioOffset > 0)
+               {
+                  --matchGameToAudioOffset;
+                  desiredGameSpeed = fullSpeed - matchGameToAudioOffset;
+                  CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &desiredGameSpeed);
+               }
+               //Device can't keep up with the game, slow audio down
+               else if(ranDry)
+               {
+                  double prevQueueLengthSec = prevQueueData->lenght/4.0/GameFreq;
+                  double timeDiff = TimeDiff(&currTime, &prevTime);
+
+                  currAdjustment = timeDiff/prevQueueLengthSec*100 - 100;
+
+                  //DebugMessage(M64MSG_ERROR, "prev length = %f, diff = %f, adj = %d",
+                  //             prevQueueLengthSec, timeDiff, currAdjustment);
+               }
+               else
+               {
+                  currAdjustment = 0;
+               }
+
+               if(currAdjustment >= 0 && currAdjustment < 100)
+               {
+                  if(abs(currAdjustment - slowAdjustment) < maxSlowAdjustment)
+                  {
+                     slowAdjustment = currAdjustment;
+                  }
+                  else if(currAdjustment < slowAdjustment)
+                  {
+                     slowAdjustment -= maxSlowAdjustment;
+                  }
+                  else
+                  {
+                     slowAdjustment += maxSlowAdjustment;
+                  }
+               }
+
+               processAudio(prevQueueData->data, prevQueueData->lenght, fullSpeed - slowAdjustment);
             }
-        }
-        primaryBufferPos += i;
-    }
-    else
-        DebugMessage(M64MSG_WARNING, "AiLenChanged(): Audio primary buffer overflow.");
-    
-    int newsamplerate = OutputFreq * 100 / speed_factor;
+            //If we are trying to make audio catch up with video
+            else
+            {
+               if(currQueueSize > maxQueueSize)
+               {
+                  int difference = currQueueSize - prevQueueSize;
+                  if(difference >= 0)
+                  {
+                     currentSpeedFactorAdjustment += 1;
+                  }
+               }
+               else
+               {
+                  currentSpeedFactorAdjustment = 0;
+               }
+
+               processAudio(prevQueueData->data, prevQueueData->lenght, prevQueueData->speedFactor + currentSpeedFactorAdjustment);
+            }
+
+            free(prevQueueData->data);
+            free(prevQueueData);
+         }
+
+         //Useful logging
+         //DebugMessage(M64MSG_ERROR, "audio adj = %d, length = %d, speed = %d, dry=%d, slow=%d",
+         //            currentSpeedFactorAdjustment, queueLength, desiredGameSpeed, ranDry, slowAdjustment);
+      }
+   }
+
+   return 0;
+}
+
+void processAudio(const unsigned char* buffer, unsigned int length, unsigned int speedFactor)
+{
+   if (primaryBufferPos + length < primaryBufferBytes)
+   {
+       unsigned int i;
+
+       for ( i = 0 ; i < length ; i += 4 )
+       {
+           if(SwapChannels == 0)
+           {
+               /* Left channel */
+              primaryBuffer[ primaryBufferPos + i ] = buffer[ i + 2 ];
+              primaryBuffer[ primaryBufferPos + i + 1 ] = buffer[ i + 3 ];
+
+               /* Right channel */
+              primaryBuffer[ primaryBufferPos + i + 2 ] = buffer[ i ];
+              primaryBuffer[ primaryBufferPos + i + 3 ] = buffer[ i + 1 ];
+           }
+           else
+           {
+               /* Left channel */
+              primaryBuffer[ primaryBufferPos + i ] = buffer[ i ];
+              primaryBuffer[ primaryBufferPos + i + 1 ] = buffer[ i + 1 ];
+
+               /* Right channel */
+              primaryBuffer[ primaryBufferPos + i + 2 ] = buffer[ i + 2];
+              primaryBuffer[ primaryBufferPos + i + 3 ] = buffer[ i + 3 ];
+           }
+       }
+       primaryBufferPos += i;
+   }
+   else
+       DebugMessage(M64MSG_WARNING, "AiLenChanged(): Audio primary buffer overflow.");
+
+
+    int newsamplerate = OutputFreq * 100 / speedFactor;
     int oldsamplerate = GameFreq;
 
     while (primaryBufferPos >= ((secondaryBufferBytes * oldsamplerate) / newsamplerate))
@@ -852,7 +1039,7 @@ EXPORT void CALL AiLenChanged(void)
             pthread_cond_wait(&(lock.cond), &(lock.mutex));
 
         --lock.value;
-    
+
         pthread_mutex_unlock(&(lock.mutex));
 
         // TODO: don't resample if speed_factor = 100 and newsamplerate ~= oldsamplerate
@@ -896,6 +1083,7 @@ EXPORT int CALL RomOpen(void)
 
     ReadConfig();
     InitializeAudio(GameFreq);
+
     return 1;
 }
 
@@ -922,6 +1110,18 @@ EXPORT void CALL SetSpeedFactor(int percentage)
         return;
     if (percentage >= 10 && percentage <= 300)
         speed_factor = percentage;
+
+    if(percentage == 100)
+    {
+       matchGameToAudio = 1;
+    }
+
+    //We don't want to snap ourselves out of this mode
+    if(matchGameToAudio && percentage > 100)
+    {
+       matchGameToAudio = 0;
+    }
+
 }
 
 EXPORT void CALL VolumeMute(void)
