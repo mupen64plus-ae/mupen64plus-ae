@@ -24,20 +24,23 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := mupen64plus-audio-sles
 LOCAL_STATIC_LIBRARIES := samplerate
+LOCAL_SHARED_LIBRARIES := soundtouch
 
 LOCAL_C_INCLUDES :=         \
     $(M64P_API_INCLUDES)    \
     $(SAMPLERATE_INCLUDES)  \
+    $(SOUNDTOUCH_INCLUDES)  \
 
 LOCAL_SRC_FILES :=            \
-    main.c                    \
-    osal_dynamiclib_unix.c    \
-    threadqueue.c             \
+    main.cpp                    \
+    osal_dynamiclib_unix.cpp    \
+    threadqueue.cpp             \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DUSE_SRC           \
+    -fpermissive
 
-LOCAL_LDLIBS := -lOpenSLES -L$(SYSROOT)/usr/lib -llog
+LOCAL_LDLIBS := -lOpenSLES -L$(SYSROOT)/usr/lib -llog 
 
 include $(BUILD_SHARED_LIBRARY)

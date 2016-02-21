@@ -6,6 +6,7 @@ SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
 PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 SAMPLERATE_INCLUDES := $(JNI_LOCAL_PATH)/libsamplerate/
 FREETYPE_INCLUDES := $(JNI_LOCAL_PATH)/freetype/include/
+SOUNDTOUCH_INCLUDES := $(JNI_LOCAL_PATH)/soundtouch/include/
 
 COMMON_CFLAGS :=                    \
     -O3                             \

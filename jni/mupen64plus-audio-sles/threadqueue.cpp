@@ -23,7 +23,7 @@ static inline struct msglist *get_msglist(struct threadqueue *queue)
         queue->msgpool = tmp->next;
         queue->msgpool_length--;
     } else {
-        tmp = malloc(sizeof *tmp);
+        tmp = (msglist*)malloc(sizeof *tmp);
     }
 
     return tmp;
