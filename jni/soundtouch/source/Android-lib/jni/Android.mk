@@ -39,11 +39,11 @@ LOCAL_LDLIBS    += -llog
 
 # Custom Flags: 
 # -fvisibility=hidden : don't export all symbols
-LOCAL_CFLAGS += -fvisibility=hidden -I $(LOCAL_PATH)/../../../include -fdata-sections -ffunction-sections -fexceptions
+LOCAL_CFLAGS += -I $(LOCAL_PATH)/../../../include -fdata-sections -ffunction-sections -fexceptions
 
 # OpenMP mode : enable these flags to enable using OpenMP for parallel computation 
-#LOCAL_CFLAGS += -fopenmp
-#LOCAL_LDFLAGS += -fopenmp
+LOCAL_CFLAGS += -fopenmp
+LOCAL_LDFLAGS += -fopenmp
 
 
 # Use ARM instruction set instead of Thumb for improved calculation performance in ARM CPUs	

@@ -32,6 +32,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <math.h>
+#include <SoundTouch.h>
 
 #ifdef USE_SRC
 #include <samplerate.h>
@@ -144,6 +145,9 @@ static struct threadqueue audioConsumerQueue;
 
 static volatile int shutdown = 1;
 static volatile int matchGameToAudio = 1;
+
+using namespace soundtouch;
+static SoundTouch soundTouch;
 
 /* Samplerate*/
 #ifdef USE_SRC
@@ -352,6 +356,13 @@ static int CreateSecondaryBuffers(void)
     return status;
 }
 
+void OnInitFailure(void)
+{
+   DebugMessage(M64MSG_ERROR, "Couldn't open OpenSLES audio");
+   CloseAudio();
+   critical_failure = 1;
+}
+
 static void InitializeAudio(int freq)
 {
     SLuint32 sample_rate;
@@ -398,32 +409,68 @@ static void InitializeAudio(int freq)
     CloseAudio();
 
     /* Create primary buffer */
-    if(!CreatePrimaryBuffer()) goto failure;
+    if(!CreatePrimaryBuffer())
+    {
+       OnInitFailure();
+       return;
+    }
 
     /* Create secondary buffers */
-    if(!CreateSecondaryBuffers()) goto failure;
+    if(!CreateSecondaryBuffers())
+    {
+       OnInitFailure();
+       return;
+    }
 
     /* Create thread Locks to ensure synchronization between callback and processing code */
-    if (pthread_mutex_init(&(lock.mutex), (pthread_mutexattr_t*) NULL) != 0) goto failure;
-    if (pthread_cond_init(&(lock.cond), (pthread_condattr_t*) NULL) != 0) goto failure;
+    if (pthread_mutex_init(&(lock.mutex), (pthread_mutexattr_t*) NULL) != 0)
+    {
+       OnInitFailure();
+       return;
+    }
+    if (pthread_cond_init(&(lock.cond), (pthread_condattr_t*) NULL) != 0)
+    {
+       OnInitFailure();
+       return;
+    }
     lock.value = lock.limit = SecondaryBufferNbr;
 
     /* Engine object */
     SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     result = (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     result = (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     /* Output mix object */
     result = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 0, NULL, NULL);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     result = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, SecondaryBufferNbr};
 
@@ -441,38 +488,56 @@ static void InitializeAudio(int freq)
     const SLInterfaceID ids1[] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
     const SLboolean req1[] = {SL_BOOLEAN_TRUE};
     result = (*engineEngine)->CreateAudioPlayer(engineEngine, &(playerObject), &audioSrc, &audioSnk, 1, ids1, req1);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     /* Realize the player */
     result = (*playerObject)->Realize(playerObject, SL_BOOLEAN_FALSE);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     /* Get the play interface */
     result = (*playerObject)->GetInterface(playerObject, SL_IID_PLAY, &(playerPlay));
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     /* Get the buffer queue interface */
     result = (*playerObject)->GetInterface(playerObject, SL_IID_ANDROIDSIMPLEBUFFERQUEUE, &(bufferQueue));
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     /* register callback on the buffer queue */
     result = (*bufferQueue)->RegisterCallback(bufferQueue, queueCallback, &lock);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     /* set the player's state to playing */
     result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
-    if(result != SL_RESULT_SUCCESS) goto failure;
+    if(result != SL_RESULT_SUCCESS)
+    {
+       OnInitFailure();
+       return;
+    }
 
     thread_queue_init(&audioConsumerQueue);
     shutdown = 0;
     pthread_create( &audioConsumerThread, NULL, audioConsumer, NULL);
 
-    return;
-
-failure:
-    DebugMessage(M64MSG_ERROR, "Couldn't open OpenSLES audio");
-    CloseAudio();
-    critical_failure = 1;
     return;
 }
 
@@ -517,13 +582,13 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
         {
             if(_src) free(_src);
             _src_len = input_avail*2;
-            _src = malloc(_src_len);
+            _src = (float*)malloc(_src_len);
         }
         if (_dest_len < output_needed*2 && output_needed > 0)
         {
             if(_dest) free(_dest);
             _dest_len = output_needed*2;
-            _dest = malloc(_dest_len);
+            _dest = (float*)malloc(_dest_len);
         }
         memset(_src,0,_src_len);
         memset(_dest,0,_dest_len);
@@ -842,8 +907,8 @@ EXPORT void CALL AiLenChanged(void)
     unsigned int LenReg = *AudioInfo.AI_LEN_REG;
     unsigned char * p = AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF);
     
-    queueData* theQueueData = malloc(sizeof(queueData));
-    theQueueData->data = malloc(LenReg);
+    queueData* theQueueData = (queueData*)malloc(sizeof(queueData));
+    theQueueData->data = (unsigned char*)malloc(LenReg);
     theQueueData->lenght = LenReg;
     theQueueData->speedFactor = speed_factor;
 
@@ -860,6 +925,9 @@ double TimeDiff(struct timespec* currTime, struct timespec* prevTime)
 
 void* audioConsumer(void* param)
 {
+   soundTouch.setSampleRate(GameFreq);
+   soundTouch.setChannels(2);
+
    int prevQueueSize = thread_queue_length(&audioConsumerQueue);
    int currQueueSize = prevQueueSize;
    int maxQueueSize = 7;
@@ -903,7 +971,7 @@ void* audioConsumer(void* param)
       if( result != ETIMEDOUT )
       {
          prevQueueData = currQueueData;
-         currQueueData = msg.data;
+         currQueueData = (queueData*)msg.data;
 
          if(prevQueueData)
          {
