@@ -20,6 +20,7 @@ COMMON_CPPFLAGS :=                  \
     -fvisibility-inlines-hidden     \
 
 include $(JNI_LOCAL_PATH)/SDL2/Android.mk
+include $(JNI_LOCAL_PATH)/soundtouch/source/Android-lib/jni/Android.mk
 include $(JNI_LOCAL_PATH)/png/Android.mk
 include $(JNI_LOCAL_PATH)/freetype.mk
 include $(JNI_LOCAL_PATH)/libsamplerate/Android.mk
