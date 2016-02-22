@@ -23,7 +23,6 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := mupen64plus-audio-sles
-LOCAL_STATIC_LIBRARIES := samplerate
 LOCAL_SHARED_LIBRARIES := soundtouch
 
 LOCAL_C_INCLUDES :=         \
@@ -39,7 +38,8 @@ LOCAL_SRC_FILES :=            \
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DUSE_SRC           \
-    -fpermissive
+    -fpermissive        \
+    -D__SOFTFP__ -DANDROID \
 
 LOCAL_LDLIBS := -lOpenSLES -L$(SYSROOT)/usr/lib -llog 
 
