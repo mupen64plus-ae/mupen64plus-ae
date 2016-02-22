@@ -27,7 +27,13 @@ LOCAL_SRC_FILES := ../../SoundTouch/AAFilter.cpp ../../SoundTouch/FIFOSampleBuff
                 ../../SoundTouch/RateTransposer.cpp ../../SoundTouch/SoundTouch.cpp \
                 ../../SoundTouch/InterpolateCubic.cpp ../../SoundTouch/InterpolateLinear.cpp \
                 ../../SoundTouch/InterpolateShannon.cpp ../../SoundTouch/TDStretch.cpp \
-                ../../SoundTouch/BPMDetect.cpp ../../SoundTouch/PeakFinder.cpp 
+                ../../SoundTouch/BPMDetect.cpp ../../SoundTouch/PeakFinder.cpp \
+
+ifeq ($(TARGET_ARCH_ABI), x86)
+LOCAL_SRC_FILES += ../../SoundTouch/mmx_optimized.cpp \
+                   ../../SoundTouch/sse_optimized.cpp \
+
+endif
 
 # for native audio
 LOCAL_SHARED_LIBRARIES += -lgcc 
@@ -39,11 +45,11 @@ LOCAL_LDLIBS    += -llog
 
 # Custom Flags: 
 # -fvisibility=hidden : don't export all symbols
-LOCAL_CFLAGS += -I $(LOCAL_PATH)/../../../include -fdata-sections -ffunction-sections -fexceptions
+LOCAL_CFLAGS += -I $(LOCAL_PATH)/../../../include -fdata-sections -ffunction-sections -fexceptions -D__SOFTFP__ -DANDROID
 
 # OpenMP mode : enable these flags to enable using OpenMP for parallel computation 
-LOCAL_CFLAGS += -fopenmp
-LOCAL_LDFLAGS += -fopenmp
+#LOCAL_CFLAGS += -fopenmp
+#LOCAL_LDFLAGS += -fopenmp
 
 
 # Use ARM instruction set instead of Thumb for improved calculation performance in ARM CPUs	

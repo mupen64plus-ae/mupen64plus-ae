@@ -34,13 +34,6 @@
 #include <math.h>
 #include <SoundTouch.h>
 
-#ifdef USE_SRC
-#include <samplerate.h>
-#endif
-#ifdef USE_SPEEX
-#include <speex/speex_resampler.h>
-#endif
-
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_common.h"
 #include "m64p_config.h"
@@ -50,13 +43,12 @@
 #include "main.h"
 #include "osal_dynamiclib.h"
 #include "threadqueue.h"
+#include <jni.h>
 
 typedef struct threadLock_
 {
-  pthread_mutex_t mutex;
-  pthread_cond_t  cond;
-  volatile unsigned char value;
-  volatile unsigned char limit;
+  volatile int value;
+  volatile int limit;
 } threadLock;
 
 /* Default start-time size of primary buffer (in equivalent output samples).
@@ -65,7 +57,7 @@ typedef struct threadLock_
 
 /* Size of a single secondary buffer, in output samples. This is the requested size of OpenSLES's
    hardware buffer, this should be a power of two. */
-#define SECONDARY_BUFFER_SIZE 1024
+#define SECONDARY_BUFFER_SIZE 256
 
 /* This sets default frequency what is used if rom doesn't want to change it.
    Probably only game that needs this is Zelda: Ocarina Of Time Master Quest
@@ -74,7 +66,7 @@ typedef struct threadLock_
 #define DEFAULT_FREQUENCY 33600
 
 /* This is the requested number of OpenSLES's hardware buffers */
-#define SECONDARY_BUFFER_NBR 2
+#define SECONDARY_BUFFER_NBR 100
 
 /* number of bytes per sample */
 #define N64_SAMPLE_BYTES 4
@@ -85,16 +77,6 @@ static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
 static m64p_handle l_ConfigAudio;
-
-enum resampler_type {
-    RESAMPLER_TRIVIAL,
-#ifdef USE_SRC
-    RESAMPLER_SRC,
-#endif
-#ifdef USE_SPEEX
-    RESAMPLER_SPEEX,
-#endif
-};
 
 /* Read header for type definition */
 static AUDIO_INFO AudioInfo;
@@ -122,10 +104,6 @@ static int GameFreq = DEFAULT_FREQUENCY;
 static unsigned int speed_factor = 100;
 /* If this is true then left and right channels are swapped */
 static int SwapChannels = 0;
-/* Resample type */
-static enum resampler_type Resample = RESAMPLER_TRIVIAL;
-/* Resampler specific quality */
-static int ResampleQuality = 3;
 /* Output Audio frequency */
 static int OutputFreq;
 /* Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
@@ -135,34 +113,21 @@ typedef struct queueData_
 {
    unsigned char* data;
    unsigned int lenght;
-   unsigned int speedFactor;
 } queueData;
 
-void processAudio(const unsigned char* buffer, unsigned int length, unsigned int speedFactor);
+void processAudio(const unsigned char* buffer, unsigned int length);
 static void* audioConsumer(void*);
 static pthread_t audioConsumerThread;
 static struct threadqueue audioConsumerQueue;
 
-static volatile int shutdown = 1;
-static volatile int matchGameToAudio = 1;
+static volatile bool shutdown = true;
+static volatile bool matchGameToAudio = true;
 
 using namespace soundtouch;
 static SoundTouch soundTouch;
 
-/* Samplerate*/
-#ifdef USE_SRC
-static float *_src = NULL;
-static unsigned int _src_len = 0;
-static float *_dest = NULL;
-static unsigned int _dest_len = 0;
-static int error;
-static SRC_STATE *src_state;
-static SRC_DATA src_data;
-#endif
-#ifdef USE_SPEEX
-SpeexResamplerState* spx_state = NULL;
-static int error;
-#endif
+double totalElapsedGameTime = 0;
+double gameStartTime = 0;
 
 /* Thread Lock */
 threadLock lock;
@@ -215,30 +180,20 @@ static void DebugMessage(int level, const char *message, ...)
     va_end(args);
 }
 
-/* This callback handler is called every time a buffer finishes playing */
-void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context)
-{
-    threadLock *plock = (threadLock *) context;
-
-    pthread_mutex_lock(&(plock->mutex));
-    
-    if(plock->value < plock->limit)
-        plock->value++;
-
-    pthread_cond_signal(&(plock->cond));
-
-    pthread_mutex_unlock(&(plock->mutex));
-}
+void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context);
 
 static void CloseAudio(void)
 {
-    if(shutdown == 0)
+    if(!shutdown)
     {
-       shutdown = 1;
+       shutdown = true;
        pthread_join(audioConsumerThread,NULL);
 
        thread_queue_cleanup(&audioConsumerQueue, 1);
     }
+
+    gameStartTime = 0.0;
+    totalElapsedGameTime = 0.0;
 
     int i = 0;
     
@@ -298,12 +253,6 @@ static void CloseAudio(void)
         engineObject = NULL;
         engineEngine = NULL;
     }
-    
-    /* Destroy thread Locks */
-    pthread_cond_signal(&(lock.cond));
-    pthread_mutex_unlock(&(lock.mutex));
-    pthread_cond_destroy(&(lock.cond));
-    pthread_mutex_destroy(&(lock.mutex));
 }
 
 static int CreatePrimaryBuffer(void)
@@ -401,9 +350,9 @@ static void InitializeAudio(int freq)
     DebugMessage(M64MSG_VERBOSE, "Requesting frequency: %iHz.", OutputFreq);
 
     /* reload these because they gets re-assigned from data below, and InitializeAudio can be called more than once */
-    PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
-    SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
-    SecondaryBufferNbr = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
+    //PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
+    //SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
+    //SecondaryBufferNbr = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
 
     /* Close everything because InitializeAudio can be called more than once */
     CloseAudio();
@@ -422,17 +371,6 @@ static void InitializeAudio(int freq)
        return;
     }
 
-    /* Create thread Locks to ensure synchronization between callback and processing code */
-    if (pthread_mutex_init(&(lock.mutex), (pthread_mutexattr_t*) NULL) != 0)
-    {
-       OnInitFailure();
-       return;
-    }
-    if (pthread_cond_init(&(lock.cond), (pthread_condattr_t*) NULL) != 0)
-    {
-       OnInitFailure();
-       return;
-    }
     lock.value = lock.limit = SecondaryBufferNbr;
 
     /* Engine object */
@@ -535,115 +473,10 @@ static void InitializeAudio(int freq)
     }
 
     thread_queue_init(&audioConsumerQueue);
-    shutdown = 0;
+    shutdown = false;
     pthread_create( &audioConsumerThread, NULL, audioConsumer, NULL);
 
     return;
-}
-
-static int resample(unsigned char *input, int input_avail, int oldsamplerate, unsigned char *output, int output_needed, int newsamplerate)
-{
-    int *psrc = (int*)input;
-    int *pdest = (int*)output;
-    int i = 0, j = 0;
-
-#ifdef USE_SPEEX
-    spx_uint32_t in_len, out_len;
-    if(Resample == RESAMPLER_SPEEX)
-    {
-        if(spx_state == NULL)
-        {
-            spx_state = speex_resampler_init(2, oldsamplerate, newsamplerate, ResampleQuality,  &error);
-            if(spx_state == NULL)
-            {
-                memset(output, 0, output_needed);
-                return 0;
-            }
-        }
-        speex_resampler_set_rate(spx_state, oldsamplerate, newsamplerate);
-        in_len = input_avail / 4;
-        out_len = output_needed / 4;
-
-        if ((error = speex_resampler_process_interleaved_int(spx_state, (const spx_int16_t *)input, &in_len, (spx_int16_t *)output, &out_len)))
-        {
-            memset(output, 0, output_needed);
-            return input_avail;  // number of bytes consumed
-        }
-        return in_len * 4;
-    }
-#endif
-#ifdef USE_SRC
-    if(Resample == RESAMPLER_SRC)
-    {
-        // the high quality resampler needs more input than the samplerate ratio would indicate to work properly
-        if (input_avail > output_needed * 3 / 2)
-            input_avail = output_needed * 3 / 2; // just to avoid too much short-float-short conversion time
-        if (_src_len < input_avail*2 && input_avail > 0)
-        {
-            if(_src) free(_src);
-            _src_len = input_avail*2;
-            _src = (float*)malloc(_src_len);
-        }
-        if (_dest_len < output_needed*2 && output_needed > 0)
-        {
-            if(_dest) free(_dest);
-            _dest_len = output_needed*2;
-            _dest = (float*)malloc(_dest_len);
-        }
-        memset(_src,0,_src_len);
-        memset(_dest,0,_dest_len);
-        if(src_state == NULL)
-        {
-            src_state = src_new (ResampleQuality, 2, &error);
-            if(src_state == NULL)
-            {
-                memset(output, 0, output_needed);
-                return 0;
-            }
-        }
-        src_short_to_float_array ((short *) input, _src, input_avail/2);
-        src_data.end_of_input = 0;
-        src_data.data_in = _src;
-        src_data.input_frames = input_avail/4;
-        src_data.src_ratio = (float) newsamplerate / oldsamplerate;
-        src_data.data_out = _dest;
-        src_data.output_frames = output_needed/4;
-        if ((error = src_process (src_state, &src_data)))
-        {
-            memset(output, 0, output_needed);
-            return input_avail;  // number of bytes consumed
-        }
-        src_float_to_short_array (_dest, (short *) output, output_needed/2);
-        return src_data.input_frames_used * 4;
-    }
-#endif
-    // RESAMPLE == TRIVIAL
-    if (newsamplerate >= oldsamplerate)
-    {
-        int sldf = oldsamplerate;
-        int const2 = 2*sldf;
-        int dldf = newsamplerate;
-        int const1 = const2 - 2*dldf;
-        int criteria = const2 - dldf;
-        for (i = 0; i < output_needed/4; i++)
-        {
-            pdest[i] = psrc[j];
-            if(criteria >= 0)
-            {
-                ++j;
-                criteria += const1;
-            }
-            else criteria += const2;
-        }
-        return j * 4; //number of bytes consumed
-    }
-    // newsamplerate < oldsamplerate, this only happens when speed_factor > 1
-    for (i = 0; i < output_needed/4; i++)
-    {
-        j = i * oldsamplerate / newsamplerate;
-        pdest[i] = psrc[j];
-    }
-    return j * 4; //number of bytes consumed
 }
 
 static void ReadConfig(void)
@@ -653,78 +486,7 @@ static void ReadConfig(void)
     /* read the configuration values into our static variables */
     GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
     SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
-    PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
-    SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
-    SecondaryBufferNbr = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
     resampler_id = ConfigGetParamString(l_ConfigAudio, "RESAMPLE");
-
-    if (!resampler_id) {
-        Resample = RESAMPLER_TRIVIAL;
-    DebugMessage(M64MSG_WARNING, "Could not find RESAMPLE configuration; use trivial resampler");
-    return;
-    }
-    if (strcmp(resampler_id, "trivial") == 0) {
-        Resample = RESAMPLER_TRIVIAL;
-        return;
-    }
-#ifdef USE_SPEEX
-    if (strncmp(resampler_id, "speex-fixed-", strlen("speex-fixed-")) == 0) {
-        int i;
-        static const char *speex_quality[] = {
-            "speex-fixed-0",
-            "speex-fixed-1",
-            "speex-fixed-2",
-            "speex-fixed-3",
-            "speex-fixed-4",
-            "speex-fixed-5",
-            "speex-fixed-6",
-            "speex-fixed-7",
-            "speex-fixed-8",
-            "speex-fixed-9",
-            "speex-fixed-10",
-        };
-        Resample = RESAMPLER_SPEEX;
-        for (i = 0; i < sizeof(speex_quality) / sizeof(*speex_quality); i++) {
-            if (strcmp(speex_quality[i], resampler_id) == 0) {
-                ResampleQuality = i;
-                return;
-            }
-        }
-        DebugMessage(M64MSG_WARNING, "Unknown RESAMPLE configuration %s; use speex-fixed-4 resampler", resampler_id);
-        ResampleQuality = 4;
-        return;
-    }
-#endif
-#ifdef USE_SRC
-    if (strncmp(resampler_id, "src-", strlen("src-")) == 0) {
-        Resample = RESAMPLER_SRC;
-        if (strcmp(resampler_id, "src-sinc-best-quality") == 0) {
-            ResampleQuality = SRC_SINC_BEST_QUALITY;
-            return;
-        }
-        if (strcmp(resampler_id, "src-sinc-medium-quality") == 0) {
-            ResampleQuality = SRC_SINC_MEDIUM_QUALITY;
-            return;
-        }
-        if (strcmp(resampler_id, "src-sinc-fastest") == 0) {
-            ResampleQuality = SRC_SINC_FASTEST;
-            return;
-        }
-        if (strcmp(resampler_id, "src-zero-order-hold") == 0) {
-            ResampleQuality = SRC_ZERO_ORDER_HOLD;
-            return;
-        }
-        if (strcmp(resampler_id, "src-linear") == 0) {
-            ResampleQuality = SRC_LINEAR;
-            return;
-        }
-        DebugMessage(M64MSG_WARNING, "Unknown RESAMPLE configuration %s; use src-sinc-medium-quality resampler", resampler_id);
-        ResampleQuality = SRC_SINC_MEDIUM_QUALITY;
-        return;
-    }
-#endif
-    DebugMessage(M64MSG_WARNING, "Unknown RESAMPLE configuration %s; use trivial resampler", resampler_id);
-    Resample = RESAMPLER_TRIVIAL;
 }
 
 /* Mupen64Plus plugin functions */
@@ -896,59 +658,154 @@ EXPORT void CALL AiDacrateChanged( int SystemType )
     InitializeAudio(f);
 }
 
+bool isSpeedLimiterEnabled(void)
+{
+   int e = 1;
+   CoreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SPEED_LIMITER, &e);
+   return  e;
+}
+
 EXPORT void CALL AiLenChanged(void)
 {
+    static const bool sleepPerfFixEnabled = false;
+    static const double minSleepNeeded = -0.1;
+    static const double maxSleepNeeded = 0.1;
     if (critical_failure == 1)
         return;
 
     if (!l_PluginInit)
         return;
+
+    static bool resetOnce = false;
+
+    bool limiterEnabled = isSpeedLimiterEnabled();
     
+    timespec time;
+    clock_gettime(CLOCK_REALTIME, &time);
+    double timeDouble = static_cast<double>(time.tv_sec) +
+          static_cast<double>(time.tv_nsec)/1.0e9;
+
+    //if this is the first time or we are resuming from pause
+    if(gameStartTime == 0 || !resetOnce)
+    {
+       gameStartTime = timeDouble;
+       totalElapsedGameTime = 0.0;
+       resetOnce = true;
+    }
+
     unsigned int LenReg = *AudioInfo.AI_LEN_REG;
     unsigned char * p = AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF);
     
     queueData* theQueueData = (queueData*)malloc(sizeof(queueData));
     theQueueData->data = (unsigned char*)malloc(LenReg);
     theQueueData->lenght = LenReg;
-    theQueueData->speedFactor = speed_factor;
 
     memcpy(theQueueData->data, p, LenReg);
 
     thread_queue_add(&audioConsumerQueue, theQueueData, 0);
+
+    double speedFactor = static_cast<double>(speed_factor)/100.0;
+    totalElapsedGameTime += 1.0*(LenReg/SLES_SAMPLE_BYTES)/GameFreq/speedFactor;
+
+    //Slow the game down if sync game to audio is enabled
+    if(!limiterEnabled)
+    {
+       double totalRealTimeElapsed = timeDouble - gameStartTime;
+       double sleepNeeded = totalElapsedGameTime - totalRealTimeElapsed;
+
+       if(sleepNeeded < minSleepNeeded || sleepNeeded > maxSleepNeeded)
+       {
+          resetOnce = false;
+       }
+
+       //Useful logging
+       //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, time=%f, speed=%d, sleep_before_factor=%f",
+       //             totalRealTimeElapsed, totalElapsedGameTime, sleepNeeded, gameStartTime, timeDouble, speed_factor, sleepNeeded*speedFactor);
+
+       if(sleepNeeded > 0.0 && sleepNeeded < maxSleepNeeded)
+       {
+          if(sleepPerfFixEnabled)
+          {
+             double endTime = timeDouble + sleepNeeded;
+
+             timespec time;
+             clock_gettime(CLOCK_REALTIME, &time);
+             double currTime = static_cast<double>(time.tv_sec) +
+                   static_cast<double>(time.tv_nsec)/1.0e9;
+             while(currTime < endTime)
+             {
+                clock_gettime(CLOCK_REALTIME, &time);
+                currTime = static_cast<double>(time.tv_sec) +
+                      static_cast<double>(time.tv_nsec)/1.0e9;
+             }
+          }
+          else
+          {
+             timespec sleepTime;
+             sleepTime.tv_sec = static_cast<time_t>(sleepNeeded);
+             sleepTime.tv_nsec = (sleepNeeded - sleepTime.tv_sec)*1e9;
+             nanosleep(&sleepTime, NULL );
+          }
+       }
+    }
 }
 
 double TimeDiff(struct timespec* currTime, struct timespec* prevTime)
 {
-   return ((double)currTime->tv_sec+((double)currTime->tv_nsec)/1e9) -
-         ((double)prevTime->tv_sec+((double)prevTime->tv_nsec)/1e9);
+   return ((double)currTime->tv_sec+((double)currTime->tv_nsec)/1.0e9) -
+         ((double)prevTime->tv_sec+((double)prevTime->tv_nsec)/1.0e9);
 }
+
+float GetAverageTime( float* feedTimes, int numTimes)
+{
+   float sum = 0;
+   for(int index = 0; index < numTimes; ++index)
+   {
+      sum += feedTimes[index];
+   }
+
+   return sum/(float)numTimes;
+}
+
 
 void* audioConsumer(void* param)
 {
+   static int sequenceLenMS = 63;
+   static int seekWindowMS = 16;
+   static int overlapMS = 7;
+
    soundTouch.setSampleRate(GameFreq);
    soundTouch.setChannels(2);
+   soundTouch.setSetting( SETTING_USE_QUICKSEEK, 0 );
+   soundTouch.setSetting( SETTING_USE_AA_FILTER, 0 );
+   soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
+   soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
+   soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
+
+   soundTouch.setRate(GameFreq*1.0/OutputFreq);
 
    int prevQueueSize = thread_queue_length(&audioConsumerQueue);
    int currQueueSize = prevQueueSize;
-   int maxQueueSize = 7;
+   int maxQueueSize = 50;
+   int minQueueSize = 25;
+   int desiredGameSpeed = 100;
+
    static const int fullSpeed = 100;
 
    //Game is being sped up, speed up audio
    int matchGameToAudioOffset = 0;
-
-   //Device is running too quickly, these are used to slow down emulation
-   int currentSpeedFactorAdjustment = 0;
-   int desiredGameSpeed = 100;
+   int matchGameToAudioCurrentPeriod = 0;
+   const int matchGameToAudioAdjustmentPeriod = 30;
 
    //Sound queue ran dry, device is running slow
    int ranDry = 0;
 
    //adjustment used when a device running too slow
-   int slowAdjustment = 0;
-   int currAdjustment = 0;
-   const int maxSlowAdjustment = 2;
+   double slowAdjustment = 0;
+   double currAdjustment = 0;
+   const double minSlowAdjustment = 0.05;
+   const double minSlowValue = 0.2;
    queueData* currQueueData = NULL;
-   queueData* prevQueueData = NULL;
    struct timespec currTime;
    struct timespec prevTime;
 
@@ -957,110 +814,146 @@ void* audioConsumer(void* param)
    waitTime.tv_sec = 1;
    waitTime.tv_nsec = 0;
 
+   const int feedTimeWindowSize = 10;
+   int feedTimeIndex = 0;
+   bool feedTimesSet = false;
+   float timePerBuffer = 1.0*SecondaryBufferSize/GameFreq;
+   float feedTimes[feedTimeWindowSize];
+   float gameTimes[feedTimeWindowSize];
+   float averageGameTime = 0.0;
+   float averageFeedTime = 0.0;
+
    while(!shutdown)
    {
-      int queueLength = thread_queue_length(&audioConsumerQueue);
-      ranDry = queueLength <= lock.limit;// && lock.value >= (lock.limit-1);
+      int queueLength = lock.limit - lock.value;
 
-      prevTime = currTime;
-      clock_gettime(CLOCK_REALTIME, &currTime);
+      ranDry = queueLength < minQueueSize;
 
       struct threadmsg msg;
       int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
 
       if( result != ETIMEDOUT )
       {
-         prevQueueData = currQueueData;
+         //Figure out how much to slow down by
+         prevTime = currTime;
+         clock_gettime(CLOCK_REALTIME, &currTime);
+         float timeDiff = TimeDiff(&currTime, &prevTime);
+         feedTimes[feedTimeIndex] = timeDiff;
+
+         averageFeedTime = GetAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex+1));
+
          currQueueData = (queueData*)msg.data;
 
-         if(prevQueueData)
-         {
-            currQueueSize = thread_queue_length(&audioConsumerQueue);
+         gameTimes[feedTimeIndex] = currQueueData->lenght/SLES_SAMPLE_BYTES*1.0/GameFreq;
+         averageGameTime = GetAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex+1));
 
-            //If we want to make the game run slower for us
-            if(matchGameToAudio)
+         ++feedTimeIndex;
+         if(feedTimeIndex == feedTimeWindowSize)
+         {
+            feedTimeIndex = 0;
+            feedTimesSet = true;
+         }
+
+         //If the intention is to allow the game run as close to 100% as possible
+         //while keeping the audio in sync
+         if(matchGameToAudio)
+         {
+            //Game is running too fast, slow it down a little
+            if(queueLength > maxQueueSize && slowAdjustment >= 1.0 && isSpeedLimiterEnabled())
             {
-               //Game is running too fast, slow it down a little
-               if(currQueueSize > maxQueueSize && slowAdjustment == 0)
+               ++matchGameToAudioCurrentPeriod;
+               if(matchGameToAudioCurrentPeriod >= matchGameToAudioAdjustmentPeriod)
                {
+                  matchGameToAudioCurrentPeriod = 0;
+
                   ++matchGameToAudioOffset;
                   desiredGameSpeed = fullSpeed - matchGameToAudioOffset;
                   CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &desiredGameSpeed);
                }
-               // Oh no! game is going too slow now, speed it up
-               else if(ranDry && matchGameToAudioOffset > 0)
+            }
+            // Oh no! game is going too slow now, speed it up
+            else if(ranDry && matchGameToAudioOffset > 0)
+            {
+               ++matchGameToAudioCurrentPeriod;
+               if(matchGameToAudioCurrentPeriod >= matchGameToAudioAdjustmentPeriod)
                {
+                  matchGameToAudioCurrentPeriod = 0;
+
                   --matchGameToAudioOffset;
                   desiredGameSpeed = fullSpeed - matchGameToAudioOffset;
                   CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &desiredGameSpeed);
                }
-               //Device can't keep up with the game, slow audio down
-               else if(ranDry)
-               {
-                  double prevQueueLengthSec = prevQueueData->lenght/4.0/GameFreq;
-                  double timeDiff = TimeDiff(&currTime, &prevTime);
-
-                  currAdjustment = timeDiff/prevQueueLengthSec*100 - 100;
-
-                  //DebugMessage(M64MSG_ERROR, "prev length = %f, diff = %f, adj = %d",
-                  //             prevQueueLengthSec, timeDiff, currAdjustment);
-               }
-               else
-               {
-                  currAdjustment = 0;
-               }
-
-               if(currAdjustment >= 0 && currAdjustment < 100)
-               {
-                  if(abs(currAdjustment - slowAdjustment) < maxSlowAdjustment)
-                  {
-                     slowAdjustment = currAdjustment;
-                  }
-                  else if(currAdjustment < slowAdjustment)
-                  {
-                     slowAdjustment -= maxSlowAdjustment;
-                  }
-                  else
-                  {
-                     slowAdjustment += maxSlowAdjustment;
-                  }
-               }
-
-               processAudio(prevQueueData->data, prevQueueData->lenght, fullSpeed - slowAdjustment);
             }
-            //If we are trying to make audio catch up with video
+            //Device can't keep up with the game or we have too much in the queue after slowing it down
+            else if(ranDry || queueLength > maxQueueSize)
+            {
+               float temp =  averageGameTime/averageFeedTime;
+
+               if(temp < 1.0)
+               {
+                  currAdjustment = temp;
+               }
+            }
+            //Device has caught up
             else
             {
-               if(currQueueSize > maxQueueSize)
-               {
-                  int difference = currQueueSize - prevQueueSize;
-                  if(difference >= 0)
-                  {
-                     currentSpeedFactorAdjustment += 1;
-                  }
-               }
-               else
-               {
-                  currentSpeedFactorAdjustment = 0;
-               }
-
-               processAudio(prevQueueData->data, prevQueueData->lenght, prevQueueData->speedFactor + currentSpeedFactorAdjustment);
+               currAdjustment = 1.0;
             }
+         }
+         //If we are trying to make audio catch up with video, usually when fast forwarding
+         else
+         {
+            if(queueLength > maxQueueSize)
+            {
+               float temp =  averageGameTime/averageFeedTime;
 
-            free(prevQueueData->data);
-            free(prevQueueData);
+               if(temp > 1.0)
+               {
+                  currAdjustment = temp;
+               }
+            }
+            else
+            {
+               currAdjustment = 1.0;
+            }
          }
 
+         //Allow the tempo to differentiate quickly, but restore original speed more slowly
+         if( (currAdjustment > minSlowValue &&
+           ( (fabs(currAdjustment - 1.0) > fabs(slowAdjustment - 1.0) && fabs(currAdjustment) > minSlowAdjustment) ||
+             (fabs(currAdjustment - 1.0) < fabs(slowAdjustment - 1.0) && fabs(currAdjustment) > minSlowAdjustment*5) ))
+               || currAdjustment == 1.0   )
+         {
+            slowAdjustment = currAdjustment;
+            soundTouch.setTempo(slowAdjustment);
+         }
+
+         processAudio(currQueueData->data, currQueueData->lenght);
+
+         free(currQueueData->data);
+         free(currQueueData);
+
          //Useful logging
-         //DebugMessage(M64MSG_ERROR, "audio adj = %d, length = %d, speed = %d, dry=%d, slow=%d",
-         //            currentSpeedFactorAdjustment, queueLength, desiredGameSpeed, ranDry, slowAdjustment);
+         /*if(queueLength == 0)
+         {
+            DebugMessage(M64MSG_ERROR, "length = %d, speed = %d, dry=%d, slow_adj=%f, curr_adj=%f, feed_time=%f, game_time=%f",
+               queueLength, desiredGameSpeed, ranDry, slowAdjustment, currAdjustment, averageFeedTime, averageGameTime);
+         }*/
       }
    }
 
    return 0;
 }
 
-void processAudio(const unsigned char* buffer, unsigned int length, unsigned int speedFactor)
+/* This callback handler is called every time a buffer finishes playing */
+void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context)
+{
+    threadLock *plock = (threadLock *) context;
+
+    plock->value++;
+}
+
+void processAudio(const unsigned char* buffer, unsigned int length)
 {
    if (primaryBufferPos + length < primaryBufferBytes)
    {
@@ -1092,47 +985,36 @@ void processAudio(const unsigned char* buffer, unsigned int length, unsigned int
        primaryBufferPos += i;
    }
    else
-       DebugMessage(M64MSG_WARNING, "AiLenChanged(): Audio primary buffer overflow.");
+       DebugMessage(M64MSG_WARNING, "processAudio(): Audio primary buffer overflow.");
 
+   soundTouch.putSamples((SAMPLETYPE*)primaryBuffer, primaryBufferPos/SLES_SAMPLE_BYTES);
 
-    int newsamplerate = OutputFreq * 100 / speedFactor;
-    int oldsamplerate = GameFreq;
+   int outSamples = 0;
 
-    while (primaryBufferPos >= ((secondaryBufferBytes * oldsamplerate) / newsamplerate))
-    {
-        pthread_mutex_lock(&(lock.mutex));
+   do
+   {
+      outSamples = soundTouch.receiveSamples((SAMPLETYPE*)secondaryBuffers[secondaryBufferIndex],
+         secondaryBufferBytes/SLES_SAMPLE_BYTES);
 
-        /* Wait for the next callback if no more output buffers available */
-        while (lock.value == 0)
-            pthread_cond_wait(&(lock.cond), &(lock.mutex));
+      if(outSamples != 0 && lock.value != 0)
+      {
+         SLresult result = (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex],
+            outSamples*SLES_SAMPLE_BYTES);
 
-        --lock.value;
+         if( result == SL_RESULT_SUCCESS )
+         {
+            --lock.value;
+         }
 
-        pthread_mutex_unlock(&(lock.mutex));
+         secondaryBufferIndex++;
 
-        // TODO: don't resample if speed_factor = 100 and newsamplerate ~= oldsamplerate
-        int input_used = resample(primaryBuffer, primaryBufferPos, oldsamplerate, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes, newsamplerate);
-
-        SLresult result = (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes);
-
-        if( result != SL_RESULT_SUCCESS )
-        {
-           pthread_mutex_lock(&(lock.mutex));
-
-           if(lock.value < lock.limit)
-               ++lock.value;
-
-           pthread_mutex_unlock(&(lock.mutex));
-        }
-
-        memmove(primaryBuffer, &primaryBuffer[input_used], primaryBufferPos - input_used);
-        primaryBufferPos -= input_used;
-
-        secondaryBufferIndex++;
-
-        if(secondaryBufferIndex > (SecondaryBufferNbr-1))
+         if(secondaryBufferIndex > (SecondaryBufferNbr-1))
             secondaryBufferIndex = 0;
-    }
+      }
+   }
+   while (outSamples != 0);
+
+   primaryBufferPos = 0;
 }
 
 EXPORT int CALL InitiateAudio( AUDIO_INFO Audio_Info )
@@ -1217,5 +1099,4 @@ EXPORT const char * CALL VolumeGetString(void)
 {
     return "100%";
 }
-
 
