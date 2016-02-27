@@ -121,7 +121,6 @@ static pthread_t audioConsumerThread;
 static struct threadqueue audioConsumerQueue;
 
 static volatile bool shutdown = true;
-static volatile bool matchGameToAudio = true;
 
 using namespace soundtouch;
 static SoundTouch soundTouch;
@@ -788,16 +787,11 @@ void* audioConsumer(void* param)
 
    int prevQueueSize = thread_queue_length(&audioConsumerQueue);
    int currQueueSize = prevQueueSize;
-   int maxQueueSize = TargetSecondaryBuffers;
+   int maxQueueSize = TargetSecondaryBuffers + 5;
    int minQueueSize = TargetSecondaryBuffers;
    int desiredGameSpeed = 100;
 
    static const int fullSpeed = 100;
-
-   //Game is being sped up, speed up audio
-   int matchGameToAudioOffset = 0;
-   int matchGameToAudioCurrentPeriod = 0;
-   const int matchGameToAudioAdjustmentPeriod = 30;
 
    //Sound queue ran dry, device is running slow
    int ranDry = 0;
@@ -805,8 +799,9 @@ void* audioConsumer(void* param)
    //adjustment used when a device running too slow
    double slowAdjustment = 0;
    double currAdjustment = 0;
-   const double minSlowAdjustment = 0.05;
+   const double minSlowAdjustment = 0.02;
    const double minSlowValue = 0.2;
+   const double catchUpOffset = 0.05;
    queueData* currQueueData = NULL;
    struct timespec currTime;
    struct timespec prevTime;
@@ -832,13 +827,14 @@ void* audioConsumer(void* param)
       ranDry = queueLength < minQueueSize;
 
       struct threadmsg msg;
+
+      clock_gettime(CLOCK_REALTIME, &prevTime);
       int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
+      clock_gettime(CLOCK_REALTIME, &currTime);
 
       if( result != ETIMEDOUT )
       {
          //Figure out how much to slow down by
-         prevTime = currTime;
-         clock_gettime(CLOCK_REALTIME, &currTime);
          float timeDiff = TimeDiff(&currTime, &prevTime);
          feedTimes[feedTimeIndex] = timeDiff;
 
@@ -856,76 +852,28 @@ void* audioConsumer(void* param)
             feedTimesSet = true;
          }
 
-         //If the intention is to allow the game run as close to 100% as possible
-         //while keeping the audio in sync
-         //TODO: First two conditions are not needed with fixed core speed limiter
-         if(matchGameToAudio)
+         float temp =  averageGameTime/averageFeedTime;
+
+         //Game is running too fast speed up audio
+         if(queueLength > maxQueueSize)
          {
-            //Game is running too fast, slow it down a little
-            if(queueLength > maxQueueSize && slowAdjustment >= 1.0 && isSpeedLimiterEnabled())
-            {
-               ++matchGameToAudioCurrentPeriod;
-               if(matchGameToAudioCurrentPeriod >= matchGameToAudioAdjustmentPeriod)
-               {
-                  matchGameToAudioCurrentPeriod = 0;
-
-                  ++matchGameToAudioOffset;
-                  desiredGameSpeed = fullSpeed - matchGameToAudioOffset;
-                  CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &desiredGameSpeed);
-               }
-            }
-            // Oh no! game is going too slow now, speed it up
-            else if(ranDry && matchGameToAudioOffset > 0)
-            {
-               ++matchGameToAudioCurrentPeriod;
-               if(matchGameToAudioCurrentPeriod >= matchGameToAudioAdjustmentPeriod)
-               {
-                  matchGameToAudioCurrentPeriod = 0;
-
-                  --matchGameToAudioOffset;
-                  desiredGameSpeed = fullSpeed - matchGameToAudioOffset;
-                  CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &desiredGameSpeed);
-               }
-            }
-            //Device can't keep up with the game or we have too much in the queue after slowing it down
-            else if(ranDry || queueLength > maxQueueSize)
-            {
-               float temp =  averageGameTime/averageFeedTime;
-
-               if(temp < 1.0)
-               {
-                  currAdjustment = temp;
-               }
-            }
-            //Device has caught up
-            else
-            {
-               currAdjustment = 1.0;
-            }
+            currAdjustment = temp + catchUpOffset;
          }
-         //If we are trying to make audio catch up with video, usually when fast forwarding
-         else
+         //Device can't keep up with the game or we have too much in the queue after slowing it down
+         else if(ranDry)
          {
-            if(queueLength > maxQueueSize)
-            {
-               float temp =  averageGameTime/averageFeedTime;
-
-               if(temp > 1.0)
-               {
-                  currAdjustment = temp;
-               }
-            }
-            else
-            {
-               currAdjustment = 1.0;
-            }
+            currAdjustment = temp - catchUpOffset;
+         }
+         else if(!ranDry && queueLength < maxQueueSize)
+         {
+            currAdjustment = temp;
          }
 
-         //Allow the tempo to differentiate quickly, but restore original speed more slowly
+         //Allow the tempo to differentiate quickly with no minimum value change, but restore original tempo more slowly
+         //by making sure that it must change by at least the minimum value
          if( (currAdjustment > minSlowValue &&
-           ( (fabs(currAdjustment - 1.0) > fabs(slowAdjustment - 1.0) && fabs(currAdjustment) > minSlowAdjustment) ||
-             (fabs(currAdjustment - 1.0) < fabs(slowAdjustment - 1.0) && fabs(currAdjustment) > minSlowAdjustment*5) ))
-               || currAdjustment == 1.0   )
+           ( (fabs(currAdjustment - 1.0) > fabs(slowAdjustment - 1.0) ) ||
+             (fabs(currAdjustment - 1.0) < fabs(slowAdjustment - 1.0) && fabs(currAdjustment) > minSlowAdjustment) )))
          {
             slowAdjustment = currAdjustment;
             soundTouch.setTempo(slowAdjustment);
@@ -937,11 +885,11 @@ void* audioConsumer(void* param)
          free(currQueueData);
 
          //Useful logging
-         if(queueLength == 0)
-         {
-            DebugMessage(M64MSG_ERROR, "target=%d, length = %d, speed = %d, dry=%d, slow_adj=%f, curr_adj=%f, feed_time=%f, game_time=%f",
-               TargetSecondaryBuffers, queueLength, desiredGameSpeed, ranDry, slowAdjustment, currAdjustment, averageFeedTime, averageGameTime);
-         }
+         //if(queueLength == 0)
+         //{
+         //   DebugMessage(M64MSG_ERROR, "target=%d, length = %d, speed = %d, dry=%d, slow_adj=%f, curr_adj=%f, feed_time=%f, game_time=%f",
+         //      TargetSecondaryBuffers, queueLength, desiredGameSpeed, ranDry, slowAdjustment, currAdjustment, averageFeedTime, averageGameTime);
+         //}
       }
    }
 
@@ -1060,18 +1008,6 @@ EXPORT void CALL SetSpeedFactor(int percentage)
         return;
     if (percentage >= 10 && percentage <= 300)
         speed_factor = percentage;
-
-    if(percentage == 100)
-    {
-       matchGameToAudio = 1;
-    }
-
-    //We don't want to snap ourselves out of this mode
-    if(matchGameToAudio && percentage > 100)
-    {
-       matchGameToAudio = 0;
-    }
-
 }
 
 EXPORT void CALL VolumeMute(void)
