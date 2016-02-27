@@ -1,20 +1,20 @@
 /**
  * Mupen64PlusAE, an N64 emulator for the Android platform
- * 
+ *
  * Copyright (C) 2012 Paul Lamb
- * 
+ *
  * This file is part of Mupen64PlusAE.
- * 
+ *
  * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Authors: paulscode, lioncash, littleguy77
  */
 
@@ -65,42 +65,42 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 {
     //Permission request ID
     static final int PERMISSION_REQUEST = 177;
-    
+
     //Total number of permissions requested
     static final int NUM_PERMISSIONS = 2;
-    
+
     /**
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
     private static final int ASSET_VERSION = 78;
-    
+
     /** The total number of assets to be extracted (for computing progress %). */
     private static final int TOTAL_ASSETS = 120;
-    
+
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
-    
+
     /** PaulsCode OUYA developer UUID */
     private static final String DEVELOPER_ID = "68d84579-c1e2-4418-8976-cda2692133f1";
-    
+
     /**
      * The subdirectory within the assets directory to extract. A subdirectory is necessary to avoid
      * extracting all the default system assets in addition to ours.
      */
     private static final String SOURCE_DIR = "mupen64plus_data";
-    
+
     /** The text view that displays extraction progress info. */
     private TextView mTextView;
-    
+
     /** The running count of assets extracted. */
     private int mAssetsExtracted;
-    
+
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
-    
+
     // These constants must match the keys used in res/xml/preferences*.xml
     private static final String DISPLAY_ORIENTATION = "displayOrientation";
     private static final String DISPLAY_POSITION = "displayPosition";
@@ -109,33 +109,32 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String AUDIO_PLUGIN = "audioPlugin";
     private static final String AUDIO_SDL_BUFFER_SIZE = "audioSDLBufferSize";
     private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize";
-    private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String NAVIGATION_MODE = "navigationMode";
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        
+
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
-        
+
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
         // new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
-        
+
         // Ensure that selected plugin names and other list preferences are valid
         // @formatter:off
-        Resources res = getResources();
+        final Resources res = getResources();
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_ORIENTATION,      R.string.displayOrientation_default,    R.array.displayOrientation_values );
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_POSITION,         R.string.displayPosition_default,       R.array.displayPosition_values );
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING,          R.string.displayScaling_default,        R.array.displayScaling_values );
@@ -143,42 +142,38 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_PLUGIN,             R.string.audioPlugin_default,           R.array.audioPlugin_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SDL_BUFFER_SIZE,    R.string.audioSDLBufferSize_default,    R.array.audioSDLBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_SIZE,   R.string.audioSLESBufferSize_default,   R.array.audioSLESBufferSize_values );
-        PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_NBR,    R.string.audioSLESBufferNbr_default,    R.array.audioSLESBufferNbr_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
         PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
         // @formatter:on
-        
+
         // Refresh the preference data wrapper
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        
+
         // Make sure custom skin directory exist
         new File( mGlobalPrefs.touchscreenCustomSkinsDir ).mkdirs();
-        
+
         // Initialize the OUYA interface if running on OUYA
         if( AppData.IS_OUYA_HARDWARE )
             OuyaFacade.getInstance().init( this, DEVELOPER_ID );
-        
+
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
-        
+
         // Don't let the activity sleep in the middle of extraction
         getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
-        
+
         // Lay out the content
         setContentView( R.layout.splash_activity );
         mTextView = (TextView) findViewById( R.id.mainText );
-        
+
         if( mGlobalPrefs.isBigScreenMode )
         {
-            ImageView splash = (ImageView) findViewById( R.id.mainImage );
+            final ImageView splash = (ImageView) findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo_ouya );
         }
-        
-        // Extract the assets in a separate thread and launch the menu activity
-        // Handler.postDelayed ensures this runs only after activity has resumed
-        final Handler handler = new Handler();
-        handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
-        
+
+        requestPermissions();
+
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation() )
         {
@@ -236,8 +231,10 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
         else
         {
-            //Permissions already granted, continue
-            extractAssets();
+            // Extract the assets in a separate thread and launch the menu activity
+            // Handler.postDelayed ensures this runs only after activity has resumed
+            final Handler handler = new Handler();
+            handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
         }
     }
 
@@ -270,7 +267,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                     good = false;
                 }
             }
-            
+
             if (!good)
             {
                 // permission denied, boo! Disable the app.
@@ -289,7 +286,10 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             else
             {
                 //Permissions already granted, continue
-                extractAssets();
+                // Extract the assets in a separate thread and launch the menu activity
+                // Handler.postDelayed ensures this runs only after activity has resumed
+                final Handler handler = new Handler();
+                handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
             }
             return;
         }
@@ -298,7 +298,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // permissions this app might request
         }
     }
-    
+
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
     private final Runnable extractAssetsTaskLauncher = new Runnable()
     {
@@ -307,19 +307,19 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         {
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
-                requestPermissions();
+                extractAssets();
             }
             else
             {
                 // Assets already extracted, just launch gallery activity, passing ROM path if it was provided externally
                 ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent().getData() );
-                
+
                 // We never want to come back to this activity, so finish it
                 finish();
             }
         }
     };
-    
+
     /**
      * Extract assets
      */
@@ -330,16 +330,16 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         mAssetsExtracted = 0;
         new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
     }
-    
+
     @Override
     public void onExtractAssetsProgress( String nextFileToExtract )
     {
-        final float percent = ( 100f * mAssetsExtracted ) / (float) TOTAL_ASSETS;
+        final float percent = ( 100f * mAssetsExtracted ) / TOTAL_ASSETS;
         final String text = getString( R.string.assetExtractor_progress, percent, nextFileToExtract );
         mTextView.setText( text );
         mAssetsExtracted++;
     }
-    
+
     @Override
     public void onExtractAssetsFinished( List<Failure> failures )
     {
@@ -349,25 +349,25 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             mTextView.setText( R.string.assetExtractor_finished );
             mAppData.putAssetVersion( ASSET_VERSION );
             CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
-            
+
             if(!RomDatabase.getInstance().hasDatabaseFile())
             {
                 RomDatabase.getInstance().setDatabaseFile(mAppData.mupen64plus_ini);
             }
-            
+
             // Launch gallery activity, passing ROM path if it was provided externally
             ActivityHelper.startGalleryActivity( this, getIntent().getData() );
-            
+
             // We never want to come back to this activity, so finish it
             finish();
         }
         else
         {
             // Extraction failed, update the on-screen text and don't start next activity
-            String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
-            String message = getString( R.string.assetExtractor_failed, weblink );
+            final String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
+            final String message = getString( R.string.assetExtractor_failed, weblink );
             String textHtml = message.replace( "\n", "<br/>" ) + "<p><small>";
-            for( Failure failure : failures )
+            for( final Failure failure : failures )
             {
                 textHtml += failure.toString() + "<br/>";
             }
