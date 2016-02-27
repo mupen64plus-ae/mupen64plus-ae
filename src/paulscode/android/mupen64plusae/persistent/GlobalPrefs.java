@@ -400,7 +400,7 @@ public class GlobalPrefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         audioSDLSecondaryBufferSize = getSafeInt( mPreferences, "audioSDLBufferSize", 2048 );
         audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize", 1024 );
-        audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr", 2 );
+        audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 20 );
 
         if( audioPlugin.enabled )
             isFramelimiterEnabled = !mPreferences.getBoolean( "audioSynchronize", true );

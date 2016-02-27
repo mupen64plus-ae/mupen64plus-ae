@@ -778,7 +778,7 @@ void* audioConsumer(void* param)
    soundTouch.setSampleRate(GameFreq);
    soundTouch.setChannels(2);
    soundTouch.setSetting( SETTING_USE_QUICKSEEK, 0 );
-   soundTouch.setSetting( SETTING_USE_AA_FILTER, 0 );
+   soundTouch.setSetting( SETTING_USE_AA_FILTER, 1 );
    soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
    soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
    soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
