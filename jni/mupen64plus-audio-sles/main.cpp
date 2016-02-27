@@ -787,8 +787,8 @@ void* audioConsumer(void* param)
 
    int prevQueueSize = thread_queue_length(&audioConsumerQueue);
    int currQueueSize = prevQueueSize;
-   int maxQueueSize = 50;
-   int minQueueSize = 25;
+   int maxQueueSize = 20;
+   int minQueueSize = 20;
    int desiredGameSpeed = 100;
 
    static const int fullSpeed = 100;
@@ -857,6 +857,7 @@ void* audioConsumer(void* param)
 
          //If the intention is to allow the game run as close to 100% as possible
          //while keeping the audio in sync
+         //TODO: First two conditions are not needed with fixed core speed limiter
          if(matchGameToAudio)
          {
             //Game is running too fast, slow it down a little
