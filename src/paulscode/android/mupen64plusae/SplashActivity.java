@@ -67,7 +67,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     static final int PERMISSION_REQUEST = 177;
 
     //Total number of permissions requested
-    static final int NUM_PERMISSIONS = 2;
+    static final int NUM_PERMISSIONS = 1;
 
     /**
      * Asset version number, used to determine stale assets. Increment this number every time the
@@ -183,13 +183,10 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
     public void requestPermissions()
     {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-            || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
-
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
             {
                 //Show dialog asking for permissions
                 new AlertDialog.Builder(this)
@@ -242,7 +239,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     public void actuallyRequestPermissions()
     {
         ActivityCompat.requestPermissions(this, new String[] {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSION_REQUEST);
     }
 
