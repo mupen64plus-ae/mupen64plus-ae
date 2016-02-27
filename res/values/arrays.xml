@@ -479,22 +479,6 @@
     </string-array>
 
     <string name="audioSLESBufferSize_default" translatable="false">1024</string>
-    
-    <!-- Audio SLES Buffer Number -->
-    <string-array name="audioSLESBufferNbr_entries" translatable="false">
-        <item>@string/audioSLESBufferNbr_entry2</item>
-        <item>@string/audioSLESBufferNbr_entry3</item>
-        <item>@string/audioSLESBufferNbr_entry4</item>
-        <item>@string/audioSLESBufferNbr_entry5</item>
-    </string-array>
-    <string-array name="audioSLESBufferNbr_values" translatable="false">
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
-    
-    <string name="audioSLESBufferNbr_default" translatable="false">2</string>
 
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">

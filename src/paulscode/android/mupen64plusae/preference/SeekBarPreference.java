@@ -1,21 +1,21 @@
 /**
  * Mupen64PlusAE, an N64 emulator for the Android platform
- * 
+ *
  * Copyright (C) 2013 Paul Lamb
- * 
+ *
  * This file is part of Mupen64PlusAE.
- * 
+ *
  * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Authors: Gillou68310, littleguy77
  */
 package paulscode.android.mupen64plusae.preference;
@@ -46,14 +46,14 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     private static final int DEFAULT_STEP = 10;
     private static final String DEFAULT_UNITS = "%";
     private static final String DEFAULT_SAVE_TYPE = "int";
-    
+
     private int mValue = DEFAULT_VALUE;
     private int mMinValue = DEFAULT_MIN;
     private int mMaxValue = DEFAULT_MAX;
     private int mStepSize = DEFAULT_STEP;
     private String mUnits = DEFAULT_UNITS;
     private String mSaveType = DEFAULT_SAVE_TYPE;
-    
+
     private TextView mTextView;
     private SeekBar mSeekBar;
 
@@ -66,9 +66,9 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     public SeekBarPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
-        
+
         // Get the attributes from the XML file, if provided
-        TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.SeekBarPreference );
+        final TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.SeekBarPreference );
         setMinValue( a.getInteger( R.styleable.SeekBarPreference_minimumValue, DEFAULT_MIN ) );
         setMaxValue( a.getInteger( R.styleable.SeekBarPreference_maximumValue, DEFAULT_MAX ) );
         setStepSize( a.getInteger( R.styleable.SeekBarPreference_stepSize, DEFAULT_STEP ) );
@@ -76,7 +76,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         setSaveType( a.getString( R.styleable.SeekBarPreference_saveType ) );
 
         a.recycle();
-        
+
         // Setup the layout
         setDialogLayoutResource( R.layout.seek_bar_preference );
         
@@ -101,7 +101,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     public void setValue( int value )
     {
         mValue = validate( value );
-        
+
         setSummary( getValueString( mValue ) );
 
         if( shouldPersist() )
@@ -150,17 +150,17 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Sets the type of units this SeekBarPreference uses (e.g. "%").
-     * 
+     *
      * @param units The unit type for this SeekBarPreference to use.
      */
     public void setUnits( String units )
     {
         mUnits = units;
     }
-    
+
     /**
      * Sets the type of save object type this SeekBarPreference uses (e.g. "int").
-     * 
+     *
      * @param saveType The save type ("int" or "string") for this SeekBarPreference to use.
      */
     public void setSaveType( String saveType )
@@ -173,7 +173,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set value.
-     * 
+     *
      * @return The currently set value in this SeekBarPreference.
      */
     public int getValue()
@@ -183,7 +183,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set minimum value.
-     * 
+     *
      * @return The currently set minimum value for this SeekBarPreference.
      */
     public int getMinValue()
@@ -193,7 +193,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set maximum value.
-     * 
+     *
      * @return The currently set maximum value for this SeekBarPreference.
      */
     public int getMaxValue()
@@ -203,7 +203,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set increment step size.
-     * 
+     *
      * @return The currently set increment step size for this SeekBarPreference.
      */
     public int getStepSize()
@@ -213,7 +213,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set units.
-     * 
+     *
      * @return The currently set unit type this SeekBarPreference uses.
      */
     public String getUnits()
@@ -223,27 +223,27 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the value as a string with units appended.
-     * 
+     *
      * @param value The value to use in the string.
-     * 
+     *
      * @return The value as a String.
      */
     public String getValueString( int value )
     {
         return getContext().getString( R.string.seekBarPreference_summary, value, mUnits );
     }
-    
+
     @Override
     protected Object onGetDefaultValue( TypedArray a, int index )
     {
         return a.getInteger( index, DEFAULT_VALUE );
     }
-    
+
     @Override
     protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
     {
         int value = mValue;
-        
+
         if(restorePersistedValue)
         {
             if(mSaveType.equals("int"))
@@ -256,7 +256,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
                 {
                     value = Integer.parseInt(getPersistedString( Integer.toString(mValue) ));
                 }
-                catch(NumberFormatException e)
+                catch(final NumberFormatException e)
                 {
                     value = mValue;
                 }
@@ -269,34 +269,34 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
         setValue( value  );
     }
-    
+
     @Override
     public void onBindDialogView( View view, FragmentActivity associatedActivity )
     {
         // Setup the dialog that is shown when the menu item is clicked
-        
+
         // Grab the widget references
         mTextView = (TextView) view.findViewById( R.id.textFeedback );
         mSeekBar = (SeekBar) view.findViewById( R.id.seekbar );
-        
+
         // Initialize and refresh the widgets
         mSeekBar.setMax( mMaxValue - mMinValue);
         mSeekBar.setOnSeekBarChangeListener( this );
         mSeekBar.setProgress( mValue - mMinValue );
         mTextView.setText( getValueString( mValue ) );
     }
-    
+
     @Override
     public void onDialogClosed( boolean positiveResult )
     {
         if( positiveResult )
         {
-            int value = mSeekBar.getProgress() + mMinValue;
+            final int value = mSeekBar.getProgress() + mMinValue;
             if( callChangeListener( value ) )
                 setValue( value );
         }
     }
-    
+
     @Override
     protected Parcelable onSaveInstanceState()
     {
@@ -305,7 +305,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
             myState.mValue = mSeekBar.getProgress() + mMinValue;
         return myState;
     }
-    
+
     @Override
     protected void onRestoreInstanceState( Parcelable state )
     {
@@ -315,27 +315,27 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
             super.onRestoreInstanceState( state );
             return;
         }
-        
+
         final SavedIntegerState myState = (SavedIntegerState) state;
         super.onRestoreInstanceState( myState.getSuperState() );
         if( mSeekBar != null )
             mSeekBar.setProgress( myState.mValue - mMinValue );
     }
-    
+
     @Override
     public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
     {
-        int value = validate( progress + mMinValue );
+        final int value = validate( progress + mMinValue );
         if( value != ( progress + mMinValue ) )
             seekBar.setProgress( value - mMinValue );
         mTextView.setText( getValueString( value ) );
     }
-    
+
     @Override
     public void onStartTrackingTouch( SeekBar seekBar )
     {
     }
-    
+
     @Override
     public void onStopTrackingTouch( SeekBar seekBar )
     {
@@ -345,7 +345,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     {
         // Round to nearest integer multiple of mStepSize
         int newValue = Math.round( value / (float) mStepSize ) * mStepSize;
-        
+
         // Address issues when mStepSize is not an integral factor of mMaxValue
         // e.g. mMaxValue = 100, mMinValue = 0, mStepSize = 9, progress = 100 --> newValue = 99 (should be 100)
         // e.g. mMaxValue = 100, mMinValue = 0, mStepSize = 6, progress = 99 --> newValue = 102 (should be 100)
@@ -353,10 +353,10 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
             newValue = mMinValue;
         if( value == mMaxValue || newValue > mMaxValue )
             newValue = mMaxValue;
-        
+
         return newValue;
     }
-    
+
     @Override
     public void onPrepareDialogBuilder(Context context, Builder builder)
     {

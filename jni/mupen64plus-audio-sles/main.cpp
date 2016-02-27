@@ -92,8 +92,6 @@ static unsigned char ** secondaryBuffers = NULL;
 static int secondaryBufferBytes = 0;
 /* Size of a single secondary audio buffer in output samples */
 static unsigned int SecondaryBufferSize = SECONDARY_BUFFER_SIZE;
-/* Position in the primary buffer where next audio chunk should be placed */
-static unsigned int primaryBufferPos = 0;
 /* Index of the next secondary buffer available */
 static int secondaryBufferIndex = 0;
 /* Number of secondary buffers */
@@ -104,6 +102,8 @@ static int GameFreq = DEFAULT_FREQUENCY;
 static unsigned int speed_factor = 100;
 /* If this is true then left and right channels are swapped */
 static int SwapChannels = 0;
+/* Number of secondary buffers to target */
+static int TargetSecondaryBuffers = 20;
 /* Output Audio frequency */
 static int OutputFreq;
 /* Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
@@ -197,7 +197,6 @@ static void CloseAudio(void)
 
     int i = 0;
     
-    primaryBufferPos = 0;
     secondaryBufferIndex = 0;
     
     /* Delete Primary buffer */
@@ -350,9 +349,9 @@ static void InitializeAudio(int freq)
     DebugMessage(M64MSG_VERBOSE, "Requesting frequency: %iHz.", OutputFreq);
 
     /* reload these because they gets re-assigned from data below, and InitializeAudio can be called more than once */
-    //PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
-    //SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
-    //SecondaryBufferNbr = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
+    PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
+    SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
+    TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
 
     /* Close everything because InitializeAudio can be called more than once */
     CloseAudio();
@@ -486,6 +485,9 @@ static void ReadConfig(void)
     /* read the configuration values into our static variables */
     GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
     SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
+    PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
+    SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
+    TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
     resampler_id = ConfigGetParamString(l_ConfigAudio, "RESAMPLE");
 }
 
@@ -586,7 +588,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE",   PRIMARY_BUFFER_SIZE,   "Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR" , SECONDARY_BUFFER_NBR,  "Number of secondary buffers.");
-    ConfigSetDefaultString(l_ConfigAudio, "RESAMPLE",              "trivial",                     "Audio resampling algorithm. src-sinc-best-quality, src-sinc-medium-quality, src-sinc-fastest, src-zero-order-hold, src-linear, speex-fixed-{10-0}, trivial");
 
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
         ConfigSaveSection("Audio-OpenSLES");
@@ -787,8 +788,8 @@ void* audioConsumer(void* param)
 
    int prevQueueSize = thread_queue_length(&audioConsumerQueue);
    int currQueueSize = prevQueueSize;
-   int maxQueueSize = 20;
-   int minQueueSize = 20;
+   int maxQueueSize = TargetSecondaryBuffers;
+   int minQueueSize = TargetSecondaryBuffers;
    int desiredGameSpeed = 100;
 
    static const int fullSpeed = 100;
@@ -938,8 +939,8 @@ void* audioConsumer(void* param)
          //Useful logging
          if(queueLength == 0)
          {
-            //DebugMessage(M64MSG_ERROR, "length = %d, speed = %d, dry=%d, slow_adj=%f, curr_adj=%f, feed_time=%f, game_time=%f",
-            //   queueLength, desiredGameSpeed, ranDry, slowAdjustment, currAdjustment, averageFeedTime, averageGameTime);
+            DebugMessage(M64MSG_ERROR, "target=%d, length = %d, speed = %d, dry=%d, slow_adj=%f, curr_adj=%f, feed_time=%f, game_time=%f",
+               TargetSecondaryBuffers, queueLength, desiredGameSpeed, ranDry, slowAdjustment, currAdjustment, averageFeedTime, averageGameTime);
          }
       }
    }
@@ -957,7 +958,7 @@ void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context)
 
 void processAudio(const unsigned char* buffer, unsigned int length)
 {
-   if (primaryBufferPos + length < primaryBufferBytes)
+   if (length < primaryBufferBytes)
    {
        unsigned int i;
 
@@ -966,30 +967,29 @@ void processAudio(const unsigned char* buffer, unsigned int length)
            if(SwapChannels == 0)
            {
                /* Left channel */
-              primaryBuffer[ primaryBufferPos + i ] = buffer[ i + 2 ];
-              primaryBuffer[ primaryBufferPos + i + 1 ] = buffer[ i + 3 ];
+              primaryBuffer[ i ] = buffer[ i + 2 ];
+              primaryBuffer[ i + 1 ] = buffer[ i + 3 ];
 
                /* Right channel */
-              primaryBuffer[ primaryBufferPos + i + 2 ] = buffer[ i ];
-              primaryBuffer[ primaryBufferPos + i + 3 ] = buffer[ i + 1 ];
+              primaryBuffer[ i + 2 ] = buffer[ i ];
+              primaryBuffer[ i + 3 ] = buffer[ i + 1 ];
            }
            else
            {
                /* Left channel */
-              primaryBuffer[ primaryBufferPos + i ] = buffer[ i ];
-              primaryBuffer[ primaryBufferPos + i + 1 ] = buffer[ i + 1 ];
+              primaryBuffer[ i ] = buffer[ i ];
+              primaryBuffer[ i + 1 ] = buffer[ i + 1 ];
 
                /* Right channel */
-              primaryBuffer[ primaryBufferPos + i + 2 ] = buffer[ i + 2];
-              primaryBuffer[ primaryBufferPos + i + 3 ] = buffer[ i + 3 ];
+              primaryBuffer[ i + 2 ] = buffer[ i + 2];
+              primaryBuffer[ i + 3 ] = buffer[ i + 3 ];
            }
        }
-       primaryBufferPos += i;
    }
    else
        DebugMessage(M64MSG_WARNING, "processAudio(): Audio primary buffer overflow.");
 
-   soundTouch.putSamples((SAMPLETYPE*)primaryBuffer, primaryBufferPos/SLES_SAMPLE_BYTES);
+   soundTouch.putSamples((SAMPLETYPE*)primaryBuffer, length/SLES_SAMPLE_BYTES);
 
    int outSamples = 0;
 
@@ -1015,8 +1015,6 @@ void processAudio(const unsigned char* buffer, unsigned int length)
       }
    }
    while (outSamples != 0);
-
-   primaryBufferPos = 0;
 }
 
 EXPORT int CALL InitiateAudio( AUDIO_INFO Audio_Info )
