@@ -788,7 +788,7 @@ static void apply_speed_limiter(void)
        resetOnce = 0;
     }
 
-    if(sleepTime > 0.0 && sleepTime < maxSleepNeeded)
+    if(sleepTime > 0.0 && sleepTime < maxSleepNeeded && l_MainSpeedLimit)
     {
        DebugMessage(M64MSG_VERBOSE, "    apply_speed_limiter(): Waiting %ims", (int) sleepTime);
 
