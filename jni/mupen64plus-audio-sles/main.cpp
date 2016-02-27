@@ -670,13 +670,13 @@ EXPORT void CALL AiLenChanged(void)
     static const bool sleepPerfFixEnabled = false;
     static const double minSleepNeeded = -0.1;
     static const double maxSleepNeeded = 0.1;
+    static bool resetOnce = false;
+
     if (critical_failure == 1)
         return;
 
     if (!l_PluginInit)
         return;
-
-    static bool resetOnce = false;
 
     bool limiterEnabled = isSpeedLimiterEnabled();
     
@@ -704,6 +704,7 @@ EXPORT void CALL AiLenChanged(void)
 
     thread_queue_add(&audioConsumerQueue, theQueueData, 0);
 
+    //Calculate total ellapsed game time
     double speedFactor = static_cast<double>(speed_factor)/100.0;
     totalElapsedGameTime += 1.0*(LenReg/SLES_SAMPLE_BYTES)/GameFreq/speedFactor;
 
@@ -934,11 +935,11 @@ void* audioConsumer(void* param)
          free(currQueueData);
 
          //Useful logging
-         /*if(queueLength == 0)
+         if(queueLength == 0)
          {
-            DebugMessage(M64MSG_ERROR, "length = %d, speed = %d, dry=%d, slow_adj=%f, curr_adj=%f, feed_time=%f, game_time=%f",
-               queueLength, desiredGameSpeed, ranDry, slowAdjustment, currAdjustment, averageFeedTime, averageGameTime);
-         }*/
+            //DebugMessage(M64MSG_ERROR, "length = %d, speed = %d, dry=%d, slow_adj=%f, curr_adj=%f, feed_time=%f, game_time=%f",
+            //   queueLength, desiredGameSpeed, ranDry, slowAdjustment, currAdjustment, averageFeedTime, averageGameTime);
+         }
       }
    }
 
