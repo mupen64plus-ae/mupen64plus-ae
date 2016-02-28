@@ -771,17 +771,18 @@ float GetAverageTime( float* feedTimes, int numTimes)
 
 void* audioConsumer(void* param)
 {
+   /*
    static int sequenceLenMS = 63;
    static int seekWindowMS = 16;
-   static int overlapMS = 7;
+   static int overlapMS = 7;*/
 
    soundTouch.setSampleRate(GameFreq);
    soundTouch.setChannels(2);
    soundTouch.setSetting( SETTING_USE_QUICKSEEK, 0 );
    soundTouch.setSetting( SETTING_USE_AA_FILTER, 1 );
-   soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
-   soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
-   soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
+   //soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
+   //soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
+   //soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
 
    soundTouch.setRate(GameFreq*1.0/OutputFreq);
 
