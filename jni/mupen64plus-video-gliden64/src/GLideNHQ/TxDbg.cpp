@@ -26,6 +26,7 @@
 #include "TxDbg.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <cstdlib>
 
 #ifdef ANDROID
 

@@ -20,27 +20,44 @@
 
 LOCAL_PATH := $(call my-dir)
 
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := mupen64plus-audio-sles
-LOCAL_SHARED_LIBRARIES := soundtouch
-
-LOCAL_C_INCLUDES :=         \
+MY_LOCAL_C_INCLUDES :=         \
     $(M64P_API_INCLUDES)    \
-    $(SAMPLERATE_INCLUDES)  \
     $(SOUNDTOUCH_INCLUDES)  \
 
-LOCAL_SRC_FILES :=            \
+MY_LOCAL_SRC_FILES :=            \
     main.cpp                    \
     osal_dynamiclib_unix.cpp    \
     threadqueue.cpp             \
 
-LOCAL_CFLAGS :=         \
+MY_LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DUSE_SRC           \
     -fpermissive        \
-    -D__SOFTFP__ -DANDROID \
 
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := mupen64plus-audio-sles
+LOCAL_SHARED_LIBRARIES := soundtouch
+LOCAL_C_INCLUDES := $(MY_LOCAL_C_INCLUDES)
+LOCAL_SRC_FILES := $(MY_LOCAL_SRC_FILES)
+LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS) -D__SOFTFP__ -DANDROID
 LOCAL_LDLIBS := -lOpenSLES -L$(SYSROOT)/usr/lib -llog 
+
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := mupen64plus-audio-sles-fp
+LOCAL_SHARED_LIBRARIES := soundtouch_fp
+LOCAL_C_INCLUDES := $(MY_LOCAL_C_INCLUDES) $(LOCAL_PATH)/../SLES/include/
+LOCAL_SRC_FILES := $(MY_LOCAL_SRC_FILES)
+LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS) -DFP_ENABLED
+
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+    LOCAL_LDLIBS        += -lOpenSLES -L$(LOCAL_PATH)/../SLES/lib/arm/ -llog 
+else ifeq ($(TARGET_ARCH_ABI), x86)
+    LOCAL_LDLIBS        += -lOpenSLES -L$(LOCAL_PATH)/../SLES/lib/x86/ -llog
+endif
+
 
 include $(BUILD_SHARED_LIBRARY)
