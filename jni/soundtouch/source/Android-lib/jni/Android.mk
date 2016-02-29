@@ -18,7 +18,6 @@ LOCAL_PATH := $(call my-dir)
 
 MY_LOCAL_SRC_FILES := ../../SoundTouch/AAFilter.cpp ../../SoundTouch/FIFOSampleBuffer.cpp \
                 ../../SoundTouch/FIRFilter.cpp ../../SoundTouch/cpu_detect_x86.cpp \
-                ../../SoundStretch/WavFile.cpp \
                 ../../SoundTouch/RateTransposer.cpp ../../SoundTouch/SoundTouch.cpp \
                 ../../SoundTouch/InterpolateCubic.cpp ../../SoundTouch/InterpolateLinear.cpp \
                 ../../SoundTouch/InterpolateShannon.cpp ../../SoundTouch/TDStretch.cpp \
