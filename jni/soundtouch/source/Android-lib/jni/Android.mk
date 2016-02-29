@@ -16,43 +16,43 @@
 
 LOCAL_PATH := $(call my-dir)
 
-include $(CLEAR_VARS)
-
-# *** Remember: Change -O0 into -O2 in add-applications.mk ***
-
-LOCAL_MODULE    := soundtouch
-LOCAL_SRC_FILES := ../../SoundTouch/AAFilter.cpp ../../SoundTouch/FIFOSampleBuffer.cpp \
+MY_LOCAL_SRC_FILES := ../../SoundTouch/AAFilter.cpp ../../SoundTouch/FIFOSampleBuffer.cpp \
                 ../../SoundTouch/FIRFilter.cpp ../../SoundTouch/cpu_detect_x86.cpp \
-                ../../SoundTouch/sse_optimized.cpp ../../SoundStretch/WavFile.cpp \
+                ../../SoundStretch/WavFile.cpp \
                 ../../SoundTouch/RateTransposer.cpp ../../SoundTouch/SoundTouch.cpp \
                 ../../SoundTouch/InterpolateCubic.cpp ../../SoundTouch/InterpolateLinear.cpp \
                 ../../SoundTouch/InterpolateShannon.cpp ../../SoundTouch/TDStretch.cpp \
                 ../../SoundTouch/BPMDetect.cpp ../../SoundTouch/PeakFinder.cpp \
 
 ifeq ($(TARGET_ARCH_ABI), x86)
-LOCAL_SRC_FILES += ../../SoundTouch/mmx_optimized.cpp \
-                   ../../SoundTouch/sse_optimized.cpp \
+MY_LOCAL_SRC_FILES += ../../SoundTouch/mmx_optimized.cpp ../../SoundTouch/sse_optimized.cpp \
 
 endif
 
-# for native audio
-LOCAL_SHARED_LIBRARIES += -lgcc 
-# --whole-archive -lgcc 
-# for logging
-LOCAL_LDLIBS    += -llog
-# for native asset manager
-#LOCAL_LDLIBS    += -landroid
+MY_LOCAL_SHARED_LIBRARIES := -lgcc 
+MY_LOCAL_LDLIBS    := -llog
+MY_LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../include
+MY_LOCAL_CFLAGS := -fdata-sections -ffunction-sections -fexceptions
+MY_LOCAL_ARM_MODE := arm
 
-# Custom Flags: 
-# -fvisibility=hidden : don't export all symbols
-LOCAL_CFLAGS += -I $(LOCAL_PATH)/../../../include -fdata-sections -ffunction-sections -fexceptions -D__SOFTFP__ -DANDROID
-
-# OpenMP mode : enable these flags to enable using OpenMP for parallel computation 
-#LOCAL_CFLAGS += -fopenmp
-#LOCAL_LDFLAGS += -fopenmp
-
-
-# Use ARM instruction set instead of Thumb for improved calculation performance in ARM CPUs	
-LOCAL_ARM_MODE := arm
-
+include $(CLEAR_VARS)
+LOCAL_MODULE    := soundtouch
+LOCAL_SRC_FILES := $(MY_LOCAL_SRC_FILES)
+LOCAL_SHARED_LIBRARIES := $(MY_LOCAL_SHARED_LIBRARIES) 
+LOCAL_LDLIBS    := $(MY_LOCAL_LDLIBS)
+LOCAL_C_INCLUDES := $(MY_LOCAL_C_INCLUDES)
+LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS) -D__SOFTFP__ -DANDROID
+LOCAL_ARM_MODE := $(MY_LOCAL_ARM_MODE)
 include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := soundtouch_fp
+LOCAL_SRC_FILES := $(MY_LOCAL_SRC_FILES)
+LOCAL_SHARED_LIBRARIES := $(MY_LOCAL_SHARED_LIBRARIES) 
+LOCAL_LDLIBS    := $(MY_LOCAL_LDLIBS)
+LOCAL_C_INCLUDES := $(MY_LOCAL_C_INCLUDES)
+LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS)
+LOCAL_ARM_MODE := $(MY_LOCAL_ARM_MODE)
+include $(BUILD_SHARED_LIBRARY)
+
+

@@ -127,7 +127,20 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );                                                         // Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );                                      // Directory in which to search for plugins
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + game.videoPlugin.path + '"' );                              // Filename of video plugin
-        mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + global.audioPlugin.path + '"' );                            // Filename of audio plugin
+
+        //Use the FP version of the SLES audio plugin if the API level is high enough
+        String audioPluginString = global.audioPlugin.path;
+
+        if(audioPluginString.endsWith("libmupen64plus-audio-sles.so"))
+        {
+            //If running lollipop, use the floating point version
+            if(AppData.IS_LOLLIPOP)
+            {
+                audioPluginString = audioPluginString.replace("libmupen64plus-audio-sles.so", "libmupen64plus-audio-sles-fp.so");
+            }
+        }
+
+        mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + audioPluginString + '"' );                            // Filename of audio plugin
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + appData.rspLib + '"' );                                       // Filename of RSP plugin
 

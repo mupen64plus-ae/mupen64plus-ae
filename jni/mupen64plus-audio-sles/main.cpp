@@ -45,6 +45,8 @@
 #include "threadqueue.h"
 #include <jni.h>
 
+#include <SLES/OpenSLES_Android.h>
+
 typedef struct threadLock_
 {
   volatile int value;
@@ -70,7 +72,12 @@ typedef struct threadLock_
 
 /* number of bytes per sample */
 #define N64_SAMPLE_BYTES 4
+
+#ifdef FP_ENABLED
+#define SLES_SAMPLE_BYTES 8
+#else
 #define SLES_SAMPLE_BYTES 4
+#endif
 
 /* local variables */
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
@@ -410,9 +417,16 @@ static void InitializeAudio(int freq)
 
     SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, SecondaryBufferNbr};
 
+#ifdef FP_ENABLED
+
+    SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, sample_rate,
+                   32, 32, SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
+                   SL_BYTEORDER_LITTLEENDIAN, SL_ANDROID_PCM_REPRESENTATION_FLOAT};
+#else
     SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM,2, sample_rate,
                    SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
                    (SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT), SL_BYTEORDER_LITTLEENDIAN};
+#endif
 
     SLDataSource audioSrc = {&loc_bufq, &format_pcm};
 
@@ -706,7 +720,7 @@ EXPORT void CALL AiLenChanged(void)
 
     //Calculate total ellapsed game time
     double speedFactor = static_cast<double>(speed_factor)/100.0;
-    totalElapsedGameTime += 1.0*(LenReg/SLES_SAMPLE_BYTES)/GameFreq/speedFactor;
+    totalElapsedGameTime += 1.0*(LenReg/N64_SAMPLE_BYTES)/GameFreq/speedFactor;
 
     //Slow the game down if sync game to audio is enabled
     if(!limiterEnabled)
@@ -778,7 +792,7 @@ void* audioConsumer(void* param)
 
    soundTouch.setSampleRate(GameFreq);
    soundTouch.setChannels(2);
-   soundTouch.setSetting( SETTING_USE_QUICKSEEK, 0 );
+   soundTouch.setSetting( SETTING_USE_QUICKSEEK, 1 );
    soundTouch.setSetting( SETTING_USE_AA_FILTER, 1 );
    //soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
    //soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
@@ -843,7 +857,7 @@ void* audioConsumer(void* param)
 
          currQueueData = (queueData*)msg.data;
 
-         gameTimes[feedTimeIndex] = currQueueData->lenght/SLES_SAMPLE_BYTES*1.0/GameFreq;
+         gameTimes[feedTimeIndex] = currQueueData->lenght/N64_SAMPLE_BYTES*1.0/GameFreq;
          averageGameTime = GetAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex+1));
 
          ++feedTimeIndex;
@@ -930,7 +944,7 @@ void processAudio(const unsigned char* buffer, unsigned int length)
               primaryBuffer[ i + 1 ] = buffer[ i + 1 ];
 
                /* Right channel */
-              primaryBuffer[ i + 2 ] = buffer[ i + 2];
+              primaryBuffer[ i + 2 ] = buffer[ i + 2 ];
               primaryBuffer[ i + 3 ] = buffer[ i + 3 ];
            }
        }
@@ -938,14 +952,27 @@ void processAudio(const unsigned char* buffer, unsigned int length)
    else
        DebugMessage(M64MSG_WARNING, "processAudio(): Audio primary buffer overflow.");
 
-   soundTouch.putSamples((SAMPLETYPE*)primaryBuffer, length/SLES_SAMPLE_BYTES);
+#ifdef FP_ENABLED
+   int numSamples = length/sizeof(short);
+   short* primaryBufferShort = (short*)primaryBuffer;
+   float primaryBufferFloat[numSamples];
+
+   for(int index = 0; index < numSamples; ++index)
+   {
+      primaryBufferFloat[index] = static_cast<float>(primaryBufferShort[index])/32767.0;
+   }
+
+   soundTouch.putSamples((SAMPLETYPE*)primaryBufferFloat, length/N64_SAMPLE_BYTES);
+
+#else
+   soundTouch.putSamples((SAMPLETYPE*)primaryBuffer, length/N64_SAMPLE_BYTES);
+#endif
 
    int outSamples = 0;
 
    do
    {
-      outSamples = soundTouch.receiveSamples((SAMPLETYPE*)secondaryBuffers[secondaryBufferIndex],
-         secondaryBufferBytes/SLES_SAMPLE_BYTES);
+      outSamples = soundTouch.receiveSamples((SAMPLETYPE*)secondaryBuffers[secondaryBufferIndex], SecondaryBufferSize);
 
       if(outSamples != 0 && lock.value != 0)
       {
