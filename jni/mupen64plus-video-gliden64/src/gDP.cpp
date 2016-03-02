@@ -14,6 +14,7 @@
 #include "CRC.h"
 #include "FrameBuffer.h"
 #include "DepthBuffer.h"
+#include "FrameBufferInfo.h"
 #include "VI.h"
 #include "Config.h"
 #include "Combiner.h"
@@ -765,11 +766,6 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 	if (gDP.otherMode.cycleType == G_CYC_FILL) {
 		if ((ulx == 0) && (uly == 0) && (lrx == gDP.scissor.lrx) && (lry == gDP.scissor.lry)) {
 			gDPFillRDRAM(gDP.colorImage.address, ulx, uly, lrx, lry, gDP.colorImage.width, gDP.colorImage.size, gDP.fillColor.color);
-			if ((*REG.VI_STATUS & 8) != 0) {
-				fillColor[0] = sqrtf(fillColor[0]);
-				fillColor[1] = sqrtf(fillColor[1]);
-				fillColor[2] = sqrtf(fillColor[2]);
-			}
 			render.clearColorBuffer(fillColor);
 			return;
 		}
@@ -852,7 +848,7 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
 		lrt = t + (lry - uly - 1) * dtdy;
 	}
 
-	OGLRender::TexturedRectParams params(ulx, uly, lrx, lry, s, t, lrs, lrt, (RSP.cmd == G_TEXRECTFLIP));
+	OGLRender::TexturedRectParams params(ulx, uly, lrx, lry, s, t, lrs, lrt, (RSP.cmd == G_TEXRECTFLIP), false, frameBufferList().getCurrent());
 	video().getRender().drawTexturedRect(params);
 
 	gSP.textureTile[0] = textureTileOrg[0];
@@ -888,11 +884,11 @@ void gDPFullSync()
 	}
 
 	const bool sync = config.frameBufferEmulation.copyToRDRAM == Config::ctSync;
-	if (config.frameBufferEmulation.copyToRDRAM != Config::ctDisable)
+	if (config.frameBufferEmulation.copyToRDRAM != Config::ctDisable && !FBInfo::fbInfo.isSupported())
 		FrameBuffer_CopyToRDRAM(gDP.colorImage.address, sync);
 
 	if (RSP.bLLE) {
-		if (config.frameBufferEmulation.copyDepthToRDRAM != Config::ctDisable)
+		if (config.frameBufferEmulation.copyDepthToRDRAM != Config::ctDisable && !FBInfo::fbInfo.isSupported())
 			FrameBuffer_CopyDepthBuffer(gDP.colorImage.address);
 	}
 

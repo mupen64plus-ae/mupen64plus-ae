@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <assert.h>
 #include <stdio.h>
 #include <math.h>
@@ -16,6 +17,7 @@
 #include "GLSLCombiner.h"
 #include "FrameBuffer.h"
 #include "DepthBuffer.h"
+#include "FrameBufferInfo.h"
 #include "GLideNHQ/Ext_TxFilter.h"
 #include "VI.h"
 #include "Config.h"
@@ -314,13 +316,14 @@ void OGLVideo::readScreen2(void * _dest, int * _width, int * _height, int _front
 
 void OGLRender::addTriangle(int _v0, int _v1, int _v2)
 {
+	const u32 firstIndex = triangles.num;
 	triangles.elements[triangles.num++] = _v0;
 	triangles.elements[triangles.num++] = _v1;
 	triangles.elements[triangles.num++] = _v2;
 
 	if ((gSP.geometryMode & G_SHADE) == 0) {
 		// Prim shading
-		for (u32 i = triangles.num - 3; i < triangles.num; ++i) {
+		for (u32 i = firstIndex; i < triangles.num; ++i) {
 			SPVertex & vtx = triangles.vertices[triangles.elements[i]];
 			vtx.flat_r = gDP.primColor.r;
 			vtx.flat_g = gDP.primColor.g;
@@ -329,18 +332,19 @@ void OGLRender::addTriangle(int _v0, int _v1, int _v2)
 		}
 	} else if ((gSP.geometryMode & G_SHADING_SMOOTH) == 0) {
 		// Flat shading
-		SPVertex & vtx0 = triangles.vertices[_v0];
-		for (u32 i = triangles.num - 3; i < triangles.num; ++i) {
+		SPVertex & vtx0 = triangles.vertices[firstIndex + ((RSP.w1 >> 24) & 3)];
+		for (u32 i = firstIndex; i < triangles.num; ++i) {
 			SPVertex & vtx = triangles.vertices[triangles.elements[i]];
-			vtx.flat_r = vtx0.r;
-			vtx.flat_g = vtx0.g;
-			vtx.flat_b = vtx0.b;
-			vtx.flat_a = vtx0.a;
+			vtx.r = vtx.flat_r = vtx0.r;
+			vtx.g = vtx.flat_g = vtx0.g;
+			vtx.b = vtx.flat_b = vtx0.b;
+			vtx.a = vtx.flat_a = vtx0.a;
+			vtx.a = vtx0.a;
 		}
 	}
 
 	if (gDP.otherMode.depthSource == G_ZS_PRIM) {
-		for (u32 i = triangles.num - 3; i < triangles.num; ++i) {
+		for (u32 i = firstIndex; i < triangles.num; ++i) {
 			SPVertex & vtx = triangles.vertices[triangles.elements[i]];
 			vtx.z = gDP.primDepth.z * vtx.w;
 		}
@@ -348,7 +352,7 @@ void OGLRender::addTriangle(int _v0, int _v1, int _v2)
 
 #ifdef GLESX
 	if (GBI.isNoN() && gDP.otherMode.depthCompare == 0 && gDP.otherMode.depthUpdate == 0) {
-		for (u32 i = triangles.num - 3; i < triangles.num; ++i) {
+		for (u32 i = firstIndex; i < triangles.num; ++i) {
 			SPVertex & vtx = triangles.vertices[triangles.elements[i]];
 			vtx.z = 0.0f;
 		}
@@ -654,7 +658,7 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 				else
 					textureCache().activateDummy(t);
 			}
-			pCurrentCombiner->updateFBInfo();
+			pCurrentCombiner->updateFrameBufferInfo();
 		}
 		if (_renderState == rsTriangle || _renderState == rsLine)
 			cmbInfo.updateTextureParameters();
@@ -1064,7 +1068,7 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 	if (!_canDraw())
 		return;
 
-	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
+	const FrameBuffer * pCurrentBuffer = _params.pBuffer;
 	OGLVideo & ogl = video();
 	if (pCurrentBuffer == NULL)
 		glViewport( 0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
@@ -1179,7 +1183,10 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 		m_rect[2].t1 = texST[1].t1;
 	}
 
-	if (ogl.isAdjustScreen() && (gDP.colorImage.width > VI.width * 98 / 100) && (_params.lrx - _params.ulx < VI.width * 9 / 10)) {
+	if (ogl.isAdjustScreen() &&
+		(_params.forceAjustScale ||
+		((gDP.colorImage.width > VI.width * 98 / 100) && (_params.lrx - _params.ulx < VI.width * 9 / 10))))
+	{
 		const float scale = ogl.getAdjustScale();
 		for (u32 i = 0; i < 4; ++i)
 			m_rect[i].x *= scale;
@@ -1213,9 +1220,6 @@ void OGLRender::clearDepthBuffer(u32 _uly, u32 _lry)
 
 void OGLRender::clearColorBuffer(float *_pColor )
 {
-	if (!_canDraw())
-		return;
-
 	glDisable(GL_SCISSOR_TEST);
 
 	glClearColor( _pColor[0], _pColor[1], _pColor[2], _pColor[3] );
@@ -1394,6 +1398,7 @@ void OGLRender::_initData()
 	TextDrawer::get().init();
 	TFH.init();
 	PostProcessor::get().init();
+	FBInfo::fbInfo.reset();
 	m_renderState = rsNone;
 
 	gSP.changed = gDP.changed = 0xFFFFFFFF;

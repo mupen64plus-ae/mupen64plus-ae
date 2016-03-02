@@ -9,6 +9,7 @@
 #include "RSP.h"
 #include "FrameBuffer.h"
 #include "DepthBuffer.h"
+#include "FrameBufferInfo.h"
 #include "Config.h"
 #include "Debug.h"
 
@@ -111,7 +112,7 @@ void VI_UpdateScreen()
 		FrameBuffer * pBuffer = frameBufferList().findBuffer(*REG.VI_ORIGIN);
 		if (pBuffer == NULL)
 			gDP.changed |= CHANGED_CPU_FB_WRITE;
-		else if (!pBuffer->isValid()) {
+		else if (!FBInfo::fbInfo.isSupported() && !pBuffer->isValid()) {
 			gDP.changed |= CHANGED_CPU_FB_WRITE;
 			if (config.frameBufferEmulation.copyToRDRAM == 0)
 				pBuffer->copyRdram();
@@ -144,12 +145,13 @@ void VI_UpdateScreen()
 						frameBufferList().saveBuffer(*REG.VI_ORIGIN, G_IM_FMT_RGBA, size, VI.width, VI.height, true);
 				}
 			}
-			if ((((*REG.VI_STATUS) & 3) > 0) && ((config.frameBufferEmulation.copyFromRDRAM && gDP.colorImage.changed) || bCFB)) {
+//			if ((((*REG.VI_STATUS) & 3) > 0) && (gDP.colorImage.changed || bCFB)) { // Does not work in release build!!!
+			if (((*REG.VI_STATUS) & 3) > 0) {
 				if (!bVIUpdated) {
 					VI_UpdateSize();
 					bVIUpdated = true;
 				}
-				FrameBuffer_CopyFromRDRAM(*REG.VI_ORIGIN, config.frameBufferEmulation.copyFromRDRAM && !bCFB);
+				FrameBuffer_CopyFromRDRAM(*REG.VI_ORIGIN, bCFB);
 			}
 			frameBufferList().renderBuffer(*REG.VI_ORIGIN);
 			frameBufferList().clearBuffersChanged();

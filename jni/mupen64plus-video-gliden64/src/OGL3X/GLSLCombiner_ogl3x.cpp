@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <assert.h>
 #include <stdio.h>
 #include <string>
@@ -330,13 +331,6 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 	strFragmentShader.append("  vec_color = vec4(input_color, vShadeColor.a); \n");
 	strFragmentShader.append(strCombiner);
 
-	strFragmentShader.append(
-		"  if (uEnableAlphaTest != 0) {				\n"
-		"    lowp float alphaTestValue = (uAlphaCompareMode == 3 && alpha2 > 0.0) ? snoise() : uAlphaTestValue;	\n"
-		"    if  (alpha2 < alphaTestValue) discard;	\n"
-		"  }										\n"
-		);
-
 	if (config.generalEmulation.enableNoise != 0) {
 		strFragmentShader.append(
 			"  if (uColorDitherMode == 2) colorNoiseDither(snoise(), color2);	\n"
@@ -514,7 +508,7 @@ void ShaderCombiner::update(bool _bForce) {
 #endif
 		}
 
-		updateFBInfo(true);
+		updateFrameBufferInfo(true);
 		updateRenderState(true);
 	}
 
@@ -653,7 +647,7 @@ void ShaderCombiner::updateTextureInfo(bool _bForce) {
 		m_uniforms.uTextureFilterMode.set(gDP.otherMode.textureFilter | (gSP.objRendermode&G_OBJRM_BILERP), _bForce);
 }
 
-void ShaderCombiner::updateFBInfo(bool _bForce) {
+void ShaderCombiner::updateFrameBufferInfo(bool _bForce) {
 	if (!usesTexture())
 		return;
 

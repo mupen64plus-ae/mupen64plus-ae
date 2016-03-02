@@ -23,6 +23,7 @@ struct FrameBuffer
 	void copyRdram();
 	bool isValid() const;
 	bool _isMarioTennisScoreboard() const;
+	bool isAuxiliary() const;
 
 	u32 m_startAddress, m_endAddress;
 	u32 m_size, m_width, m_height, m_fillcolor, m_validityChecked;
@@ -76,6 +77,8 @@ public:
 	FrameBuffer * getCopyBuffer() const { return m_pCopy; }
 	void setCopyBuffer(FrameBuffer * _pBuffer) { m_pCopy = _pBuffer; }
 
+	void fillBufferInfo(void * _pinfo, u32 _size);
+
 	static FrameBufferList & get();
 
 private:
@@ -88,6 +91,7 @@ private:
 	FrameBuffers m_list;
 	FrameBuffer * m_pCurrent;
 	FrameBuffer * m_pCopy;
+	u32 m_prevColorImageHeight;
 };
 
 struct PBOBinder {
@@ -116,8 +120,11 @@ FrameBufferList & frameBufferList()
 void FrameBuffer_Init();
 void FrameBuffer_Destroy();
 void FrameBuffer_CopyToRDRAM( u32 _address , bool _sync );
-void FrameBuffer_CopyFromRDRAM( u32 address, bool bUseAlpha );
-bool FrameBuffer_CopyDepthBuffer( u32 address );
+void FrameBuffer_CopyChunkToRDRAM(u32 _address);
+void FrameBuffer_CopyFromRDRAM(u32 address, bool bUseAlpha);
+void FrameBuffer_AddAddress(u32 address, u32 _size);
+bool FrameBuffer_CopyDepthBuffer(u32 address);
+bool FrameBuffer_CopyDepthBufferChunk(u32 address);
 void FrameBuffer_ActivateBufferTexture(s16 t, FrameBuffer *pBuffer);
 void FrameBuffer_ActivateBufferTextureBG(s16 t, FrameBuffer *pBuffer);
 

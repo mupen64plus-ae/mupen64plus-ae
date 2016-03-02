@@ -179,13 +179,6 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 	strFragmentShader.append("  vec_color = vec4(input_color, vShadeColor.a); \n");
 	strFragmentShader.append(strCombiner);
 
-	strFragmentShader.append(
-		"  if (uEnableAlphaTest != 0) {				\n"
-		"    lowp float alphaTestValue = (uAlphaCompareMode == 3 && alpha2 > 0.0) ? snoise() : uAlphaTestValue;	\n"
-		"    if  (alpha2 < alphaTestValue) discard;	\n"
-		"  }										\n"
-		);
-
 	if (!g_weakGLSL) {
 		strFragmentShader.append(
 			"  lowp int fogUsage = uFogUsage;			\n"
@@ -302,7 +295,7 @@ void ShaderCombiner::update(bool _bForce) {
 			m_uniforms.uTex0.set(0, true);
 			m_uniforms.uTex1.set(1, true);
 		}
-		updateFBInfo(true);
+		updateFrameBufferInfo(true);
 		updateRenderState(true);
 	}
 
@@ -428,7 +421,7 @@ void ShaderCombiner::updateTextureInfo(bool _bForce) {
 		m_uniforms.uTextureFilterMode.set(gDP.otherMode.textureFilter | (gSP.objRendermode&G_OBJRM_BILERP), _bForce);
 }
 
-void ShaderCombiner::updateFBInfo(bool _bForce) {
+void ShaderCombiner::updateFrameBufferInfo(bool _bForce) {
 	if (!usesTexture())
 		return;
 

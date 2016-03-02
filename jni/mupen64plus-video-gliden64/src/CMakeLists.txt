@@ -22,6 +22,7 @@ set(GLideN64_SOURCES
   F3DEX2.cpp
   F3DEX2CBFD.cpp
   FrameBuffer.cpp
+  FrameBufferInfo.cpp
   GBI.cpp
   gDP.cpp
   GLideN64.cpp
@@ -95,7 +96,7 @@ else(MUPENPLUSAPI)
 	windows/Config_windows.cpp
 	windows/CommonAPIImpl_windows.cpp
 	windows/GLideN64_windows.cpp
-	windows/GLFunctions.cpp
+	windows/GLFunctions_windows.cpp
 	windows/OpenGL_windows.cpp
 	windows/ZilmarAPIImpl_windows.cpp
   )

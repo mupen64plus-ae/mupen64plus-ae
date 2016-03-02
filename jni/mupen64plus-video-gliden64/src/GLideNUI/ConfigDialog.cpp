@@ -12,13 +12,11 @@
 #include "FullscreenResolutions.h"
 
 static
-const unsigned int numWindowedModes = 13U;
-static
 struct
 {
 	unsigned short width, height;
 	const char *description;
-} WindowedModes[numWindowedModes] = {
+} WindowedModes[] = {
 	{ 320, 240, "320 x 240" },
 	{ 400, 300, "400 x 300" },
 	{ 480, 360, "480 x 360" },
@@ -31,8 +29,11 @@ struct
 	{ 1280, 1024, "1280 x 1024" },
 	{ 1440, 1080, "1440 x 1080" },
 	{ 1600, 1024, "1600 x 1024" },
-	{ 1600, 1200, "1600 x 1200" }
+	{ 1600, 1200, "1600 x 1200" },
+	{ 640, 480, "custom" }
 };
+static
+const unsigned int numWindowedModes = sizeof(WindowedModes) / sizeof(WindowedModes[0]);
 
 static const unsigned int numFilters = 7U;
 static const char * cmbTexFilter_choices[numFilters] = {
@@ -67,7 +68,7 @@ void ConfigDialog::_init()
 {
 	// Video settings
 	QStringList windowedModesList;
-	int windowedModesCurrent = 0;
+	int windowedModesCurrent = numWindowedModes - 1;
 	for (int i = 0; i < numWindowedModes; ++i) {
 		windowedModesList.append(WindowedModes[i].description);
 		if (WindowedModes[i].width == config.video.windowedWidth && WindowedModes[i].height == config.video.windowedHeight)
@@ -144,6 +145,13 @@ void ConfigDialog::_init()
 		ui->aspectAdjustRadioButton->setChecked(true);
 		break;
 	}
+	ui->resolutionFactorSlider->setValue(config.frameBufferEmulation.nativeResFactor);
+	ui->copyAuxBuffersCheckBox->setChecked(config.frameBufferEmulation.copyAuxToRDRAM != 0);
+	ui->fbInfoDisableCheckBox->setChecked(config.frameBufferEmulation.fbInfoDisabled != 0);
+	ui->readColorChunkCheckBox->setChecked(config.frameBufferEmulation.fbInfoReadColorChunk != 0);
+	ui->readColorChunkCheckBox->setEnabled(config.frameBufferEmulation.fbInfoDisabled == 0);
+	ui->readDepthChunkCheckBox->setChecked(config.frameBufferEmulation.fbInfoReadDepthChunk != 0);
+	ui->readDepthChunkCheckBox->setEnabled(config.frameBufferEmulation.fbInfoDisabled == 0);
 
 	// Texture filter settings
 	QStringList textureFiltersList;
@@ -260,9 +268,9 @@ ConfigDialog::~ConfigDialog()
 void ConfigDialog::accept()
 {
 	m_accepted = true;
-	const int currentWindowedResolution = ui->windowedResolutionComboBox->currentIndex();
-	config.video.windowedWidth = WindowedModes[currentWindowedResolution].width;
-	config.video.windowedHeight = WindowedModes[currentWindowedResolution].height;
+
+	config.video.windowedWidth = ui->windowWidthSpinBox->value();
+	config.video.windowedHeight = ui->windowHeightSpinBox->value();
 
 	getFullscreenResolutions(ui->fullScreenResolutionComboBox->currentIndex(), config.video.fullscreenWidth, config.video.fullscreenHeight);
 	getFullscreenRefreshRate(ui->fullScreenRefreshRateComboBox->currentIndex(), config.video.fullscreenRefresh);
@@ -317,6 +325,11 @@ void ConfigDialog::accept()
 		config.frameBufferEmulation.aspect = Config::a169;
 	else if (ui->aspectAdjustRadioButton->isChecked())
 		config.frameBufferEmulation.aspect = Config::aAdjust;
+	config.frameBufferEmulation.nativeResFactor = ui->resolutionFactorSlider->value();
+	config.frameBufferEmulation.copyAuxToRDRAM = ui->copyAuxBuffersCheckBox->isChecked() ? 1 : 0;
+	config.frameBufferEmulation.fbInfoDisabled = ui->fbInfoDisableCheckBox->isChecked() ? 1: 0;
+	config.frameBufferEmulation.fbInfoReadColorChunk = ui->readColorChunkCheckBox->isChecked() ? 1 : 0;
+	config.frameBufferEmulation.fbInfoReadDepthChunk = ui->readDepthChunkCheckBox->isChecked() ? 1 : 0;
 
 	// Texture filter settings
 	config.textureFilter.txFilterMode = ui->filterComboBox->currentIndex();
@@ -438,4 +451,19 @@ void ConfigDialog::on_texPackPathButton_clicked()
 		options);
 	if (!directory.isEmpty())
 		ui->txPathLabel->setText(directory);
+}
+
+void ConfigDialog::on_fbInfoDisableCheckBox_toggled(bool checked)
+{
+	ui->readColorChunkCheckBox->setEnabled(!checked);
+	ui->readDepthChunkCheckBox->setEnabled(!checked);
+}
+
+void ConfigDialog::on_windowedResolutionComboBox_currentIndexChanged(int index)
+{
+	const bool bCustom = index == numWindowedModes - 1;
+	ui->windowWidthSpinBox->setValue(bCustom ? config.video.windowedWidth : WindowedModes[index].width);
+	ui->windowWidthSpinBox->setEnabled(bCustom);
+	ui->windowHeightSpinBox->setValue(bCustom ? config.video.windowedHeight : WindowedModes[index].height);
+	ui->windowHeightSpinBox->setEnabled(bCustom);
 }
