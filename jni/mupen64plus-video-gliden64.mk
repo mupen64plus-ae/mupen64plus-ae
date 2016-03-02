@@ -33,6 +33,7 @@ MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/F3DSWSE.cpp                           \
     $(SRCDIR)/F3DWRUS.cpp                           \
     $(SRCDIR)/FrameBuffer.cpp                       \
+    $(SRCDIR)/FrameBufferInfo.cpp                       \
     $(SRCDIR)/GBI.cpp                               \
     $(SRCDIR)/gDP.cpp                               \
     $(SRCDIR)/GLideN64.cpp                          \
