@@ -197,12 +197,6 @@
             android:defaultValue="true"
             android:key="EnableShaderStorage"
             android:title="@string/gliden64_enable_shader_storage_title" />
-
-        
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="false"
-            android:key="EnableN64DepthCompare"
-            android:title="@string/gliden64_enable_n64_depth_compare_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
@@ -238,6 +232,29 @@
             android:defaultValue="false"
             android:key="EnableCopyColorFromRDRAM"
             android:title="@string/gliden64_enable_color_buffer_from_RDRAM_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="EnableN64DepthCompare"
+            android:title="@string/gliden64_enable_n64_depth_compare_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_use_native_resolution_factor_default"
+            android:entries="@array/gliden64_use_native_resolution_factor_entries"
+            android:entryValues="@array/gliden64_use_native_resolution_factor_values"
+            android:key="UseNativeResolutionFactor"
+            android:summary="@string/selectedValue"
+            android:title="@string/gliden64_use_native_resolution_factor_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="DisableFBInfo"
+            android:title="@string/gliden64_disable_fbinfo" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
+            android:key="FBInfoReadColorChunk"
+            android:title="@string/gliden64_read_color_buffer_by_4kb_chunks" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="true"
+            android:key="FBInfoReadDepthChunk"
+            android:title="@string/gliden64_read_depth_buffer_by_4kb_chunks" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryGliden64TextureFiltering"

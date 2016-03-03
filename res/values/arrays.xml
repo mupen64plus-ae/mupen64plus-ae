@@ -315,7 +315,24 @@
         <item>2</item>
     </string-array>
     <string name="gliden64_color_buffer_copy_to_RDRAM_default" translatable="false">2</string>
-
+    
+    <!-- GLideN64 color buffer copy to RDRAM list-->
+    <string-array name="gliden64_use_native_resolution_factor_entries">
+        <item>@string/gliden64_use_native_resolution_factor_off</item>
+        <item>@string/gliden64_use_native_resolution_factor_1x</item>
+        <item>@string/gliden64_use_native_resolution_factor_2x</item>
+        <item>@string/gliden64_use_native_resolution_factor_3x</item>
+        <item>@string/gliden64_use_native_resolution_factor_4x</item>
+    </string-array>
+    <string-array name="gliden64_use_native_resolution_factor_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string name="gliden64_use_native_resolution_factor_default" translatable="false">0</string>
+    
     <!-- GLideN64 texture filter list-->
     <string-array name="gliden64_texture_filter_entries">
         <item>@string/gliden64_tx_filter_mode_entry_none</item>
