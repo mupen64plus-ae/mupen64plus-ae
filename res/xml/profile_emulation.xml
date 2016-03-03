@@ -244,7 +244,7 @@
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_use_native_resolution_factor_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="DisableFBInfo"
             android:title="@string/gliden64_disable_fbinfo" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
