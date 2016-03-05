@@ -744,18 +744,21 @@ static void apply_speed_limiter(void)
     //Reset if the sleep needed is an unreasonable value
     static const double minSleepNeeded = -100;
     static const double maxSleepNeeded = 100;
-    static double totalElapsedGameTime = 0;
+    static unsigned long totalVIs = 0;
     static int resetOnce = 0;
+    static int lastSpeedFactor = 100;
 
     //if this is the first time or we are resuming from pause
-    if(StartFPSTime == 0 || !resetOnce)
+    if(StartFPSTime == 0 || !resetOnce || lastSpeedFactor != l_SpeedFactor)
     {
        StartFPSTime = SDL_GetTicks();
-       totalElapsedGameTime = 0;
+       totalVIs = 0;
        resetOnce = 1;
     }
 
-    double VILimitMilliseconds = 1000.0 / ROM_PARAMS.vilimit;
+    lastSpeedFactor = l_SpeedFactor;
+
+    double VILimitMilliseconds = 1000.0 / (double)ROM_PARAMS.vilimit;
     double AdjustedLimit = VILimitMilliseconds * 100.0 / l_SpeedFactor;  // adjust for selected emulator speed
     float ThisFrameDelta;
 
@@ -779,7 +782,8 @@ static void apply_speed_limiter(void)
     CurrentFPSTime = SDL_GetTicks();
     ThisFrameDelta = CurrentFPSTime - LastFPSTime - AdjustedLimit;
 
-    totalElapsedGameTime += AdjustedLimit;
+    ++totalVIs;
+    double totalElapsedGameTime = AdjustedLimit*totalVIs;
     double ellapsedRealTime = CurrentFPSTime - StartFPSTime;
     double sleepTime = totalElapsedGameTime - ellapsedRealTime;
 
