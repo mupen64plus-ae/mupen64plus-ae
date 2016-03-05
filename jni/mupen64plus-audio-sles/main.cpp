@@ -325,6 +325,7 @@ static void InitializeAudio(int freq)
     /* This is important for the sync */
     GameFreq = freq;
 
+    /*
     if((freq/1000) <= 11)
     {
         OutputFreq = 11025;
@@ -344,7 +345,10 @@ static void InitializeAudio(int freq)
     {
         OutputFreq = 44100;
         sample_rate = SL_SAMPLINGRATE_44_1;
-    }
+    }*/
+
+    OutputFreq = 48000;
+    sample_rate = SL_SAMPLINGRATE_48;
 
     DebugMessage(M64MSG_VERBOSE, "Requesting frequency: %iHz.", OutputFreq);
 
@@ -799,7 +803,7 @@ void* audioConsumer(void* param)
    //soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
    //soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
 
-   soundTouch.setRate(GameFreq*1.0/OutputFreq);
+   soundTouch.setRate((double)GameFreq/(double)OutputFreq);
 
    int prevQueueSize = thread_queue_length(&audioConsumerQueue);
    int currQueueSize = prevQueueSize;
@@ -832,7 +836,7 @@ void* audioConsumer(void* param)
 
    //use the smallest of the two
    const int maxWindowSize = 5;
-   int feedTimeWindowSize = TargetSecondaryBuffers >= maxWindowSize ? maxWindowSize : TargetSecondaryBuffers;
+   int feedTimeWindowSize = fmin(TargetSecondaryBuffers, maxWindowSize);
    int feedTimeIndex = 0;
    bool feedTimesSet = false;
    float timePerBuffer = 1.0*SecondaryBufferSize/GameFreq;
