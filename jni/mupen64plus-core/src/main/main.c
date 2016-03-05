@@ -742,8 +742,8 @@ static void apply_speed_limiter(void)
     static unsigned int VIDeltasIndex;
 
     //Reset if the sleep needed is an unreasonable value
-    static const double minSleepNeeded = -100;
-    static const double maxSleepNeeded = 100;
+    static const double minSleepNeeded = -50;
+    static const double maxSleepNeeded = 50;
     static unsigned long totalVIs = 0;
     static int resetOnce = 0;
     static int lastSpeedFactor = 100;
