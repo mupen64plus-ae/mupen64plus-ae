@@ -203,6 +203,9 @@ public class GlobalPrefs
     /** Number of SLES secondary buffers. */
     public final int audioSLESSecondaryBufferNbr;
 
+    /** Number of SLES sampling rate. */
+    public final int audioSLESSamplingRate;
+
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
 
@@ -401,6 +404,7 @@ public class GlobalPrefs
         audioSDLSecondaryBufferSize = getSafeInt( mPreferences, "audioSDLBufferSize", 2048 );
         audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize", 1024 );
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 20 );
+        audioSLESSamplingRate = getSafeInt( mPreferences, "audioSLESSamplingRate", 0 );
 
         if( audioPlugin.enabled )
             isFramelimiterEnabled = !mPreferences.getBoolean( "audioSynchronize", true );

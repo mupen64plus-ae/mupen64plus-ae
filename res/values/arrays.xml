@@ -477,8 +477,28 @@
         <item>256</item>
         <item>128</item>
     </string-array>
-
+    
     <string name="audioSLESBufferSize_default" translatable="false">1024</string>
+    
+    <!-- Audio SLES Sampling Rate -->
+    <string-array name="audioSLESRate_entries" translatable="false">
+        <item>@string/audioSLESRate_entry_orig</item>
+        <item>@string/audioSLESRate_entry16</item>
+        <item>@string/audioSLESRate_entry24</item>
+        <item>@string/audioSLESRate_entry32</item>
+        <item>@string/audioSLESRate_entry441</item>
+        <item>@string/audioSLESRate_entry48</item>
+    </string-array>
+    <string-array name="audioSLESRate_values" translatable="false">
+        <item>0</item>
+        <item>16</item>
+        <item>24</item>
+        <item>32</item>
+        <item>441</item>
+        <item>48</item>
+    </string-array>
+
+    <string name="audioSLESRate_default" translatable="false">0</string>
 
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">
