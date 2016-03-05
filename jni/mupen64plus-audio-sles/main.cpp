@@ -863,7 +863,7 @@ void* audioConsumer(void* param)
    waitTime.tv_nsec = 0;
 
    //use the smallest of the two
-   const int maxWindowSize = 5;
+   const int maxWindowSize = 10;
    int feedTimeWindowSize = fmin(TargetSecondaryBuffers, maxWindowSize);
    int feedTimeIndex = 0;
    bool feedTimesSet = false;
@@ -907,7 +907,7 @@ void* audioConsumer(void* param)
          }
          else if(!ranDry && slesQueueLength < maxQueueSize)
          {
-            currAdjustment = (double)speed_factor/100.0;;
+            currAdjustment = temp;
          }
 
          //Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
