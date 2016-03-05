@@ -111,6 +111,8 @@ static unsigned int speed_factor = 100;
 static int SwapChannels = 0;
 /* Number of secondary buffers to target */
 static int TargetSecondaryBuffers = 20;
+/* Selected samplin rate */
+static int SamplingRateSelection = 0;
 /* Output Audio frequency */
 static int OutputFreq;
 /* Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
@@ -313,6 +315,13 @@ void OnInitFailure(void)
 
 static void InitializeAudio(int freq)
 {
+
+   /* reload these because they gets re-assigned from data below, and InitializeAudio can be called more than once */
+   PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
+   SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
+   TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
+   SamplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
+
     SLuint32 sample_rate;
 
     /* Sometimes a bad frequency is requested so ignore it */
@@ -325,37 +334,57 @@ static void InitializeAudio(int freq)
     /* This is important for the sync */
     GameFreq = freq;
 
-    /*
-    if((freq/1000) <= 11)
+    if(SamplingRateSelection == 0)
     {
-        OutputFreq = 11025;
-        sample_rate = SL_SAMPLINGRATE_11_025;
-    }
-    else if((freq/1000) <= 22)
-    {
-        OutputFreq = 22050;
-        sample_rate = SL_SAMPLINGRATE_22_05;
-    }
-    else if((freq/1000) <= 32)
-    {
-        OutputFreq = 32000;
-        sample_rate = SL_SAMPLINGRATE_32;
+       if((freq/1000) <= 11)
+       {
+           OutputFreq = 11025;
+           sample_rate = SL_SAMPLINGRATE_11_025;
+       }
+       else if((freq/1000) <= 22)
+       {
+           OutputFreq = 22050;
+           sample_rate = SL_SAMPLINGRATE_22_05;
+       }
+       else if((freq/1000) <= 32)
+       {
+           OutputFreq = 32000;
+           sample_rate = SL_SAMPLINGRATE_32;
+       }
+       else
+       {
+           OutputFreq = 44100;
+           sample_rate = SL_SAMPLINGRATE_44_1;
+       }
     }
     else
     {
-        OutputFreq = 44100;
-        sample_rate = SL_SAMPLINGRATE_44_1;
-    }*/
-
-    OutputFreq = 48000;
-    sample_rate = SL_SAMPLINGRATE_48;
+       switch(SamplingRateSelection)
+       {
+          case 16:
+             OutputFreq = 16000;
+             sample_rate = SL_SAMPLINGRATE_16;
+             break;
+          case 24:
+             OutputFreq = 24000;
+             sample_rate = SL_SAMPLINGRATE_24;
+             break;
+          case 32:
+             OutputFreq = 32000;
+             sample_rate = SL_SAMPLINGRATE_32;
+             break;
+          case 441:
+             OutputFreq = 44100;
+             sample_rate = SL_SAMPLINGRATE_44_1;
+             break;
+          case 48:
+             OutputFreq = 48000;
+             sample_rate = SL_SAMPLINGRATE_48;
+             break;
+       }
+    }
 
     DebugMessage(M64MSG_VERBOSE, "Requesting frequency: %iHz.", OutputFreq);
-
-    /* reload these because they gets re-assigned from data below, and InitializeAudio can be called more than once */
-    PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
-    SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
-    TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
 
     /* Close everything because InitializeAudio can be called more than once */
     CloseAudio();
@@ -491,15 +520,13 @@ static void InitializeAudio(int freq)
 
 static void ReadConfig(void)
 {
-    const char *resampler_id;
-
     /* read the configuration values into our static variables */
     GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
     SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
     PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
     SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
     TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
-    resampler_id = ConfigGetParamString(l_ConfigAudio, "RESAMPLE");
+    SamplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
 }
 
 /* Mupen64Plus plugin functions */
@@ -599,6 +626,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE",   PRIMARY_BUFFER_SIZE,   "Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR" , SECONDARY_BUFFER_NBR,  "Number of secondary buffers.");
+    ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_RATE" ,        0,                     "Sampling rate, (0=game original, 16, 24, 32, 441, 48");
 
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
         ConfigSaveSection("Audio-OpenSLES");
