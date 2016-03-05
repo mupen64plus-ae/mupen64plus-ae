@@ -310,7 +310,7 @@ void gDPSetTile( u32 format, u32 size, u32 line, u32 tmem, u32 tile, u32 palette
 	if (!gDP.tiles[tile].maskt) gDP.tiles[tile].clampt = 1;
 
 	if (tile == gSP.texture.tile || tile == gSP.texture.tile + 1) {
-		u32 nTile = 7;
+		u32 nTile = gDP.loadTileIdx;
 		while(gDP.tiles[nTile].tmem != tmem && nTile > gSP.texture.tile + 1)
 			--nTile;
 		if (nTile > gSP.texture.tile + 1) {
@@ -469,6 +469,7 @@ void gDPLoadTile32b(u32 uls, u32 ult, u32 lrs, u32 lrt)
 void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 {
 	gDPSetTileSize( tile, uls, ult, lrs, lrt );
+	gDP.loadTileIdx = tile;
 	gDP.loadTile = &gDP.tiles[tile];
 	gDP.loadTile->loadType = LOADTYPE_TILE;
 	gDP.loadTile->imageAddress = gDP.textureImage.address;
@@ -577,6 +578,7 @@ void gDPLoadBlock32(u32 uls,u32 lrs, u32 dxt)
 void gDPLoadBlock(u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt)
 {
 	gDPSetTileSize( tile, uls, ult, lrs, dxt );
+	gDP.loadTileIdx = tile;
 	gDP.loadTile = &gDP.tiles[tile];
 	gDP.loadTile->loadType = LOADTYPE_BLOCK;
 
@@ -738,10 +740,7 @@ void gDPFillRDRAM(u32 address, s32 ulx, s32 uly, s32 lrx, s32 lry, u32 width, u3
 void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 {
 	OGLRender & render = video().getRender();
-	if (gDP.otherMode.cycleType == G_CYC_FILL) {
-		++lrx;
-		++lry;
-	} else if (lry == uly)
+	if (gDP.otherMode.cycleType == G_CYC_FILL || lry == uly)
 		++lry;
 
 	if (gDP.depthImageAddress == gDP.colorImage.address) {
@@ -824,7 +823,6 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
 {
 	if (gDP.otherMode.cycleType == G_CYC_COPY) {
 		dsdx = 1.0f;
-		lrx += 1.0f;
 		lry += 1.0f;
 	}
 	lry = max(lry, uly + 1.0f);
@@ -836,7 +834,7 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
 	gSP.textureTile[1] = &gDP.tiles[(tile + 1) & 7];
 
 	// HACK ALERT!
-	if ((int(s) == 512) && (gDP.colorImage.width < 512))
+	if ((int(s) == 512) && (gDP.colorImage.width + gSP.textureTile[0]->uls < 512))
 		s = 0.0f;
 
 	f32 lrs, lrt;

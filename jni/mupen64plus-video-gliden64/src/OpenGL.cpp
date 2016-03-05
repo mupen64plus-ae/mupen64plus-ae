@@ -321,25 +321,27 @@ void OGLRender::addTriangle(int _v0, int _v1, int _v2)
 	triangles.elements[triangles.num++] = _v1;
 	triangles.elements[triangles.num++] = _v2;
 
-	if ((gSP.geometryMode & G_SHADE) == 0) {
-		// Prim shading
-		for (u32 i = firstIndex; i < triangles.num; ++i) {
-			SPVertex & vtx = triangles.vertices[triangles.elements[i]];
-			vtx.flat_r = gDP.primColor.r;
-			vtx.flat_g = gDP.primColor.g;
-			vtx.flat_b = gDP.primColor.b;
-			vtx.flat_a = gDP.primColor.a;
-		}
-	} else if ((gSP.geometryMode & G_SHADING_SMOOTH) == 0) {
-		// Flat shading
-		SPVertex & vtx0 = triangles.vertices[firstIndex + ((RSP.w1 >> 24) & 3)];
-		for (u32 i = firstIndex; i < triangles.num; ++i) {
-			SPVertex & vtx = triangles.vertices[triangles.elements[i]];
-			vtx.r = vtx.flat_r = vtx0.r;
-			vtx.g = vtx.flat_g = vtx0.g;
-			vtx.b = vtx.flat_b = vtx0.b;
-			vtx.a = vtx.flat_a = vtx0.a;
-			vtx.a = vtx0.a;
+	if ((gSP.geometryMode & G_LIGHTING) == 0) {
+		if ((gSP.geometryMode & G_SHADE) == 0) {
+			// Prim shading
+			for (u32 i = firstIndex; i < triangles.num; ++i) {
+				SPVertex & vtx = triangles.vertices[triangles.elements[i]];
+				vtx.flat_r = gDP.primColor.r;
+				vtx.flat_g = gDP.primColor.g;
+				vtx.flat_b = gDP.primColor.b;
+				vtx.flat_a = gDP.primColor.a;
+			}
+		} else if ((gSP.geometryMode & G_SHADING_SMOOTH) == 0) {
+			// Flat shading
+			SPVertex & vtx0 = triangles.vertices[firstIndex + ((RSP.w1 >> 24) & 3)];
+			for (u32 i = firstIndex; i < triangles.num; ++i) {
+				SPVertex & vtx = triangles.vertices[triangles.elements[i]];
+				vtx.r = vtx.flat_r = vtx0.r;
+				vtx.g = vtx.flat_g = vtx0.g;
+				vtx.b = vtx.flat_b = vtx0.b;
+				vtx.a = vtx.flat_a = vtx0.a;
+				vtx.a = vtx0.a;
+			}
 		}
 	}
 
@@ -660,7 +662,7 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 			}
 			pCurrentCombiner->updateFrameBufferInfo();
 		}
-		if (_renderState == rsTriangle || _renderState == rsLine)
+		if (pCurrentCombiner->usesTexture() && (_renderState == rsTriangle || _renderState == rsLine))
 			cmbInfo.updateTextureParameters();
 		gDP.changed &= ~(CHANGED_TILE | CHANGED_TMEM);
 		gSP.changed &= ~(CHANGED_TEXTURE);
@@ -721,9 +723,14 @@ void OGLRender::_prepareDrawTriangle(bool _dma)
 	}
 	currentCombiner()->updateRenderState();
 
-	const bool updateColorArrays = m_bFlatColors != (!RSP.bLLE && (gSP.geometryMode & G_SHADING_SMOOTH) == 0);
-	if (updateColorArrays)
-		m_bFlatColors = !m_bFlatColors;
+	bool bFlatColors = false;
+	if (!RSP.bLLE && (gSP.geometryMode & G_LIGHTING) == 0) {
+		bFlatColors = (gSP.geometryMode & G_SHADE) == 0;
+		bFlatColors |= (gSP.geometryMode & G_SHADING_SMOOTH) == 0;
+	}
+
+	const bool updateColorArrays = m_bFlatColors != bFlatColors;
+	m_bFlatColors = bFlatColors;
 
 	if (updateArrays) {
 		SPVertex * pVtx = _dma ? triangles.dmaVertices.data() : &triangles.vertices[0];
@@ -1222,7 +1229,10 @@ void OGLRender::clearColorBuffer(float *_pColor )
 {
 	glDisable(GL_SCISSOR_TEST);
 
-	glClearColor( _pColor[0], _pColor[1], _pColor[2], _pColor[3] );
+	if (_pColor != nullptr)
+		glClearColor( _pColor[0], _pColor[1], _pColor[2], _pColor[3] );
+	else
+		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 	glClear( GL_COLOR_BUFFER_BIT );
 
 	glEnable( GL_SCISSOR_TEST );
@@ -1503,8 +1513,7 @@ void displayLoadProgress(const wchar_t *format, ...)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 	OGLRender & render = video().getRender();
-	float black[4] = {0, 0, 0, 0};
-	render.clearColorBuffer(black);
+	render.clearColorBuffer(nullptr);
 	render.drawText(buf, -0.9f, 0);
 	video().swapBuffers();
 
