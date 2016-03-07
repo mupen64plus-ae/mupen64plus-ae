@@ -8,11 +8,18 @@ bool checkShaderCompileStatus(GLuint obj)
 {
 	GLint status;
 	glGetShaderiv(obj, GL_COMPILE_STATUS, &status);
-	if (status == GL_FALSE) {
+	if (status == GL_FALSE)
+	{
 		GLchar shader_log[nShaderLogSize];
+
+		for(int index = 0; index < nShaderLogSize; ++index)
+		{
+		   shader_log[index] = '0';
+		}
+
 		GLsizei nLogSize = nShaderLogSize;
 		glGetShaderInfoLog(obj, nShaderLogSize, &nLogSize, shader_log);
-		shader_log[nLogSize] = 0;
+		shader_log[nShaderLogSize-1] = 0;
 		LOG(LOG_ERROR, "shader_compile error: %s\n", shader_log);
 		return false;
 	}
