@@ -390,8 +390,26 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 	const GLchar * strShaderData = strFragmentShader.data();
 	glShaderSource(fragmentShader, 1, &strShaderData, NULL);
 	glCompileShader(fragmentShader);
-	if (!checkShaderCompileStatus(fragmentShader))
-		LOG(LOG_ERROR, "Error in fragment shader:\n%s\n", strFragmentShader.data());
+        if (!checkShaderCompileStatus(fragmentShader))
+        {
+             int pos = 0;
+                int max = 900;
+                LOG(LOG_ERROR, "Error in fragment shader");
+
+                while(pos < strFragmentShader.length() )
+                {
+                   if(strFragmentShader.length() - pos < max)
+                   {
+                           LOG(LOG_ERROR, "%s", strFragmentShader.substr(pos).data());
+                   }
+                   else
+                   {
+                             LOG(LOG_ERROR, "%s", strFragmentShader.substr(pos, max).data());
+                   }
+
+                   pos += max;
+                }
+        }
 
 	m_program = glCreateProgram();
 	_locate_attributes();
