@@ -501,7 +501,7 @@ public class GamePrefs
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
         gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);
         gliden64MaxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
-        gliden64CacheSize = getSafeInt( emulationProfile, "CacheSize", 500);
+        gliden64CacheSize = getSafeInt( emulationProfile, "CacheSize", 256);
         gliden64EnableFog = emulationProfile.get( "EnableFog", "True" ).equals( "True" );
         gliden64EnableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         gliden64EnableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
@@ -514,14 +514,14 @@ public class GamePrefs
         gliden64EnableCopyDepthToRDRAM = emulationProfile.get( "EnableCopyDepthToRDRAM", "False" ).equals( "True" );
         gliden64EnableCopyColorFromRDRAM = emulationProfile.get( "EnableCopyColorFromRDRAM", "False" ).equals( "True" );
         gliden64EnableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
-        gliden64UseNativeResolutionFactor = getSafeInt( emulationProfile, "UseNativeResolutionFactor", 1);
-        gliden64DisableFBInfo = emulationProfile.get( "DisableFBInfo", "False" ).equals( "True" );
+        gliden64UseNativeResolutionFactor = getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);
+        gliden64DisableFBInfo = emulationProfile.get( "DisableFBInfo", "True" ).equals( "True" );
         gliden64FBInfoReadColorChunk = emulationProfile.get( "FBInfoReadColorChunk", "False" ).equals( "True" );
         gliden64FBInfoReadDepthChunk = emulationProfile.get( "FBInfoReadDepthChunk", "True" ).equals( "True" );
         gliden64TxFilterMode = getSafeInt( emulationProfile, "txFilterMode}]", 0);
         gliden64TxEnhancementMode = getSafeInt( emulationProfile, "txEnhancementMode", 0);
         gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "False" ).equals( "True" );
-        gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 100);
+        gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 256);
         gliden64TxHiresEnable = emulationProfile.get( "txHiresEnable", "False" ).equals( "True" );
         gliden64TxHiresFullAlphaChannel = emulationProfile.get( "txHiresFullAlphaChannel", "False" ).equals( "True" );
         gliden64TxHresAltCRC = emulationProfile.get( "txHresAltCRC", "False" ).equals( "True" );
