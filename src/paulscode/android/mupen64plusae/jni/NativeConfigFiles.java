@@ -20,6 +20,15 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.zip.GZIPInputStream;
+
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -28,6 +37,15 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 public class NativeConfigFiles
 {
     private final static String EMPTY = "\"\"";
+
+    private static final int GZ_HIRESTEXCACHE = 0x00800000;
+    private static final int FORCE16BPP_HIRESTEX = 0x10000000;
+    private static final int LET_TEXARTISTS_FLY = 0x40000000;
+
+    private static boolean hiresTexHTCPresent = false;
+    private static boolean zipTextureCache = false;
+    private static boolean force16bpp = false;
+    private static boolean fullAlphaChannel = false;
 
     /**
      * Populates the core configuration files with the user preferences.
@@ -133,6 +151,8 @@ public class NativeConfigFiles
         if( game.emulationProfile.get( "WidescreenHack", "False" ).equals("True") )
             aspectRatio = "3";
 
+        readHiResSettings(game, global, appData);
+
         mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "7" );
         mupen64plus_cfg.put( "Video-GLideN64", "AspectRatio", aspectRatio);
         mupen64plus_cfg.put( "Video-GLideN64", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
@@ -163,12 +183,23 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-GLideN64", "txFilterIgnoreBG", boolToNum( game.gliden64TxFilterIgnoreBG ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txCacheSize", String.valueOf( game.gliden64TxCacheSize ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txHiresEnable", boolToNum( game.gliden64TxHiresEnable ) );
-        mupen64plus_cfg.put( "Video-GLideN64", "txHiresFullAlphaChannel", boolToNum( game.gliden64TxHiresFullAlphaChannel ) );
-        mupen64plus_cfg.put( "Video-GLideN64", "txHresAltCRC", boolToNum( game.gliden64TxHresAltCRC ) );
+
+        if(hiresTexHTCPresent && game.gliden64TxHiresEnable)
+        {
+            mupen64plus_cfg.put( "Video-GLideN64", "txHiresFullAlphaChannel", boolToNum( fullAlphaChannel ) );
+            mupen64plus_cfg.put( "Video-GLideN64", "txCacheCompression", boolToNum( zipTextureCache ) );
+            mupen64plus_cfg.put( "Video-GLideN64", "txForce16bpp", boolToNum( force16bpp ) );
+            mupen64plus_cfg.put( "Video-GLideN64", "txSaveCache", boolToNum( true ) );
+        }
+        else
+        {
+            mupen64plus_cfg.put( "Video-GLideN64", "txHiresFullAlphaChannel", boolToNum( game.gliden64TxHiresFullAlphaChannel ) );
+            mupen64plus_cfg.put( "Video-GLideN64", "txCacheCompression", boolToNum( game.gliden64TxCacheCompression ) );
+            mupen64plus_cfg.put( "Video-GLideN64", "txForce16bpp", boolToNum( game.gliden64TxForce16bpp ) );
+            mupen64plus_cfg.put( "Video-GLideN64", "txSaveCache", boolToNum( game.gliden64TxSaveCache ) );
+        }
         mupen64plus_cfg.put( "Video-GLideN64", "txDump", "0" );
-        mupen64plus_cfg.put( "Video-GLideN64", "txCacheCompression", boolToNum( game.gliden64TxCacheCompression ) );
-        mupen64plus_cfg.put( "Video-GLideN64", "txForce16bpp", boolToNum( game.gliden64TxForce16bpp ) );
-        mupen64plus_cfg.put( "Video-GLideN64", "txSaveCache", boolToNum( game.gliden64TxSaveCache ) );
+        mupen64plus_cfg.put( "Video-GLideN64", "txHresAltCRC", boolToNum( game.gliden64TxHresAltCRC ) );
         mupen64plus_cfg.put( "Video-GLideN64", "fontName", "DroidSans.ttf" );
         mupen64plus_cfg.put( "Video-GLideN64", "fontSize", "18" );
         mupen64plus_cfg.put( "Video-GLideN64", "fontColor", "B5E61D" );
@@ -211,5 +242,54 @@ public class NativeConfigFiles
     private static String boolToNum( boolean b )
     {
         return b ? "1" : "0";
+    }
+
+    private static void readHiResSettings( GamePrefs game, GlobalPrefs global, AppData appData)
+    {
+        final String hiResHtc = global.textureCacheDir + "/" + game.gameHeaderName + "_HIRESTEXTURES.htc";
+        final File htcFile = new File(hiResHtc);
+
+        hiresTexHTCPresent = htcFile.exists();
+
+        if(hiresTexHTCPresent)
+        {
+            InputStream stream = null;
+            InputStream gzipStream = null;
+
+            try
+            {
+                stream = new FileInputStream(htcFile);
+                gzipStream = new GZIPInputStream(stream);
+
+                final byte[] buffer = new byte[4];
+
+                gzipStream.read(buffer);
+                final ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+                wrapped.order(ByteOrder.LITTLE_ENDIAN);
+                final int config = wrapped.getInt();
+
+                zipTextureCache = (config & GZ_HIRESTEXCACHE) == GZ_HIRESTEXCACHE;
+                force16bpp = (config & FORCE16BPP_HIRESTEX) == FORCE16BPP_HIRESTEX;
+                fullAlphaChannel = (config & LET_TEXARTISTS_FLY) == LET_TEXARTISTS_FLY;
+            }
+            catch (final FileNotFoundException e)
+            {
+                hiresTexHTCPresent = false;
+            }
+            catch (final IOException e)
+            {
+                hiresTexHTCPresent = false;
+            }
+            finally
+            {
+                try
+                {
+                    gzipStream.close();
+                }
+                catch (final IOException e)
+                {
+                }
+            }
+        }
     }
 }

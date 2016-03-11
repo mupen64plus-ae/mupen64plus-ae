@@ -42,6 +42,9 @@ public class GamePrefs
     /** The subdirectory containing manual save files. */
     public final String userSaveDir;
 
+    /** Game header name */
+    public final String gameHeaderName;
+
     /** The subdirectory containing user screenshots. */
     public final String screenshotDir;
 
@@ -406,6 +409,7 @@ public class GamePrefs
     public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol,
         AppData appData, GlobalPrefs globalPrefs)
     {
+        gameHeaderName = headerName;
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
 

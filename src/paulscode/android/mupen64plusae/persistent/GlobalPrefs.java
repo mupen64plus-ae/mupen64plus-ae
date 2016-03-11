@@ -1,21 +1,21 @@
 /**
  * Mupen64PlusAE, an N64 emulator for the Android platform
- * 
+ *
  * Copyright (C) 2013 Paul Lamb
- * 
+ *
  * This file is part of Mupen64PlusAE.
- * 
+ *
  * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Authors: littleguy77
  */
 package paulscode.android.mupen64plusae.persistent;
@@ -55,25 +55,25 @@ import android.view.KeyEvent;
  * development, it simplifies code maintenance later since all maintenance can be consolidated to a
  * single file. For example, if you change the name of a key, you only need to update one line in
  * this class:
- * 
+ *
  * <pre>
  * {@code
  * myPreference = mPreferences.getString( "myOldKey", "myFallbackValue" );
  *            --> mPreferences.getString( "myNewKey", "myFallbackValue" );
  * }
  * </pre>
- * 
+ *
  * Without this class, you would need to search through the entire code base for every call to
  * getString( "myOldKey", ... ) and update each one. This class also ensures that the same fallback
  * value will be used everywhere. A third advantage is that you can easily provide frequently-used
  * "derived" preferences, as in
- * 
+ *
  * <pre>
  * {@code
  * isMyPreferenceValid = ( myPreference != null ) && ( myPreference.field != someBadValue );
  * }
  * </pre>
- * 
+ *
  * Finally, the cost of looking up a preference value is made up front in this class's constructor,
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.
@@ -82,145 +82,148 @@ public class GlobalPrefs
 {
     /** The parent directory containing all user-writable data files. */
     public final String userDataDir;
-    
+
     /** The subdirectory containing gallery data cache. */
     public final String galleryCacheDir;
-    
+
     /** The subdirectory containing cover art files. */
     public final String coverArtDir;
-    
+
     /** The subdirectory containing unzipped ROM files. */
     public final String unzippedRomsDir;
-    
+
     /** The subdirectory containing custom profiles. */
     public final String profilesDir;
-    
+
     /** The subdirectory containing crash logs. */
     public final String crashLogDir;
-    
+
     /** The subdirectory returned from the core's ConfigGetUserDataPath() method. */
     public final String coreUserDataDir;
-    
+
     /** The subdirectory returned from the core's ConfigGetUserCachePath() method. */
     public final String coreUserCacheDir;
-    
+
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
-    
+
+    /** Directory where texture cache htc files are stored */
+    public final String textureCacheDir;
+
     /** The directory containing all custom touchscreen skin folders. */
     public final String touchscreenCustomSkinsDir;
-    
+
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
-    
+
     /** The path of the custom controller profiles file. */
     public final String controllerProfiles_cfg;
-    
+
     /** The path of the custom touchscreen profiles file. */
     public final String touchscreenProfiles_cfg;
-    
+
     /** The path of the custom emulation profiles file. */
     public final String emulationProfiles_cfg;
-    
+
     /** The controller profiles config */
     private ConfigFile mControllerProfilesConfig = null;
-    
+
     /** The touchscreen profiles config */
     private ConfigFile mTouchscreenProfilesConfig = null;
-    
+
     /** The emulation profiles config */
     private ConfigFile mEmulationProfilesConfig = null;
-    
+
     /** The path of the user's custom cheat files. */
     public final String customCheats_txt;
-    
+
     /** The selected audio plug-in. */
     public final Plugin audioPlugin;
-    
+
     /** True if the touchscreen feedback is enabled. */
     public final boolean isTouchscreenFeedbackEnabled;
-    
+
     /** The touchscreen transparency value. */
     public final int touchscreenTransparency;
-    
+
     /** Factor applied to the final calculated visible touchmap scale. */
     public final float touchscreenScale;
-    
+
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
-    
+
     /** True if a single peripheral device can control multiple players concurrently. */
     public final boolean isControllerShared;
-    
+
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
-    
+
     /** True if the recently played section of the gallery should be shown. */
     public final boolean isRecentShown;
-    
+
     /** True if the full ROM rip info should be shown. */
     public final boolean isFullNameShown;
-    
+
     /** The screen orientation for the game activity. */
     public final int displayOrientation;
-    
+
     /** The vertical screen position. */
     public final int displayPosition;
-    
+
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
-    
+
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
-    
+
     /** True if immersive mode should be used (KitKat only). */
     public final boolean isImmersiveModeEnabled;
-    
+
     /** True if framelimiter is used. */
     public final boolean isFramelimiterEnabled;
-    
+
     /** True if Android polygon offset hack is enabled. **/
     public final boolean isPolygonOffsetHackEnabled;
-    
+
     /** The manually-overridden hardware type, used for flicker reduction. */
     public final int videoHardwareType;
-    
+
     /** The polygon offset to use. */
     public final float videoPolygonOffset;
-    
+
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
-    
+
     /** Size of secondary buffer in output samples. This is SDL's hardware buffer, which directly affects latency. */
     public final int audioSDLSecondaryBufferSize;
-    
+
     /** Size of secondary buffer in output samples. This is SLES's hardware buffer, which directly affects latency. */
     public final int audioSLESSecondaryBufferSize;
-    
+
     /** Number of SLES secondary buffers. */
     public final int audioSLESSecondaryBufferNbr;
-    
+
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
-    
+
     /** Maximum number of auto saves */
     public final int maxAutoSaves;
-    
+
     /** The input profile for Player 1. */
     public final ControllerProfile controllerProfile1;
-    
+
     /** The input profile for Player 2. */
     public final ControllerProfile controllerProfile2;
-    
+
     /** The input profile for Player 3. */
     public final ControllerProfile controllerProfile3;
-    
+
     /** The input profile for Player 4. */
     public final ControllerProfile controllerProfile4;
-    
+
     /** The player map for multi-player gaming. */
     public final PlayerMap playerMap;
-    
+
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     private static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -229,7 +232,7 @@ public class GlobalPrefs
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     // ... add more as needed
-    
+
     // Shared preferences default values
     public static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Fast";
     public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = AppData.IS_OUYA_HARDWARE ? "" : "Analog";
@@ -241,28 +244,28 @@ public class GlobalPrefs
     public static final boolean DEFAULT_DOWNLOAD_ART = true;
     public static final boolean DEFAULT_CLEAR_GALLERY = true;
     // ... add more as needed
-    
+
     private final SharedPreferences mPreferences;
     private final Locale mLocale;
     private final String mLocaleCode;
     private final String[] mLocaleNames;
     private final String[] mLocaleCodes;
-    
+
     //Pak Type
     public enum PakType {
         NONE(NativeConstants.PAK_TYPE_NONE, R.string.menuItem_pak_empty),
         MEMORY(NativeConstants.PAK_TYPE_MEMORY, R.string.menuItem_pak_mem),
         RAMBLE(NativeConstants.PAK_TYPE_RUMBLE, R.string.menuItem_pak_rumble);
-        
+
         private final int mNativeValue;
         private final int mResourceStringName;
-        
+
         PakType(int nativeValue, int resourceStringName)
         {
             mNativeValue = nativeValue;
             mResourceStringName = resourceStringName;
         }
-        
+
         public int getNativeValue()
         {
             return mNativeValue;
@@ -283,7 +286,7 @@ public class GlobalPrefs
 
             }
         }
-        
+
         public int getResourceString()
         {
             return mResourceStringName;
@@ -292,24 +295,24 @@ public class GlobalPrefs
 
     /**
      * Instantiates a new user preferences wrapper.
-     * 
+     *
      * @param context
      *            The application context.
      */
     public GlobalPrefs( Context context, AppData appData )
     {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
-        
+
         // Locale
         mLocaleCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
         mLocale = TextUtils.isEmpty( mLocaleCode ) ? Locale.getDefault() : createLocale( mLocaleCode );
-        Locale[] availableLocales = Locale.getAvailableLocales();
+        final Locale[] availableLocales = Locale.getAvailableLocales();
         String[] values = context.getResources().getStringArray( R.array.localeOverride_values );
         String[] entries = new String[values.length];
         for( int i = values.length - 1; i > 0; i-- )
         {
-            Locale locale = createLocale( values[i] );
-            
+            final Locale locale = createLocale( values[i] );
+
             // Get intersection of languages (available on device) and (translated for Mupen)
             if( ArrayUtils.contains( availableLocales, locale ) )
             {
@@ -326,7 +329,7 @@ public class GlobalPrefs
         entries[0] = context.getString( R.string.localeOverride_entrySystemDefault );
         mLocaleNames = entries;
         mLocaleCodes = values;
-        
+
         // Files
         userDataDir = mPreferences.getString( "pathGameSaves", "" );
         galleryCacheDir = userDataDir + "/GalleryCache";
@@ -337,33 +340,34 @@ public class GlobalPrefs
         coreUserDataDir = userDataDir + "/CoreConfig/UserData";
         coreUserCacheDir = userDataDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
+        textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         customCheats_txt = profilesDir + "/customCheats.txt";
         touchscreenCustomSkinsDir = userDataDir + "/CustomSkins";
-        
+
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
-        
+
         // Library prefs
         isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
         isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
-        
+
         // Touchscreen prefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
-        touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
+        touchscreenScale = ( mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
-        
+
         // Video prefs
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         displayPosition = getSafeInt( mPreferences, "displayPosition", Gravity.CENTER_VERTICAL );
-        int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
+        final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
         isFpsEnabled = mPreferences.getBoolean( "displayFps", false );
-        int selectedHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
+        final int selectedHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
         isPolygonOffsetHackEnabled = selectedHardwareType > -2;
         videoHardwareType = selectedHardwareType < 0 ? appData.hardwareInfo.hardwareType : selectedHardwareType;
         switch( videoHardwareType )
@@ -391,35 +395,35 @@ public class GlobalPrefs
                 break;
         }
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
-        
+
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         audioSDLSecondaryBufferSize = getSafeInt( mPreferences, "audioSDLBufferSize", 2048 );
         audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize", 1024 );
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr", 2 );
-        
+
         if( audioPlugin.enabled )
             isFramelimiterEnabled = mPreferences.getBoolean( "audioSynchronize", true );
         else
             isFramelimiterEnabled = !mPreferences.getString( "audioPlugin", "" ).equals( "nospeedlimit" );
-        
+
         // User interface modes
-        String navMode = mPreferences.getString( "navigationMode", "auto" );
+        final String navMode = mPreferences.getString( "navigationMode", "auto" );
         if( navMode.equals( "bigscreen" ) )
             isBigScreenMode = true;
         else if( navMode.equals( "standard" ) )
             isBigScreenMode = false;
         else
             isBigScreenMode = AppData.IS_OUYA_HARDWARE || appData.isAndroidTv; // TODO: Add other systems as they enter market
-        
+
         // Peripheral share mode
         isControllerShared = mPreferences.getBoolean( "inputShareController", false );
-        
+
         maxAutoSaves = mPreferences.getInt( "gameAutoSaves", 5 );
-        
+
         // Determine the key codes that should not be mapped to controls
-        boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
-        List<Integer> unmappables = new ArrayList<Integer>();
+        final boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
+        final List<Integer> unmappables = new ArrayList<Integer>();
         unmappables.add( KeyEvent.KEYCODE_MENU );
 
             // Back key is needed to show/hide the action bar in HC+
@@ -432,7 +436,7 @@ public class GlobalPrefs
             unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
-        
+
         // Controller profiles
         controllerProfile1 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE1,
                 getControllerProfileDefault(1),
@@ -446,37 +450,37 @@ public class GlobalPrefs
         controllerProfile4 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE4,
                 getControllerProfileDefault(4),
                 GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        
+
         // Player map
         playerMap = new PlayerMap( mPreferences.getString( GamePrefs.PLAYER_MAP, "" ) );
-        
+
         // Determine whether controller deconfliction is needed
         int numControllers = 0;
         numControllers += controllerProfile1 != null ? 1 : 0;
         numControllers += controllerProfile2 != null ? 1 : 0;
         numControllers += controllerProfile3 != null ? 1 : 0;
         numControllers += controllerProfile4 != null ? 1 : 0;
-        
+
         playerMap.setEnabled( numControllers > 1 && !isControllerShared );
     }
-    
+
     public void enforceLocale( Activity activity )
     {
-        Configuration config = activity.getBaseContext().getResources().getConfiguration();
+        final Configuration config = activity.getBaseContext().getResources().getConfiguration();
         if( !mLocale.equals( config.locale ) )
         {
             config.locale = mLocale;
             activity.getBaseContext().getResources().updateConfiguration( config, null );
         }
     }
-    
+
     public void changeLocale( final Activity activity )
     {
         // Get the index of the current locale
         final int currentIndex = ArrayUtils.indexOf( mLocaleCodes, mLocaleCode );
-        
+
         // Populate and show the language menu
-        Builder builder = new Builder( activity );
+        final Builder builder = new Builder( activity );
         builder.setTitle( R.string.menuItem_localeOverride );
         builder.setSingleChoiceItems( mLocaleNames, currentIndex, new DialogInterface.OnClickListener()
         {
@@ -498,12 +502,12 @@ public class GlobalPrefs
     {
         return getString( KEY_EMULATION_PROFILE_DEFAULT, DEFAULT_EMULATION_PROFILE_DEFAULT );
     }
-    
+
     public String getTouchscreenProfileDefault()
     {
         return getString( KEY_TOUCHSCREEN_PROFILE_DEFAULT, DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT );
     }
-    
+
     public String getControllerProfileDefault( int player )
     {
         switch( player )
@@ -513,80 +517,80 @@ public class GlobalPrefs
         case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
         default: break;
         }
-        
+
         return getString( GamePrefs.CONTROLLER_PROFILE1, getString( KEY_CONTROLLER_PROFILE_DEFAULT, DEFAULT_CONTROLLER_PROFILE_DEFAULT ) );
     }
-    
+
     public PakType getPakType( int player )
     {
         return PakType.getPakTypeFromNativeValue(getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE ));
     }
-    
+
     public boolean getPlayerMapReminder()
     {
         return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
     }
-    
+
     public void putEmulationProfileDefault( String value )
     {
         putString( KEY_EMULATION_PROFILE_DEFAULT, value );
     }
-    
+
     public void putTouchscreenProfileDefault( String value )
     {
         putString( KEY_TOUCHSCREEN_PROFILE_DEFAULT, value );
     }
-    
+
     public void putControllerProfileDefault( String value )
     {
         putString( GamePrefs.CONTROLLER_PROFILE1, value );
     }
-    
+
     public void putPakType( int player, PakType pakType )
     {
         putInt( KEYTEMPLATE_PAK_TYPE, player, pakType.getNativeValue() );
     }
-    
+
     public void putPlayerMapReminder( boolean value )
     {
         putBoolean( KEY_PLAYER_MAP_REMINDER, value );
     }
-    
+
     public boolean getBoolean( String key, boolean defaultValue )
     {
         return mPreferences.getBoolean( key, defaultValue );
     }
-    
+
     public int getInt( String keyTemplate, int index, int defaultValue )
     {
-        String key = String.format( Locale.US, keyTemplate, index );
+        final String key = String.format( Locale.US, keyTemplate, index );
         return mPreferences.getInt( key, defaultValue );
     }
-    
+
     public String getString( String key, String defaultValue )
     {
         return mPreferences.getString( key, defaultValue );
     }
-    
+
     private void putBoolean( String key, boolean value )
     {
         mPreferences.edit().putBoolean( key, value ).commit();
     }
-    
+
     private void putInt( String keyTemplate, int index, int value )
     {
-        String key = String.format( Locale.US, keyTemplate, index );
+        final String key = String.format( Locale.US, keyTemplate, index );
         mPreferences.edit().putInt( key, value ).commit();
     }
-    
+
     private void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).commit();
     }
-    
+
     private Locale createLocale( String code )
     {
-        String[] codes = code.split( "_" );
+        final String[] codes = code.split( "_" );
         switch( codes.length )
         {
             case 1: // Language code provided
@@ -599,14 +603,14 @@ public class GlobalPrefs
                 return null;
         }
     }
-    
+
     /**
      * Gets the selected value of a ListPreference, as an integer.
-     * 
+     *
      * @param preferences  The object containing the ListPreference.
      * @param key          The key of the ListPreference.
      * @param defaultValue The value to use if parsing fails.
-     * 
+     *
      * @return The value of the selected entry, as an integer.
      */
     private static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )
@@ -615,7 +619,7 @@ public class GlobalPrefs
         {
             return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
         }
-        catch( NumberFormatException ex )
+        catch( final NumberFormatException ex )
         {
             return defaultValue;
         }
@@ -630,7 +634,7 @@ public class GlobalPrefs
 
         return mEmulationProfilesConfig;
     }
-    
+
     public ConfigFile GetTouchscreenProfilesConfig()
     {
         if(mTouchscreenProfilesConfig == null)
@@ -640,7 +644,7 @@ public class GlobalPrefs
 
         return mTouchscreenProfilesConfig;
     }
-    
+
     public ConfigFile GetControllerProfilesConfig()
     {
         if(mControllerProfilesConfig == null)
@@ -650,12 +654,12 @@ public class GlobalPrefs
 
         return mControllerProfilesConfig;
     }
-    
+
     private static ControllerProfile loadControllerProfile( SharedPreferences prefs, String key,
             String defaultName, ConfigFile custom, ConfigFile builtin )
     {
         final String name = prefs.getString( key, defaultName );
-        
+
         if( custom.keySet().contains( name ) )
             return new ControllerProfile( false, custom.get( name ) );
         else if( builtin.keySet().contains( name ) )
