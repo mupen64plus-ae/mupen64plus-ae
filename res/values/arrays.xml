@@ -478,7 +478,7 @@
         <item>128</item>
     </string-array>
     
-    <string name="audioSLESBufferSize_default" translatable="false">1024</string>
+    <string name="audioSLESBufferSize_default" translatable="false">256</string>
     
     <!-- Audio SLES Sampling Rate -->
     <string-array name="audioSLESRate_entries" translatable="false">
