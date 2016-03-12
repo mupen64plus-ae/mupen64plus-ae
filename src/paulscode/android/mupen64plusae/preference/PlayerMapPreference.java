@@ -1,21 +1,21 @@
 /**
  * Mupen64PlusAE, an N64 emulator for the Android platform
- * 
+ *
  * Copyright (C) 2013 Paul Lamb
- * 
+ *
  * This file is part of Mupen64PlusAE.
- * 
+ *
  * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Authors: littleguy77
  */
 package paulscode.android.mupen64plusae.preference;
@@ -52,41 +52,41 @@ public class PlayerMapPreference extends DialogPreference implements
 
     private final PlayerMap mMap = new PlayerMap();
     private List<Integer> mUnmappableKeyCodes;
-    
+
     private Button buttonPlayer1;
     private Button buttonPlayer2;
     private Button buttonPlayer3;
     private Button buttonPlayer4;
     private CheckBox checkBoxReminder;
-    
+
     private String mValue = "";
     private boolean isControllerEnabled1 = true;
     private boolean isControllerEnabled2 = true;
     private boolean isControllerEnabled3 = true;
     private boolean isControllerEnabled4 = true;
-    
+
     private int mSelectedPlayer = 0;
     private FragmentActivity mAssociatedActivity = null;
-    
+
     public PlayerMapPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
         setDialogLayoutResource( R.layout.player_map_preference );
         setDialogMessage( getSummary() );
     }
-    
+
     public void setValue( String value )
     {
         mValue = value;
         if( shouldPersist() )
             persistString( mValue );
     }
-    
+
     public String getValue()
     {
         return mValue;
     }
-    
+
     public void setControllersEnabled( boolean player1, boolean player2, boolean player3, boolean player4 )
     {
         isControllerEnabled1 = player1;
@@ -100,23 +100,23 @@ public class PlayerMapPreference extends DialogPreference implements
     {
         return a.getString( index );
     }
-    
+
     @Override
     protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
     {
         setValue( restorePersistedValue ? getPersistedString( mValue ) : (String) defaultValue );
     }
-    
+
     @Override
     public void onBindDialogView( View view, FragmentActivity associatedActivity )
     {
         // Set the member variables
         mAssociatedActivity = associatedActivity;
-        AppData appData = new AppData( getContext() );
-        GlobalPrefs prefs = new GlobalPrefs( getContext(), appData );
+        final AppData appData = new AppData( getContext() );
+        final GlobalPrefs prefs = new GlobalPrefs( getContext(), appData );
         mUnmappableKeyCodes = prefs.unmappableKeyCodes;
         mMap.deserialize( mValue );
-        
+
         // Initialize and refresh the widgets
         buttonPlayer1 = setupButton( view, R.id.btnPlayer1, isControllerEnabled1 );
         buttonPlayer2 = setupButton( view, R.id.btnPlayer2, isControllerEnabled2 );
@@ -126,16 +126,16 @@ public class PlayerMapPreference extends DialogPreference implements
         checkBoxReminder.setChecked( prefs.getPlayerMapReminder() );
         checkBoxReminder.setOnCheckedChangeListener( this );
         updateViews();
-        
+
         buttonPlayer1.setOnLongClickListener( this );
         buttonPlayer2.setOnLongClickListener( this );
         buttonPlayer3.setOnLongClickListener( this );
         buttonPlayer4.setOnLongClickListener( this );
     }
-    
+
     @Override
     public boolean onLongClick(View view)
-    {        
+    {
         switch( view.getId() )
         {
             case R.id.btnPlayer1:
@@ -152,22 +152,17 @@ public class PlayerMapPreference extends DialogPreference implements
                 break;
             default: return false;
         }
-        
+
         updateViews();
         return true;
     }
-    
+
     @Override
     public void onDialogClosed( boolean positiveResult )
-    {        
-        if( positiveResult )
-        {
-            String value = mMap.serialize();
-            if( callChangeListener( value ) )
-                setValue( value );
-        }
+    {
+
     }
-    
+
     @Override
     protected Parcelable onSaveInstanceState()
     {
@@ -175,7 +170,7 @@ public class PlayerMapPreference extends DialogPreference implements
         myState.mValue = mMap.serialize();
         return myState;
     }
-    
+
     @Override
     protected void onRestoreInstanceState( Parcelable state )
     {
@@ -185,13 +180,13 @@ public class PlayerMapPreference extends DialogPreference implements
             super.onRestoreInstanceState( state );
             return;
         }
-        
+
         final SavedStringState myState = (SavedStringState) state;
         super.onRestoreInstanceState( myState.getSuperState() );
         mMap.deserialize( myState.mValue );
         updateViews();
     }
-    
+
     @Override
     public void onClick( View view )
     {
@@ -211,29 +206,29 @@ public class PlayerMapPreference extends DialogPreference implements
                 break;
         }
     }
-    
+
     @Override
     public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
     {
-        AppData appData = new AppData( getContext() );
+        final AppData appData = new AppData( getContext() );
         new GlobalPrefs( getContext(), appData ).putPlayerMapReminder( isChecked );
     }
-    
+
     private void promptPlayer( final int player )
     {
         mSelectedPlayer = player;
-        
-        Context context = getContext();
-        String title = context.getString( R.string.playerMapPreference_popupTitle, player );
-        String message = context.getString( R.string.playerMapPreference_popupMessage, player,
+
+        final Context context = getContext();
+        final String title = context.getString( R.string.playerMapPreference_popupTitle, player );
+        final String message = context.getString( R.string.playerMapPreference_popupMessage, player,
                 mMap.getDeviceSummary( context, player ) );
-        String btnText = context.getString( R.string.playerMapPreference_popupUnmap );
-        
-        
-        PromptInputCodeDialog promptInputCodeDialog = PromptInputCodeDialog.newInstance(
+        final String btnText = context.getString( R.string.playerMapPreference_popupUnmap );
+
+
+        final PromptInputCodeDialog promptInputCodeDialog = PromptInputCodeDialog.newInstance(
             title, message, btnText, mUnmappableKeyCodes);
-        
-        FragmentManager fm = mAssociatedActivity.getSupportFragmentManager();
+
+        final FragmentManager fm = mAssociatedActivity.getSupportFragmentManager();
         promptInputCodeDialog.show(fm, STATE_PROMPT_INPUT_CODE_DIALOG);
     }
 
@@ -246,9 +241,13 @@ public class PlayerMapPreference extends DialogPreference implements
             else
                 mMap.unmapPlayer( mSelectedPlayer );
             updateViews();
+
+            final String value = mMap.serialize();
+            if( callChangeListener( value ) )
+                setValue( value );
         }
     }
-    
+
     private void updateViews()
     {
         updatePlayerButton( buttonPlayer1, 1 );
@@ -256,22 +255,22 @@ public class PlayerMapPreference extends DialogPreference implements
         updatePlayerButton( buttonPlayer3, 3 );
         updatePlayerButton( buttonPlayer4, 4 );
     }
-    
+
     private void updatePlayerButton( Button button, int player )
     {
         if( button != null )
         {
-            Context context = getContext();
-            String deviceInfo = mMap.getDeviceSummary( context, player );
-            String buttonText = context.getString( R.string.playerMapPreference_button, player,
+            final Context context = getContext();
+            final String deviceInfo = mMap.getDeviceSummary( context, player );
+            final String buttonText = context.getString( R.string.playerMapPreference_button, player,
                     deviceInfo );
             button.setText( buttonText );
         }
     }
-    
+
     private Button setupButton( View parentView, int resId, boolean isEnabled )
     {
-        Button button = (Button) parentView.findViewById( resId );
+        final Button button = (Button) parentView.findViewById( resId );
         button.setVisibility( isEnabled ? View.VISIBLE : View.GONE );
         button.setOnClickListener( this );
         return button;
@@ -280,6 +279,6 @@ public class PlayerMapPreference extends DialogPreference implements
     @Override
     public void onPrepareDialogBuilder(Context context, Builder builder)
     {
-        //Nothing to do here
+        builder.setNegativeButton(null, null);
     }
 }
