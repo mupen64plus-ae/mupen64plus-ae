@@ -70,10 +70,10 @@
         android:title="@string/audioSLESBufferSize_title" />
 
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
-        android:defaultValue="20"
+        android:defaultValue="15"
         android:key="audioSLESBufferNbr2"
         android:title="@string/audioSLESBufferNbr_title"
-        mupen64:maximumValue="50"
+        mupen64:maximumValue="75"
         mupen64:minimumValue="2"
         mupen64:saveType="string"
         mupen64:stepSize="1"
