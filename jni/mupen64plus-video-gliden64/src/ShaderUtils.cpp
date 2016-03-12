@@ -33,6 +33,24 @@ bool checkProgramLinkStatus(GLuint obj)
 	return true;
 }
 
+void logErrorShader(GLenum _shaderType, const std::string & _strShader)
+{
+	LOG(LOG_ERROR, "Error in %s shader", _shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment");
+
+	const int max = 800;
+	int pos = 0;
+
+	while(pos < _strShader.length() ) {
+
+		if (_strShader.length() - pos < max) {
+			LOG(LOG_ERROR, "%s", _strShader.substr(pos).data());
+		} else {
+			LOG(LOG_ERROR, "%s", _strShader.substr(pos, max).data());
+		}
+		pos += max;
+	}
+}
+
 GLuint createShaderProgram(const char * _strVertex, const char * _strFragment)
 {
 	GLuint vertex_shader_object = glCreateShader(GL_VERTEX_SHADER);
@@ -167,7 +185,7 @@ void _correctSecondStageParams(CombinerStage & _stage) {
 }
 
 static
-int _compileCombiner(const CombinerStage & _stage, const char** _Input, char * _strCombiner) {
+int _compileCombiner(const CombinerStage & _stage, const char** _Input, std::string & _strShader) {
 	char buf[128];
 	bool bBracketOpen = false;
 	int nRes = 0;
@@ -175,7 +193,7 @@ int _compileCombiner(const CombinerStage & _stage, const char** _Input, char * _
 		switch (_stage.op[i].op) {
 		case LOAD:
 			sprintf(buf, "(%s ", _Input[_stage.op[i].param1]);
-			strcat(_strCombiner, buf);
+			_strShader += buf;
 			bBracketOpen = true;
 			nRes |= 1 << _stage.op[i].param1;
 			break;
@@ -186,7 +204,7 @@ int _compileCombiner(const CombinerStage & _stage, const char** _Input, char * _
 			}
 			else
 				sprintf(buf, "- %s", _Input[_stage.op[i].param1]);
-			strcat(_strCombiner, buf);
+			_strShader += buf;
 			nRes |= 1 << _stage.op[i].param1;
 			break;
 		case ADD:
@@ -196,7 +214,7 @@ int _compileCombiner(const CombinerStage & _stage, const char** _Input, char * _
 			}
 			else
 				sprintf(buf, "+ %s", _Input[_stage.op[i].param1]);
-			strcat(_strCombiner, buf);
+			_strShader += buf;
 			nRes |= 1 << _stage.op[i].param1;
 			break;
 		case MUL:
@@ -206,12 +224,12 @@ int _compileCombiner(const CombinerStage & _stage, const char** _Input, char * _
 			}
 			else
 				sprintf(buf, "*%s", _Input[_stage.op[i].param1]);
-			strcat(_strCombiner, buf);
+			_strShader += buf;
 			nRes |= 1 << _stage.op[i].param1;
 			break;
 		case INTER:
 			sprintf(buf, "mix(%s, %s, %s)", _Input[_stage.op[0].param2], _Input[_stage.op[0].param1], _Input[_stage.op[0].param3]);
-			strcat(_strCombiner, buf);
+			_strShader += buf;
 			nRes |= 1 << _stage.op[i].param1;
 			nRes |= 1 << _stage.op[i].param2;
 			nRes |= 1 << _stage.op[i].param3;
@@ -222,43 +240,53 @@ int _compileCombiner(const CombinerStage & _stage, const char** _Input, char * _
 		}
 	}
 	if (bBracketOpen)
-		strcat(_strCombiner, ")");
-	strcat(_strCombiner, "; \n");
+		_strShader.append(")");
+	_strShader.append("; \n");
 	return nRes;
 }
 
-int compileCombiner(Combiner & _color, Combiner & _alpha, char * _strShader)
+int compileCombiner(Combiner & _color, Combiner & _alpha, std::string & _strShader)
 {
 	if (gDP.otherMode.cycleType == G_CYC_1CYCLE) {
 		_correctFirstStageParams(_alpha.stage[0]);
 		_correctFirstStageParams(_color.stage[0]);
 	}
-	strcpy(_strShader, "  alpha1 = ");
+	_strShader.append("  alpha1 = ");
 	int nInputs = _compileCombiner(_alpha.stage[0], AlphaInput, _strShader);
-	strcat(_strShader,
-		"  if (uEnableAlphaTest != 0) {				\n"
-		"    lowp float alphaTestValue = (uAlphaCompareMode == 3 && alpha1 > 0.0) ? snoise() : uAlphaTestValue;	\n"
-		"    if  (alpha1 < alphaTestValue) discard;	\n"
-		"  }										\n"
-		);
-	strcat(_strShader, "  color1 = ");
-	nInputs |= _compileCombiner(_color.stage[0], ColorInput, _strShader);
-	strcat(_strShader, fragment_shader_blender);
 
-	strcat(_strShader, "  combined_color = vec4(color1, alpha1); \n");
+	_strShader.append(
+		"  if (uEnableAlphaTest != 0) {							\n"
+		"    lowp float alphaTestValue = (uAlphaCompareMode == 3) ? snoise() : uAlphaTestValue;	\n"
+		"    lowp float alphaValue = alpha1;					\n"
+		"    if  (uAlphaCvgSel == 0) {							\n"
+		"       alphaValue += 0.0078125;						\n"
+		"       alphaValue = clamp(alphaValue, 0.0, 1.0);		\n"
+		"    } else {											\n"
+		"       if (uCvgXAlpha != 0) alphaValue *= 0.5;			\n"
+		"       else alphaValue = 0.125;						\n"
+		"    }													\n"
+		"    if (alphaValue < alphaTestValue) discard;			\n"
+		"  }													\n"
+		);
+
+	_strShader.append("  color1 = ");
+	nInputs |= _compileCombiner(_color.stage[0], ColorInput, _strShader);
+	_strShader.append(fragment_shader_blender);
+
+	_strShader.append("  combined_color = vec4(color1, alpha1); \n");
 	if (_alpha.numStages == 2) {
-		strcat(_strShader, "  alpha2 = ");
+		_strShader.append("  alpha2 = ");
 		_correctSecondStageParams(_alpha.stage[1]);
 		nInputs |= _compileCombiner(_alpha.stage[1], AlphaInput, _strShader);
 	}
 	else
-		strcat(_strShader, "  alpha2 = alpha1; \n");
+		_strShader.append("  alpha2 = alpha1; \n");
 	if (_color.numStages == 2) {
-		strcat(_strShader, "  color2 = ");
+		_strShader.append("  color2 = ");
 		_correctSecondStageParams(_color.stage[1]);
 		nInputs |= _compileCombiner(_color.stage[1], ColorInput, _strShader);
 	}
 	else
-		strcat(_strShader, "  color2 = color1; \n");
+		_strShader.append("  color2 = color1; \n");
 	return nInputs;
 }

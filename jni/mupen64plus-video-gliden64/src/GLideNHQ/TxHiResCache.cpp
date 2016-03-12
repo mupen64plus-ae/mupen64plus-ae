@@ -52,7 +52,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../Log.h"
 
 TxHiResCache::~TxHiResCache()
 {
@@ -98,7 +97,6 @@ TxHiResCache::TxHiResCache(int maxwidth, int maxheight, int maxbpp, int options,
   }
 
 #if DUMP_CACHE
-
   /* read in hires texture cache */
   if (_options & DUMP_HIRESTEXCACHE) {
 	/* find it on disk */
@@ -107,8 +105,6 @@ TxHiResCache::TxHiResCache(int maxwidth, int maxheight, int maxbpp, int options,
 	cachepath += OSAL_DIR_SEPARATOR_STR;
 	cachepath += wst("cache");
 	int config = _options & (HIRESTEXTURES_MASK|TILE_HIRESTEX|FORCE16BPP_HIRESTEX|GZ_HIRESTEXCACHE|LET_TEXARTISTS_FLY);
-
-	LOG(LOG_ERROR, "config=0x%x, options=0x%x", config, _options);
 
 	_haveCache = TxCache::load(cachepath.c_str(), filename.c_str(), config);
   }

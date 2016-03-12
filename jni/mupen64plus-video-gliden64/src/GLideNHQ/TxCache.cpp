@@ -31,7 +31,6 @@
 #include <zlib.h>
 #include <memory.h>
 #include <stdlib.h>
-#include "../Log.h"
 
 TxCache::~TxCache()
 {
@@ -308,8 +307,6 @@ TxCache::save(const wchar_t *path, const wchar_t *filename, int config)
 boolean
 TxCache::load(const wchar_t *path, const wchar_t *filename, int config)
 {
-	LOG(LOG_ERROR, "Loading!!! Path: %ls/%ls, config=0x%x", path, filename, config);
-
 	/* find it on disk */
 	char cbuf[MAX_PATH];
 
@@ -327,7 +324,7 @@ TxCache::load(const wchar_t *path, const wchar_t *filename, int config)
 	wcstombs(cbuf, filename, MAX_PATH);
 
 	gzFile gzfp = gzopen(cbuf, "rb");
-	LOG(LOG_ERROR, "gzfp:%x file:%ls\n", gzfp, filename);
+	DBG_INFO(80, wst("gzfp:%x file:%ls\n"), gzfp, filename);
 	if (gzfp) {
 		/* yep, we have it. load it into memory cache. */
 		int dataSize;
@@ -336,11 +333,7 @@ TxCache::load(const wchar_t *path, const wchar_t *filename, int config)
 		/* read header to determine config match */
 		gzread(gzfp, &tmpconfig, 4);
 
-		LOG(LOG_ERROR, "Loading high res textures file_config=0x%x, current_config=0x%x",tmpconfig, config);
-
 		if (tmpconfig == config) {
-
-
 			do {
 				GHQTexInfo tmpInfo;
 
@@ -370,6 +363,7 @@ TxCache::load(const wchar_t *path, const wchar_t *filename, int config)
 				/* skip in between to prevent the loop from being tied down to vsync */
 				if (_callback && (!(_cache.size() % 100) || gzeof(gzfp)))
 					(*_callback)(wst("[%d] total mem:%.02fmb - %ls\n"), _cache.size(), (float)_totalSize/1000000, filename);
+
 			} while (!gzeof(gzfp));
 			gzclose(gzfp);
 		}

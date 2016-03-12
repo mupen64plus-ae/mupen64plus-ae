@@ -282,19 +282,58 @@ ShaderCombiner::ShaderCombiner() : m_bNeedUpdate(true)
 
 ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCombine & _combine) : m_combine(_combine), m_bNeedUpdate(true)
 {
-	char strCombiner[1024];
+	std::string strCombiner;
 	m_nInputs = compileCombiner(_color, _alpha, strCombiner);
+
+	const bool bUseLod = usesLOD();
+	const bool bUseHWLight = config.generalEmulation.enableHWLighting != 0 && GBI.isHWLSupported() && usesShadeColor();
 
 	if (usesTexture()) {
 		strFragmentShader.assign(fragment_shader_header_common_variables);
-		strFragmentShader.append(fragment_shader_header_common_functions);
-	}
-	else {
+
+#ifdef GL_MULTISAMPLING_SUPPORT
+		if (config.video.multisampling > 0) {
+			strFragmentShader.append(fragment_shader_header_common_variables_ms_enabled);
+			if(usesTile(0))
+				strFragmentShader.append(fragment_shader_header_common_variables_ms_tex0);
+			if(usesTile(1))
+				strFragmentShader.append(fragment_shader_header_common_variables_ms_tex1);
+		}
+#endif
+
+		strFragmentShader.append(fragment_shader_header_noise);
+		strFragmentShader.append(fragment_shader_header_noise_dither);
+
+		if (bUseLod)
+			strFragmentShader.append(fragment_shader_header_mipmap);
+		else {
+			strFragmentShader.append(fragment_shader_header_readTex);
+#ifdef GL_MULTISAMPLING_SUPPORT
+			if (config.video.multisampling > 0)
+				strFragmentShader.append(fragment_shader_header_readTexMS);
+#endif
+		}
+#ifdef GL_IMAGE_TEXTURES_SUPPORT
+		if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
+			strFragmentShader.append(fragment_shader_header_depth_compare);
+#endif
+
+	} else {
 		strFragmentShader.assign(fragment_shader_header_common_variables_notex);
-		strFragmentShader.append(fragment_shader_header_common_functions_notex);
+		strFragmentShader.append(fragment_shader_header_noise);
+		strFragmentShader.append(fragment_shader_header_noise_dither);
+
+#ifdef GL_IMAGE_TEXTURES_SUPPORT
+		if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
+			strFragmentShader.append(fragment_shader_header_depth_compare);
+#endif
+
 	}
+
+	if (bUseHWLight)
+		strFragmentShader.append(fragment_shader_header_calc_light);
+
 	strFragmentShader.append(fragment_shader_header_main);
-	const bool bUseLod = usesLOD();
 	if (bUseLod) {
 		strFragmentShader.append("  lowp vec4 readtex0, readtex1; \n");
 		strFragmentShader.append("  lowp float lod_frac = mipmap(readtex0, readtex1);	\n");
@@ -323,13 +362,16 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 			strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1] != 0); \n");
 #endif // GL_MULTISAMPLING_SUPPORT
 	}
-	const bool bUseHWLight = config.generalEmulation.enableHWLighting != 0 && GBI.isHWLSupported() && usesShadeColor();
 	if (bUseHWLight)
 		strFragmentShader.append("  calc_light(vNumLights, vShadeColor.rgb, input_color); \n");
 	else
 		strFragmentShader.append("  input_color = vShadeColor.rgb;\n");
 	strFragmentShader.append("  vec_color = vec4(input_color, vShadeColor.a); \n");
 	strFragmentShader.append(strCombiner);
+
+	strFragmentShader.append(
+		"  if (uCvgXAlpha != 0 && alpha2 == 0.0) discard; \n"
+		);
 
 	if (config.generalEmulation.enableNoise != 0) {
 		strFragmentShader.append(
@@ -390,26 +432,8 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 	const GLchar * strShaderData = strFragmentShader.data();
 	glShaderSource(fragmentShader, 1, &strShaderData, NULL);
 	glCompileShader(fragmentShader);
-        if (!checkShaderCompileStatus(fragmentShader))
-        {
-             int pos = 0;
-                int max = 900;
-                LOG(LOG_ERROR, "Error in fragment shader");
-
-                while(pos < strFragmentShader.length() )
-                {
-                   if(strFragmentShader.length() - pos < max)
-                   {
-                           LOG(LOG_ERROR, "%s", strFragmentShader.substr(pos).data());
-                   }
-                   else
-                   {
-                             LOG(LOG_ERROR, "%s", strFragmentShader.substr(pos, max).data());
-                   }
-
-                   pos += max;
-                }
-        }
+	if (!checkShaderCompileStatus(fragmentShader))
+		logErrorShader(GL_FRAGMENT_SHADER, strFragmentShader);
 
 	m_program = glCreateProgram();
 	_locate_attributes();
@@ -464,6 +488,8 @@ void ShaderCombiner::_locateUniforms() {
 	LocateUniform(uAlphaCompareMode);
 	LocateUniform(uAlphaDitherMode);
 	LocateUniform(uColorDitherMode);
+	LocateUniform(uCvgXAlpha);
+	LocateUniform(uAlphaCvgSel);
 	LocateUniform(uEnableLod);
 	LocateUniform(uEnableAlphaTest);
 	LocateUniform(uEnableDepth);
@@ -654,7 +680,10 @@ void ShaderCombiner::updateLOD(bool _bForce)
 	if (config.generalEmulation.enableLOD != 0) {
 		const int uCalcLOD = (gDP.otherMode.textureLOD == G_TL_LOD) ? 1 : 0;
 		m_uniforms.uEnableLod.set(uCalcLOD, _bForce);
-		m_uniforms.uScreenScale.set(video().getScaleX(), video().getScaleY(), _bForce);
+		if (config.frameBufferEmulation.nativeResFactor == 0)
+			m_uniforms.uScreenScale.set(video().getScaleX(), video().getScaleY(), _bForce);
+		else
+			m_uniforms.uScreenScale.set(float(config.frameBufferEmulation.nativeResFactor), float(config.frameBufferEmulation.nativeResFactor), _bForce);
 		m_uniforms.uTextureDetail.set(gDP.otherMode.textureDetail, _bForce);
 	}
 }
@@ -729,28 +758,23 @@ void ShaderCombiner::updateDepthInfo(bool _bForce) {
 void ShaderCombiner::updateAlphaTestInfo(bool _bForce) {
 	if (gDP.otherMode.cycleType == G_CYC_FILL) {
 		m_uniforms.uEnableAlphaTest.set(0, _bForce);
-		m_uniforms.uAlphaTestValue.set(0.0f, _bForce);
 	} else if (gDP.otherMode.cycleType == G_CYC_COPY) {
 		if (gDP.otherMode.alphaCompare & G_AC_THRESHOLD) {
 			m_uniforms.uEnableAlphaTest.set(1, _bForce);
+			m_uniforms.uAlphaCvgSel.set(0, _bForce);
 			m_uniforms.uAlphaTestValue.set(0.5f, _bForce);
 		} else {
 			m_uniforms.uEnableAlphaTest.set(0, _bForce);
-			m_uniforms.uAlphaTestValue.set(0.0f, _bForce);
 		}
-	} else if (((gDP.otherMode.alphaCompare & G_AC_THRESHOLD) != 0) && (gDP.otherMode.alphaCvgSel == 0) && (gDP.otherMode.forceBlender == 0 || gDP.blendColor.a > 0))	{
+	} else if ((gDP.otherMode.alphaCompare & G_AC_THRESHOLD) != 0) {
 		m_uniforms.uEnableAlphaTest.set(1, _bForce);
-		m_uniforms.uAlphaTestValue.set(max(gDP.blendColor.a, 1.0f / 256.0f), _bForce);
-	} else if ((gDP.otherMode.alphaCompare == G_AC_DITHER) && (gDP.otherMode.alphaCvgSel == 0))	{
-		m_uniforms.uEnableAlphaTest.set(1, _bForce);
-		m_uniforms.uAlphaTestValue.set(0.0f, _bForce);
-	} else if (gDP.otherMode.cvgXAlpha != 0)	{
-		m_uniforms.uEnableAlphaTest.set(1, _bForce);
-		m_uniforms.uAlphaTestValue.set(0.125f, _bForce);
+		m_uniforms.uAlphaTestValue.set(gDP.blendColor.a, _bForce);
+		m_uniforms.uAlphaCvgSel.set(gDP.otherMode.alphaCvgSel, _bForce);
 	} else {
 		m_uniforms.uEnableAlphaTest.set(0, _bForce);
-		m_uniforms.uAlphaTestValue.set(0.0f, _bForce);
 	}
+
+	m_uniforms.uCvgXAlpha.set(gDP.otherMode.cvgXAlpha, _bForce);
 }
 
 std::ostream & operator<< (std::ostream & _os, const ShaderCombiner & _combiner)
