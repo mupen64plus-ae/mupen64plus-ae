@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    Wherever possible, use Android's built-in Preference framework for defining global
+    user settings and the menu interface that supports them:
+        http://developer.android.com/guide/topics/ui/settings.html
+        http://developer.android.com/design/patterns/settings.html
+    
+    Please follow our naming convention (casing and underscores) for all Preferences:
+        <android.support.v7.preference.CheckBoxPreference
+            android:key="myKey"
+            android:title="@string/myKey_title"
+            android:summary="@string/myKey_summary"
+            ...
+            />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            ...
+            android:entries="@array/myKey_entries"
+            android:entryValues="@array/myKey_values"
+            android:defaultValue="@string/myKey_default"
+            ...
+            />
+        <paulscode.android.mupen64plusae.MyCustomPreference
+            ...
+            mupen64:myAttribute="@string/myKey_myAttribute"
+            ...
+            />
+    
+    Strings should never be hard-coded into this file, with the exception perhaps of
+    boolean default values.  Instead, define all strings as resources in:
+        res/values/strings.xml
+    
+    To improve code readability, define all arrays as resources in:
+        res/values/arrays.xml
+    Define default array values below the arrays themselves in arrays.xml, rather than
+    in strings.xml.  This makes it easy to keep arrays and their default values
+    synchronized.
+    
+    To minimize app size, consider using Android's built-in resources when possible.
+    For example, consider icon resources in "@android:drawable/..." instead of custom
+    resources in "@drawable/...".       
+    ***********************************************************************************
+-->
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
+    android:key="screenRoot" >
+
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="100"
+        android:key="touchscreenScale"
+        android:title="@string/touchscreenScale_title"
+        mupen64:maximumValue="400"
+        mupen64:minimumValue="50"
+        mupen64:stepSize="1"
+        mupen64:units="%" />
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="100"
+        android:key="touchscreenTransparency"
+        android:title="@string/touchscreenTransparency_title"
+        mupen64:maximumValue="100"
+        mupen64:stepSize="10"
+        mupen64:units="%" />
+
+    <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="touchscreenFeedback"
+        android:summary="@string/touchscreenFeedback_summary"
+        android:title="@string/touchscreenFeedback_title" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/touchscreenAutoHold_default"
+        android:entries="@array/touchscreenAutoHold_entries"
+        android:entryValues="@array/touchscreenAutoHold_values"
+        android:key="touchscreenAutoHold"
+        android:summary="@string/selectedValue"
+        android:title="@string/touchscreenAutoHold_title" />
+
+</android.support.v7.preference.PreferenceScreen>

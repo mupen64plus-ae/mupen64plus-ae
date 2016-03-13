@@ -9,7 +9,28 @@
     <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"
-        android:title="@string/menuItem_settings"/>
+        android:title="@string/menuItem_settings">
+        <menu>
+            <item
+                android:id="@+id/menuItem_categoryLibrary"
+                android:title="@string/categoryLibrary_title"/>
+            <item
+                android:id="@+id/menuItem_categoryDisplay"
+                android:title="@string/categoryDisplay_title"/>
+            <item
+                android:id="@+id/menuItem_categoryAudio"
+                android:title="@string/categoryAudio_title"/>
+            <item
+                android:id="@+id/menuItem_categoryTouchscreen"
+                android:title="@string/categoryTouchscreen_title"/>
+            <item
+                android:id="@+id/menuItem_categoryInput"
+                android:title="@string/categoryInput_title"/>
+            <item
+                android:id="@+id/menuItem_categoryData"
+                android:title="@string/categoryData_title"/>
+        </menu>
+    </item>
     <item
         android:id="@+id/menuItem_localeOverride"
         android:icon="@drawable/ic_location"

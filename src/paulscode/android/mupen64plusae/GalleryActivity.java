@@ -1,21 +1,21 @@
 /**
  * Mupen64PlusAE, an N64 emulator for the Android platform
- * 
+ *
  * Copyright (C) 2013 Paul Lamb
- * 
+ *
  * This file is part of Mupen64PlusAE.
- * 
+ *
  * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Authors: littleguy77
  */
 package paulscode.android.mupen64plusae;
@@ -50,8 +50,8 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -88,42 +88,42 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final int RESTART_CONFIRM_DIALOG_ID = 0;
-    
+
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
-    
+
     // Widgets
     private RecyclerView mGridView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MenuListView mDrawerList;
     private GameSidebar mGameSidebar;
-    
+
     // Searching
     private SearchView mSearchView;
     private String mSearchQuery = "";
-    
+
     // Resizable gallery thumbnails
     public int galleryWidth;
     public int galleryMaxWidth;
     public int galleryHalfSpacing;
     public int galleryColumns = 2;
     public float galleryAspectRatio;
-    
+
     // Misc.
     private List<GalleryItem> mGalleryItems = null;
     private GalleryItem mSelectedItem = null;
     private boolean mDragging = false;
-    
+
     private CacheRomInfoFragment mCacheRomInfoFragment = null;
-    
+
     //True if the restart promp is enabled
     boolean mRestartPromptEnabled = true;
-    
+
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
-    
+
     @Override
     protected void onNewIntent( Intent intent )
     {
@@ -136,59 +136,59 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // is the selected game path, so we only need to refresh that aspect of the UI. This will
         // happen anyhow in onResume(), so we don't really need to do much here.
         super.onNewIntent( intent );
-        
+
         // Only remember the last intent used
         setIntent( intent );
     }
-    
+
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        
+
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
-        
-        int lastVer = mAppData.getLastAppVersionCode();
-        int currVer = mAppData.appVersionCode;
+
+        final int lastVer = mAppData.getLastAppVersionCode();
+        final int currVer = mAppData.appVersionCode;
         if( lastVer != currVer )
         {
             // First run after install/update, greet user with changelog, then help dialog
             Popups.showFaq( this );
-            ChangeLog log = new ChangeLog( getAssets() );
+            final ChangeLog log = new ChangeLog( getAssets() );
             if( log.show( this, lastVer + 1, currVer ) )
             {
                 mAppData.putLastAppVersionCode( currVer );
             }
         }
-        
+
         // Get the ROM path if it was passed from another activity/app
-        Bundle extras = getIntent().getExtras();
+        final Bundle extras = getIntent().getExtras();
         if( extras != null )
         {
-            String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+            final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
             if( !TextUtils.isEmpty( givenRomPath ) )
             {
                 // Asynchronously compute MD5 and launch game when finished
                 Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
-                ComputeMd5Task task = new ComputeMd5Task( new File( givenRomPath ), new ComputeMd5Listener()
+                final ComputeMd5Task task = new ComputeMd5Task( new File( givenRomPath ), new ComputeMd5Listener()
                 {
                     @Override
                     public void onComputeMd5Finished( File file, String md5 )
                     {
-                        RomHeader header = new RomHeader(file);
-                        
+                        final RomHeader header = new RomHeader(file);
+
                         final RomDatabase database = RomDatabase.getInstance();
-                        
+
                         if(!database.hasDatabaseFile())
                         {
                             database.setDatabaseFile(mAppData.mupen64plus_ini);
                         }
-                        
-                        RomDetail detail = database.lookupByMd5WithFallback( md5, file, header.crc );
+
+                        final RomDetail detail = database.lookupByMd5WithFallback( md5, file, header.crc );
                         launchGameActivity( file.getAbsolutePath(), null, true, md5, header.crc, header.name,
                             header.countryCode, null, detail.goodName, false );
                     }
@@ -196,45 +196,45 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 task.execute();
             }
         }
-        
+
         // Lay out the content
         setContentView( R.layout.gallery_activity );
         mGridView = (RecyclerView) findViewById( R.id.gridview );
         refreshGrid();
-        
+
         // Update the grid layout
         galleryMaxWidth = (int) getResources().getDimension( R.dimen.galleryImageWidth );
         galleryHalfSpacing = (int) getResources().getDimension( R.dimen.galleryHalfSpacing );
         galleryAspectRatio = galleryMaxWidth * 1.0f
                 / getResources().getDimension( R.dimen.galleryImageHeight );
-        
-        DisplayMetrics metrics = new DisplayMetrics();
+
+        final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics( metrics );
-        
-        int width = metrics.widthPixels - galleryHalfSpacing * 2;
+
+        final int width = metrics.widthPixels - galleryHalfSpacing * 2;
         galleryColumns = (int) Math
                 .ceil( width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
         galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
-        
-        GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
+
+        final GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
         layoutManager.setSpanCount( galleryColumns );
         mGridView.getAdapter().notifyDataSetChanged();
         mGridView.setFocusable(false);
         mGridView.setFocusableInTouchMode(false);
-        
+
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
-        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+        final Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         toolbar.setTitle( R.string.app_name );
-        View firstGridChild = mGridView.getChildAt(0);
-        
+        final View firstGridChild = mGridView.getChildAt(0);
+
         if(firstGridChild != null)
         {
             toolbar.setNextFocusDownId(firstGridChild.getId());
         }
 
-        
+
         setSupportActionBar( toolbar );
-        
+
         // Configure the navigation drawer
         mDrawerLayout = (DrawerLayout) findViewById( R.id.drawerLayout );
         mDrawerToggle = new ActionBarDrawerToggle( this, mDrawerLayout, toolbar, 0, 0 )
@@ -264,7 +264,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     }
                 }
             }
-            
+
             @Override
             public void onDrawerClosed( View drawerView )
             {
@@ -272,10 +272,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mDrawerList.setVisibility( View.VISIBLE );
                 mGameSidebar.setVisibility( View.GONE );
                 mSelectedItem = null;
-                
+
                 super.onDrawerClosed( drawerView );
             }
-            
+
             @Override
             public void onDrawerOpened( View drawerView )
             {
@@ -284,21 +284,21 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
         };
         mDrawerLayout.setDrawerListener( mDrawerToggle );
-        
+
         // Configure the list in the navigation drawer
         mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
         mDrawerList.setMenuResource( R.menu.gallery_drawer );
-        
+
         //Remove touch screen profile configuration if in TV mode
         if(mGlobalPrefs.isBigScreenMode)
         {
-            MenuItem profileGroupItem = mDrawerList.getMenu().findItem(R.id.menuItem_profiles);
+            final MenuItem profileGroupItem = mDrawerList.getMenu().findItem(R.id.menuItem_profiles);
             profileGroupItem.getSubMenu().removeItem(R.id.menuItem_touchscreenProfiles);
         }
-        
+
         // Select the Library section
         mDrawerList.getMenu().getItem( 0 ).setChecked( true );
-        
+
         // Handle menu item selections
         mDrawerList.setOnClickListener( new MenuListView.OnClickListener()
         {
@@ -308,21 +308,21 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 GalleryActivity.this.onOptionsItemSelected( menuItem );
             }
         } );
-        
+
         // Configure the game information drawer
         mGameSidebar = (GameSidebar) findViewById( R.id.gameSidebar );
-        
+
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
-        
+
         if( savedInstanceState != null )
         {
             mSelectedItem = null;
-            String md5 = savedInstanceState.getString( STATE_SIDEBAR );
+            final String md5 = savedInstanceState.getString( STATE_SIDEBAR );
             if( md5 != null )
             {
                 // Repopulate the game sidebar
-                for( GalleryItem item : mGalleryItems )
+                for( final GalleryItem item : mGalleryItems )
                 {
                     if( md5.equals( item.md5 ) )
                     {
@@ -331,48 +331,48 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     }
                 }
             }
-            
-            String query = savedInstanceState.getString( STATE_QUERY );
+
+            final String query = savedInstanceState.getString( STATE_QUERY );
             if( query != null )
                 mSearchQuery = query;
-            
+
             mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
         }
-        
+
         // find the retained fragment on activity restarts
-        FragmentManager fm = getSupportFragmentManager();
+        final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (CacheRomInfoFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
-        
+
         if(mCacheRomInfoFragment == null)
         {
             mCacheRomInfoFragment = new CacheRomInfoFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
         }
-        
+
         // Set the sidebar opacity on the two sidebars
         mDrawerList.setBackgroundDrawable( new DrawerDrawable(
                 mGlobalPrefs.displayActionBarTransparency ) );
         mGameSidebar.setBackgroundDrawable( new DrawerDrawable(
                 mGlobalPrefs.displayActionBarTransparency ) );
     }
-    
+
     @Override
     public void onResume()
     {
         super.onResume();
-        
+
         //mRefreshNeeded will be set to true whenever a game is launched
         if(mRefreshNeeded)
-        {            
+        {
             mRefreshNeeded = false;
             refreshGrid();
-            
+
             mGameSidebar.setVisibility( View.GONE );
             mDrawerList.setVisibility( View.VISIBLE );
-            
+
             //Close the drawer without an animation
             final View view = mDrawerLayout.getChildAt(mDrawerLayout.getChildCount() - 1);
-            ViewTreeObserver vto = view.getViewTreeObserver();
+            final ViewTreeObserver vto = view.getViewTreeObserver();
 
             vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
             {
@@ -391,7 +391,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             });
         }
     }
-    
+
     @Override
     public void onSaveInstanceState( Bundle savedInstanceState )
     {
@@ -400,17 +400,17 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( mSelectedItem != null )
             savedInstanceState.putString( STATE_SIDEBAR, mSelectedItem.md5 );
         savedInstanceState.putBoolean(STATE_GALLERY_REFRESH_NEEDED, mRefreshNeeded);
-        
+
         super.onSaveInstanceState( savedInstanceState );
     }
-    
+
     public void hideSoftKeyboard()
     {
         // Hide the soft keyboard if needed
         if( mSearchView == null )
             return;
-        
-        InputMethodManager imm = (InputMethodManager) getSystemService( Context.INPUT_METHOD_SERVICE );
+
+        final InputMethodManager imm = (InputMethodManager) getSystemService( Context.INPUT_METHOD_SERVICE );
         imm.hideSoftInputFromWindow( mSearchView.getWindowToken(), 0 );
     }
 
@@ -420,20 +420,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         super.onPostCreate( savedInstanceState );
         mDrawerToggle.syncState();
     }
-    
+
     @Override
     public void onConfigurationChanged( Configuration newConfig )
     {
         super.onConfigurationChanged( newConfig );
         mDrawerToggle.onConfigurationChanged( newConfig );
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.gallery_activity, menu );
-        
-        MenuItem searchItem = menu.findItem( R.id.menuItem_search );
+
+        final MenuItem searchItem = menu.findItem( R.id.menuItem_search );
         MenuItemCompat.setOnActionExpandListener( searchItem, new OnActionExpandListener()
         {
             @Override
@@ -443,23 +443,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 refreshGrid();
                 return true;
             }
-            
+
             @Override
             public boolean onMenuItemActionExpand( MenuItem item )
             {
                 return true;
             }
         } );
-        
+
         mSearchView = (SearchView) MenuItemCompat.getActionView( searchItem );
         mSearchView.setOnQueryTextListener( new OnQueryTextListener()
         {
+            @Override
             public boolean onQueryTextSubmit( String query )
             {
-                
+
                 return false;
             }
-            
+
+            @Override
             public boolean onQueryTextChange( String query )
             {
                 mSearchQuery = query;
@@ -467,84 +469,99 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 return false;
             }
         } );
-        
+
         if( !"".equals( mSearchQuery ) )
         {
-            String query = mSearchQuery;
+            final String query = mSearchQuery;
             MenuItemCompat.expandActionView( searchItem );
             mSearchView.setQuery( query, true );
         }
-        
+
         return super.onCreateOptionsMenu( menu );
     }
-    
+
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
-        switch( item.getItemId() )
+        switch (item.getItemId())
         {
-            case R.id.menuItem_refreshRoms:
-                ActivityHelper.StartRomScanService(this);
-                return true;
-            case R.id.menuItem_library:
-                mDrawerLayout.closeDrawer( GravityCompat.START );
-                return true;
-            case R.id.menuItem_settings:
-                ActivityHelper.startGlobalPrefsActivity( this );
-                return true;
-            case R.id.menuItem_emulationProfiles:
-                ActivityHelper.startManageEmulationProfilesActivity( this );
-                return true;
-            case R.id.menuItem_touchscreenProfiles:
-                ActivityHelper.startManageTouchscreenProfilesActivity( this );
-                return true;
-            case R.id.menuItem_controllerProfiles:
-                ActivityHelper.startManageControllerProfilesActivity( this );
-                return true;
-            case R.id.menuItem_faq:
-                Popups.showFaq( this );
-                return true;
-            case R.id.menuItem_helpForum:
-                ActivityHelper.launchUri( this, R.string.uri_forum );
-                return true;
-            case R.id.menuItem_controllerDiagnostics:
-                ActivityHelper.startDiagnosticActivity( this );
-                return true;
-            case R.id.menuItem_reportBug:
-                ActivityHelper.launchUri( this, R.string.uri_bugReport );
-                return true;
-            case R.id.menuItem_appVersion:
-                Popups.showAppVersion( this );
-                return true;
-            case R.id.menuItem_changelog:
-                new ChangeLog( getAssets() ).show( this, 0, mAppData.appVersionCode );
-                return true;
-            case R.id.menuItem_logcat:
-                Popups.showLogcat( this );
-                return true;
-            case R.id.menuItem_hardwareInfo:
-                Popups.showHardwareInfo( this );
-                return true;
-            case R.id.menuItem_credits:
-                ActivityHelper.launchUri( GalleryActivity.this, R.string.uri_credits );
-                return true;
-            case R.id.menuItem_localeOverride:
-                mGlobalPrefs.changeLocale( this );
-                return true;
-            default:
-                return super.onOptionsItemSelected( item );
+        case R.id.menuItem_refreshRoms:
+            ActivityHelper.StartRomScanService(this);
+            return true;
+        case R.id.menuItem_library:
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        case R.id.menuItem_categoryLibrary:
+            ActivityHelper.startLibraryPrefsActivity( this );
+            return true;
+        case R.id.menuItem_categoryDisplay:
+            ActivityHelper.startDisplayPrefsActivity( this );
+            return true;
+        case R.id.menuItem_categoryAudio:
+            ActivityHelper.startAudioPrefsActivity( this );
+            return true;
+        case R.id.menuItem_categoryTouchscreen:
+            ActivityHelper.startTouchscreenPrefsActivity( this );
+            return true;
+        case R.id.menuItem_categoryInput:
+            ActivityHelper.startInputPrefsActivity( this );
+            return true;
+        case R.id.menuItem_categoryData:
+            ActivityHelper.startDataPrefsActivity( this );
+            return true;
+        case R.id.menuItem_emulationProfiles:
+            ActivityHelper.startManageEmulationProfilesActivity(this);
+            return true;
+        case R.id.menuItem_touchscreenProfiles:
+            ActivityHelper.startManageTouchscreenProfilesActivity(this);
+            return true;
+        case R.id.menuItem_controllerProfiles:
+            ActivityHelper.startManageControllerProfilesActivity(this);
+            return true;
+        case R.id.menuItem_faq:
+            Popups.showFaq(this);
+            return true;
+        case R.id.menuItem_helpForum:
+            ActivityHelper.launchUri(this, R.string.uri_forum);
+            return true;
+        case R.id.menuItem_controllerDiagnostics:
+            ActivityHelper.startDiagnosticActivity(this);
+            return true;
+        case R.id.menuItem_reportBug:
+            ActivityHelper.launchUri(this, R.string.uri_bugReport);
+            return true;
+        case R.id.menuItem_appVersion:
+            Popups.showAppVersion(this);
+            return true;
+        case R.id.menuItem_changelog:
+            new ChangeLog(getAssets()).show(this, 0, mAppData.appVersionCode);
+            return true;
+        case R.id.menuItem_logcat:
+            Popups.showLogcat(this);
+            return true;
+        case R.id.menuItem_hardwareInfo:
+            Popups.showHardwareInfo(this);
+            return true;
+        case R.id.menuItem_credits:
+            ActivityHelper.launchUri(GalleryActivity.this, R.string.uri_credits);
+            return true;
+        case R.id.menuItem_localeOverride:
+            mGlobalPrefs.changeLocale(this);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
-    
+
     @Override
     public void onGameSidebarAction(MenuItem menuItem)
     {
-        GalleryItem item = mSelectedItem;
+        final GalleryItem item = mSelectedItem;
         if( item == null )
             return;
-        
+
         final GalleryItem finalItem = item;
-        
+
         switch( menuItem.getItemId() )
         {
             case R.id.menuItem_resume:
@@ -557,20 +574,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 //Don't show the prompt if this is the first time we start a game
                 if(mRestartPromptEnabled)
                 {
-                    CharSequence title = getText( R.string.confirm_title );
-                    CharSequence message = getText( R.string.confirmResetGame_message );
-                    
-                    ConfirmationDialog confirmationDialog =
+                    final CharSequence title = getText( R.string.confirm_title );
+                    final CharSequence message = getText( R.string.confirmResetGame_message );
+
+                    final ConfirmationDialog confirmationDialog =
                         ConfirmationDialog.newInstance(RESTART_CONFIRM_DIALOG_ID, title.toString(), message.toString());
-                    
-                    FragmentManager fm = getSupportFragmentManager();
+
+                    final FragmentManager fm = getSupportFragmentManager();
                     confirmationDialog.show(fm, STATE_RESTART_CONFIRM_DIALOG);
                 }
                 else
                 {
                     launchGameActivity( finalItem.romFile.getAbsolutePath(),
                         finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                        finalItem.isExtracted, finalItem.md5, finalItem.crc, 
+                        finalItem.isExtracted, finalItem.md5, finalItem.crc,
                         finalItem.headerName, finalItem.countryCode, finalItem.artPath,
                         finalItem.goodName, true );
                 }
@@ -583,7 +600,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             default:
         }
     }
-    
+
     @Override
     public void onPromptDialogClosed(int id, int which)
     {
@@ -593,7 +610,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             {
                 launchGameActivity( mSelectedItem.romFile.getAbsolutePath(),
                     mSelectedItem.zipFile == null ? null : mSelectedItem.zipFile.getAbsolutePath(),
-                    mSelectedItem.isExtracted, mSelectedItem.md5, mSelectedItem.crc, 
+                    mSelectedItem.isExtracted, mSelectedItem.md5, mSelectedItem.crc,
                     mSelectedItem.headerName, mSelectedItem.countryCode, mSelectedItem.artPath,
                     mSelectedItem.goodName, true );
             }
@@ -615,19 +632,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Set the game title
         mGameSidebar.setTitle(item.goodName);
-        
+
         // If there are no saves for this game, disable the resume
         // option
-        String gameDataPath = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
+        final String gameDataPath = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
             RomHeader.countryCodeToSymbol(mSelectedItem.countryCode), mGlobalPrefs);
-        String autoSavePath = gameDataPath + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+        final String autoSavePath = gameDataPath + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
 
-        File autoSavePathFile = new File(autoSavePath);
-        File[] allFilesInSavePath = autoSavePathFile.listFiles();
+        final File autoSavePathFile = new File(autoSavePath);
+        final File[] allFilesInSavePath = autoSavePathFile.listFiles();
 
         //No saves, go ahead and remove it
-        boolean visible = allFilesInSavePath != null && allFilesInSavePath.length != 0;
-        
+        final boolean visible = allFilesInSavePath != null && allFilesInSavePath.length != 0;
+
         if (visible)
         {
             // Restore the menu
@@ -654,7 +671,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             item.artPath, item.goodName, false );
         return true;
     }
-    
+
     @Override
     public boolean onKeyDown( int keyCode, KeyEvent event )
     {
@@ -674,7 +691,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
         return super.onKeyDown( keyCode, event );
     }
-    
+
     @Override
     public void onBackPressed()
     {
@@ -687,7 +704,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             super.onBackPressed();
         }
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
@@ -695,12 +712,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             // Make sure the request was successful
             if (resultCode == RESULT_OK && data != null)
             {
-                Bundle extras = data.getExtras();
-                String searchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
-                boolean searchZips = extras.getBoolean( ActivityHelper.Keys.SEARCH_ZIPS );
-                boolean downloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
-                boolean clearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
-                
+                final Bundle extras = data.getExtras();
+                final String searchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
+                final boolean searchZips = extras.getBoolean( ActivityHelper.Keys.SEARCH_ZIPS );
+                final boolean downloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
+                final boolean clearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
+
                 if (searchPath != null)
                 {
                     refreshRoms(new File(searchPath), searchZips, downloadArt, clearGallery);
@@ -708,21 +725,21 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
         }
     }
-    
+
     private void refreshRoms( final File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery )
     {
         mCacheRomInfoFragment.refreshRoms(startDir, searchZips, downloadArt, clearGallery, mAppData, mGlobalPrefs);
     }
 
     void refreshGrid( ){
-        
-        ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-        
-        String query = mSearchQuery.toLowerCase( Locale.US );
+
+        final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
+
+        final String query = mSearchQuery.toLowerCase( Locale.US );
         String[] searches = null;
         if( query.length() > 0 )
             searches = query.split( " " );
-        
+
         List<GalleryItem> items = new ArrayList<GalleryItem>();
         List<GalleryItem> recentItems = null;
         int currentTime = 0;
@@ -731,24 +748,24 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             recentItems = new ArrayList<GalleryItem>();
             currentTime = (int) ( new Date().getTime() / 1000 );
         }
-        
-        for( String md5 : config.keySet() )
+
+        for( final String md5 : config.keySet() )
         {
             if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
             {
-                ConfigSection section = config.get( md5 );
+                final ConfigSection section = config.get( md5 );
                 String goodName;
                 if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
                     goodName = section.get( "goodName" );
                 else
                     goodName = section.get( "baseName" );
-                
+
                 boolean matchesSearch = true;
                 if( searches != null && searches.length > 0 )
                 {
                     // Make sure the ROM name contains every token in the query
-                    String lowerName = goodName.toLowerCase( Locale.US );
-                    for( String search : searches )
+                    final String lowerName = goodName.toLowerCase( Locale.US );
+                    for( final String search : searches )
                     {
                         if( search.length() > 0 && !lowerName.contains( search ) )
                         {
@@ -757,17 +774,17 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         }
                     }
                 }
-                
+
                 if( matchesSearch )
                 {
-                    String romPath = config.get( md5, "romPath" );
+                    final String romPath = config.get( md5, "romPath" );
                     String zipPath = config.get( md5, "zipPath" );
-                    String artPath = config.get( md5, "artPath" );
+                    final String artPath = config.get( md5, "artPath" );
                     String crc = config.get( md5, "crc" );
                     String headerName = config.get( md5, "headerName" );
-                    String countryCodeString = config.get( md5, "countryCode" );
+                    final String countryCodeString = config.get( md5, "countryCode" );
                     byte countryCode = 0;
-                    
+
                     //We can't really do much if the rompath is null
                     if (romPath != null)
                     {
@@ -776,14 +793,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         {
                             countryCode = Byte.parseByte(countryCodeString);
                         }
-                        String lastPlayedStr = config.get(md5, "lastPlayed");
+                        final String lastPlayedStr = config.get(md5, "lastPlayed");
                         String extracted = config.get(md5, "extracted");
 
                         if (zipPath == null || crc == null || headerName == null || countryCodeString == null
                             || extracted == null)
                         {
-                            File file = new File(romPath);
-                            RomHeader header = new RomHeader(file);
+                            final File file = new File(romPath);
+                            final RomHeader header = new RomHeader(file);
 
                             zipPath = "";
                             crc = header.crc;
@@ -802,7 +819,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         if (lastPlayedStr != null)
                             lastPlayed = Integer.parseInt(lastPlayedStr);
 
-                        GalleryItem item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
+                        final GalleryItem item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
                             zipPath, extracted.equals("true"), artPath, lastPlayed);
                         items.add(item);
                         if (mGlobalPrefs.isRecentShown && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7) // 7
@@ -814,7 +831,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         // file
                         else if (!zipPath.equals("") && extracted.equals("true"))
                         {
-                            File deleteFile = new File(romPath);
+                            final File deleteFile = new File(romPath);
                             deleteFile.delete();
 
                             config.put(md5, "extracted", "false");
@@ -823,34 +840,34 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
             }
         }
-        
+
         config.save();
 
         Collections.sort( items, new GalleryItem.NameComparator() );
         if( recentItems != null )
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
-        
+
         List<GalleryItem> combinedItems = items;
         if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
         {
             combinedItems = new ArrayList<GalleryItem>();
-            
+
             combinedItems
                     .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
             combinedItems.addAll( recentItems );
-            
+
             combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ) ) );
             combinedItems.addAll( items );
-            
+
             items = combinedItems;
         }
-        
+
         mGalleryItems = items;
         mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
-        
+
         // Allow the headings to take up the entire width of the layout
         final List<GalleryItem> finalItems = items;
-        GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
+        final GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
         layoutManager.setSpanSizeLookup( new GridLayoutManager.SpanSizeLookup()
         {
             @Override
@@ -859,18 +876,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 // Headings will take up every span (column) in the grid
                 if( finalItems.get( position ).isHeading )
                     return galleryColumns;
-                
+
                 // Games will fit in a single column
                 return 1;
             }
         } );
-        
+
         mGridView.setLayoutManager( layoutManager );
     }
-    
+
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting )
-    {        
+    {
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
         {
@@ -878,25 +895,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             Notifier.showToast( this, R.string.toast_sdInaccessible );
             return;
         }
-        
+
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_launchingEmulator );
-        
+
         // Update the ConfigSection with the new value for lastPlayed
-        String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
-        ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
+        final String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
+        final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
         if( config != null && config.get(romMd5) != null)
         {
             config.put( romMd5, "lastPlayed", lastPlayed );
-            
+
             if(zipPath != null)
             {
                 ExtractFileIfNeeded(romMd5, config, romPath, zipPath, extracted);
             }
-            
+
             config.save();
         }
-        
+
         mRefreshNeeded = true;
         mSelectedItem = null;
 
@@ -904,41 +921,41 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
                     romArtPath, romGoodName, isRestarting );
     }
-    
+
     private void ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)
     {
-        File romFile = new File(romPath);
-        RomHeader romHeader = new RomHeader( zipPath );
+        final File romFile = new File(romPath);
+        final RomHeader romHeader = new RomHeader( zipPath );
 
-        boolean isZip = romHeader.isZip;
+        final boolean isZip = romHeader.isZip;
 
         if(isZip && (!romFile.exists() || !isExtracted))
         {
             boolean lbFound = false;
-            
+
             try
             {
-                ZipFile zipFile = new ZipFile( zipPath );
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                final ZipFile zipFile = new ZipFile( zipPath );
+                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
                 while( entries.hasMoreElements() && !lbFound)
                 {
-                    ZipEntry zipEntry = entries.nextElement();
-                    
+                    final ZipEntry zipEntry = entries.nextElement();
+
                     try
                     {
-                        InputStream zipStream = zipFile.getInputStream( zipEntry );
-                        
-                        File destDir = new File( mGlobalPrefs.unzippedRomsDir );
-                        String entryName = new File( zipEntry.getName() ).getName();
+                        final InputStream zipStream = zipFile.getInputStream( zipEntry );
+
+                        final File destDir = new File( mGlobalPrefs.unzippedRomsDir );
+                        final String entryName = new File( zipEntry.getName() ).getName();
                         File tempRomPath = new File( destDir, entryName );
-                        boolean fileExisted = tempRomPath.exists();
-                        
+                        final boolean fileExisted = tempRomPath.exists();
+
                         if( !fileExisted )
                         {
                             tempRomPath = FileUtil.extractRomFile( destDir, zipEntry, zipStream );
                         }
-                        
-                        String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
+
+                        final String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
                         lbFound = computedMd5.equals(md5);
 
                         //only deleye the file if we extracted our selves
@@ -949,26 +966,26 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                         zipStream.close();
                     }
-                    catch( IOException e )
+                    catch( final IOException e )
                     {
                         Log.w( "CacheRomInfoTask", e );
                     }
                 }
                 zipFile.close();
             }
-            catch( ZipException e )
+            catch( final ZipException e )
             {
                 Log.w( "GalleryActivity", e );
             }
-            catch( IOException e )
+            catch( final IOException e )
             {
                 Log.w( "GalleryActivity", e );
             }
-            catch( ArrayIndexOutOfBoundsException e )
+            catch( final ArrayIndexOutOfBoundsException e )
             {
                 Log.w( "GalleryActivity", e );
             }
-            
+
             if(lbFound || romFile.exists())
             {
                 config.put(md5, "extracted", "true");

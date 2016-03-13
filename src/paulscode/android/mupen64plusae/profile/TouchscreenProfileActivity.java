@@ -284,7 +284,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         switch( item.getItemId() )
         {
             case R.id.menuItem_globalSettings:
-                ActivityHelper.startGlobalPrefsActivity( this, 1 );
+                ActivityHelper.startTouchscreenPrefsActivity( this );
                 return;
             case R.id.menuItem_sensorConfiguration:
                 new SensorConfigurationDialog(this, mProfile).show();

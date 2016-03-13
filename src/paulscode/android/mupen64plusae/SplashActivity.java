@@ -130,7 +130,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
         // new release)
-        PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_audio, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_data, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_display, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_input, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_library, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_touchscreen, false );
 
         // Ensure that selected plugin names and other list preferences are valid
         // @formatter:off

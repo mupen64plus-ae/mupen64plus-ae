@@ -22,8 +22,13 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
+import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.DataPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.DisplayPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.LibraryPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.TouchscreenPrefsActivity;
 import paulscode.android.mupen64plusae.profile.ControllerProfileActivity;
 import paulscode.android.mupen64plusae.profile.ControllerProfileActivityBigScreen;
 import paulscode.android.mupen64plusae.profile.EmulationProfileActivity;
@@ -64,7 +69,6 @@ public class ActivityHelper
         public static final String ROM_ART_PATH         = NAMESPACE + "ROM_ART_PATH";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
-        public static final String MENU_DISPLAY_MODE    = NAMESPACE + "MENU_DISPLAY_MODE";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
         public static final String DATABASE_PATH        = NAMESPACE + "GALLERY_DATABASE_PATH";
         public static final String CONFIG_PATH          = NAMESPACE + "GALLERY_CONFIG_PATH";
@@ -146,16 +150,40 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startGlobalPrefsActivity( Context context )
+    public static void startAudioPrefsActivity( Context context )
     {
-        startGlobalPrefsActivity( context, 0 );
+        Intent intent = new Intent( context, AudioPrefsActivity.class );
+        context.startActivity( intent );    
     }
     
-    public static void startGlobalPrefsActivity( Context context, int menuDisplayMode )
+    public static void startDataPrefsActivity( Context context )
     {
-        Intent intent = new Intent( context, GlobalPrefsActivity.class );
-        intent.putExtra( ActivityHelper.Keys.MENU_DISPLAY_MODE, menuDisplayMode );
-        context.startActivity( intent );
+        Intent intent = new Intent( context, DataPrefsActivity.class );
+        context.startActivity( intent );    
+    }
+    
+    public static void startDisplayPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, DisplayPrefsActivity.class );
+        context.startActivity( intent );    
+    }
+    
+    public static void startInputPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, InputPrefsActivity.class );
+        context.startActivity( intent );    
+    }
+    
+    public static void startLibraryPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, LibraryPrefsActivity.class );
+        context.startActivity( intent );    
+    }
+    
+    public static void startTouchscreenPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, TouchscreenPrefsActivity.class );
+        context.startActivity( intent );    
     }
     
     public static void startGamePrefsActivity( Context context, String romPath, String romMd5,
