@@ -77,6 +77,8 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
         
         mDelimiter = TextUtils.isEmpty( delimiter ) ? DEFAULT_DELIMITER : delimiter;
         mSeparator = TextUtils.isEmpty( separator ) ? DEFAULT_SEPARATOR : separator;
+        
+        setOnPreferenceChangeListener(null);
     }
     
     /**

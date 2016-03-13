@@ -82,6 +82,8 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.PathPreference );
         mSelectionMode = a.getInteger( R.styleable.PathPreference_selectionMode, SELECTION_MODE_ANY );
         a.recycle();
+        
+        setOnPreferenceChangeListener(null);
     }
 
     /**

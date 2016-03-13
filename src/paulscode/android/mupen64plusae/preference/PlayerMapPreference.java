@@ -73,6 +73,7 @@ public class PlayerMapPreference extends DialogPreference implements
         super( context, attrs );
         setDialogLayoutResource( R.layout.player_map_preference );
         setDialogMessage( getSummary() );
+        setOnPreferenceChangeListener(null);
     }
 
     public void setValue( String value )

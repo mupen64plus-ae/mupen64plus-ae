@@ -79,6 +79,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         
         // Setup the layout
         setDialogLayoutResource( R.layout.seek_bar_preference );
+        
+        setOnPreferenceChangeListener(null);
     }
 
     /**
