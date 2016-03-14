@@ -38,7 +38,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
 
-public abstract class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
+public class AppCompatPreferenceActivity extends AppCompatActivity implements OnDisplayDialogListener, OnPreferenceStartScreenCallback, OnFragmentCreationListener
 {
     public interface OnPreferenceDialogListener
     {
@@ -219,7 +219,26 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
     @Override
     public void onFragmentCreation(AppCompatPreferenceFragment currentFragment)
     {
+        //TODO: DIdn't fix it
+        if(mPrefFrag != null)
+        {
+            View fragView = mPrefFrag.getView();
+            
+            if(fragView != null)
+            {
+                fragView.setVisibility(View.GONE);
+            }
+        }
+
         mPrefFrag = currentFragment;
+        
+        View fragView = mPrefFrag.getView();
+        
+        if(fragView != null)
+        {
+            fragView.setVisibility(View.VISIBLE);
+        }
+        
         OnPreferenceScreenChange(mPrefFrag.getTag());
     }
     
@@ -227,4 +246,11 @@ public abstract class AppCompatPreferenceActivity extends AppCompatActivity impl
     {
         return mPrefFrag.getPreferenceManager().getContext();
     }
+    
+    protected AppCompatPreferenceFragment getPreferenceFragment()
+    {
+        return mPrefFrag;
+    }
+    
+    
 }
