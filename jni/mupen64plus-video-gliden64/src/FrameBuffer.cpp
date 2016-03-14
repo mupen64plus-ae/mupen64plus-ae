@@ -86,7 +86,7 @@ public:
 	bool copyChunkToRDRAM(u32 _address);
 
 private:
-	bool _prepareCopy(u32 _address);
+	bool _prepareCopy(u32 _address, bool _copyChunk);
 	bool _copy(u32 _startAddress, u32 _endAddress);
 
 	// Convert pixel from video memory to N64 depth buffer format.
@@ -1402,10 +1402,10 @@ void DepthBufferToRDRAM::Destroy() {
 	}
 }
 
-bool DepthBufferToRDRAM::_prepareCopy(u32 _address)
+bool DepthBufferToRDRAM::_prepareCopy(u32 _address, bool _copyChunk)
 {
 	const u32 curFrame = video().getBuffersSwapCount();
-	if (m_frameCount == curFrame)
+	if (_copyChunk && m_frameCount == curFrame)
 		return true;
 
 	const u32 numPixels = VI.width * VI.height;
@@ -1433,7 +1433,7 @@ bool DepthBufferToRDRAM::_prepareCopy(u32 _address)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
 	glScissor(0, 0, pBuffer->m_pTexture->realWidth, pBuffer->m_pTexture->realHeight);
 	glBlitFramebuffer(
-		0, 0, video().getWidth(), video().getHeight(),
+		0, 0, pBuffer->m_pTexture->realWidth, pBuffer->m_pTexture->realHeight,
 		0, 0, pBuffer->m_width, pBuffer->m_height,
 		GL_DEPTH_BUFFER_BIT, GL_NEAREST
 	);
@@ -1494,7 +1494,7 @@ bool DepthBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress)
 
 bool DepthBufferToRDRAM::copyToRDRAM( u32 _address)
 {
-	if (!_prepareCopy(_address))
+	if (!_prepareCopy(_address, false))
 		return false;
 
 	const u32 endAddress = m_pCurDepthBuffer->m_address + (min(VI.height, m_pCurDepthBuffer->m_lry) * m_pCurDepthBuffer->m_width * 2);
@@ -1503,7 +1503,7 @@ bool DepthBufferToRDRAM::copyToRDRAM( u32 _address)
 
 bool DepthBufferToRDRAM::copyChunkToRDRAM(u32 _address)
 {
-	if (!_prepareCopy(_address))
+	if (!_prepareCopy(_address, true))
 		return false;
 
 	const u32 endAddress = _address + 0x1000;

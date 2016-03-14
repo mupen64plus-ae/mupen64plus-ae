@@ -3,7 +3,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <cstdlib>
 #include "txWidestringWrapper.h"
 
 tx_wstring::tx_wstring(const wchar_t * wstr) : _wstring(wstr)
