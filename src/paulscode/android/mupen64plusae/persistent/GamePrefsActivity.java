@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -55,6 +56,7 @@ import android.support.v7.preference.PreferenceGroup;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.bda.controller.Controller;
 
@@ -100,6 +102,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private PreferenceGroup mCategoryCheats = null;
 
     private boolean mClearCheats = false;
+    
+    Semaphore refreshCheatsMutex = new Semaphore(1);
 
     // MOGA controller interface
     private final Controller mMogaController = Controller.getInstance( this );
@@ -359,82 +363,80 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         if (mCategoryCheats != null)
         {
-            if (mGamePrefs.isCheatOptionsShown)
-            {
-                if (mCategoryCheats.getPreferenceCount() == 0 || mClearCheats)
-                {
-                    ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt, mRomCrc,
-                        mRomCountryCode);
-                    cheatsTask.execute((String) null);
-                }
-            }
-            else
-            {
-                mScreenCheats.removePreference(mCategoryCheats);
-                mCategoryCheats.removeAll();
-            }
+            ExtractCheatsTask cheatsTask = new ExtractCheatsTask(this, this, mAppData.mupencheat_txt, mRomCrc,
+                mRomCountryCode);
+            cheatsTask.execute((String) null);
+        }
+        else
+        {
+            Log.e("Cheats", "category is NULL");
         }
     }
 
     @Override
-    public void onExtractFinished(ArrayList<Cheat> cheats)
+    synchronized public void onExtractFinished(ArrayList<Cheat> cheats)
     {
         mCategoryCheats.removeAll();
-
-        // Layout the menu, populating it with appropriate cheat options
-        for (final Cheat cheat : cheats)
+        
+        if (mGamePrefs.isCheatOptionsShown)
         {
-            // Get the short title of the cheat (shown in the menu)
-            String title;
-            if( cheat.name == null )
+            if (mCategoryCheats.getPreferenceCount() == 0 || mClearCheats)
             {
-                // Title not available, just use a default string for the menu
-                title = getString( R.string.cheats_defaultName, cheat.cheatIndex );
-            }
-            else
-            {
-                // Title available, remove the leading/trailing quotation marks
-                title = cheat.name;
-            }
-            final String notes = cheat.desc;
-            final String options = cheat.option;
-            String[] optionStrings = null;
-            if( !TextUtils.isEmpty( options ) )
-            {
-                optionStrings = options.split( "\n" );
-            }
+                // Layout the menu, populating it with appropriate cheat options
+                for (final Cheat cheat : cheats)
+                {
+                    // Get the short title of the cheat (shown in the menu)
+                    String title;
+                    if( cheat.name == null )
+                    {
+                        // Title not available, just use a default string for the menu
+                        title = getString( R.string.cheats_defaultName, cheat.cheatIndex );
+                    }
+                    else
+                    {
+                        // Title available, remove the leading/trailing quotation marks
+                        title = cheat.name;
+                    }
+                    final String notes = cheat.desc;
+                    final String options = cheat.option;
+                    String[] optionStrings = null;
+                    if( !TextUtils.isEmpty( options ) )
+                    {
+                        optionStrings = options.split( "\n" );
+                    }
 
-            // Create the menu item associated with this cheat
-            final CheatPreference pref = new CheatPreference( getPreferenceManagerContext(),
-                cheat.cheatIndex, title, notes, optionStrings );
+                    // Create the menu item associated with this cheat
+                    final CheatPreference pref = new CheatPreference( getPreferenceManagerContext(),
+                        cheat.cheatIndex, title, notes, optionStrings );
 
-            //We store the cheat index in the key as a string
-            final String key = mRomCrc + " Cheat" + cheat.cheatIndex ;
-            pref.setKey( key );
+                    //We store the cheat index in the key as a string
+                    final String key = mRomCrc + " Cheat" + cheat.cheatIndex ;
+                    pref.setKey( key );
 
-            // Add the preference menu item to the cheats category
-            mCategoryCheats.addPreference( pref );
+                    // Add the preference menu item to the cheats category
+                    mCategoryCheats.addPreference( pref );
 
-            // We reset if the list was changed by the user
-            if (mClearCheats)
-            {
-                pref.onOptionChoice(0);
+                    // We reset if the list was changed by the user
+                    if (mClearCheats)
+                    {
+                        pref.onOptionChoice(0);
+                    }
+                }
+
+                 mScreenCheats.addPreference( mCategoryCheats );
+
+                 if(mClearCheats)
+                 {
+                     //Reset this to false if it was set
+                     mPrefs.edit().apply();
+
+                     mClearCheats = false;
+                 }
             }
         }
-
-        //Check again because the user could had disabled cheats before
-        //cheats finished displaying
-        if(mGamePrefs.isCheatOptionsShown)
+        else
         {
-            mScreenCheats.addPreference( mCategoryCheats );
-
-            if(mClearCheats)
-            {
-                //Reset this to false if it was set
-                mPrefs.edit().apply();
-
-                mClearCheats = false;
-            }
+            mScreenCheats.removePreference(mCategoryCheats);
         }
     }
 
@@ -500,11 +502,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(key.equals(SCREEN_CHEATS))
         {
             mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );
-
-            if(mCategoryCheats == null)
-            {
-                mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
-            }
+            mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
 
             // Handle certain menu items that require extra processing or aren't actually preferences
             PrefUtil.setOnPreferenceClickListener( this, ACTION_CHEAT_EDITOR, this );
