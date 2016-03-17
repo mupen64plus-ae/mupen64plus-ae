@@ -251,7 +251,7 @@ public class PlayerMap extends SerializableMap
                 
                 // Putting the value first makes the string a bit more human readable IMO
                 if( player > 0 && device != null )
-                    result += player + ":" + device + ",";
+                    result += player + "$" + device + ",";
             }
         }
         
@@ -279,7 +279,7 @@ public class PlayerMap extends SerializableMap
             String[] pairs = s.split( "," );
             for( String pair : pairs )
             {
-                String[] elements = pair.split( ":" );
+                String[] elements = pair.split( "\\$" );
                 if( elements.length == 2 )
                 {
                     try
