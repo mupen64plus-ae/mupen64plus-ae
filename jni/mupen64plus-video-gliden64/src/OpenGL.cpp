@@ -650,7 +650,10 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 	if (gSP.changed & CHANGED_LIGHT)
 		cmbInfo.updateLightParameters();
 
-	if ((gSP.changed & CHANGED_TEXTURE) || (gDP.changed & CHANGED_TILE) || (gDP.changed & CHANGED_TMEM) || cmbInfo.isChanged()) {
+	if ((gSP.changed & CHANGED_TEXTURE) ||
+		(gDP.changed & (CHANGED_TILE|CHANGED_TMEM)) ||
+		cmbInfo.isChanged() ||
+		_renderState == rsTexRect) {
 		//For some reason updating the texture cache on the first frame of LOZ:OOT causes a NULL Pointer exception...
 		ShaderCombiner * pCurrentCombiner = cmbInfo.getCurrent();
 		if (pCurrentCombiner != NULL) {
@@ -843,7 +846,10 @@ void OGLRender::drawLine(int _v0, int _v1, float _width)
 	unsigned short elem[2];
 	elem[0] = _v0;
 	elem[1] = _v1;
-	glLineWidth(_width * video().getScaleX());
+	if (config.frameBufferEmulation.nativeResFactor == 0)
+		glLineWidth(_width * video().getScaleX());
+	else
+		glLineWidth(_width * config.frameBufferEmulation.nativeResFactor);
 	glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, elem);
 
 }
@@ -1060,7 +1066,7 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 #ifdef RENDERSTATE_TEST
 		StateChanges++;
 #endif
-		glVertexAttrib4f(SC_COLOR, 0, 0, 0, 1);
+		glVertexAttrib4f(SC_COLOR, 0, 0, 0, m_texrectVertexAlpha);
 		glVertexAttribPointer(SC_POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].x);
 		glVertexAttribPointer(SC_TEXCOORD0, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].s0);
 		glVertexAttribPointer(SC_TEXCOORD1, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].s1);
@@ -1420,6 +1426,8 @@ void OGLRender::_initData()
 	for (u32 i = 0; i < VERTBUFF_SIZE; ++i)
 		triangles.vertices[i].w = 1.0f;
 	triangles.num = 0;
+	if ((config.generalEmulation.hacks & hack_texrectVertexFullAlpha) != 0)
+		m_texrectVertexAlpha = 1.0f;
 }
 
 void OGLRender::_destroyData()
