@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <EditText
+        android:id="@+id/textCheatExtraAddress"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:layout_weight="2"
+        android:digits="0123456789ABCDEF"
+        android:hint="@string/cheatEditor_hint_cheatAddress"
+        android:inputType="textCapCharacters"
+        android:maxLength="8"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/textCheatExtraValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:digits="0123456789ABCDEF"
+        android:hint="@string/cheatEditor_hint_value"
+        android:inputType="textCapCharacters"
+        android:maxLength="4"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ImageButton
+        android:id="@+id/removeCheatOptionButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_margin="5dp"
+        android:contentDescription="@string/cheatEditor_remove_option"
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+</LinearLayout>

@@ -219,7 +219,7 @@ public class CheatUtils
                 // Get the descriptive note for this cheat (shown on long-click)
                 if( cheatBlock.description == null )
                 {
-                    cheat.desc = con.getString( R.string.cheatNotes_none );
+                    cheat.desc = "";
                 }
                 else
                 {

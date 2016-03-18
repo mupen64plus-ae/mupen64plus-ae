@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/textCheatTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:hint="@string/cheatEditor_hint_cheatTitle"
+            android:inputType="textNoSuggestions|text"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/textCheatNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:gravity="top|start"
+            android:hint="@string/cheatEditor_hint_cheatNotes"
+            android:lines="8"
+            android:maxLines="10"
+            android:minLines="1"
+            android:scrollbars="vertical"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/textCheatAddress"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="2"
+                android:digits="0123456789ABCDEF"
+                android:hint="@string/cheatEditor_hint_cheatAddress"
+                android:inputType="textCapCharacters"
+                android:maxLength="8"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/textCheatMainValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:digits="0123456789ABCDEF"
+                android:hint="@string/cheatEditor_hint_value"
+                android:inputType="textCapCharacters"
+                android:maxLength="4"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutCheatOptionsHolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarStyle"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/addMoreCheatOptionsButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/cheatEditor_add_option"
+                android:drawableLeft="@android:drawable/ic_menu_add"
+                android:drawableStart="@android:drawable/ic_menu_add"
+                android:text="@string/cheatEditor_add_option" />
+            <Button
+                android:id="@+id/addMoreCheatsButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/cheatEditor_add_cheats"
+                android:drawableLeft="@android:drawable/ic_menu_add"
+                android:drawableStart="@android:drawable/ic_menu_add"
+                android:text="@string/cheatEditor_add_cheats" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

@@ -23,41 +23,42 @@ package paulscode.android.mupen64plusae.cheat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.MenuListView;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
+import paulscode.android.mupen64plusae.dialog.EditCheatDialog;
+import paulscode.android.mupen64plusae.dialog.EditCheatDialog.CheatAddressData;
+import paulscode.android.mupen64plusae.dialog.EditCheatDialog.CheatOptionData;
+import paulscode.android.mupen64plusae.dialog.EditCheatDialog.OnEditCompleteListener;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
-import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.text.InputType;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class CheatEditorActivity extends AppCompatListActivity implements View.OnClickListener, OnItemLongClickListener, ExtractCheatListener
+public class CheatEditorActivity extends AppCompatListActivity implements View.OnClickListener, ExtractCheatListener,
+    OnDialogMenuItemSelectedListener, OnEditCompleteListener
 {
     private static class CheatListAdapter extends ArrayAdapter<Cheat>
     {
@@ -93,6 +94,9 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         }
     }
     
+    private static final String STATE_MENU_DIALOG_FRAGMENT = "STATE_MENU_DIALOG_FRAGMENT";
+    private static final String STATE_CHEAT_EDIT_DIALOG_FRAGMENT = "STATE_CHEAT_EDIT_DIALOG_FRAGMENT";
+    
     private final ArrayList<Cheat> userCheats = new ArrayList<Cheat>();
     private final ArrayList<Cheat> systemCheats = new ArrayList<Cheat>();
     private CheatListAdapter cheatListAdapter = null;
@@ -101,6 +105,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
     private String mRomCrc = null;
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
+    private int mSelectedCheat = 0;
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -122,10 +127,6 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         setContentView( R.layout.cheat_editor );
         reload( mRomCrc, mRomCountryCode );
         findViewById( R.id.imgBtnChtAdd ).setOnClickListener( this );
-        findViewById( R.id.imgBtnChtEdit ).setOnClickListener( this );
-        findViewById( R.id.imgBtnChtSave ).setOnClickListener( this );
-        findViewById( R.id.imgBtnChtInfo ).setOnClickListener( this );
-        getListView().setOnItemLongClickListener( this );
         
         //default state is cancelled unless we save
         setResult(RESULT_CANCELED, null);
@@ -174,340 +175,124 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         setResult(RESULT_OK, null);
     }
     
-    private boolean isHexNumber( String num )
-    {
-        try
-        {
-            Long.parseLong( num, 16 );
-            return true;
-        }
-        catch( NumberFormatException ex )
-        {
-            return false;
-        }
-    }
-    
     @Override
     protected void onListItemClick( ListView l, View v, final int position, long id )
     {
-        Cheat cheat = userCheats.get( position );
-        StringBuilder message = new StringBuilder();
-        message.append( getString( R.string.cheatEditor_title2 ) + "\n" );
-        message.append( cheat.name + "\n" );
-        message.append( getString( R.string.cheatEditor_notes2 ) + "\n" );
-        message.append( cheat.desc + "\n" );
-        message.append( getString( R.string.cheatEditor_code2 ) + "\n" );
-        message.append( cheat.code );
-        if( !TextUtils.isEmpty( cheat.option ) && cheat.code.contains( "?" ) )
-        {
-            message.append( "\n" + getString( R.string.cheatEditor_option2 ) );
-            message.append( "\n" + cheat.option );
-        }
+        int resId = R.menu.cheat_editor_activity;
+        int stringId = R.string.touchscreenProfileActivity_menuTitle;
+        mSelectedCheat = position; 
         
-        Builder builder = new Builder( this );
-        builder.setTitle( R.string.cheatEditor_info );
-        builder.setMessage( message.toString() );
-        builder.create().show();
+        MenuDialogFragment menuDialogFragment = MenuDialogFragment.newInstance(0,
+           getString(stringId), resId);
+        
+        FragmentManager fm = getSupportFragmentManager();
+        menuDialogFragment.show(fm, STATE_MENU_DIALOG_FRAGMENT);
     }
     
     @Override
-    public void onClick( View v )
+    public void onPrepareMenuList(MenuListView listView)
     {
-        AlertDialog alertDialog;
-        
-        switch( v.getId() )
+        //Nothing to do here
+    }
+    
+    @Override
+    public void onDialogMenuItemSelected( int dialogId, MenuItem item)
+    {
+        switch( item.getItemId() )
         {
-            case R.id.imgBtnChtAdd:
-                Cheat cheat = new Cheat();
-                cheat.name = getString( R.string.cheatEditor_empty );
-                cheat.desc = getString( R.string.cheatNotes_none );
-                cheat.code = "";
-                cheat.option = "";
-                userCheats.add( cheat );
-                Collections.sort(userCheats);
-                cheatListAdapter.notifyDataSetChanged();
-                Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_added ), Toast.LENGTH_SHORT );
-                t.show();
+            case R.id.menuItem_edit:
+                CreateCheatEditorDialog();
                 break;
-                
-            case R.id.imgBtnChtEdit:
-                alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-                alertDialog.setTitle( getString( R.string.cheatEditor_edit ) );
-                alertDialog.setMessage( getString( R.string.cheatEditor_edit_desc ) );
-                alertDialog.show();
+            case R.id.menuItem_delete:
+                promptDelete(mSelectedCheat);
                 break;
+            default:
+                return;
+        }
+    }
+    
+    private void CreateCheatEditorDialog()
+    {
+        int stringId = R.string.cheatEditor_edit1;
+        final Cheat cheat = userCheats.get( mSelectedCheat );
+        ArrayList<CheatAddressData> addressList = new ArrayList<CheatAddressData>();
+        ArrayList<CheatOptionData> optionsList = new ArrayList<CheatOptionData>();
+        String addresses = cheat.code;
+        String options = cheat.option;
+        
+        //Convert address string to a list of addresses
+        if( !TextUtils.isEmpty( addresses ) )
+        {
+            String[] addressStrings = null;
+            addressStrings = addresses.split("\n");
             
-            case R.id.imgBtnChtSave:
-                save( mRomCrc );
-                CheatEditorActivity.this.finish();
-                break;
+            for(String address : addressStrings)
+            {
+                CheatAddressData addressData = new CheatAddressData();
                 
-            case R.id.imgBtnChtInfo:
-                StringBuilder message = new StringBuilder();
-                message.append( getString( R.string.cheatEditor_readme1 ) + "\n\n" );
-                message.append( getString( R.string.cheatEditor_readme2 ) + "\n\n" );
-                message.append( getString( R.string.cheatEditor_readme3 ) + "\n\n" );
-                message.append( getString( R.string.cheatEditor_readme4 ) + "\n\n" );
-                message.append( getString( R.string.cheatEditor_readme5 ) + "\n\n" );
-                message.append( getString( R.string.cheatEditor_readme6 ) );
-                
-                alertDialog = new AlertDialog.Builder( CheatEditorActivity.this ).create();
-                alertDialog.setTitle( getString( R.string.cheatEditor_help ) );
-                alertDialog.setMessage( message.toString() );
-                alertDialog.show();
-                break;
-        }
-    }
+                String addressString = address.substring(0, 8);
+                String valueString = address.substring(address.length()-4, address.length());
 
+                addressData.address = Long.valueOf(addressString, 16);
+                if(!valueString.contains("?"))
+                {
+                    addressData.value = Integer.valueOf(valueString, 16);
+                }
+                else
+                {
+                    addressData.value = -1;
+                }
+                addressList.add(addressData);
+            }
+
+        }
+        
+        //Convert options into a list of options
+        if( !TextUtils.isEmpty( options ) )
+        {
+            String[] optionStrings = null;
+            optionStrings = options.split( "\n" );
+            
+            for(String option : optionStrings)
+            {
+                CheatOptionData cheatData = new CheatOptionData();
+                String valueString = option.substring(option.length()-4, option.length());
+                cheatData.value = Integer.valueOf(valueString, 16);
+                cheatData.description = option.substring(0, option.length() - 5);
+                optionsList.add(cheatData);
+            }
+        }
+        
+        EditCheatDialog editCheatDialogFragment =
+            EditCheatDialog.newInstance(getString(stringId), cheat.name, cheat.desc,
+                addressList, optionsList, getCheatTitles());
+        
+        FragmentManager fm = getSupportFragmentManager();
+        editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);
+    }
+    
     @Override
-    public boolean onItemLongClick( AdapterView<?> av, View v, final int pos, long id )
+    public void onClick(View v)
     {
-        final Cheat cheat = userCheats.get( pos );
-        
-        // Inflate the long-click dialog
-        final View ll = View.inflate( this, R.layout.cheat_editor_longclick_dialog, null );
-        
-        // Build the alert dialog
-        Builder builder = new Builder( this );
-        builder.setTitle( R.string.cheatEditor_config  );
-        builder.setMessage( R.string.cheatEditor_config_desc );
-        builder.setView( ll );
-        final AlertDialog parentDialog = builder.create();
-        
-        // Define the handler for button clicks
-        final View.OnClickListener listener = new View.OnClickListener()
-        {
-            @Override
-            public void onClick( View v )
-            {
-                parentDialog.dismiss();
-                switch( v.getId() )
-                {
-                    case R.id.btnEditTitle:
-                        promptTitle( cheat );
-                        break;
-                    case R.id.btnEditNotes:
-                        promptNotes( cheat );
-                        break;
-                    case R.id.btnEditCode:
-                        promptCode( cheat );
-                        break;
-                    case R.id.btnEditOption:
-                        promptOption( cheat );
-                        break;
-                    case R.id.btnDelete:
-                        promptDelete( pos );
-                        break;
-                }
-            }
-        };
-        
-        // Assign the button click handler
-        ll.findViewById( R.id.btnEditTitle ).setOnClickListener( listener );
-        ll.findViewById( R.id.btnEditNotes ).setOnClickListener( listener );
-        ll.findViewById( R.id.btnEditCode ).setOnClickListener( listener );
-        ll.findViewById( R.id.btnEditOption ).setOnClickListener( listener );
-        ll.findViewById( R.id.btnDelete ).setOnClickListener( listener );
-        
-        // Hide the edit option button if not applicable
-        if( !userCheats.get( pos ).code.contains( "?" ) )
-            ll.findViewById( R.id.btnEditOption ).setVisibility( View.GONE );
-        
-        // Show the long-click dialog
-        parentDialog.show();
-        return true;
-    }
+        //Add a cheat
+        mSelectedCheat = -1;
+        int stringId = R.string.cheatEditor_edit1;
+        EditCheatDialog editCheatDialogFragment = EditCheatDialog.newInstance(getString(stringId), null, null,
+            null, null, getCheatTitles());
 
-    @Override
-    // onBackPressed could probably be used
-    public boolean onKeyDown( int KeyCode, KeyEvent event )
+        FragmentManager fm = getSupportFragmentManager();
+        editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);
+    }
+    
+    private List<String> getCheatTitles()
     {
-        if( KeyCode == KeyEvent.KEYCODE_BACK )
+        List<String> cheatTitles = new ArrayList<String>();
+        
+        for(Cheat cheat: userCheats)
         {
-            final OnClickListener listener = new OnClickListener()
-            {
-                @Override
-                public void onClick( DialogInterface dialog, int which )
-                {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        save( mRomCrc );
-                    }
-                    CheatEditorActivity.this.finish();
-                }
-            };            
-            Builder builder = new Builder( this );
-            builder.setTitle( R.string.cheatEditor_saveConfirm );
-            builder.setPositiveButton( android.R.string.yes, listener );
-            builder.setNegativeButton( android.R.string.no, listener );
-            builder.create().show();
-            return true;
+            cheatTitles.add(cheat.name);
         }
-        return super.onKeyDown( KeyCode, event );
-    }
-
-    private void promptTitle( final Cheat cheat )
-    {
-        CharSequence title = getText( R.string.cheatEditor_title );
-        CharSequence message = getText( R.string.cheatEditor_title_desc );
-        int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( this, title, message, cheat.name, null, inputType, new PromptTextListener()
-        {
-            @Override
-            public void onDialogClosed( CharSequence text, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    String str = text.toString().replace( '\n', ' ' );
-                    cheat.name = str;
-                    
-                    Collections.sort(userCheats);
-                    cheatListAdapter.notifyDataSetChanged();
-                }
-            }
-        } );
-    }
-
-    private void promptNotes( final Cheat cheat )
-    {
-        CharSequence title = getText( R.string.cheatEditor_notes );
-        CharSequence message = getText( R.string.cheatEditor_notes_desc );
-        CharSequence text;
-        if( TextUtils.isEmpty( cheat.desc ) || cheat.desc.equals( getString( R.string.cheatNotes_none ) ) )
-        {
-            text = "";
-        }
-        else
-        {
-            text = cheat.desc;
-        }
-        int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( this, title, message, text, null, inputType, new PromptTextListener()
-        {
-            @Override
-            public void onDialogClosed( CharSequence text, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    String str = text.toString().replace( '\n', ' ' );
-                    if( TextUtils.isEmpty( str ) )
-                    {
-                        str = getString( R.string.cheatNotes_none );
-                    }
-                    cheat.desc = str;
-                }
-            }
-        } );
-    }
-
-    private void promptCode( final Cheat cheat )
-    {
-        CharSequence title = getText( R.string.cheatEditor_code );
-        CharSequence message = getText( R.string.cheatEditor_code_desc );
-        int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( this, title, message, cheat.code, null, inputType, new PromptTextListener()
-        {
-            @Override
-            public void onDialogClosed( CharSequence text, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    String verify = text.toString();
-                    String[] split = verify.split( "\n" );
-                    boolean bad = false;
-                    for( int o = 0; o < split.length; o++ )
-                    {
-                        if( split[o].length() != 13 )
-                        {
-                            bad = true;
-                            break;
-                        }
-                        if( split[o].indexOf( ' ' ) != -1 )
-                        {
-                            if( !isHexNumber( split[o].substring( 0, split[o].indexOf( ' ' ) ) ) )
-                            {
-                                bad = true;
-                                break;
-                            }
-                            if( !isHexNumber( split[o].substring( split[o].indexOf( ' ' ) + 1 ) ) && !split[o].substring( split[o].indexOf( ' ' ) + 1 ).equals( "????" ) )
-                            {
-                                bad = true;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            bad = true;
-                            break;
-                        }
-                    }
-                    if( !bad )
-                    {
-                        cheat.code = text.toString().toUpperCase( Locale.US );
-                    }
-                    else
-                    {
-                        Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_badCode ), Toast.LENGTH_SHORT );
-                        t.show();
-                    }
-                }
-            }
-        } );
-    }
-
-    private void promptOption( final Cheat cheat )
-    {
-        CharSequence title = getText( R.string.cheatEditor_option );
-        CharSequence message = getText( R.string.cheatEditor_option_desc );
-        int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( this, title, message, cheat.option, null, inputType, new PromptTextListener()
-        {
-            @Override
-            public void onDialogClosed( CharSequence text, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    String verify = text.toString();
-                    String[] split = verify.split( "\n" );
-                    boolean bad = false;
-                    verify = "";
-                    for( int o = 0; o < split.length; o++ )
-                    {
-                        if( split[o].length() <= 5 )
-                        {
-                            bad = true;
-                            break;
-                        }
-                        if( !isHexNumber( split[o].substring( split[o].length() - 4 ) ) )
-                        {
-                            bad = true;
-                            break;
-                        }
-                        if( split[o].lastIndexOf( ' ' ) != split[o].length() - 5 )
-                        {
-                            bad = true;
-                            break;
-                        }
-                        split[o] = split[o].substring( 0, split[o].length() - 5 ) + " " + split[o].substring( split[o].length() - 4 ).toUpperCase( Locale.US );
-                        String y = "";
-                        if( o != split.length - 1 )
-                        {
-                            y = "\n";
-                        }
-                        verify += split[o] + y;
-                    }
-                    if( !bad )
-                    {
-                        cheat.option = verify;
-                    }
-                    else
-                    {
-                        Toast t = Toast.makeText( CheatEditorActivity.this, getString( R.string.cheatEditor_badOption ), Toast.LENGTH_SHORT );
-                        t.show();
-                    }
-                }
-            }
-        } );
+        return cheatTitles;
     }
 
     private void promptDelete( final int pos )
@@ -521,6 +306,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 {
                     userCheats.remove( pos );
                     cheatListAdapter.notifyDataSetChanged();
+                    
+                    save( mRomCrc );
                 }
             }
         };            
@@ -530,5 +317,73 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         builder.setPositiveButton( android.R.string.yes, listener );
         builder.setNegativeButton( android.R.string.no, listener );
         builder.create().show();
+    }
+ 
+    @Override
+    public void onEditComplete(int selectedButton, String name, String comment, List<CheatAddressData> address,
+        List<CheatOptionData> options)
+    {        
+        if( selectedButton == DialogInterface.BUTTON_POSITIVE )
+        {
+            Cheat cheat = null;
+            
+            if (mSelectedCheat != -1)
+            {
+                cheat = userCheats.get(mSelectedCheat);
+            }
+            else
+            {
+                cheat = new Cheat();
+            }
+            
+            cheat.option = "";
+            
+            if(!name.isEmpty())
+            {
+                cheat.name = name;
+            }
+
+            cheat.desc = comment.replace( '\n', ' ' );
+            
+            //There are options present, ignore the first value in the first code
+            int startIndex = 0;
+            String optionAddressString = new String();
+            if(!options.isEmpty() && !address.isEmpty())
+            {
+                optionAddressString = String.format("%08X ????\n", address.get(0).address);
+                ++startIndex;
+            }
+            
+            //Build the codes
+            StringBuilder builder = new StringBuilder();
+            for(int index = startIndex; index < address.size(); ++index)
+            {
+                builder.append(String.format("%08X %04X\n", address.get(index).address, address.get(index).value));
+            }
+            
+            cheat.code = builder.toString() + optionAddressString;
+            
+            //Build the options
+            builder = new StringBuilder();
+            for (CheatOptionData data : options)
+            {
+                builder.append(String.format("%s %04X\n", data.description, data.value));
+            }
+            cheat.option = builder.toString();
+
+            boolean ValidCheat = !name.isEmpty() && cheat.code.length() > 8;
+            
+            if(ValidCheat)
+            {
+                if(mSelectedCheat == -1 )
+                {
+                    userCheats.add(cheat);
+                }
+
+                Collections.sort(userCheats);
+                save( mRomCrc );
+                cheatListAdapter.notifyDataSetChanged();
+            }
+        }
     }
 }

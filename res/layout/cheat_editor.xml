@@ -3,38 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-	<LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" >
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-	    <ImageButton
-	        android:id="@+id/imgBtnChtAdd"
-	        android:layout_width="50dp"
-	        android:layout_height="50dp"
-	        android:src="@drawable/ic_plus" />
-	    <ImageButton
-	        android:id="@+id/imgBtnChtEdit"
-	        android:layout_width="50dp"
-	        android:layout_height="50dp"
-	        android:src="@drawable/ic_pencil" />
-	    <ImageButton
-	        android:id="@+id/imgBtnChtSave"
-	        android:layout_width="50dp"
-	        android:layout_height="50dp"
-	        android:src="@drawable/ic_save" />
-	   	<ImageButton
-	        android:id="@+id/imgBtnChtInfo"
-	        android:layout_width="50dp"
-	        android:layout_height="50dp"
-	        android:src="@drawable/ic_help" />
-	</LinearLayout>
-	<ListView
-	    android:id="@android:id/list"
-	    android:layout_width="fill_parent"
-	    android:layout_height="match_parent" 
-	    android:layout_gravity="bottom"
-	    android:longClickable="true"/>
+        <ImageButton
+            android:id="@+id/imgBtnChtAdd"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/cheatEditor_add"
+            android:src="@drawable/ic_plus" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:longClickable="true" />
 
 </LinearLayout>
