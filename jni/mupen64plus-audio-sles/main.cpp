@@ -385,6 +385,9 @@ static void InitializeAudio(int freq)
     }
 
     DebugMessage(M64MSG_VERBOSE, "Requesting frequency: %iHz.", OutputFreq);
+    
+    double bufferMultiplier = (double)OutputFreq/DEFAULT_FREQUENCY;
+    SecondaryBufferSize = bufferMultiplier*(double)SecondaryBufferSize;
 
     /* Close everything because InitializeAudio can be called more than once */
     CloseAudio();
@@ -832,11 +835,13 @@ void* audioConsumer(void* param)
    //soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
 
    soundTouch.setRate((double)GameFreq/(double)OutputFreq);
+   
+   double bufferMultiplier = (double)OutputFreq/DEFAULT_FREQUENCY;
 
    int prevQueueSize = thread_queue_length(&audioConsumerQueue);
    int currQueueSize = prevQueueSize;
-   int maxQueueSize = TargetSecondaryBuffers + 40;
-   int minQueueSize = TargetSecondaryBuffers;
+   int maxQueueSize = TargetSecondaryBuffers + 30.0*bufferMultiplier;
+   int minQueueSize = (double)TargetSecondaryBuffers*bufferMultiplier;
    bool drainQueue = false;
 
    //Sound queue ran dry, device is running slow
