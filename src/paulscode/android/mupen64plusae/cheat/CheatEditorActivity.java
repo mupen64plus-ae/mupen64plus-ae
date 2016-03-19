@@ -30,9 +30,9 @@ import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.MenuListView;
 import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
 import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
+import paulscode.android.mupen64plusae.dialog.EditCheatAdvancedDialog;
+import paulscode.android.mupen64plusae.dialog.EditCheatAdvancedDialog.OnAdvancedEditCompleteListener;
 import paulscode.android.mupen64plusae.dialog.EditCheatDialog;
-import paulscode.android.mupen64plusae.dialog.EditCheatDialog.CheatAddressData;
-import paulscode.android.mupen64plusae.dialog.EditCheatDialog.CheatOptionData;
 import paulscode.android.mupen64plusae.dialog.EditCheatDialog.OnEditCompleteListener;
 import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
 import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
@@ -57,9 +57,21 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class CheatEditorActivity extends AppCompatListActivity implements View.OnClickListener, ExtractCheatListener,
-    OnDialogMenuItemSelectedListener, OnEditCompleteListener
+public class CheatEditorActivity extends AppCompatListActivity implements ExtractCheatListener,
+    OnDialogMenuItemSelectedListener, OnEditCompleteListener, OnAdvancedEditCompleteListener
 {
+
+    static public final class CheatOptionData
+    {
+        public String description;
+        public int value;
+    }
+    
+    static public final class CheatAddressData
+    {
+        public long address;
+        public int value;
+    }
     private static class CheatListAdapter extends ArrayAdapter<Cheat>
     {
         private static final int RESID = R.layout.list_item_two_text_icon;
@@ -126,7 +138,38 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         
         setContentView( R.layout.cheat_editor );
         reload( mRomCrc, mRomCountryCode );
-        findViewById( R.id.imgBtnChtAdd ).setOnClickListener( this );
+        findViewById( R.id.imgBtnChtAdd ).setOnClickListener( new View.OnClickListener()
+        {
+            
+            @Override
+            public void onClick(View v)
+            {
+                //Add a cheat
+                mSelectedCheat = -1;
+                int stringId = R.string.cheatEditor_edit1;
+                EditCheatDialog editCheatDialogFragment = EditCheatDialog.newInstance(getString(stringId), null, null,
+                    null, null, getCheatTitles());
+
+                FragmentManager fm = getSupportFragmentManager();
+                editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);                
+            }
+        } );
+        findViewById( R.id.imgBtnChtAddAvanced ).setOnClickListener( new View.OnClickListener()
+        {
+            
+            @Override
+            public void onClick(View v)
+            {
+                //Add a cheat
+                mSelectedCheat = -1;
+                int stringId = R.string.cheatEditor_edit2;
+                EditCheatAdvancedDialog editCheatDialogFragment = EditCheatAdvancedDialog.newInstance(getString(stringId), null, null,
+                    null, null, getCheatTitles());
+
+                FragmentManager fm = getSupportFragmentManager();
+                editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);                
+            }
+        } );
         
         //default state is cancelled unless we save
         setResult(RESULT_CANCELED, null);
@@ -201,7 +244,10 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         switch( item.getItemId() )
         {
             case R.id.menuItem_edit:
-                CreateCheatEditorDialog();
+                CreateCheatEditorDialog(false);
+                break;
+            case R.id.menuItem_advaned_edit:
+                CreateCheatEditorDialog(true);
                 break;
             case R.id.menuItem_delete:
                 promptDelete(mSelectedCheat);
@@ -211,7 +257,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
         }
     }
     
-    private void CreateCheatEditorDialog()
+    private void CreateCheatEditorDialog(boolean advanced)
     {
         int stringId = R.string.cheatEditor_edit1;
         final Cheat cheat = userCheats.get( mSelectedCheat );
@@ -237,12 +283,14 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 if(!valueString.contains("?"))
                 {
                     addressData.value = Integer.valueOf(valueString, 16);
+                    addressList.add(addressData);
                 }
                 else
                 {
+                    //The cheat with the option goes at the front
                     addressData.value = -1;
+                    addressList.add(0, addressData);
                 }
-                addressList.add(addressData);
             }
 
         }
@@ -263,25 +311,24 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
             }
         }
         
-        EditCheatDialog editCheatDialogFragment =
-            EditCheatDialog.newInstance(getString(stringId), cheat.name, cheat.desc,
-                addressList, optionsList, getCheatTitles());
-        
-        FragmentManager fm = getSupportFragmentManager();
-        editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);
-    }
-    
-    @Override
-    public void onClick(View v)
-    {
-        //Add a cheat
-        mSelectedCheat = -1;
-        int stringId = R.string.cheatEditor_edit1;
-        EditCheatDialog editCheatDialogFragment = EditCheatDialog.newInstance(getString(stringId), null, null,
-            null, null, getCheatTitles());
-
-        FragmentManager fm = getSupportFragmentManager();
-        editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);
+        if(advanced)
+        {
+            EditCheatAdvancedDialog editCheatDialogFragment =
+                EditCheatAdvancedDialog.newInstance(getString(stringId), cheat.name, cheat.desc,
+                    addressList, optionsList, getCheatTitles());
+            
+            FragmentManager fm = getSupportFragmentManager();
+            editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);
+        }
+        else
+        {
+            EditCheatDialog editCheatDialogFragment =
+                EditCheatDialog.newInstance(getString(stringId), cheat.name, cheat.desc,
+                    addressList, optionsList, getCheatTitles());
+            
+            FragmentManager fm = getSupportFragmentManager();
+            editCheatDialogFragment.show(fm, STATE_CHEAT_EDIT_DIALOG_FRAGMENT);
+        }
     }
     
     private List<String> getCheatTitles()
@@ -345,20 +392,20 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
 
             cheat.desc = comment.replace( '\n', ' ' );
             
-            //There are options present, ignore the first value in the first code
-            int startIndex = 0;
             String optionAddressString = new String();
-            if(!options.isEmpty() && !address.isEmpty())
-            {
-                optionAddressString = String.format("%08X ????\n", address.get(0).address);
-                ++startIndex;
-            }
             
             //Build the codes
             StringBuilder builder = new StringBuilder();
-            for(int index = startIndex; index < address.size(); ++index)
+            for(CheatAddressData data : address)
             {
-                builder.append(String.format("%08X %04X\n", address.get(index).address, address.get(index).value));
+                if(data.value != -1)
+                {
+                    builder.append(String.format("%08X %04X\n", data.address, data.value));
+                }
+                else
+                {
+                    optionAddressString = String.format("%08X ????\n", data.address);
+                }
             }
             
             cheat.code = builder.toString() + optionAddressString;
@@ -385,5 +432,12 @@ public class CheatEditorActivity extends AppCompatListActivity implements View.O
                 cheatListAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    @Override
+    public void onAdvancedEditComplete(int selectedButton, String name, String comment, List<CheatAddressData> address,
+        List<CheatOptionData> options)
+    {
+        onEditComplete(selectedButton, name, comment, address, options);        
     }
 }

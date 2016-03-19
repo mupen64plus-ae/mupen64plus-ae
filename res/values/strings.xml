@@ -541,13 +541,17 @@
     <string name="cheatEditor_info">Cheat information</string>
     <string name="cheatEditor_saveConfirm">Save cheat file?</string>
     <string name="cheatEditor_edit1">Edit cheat</string>
+    <string name="cheatEditor_edit2">Advanced edit cheat</string>
     <string name="cheatEditor_invalid_value">N/A</string>
     <string name="cheatEditor_delete">Delete cheat</string>
     <string name="cheatEditor_add">Add cheat</string>
+    <string name="cheatEditor_add_advanced">Add advanced cheat</string>
     <string name="cheatEditor_save">Save cheat</string>
     <string name="cheatEditor_hint_cheatTitle">Cheat Title</string>
     <string name="cheatEditor_hint_cheatNotes">Cheat Notes (optional)</string>
     <string name="cheatEditor_hint_cheatAddress">Address</string>
+    <string name="cheatEditor_hint_cheatData">Enter cheat data</string>
+    <string name="cheatEditor_hint_optionData">Enter option data</string>
     <string name="cheatEditor_hint_value">Value</string>
     <string name="cheatEditor_hint_value_description">Description</string>
     <string name="cheatEditor_add_option">Add option</string>

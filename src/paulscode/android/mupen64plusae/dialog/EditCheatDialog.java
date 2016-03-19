@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import paulscode.android.mupen64plusae.cheat.CheatEditorActivity.CheatAddressData;
+import paulscode.android.mupen64plusae.cheat.CheatEditorActivity.CheatOptionData;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -55,18 +57,6 @@ public class EditCheatDialog extends DialogFragment
     private ArrayList<EditText> mOptionValueFields = null;
     private ArrayList<EditText> mCheatAddressFields = null;
     private ArrayList<EditText> mCheatValueFields = null;
-
-    static public final class CheatOptionData
-    {
-        public String description;
-        public int value;
-    }
-    
-    static public final class CheatAddressData
-    {
-        public long address;
-        public int value;
-    }
 
     public interface OnEditCompleteListener
     {
@@ -529,7 +519,7 @@ public class EditCheatDialog extends DialogFragment
             EditText cheatValueText = (EditText) child.findViewById(R.id.textCheatValue);
             EditText cheatValueDescription = (EditText) child.findViewById(R.id.textCheatValueDescription);
 
-            //If these are nulls then that means that this layout must be an address instead of an option
+            //If these are nulls then that means that this layout must be an option instead of an address
             if(cheatValueText != null && cheatValueDescription != null)
             {
                 CheatOptionData data = new CheatOptionData();
@@ -576,7 +566,7 @@ public class EditCheatDialog extends DialogFragment
             EditText cheatAddressText = (EditText) child.findViewById(R.id.textCheatExtraAddress);
             EditText cheatValueText = (EditText) child.findViewById(R.id.textCheatExtraValue);
 
-            //If these are null, then this must be an options layout
+            //If these are null, then this must be an address layout
             if(cheatAddressText != null && cheatValueText != null)
             {
                 addressString = cheatAddressText.getText().toString();

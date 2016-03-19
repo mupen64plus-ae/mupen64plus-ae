@@ -6,15 +6,29 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
+        style="?android:attr/buttonBarStyle"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <ImageButton
+        <Button
             android:id="@+id/imgBtnChtAdd"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/cheatEditor_add"
-            android:src="@drawable/ic_plus" />
+            android:drawableLeft="@android:drawable/ic_menu_add"
+            android:drawableStart="@android:drawable/ic_menu_add"
+            android:text="@string/cheatEditor_add"/>
+
+        <Button
+            android:id="@+id/imgBtnChtAddAvanced"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cheatEditor_add_advanced"
+            android:drawableLeft="@android:drawable/ic_menu_add"
+            android:drawableStart="@android:drawable/ic_menu_add"
+            android:text="@string/cheatEditor_add_advanced"/>
     </LinearLayout>
 
     <ListView
