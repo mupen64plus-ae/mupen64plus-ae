@@ -425,7 +425,7 @@ public class GamePrefs
 
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
-                globalPrefs.getEmulationProfileDefault(),
+                globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
                 globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
 
         // Touchscreen profile
@@ -436,7 +436,7 @@ public class GamePrefs
         else
         {
             touchscreenProfile = loadProfile( mPreferences, TOUCHSCREEN_PROFILE,
-                globalPrefs.getTouchscreenProfileDefault(),
+                globalPrefs.getTouchscreenProfileDefault(), GlobalPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT,
                 globalPrefs.GetTouchscreenProfilesConfig(), appData.GetTouchscreenProfilesConfig() );
         }
 
@@ -777,7 +777,7 @@ public class GamePrefs
     }
 
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,
-        ConfigFile custom, ConfigFile builtin )
+        String appDefault, ConfigFile custom, ConfigFile builtin )
     {
         final String name = prefs.getString( key, defaultName );
 
@@ -791,6 +791,10 @@ public class GamePrefs
             return new Profile( false, custom.get( defaultName ) );
         else if( builtin.keySet().contains( defaultName ) )
             return new Profile( true, builtin.get( defaultName ) );
+        else if( custom.keySet().contains( defaultName ) )
+            return new Profile( false, custom.get( appDefault ) );
+        else if( builtin.keySet().contains( defaultName ) )
+            return new Profile( true, builtin.get( appDefault ) );
         else
             return null;
     }
