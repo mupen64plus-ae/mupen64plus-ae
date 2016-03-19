@@ -358,6 +358,8 @@ public class EditCheatDialog extends DialogFragment
                 cheatValueText.addTextChangedListener(fieldValidator);
                 
                 mOptionValueFields.add(cheatValueText);
+                
+                validateFields();
             }
         });
         
@@ -379,6 +381,8 @@ public class EditCheatDialog extends DialogFragment
 
                 mCheatAddressFields.add(cheatAddressText);
                 mCheatValueFields.add(cheatValueText);
+                
+                validateFields();
             }
         });
     }
@@ -477,6 +481,8 @@ public class EditCheatDialog extends DialogFragment
                     mEditValue.setEnabled(true);
                     mEditValue.setText("");
                 }
+                
+                validateFields();
             }
         };
         
@@ -503,6 +509,8 @@ public class EditCheatDialog extends DialogFragment
 
                 mCheatAddressFields.remove(cheatAddressText);
                 mCheatValueFields.remove(cheatValueText);
+                
+                validateFields();
             }
         };
         
