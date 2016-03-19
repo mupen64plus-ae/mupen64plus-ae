@@ -402,7 +402,7 @@ public class GlobalPrefs
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         audioSDLSecondaryBufferSize = getSafeInt( mPreferences, "audioSDLBufferSize", 2048 );
-        audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize", 1024 );
+        audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize2", 256 );
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 20 );
         audioSLESSamplingRate = getSafeInt( mPreferences, "audioSLESSamplingRate", 0 );
 

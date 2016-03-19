@@ -33,7 +33,7 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
 {
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String AUDIO_SDL_BUFFER_SIZE = "audioSDLBufferSize";
-    private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize";
+    private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize2";
     private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr2";
     private static final String AUDIO_SLES_SAMPLING_RATE = "audioSLESSamplingRate";
     private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";

@@ -108,7 +108,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
     private static final String AUDIO_PLUGIN = "audioPlugin";
     private static final String AUDIO_SDL_BUFFER_SIZE = "audioSDLBufferSize";
-    private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize";
+    private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize2";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String NAVIGATION_MODE = "navigationMode";
 
