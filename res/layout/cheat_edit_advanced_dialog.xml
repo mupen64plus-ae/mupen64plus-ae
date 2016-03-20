@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_margin="5dp"
-            android:digits="0123456789ABCDEF"
+            android:digits="0123456789ABCDEF? \n"
             android:gravity="top"
             android:hint="@string/cheatEditor_hint_cheatData"
             android:inputType="textCapCharacters"
