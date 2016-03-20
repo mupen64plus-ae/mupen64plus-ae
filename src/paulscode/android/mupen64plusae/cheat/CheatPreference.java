@@ -149,7 +149,10 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         mCheckbox.setClickable( false );
         
         // Refresh the widgets
-        refreshWidgets();
+        if( mCheckbox != null )
+        {
+            mCheckbox.setChecked( isCheatEnabled() );
+        }
     }
     
     @Override
