@@ -21,7 +21,11 @@
 package paulscode.android.mupen64plusae.jni;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,6 +36,7 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
+import paulscode.android.mupen64plusae.game.GameAutoSaveManager;
 import paulscode.android.mupen64plusae.game.GameSurface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -195,6 +200,117 @@ public class CoreInterface
         new File( sGamePrefs.coreUserConfigDir ).mkdirs();
         new File( sGlobalPrefs.coreUserDataDir ).mkdirs();
         new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
+        
+        moveFromLegacy();
+    }
+    
+    /**
+     * Move any legacy files to new folder structure
+     */
+    private static void moveFromLegacy()
+    {
+        final File legacySlotPath = new File(sGlobalPrefs.legacySlotSaves);
+        final File legacyAutoSavePath = new File(sGlobalPrefs.legacyAutoSaves);
+
+        //Move sra, mpk, and eep files
+        final FileFilter fileSramFilter = new FileFilter(){
+
+            @Override
+            public boolean accept(File pathname)
+            {
+                final String fileName = pathname.getName();
+                
+                return fileName.contains(sGamePrefs.gameGoodName + ".sra") ||
+                    fileName.contains(sGamePrefs.gameGoodName + ".eep") ||
+                    fileName.contains(sGamePrefs.gameGoodName + ".mpk");
+            }
+        };
+        
+        //Move all files found
+        for( final File file : legacySlotPath.listFiles(fileSramFilter) )
+        {
+            String targetPath = sGamePrefs.sramDataDir + "/" + file.getName();
+            File targetFile= new File(targetPath);
+            
+            if(!targetFile.exists())
+            {
+                Log.i("CoreInterface", "Found legacy SRAM file: " + file +
+                    " Moving to " + targetFile.getPath());
+
+                file.renameTo(targetFile);
+            }
+            else
+            {
+                Log.i("CoreInterface", "Found legacy SRAM file: " + file +
+                    " but can't move");
+            }
+        }
+        
+        //Move all st files
+        final FileFilter fileSlotFilter = new FileFilter(){
+
+            @Override
+            public boolean accept(File pathname)
+            {
+                final String fileName = pathname.getName();
+                return fileName.contains(sGamePrefs.gameGoodName) &&
+                    fileName.substring(fileName.length() - 3).contains("st");
+            }
+        };
+        
+        for( final File file : legacySlotPath.listFiles(fileSlotFilter) )
+        {            
+            String targetPath = sGamePrefs.slotSaveDir + "/" + file.getName();
+            File targetFile= new File(targetPath);
+            
+            if(!targetFile.exists())
+            {
+                Log.i("CoreInterface", "Found legacy ST file: " + file +
+                    " Moving to " + targetFile.getPath());
+
+                file.renameTo(targetFile);
+            }
+            else
+            {
+                Log.i("CoreInterface", "Found legacy ST file: " + file +
+                    " but can't move");
+            }
+        }
+        
+        //Move auto saves
+        final FileFilter fileAutoSaveFilter = new FileFilter(){
+
+            @Override
+            public boolean accept(File pathname)
+            {
+                final String fileName = pathname.getName();
+                return fileName.equals(sGamePrefs.legacySaveFileName + ".sav");
+            }
+        };
+        
+        //Move all files found
+        for( final File file : legacyAutoSavePath.listFiles(fileAutoSaveFilter) )
+        {
+            final DateFormat dateFormat = new SimpleDateFormat(GameAutoSaveManager.sFormatString, java.util.Locale.getDefault());
+            final String dateAndTime = dateFormat.format(new Date()).toString();
+            final String fileName = dateAndTime + ".sav";
+            
+            String targetPath = sGamePrefs.autoSaveDir + "/" + fileName;
+            File targetFile= new File(targetPath);
+            
+            if(!targetFile.exists())
+            {
+                Log.i("CoreInterface", "Found legacy SAV file: " + file +
+                    " Moving to " + targetFile.getPath());
+
+                file.renameTo(targetFile);
+            }
+            else
+            {
+                Log.i("CoreInterface", "Found legacy SAV file: " + file +
+                    " but can't move");
+            }
+        }
     }
     
     public static void registerVibrator( int player, Vibrator vibrator )

@@ -193,6 +193,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
         mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
         mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+        String legacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
@@ -205,8 +206,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         // Get app data and user preferences
         mGlobalPrefs = new GlobalPrefs( this, appData );
 
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName,
-            RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs, legacySaveName );
         mCheatArgs =  mGamePrefs.getCheatArgs();
 
         mAutoSaveManager = new GameAutoSaveManager(mGamePrefs, mGlobalPrefs.maxAutoSaves);
@@ -227,8 +228,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
 
         // If the orientation changes, the screensize info changes, so we must refresh dependencies
         mGlobalPrefs = new GlobalPrefs( this, appData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName,
-                RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+                RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs, legacySaveName );
 
         mFirstStart = true;
 

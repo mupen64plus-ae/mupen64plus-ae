@@ -87,6 +87,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private String mRomMd5 = null;
     private String mRomCrc = null;
     private String mRomHeaderName = null;
+    private String mRomGoodName = null;
+    private String mLegacySaveName = null;
     private byte mRomCountryCode = 0;
     private RomDatabase mRomDatabase = null;
     private RomDetail mRomDetail = null;
@@ -121,6 +123,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
         mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+        mLegacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
         mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
 
         if( TextUtils.isEmpty( mRomMd5 ) )
@@ -134,8 +138,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName,
-            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs, mLegacySaveName );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
 
@@ -267,8 +271,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         // Refresh the preferences objects
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName,
-            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs, mLegacySaveName );
 
         // Populate the profile preferences
         if(mEmulationProfile != null)
@@ -329,8 +333,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, RomHeader.countryCodeToSymbol(mRomCountryCode),
-            mAppData, mGlobalPrefs );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs, mLegacySaveName );
 
         // Set cheats screen summary text
         mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );

@@ -67,6 +67,7 @@ public class ActivityHelper
         public static final String ROM_COUNTRY_CODE     = NAMESPACE + "ROM_COUNTRY_CODE";
         public static final String ROM_GOOD_NAME        = NAMESPACE + "ROM_GOOD_NAME";
         public static final String ROM_ART_PATH         = NAMESPACE + "ROM_ART_PATH";
+        public static final String ROM_LEGACY_SAVE      = NAMESPACE + "ROM_LEGACY_SAVE";
         public static final String DO_RESTART           = NAMESPACE + "DO_RESTART";
         public static final String PROFILE_NAME         = NAMESPACE + "PROFILE_NAME";
         public static final String SEARCH_PATH          = NAMESPACE + "GALLERY_SEARCH_PATH";
@@ -135,7 +136,7 @@ public class ActivityHelper
     }
     
     public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,
-            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName,
+            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romLegacySave,
             boolean doRestart)
     {
         Intent intent = new Intent( context, GameActivity.class );
@@ -146,6 +147,7 @@ public class ActivityHelper
         intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
         intent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, romArtPath );
         intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
+        intent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, romLegacySave );
         intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
         context.startActivity( intent );
     }
@@ -187,13 +189,15 @@ public class ActivityHelper
     }
     
     public static void startGamePrefsActivity( Context context, String romPath, String romMd5,
-        String romCrc, String romHeaderName, byte romCountryCode )
+        String romCrc, String romHeaderName, String romGoodName, byte romCountryCode, String romLegacySave )
     {
         Intent intent = new Intent( context, GamePrefsActivity.class );
         intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
+        intent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, romLegacySave );
         intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
         context.startActivity( intent );
     }

@@ -594,9 +594,23 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                 break;
             case R.id.menuItem_settings:
+            {
+                String romLegacySaveFileName = null;
+                
+                if(finalItem.zipFile != null)
+                {
+                    romLegacySaveFileName = finalItem.zipFile.getName();
+                }
+                else
+                {
+                    romLegacySaveFileName = finalItem.romFile.getName();
+                }
                 ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(),
-                    finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.countryCode );
+                    finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.goodName, finalItem.countryCode,
+                    romLegacySaveFileName);
                 break;
+
+            }
             default:
         }
     }
@@ -916,10 +930,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         mRefreshNeeded = true;
         mSelectedItem = null;
+        
+        String romLegacySaveFileName = null;
+        
+        
+        
+        if(zipPath != null)
+        {
+            File zipFile = new File(zipPath);
+            romLegacySaveFileName = zipFile.getName();
+        }
+        else
+        {
+            File romFile = new File(romPath);
+            romLegacySaveFileName = romFile.getName();
+        }
 
         // Launch the game activity
         ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                    romArtPath, romGoodName, isRestarting );
+                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting );
     }
 
     private void ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)

@@ -17,7 +17,7 @@ public class GameAutoSaveManager
     private final GamePrefs mGamePrefs;
     private final String mAutoSavePath;
     private final int mMaxAutoSave;
-    private static final String sFormatString = "yyyy-MM-dd-HH-mm-ss";
+    public static final String sFormatString = "yyyy-MM-dd-HH-mm-ss";
     private static final String sMatcherString = "^\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d\\.sav$";
     private static final String sDefaultString = "yyyy-mm-dd-hh-mm-ss.sav";
 

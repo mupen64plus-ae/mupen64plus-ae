@@ -112,6 +112,12 @@ public class GlobalPrefs
 
     /** The directory containing all custom touchscreen skin folders. */
     public final String touchscreenCustomSkinsDir;
+    
+    /** Legacy auto save directory */
+    public final String legacyAutoSaves;
+
+    /** Legacy slot save directory */
+    public final String legacySlotSaves;
 
     /** The path of the rom info cache for the gallery. */
     public final String romInfoCache_cfg;
@@ -350,6 +356,8 @@ public class GlobalPrefs
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         customCheats_txt = profilesDir + "/customCheats.txt";
         touchscreenCustomSkinsDir = userDataDir + "/CustomSkins";
+        legacyAutoSaves = userDataDir + "/AutoSaves";
+        legacySlotSaves = userDataDir + "/SlotSaves";
 
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );

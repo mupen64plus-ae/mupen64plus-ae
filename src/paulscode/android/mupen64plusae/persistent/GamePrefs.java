@@ -45,6 +45,12 @@ public class GamePrefs
     /** Game header name */
     public final String gameHeaderName;
 
+    /** Game good name */
+    public final String gameGoodName;
+    
+    /** Legacy save file name */
+    public final String legacySaveFileName;
+    
     /** The subdirectory containing user screenshots. */
     public final String screenshotDir;
 
@@ -406,10 +412,13 @@ public class GamePrefs
     public static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
 
     @TargetApi( 17 )
-    public GamePrefs( Context context, String romMd5, String crc, String headerName, String countrySymbol,
-        AppData appData, GlobalPrefs globalPrefs)
+    public GamePrefs( Context context, String romMd5, String crc, String headerName, String goodName,
+        String countrySymbol, AppData appData, GlobalPrefs globalPrefs, String legacySave)
     {
         gameHeaderName = headerName;
+        gameGoodName = goodName;
+        legacySaveFileName = legacySave;
+        
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
 
