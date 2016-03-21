@@ -294,6 +294,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             final MenuItem profileGroupItem = mDrawerList.getMenu().findItem(R.id.menuItem_profiles);
             profileGroupItem.getSubMenu().removeItem(R.id.menuItem_touchscreenProfiles);
+            
+            final MenuItem settingsGroupItem = mDrawerList.getMenu().findItem(R.id.menuItem_settings);
+            settingsGroupItem.getSubMenu().removeItem(R.id.menuItem_categoryTouchscreen);
         }
 
         // Select the Library section
