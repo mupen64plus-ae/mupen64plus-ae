@@ -151,7 +151,6 @@ public class CacheRomInfoService extends Service
             mListener.GetProgressDialog().setMaxProgress( files.size() );
             for( final File file : files )
             {
-                mListener.GetProgressDialog().setMaxSubprogress( 0 );
                 mListener.GetProgressDialog().setSubtext( "" );
                 mListener.GetProgressDialog().setText( file.getAbsolutePath().substring( mSearchPath.length() ) );
                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searching );
@@ -168,7 +167,6 @@ public class CacheRomInfoService extends Service
                     try
                     {
                         ZipFile zipFile = new ZipFile( file );
-                        mListener.GetProgressDialog().setMaxSubprogress( zipFile.size() );
                         Enumeration<? extends ZipEntry> entries = zipFile.entries();
                         while( entries.hasMoreElements() )
                         {
@@ -201,7 +199,6 @@ public class CacheRomInfoService extends Service
                             {
                                 Log.w( "CacheRomInfoService", e );
                             }
-                            mListener.GetProgressDialog().incrementSubprogress( 1 );
                         }
                         zipFile.close();
                     }

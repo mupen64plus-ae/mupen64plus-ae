@@ -20,15 +20,12 @@ public class ProgressDialog implements OnClickListener
     private final TextView mTextProgress;
     private final TextView mTextSubprogress;
     private final TextView mTextMessage;
-    private final ProgressBar mProgressSubtotal;
     private final ProgressBar mProgressTotal;
     private AlertDialog mDialog;
     private AlertDialog mAbortDialog;
     
     private long mMaxProgress = -1;
-    private long mMaxSubprogress = -1;
     private long mProgress = 0;
-    private long mSubprogress = 0;
     private CacheRomInfoService mCacheRomInfoService = null;
     
     public ProgressDialog( Activity activity, CharSequence title,
@@ -40,7 +37,6 @@ public class ProgressDialog implements OnClickListener
         mTextProgress = (TextView) layout.findViewById( R.id.textProgress );
         mTextSubprogress = (TextView) layout.findViewById( R.id.textSubprogress );
         mTextMessage = (TextView) layout.findViewById( R.id.textMessage );
-        mProgressSubtotal = (ProgressBar) layout.findViewById( R.id.progressSubtotal );
         mProgressTotal = (ProgressBar) layout.findViewById( R.id.progressTotal );
         
         // Create main dialog
@@ -66,13 +62,10 @@ public class ProgressDialog implements OnClickListener
             mCacheRomInfoService = original.mCacheRomInfoService;
             
             setMaxProgress(original.mMaxProgress);
-            setMaxSubprogress(original.mMaxSubprogress);
             
             mProgress = original.mProgress;
-            mSubprogress = original.mSubprogress;
             
             incrementProgress(0);
-            incrementSubprogress(0);
             
             mTextProgress.setText(original.mTextProgress.getText());
             mTextSubprogress.setText(original.mTextSubprogress.getText());
@@ -186,21 +179,6 @@ public class ProgressDialog implements OnClickListener
         } );
     }
     
-    public void setMaxSubprogress( final long size )
-    {
-        mActivity.runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mMaxSubprogress = size;
-                mSubprogress = 0;
-                mProgressSubtotal.setProgress( 0 );
-                mProgressSubtotal.setVisibility( mMaxSubprogress > 0 ? View.VISIBLE : View.GONE );
-            }
-        } );
-    }
-    
     public void incrementProgress( final long inc )
     {
         mActivity.runOnUiThread( new Runnable()
@@ -214,24 +192,6 @@ public class ProgressDialog implements OnClickListener
                     int pctProgress = Math.round( ( PROGRESS_PRECISION * mProgress )
                             / mMaxProgress );
                     mProgressTotal.setProgress( pctProgress );
-                }
-            }
-        } );
-    }
-    
-    public void incrementSubprogress( final long inc )
-    {
-        mActivity.runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                if( mMaxSubprogress > 0 )
-                {
-                    mSubprogress += inc;
-                    int pctSubprogress = Math.round( ( PROGRESS_PRECISION * mSubprogress )
-                            / mMaxSubprogress );
-                    mProgressSubtotal.setProgress( pctSubprogress );
                 }
             }
         } );

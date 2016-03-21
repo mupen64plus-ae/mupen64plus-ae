@@ -41,14 +41,6 @@
             android:max="1000"
             android:visibility="gone" />
 
-        <ProgressBar
-            android:id="@+id/progressSubtotal"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="1000"
-            android:visibility="gone" />
-
         <TextView
             android:id="@+id/textSubprogress"
             android:layout_width="wrap_content"
