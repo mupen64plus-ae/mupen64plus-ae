@@ -80,7 +80,7 @@ public class GameAutoSaveManager
         final List<File> result = new ArrayList<File>();
         final File savePath = new File(mAutoSavePath);
 
-        if(savePath.listFiles().length != 0)
+        if(savePath.listFiles() != null && savePath.listFiles().length != 0)
         {
             //Only find files that end with .sav
             final FileFilter fileFilter = new FileFilter(){
