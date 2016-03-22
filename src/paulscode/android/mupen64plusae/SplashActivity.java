@@ -111,6 +111,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize2";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String NAVIGATION_MODE = "navigationMode";
+    private static final String DATA_PATH = "pathGameSaves";
 
     /*
      * (non-Javadoc)
@@ -149,6 +150,16 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_SIZE,   R.string.audioSLESBufferSize_default,   R.array.audioSLESBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
         PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
+        
+        //Check for invalid data path
+        String dataPathString = mPrefs.getString( DATA_PATH, null );
+        
+        if(dataPathString == null || dataPathString.isEmpty())
+        {
+            String defValue = res.getString( R.string.pathGameSaves_default );
+            mPrefs.edit().putString( DATA_PATH, defValue ).commit();
+        }
+        
         // @formatter:on
 
         // Refresh the preference data wrapper
