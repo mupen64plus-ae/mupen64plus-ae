@@ -800,9 +800,9 @@ public class GamePrefs
             return new Profile( false, custom.get( defaultName ) );
         else if( builtin.keySet().contains( defaultName ) )
             return new Profile( true, builtin.get( defaultName ) );
-        else if( custom.keySet().contains( defaultName ) )
+        else if( custom.keySet().contains( appDefault ) )
             return new Profile( false, custom.get( appDefault ) );
-        else if( builtin.keySet().contains( defaultName ) )
+        else if( builtin.keySet().contains( appDefault ) )
             return new Profile( true, builtin.get( appDefault ) );
         else
             return null;
