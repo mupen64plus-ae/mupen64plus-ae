@@ -274,7 +274,7 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         FileUtil.populate( startPath, true, true, isFilesIncluded, mNames, mPaths );
     }
 
-    private static String validate( String value )
+    public static String validate( String value )
     {
         if( TextUtils.isEmpty( value ) )
         {

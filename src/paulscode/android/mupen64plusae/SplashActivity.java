@@ -29,6 +29,7 @@ import paulscode.android.mupen64plusae.cheat.CheatUtils;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.preference.PathPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListener;
@@ -154,10 +155,13 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         //Check for invalid data path
         String dataPathString = mPrefs.getString( DATA_PATH, null );
         
-        if(dataPathString == null || dataPathString.isEmpty())
+        if(dataPathString == null || dataPathString.isEmpty() ||
+            dataPathString.contains(res.getString(R.string.pathGameSaves_default)))
         {
             String defValue = res.getString( R.string.pathGameSaves_default );
-            mPrefs.edit().putString( DATA_PATH, defValue ).commit();
+            String newDefValue = PathPreference.validate( defValue);
+            
+            mPrefs.edit().putString( DATA_PATH, newDefValue ).commit();
         }
         
         // @formatter:on
