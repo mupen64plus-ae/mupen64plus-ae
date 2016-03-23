@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.cheat;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -209,6 +210,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         combinedCheats.addAll(systemCheats);
         combinedCheats.addAll(userCheats);
         Collections.sort(combinedCheats);
+        
+        new File( mGlobalPrefs.customCheats_txt ).getParentFile().mkdirs();
         
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt, true );
