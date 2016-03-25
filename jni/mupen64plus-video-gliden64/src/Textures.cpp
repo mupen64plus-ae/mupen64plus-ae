@@ -899,7 +899,7 @@ void TextureCache::_getTextureDestData(CachedTexture& tmptex,
 		maskSMask = (1 << tmptex.maskS) - 1;
 		mirrorSBit = (tmptex.mirrorS != 0 || tmptex.realWidth/tmptex.width == 2) ? 1 << tmptex.maskS : 0;
 	} else {
-		clampSClamp = min(tmptex.clampWidth, tmptex.width) - 1;
+		clampSClamp = tmptex.clampS ? tmptex.clampWidth - 1 : tmptex.width - 1;
 		maskSMask = 0xFFFF;
 		mirrorSBit = 0x0000;
 	}
@@ -909,7 +909,7 @@ void TextureCache::_getTextureDestData(CachedTexture& tmptex,
 		maskTMask = (1 << tmptex.maskT) - 1;
 		mirrorTBit = (tmptex.mirrorT != 0 || tmptex.realHeight/tmptex.height == 2) ? 1 << tmptex.maskT : 0;
 	} else {
-		clampTClamp = min(tmptex.clampHeight, tmptex.height) - 1;
+		clampTClamp = tmptex.clampT ? tmptex.clampHeight - 1 : tmptex.height - 1;
 		maskTMask = 0xFFFF;
 		mirrorTBit = 0x0000;
 	}
@@ -1158,6 +1158,8 @@ u32 _calculateCRC(u32 t, const TextureParams & _params)
 		else if (gSP.textureTile[t]->size == G_IM_SIZ_8b)
 			crc = CRC_Calculate( crc, &gDP.paletteCRC256, 4 );
 	}
+	const u8 tlutMode = gDP.otherMode.textureLUT;
+	crc = CRC_Calculate(crc, &tlutMode, 1);
 
 	crc = CRC_Calculate(crc, &_params, sizeof(_params));
 

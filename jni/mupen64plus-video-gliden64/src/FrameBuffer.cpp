@@ -391,10 +391,10 @@ bool FrameBuffer::isValid() const
 	return true; // No data to decide
 }
 
-void FrameBuffer::resolveMultisampledTexture()
+void FrameBuffer::resolveMultisampledTexture(bool _bForce)
 {
 #ifdef GL_MULTISAMPLING_SUPPORT
-	if (m_resolved)
+	if (m_resolved && !_bForce)
 		return;
 	glScissor(0, 0, m_pTexture->realWidth, m_pTexture->realHeight);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
@@ -538,9 +538,9 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 	if (m_pCurrent != NULL) {
 		// Correct buffer's end address
 		if (!m_pCurrent->isAuxiliary()) {
-			if (gDP.colorImage.height != 0)
+			if (gDP.colorImage.height > 200)
 				m_prevColorImageHeight = gDP.colorImage.height;
-			else
+			else if (gDP.colorImage.height == 0)
 				gDP.colorImage.height = m_prevColorImageHeight;
 			gDP.colorImage.height = min(gDP.colorImage.height, VI.height);
 			m_pCurrent->m_endAddress = min(RDRAMSize, m_pCurrent->m_startAddress + (((m_pCurrent->m_width * gDP.colorImage.height) << m_pCurrent->m_size >> 1) - 1));
@@ -838,8 +838,6 @@ void FrameBufferList::renderBuffer(u32 _address)
 	render.updateScissor(pBuffer);
 	PostProcessor::get().doGammaCorrection(pBuffer);
 	PostProcessor::get().doBlur(pBuffer);
-	// glDisable(GL_SCISSOR_TEST) does not affect glBlitFramebuffer, at least on AMD
-	glScissor(0, 0, ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset());
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//glDrawBuffer( GL_BACK );
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -850,7 +848,7 @@ void FrameBufferList::renderBuffer(u32 _address)
 		if (X0 > 0 || dstPartHeight > 0 ||
 			(srcCoord[2] - srcCoord[0]) != (dstCoord[2] - dstCoord[0]) ||
 			(srcCoord[3] - srcCoord[1]) != (dstCoord[3] - dstCoord[1])) {
-			pBuffer->resolveMultisampledTexture();
+			pBuffer->resolveMultisampledTexture(true);
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, pBuffer->m_resolveFBO);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		} else {
@@ -859,6 +857,9 @@ void FrameBufferList::renderBuffer(u32 _address)
 		}
 	} else
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, pBuffer->m_FBO);
+
+	// glDisable(GL_SCISSOR_TEST) does not affect glBlitFramebuffer, at least on AMD
+	glScissor(0, 0, ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset());
 
 	glBlitFramebuffer(
 		srcCoord[0], srcCoord[1], srcCoord[2], srcCoord[3],
@@ -1130,15 +1131,22 @@ bool FrameBufferToRDRAM::_prepareCopy(u32 _startAddress)
 	if (m_pCurFrameBuffer->m_scaleX > 1.0f) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
 		glScissor(0, 0, m_pCurFrameBuffer->m_pTexture->realWidth, m_pCurFrameBuffer->m_pTexture->realHeight);
-		const u32 screenWidth = ogl.getWidth();
 		u32 x0 = 0;
-		u32 width = screenWidth;
-		if (ogl.isAdjustScreen()) {
-			width = static_cast<u32>(screenWidth*ogl.getAdjustScale());
-			x0 = (screenWidth - width) / 2;
+		u32 width, height;
+		if (config.frameBufferEmulation.nativeResFactor == 0) {
+			height = ogl.getHeight();
+			const u32 screenWidth = ogl.getWidth();
+			width = screenWidth;
+			if (ogl.isAdjustScreen()) {
+				width = static_cast<u32>(screenWidth*ogl.getAdjustScale());
+				x0 = (screenWidth - width) / 2;
+			}
+		} else {
+			width = m_pCurFrameBuffer->m_pTexture->realWidth;
+			height = m_pCurFrameBuffer->m_pTexture->realHeight;
 		}
 		glBlitFramebuffer(
-			x0, 0, x0 + width, ogl.getHeight(),
+			x0, 0, x0 + width, height,
 			0, 0, VI.width, VI.height,
 			GL_COLOR_BUFFER_BIT, GL_NEAREST
 			);

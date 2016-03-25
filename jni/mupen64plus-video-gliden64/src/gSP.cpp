@@ -333,6 +333,7 @@ void gSPProcessVertex4(u32 v)
 		vPos[i][0] = vtx.x;
 		vPos[i][1] = vtx.y;
 		vPos[i][2] = vtx.z;
+		vtx.modify = 0;
 	}
 	gSPTransformVertex4(v, gSP.matrix.combined );
 
@@ -398,7 +399,7 @@ static void gSPTransformVertex_default(float vtx[4], float mtx[4][4])
 
 static void gSPLightVertex_default(SPVertex & _vtx)
 {
-	if (!config.generalEmulation.enableHWLighting) {
+	if (config.generalEmulation.enableHWLighting == 0) {
 		_vtx.HWLight = 0;
 		_vtx.r = gSP.lights[gSP.numLights].r;
 		_vtx.g = gSP.lights[gSP.numLights].g;
@@ -575,6 +576,7 @@ void gSPProcessVertex(u32 v)
 	}
 
 	gSPClipVertex(v);
+	vtx.modify = 0;
 
 	if (gSP.geometryMode & G_LIGHTING) {
 		TransformVectorNormalize( &vtx.nx, gSP.matrix.modelView[gSP.matrix.modelViewi] );
@@ -1520,28 +1522,27 @@ void gSPModifyVertex( u32 _vtx, u32 _where, u32 _val )
 			vtx0.g = _SHIFTR( _val, 16, 8 ) * 0.0039215689f;
 			vtx0.b = _SHIFTR( _val, 8, 8 ) * 0.0039215689f;
 			vtx0.a = _SHIFTR( _val, 0, 8 ) * 0.0039215689f;
+			vtx0.modify|= MODIFY_RGBA;
 		break;
 		case G_MWO_POINT_ST:
 			vtx0.s = _FIXED2FLOAT( (s16)_SHIFTR( _val, 16, 16 ), 5 ) / gSP.texture.scales;
 			vtx0.t = _FIXED2FLOAT((s16)_SHIFTR(_val, 0, 16), 5) / gSP.texture.scalet;
+			vtx0.modify |= MODIFY_ST;
 		break;
 		case G_MWO_POINT_XYSCREEN:
 		{
-			f32 scrX = _FIXED2FLOAT( (s16)_SHIFTR( _val, 16, 16 ), 2 );
-			f32 scrY = _FIXED2FLOAT( (s16)_SHIFTR( _val, 0, 16 ), 2 );
-			vtx0.x = (scrX - gSP.viewport.vtrans[0]) / gSP.viewport.vscale[0];
-			vtx0.x *= vtx0.w;
-			vtx0.y = -(scrY - gSP.viewport.vtrans[1]) / gSP.viewport.vscale[1];
-			vtx0.y *= vtx0.w;
+			vtx0.x = _FIXED2FLOAT((s16)_SHIFTR(_val, 16, 16), 2);
+			vtx0.y = _FIXED2FLOAT((s16)_SHIFTR(_val, 0, 16), 2);
 			vtx0.clip &= ~(CLIP_POSX | CLIP_NEGX | CLIP_POSY | CLIP_NEGY);
+			vtx0.modify |= MODIFY_XY;
 		}
 		break;
 		case G_MWO_POINT_ZSCREEN:
 		{
 			f32 scrZ = _FIXED2FLOAT((s16)_SHIFTR(_val, 16, 16), 15);
 			vtx0.z = (scrZ - gSP.viewport.vtrans[2]) / (gSP.viewport.vscale[2]);
-			vtx0.z *= vtx0.w;
 			vtx0.clip &= ~CLIP_Z;
+			vtx0.modify |= MODIFY_Z;
 		}
 		break;
 	}
@@ -1811,7 +1812,6 @@ void gSPSetSpriteTile(const uObjSprite *_pObjSprite)
 	gDPSetTile( _pObjSprite->imageFmt, _pObjSprite->imageSiz, _pObjSprite->imageStride, _pObjSprite->imageAdrs, 0, _pObjSprite->imagePal, G_TX_CLAMP, G_TX_CLAMP, 0, 0, 0, 0 );
 	gDPSetTileSize( 0, 0, 0, (w - 1) << 2, (h - 1) << 2 );
 	gSPTexture( 1.0f, 1.0f, 0, 0, TRUE );
-	gDP.otherMode.texturePersp = 1;
 }
 
 struct ObjData
@@ -2140,7 +2140,6 @@ void gSPBgRect1Cyc( u32 _bg )
 	gDP.otherMode.cycleType = G_CYC_1CYCLE;
 	gDP.changed |= CHANGED_CYCLETYPE;
 	gSPTexture(1.0f, 1.0f, 0, 0, TRUE);
-	gDP.otherMode.texturePersp = 1;
 
 	ObjCoordinates objCoords(objScaleBg);
 	gSPDrawObjRect(objCoords);
@@ -2159,7 +2158,6 @@ void gSPBgRectCopy( u32 _bg )
 #endif // GL_IMAGE_TEXTURES_SUPPORT
 
 	gSPTexture( 1.0f, 1.0f, 0, 0, TRUE );
-	gDP.otherMode.texturePersp = 1;
 
 	ObjCoordinates objCoords(objBg);
 	gSPDrawObjRect(objCoords);
@@ -2365,7 +2363,8 @@ void gSPSprite2DBase(u32 _base)
 		vtx3.s = lrs;
 		vtx3.t = lrt;
 
-		render.drawLLETriangle(4);
+		if (pSprite->stride > 0)
+			render.drawLLETriangle(4);
 	} while (RSP.nextCmd == 0xBD || RSP.nextCmd == 0xBE);
 }
 

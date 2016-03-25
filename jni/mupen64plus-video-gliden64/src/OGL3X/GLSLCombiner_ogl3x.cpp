@@ -515,6 +515,7 @@ void ShaderCombiner::_locateUniforms() {
 	LocateUniform(uScreenScale);
 	LocateUniform(uDepthScale);
 	LocateUniform(uFogScale);
+	LocateUniform(uScreenCoordsScale);
 
 #ifdef GL_MULTISAMPLING_SUPPORT
 	LocateUniform(uMSTex0);
@@ -531,6 +532,7 @@ void ShaderCombiner::_locate_attributes() const {
 	glBindAttribLocation(m_program, SC_TEXCOORD0, "aTexCoord0");
 	glBindAttribLocation(m_program, SC_TEXCOORD1, "aTexCoord1");
 	glBindAttribLocation(m_program, SC_NUMLIGHTS, "aNumLights");
+	glBindAttribLocation(m_program, SC_MODIFY, "aModify");
 }
 
 void ShaderCombiner::update(bool _bForce) {
@@ -562,11 +564,20 @@ void ShaderCombiner::update(bool _bForce) {
 	updateTextureInfo(_bForce);
 	updateAlphaTestInfo(_bForce);
 	updateDepthInfo(_bForce);
+	updateScreenCoordsScale(_bForce);
 }
 
 void ShaderCombiner::updateRenderState(bool _bForce)
 {
 	m_uniforms.uRenderState.set(video().getRender().getRenderState(), _bForce);
+}
+
+void ShaderCombiner::updateScreenCoordsScale(bool _bForce)
+{
+	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
+	const float scaleX = pCurrentBuffer != NULL ? 1.0f / pCurrentBuffer->m_width : VI.rwidth;
+	const float scaleY = pCurrentBuffer != NULL ? 1.0f / pCurrentBuffer->m_height : VI.rheight;
+	m_uniforms.uScreenCoordsScale.set(2.0f*scaleX, -2.0f*scaleY, _bForce);
 }
 
 void ShaderCombiner::updateFogMode(bool _bForce)
@@ -692,7 +703,8 @@ void ShaderCombiner::updateLOD(bool _bForce)
 }
 
 void ShaderCombiner::updateTextureInfo(bool _bForce) {
-	m_uniforms.uTexturePersp.set(gDP.otherMode.texturePersp, _bForce);
+	const u32 texturePersp = (RSP.bLLE || GBI.isTexturePersp()) ? gDP.otherMode.texturePersp : 1U;
+	m_uniforms.uTexturePersp.set(texturePersp, _bForce);
 	if (config.texture.bilinearMode == BILINEAR_3POINT)
 		m_uniforms.uTextureFilterMode.set(gDP.otherMode.textureFilter | (gSP.objRendermode&G_OBJRM_BILERP), _bForce);
 }

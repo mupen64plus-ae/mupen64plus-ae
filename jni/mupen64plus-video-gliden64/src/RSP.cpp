@@ -139,7 +139,8 @@ void RSP_CheckDLCounter()
 void RSP_ProcessDList()
 {
 	if (ConfigOpen || video().isResizeWindow()) {
-		gDPFullSync();
+		*REG.MI_INTR |= MI_INTR_DP;
+		CheckInterrupts();
 		return;
 	}
 	if (*REG.VI_ORIGIN != VI.lastOrigin) {
@@ -158,6 +159,7 @@ void RSP_ProcessDList()
 	if (gSP.matrix.stackSize == 0)
 		gSP.matrix.stackSize = 32;
 	gSP.matrix.modelViewi = 0;
+	gSP.status[0] = gSP.status[1] = gSP.status[2] = gSP.status[3] = 0;
 	gSP.changed |= CHANGED_MATRIX;
 	gDP.changed &= ~CHANGED_CPU_FB_WRITE;
 	gDPSetTexturePersp(G_TP_PERSP);
@@ -341,8 +343,6 @@ void RSP_Init()
 	else if (strstr(RSP.romname, (const char *)"Perfect Dark") != NULL ||
 			 strstr(RSP.romname, (const char *)"PERFECT DARK") != NULL)
 		config.generalEmulation.hacks |= hack_rectDepthBufferCopyPD;
-	else if (strstr(RSP.romname, (const char *)"POKEMON STADIUM 2") != NULL)
-		config.generalEmulation.hacks |= hack_texrectVertexFullAlpha;
 
 	api().FindPluginPath(RSP.pluginpath);
 

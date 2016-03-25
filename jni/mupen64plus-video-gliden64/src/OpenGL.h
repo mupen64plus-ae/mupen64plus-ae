@@ -114,10 +114,10 @@ public:
 
 	enum RENDER_STATE {
 		rsNone = 0,
-		rsTriangle = 1,
-		rsRect = 2,
-		rsTexRect = 3,
-		rsLine = 4
+		rsLine = 1,
+		rsTriangle = 2,
+		rsRect = 3,
+		rsTexRect = 4,
 	};
 	RENDER_STATE getRenderState() const {return m_renderState;}
 
@@ -130,7 +130,7 @@ public:
 	void dropRenderState() {m_renderState = rsNone;}
 
 private:
-	OGLRender() : m_oglRenderer(glrOther), m_bImageTexture(false), m_bFlatColors(false), m_texrectVertexAlpha(0) {}
+	OGLRender() : m_oglRenderer(glrOther), m_bImageTexture(false), m_bFlatColors(false) {}
 	OGLRender(const OGLRender &);
 	friend class OGLVideo;
 
@@ -146,6 +146,7 @@ private:
 	void _setBlendMode() const;
 	void _updateCullFace() const;
 	void _updateViewport() const;
+	void _updateScreenCoordsViewport() const;
 	void _updateDepthUpdate() const;
 	void _updateStates(RENDER_STATE _renderState) const;
 	void _prepareDrawTriangle(bool _dma);
@@ -173,7 +174,6 @@ private:
 	GLVertex m_rect[4];
 	bool m_bImageTexture;
 	bool m_bFlatColors;
-	float m_texrectVertexAlpha;
 };
 
 class OGLVideo

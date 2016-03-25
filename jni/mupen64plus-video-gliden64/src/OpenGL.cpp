@@ -158,7 +158,6 @@ void OGLVideo::swapBuffers()
 {
 	_swapBuffers();
 	gDP.otherMode.l = 0;
-	gDPSetTextureLUT(G_TT_NONE);
 	++m_buffersSwapCount;
 }
 
@@ -468,6 +467,10 @@ void OGLRender::_setBlendMode() const
 				glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
 				break;
 
+			case 0xFA00: // Bomberman second attack
+				glBlendFunc(GL_ONE, GL_ZERO);
+				break;
+
 			default:
 				//LOG(LOG_VERBOSE, "Unhandled blend mode=%x", gDP.otherMode.l >> 16);
 				glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -476,7 +479,7 @@ void OGLRender::_setBlendMode() const
 	} else if ((config.generalEmulation.hacks & hack_pilotWings) != 0 && (gDP.otherMode.l & 0x80) != 0) { //CLR_ON_CVG without FORCE_BL
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ZERO, GL_ONE);
-	} else if ((config.generalEmulation.hacks & hack_blastCorps) != 0 && gSP.texture.on == 0 && currentCombiner()->usesTexture()) { // Blast Corps
+	} else if ((config.generalEmulation.hacks & hack_blastCorps) != 0 && gDP.otherMode.cycleType < G_CYC_COPY && gSP.texture.on == 0 && currentCombiner()->usesTexture()) { // Blast Corps
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ZERO, GL_ONE);
 	} else {
@@ -532,6 +535,17 @@ void OGLRender::_updateViewport() const
 			max((GLint)(gSP.viewport.width * scaleX), 0), max((GLint)(gSP.viewport.height * scaleY), 0));
 	}
 	gSP.changed &= ~CHANGED_VIEWPORT;
+}
+
+void OGLRender::_updateScreenCoordsViewport() const
+{
+	OGLVideo & ogl = video();
+	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
+	if (pCurrentBuffer == NULL)
+		glViewport(0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
+	else
+		glViewport(0, 0, pCurrentBuffer->m_width*pCurrentBuffer->m_scaleX, pCurrentBuffer->m_height*pCurrentBuffer->m_scaleY);
+	gSP.changed |= CHANGED_VIEWPORT;
 }
 
 inline
@@ -747,7 +761,8 @@ void OGLRender::_prepareDrawTriangle(bool _dma)
 			glEnableVertexAttribArray(SC_NUMLIGHTS);
 			glVertexAttribPointer(SC_NUMLIGHTS, 1, GL_BYTE, GL_FALSE, sizeof(SPVertex), &pVtx->HWLight);
 		}
-
+		glEnableVertexAttribArray(SC_MODIFY);
+		glVertexAttribPointer(SC_MODIFY, 4, GL_BYTE, GL_FALSE, sizeof(SPVertex), &pVtx->modify);
 	} else if (updateColorArrays) {
 		SPVertex * pVtx = _dma ? triangles.dmaVertices.data() : &triangles.vertices[0];
 		if (m_bFlatColors)
@@ -755,6 +770,9 @@ void OGLRender::_prepareDrawTriangle(bool _dma)
 		else
 			glVertexAttribPointer(SC_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SPVertex), &pVtx->r);
 	}
+
+	if ((triangles.vertices[0].modify & MODIFY_XY) != 0)
+		_updateScreenCoordsViewport();
 }
 
 bool OGLRender::_canDraw() const
@@ -767,39 +785,20 @@ void OGLRender::drawLLETriangle(u32 _numVtx)
 	if (_numVtx == 0 || !_canDraw())
 		return;
 
+	for (u32 i = 0; i < _numVtx; ++i) {
+		SPVertex & vtx = triangles.vertices[i];
+		vtx.modify = MODIFY_ALL;
+	}
+
 	gSP.changed &= ~CHANGED_GEOMETRYMODE; // Don't update cull mode
 	_prepareDrawTriangle(false);
 	glDisable(GL_CULL_FACE);
-
-	OGLVideo & ogl = video();
-	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-	if (pCurrentBuffer == NULL)
-		glViewport( 0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
-	else
-		glViewport(0, 0, pCurrentBuffer->m_width*pCurrentBuffer->m_scaleX, pCurrentBuffer->m_height*pCurrentBuffer->m_scaleY);
-
-	const float scaleX = pCurrentBuffer != NULL ? 1.0f / pCurrentBuffer->m_width : VI.rwidth;
-	const float scaleY = pCurrentBuffer != NULL ? 1.0f / pCurrentBuffer->m_height : VI.rheight;
-
-	for (u32 i = 0; i < _numVtx; ++i) {
-		SPVertex & vtx = triangles.vertices[i];
-		vtx.HWLight = 0;
-		vtx.x = vtx.x * (2.0f * scaleX) - 1.0f;
-		vtx.x *= vtx.w;
-		vtx.y = vtx.y * (-2.0f * scaleY) + 1.0f;
-		vtx.y *= vtx.w;
-		vtx.z *= vtx.w;
-		if (gDP.otherMode.texturePersp == 0) {
-			vtx.s *= 2.0f;
-			vtx.t *= 2.0f;
-		}
-	}
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, _numVtx);
 	triangles.num = 0;
 
 	frameBufferList().setBufferChanged();
-	gSP.changed |= CHANGED_VIEWPORT | CHANGED_GEOMETRYMODE;
+	gSP.changed |= CHANGED_GEOMETRYMODE;
 }
 
 void OGLRender::drawDMATriangles(u32 _numVtx)
@@ -827,8 +826,12 @@ void OGLRender::drawLine(int _v0, int _v1, float _width)
 	if (!_canDraw())
 		return;
 
+	if ((triangles.vertices[_v0].modify & MODIFY_XY) != 0)
+		gSP.changed &= ~CHANGED_VIEWPORT;
 	if (gSP.changed || gDP.changed)
 		_updateStates(rsLine);
+
+	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
 
 	if (m_renderState != rsLine || CombinerInfo::get().isChanged()) {
 		_setColorArray();
@@ -836,12 +839,15 @@ void OGLRender::drawLine(int _v0, int _v1, float _width)
 		glDisableVertexAttribArray(SC_TEXCOORD1);
 		glVertexAttribPointer(SC_POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(SPVertex), &triangles.vertices[0].x);
 		glVertexAttribPointer(SC_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SPVertex), &triangles.vertices[0].r);
+		glEnableVertexAttribArray(SC_MODIFY);
+		glVertexAttribPointer(SC_MODIFY, 1, GL_BYTE, GL_FALSE, sizeof(SPVertex), &triangles.vertices[0].modify);
 
-		_updateCullFace();
-		_updateViewport();
 		m_renderState = rsLine;
+		currentCombiner()->updateRenderState();
 	}
-	currentCombiner()->updateRenderState();
+
+	if ((triangles.vertices[_v0].modify & MODIFY_XY) != 0)
+		_updateScreenCoordsViewport();
 
 	unsigned short elem[2];
 	elem[0] = _v0;
@@ -851,7 +857,6 @@ void OGLRender::drawLine(int _v0, int _v1, float _width)
 	else
 		glLineWidth(_width * config.frameBufferEmulation.nativeResFactor);
 	glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, elem);
-
 }
 
 void OGLRender::drawRect(int _ulx, int _uly, int _lrx, int _lry, float *_pColor)
@@ -868,6 +873,8 @@ void OGLRender::drawRect(int _ulx, int _uly, int _lrx, int _lry, float *_pColor)
 		glDisableVertexAttribArray(SC_COLOR);
 		glDisableVertexAttribArray(SC_TEXCOORD0);
 		glDisableVertexAttribArray(SC_TEXCOORD1);
+		glDisableVertexAttribArray(SC_NUMLIGHTS);
+		glDisableVertexAttribArray(SC_MODIFY);
 	}
 
 	if (updateArrays)
@@ -1060,16 +1067,26 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 		m_renderState = rsTexRect;
 		glDisableVertexAttribArray(SC_COLOR);
 		_setTexCoordArrays();
+
+		GLfloat alpha = 0.0f;
+		if (currentCombiner()->usesShade()) {
+			gDPCombine combine;
+			combine.mux = currentCombiner()->getMux();
+			if (combine.mA0 == G_ACMUX_0 && combine.aA0 == G_ACMUX_SHADE)
+				alpha = 1.0f;
+		}
+		glVertexAttrib4f(SC_COLOR, 0, 0, 0, alpha);
 	}
 
 	if (updateArrays) {
 #ifdef RENDERSTATE_TEST
 		StateChanges++;
 #endif
-		glVertexAttrib4f(SC_COLOR, 0, 0, 0, m_texrectVertexAlpha);
 		glVertexAttribPointer(SC_POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].x);
 		glVertexAttribPointer(SC_TEXCOORD0, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].s0);
 		glVertexAttribPointer(SC_TEXCOORD1, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), &m_rect[0].s1);
+		glDisableVertexAttribArray(SC_NUMLIGHTS);
+		glDisableVertexAttribArray(SC_MODIFY);
 	}
 	currentCombiner()->updateRenderState();
 
@@ -1426,8 +1443,6 @@ void OGLRender::_initData()
 	for (u32 i = 0; i < VERTBUFF_SIZE; ++i)
 		triangles.vertices[i].w = 1.0f;
 	triangles.num = 0;
-	if ((config.generalEmulation.hacks & hack_texrectVertexFullAlpha) != 0)
-		m_texrectVertexAlpha = 1.0f;
 }
 
 void OGLRender::_destroyData()
