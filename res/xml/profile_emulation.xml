@@ -114,14 +114,6 @@
             android:key="riceHiResTextures"
             android:summary="@string/riceHiResTextures_summary"
             android:title="@string/riceHiResTextures_title" />
-
-        <paulscode.android.mupen64plusae.preference.PathPreference
-            android:defaultValue="@string/pathHiResTextures_default"
-            android:dependency="riceHiResTextures"
-            android:key="pathHiResTextures"
-            android:summary="@string/pathHiResTextures_summary"
-            android:title="@string/pathHiResTextures_title"
-            mupen64:selectionMode="1" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryGlide64"

@@ -41,6 +41,7 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
+import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
@@ -450,7 +451,14 @@ public class CacheRomInfoService extends Service
     public void SetCacheRomInfoListener(CacheRomInfoListener cacheRomInfoListener)
     {
         mListener = cacheRomInfoListener;
-        mListener.GetProgressDialog().SetCacheRomInfoService(this);
+        mListener.GetProgressDialog().setOnCancelListener(new OnCancelListener()
+        {
+            @Override
+            public void OnCancel()
+            {
+                Stop();
+            }
+        });
         
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job

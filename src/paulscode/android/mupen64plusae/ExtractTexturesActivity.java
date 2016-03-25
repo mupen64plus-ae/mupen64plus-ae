@@ -17,16 +17,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ListView;
 
-public class ScanRomsActivity extends AppCompatActivity implements OnItemClickListener
+public class ExtractTexturesActivity extends AppCompatActivity implements OnItemClickListener
 {    
     private List<CharSequence> mNames;
     private List<String> mPaths;
-    private CheckBox mCheckBox1;
-    private CheckBox mCheckBox2;
-    private CheckBox mCheckBox3;
     private Button mCancelButton;
     private Button mOkButton;
     
@@ -54,21 +50,13 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
         }
          
-        setContentView(R.layout.scan_roms_activity);
-                
-        // Set checkbox state
-        mCheckBox1 = (CheckBox) findViewById( R.id.checkBox1 );
-        mCheckBox2 = (CheckBox) findViewById( R.id.checkBox2 );
-        mCheckBox3 = (CheckBox) findViewById( R.id.checkBox3 );
-        mCheckBox1.setChecked( true );
-        mCheckBox2.setChecked( true );
-        mCheckBox3.setChecked( true );
+        setContentView(R.layout.extract_textures_activity);
         
         mCancelButton = (Button) findViewById( R.id.buttonCancel );
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ScanRomsActivity.this.setResult(RESULT_CANCELED, null);
-                ScanRomsActivity.this.finish();
+                ExtractTexturesActivity.this.setResult(RESULT_CANCELED, null);
+                ExtractTexturesActivity.this.finish();
             }
         });
         
@@ -77,11 +65,8 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             public void onClick(View v) {
                 Intent data = new Intent();
                 data.putExtra(ActivityHelper.Keys.SEARCH_PATH, mCurrentPath.getPath());
-                data.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, mCheckBox1.isChecked());
-                data.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, mCheckBox2.isChecked());
-                data.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());
-                ScanRomsActivity.this.setResult(RESULT_OK, data);
-                ScanRomsActivity.this.finish();
+                ExtractTexturesActivity.this.setResult(RESULT_OK, data);
+                ExtractTexturesActivity.this.finish();
             }
         });
 
@@ -111,7 +96,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             ListView listView1 = (ListView) findViewById( R.id.listView1 );
             ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( this, mPaths, mNames );
             listView1.setAdapter( adapter );
-            listView1.setOnItemClickListener( this );   
+            listView1.setOnItemClickListener( this );
         }
     }
 

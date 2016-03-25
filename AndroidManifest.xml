@@ -76,6 +76,12 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
         </activity>
         <activity
+            android:name="paulscode.android.mupen64plusae.ExtractTexturesActivity"
+            android:exported="false"
+            android:label="@string/ExtractTexturesActivity_title"
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
+        </activity>
+        <activity
             android:name="paulscode.android.mupen64plusae.persistent.GamePrefsActivity"
             android:exported="false"
             android:label="@string/PlayMenuActivity_title"
@@ -263,7 +269,7 @@
             android:theme="@style/appTheme.Black" >
         </activity>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
-
+        <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService" />
         <meta-data
             android:name="game_display_name"
             android:resource="@string/app_name" />

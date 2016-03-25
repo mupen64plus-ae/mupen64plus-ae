@@ -228,15 +228,6 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         final SavedStringState myState = (SavedStringState) state;
         super.onRestoreInstanceState( myState.getSuperState() );
         populate( myState.mValue );
-        
-        // If the dialog is already showing, we must close and reopen to refresh the contents
-        // TODO: Find a less hackish solution, if one exists
-        /*
-        if( getDialog() != null )
-        {
-            mDoReclick = true;
-            getDialog().dismiss();
-        }*/
     }
 
     // Populates the dialog view with files and folders on the device.

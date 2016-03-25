@@ -26,11 +26,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.CompatListPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
-import paulscode.android.mupen64plusae.task.ExtractTexturesTask;
-import paulscode.android.mupen64plusae.task.ExtractTexturesTask.ExtractTexturesListener;
-import paulscode.android.mupen64plusae.util.Notifier;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -38,8 +33,6 @@ import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceGroup;
-import android.text.TextUtils;
-import android.util.Log;
 
 public class EmulationProfileActivity extends ProfileActivity
 {
@@ -57,7 +50,6 @@ public class EmulationProfileActivity extends ProfileActivity
     
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
-    private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
     private static final String GLIDEN64_ENABLE_LOD = "EnableLOD";
     private static final String GLIDEN64_ENABLE_SHADER_STORAGE = "EnableShaderStorage";
@@ -131,8 +123,6 @@ public class EmulationProfileActivity extends ProfileActivity
         }
 
         super.onSharedPreferenceChanged( sharedPreferences, key );
-        if( key.equals( PATH_HI_RES_TEXTURES ) )
-            processTexturePak( sharedPreferences.getString( PATH_HI_RES_TEXTURES, "" ) );
     }
 
     @Override
@@ -266,36 +256,5 @@ public class EmulationProfileActivity extends ProfileActivity
             else
                 mScreenRoot.removePreference( mPreferenceVideoSubPlugin );
         }
-    }
-    
-    private void processTexturePak( final String filename )
-    {
-        if( TextUtils.isEmpty( filename ) )
-        {
-            Log.e( "EmulationProfileEditActivity", "Filename not specified in processTexturePak" );
-            Notifier.showToast( this, R.string.pathHiResTexturesTask_errorMessage );
-            return;
-        }
-        
-        // Display popup window
-        String title = getString( R.string.pathHiResTexturesTask_title );
-        String message = getString( R.string.pathHiResTexturesTask_message );
-        final AlertDialog dialog = new Builder( this ).setTitle( title ).setMessage( message ).create();
-        dialog.show();
-        
-        // Asynchronously extract textures and dismiss popup
-        AppData appData = new AppData( EmulationProfileActivity.this );
-        GlobalPrefs globalPrefs = new GlobalPrefs( EmulationProfileActivity.this, appData );
-        new ExtractTexturesTask( filename, globalPrefs.hiResTextureDir, new ExtractTexturesListener()
-        {
-            @Override
-            public void onExtractTexturesFinished( boolean success )
-            {
-                dialog.dismiss();
-                if( !success )
-                    Notifier.showToast( EmulationProfileActivity.this,
-                            R.string.pathHiResTexturesTask_errorMessage );
-            }
-        } ).execute();
     }
 }

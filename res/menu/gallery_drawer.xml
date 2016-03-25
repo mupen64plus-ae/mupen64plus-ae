@@ -52,6 +52,22 @@
         </menu>
     </item>
     <item
+        android:id="@+id/menuItem_tools"
+        android:icon="@drawable/ic_circuit"
+        android:title="@string/menuItem_Tools">
+        <menu>
+            <item
+                android:id="@+id/menuItem_extract"
+                android:title="@string/menuItem_Extract"/>
+            <item
+                android:id="@+id/menuItem_logcat"
+                android:title="@string/menuItem_logcat"/>
+            <item
+                android:id="@+id/menuItem_hardwareInfo"
+                android:title="@string/menuItem_hardwareInfo"/>
+        </menu>
+    </item>
+    <item
         android:id="@+id/menuItem_help"
         android:icon="@drawable/ic_help"
         android:title="@string/menuItem_help">
@@ -81,12 +97,6 @@
             <item
                 android:id="@+id/menuItem_changelog"
                 android:title="@string/menuItem_changelog"/>
-            <item
-                android:id="@+id/menuItem_logcat"
-                android:title="@string/menuItem_logcat"/>
-            <item
-                android:id="@+id/menuItem_hardwareInfo"
-                android:title="@string/menuItem_hardwareInfo"/>
             <item
                 android:id="@+id/menuItem_credits"
                 android:title="@string/menuItem_credits"/>

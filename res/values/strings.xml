@@ -81,6 +81,8 @@
     <string name="menuItem_changelog">Changelog</string>
     <string name="menuItem_logcat">Logcat</string>
     <string name="menuItem_hardwareInfo">Hardware info</string>
+    <string name="menuItem_Tools">Tools</string>
+    <string name="menuItem_Extract">Add Texture Pack</string>
     <string name="menuItem_localeOverride">Language</string>
 
     <!-- ManageProfilesActivity -->
@@ -559,7 +561,8 @@
     <string name="cheatEditor_remove_option">Remove option</string>
 
     <!-- Hi-Res Texture Unpacking -->
-    <string name="pathHiResTexturesTask_title">Unpacking textures</string>
+    <string name="pathHiResTexturesTask_select_zip">Select the ZIP file containing the high resolution texture pack</string>
+    <string name="pathHiResTexturesTask_title">Unpacking textures...</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
 

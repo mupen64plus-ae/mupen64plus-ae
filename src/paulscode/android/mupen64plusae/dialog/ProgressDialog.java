@@ -2,7 +2,6 @@ package paulscode.android.mupen64plusae.dialog;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -14,6 +13,12 @@ import android.widget.TextView;
 
 public class ProgressDialog implements OnClickListener
 {
+    public interface OnCancelListener
+    {
+        //This is called if the dialog is canceled
+        public void OnCancel();
+    }
+    
     private static final float PROGRESS_PRECISION = 1000f;
     
     private final Activity mActivity;
@@ -26,7 +31,7 @@ public class ProgressDialog implements OnClickListener
     
     private long mMaxProgress = -1;
     private long mProgress = 0;
-    private CacheRomInfoService mCacheRomInfoService = null;
+    private OnCancelListener mOnCancelListener = null;
     
     public ProgressDialog( Activity activity, CharSequence title,
             CharSequence subtitle, CharSequence message, boolean cancelable )
@@ -59,7 +64,7 @@ public class ProgressDialog implements OnClickListener
         if(original != null)
         {            
 
-            mCacheRomInfoService = original.mCacheRomInfoService;
+            mOnCancelListener = original.mOnCancelListener;
             
             setMaxProgress(original.mMaxProgress);
             
@@ -85,17 +90,17 @@ public class ProgressDialog implements OnClickListener
         mDialog.dismiss();
     }
     
-    public void SetCacheRomInfoService(CacheRomInfoService cacheRomInfoService)
+    public void setOnCancelListener(OnCancelListener onCancelListener)
     {
-        mCacheRomInfoService = cacheRomInfoService;
+        mOnCancelListener = onCancelListener;
     }
     
     @Override
     public void onClick( DialogInterface dlg, int which )
     {
-        if( which == DialogInterface.BUTTON_NEGATIVE  && mCacheRomInfoService != null)
+        if( which == DialogInterface.BUTTON_NEGATIVE  && mOnCancelListener != null)
         {
-            mCacheRomInfoService.Stop();
+            mOnCancelListener.OnCancel();
         }
     }
     

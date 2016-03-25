@@ -85,6 +85,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_QUERY = "query";
     private static final String STATE_SIDEBAR = "sidebar";
     private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
+    private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final int RESTART_CONFIRM_DIALOG_ID = 0;
@@ -116,8 +117,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private GalleryItem mSelectedItem = null;
     private boolean mDragging = false;
 
-    private CacheRomInfoFragment mCacheRomInfoFragment = null;
-
+    private ScanRomsFragment mCacheRomInfoFragment = null;
+    private ExtractTexturesFragment mExtractTexturesFragment = null;
+    
     //True if the restart promp is enabled
     boolean mRestartPromptEnabled = true;
 
@@ -344,12 +346,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // find the retained fragment on activity restarts
         final FragmentManager fm = getSupportFragmentManager();
-        mCacheRomInfoFragment = (CacheRomInfoFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
+        mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
+        mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
 
         if(mCacheRomInfoFragment == null)
         {
-            mCacheRomInfoFragment = new CacheRomInfoFragment();
+            mCacheRomInfoFragment = new ScanRomsFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
+        }
+        
+        if(mExtractTexturesFragment == null)
+        {
+            mExtractTexturesFragment = new ExtractTexturesFragment();
+            fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
         }
 
         // Set the sidebar opacity on the two sidebars
@@ -489,7 +498,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         switch (item.getItemId())
         {
         case R.id.menuItem_refreshRoms:
-            ActivityHelper.StartRomScanService(this);
+            ActivityHelper.startRomScanActivity(this);
             return true;
         case R.id.menuItem_library:
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -550,6 +559,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return true;
         case R.id.menuItem_localeOverride:
             mGlobalPrefs.changeLocale(this);
+            return true;
+        case R.id.menuItem_extract:
+            ActivityHelper.starExtractTextureActivity(this);
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -738,6 +750,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 if (searchPath != null)
                 {
                     refreshRoms(new File(searchPath), searchZips, downloadArt, clearGallery);
+                }
+            }
+        }
+        else if(requestCode == ActivityHelper.EXTRACT_TEXTURES_CODE)
+        {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK && data != null)
+            {
+                final Bundle extras = data.getExtras();
+                final String searchPath = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+
+                if (searchPath != null)
+                {
+                    mExtractTexturesFragment.extractTextures(new File(searchPath));
                 }
             }
         }

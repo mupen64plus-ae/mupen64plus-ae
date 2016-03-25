@@ -38,7 +38,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 
-public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListener
+public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
 {    
     //Progress dialog for ROM scan
     private ProgressDialog mProgress = null;
@@ -202,7 +202,7 @@ public class CacheRomInfoFragment extends Fragment implements CacheRomInfoListen
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
                 LocalBinder binder = (LocalBinder) service;
                 CacheRomInfoService cacheRomInfoService = binder.getService();
-                cacheRomInfoService.SetCacheRomInfoListener(CacheRomInfoFragment.this);
+                cacheRomInfoService.SetCacheRomInfoListener(ScanRomsFragment.this);
             }
 
             @Override

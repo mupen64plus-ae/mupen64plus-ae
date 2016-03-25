@@ -37,6 +37,7 @@ import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
+import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -82,6 +83,7 @@ public class ActivityHelper
     }
     
     public static final int SCAN_ROM_REQUEST_CODE = 1;
+    public static final int EXTRACT_TEXTURES_CODE = 2;
 
     public static void launchUri( Context context, int resId )
     {
@@ -267,7 +269,7 @@ public class ActivityHelper
         context.startService(intent);
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
-    
+
     public static void stopCacheRomInfoService(Context context, ServiceConnection serviceConnection)
     {
         Intent intent = new Intent(context, CacheRomInfoService.class);
@@ -275,10 +277,34 @@ public class ActivityHelper
         context.unbindService(serviceConnection);
         context.stopService(intent);
     }
-    
-    public static void StartRomScanService(Activity activity)
+
+    public static void startRomScanActivity(Activity activity)
     {
         Intent intent = new Intent(activity, ScanRomsActivity.class);
         activity.startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
+    }
+
+    public static void startExtractTexturesService(Context context, ServiceConnection serviceConnection,
+        String searchPath)
+    {
+        Intent intent = new Intent(context, ExtractTexturesService.class);
+        intent.putExtra(ActivityHelper.Keys.SEARCH_PATH, searchPath);
+
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public static void stopExtractTexturesService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, ExtractTexturesService.class);
+
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
+    }
+    
+    public static void starExtractTextureActivity(Activity activity)
+    {
+        Intent intent = new Intent(activity, ExtractTexturesActivity.class);
+        activity.startActivityForResult( intent, EXTRACT_TEXTURES_CODE );
     }
 }
