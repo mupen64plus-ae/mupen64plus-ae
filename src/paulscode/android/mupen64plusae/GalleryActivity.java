@@ -822,7 +822,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 {
                     final String romPath = config.get( md5, "romPath" );
                     String zipPath = config.get( md5, "zipPath" );
-                    final String artPath = config.get( md5, "artPath" );
+                    final String artFullPath = config.get( md5, "artPath" );
+                    String artPath = new File(artFullPath).getName();
+                    artPath = mGlobalPrefs.coverArtDir + "/" + artPath;
+                    
                     String crc = config.get( md5, "crc" );
                     String headerName = config.get( md5, "headerName" );
                     final String countryCodeString = config.get( md5, "countryCode" );
