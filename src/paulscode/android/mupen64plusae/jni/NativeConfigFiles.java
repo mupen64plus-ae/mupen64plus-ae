@@ -197,7 +197,8 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-GLideN64", "txFilterIgnoreBG", boolToNum( game.gliden64TxFilterIgnoreBG ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txCacheSize", String.valueOf( game.gliden64TxCacheSize ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txHiresEnable", boolToNum( game.gliden64TxHiresEnable ) );
-
+        mupen64plus_cfg.put( "Video-GLideN64", "txPath", global.hiResTextureDir);
+        
         if(hiresTexHTCPresent && game.gliden64TxHiresEnable)
         {
             mupen64plus_cfg.put( "Video-GLideN64", "txHiresFullAlphaChannel", boolToNum( fullAlphaChannel ) );

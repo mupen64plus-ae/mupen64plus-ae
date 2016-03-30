@@ -35,6 +35,8 @@
 #include "TxDbg.h"
 #include "bldno.h"
 
+#include <android/log.h>
+
 void TxFilter::clear()
 {
 	/* clear hires texture cache */
@@ -62,6 +64,8 @@ TxFilter::TxFilter(int maxwidth, int maxheight, int maxbpp, int options,
 				   dispInfoFuncExt callback) :
 	_tex1(NULL), _tex2(NULL), _txQuantize(NULL), _txTexCache(NULL), _txHiResCache(NULL), _txUtil(NULL), _txImage(NULL)
 {
+	__android_log_print(ANDROID_LOG_DEBUG, "GLideNHQ", "high res texture path=%ls", texPackPath);
+	
 	/* HACKALERT: the emulator misbehaves and sometimes forgets to shutdown */
 	if ((ident && wcscmp(ident, wst("DEFAULT")) != 0 && _ident.compare(ident) == 0) &&
 			_maxwidth  == maxwidth  &&
