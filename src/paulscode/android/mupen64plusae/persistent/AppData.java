@@ -228,7 +228,7 @@ public class AppData
         appVersionCode = versionCode;
         
         // Directories
-        if( DOWNLOAD_TO_SDCARD )
+        if( !Environment.isExternalStorageEmulated() )
         {
             storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
             coreSharedDataDir = storageDir + "/Android/data/" + packageName;
