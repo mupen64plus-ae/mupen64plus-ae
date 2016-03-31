@@ -191,11 +191,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             final ImageView splash = (ImageView) findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo_ouya );
         }
-
-        // Extract the assets in a separate thread and launch the menu activity
-        // Handler.postDelayed ensures this runs only after activity has resumed
-        final Handler handler = new Handler();
-        handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
+        
+        requestPermissions();
 
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation() )

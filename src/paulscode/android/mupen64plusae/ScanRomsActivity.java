@@ -49,7 +49,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             mCurrentPath = new File(currentPath);
         }
         else
-        {  
+        {            
             // Pick the root of the storage directory by default
             mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
         }
