@@ -73,6 +73,7 @@
         android:key="displayActionBarTransparency"
         android:title="@string/displayActionBarTransparency_title"
         mupen64:maximumValue="100"
+        mupen64:minimumValue="30"
         mupen64:stepSize="10"
         mupen64:units="%" />
 
