@@ -214,7 +214,7 @@ public class CoreInterface
 
         if (legacySlotPath.listFiles() != null)
         {
-            // Move sra, mpk, and eep files
+            // Move sra, mpk, fla, and eep files
             final FileFilter fileSramFilter = new FileFilter()
             {
 
@@ -225,7 +225,8 @@ public class CoreInterface
 
                     return fileName.contains(sGamePrefs.gameGoodName + ".sra")
                         || fileName.contains(sGamePrefs.gameGoodName + ".eep")
-                        || fileName.contains(sGamePrefs.gameGoodName + ".mpk");
+                        || fileName.contains(sGamePrefs.gameGoodName + ".mpk")
+                        || fileName.contains(sGamePrefs.gameGoodName + ".fla");
                 }
             };
 
