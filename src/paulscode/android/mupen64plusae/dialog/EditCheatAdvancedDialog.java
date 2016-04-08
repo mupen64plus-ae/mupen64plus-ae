@@ -21,8 +21,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+
 
 public class EditCheatAdvancedDialog extends DialogFragment
 {
@@ -244,7 +246,12 @@ public class EditCheatAdvancedDialog extends DialogFragment
         builder.setPositiveButton(android.R.string.ok, clickListener);
         builder.setNegativeButton(android.R.string.cancel, null);
 
-        return builder.create();
+        AlertDialog dialog = builder.create();
+
+        /* Make the dialog resize to the keyboard */
+        dialog.getWindow().setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        return dialog;
     }
     
     private void populateCheatsFromText()
