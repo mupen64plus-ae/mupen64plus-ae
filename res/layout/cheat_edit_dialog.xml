@@ -13,7 +13,7 @@
         <EditText
             android:id="@+id/textCheatTitle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:hint="@string/cheatEditor_hint_cheatTitle"
             android:inputType="textNoSuggestions|text"
@@ -44,9 +44,10 @@
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:layout_weight="2"
-                android:digits="0123456789ABCDEF"
+                android:digits="0123456789ABCDEFabcdef"
                 android:hint="@string/cheatEditor_hint_cheatAddress"
                 android:inputType="textCapCharacters"
+                android:textAllCaps="true"
                 android:maxLength="8"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -57,9 +58,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:digits="0123456789ABCDEF"
+                android:digits="0123456789ABCDEFabcdef"
                 android:hint="@string/cheatEditor_hint_value"
                 android:inputType="textCapCharacters"
+                android:textAllCaps="true"
                 android:maxLength="4"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
