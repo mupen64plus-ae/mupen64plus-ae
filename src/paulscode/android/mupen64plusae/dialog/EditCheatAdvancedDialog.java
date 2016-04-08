@@ -202,8 +202,11 @@ public class EditCheatAdvancedDialog extends DialogFragment
                 
                 if(dialog != null)
                 {
-                    Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);                
-                    okButton.setEnabled(validateFields());
+                    Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    boolean isValid = validateFields();
+                    okButton.setEnabled(isValid);
+                    okButton.setTextColor(isValid ? getActivity().getColor(R.color.accent_material_dark) : getActivity().getColor(R.color.dim_foreground_disabled_material_dark));
+					
                 }
             }
         };
