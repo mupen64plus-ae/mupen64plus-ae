@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
 import android.text.Editable;
@@ -202,8 +203,12 @@ public class EditCheatAdvancedDialog extends DialogFragment
                 
                 if(dialog != null)
                 {
-                    Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);                
-                    okButton.setEnabled(validateFields());
+                    Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    boolean isValid = validateFields();
+                    okButton.setEnabled(isValid);
+                    okButton.setTextColor(ContextCompat.getColor(getActivity(), isValid ? R.color.accent_material_dark :
+                        R.color.dim_foreground_disabled_material_dark));
+					
                 }
             }
         };
