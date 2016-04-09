@@ -15,6 +15,7 @@
         android:digits="0123456789ABCDEFabcdef"
         android:hint="@string/cheatEditor_hint_cheatAddress"
         android:inputType="textCapCharacters"
+        android:textAllCaps="true"
         android:maxLength="8"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -28,6 +29,7 @@
         android:digits="0123456789ABCDEFabcdef"
         android:hint="@string/cheatEditor_hint_value"
         android:inputType="textCapCharacters"
+        android:textAllCaps="true"
         android:maxLength="4"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceMedium" />
