@@ -14,7 +14,7 @@
         android:layout_weight="2"
         android:digits="0123456789ABCDEFabcdef"
         android:hint="@string/cheatEditor_hint_value"
-        android:inputType="textCapCharacters"
+        android:inputType="textCapCharacters|textNoSuggestions"
         android:maxLength="4"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceMedium" />
