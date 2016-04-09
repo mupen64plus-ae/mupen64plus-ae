@@ -764,7 +764,7 @@ EXPORT void CALL AiLenChanged(void)
        double totalRealTimeElapsed = timeDouble - gameStartTime;
        double sleepNeeded = totalElapsedGameTime - totalRealTimeElapsed;
 
-       if(sleepNeeded < minSleepNeeded || sleepNeeded > maxSleepNeeded)
+       if(sleepNeeded < minSleepNeeded || sleepNeeded > (maxSleepNeeded/speedFactor))
        {
           resetOnce = false;
        }
@@ -773,7 +773,7 @@ EXPORT void CALL AiLenChanged(void)
        //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, time=%f, speed=%d, sleep_before_factor=%f",
        //             totalRealTimeElapsed, totalElapsedGameTime, sleepNeeded, gameStartTime, timeDouble, speed_factor, sleepNeeded*speedFactor);
 
-       if(sleepNeeded > 0.0 && sleepNeeded < maxSleepNeeded)
+       if(sleepNeeded > 0.0 && sleepNeeded < (maxSleepNeeded/speedFactor))
        {
           if(sleepPerfFixEnabled)
           {
@@ -1100,7 +1100,7 @@ EXPORT void CALL ProcessAList(void)
 }
 
 EXPORT void CALL SetSpeedFactor(int percentage)
-{
+{	
     if (!l_PluginInit)
         return;
     if (percentage >= 10 && percentage <= 300)
