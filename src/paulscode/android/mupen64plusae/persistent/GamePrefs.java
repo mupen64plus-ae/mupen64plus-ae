@@ -440,7 +440,7 @@ public class GamePrefs
         // Touchscreen profile
         if(globalPrefs.isBigScreenMode)
         {
-            touchscreenProfile = null;
+            touchscreenProfile =  new Profile( true, appData.GetTouchscreenProfilesConfig().get( "FPS-Only" ) );
         }
         else
         {
