@@ -41,7 +41,6 @@
             android:gravity="top"
             android:hint="@string/cheatEditor_hint_cheatData"
             android:inputType="textCapCharacters"
-            android:textAllCaps="true"
             android:minLines="1"
             android:singleLine="false"
             android:textAppearance="?android:attr/textAppearanceSmall"
