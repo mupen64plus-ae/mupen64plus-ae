@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
 import android.text.Editable;
@@ -20,6 +21,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -176,7 +178,7 @@ public class EditCheatDialog extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         setRetainInstance(true);
-
+		
         final String title = getArguments().getString(STATE_TITLE);
         unpackFields();
 
@@ -213,8 +215,10 @@ public class EditCheatDialog extends DialogFragment
                 
                 if(dialog != null)
                 {
-                    Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);                
-                    okButton.setEnabled(validateFields());
+                    Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    boolean isValid = validateFields();
+                    okButton.setEnabled(isValid);
+                    okButton.setTextColor(ContextCompat.getColor(getActivity(), isValid ? R.color.accent_material_dark : R.color.dim_foreground_disabled_material_dark));
                 }
 
             }
@@ -244,7 +248,7 @@ public class EditCheatDialog extends DialogFragment
                 //Populate the options and submit to activity
                 if (getActivity() instanceof OnEditCompleteListener)
                 {
-                    List<CheatAddressData> address = getAdressesFromView();
+                    List<CheatAddressData> address = getAddressesFromView();
                     List<CheatOptionData> options = getOptionsFromView();
 
                     ((OnEditCompleteListener) getActivity()).onEditComplete( which,
@@ -262,7 +266,12 @@ public class EditCheatDialog extends DialogFragment
         builder.setPositiveButton(android.R.string.ok, clickListener);
         builder.setNegativeButton(android.R.string.cancel, null);
 
-        return builder.create();
+        AlertDialog dialog = builder.create();
+
+        /* Make the dialog resize to the keyboard */ 
+        dialog.getWindow().setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        return dialog;
     }
     
     private boolean validateFields()
@@ -352,7 +361,7 @@ public class EditCheatDialog extends DialogFragment
                 mEditValue.setText(invalidValue);
                 
                 ImageButton cheatOptionDelete = (ImageButton) optionLayout.findViewById(R.id.removeCheatOptionButton);
-                cheatOptionDelete.setOnClickListener(getDeteleOptionOnClickListener(optionLayout));
+                cheatOptionDelete.setOnClickListener(getDeleteOptionOnClickListener(optionLayout));
                 
                 EditText cheatValueText = (EditText) optionLayout.findViewById(R.id.textCheatValue);
                 cheatValueText.addTextChangedListener(fieldValidator);
@@ -372,7 +381,7 @@ public class EditCheatDialog extends DialogFragment
                 mOptionsLayoutHolder.addView(moreCheatsLayout);
                 
                 ImageButton cheatDelete = (ImageButton) moreCheatsLayout.findViewById(R.id.removeCheatOptionButton);
-                cheatDelete.setOnClickListener(getDeteleCheatOnClickListener(moreCheatsLayout));
+                cheatDelete.setOnClickListener(getDeleteCheatOnClickListener(moreCheatsLayout));
                 
                 EditText cheatAddressText = (EditText) moreCheatsLayout.findViewById(R.id.textCheatExtraAddress);
                 cheatAddressText.addTextChangedListener(fieldValidator);
@@ -418,7 +427,7 @@ public class EditCheatDialog extends DialogFragment
 
                 cheatAddressText.setText(cheatAddressString);
                 cheatValueText.setText(cheatValueString);
-                cheatOptionDelete.setOnClickListener(getDeteleCheatOnClickListener(optionLayout));
+                cheatOptionDelete.setOnClickListener(getDeleteCheatOnClickListener(optionLayout));
 
                 cheatValueText.addTextChangedListener(fieldValidator);
 
@@ -448,7 +457,7 @@ public class EditCheatDialog extends DialogFragment
 
                 cheatValueText.setText(optionValueString);
                 cheatValueDescription.setText(data.description);
-                cheatOptionDelete.setOnClickListener(getDeteleOptionOnClickListener(optionLayout));
+                cheatOptionDelete.setOnClickListener(getDeleteOptionOnClickListener(optionLayout));
 
                 cheatValueText.addTextChangedListener(fieldValidator);
 
@@ -463,7 +472,7 @@ public class EditCheatDialog extends DialogFragment
      * @param viewToRemove view to remove when an option is being deleted
      * @return OnClickListener that takes the correct action
      */
-    View.OnClickListener getDeteleOptionOnClickListener(final View viewToRemove)
+    View.OnClickListener getDeleteOptionOnClickListener(final View viewToRemove)
     {
         View.OnClickListener listener = new View.OnClickListener ()
         {
@@ -494,7 +503,7 @@ public class EditCheatDialog extends DialogFragment
      * @param viewToRemove view to remove when an option is being deleted
      * @return OnClickListener that takes the correct action
      */
-    View.OnClickListener getDeteleCheatOnClickListener(final View viewToRemove)
+    View.OnClickListener getDeleteCheatOnClickListener(final View viewToRemove)
     {
         View.OnClickListener listener = new View.OnClickListener ()
         {
@@ -544,7 +553,7 @@ public class EditCheatDialog extends DialogFragment
         return options;
     }
     
-    List<CheatAddressData> getAdressesFromView()
+    List<CheatAddressData> getAddressesFromView()
     {
         final String invalidValue = getString(R.string.cheatEditor_invalid_value);
         List<CheatAddressData> allAddressData = new ArrayList<CheatAddressData>();

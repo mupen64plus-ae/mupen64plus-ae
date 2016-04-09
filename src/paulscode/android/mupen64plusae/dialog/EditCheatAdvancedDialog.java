@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
 import android.text.Editable;
@@ -21,8 +22,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+
 
 public class EditCheatAdvancedDialog extends DialogFragment
 {
@@ -200,8 +203,11 @@ public class EditCheatAdvancedDialog extends DialogFragment
                 
                 if(dialog != null)
                 {
-                    Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);                
-                    okButton.setEnabled(validateFields());
+                    Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    boolean isValid = validateFields();
+                    okButton.setEnabled(isValid);
+                    okButton.setTextColor(ContextCompat.getColor(isValid ? R.color.accent_material_dark : R.color.dim_foreground_disabled_material_dark));
+					
                 }
             }
         };
@@ -244,7 +250,12 @@ public class EditCheatAdvancedDialog extends DialogFragment
         builder.setPositiveButton(android.R.string.ok, clickListener);
         builder.setNegativeButton(android.R.string.cancel, null);
 
-        return builder.create();
+        AlertDialog dialog = builder.create();
+
+        /* Make the dialog resize to the keyboard */
+        dialog.getWindow().setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        return dialog;
     }
     
     private void populateCheatsFromText()
