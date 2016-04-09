@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="?attr/selectedItemBackground"
+    android:background="?attr/selectableItemBackground"
     android:focusable="true"
     android:id="@+id/galleryItem"
     android:layout_width="match_parent"
