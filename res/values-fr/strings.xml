@@ -435,7 +435,7 @@
   <string name="sensorConfig_sensorY">Axe Y de l\'accéléromètre en mode paysage</string>
   <string name="sensorConfig_angle">Angle au repos (°)</string>
   <string name="sensorConfig_invertAxis">Inverser l\'axe</string>
-  <string name="sensorConfig_axisCustom">Personnalisé</string>
+  <string name="sensorConfig_axisCustom">Avancé</string>
   <string name="sensorConfig_axisDisabled">Désactivé</string>
   <!--Controller button names-->
   <string name="controller_analog">Stick analogique</string>
