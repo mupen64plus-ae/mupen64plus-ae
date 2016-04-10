@@ -3,8 +3,8 @@
     android:background="?attr/selectableItemBackground"
     android:focusable="true"
     android:id="@+id/galleryItem"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:padding="@dimen/galleryHalfSpacing"
     android:orientation="vertical" >
 
@@ -24,7 +24,7 @@
         <TextView
             android:id="@+id/text1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/galleryItemAdapter_dummyText"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
