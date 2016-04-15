@@ -267,6 +267,10 @@
             android:title="@string/gliden64_tx_enhancement_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="false"
+            android:key="txDeposterize"
+            android:title="@string/gliden64_tx_deposterize_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="false"
             android:key="txFilterIgnoreBG"
             android:title="@string/gliden64_tx_filter_ignore_BG_title" />
         <paulscode.android.mupen64plusae.preference.SeekBarPreference

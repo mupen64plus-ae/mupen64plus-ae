@@ -167,7 +167,7 @@ public class NativeConfigFiles
 
         readHiResSettings(game, global, appData);
 
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "7" );
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "8" );
         mupen64plus_cfg.put( "Video-GLideN64", "AspectRatio", aspectRatio);
         mupen64plus_cfg.put( "Video-GLideN64", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
         mupen64plus_cfg.put( "Video-GLideN64", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );
@@ -194,6 +194,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-GLideN64", "FBInfoReadDepthChunk", boolToNum( game.gliden64FBInfoReadDepthChunk ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txFilterMode", String.valueOf( game.gliden64TxFilterMode ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txEnhancementMode", String.valueOf( game.gliden64TxEnhancementMode ) );
+        mupen64plus_cfg.put( "Video-GLideN64", "txDeposterize", boolToNum( game.gliden64TxDeposterize ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txFilterIgnoreBG", boolToNum( game.gliden64TxFilterIgnoreBG ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txCacheSize", String.valueOf( game.gliden64TxCacheSize ) );
         mupen64plus_cfg.put( "Video-GLideN64", "txHiresEnable", boolToNum( game.gliden64TxHiresEnable ) );

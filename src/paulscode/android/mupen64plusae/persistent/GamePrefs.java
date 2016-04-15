@@ -244,6 +244,9 @@ public class GamePrefs
      * 13=6xBRZ) */
     public final int gliden64TxEnhancementMode;
 
+    /** Deposterize texture before enhancement.. */
+    public final boolean gliden64TxDeposterize;
+
     /** Don't filter background textures. */
     public final boolean gliden64TxFilterIgnoreBG;
 
@@ -533,6 +536,7 @@ public class GamePrefs
         gliden64FBInfoReadDepthChunk = emulationProfile.get( "FBInfoReadDepthChunk", "True" ).equals( "True" );
         gliden64TxFilterMode = getSafeInt( emulationProfile, "txFilterMode}]", 0);
         gliden64TxEnhancementMode = getSafeInt( emulationProfile, "txEnhancementMode", 0);
+        gliden64TxDeposterize = emulationProfile.get( "txDeposterize", "False" ).equals( "True" );
         gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "False" ).equals( "True" );
         gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 256);
         gliden64TxHiresEnable = emulationProfile.get( "txHiresEnable", "False" ).equals( "True" );

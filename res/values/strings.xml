@@ -398,6 +398,7 @@
     <string name="gliden64_tx_enhancement_entry_4xBRZ">4xBRZ</string>
     <string name="gliden64_tx_enhancement_entry_5xBRZ">5xBRZ</string>
     <string name="gliden64_tx_enhancement_entry_6xBRZ">6xBRZ</string>
+    <string name="gliden64_tx_deposterize_title">Deposterize texture before enhancement</string>
     <string name="gliden64_tx_filter_ignore_BG_title">Don\'t filter background textures</string>
     <string name="gliden64_tx_cache_size_title">Size of filtered textures cache in megabytes</string>
     <string name="gliden64_tx_hi_res_enable_title">Use high-resolution texture packs if available</string>
