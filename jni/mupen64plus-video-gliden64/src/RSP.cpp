@@ -205,7 +205,10 @@ void RSP_ProcessDList()
 #endif
 
 			RSP.PC[RSP.PCi] += 8;
-			RSP.nextCmd = _SHIFTR(*(u32*)&RDRAM[RSP.PC[RSP.PCi]], 24, 8);
+			u32 pci = RSP.PCi;
+			if (RSP.count == 1)
+				--pci;
+			RSP.nextCmd = _SHIFTR(*(u32*)&RDRAM[RSP.PC[pci]], 24, 8);
 
 			GBI.cmd[RSP.cmd](RSP.w0, RSP.w1);
 			RSP_CheckDLCounter();
@@ -334,6 +337,8 @@ void RSP_Init()
 			 strstr(RSP.romname, (const char *)"ZELDA MASTER QUEST") != NULL ||
 			 strstr(RSP.romname, (const char *)"DOUBUTSUNOMORI") != NULL)
 		config.generalEmulation.hacks |= hack_subscreen;
+	else if (strstr(RSP.romname, (const char *)"LEGORacers") != NULL)
+		config.generalEmulation.hacks |= hack_legoRacers;
 	else if (strstr(RSP.romname, (const char *)"Blast") != NULL)
 		config.generalEmulation.hacks |= hack_blastCorps;
 	else if (strstr(RSP.romname, (const char *)"SPACE INVADERS") != NULL)
@@ -343,6 +348,12 @@ void RSP_Init()
 	else if (strstr(RSP.romname, (const char *)"Perfect Dark") != NULL ||
 			 strstr(RSP.romname, (const char *)"PERFECT DARK") != NULL)
 		config.generalEmulation.hacks |= hack_rectDepthBufferCopyPD;
+	else if (strstr(RSP.romname, (const char *)"Jeremy McGrath Super") != NULL)
+		config.generalEmulation.hacks |= hack_ModifyVertexXyInShader;
+	else if (strstr(RSP.romname, (const char *)"Quake") != NULL)
+		config.generalEmulation.hacks |= hack_doNotResetTLUTmode;
+	else if (strstr(RSP.romname, (const char *)"quarterback_club_98") != NULL)
+		config.generalEmulation.hacks |= hack_LoadDepthTextures;
 
 	api().FindPluginPath(RSP.pluginpath);
 

@@ -535,3 +535,10 @@ void SetMonochromeCombiner() {
 	}
 	gDP.changed |= CHANGED_COMBINE;
 }
+
+bool SetDepthTextureCombiner() {
+	// All I can do for GLES2 is just to clear depth buffer.
+	glDepthMask(TRUE);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	return false;
+}

@@ -158,6 +158,8 @@ void OGLVideo::swapBuffers()
 {
 	_swapBuffers();
 	gDP.otherMode.l = 0;
+	if ((config.generalEmulation.hacks & hack_doNotResetTLUTmode) == 0)
+		gDPSetTextureLUT(G_TT_NONE);
 	++m_buffersSwapCount;
 }
 
@@ -319,6 +321,9 @@ void OGLRender::addTriangle(int _v0, int _v1, int _v2)
 	triangles.elements[triangles.num++] = _v0;
 	triangles.elements[triangles.num++] = _v1;
 	triangles.elements[triangles.num++] = _v2;
+	m_modifyVertices |= triangles.vertices[_v0].modify |
+		triangles.vertices[_v1].modify |
+		triangles.vertices[_v2].modify;
 
 	if ((gSP.geometryMode & G_LIGHTING) == 0) {
 		if ((gSP.geometryMode & G_SHADE) == 0) {
@@ -332,7 +337,7 @@ void OGLRender::addTriangle(int _v0, int _v1, int _v2)
 			}
 		} else if ((gSP.geometryMode & G_SHADING_SMOOTH) == 0) {
 			// Flat shading
-			SPVertex & vtx0 = triangles.vertices[firstIndex + ((RSP.w1 >> 24) & 3)];
+			SPVertex & vtx0 = triangles.vertices[triangles.elements[firstIndex + ((RSP.w1 >> 24) & 3)]];
 			for (u32 i = firstIndex; i < triangles.num; ++i) {
 				SPVertex & vtx = triangles.vertices[triangles.elements[i]];
 				vtx.r = vtx.flat_r = vtx0.r;
@@ -729,6 +734,9 @@ void OGLRender::_prepareDrawTriangle(bool _dma)
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 #endif // GL_IMAGE_TEXTURES_SUPPORT
 
+	if ((m_modifyVertices & MODIFY_XY) != 0)
+		gSP.changed &= ~CHANGED_VIEWPORT;
+
 	if (gSP.changed || gDP.changed)
 		_updateStates(rsTriangle);
 
@@ -771,8 +779,9 @@ void OGLRender::_prepareDrawTriangle(bool _dma)
 			glVertexAttribPointer(SC_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SPVertex), &pVtx->r);
 	}
 
-	if ((triangles.vertices[0].modify & MODIFY_XY) != 0)
+	if ((m_modifyVertices & MODIFY_XY) != 0)
 		_updateScreenCoordsViewport();
+	m_modifyVertices = 0;
 }
 
 bool OGLRender::_canDraw() const
@@ -789,6 +798,7 @@ void OGLRender::drawLLETriangle(u32 _numVtx)
 		SPVertex & vtx = triangles.vertices[i];
 		vtx.modify = MODIFY_ALL;
 	}
+	m_modifyVertices = MODIFY_ALL;
 
 	gSP.changed &= ~CHANGED_GEOMETRYMODE; // Don't update cull mode
 	_prepareDrawTriangle(false);
@@ -979,6 +989,18 @@ bool texturedRectDepthBufferCopy(const OGLRender::TexturedRectParams & _params)
 }
 
 static
+bool texturedRectDepthBufferRender(const OGLRender::TexturedRectParams & _params)
+{
+	if (gDP.colorImage.address == gDP.depthImageAddress) {
+		FrameBuffer * pCurBuf = frameBufferList().getCurrent();
+		if (pCurBuf == nullptr || pCurBuf->m_pDepthBuffer == nullptr)
+			return true;
+		return !SetDepthTextureCombiner();
+	}
+	return false;
+}
+
+static
 bool texturedRectCopyToItself(const OGLRender::TexturedRectParams & _params)
 {
 	FrameBuffer * pCurrent = frameBufferList().getCurrent();
@@ -1090,7 +1112,7 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 	}
 	currentCombiner()->updateRenderState();
 
-	if (RSP.cmd == 0xE4 && texturedRectSpecial != NULL && texturedRectSpecial(_params)) {
+	if (_params.texrectCmd && texturedRectSpecial != NULL && texturedRectSpecial(_params)) {
 		gSP.changed |= CHANGED_GEOMETRYMODE;
 		return;
 	}
@@ -1139,18 +1161,18 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 			f32 shiftScaleT = 1.0f;
 			getTextureShiftScale(t, cache, shiftScaleS, shiftScaleT);
 			if (_params.uls > _params.lrs) {
-				texST[t].s0 = (_params.uls + 1.0f) * shiftScaleS - gSP.textureTile[t]->fuls;
+				texST[t].s0 = (_params.uls + _params.dsdx) * shiftScaleS - gSP.textureTile[t]->fuls;
 				texST[t].s1 = _params.lrs * shiftScaleS - gSP.textureTile[t]->fuls;
 			} else {
 				texST[t].s0 = _params.uls * shiftScaleS - gSP.textureTile[t]->fuls;
-				texST[t].s1 = (_params.lrs + 1.0f) * shiftScaleS - gSP.textureTile[t]->fuls;
+				texST[t].s1 = (_params.lrs + _params.dsdx) * shiftScaleS - gSP.textureTile[t]->fuls;
 			}
 			if (_params.ult > _params.lrt) {
-				texST[t].t0 = (_params.ult + 1.0f) * shiftScaleT - gSP.textureTile[t]->fult;
+				texST[t].t0 = (_params.ult + _params.dtdy) * shiftScaleT - gSP.textureTile[t]->fult;
 				texST[t].t1 = _params.lrt * shiftScaleT - gSP.textureTile[t]->fult;
 			} else {
 				texST[t].t0 = _params.ult * shiftScaleT - gSP.textureTile[t]->fult;
-				texST[t].t1 = (_params.lrt + 1.0f) * shiftScaleT - gSP.textureTile[t]->fult;
+				texST[t].t1 = (_params.lrt + _params.dtdy) * shiftScaleT - gSP.textureTile[t]->fult;
 			}
 
 			if (cache.current[t]->frameBufferTexture) {
@@ -1162,10 +1184,17 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 
 			glActiveTexture(GL_TEXTURE0 + t);
 
-			if ((cache.current[t]->mirrorS == 0 && cache.current[t]->maskS == 0 && texST[t].s0 < texST[t].s1 && texST[t].s0 >= 0.0 && texST[t].s1 <= (float)cache.current[t]->width) || (cache.current[t]->maskS == 0 && (texST[t].s0 < -1024.0f || texST[t].s1 > 1023.99f)))
+			if ((cache.current[t]->mirrorS == 0 && cache.current[t]->maskS == 0 &&
+				(texST[t].s0 < texST[t].s1 ?
+				texST[t].s0 >= 0.0 && texST[t].s1 <= (float)cache.current[t]->width :
+				texST[t].s1 >= 0.0 && texST[t].s0 <= (float)cache.current[t]->width))
+				|| (cache.current[t]->maskS == 0 && (texST[t].s0 < -1024.0f || texST[t].s1 > 1023.99f)))
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 
-			if (cache.current[t]->mirrorT == 0 && texST[t].t0 < texST[t].t1 && texST[t].t0 >= 0.0f && texST[t].t1 <= (float)cache.current[t]->height)
+			if (cache.current[t]->mirrorT == 0 &&
+				(texST[t].t0 < texST[t].t1 ?
+				texST[t].t0 >= 0.0f && texST[t].t1 <= (float)cache.current[t]->height :
+				texST[t].t1 >= 0.0f && texST[t].t0 <= (float)cache.current[t]->height))
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 			texST[t].s0 *= cache.current[t]->scaleS;
@@ -1475,6 +1504,8 @@ void OGLRender::_setSpecialTexrect() const
 		texturedRectSpecial = texturedRectPaletteMod;
 	else if (strstr(name, (const char *)"ZELDA"))
 		texturedRectSpecial = texturedRectMonochromeBackground;
+	else if (strstr(name, (const char *)"quarterback_club_98"))
+		texturedRectSpecial = texturedRectDepthBufferRender;
 	else
 		texturedRectSpecial = NULL;
 }
@@ -1561,6 +1592,8 @@ u32 TextureFilterHandler::_getConfigOptions() const
 		options |= LET_TEXARTISTS_FLY;
 	if (config.textureFilter.txDump)
 		options |= DUMP_TEX;
+	if (config.textureFilter.txDeposterize)
+		options |= DEPOSTERIZE;
 	return options;
 }
 

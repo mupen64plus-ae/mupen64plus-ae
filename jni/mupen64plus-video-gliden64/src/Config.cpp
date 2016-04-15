@@ -55,21 +55,27 @@ void Config::resetToDefaults()
 	frameBufferEmulation.aspect = a43;
 	frameBufferEmulation.bufferSwapMode = bsOnVerticalInterrupt;
 	frameBufferEmulation.nativeResFactor = 0;
-	frameBufferEmulation.fbInfoDisabled = 0;
 	frameBufferEmulation.fbInfoReadColorChunk = 0;
 	frameBufferEmulation.fbInfoReadDepthChunk = 1;
+#ifndef MUPENPLUSAPI
+	frameBufferEmulation.fbInfoDisabled = 0;
+#else
+	frameBufferEmulation.fbInfoDisabled = 1;
+#endif
 
-	textureFilter.txCacheSize = 100 * gc_uMegabyte;
-	textureFilter.txDump = 0;
-	textureFilter.txEnhancementMode = 0;
-	textureFilter.txFilterIgnoreBG = 0;
 	textureFilter.txFilterMode = 0;
+	textureFilter.txEnhancementMode = 0;
+	textureFilter.txDeposterize = 0;
+	textureFilter.txFilterIgnoreBG = 0;
+	textureFilter.txCacheSize = 100 * gc_uMegabyte;
+
 	textureFilter.txHiresEnable = 0;
 	textureFilter.txHiresFullAlphaChannel = 0;
 	textureFilter.txHresAltCRC = 0;
+	textureFilter.txDump = 0;
 
-	textureFilter.txCacheCompression = 1;
 	textureFilter.txForce16bpp = 0;
+	textureFilter.txCacheCompression = 1;
 	textureFilter.txSaveCache = 1;
 
 	api().GetUserDataPath(textureFilter.txPath);
