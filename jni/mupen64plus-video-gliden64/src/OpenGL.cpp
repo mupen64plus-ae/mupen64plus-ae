@@ -417,6 +417,12 @@ void OGLRender::_setBlendMode() const
 				glBlendFunc(GL_ONE, GL_ZERO);
 				break;
 
+			case 0x55f0:
+				// Bust-A-Move 3 DX
+				// CLR_MEM * A_FOG + CLR_FOG * 1MA
+				glBlendFunc(GL_ONE, GL_SRC_ALPHA);
+				break;
+
 			case 0x0F1A:
 				if (gDP.otherMode.cycleType == G_CYC_1CYCLE)
 					glBlendFunc(GL_ONE, GL_ZERO);
@@ -1253,6 +1259,28 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	gSP.changed |= CHANGED_GEOMETRYMODE | CHANGED_VIEWPORT;
+}
+
+void OGLRender::correctTexturedRectParams(TexturedRectParams & _params)
+{
+    if (config.generalEmulation.correctTexrectCoords == Config::tcSmart) {
+        if (_params.ulx == m_texrectParams.ulx && _params.lrx == m_texrectParams.lrx) {
+            if (fabsf(_params.uly - m_texrectParams.lry) < 0.51f)
+                _params.uly = m_texrectParams.lry;
+            else if (fabsf(_params.lry - m_texrectParams.uly) < 0.51f)
+                _params.lry = m_texrectParams.uly;
+        } else if (_params.uly == m_texrectParams.uly && _params.lry == m_texrectParams.lry) {
+            if (fabsf(_params.ulx - m_texrectParams.lrx) < 0.51f)
+                _params.ulx = m_texrectParams.lrx;
+            else if (fabsf(_params.lrx - m_texrectParams.ulx) < 0.51f)
+                _params.lrx = m_texrectParams.ulx;
+        }
+    } else if (config.generalEmulation.correctTexrectCoords == Config::tcForce) {
+        _params.lrx += 0.25f;
+        _params.lry += 0.25f;
+    }
+
+    m_texrectParams = _params;
 }
 
 void OGLRender::drawText(const char *_pText, float x, float y)
