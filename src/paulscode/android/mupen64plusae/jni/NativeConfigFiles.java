@@ -181,6 +181,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-GLideN64", "EnableLOD", boolToNum( game.gliden64EnableLOD ) );
         mupen64plus_cfg.put( "Video-GLideN64", "EnableHWLighting", boolToNum( game.gliden64EnableHWLighting ) );
         mupen64plus_cfg.put( "Video-GLideN64", "EnableShaderStorage", boolToNum( game.gliden64EnableShaderStorage ) );
+        mupen64plus_cfg.put( "Video-GLideN64", "CorrectTexrectCoords", String.valueOf( game.gliden64CorrectTexrectCoords ) );
         mupen64plus_cfg.put( "Video-GLideN64", "EnableFBEmulation", boolToNum( game.gliden64EnableFBEmulation ));
         mupen64plus_cfg.put( "Video-GLideN64", "BufferSwapMode", String.valueOf( game.gliden64BufferSwapMode ));
         mupen64plus_cfg.put( "Video-GLideN64", "EnableCopyColorToRDRAM", String.valueOf( game.gliden64EnableCopyColorToRDRAM ) );

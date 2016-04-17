@@ -290,6 +290,19 @@
     </string-array>
     <string name="gliden64_bilinear_default" translatable="false">1</string>
 
+    <!-- GLideN64 texrect coord list-->
+    <string-array name="gliden64_texrect_coords_entries">
+        <item>@string/gliden64_correct_texrect_coords_off</item>
+        <item>@string/gliden64_correct_texrect_coords_auto</item>
+        <item>@string/gliden64_correct_texrect_coords_force</item>
+    </string-array>
+    <string-array name="gliden64_texrect_coords_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="gliden64_texrect_coords_default" translatable="false">1</string>
+
     <!-- GLideN64 swap frame buffers list-->
     <string-array name="gliden64_swap_frame_buffer_entries">
         <item>@string/gliden64_swap_frame_buffers_entry_on_vi_update</item>
