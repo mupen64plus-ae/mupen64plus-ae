@@ -24,6 +24,8 @@
 #define FRAGMENT_SHADER_END "\n"
 #endif
 
+PostProcessor PostProcessor::processor;
+
 static const char * vertexShader =
 SHADER_VERSION
 "#if (__VERSION__ > 120)						\n"
@@ -484,7 +486,6 @@ void PostProcessor::destroy()
 
 PostProcessor & PostProcessor::get()
 {
-	static PostProcessor processor;
 	return processor;
 }
 
