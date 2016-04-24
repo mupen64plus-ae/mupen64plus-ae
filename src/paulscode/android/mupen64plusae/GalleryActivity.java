@@ -88,7 +88,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
+    private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
     private static final int RESTART_CONFIRM_DIALOG_ID = 0;
+    private static final int CLEAR_CONFIRM_DIALOG_ID = 1;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -563,6 +565,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         case R.id.menuItem_extract:
             ActivityHelper.starExtractTextureActivity(this);
             return true;
+        case R.id.menuItem_clear:
+        {
+            String title = getString( R.string.confirm_title );
+            String message = getString( R.string.confirmClearData_message );
+
+            ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(CLEAR_CONFIRM_DIALOG_ID, title, message);
+
+            FragmentManager fm = getSupportFragmentManager();
+            confirmationDialog.show(fm, STATE_CLEAR_CONFIRM_DIALOG);
+        }
+            return true;
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -642,6 +656,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     mSelectedItem.isExtracted, mSelectedItem.md5, mSelectedItem.crc,
                     mSelectedItem.headerName, mSelectedItem.countryCode, mSelectedItem.artPath,
                     mSelectedItem.goodName, true );
+            }
+            if(id == CLEAR_CONFIRM_DIALOG_ID)
+            {
+                FileUtil.deleteFolder(new File(mGlobalPrefs.coreUserDataDir));
+                FileUtil.deleteFolder(new File(mGlobalPrefs.coreUserCacheDir));
             }
         }
     }

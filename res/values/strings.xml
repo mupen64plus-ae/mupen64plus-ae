@@ -83,6 +83,7 @@
     <string name="menuItem_hardwareInfo">Hardware info</string>
     <string name="menuItem_Tools">Tools</string>
     <string name="menuItem_Extract">Add Texture Pack</string>
+    <string name="menuItem_Clear">Clear Texture Packs/Caches</string>
     <string name="menuItem_localeOverride">Language</string>
 
     <!-- ManageProfilesActivity -->
@@ -511,6 +512,7 @@
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
+    <string name="confirmClearData_message">Are you sure you want to clear all installed high resolution texture packs and caches?</string>
 
     <!-- Change Log -->
     <string name="changeLog_dialogTitle">Change log</string>
