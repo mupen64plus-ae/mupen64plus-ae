@@ -273,22 +273,25 @@ public class EditCheatAdvancedDialog extends DialogFragment
             
             for(String address : addressStrings)
             {
-                CheatAddressData addressData = new CheatAddressData();
-                
-                String addressString = address.substring(0, 8);
-                String valueString = address.substring(address.length()-4, address.length());
+                if(!TextUtils.isEmpty(address))
+                {
+                    CheatAddressData addressData = new CheatAddressData();
 
-                addressData.address = Long.valueOf(addressString, 16);
-                if(!valueString.contains("?"))
-                {
-                    addressData.value = Integer.valueOf(valueString, 16);
-                    mAddresses.add(addressData);
-                }
-                else
-                {
-                    //The cheat with the option goes at the front
-                    addressData.value = -1;
-                    mAddresses.add(0, addressData);
+                    String addressString = address.substring(0, 8);
+                    String valueString = address.substring(address.length()-4, address.length());
+
+                    addressData.address = Long.valueOf(addressString, 16);
+                    if(!valueString.contains("?"))
+                    {
+                        addressData.value = Integer.valueOf(valueString, 16);
+                        mAddresses.add(addressData);
+                    }
+                    else
+                    {
+                        //The cheat with the option goes at the front
+                        addressData.value = -1;
+                        mAddresses.add(0, addressData);
+                    }
                 }
             }
         }
@@ -301,11 +304,14 @@ public class EditCheatAdvancedDialog extends DialogFragment
             
             for(String option : optionStrings)
             {
-                CheatOptionData cheatData = new CheatOptionData();
-                String valueString = option.substring(option.length()-4, option.length());
-                cheatData.value = Integer.valueOf(valueString, 16);
-                cheatData.description = option.substring(0, option.length() - 5);
-                mOptionItems.add(cheatData);
+                if(!TextUtils.isEmpty(option))
+                {
+                    CheatOptionData cheatData = new CheatOptionData();
+                    String valueString = option.substring(option.length()-4, option.length());
+                    cheatData.value = Integer.valueOf(valueString, 16);
+                    cheatData.description = option.substring(0, option.length() - 5);
+                    mOptionItems.add(cheatData);
+                }
             }
         }
     }
@@ -461,7 +467,7 @@ public class EditCheatAdvancedDialog extends DialogFragment
      * Checks whether a candidate name is unique, non-empty, and contains only
      * safe characters. Unsafe characters are: '[', ']'.
      * 
-     * @param profileNames
+     * @param cheatNames
      *            list of profile names to compare against
      * @param oldName
      *            the old name
