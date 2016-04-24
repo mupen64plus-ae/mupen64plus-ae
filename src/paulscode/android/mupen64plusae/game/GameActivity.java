@@ -145,12 +145,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
     private String mRomPath;
     private String mRomMd5;
     private String mRomCrc;
-    private String mRomHeaderName;
-    private byte mRomCountryCode;
-    private String mCheatArgs;
-    private boolean mDoRestart;
-    private String mArtPath;
-    private String mRomGoodName;
 
     // Lifecycle state tracking
     private boolean mIsResumed = false;     // true if the activity is resumed
@@ -179,7 +173,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
 
-        mControllers = new ArrayList<AbstractController>();
+        mControllers = new ArrayList<>();
         mMogaController = Controller.getInstance( this );
 
         // Get the intent data
@@ -189,12 +183,12 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
-        mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
-        mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
-        mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
-        mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+        String romHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        byte romCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
+        String artPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
+        String romGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
         String legacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
-        mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
+        boolean doRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
 
@@ -206,9 +200,9 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         // Get app data and user preferences
         mGlobalPrefs = new GlobalPrefs( this, appData );
 
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-            RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs, legacySaveName );
-        mCheatArgs =  mGamePrefs.getCheatArgs();
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, romHeaderName, romGoodName,
+            RomHeader.countryCodeToSymbol(romCountryCode), appData, mGlobalPrefs, legacySaveName );
+        String cheatArgs =  mGamePrefs.getCheatArgs();
 
         mAutoSaveManager = new GameAutoSaveManager(mGamePrefs, mGlobalPrefs.maxAutoSaves);
 
@@ -228,8 +222,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
 
         // If the orientation changes, the screensize info changes, so we must refresh dependencies
         mGlobalPrefs = new GlobalPrefs( this, appData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-                RomHeader.countryCodeToSymbol(mRomCountryCode), appData, mGlobalPrefs, legacySaveName );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, romHeaderName, romGoodName,
+                RomHeader.countryCodeToSymbol(romCountryCode), appData, mGlobalPrefs, legacySaveName );
 
         mFirstStart = true;
 
@@ -250,12 +244,12 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         mSurface.getRootView().setBackgroundColor(0xFF000000);
         mSurface.SetGameSurfaceCreatedListener(this);
 
-        if (!TextUtils.isEmpty(mArtPath) && new File(mArtPath).exists())
-            mGameSidebar.setImage(new BitmapDrawable(this.getResources(), mArtPath));
+        if (!TextUtils.isEmpty(artPath) && new File(artPath).exists())
+            mGameSidebar.setImage(new BitmapDrawable(this.getResources(), artPath));
 
-        mGameSidebar.setTitle(mRomGoodName);
+        mGameSidebar.setTitle(romGoodName);
         // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( this, mSurface, mGamePrefs, mRomPath, mRomMd5, mCheatArgs, mDoRestart );
+        CoreInterface.initialize( this, mSurface, mGamePrefs, mRomPath, mRomMd5, cheatArgs, doRestart );
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
@@ -313,7 +307,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             }, 1000);
         }
 
-        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener(){
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener(){
 
             @Override
             public void onDrawerClosed(View arg0)
@@ -539,16 +533,16 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             mGameSidebar.reload();
             break;
         case R.id.menuItem_player_one:
-            setPakTypeFromPrompt(1, mGlobalPrefs.getPakType(1).ordinal(), this);
+            setPakTypeFromPrompt(1);
             break;
         case R.id.menuItem_player_two:
-            setPakTypeFromPrompt(2, mGlobalPrefs.getPakType(2).ordinal(), this);
+            setPakTypeFromPrompt(2);
             break;
         case R.id.menuItem_player_three:
-            setPakTypeFromPrompt(3, mGlobalPrefs.getPakType(3).ordinal(), this);
+            setPakTypeFromPrompt(3);
             break;
         case R.id.menuItem_player_four:
-            setPakTypeFromPrompt(4, mGlobalPrefs.getPakType(4).ordinal(), this);
+            setPakTypeFromPrompt(4);
             break;
         case R.id.menuItem_setIme:
             final InputMethodManager imeManager = (InputMethodManager) this
@@ -610,15 +604,14 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         return playerMenuItem;
     }
 
-    public void setPakTypeFromPrompt(final int player, final int selectedPakType,
-        final OnPromptFinishedListener promptFinishedListener)
+    public void setPakTypeFromPrompt(final int player)
     {
         //First get the prompt title
         final CharSequence title = GetPlayerTextFromId(player);
         final MenuItem playerMenuItem = GetPlayerMenuItemFromId(player);
 
         //Generate possible pak types
-        final ArrayList<CharSequence> selections = new ArrayList<CharSequence>();
+        final ArrayList<CharSequence> selections = new ArrayList<>();
         for(final PakType pakType:PakType.values())
         {
             selections.add(this.getString(pakType.getResourceString()));
