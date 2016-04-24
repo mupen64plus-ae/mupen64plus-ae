@@ -111,12 +111,26 @@ public class ExtractTexturesService extends Service
                     FileUtil.deleteFolder( new File( outputFolder ) );
                     FileUtil.unzipAll( new File( mZipPath ), outputFolder );
                 }
+                else
+                {
+                    final String text = getString(R.string.pathHiResTexturesTask_errorMessage);
+
+                    Handler handler = new Handler(Looper.getMainLooper());
+
+                    handler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
             else if(mZipPath.toLowerCase().endsWith("htc"))
             {
-                if(mZipPath.toLowerCase().endsWith("_HIRESTEXTURES.htc"))
+                if(mZipPath.toLowerCase().endsWith("_hirestextures.htc"))
                 {
-                    FileUtil.copyFile(new File(mZipPath), new File(globalPrefs.textureCacheDir));
+                    FileUtil.copyFile(new File(mZipPath), new File(globalPrefs.textureCacheDir + "/" + new File(mZipPath).getName()));
                 }
                 else
                 {
