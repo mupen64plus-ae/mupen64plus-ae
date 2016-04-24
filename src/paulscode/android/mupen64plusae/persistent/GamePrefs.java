@@ -176,7 +176,7 @@ public class GamePrefs
     public final boolean gliden64EnableHWLighting;
 
     /** Use persistent storage for compiled shaders. */
-    public final boolean gliden64EnableShaderStorage;
+    public final boolean gliden64EnableShadersStorage;
 
     /** Make texrect coordinates continuous to avoid black lines between them
      * 0=Off
@@ -528,7 +528,7 @@ public class GamePrefs
         gliden64EnableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         gliden64EnableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         gliden64EnableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
-        gliden64EnableShaderStorage = emulationProfile.get( "EnableShaderStorage", "True" ).equals( "True" );
+        gliden64EnableShadersStorage = emulationProfile.get( "EnableShadersStorage", "True" ).equals( "True" );
         gliden64CorrectTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 1);
         gliden64EnableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
         gliden64BufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);

@@ -55,11 +55,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String GLIDEN64_ENABLE_SHADER_STORAGE = "EnableShaderStorage";
     private static final String GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM = "EnableCopyDepthToRDRAM";
     private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
-    private static final String GLIDEN64_ENABLE_FB_EMULATION = "EnableFBEmulation";
-    private static final String GLIDEN64_WIDESCREEN_HACK = "WidescreenHack";
-    private static final String GLIDEN64_FORCE_GAMMA_CORRECTION = "ForceGammaCorrection";
-    private static final String GLIDEN64_GAMMA_CORRECTION_LEVEL = "GammaCorrectionLevel";
-    
+
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
     private static final String LIBGLIDEN64_SO = "libmupen64plus-video-gliden64%1$s.so";
@@ -230,16 +226,9 @@ public class EmulationProfileActivity extends ProfileActivity
                 findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 );
-                
-                String enableFBEmulation = mPrefs.getString( GLIDEN64_ENABLE_FB_EMULATION, null );
-                findPreference( GLIDEN64_WIDESCREEN_HACK ).setEnabled( enableFBEmulation.equals("True") );
-                
-                String forceGammaCorrection = mPrefs.getString( GLIDEN64_FORCE_GAMMA_CORRECTION, null );
-                findPreference( GLIDEN64_GAMMA_CORRECTION_LEVEL ).setEnabled( forceGammaCorrection.equals("True") );
             }
             else
             {
-
                 mScreenRoot.removePreference( mCategoryGliden64Texture );
                 mScreenRoot.removePreference( mCategoryGliden64General );
                 mScreenRoot.removePreference( mCategoryGliden64FrameBuffer );

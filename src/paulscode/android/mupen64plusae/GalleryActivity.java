@@ -177,7 +177,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             if( !TextUtils.isEmpty( givenRomPath ) )
             {
                 // Asynchronously compute MD5 and launch game when finished
-                Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameInfo ) ) );
+                Notifier.showToast( this, getString( R.string.toast_loadingGameInfo ) );
                 final ComputeMd5Task task = new ComputeMd5Task( new File( givenRomPath ), new ComputeMd5Listener()
                 {
                     @Override
@@ -589,15 +589,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( item == null )
             return;
 
-        final GalleryItem finalItem = item;
-
         switch( menuItem.getItemId() )
         {
             case R.id.menuItem_resume:
-                launchGameActivity( finalItem.romFile.getAbsolutePath(),
-                       finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                       finalItem.isExtracted, finalItem.md5, finalItem.crc, finalItem.headerName,
-                       finalItem.countryCode, finalItem.artPath, finalItem.goodName, false );
+                launchGameActivity( item.romFile.getAbsolutePath(),
+                        item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
+                        item.isExtracted, item.md5, item.crc, item.headerName,
+                        item.countryCode, item.artPath, item.goodName, false );
                 break;
             case R.id.menuItem_restart:
                 //Don't show the prompt if this is the first time we start a game
@@ -614,11 +612,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
                 else
                 {
-                    launchGameActivity( finalItem.romFile.getAbsolutePath(),
-                        finalItem.zipFile == null ? null : finalItem.zipFile.getAbsolutePath(),
-                        finalItem.isExtracted, finalItem.md5, finalItem.crc,
-                        finalItem.headerName, finalItem.countryCode, finalItem.artPath,
-                        finalItem.goodName, true );
+                    launchGameActivity( item.romFile.getAbsolutePath(),
+                            item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
+                            item.isExtracted, item.md5, item.crc,
+                            item.headerName, item.countryCode, item.artPath,
+                            item.goodName, true );
                 }
 
                 break;
@@ -626,17 +624,17 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             {
                 String romLegacySaveFileName = null;
                 
-                if(finalItem.zipFile != null)
+                if(item.zipFile != null)
                 {
-                    romLegacySaveFileName = finalItem.zipFile.getName();
+                    romLegacySaveFileName = item.zipFile.getName();
                 }
                 else
                 {
-                    romLegacySaveFileName = finalItem.romFile.getName();
+                    romLegacySaveFileName = item.romFile.getName();
                 }
-                ActivityHelper.startGamePrefsActivity( GalleryActivity.this, finalItem.romFile.getAbsolutePath(),
-                    finalItem.md5, finalItem.crc, finalItem.headerName, finalItem.goodName, finalItem.countryCode,
-                    romLegacySaveFileName);
+                ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romFile.getAbsolutePath(),
+                        item.md5, item.crc, item.headerName, item.goodName, item.countryCode,
+                        romLegacySaveFileName);
                 break;
 
             }
@@ -802,12 +800,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( query.length() > 0 )
             searches = query.split( " " );
 
-        List<GalleryItem> items = new ArrayList<GalleryItem>();
+        List<GalleryItem> items = new ArrayList<>();
         List<GalleryItem> recentItems = null;
         int currentTime = 0;
         if( mGlobalPrefs.isRecentShown )
         {
-            recentItems = new ArrayList<GalleryItem>();
+            recentItems = new ArrayList<>();
             currentTime = (int) ( new Date().getTime() / 1000 );
         }
 
@@ -915,7 +913,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         List<GalleryItem> combinedItems = items;
         if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
         {
-            combinedItems = new ArrayList<GalleryItem>();
+            combinedItems = new ArrayList<>();
 
             combinedItems
                     .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
@@ -967,7 +965,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Update the ConfigSection with the new value for lastPlayed
         final String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
         final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-        if( config != null && config.get(romMd5) != null)
+        if( config.get(romMd5) != null)
         {
             config.put( romMd5, "lastPlayed", lastPlayed );
 
@@ -982,7 +980,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mRefreshNeeded = true;
         mSelectedItem = null;
         
-        String romLegacySaveFileName = null;
+        String romLegacySaveFileName;
         
         
         
@@ -1053,15 +1051,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
                 zipFile.close();
             }
-            catch( final ZipException e )
-            {
-                Log.w( "GalleryActivity", e );
-            }
-            catch( final IOException e )
-            {
-                Log.w( "GalleryActivity", e );
-            }
-            catch( final ArrayIndexOutOfBoundsException e )
+            catch( final IOException|ArrayIndexOutOfBoundsException e )
             {
                 Log.w( "GalleryActivity", e );
             }
