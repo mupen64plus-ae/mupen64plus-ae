@@ -439,7 +439,7 @@ const xbrz::ScalerCfg& cfg)
 				return true;
 
 			//make sure there is no second blending in an adjacent rotation for this pixel: handles insular pixels, mario eyes
-			if (getTopR(blend) != BLEND_NONE && !eq(e, g)) //but support double-blending for 90° corners
+			if (getTopR(blend) != BLEND_NONE && !eq(e, g)) //but support double-blending for 90ï¿½ corners
 				return false;
 			if (getBottomL(blend) != BLEND_NONE && !eq(e, c))
 				return false;

@@ -566,10 +566,11 @@
     <string name="cheatEditor_remove_option">Remove option</string>
 
     <!-- Hi-Res Texture Unpacking -->
-    <string name="pathHiResTexturesTask_select_zip">Select the ZIP file containing the high resolution texture pack</string>
+    <string name="pathHiResTexturesTask_select_zip">Select the ZIP or HTC file containing the high resolution texture pack</string>
     <string name="pathHiResTexturesTask_title">Unpacking textures...</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
+    <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Error: HTC file must match this format [GAME_HEADER]__HIRESTEXTURES.htc</string>
 
     <!-- Scan Roms Dialog -->
     <string name="scanRomsDialog_selectRom">Select a ROM file or an entire folder to scan</string>

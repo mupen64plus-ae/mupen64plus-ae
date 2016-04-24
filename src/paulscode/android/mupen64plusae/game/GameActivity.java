@@ -424,7 +424,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         //Reload the menu with the new frame limiter setting
         final MenuItem frameLimiterItem =
             mGameSidebar.getMenu().findItem(R.id.menuItem_disable_frame_limiter);
-        frameLimiterItem.setTitle(this.getString(resId, NativeExports.emuGetSpeed()));
+        frameLimiterItem.setTitle(this.getString(resId));
 
         //Reload player pak settings
         UpdateControllerMenu(R.id.menuItem_player_one, mGamePrefs.isPlugged1, 1);
@@ -535,7 +535,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             //Reload the menu with the new speed
             final MenuItem frameLimiterItem =
                 mGameSidebar.getMenu().findItem(R.id.menuItem_disable_frame_limiter);
-            frameLimiterItem.setTitle(this.getString(resId, NativeExports.emuGetSpeed()));
+            frameLimiterItem.setTitle(this.getString(resId));
             mGameSidebar.reload();
             break;
         case R.id.menuItem_player_one:
