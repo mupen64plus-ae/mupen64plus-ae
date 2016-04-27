@@ -307,7 +307,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             }, 1000);
         }
 
-        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener(){
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener(){
 
             @Override
             public void onDrawerClosed(View arg0)
