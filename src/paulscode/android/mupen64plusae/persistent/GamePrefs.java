@@ -176,7 +176,13 @@ public class GamePrefs
     public final boolean gliden64EnableHWLighting;
 
     /** Use persistent storage for compiled shaders. */
-    public final boolean gliden64EnableShaderStorage;
+    public final boolean gliden64EnableShadersStorage;
+
+    /** Make texrect coordinates continuous to avoid black lines between them
+     * 0=Off
+     * 1=Auto
+     * 2=Force */
+    public final int gliden64CorrectTexrectCoords;
 
     /** Enable frame and|or depth buffer emulation. */
     public final boolean gliden64EnableFBEmulation;
@@ -187,10 +193,10 @@ public class GamePrefs
      * 2=On buffer update) */
     public final int gliden64BufferSwapMode;
 
-    /** Enable color buffer copy to RDRAM (
+    /** Enable color buffer copy to RDRAM
      * 0=do not copy
      * 1=copy in sync mode
-     * 2=copy in async mode) */
+     * 2=copy in async mode */
     public final int gliden64EnableCopyColorToRDRAM;
 
     /** Copy auxiliary buffers to RDRAM */
@@ -243,6 +249,9 @@ public class GamePrefs
      * 12=5xBRZ
      * 13=6xBRZ) */
     public final int gliden64TxEnhancementMode;
+
+    /** Deposterize texture before enhancement.. */
+    public final boolean gliden64TxDeposterize;
 
     /** Don't filter background textures. */
     public final boolean gliden64TxFilterIgnoreBG;
@@ -519,7 +528,8 @@ public class GamePrefs
         gliden64EnableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         gliden64EnableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         gliden64EnableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
-        gliden64EnableShaderStorage = emulationProfile.get( "EnableShaderStorage", "True" ).equals( "True" );
+        gliden64EnableShadersStorage = emulationProfile.get( "EnableShadersStorage", "True" ).equals( "True" );
+        gliden64CorrectTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 1);
         gliden64EnableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
         gliden64BufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);
         gliden64EnableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 2);
@@ -533,6 +543,7 @@ public class GamePrefs
         gliden64FBInfoReadDepthChunk = emulationProfile.get( "FBInfoReadDepthChunk", "True" ).equals( "True" );
         gliden64TxFilterMode = getSafeInt( emulationProfile, "txFilterMode}]", 0);
         gliden64TxEnhancementMode = getSafeInt( emulationProfile, "txEnhancementMode", 0);
+        gliden64TxDeposterize = emulationProfile.get( "txDeposterize", "False" ).equals( "True" );
         gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "False" ).equals( "True" );
         gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 256);
         gliden64TxHiresEnable = emulationProfile.get( "txHiresEnable", "False" ).equals( "True" );

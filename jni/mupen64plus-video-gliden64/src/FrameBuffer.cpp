@@ -466,7 +466,7 @@ void FrameBufferList::correctHeight()
 			m_pCurrent->reinit((u32)gDP.scissor.lry);
 
 			if (m_pCurrent->_isMarioTennisScoreboard())
-				g_RDRAMtoFB.CopyFromRDRAM(m_pCurrent->m_startAddress + 4, false);
+				g_RDRAMtoFB.CopyFromRDRAM(m_pCurrent->m_startAddress + 4, true);
 			gSP.changed |= CHANGED_VIEWPORT;
 		}
 		m_pCurrent->m_needHeightCorrection = false;
@@ -542,10 +542,15 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 				m_prevColorImageHeight = gDP.colorImage.height;
 			else if (gDP.colorImage.height == 0)
 				gDP.colorImage.height = m_prevColorImageHeight;
+
 			gDP.colorImage.height = min(gDP.colorImage.height, VI.height);
-			m_pCurrent->m_endAddress = min(RDRAMSize, m_pCurrent->m_startAddress + (((m_pCurrent->m_width * gDP.colorImage.height) << m_pCurrent->m_size >> 1) - 1));
-		} else if (m_pCurrent->m_needHeightCorrection && gDP.colorImage.height != 0) {
-			m_pCurrent->m_endAddress = min(RDRAMSize, m_pCurrent->m_startAddress + (((m_pCurrent->m_width * gDP.colorImage.height) << m_pCurrent->m_size >> 1) - 1));
+		}
+
+		//Non-auxiliary buffers are always corrected, auxiliary buffers are correct only if they need correction.
+		//Also, before making any adjustments, make sure gDP.colorImage.height has a valid value.
+		if((!m_pCurrent->isAuxiliary() || m_pCurrent->m_needHeightCorrection) && gDP.colorImage.height != 0)
+		{
+		    m_pCurrent->m_endAddress = min(RDRAMSize, m_pCurrent->m_startAddress + (((m_pCurrent->m_width * gDP.colorImage.height) << m_pCurrent->m_size >> 1) - 1));
 		}
 
 		if (!m_pCurrent->_isMarioTennisScoreboard() && !m_pCurrent->m_isDepthBuffer && !m_pCurrent->m_copiedToRdram && !m_pCurrent->m_cfb && !m_pCurrent->m_cleared && m_pCurrent->m_RdramCopy.empty() && gDP.colorImage.height > 1) {
@@ -597,8 +602,8 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 		buffer.init(_address, endAddress, _format, _size, _width, _height, _cfb);
 		m_pCurrent = &buffer;
 
-		if (m_pCurrent->_isMarioTennisScoreboard())
-			g_RDRAMtoFB.CopyFromRDRAM(m_pCurrent->m_startAddress + 4, false);
+		if (m_pCurrent->_isMarioTennisScoreboard() || ((config.generalEmulation.hacks & hack_legoRacers) != 0 && _width == VI.width))
+			g_RDRAMtoFB.CopyFromRDRAM(m_pCurrent->m_startAddress + 4, true);
 	}
 
 	if (_address == gDP.depthImageAddress)
@@ -835,16 +840,15 @@ void FrameBufferList::renderBuffer(u32 _address)
 		dstCoord[0] += 1; // workaround for Adreno's issue with glBindFramebuffer;
 #endif // GLESX
 
-	render.updateScissor(pBuffer);
-	PostProcessor::get().doGammaCorrection(pBuffer);
-	PostProcessor::get().doBlur(pBuffer);
+	FrameBuffer * pFilteredBuffer = PostProcessor::get().doBlur(PostProcessor::get().doGammaCorrection(pBuffer));
+	pBuffer->m_postProcessed = pFilteredBuffer->m_postProcessed;
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//glDrawBuffer( GL_BACK );
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	render.clearColorBuffer(clearColor);
 
 	GLenum filter = GL_LINEAR;
-	if (config.video.multisampling != 0) {
+	if (config.video.multisampling != 0 && pFilteredBuffer == pBuffer) {
 		if (X0 > 0 || dstPartHeight > 0 ||
 			(srcCoord[2] - srcCoord[0]) != (dstCoord[2] - dstCoord[0]) ||
 			(srcCoord[3] - srcCoord[1]) != (dstCoord[3] - dstCoord[1])) {
@@ -856,7 +860,7 @@ void FrameBufferList::renderBuffer(u32 _address)
 			filter = GL_NEAREST;
 		}
 	} else
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, pBuffer->m_FBO);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, pFilteredBuffer->m_FBO);
 
 	// glDisable(GL_SCISSOR_TEST) does not affect glBlitFramebuffer, at least on AMD
 	glScissor(0, 0, ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset());
@@ -903,8 +907,8 @@ void FrameBufferList::renderBuffer(u32 _address)
 
 	OGLVideo & ogl = video();
 	ogl.getRender().updateScissor(pBuffer);
-	PostProcessor::get().doGammaCorrection(pBuffer);
-	PostProcessor::get().doBlur(pBuffer);
+	FrameBuffer * pFilteredBuffer = PostProcessor::get().doBlur(PostProcessor::get().doGammaCorrection(pBuffer));
+	pBuffer->m_postProcessed = pFilteredBuffer->m_postProcessed;
 	ogl.getRender().dropRenderState();
 	gSP.changed = gDP.changed = 0;
 
@@ -914,16 +918,16 @@ void FrameBufferList::renderBuffer(u32 _address)
 	glDisable( GL_CULL_FACE );
 	glDisable( GL_POLYGON_OFFSET_FILL );
 
-	const u32 width = pBuffer->m_width;
-	const u32 height = pBuffer->m_height;
+	const u32 width = pFilteredBuffer->m_width;
+	const u32 height = pFilteredBuffer->m_height;
 
-	pBuffer->m_pTexture->scaleS = ogl.getScaleX() / (float)pBuffer->m_pTexture->realWidth;
-	pBuffer->m_pTexture->scaleT = ogl.getScaleY() / (float)pBuffer->m_pTexture->realHeight;
-	pBuffer->m_pTexture->shiftScaleS = 1.0f;
-	pBuffer->m_pTexture->shiftScaleT = 1.0f;
-	pBuffer->m_pTexture->offsetS = 0;
-	pBuffer->m_pTexture->offsetT = (float)height;
-	textureCache().activateTexture(0, pBuffer->m_pTexture);
+	pFilteredBuffer->m_pTexture->scaleS = ogl.getScaleX() / (float)pFilteredBuffer->m_pTexture->realWidth;
+	pFilteredBuffer->m_pTexture->scaleT = ogl.getScaleY() / (float)pFilteredBuffer->m_pTexture->realHeight;
+	pFilteredBuffer->m_pTexture->shiftScaleS = 1.0f;
+	pFilteredBuffer->m_pTexture->shiftScaleT = 1.0f;
+	pFilteredBuffer->m_pTexture->offsetS = 0;
+	pFilteredBuffer->m_pTexture->offsetT = (float)height;
+	textureCache().activateTexture(0, pFilteredBuffer->m_pTexture);
 	gSP.textureTile[0]->fuls = gSP.textureTile[0]->fult = 0.0f;
 	gSP.textureTile[0]->shifts = gSP.textureTile[0]->shiftt = 0;
 	currentCombiner()->updateTextureInfo(true);
@@ -933,7 +937,7 @@ void FrameBufferList::renderBuffer(u32 _address)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	OGLRender::TexturedRectParams params(0.0f, 0.0f, width, height, 0.0f, 0.0f, width - 1.0f, height - 1.0f, false, false, pBuffer);
+	OGLRender::TexturedRectParams params(0.0f, 0.0f, width, height, 0.0f, 0.0f, width - 1.0f, height - 1.0f, 1.0f, 1.0f, false, false, false, pFilteredBuffer);
 	ogl.getRender().drawTexturedRect(params);
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
@@ -1094,27 +1098,29 @@ void FrameBufferToRDRAM::Destroy() {
 
 bool FrameBufferToRDRAM::_prepareCopy(u32 _startAddress)
 {
-	OGLVideo & ogl = video();
-	const u32 curFrame = ogl.getBuffersSwapCount();
-	FrameBuffer * pBuffer = frameBufferList().findBuffer(_startAddress);
-	if (m_frameCount == curFrame && pBuffer == m_pCurFrameBuffer && m_startAddress != _startAddress)
-		return true;
-
 	if (VI.width == 0 || frameBufferList().getCurrent() == NULL)
 		return false;
 
-	m_pCurFrameBuffer = pBuffer;
-	if (m_pCurFrameBuffer == NULL || m_pCurFrameBuffer->m_isOBScreen)
+	OGLVideo & ogl = video();
+	const u32 curFrame = ogl.getBuffersSwapCount();
+	FrameBuffer * pBuffer = frameBufferList().findBuffer(_startAddress);
+
+	if (pBuffer == NULL || pBuffer->m_isOBScreen)
 		return false;
 
-	const u32 numPixels = m_pCurFrameBuffer->m_width * m_pCurFrameBuffer->m_height;
+	if (m_frameCount == curFrame && pBuffer == m_pCurFrameBuffer && m_startAddress != _startAddress)
+		return true;
+
+	const u32 numPixels = pBuffer->m_width * pBuffer->m_height;
 	if (numPixels == 0)
 		return false;
 
-	const u32 stride = m_pCurFrameBuffer->m_width << m_pCurFrameBuffer->m_size >> 1;
-	const u32 height = _cutHeight(_startAddress, m_pCurFrameBuffer->m_height, stride);
+	const u32 stride = pBuffer->m_width << pBuffer->m_size >> 1;
+	const u32 height = _cutHeight(_startAddress, pBuffer->m_height, stride);
 	if (height == 0)
 		return false;
+
+	m_pCurFrameBuffer = pBuffer;
 
 	if ((config.generalEmulation.hacks & hack_subscreen) != 0 && m_pCurFrameBuffer->m_width == VI.width && m_pCurFrameBuffer->m_height == VI.height) {
 		copyWhiteToRDRAM(m_pCurFrameBuffer);
@@ -1783,8 +1789,8 @@ void RDRAMtoFrameBuffer::CopyFromRDRAM(u32 _address, bool _bCFB)
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_pCurBuffer->m_FBO);
 	OGLRender::TexturedRectParams params((float)x0, (float)y0, (float)width, (float)height,
-										 0.0f, 0.0f, width - 1.0f, height - 1.0f,
-										 false, true, m_pCurBuffer);
+										 0.0f, 0.0f, width - 1.0f, height - 1.0f, 1.0f, 1.0f,
+										 false, true, false, m_pCurBuffer);
 	video().getRender().drawTexturedRect(params);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferList().getCurrent()->m_FBO);
 

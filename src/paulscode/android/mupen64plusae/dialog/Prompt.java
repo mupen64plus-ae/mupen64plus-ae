@@ -59,7 +59,7 @@ public final class Prompt
      */
     public interface ListItemPopulator<T>
     {
-        public void onPopulateListItem( T item, int position, View view );
+        void onPopulateListItem( T item, int position, View view );
     }
     
     /**
@@ -70,7 +70,7 @@ public final class Prompt
      */
     public interface ListItemTwoTextIconPopulator<T>
     {
-        public void onPopulateListItem( T item, int position, TextView text1, TextView text2,
+        void onPopulateListItem( T item, int position, TextView text1, TextView text2,
                 ImageView icon );
     }
     
@@ -89,7 +89,7 @@ public final class Prompt
          * negative button.
          * @param which The DialogInterface button pressed by the user.
          */
-        public void onDialogClosed( File file, int which );
+        void onDialogClosed( File file, int which );
     }
     
     /**
@@ -107,7 +107,7 @@ public final class Prompt
          * negative button.
          * @param which The DialogInterface button pressed by the user.
          */
-        public void onDialogClosed( CharSequence text, int which );
+        void onDialogClosed( CharSequence text, int which );
     }
     
     /**
@@ -125,7 +125,7 @@ public final class Prompt
          * dialog's negative button.
          * @param which The DialogInterface button pressed by the user.
          */
-        public void onDialogClosed( Integer value, int which );
+        void onDialogClosed( Integer value, int which );
     }
     
     /**
@@ -153,11 +153,11 @@ public final class Prompt
                 {
                     LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
                             Context.LAYOUT_INFLATER_SERVICE );
-                    row = (View) inflater.inflate( layoutResId, null );
+                    row = inflater.inflate( layoutResId, null );
                 }
                 else
                 {
-                    row = (View) convertView;
+                    row = convertView;
                 }
                 
                 populator.onPopulateListItem( getItem( position ), position, row );
@@ -255,8 +255,8 @@ public final class Prompt
             return;
         
         // Get the filenames and absolute paths
-        final List<CharSequence> names = new ArrayList<CharSequence>();
-        final List<String> paths = new ArrayList<String>();
+        final List<CharSequence> names = new ArrayList<>();
+        final List<String> paths = new ArrayList<>();
         FileUtil.populate( startPath, includeParent, includeDirs, includeFiles, names, paths );
         
         // When the user clicks a file, notify the downstream listener
@@ -410,7 +410,7 @@ public final class Prompt
      * @param title    The title of the dialog.
      * @param initial  The initial (default) value shown in the dialog.
      * @param min      The minimum value permitted.
-     * @param max      The maximum value permitted.
+     * @param row      The maximum value permitted.
      * @param listener The listener to process the integer, when provided.
      */
     public static void promptRadioInteger( Context context, CharSequence title,
@@ -421,7 +421,7 @@ public final class Prompt
         final LinearLayout mainLayout = (LinearLayout) layout.findViewById( R.id.main_layout );
         mainLayout.setGravity(Gravity.CENTER);
         
-        final ArrayList<AppCompatRadioButton> radioButtons = new ArrayList<AppCompatRadioButton>(row*columns);
+        final ArrayList<AppCompatRadioButton> radioButtons = new ArrayList<>(row*columns);
         Integer radioNumber = min;
         
         //create row of buttons
@@ -516,10 +516,7 @@ public final class Prompt
      *
      * @param context  The activity context.
      * @param title    The title of the dialog.
-     * @param format   The string format for the displayed value (e.g. "%1$d %%"), or null to display number only.
-     * @param initial  The initial (default) value shown in the dialog.
-     * @param min      The minimum value permitted.
-     * @param max      The maximum value permitted.
+     * @param selections List of selections to display
      * @param listener The listener to process the integer, when provided.
      */
     public static void promptListSelection( Context context, CharSequence title,

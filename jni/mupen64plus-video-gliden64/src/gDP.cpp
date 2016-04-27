@@ -142,10 +142,9 @@ void gDPSetColorImage( u32 format, u32 size, u32 width, u32 address )
 		else if (!RSP.bLLE && gSP.viewport.height > 0)
 			height = gSP.viewport.height;
 		else
-			height = gDP.scissor.lry;
+			height = VI.height > 0 ? VI.height : gDP.scissor.lry;
 
-		if (config.frameBufferEmulation.enable) // && address != gDP.depthImageAddress)
-		{
+		if (config.frameBufferEmulation.enable) {
 				frameBufferList().saveBuffer(address, (u16)format, (u16)size, (u16)width, height, false);
 				gDP.colorImage.height = 0;
 		} else
@@ -623,26 +622,33 @@ void gDPLoadBlock(u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt)
 		memcpy(TMEM, &RDRAM[address], bytes); // HACK!
 	else {
 		u32 tmemAddr = gDP.loadTile->tmem;
-
-		if (dxt > 0) {
-			const u32 widthInQWords = (bytes >> 3);
-			u32 height = (widthInQWords * dxt) / 2048;
-			if ((widthInQWords * dxt) % 2048 >= 1024)
-				++height;
-			u32 line = widthInQWords / height;
-			if (widthInQWords % height > height/2)
-				++line;
-			const u32 bpl = line << 3;
-
-			for (u32 y = 0; y < height; ++y) {
-				UnswapCopyWrap(RDRAM, address, (u8*)TMEM, tmemAddr << 3, 0xFFF, bpl);
-				if (y & 1)
-					DWordInterleaveWrap((u32*)TMEM, tmemAddr << 1, 0x3FF, line);
-				address += bpl;
+		UnswapCopyWrap(RDRAM, address, (u8*)TMEM, tmemAddr << 3, 0xFFF, bytes);
+		if (dxt != 0) {
+			u32 dxtCounter = 0;
+			u32 qwords = (bytes >> 3);
+			u32 line = 0;
+			while (true) {
+				do {
+					++tmemAddr;
+					--qwords;
+					if (qwords == 0)
+						goto end_dxt_test;
+					dxtCounter += dxt;
+				} while ((dxtCounter & 0x800) == 0);
+				do {
+					++line;
+					--qwords;
+					if (qwords == 0)
+						goto end_dxt_test;
+					dxtCounter += dxt;
+				} while ((dxtCounter & 0x800) != 0);
+				DWordInterleaveWrap((u32*)TMEM, tmemAddr << 1, 0x3FF, line);
 				tmemAddr += line;
+				line = 0;
 			}
-		} else
-			UnswapCopyWrap(RDRAM, address, (u8*)TMEM, tmemAddr << 3, 0xFFF, bytes);
+			end_dxt_test:
+				DWordInterleaveWrap((u32*)TMEM, tmemAddr << 1, 0x3FF, line);
+		}
 	}
 #ifdef DEBUG
 	DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadBlock( %i, %i, %i, %i, %i );\n",
@@ -751,18 +757,23 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 	} else if (lry == uly)
 		++lry;
 
+	bool bClearBuffer = false;
 	if (gDP.depthImageAddress == gDP.colorImage.address) {
 		// Game may use depth texture as auxilary color texture. Example: Mario Tennis
 		// If color is not depth clear color, that is most likely the case
 		if (gDP.fillColor.color == DepthClearColor) {
 			gDPFillRDRAM(gDP.colorImage.address, ulx, uly, lrx, lry, gDP.colorImage.width, gDP.colorImage.size, gDP.fillColor.color);
 			render.clearDepthBuffer(uly, lry);
+			bClearBuffer = true;
 		}
 	} else if (gDP.fillColor.color == DepthClearColor && gDP.otherMode.cycleType == G_CYC_FILL) {
 		depthBufferList().saveBuffer(gDP.colorImage.address);
 		gDPFillRDRAM(gDP.colorImage.address, ulx, uly, lrx, lry, gDP.colorImage.width, gDP.colorImage.size, gDP.fillColor.color);
 		render.clearDepthBuffer(uly, lry);
-	} else {
+		bClearBuffer = true;
+	}
+
+	if (!bClearBuffer) {
 		frameBufferList().setBufferChanged();
 		f32 fillColor[4];
 		gDPGetFillColor(fillColor);
@@ -777,13 +788,16 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 			render.drawRect(ulx, uly, lrx, lry, fillColor);
 	}
 
-	if (gDP.otherMode.cycleType == G_CYC_FILL) {
-		if (lry > (u32)gDP.scissor.lry)
-			gDP.colorImage.height = (u32)max(gDP.colorImage.height, (u32)gDP.scissor.lry);
+	if (lrx == gDP.colorImage.width) {
+		if (gDP.otherMode.cycleType == G_CYC_FILL) {
+			if (lry > (u32)gDP.scissor.lry)
+				gDP.colorImage.height = (u32)max(gDP.colorImage.height, (u32)gDP.scissor.lry);
+			else
+				gDP.colorImage.height = (u32)max((s32)gDP.colorImage.height, lry);
+		}
 		else
-			gDP.colorImage.height = (u32)max((s32)gDP.colorImage.height, lry);
-	} else
-		gDP.colorImage.height = max( gDP.colorImage.height, (u32)gDP.scissor.lry );
+			gDP.colorImage.height = max(gDP.colorImage.height, (u32)gDP.scissor.lry);
+	}
 
 #ifdef DEBUG
 	DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPFillRectangle( %i, %i, %i, %i );\n",
@@ -824,7 +838,7 @@ void gDPSetKeyGB(u32 cG, u32 sG, u32 wG, u32 cB, u32 sB, u32 wB )
 	CombinerInfo::get().updateKeyColor();
 }
 
-void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f32 t, f32 dsdx, f32 dtdy )
+void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f32 t, f32 dsdx, f32 dtdy , bool flip)
 {
 	if (gDP.otherMode.cycleType == G_CYC_COPY) {
 		dsdx = 1.0f;
@@ -844,7 +858,7 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
 		s = 0.0f;
 
 	f32 lrs, lrt;
-	if (RSP.cmd == G_TEXRECTFLIP) {
+	if (flip) {
 		lrs = s + (lry - uly - 1) * dsdx;
 		lrt = t + (lrx - ulx - 1) * dtdy;
 	} else {
@@ -852,8 +866,12 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
 		lrt = t + (lry - uly - 1) * dtdy;
 	}
 
-	OGLRender::TexturedRectParams params(ulx, uly, lrx, lry, s, t, lrs, lrt, (RSP.cmd == G_TEXRECTFLIP), false, frameBufferList().getCurrent());
-	video().getRender().drawTexturedRect(params);
+	OGLRender::TexturedRectParams params(ulx, uly, lrx, lry, s, t, lrs, lrt, fabsf(dsdx), fabsf(dtdy),
+										 flip, false, true, frameBufferList().getCurrent());
+	OGLRender & render = video().getRender();
+	if (config.generalEmulation.correctTexrectCoords != Config::tcDisable)
+		render.correctTexturedRectParams(params);
+	render.drawTexturedRect(params);
 
 	gSP.textureTile[0] = textureTileOrg[0];
 	gSP.textureTile[1] = textureTileOrg[1];
@@ -865,18 +883,12 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
 		gDP.colorImage.height = max( gDP.colorImage.height, (u32)gDP.scissor.lry );
 
 #ifdef DEBUG
-	DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangle( %f, %f, %f, %f, %i, %i, %f, %f, %f, %f );\n",
-		ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
-#endif
-}
-
-void gDPTextureRectangleFlip( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f32 t, f32 dsdx, f32 dtdy )
-{
-	gDPTextureRectangle( ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
-
-#ifdef DEBUG
-	DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangleFlip( %f, %f, %f, %f, %i, %f, %f, %f, %f);\n",
-			  ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
+	if (flip)
+		DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangleFlip( %f, %f, %f, %f, %i, %f, %f, %f, %f);\n",
+				  ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
+	else
+		DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangle( %f, %f, %f, %f, %i, %i, %f, %f, %f, %f );\n",
+				  ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
 #endif
 }
 
@@ -888,7 +900,11 @@ void gDPFullSync()
 	}
 
 	const bool sync = config.frameBufferEmulation.copyToRDRAM == Config::ctSync;
-	if (config.frameBufferEmulation.copyToRDRAM != Config::ctDisable && !FBInfo::fbInfo.isSupported())
+	if (config.frameBufferEmulation.copyToRDRAM != Config::ctDisable &&
+		!FBInfo::fbInfo.isSupported() &&
+		frameBufferList().getCurrent() != nullptr &&
+		!frameBufferList().getCurrent()->isAuxiliary()
+	)
 		FrameBuffer_CopyToRDRAM(gDP.colorImage.address, sync);
 
 	if (RSP.bLLE) {

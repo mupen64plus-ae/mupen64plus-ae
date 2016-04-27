@@ -881,6 +881,22 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 	return false;
 }
 
+void TextureCache::_loadDepthTexture(CachedTexture * _pTexture, u16* _pDest)
+{
+#ifndef GLES2
+	const u32 numTexels = _pTexture->realWidth * _pTexture->realHeight;
+	_pTexture->textureBytes = numTexels * sizeof(GLfloat);
+	GLfloat * pDestF = (GLfloat*)malloc(_pTexture->textureBytes);
+	assert(pDestF != NULL);
+
+	for (u32 t = 0; t < numTexels; ++t)
+		pDestF[t] = _pDest[t] / 65535.0f;
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, _pTexture->realWidth, _pTexture->realHeight, 0, GL_RED, GL_FLOAT, pDestF);
+	free(pDestF);
+#endif
+}
+
 /*
  * Worker function for _load
 */
@@ -1047,7 +1063,12 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 	while (true) {
 		_getTextureDestData(tmptex, pDest, glInternalFormat, GetTexel, &line);
 
-		bool bLoaded = false;
+		if ((config.generalEmulation.hacks&hack_LoadDepthTextures) != 0 && gDP.colorImage.address == gDP.depthImageAddress) {
+			_loadDepthTexture(_pTexture, (u16*)pDest);
+			free(pDest);
+			return;
+		}
+
 		if (m_toggleDumpTex &&
 				config.textureFilter.txHiresEnable != 0 &&
 				config.textureFilter.txDump != 0) {
@@ -1056,7 +1077,9 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 					(unsigned short)(_pTexture->format << 8 | _pTexture->size),
 					ricecrc);
 		}
-		else if ((config.textureFilter.txEnhancementMode | config.textureFilter.txFilterMode) != 0 &&
+
+		bool bLoaded = false;
+		if ((config.textureFilter.txEnhancementMode | config.textureFilter.txFilterMode) != 0 &&
 				maxLevel == 0 &&
 				(config.textureFilter.txFilterIgnoreBG == 0 || (RSP.cmd != G_TEXRECT && RSP.cmd != G_TEXRECTFLIP)) &&
 				TFH.isInited())

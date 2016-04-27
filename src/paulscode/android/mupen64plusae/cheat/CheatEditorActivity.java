@@ -421,7 +421,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
             }
             cheat.option = builder.toString();
 
-            boolean ValidCheat = !name.isEmpty() && cheat.code.length() > 8;
+            boolean ValidCheat = !name.isEmpty() && cheat.code.length() > 12;
             
             if(ValidCheat)
             {

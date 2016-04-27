@@ -29,6 +29,7 @@ static GLuint  g_readtex_shader_object;
 static GLuint  g_readtex_ms_shader_object;
 static GLuint  g_dither_shader_object;
 static GLuint  g_monochrome_image_program = 0;
+static GLuint  g_depth_texture_program = 0;
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 GLuint g_draw_shadow_map_program = 0;
@@ -228,6 +229,24 @@ void InitShaderCombiner()
 	glUseProgram(g_monochrome_image_program);
 	const int texLoc = glGetUniformLocation(g_monochrome_image_program, "uColorImage");
 	glUniform1i(texLoc, 0);
+
+	if ((config.generalEmulation.hacks&hack_LoadDepthTextures) != 0) {
+		GLuint depth_texture_shader_object = _createShader(GL_FRAGMENT_SHADER, depth_texture_fragment_shader);
+		g_depth_texture_program = glCreateProgram();
+		glBindAttribLocation(g_depth_texture_program, SC_POSITION, "aPosition");
+		glBindAttribLocation(g_depth_texture_program, SC_TEXCOORD0, "aTexCoord0");
+		glAttachShader(g_depth_texture_program, g_vertex_shader_object);
+		glAttachShader(g_depth_texture_program, depth_texture_shader_object);
+		glLinkProgram(g_depth_texture_program);
+		glDeleteShader(depth_texture_shader_object);
+		assert(checkProgramLinkStatus(g_depth_texture_program));
+		glUseProgram(g_depth_texture_program);
+		int loc = glGetUniformLocation(g_depth_texture_program, "uTex0");
+		glUniform1i(loc, 0);
+		loc = glGetUniformLocation(g_depth_texture_program, "uRenderState");
+		glUniform1i(loc, OGLRender::rsTexRect);
+	}
+
 	glUseProgram(0);
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
@@ -267,6 +286,8 @@ void DestroyShaderCombiner() {
 	glDeleteProgram(g_monochrome_image_program);
 	g_monochrome_image_program = 0;
 	noiseTex.destroy();
+	glDeleteProgram(g_depth_texture_program);
+	g_depth_texture_program = 0;
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 	DestroyZlutTexture();
@@ -626,6 +647,13 @@ void ShaderCombiner::updateFogMode(bool _bForce)
 			nFogUsage = 5;
 		}
 		break;
+	case 0x55f0:
+		// CLR_MEM * A_FOG + CLR_FOG * 1MA
+		if (gDP.otherMode.cycleType == G_CYC_1CYCLE) {
+			nSpecialBlendMode = 4;
+			nFogUsage = 5;
+		}
+		break;
 		/* Brings troubles with Roadsters sky
 		case 0xc702:
 		// Donald Duck
@@ -879,7 +907,18 @@ void SetDepthFogCombiner()
 }
 #endif // GL_IMAGE_TEXTURES_SUPPORT
 
-void SetMonochromeCombiner() {
+void SetMonochromeCombiner()
+{
 	glUseProgram(g_monochrome_image_program);
 	gDP.changed |= CHANGED_COMBINE;
+}
+
+bool SetDepthTextureCombiner()
+{
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_ALWAYS);
+	glDepthMask(TRUE);
+	glUseProgram(g_depth_texture_program);
+	gDP.changed |= CHANGED_COMBINE | CHANGED_RENDERMODE;
+	return true;
 }

@@ -83,6 +83,7 @@
     <string name="menuItem_hardwareInfo">Hardware info</string>
     <string name="menuItem_Tools">Tools</string>
     <string name="menuItem_Extract">Add Texture Pack</string>
+    <string name="menuItem_Clear">Clear Texture Packs/Caches</string>
     <string name="menuItem_localeOverride">Language</string>
 
     <!-- ManageProfilesActivity -->
@@ -352,6 +353,10 @@
     <string name="gliden64_enable_lod_title">Enable LOD emulation</string>
     <string name="gliden64_enable_hw_lighting_title">Enable hardware per-pixel lighting</string>
     <string name="gliden64_enable_shader_storage_title">Use persistent storage for compiled shaders</string>
+    <string name="gliden64_correct_texrect_coords_title">Make texrect coordinates continuous</string>
+    <string name="gliden64_correct_texrect_coords_off">Off</string>
+    <string name="gliden64_correct_texrect_coords_auto">Auto</string>
+    <string name="gliden64_correct_texrect_coords_force">Force</string>
     <string name="gliden64_category_fb_title">Frame Buffer Emulation</string>
     <string name="gliden64_enable_fb_emulation_title">Enable frame and/or depth buffer emulation</string>
     <string name="gliden64_swap_frame_buffers_title">Swap frame buffers</string>
@@ -398,6 +403,7 @@
     <string name="gliden64_tx_enhancement_entry_4xBRZ">4xBRZ</string>
     <string name="gliden64_tx_enhancement_entry_5xBRZ">5xBRZ</string>
     <string name="gliden64_tx_enhancement_entry_6xBRZ">6xBRZ</string>
+    <string name="gliden64_tx_deposterize_title">Deposterize texture before enhancement</string>
     <string name="gliden64_tx_filter_ignore_BG_title">Don\'t filter background textures</string>
     <string name="gliden64_tx_cache_size_title">Size of filtered textures cache in megabytes</string>
     <string name="gliden64_tx_hi_res_enable_title">Use high-resolution texture packs if available</string>
@@ -506,6 +512,7 @@
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
+    <string name="confirmClearData_message">Are you sure you want to clear all installed high resolution texture packs and caches?</string>
 
     <!-- Change Log -->
     <string name="changeLog_dialogTitle">Change log</string>
@@ -561,10 +568,11 @@
     <string name="cheatEditor_remove_option">Remove option</string>
 
     <!-- Hi-Res Texture Unpacking -->
-    <string name="pathHiResTexturesTask_select_zip">Select the ZIP file containing the high resolution texture pack</string>
+    <string name="pathHiResTexturesTask_select_zip">Select the ZIP or HTC file containing the high resolution texture pack</string>
     <string name="pathHiResTexturesTask_title">Unpacking textures...</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
+    <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Error: HTC file must match this format [GAME_HEADER]__HIRESTEXTURES.htc</string>
 
     <!-- Scan Roms Dialog -->
     <string name="scanRomsDialog_selectRom">Select a ROM file or an entire folder to scan</string>

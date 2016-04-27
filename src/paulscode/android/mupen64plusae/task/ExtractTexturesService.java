@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.TextureInfo;
+
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -44,6 +45,7 @@ import android.os.Message;
 import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 public class ExtractTexturesService extends Service
 {
@@ -52,7 +54,7 @@ public class ExtractTexturesService extends Service
     private int mStartId;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
-    
+
     private final IBinder mBinder = new LocalBinder();
     private ExtractTexturesListener mListener = null;
 
@@ -61,13 +63,13 @@ public class ExtractTexturesService extends Service
     public interface ExtractTexturesListener
     {
         //This is called once the ROM scan is finished
-        public void onExtractTexturesFinished();
+        void onExtractTexturesFinished();
         
         //This is called when the service is destroyed
-        public void onExtractTexturesServiceDestroyed();
+        void onExtractTexturesServiceDestroyed();
         
         //This is called to get a progress dialog object
-        public ProgressDialog GetProgressDialog();
+        ProgressDialog GetProgressDialog();
     }
 
     /**
@@ -99,15 +101,51 @@ public class ExtractTexturesService extends Service
             
             AppData appData = new AppData( ExtractTexturesService.this );
             GlobalPrefs globalPrefs = new GlobalPrefs( ExtractTexturesService.this, appData );
-                        
-            //mListener.GetProgressDialog().setMaxProgress( files.size() );
-            
-            String headerName = TextureInfo.getTexturePackName( mZipPath );
-            if( !TextUtils.isEmpty( headerName ) )
+
+            if(mZipPath.toLowerCase().endsWith("zip"))
             {
-                String outputFolder = globalPrefs.hiResTextureDir + headerName;
-                FileUtil.deleteFolder( new File( outputFolder ) );
-                FileUtil.unzipAll( new File( mZipPath ), outputFolder );
+                String headerName = TextureInfo.getTexturePackName( mZipPath );
+                if( !TextUtils.isEmpty( headerName ) )
+                {
+                    String outputFolder = globalPrefs.hiResTextureDir + headerName;
+                    FileUtil.deleteFolder( new File( outputFolder ) );
+                    FileUtil.unzipAll( new File( mZipPath ), outputFolder );
+                }
+                else
+                {
+                    final String text = getString(R.string.pathHiResTexturesTask_errorMessage);
+
+                    Handler handler = new Handler(Looper.getMainLooper());
+
+                    handler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+            else if(mZipPath.toLowerCase().endsWith("htc"))
+            {
+                if(mZipPath.toLowerCase().endsWith("_hirestextures.htc"))
+                {
+                    FileUtil.copyFile(new File(mZipPath), new File(globalPrefs.textureCacheDir + "/" + new File(mZipPath).getName()));
+                }
+                else
+                {
+                    final String text = getString(R.string.pathHiResTexturesTask_errorMessageInvalidHTC);
+
+                    Handler handler = new Handler(Looper.getMainLooper());
+
+                    handler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(ExtractTexturesService.this.getApplicationContext(),text,Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
             
             if (mListener != null)

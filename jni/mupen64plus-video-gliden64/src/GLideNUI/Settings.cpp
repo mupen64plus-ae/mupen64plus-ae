@@ -42,6 +42,7 @@ void _loadSettings(QSettings & settings)
 	config.generalEmulation.enableHWLighting = settings.value("enableHWLighting", config.generalEmulation.enableHWLighting).toInt();
 	config.generalEmulation.enableShadersStorage = settings.value("enableShadersStorage", config.generalEmulation.enableShadersStorage).toInt();
 	config.generalEmulation.enableCustomSettings = settings.value("enableCustomSettings", config.generalEmulation.enableCustomSettings).toInt();
+	config.generalEmulation.correctTexrectCoords = settings.value("correctTexrectCoords", config.generalEmulation.correctTexrectCoords).toInt();
 	settings.endGroup();
 
 	settings.beginGroup("frameBufferEmulation");
@@ -63,6 +64,7 @@ void _loadSettings(QSettings & settings)
 	settings.beginGroup("textureFilter");
 	config.textureFilter.txFilterMode = settings.value("txFilterMode", config.textureFilter.txFilterMode).toInt();
 	config.textureFilter.txEnhancementMode = settings.value("txEnhancementMode", config.textureFilter.txEnhancementMode).toInt();
+	config.textureFilter.txDeposterize = settings.value("txDeposterize", config.textureFilter.txDeposterize).toInt();
 	config.textureFilter.txFilterIgnoreBG = settings.value("txFilterIgnoreBG", config.textureFilter.txFilterIgnoreBG).toInt();
 	config.textureFilter.txCacheSize = settings.value("txCacheSize", config.textureFilter.txCacheSize).toInt();
 	config.textureFilter.txHiresEnable = settings.value("txHiresEnable", config.textureFilter.txHiresEnable).toInt();
@@ -156,6 +158,7 @@ void writeSettings(const QString & _strIniFolder)
 	settings.setValue("enableHWLighting", config.generalEmulation.enableHWLighting);
 	settings.setValue("enableShadersStorage", config.generalEmulation.enableShadersStorage);
 	settings.setValue("enableCustomSettings", config.generalEmulation.enableCustomSettings);
+	settings.setValue("correctTexrectCoords", config.generalEmulation.correctTexrectCoords);
 	settings.endGroup();
 
 	settings.beginGroup("frameBufferEmulation");
@@ -176,6 +179,7 @@ void writeSettings(const QString & _strIniFolder)
 	settings.beginGroup("textureFilter");
 	settings.setValue("txFilterMode", config.textureFilter.txFilterMode);
 	settings.setValue("txEnhancementMode", config.textureFilter.txEnhancementMode);
+	settings.setValue("txDeposterize", config.textureFilter.txDeposterize);
 	settings.setValue("txFilterIgnoreBG", config.textureFilter.txFilterIgnoreBG);
 	settings.setValue("txCacheSize", config.textureFilter.txCacheSize);
 	settings.setValue("txHiresEnable", config.textureFilter.txHiresEnable);

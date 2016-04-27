@@ -86,16 +86,27 @@ public:
 	{
 		float ulx, uly, lrx, lry;
 		float uls, ult, lrs, lrt;
-		bool flip, forceAjustScale;
+		float dsdx, dtdy;
+		bool flip, forceAjustScale, texrectCmd;
 		const FrameBuffer * pBuffer;
 		TexturedRectParams(float _ulx, float _uly, float _lrx, float _lry,
 						   float _uls, float _ult, float _lrs, float _lrt,
-						   bool _flip, bool _forceAjustScale, const FrameBuffer * _pBuffer) :
+						   float _dsdx, float _dtdy,
+						   bool _flip, bool _forceAjustScale, bool _texrectCmd,
+						   const FrameBuffer * _pBuffer) :
 			ulx(_ulx), uly(_uly), lrx(_lrx), lry(_lry),
 			uls(_uls), ult(_ult), lrs(_lrs), lrt(_lrt),
-			flip(_flip), forceAjustScale(_forceAjustScale), pBuffer(_pBuffer)
+			dsdx(_dsdx), dtdy(_dtdy),
+			flip(_flip), forceAjustScale(_forceAjustScale), texrectCmd(_texrectCmd),
+			pBuffer(_pBuffer)
 		{}
+	private:
+		friend class OGLRender;
+		TexturedRectParams() :
+			ulx(0), uly(0), lrx(0), lry(0)
+		{};
 	};
+	void correctTexturedRectParams(TexturedRectParams & _params);
 	void drawTexturedRect(const TexturedRectParams & _params);
 	void drawText(const char *_pText, float x, float y);
 	void clearDepthBuffer(u32 _uly, u32 _lry);
@@ -130,7 +141,12 @@ public:
 	void dropRenderState() {m_renderState = rsNone;}
 
 private:
-	OGLRender() : m_oglRenderer(glrOther), m_bImageTexture(false), m_bFlatColors(false) {}
+	OGLRender()
+		: m_oglRenderer(glrOther)
+		, m_modifyVertices(0)
+		, m_bImageTexture(false)
+		, m_bFlatColors(false) {
+	}
 	OGLRender(const OGLRender &);
 	friend class OGLVideo;
 
@@ -171,7 +187,9 @@ private:
 
 	RENDER_STATE m_renderState;
 	OGL_RENDERER m_oglRenderer;
+	TexturedRectParams m_texrectParams;
 	GLVertex m_rect[4];
+	u32 m_modifyVertices;
 	bool m_bImageTexture;
 	bool m_bFlatColors;
 };

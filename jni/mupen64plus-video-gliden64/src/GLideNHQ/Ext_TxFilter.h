@@ -84,6 +84,8 @@ typedef unsigned char boolean;
 #define BRZ5X_ENHANCEMENT   0x00000b00
 #define BRZ6X_ENHANCEMENT   0x00000c00
 
+#define DEPOSTERIZE         0x00001000
+
 #define HIRESTEXTURES_MASK  0x000f0000
 #define NO_HIRESTEXTURES    0x00000000
 #define GHQ_HIRESTEXTURES   0x00010000
@@ -210,7 +212,7 @@ boolean ext_ghq_reloadhirestex();
 
 typedef unsigned char  uint8;
 typedef unsigned short uint16;
-typedef unsigned long  uint32;
+typedef unsigned int  uint32;
 
 #ifdef __cplusplus
 extern "C"{

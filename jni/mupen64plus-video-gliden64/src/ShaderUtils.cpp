@@ -77,14 +77,19 @@ GLuint createShaderProgram(const char * _strVertex, const char * _strFragment)
 static
 const char* fragment_shader_blender =
 // Mace
-"  if (uSpecialBlendMode == 1)													\n"
+"	if (uSpecialBlendMode == 1)													\n"
 "		color1 = color1 * alpha1 + uBlendColor.rgb * (1.0 - alpha1);			\n"
 // Bomberman2
-"  else if (uSpecialBlendMode == 2)												\n"
+"	else if (uSpecialBlendMode == 2)											\n"
 "		color1 = uBlendColor.rgb * uFogColor.a + color1 * (1.0 - uFogColor.a);	\n"
 // Conker BFD
-"  else if (uSpecialBlendMode == 3)												\n"
+"	else if (uSpecialBlendMode == 3)											\n"
 "		color1 = color1 * uFogColor.a + uFogColor.rgb * (1.0 - uFogColor.a);	\n"
+// Bust-A-Move 3 DX
+"	else if (uSpecialBlendMode == 4) {											\n"
+"		color1 = uFogColor.rgb * (1.0 - alpha1);								\n"
+"		alpha1 = uFogColor.a;													\n"
+"	}																			\n"
 ;
 
 static
@@ -257,10 +262,9 @@ int compileCombiner(Combiner & _color, Combiner & _alpha, std::string & _strShad
 	_strShader.append(
 		"  if (uEnableAlphaTest != 0) {							\n"
 		"    lowp float alphaTestValue = (uAlphaCompareMode == 3) ? snoise() : uAlphaTestValue;	\n"
-		"    lowp float alphaValue = alpha1;					\n"
+		"    lowp float alphaValue = clamp(alpha1, 0.0, 1.0);	\n"
 		"    if  (uAlphaCvgSel != 0) {							\n"
-		"       if (uCvgXAlpha != 0) alphaValue *= 0.5;			\n"
-		"       else alphaValue = 0.125;						\n"
+		"       if (uCvgXAlpha == 0) alphaValue = 0.125;		\n"
 		"    }													\n"
 		"    if (alphaValue < alphaTestValue) discard;			\n"
 		"  }													\n"

@@ -249,9 +249,6 @@ public class GlobalPrefs
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
-    public static final boolean DEFAULT_SEARCH_ZIPS = true;
-    public static final boolean DEFAULT_DOWNLOAD_ART = true;
-    public static final boolean DEFAULT_CLEAR_GALLERY = true;
     // ... add more as needed
 
     private final SharedPreferences mPreferences;
@@ -435,7 +432,7 @@ public class GlobalPrefs
 
         // Determine the key codes that should not be mapped to controls
         final boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
-        final List<Integer> unmappables = new ArrayList<Integer>();
+        final List<Integer> unmappables = new ArrayList<>();
         unmappables.add( KeyEvent.KEYCODE_MENU );
 
             // Back key is needed to show/hide the action bar in HC+
@@ -502,7 +499,7 @@ public class GlobalPrefs
                 dialog.dismiss();
                 if( which >= 0 && which != currentIndex )
                 {
-                    mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).commit();
+                    mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).apply();
                     ActivityHelper.restartActivity( activity );
                 }
             }
@@ -586,18 +583,18 @@ public class GlobalPrefs
 
     private void putBoolean( String key, boolean value )
     {
-        mPreferences.edit().putBoolean( key, value ).commit();
+        mPreferences.edit().putBoolean( key, value ).apply();
     }
 
     private void putInt( String keyTemplate, int index, int value )
     {
         final String key = String.format( Locale.US, keyTemplate, index );
-        mPreferences.edit().putInt( key, value ).commit();
+        mPreferences.edit().putInt( key, value ).apply();
     }
 
     private void putString( String key, String value )
     {
-        mPreferences.edit().putString( key, value ).commit();
+        mPreferences.edit().putString( key, value ).apply();
     }
 
     private Locale createLocale( String code )

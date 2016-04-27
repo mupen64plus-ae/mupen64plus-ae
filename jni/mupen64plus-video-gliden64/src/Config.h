@@ -4,14 +4,7 @@
 #include <string>
 #include "Types.h"
 
-#define CONFIG_VERSION_ONE 1U
-#define CONFIG_VERSION_TWO 2U
-#define CONFIG_VERSION_THREE 3U
-#define CONFIG_VERSION_FOUR 4U		// Remove ValidityCheckMethod setting
-#define CONFIG_VERSION_FIVE 5U		// Add shader storage option
-#define CONFIG_VERSION_SIX 6U		// Change gamma correction options
-#define CONFIG_VERSION_SEVEN 7U		// Add FBInfo options
-#define CONFIG_VERSION_CURRENT CONFIG_VERSION_SEVEN
+#define CONFIG_VERSION_CURRENT 8U
 
 #define BILINEAR_3POINT   0
 #define BILINEAR_STANDARD 1
@@ -42,13 +35,20 @@ struct Config
 		u32 screenShotFormat;
 	} texture;
 
-	struct {
+    enum TexrectCorrectionMode {
+        tcDisable = 0,
+        tcSmart,
+        tcForce
+    };
+
+    struct {
 		u32 enableFog;
 		u32 enableNoise;
 		u32 enableLOD;
 		u32 enableHWLighting;
 		u32 enableCustomSettings;
 		u32 enableShadersStorage;
+		u32 correctTexrectCoords;
 		u32 hacks;
 #ifdef ANDROID
 		u32 forcePolygonOffset;
@@ -100,6 +100,7 @@ struct Config
 	{
 		u32 txFilterMode;				// Texture filtering mode, eg Sharpen
 		u32 txEnhancementMode;			// Texture enhancement mode, eg 2xSAI
+		u32 txDeposterize;				// Deposterize texture before enhancement
 		u32 txFilterIgnoreBG;			// Do not apply filtering to backgrounds textures
 		u32 txCacheSize;				// Cache size in Mbytes
 
@@ -152,6 +153,10 @@ struct Config
 #define hack_rectDepthBufferCopyCBFD (1<<10) //Copy depth buffer only when game need it. Optimized for CBFD
 #define hack_skipVIChangeCheck		(1<<11) //Don't reset FBO when VI parameters changed. Zelda MM
 #define hack_ZeldaCamera			(1<<12) //Special hack to detect and process Zelda MM camera.
+#define hack_ModifyVertexXyInShader	(1<<13) //Pass screen coordinates provided in gSPModifyVertex to vertes shader.
+#define hack_legoRacers				(1<<14) //LEGO racers course map
+#define hack_doNotResetTLUTmode		(1<<15) //Don't set TLUT mode to none after dlist end. Quake 64
+#define hack_LoadDepthTextures		(1<<16) //Load textures for depth buffer
 
 extern Config config;
 

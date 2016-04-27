@@ -375,6 +375,13 @@ void ShaderCombiner::updateFogMode(bool _bForce)
 			nFogUsage = 5;
 		}
 		break;
+	case 0x55f0:
+		// CLR_MEM * A_FOG + CLR_FOG * 1MA
+		if (gDP.otherMode.cycleType == G_CYC_1CYCLE) {
+			nSpecialBlendMode = 4;
+			nFogUsage = 5;
+		}
+		break;
 		/* Brings troubles with Roadsters sky
 		case 0xc702:
 		// Donald Duck
@@ -534,4 +541,11 @@ void SetMonochromeCombiner() {
 		glUniform2f(sizeLoc, (float)video().getWidth(), (float)video().getHeight());
 	}
 	gDP.changed |= CHANGED_COMBINE;
+}
+
+bool SetDepthTextureCombiner() {
+	// All I can do for GLES2 is just to clear depth buffer.
+	glDepthMask(TRUE);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	return false;
 }
