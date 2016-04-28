@@ -52,7 +52,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
     private static final String GLIDEN64_ENABLE_LOD = "EnableLOD";
-    private static final String GLIDEN64_ENABLE_SHADER_STORAGE = "EnableShaderStorage";
+    private static final String GLIDEN64_ENABLE_SHADER_STORAGE = "EnableShadersStorage";
     private static final String GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM = "EnableCopyDepthToRDRAM";
     private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
 
