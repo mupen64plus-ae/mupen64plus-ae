@@ -54,6 +54,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
+import android.widget.LinearLayout;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -152,6 +153,39 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
         PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
         
+        if ( !mPrefs.getBoolean( "seen_survey", false )) {
+            LinearLayout dialogLayout = new LinearLayout( this );
+            dialogLayout.setLayoutParams( new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT ));
+            dialogLayout.setOrientation( LinearLayout.VERTICAL );
+            TextView message = new TextView( this );
+            message.setLayoutParams( new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT ));
+            message.setText( "We have recently changed our icon and we want your feedback!\n\n" +
+                "Please take a few moments to fill out this feedback form so we can make improvements. " +
+                "You will need a Google account to fill out this form. This is so we don't have duplicates." );
+            message.setPadding( 16, 16, 16, 16 );
+            dialogLayout.addView( message );
+            ImageView icon = new ImageView( this );
+            icon.setLayoutParams( new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT ));
+            icon.setAdjustViewBounds( true );
+            icon.setPadding( 16, 16, 16, 16 );
+            icon.setImageResource( R.drawable.ic_playstore_ouya );
+            dialogLayout.addView( icon );
+            AlertDialog dialog = new AlertDialog.Builder()
+                .setTitle( "We want your feedback!" )
+                .setView( iconLayout )
+                .setPositiveButton( getString( android.R.string.ok ), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick( DialogInterface dialog, int which ) {
+                        Intent i = new Intent( Intent.ACTION_VIEW, 
+                            Uri.parse( "https://docs.google.com/forms/d/1F2stkHvb0Rx5vfmaz50OtTfT73XjHK2GEXZj9a_x-yw/viewform" ));
+                        SplashActivity.this.startActivity( i );
+                    }
+               })
+               .setNegativeButton( getString( android.R.string.cancel ), null )
+               .create();
+               mPrefs.edit().putBoolean( "seen_survey", true ).apply();
+               dialog.show();
+        }
         //Check for invalid data path
         String dataPathString = mPrefs.getString( DATA_PATH, null );
         
