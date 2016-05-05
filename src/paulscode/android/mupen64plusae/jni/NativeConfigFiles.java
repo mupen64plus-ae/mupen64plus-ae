@@ -167,7 +167,7 @@ public class NativeConfigFiles
 
         readHiResSettings(game, global, appData);
 
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "8" );
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "9" );
 
         mupen64plus_cfg.put( "Video-GLideN64", "AspectRatio", aspectRatio);
         mupen64plus_cfg.put( "Video-GLideN64", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
@@ -177,7 +177,6 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-GLideN64", "bilinearMode", String.valueOf( game.gliden64BilinearMode ) );
         mupen64plus_cfg.put( "Video-GLideN64", "MaxAnisotropy", String.valueOf( game.gliden64MaxAnisotropy ) );
         mupen64plus_cfg.put( "Video-GLideN64", "CacheSize", String.valueOf( game.gliden64CacheSize ) );
-        mupen64plus_cfg.put( "Video-GLideN64", "EnableFog", boolToTF( game.gliden64EnableFog ) );
         mupen64plus_cfg.put( "Video-GLideN64", "EnableNoise", boolToTF( game.gliden64EnableNoise ) );
         mupen64plus_cfg.put( "Video-GLideN64", "EnableLOD", boolToTF( game.gliden64EnableLOD ) );
         mupen64plus_cfg.put( "Video-GLideN64", "EnableHWLighting", boolToTF( game.gliden64EnableHWLighting ) );

@@ -171,10 +171,6 @@
             android:title="@string/gliden64_widescreen_hack_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="True"
-            android:key="EnableFog"
-            android:title="@string/gliden64_enable_fog_title" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="True"
             android:key="EnableNoise"
             android:title="@string/gliden64_enable_noise_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference

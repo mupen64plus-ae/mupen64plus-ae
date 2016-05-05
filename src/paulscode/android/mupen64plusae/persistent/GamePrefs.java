@@ -163,9 +163,6 @@ public class GamePrefs
     /** Size of texture cache in megabytes. Good value is VRAM*3/4 */
     public final int gliden64CacheSize;
 
-    /** Enable fog emulation. */
-    public final boolean gliden64EnableFog;
-
     /** Enable color noise emulation. */
     public final boolean gliden64EnableNoise;
 
@@ -524,7 +521,6 @@ public class GamePrefs
         gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);
         gliden64MaxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
         gliden64CacheSize = getSafeInt( emulationProfile, "CacheSize", 256);
-        gliden64EnableFog = emulationProfile.get( "EnableFog", "True" ).equals( "True" );
         gliden64EnableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         gliden64EnableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         gliden64EnableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
