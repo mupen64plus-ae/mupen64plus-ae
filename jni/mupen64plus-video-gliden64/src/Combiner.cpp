@@ -75,11 +75,13 @@ void Combiner_Init() {
 	CombinerInfo & cmbInfo = CombinerInfo::get();
 	cmbInfo.init();
 	InitShaderCombiner();
-	gDP.otherMode.cycleType = G_CYC_1CYCLE;
 	if (cmbInfo.getCombinersNumber() == 0) {
+		gDP.otherMode.cycleType = G_CYC_COPY;
 		cmbInfo.setCombine(EncodeCombineMode(0, 0, 0, TEXEL0, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL0));
-		cmbInfo.setCombine(EncodeCombineMode(0, 0, 0, TEXEL0, 0, 0, 0, 1, 0, 0, 0, TEXEL0, 0, 0, 0, 1));
+		gDP.otherMode.cycleType = G_CYC_FILL;
+		cmbInfo.setCombine(EncodeCombineMode(0, 0, 0, SHADE, 0, 0, 0, SHADE, 0, 0, 0, SHADE, 0, 0, 0, SHADE));
 	}
+	gDP.otherMode.cycleType = G_CYC_1CYCLE;
 }
 
 void Combiner_Destroy() {
@@ -253,12 +255,13 @@ void CombinerInfo::update()
 
 void CombinerInfo::setCombine(u64 _mux )
 {
-	if (m_pCurrent != NULL && m_pCurrent->getMux() == _mux) {
+	const u64 key = getCombinerKey(_mux);
+	if (m_pCurrent != NULL && m_pCurrent->getKey() == key) {
 		m_bChanged = false;
 		m_pCurrent->update(false);
 		return;
 	}
-	Combiners::const_iterator iter = m_combiners.find(_mux);
+	Combiners::const_iterator iter = m_combiners.find(key);
 	if (iter != m_combiners.end()) {
 		m_pCurrent = iter->second;
 		m_pCurrent->update(false);
@@ -266,7 +269,7 @@ void CombinerInfo::setCombine(u64 _mux )
 		m_pCurrent = _compile(_mux);
 		m_pCurrent->update(true);
 		m_pUniformCollection->bindWithShaderCombiner(m_pCurrent);
-		m_combiners[_mux] = m_pCurrent;
+		m_combiners[m_pCurrent->getKey()] = m_pCurrent;
 	}
 	m_bChanged = true;
 }
@@ -366,7 +369,7 @@ Storage format:
   uint32 - number of shaders
   shaders in binary form
 */
-static const u32 ShaderStorageFormatVersion = 0x06U;
+static const u32 ShaderStorageFormatVersion = 0x07U;
 void CombinerInfo::_saveShadersStorage() const
 {
 	if (m_shadersLoaded >= m_combiners.size())
@@ -455,7 +458,7 @@ bool CombinerInfo::_loadShadersStorage()
 			fin >> *m_pCurrent;
 			m_pCurrent->update(true);
 			m_pUniformCollection->bindWithShaderCombiner(m_pCurrent);
-			m_combiners[m_pCurrent->getMux()] = m_pCurrent;
+			m_combiners[m_pCurrent->getKey()] = m_pCurrent;
 		}
 	}
 	catch (...) {

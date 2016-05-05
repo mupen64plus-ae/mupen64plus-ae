@@ -21,7 +21,6 @@ public:
 private:
 	PostProcessor();
 	PostProcessor(const PostProcessor & _other);
-
 	void _initCommon();
 	void _destroyCommon();
 	void _initGammaCorrection();
@@ -48,8 +47,6 @@ private:
 	CachedTexture * m_pTextureResolved;
 	CachedTexture * m_pTextureGlowMap;
 	CachedTexture * m_pTextureBlur;
-
-	static PostProcessor processor;
 };
 
 #endif // POST_PROCESSOR_H

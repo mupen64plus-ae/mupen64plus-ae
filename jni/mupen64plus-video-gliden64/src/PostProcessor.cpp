@@ -24,8 +24,6 @@
 #define FRAGMENT_SHADER_END "\n"
 #endif
 
-PostProcessor PostProcessor::processor;
-
 static const char * vertexShader =
 SHADER_VERSION
 "#if (__VERSION__ > 120)						\n"
@@ -486,6 +484,7 @@ void PostProcessor::destroy()
 
 PostProcessor & PostProcessor::get()
 {
+	static PostProcessor processor;
 	return processor;
 }
 
@@ -520,11 +519,11 @@ void PostProcessor::_preDraw(FrameBuffer * _pBuffer)
 	_setGLState(_pBuffer);
 	OGLVideo & ogl = video();
 
-#ifdef GLES2
 	m_pResultBuffer->m_width = _pBuffer->m_width;
 	m_pResultBuffer->m_height = _pBuffer->m_height;
 	m_pResultBuffer->m_scaleX = _pBuffer->m_scaleX;
 	m_pResultBuffer->m_scaleY = _pBuffer->m_scaleY;
+#ifdef GLES2
 	m_pTextureOriginal = _pBuffer->m_pTexture;
 #else
 	if (config.video.multisampling != 0) {

@@ -913,7 +913,7 @@ void TextureCache::_getTextureDestData(CachedTexture& tmptex,
 	if (tmptex.maskS > 0) {
 		clampSClamp = tmptex.clampS ? tmptex.clampWidth - 1 : (tmptex.mirrorS ? (tmptex.width << 1) - 1 : tmptex.width - 1);
 		maskSMask = (1 << tmptex.maskS) - 1;
-		mirrorSBit = (tmptex.mirrorS != 0 || tmptex.realWidth/tmptex.width == 2) ? 1 << tmptex.maskS : 0;
+		mirrorSBit = tmptex.mirrorS != 0 ? 1 << tmptex.maskS : 0;
 	} else {
 		clampSClamp = tmptex.clampS ? tmptex.clampWidth - 1 : tmptex.width - 1;
 		maskSMask = 0xFFFF;
@@ -923,7 +923,7 @@ void TextureCache::_getTextureDestData(CachedTexture& tmptex,
 	if (tmptex.maskT > 0) {
 		clampTClamp = tmptex.clampT ? tmptex.clampHeight - 1 : (tmptex.mirrorT ? (tmptex.height << 1) - 1 : tmptex.height - 1);
 		maskTMask = (1 << tmptex.maskT) - 1;
-		mirrorTBit = (tmptex.mirrorT != 0 || tmptex.realHeight/tmptex.height == 2) ? 1 << tmptex.maskT : 0;
+		mirrorTBit = tmptex.mirrorT != 0 ? 1 << tmptex.maskT : 0;
 	} else {
 		clampTClamp = tmptex.clampT ? tmptex.clampHeight - 1 : tmptex.height - 1;
 		maskTMask = 0xFFFF;
@@ -1410,12 +1410,6 @@ void TextureCache::update(u32 _t)
 		return;
 	}
 
-	if (gDP.otherMode.textureLOD == G_TL_LOD && gSP.texture.level == 0 && _t == 1) {
-		current[1] = current[0];
-		activateTexture(_t, current[_t]);
-		return;
-	}
-
 	if (gSP.texture.tile == 7 &&
 			_t == 0 &&
 			gSP.textureTile[0] == gDP.loadTile &&
@@ -1534,9 +1528,6 @@ void getTextureShiftScale(u32 t, const TextureCache & cache, f32 & shiftScaleS, 
 		shiftScaleT = cache.current[t]->shiftScaleT;
 		return;
 	}
-
-	if (gDP.otherMode.textureLOD == G_TL_LOD && gSP.texture.level == 0)
-		t = 0;
 
 	if (gSP.textureTile[t]->shifts > 10)
 		shiftScaleS = (f32)(1 << (16 - gSP.textureTile[t]->shifts));
