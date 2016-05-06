@@ -255,8 +255,8 @@ public final class Prompt
             return;
         
         // Get the filenames and absolute paths
-        final List<CharSequence> names = new ArrayList<>();
-        final List<String> paths = new ArrayList<>();
+        final List<CharSequence> names = new ArrayList<CharSequence>();
+        final List<String> paths = new ArrayList<String>();
         FileUtil.populate( startPath, includeParent, includeDirs, includeFiles, names, paths );
         
         // When the user clicks a file, notify the downstream listener
@@ -421,7 +421,7 @@ public final class Prompt
         final LinearLayout mainLayout = (LinearLayout) layout.findViewById( R.id.main_layout );
         mainLayout.setGravity(Gravity.CENTER);
         
-        final ArrayList<AppCompatRadioButton> radioButtons = new ArrayList<>(row*columns);
+        final ArrayList<AppCompatRadioButton> radioButtons = new ArrayList<AppCompatRadioButton>(row*columns);
         Integer radioNumber = min;
         
         //create row of buttons

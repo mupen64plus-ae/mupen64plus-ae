@@ -432,7 +432,7 @@ public class GlobalPrefs
 
         // Determine the key codes that should not be mapped to controls
         final boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
-        final List<Integer> unmappables = new ArrayList<>();
+        final List<Integer> unmappables = new ArrayList<Integer>();
         unmappables.add( KeyEvent.KEYCODE_MENU );
 
             // Back key is needed to show/hide the action bar in HC+

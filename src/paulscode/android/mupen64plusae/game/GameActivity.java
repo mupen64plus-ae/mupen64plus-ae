@@ -173,7 +173,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
 
-        mControllers = new ArrayList<>();
+        mControllers = new ArrayList<AbstractController>();
         mMogaController = Controller.getInstance( this );
 
         // Get the intent data
@@ -611,7 +611,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         final MenuItem playerMenuItem = GetPlayerMenuItemFromId(player);
 
         //Generate possible pak types
-        final ArrayList<CharSequence> selections = new ArrayList<>();
+        final ArrayList<CharSequence> selections = new ArrayList<CharSequence>();
         for(final PakType pakType:PakType.values())
         {
             selections.add(this.getString(pakType.getResourceString()));

@@ -799,12 +799,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( query.length() > 0 )
             searches = query.split( " " );
 
-        List<GalleryItem> items = new ArrayList<>();
+        List<GalleryItem> items = new ArrayList<GalleryItem>();
         List<GalleryItem> recentItems = null;
         int currentTime = 0;
         if( mGlobalPrefs.isRecentShown )
         {
-            recentItems = new ArrayList<>();
+            recentItems = new ArrayList<GalleryItem>();
             currentTime = (int) ( new Date().getTime() / 1000 );
         }
 
@@ -912,7 +912,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         List<GalleryItem> combinedItems = items;
         if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
         {
-            combinedItems = new ArrayList<>();
+            combinedItems = new ArrayList<GalleryItem>();
 
             combinedItems
                     .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
@@ -1050,7 +1050,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
                 zipFile.close();
             }
-            catch( final IOException|ArrayIndexOutOfBoundsException e )
+            catch( final IOException e)
+            {
+                Log.w( "GalleryActivity", e );
+            }
+            catch(ArrayIndexOutOfBoundsException e )
             {
                 Log.w( "GalleryActivity", e );
             }
