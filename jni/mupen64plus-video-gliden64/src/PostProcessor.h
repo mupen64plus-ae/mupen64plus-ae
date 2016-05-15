@@ -15,9 +15,6 @@ public:
 
 	static PostProcessor & get();
 
-	static const u32 postEffectBlur = 1U;
-	static const u32 postEffectGammaCorrection = 2U;
-
 private:
 	PostProcessor();
 	PostProcessor(const PostProcessor & _other);
@@ -27,6 +24,7 @@ private:
 	void _destroyGammaCorrection();
 	void _initBlur();
 	void _destroyBlur();
+	void _setGLState();
 	void _preDraw(FrameBuffer * _pBuffer);
 	void _postDraw();
 
@@ -39,12 +37,10 @@ private:
 
 	FrameBuffer * m_pResultBuffer;
 
-	GLuint m_FBO_resolved;
 	GLuint m_FBO_glowMap;
 	GLuint m_FBO_blur;
 
 	CachedTexture * m_pTextureOriginal;
-	CachedTexture * m_pTextureResolved;
 	CachedTexture * m_pTextureGlowMap;
 	CachedTexture * m_pTextureBlur;
 };

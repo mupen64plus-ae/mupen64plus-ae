@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <algorithm>
+#include <cmath>
 #include "GLideN64.h"
 #include "N64.h"
 #include "GBI.h"
@@ -419,7 +420,9 @@ bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
 		}
 
 		if (bRes) {
-			pBuffer->m_pLoadTile = gDP.loadTile;
+			pBuffer->m_loadType = gDP.loadTile->loadType;
+			pBuffer->m_loadTileOrigin.uls = gDP.loadTile->uls;
+			pBuffer->m_loadTileOrigin.ult = gDP.loadTile->ult;
 			gDP.loadTile->frameBuffer = pBuffer;
 			gDP.loadTile->textureMode = TEXTUREMODE_FRAMEBUFFER;
 		}

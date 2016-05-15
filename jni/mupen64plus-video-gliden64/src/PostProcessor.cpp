@@ -318,22 +318,15 @@ PostProcessor::PostProcessor()
 	, m_bloomProgram(0)
 	, m_gammaCorrectionProgram(0)
 	, m_pResultBuffer(nullptr)
-	, m_FBO_resolved(0)
 	, m_FBO_glowMap(0)
 	, m_FBO_blur(0)
 	, m_pTextureOriginal(nullptr)
-	, m_pTextureResolved(nullptr)
 	, m_pTextureGlowMap(nullptr)
 	, m_pTextureBlur(nullptr)
 {}
 
 void PostProcessor::_initCommon()
 {
-	if (config.video.multisampling != 0) {
-		m_pTextureResolved = _createTexture();
-		m_FBO_resolved = _createFBO(m_pTextureResolved);
-	}
-
 	m_pResultBuffer = new FrameBuffer();
 	_initTexture(m_pResultBuffer->m_pTexture);
 	_initFBO(m_pResultBuffer->m_FBO, m_pResultBuffer->m_pTexture);
@@ -418,14 +411,6 @@ void PostProcessor::init()
 
 void PostProcessor::_destroyCommon()
 {
-	if (m_FBO_resolved != 0)
-		glDeleteFramebuffers(1, &m_FBO_resolved);
-	m_FBO_resolved = 0;
-
-	if (m_pTextureResolved != nullptr)
-		textureCache().removeFrameBufferTexture(m_pTextureResolved);
-	m_pTextureResolved = nullptr;
-
 	delete m_pResultBuffer;
 	m_pResultBuffer = nullptr;
 
@@ -488,7 +473,7 @@ PostProcessor & PostProcessor::get()
 	return processor;
 }
 
-void _setGLState(FrameBuffer * _pBuffer) {
+void PostProcessor::_setGLState() {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
@@ -509,32 +494,26 @@ void _setGLState(FrameBuffer * _pBuffer) {
 	glDisableVertexAttribArray(SC_NUMLIGHTS);
 	glDisableVertexAttribArray(SC_MODIFY);
 	glViewport(0, 0, video().getWidth(), video().getHeight());
-	glScissor(0, 0, _pBuffer->m_pTexture->realWidth, _pBuffer->m_pTexture->realHeight);
+	glScissor(0, 0, m_pResultBuffer->m_pTexture->realWidth, m_pResultBuffer->m_pTexture->realHeight);
 	gSP.changed |= CHANGED_VIEWPORT;
 	gDP.changed |= CHANGED_RENDERMODE | CHANGED_SCISSOR;
 }
 
 void PostProcessor::_preDraw(FrameBuffer * _pBuffer)
 {
-	_setGLState(_pBuffer);
+	_setGLState();
 	OGLVideo & ogl = video();
 
 	m_pResultBuffer->m_width = _pBuffer->m_width;
 	m_pResultBuffer->m_height = _pBuffer->m_height;
-	m_pResultBuffer->m_scaleX = _pBuffer->m_scaleX;
-	m_pResultBuffer->m_scaleY = _pBuffer->m_scaleY;
+	m_pResultBuffer->m_scaleX = ogl.getScaleX();
+	m_pResultBuffer->m_scaleY = ogl.getScaleY();
 #ifdef GLES2
 	m_pTextureOriginal = _pBuffer->m_pTexture;
 #else
-	if (config.video.multisampling != 0) {
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, _pBuffer->m_FBO);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO_resolved);
-		glBlitFramebuffer(
-			0, 0, ogl.getWidth(), ogl.getHeight(),
-			0, 0, ogl.getWidth(), ogl.getHeight(),
-			GL_COLOR_BUFFER_BIT, GL_LINEAR
-			);
-		m_pTextureOriginal = m_pTextureResolved;
+	if (_pBuffer->m_pTexture->frameBufferTexture == CachedTexture::fbMultiSample) {
+		_pBuffer->resolveMultisampledTexture(true);
+		m_pTextureOriginal = _pBuffer->m_pResolveTexture;
 	} else
 		m_pTextureOriginal = _pBuffer->m_pTexture;
 #endif
@@ -554,15 +533,8 @@ FrameBuffer * PostProcessor::doBlur(FrameBuffer * _pBuffer)
 	if (_pBuffer == nullptr)
 		return nullptr;
 
-	m_pResultBuffer->m_postProcessed = _pBuffer->m_postProcessed;
-
 	if (config.bloomFilter.enable == 0)
 		return _pBuffer;
-
-	if ((_pBuffer->m_postProcessed&PostProcessor::postEffectBlur) == PostProcessor::postEffectBlur)
-		return m_pResultBuffer;
-
-	_pBuffer->m_postProcessed |= PostProcessor::postEffectBlur;
 
 	_preDraw(_pBuffer);
 
@@ -591,7 +563,6 @@ FrameBuffer * PostProcessor::doBlur(FrameBuffer * _pBuffer)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	_postDraw();
-	m_pResultBuffer->m_postProcessed = _pBuffer->m_postProcessed;
 	return m_pResultBuffer;
 }
 
@@ -600,15 +571,9 @@ FrameBuffer * PostProcessor::doGammaCorrection(FrameBuffer * _pBuffer)
 	if (_pBuffer == nullptr)
 		return nullptr;
 
-	m_pResultBuffer->m_postProcessed = _pBuffer->m_postProcessed;
-
 	if (((*REG.VI_STATUS & 8) | config.gammaCorrection.force) == 0)
 		return _pBuffer;
 
-	if ((_pBuffer->m_postProcessed&PostProcessor::postEffectGammaCorrection) == PostProcessor::postEffectGammaCorrection)
-		return m_pResultBuffer;
-
-	_pBuffer->m_postProcessed |= PostProcessor::postEffectGammaCorrection;
 
 	_preDraw(_pBuffer);
 
@@ -618,6 +583,5 @@ FrameBuffer * PostProcessor::doGammaCorrection(FrameBuffer * _pBuffer)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	_postDraw();
-	m_pResultBuffer->m_postProcessed = _pBuffer->m_postProcessed;
 	return m_pResultBuffer;
 }

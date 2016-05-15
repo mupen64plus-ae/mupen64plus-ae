@@ -147,10 +147,11 @@ FrameBuffer::FrameBuffer() :
 	m_scaleX(0), m_scaleY(0),
 	m_copiedToRdram(false), m_fingerprint(false), m_cleared(false), m_changed(false), m_cfb(false),
 	m_isDepthBuffer(false), m_isPauseScreen(false), m_isOBScreen(false), m_needHeightCorrection(false),
-	m_postProcessed(0), m_pLoadTile(NULL),
-	m_pDepthBuffer(NULL), m_resolveFBO(0), m_pResolveTexture(NULL), m_resolved(false),
+	m_loadType(LOADTYPE_BLOCK), m_pDepthBuffer(NULL),
+	m_resolveFBO(0), m_pResolveTexture(NULL), m_resolved(false),
 	m_SubFBO(0), m_pSubTexture(NULL)
 {
+	m_loadTileOrigin.uls = m_loadTileOrigin.ult = 0;
 	m_pTexture = textureCache().addFrameBufferTexture();
 	glGenFramebuffers(1, &m_FBO);
 }
@@ -161,15 +162,15 @@ FrameBuffer::FrameBuffer(FrameBuffer && _other) :
 	m_validityChecked(_other.m_validityChecked), m_scaleX(_other.m_scaleX), m_scaleY(_other.m_scaleY), m_copiedToRdram(_other.m_copiedToRdram),
 	m_fingerprint(_other.m_fingerprint), m_cleared(_other.m_cleared), m_changed(_other.m_changed),
 	m_cfb(_other.m_cfb), m_isDepthBuffer(_other.m_isDepthBuffer), m_isPauseScreen(_other.m_isPauseScreen),
-	m_isOBScreen(_other.m_isOBScreen), m_needHeightCorrection(_other.m_needHeightCorrection), m_postProcessed(_other.m_postProcessed),
-	m_FBO(_other.m_FBO), m_pLoadTile(_other.m_pLoadTile), m_pTexture(_other.m_pTexture), m_pDepthBuffer(_other.m_pDepthBuffer),
+	m_isOBScreen(_other.m_isOBScreen), m_needHeightCorrection(_other.m_needHeightCorrection),
+	m_loadTileOrigin(_other.m_loadTileOrigin), m_loadType(_other.m_loadType),
+	m_FBO(_other.m_FBO), m_pTexture(_other.m_pTexture), m_pDepthBuffer(_other.m_pDepthBuffer),
 	m_resolveFBO(_other.m_resolveFBO), m_pResolveTexture(_other.m_pResolveTexture), m_resolved(_other.m_resolved),
 	m_SubFBO(_other.m_SubFBO), m_pSubTexture(_other.m_pSubTexture),
 	m_RdramCopy(_other.m_RdramCopy)
 {
 	_other.m_FBO = 0;
 	_other.m_pTexture = NULL;
-	_other.m_pLoadTile = NULL;
 	_other.m_pDepthBuffer = NULL;
 	_other.m_pResolveTexture = NULL;
 	_other.m_resolveFBO = 0;
@@ -407,18 +408,18 @@ void FrameBuffer::resolveMultisampledTexture(bool _bForce)
 #ifdef GL_MULTISAMPLING_SUPPORT
 	if (m_resolved && !_bForce)
 		return;
-	glScissor(0, 0, m_pTexture->realWidth, m_pTexture->realHeight);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_resolveFBO);
+	glDisable(GL_SCISSOR_TEST);
 	glBlitFramebuffer(
 		0, 0, m_pTexture->realWidth, m_pTexture->realHeight,
 		0, 0, m_pResolveTexture->realWidth, m_pResolveTexture->realHeight,
 		GL_COLOR_BUFFER_BIT, GL_NEAREST
 		);
+	glEnable(GL_SCISSOR_TEST);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	frameBufferList().setCurrentDrawBuffer();
-	gDP.changed |= CHANGED_SCISSOR;
 	m_resolved = true;
 #endif
 }
@@ -484,9 +485,11 @@ CachedTexture * FrameBuffer::_getSubTexture(u32 _t)
 #else
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_SubFBO);
+	glDisable(GL_SCISSOR_TEST);
 	glBlitFramebuffer(x0, y0, x0 + copyWidth, y0 + copyHeight,
 		0, 0, copyWidth, copyHeight,
 		GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glEnable(GL_SCISSOR_TEST);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	frameBufferList().setCurrentDrawBuffer();
 #endif
@@ -498,9 +501,9 @@ CachedTexture * FrameBuffer::getTexture(u32 _t)
 {
 	const u32 shift = (gSP.textureTile[_t]->imageAddress - m_startAddress) >> (m_size - 1);
 	const u32 factor = m_width;
-	if (gSP.textureTile[_t]->loadType == LOADTYPE_TILE) {
-		m_pTexture->offsetS = (float)(m_pLoadTile->uls + (shift % factor));
-		m_pTexture->offsetT = (float)(m_height - (m_pLoadTile->ult + shift / factor));
+	if (m_loadType == LOADTYPE_TILE) {
+		m_pTexture->offsetS = (float)(m_loadTileOrigin.uls + (shift % factor));
+		m_pTexture->offsetT = (float)(m_height - (m_loadTileOrigin.ult + shift / factor));
 	} else {
 		m_pTexture->offsetS = (float)(shift % factor);
 		m_pTexture->offsetT = (float)(m_height - shift / factor);
@@ -746,7 +749,6 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 
 	m_pCurrent->m_isDepthBuffer = _address == gDP.depthImageAddress;
 	m_pCurrent->m_isPauseScreen = m_pCurrent->m_isOBScreen = false;
-	m_pCurrent->m_postProcessed = 0;
 }
 
 void FrameBufferList::copyAux()
@@ -942,8 +944,10 @@ void FrameBufferList::renderBuffer(u32 _address)
 		srcY1 = srcY0 + VI.real_height;
 	}
 
+	FrameBuffer * pFilteredBuffer = PostProcessor::get().doBlur(PostProcessor::get().doGammaCorrection(pBuffer));
+
 	const f32 viScaleX = _FIXED2FLOAT(_SHIFTR(*REG.VI_X_SCALE, 0, 12), 10);
-	const f32 srcScaleX = pBuffer->m_scaleX;
+	const f32 srcScaleX = pFilteredBuffer->m_scaleX;
 	const f32 dstScaleX = ogl.getScaleX();
 	const s32 h0 = (isPAL ? 128 : 108);
 	const s32 hx0 = max(0, hStart - h0);
@@ -952,10 +956,10 @@ void FrameBufferList::renderBuffer(u32 _address)
 	Xwidth = (GLint)((min((f32)VI.width, (hEnd - hStart)*viScaleX)) * srcScaleX);
 	X1 = ogl.getWidth() - (GLint)(hx1 *viScaleX * dstScaleX);
 
-	const float srcScaleY = pBuffer->m_scaleY;
+	const f32 srcScaleY = pFilteredBuffer->m_scaleY;
 	const GLint hOffset = (ogl.getScreenWidth() - ogl.getWidth()) / 2;
 	const GLint vOffset = (ogl.getScreenHeight() - ogl.getHeight()) / 2 + ogl.getHeightOffset();
-	CachedTexture * pBufferTexture = pBuffer->m_pTexture;
+	CachedTexture * pBufferTexture = pFilteredBuffer->m_pTexture;
 	GLint srcCoord[4] = { 0, (GLint)(srcY0*srcScaleY), Xwidth, min((GLint)(srcY1*srcScaleY), (GLint)pBufferTexture->realHeight) };
 	if (srcCoord[2] > pBufferTexture->realWidth || srcCoord[3] > pBufferTexture->realHeight) {
 		removeBuffer(pBuffer->m_startAddress);
@@ -967,23 +971,21 @@ void FrameBufferList::renderBuffer(u32 _address)
 		dstCoord[0] += 1; // workaround for Adreno's issue with glBindFramebuffer;
 #endif // GLESX
 
-	FrameBuffer * pFilteredBuffer = PostProcessor::get().doBlur(PostProcessor::get().doGammaCorrection(pBuffer));
-	pBuffer->m_postProcessed = pFilteredBuffer->m_postProcessed;
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//glDrawBuffer( GL_BACK );
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	render.clearColorBuffer(clearColor);
 
 	GLenum filter = GL_LINEAR;
-	if (config.video.multisampling != 0 && pFilteredBuffer == pBuffer) {
+	if (pFilteredBuffer->m_pTexture->frameBufferTexture == CachedTexture::fbMultiSample) {
 		if (X0 > 0 || dstPartHeight > 0 ||
 			(srcCoord[2] - srcCoord[0]) != (dstCoord[2] - dstCoord[0]) ||
 			(srcCoord[3] - srcCoord[1]) != (dstCoord[3] - dstCoord[1])) {
-			pBuffer->resolveMultisampledTexture(true);
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, pBuffer->m_resolveFBO);
+			pFilteredBuffer->resolveMultisampledTexture(true);
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, pFilteredBuffer->m_resolveFBO);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		} else {
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, pBuffer->m_FBO);
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, pFilteredBuffer->m_FBO);
 			filter = GL_NEAREST;
 		}
 	} else
@@ -1035,7 +1037,6 @@ void FrameBufferList::renderBuffer(u32 _address)
 	OGLVideo & ogl = video();
 	ogl.getRender().updateScissor(pBuffer);
 	FrameBuffer * pFilteredBuffer = PostProcessor::get().doBlur(PostProcessor::get().doGammaCorrection(pBuffer));
-	pBuffer->m_postProcessed = pFilteredBuffer->m_postProcessed;
 	ogl.getRender().dropRenderState();
 
 	const u32 width = pFilteredBuffer->m_width;
@@ -1229,7 +1230,6 @@ bool FrameBufferToRDRAM::_prepareCopy(u32 _startAddress)
 
 	if (m_pCurFrameBuffer->m_scaleX > 1.0f) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
-		glScissor(0, 0, m_pCurFrameBuffer->m_pTexture->realWidth, m_pCurFrameBuffer->m_pTexture->realHeight);
 		u32 x0 = 0;
 		u32 width, height;
 		if (config.frameBufferEmulation.nativeResFactor == 0) {
@@ -1244,11 +1244,13 @@ bool FrameBufferToRDRAM::_prepareCopy(u32 _startAddress)
 			width = m_pCurFrameBuffer->m_pTexture->realWidth;
 			height = m_pCurFrameBuffer->m_pTexture->realHeight;
 		}
+		glDisable(GL_SCISSOR_TEST);
 		glBlitFramebuffer(
 			x0, 0, x0 + width, height,
 			0, 0, VI.width, VI.height,
 			GL_COLOR_BUFFER_BIT, GL_NEAREST
 			);
+		glEnable(GL_SCISSOR_TEST);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
 		frameBufferList().setCurrentDrawBuffer();
 	}
@@ -1538,12 +1540,13 @@ bool DepthBufferToRDRAM::_prepareCopy(u32 _address, bool _copyChunk)
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, pBuffer->m_resolveFBO);
 	}
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
-	glScissor(0, 0, pBuffer->m_pTexture->realWidth, pBuffer->m_pTexture->realHeight);
+	glDisable(GL_SCISSOR_TEST);
 	glBlitFramebuffer(
 		0, 0, pBuffer->m_pTexture->realWidth, pBuffer->m_pTexture->realHeight,
 		0, 0, pBuffer->m_width, pBuffer->m_height,
 		GL_DEPTH_BUFFER_BIT, GL_NEAREST
 	);
+	glEnable(GL_SCISSOR_TEST);
 	frameBufferList().setCurrentDrawBuffer();
 	m_frameCount = curFrame;
 	return true;
