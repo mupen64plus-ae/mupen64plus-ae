@@ -7,6 +7,7 @@ PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 SAMPLERATE_INCLUDES := $(JNI_LOCAL_PATH)/libsamplerate/
 FREETYPE_INCLUDES := $(JNI_LOCAL_PATH)/freetype/include/
 SOUNDTOUCH_INCLUDES := $(JNI_LOCAL_PATH)/soundtouch/include/
+ANDROID_FRAMEWORK_INCLUDES := $(JNI_LOCAL_PATH)/android_framework/include/
 
 COMMON_CFLAGS :=                    \
     -O3                             \
@@ -14,7 +15,6 @@ COMMON_CFLAGS :=                    \
     -fno-strict-aliasing            \
     -fomit-frame-pointer            \
     -frename-registers              \
-    -fsingle-precision-constant     \
     -fvisibility=hidden             \
 
 COMMON_CPPFLAGS :=                  \

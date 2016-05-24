@@ -44,6 +44,7 @@ OGLVideo & OGLVideo::get()
 
 void OGLVideoMupenPlus::_setAttributes()
 {
+
 #ifdef GLES2
 	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MAJOR_VERSION, 2);
 	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 0);
@@ -60,6 +61,14 @@ void OGLVideoMupenPlus::_setAttributes()
 #else
 	// Do nothing
 #endif
+
+#if defined(GLES3) || defined (GLES3_1)
+	CoreVideo_GL_SetAttribute(M64P_GL_RED_SIZE, 8);
+	CoreVideo_GL_SetAttribute(M64P_GL_GREEN_SIZE, 8);
+	CoreVideo_GL_SetAttribute(M64P_GL_BLUE_SIZE, 8);
+	CoreVideo_GL_SetAttribute(M64P_GL_ALPHA_SIZE, 8);
+#endif
+
 	CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
 	CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, config.video.verticalSync);
 	CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 32);
@@ -127,6 +136,16 @@ void OGLVideoMupenPlus::_swapBuffers()
 		(*renderCallback)((gDP.changed&CHANGED_CPU_FB_WRITE) == 0 ? 1 : 0);
 	}
 	CoreVideo_GL_SwapBuffers();
+/*
+	int lnRed, lnGreen, lnBlue, lnAlpha, lnBuffer, lnDepth;
+    		CoreVideo_GL_GetAttribute(M64P_GL_RED_SIZE, &lnRed);
+        	CoreVideo_GL_GetAttribute(M64P_GL_GREEN_SIZE, &lnGreen);
+        	CoreVideo_GL_GetAttribute(M64P_GL_BLUE_SIZE, &lnBlue);
+        	CoreVideo_GL_GetAttribute(M64P_GL_ALPHA_SIZE, &lnAlpha);
+        	CoreVideo_GL_GetAttribute(M64P_GL_BUFFER_SIZE, &lnBuffer);
+        	CoreVideo_GL_GetAttribute(M64P_GL_DEPTH_SIZE, &lnDepth);
+
+        LOG(LOG_ERROR, "FORMAT!!! R=%d, G=%d, B=%d, A=%d, Buffer=%d, Depth=%d\n", lnRed, lnGreen, lnBlue, lnAlpha, lnBuffer, lnDepth);*/
 }
 
 void OGLVideoMupenPlus::_saveScreenshot()

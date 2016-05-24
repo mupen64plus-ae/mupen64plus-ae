@@ -18,6 +18,16 @@
 #include "Debug.h"
 #include "PostProcessor.h"
 #include "FrameBufferInfo.h"
+#include "Log.h"
+#include "ui/GraphicBuffer.h"
+#include <android/native_window.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+
+typedef void (GL_APIENTRY* PFNGLEGLIMAGETARGETTEXTURE2DOESPROC) (GLenum target, EGLImageKHR image);
+typedef void (GL_APIENTRY* PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC) (GLenum target, EGLImageKHR image);
+
+using namespace android;
 
 using namespace std;
 
@@ -62,9 +72,14 @@ private:
 	CachedTexture * m_pTexture;
 	FrameBuffer * m_pCurFrameBuffer;
 	u32 m_curIndex;
+	static const u32 m_maxPbo = 5;
 	u32 m_frameCount;
 	u32 m_startAddress;
-	GLuint m_PBO[3];
+	GLuint m_PBO[m_maxPbo];
+	GraphicBuffer* m_window;
+    EGLImageKHR m_image;
+
+    PFNGLEGLIMAGETARGETTEXTURE2DOESPROC m_glEGLImageTargetTexture2DOES;
 };
 
 class DepthBufferToRDRAM
@@ -1167,13 +1182,24 @@ void FrameBufferToRDRAM::Init()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 	// Generate and initialize Pixel Buffer Objects
-	glGenBuffers(3, m_PBO);
-	for (u32 i = 0; i < 3; ++i) {
+	glGenBuffers(m_maxPbo, m_PBO);
+	for (u32 i = 0; i < m_maxPbo; ++i) {
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, m_PBO[i]);
 		glBufferData(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, NULL, GL_DYNAMIC_READ);
 	}
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	m_curIndex = 0;
+
+		m_window = new GraphicBuffer(m_pTexture->realWidth, m_pTexture->realHeight,
+            PIXEL_FORMAT_RGBA_8888, GraphicBuffer::USAGE_SW_READ_OFTEN | GraphicBuffer::USAGE_HW_TEXTURE);
+
+        EGLint eglImgAttrs[] = { EGL_IMAGE_PRESERVED_KHR, EGL_TRUE, EGL_NONE, EGL_NONE };
+        m_image = eglCreateImageKHR(eglGetDisplay(EGL_DEFAULT_DISPLAY), EGL_NO_CONTEXT,
+                                        EGL_NATIVE_BUFFER_ANDROID,
+                                        (EGLClientBuffer)m_window->getNativeBuffer(),
+                                        eglImgAttrs);
+
+    m_glEGLImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)eglGetProcAddress("glEGLImageTargetTexture2DOES");
 }
 
 void FrameBufferToRDRAM::Destroy() {
@@ -1186,8 +1212,10 @@ void FrameBufferToRDRAM::Destroy() {
 		textureCache().removeFrameBufferTexture(m_pTexture);
 		m_pTexture = NULL;
 	}
-	glDeleteBuffers(3, m_PBO);
+	glDeleteBuffers(m_maxPbo, m_PBO);
 	m_PBO[0] = m_PBO[1] = m_PBO[2] = 0;
+
+	eglDestroyImageKHR(eglGetDisplay(EGL_DEFAULT_DISPLAY), m_image);
 }
 
 bool FrameBufferToRDRAM::_prepareCopy(u32 _startAddress)
@@ -1341,30 +1369,63 @@ void FrameBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress, bool _sync)
 		colorFormatBytes = fboFormats.monochromeFormatBytes;
 	}
 
-#ifndef GLES2
+/*#ifndef GLES2
 	// If Sync, read pixels from the buffer, copy them to RDRAM.
 	// If not Sync, read pixels from the buffer, copy pixels from the previous buffer to RDRAM.
 	if (!_sync) {
-		m_curIndex ^= 1;
-		const u32 nextIndex = m_curIndex ^ 1;
+		if(m_curIndex == m_maxPbo)
+		{
+		    m_curIndex = 0;
+		}
+		const u32 nextIndex = (m_curIndex + (m_maxPbo - 1))%m_maxPbo;
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, m_PBO[m_curIndex]);
+		glBufferData(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, NULL, GL_DYNAMIC_READ);
 		glReadPixels(x0, y0, width, height, colorFormat, colorType, 0);
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, m_PBO[nextIndex]);
+
+		m_curIndex++;
+
+		    //LOG(LOG_ERROR, "FORMAT!!! m_PBO[0]=%d, m_PBO[1]=%d, m_PBO[2]=%d, m_curIndex=%d, nextIndex=%d, \n", m_PBO[0], m_PBO[1], m_PBO[2], m_curIndex, nextIndex);
 	}
 	else {
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, m_PBO[2]);
 		glReadPixels(x0, y0, width, height, colorFormat, colorType, 0);
 	}
 
-	GLubyte* pixelData = (GLubyte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, width * height * colorFormatBytes, GL_MAP_READ_BIT);
+
+
+	GLubyte* pixelData = (GLubyte*)glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, width * height * colorFormatBytes, GL_MAP_READ_BIT );
 	if (pixelData == NULL)
+	{
+		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 		return;
+	}
+
 #else
 	GLubyte* pixelData = (GLubyte*)malloc(width * height * colorFormatBytes);
 	if (pixelData == NULL)
 		return;
 	glReadPixels(x0, y0, width, height, colorFormat, colorType, pixelData);
-#endif // GLES2
+#endif // GLES2*/
+
+void* ptr;
+GLubyte* pixelData = (GLubyte*)malloc(m_pTexture->realWidth * m_pTexture->realHeight * colorFormatBytes);
+
+glBindTexture(GL_TEXTURE_2D, m_pTexture->glName);
+m_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
+glBindTexture(GL_TEXTURE_2D, 0);
+
+m_window->lock(GraphicBuffer::USAGE_SW_READ_OFTEN, &ptr);
+memcpy(pixelData, ptr, m_pTexture->realWidth * m_pTexture->realHeight * colorFormatBytes);
+m_window->unlock();
+
+int widthBytes = width*colorFormatBytes;
+int strideBytes = m_pTexture->realWidth*colorFormatBytes;
+for(unsigned int lnIndex = 0; lnIndex < height; ++lnIndex)
+{
+    memmove(pixelData + lnIndex*widthBytes, pixelData+((lnIndex+y0)*strideBytes), widthBytes);
+}
 
 	if (m_pCurFrameBuffer->m_size == G_IM_SIZ_32b) {
 		u32 *ptr_src = (u32*)pixelData;
@@ -1389,12 +1450,14 @@ void FrameBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress, bool _sync)
 	m_pCurFrameBuffer->m_copiedToRdram = true;
 	m_pCurFrameBuffer->copyRdram();
 	m_pCurFrameBuffer->m_cleared = false;
-#ifndef GLES2
+/*#ifndef GLES2
 	glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 #else
 	free(pixelData);
-#endif
+#endif*/
+	free(pixelData);
+
 	gDP.changed |= CHANGED_SCISSOR;
 }
 

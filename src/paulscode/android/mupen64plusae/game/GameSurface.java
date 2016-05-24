@@ -298,34 +298,45 @@ public class GameSurface extends SurfaceView
 
         if (mEglContext == null || mEglContext == EGL10.EGL_NO_CONTEXT)
         {
-            // Get the number of compatible EGL frame buffer configurations
-            final int[] numConfigOut = new int[1];
-            mEgl.eglChooseConfig( mEglDisplay, configSpec, null, 0, numConfigOut );
-            final int numConfig = numConfigOut[0];
-
-            // Get the compatible EGL frame buffer configurations
-            final EGLConfig[] configs = new EGLConfig[numConfig];
-            final boolean success = mEgl.eglChooseConfig( mEglDisplay, configSpec, configs, numConfig, null );
-            if( !success || numConfig == 0 )
-            {
-                Log.e( TAG, EGL_CHOOSE_CONFIG_FAIL );
+            EGLConfig[] configs = new EGLConfig[128];
+            int[] num_config = new int[1];
+            if (!mEgl.eglChooseConfig(mEglDisplay, configSpec, configs, 1, num_config) || num_config[0] == 0) {
+                Log.e("SDL", "No EGL config available");
                 return false;
             }
+            EGLConfig config = null;
+            int bestdiff = -1, bitdiff;
+            int[] value = new int[1];
 
-            // Select the best configuration
-            for( int i = 0; i < numConfig; i++ )
-            {
-                // "Best" config is the first one that is fast and egl-conformant
-                // So we test for the "caveat" flag which would indicate slow/non-conformant
-                final int[] value = new int[1];
-                mEgl.eglGetConfigAttrib( mEglDisplay, configs[i], EGL10.EGL_CONFIG_CAVEAT, value );
-                if( value[0] == EGL10.EGL_NONE )
-                {
-                    mEglConfig = configs[i];
-                    break;
+            // eglChooseConfig returns a number of configurations that match or exceed the requested attribs.
+            // From those, we select the one that matches our requirements more closely
+            Log.v("SDL", "Got " + num_config[0] + " valid modes from egl");
+            for(int i = 0; i < num_config[0]; i++) {
+                bitdiff = 0;
+                // Go through some of the attributes and compute the bit difference between what we want and what we get.
+                for (int j = 0; ; j += 2) {
+                    if (configSpec[j] == EGL10.EGL_NONE)
+                        break;
+
+                    if (configSpec[j+1] != EGL10.EGL_DONT_CARE && (configSpec[j] == EGL10.EGL_RED_SIZE ||
+                            configSpec[j] == EGL10.EGL_GREEN_SIZE ||
+                            configSpec[j] == EGL10.EGL_BLUE_SIZE ||
+                            configSpec[j] == EGL10.EGL_ALPHA_SIZE ||
+                            configSpec[j] == EGL10.EGL_DEPTH_SIZE)) {
+                        mEgl.eglGetConfigAttrib(mEglDisplay, configs[i], configSpec[j], value);
+                        bitdiff += value[0] - configSpec[j + 1]; // value is always >= attrib
+                    }
                 }
+
+                if (bitdiff < bestdiff || bestdiff == -1) {
+                    config = configs[i];
+                    bestdiff = bitdiff;
+                }
+
+                if (bitdiff == 0) break; // we found an exact match!
             }
-            Log.v( TAG, EGL_CHOOSE_CONFIG );
+
+            mEglConfig = config;
         }
         else
             Log.v( TAG, EGL_CHOOSE_CONFIG_NOCHANGE );
@@ -354,6 +365,7 @@ public class GameSurface extends SurfaceView
                 EGL_CONTEXT_CLIENT_VERSION,
                 mGlMajorVersion,
                 EGL10.EGL_NONE };
+
             mEglContext = mEgl.eglCreateContext( mEglDisplay, mEglConfig, EGL10.EGL_NO_CONTEXT,
                     contextAttrs );
             if( mEglContext == EGL10.EGL_NO_CONTEXT )

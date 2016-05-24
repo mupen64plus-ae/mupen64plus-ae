@@ -5,8 +5,13 @@ include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./mupen64plus-video-gliden64/src
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := android-framework-ui
+LOCAL_SRC_FILES := ./android_framework/lib/$(TARGET_ARCH_ABI)/libui.so
+include $(PREBUILT_SHARED_LIBRARY)
+
 MY_LOCAL_MODULE := mupen64plus-video-gliden64
-MY_LOCAL_SHARED_LIBRARIES := freetype
+MY_LOCAL_SHARED_LIBRARIES := freetype android-framework-ui
 MY_LOCAL_STATIC_LIBRARIES := glidenhq osal
 MY_LOCAL_ARM_MODE := arm
 
@@ -16,6 +21,7 @@ MY_LOCAL_C_INCLUDES :=                          \
     $(SDL_INCLUDES)                             \
     $(FREETYPE_INCLUDES)                        \
     $(LOCAL_PATH)/$(SRCDIR)/osal                \
+    $(ANDROID_FRAMEWORK_INCLUDES)               \
 
 MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/3DMath.cpp                            \
@@ -70,6 +76,8 @@ MY_LOCAL_CFLAGS :=      \
     -DANDROID           \
     -DUSE_SDL           \
     -DMUPENPLUSAPI      \
+    -DEGL_EGLEXT_PROTOTYPES \
+    -DGL_GLEXT_PROTOTYPES \
     -fsigned-char       \
     #-DSDL_NO_COMPAT     \
 
@@ -77,7 +85,7 @@ MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -std=c++11 -g
 
 MY_LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/mupenplus/video_api_export.ver
 
-MY_LOCAL_LDLIBS := -llog
+MY_LOCAL_LDLIBS := -llog -latomic -lEGL
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
@@ -130,9 +138,9 @@ LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
 LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -lGLESv3
+    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -L$(LOCAL_PATH)/android_framework/lib/armeabi-v7a/ -lGLESv3
 else ifeq ($(TARGET_ARCH_ABI), x86)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/x86/ -lGLESv3
+    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/x86/ -L$(LOCAL_PATH)/android_framework/lib/armeabi-v7a/ -lGLESv3
 else
     # Any other architectures that Android could be running on?
 endif
@@ -154,9 +162,9 @@ LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
 LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -lGLESv3
+    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -L$(LOCAL_PATH)/android_framework/lib/armeabi-v7a/ -lGLESv3
 else ifeq ($(TARGET_ARCH_ABI), x86)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/x86/ -lGLESv3
+    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/x86/ -L$(LOCAL_PATH)/android_framework/lib/armeabi-v7a/ -lGLESv3
 else
     # Any other architectures that Android could be running on?
 endif
