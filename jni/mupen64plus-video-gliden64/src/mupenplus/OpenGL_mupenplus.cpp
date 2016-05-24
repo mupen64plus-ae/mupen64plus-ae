@@ -136,16 +136,6 @@ void OGLVideoMupenPlus::_swapBuffers()
 		(*renderCallback)((gDP.changed&CHANGED_CPU_FB_WRITE) == 0 ? 1 : 0);
 	}
 	CoreVideo_GL_SwapBuffers();
-/*
-	int lnRed, lnGreen, lnBlue, lnAlpha, lnBuffer, lnDepth;
-    		CoreVideo_GL_GetAttribute(M64P_GL_RED_SIZE, &lnRed);
-        	CoreVideo_GL_GetAttribute(M64P_GL_GREEN_SIZE, &lnGreen);
-        	CoreVideo_GL_GetAttribute(M64P_GL_BLUE_SIZE, &lnBlue);
-        	CoreVideo_GL_GetAttribute(M64P_GL_ALPHA_SIZE, &lnAlpha);
-        	CoreVideo_GL_GetAttribute(M64P_GL_BUFFER_SIZE, &lnBuffer);
-        	CoreVideo_GL_GetAttribute(M64P_GL_DEPTH_SIZE, &lnDepth);
-
-        LOG(LOG_ERROR, "FORMAT!!! R=%d, G=%d, B=%d, A=%d, Buffer=%d, Depth=%d\n", lnRed, lnGreen, lnBlue, lnAlpha, lnBuffer, lnDepth);*/
 }
 
 void OGLVideoMupenPlus::_saveScreenshot()
