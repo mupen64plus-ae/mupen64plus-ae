@@ -225,7 +225,7 @@ public class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game.gameHeaderName, "fontName", "DroidSans.ttf" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game.gameHeaderName, "fontSize", "18" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game.gameHeaderName, "fontColor", "B5E61D" );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game.gameHeaderName, "EnableBloom", boolToNum( game.gliden64EnableBloom ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game.gameHeaderName, "EnableBloom", boolToTF( game.gliden64EnableBloom ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game.gameHeaderName, "bloomThresholdLevel", String.valueOf( game.gliden64BloomThresholdLevel ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game.gameHeaderName, "bloomBlendMode", String.valueOf( game.gliden64BloomBlendMode ) );                                                        // Bloom blend mode (0=Strong, 1=Mild, 2=Light)
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game.gameHeaderName, "blurAmount", String.valueOf( game.gliden64BlurAmount ) );
