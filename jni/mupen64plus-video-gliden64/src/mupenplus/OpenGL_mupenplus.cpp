@@ -12,11 +12,13 @@
 #include <bcm_host.h>
 #endif
 
+#ifndef EGL
 #if !defined(OS_WINDOWS) || defined(GLES2) || defined(GLES3) || defined(GLES3_1)
 
 void initGLFunctions()
 {
 }
+#endif
 #endif
 
 class OGLVideoMupenPlus : public OGLVideo
@@ -62,7 +64,7 @@ void OGLVideoMupenPlus::_setAttributes()
 	// Do nothing
 #endif
 
-#if defined(GLES3) || defined (GLES3_1)
+#ifndef GLES2
 	CoreVideo_GL_SetAttribute(M64P_GL_RED_SIZE, 8);
 	CoreVideo_GL_SetAttribute(M64P_GL_GREEN_SIZE, 8);
 	CoreVideo_GL_SetAttribute(M64P_GL_BLUE_SIZE, 8);

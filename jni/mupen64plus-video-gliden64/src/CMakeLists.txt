@@ -45,6 +45,9 @@ set(GLideN64_SOURCES
   TextDrawer.cpp
   PostProcessor.cpp
   VI.cpp
+  BufferCopy/ColorBufferToRDRAM.cpp
+  BufferCopy/DepthBufferToRDRAM.cpp
+  BufferCopy/RDRAMtoColorBuffer.cpp
   common/CommonAPIImpl_common.cpp
 )
 
@@ -75,7 +78,7 @@ if(MUPENPLUSAPI)
 	-DMUPENPLUSAPI
 		-DTXFILTER_LIB
   )
-  include_directories( inc )
+  include_directories( . inc )
   set(GLideN64_SOURCES_UNIX
 	MupenPlusPluginAPI.cpp
 	mupenplus/Config_mupenplus.cpp
@@ -83,6 +86,17 @@ if(MUPENPLUSAPI)
 	mupenplus/MupenPlusAPIImpl.cpp
 	mupenplus/OpenGL_mupenplus.cpp
   )
+
+  if(BCMHOST)
+    set(GLideN64_SOURCES_UNIX ${GLideN64_SOURCES_UNIX}
+        BufferCopy/ColorBufferToRDRAMStub.cpp
+    )
+  else(BCMHOST)
+    set(GLideN64_SOURCES_UNIX ${GLideN64_SOURCES_UNIX}
+        BufferCopy/ColorBufferToRDRAMDesktop.cpp
+    )
+  endif(BCMHOST)
+
   set(GLideN64_SOURCES_WIN ${GLideN64_SOURCES_UNIX}
 	windows/GLFunctions_windows.cpp
   )
@@ -105,8 +119,15 @@ endif(MUPENPLUSAPI)
 
 add_subdirectory( osal )
 include_directories( osal )
-add_subdirectory( GLideNHQ )
-include_directories( GLideNHQ )
+
+if (NOHQ)
+  list(APPEND GLideN64_SOURCES
+    TxFilterStub.cpp
+  )
+else (NOHQ)
+  add_subdirectory( GLideNHQ )
+  include_directories( GLideNHQ )
+endif(NOHQ)
 
 if(UNIX)
   list(APPEND GLideN64_SOURCES ${GLideN64_SOURCES_UNIX})
@@ -226,9 +247,17 @@ if( CMAKE_BUILD_TYPE STREQUAL "Debug")
   )
 
   if(SDL)
-	target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osald GLideNHQd )
+        if (NOHQ)
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osald )
+	else (NOHQ)
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osald GLideNHQd )
+	endif (NOHQ)
   else(SDL)
-	target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osald GLideNHQd )
+	if (NOHQ)
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osald )
+	else (NOHQ)
+	  target_link_libraries(${GLideN64_DLL_NAME} PRIVATE ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osald GLideNHQd )
+	endif (NOHQ)
   endif(SDL)
 endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
 
@@ -242,8 +271,16 @@ if( CMAKE_BUILD_TYPE STREQUAL "Release")
   )
 
   if(SDL)
-	target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osal GLideNHQ )
+	if (NOHQ)
+	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osal )
+	else (NOHQ)
+	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${SDL_LIBRARIES} ${FREETYPE_LIBRARIES} osal GLideNHQ )
+	endif (NOHQ)
   else(SDL)
-	target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osal GLideNHQ )
+	if (NOHQ)
+	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osal )
+	else (NOHQ)
+	  target_link_libraries(${GLideN64_DLL_NAME} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} osal GLideNHQ )
+	endif (NOHQ)
   endif(SDL)
 endif( CMAKE_BUILD_TYPE STREQUAL "Release")
