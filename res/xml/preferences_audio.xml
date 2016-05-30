@@ -88,6 +88,12 @@
         android:title="@string/audioSLESRate_title" />
 
     <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="audioSLESFloatingPoint"
+        android:summary="@string/audioSLESFloatingPoint_summary"
+        android:title="@string/audioSLESFloatingPoint_title" />
+
+    <android.support.v7.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="audioSynchronize"
         android:summary="@string/audioSynchronize_summary"

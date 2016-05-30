@@ -20,22 +20,6 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.WordUtils;
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.input.map.PlayerMap;
-import paulscode.android.mupen64plusae.jni.NativeConstants;
-import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
-import paulscode.android.mupen64plusae.profile.ControllerProfile;
-import paulscode.android.mupen64plusae.util.Plugin;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -46,6 +30,23 @@ import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.WordUtils;
+import org.mupen64plusae.v3.alpha.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
+import paulscode.android.mupen64plusae.profile.ControllerProfile;
+import paulscode.android.mupen64plusae.util.Plugin;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
@@ -211,6 +212,9 @@ public class GlobalPrefs
 
     /** Number of SLES sampling rate. */
     public final int audioSLESSamplingRate;
+
+    /** Use SLES floating point samples */
+    public final boolean audioSLESFloatingPoint;
 
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
@@ -410,6 +414,7 @@ public class GlobalPrefs
         audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize2", 256 );
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 20 );
         audioSLESSamplingRate = getSafeInt( mPreferences, "audioSLESSamplingRate", 0 );
+        audioSLESFloatingPoint = mPreferences.getBoolean( "audioSLESFloatingPoint", false );
 
         if( audioPlugin.enabled )
             isFramelimiterEnabled = !mPreferences.getBoolean( "audioSynchronize", true );

@@ -20,14 +20,15 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
 
 public class AudioPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
 {
@@ -36,11 +37,15 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize2";
     private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr2";
     private static final String AUDIO_SLES_SAMPLING_RATE = "audioSLESSamplingRate";
+    private static final String AUDIO_SLES_FLOATING_POINT = "audioSLESFloatingPoint";
     private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
 
     private static final String AUDIO_SDL_PLUGIN = "libmupen64plus-audio-sdl.so";
     private static final String AUDIO_SLES_PLUGIN = "libmupen64plus-audio-sles.so";
+
+    private static final String ROOT = "screenRoot";
+
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -99,8 +104,14 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
         PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_SIZE, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
         PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
         PrefUtil.enablePreference( this, AUDIO_SLES_SAMPLING_RATE, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
+        PrefUtil.enablePreference( this, AUDIO_SLES_FLOATING_POINT, mGlobalPrefs.audioPlugin.name.equals( AUDIO_SLES_PLUGIN ) );
         PrefUtil.enablePreference(this, AUDIO_SYNCHRONIZE, mGlobalPrefs.audioPlugin.enabled);
         PrefUtil.enablePreference(this, AUDIO_SWAP_CHANNELS, mGlobalPrefs.audioPlugin.enabled);
+
+        if(!AppData.IS_LOLLIPOP)
+        {
+            PrefUtil.removePreference(this, ROOT, AUDIO_SLES_FLOATING_POINT);
+        }
     }
 
     @Override

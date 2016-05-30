@@ -136,7 +136,7 @@ public class NativeConfigFiles
         if(audioPluginString.endsWith("libmupen64plus-audio-sles.so"))
         {
             //If running lollipop, use the floating point version
-            if(AppData.IS_LOLLIPOP)
+            if(AppData.IS_LOLLIPOP && global.audioSLESFloatingPoint)
             {
                 audioPluginString = audioPluginString.replace("libmupen64plus-audio-sles.so", "libmupen64plus-audio-sles-fp.so");
             }

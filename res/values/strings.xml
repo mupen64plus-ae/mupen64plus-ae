@@ -461,6 +461,8 @@
     <string name="audioSLESRate_entry32">32kHz</string>
     <string name="audioSLESRate_entry441">44.1kHz</string>
     <string name="audioSLESRate_entry48">48kHz</string>
+    <string name="audioSLESFloatingPoint_title">Floating Point Samples</string>
+    <string name="audioSLESFloatingPoint_summary">Higher quality FP audio. Some devices may not be compatible.</string>
     <string name="localeOverride_entrySystemDefault">System default</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
