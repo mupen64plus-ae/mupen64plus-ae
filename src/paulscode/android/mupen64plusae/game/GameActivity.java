@@ -20,10 +20,37 @@
  */
 package paulscode.android.mupen64plusae.game;
 
-import java.io.File;
-import java.util.ArrayList;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
+import android.hardware.SensorManager;
+import android.media.AudioManager;
+import android.os.Bundle;
+import android.os.Vibrator;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
+
+import com.bda.controller.Controller;
 
 import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
@@ -33,7 +60,6 @@ import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmLi
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
-import paulscode.android.mupen64plusae.game.GameSurface.GameSurfaceCreatedListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
@@ -61,32 +87,6 @@ import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
-import android.hardware.SensorManager;
-import android.media.AudioManager;
-import android.os.Bundle;
-import android.os.Vibrator;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager.LayoutParams;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
-
-import com.bda.controller.Controller;
 
 //@formatter:off
 /**
@@ -126,7 +126,7 @@ import com.bda.controller.Controller;
 //@formatter:on
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback, GameSidebarActionHandler,
-OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExitListener, OnRestartListener
+OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedListener, OnExitListener, OnRestartListener
 {
     // Activity and views
     private GameSurface mSurface;
@@ -231,8 +231,18 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurfaceCreatedListener, OnExit
         super.onCreate( savedInstanceState );
 
         // Lay out content and get the views
-        this.setContentView( R.layout.game_activity );
-        mSurface = (GameSurface) this.findViewById( R.id.gameSurface );
+        if(AppData.IS_JELLY_BEAN_MR1)
+        {
+            this.setContentView( R.layout.game_activity_egl14);
+            mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
+
+        }
+        else
+        {
+            this.setContentView( R.layout.game_activity_egl10);
+            mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl10 );
+        }
+
         mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
         mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
         mGameSidebar = (GameSidebar) this.findViewById(R.id.gameSidebar);

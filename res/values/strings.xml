@@ -291,6 +291,7 @@
     <string name="videoSubPlugin_entryGles20">OpenGL ES 2.0</string>
     <string name="videoSubPlugin_entryGles30">OpenGL ES 3.0\n<small>(requires Android 4.3+ and device support)</small></string>
     <string name="videoSubPlugin_entryGles31">OpenGL ES 3.1\n<small>(requires Android 5.0+ and device support)</small></string>
+    <string name="videoSubPlugin_entryEgl">Full OpenGL\n<small>(requires Android 5.0+ and device support)</small></string>
     <string name="videoHardwareType_title">Flicker reduction</string>
     <string name="videoHardwareType_entryDisableHack">Disable flicker reduction hack</string>
     <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>

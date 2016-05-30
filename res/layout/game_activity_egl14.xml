@@ -13,8 +13,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
-        <paulscode.android.mupen64plusae.game.GameSurface
-            android:id="@+id/gameSurface"
+        <paulscode.android.mupen64plusae.game.GameSurfaceEGL14
+            android:id="@+id/gameSurfaceEgl14"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="false"

@@ -20,6 +20,17 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import android.content.DialogInterface;
+import android.media.AudioTrack;
+import android.os.Build;
+import android.os.Vibrator;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.util.Log;
+
+import org.mupen64plusae.v3.alpha.R;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.text.DateFormat;
@@ -28,8 +39,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
@@ -43,14 +52,6 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.content.DialogInterface;
-import android.media.AudioTrack;
-import android.os.Build;
-import android.os.Vibrator;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
-import android.util.Log;
 
 /**
  * A class that consolidates all interactions with the emulator core.
@@ -176,9 +177,9 @@ public class CoreInterface
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
-    public static void initialize( AppCompatActivity activity,
-        GameSurface surface, GamePrefs gamePrefs, String romPath, String romMd5,
-        String cheatArgs, boolean isRestarting )
+    public static void initialize(AppCompatActivity activity,
+                                  GameSurface surface, GamePrefs gamePrefs, String romPath, String romMd5,
+                                  String cheatArgs, boolean isRestarting )
     {
         sRomPath = romPath;
         sCheatOptions = cheatArgs;

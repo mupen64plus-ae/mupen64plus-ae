@@ -436,11 +436,13 @@
         <item>@string/videoSubPlugin_entryGles20</item>
         <item>@string/videoSubPlugin_entryGles30</item>
         <item>@string/videoSubPlugin_entryGles31</item>
+        <item>@string/videoSubPlugin_entryEgl</item>
     </string-array>
     <string-array name="videoSubPlugin_values" translatable="false">
         <item>-gles20</item>
         <item>-gles30</item>
         <item>-gles31</item>
+        <item>-egl</item>
     </string-array>
 
     <string name="videoSubPlugin_default" translatable="false">-gles20</string>

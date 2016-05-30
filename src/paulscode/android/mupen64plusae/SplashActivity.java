@@ -20,24 +20,6 @@
 
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.cheat.CheatUtils;
-import paulscode.android.mupen64plusae.dialog.Popups;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.preference.PathPreference;
-import paulscode.android.mupen64plusae.preference.PrefUtil;
-import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
-import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListener;
-import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
-import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.RomDatabase;
-import tv.ouya.console.api.OuyaFacade;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -58,6 +40,25 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.cheat.CheatUtils;
+import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.preference.PathPreference;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
+import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListener;
+import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
+import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomDatabase;
+import tv.ouya.console.api.OuyaFacade;
+
 /**
  * The main activity that presents the splash screen, extracts the assets if necessary, and launches
  * the main menu activity.
@@ -74,7 +75,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 80;
+    private static final int ASSET_VERSION = 81;
 
     /** The total number of assets to be extracted (for computing progress %). */
     private static final int TOTAL_ASSETS = 120;

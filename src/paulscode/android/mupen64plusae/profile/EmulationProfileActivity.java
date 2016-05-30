@@ -20,12 +20,6 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.preference.CompatListPreference;
-import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -33,6 +27,13 @@ import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceGroup;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.preference.CompatListPreference;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
 
 public class EmulationProfileActivity extends ProfileActivity
 {
@@ -63,6 +64,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
     private static final String GLES20 = "-gles20";
     private static final String GLES31 = "-gles31";
+    private static final String FULLOGL = "-egl";
     
     // Preference menu items
     private PreferenceGroup mScreenRoot = null;
@@ -221,11 +223,12 @@ public class EmulationProfileActivity extends ProfileActivity
 
                 boolean isGles20 = GLES20.equals( videoSubPlugin );
                 boolean isGles31 = GLES31.equals( videoSubPlugin );
-                findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 );
+                boolean isOGL = FULLOGL.equals( videoSubPlugin );
+                findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 || isOGL );
                 findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
-                findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 );
+                findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 || isOGL);
             }
             else
             {

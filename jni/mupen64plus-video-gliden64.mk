@@ -67,6 +67,9 @@ MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/mupenplus/Config_mupenplus.cpp        \
     $(SRCDIR)/mupenplus/MupenPlusAPIImpl.cpp        \
     $(SRCDIR)/mupenplus/OpenGL_mupenplus.cpp        \
+    $(SRCDIR)/BufferCopy/ColorBufferToRDRAM.cpp     \
+    $(SRCDIR)/BufferCopy/DepthBufferToRDRAM.cpp     \
+    $(SRCDIR)/BufferCopy/RDRAMtoColorBuffer.cpp     \
     $(SRCDIR)/TextDrawer.cpp                        \
 
 MY_LOCAL_CFLAGS :=      \
@@ -77,7 +80,6 @@ MY_LOCAL_CFLAGS :=      \
     -DUSE_SDL           \
     -DMUPENPLUSAPI      \
     -DEGL_EGLEXT_PROTOTYPES \
-    -DGL_GLEXT_PROTOTYPES \
     -fsigned-char       \
     #-DSDL_NO_COMPAT     \
 
@@ -114,14 +116,13 @@ LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES)
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/GLES2/UniformSet.cpp $(SRCDIR)/GLES2/GLSLCombiner_gles2.cpp
+LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/GLES2/UniformSet.cpp $(SRCDIR)/GLES2/GLSLCombiner_gles2.cpp \
+                           $(SRCDIR)/BufferCopy/ColorBufferToRDRAMAndroid.cpp
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS) -DGLES2
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
 LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
 LOCAL_LDLIBS            := $(MY_LOCAL_LDLIBS) -lGLESv2
 include $(BUILD_SHARED_LIBRARY)
-
-ifneq ($(TARGET_ARCH_ABI), armeabi)
 
 ###########
 # gles 3.0
@@ -132,19 +133,12 @@ LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES) $(LOCAL_PATH)/GLES3/include/
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/OGL3X/UniformBlock.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp
+LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/OGL3X/UniformBlock.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
+                           $(SRCDIR)/BufferCopy/ColorBufferToRDRAMAndroid.cpp
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS) -DGLES3
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
 LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
-
-ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -L$(LOCAL_PATH)/android_framework/lib/armeabi-v7a/ -lGLESv3
-else ifeq ($(TARGET_ARCH_ABI), x86)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/x86/ -L$(LOCAL_PATH)/android_framework/lib/armeabi-v7a/ -lGLESv3
-else
-    # Any other architectures that Android could be running on?
-endif
-
+LOCAL_LDLIBS            := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/$(TARGET_ARCH_ABI)/ -lGLESv3
 include $(BUILD_SHARED_LIBRARY)
 
 ###########
@@ -156,19 +150,28 @@ LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES) $(LOCAL_PATH)/GLES3/include/
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/OGL3X/UniformBlock.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp
+LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/OGL3X/UniformBlock.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
+                           $(SRCDIR)/BufferCopy/ColorBufferToRDRAMAndroid.cpp
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS) -DGLES3_1
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
 LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
-
-ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/arm/ -L$(LOCAL_PATH)/android_framework/lib/armeabi-v7a/ -lGLESv3
-else ifeq ($(TARGET_ARCH_ABI), x86)
-    LOCAL_LDLIBS        := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/x86/ -L$(LOCAL_PATH)/android_framework/lib/armeabi-v7a/ -lGLESv3
-else
-    # Any other architectures that Android could be running on?
-endif
-
+LOCAL_LDLIBS            := $(MY_LOCAL_LDLIBS) -L$(LOCAL_PATH)/GLES3/lib/$(TARGET_ARCH_ABI)/ -lGLESv3
 include $(BUILD_SHARED_LIBRARY)
 
-endif #not armebi
+###########
+# EGL
+###########
+include $(CLEAR_VARS)
+LOCAL_MODULE            := $(MY_LOCAL_MODULE)-egl
+LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
+LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
+LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
+LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES) $(LOCAL_PATH)/GL/
+LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/OGL3X/UniformBlock.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
+                           $(SRCDIR)/common/GLFunctions.cpp $(SRCDIR)/BufferCopy/ColorBufferToRDRAMDesktop.cpp
+LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS) -DEGL
+LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
+LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
+LOCAL_LDLIBS            := $(MY_LOCAL_LDLIBS) -lEGL
+
+include $(BUILD_SHARED_LIBRARY)
