@@ -30,6 +30,8 @@ import android.support.v7.preference.PreferenceGroup;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.util.ArrayList;
+
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.CompatListPreference;
@@ -148,15 +150,37 @@ public class EmulationProfileActivity extends ProfileActivity
             {
                 mScreenRoot.removePreference(mPreferenceVideoSubPlugin);
             }
-            else if(openGlVersion.equals("3.0"))
+            else
             {
-                mPreferenceVideoSubPlugin.setEntries(new String[]{
-                    getString(R.string.videoSubPlugin_entryGles20),
-                    getString(R.string.videoSubPlugin_entryGles30)
-                });
-                mPreferenceVideoSubPlugin.setEntryValues(new String[]{
-                    "-gles20",
-                    "-gles30"});
+                ArrayList<String> entries = new ArrayList<String>();
+                ArrayList<String> values = new ArrayList<String>();
+
+                if (openGlVersion.equals("3.0")) {
+                    entries.add(getString(R.string.videoSubPlugin_entryGles20));
+                    entries.add(getString(R.string.videoSubPlugin_entryGles30));
+                    values.add("-gles20");
+                    values.add("-gles30");
+                }
+                else if (openGlVersion.equals("3.1")) {
+                    entries.add(getString(R.string.videoSubPlugin_entryGles20));
+                    entries.add(getString(R.string.videoSubPlugin_entryGles30));
+                    entries.add(getString(R.string.videoSubPlugin_entryGles31));
+                    values.add("-gles20");
+                    values.add("-gles30");
+                    values.add("-gles31");
+                }
+
+                if(AppData.doesSupportFullGL())
+                {
+                    entries.add(getString(R.string.videoSubPlugin_entryEgl));
+                    values.add("-egl");
+                }
+
+                String [] entriesArray = entries.toArray(new String[entries.size()]);
+                String [] valuesArray = values.toArray(new String[values.size()]);
+
+                mPreferenceVideoSubPlugin.setEntries(entriesArray);
+                mPreferenceVideoSubPlugin.setEntryValues(valuesArray);
             }
         }
                 

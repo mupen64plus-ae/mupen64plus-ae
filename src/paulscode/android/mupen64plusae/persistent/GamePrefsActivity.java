@@ -20,11 +20,27 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.Preference.OnPreferenceClickListener;
+import android.support.v7.preference.PreferenceGroup;
+import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceScreen;
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.bda.controller.Controller;
+
+import org.mupen64plusae.v3.alpha.R;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-
-import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
@@ -44,21 +60,6 @@ import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListen
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.Preference.OnPreferenceClickListener;
-import android.support.v7.preference.PreferenceGroup;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.preference.PreferenceScreen;
-import android.text.TextUtils;
-import android.util.Log;
-
-import com.bda.controller.Controller;
 
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
@@ -289,6 +290,11 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             else if (openGlVersion.equals("3.0"))
             {
                 exclusions.add(new Profile(true, "GlideN64-GLES-3.1", null));
+            }
+
+            if(!AppData.doesSupportFullGL())
+            {
+                exclusions.add(new Profile(true, "GlideN64-Full-OpenGL", null));
             }
 
             mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),

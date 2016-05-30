@@ -20,23 +20,26 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import java.io.File;
-import java.util.Locale;
-
-import paulscode.android.mupen64plusae.util.DeviceUtil;
-import tv.ouya.console.api.OuyaFacade;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.UiModeManager;
-import android.content.res.Configuration;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
+import android.opengl.EGL14;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
+import java.util.Locale;
+
+import paulscode.android.mupen64plusae.util.DeviceUtil;
+import tv.ouya.console.api.OuyaFacade;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
@@ -533,6 +536,19 @@ public class AppData
         
         return "" + getMajorVersion(configurationInfo.reqGlEsVersion) +
             "." + getMinorVersion(configurationInfo.reqGlEsVersion);
+    }
+
+    @TargetApi(17)
+    public static boolean doesSupportFullGL()
+    {
+        if(AppData.IS_JELLY_BEAN_MR1)
+        {
+            return EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
+        }
+        else
+        {
+            return false;
+        }
     }
     
 }

@@ -81,5 +81,10 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
         {
             RemoveProfile("GlideN64-GLES-3.1");
         }
+
+        if(!AppData.doesSupportFullGL())
+        {
+            RemoveProfile("GlideN64-Full-OpenGL");
+        }
     }
 }
