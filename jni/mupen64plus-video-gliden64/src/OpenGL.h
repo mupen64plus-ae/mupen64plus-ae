@@ -80,6 +80,13 @@ typedef char GLchar;
 #define VERTBUFF_SIZE 256U
 #define ELEMBUFF_SIZE 1024U
 
+extern const char * strTexrectDrawerVertexShader;
+extern const char * strTexrectDrawerTex3PointFilter;
+extern const char * strTexrectDrawerTexBilinearFilter;
+extern const char * strTexrectDrawerFragmentShaderTex;
+extern const char * strTexrectDrawerFragmentShaderClean;
+
+class CachedTexture;
 class OGLRender
 {
 public:
@@ -129,6 +136,7 @@ public:
 	void setDMAVerticesSize(u32 _size) { if (triangles.dmaVertices.size() < _size) triangles.dmaVertices.resize(_size); }
 	SPVertex * getDMAVerticesData() { return triangles.dmaVertices.data(); }
 	void updateScissor(FrameBuffer * _pBuffer) const;
+	void flush() { m_texrectDrawer.draw(); }
 
 	enum RENDER_STATE {
 		rsNone = 0,
@@ -171,6 +179,8 @@ private:
 	void _updateViewport() const;
 	void _updateScreenCoordsViewport() const;
 	void _updateDepthUpdate() const;
+	void _updateDepthCompare() const;
+	void _updateTextures(RENDER_STATE _renderState) const;
 	void _updateStates(RENDER_STATE _renderState) const;
 	void _prepareDrawTriangle(bool _dma);
 	bool _canDraw() const;
@@ -192,6 +202,37 @@ private:
 		float s0, t0, s1, t1;
 	};
 
+	class TexrectDrawer
+	{
+	public:
+		TexrectDrawer();
+		void init();
+		void destroy();
+		void add();
+		bool draw();
+		bool isEmpty();
+	private:
+		u32 m_numRects;
+		u64 m_otherMode;
+		u64 m_mux;
+		f32 m_ulx, m_lrx, m_uly, m_lry, m_Z;
+		f32 m_max_lrx, m_max_lry;
+		GLuint m_FBO;
+		GLuint m_programTex;
+		GLuint m_programClean;
+		GLint m_enableAlphaTestLoc;
+		GLint m_textureBoundsLoc;
+		GLint m_depthScaleLoc;
+		gDPScissor m_scissor;
+		CachedTexture * m_pTexture;
+		FrameBuffer * m_pBuffer;
+
+		struct RectCoords {
+			f32 x, y;
+		};
+		std::vector<RectCoords> m_vecRectCoords;
+	};
+
 	RENDER_STATE m_renderState;
 	OGL_RENDERER m_oglRenderer;
 	TexturedRectParams m_texrectParams;
@@ -199,6 +240,7 @@ private:
 	u32 m_modifyVertices;
 	bool m_bImageTexture;
 	bool m_bFlatColors;
+	TexrectDrawer m_texrectDrawer;
 };
 
 class OGLVideo
