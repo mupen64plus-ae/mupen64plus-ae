@@ -357,6 +357,7 @@
     <string name="gliden64_correct_texrect_coords_off">Off</string>
     <string name="gliden64_correct_texrect_coords_auto">Auto</string>
     <string name="gliden64_correct_texrect_coords_force">Force</string>
+    <string name="gliden64_enable_native_res_texrects_title">Fix texrect image mis-aligment (slowdown)</string>
     <string name="gliden64_category_fb_title">Frame Buffer Emulation</string>
     <string name="gliden64_enable_fb_emulation_title">Enable frame and/or depth buffer emulation</string>
     <string name="gliden64_swap_frame_buffers_title">Swap frame buffers</string>

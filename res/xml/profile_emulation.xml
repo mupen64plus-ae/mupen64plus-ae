@@ -192,6 +192,10 @@
             android:key="CorrectTexrectCoords"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_correct_texrect_coords_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="EnableNativeResTexrects"
+            android:title="@string/gliden64_enable_native_res_texrects_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory

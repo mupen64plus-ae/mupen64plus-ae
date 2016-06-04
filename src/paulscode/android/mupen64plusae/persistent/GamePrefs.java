@@ -1,5 +1,14 @@
 package paulscode.android.mupen64plusae.persistent;
 
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.graphics.Point;
+import android.text.TextUtils;
+import android.view.Display;
+import android.view.WindowManager;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,14 +22,6 @@ import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.graphics.Point;
-import android.text.TextUtils;
-import android.view.Display;
-import android.view.WindowManager;
 
 public class GamePrefs
 {
@@ -180,6 +181,9 @@ public class GamePrefs
      * 1=Auto
      * 2=Force */
     public final int gliden64CorrectTexrectCoords;
+
+    /** Render 2D texrects in native resolution to fix misalignment between parts of 2D image */
+    public final boolean gliden64EnableNativeResTexrects;
 
     /** Enable frame and|or depth buffer emulation. */
     public final boolean gliden64EnableFBEmulation;
@@ -526,6 +530,7 @@ public class GamePrefs
         gliden64EnableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
         gliden64EnableShadersStorage = emulationProfile.get( "EnableShadersStorage", "True" ).equals( "True" );
         gliden64CorrectTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 1);
+        gliden64EnableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "True" ).equals( "True" );
         gliden64EnableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
         gliden64BufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);
         gliden64EnableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 2);
