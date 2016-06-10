@@ -13,17 +13,19 @@ typedef void (GL_APIENTRY* PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC) (GLenu
 
 using namespace android;
 
-class ColorBufferToRDRAMAndroid : public ColorBufferToRDRAM
+class ColorBufferToRDRAM_GLES : public ColorBufferToRDRAM
 {
 public:
-	ColorBufferToRDRAMAndroid();
-	~ColorBufferToRDRAMAndroid() {};
+	ColorBufferToRDRAM_GLES();
+	~ColorBufferToRDRAM_GLES() {};
 
 private:
 	void _init() override;
 	void _destroy() override;
-	GLubyte* _getPixels(GLint _x0, GLint _y0, GLsizei _width, GLsizei _height, u32 _size, bool _sync)  override;
-	void _cleanUpPixels(GLubyte* pixelData)  override;
+	bool _readPixels(GLint _x0, GLint _y0, GLsizei _width, GLsizei _height, u32 _size, bool _sync)  override;
+	void _cleanUp()  override;
+	void _initBuffers(void) override;
+	void _destroyBuffers(void) override;
 
 	GraphicBuffer* m_window;
 	EGLImageKHR m_image;
@@ -32,33 +34,47 @@ private:
 
 ColorBufferToRDRAM & ColorBufferToRDRAM::get()
 {
-	static ColorBufferToRDRAMAndroid cbCopy;
+	static ColorBufferToRDRAM_GLES cbCopy;
 	return cbCopy;
 }
 
-ColorBufferToRDRAMAndroid::ColorBufferToRDRAMAndroid() 
-	: ColorBufferToRDRAM()
+ColorBufferToRDRAM_GLES::ColorBufferToRDRAM_GLES() 
+	: ColorBufferToRDRAM(),
+	m_window(nullptr),
+	m_image(0)
 {
 }
 
-void ColorBufferToRDRAMAndroid::_init()
+void ColorBufferToRDRAM_GLES::_init()
 {
-	m_window = new GraphicBuffer(m_pTexture->realWidth, m_pTexture->realHeight,
-		PIXEL_FORMAT_RGBA_8888, GraphicBuffer::USAGE_SW_READ_OFTEN | GraphicBuffer::USAGE_HW_TEXTURE);
+	m_glEGLImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)eglGetProcAddress("glEGLImageTargetTexture2DOES");
 
+	m_window = new GraphicBuffer();
+}
+
+void ColorBufferToRDRAM_GLES::_destroy()
+{
+}
+
+void ColorBufferToRDRAM_GLES::_initBuffers(void)
+{
+	m_window->reallocate(m_pTexture->realWidth, m_pTexture->realHeight,
+		PIXEL_FORMAT_RGBA_8888, GraphicBuffer::USAGE_SW_READ_OFTEN | GraphicBuffer::USAGE_HW_TEXTURE);
 	EGLint eglImgAttrs[] = { EGL_IMAGE_PRESERVED_KHR, EGL_TRUE, EGL_NONE, EGL_NONE };
 	m_image = eglCreateImageKHR(eglGetDisplay(EGL_DEFAULT_DISPLAY), EGL_NO_CONTEXT,
 		EGL_NATIVE_BUFFER_ANDROID, (EGLClientBuffer)m_window->getNativeBuffer(), eglImgAttrs);
-
-	m_glEGLImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)eglGetProcAddress("glEGLImageTargetTexture2DOES");
 }
 
-void ColorBufferToRDRAMAndroid::_destroy()
+void ColorBufferToRDRAM_GLES::_destroyBuffers(void)
 {
-	eglDestroyImageKHR(eglGetDisplay(EGL_DEFAULT_DISPLAY), m_image);
+	if(m_image != 0)
+	{
+	    eglDestroyImageKHR(eglGetDisplay(EGL_DEFAULT_DISPLAY), m_image);
+	    m_image = 0;
+	}
 }
 
-GLubyte* ColorBufferToRDRAMAndroid::_getPixels(GLint _x0, GLint _y0, GLsizei _width, GLsizei _height, u32 _size, bool _sync)
+bool ColorBufferToRDRAM_GLES::_readPixels(GLint _x0, GLint _y0, GLsizei _width, GLsizei _height, u32 _size, bool _sync)
 {
 	GLenum colorFormat, colorType, colorFormatBytes;
 	if (_size > G_IM_SIZ_8b) {
@@ -71,7 +87,7 @@ GLubyte* ColorBufferToRDRAMAndroid::_getPixels(GLint _x0, GLint _y0, GLsizei _wi
 		colorFormatBytes = fboFormats.monochromeFormatBytes;
 	}
 
-	GLubyte* pixelData = (GLubyte*)malloc(m_pTexture->realWidth * m_pTexture->realHeight * colorFormatBytes);
+	GLubyte* pixelData = m_pixelData.data();
 
 	if (!_sync) {
 		void* ptr;
@@ -95,10 +111,9 @@ GLubyte* ColorBufferToRDRAMAndroid::_getPixels(GLint _x0, GLint _y0, GLsizei _wi
 		glReadPixels(_x0, _y0, _width, _height, colorFormat, colorType, pixelData);
 	}
 
-	return pixelData;
+	return true;
 }
 
-void ColorBufferToRDRAMAndroid::_cleanUpPixels(GLubyte* pixelData)
+void ColorBufferToRDRAM_GLES::_cleanUp()
 {
-	free(pixelData);
 }

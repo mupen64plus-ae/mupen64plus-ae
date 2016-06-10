@@ -9,6 +9,7 @@
 #include <Config.h>
 #include <N64.h>
 #include <VI.h>
+#include <Log.h>
 
 ColorBufferToRDRAM::ColorBufferToRDRAM()
 	: m_FBO(0)
@@ -16,7 +17,12 @@ ColorBufferToRDRAM::ColorBufferToRDRAM()
 	, m_pCurFrameBuffer(nullptr)
 	, m_frameCount(-1)
 	, m_startAddress(-1)
+	, m_lastVIWidth(-1)
+	, m_lastVIHeight(-1)
 {
+	m_allowedRealWidths[0] = 320;
+	m_allowedRealWidths[1] = 480;
+	m_allowedRealWidths[2] = 640;
 }
 
 ColorBufferToRDRAM::~ColorBufferToRDRAM()
@@ -30,6 +36,22 @@ void ColorBufferToRDRAM::init()
 	// generate a framebuffer
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glGenFramebuffers(1, &m_FBO);
+
+	_init();
+}
+
+void ColorBufferToRDRAM::destroy() {
+	_destroyFBTexure();
+	_destroy();
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	if (m_FBO != 0) {
+		glDeleteFramebuffers(1, &m_FBO);
+		m_FBO = 0;
+	}
+}
+
+void ColorBufferToRDRAM::_initFBTexture(void)
+{
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
 
 	m_pTexture = textureCache().addFrameBufferTexture();
@@ -41,8 +63,10 @@ void ColorBufferToRDRAM::init()
 	m_pTexture->maskT = 0;
 	m_pTexture->mirrorS = 0;
 	m_pTexture->mirrorT = 0;
-	m_pTexture->realWidth = 640;
-	m_pTexture->realHeight = 580;
+	//The actual VI width is not used for texture width because most texture widths
+	//cause slowdowns in the glReadPixels call, at least on Android
+	m_pTexture->realWidth = _getRealWidth(m_lastVIWidth);
+	m_pTexture->realHeight = m_lastVIHeight;
 	m_pTexture->textureBytes = m_pTexture->realWidth * m_pTexture->realHeight * 4;
 	textureCache().addFrameBufferTextureSize(m_pTexture->textureBytes);
 	glBindTexture(GL_TEXTURE_2D, m_pTexture->glName);
@@ -56,20 +80,16 @@ void ColorBufferToRDRAM::init()
 	assert(checkFBO());
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-//	_init(m_pTexture->realWidth, m_pTexture->realHeight, m_pTexture->textureBytes);
-	_init();
+	_initBuffers();
 }
 
-void ColorBufferToRDRAM::destroy() {
-	_destroy();
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	if (m_FBO != 0) {
-		glDeleteFramebuffers(1, &m_FBO);
-		m_FBO = 0;
-	}
-	if (m_pTexture != NULL) {
+void ColorBufferToRDRAM::_destroyFBTexure(void)
+{
+	_destroyBuffers();
+
+	if (m_pTexture != nullptr) {
 		textureCache().removeFrameBufferTexture(m_pTexture);
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 	}
 }
 
@@ -96,6 +116,17 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 	const u32 height = cutHeight(_startAddress, pBuffer->m_height, stride);
 	if (height == 0)
 		return false;
+
+	if(m_pTexture == nullptr ||
+		(m_lastVIWidth != VI.width || m_lastVIHeight != VI.height))
+	{
+		_destroyFBTexure();
+
+		m_lastVIWidth = VI.width;
+		m_lastVIHeight = VI.height;
+		_initFBTexture();
+		m_pixelData.resize(m_pTexture->realWidth * m_pTexture->realHeight * fboFormats.colorFormatBytes);
+	}
 
 	m_pCurFrameBuffer = pBuffer;
 
@@ -177,20 +208,21 @@ void ColorBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress, bool _sync)
 	const GLint y1 = max_height - (_startAddress - m_pCurFrameBuffer->m_startAddress) / stride;
 	const GLsizei height = std::min(max_height, 1u + y1 - y0);
 
-	GLubyte* pixelData = _getPixels(x0, y0, width, height, m_pCurFrameBuffer->m_size, _sync);
+	if (!_readPixels(x0, y0, width, height, m_pCurFrameBuffer->m_size, _sync))
+		return;
 
 	if (m_pCurFrameBuffer->m_size == G_IM_SIZ_32b) {
-		u32 *ptr_src = (u32*)pixelData;
+		u32 *ptr_src = (u32*)m_pixelData.data();
 		u32 *ptr_dst = (u32*)(RDRAM + _startAddress);
 		writeToRdram<u32, u32>(ptr_src, ptr_dst, &ColorBufferToRDRAM::_RGBAtoRGBA32, 0, 0, width, height, numPixels, _startAddress, m_pCurFrameBuffer->m_startAddress, m_pCurFrameBuffer->m_size);
 	}
 	else if (m_pCurFrameBuffer->m_size == G_IM_SIZ_16b) {
-		u32 *ptr_src = (u32*)pixelData;
+		u32 *ptr_src = (u32*)m_pixelData.data();
 		u16 *ptr_dst = (u16*)(RDRAM + _startAddress);
 		writeToRdram<u32, u16>(ptr_src, ptr_dst, &ColorBufferToRDRAM::_RGBAtoRGBA16, 0, 1, width, height, numPixels, _startAddress, m_pCurFrameBuffer->m_startAddress, m_pCurFrameBuffer->m_size);
 	}
 	else if (m_pCurFrameBuffer->m_size == G_IM_SIZ_8b) {
-		u8 *ptr_src = (u8*)pixelData;
+		u8 *ptr_src = (u8*)m_pixelData.data();
 		u8 *ptr_dst = RDRAM + _startAddress;
 		writeToRdram<u8, u8>(ptr_src, ptr_dst, &ColorBufferToRDRAM::_RGBAtoR8, 0, 3, width, height, numPixels, _startAddress, m_pCurFrameBuffer->m_startAddress, m_pCurFrameBuffer->m_size);
 	}
@@ -199,9 +231,20 @@ void ColorBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress, bool _sync)
 	m_pCurFrameBuffer->copyRdram();
 	m_pCurFrameBuffer->m_cleared = false;
 
-	_cleanUpPixels(pixelData);
+	_cleanUp();
 
 	gDP.changed |= CHANGED_SCISSOR;
+}
+
+u32 ColorBufferToRDRAM::_getRealWidth(u32 _viWidth)
+{
+	u32 index = 0;
+	while(index < m_allowedRealWidths.size() && _viWidth > m_allowedRealWidths[index])
+	{
+		++index;
+	}
+
+	return m_allowedRealWidths[index];
 }
 
 void ColorBufferToRDRAM::copyToRDRAM(u32 _address, bool _sync)

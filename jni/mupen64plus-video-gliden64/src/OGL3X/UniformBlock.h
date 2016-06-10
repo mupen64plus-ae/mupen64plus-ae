@@ -70,7 +70,6 @@ private:
 	UniformBlockData<luTotal, 3> m_lightBlock;
 
 	std::vector<GLbyte> m_textureBlockData;
-	std::vector<GLbyte> m_prevTextureBlockData;
 	std::vector<GLbyte> m_colorsBlockData;
 	std::vector<GLbyte> m_lightBlockData;
 };

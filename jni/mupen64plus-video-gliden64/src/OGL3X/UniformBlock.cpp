@@ -226,20 +226,15 @@ void UniformBlock::updateTextureParameters()
 	memcpy(pData + m_textureBlock.m_offsets[tuCacheShiftScale], texCacheShiftScale, m_textureBlock.m_offsets[tuCacheFrameBuffer] - m_textureBlock.m_offsets[tuCacheShiftScale]);
 	memcpy(pData + m_textureBlock.m_offsets[tuCacheFrameBuffer], texCacheFrameBuffer, m_textureBlockData.size() - m_textureBlock.m_offsets[tuCacheFrameBuffer]);
 
-    if(m_prevTextureBlockData.size() == 0 ||
-        memcmp(m_prevTextureBlockData.data(), m_textureBlockData.data(), m_textureBlockData.size() ) != 0)
-    {
-        m_prevTextureBlockData = m_textureBlockData;
-    	if (m_currentBuffer != m_textureBlock.m_buffer) {
-    		m_currentBuffer = m_textureBlock.m_buffer;
-    		glBindBuffer(GL_UNIFORM_BUFFER, m_textureBlock.m_buffer);
-    	}
+	if (m_currentBuffer != m_textureBlock.m_buffer) {
+		m_currentBuffer = m_textureBlock.m_buffer;
+		glBindBuffer(GL_UNIFORM_BUFFER, m_textureBlock.m_buffer);
+	}
 
-    	if (m_renderer != OGLRender::glrAdreno)
-    		glBufferSubData(GL_UNIFORM_BUFFER, m_textureBlock.m_offsets[tuTexScale], m_textureBlockData.size(), pData);
-    	else
-    		glBufferData(GL_UNIFORM_BUFFER, m_textureBlockData.size(), m_textureBlockData.data(), GL_STATIC_DRAW);
-    }
+	if (m_renderer != OGLRender::glrAdreno)
+		glBufferSubData(GL_UNIFORM_BUFFER, m_textureBlock.m_offsets[tuTexScale], m_textureBlockData.size(), pData);
+	else
+		glBufferData(GL_UNIFORM_BUFFER, m_textureBlockData.size(), m_textureBlockData.data(), GL_STATIC_DRAW);
 }
 
 void UniformBlock::updateLightParameters()

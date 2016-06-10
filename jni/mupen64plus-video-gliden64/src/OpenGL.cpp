@@ -399,8 +399,10 @@ void OGLRender::TexrectDrawer::init()
 	assert(m_textureBoundsLoc >= 0);
 	m_enableAlphaTestLoc = glGetUniformLocation(m_programTex, "uEnableAlphaTest");
 	assert(m_enableAlphaTestLoc >= 0);
+#ifndef GLES2
 	m_depthScaleLoc = glGetUniformLocation(m_programTex, "uDepthScale");
 	assert(m_depthScaleLoc >= 0);
+#endif
 	glUseProgram(0);
 
 	m_vecRectCoords.reserve(256);
@@ -1820,7 +1822,7 @@ void OGLRender::_initExtensions()
 #endif
 	LOG(LOG_VERBOSE, "ImageTexture support: %s\n", m_bImageTexture ? "yes" : "no");
 	if (!m_bImageTexture)
-		LOG(LOG_WARNING, "N64 depth compare and depth based fog will not work without Image Textures support provided in OpenGL >= 4.3 or GLES >= 3.1");
+		LOG(LOG_WARNING, "N64 depth compare and depth based fog will not work without Image Textures support provided in OpenGL >= 4.3 or GLES >= 3.1\n");
 
 	if (config.texture.maxAnisotropy != 0 && OGLVideo::isExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &config.texture.maxAnisotropyF);
