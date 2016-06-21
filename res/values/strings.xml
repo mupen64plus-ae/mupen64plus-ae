@@ -365,11 +365,14 @@
     <string name="gliden64_swap_frame_buffers_entry_on_vi_origin_change">On VI origin change</string>
     <string name="gliden64_swap_frame_buffers_entry_on_buffer_update">On buffer update</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_title">Copy color buffer to RDRAM</string>
-    <string name="gliden64_color_buffer_copy_to_RDRAM_off">Do not copy</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_off">Do not copy</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode">Copy in sync mode</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode">Copy in async mode</string>
     <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Enable copy auxiliary buffers to RDRAM</string>
-    <string name="gliden64_enable_copy_depth_to_RDRAM_title">Enable copy depth buffer to RDRAM</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_title">Copy depth buffer to RDRAM</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">Do not copy</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">Hardware renderer</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Software renderer</string>
     <string name="gliden64_enable_color_buffer_from_RDRAM_title">Enable color buffer copy from RDRAM</string>
     <string name="gliden64_enable_n64_depth_compare_title">Enable N64 depth compare (Experimental)</string>
     <string name="gliden64_use_native_resolution_factor_title">Use native resolution factor</string>

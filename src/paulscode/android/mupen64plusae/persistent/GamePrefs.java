@@ -203,8 +203,11 @@ public class GamePrefs
     /** Copy auxiliary buffers to RDRAM */
     public final boolean gliden64EnableCopyAuxiliaryToRDRAM;
 
-    /** Enable depth buffer copy to RDRAM. */
-    public final boolean gliden64EnableCopyDepthToRDRAM;
+    /** Enable depth buffer copy to RDRAM
+     * 0=do not copy
+     * 1=copy from video memory
+     * 2=use software render */
+    public final int gliden64EnableCopyDepthToRDRAM;
 
     /** Enable color buffer copy from RDRAM. */
     public final boolean gliden64EnableCopyColorFromRDRAM;
@@ -535,7 +538,7 @@ public class GamePrefs
         gliden64BufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);
         gliden64EnableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 2);
         gliden64EnableCopyAuxiliaryToRDRAM = emulationProfile.get( "EnableCopyAuxiliaryToRDRAM", "False" ).equals( "True" );
-        gliden64EnableCopyDepthToRDRAM = emulationProfile.get( "EnableCopyDepthToRDRAM", "False" ).equals( "True" );
+        gliden64EnableCopyDepthToRDRAM = getSafeInt( emulationProfile, "EnableCopyDepthToRDRAM", 0 );
         gliden64EnableCopyColorFromRDRAM = emulationProfile.get( "EnableCopyColorFromRDRAM", "False" ).equals( "True" );
         gliden64EnableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
         gliden64UseNativeResolutionFactor = getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);

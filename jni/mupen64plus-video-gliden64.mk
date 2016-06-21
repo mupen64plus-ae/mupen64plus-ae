@@ -38,8 +38,9 @@ MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/F3DPD.cpp                             \
     $(SRCDIR)/F3DSWSE.cpp                           \
     $(SRCDIR)/F3DWRUS.cpp                           \
+    $(SRCDIR)/FBOTextureFormats.cpp                 \
     $(SRCDIR)/FrameBuffer.cpp                       \
-    $(SRCDIR)/FrameBufferInfo.cpp                       \
+    $(SRCDIR)/FrameBufferInfo.cpp                   \
     $(SRCDIR)/GBI.cpp                               \
     $(SRCDIR)/gDP.cpp                               \
     $(SRCDIR)/GLideN64.cpp                          \
@@ -53,10 +54,12 @@ MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/N64.cpp                               \
     $(SRCDIR)/OpenGL.cpp                            \
     $(SRCDIR)/PostProcessor.cpp                     \
+    $(SRCDIR)/SoftwareRender.cpp                     \
     $(SRCDIR)/RDP.cpp                               \
     $(SRCDIR)/RSP.cpp                               \
     $(SRCDIR)/S2DEX2.cpp                            \
     $(SRCDIR)/S2DEX.cpp                             \
+    $(SRCDIR)/TextureFilterHandler.cpp              \
     $(SRCDIR)/Textures.cpp                          \
     $(SRCDIR)/Turbo3D.cpp                           \
     $(SRCDIR)/VI.cpp                                \
@@ -67,6 +70,8 @@ MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/mupenplus/Config_mupenplus.cpp        \
     $(SRCDIR)/mupenplus/MupenPlusAPIImpl.cpp        \
     $(SRCDIR)/mupenplus/OpenGL_mupenplus.cpp        \
+    $(SRCDIR)/DepthBufferRender/ClipPolygon.cpp     \
+    $(SRCDIR)/DepthBufferRender/DepthBufferRender.cpp     \
     $(SRCDIR)/BufferCopy/ColorBufferToRDRAM.cpp     \
     $(SRCDIR)/BufferCopy/DepthBufferToRDRAM.cpp     \
     $(SRCDIR)/BufferCopy/RDRAMtoColorBuffer.cpp     \

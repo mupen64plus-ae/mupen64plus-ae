@@ -171,7 +171,7 @@ public class NativeConfigFiles
         // gln64 config file
         final ConfigFile glideN64_conf = new ConfigFile( appData.glideN64_conf );
 
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "10" );
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "11" );
 
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
@@ -192,7 +192,7 @@ public class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "BufferSwapMode", String.valueOf( game.gliden64BufferSwapMode ));
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorToRDRAM", String.valueOf( game.gliden64EnableCopyColorToRDRAM ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyAuxiliaryToRDRAM", boolToTF( game.gliden64EnableCopyAuxiliaryToRDRAM ));
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyDepthToRDRAM", boolToTF( game.gliden64EnableCopyDepthToRDRAM ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyDepthToRDRAM", String.valueOf( game.gliden64EnableCopyDepthToRDRAM ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorFromRDRAM", boolToTF( game.gliden64EnableCopyColorFromRDRAM ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableN64DepthCompare", boolToTF( game.gliden64EnableN64DepthCompare ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "UseNativeResolutionFactor", String.valueOf( game.gliden64UseNativeResolutionFactor ) );

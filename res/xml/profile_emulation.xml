@@ -223,9 +223,12 @@
             android:defaultValue="False"
             android:key="EnableCopyAuxiliaryToRDRAM"
             android:title="@string/gliden64_enable_copy_auxiliary_to_RDRAM_title" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="False"
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_depth_buffer_copy_to_RDRAM_default"
+            android:entries="@array/gliden64_depth_buffer_copy_to_RDRAM_entries"
+            android:entryValues="@array/gliden64_depth_buffer_copy_to_RDRAM_values"
             android:key="EnableCopyDepthToRDRAM"
+            android:summary="@string/selectedValue"
             android:title="@string/gliden64_enable_copy_depth_to_RDRAM_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="False"
