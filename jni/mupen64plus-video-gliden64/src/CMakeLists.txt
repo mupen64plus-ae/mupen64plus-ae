@@ -21,6 +21,7 @@ set(GLideN64_SOURCES
   F3DSWSE.cpp
   F3DEX2.cpp
   F3DEX2CBFD.cpp
+  FBOTextureFormats.cpp
   FrameBuffer.cpp
   FrameBufferInfo.cpp
   GBI.cpp
@@ -41,13 +42,17 @@ set(GLideN64_SOURCES
   Turbo3D.cpp
   ZSort.cpp
   ShaderUtils.cpp
+  SoftwareRender.cpp
   Textures.cpp
   TextDrawer.cpp
+  TextureFilterHandler.cpp
   PostProcessor.cpp
   VI.cpp
   BufferCopy/ColorBufferToRDRAM.cpp
   BufferCopy/DepthBufferToRDRAM.cpp
   BufferCopy/RDRAMtoColorBuffer.cpp
+  DepthBufferRender/ClipPolygon.cpp
+  DepthBufferRender/DepthBufferRender.cpp
   common/CommonAPIImpl_common.cpp
 )
 

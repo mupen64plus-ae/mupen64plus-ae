@@ -10,7 +10,10 @@
 #include "winlnxdefs.h"
 #endif
 
-#ifdef GLES2
+#ifdef __LIBRETRO__
+#include <glsm/glsmsym.h>
+#include <GLideN64_libretro.h>
+#elif GLES2
 #include <GLES2/gl2.h>
 #define GL_DRAW_FRAMEBUFFER GL_FRAMEBUFFER
 #define GL_READ_FRAMEBUFFER GL_FRAMEBUFFER
@@ -73,7 +76,9 @@ typedef char GLchar;
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #endif
 
+#ifndef __LIBRETRO__
 #include "glState.h"
+#endif
 #include "gSP.h"
 
 #define INDEXMAP_SIZE 80U
@@ -314,61 +319,11 @@ private:
 	virtual bool _resizeWindow() = 0;
 };
 
-struct FBOTextureFormats
-{
-	GLint colorInternalFormat;
-	GLenum colorFormat;
-	GLenum colorType;
-	u32 colorFormatBytes;
-
-	GLint monochromeInternalFormat;
-	GLenum monochromeFormat;
-	GLenum monochromeType;
-	u32 monochromeFormatBytes;
-
-	GLint depthInternalFormat;
-	GLenum depthFormat;
-	GLenum depthType;
-	u32 depthFormatBytes;
-
-	GLint depthImageInternalFormat;
-	GLenum depthImageFormat;
-	GLenum depthImageType;
-	u32 depthImageFormatBytes;
-
-	GLint lutInternalFormat;
-	GLenum lutFormat;
-	GLenum lutType;
-	u32 lutFormatBytes;
-
-	void init();
-};
-
-extern FBOTextureFormats fboFormats;
-
 inline
 OGLVideo & video()
 {
 	return OGLVideo::get();
 }
-
-class TextureFilterHandler
-{
-public:
-	TextureFilterHandler() : m_inited(0), m_options(0) {}
-	// It's not safe to call shutdown() in destructor, because texture filter has its own static objects, which can be destroyed first.
-	~TextureFilterHandler() { m_inited = m_options = 0; }
-	void init();
-	void shutdown();
-	bool isInited() const { return m_inited != 0; }
-	bool optionsChanged() const { return _getConfigOptions() != m_options; }
-private:
-	u32 _getConfigOptions() const;
-	u32 m_inited;
-	u32 m_options;
-};
-
-extern TextureFilterHandler TFH;
 
 void initGLFunctions();
 bool checkFBO();

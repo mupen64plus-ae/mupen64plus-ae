@@ -4,6 +4,7 @@
 #include "ColorBufferToRDRAM.h"
 #include "WriteToRDRAM.h"
 
+#include <FBOTextureFormats.h>
 #include <FrameBuffer.h>
 #include <Textures.h>
 #include <Config.h>
@@ -17,8 +18,8 @@ ColorBufferToRDRAM::ColorBufferToRDRAM()
 	, m_pCurFrameBuffer(nullptr)
 	, m_frameCount(-1)
 	, m_startAddress(-1)
-	, m_lastVIWidth(-1)
-	, m_lastVIHeight(-1)
+	, m_lastBufferWidth(-1)
+	, m_lastBufferHeight(-1)
 {
 	m_allowedRealWidths[0] = 320;
 	m_allowedRealWidths[1] = 480;
@@ -65,12 +66,12 @@ void ColorBufferToRDRAM::_initFBTexture(void)
 	m_pTexture->mirrorT = 0;
 	//The actual VI width is not used for texture width because most texture widths
 	//cause slowdowns in the glReadPixels call, at least on Android
-	m_pTexture->realWidth = _getRealWidth(m_lastVIWidth);
-	m_pTexture->realHeight = m_lastVIHeight;
+	m_pTexture->realWidth = _getRealWidth(m_lastBufferWidth);
+	m_pTexture->realHeight = m_lastBufferHeight;
 	m_pTexture->textureBytes = m_pTexture->realWidth * m_pTexture->realHeight * 4;
 	textureCache().addFrameBufferTextureSize(m_pTexture->textureBytes);
 	glBindTexture(GL_TEXTURE_2D, m_pTexture->glName);
-	glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.colorInternalFormat, m_pTexture->realWidth, m_pTexture->realHeight, 0, fboFormats.colorFormat, fboFormats.colorType, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.colorInternalFormat, m_pTexture->realWidth, m_pTexture->realHeight, 0, fboFormats.colorFormat, fboFormats.colorType, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -95,14 +96,14 @@ void ColorBufferToRDRAM::_destroyFBTexure(void)
 
 bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 {
-	if (VI.width == 0 || frameBufferList().getCurrent() == NULL)
+	if (VI.width == 0 || frameBufferList().getCurrent() == nullptr)
 		return false;
 
 	OGLVideo & ogl = video();
 	const u32 curFrame = ogl.getBuffersSwapCount();
 	FrameBuffer * pBuffer = frameBufferList().findBuffer(_startAddress);
 
-	if (pBuffer == NULL || pBuffer->m_isOBScreen)
+	if (pBuffer == nullptr || pBuffer->m_isOBScreen)
 		return false;
 
 	if (m_frameCount == curFrame && pBuffer == m_pCurFrameBuffer && m_startAddress != _startAddress)
@@ -118,12 +119,12 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 		return false;
 
 	if(m_pTexture == nullptr ||
-		(m_lastVIWidth != VI.width || m_lastVIHeight != VI.height))
+		(m_lastBufferWidth != pBuffer->m_width || m_lastBufferHeight != pBuffer->m_height))
 	{
 		_destroyFBTexure();
 
-		m_lastVIWidth = VI.width;
-		m_lastVIHeight = VI.height;
+		m_lastBufferWidth = pBuffer->m_width;
+		m_lastBufferHeight = pBuffer->m_height;
 		_initFBTexture();
 		m_pixelData.resize(m_pTexture->realWidth * m_pTexture->realHeight * fboFormats.colorFormatBytes);
 	}

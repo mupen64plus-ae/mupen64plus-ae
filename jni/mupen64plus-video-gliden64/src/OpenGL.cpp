@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <assert.h>
-#include <stdio.h>
 #include <math.h>
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
@@ -18,15 +17,15 @@
 #include "FrameBuffer.h"
 #include "DepthBuffer.h"
 #include "FrameBufferInfo.h"
-#include "GLideNHQ/Ext_TxFilter.h"
 #include "VI.h"
 #include "Config.h"
-#include "wst.h"
 #include "Log.h"
 #include "TextDrawer.h"
-#include "PluginAPI.h"
 #include "PostProcessor.h"
 #include "ShaderUtils.h"
+#include "SoftwareRender.h"
+#include "FBOTextureFormats.h"
+#include "TextureFilterHandler.h"
 
 using namespace std;
 
@@ -81,7 +80,7 @@ const char* GLErrorString(GLenum errorCode)
 #endif
 	{GL_OUT_OF_MEMORY, "out of memory"},
 
-	{0, NULL }
+	{0, nullptr }
 };
 
 	int i;
@@ -94,7 +93,7 @@ const char* GLErrorString(GLenum errorCode)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool isGLError()
@@ -104,7 +103,7 @@ bool isGLError()
 
 	if ((errCode = glGetError()) != GL_NO_ERROR) {
 		errString = GLErrorString(errCode);
-		if (errString != NULL)
+		if (errString != nullptr)
 			fprintf (stderr, "OpenGL Error: %s\n", errString);
 		return true;
 	}
@@ -122,7 +121,7 @@ bool OGLVideo::isExtensionSupported(const char *extension)
 	const GLubyte *start = extensions;
 	for (;;) {
 		where = (GLubyte *)strstr((const char *)start, extension);
-		if (where == NULL)
+		if (where == nullptr)
 			break;
 
 		GLubyte *terminator = where + strlen(extension);
@@ -279,7 +278,7 @@ void OGLVideo::readScreen(void **_pDest, long *_pWidth, long *_pHeight )
 	*_pHeight = m_height;
 
 	*_pDest = malloc( m_height * m_width * 3 );
-	if (*_pDest == NULL)
+	if (*_pDest == nullptr)
 		return;
 
 #ifndef GLESX
@@ -293,13 +292,13 @@ void OGLVideo::readScreen(void **_pDest, long *_pWidth, long *_pHeight )
 
 void OGLVideo::readScreen2(void * _dest, int * _width, int * _height, int _front)
 {
-	if (_width == NULL || _height == NULL)
+	if (_width == nullptr || _height == nullptr)
 		return;
 
 	*_width = m_screenWidth;
 	*_height = m_screenHeight;
 
-	if (_dest == NULL)
+	if (_dest == nullptr)
 		return;
 
 	u8 *pBufferData = (u8*)malloc((*_width)*(*_height) * 4);
@@ -347,8 +346,8 @@ OGLRender::TexrectDrawer::TexrectDrawer()
 	, m_FBO(0)
 	, m_programTex(0)
 	, m_programClean(0)
-	, m_pTexture(NULL)
-	, m_pBuffer(NULL)
+	, m_pTexture(nullptr)
+	, m_pBuffer(nullptr)
 {}
 
 void OGLRender::TexrectDrawer::init()
@@ -372,7 +371,7 @@ void OGLRender::TexrectDrawer::init()
 	m_pTexture->textureBytes = m_pTexture->realWidth * m_pTexture->realHeight * 4;
 	textureCache().addFrameBufferTextureSize(m_pTexture->textureBytes);
 	glBindTexture(GL_TEXTURE_2D, m_pTexture->glName);
-	glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.colorInternalFormat, m_pTexture->realWidth, m_pTexture->realHeight, 0, fboFormats.colorFormat, fboFormats.colorType, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, fboFormats.colorInternalFormat, m_pTexture->realWidth, m_pTexture->realHeight, 0, fboFormats.colorFormat, fboFormats.colorType, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -415,9 +414,9 @@ void OGLRender::TexrectDrawer::destroy()
 		glDeleteFramebuffers(1, &m_FBO);
 		m_FBO = 0;
 	}
-	if (m_pTexture != NULL) {
+	if (m_pTexture != nullptr) {
 		textureCache().removeFrameBufferTexture(m_pTexture);
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 	}
 	if (m_programTex != 0)
 		glDeleteProgram(m_programTex);
@@ -437,7 +436,7 @@ void OGLRender::TexrectDrawer::add()
 	if (m_numRects != 0) {
 		bool bContinue = false;
 		if (m_otherMode == gDP.otherMode._u64 && m_mux == gDP.combine.mux) {
-			const float scaleY = (m_pBuffer != NULL ? m_pBuffer->m_height : VI.height) / 2.0f;
+			const float scaleY = (m_pBuffer != nullptr ? m_pBuffer->m_height : VI.height) / 2.0f;
 			if (m_ulx == pRect[0].x) {
 				//			bContinue = m_lry == pRect[0].y;
 				bContinue = fabs((m_lry - pRect[0].y) * scaleY) < 1.1f; // Fix for Mario Kart
@@ -478,7 +477,7 @@ void OGLRender::TexrectDrawer::add()
 		glDepthMask(FALSE);
 		glDisable(GL_BLEND);
 
-		if (m_pBuffer == NULL)
+		if (m_pBuffer == nullptr)
 			glViewport(0, 0, VI.width, VI.height);
 		else
 			glViewport(0, 0, m_pBuffer->m_width, m_pBuffer->m_height);
@@ -548,8 +547,8 @@ bool OGLRender::TexrectDrawer::draw()
 
 	GLVertex * rect = render.m_rect;
 
-	const float scaleX = (m_pBuffer != NULL ? 1.0f / m_pBuffer->m_width : VI.rwidth) * 2.0f;
-	const float scaleY = (m_pBuffer != NULL ? 1.0f / m_pBuffer->m_height : VI.rheight) * 2.0f;
+	const float scaleX = (m_pBuffer != nullptr ? 1.0f / m_pBuffer->m_width : VI.rwidth) * 2.0f;
+	const float scaleY = (m_pBuffer != nullptr ? 1.0f / m_pBuffer->m_height : VI.rheight) * 2.0f;
 
 	const float s0 = (m_ulx + 1.0f) / scaleX / (float)m_pTexture->realWidth;
 	const float t1 = (m_uly + 1.0f) / scaleY / (float)m_pTexture->realHeight;
@@ -557,7 +556,7 @@ bool OGLRender::TexrectDrawer::draw()
 	const float t0 = (m_lry + 1.0f) / scaleY / (float)m_pTexture->realHeight;
 	const float W = 1.0f;
 
-	if (m_pBuffer == NULL)
+	if (m_pBuffer == nullptr)
 		glViewport(0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
 	else
 		glViewport(0, 0, m_pBuffer->m_width*m_pBuffer->m_scaleX, m_pBuffer->m_height*m_pBuffer->m_scaleY);
@@ -603,7 +602,7 @@ bool OGLRender::TexrectDrawer::draw()
 	rect[3].t0 = t1;
 
 	render.updateScissor(m_pBuffer);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_pBuffer != NULL ? m_pBuffer->m_FBO : 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_pBuffer != nullptr ? m_pBuffer->m_FBO : 0);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
@@ -613,7 +612,7 @@ bool OGLRender::TexrectDrawer::draw()
 	rect[2].y = m_lry;
 	rect[3].y = m_lry;
 
-	if (m_pBuffer == NULL)
+	if (m_pBuffer == nullptr)
 		glViewport(0, 0, VI.width, VI.height);
 	else
 		glViewport(0, 0, m_pBuffer->m_width, m_pBuffer->m_height);
@@ -624,7 +623,7 @@ bool OGLRender::TexrectDrawer::draw()
 	glEnable(GL_SCISSOR_TEST);
 
 	m_pBuffer = frameBufferList().getCurrent();
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_pBuffer != NULL ? m_pBuffer->m_FBO : 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_pBuffer != nullptr ? m_pBuffer->m_FBO : 0);
 
 	m_numRects = 0;
 	m_vecRectCoords.clear();
@@ -833,7 +832,7 @@ void OGLRender::_updateViewport() const
 {
 	OGLVideo & ogl = video();
 	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-	if (pCurrentBuffer == NULL) {
+	if (pCurrentBuffer == nullptr) {
 		const f32 scaleX = ogl.getScaleX();
 		const f32 scaleY = ogl.getScaleY();
 		float Xf = gSP.viewport.vscale[0] < 0 ? (gSP.viewport.x + gSP.viewport.vscale[0] * 2.0f) : gSP.viewport.x;
@@ -861,7 +860,7 @@ void OGLRender::_updateScreenCoordsViewport() const
 {
 	OGLVideo & ogl = video();
 	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-	if (pCurrentBuffer == NULL)
+	if (pCurrentBuffer == nullptr)
 		glViewport(0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
 	else
 		glViewport(0, 0, pCurrentBuffer->m_width*pCurrentBuffer->m_scaleX, pCurrentBuffer->m_height*pCurrentBuffer->m_scaleY);
@@ -881,7 +880,7 @@ void OGLRender::updateScissor(FrameBuffer * _pBuffer) const
 	OGLVideo & ogl = video();
 	f32 scaleX, scaleY;
 	u32 heightOffset, screenHeight;
-	if (_pBuffer == NULL) {
+	if (_pBuffer == nullptr) {
 		scaleX = ogl.getScaleX();
 		scaleY = ogl.getScaleY();
 		heightOffset = ogl.getHeightOffset();
@@ -965,10 +964,10 @@ void OGLRender::_updateDepthCompare() const
 
 void OGLRender::_updateTextures(RENDER_STATE _renderState) const
 {
-	//For some reason updating the texture cache on the first frame of LOZ:OOT causes a NULL Pointer exception...
+	//For some reason updating the texture cache on the first frame of LOZ:OOT causes a nullptr Pointer exception...
 	CombinerInfo & cmbInfo = CombinerInfo::get();
 	ShaderCombiner * pCurrentCombiner = cmbInfo.getCurrent();
-	if (pCurrentCombiner != NULL) {
+	if (pCurrentCombiner != nullptr) {
 		for (u32 t = 0; t < 2; ++t) {
 			if (pCurrentCombiner->usesTile(t))
 				textureCache().update(t);
@@ -1138,7 +1137,7 @@ void OGLRender::_prepareDrawTriangle(bool _dma)
 
 bool OGLRender::_canDraw() const
 {
-	return config.frameBufferEmulation.enable == 0 || frameBufferList().getCurrent() != NULL;
+	return config.frameBufferEmulation.enable == 0 || frameBufferList().getCurrent() != nullptr;
 }
 
 void OGLRender::drawLLETriangle(u32 _numVtx)
@@ -1181,6 +1180,14 @@ void OGLRender::drawTriangles()
 	_prepareDrawTriangle(false);
 	glDrawElements(GL_TRIANGLES, triangles.num, GL_UNSIGNED_BYTE, triangles.elements);
 //	glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
+
+	if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdSoftwareRender && gDP.otherMode.depthUpdate != 0) {
+		renderTriangles(triangles.vertices, triangles.elements, triangles.num);
+		FrameBuffer * pCurrentDepthBuffer = frameBufferList().findBuffer(gDP.depthImageAddress);
+		if (pCurrentDepthBuffer != nullptr)
+			pCurrentDepthBuffer->m_cleared = false;
+	}
+
 	triangles.num = 0;
 }
 
@@ -1247,15 +1254,15 @@ void OGLRender::drawRect(int _ulx, int _uly, int _lrx, int _lry, float *_pColor)
 
 	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
 	OGLVideo & ogl = video();
-	if (pCurrentBuffer == NULL)
+	if (pCurrentBuffer == nullptr)
 		glViewport( 0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
 	else {
 		glViewport(0, 0, pCurrentBuffer->m_width*pCurrentBuffer->m_scaleX, pCurrentBuffer->m_height*pCurrentBuffer->m_scaleY);
 	}
 	glDisable(GL_CULL_FACE);
 
-	const float scaleX = pCurrentBuffer != NULL ? 1.0f / pCurrentBuffer->m_width : VI.rwidth;
-	const float scaleY = pCurrentBuffer != NULL ? 1.0f / pCurrentBuffer->m_height : VI.rheight;
+	const float scaleX = pCurrentBuffer != nullptr ? 1.0f / pCurrentBuffer->m_width : VI.rwidth;
+	const float scaleY = pCurrentBuffer != nullptr ? 1.0f / pCurrentBuffer->m_height : VI.rheight;
 	const float Z = (gDP.otherMode.depthSource == G_ZS_PRIM) ? gDP.primDepth.z : gSP.viewport.nearz;
 	const float W = 1.0f;
 	m_rect[0].x = (float)_ulx * (2.0f * scaleX) - 1.0;
@@ -1294,7 +1301,7 @@ static
 bool texturedRectShadowMap(const OGLRender::TexturedRectParams &)
 {
 	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-	if (pCurrentBuffer != NULL) {
+	if (pCurrentBuffer != nullptr) {
 		if (gDP.textureImage.size == 2 && gDP.textureImage.address >= gDP.depthImageAddress &&  gDP.textureImage.address < (gDP.depthImageAddress + gDP.colorImage.width*gDP.colorImage.width * 6 / 4)) {
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 			pCurrentBuffer->m_pDepthBuffer->activateDepthBufferTexture(pCurrentBuffer);
@@ -1317,18 +1324,20 @@ bool texturedRectDepthBufferCopy(const OGLRender::TexturedRectParams & _params)
 	// Load of arbitrary data to that area causes weird camera rotation in CBFD.
 	const gDPTile * pTile = gSP.textureTile[0];
 	if (pTile->loadType == LOADTYPE_BLOCK && gDP.textureImage.size == 2 && gDP.textureImage.address >= gDP.depthImageAddress &&  gDP.textureImage.address < (gDP.depthImageAddress + gDP.colorImage.width*gDP.colorImage.width * 6 / 4)) {
-		if (config.frameBufferEmulation.copyDepthToRDRAM == 0)
+		if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdDisable)
 			return true;
 		FrameBuffer * pBuffer = frameBufferList().getCurrent();
-		if (pBuffer == NULL)
+		if (pBuffer == nullptr)
 			return true;
 		pBuffer->m_cleared = true;
-		if (rectDepthBufferCopyFrame != video().getBuffersSwapCount()) {
-			rectDepthBufferCopyFrame = video().getBuffersSwapCount();
-			if (!FrameBuffer_CopyDepthBuffer(gDP.colorImage.address))
-				return true;
+		if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdCopyFromVRam) {
+			if (rectDepthBufferCopyFrame != video().getBuffersSwapCount()) {
+				rectDepthBufferCopyFrame = video().getBuffersSwapCount();
+				if (!FrameBuffer_CopyDepthBuffer(gDP.colorImage.address))
+					return true;
+			}
+			RDP_RepeatLastLoadBlock();
 		}
-		RDP_RepeatLastLoadBlock();
 
 		const u32 width = (u32)(_params.lrx - _params.ulx);
 		const u32 ulx = (u32)_params.ulx;
@@ -1346,7 +1355,7 @@ static
 bool texturedRectCopyToItself(const OGLRender::TexturedRectParams & _params)
 {
 	FrameBuffer * pCurrent = frameBufferList().getCurrent();
-	if (pCurrent != NULL && pCurrent->m_size == G_IM_SIZ_8b && gSP.textureTile[0]->frameBuffer == pCurrent)
+	if (pCurrent != nullptr && pCurrent->m_size == G_IM_SIZ_8b && gSP.textureTile[0]->frameBuffer == pCurrent)
 		return true;
 	return texturedRectDepthBufferCopy(_params);
 }
@@ -1426,7 +1435,7 @@ bool texturedRectMonochromeBackground(const OGLRender::TexturedRectParams & _par
 	if (gDP.textureImage.address >= gDP.colorImage.address && gDP.textureImage.address <= (gDP.colorImage.address + gDP.colorImage.width*gDP.colorImage.height * 2)) {
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 		FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-		if (pCurrentBuffer != NULL) {
+		if (pCurrentBuffer != nullptr) {
 			FrameBuffer_ActivateBufferTexture(0, pCurrentBuffer);
 			SetMonochromeCombiner();
 			return false;
@@ -1439,7 +1448,7 @@ bool texturedRectMonochromeBackground(const OGLRender::TexturedRectParams & _par
 
 // Special processing of textured rect.
 // Return true if actuial rendering is not necessary
-bool(*texturedRectSpecial)(const OGLRender::TexturedRectParams & _params) = NULL;
+bool(*texturedRectSpecial)(const OGLRender::TexturedRectParams & _params) = nullptr;
 
 void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 {
@@ -1480,8 +1489,9 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 			glDisableVertexAttribArray(SC_NUMLIGHTS);
 			glDisableVertexAttribArray(SC_MODIFY);
 		}
+		currentCombiner()->updateRenderState();
 
-		if (_params.texrectCmd && texturedRectSpecial != NULL && texturedRectSpecial(_params)) {
+		if (_params.texrectCmd && texturedRectSpecial != nullptr && texturedRectSpecial(_params)) {
 			gSP.changed |= CHANGED_GEOMETRYMODE;
 			return;
 		}
@@ -1491,8 +1501,6 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 	}
 
 	ShaderCombiner * pCurrentCombiner = currentCombiner();
-	pCurrentCombiner->updateRenderState();
-
 	const FrameBuffer * pCurrentBuffer = _params.pBuffer;
 	OGLVideo & ogl = video();
 	TextureCache & cache = textureCache();
@@ -1500,14 +1508,14 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 	const bool bUseTexrectDrawer = config.generalEmulation.enableNativeResTexrects != 0
 		&& bUseBilinear
 		&& pCurrentCombiner->usesTexture()
-		&& (pCurrentBuffer == NULL || !pCurrentBuffer->m_cfb)
-		&& (cache.current[0] != NULL)
-//		&& (cache.current[0] == NULL || cache.current[0]->format == G_IM_FMT_RGBA || cache.current[0]->format == G_IM_FMT_CI)
+		&& (pCurrentBuffer == nullptr || !pCurrentBuffer->m_cfb)
+		&& (cache.current[0] != nullptr)
+//		&& (cache.current[0] == nullptr || cache.current[0]->format == G_IM_FMT_RGBA || cache.current[0]->format == G_IM_FMT_CI)
 		&& ((cache.current[0]->frameBufferTexture == CachedTexture::fbNone && !cache.current[0]->bHDTexture))
-		&& (cache.current[1] == NULL || (cache.current[1]->frameBufferTexture == CachedTexture::fbNone && !cache.current[1]->bHDTexture));
+		&& (cache.current[1] == nullptr || (cache.current[1]->frameBufferTexture == CachedTexture::fbNone && !cache.current[1]->bHDTexture));
 
-	const float scaleX = pCurrentBuffer != NULL ? 1.0f / pCurrentBuffer->m_width : VI.rwidth;
-	const float scaleY = pCurrentBuffer != NULL ? 1.0f / pCurrentBuffer->m_height : VI.rheight;
+	const float scaleX = pCurrentBuffer != nullptr ? 1.0f / pCurrentBuffer->m_width : VI.rwidth;
+	const float scaleY = pCurrentBuffer != nullptr ? 1.0f / pCurrentBuffer->m_height : VI.rheight;
 	const float Z = (gDP.otherMode.depthSource == G_ZS_PRIM) ? gDP.primDepth.z : gSP.viewport.nearz;
 	const float W = 1.0f;
 	f32 uly, lry;
@@ -1642,7 +1650,7 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 	if (bUseTexrectDrawer)
 		m_texrectDrawer.add();
 	else {
-		if (pCurrentBuffer == NULL)
+		if (pCurrentBuffer == nullptr)
 			glViewport(0, ogl.getHeightOffset(), ogl.getScreenWidth(), ogl.getScreenHeight());
 		else
 			glViewport(0, 0, pCurrentBuffer->m_width*pCurrentBuffer->m_scaleX, pCurrentBuffer->m_height*pCurrentBuffer->m_scaleY);
@@ -1708,92 +1716,12 @@ void OGLRender::clearColorBuffer(float *_pColor )
 	glEnable( GL_SCISSOR_TEST );
 }
 
-FBOTextureFormats fboFormats;
-
-void FBOTextureFormats::init()
-{
-#ifdef GLES2
-	monochromeInternalFormat = GL_RGB;
-	monochromeFormat = GL_RGB;
-	monochromeType = GL_UNSIGNED_SHORT_5_6_5;
-	monochromeFormatBytes = 2;
-
-	depthInternalFormat = GL_DEPTH_COMPONENT16;
-	depthFormat = GL_DEPTH_COMPONENT;
-	depthType = GL_UNSIGNED_INT;
-	depthFormatBytes = 2;
-
-	if (OGLVideo::isExtensionSupported("GL_OES_rgb8_rgba8")) {
-		colorInternalFormat = GL_RGBA;
-		colorFormat = GL_RGBA;
-		colorType = GL_UNSIGNED_BYTE;
-		colorFormatBytes = 4;
-	} else {
-		colorInternalFormat = GL_RGB;
-		colorFormat = GL_RGB;
-		colorType = GL_UNSIGNED_SHORT_5_6_5;
-		colorFormatBytes = 2;
-	}
-#elif defined(GLES3) || defined (GLES3_1)
-	colorInternalFormat = GL_RGBA;
-	colorFormat = GL_RGBA;
-	colorType = GL_UNSIGNED_BYTE;
-	colorFormatBytes = 4;
-
-	monochromeInternalFormat = GL_RED;
-	monochromeFormat = GL_RED;
-	monochromeType = GL_UNSIGNED_BYTE;
-	monochromeFormatBytes = 1;
-
-	depthInternalFormat = GL_DEPTH_COMPONENT32F;
-	depthFormat = GL_DEPTH_COMPONENT;
-	depthType = GL_FLOAT;
-	depthFormatBytes = 4;
-
-	depthImageInternalFormat = GL_RGBA32F;
-	depthImageFormat = GL_RGBA;
-	depthImageType = GL_FLOAT;
-	depthImageFormatBytes = 16;
-
-	lutInternalFormat = GL_R32UI;
-	lutFormat = GL_RED;
-	lutType = GL_UNSIGNED_INT;
-	lutFormatBytes = 4;
-#else
-	colorInternalFormat = GL_RGBA;
-	colorFormat = GL_RGBA;
-	colorType = GL_UNSIGNED_BYTE;
-	colorFormatBytes = 4;
-
-	monochromeInternalFormat = GL_RED;
-	monochromeFormat = GL_RED;
-	monochromeType = GL_UNSIGNED_BYTE;
-	monochromeFormatBytes = 1;
-
-	depthInternalFormat = GL_DEPTH_COMPONENT;
-	depthFormat = GL_DEPTH_COMPONENT;
-	depthType = GL_FLOAT;
-	depthFormatBytes = 4;
-
-	depthImageInternalFormat = GL_RG32F;
-	depthImageFormat = GL_RG;
-	depthImageType = GL_FLOAT;
-	depthImageFormatBytes = 8;
-
-	lutInternalFormat = GL_R16;
-	lutFormat = GL_RED;
-	lutType = GL_UNSIGNED_SHORT;
-	lutFormatBytes = 2;
-
-#endif
-}
-
 void OGLRender::_initExtensions()
 {
 	LOG(LOG_VERBOSE, "OpenGL version string: %s\n", glGetString(GL_VERSION));
 	LOG(LOG_VERBOSE, "OpenGL vendor: %s\n", glGetString(GL_VENDOR));
 	const GLubyte * strRenderer = glGetString(GL_RENDERER);
-	if (strstr((const char*)strRenderer, "Adreno") != NULL)
+	if (strstr((const char*)strRenderer, "Adreno") != nullptr)
 		m_oglRenderer = glrAdreno;
 	LOG(LOG_VERBOSE, "OpenGL renderer: %s\n", strRenderer);
 
@@ -1811,9 +1739,9 @@ void OGLRender::_initExtensions()
 	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
 	LOG(LOG_VERBOSE, "OpenGL minor version: %d\n", minorVersion);
 #ifndef GLESX
-	m_bImageTexture = (majorVersion >= 4) && (minorVersion >= 3) && (glBindImageTexture != NULL);
+	m_bImageTexture = (majorVersion >= 4) && (minorVersion >= 3) && (glBindImageTexture != nullptr);
 #elif defined(GLES3_1)
-	m_bImageTexture = (majorVersion >= 3) && (minorVersion >= 1) && (glBindImageTexture != NULL);
+	m_bImageTexture = (majorVersion >= 3) && (minorVersion >= 1) && (glBindImageTexture != nullptr);
 #else
 	m_bImageTexture = false;
 #endif
@@ -1861,7 +1789,7 @@ void OGLRender::_initStates()
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 	glClear( GL_COLOR_BUFFER_BIT );
 
-	srand( time(NULL) );
+	srand( time(nullptr) );
 
 	ogl.swapBuffers();
 }
@@ -1925,139 +1853,5 @@ void OGLRender::_setSpecialTexrect() const
 	else if (strstr(name, (const char *)"ZELDA"))
 		texturedRectSpecial = texturedRectMonochromeBackground;
 	else
-		texturedRectSpecial = NULL;
+		texturedRectSpecial = nullptr;
 }
-
-static
-u32 textureFilters[] = {
-	NO_FILTER, //"None"
-	SMOOTH_FILTER_1, //"Smooth filtering 1"
-	SMOOTH_FILTER_2, //"Smooth filtering 2"
-	SMOOTH_FILTER_3, //"Smooth filtering 3"
-	SMOOTH_FILTER_4, //"Smooth filtering 4"
-	SHARP_FILTER_1,  //"Sharp filtering 1"
-	SHARP_FILTER_2,  //"Sharp filtering 2"
-};
-
-static
-u32 textureEnhancements[] = {
-	NO_ENHANCEMENT,    //"None"
-	NO_ENHANCEMENT,    //"Store"
-	X2_ENHANCEMENT,    //"X2"
-	X2SAI_ENHANCEMENT, //"X2SAI"
-	HQ2X_ENHANCEMENT,  //"HQ2X"
-	HQ2XS_ENHANCEMENT, //"HQ2XS"
-	LQ2X_ENHANCEMENT,  //"LQ2X"
-	LQ2XS_ENHANCEMENT, //"LQ2XS"
-	HQ4X_ENHANCEMENT,  //"HQ4X"
-	BRZ2X_ENHANCEMENT, //"2XBRZ"
-	BRZ3X_ENHANCEMENT, //"3XBRZ"
-	BRZ4X_ENHANCEMENT, //"4XBRZ"
-	BRZ5X_ENHANCEMENT, //"5XBRZ"
-	BRZ6X_ENHANCEMENT  //"6XBRZ"
-};
-
-void displayLoadProgress(const wchar_t *format, ...)
-{
-	va_list args;
-	wchar_t wbuf[INFO_BUF];
-	char buf[INFO_BUF];
-
-	// process input
-#ifdef ANDROID
-	const u32 bufSize = 2048;
-	char cbuf[bufSize];
-	char fmt[bufSize];
-	wcstombs(fmt, format, bufSize);
-	va_start(args, format);
-	vsprintf(cbuf, fmt, args);
-	va_end(args);
-	mbstowcs(wbuf, cbuf, INFO_BUF);
-#else
-	va_start(args, format);
-	vswprintf(wbuf, INFO_BUF, format, args);
-	va_end(args);
-#endif
-
-	// XXX: convert to multibyte
-	wcstombs(buf, wbuf, INFO_BUF);
-
-	FrameBuffer* pBuffer = frameBufferList().getCurrent();
-	if (pBuffer != NULL)
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-	OGLRender & render = video().getRender();
-	render.clearColorBuffer(nullptr);
-	render.drawText(buf, -0.9f, 0);
-	video().swapBuffers();
-
-	if (pBuffer != NULL)
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, pBuffer->m_FBO);
-}
-
-u32 TextureFilterHandler::_getConfigOptions() const
-{
-	u32 options = textureFilters[config.textureFilter.txFilterMode] | textureEnhancements[config.textureFilter.txEnhancementMode];
-	if (config.textureFilter.txHiresEnable)
-		options |= RICE_HIRESTEXTURES;
-	if (config.textureFilter.txForce16bpp)
-		options |= FORCE16BPP_TEX | FORCE16BPP_HIRESTEX;
-	if (config.textureFilter.txCacheCompression)
-		options |= GZ_TEXCACHE | GZ_HIRESTEXCACHE;
-	if (config.textureFilter.txSaveCache)
-		options |= (DUMP_TEXCACHE | DUMP_HIRESTEXCACHE);
-	if (config.textureFilter.txHiresFullAlphaChannel)
-		options |= LET_TEXARTISTS_FLY;
-	if (config.textureFilter.txDump)
-		options |= DUMP_TEX;
-	if (config.textureFilter.txDeposterize)
-		options |= DEPOSTERIZE;
-	return options;
-}
-
-void TextureFilterHandler::init()
-{
-	if (isInited())
-		return;
-
-	m_inited = config.textureFilter.txFilterMode | config.textureFilter.txEnhancementMode | config.textureFilter.txHiresEnable;
-	if (m_inited == 0)
-		return;
-
-	m_options = _getConfigOptions();
-
-	GLint maxTextureSize;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-	wchar_t wRomName[32];
-	::mbstowcs(wRomName, RSP.romname, 32);
-	wchar_t txPath[PLUGIN_PATH_SIZE + 16];
-	wchar_t * pTexPackPath = config.textureFilter.txPath;
-	if (::wcslen(config.textureFilter.txPath) == 0) {
-		api().GetUserDataPath(txPath);
-		gln_wcscat(txPath, wst("/hires_texture"));
-		pTexPackPath = txPath;
-	}
-	wchar_t txCachePath[PLUGIN_PATH_SIZE];
-	api().GetUserCachePath(txCachePath);
-
-	m_inited = txfilter_init(maxTextureSize, // max texture width supported by hardware
-		maxTextureSize, // max texture height supported by hardware
-		32, // max texture bpp supported by hardware
-		m_options,
-		config.textureFilter.txCacheSize, // cache texture to system memory
-		txCachePath, // path to store cache files
-		pTexPackPath, // path to texture packs folder
-		wRomName, // name of ROM. must be no longer than 256 characters
-		displayLoadProgress);
-
-}
-
-void TextureFilterHandler::shutdown()
-{
-	if (isInited()) {
-		txfilter_shutdown();
-		m_inited = m_options = 0;
-	}
-}
-
-TextureFilterHandler TFH;

@@ -16,6 +16,7 @@
 #include "FrameBuffer.h"
 #include "DepthBuffer.h"
 #include "FrameBufferInfo.h"
+#include "TextureFilterHandler.h"
 #include "VI.h"
 #include "Config.h"
 #include "Combiner.h"
@@ -371,14 +372,14 @@ static
 bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
 {
 	gDP.loadTile->textureMode = TEXTUREMODE_NORMAL;
-	gDP.loadTile->frameBuffer = NULL;
+	gDP.loadTile->frameBuffer = nullptr;
 	gDP.changed |= CHANGED_TMEM;
 	if (!config.frameBufferEmulation.enable)
 		return false;
 
 	FrameBufferList & fbList = frameBufferList();
 	FrameBuffer *pBuffer = fbList.findBuffer(_address);
-	bool bRes = pBuffer != NULL;
+	bool bRes = pBuffer != nullptr;
 	if (bRes) {
 		if ((config.generalEmulation.hacks & hack_blurPauseScreen) != 0) {
 			if (gDP.colorImage.address == gDP.depthImageAddress && pBuffer->m_copiedToRdram) {
@@ -620,7 +621,7 @@ void gDPLoadBlock(u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt)
 		return;
 	}
 
-	gDP.loadTile->frameBuffer = NULL;
+	gDP.loadTile->frameBuffer = nullptr;
 	CheckForFrameBufferTexture(address, bytes); // Load data to TMEM even if FB texture is found. See comment to texturedRectDepthBufferCopy
 
 	if (gDP.loadTile->size == G_IM_SIZ_32b)
@@ -726,7 +727,7 @@ void gDPSetScissor( u32 mode, f32 ulx, f32 uly, f32 lrx, f32 lry )
 void gDPFillRDRAM(u32 address, s32 ulx, s32 uly, s32 lrx, s32 lry, u32 width, u32 size, u32 color, bool scissor)
 {
 	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-	if (pCurrentBuffer != NULL) {
+	if (pCurrentBuffer != nullptr) {
 		pCurrentBuffer->m_cleared = true;
 		pCurrentBuffer->m_fillcolor = color;
 	}
@@ -914,7 +915,7 @@ void gDPFullSync()
 		FrameBuffer_CopyToRDRAM(gDP.colorImage.address, sync);
 
 	if (RSP.bLLE) {
-		if (config.frameBufferEmulation.copyDepthToRDRAM != Config::ctDisable && !FBInfo::fbInfo.isSupported())
+		if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdCopyFromVRam && !FBInfo::fbInfo.isSupported())
 			FrameBuffer_CopyDepthBuffer(gDP.colorImage.address);
 	}
 
