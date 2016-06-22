@@ -1015,9 +1015,7 @@ void FrameBuffer_CopyToRDRAM(u32 _address, bool _sync)
 
 void FrameBuffer_CopyChunkToRDRAM(u32 _address)
 {
-#ifndef GLES2
 	ColorBufferToRDRAM::get().copyChunkToRDRAM(_address);
-#endif
 }
 
 bool FrameBuffer_CopyDepthBuffer( u32 address )

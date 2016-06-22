@@ -166,7 +166,6 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 										 m_pTexture->realWidth, m_pTexture->realHeight, GL_NEAREST);
 
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
-		frameBufferList().setCurrentDrawBuffer();
 	}
 
 	m_frameCount = curFrame;
@@ -207,7 +206,9 @@ void ColorBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress, bool _sync)
 	const GLint y1 = max_height - (_startAddress - m_pCurFrameBuffer->m_startAddress) / stride;
 	const GLsizei height = std::min(max_height, 1u + y1 - y0);
 
-	if (!_readPixels(x0, y0, width, height, m_pCurFrameBuffer->m_size, _sync))
+	const bool pixelsRead = _readPixels(x0, y0, width, height, m_pCurFrameBuffer->m_size, _sync);
+	frameBufferList().setCurrentDrawBuffer();
+	if (!pixelsRead)
 		return;
 
 	if (m_pCurFrameBuffer->m_size == G_IM_SIZ_32b) {
