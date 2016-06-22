@@ -368,21 +368,14 @@ CachedTexture * FrameBuffer::_getSubTexture(u32 _t)
 	if (y0 + copyHeight > m_pTexture->realHeight)
 		copyHeight = m_pTexture->realHeight - y0;
 
-#ifdef GLES2
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
-	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x0, y0, copyWidth, copyHeight, 0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-#else
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_SubFBO);
-	glDisable(GL_SCISSOR_TEST);
-	glBlitFramebuffer(x0, y0, x0 + copyWidth, y0 + copyHeight,
-		0, 0, copyWidth, copyHeight,
-		GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	glEnable(GL_SCISSOR_TEST);
+	video().getRender().copyTexturedRect(x0, y0, x0 + copyWidth, y0 + copyHeight,
+										 m_pTexture->realWidth,m_pTexture->realHeight, m_pTexture->glName,
+										 0, 0, copyWidth, copyHeight,
+										 m_pSubTexture->realWidth, m_pSubTexture->realHeight, GL_NEAREST);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	frameBufferList().setCurrentDrawBuffer();
-#endif
 
 	return m_pSubTexture;
 }
@@ -753,8 +746,8 @@ void FrameBuffer_Init()
 {
 	frameBufferList().init();
 	if (config.frameBufferEmulation.enable != 0) {
-#ifndef GLES2
 	ColorBufferToRDRAM::get().init();
+#ifndef GLES2
 	DepthBufferToRDRAM::get().init();
 #endif
 	RDRAMtoColorBuffer::get().init();
@@ -771,7 +764,7 @@ void FrameBuffer_Destroy()
 	frameBufferList().destroy();
 }
 
-#ifndef GLES2
+#if 1
 void FrameBufferList::renderBuffer(u32 _address)
 {
 	static s32 vStartPrev = 0;
@@ -873,7 +866,6 @@ void FrameBufferList::renderBuffer(u32 _address)
 			(srcCoord[3] - srcCoord[1]) != (dstCoord[3] - dstCoord[1])) {
 			pFilteredBuffer->resolveMultisampledTexture(true);
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, pFilteredBuffer->m_resolveFBO);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		} else {
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, pFilteredBuffer->m_FBO);
 			filter = GL_NEAREST;
@@ -881,14 +873,12 @@ void FrameBufferList::renderBuffer(u32 _address)
 	} else
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, pFilteredBuffer->m_FBO);
 
-	// glDisable(GL_SCISSOR_TEST) does not affect glBlitFramebuffer, at least on AMD
-	glScissor(0, 0, ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-	glBlitFramebuffer(
-		srcCoord[0], srcCoord[1], srcCoord[2], srcCoord[3],
-		dstCoord[0], dstCoord[1], dstCoord[2], dstCoord[3],
-		GL_COLOR_BUFFER_BIT, filter
-	);
+	ogl.getRender().copyTexturedRect(srcCoord[0], srcCoord[1], srcCoord[2], srcCoord[3],
+									 pBufferTexture->realWidth, pBufferTexture->realHeight, pBufferTexture->glName,
+									 dstCoord[0], dstCoord[1], dstCoord[2], dstCoord[3],
+									 ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset(), filter);
 
 	if (dstPartHeight > 0) {
 		const u32 size = *REG.VI_STATUS & 3;
@@ -902,14 +892,16 @@ void FrameBufferList::renderBuffer(u32 _address)
 			if (pFilteredBuffer->m_pTexture->frameBufferTexture == CachedTexture::fbMultiSample) {
 				pFilteredBuffer->resolveMultisampledTexture();
 				glBindFramebuffer(GL_READ_FRAMEBUFFER, pFilteredBuffer->m_resolveFBO);
-				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			} else
 				glBindFramebuffer(GL_READ_FRAMEBUFFER, pFilteredBuffer->m_FBO);
-			glBlitFramebuffer(
-				0, (GLint)(srcY0*srcScaleY), Xwidth, min((GLint)(srcY1*srcScaleY), (GLint)pFilteredBuffer->m_pTexture->realHeight),
-				hOffset, vOffset + (GLint)(dstY0*dstScaleY), hOffset + X1, vOffset + (GLint)(dstY1*dstScaleY),
-				GL_COLOR_BUFFER_BIT, filter
-			);
+
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+			pBufferTexture = pFilteredBuffer->m_pTexture;
+			ogl.getRender().copyTexturedRect(0, (GLint)(srcY0*srcScaleY), Xwidth, min((GLint)(srcY1*srcScaleY), (GLint)pFilteredBuffer->m_pTexture->realHeight),
+											 pBufferTexture->realWidth, pBufferTexture->realHeight, pBufferTexture->glName,
+											 hOffset, vOffset + (GLint)(dstY0*dstScaleY), hOffset + X1, vOffset + (GLint)(dstY1*dstScaleY),
+											 ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset(), filter);
 		}
 	}
 
@@ -919,8 +911,9 @@ void FrameBufferList::renderBuffer(u32 _address)
 	ogl.swapBuffers();
 	gDP.changed |= CHANGED_SCISSOR;
 }
-#else
 
+#else
+// To be removed
 void FrameBufferList::renderBuffer(u32 _address)
 {
 	if (VI.width == 0 || *REG.VI_WIDTH == 0 || *REG.VI_H_START == 0) // H width is zero. Don't draw
@@ -975,7 +968,6 @@ void FrameBufferList::renderBuffer(u32 _address)
 #endif
 
 
-
 void FrameBuffer_ActivateBufferTexture(u32 t, FrameBuffer *pBuffer)
 {
 	if (pBuffer == nullptr)
@@ -1006,9 +998,10 @@ void FrameBuffer_ActivateBufferTextureBG(u32 t, FrameBuffer *pBuffer )
 
 void FrameBuffer_CopyToRDRAM(u32 _address, bool _sync)
 {
-#ifndef GLES2
+#if 1 //ndef GLES2
 	ColorBufferToRDRAM::get().copyToRDRAM(_address, _sync);
 #else
+	// To be removed
 	if ((config.generalEmulation.hacks & hack_subscreen) == 0)
 		return;
 	if (VI.width == 0 || frameBufferList().getCurrent() == nullptr)
