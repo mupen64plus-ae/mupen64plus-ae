@@ -26,7 +26,6 @@ typedef char GLchar;
 #include <GLES3/gl3.h>
 #define GLESX
 #define GL_UNIFORMBLOCK_SUPPORT
-#define NO_BLIT_BUFFER_COPY // For testing purposes. To be removed.
 #elif defined(GLES3_1)
 #include <GLES3/gl31.h>
 #define GLESX

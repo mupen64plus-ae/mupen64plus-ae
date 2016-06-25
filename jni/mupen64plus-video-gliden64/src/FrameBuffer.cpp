@@ -764,7 +764,6 @@ void FrameBuffer_Destroy()
 	frameBufferList().destroy();
 }
 
-#if 1
 void FrameBufferList::renderBuffer(u32 _address)
 {
 	static s32 vStartPrev = 0;
@@ -912,62 +911,6 @@ void FrameBufferList::renderBuffer(u32 _address)
 	gDP.changed |= CHANGED_SCISSOR;
 }
 
-#else
-// To be removed
-void FrameBufferList::renderBuffer(u32 _address)
-{
-	if (VI.width == 0 || *REG.VI_WIDTH == 0 || *REG.VI_H_START == 0) // H width is zero. Don't draw
-		return;
-
-	FrameBuffer *pBuffer = findBuffer(_address);
-	if (pBuffer == nullptr)
-		return;
-
-	OGLVideo & ogl = video();
-	ogl.getRender().updateScissor(pBuffer);
-	FrameBuffer * pFilteredBuffer = PostProcessor::get().doBlur(PostProcessor::get().doGammaCorrection(pBuffer));
-	ogl.getRender().dropRenderState();
-
-	const u32 width = pFilteredBuffer->m_width;
-	const u32 height = pFilteredBuffer->m_height;
-
-	pFilteredBuffer->m_pTexture->scaleS = ogl.getScaleX() / (float)pFilteredBuffer->m_pTexture->realWidth;
-	pFilteredBuffer->m_pTexture->scaleT = ogl.getScaleY() / (float)pFilteredBuffer->m_pTexture->realHeight;
-	pFilteredBuffer->m_pTexture->shiftScaleS = 1.0f;
-	pFilteredBuffer->m_pTexture->shiftScaleT = 1.0f;
-	pFilteredBuffer->m_pTexture->offsetS = 0;
-	pFilteredBuffer->m_pTexture->offsetT = (float)height;
-	textureCache().activateTexture(0, pFilteredBuffer->m_pTexture);
-	gSP.textureTile[0]->fuls = gSP.textureTile[0]->fult = 0.0f;
-	gSP.textureTile[0]->shifts = gSP.textureTile[0]->shiftt = 0;
-
-	gDP.otherMode.cycleType = G_CYC_COPY;
-	CombinerInfo::get().setCombine(EncodeCombineMode(0, 0, 0, TEXEL0, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL0));
-	CombinerInfo::get().updateParameters(OGLRender::rsTexRect);
-	currentCombiner()->disableBlending();
-	glDisable( GL_BLEND );
-	glDisable(GL_DEPTH_TEST);
-	glDisable( GL_CULL_FACE );
-	glDisable( GL_POLYGON_OFFSET_FILL );
-
-	glScissor(0, 0, ogl.getScreenWidth(), ogl.getScreenHeight() + ogl.getHeightOffset());
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	OGLRender::TexturedRectParams params(0.0f, 0.0f, width, height, 0.0f, 0.0f, width - 1.0f, height - 1.0f, 1.0f, 1.0f, false, false, false, pFilteredBuffer);
-	ogl.getRender().drawTexturedRect(params);
-
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-	if (m_pCurrent != nullptr)
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_pCurrent->m_FBO);
-	ogl.swapBuffers();
-
-	gSP.changed |= CHANGED_VIEWPORT;
-	gDP.changed |= CHANGED_COMBINE | CHANGED_SCISSOR;
-}
-#endif
-
-
 void FrameBuffer_ActivateBufferTexture(u32 t, FrameBuffer *pBuffer)
 {
 	if (pBuffer == nullptr)
@@ -998,19 +941,7 @@ void FrameBuffer_ActivateBufferTextureBG(u32 t, FrameBuffer *pBuffer )
 
 void FrameBuffer_CopyToRDRAM(u32 _address, bool _sync)
 {
-#if 1 //ndef GLES2
 	ColorBufferToRDRAM::get().copyToRDRAM(_address, _sync);
-#else
-	// To be removed
-	if ((config.generalEmulation.hacks & hack_subscreen) == 0)
-		return;
-	if (VI.width == 0 || frameBufferList().getCurrent() == nullptr)
-		return;
-	FrameBuffer *pBuffer = frameBufferList().findBuffer(_address);
-	if (pBuffer == nullptr || pBuffer->m_width < VI.width || pBuffer->m_isOBScreen)
-		return;
-	copyWhiteToRDRAM(pBuffer);
-#endif
 }
 
 void FrameBuffer_CopyChunkToRDRAM(u32 _address)
