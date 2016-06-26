@@ -15,6 +15,7 @@
 #include <GLideN64_libretro.h>
 #elif GLES2
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #define GL_DRAW_FRAMEBUFFER GL_FRAMEBUFFER
 #define GL_READ_FRAMEBUFFER GL_FRAMEBUFFER
 #define NO_BLIT_BUFFER_COPY
@@ -165,9 +166,13 @@ public:
 
 	enum OGL_RENDERER {
 		glrOther,
-		glrAdreno
+		glrAdreno,
+		glrPowerVR,
+		glrMali
 	};
 	OGL_RENDERER getRenderer() const { return m_oglRenderer; }
+
+	bool isBufferSubDataSupported() const {return m_isBufferSubDataSupported;}
 
 	void dropRenderState() {m_renderState = rsNone;}
 
@@ -176,7 +181,8 @@ private:
 		: m_oglRenderer(glrOther)
 		, m_modifyVertices(0)
 		, m_bImageTexture(false)
-		, m_bFlatColors(false) {
+		, m_bFlatColors(false)
+		, m_isBufferSubDataSupported(true){
 	}
 	OGLRender(const OGLRender &);
 	friend class OGLVideo;
@@ -259,6 +265,8 @@ private:
 	TexrectDrawer m_texrectDrawer;
 
 	GLuint m_programCopyTex;
+
+	bool m_isBufferSubDataSupported;
 };
 
 class OGLVideo
