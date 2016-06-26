@@ -20,13 +20,6 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
-import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,6 +28,14 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.support.v7.preference.PreferenceManager;
 
+import org.mupen64plusae.v3.alpha.R;
+
+import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
+
 public class DataPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
     PromptConfirmListener
 {
@@ -42,6 +43,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     private static final String RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE = "RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE";
 
     // These constants must match the keys used in res/xml/preferences.xml
+    private static final String PATH_GAME_SAVES = "pathGameSaves";
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
 
@@ -77,11 +79,19 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         final String key = preference.getKey();
 
         if (key.equals(ACTION_RELOAD_ASSETS))
+        {
             actionReloadAssets();
-
+        }
         else if (key.equals(ACTION_RESET_USER_PREFS))
+        {
             actionResetUserPrefs();
-
+        }
+        else if (key.equals(PATH_GAME_SAVES))
+        {
+            //Force reload of assets
+            mAppData.putAssetVersion( 0 );
+            return false;
+        }
         else
             // Let Android handle all other preference clicks
             return false;
@@ -130,5 +140,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         // actually preferences
         PrefUtil.setOnPreferenceClickListener(this, ACTION_RELOAD_ASSETS, this);
         PrefUtil.setOnPreferenceClickListener(this, ACTION_RESET_USER_PREFS, this);
+        PrefUtil.setOnPreferenceClickListener(this, PATH_GAME_SAVES, this);
     }
 }

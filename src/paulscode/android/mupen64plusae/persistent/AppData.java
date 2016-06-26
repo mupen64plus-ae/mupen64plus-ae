@@ -32,7 +32,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.opengl.EGL14;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -120,9 +119,6 @@ public class AppData
     
     /** The app version code. */
     public final int appVersionCode;
-    
-    /** The device's storage directory (typically the external storage directory). */
-    private final String storageDir;
     
     /**
      * The subdirectory returned from the core's ConfigGetSharedDataPath() method. Location of extra
@@ -234,16 +230,8 @@ public class AppData
         appVersionCode = versionCode;
         
         // Directories
-        if( !Environment.isExternalStorageEmulated() )
-        {
-            storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-            coreSharedDataDir = storageDir + "/Android/data/" + packageName;
-        }
-        else
-        {
-            storageDir = context.getFilesDir().getAbsolutePath();
-            coreSharedDataDir = storageDir;
-        }
+        GlobalPrefs globalPrefs = new GlobalPrefs( context, this );
+        coreSharedDataDir = globalPrefs.userDataDir + "/AppData";
         tempDir = coreSharedDataDir + "/tmp";
         String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
         if( !( new File( _libsDir ) ).exists() )
@@ -290,7 +278,7 @@ public class AppData
      */
     public boolean isSdCardAccessible()
     {
-        return ( new File( storageDir ) ).exists();
+        return ( new File( coreSharedDataDir ) ).exists();
     }
     
     /**
