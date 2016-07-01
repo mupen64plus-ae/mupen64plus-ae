@@ -436,7 +436,7 @@ public class GamePrefs
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
 
         // Game-specific data
-        gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol, globalPrefs);
+        gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol, appData);
         sramDataDir = gameDataDir + "/" + SRAM_DATA_DIR;
         autoSaveDir = gameDataDir + "/" + AUTO_SAVES_DIR;
         slotSaveDir = gameDataDir + "/" + SLOT_SAVES_DIR;
@@ -795,9 +795,9 @@ public class GamePrefs
     }
 
     public static String getGameDataPath( String romMd5, String headerName, String countrySymbol,
-        GlobalPrefs globalPrefs)
+        AppData appData)
     {
-        return String.format( "%s/GameData/%s %s %s", globalPrefs.userDataDir, headerName, countrySymbol, romMd5 );
+        return String.format( "%s/GameData/%s %s %s", appData.userDataDir, headerName, countrySymbol, romMd5 );
     }
 
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,

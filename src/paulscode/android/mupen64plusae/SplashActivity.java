@@ -125,11 +125,25 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     {
         super.onCreate( savedInstanceState );
 
+        final Resources res = getResources();
+        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
+
+        //Check for invalid data path
+        String dataPathString = mPrefs.getString( DATA_PATH, null );
+
+        if(dataPathString == null || dataPathString.isEmpty() ||
+                dataPathString.contains(res.getString(R.string.pathGameSaves_default)))
+        {
+            String defValue = res.getString( R.string.pathGameSaves_default );
+            String newDefValue = PathPreference.validate( defValue);
+
+            mPrefs.edit().putString( DATA_PATH, newDefValue ).commit();
+        }
+
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
-        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
 
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
         // new release)
@@ -142,7 +156,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
         // Ensure that selected plugin names and other list preferences are valid
         // @formatter:off
-        final Resources res = getResources();
+
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_ORIENTATION,      R.string.displayOrientation_default,    R.array.displayOrientation_values );
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_POSITION,         R.string.displayPosition_default,       R.array.displayPosition_values );
         PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING,          R.string.displayScaling_default,        R.array.displayScaling_values );
@@ -152,18 +166,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         PrefUtil.validateListPreference( res, mPrefs, AUDIO_SLES_BUFFER_SIZE,   R.string.audioSLESBufferSize_default,   R.array.audioSLESBufferSize_values );
         PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
         PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
-        
-        //Check for invalid data path
-        String dataPathString = mPrefs.getString( DATA_PATH, null );
-        
-        if(dataPathString == null || dataPathString.isEmpty() ||
-            dataPathString.contains(res.getString(R.string.pathGameSaves_default)))
-        {
-            String defValue = res.getString( R.string.pathGameSaves_default );
-            String newDefValue = PathPreference.validate( defValue);
-            
-            mPrefs.edit().putString( DATA_PATH, newDefValue ).commit();
-        }
         
         // @formatter:on
 

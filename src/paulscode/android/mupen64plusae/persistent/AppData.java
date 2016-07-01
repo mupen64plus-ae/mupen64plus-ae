@@ -32,6 +32,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.opengl.EGL14;
 import android.os.Build;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -191,6 +192,9 @@ public class AppData
     
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
+
+    /** The parent directory containing all user-writable data files. */
+    public final String userDataDir;
     
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
@@ -212,6 +216,9 @@ public class AppData
     {
         hardwareInfo = new HardwareInfo();
         packageName = context.getPackageName();
+
+        // Preference object for persisting app data
+        mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         PackageInfo info;
         String version = "";
@@ -230,8 +237,8 @@ public class AppData
         appVersionCode = versionCode;
         
         // Directories
-        GlobalPrefs globalPrefs = new GlobalPrefs( context, this );
-        coreSharedDataDir = globalPrefs.userDataDir + "/AppData";
+        userDataDir = mPreferences.getString( "pathGameSaves", "" );
+        coreSharedDataDir = userDataDir + "/AppData";
         tempDir = coreSharedDataDir + "/tmp";
         String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
         if( !( new File( _libsDir ) ).exists() )
@@ -262,10 +269,6 @@ public class AppData
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
-        
-        // Preference object for persisting app data
-        String appDataFilename = packageName + "_appdata";
-        mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
         UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
         isAndroidTv = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;

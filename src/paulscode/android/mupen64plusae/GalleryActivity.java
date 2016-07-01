@@ -20,37 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
-import paulscode.android.mupen64plusae.dialog.ChangeLog;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
-import paulscode.android.mupen64plusae.dialog.Popups;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.task.ComputeMd5Task;
-import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
-import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
-import paulscode.android.mupen64plusae.util.RomHeader;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -77,6 +46,38 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
+import paulscode.android.mupen64plusae.dialog.ChangeLog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.persistent.GamePrefs;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.task.ComputeMd5Task;
+import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
+import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.RomDatabase;
+import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
+import paulscode.android.mupen64plusae.util.RomHeader;
 
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener
 {
@@ -681,7 +682,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // If there are no saves for this game, disable the resume
         // option
         final String gameDataPath = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
-            RomHeader.countryCodeToSymbol(mSelectedItem.countryCode), mGlobalPrefs);
+            RomHeader.countryCodeToSymbol(mSelectedItem.countryCode), mAppData);
         final String autoSavePath = gameDataPath + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
 
         final File autoSavePathFile = new File(autoSavePath);

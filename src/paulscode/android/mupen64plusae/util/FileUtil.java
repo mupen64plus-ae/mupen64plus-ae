@@ -20,6 +20,9 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import android.text.Html;
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -42,9 +45,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
-import android.text.Html;
-import android.util.Log;
 
 /**
  * Utility class that provides methods which simplify file I/O tasks.
@@ -147,26 +147,13 @@ public final class FileUtil
      * Deletes a given folder directory in the form of a {@link File}
      * 
      * @param folder The folder to delete.
-     * 
-     * @return True if the folder was deleted, false otherwise.
      */
-    public static boolean deleteFolder( File folder )
-    {
-        if( folder.isDirectory() )
-        {
-            String[] children = folder.list();
-            if( children != null )
-            {
-                for( String child : children )
-                {
-                    boolean success = deleteFolder( new File( folder, child ) );
-                    if( !success )
-                        return false;
-                }
-            }
-        }
-        
-        return folder.delete();
+    public static void deleteFolder(File folder) {
+        if (folder.isDirectory())
+            for (File child : folder.listFiles())
+                deleteFolder(child);
+
+        folder.delete();
     }
     
     /**

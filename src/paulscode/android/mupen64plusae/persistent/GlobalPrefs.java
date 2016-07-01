@@ -81,9 +81,6 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
  */
 public class GlobalPrefs
 {
-    /** The parent directory containing all user-writable data files. */
-    public final String userDataDir;
-
     /** The subdirectory containing gallery data cache. */
     public final String galleryCacheDir;
 
@@ -341,14 +338,13 @@ public class GlobalPrefs
         mLocaleCodes = values;
 
         // Files
-        userDataDir = mPreferences.getString( "pathGameSaves", "" );
-        galleryCacheDir = userDataDir + "/GalleryCache";
+        galleryCacheDir = appData.userDataDir + "/GalleryCache";
         coverArtDir = galleryCacheDir + "/CoverArt";
         unzippedRomsDir = galleryCacheDir + "/UnzippedRoms";
-        profilesDir = userDataDir + "/Profiles";
-        crashLogDir = userDataDir + "/CrashLogs";
-        coreUserDataDir = userDataDir + "/CoreConfig/UserData";
-        coreUserCacheDir = userDataDir + "/CoreConfig/UserCache";
+        profilesDir = appData.userDataDir + "/Profiles";
+        crashLogDir = appData.userDataDir + "/CrashLogs";
+        coreUserDataDir = appData.userDataDir + "/CoreConfig/UserData";
+        coreUserCacheDir = appData.userDataDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
@@ -356,9 +352,9 @@ public class GlobalPrefs
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         customCheats_txt = profilesDir + "/customCheats.txt";
-        touchscreenCustomSkinsDir = userDataDir + "/CustomSkins";
-        legacyAutoSaves = userDataDir + "/AutoSaves";
-        legacySlotSaves = userDataDir + "/SlotSaves";
+        touchscreenCustomSkinsDir = appData.userDataDir + "/CustomSkins";
+        legacyAutoSaves = appData.userDataDir + "/AutoSaves";
+        legacySlotSaves = appData.userDataDir + "/SlotSaves";
 
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
