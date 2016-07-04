@@ -114,7 +114,8 @@
         <item>120</item>
     </string-array>
 
-    <string name="displayResolution_default" translatable="false">0</string>
+    <string name="displayResolution_default" translatable="false">480</string>
+    <string name="displayResolution_default_game" translatable="false">-1</string>
 
     <!-- Screen Scaling List -->
     <string-array name="displayScaling_entries" translatable="false">

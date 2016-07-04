@@ -20,16 +20,21 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
@@ -167,6 +172,21 @@ public class GlobalPrefs
 
     /** True if the full ROM rip info should be shown. */
     public final boolean isFullNameShown;
+
+    /** Default resolution */
+    public final int displayResolution;
+
+    /** The width of the viewing surface, in pixels with the correct aspect ratio. */
+    public int videoSurfaceWidthOriginal;
+
+    /** The height of the viewing surface, in pixels with the correct aspect ratio. */
+    public int videoSurfaceHeightOriginal;
+
+    /** The width of the viewing surface, in pixels with the stretched aspect ratio. */
+    public int videoSurfaceWidthStretch;
+
+    /** The height of the viewing surface, in pixels with the stretched aspect ratio. */
+    public int videoSurfaceHeightStretch;
 
     /** The screen orientation for the game activity. */
     public final int displayOrientation;
@@ -370,9 +390,11 @@ public class GlobalPrefs
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
 
         // Video prefs
+        displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 0 );
+        DetermineResolutionData(context);
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         displayPosition = getSafeInt( mPreferences, "displayPosition", Gravity.CENTER_VERTICAL );
-        final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
+        final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 80 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
         isFpsEnabled = mPreferences.getBoolean( "displayFps", false );
         final int selectedHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
@@ -396,10 +418,10 @@ public class GlobalPrefs
                 videoPolygonOffset = -2.0f;
                 break;
             case HardwareInfo.HARDWARE_TYPE_UNKNOWN:
-                videoPolygonOffset = -1.5f;
+                videoPolygonOffset = -3.0f;
                 break;
             default:
-                videoPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "videoPolygonOffset", "-1.5" ), -1.5f );
+                videoPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "videoPolygonOffset", "-3.0" ), -3.0f );
                 break;
         }
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
@@ -408,7 +430,7 @@ public class GlobalPrefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         audioSDLSecondaryBufferSize = getSafeInt( mPreferences, "audioSDLBufferSize", 2048 );
         audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize2", 256 );
-        audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 20 );
+        audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 10 );
         audioSLESSamplingRate = getSafeInt( mPreferences, "audioSLESSamplingRate", 0 );
         audioSLESFloatingPoint = mPreferences.getBoolean( "audioSLESFloatingPoint", false );
 
@@ -680,5 +702,147 @@ public class GlobalPrefs
             return new ControllerProfile( true, builtin.get( defaultName ) );
         else
             return null;
+    }
+
+    @TargetApi( 17 )
+    private void DetermineResolutionData(Context context)
+    {
+        // Determine the pixel dimensions of the rendering context and view surface
+        // Screen size
+        final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
+        final Display display = windowManager.getDefaultDisplay();
+
+        if( display == null )
+        {
+            videoSurfaceWidthStretch = videoSurfaceHeightStretch = 0;
+        }
+        //Kit Kat (19) adds support for immersive mode
+        else if( AppData.IS_KITKAT && isImmersiveModeEnabled )
+        {
+            final Point dimensions = new Point();
+            display.getRealSize(dimensions);
+            videoSurfaceWidthStretch = dimensions.x;
+            videoSurfaceHeightStretch = dimensions.y;
+        }
+        else
+        {
+            final Point dimensions = new Point();
+            display.getSize(dimensions);
+            videoSurfaceWidthStretch = dimensions.x;
+            videoSurfaceHeightStretch = dimensions.y;
+        }
+
+        final float aspect = 0.75f; // TODO: Handle PAL
+        final boolean isLetterboxed = ( (float) videoSurfaceHeightStretch / (float) videoSurfaceWidthStretch ) > aspect;
+        videoSurfaceWidthOriginal = isLetterboxed ? videoSurfaceWidthStretch : Math.round( videoSurfaceHeightStretch / aspect );
+        videoSurfaceHeightOriginal = isLetterboxed ? Math.round( videoSurfaceWidthStretch * aspect ) : videoSurfaceHeightStretch;
+    }
+
+    public int getResolutionWidth(boolean stretch, int hResolution)
+    {
+        if( hResolution == -1)
+        {
+            hResolution = displayResolution;
+        }
+
+        float widthRatio = (float)videoSurfaceWidthStretch/(float)videoSurfaceWidthOriginal;
+
+        // Display prefs, default value is the global default
+        int tempVideoRenderWidth = 0;
+
+        switch( hResolution )
+        {
+            case 720:
+                tempVideoRenderWidth = 960;
+                break;
+            case 600:
+                tempVideoRenderWidth = 800;
+                break;
+            case 480:
+                tempVideoRenderWidth = 640;
+                break;
+            case 360:
+                tempVideoRenderWidth = 480;
+                break;
+            case 240:
+                tempVideoRenderWidth = 320;
+                break;
+            case 120:
+                tempVideoRenderWidth = 160;
+                break;
+            case 0:
+                tempVideoRenderWidth = videoSurfaceWidthOriginal;
+                break;
+            default:
+                break;
+        }
+
+        if(stretch)
+        {
+            //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
+            //ratio to make it full screen
+            if(displayOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT &&
+                    displayOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)
+            {
+                final float newWidth = tempVideoRenderWidth * widthRatio;
+                tempVideoRenderWidth = Math.round(newWidth);
+            }
+        }
+
+        return tempVideoRenderWidth;
+    }
+
+    public int getResolutionHeight(boolean stretch, int hResolution)
+    {
+        if( hResolution == -1)
+        {
+            hResolution = displayResolution;
+        }
+
+        float heightRatio = (float)videoSurfaceHeightStretch/(float)videoSurfaceHeightOriginal;
+
+        // Display prefs, default value is the global default
+        int tempVideoRenderHeight = 0;
+
+        switch( hResolution )
+        {
+            case 720:
+                tempVideoRenderHeight = 720;
+                break;
+            case 600:
+                tempVideoRenderHeight = 600;
+                break;
+            case 480:
+                tempVideoRenderHeight = 480;
+                break;
+            case 360:
+                tempVideoRenderHeight = 360;
+                break;
+            case 240:
+                tempVideoRenderHeight = 240;
+                break;
+            case 120:
+                tempVideoRenderHeight = 120;
+                break;
+            case 0:
+                tempVideoRenderHeight = videoSurfaceHeightOriginal;
+                break;
+            default:
+                break;
+        }
+
+        if(stretch)
+        {
+            //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
+            //ratio to make it full screen
+            if(displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                    displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)
+            {
+                final float newWidth = tempVideoRenderHeight * heightRatio;
+                tempVideoRenderHeight = Math.round(newWidth);
+            }
+        }
+
+        return tempVideoRenderHeight;
     }
 }

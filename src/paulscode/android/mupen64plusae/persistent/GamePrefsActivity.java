@@ -40,6 +40,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
@@ -51,6 +52,7 @@ import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
+import paulscode.android.mupen64plusae.preference.CompatListPreference;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
@@ -95,6 +97,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private RomDetail mRomDetail = null;
 
     // Preference menu items
+    private CompatListPreference mDisplayResolution = null;
     private ProfilePreference mEmulationProfile = null;
     private ProfilePreference mTouchscreenProfile = null;
     private ProfilePreference mControllerProfile1 = null;
@@ -169,6 +172,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
     protected void updateActivity()
     {
+        mDisplayResolution = (CompatListPreference) findPreference( GamePrefs.DISPLAY_RESOLUTION );
         mEmulationProfile = (ProfilePreference) findPreference( GamePrefs.EMULATION_PROFILE );
         mTouchscreenProfile = (ProfilePreference) findPreference( GamePrefs.TOUCHSCREEN_PROFILE );
         mControllerProfile1 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE1 );
@@ -274,6 +278,21 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
             RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs, mLegacySaveName );
+
+        //Take the resolution entries and add a default value
+        CharSequence[] resolutionEntries = mDisplayResolution.getEntries();
+        CharSequence[] resolutionValues = mDisplayResolution.getEntryValues();
+
+        ArrayList<CharSequence> resolutionEntriesArray = new ArrayList<CharSequence>(Arrays.asList(resolutionEntries));
+        ArrayList<CharSequence> resolutionValuesArray = new ArrayList<CharSequence>(Arrays.asList(resolutionValues));
+
+        resolutionEntriesArray.add(0,  getText( R.string.default_profile_title ));
+        resolutionValuesArray.add(0, "-1");
+
+        mDisplayResolution.setEntries(
+            resolutionEntriesArray.toArray(new CharSequence[resolutionEntriesArray.size()]));
+        mDisplayResolution.setEntryValues(
+                resolutionValuesArray.toArray(new CharSequence[resolutionValuesArray.size()]));
 
         // Populate the profile preferences
         if(mEmulationProfile != null)
