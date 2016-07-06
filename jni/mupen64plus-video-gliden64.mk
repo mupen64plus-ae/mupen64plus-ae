@@ -11,7 +11,7 @@ LOCAL_SRC_FILES := ./android_framework/lib/$(TARGET_ARCH_ABI)/libui.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 MY_LOCAL_MODULE := mupen64plus-video-gliden64
-MY_LOCAL_SHARED_LIBRARIES := freetype android-framework-ui
+MY_LOCAL_SHARED_LIBRARIES := freetype
 MY_LOCAL_STATIC_LIBRARIES := glidenhq osal
 MY_LOCAL_ARM_MODE := arm
 
@@ -24,7 +24,6 @@ MY_LOCAL_C_INCLUDES :=                          \
     $(ANDROID_FRAMEWORK_INCLUDES)               \
 
 MY_LOCAL_SRC_FILES :=                               \
-    $(SRCDIR)/3DMath.cpp                            \
     $(SRCDIR)/Combiner.cpp                          \
     $(SRCDIR)/CommonPluginAPI.cpp                   \
     $(SRCDIR)/Config.cpp                            \
@@ -96,20 +95,16 @@ MY_LOCAL_LDLIBS := -llog -latomic -lEGL
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
-    #MY_LOCAL_SRC_FILES += gSPNeon.cpp.neon
-    #MY_LOCAL_SRC_FILES += 3DMathNeon.cpp.neon 
+    MY_LOCAL_SRC_FILES += $(SRCDIR)/3DMathNeon.cpp.neon
+    MY_LOCAL_SRC_FILES += $(SRCDIR)/gSPNeon.cpp.neon
     MY_LOCAL_CFLAGS += -DARM_ASM
     MY_LOCAL_CFLAGS += -D__NEON_OPT
-    
-else ifeq ($(TARGET_ARCH_ABI), armeabi)
-    # Use for pre-ARM7a:
-    
+    MY_LOCAL_CFLAGS += -D__VEC4_OPT
+
 else ifeq ($(TARGET_ARCH_ABI), x86)
-    # TODO: set the proper flags here
-    
-else
-    # Any other architectures that Android could be running on?
-    
+    MY_LOCAL_CFLAGS += -DX86_ASM
+    MY_LOCAL_CFLAGS += -D__VEC4_OPT
+    MY_LOCAL_SRC_FILES += $(SRCDIR)/3DMath.cpp
 endif
 
 ###########
@@ -117,11 +112,11 @@ endif
 ###########
 include $(CLEAR_VARS)
 LOCAL_MODULE            := $(MY_LOCAL_MODULE)-gles20
-LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
+LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES) android-framework-ui
 LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES)
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/GLES2/UniformSet.cpp $(SRCDIR)/GLES2/GLSLCombiner_gles2.cpp \
+LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/GLUniforms/UniformSet.cpp $(SRCDIR)/GLES2/GLSLCombiner_gles2.cpp \
                            $(SRCDIR)/BufferCopy/ColorBufferToRDRAM_GLES.cpp
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS) -DGLES2
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
@@ -138,7 +133,7 @@ LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES) $(LOCAL_PATH)/GLES3/include/
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/OGL3X/UniformBlock.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
+LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/GLUniforms/UniformSet.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
                            $(SRCDIR)/BufferCopy/ColorBufferToRDRAM_GL.cpp
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS) -DGLES3
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
@@ -155,7 +150,7 @@ LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES) $(LOCAL_PATH)/GLES3/include/
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/OGL3X/UniformBlock.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
+LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/GLUniforms/UniformSet.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
                            $(SRCDIR)/BufferCopy/ColorBufferToRDRAM_GL.cpp
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS) -DGLES3_1
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
@@ -172,7 +167,7 @@ LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES) $(LOCAL_PATH)/GL/
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/OGL3X/UniformBlock.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
+LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES) $(SRCDIR)/GLUniforms/UniformSet.cpp $(SRCDIR)/OGL3X/GLSLCombiner_ogl3x.cpp \
                            $(SRCDIR)/common/GLFunctions.cpp $(SRCDIR)/BufferCopy/ColorBufferToRDRAM_GL.cpp
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS) -DEGL
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
