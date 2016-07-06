@@ -26,20 +26,17 @@ typedef char GLchar;
 #elif defined(GLES3)
 #include <GLES3/gl3.h>
 #define GLESX
-#define GL_UNIFORMBLOCK_SUPPORT
 #elif defined(GLES3_1)
 #include <GLES3/gl31.h>
 #define GLESX
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
-#define GL_UNIFORMBLOCK_SUPPORT
 #elif defined(EGL)
 #include <GL/glcorearb.h>
 #include "common/GLFunctions.h"
 #include <GL/glext.h>
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
-#define GL_UNIFORMBLOCK_SUPPORT
 #else
 #if defined(OS_MAC_OS_X)
 #define GL_GLEXT_PROTOTYPES
@@ -52,14 +49,12 @@ typedef char GLchar;
 #include <GL/glext.h>
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
-#define GL_UNIFORMBLOCK_SUPPORT
 #elif defined(OS_WINDOWS)
 #include <GL/gl.h>
 #include "glext.h"
 #include "common/GLFunctions.h"
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
-#define GL_UNIFORMBLOCK_SUPPORT
 #endif // OS_MAC_OS_X
 #endif // GLES2
 
@@ -94,7 +89,7 @@ extern const char * strTexrectDrawerFragmentShaderTex;
 extern const char * strTexrectDrawerFragmentShaderClean;
 extern const char * strTextureCopyShader;
 
-class CachedTexture;
+struct CachedTexture;
 class OGLRender
 {
 public:
@@ -166,13 +161,9 @@ public:
 
 	enum OGL_RENDERER {
 		glrOther,
-		glrAdreno,
-		glrPowerVR,
-		glrMali
+		glrAdreno
 	};
 	OGL_RENDERER getRenderer() const { return m_oglRenderer; }
-
-	bool isBufferSubDataSupported() const {return m_isBufferSubDataSupported;}
 
 	void dropRenderState() {m_renderState = rsNone;}
 
@@ -181,8 +172,7 @@ private:
 		: m_oglRenderer(glrOther)
 		, m_modifyVertices(0)
 		, m_bImageTexture(false)
-		, m_bFlatColors(false)
-		, m_isBufferSubDataSupported(true){
+		, m_bFlatColors(false) {
 	}
 	OGLRender(const OGLRender &);
 	friend class OGLVideo;
@@ -265,8 +255,6 @@ private:
 	TexrectDrawer m_texrectDrawer;
 
 	GLuint m_programCopyTex;
-
-	bool m_isBufferSubDataSupported;
 };
 
 class OGLVideo

@@ -74,6 +74,7 @@ if(EXISTS "/opt/vc/include/bcm_host.h")
   )
   link_directories(
     "/opt/vc/lib"
+    "/opt/vc/lib/GL"
   )
 else(EXISTS "/opt/vc/include/bcm_host.h")
   MESSAGE("bcm_host.h not found")
@@ -92,16 +93,6 @@ if(MUPENPLUSAPI)
 	mupenplus/MupenPlusAPIImpl.cpp
 	mupenplus/OpenGL_mupenplus.cpp
   )
-
-  if(BCMHOST)
-    set(GLideN64_SOURCES_UNIX ${GLideN64_SOURCES_UNIX}
-        BufferCopy/ColorBufferToRDRAMStub.cpp
-    )
-  else(BCMHOST)
-    set(GLideN64_SOURCES_UNIX ${GLideN64_SOURCES_UNIX}
-        BufferCopy/ColorBufferToRDRAM_GL.cpp
-    )
-  endif(BCMHOST)
 
   set(GLideN64_SOURCES_WIN ${GLideN64_SOURCES_UNIX}
 	common/GLFunctions.cpp
@@ -206,13 +197,26 @@ if( CMAKE_BUILD_TYPE STREQUAL "Debug")
 #	)
 endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
 
+if (USE_UNIFORMBLOCK)
+  add_definitions(
+	-DGL_USE_UNIFORMBLOCK
+   )
+  list(APPEND GLideN64_SOURCES
+	GLUniforms/UniformBlock.cpp
+  )
+else (USE_UNIFORMBLOCK)
+  list(APPEND GLideN64_SOURCES
+	GLUniforms/UniformSet.cpp
+  )
+endif (USE_UNIFORMBLOCK)
+
 if(GLES2)
   add_definitions(
     -DGLES2
    )
    list(APPEND GLideN64_SOURCES 
     GLES2/GLSLCombiner_gles2.cpp
-    GLES2/UniformSet.cpp
+    BufferCopy/ColorBufferToRDRAMStub.cpp
    )
    SET(OPENGL_LIBRARIES -lGLESv2 -lEGL)
 else(GLES2)
@@ -225,7 +229,7 @@ else(GLES2)
   endif(NOT OPENGL_FOUND)
   list(APPEND GLideN64_SOURCES 
     OGL3X/GLSLCombiner_ogl3x.cpp
-    OGL3X/UniformBlock.cpp
+    BufferCopy/ColorBufferToRDRAM_GL.cpp
   )
 endif(GLES2)
 

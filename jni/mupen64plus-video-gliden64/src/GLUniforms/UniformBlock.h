@@ -63,7 +63,6 @@ private:
 	};
 
 	GLuint m_currentBuffer;
-	bool m_isBufferSubDataSupported;
 
 	UniformBlockData<tuTotal, 1> m_textureBlock;
 	UniformBlockData<cuTotal, 2> m_colorsBlock;
