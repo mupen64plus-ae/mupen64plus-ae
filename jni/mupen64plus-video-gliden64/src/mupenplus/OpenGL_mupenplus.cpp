@@ -12,13 +12,11 @@
 #include <bcm_host.h>
 #endif
 
-#ifndef EGL
 #if !defined(OS_WINDOWS) || defined(GLES2) || defined(GLES3) || defined(GLES3_1)
 
 void initGLFunctions()
 {
 }
-#endif
 #endif
 
 class OGLVideoMupenPlus : public OGLVideo
@@ -46,7 +44,6 @@ OGLVideo & OGLVideo::get()
 
 void OGLVideoMupenPlus::_setAttributes()
 {
-
 #ifdef GLES2
 	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MAJOR_VERSION, 2);
 	CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 0);
@@ -63,14 +60,6 @@ void OGLVideoMupenPlus::_setAttributes()
 #else
 	// Do nothing
 #endif
-
-#ifndef GLES2
-	CoreVideo_GL_SetAttribute(M64P_GL_RED_SIZE, 8);
-	CoreVideo_GL_SetAttribute(M64P_GL_GREEN_SIZE, 8);
-	CoreVideo_GL_SetAttribute(M64P_GL_BLUE_SIZE, 8);
-	CoreVideo_GL_SetAttribute(M64P_GL_ALPHA_SIZE, 8);
-#endif
-
 	CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
 	CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, config.video.verticalSync);
 	CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 32);
@@ -128,7 +117,7 @@ void OGLVideoMupenPlus::_stop()
 void OGLVideoMupenPlus::_swapBuffers()
 {
 	// if emulator defined a render callback function, call it before buffer swap
-	if (renderCallback != nullptr) {
+	if (renderCallback != NULL) {
 		glUseProgram(0);
 		if (config.frameBufferEmulation.N64DepthCompare == 0) {
 			glViewport(0, getHeightOffset(), getScreenWidth(), getScreenHeight());

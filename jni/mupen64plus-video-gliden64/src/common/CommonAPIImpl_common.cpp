@@ -1,23 +1,22 @@
 #ifdef OS_WINDOWS
 # include <windows.h>
 #else
-# include <winlnxdefs.h>
+# include "../winlnxdefs.h"
 #endif // OS_WINDOWS
 #include <assert.h>
 
-#include <PluginAPI.h>
+#include "../PluginAPI.h"
 
-#include <N64.h>
-#include <GLideN64.h>
-#include <OpenGL.h>
-#include <RSP.h>
-#include <RDP.h>
-#include <VI.h>
-#include <Config.h>
-#include <Debug.h>
-#include <FrameBufferInfo.h>
-#include <TextureFilterHandler.h>
-#include <Log.h>
+#include "../N64.h"
+#include "../GLideN64.h"
+#include "../OpenGL.h"
+#include "../RSP.h"
+#include "../RDP.h"
+#include "../VI.h"
+#include "../Config.h"
+#include "../Debug.h"
+#include "../FrameBufferInfo.h"
+#include "../Log.h"
 
 PluginAPI & PluginAPI::get()
 {
@@ -162,7 +161,7 @@ void PluginAPI::RomClosed()
 					&m_pluginThreadCv)
 	);
 	delete m_pRspThread;
-	m_pRspThread = nullptr;
+	m_pRspThread = NULL;
 #else
 	TFH.shutdown();
 	video().stop();

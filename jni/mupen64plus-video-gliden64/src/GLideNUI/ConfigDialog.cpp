@@ -127,13 +127,6 @@ void ConfigDialog::_init()
 		ui->fixTexrectForceRadioButton->setChecked(true);
 		break;
 	}
-	ui->nativeRes2D_checkBox->setChecked(config.generalEmulation.enableNativeResTexrects != 0);
-	if (ui->nativeRes2D_checkBox->isChecked()) {
-		ui->texrectsBlackLinesLabel->setEnabled(false);
-		ui->fixTexrectDisableRadioButton->setEnabled(false);
-		ui->fixTexrectSmartRadioButton->setEnabled(false);
-		ui->fixTexrectForceRadioButton->setEnabled(false);
-	}
 
 	ui->bufferSwapComboBox->setCurrentIndex(config.frameBufferEmulation.bufferSwapMode);
 	ui->frameBufferGroupBox->setChecked(config.frameBufferEmulation.enable != 0);
@@ -149,17 +142,7 @@ void ConfigDialog::_init()
 		break;
 	}
 	ui->RenderFBCheckBox->setChecked(config.frameBufferEmulation.copyFromRDRAM != 0);
-	switch (config.frameBufferEmulation.copyDepthToRDRAM) {
-	case Config::cdDisable:
-		ui->copyDepthDisableRadioButton->setChecked(true);
-		break;
-	case Config::cdCopyFromVRam:
-		ui->copyDepthVRamRadioButton->setChecked(true);
-		break;
-	case Config::cdSoftwareRender:
-		ui->copyDepthSoftwareRadioButton->setChecked(true);
-		break;
-	}
+	ui->CopyDepthCheckBox->setChecked(config.frameBufferEmulation.copyDepthToRDRAM != 0);
 	ui->n64DepthCompareCheckBox->setChecked(config.frameBufferEmulation.N64DepthCompare != 0);
 	switch (config.frameBufferEmulation.aspect) {
 	case Config::aStretch:
@@ -185,13 +168,13 @@ void ConfigDialog::_init()
 
 	// Texture filter settings
 	QStringList textureFiltersList;
-	for (unsigned int i = 0; i < numFilters; ++i)
+	for (int i = 0; i < numFilters; ++i)
 		textureFiltersList.append(cmbTexFilter_choices[i]);
 	ui->filterComboBox->insertItems(0, textureFiltersList);
 	ui->filterComboBox->setCurrentIndex(config.textureFilter.txFilterMode);
 
 	QStringList textureEnhancementList;
-	for (unsigned int i = 0; i < numEnhancements; ++i)
+	for (int i = 0; i < numEnhancements; ++i)
 		textureEnhancementList.append(cmbTexEnhancement_choices[i]);
 	ui->enhancementComboBox->insertItems(0, textureEnhancementList);
 	ui->enhancementComboBox->setCurrentIndex(config.textureFilter.txEnhancementMode);
@@ -341,7 +324,6 @@ void ConfigDialog::accept()
 		config.generalEmulation.correctTexrectCoords = Config::tcSmart;
 	else if (ui->fixTexrectForceRadioButton->isChecked())
 		config.generalEmulation.correctTexrectCoords = Config::tcForce;
-	config.generalEmulation.enableNativeResTexrects = ui->nativeRes2D_checkBox->isChecked() ? 1 : 0;
 
 	config.frameBufferEmulation.bufferSwapMode = ui->bufferSwapComboBox->currentIndex();
 	config.frameBufferEmulation.enable = ui->frameBufferGroupBox->isChecked() ? 1 : 0;
@@ -352,12 +334,7 @@ void ConfigDialog::accept()
 	else if (ui->copyBufferAsyncRadioButton->isChecked())
 		config.frameBufferEmulation.copyToRDRAM = Config::ctAsync;
 	config.frameBufferEmulation.copyFromRDRAM = ui->RenderFBCheckBox->isChecked() ? 1 : 0;
-	if (ui->copyDepthDisableRadioButton->isChecked())
-		config.frameBufferEmulation.copyDepthToRDRAM = Config::cdDisable;
-	else if (ui->copyDepthVRamRadioButton->isChecked())
-		config.frameBufferEmulation.copyDepthToRDRAM = Config::cdCopyFromVRam;
-	else if (ui->copyDepthSoftwareRadioButton->isChecked())
-		config.frameBufferEmulation.copyDepthToRDRAM = Config::cdSoftwareRender;
+	config.frameBufferEmulation.copyDepthToRDRAM = ui->CopyDepthCheckBox->isChecked() ? 1 : 0;
 	config.frameBufferEmulation.N64DepthCompare = ui->n64DepthCompareCheckBox->isChecked() ? 1 : 0;
 	if (ui->aspectStretchRadioButton->isChecked())
 		config.frameBufferEmulation.aspect = Config::aStretch;
@@ -509,12 +486,4 @@ void ConfigDialog::on_windowedResolutionComboBox_currentIndexChanged(int index)
 	ui->windowWidthSpinBox->setEnabled(bCustom);
 	ui->windowHeightSpinBox->setValue(bCustom ? config.video.windowedHeight : WindowedModes[index].height);
 	ui->windowHeightSpinBox->setEnabled(bCustom);
-}
-
-void ConfigDialog::on_nativeRes2D_checkBox_toggled(bool checked)
-{
-	ui->texrectsBlackLinesLabel->setEnabled(!checked);
-	ui->fixTexrectDisableRadioButton->setEnabled(!checked);
-	ui->fixTexrectSmartRadioButton->setEnabled(!checked);
-	ui->fixTexrectForceRadioButton->setEnabled(!checked);
 }

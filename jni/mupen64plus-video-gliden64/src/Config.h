@@ -4,7 +4,7 @@
 #include <string>
 #include "Types.h"
 
-#define CONFIG_VERSION_CURRENT 11U
+#define CONFIG_VERSION_CURRENT 9U
 
 #define BILINEAR_3POINT   0
 #define BILINEAR_STANDARD 1
@@ -48,7 +48,6 @@ struct Config
 		u32 enableCustomSettings;
 		u32 enableShadersStorage;
 		u32 correctTexrectCoords;
-		u32 enableNativeResTexrects;
 		u32 hacks;
 #ifdef ANDROID
 		u32 forcePolygonOffset;
@@ -75,12 +74,6 @@ struct Config
 		bsOnVerticalInterrupt = 0,
 		bsOnVIOriginChange,
 		bsOnColorImageChange
-	};
-
-	enum CopyDepthMode {
-		cdDisable = 0,
-		cdCopyFromVRam = 1,
-		cdSoftwareRender = 2
 	};
 
 	struct {

@@ -36,24 +36,6 @@
     <Filter Include="Source Files\OGL3X">
       <UniqueIdentifier>{32bbb389-ea50-4ac9-bb55-84e4f066fe94}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\BufferCopy">
-      <UniqueIdentifier>{e9bcfc4d-06e5-496a-a069-3d28e2fcd559}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\BufferCopy">
-      <UniqueIdentifier>{03c90b24-47cf-4a72-8652-837470d2a641}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\DepthBufferRender">
-      <UniqueIdentifier>{763fe27e-e0ab-4884-9794-727c47a9dd24}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\DepthBufferRender">
-      <UniqueIdentifier>{ac6b6e3c-c470-4a66-ad6c-d4ad388ec793}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\GLUniforms">
-      <UniqueIdentifier>{b4b4d718-d4cf-4851-bd8f-fe0646df3d76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GLUniforms">
-      <UniqueIdentifier>{6207c101-59f4-44f2-9022-0b5d14645d92}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Combiner.cpp">
@@ -200,6 +182,12 @@
     <ClCompile Include="..\..\src\Keys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\windows\GLFunctions_windows.cpp">
+      <Filter>Source Files\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OGL3X\UniformBlock.cpp">
+      <Filter>Source Files\OGL3X</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\ShaderUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -208,42 +196,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\FrameBufferInfo.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\BufferCopy\ColorBufferToRDRAM.cpp">
-      <Filter>Source Files\BufferCopy</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\BufferCopy\DepthBufferToRDRAM.cpp">
-      <Filter>Source Files\BufferCopy</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\BufferCopy\RDRAMtoColorBuffer.cpp">
-      <Filter>Source Files\BufferCopy</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\GLFunctions.cpp">
-      <Filter>Source Files\common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\BufferCopy\ColorBufferToRDRAM_GL.cpp">
-      <Filter>Source Files\BufferCopy</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\TextureFilterHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\SoftwareRender.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\DepthBufferRender\ClipPolygon.cpp">
-      <Filter>Source Files\DepthBufferRender</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\DepthBufferRender\DepthBufferRender.cpp">
-      <Filter>Source Files\DepthBufferRender</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\FBOTextureFormats.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\GLUniforms\UniformSet.cpp">
-      <Filter>Source Files\GLUniforms</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\GLUniforms\UniformBlock.cpp">
-      <Filter>Source Files\GLUniforms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +337,9 @@
     <ClInclude Include="..\..\src\UniformCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\OGL3X\UniformBlock.h">
+      <Filter>OGL3X</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\ShaderUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -402,39 +357,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\FrameBufferInfoAPI.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\BufferCopy\ColorBufferToRDRAM.h">
-      <Filter>Header Files\BufferCopy</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\BufferCopy\DepthBufferToRDRAM.h">
-      <Filter>Header Files\BufferCopy</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\BufferCopy\RDRAMtoColorBuffer.h">
-      <Filter>Header Files\BufferCopy</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\BufferCopy\WriteToRDRAM.h">
-      <Filter>Header Files\BufferCopy</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\TextureFilterHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\SoftwareRender.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\DepthBufferRender\ClipPolygon.h">
-      <Filter>Header Files\DepthBufferRender</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\DepthBufferRender\DepthBufferRender.h">
-      <Filter>Header Files\DepthBufferRender</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\FBOTextureFormats.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\GLUniforms\UniformSet.h">
-      <Filter>Header Files\GLUniforms</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\GLUniforms\UniformBlock.h">
-      <Filter>Header Files\GLUniforms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

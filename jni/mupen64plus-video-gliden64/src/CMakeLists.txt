@@ -21,7 +21,6 @@ set(GLideN64_SOURCES
   F3DSWSE.cpp
   F3DEX2.cpp
   F3DEX2CBFD.cpp
-  FBOTextureFormats.cpp
   FrameBuffer.cpp
   FrameBufferInfo.cpp
   GBI.cpp
@@ -42,17 +41,10 @@ set(GLideN64_SOURCES
   Turbo3D.cpp
   ZSort.cpp
   ShaderUtils.cpp
-  SoftwareRender.cpp
   Textures.cpp
   TextDrawer.cpp
-  TextureFilterHandler.cpp
   PostProcessor.cpp
   VI.cpp
-  BufferCopy/ColorBufferToRDRAM.cpp
-  BufferCopy/DepthBufferToRDRAM.cpp
-  BufferCopy/RDRAMtoColorBuffer.cpp
-  DepthBufferRender/ClipPolygon.cpp
-  DepthBufferRender/DepthBufferRender.cpp
   common/CommonAPIImpl_common.cpp
 )
 
@@ -64,7 +56,6 @@ if(EXISTS "/opt/vc/include/bcm_host.h")
   set(GLES2 ON)
   add_definitions(
     -DVC
-    -DUSE_DEPTH_RENDERBUFFER
   )
   include_directories(
     "/opt/vc/include"
@@ -74,7 +65,6 @@ if(EXISTS "/opt/vc/include/bcm_host.h")
   )
   link_directories(
     "/opt/vc/lib"
-    "/opt/vc/lib/GL"
   )
 else(EXISTS "/opt/vc/include/bcm_host.h")
   MESSAGE("bcm_host.h not found")
@@ -85,7 +75,7 @@ if(MUPENPLUSAPI)
 	-DMUPENPLUSAPI
 		-DTXFILTER_LIB
   )
-  include_directories( . inc )
+  include_directories( inc )
   set(GLideN64_SOURCES_UNIX
 	MupenPlusPluginAPI.cpp
 	mupenplus/Config_mupenplus.cpp
@@ -93,9 +83,8 @@ if(MUPENPLUSAPI)
 	mupenplus/MupenPlusAPIImpl.cpp
 	mupenplus/OpenGL_mupenplus.cpp
   )
-
   set(GLideN64_SOURCES_WIN ${GLideN64_SOURCES_UNIX}
-	common/GLFunctions.cpp
+	windows/GLFunctions_windows.cpp
   )
   set(GLideN64_DLL_NAME mupen64plus-video-GLideN64)
 else(MUPENPLUSAPI)
@@ -107,7 +96,7 @@ else(MUPENPLUSAPI)
 	windows/Config_windows.cpp
 	windows/CommonAPIImpl_windows.cpp
 	windows/GLideN64_windows.cpp
-	common/GLFunctions.cpp
+	windows/GLFunctions_windows.cpp
 	windows/OpenGL_windows.cpp
 	windows/ZilmarAPIImpl_windows.cpp
   )
@@ -197,26 +186,13 @@ if( CMAKE_BUILD_TYPE STREQUAL "Debug")
 #	)
 endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-if (USE_UNIFORMBLOCK)
-  add_definitions(
-	-DGL_USE_UNIFORMBLOCK
-   )
-  list(APPEND GLideN64_SOURCES
-	GLUniforms/UniformBlock.cpp
-  )
-else (USE_UNIFORMBLOCK)
-  list(APPEND GLideN64_SOURCES
-	GLUniforms/UniformSet.cpp
-  )
-endif (USE_UNIFORMBLOCK)
-
 if(GLES2)
   add_definitions(
     -DGLES2
    )
    list(APPEND GLideN64_SOURCES 
     GLES2/GLSLCombiner_gles2.cpp
-    BufferCopy/ColorBufferToRDRAMStub.cpp
+    GLES2/UniformSet.cpp
    )
    SET(OPENGL_LIBRARIES -lGLESv2 -lEGL)
 else(GLES2)
@@ -229,7 +205,7 @@ else(GLES2)
   endif(NOT OPENGL_FOUND)
   list(APPEND GLideN64_SOURCES 
     OGL3X/GLSLCombiner_ogl3x.cpp
-    BufferCopy/ColorBufferToRDRAM_GL.cpp
+    OGL3X/UniformBlock.cpp
   )
 endif(GLES2)
 

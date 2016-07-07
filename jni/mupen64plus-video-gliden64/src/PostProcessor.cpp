@@ -24,10 +24,6 @@
 #define FRAGMENT_SHADER_END "\n"
 #endif
 
-#ifdef ANDROID
-PostProcessor PostProcessor::processor;
-#endif
-
 static const char * vertexShader =
 SHADER_VERSION
 "#if (__VERSION__ > 120)						\n"
@@ -473,9 +469,7 @@ void PostProcessor::destroy()
 
 PostProcessor & PostProcessor::get()
 {
-#ifndef ANDROID
 	static PostProcessor processor;
-#endif
 	return processor;
 }
 

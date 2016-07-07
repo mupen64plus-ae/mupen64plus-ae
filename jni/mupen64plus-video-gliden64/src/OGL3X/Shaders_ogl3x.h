@@ -25,7 +25,6 @@ MAIN_SHADER_VERSION
 "uniform mediump vec2 uFogScale;					\n"
 "uniform mediump vec2 uScreenCoordsScale;			\n"
 "													\n"
-#ifdef GL_USE_UNIFORMBLOCK
 "layout (std140) uniform TextureBlock {				\n"
 "  mediump vec2 uTexScale;							\n"
 "  mediump vec2 uTexOffset[2];						\n"
@@ -34,14 +33,6 @@ MAIN_SHADER_VERSION
 "  mediump vec2 uCacheShiftScale[2];				\n"
 "  lowp ivec2 uCacheFrameBuffer;					\n"
 "};													\n"
-#else
-"uniform mediump vec2 uTexScale;					\n"
-"uniform mediump vec2 uTexOffset[2];				\n"
-"uniform mediump vec2 uCacheScale[2];				\n"
-"uniform mediump vec2 uCacheOffset[2];				\n"
-"uniform mediump vec2 uCacheShiftScale[2];			\n"
-"uniform lowp ivec2 uCacheFrameBuffer;				\n"
-#endif //  GL_USE_UNIFORMBLOCK
 "out lowp vec4 vShadeColor;							\n"
 "out mediump vec2 vTexCoord0;						\n"
 "out mediump vec2 vTexCoord1;						\n"
@@ -152,7 +143,6 @@ MAIN_SHADER_VERSION
 "uniform sampler2D uTex0;		\n"
 "uniform sampler2D uTex1;		\n"
 "uniform sampler2D uDepthTex;	\n"
-#ifdef GL_USE_UNIFORMBLOCK
 "layout (std140) uniform ColorsBlock {\n"
 "  lowp vec4 uFogColor;			\n"
 "  lowp vec4 uCenterColor;		\n"
@@ -164,17 +154,6 @@ MAIN_SHADER_VERSION
 "  lowp float uK4;				\n"
 "  lowp float uK5;				\n"
 "};								\n"
-#else
-"uniform lowp vec4 uFogColor;	\n"
-"uniform lowp vec4 uCenterColor;\n"
-"uniform lowp vec4 uScaleColor;	\n"
-"uniform lowp vec4 uBlendColor;	\n"
-"uniform lowp vec4 uEnvColor;	\n"
-"uniform lowp vec4 uPrimColor;	\n"
-"uniform lowp float uPrimLod;	\n"
-"uniform lowp float uK4;		\n"
-"uniform lowp float uK5;		\n"
-#endif // GL_USE_UNIFORMBLOCK
 #ifdef GLESX
 "uniform mediump vec2 uScreenScale;	\n"
 #endif
@@ -213,7 +192,6 @@ static const char* fragment_shader_header_common_variables_ms_tex1 =
 static const char* fragment_shader_header_common_variables_notex =
 MAIN_SHADER_VERSION
 "uniform sampler2D uDepthTex;	\n"
-#ifdef GL_USE_UNIFORMBLOCK
 "layout (std140) uniform ColorsBlock {\n"
 "  lowp vec4 uFogColor;			\n"
 "  lowp vec4 uCenterColor;		\n"
@@ -225,17 +203,6 @@ MAIN_SHADER_VERSION
 "  lowp float uK4;				\n"
 "  lowp float uK5;				\n"
 "};								\n"
-#else
-"uniform lowp vec4 uFogColor;	\n"
-"uniform lowp vec4 uCenterColor;\n"
-"uniform lowp vec4 uScaleColor;	\n"
-"uniform lowp vec4 uBlendColor;	\n"
-"uniform lowp vec4 uEnvColor;	\n"
-"uniform lowp vec4 uPrimColor;	\n"
-"uniform lowp float uPrimLod;	\n"
-"uniform lowp float uK4;		\n"
-"uniform lowp float uK5;		\n"
-#endif // GL_USE_UNIFORMBLOCK
 #ifdef GLESX
 "uniform mediump vec2 uScreenScale;	\n"
 #endif
@@ -286,15 +253,10 @@ static const char* fragment_shader_header_alpha_noise_toonify =
 
 static const char* fragment_shader_calc_light =
 AUXILIARY_SHADER_VERSION
-#ifdef GL_USE_UNIFORMBLOCK
 "layout (std140) uniform LightBlock {		\n"
 "  mediump vec3 uLightDirection[8];			\n"
 "  lowp vec3 uLightColor[8];				\n"
 "};											\n"
-#else
-"uniform mediump vec3 uLightDirection[8];	\n"
-"uniform lowp vec3 uLightColor[8];			\n"
-#endif // GL_USE_UNIFORMBLOCK
 "void calc_light(in lowp float fLights, in lowp vec3 input_color, out lowp vec3 output_color) {\n"
 "  output_color = input_color;									\n"
 "  lowp int nLights = int(floor(fLights + 0.5));				\n"
@@ -704,116 +666,4 @@ MAIN_SHADER_VERSION
 "  gl_FragDepth = texture(uTex0, vTexCoord0).r;	\n"
 #endif
 "}												\n"
-;
-
-const char * strTexrectDrawerVertexShader =
-MAIN_SHADER_VERSION
-"in highp vec4 aPosition;		\n"
-"in highp vec2 aTexCoord0;		\n"
-"out mediump vec2 vTexCoord0;	\n"
-"void main()					\n"
-"{								\n"
-"  gl_Position = aPosition;		\n"
-"  vTexCoord0 = aTexCoord0;		\n"
-"}								\n"
-;
-
-const char * strTexrectDrawerTex3PointFilter =
-MAIN_SHADER_VERSION
-"uniform mediump vec4 uTextureBounds;																			\n"
-// 3 point texture filtering.
-// Original author: ArthurCarvalho
-// GLSL implementation: twinaphex, mupen64plus-libretro project.
-"#define TEX_OFFSET(off) texture(tex, texCoord - (off)/texSize)													\n"
-"lowp vec4 texFilter(in sampler2D tex, in mediump vec2 texCoord)												\n"
-"{																												\n"
-"  mediump vec2 texSize = vec2(textureSize(tex,0));																\n"
-"  mediump vec2 texelSize = vec2(1.0) / texSize;																\n"
-"  lowp vec4 c = texture(tex, texCoord);		 																\n"
-"  if (abs(texCoord.s - uTextureBounds[0]) < texelSize.x || abs(texCoord.s - uTextureBounds[2]) < texelSize.x) return c;	\n"
-"  if (abs(texCoord.t - uTextureBounds[1]) < texelSize.y || abs(texCoord.t - uTextureBounds[3]) < texelSize.y) return c;	\n"
-"																												\n"
-"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));													\n"
-"  offset -= step(1.0, offset.x + offset.y);																	\n"
-"  lowp vec4 zero = vec4(0.0);					 																\n"
-"  lowp vec4 c0 = TEX_OFFSET(offset);																			\n"
-"  lowp vec4 c1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y));										\n"
-"  lowp vec4 c2 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));										\n"
-"  return c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0);													\n"
-"}																												\n"
-"																											    \n"
-;
-
-const char * strTexrectDrawerTexBilinearFilter =
-MAIN_SHADER_VERSION
-"uniform mediump vec4 uTextureBounds;																			\n"
-"#define TEX_OFFSET(off) texture(tex, texCoord - (off)/texSize)													\n"
-"lowp vec4 texFilter(in sampler2D tex, in mediump vec2 texCoord)												\n"
-"{																												\n"
-"  mediump vec2 texSize = vec2(textureSize(tex,0));																\n"
-"  mediump vec2 texelSize = vec2(1.0) / texSize;																\n"
-"  lowp vec4 c = texture(tex, texCoord);																		\n"
-"  if (abs(texCoord.s - uTextureBounds[0]) < texelSize.x || abs(texCoord.s - uTextureBounds[2]) < texelSize.x) return c;	\n"
-"  if (abs(texCoord.t - uTextureBounds[1]) < texelSize.y || abs(texCoord.t - uTextureBounds[3]) < texelSize.y) return c;	\n"
-"																												\n"
-"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));													\n"
-"  offset -= step(1.0, offset.x + offset.y);																	\n"
-"  lowp vec4 zero = vec4(0.0);																					\n"
-"																												\n"
-"  lowp vec4 p0q0 = TEX_OFFSET(offset);																			\n"
-"  lowp vec4 p1q0 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y));										\n"
-"																												\n"
-"  lowp vec4 p0q1 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));				                        \n"
-"  lowp vec4 p1q1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y - sign(offset.y)));						\n"
-"																												\n"
-"  mediump vec2 interpolationFactor = abs(offset);																\n"
-"  lowp vec4 pInterp_q0 = mix( p0q0, p1q0, interpolationFactor.x ); // Interpolates top row in X direction.		\n"
-"  lowp vec4 pInterp_q1 = mix( p0q1, p1q1, interpolationFactor.x ); // Interpolates bottom row in X direction.	\n"
-"  return mix( pInterp_q0, pInterp_q1, interpolationFactor.y ); // Interpolate in Y direction.					\n"
-"}																												\n"
-"																												\n"
-;
-
-const char * strTexrectDrawerFragmentShaderTex =
-"uniform sampler2D uTex0;																						\n"
-"uniform lowp int uEnableAlphaTest;																				\n"
-"uniform mediump vec2 uDepthScale;																				\n"
-"uniform lowp vec4 uTestColor = vec4(4.0/255.0, 2.0/255.0, 1.0/255.0, 0.0);										\n"
-"in mediump vec2 vTexCoord0;																					\n"
-"out lowp vec4 fragColor;																						\n"
-"void main()																									\n"
-"{																												\n"
-#ifdef GLESX
-"#ifdef GL_NV_fragdepth																							\n"
-"  gl_FragDepth = clamp((gl_FragCoord.z * 2.0 - 1.0) * uDepthScale.s + uDepthScale.t, 0.0, 1.0);				\n"
-"#endif																											\n"
-#else
-"  gl_FragDepth = clamp((gl_FragCoord.z * 2.0 - 1.0) * uDepthScale.s + uDepthScale.t, 0.0, 1.0);				\n"
-#endif
-"  fragColor = texFilter(uTex0, vTexCoord0);																	\n"
-"  if (fragColor == uTestColor) discard;																		\n"
-"  if (uEnableAlphaTest == 1 && !(fragColor.a > 0.0)) discard;													\n"
-"}																												\n"
-;
-
-const char * strTexrectDrawerFragmentShaderClean =
-MAIN_SHADER_VERSION
-"uniform lowp vec4 uTestColor = vec4(4.0/255.0, 2.0/255.0, 1.0/255.0, 0.0);	\n"
-"out lowp vec4 fragColor;													\n"
-"void main()																\n"
-"{																			\n"
-"  fragColor = uTestColor;													\n"
-"}																			\n"
-;
-
-const char* strTextureCopyShader =
-MAIN_SHADER_VERSION
-"in mediump vec2 vTexCoord0;                            \n"
-"uniform sampler2D uTex0;				                \n"
-"out lowp vec4 fragColor;								\n"
-"                                                       \n"
-"void main()                                            \n"
-"{                                                      \n"
-"    fragColor = texture(uTex0, vTexCoord0);	        \n"
-"}							                            \n"
 ;

@@ -14,7 +14,7 @@ typedef u32 (*GetTexelFunc)( u64 *src, u16 x, u16 i, u8 palette );
 
 struct CachedTexture
 {
-	CachedTexture(GLuint _glName) : glName(_glName), max_level(0), frameBufferTexture(fbNone), bHDTexture(false) {}
+	CachedTexture(GLuint _glName) : glName(_glName), max_level(0), frameBufferTexture(fbNone) {}
 
 	GLuint	glName;
 	u32		crc;
@@ -44,7 +44,6 @@ struct CachedTexture
 		fbOneSample = 1,
 		fbMultiSample = 2
 	} frameBufferTexture;
-	bool bHDTexture;
 };
 
 
@@ -65,10 +64,10 @@ struct TextureCache
 	static TextureCache & get();
 
 private:
-	TextureCache() : m_pDummy(nullptr), m_hits(0), m_misses(0), m_maxBytes(0), m_cachedBytes(0), m_curUnpackAlignment(4), m_toggleDumpTex(false)
+	TextureCache() : m_pDummy(NULL), m_hits(0), m_misses(0), m_maxBytes(0), m_cachedBytes(0), m_curUnpackAlignment(4), m_toggleDumpTex(false)
 	{
-		current[0] = nullptr;
-		current[1] = nullptr;
+		current[0] = NULL;
+		current[1] = NULL;
 		CRC_BuildTable();
 	}
 	TextureCache(const TextureCache &);
