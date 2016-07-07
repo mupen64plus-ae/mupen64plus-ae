@@ -16,8 +16,8 @@ Config config;
 static
 const u32 uMegabyte = 1024U*1024U;
 
-static m64p_handle g_configVideoGeneral = NULL;
-static m64p_handle g_configVideoGliden64 = NULL;
+static m64p_handle g_configVideoGeneral = nullptr;
+static m64p_handle g_configVideoGliden64 = nullptr;
 
 static
 bool Config_SetDefault()
@@ -72,6 +72,8 @@ bool Config_SetDefault()
 	assert(res == M64ERR_SUCCESS);
 	res = ConfigSetDefaultInt(g_configVideoGliden64, "CorrectTexrectCoords", config.generalEmulation.correctTexrectCoords, "Make texrect coordinates continuous to avoid black lines between them. (0=Off, 1=Auto, 2=Force)");
 	assert(res == M64ERR_SUCCESS);
+	res = ConfigSetDefaultBool(g_configVideoGliden64, "enableNativeResTexrects", config.generalEmulation.enableNativeResTexrects, "Render 2D texrects in native resolution to fix misalignment between parts of 2D image.");
+	assert(res == M64ERR_SUCCESS);
 #ifdef ANDROID
 	res = ConfigSetDefaultBool(g_configVideoGliden64, "ForcePolygonOffset", config.generalEmulation.forcePolygonOffset, "If true, use polygon offset values specified below");
 	assert(res == M64ERR_SUCCESS);
@@ -95,7 +97,7 @@ bool Config_SetDefault()
 	assert(res == M64ERR_SUCCESS);
 	res = ConfigSetDefaultInt(g_configVideoGliden64, "EnableCopyColorToRDRAM", config.frameBufferEmulation.copyToRDRAM, "Enable color buffer copy to RDRAM (0=do not copy, 1=copy in sync mode, 2=copy in async mode)");
 	assert(res == M64ERR_SUCCESS);
-	res = ConfigSetDefaultBool(g_configVideoGliden64, "EnableCopyDepthToRDRAM", config.frameBufferEmulation.copyDepthToRDRAM, "Enable depth buffer copy to RDRAM.");
+	res = ConfigSetDefaultInt(g_configVideoGliden64, "EnableCopyDepthToRDRAM", config.frameBufferEmulation.copyDepthToRDRAM, "Enable depth buffer copy to RDRAM  (0=do not copy, 1=copy from video memory, 2=use software render)");
 	assert(res == M64ERR_SUCCESS);
 	res = ConfigSetDefaultBool(g_configVideoGliden64, "EnableCopyColorFromRDRAM", config.frameBufferEmulation.copyFromRDRAM, "Enable color buffer copy from RDRAM.");
 	assert(res == M64ERR_SUCCESS);
@@ -202,6 +204,7 @@ void Config_LoadConfig()
 	config.generalEmulation.enableHWLighting = ConfigGetParamBool(g_configVideoGliden64, "EnableHWLighting");
 	config.generalEmulation.enableShadersStorage = ConfigGetParamBool(g_configVideoGliden64, "EnableShadersStorage");
 	config.generalEmulation.correctTexrectCoords = ConfigGetParamInt(g_configVideoGliden64, "CorrectTexrectCoords");
+	config.generalEmulation.enableNativeResTexrects = ConfigGetParamBool(g_configVideoGliden64, "enableNativeResTexrects");
 #ifdef ANDROID
 	config.generalEmulation.forcePolygonOffset = ConfigGetParamBool(g_configVideoGliden64, "ForcePolygonOffset");
 	config.generalEmulation.polygonOffsetFactor = ConfigGetParamFloat(g_configVideoGliden64, "PolygonOffsetFactor");
@@ -211,7 +214,7 @@ void Config_LoadConfig()
 	config.frameBufferEmulation.enable = ConfigGetParamBool(g_configVideoGliden64, "EnableFBEmulation");
 	config.frameBufferEmulation.copyAuxToRDRAM = ConfigGetParamBool(g_configVideoGliden64, "EnableCopyAuxiliaryToRDRAM");
 	config.frameBufferEmulation.copyToRDRAM = ConfigGetParamInt(g_configVideoGliden64, "EnableCopyColorToRDRAM");
-	config.frameBufferEmulation.copyDepthToRDRAM = ConfigGetParamBool(g_configVideoGliden64, "EnableCopyDepthToRDRAM");
+	config.frameBufferEmulation.copyDepthToRDRAM = ConfigGetParamInt(g_configVideoGliden64, "EnableCopyDepthToRDRAM");
 	config.frameBufferEmulation.copyFromRDRAM = ConfigGetParamBool(g_configVideoGliden64, "EnableCopyColorFromRDRAM");
 	config.frameBufferEmulation.N64DepthCompare = ConfigGetParamBool(g_configVideoGliden64, "EnableN64DepthCompare");
 	config.frameBufferEmulation.fbInfoDisabled = ConfigGetParamBool(g_configVideoGliden64, "DisableFBInfo");
@@ -238,7 +241,7 @@ void Config_LoadConfig()
 		config.font.name = "arial.ttf";
 	char buf[16];
 	sprintf(buf, "0x%s", ConfigGetParamString(g_configVideoGliden64, "fontColor"));
-	long int uColor = strtol(buf, NULL, 16);
+	long int uColor = strtol(buf, nullptr, 16);
 	if (uColor != 0) {
 		config.font.color[0] = _SHIFTR(uColor, 16, 8);
 		config.font.color[1] = _SHIFTR(uColor, 8, 8);

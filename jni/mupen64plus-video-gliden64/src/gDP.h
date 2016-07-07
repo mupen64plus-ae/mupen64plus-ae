@@ -106,6 +106,13 @@ struct gDPLoadTileInfo {
 	u16 texWidth;
 	u32 texAddress;
 	u32 dxt;
+	u32 bytes;
+};
+
+struct gDPScissor
+{
+	u32 mode;
+	f32 ulx, uly, lrx, lry;
 };
 
 struct gDPInfo
@@ -218,11 +225,7 @@ struct gDPInfo
 
 	u32	depthImageAddress;
 
-	struct
-	{
-		u32 mode;
-		f32 ulx, uly, lrx, lry;
-	} scissor;
+	gDPScissor scissor;
 
 	struct
 	{

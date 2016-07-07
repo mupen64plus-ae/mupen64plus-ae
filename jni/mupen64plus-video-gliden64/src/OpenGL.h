@@ -10,10 +10,15 @@
 #include "winlnxdefs.h"
 #endif
 
-#ifdef GLES2
+#ifdef __LIBRETRO__
+#include <glsm/glsmsym.h>
+#include <GLideN64_libretro.h>
+#elif GLES2
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #define GL_DRAW_FRAMEBUFFER GL_FRAMEBUFFER
 #define GL_READ_FRAMEBUFFER GL_FRAMEBUFFER
+#define NO_BLIT_BUFFER_COPY
 #define GLESX
 #ifdef PANDORA
 typedef char GLchar;
@@ -21,13 +26,17 @@ typedef char GLchar;
 #elif defined(GLES3)
 #include <GLES3/gl3.h>
 #define GLESX
-#define GL_UNIFORMBLOCK_SUPPORT
 #elif defined(GLES3_1)
 #include <GLES3/gl31.h>
 #define GLESX
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
-#define GL_UNIFORMBLOCK_SUPPORT
+#elif defined(EGL)
+#include <GL/glcorearb.h>
+#include "common/GLFunctions.h"
+#include <GL/glext.h>
+#define GL_IMAGE_TEXTURES_SUPPORT
+#define GL_MULTISAMPLING_SUPPORT
 #else
 #if defined(OS_MAC_OS_X)
 #define GL_GLEXT_PROTOTYPES
@@ -40,14 +49,12 @@ typedef char GLchar;
 #include <GL/glext.h>
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
-#define GL_UNIFORMBLOCK_SUPPORT
 #elif defined(OS_WINDOWS)
 #include <GL/gl.h>
 #include "glext.h"
-#include "windows/GLFunctions.h"
+#include "common/GLFunctions.h"
 #define GL_IMAGE_TEXTURES_SUPPORT
 #define GL_MULTISAMPLING_SUPPORT
-#define GL_UNIFORMBLOCK_SUPPORT
 #endif // OS_MAC_OS_X
 #endif // GLES2
 
@@ -66,13 +73,23 @@ typedef char GLchar;
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #endif
 
+#ifndef __LIBRETRO__
 #include "glState.h"
+#endif
 #include "gSP.h"
 
 #define INDEXMAP_SIZE 80U
 #define VERTBUFF_SIZE 256U
 #define ELEMBUFF_SIZE 1024U
 
+extern const char * strTexrectDrawerVertexShader;
+extern const char * strTexrectDrawerTex3PointFilter;
+extern const char * strTexrectDrawerTexBilinearFilter;
+extern const char * strTexrectDrawerFragmentShaderTex;
+extern const char * strTexrectDrawerFragmentShaderClean;
+extern const char * strTextureCopyShader;
+
+struct CachedTexture;
 class OGLRender
 {
 public:
@@ -89,16 +106,21 @@ public:
 		float dsdx, dtdy;
 		bool flip, forceAjustScale, texrectCmd;
 		const FrameBuffer * pBuffer;
+		const CachedTexture * pInputTexture;
+		const CachedTexture * pOutputTexture;
 		TexturedRectParams(float _ulx, float _uly, float _lrx, float _lry,
 						   float _uls, float _ult, float _lrs, float _lrt,
 						   float _dsdx, float _dtdy,
 						   bool _flip, bool _forceAjustScale, bool _texrectCmd,
-						   const FrameBuffer * _pBuffer) :
+						   const FrameBuffer * _pBuffer,
+						   const CachedTexture * _pInputTexture = 0,
+						   const CachedTexture * _pOutputTexture = 0
+						   ) :
 			ulx(_ulx), uly(_uly), lrx(_lrx), lry(_lry),
 			uls(_uls), ult(_ult), lrs(_lrs), lrt(_lrt),
 			dsdx(_dsdx), dtdy(_dtdy),
 			flip(_flip), forceAjustScale(_forceAjustScale), texrectCmd(_texrectCmd),
-			pBuffer(_pBuffer)
+			pBuffer(_pBuffer), pInputTexture(_pInputTexture), pOutputTexture(_pOutputTexture)
 		{}
 	private:
 		friend class OGLRender;
@@ -108,6 +130,10 @@ public:
 	};
 	void correctTexturedRectParams(TexturedRectParams & _params);
 	void drawTexturedRect(const TexturedRectParams & _params);
+	void copyTexturedRect(GLint _srcX0, GLint _srcY0, GLint _srcX1, GLint _srcY1,
+						  GLuint _srcWidth, GLuint _srcHeight, GLuint _srcTex,
+						  GLint _dstX0, GLint _dstY0, GLint _dstX1, GLint _dstY1,
+						  GLuint _dstWidth, GLuint _dstHeight, GLenum _filter);
 	void drawText(const char *_pText, float x, float y);
 	void clearDepthBuffer(u32 _uly, u32 _lry);
 	void clearColorBuffer( float * _pColor );
@@ -122,6 +148,7 @@ public:
 	void setDMAVerticesSize(u32 _size) { if (triangles.dmaVertices.size() < _size) triangles.dmaVertices.resize(_size); }
 	SPVertex * getDMAVerticesData() { return triangles.dmaVertices.data(); }
 	void updateScissor(FrameBuffer * _pBuffer) const;
+	void flush() { m_texrectDrawer.draw(); }
 
 	enum RENDER_STATE {
 		rsNone = 0,
@@ -164,6 +191,8 @@ private:
 	void _updateViewport() const;
 	void _updateScreenCoordsViewport() const;
 	void _updateDepthUpdate() const;
+	void _updateDepthCompare() const;
+	void _updateTextures(RENDER_STATE _renderState) const;
 	void _updateStates(RENDER_STATE _renderState) const;
 	void _prepareDrawTriangle(bool _dma);
 	bool _canDraw() const;
@@ -185,6 +214,37 @@ private:
 		float s0, t0, s1, t1;
 	};
 
+	class TexrectDrawer
+	{
+	public:
+		TexrectDrawer();
+		void init();
+		void destroy();
+		void add();
+		bool draw();
+		bool isEmpty();
+	private:
+		u32 m_numRects;
+		u64 m_otherMode;
+		u64 m_mux;
+		f32 m_ulx, m_lrx, m_uly, m_lry, m_Z;
+		f32 m_max_lrx, m_max_lry;
+		GLuint m_FBO;
+		GLuint m_programTex;
+		GLuint m_programClean;
+		GLint m_enableAlphaTestLoc;
+		GLint m_textureBoundsLoc;
+		GLint m_depthScaleLoc;
+		gDPScissor m_scissor;
+		CachedTexture * m_pTexture;
+		FrameBuffer * m_pBuffer;
+
+		struct RectCoords {
+			f32 x, y;
+		};
+		std::vector<RectCoords> m_vecRectCoords;
+	};
+
 	RENDER_STATE m_renderState;
 	OGL_RENDERER m_oglRenderer;
 	TexturedRectParams m_texrectParams;
@@ -192,6 +252,9 @@ private:
 	u32 m_modifyVertices;
 	bool m_bImageTexture;
 	bool m_bFlatColors;
+	TexrectDrawer m_texrectDrawer;
+
+	GLuint m_programCopyTex;
 };
 
 class OGLVideo
@@ -265,61 +328,11 @@ private:
 	virtual bool _resizeWindow() = 0;
 };
 
-struct FBOTextureFormats
-{
-	GLint colorInternalFormat;
-	GLenum colorFormat;
-	GLenum colorType;
-	u32 colorFormatBytes;
-
-	GLint monochromeInternalFormat;
-	GLenum monochromeFormat;
-	GLenum monochromeType;
-	u32 monochromeFormatBytes;
-
-	GLint depthInternalFormat;
-	GLenum depthFormat;
-	GLenum depthType;
-	u32 depthFormatBytes;
-
-	GLint depthImageInternalFormat;
-	GLenum depthImageFormat;
-	GLenum depthImageType;
-	u32 depthImageFormatBytes;
-
-	GLint lutInternalFormat;
-	GLenum lutFormat;
-	GLenum lutType;
-	u32 lutFormatBytes;
-
-	void init();
-};
-
-extern FBOTextureFormats fboFormats;
-
 inline
 OGLVideo & video()
 {
 	return OGLVideo::get();
 }
-
-class TextureFilterHandler
-{
-public:
-	TextureFilterHandler() : m_inited(0), m_options(0) {}
-	// It's not safe to call shutdown() in destructor, because texture filter has its own static objects, which can be destroyed first.
-	~TextureFilterHandler() { m_inited = m_options = 0; }
-	void init();
-	void shutdown();
-	bool isInited() const { return m_inited != 0; }
-	bool optionsChanged() const { return _getConfigOptions() != m_options; }
-private:
-	u32 _getConfigOptions() const;
-	u32 m_inited;
-	u32 m_options;
-};
-
-extern TextureFilterHandler TFH;
 
 void initGLFunctions();
 bool checkFBO();

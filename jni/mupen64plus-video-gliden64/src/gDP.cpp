@@ -16,6 +16,7 @@
 #include "FrameBuffer.h"
 #include "DepthBuffer.h"
 #include "FrameBufferInfo.h"
+#include "TextureFilterHandler.h"
 #include "VI.h"
 #include "Config.h"
 #include "Combiner.h"
@@ -371,14 +372,14 @@ static
 bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
 {
 	gDP.loadTile->textureMode = TEXTUREMODE_NORMAL;
-	gDP.loadTile->frameBuffer = NULL;
+	gDP.loadTile->frameBuffer = nullptr;
 	gDP.changed |= CHANGED_TMEM;
 	if (!config.frameBufferEmulation.enable)
 		return false;
 
 	FrameBufferList & fbList = frameBufferList();
 	FrameBuffer *pBuffer = fbList.findBuffer(_address);
-	bool bRes = pBuffer != NULL;
+	bool bRes = pBuffer != nullptr;
 	if (bRes) {
 		if ((config.generalEmulation.hacks & hack_blurPauseScreen) != 0) {
 			if (gDP.colorImage.address == gDP.depthImageAddress && pBuffer->m_copiedToRdram) {
@@ -480,7 +481,8 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 		return;
 
 	const u32 width = (gDP.loadTile->lrs - gDP.loadTile->uls + 1) & 0x03FF;
-	u32 height = (gDP.loadTile->lrt - gDP.loadTile->ult + 1) & 0x03FF;
+	const u32 height = (gDP.loadTile->lrt - gDP.loadTile->ult + 1) & 0x03FF;
+	const u32 bpl = gDP.loadTile->line << 3;
 
 	gDPLoadTileInfo &info = gDP.loadInfo[gDP.loadTile->tmem];
 	info.texAddress = gDP.loadTile->imageAddress;
@@ -491,12 +493,12 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 	info.texWidth = gDP.textureImage.width;
 	info.size = gDP.textureImage.size;
 	info.loadType = LOADTYPE_TILE;
+	info.bytes = bpl * height;
 
 	if (gDP.loadTile->line == 0)
 		return;
 
 	u32 address = gDP.textureImage.address + gDP.loadTile->ult * gDP.textureImage.bpl + (gDP.loadTile->uls << gDP.textureImage.size >> 1);
-	const u32 bpl = gDP.loadTile->line << 3;
 	u32 bpl2 = bpl;
 	if (gDP.loadTile->lrs > gDP.textureImage.width)
 		bpl2 = (gDP.textureImage.width - gDP.loadTile->uls);
@@ -609,6 +611,8 @@ void gDPLoadBlock(u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt)
 	u32 bytes = (lrs - uls + 1) << gDP.loadTile->size >> 1;
 	if ((bytes & 7) != 0)
 		bytes = (bytes & (~7)) + 8;
+
+	info.bytes = bytes;
 	u32 address = gDP.textureImage.address + ult * gDP.textureImage.bpl + (uls << gDP.textureImage.size >> 1);
 
 	if (bytes == 0 || (address + bytes) > RDRAMSize) {
@@ -620,7 +624,7 @@ void gDPLoadBlock(u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt)
 		return;
 	}
 
-	gDP.loadTile->frameBuffer = NULL;
+	gDP.loadTile->frameBuffer = nullptr;
 	CheckForFrameBufferTexture(address, bytes); // Load data to TMEM even if FB texture is found. See comment to texturedRectDepthBufferCopy
 
 	if (gDP.loadTile->size == G_IM_SIZ_32b)
@@ -726,7 +730,7 @@ void gDPSetScissor( u32 mode, f32 ulx, f32 uly, f32 lrx, f32 lry )
 void gDPFillRDRAM(u32 address, s32 ulx, s32 uly, s32 lrx, s32 lry, u32 width, u32 size, u32 color, bool scissor)
 {
 	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-	if (pCurrentBuffer != NULL) {
+	if (pCurrentBuffer != nullptr) {
 		pCurrentBuffer->m_cleared = true;
 		pCurrentBuffer->m_fillcolor = color;
 	}
@@ -873,7 +877,7 @@ void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f3
 	OGLRender::TexturedRectParams params(ulx, uly, lrx, lry, s, t, lrs, lrt, fabsf(dsdx), fabsf(dtdy),
 										 flip, false, true, frameBufferList().getCurrent());
 	OGLRender & render = video().getRender();
-	if (config.generalEmulation.correctTexrectCoords != Config::tcDisable)
+	if (config.generalEmulation.enableNativeResTexrects == 0 && config.generalEmulation.correctTexrectCoords != Config::tcDisable)
 		render.correctTexturedRectParams(params);
 	render.drawTexturedRect(params);
 
@@ -903,6 +907,8 @@ void gDPFullSync()
 		frameBufferList().removeAux();
 	}
 
+	video().getRender().flush();
+
 	const bool sync = config.frameBufferEmulation.copyToRDRAM == Config::ctSync;
 	if (config.frameBufferEmulation.copyToRDRAM != Config::ctDisable &&
 		!FBInfo::fbInfo.isSupported() &&
@@ -912,7 +918,7 @@ void gDPFullSync()
 		FrameBuffer_CopyToRDRAM(gDP.colorImage.address, sync);
 
 	if (RSP.bLLE) {
-		if (config.frameBufferEmulation.copyDepthToRDRAM != Config::ctDisable && !FBInfo::fbInfo.isSupported())
+		if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdCopyFromVRam && !FBInfo::fbInfo.isSupported())
 			FrameBuffer_CopyDepthBuffer(gDP.colorImage.address);
 	}
 

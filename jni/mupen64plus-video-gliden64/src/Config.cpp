@@ -35,6 +35,7 @@ void Config::resetToDefaults()
 	generalEmulation.enableCustomSettings = 1;
 	generalEmulation.enableShadersStorage = 1;
 	generalEmulation.correctTexrectCoords = tcDisable;
+	generalEmulation.enableNativeResTexrects = 0;
 	generalEmulation.hacks = 0;
 #ifdef ANDROID
 	generalEmulation.forcePolygonOffset = 0;
@@ -42,12 +43,8 @@ void Config::resetToDefaults()
 	generalEmulation.polygonOffsetUnits = 0.0f;
 #endif
 
-#ifdef VC
-	frameBufferEmulation.enable = 0;
-#else
 	frameBufferEmulation.enable = 1;
-#endif
-	frameBufferEmulation.copyDepthToRDRAM = ctDisable;
+	frameBufferEmulation.copyDepthToRDRAM = cdDisable;
 	frameBufferEmulation.copyFromRDRAM = 0;
 	frameBufferEmulation.copyAuxToRDRAM = 0;
 	frameBufferEmulation.copyToRDRAM = ctAsync;

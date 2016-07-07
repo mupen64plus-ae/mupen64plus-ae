@@ -31,7 +31,7 @@ const char * strLightUniforms[UniformBlock::luTotal] = {
 	"uLightColor"
 };
 
-UniformBlock::UniformBlock() : m_currentBuffer(0), m_renderer(video().getRender().getRenderer())
+UniformBlock::UniformBlock() : m_currentBuffer(0)
 {
 }
 
@@ -148,10 +148,7 @@ void UniformBlock::setColorData(ColorUniforms _index, u32 _dataSize, const void 
 		glBindBuffer(GL_UNIFORM_BUFFER, m_colorsBlock.m_buffer);
 	}
 
-	if (m_renderer != OGLRender::glrAdreno)
-		glBufferSubData(GL_UNIFORM_BUFFER, m_colorsBlock.m_offsets[_index], _dataSize, _data);
-	else
-		glBufferData(GL_UNIFORM_BUFFER, m_colorsBlockData.size(), m_colorsBlockData.data(), GL_STATIC_DRAW);
+	glBufferSubData(GL_UNIFORM_BUFFER, m_colorsBlock.m_offsets[_index], _dataSize, _data);
 }
 
 void UniformBlock::updateTextureParameters()
@@ -159,17 +156,18 @@ void UniformBlock::updateTextureParameters()
 	if (m_textureBlock.m_buffer == 0)
 		return;
 
-	GLbyte * pData = m_textureBlockData.data();
+	std::vector<GLbyte> temp(m_textureBlockData.size(), 0);
+	GLbyte * pData = temp.data();
 	f32 texScale[4] = { gSP.texture.scales, gSP.texture.scalet, 0, 0 };
 	memcpy(pData + m_textureBlock.m_offsets[tuTexScale], texScale, m_textureBlock.m_offsets[tuTexOffset] - m_textureBlock.m_offsets[tuTexScale]);
 
 	f32 texOffset[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	if (gSP.textureTile[0] != NULL) {
+	if (gSP.textureTile[0] != nullptr) {
 		if (gSP.textureTile[0]->textureMode != TEXTUREMODE_BGIMAGE && gSP.textureTile[0]->textureMode != TEXTUREMODE_FRAMEBUFFER_BG) {
 			texOffset[0] = gSP.textureTile[0]->fuls;
 			texOffset[1] = gSP.textureTile[0]->fult;
 			FrameBuffer * pBuffer = gSP.textureTile[0]->frameBuffer;
-			if (pBuffer != NULL) {
+			if (pBuffer != nullptr) {
 				if (gSP.textureTile[0]->masks > 0 && gSP.textureTile[0]->clamps == 0)
 					texOffset[0] = float(gSP.textureTile[0]->uls % (1 << gSP.textureTile[0]->masks));
 				if (gSP.textureTile[0]->maskt > 0 && gSP.textureTile[0]->clampt == 0)
@@ -181,7 +179,7 @@ void UniformBlock::updateTextureParameters()
 		texOffset[4] = gSP.textureTile[1]->fuls;
 		texOffset[5] = gSP.textureTile[1]->fult;
 		FrameBuffer * pBuffer = gSP.textureTile[1]->frameBuffer;
-		if (pBuffer != NULL) {
+		if (pBuffer != nullptr) {
 			if (gSP.textureTile[1]->masks > 0 && gSP.textureTile[1]->clamps == 0)
 				texOffset[4] = float(gSP.textureTile[1]->uls % (1 << gSP.textureTile[1]->masks));
 			if (gSP.textureTile[1]->maskt > 0 && gSP.textureTile[1]->clampt == 0)
@@ -231,10 +229,10 @@ void UniformBlock::updateTextureParameters()
 		glBindBuffer(GL_UNIFORM_BUFFER, m_textureBlock.m_buffer);
 	}
 
-	if (m_renderer != OGLRender::glrAdreno)
+	if(temp != m_textureBlockData) {
+		m_textureBlockData = temp;
 		glBufferSubData(GL_UNIFORM_BUFFER, m_textureBlock.m_offsets[tuTexScale], m_textureBlockData.size(), pData);
-	else
-		glBufferData(GL_UNIFORM_BUFFER, m_textureBlockData.size(), m_textureBlockData.data(), GL_STATIC_DRAW);
+	}
 }
 
 void UniformBlock::updateLightParameters()
@@ -253,10 +251,7 @@ void UniformBlock::updateLightParameters()
 		glBindBuffer(GL_UNIFORM_BUFFER, m_lightBlock.m_buffer);
 	}
 
-	if (m_renderer != OGLRender::glrAdreno)
-		glBufferSubData(GL_UNIFORM_BUFFER, m_lightBlock.m_offsets[luLightDirection], m_lightBlockData.size(), pData);
-	else
-		glBufferData(GL_UNIFORM_BUFFER, m_lightBlockData.size(), m_lightBlockData.data(), GL_STATIC_DRAW);
+	glBufferSubData(GL_UNIFORM_BUFFER, m_lightBlock.m_offsets[luLightDirection], m_lightBlockData.size(), pData);
 }
 
 UniformCollection * createUniformCollection()

@@ -163,7 +163,6 @@ SHADER_VERSION
 "uniform lowp int uCvgXAlpha;	\n"
 "uniform lowp int uAlphaCvgSel;	\n"
 "uniform lowp float uAlphaTestValue;\n"
-"uniform mediump vec2 uDepthScale;	\n"
 "uniform lowp ivec4 uBlendMux1;		\n"
 "uniform lowp int uForceBlendCycle1;\n"
 "IN lowp vec4 vShadeColor;	\n"
@@ -199,7 +198,6 @@ SHADER_VERSION
 "uniform lowp int uCvgXAlpha;	\n"
 "uniform lowp int uAlphaCvgSel;	\n"
 "uniform lowp float uAlphaTestValue;\n"
-"uniform mediump vec2 uDepthScale;	\n"
 "uniform lowp ivec4 uBlendMux1;		\n"
 "uniform lowp int uForceBlendCycle1;\n"
 "IN lowp vec4 vShadeColor;	\n"
@@ -311,7 +309,15 @@ static const char* fragment_shader_readtex_3point =
 "#define TEX_OFFSET(off) texture2D(tex, texCoord - (off)/texSize)	\n"
 "lowp vec4 filter3point(in sampler2D tex, in mediump vec2 texCoord)			\n"
 "{																			\n"
+#ifndef VC
 "  mediump vec2 texSize = uTextureSize[nCurrentTile];						\n"
+#else
+"  mediump vec2 texSize;		\n"
+"  if (nCurrentTile == 0)		\n"
+"    texSize = uTextureSize[0];		\n"
+"  else if (nCurrentTile == 1)		\n"
+"    texSize = uTextureSize[1];		\n"
+#endif
 "  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));	\n"
 "  offset -= step(1.0, offset.x + offset.y);								\n"
 "  lowp vec4 c0 = TEX_OFFSET(offset);										\n"
@@ -375,4 +381,134 @@ SHADER_VERSION
 "  lowp float c = dot(vec4(0.2126, 0.7152, 0.0722, 0.0), tex);	\n"
 "  gl_FragColor = vec4(c, c, c, 1.0);							\n"
 "}																\n"
+;
+
+const char * strTexrectDrawerVertexShader =
+SHADER_VERSION
+"#if (__VERSION__ > 120)		\n"
+"# define IN in					\n"
+"# define OUT out				\n"
+"#else							\n"
+"# define IN attribute			\n"
+"# define OUT varying			\n"
+"#endif // __VERSION			\n"
+"IN highp vec4 aPosition;		\n"
+"IN highp vec2 aTexCoord0;		\n"
+"OUT mediump vec2 vTexCoord0;	\n"
+"void main()					\n"
+"{								\n"
+"  gl_Position = aPosition;		\n"
+"  vTexCoord0 = aTexCoord0;		\n"
+"}								\n"
+;
+
+const char * strTexrectDrawerTex3PointFilter =
+SHADER_VERSION
+"#if (__VERSION__ > 120)																						\n"
+"# define IN in																									\n"
+"# define OUT out																								\n"
+"#else																											\n"
+"# define IN varying																							\n"
+"# define OUT																									\n"
+"#endif // __VERSION __																							\n"
+"uniform mediump vec4 uTextureBounds;																			\n"
+"uniform mediump vec2 uTextureSize;																				\n"
+// 3 point texture filtering.
+// Original author: ArthurCarvalho
+// GLSL implementation: twinaphex, mupen64plus-libretro project.
+"#define TEX_OFFSET(off) texture2D(tex, texCoord - (off)/texSize)												\n"
+"lowp vec4 texFilter(in sampler2D tex, in mediump vec2 texCoord)												\n"
+"{																												\n"
+"  mediump vec2 texSize = uTextureSize;																			\n"
+"  mediump vec2 texelSize = vec2(1.0) / texSize;																\n"
+"  lowp vec4 c = texture2D(tex, texCoord);		 																\n"
+"  if (abs(texCoord.s - uTextureBounds[0]) < texelSize.x || abs(texCoord.s - uTextureBounds[2]) < texelSize.x) return c;	\n"
+"  if (abs(texCoord.t - uTextureBounds[1]) < texelSize.y || abs(texCoord.t - uTextureBounds[3]) < texelSize.y) return c;	\n"
+"																												\n"
+"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));													\n"
+"  offset -= step(1.0, offset.x + offset.y);																	\n"
+"  lowp vec4 zero = vec4(0.0);					 																\n"
+"  lowp vec4 c0 = TEX_OFFSET(offset);																			\n"
+"  lowp vec4 c1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y));										\n"
+"  lowp vec4 c2 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));										\n"
+"  return c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0);													\n"
+"}																												\n"
+"																												\n"
+;
+
+const char * strTexrectDrawerTexBilinearFilter =
+SHADER_VERSION
+"#if (__VERSION__ > 120)																						\n"
+"# define IN in																									\n"
+"# define OUT out																								\n"
+"#else																											\n"
+"# define IN varying																							\n"
+"# define OUT																									\n"
+"#endif // __VERSION __																							\n"
+"uniform mediump vec4 uTextureBounds;																			\n"
+"uniform mediump vec2 uTextureSize;																				\n"
+"#define TEX_OFFSET(off) texture2D(tex, texCoord - (off)/texSize)												\n"
+"lowp vec4 texFilter(in sampler2D tex, in mediump vec2 texCoord)												\n"
+"{																												\n"
+"  mediump vec2 texSize = uTextureSize;																			\n"
+"  mediump vec2 texelSize = vec2(1.0) / texSize;																\n"
+"  lowp vec4 c = texture2D(tex, texCoord);																		\n"
+"  if (abs(texCoord.s - uTextureBounds[0]) < texelSize.x || abs(texCoord.s - uTextureBounds[2]) < texelSize.x) return c;	\n"
+"  if (abs(texCoord.t - uTextureBounds[1]) < texelSize.y || abs(texCoord.t - uTextureBounds[3]) < texelSize.y) return c;	\n"
+"																												\n"
+"  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));													\n"
+"  offset -= step(1.0, offset.x + offset.y);																	\n"
+"  lowp vec4 zero = vec4(0.0);																					\n"
+"																												\n"
+"  lowp vec4 p0q0 = TEX_OFFSET(offset);																			\n"
+"  lowp vec4 p1q0 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y));										\n"
+"																												\n"
+"  lowp vec4 p0q1 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));				                        \n"
+"  lowp vec4 p1q1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y - sign(offset.y)));						\n"
+"																												\n"
+"  mediump vec2 interpolationFactor = abs(offset);																\n"
+"  lowp vec4 pInterp_q0 = mix( p0q0, p1q0, interpolationFactor.x ); // Interpolates top row in X direction.		\n"
+"  lowp vec4 pInterp_q1 = mix( p0q1, p1q1, interpolationFactor.x ); // Interpolates bottom row in X direction.	\n"
+"  return mix( pInterp_q0, pInterp_q1, interpolationFactor.y ); // Interpolate in Y direction.					\n"
+"}																												\n"
+;
+
+const char * strTexrectDrawerFragmentShaderTex =
+"uniform sampler2D uTex0;																						\n"
+"uniform lowp int uEnableAlphaTest;																				\n"
+"lowp vec4 uTestColor = vec4(4.0/255.0, 2.0/255.0, 1.0/255.0, 0.0);										\n"
+"IN mediump vec2 vTexCoord0;																					\n"
+"OUT lowp vec4 fragColor;																						\n"
+"void main()																									\n"
+"{																												\n"
+"  fragColor = texFilter(uTex0, vTexCoord0);																	\n"
+"  if (fragColor == uTestColor) discard;																		\n"
+"  if (uEnableAlphaTest != 0 && !(fragColor.a > 0.0)) discard;													\n"
+"  gl_FragColor = fragColor;																					\n"
+"}																												\n"
+;
+
+const char * strTexrectDrawerFragmentShaderClean =
+SHADER_VERSION
+"lowp vec4 uTestColor = vec4(4.0/255.0, 2.0/255.0, 1.0/255.0, 0.0);	\n"
+"void main()																\n"
+"{																			\n"
+"  gl_FragColor = uTestColor;												\n"
+"}																			\n"
+;
+
+const char* strTextureCopyShader =
+SHADER_VERSION
+"#if (__VERSION__ > 120)								\n"
+"# define IN in											\n"
+"#else													\n"
+"# define IN varying									\n"
+"#endif // __VERSION __									\n"
+"IN mediump vec2 vTexCoord0;                            \n"
+"uniform sampler2D uTex0;				                \n"
+"                                                       \n"
+"void main()                                            \n"
+"{                                                      \n"
+"    gl_FragColor = texture2D(uTex0, vTexCoord0);       \n"
+"}							                            \n"
 ;

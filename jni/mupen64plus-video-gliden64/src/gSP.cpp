@@ -175,7 +175,7 @@ static void gSPLightVertex4_default(u32 v)
 
 static void gSPPointLightVertex4_default(u32 v, float _vPos[4][3])
 {
-	assert(_vPos != NULL);
+	assert(_vPos != nullptr);
 	gSPTransformNormal4(v, gSP.matrix.modelView[gSP.matrix.modelViewi]);
 	OGLRender & render = video().getRender();
 	for(int j = 0; j < 4; ++j) {
@@ -317,7 +317,7 @@ void gSPClipVertex4(u32 v)
 		if (vtx.x < -vtx.w) vtx.clip |= CLIP_NEGX;
 		if (vtx.y > +vtx.w) vtx.clip |= CLIP_POSY;
 		if (vtx.y < -vtx.w) vtx.clip |= CLIP_NEGY;
-		if (vtx.w < 0.01f) vtx.clip |= CLIP_Z;
+		if (vtx.w < 0.01f) vtx.clip |= CLIP_W;
 	}
 }
 
@@ -381,7 +381,8 @@ void gSPProcessVertex4(u32 v)
 
 	gSPClipVertex4(v);
 }
-#endif
+
+#endif //__VEC4_OPT
 
 static void gSPTransformVertex_default(float vtx[4], float mtx[4][4])
 {
@@ -425,7 +426,7 @@ static void gSPLightVertex_default(SPVertex & _vtx)
 
 static void gSPPointLightVertex_default(SPVertex & _vtx, float * _vPos)
 {
-	assert(_vPos != NULL);
+	assert(_vPos != nullptr);
 	float light_intensity = 0.0f;
 	_vtx.HWLight = 0;
 	_vtx.r = gSP.lights[gSP.numLights].r;
@@ -547,7 +548,7 @@ void gSPClipVertex(u32 v)
 	if (vtx.x < -vtx.w) vtx.clip |= CLIP_NEGX;
 	if (vtx.y > +vtx.w) vtx.clip |= CLIP_POSY;
 	if (vtx.y < -vtx.w) vtx.clip |= CLIP_NEGY;
-	if (vtx.w < 0.01f)  vtx.clip |= CLIP_Z;
+	if (vtx.w < 0.01f)  vtx.clip |= CLIP_W;
 }
 
 void gSPProcessVertex(u32 v)
@@ -1548,7 +1549,7 @@ void gSPModifyVertex( u32 _vtx, u32 _where, u32 _val )
 		{
 			f32 scrZ = _FIXED2FLOAT((s16)_SHIFTR(_val, 16, 16), 15);
 			vtx0.z = (scrZ - gSP.viewport.vtrans[2]) / (gSP.viewport.vscale[2]);
-			vtx0.clip &= ~CLIP_Z;
+			vtx0.clip &= ~CLIP_W;
 			vtx0.modify |= MODIFY_Z;
 		}
 		break;
@@ -2030,7 +2031,7 @@ void _drawYUVImageToFrameBuffer(const ObjCoordinates & _objCoords)
 		dst += ci_width - 16;
 	}
 	FrameBuffer *pBuffer = frameBufferList().getCurrent();
-	if (pBuffer != NULL)
+	if (pBuffer != nullptr)
 		pBuffer->m_isOBScreen = true;
 }
 
@@ -2070,10 +2071,10 @@ void _copyDepthBuffer()
 	// Take any frame buffer and attach source depth buffer to it, to blit it into copy depth buffer
 	FrameBufferList & fbList = frameBufferList();
 	FrameBuffer * pTmpBuffer = fbList.findTmpBuffer(fbList.getCurrent()->m_startAddress);
-	if (pTmpBuffer == NULL)
+	if (pTmpBuffer == nullptr)
 		return;
 	DepthBuffer * pCopyBufferDepth = dbList.findBuffer(gSP.bgImage.address);
-	if (pCopyBufferDepth == NULL)
+	if (pCopyBufferDepth == nullptr)
 		return;
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, pTmpBuffer->m_FBO);
 	pCopyBufferDepth->setDepthAttachment(GL_READ_FRAMEBUFFER);
@@ -2085,7 +2086,7 @@ void _copyDepthBuffer()
 		GL_DEPTH_BUFFER_BIT, GL_NEAREST
 	);
 	// Restore objects
-	if (pTmpBuffer->m_pDepthBuffer != NULL)
+	if (pTmpBuffer->m_pDepthBuffer != nullptr)
 		pTmpBuffer->m_pDepthBuffer->setDepthAttachment(GL_READ_FRAMEBUFFER);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	// Set back current depth buffer
@@ -2116,7 +2117,7 @@ void _loadBGImage(const uObjScaleBg * _bgInfo, bool _loadScale)
 
 	if (config.frameBufferEmulation.enable) {
 		FrameBuffer *pBuffer = frameBufferList().findBuffer(gSP.bgImage.address);
-		if ((pBuffer != NULL) && pBuffer->m_size == gSP.bgImage.size && (!pBuffer->m_isDepthBuffer || pBuffer->m_changed)) {
+		if ((pBuffer != nullptr) && pBuffer->m_size == gSP.bgImage.size && (!pBuffer->m_isDepthBuffer || pBuffer->m_changed)) {
 			gDP.tiles[0].frameBuffer = pBuffer;
 			gDP.tiles[0].textureMode = TEXTUREMODE_FRAMEBUFFER_BG;
 			gDP.tiles[0].loadType = LOADTYPE_TILE;
@@ -2141,7 +2142,7 @@ void gSPBgRect1Cyc( u32 _bg )
 	// In later case depth buffer is used as temporal color buffer, and usual rendering must be used.
 	// Since both situations are hard to distinguish, do the both depth buffer copy and bg rendering.
 	if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0 &&
-		(gSP.bgImage.address == gDP.depthImageAddress || depthBufferList().findBuffer(gSP.bgImage.address) != NULL)
+		(gSP.bgImage.address == gDP.depthImageAddress || depthBufferList().findBuffer(gSP.bgImage.address) != nullptr)
 	)
 		_copyDepthBuffer();
 #endif // GLES2
@@ -2163,7 +2164,7 @@ void gSPBgRectCopy( u32 _bg )
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 	// See comment to gSPBgRect1Cyc
 	if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0 &&
-		(gSP.bgImage.address == gDP.depthImageAddress || depthBufferList().findBuffer(gSP.bgImage.address) != NULL)
+		(gSP.bgImage.address == gDP.depthImageAddress || depthBufferList().findBuffer(gSP.bgImage.address) != nullptr)
 	)
 		_copyDepthBuffer();
 #endif // GL_IMAGE_TEXTURES_SUPPORT
@@ -2254,7 +2255,7 @@ void _loadSpriteImage(const uSprite *_pSprite)
 	if (config.frameBufferEmulation.enable != 0)
 	{
 		FrameBuffer *pBuffer = frameBufferList().findBuffer(gSP.bgImage.address);
-		if (pBuffer != NULL) {
+		if (pBuffer != nullptr) {
 			gDP.tiles[0].frameBuffer = pBuffer;
 			gDP.tiles[0].textureMode = TEXTUREMODE_FRAMEBUFFER_BG;
 			gDP.tiles[0].loadType = LOADTYPE_TILE;
@@ -2427,15 +2428,30 @@ void gSPObjRendermode(u32 _mode)
 	gSP.objRendermode = _mode;
 }
 
+
+#ifdef __NEON_OPT
+void gSPTransformVertex4NEON(u32 v, float mtx[4][4]);
+void gSPTransformNormal4NEON(u32 v, float mtx[4][4]);
+void gSPBillboardVertex4NEON(u32 v);
+#endif //__NEON_OPT
+
 #ifdef __VEC4_OPT
-void (*gSPTransformVertex4)(u32 v, float mtx[4][4]) =
-		gSPTransformVertex4_default;
-void (*gSPTransformNormal4)(u32 v, float mtx[4][4]) =
-		gSPTransformNormal4_default;
+#ifndef __NEON_OPT
+void (*gSPTransformVertex4)(u32 v, float mtx[4][4]) = gSPTransformVertex4_default;
+void (*gSPTransformNormal4)(u32 v, float mtx[4][4]) = gSPTransformNormal4_default;
+void (*gSPBillboardVertex4)(u32 v) = gSPBillboardVertex4_default;
+#else
+void (*gSPTransformVertex4)(u32 v, float mtx[4][4]) = gSPTransformVertex4NEON;
+void (*gSPTransformNormal4)(u32 v, float mtx[4][4]) = gSPTransformNormal4NEON;
+void (*gSPBillboardVertex4)(u32 v) = gSPBillboardVertex4NEON;
+#endif
+
 void (*gSPLightVertex4)(u32 v) = gSPLightVertex4_default;
 void (*gSPPointLightVertex4)(u32 v, float _vPos[4][3]) = gSPPointLightVertex4_default;
-void (*gSPBillboardVertex4)(u32 v) = gSPBillboardVertex4_default;
+
 #endif
+
+
 void (*gSPTransformVertex)(float vtx[4], float mtx[4][4]) =
 		gSPTransformVertex_default;
 void (*gSPLightVertex)(SPVertex & _vtx) = gSPLightVertex_default;
@@ -2445,6 +2461,7 @@ void (*gSPBillboardVertex)(u32 v, u32 i) = gSPBillboardVertex_default;
 void gSPSetupFunctions()
 {
 	if (GBI.getMicrocodeType() != F3DEX2CBFD) {
+
 #ifdef __VEC4_OPT
 		gSPLightVertex4 = gSPLightVertex4_default;
 		gSPPointLightVertex4 = gSPPointLightVertex4_default;

@@ -3,16 +3,17 @@
 #include <string>
 #include <memory>
 
-#include "../N64.h"
-#include "../OpenGL.h"
-#include "../Config.h"
-#include "../GLSLCombiner.h"
-#include "../ShaderUtils.h"
-#include "../FrameBuffer.h"
-#include "../DepthBuffer.h"
-#include "../RSP.h"
-#include "../VI.h"
-#include "../Log.h"
+#include <N64.h>
+#include <OpenGL.h>
+#include <Config.h>
+#include <GLSLCombiner.h>
+#include <ShaderUtils.h>
+#include <FrameBuffer.h>
+#include <DepthBuffer.h>
+#include <RSP.h>
+#include <VI.h>
+#include <Log.h>
+#include <FBOTextureFormats.h>
 
 #include "Shaders_gles2.h"
 
@@ -259,7 +260,6 @@ void ShaderCombiner::_locateUniforms() {
 	LocateUniform(uRenderState);
 
 	LocateUniform(uScreenScale);
-	LocateUniform(uDepthScale);
 	LocateUniform(uFogScale);
 
 	LocateUniform(uBlendMux1);
@@ -289,7 +289,7 @@ void ShaderCombiner::update(bool _bForce) {
 	}
 
 	updateFogMode(_bForce);
-	updateBlendMode();
+	updateBlendMode(_bForce);
 	updateDitherMode(_bForce);
 	updateLOD(_bForce);
 	updateTextureInfo(_bForce);
@@ -422,11 +422,6 @@ void ShaderCombiner::updateFrameBufferInfo(bool _bForce) {
 }
 
 void ShaderCombiner::updateDepthInfo(bool _bForce) {
-	if (RSP.bLLE)
-		m_uniforms.uDepthScale.set(0.5f, 0.5f, _bForce);
-	else
-		m_uniforms.uDepthScale.set(gSP.viewport.vscale[2], gSP.viewport.vtrans[2], _bForce);
-
 	if (config.frameBufferEmulation.N64DepthCompare == 0 || !video().getRender().isImageTexturesSupported())
 		return;
 
