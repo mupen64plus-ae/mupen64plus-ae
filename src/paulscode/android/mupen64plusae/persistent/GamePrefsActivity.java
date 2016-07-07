@@ -286,8 +286,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         ArrayList<CharSequence> resolutionEntriesArray = new ArrayList<CharSequence>(Arrays.asList(resolutionEntries));
         ArrayList<CharSequence> resolutionValuesArray = new ArrayList<CharSequence>(Arrays.asList(resolutionValues));
 
-        resolutionEntriesArray.add(0,  getText( R.string.default_profile_title ));
-        resolutionValuesArray.add(0, "-1");
+        //Only add it if not already there
+        if(!resolutionValuesArray.get(0).equals("-1")) {
+
+            resolutionEntriesArray.add(0, getText(R.string.default_profile_title));
+            resolutionValuesArray.add(0, "-1");
+        }
 
         mDisplayResolution.setEntries(
             resolutionEntriesArray.toArray(new CharSequence[resolutionEntriesArray.size()]));
