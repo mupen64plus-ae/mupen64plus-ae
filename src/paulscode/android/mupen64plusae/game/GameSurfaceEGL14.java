@@ -35,6 +35,8 @@ import android.util.Log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import paulscode.android.mupen64plusae.jni.CoreInterface;
+
 /**
  * Represents a graphical area of memory that can be drawn to.
  */
@@ -194,8 +196,11 @@ public class GameSurfaceEGL14 extends GameSurface
     {
         try
         {
-            // Uncomment the next line only for debugging; otherwise don't waste the time
-            EGL14.eglSwapBuffers( mEglDisplay, mEglSurface );
+            //Don't swap if paused, fixes core dump in some devices.
+            if( !CoreInterface.isPaused())
+            {
+                EGL14.eglSwapBuffers( mEglDisplay, mEglSurface );
+            }
         }
         catch(final IllegalArgumentException exception)
         {

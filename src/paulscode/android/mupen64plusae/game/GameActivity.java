@@ -322,13 +322,13 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             @Override
             public void onDrawerClosed(View arg0)
             {
-                NativeExports.emuResume();
+                CoreInterface.resumeEmulator();
             }
 
             @Override
             public void onDrawerOpened(View arg0)
             {
-                NativeExports.emuPause();
+                CoreInterface.pauseEmulator(false, null);
                 ReloadAllMenus();
             }
 
@@ -687,7 +687,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
         {
-            NativeExports.emuResume();
+            CoreInterface.resumeEmulator();
         }
 
         mWaitingOnConfirmation = false;
@@ -710,7 +710,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
         {
-            NativeExports.emuResume();
+            CoreInterface.resumeEmulator();
         }
 
         mWaitingOnConfirmation = false;
@@ -924,7 +924,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
     {
         if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation)
         {
-            NativeExports.emuResume();
+            CoreInterface.resumeEmulator();
         }
         else
         {

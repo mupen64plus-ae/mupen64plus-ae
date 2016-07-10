@@ -34,6 +34,8 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
+import paulscode.android.mupen64plusae.jni.CoreInterface;
+
 /**
  * Represents a graphical area of memory that can be drawn to.
  */
@@ -192,9 +194,9 @@ public class GameSurfaceEGL10 extends GameSurface
     {
         try
         {
-            if(mEgl != null)
+            //Don't swap if paused, fixes core dump in some devices.
+            if(mEgl != null && !CoreInterface.isPaused())
             {
-                // Uncomment the next line only for debugging; otherwise don't waste the time
                 mEgl.eglSwapBuffers( mEglDisplay, mEglSurface );
             }
         }

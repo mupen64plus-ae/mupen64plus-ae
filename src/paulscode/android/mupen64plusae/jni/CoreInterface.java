@@ -109,60 +109,60 @@ public class CoreInterface
     {
         /**
          * Called when a game is exited
-         * @param True if we want to exit
+         * @param shouldExit True if we want to exit
          */
         public void onExit(boolean shouldExit);
     }
-    
+
     public interface OnRestartListener
     {
         /**
          * Called when a game is restarted
-         * @param True if we want to restart
+         * @param shouldRestart True if we want to restart
          */
         public void onRestart(boolean shouldRestart);
     }
-    
+
     private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 0;
     private static final String SAVE_STATE_FILE_CONFIRM_DIALOG_STATE = "SAVE_STATE_FILE_CONFIRM_DIALOG_STATE";
-    
+
     private static final int RESTART_CONFIRM_DIALOG_ID = 1;
     private static final String RESTART_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
-    
+
     private static final int EXIT_CONFIRM_DIALOG_ID = 2;
     private static final String EXIT_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
-    
+
     // Haptic objects - used by NativeInput
     protected static final Vibrator[] sVibrators = new Vibrator[4];
-    
+
     // Core state callbacks - used by NativeImports
     protected static final ArrayList<OnStateCallbackListener> sStateCallbackListeners = new ArrayList<OnStateCallbackListener>();
     protected static final Object sStateCallbackLock = new Object();
-    
+
     // User/app data - used by NativeImports, NativeSDL
     protected static AppData sAppData = null;
     protected static GlobalPrefs sGlobalPrefs = null;
     protected static GamePrefs sGamePrefs = null;
-    
+
     // Audio/video objects - used by NativeSDL
     protected static AudioTrack sAudioTrack = null;
     protected static GameSurface sSurface = null;
-    
+
     // Frame rate info - used by NativeSDL
     protected static OnFpsChangedListener sFpsListener;
     protected static int sFpsRecalcPeriod = 0;
     protected static int sFrameCount = -1;
     protected static long sLastFpsTime = 0;
-    
+
     // Activity and threading objects - used internally
     private static AppCompatActivity sActivity = null;
     private static Thread sCoreThread;
-    
+
     // Startup info - used internally
     protected static String sRomPath = null;
     protected static String sCheatOptions = null;
     protected static boolean sIsRestarting = false;
-    
+
     // Speed info - used internally
     private static final int BASELINE_SPEED = 100;
     private static final int DEFAULT_SPEED = 250;
@@ -171,12 +171,14 @@ public class CoreInterface
     private static final int DELTA_SPEED = 10;
     private static boolean sUseCustomSpeed = false;
     private static int sCustomSpeed = DEFAULT_SPEED;
-    
+
     private static File sCurrentSaveStateFile = null;
-    
+
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
-    
+
+    private static boolean sIsPaused = false;
+
     public static void initialize(AppCompatActivity activity,
                                   GameSurface surface, GamePrefs gamePrefs, String romPath, String romMd5,
                                   String cheatArgs, boolean isRestarting )
@@ -184,14 +186,14 @@ public class CoreInterface
         sRomPath = romPath;
         sCheatOptions = cheatArgs;
         sIsRestarting = isRestarting;
-        
+
         sActivity = activity;
         sSurface = surface;
         sAppData = new AppData( sActivity );
         sGlobalPrefs = new GlobalPrefs( sActivity, sAppData );
         sGamePrefs = gamePrefs;
         NativeConfigFiles.syncConfigFiles( sGamePrefs, sGlobalPrefs, sAppData );
-        
+
         // Make sure various directories exist so that we can write to them
         new File( sGamePrefs.sramDataDir ).mkdirs();
         new File( sGamePrefs.autoSaveDir ).mkdirs();
@@ -201,10 +203,10 @@ public class CoreInterface
         new File( sGamePrefs.coreUserConfigDir ).mkdirs();
         new File( sGlobalPrefs.coreUserDataDir ).mkdirs();
         new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
-        
+
         moveFromLegacy();
     }
-    
+
     /**
      * Move any legacy files to new folder structure
      */
@@ -279,7 +281,7 @@ public class CoreInterface
                 }
             }
         }
-        
+
         if(legacyAutoSavePath.listFiles() != null)
         {
             //Move auto saves
@@ -292,17 +294,17 @@ public class CoreInterface
                     return fileName.equals(sGamePrefs.legacySaveFileName + ".sav");
                 }
             };
-            
+
             //Move all files found
             for( final File file : legacyAutoSavePath.listFiles(fileAutoSaveFilter) )
             {
                 final DateFormat dateFormat = new SimpleDateFormat(GameAutoSaveManager.sFormatString, java.util.Locale.getDefault());
                 final String dateAndTime = dateFormat.format(new Date()).toString();
                 final String fileName = dateAndTime + ".sav";
-                
+
                 String targetPath = sGamePrefs.autoSaveDir + "/" + fileName;
                 File targetFile= new File(targetPath);
-                
+
                 if(!targetFile.exists())
                 {
                     Log.i("CoreInterface", "Found legacy SAV file: " + file +
@@ -318,17 +320,17 @@ public class CoreInterface
             }
         }
     }
-    
+
     public static void registerVibrator( int player, Vibrator vibrator )
     {
         boolean hasVibrator = vibrator.hasVibrator();
-        
+
         if( hasVibrator && player > 0 && player < 5 )
         {
             sVibrators[player - 1] = vibrator;
         }
     }
-    
+
     public static void addOnStateCallbackListener( OnStateCallbackListener listener )
     {
         synchronized( sStateCallbackLock )
@@ -338,7 +340,7 @@ public class CoreInterface
                 sStateCallbackListeners.add( listener );
         }
     }
-    
+
     public static void removeOnStateCallbackListener( OnStateCallbackListener listener )
     {
         synchronized( sStateCallbackLock )
@@ -346,13 +348,13 @@ public class CoreInterface
             sStateCallbackListeners.remove( listener );
         }
     }
-    
+
     public static void setOnFpsChangedListener( OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
         sFpsListener = fpsListener;
         sFpsRecalcPeriod = fpsRecalcPeriod;
     }
-    
+
     public static synchronized void startupEmulator(final String saveToLoad)
     {
         Log.i("CoreInterface", "Startup emulator");
@@ -360,7 +362,7 @@ public class CoreInterface
         {
             // Load the native libraries
             NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
-            
+
             // Start the core thread if not already running
             sCoreThread = new Thread( new Runnable()
             {
@@ -375,7 +377,7 @@ public class CoreInterface
                     NativeInput.setConfig( 1, sGamePrefs.isPlugged2, sGlobalPrefs.getPakType( 2 ).getNativeValue() );
                     NativeInput.setConfig( 2, sGamePrefs.isPlugged3, sGlobalPrefs.getPakType( 3 ).getNativeValue() );
                     NativeInput.setConfig( 3, sGamePrefs.isPlugged4, sGlobalPrefs.getPakType( 4 ).getNativeValue() );
-                    
+
                     ArrayList<String> arglist = new ArrayList<String>();
                     arglist.add( "mupen64plus" );
                     arglist.add( "--corelib" );
@@ -454,7 +456,7 @@ public class CoreInterface
                     }
                 }
             }, "CoreThread" );
-            
+
             // Auto-load state if desired
             if( !sIsRestarting)
             {
@@ -468,7 +470,7 @@ public class CoreInterface
                                 && saveToLoad != null)
                         {
                             removeOnStateCallbackListener( this );
-                            
+
                             if( sAppData.useX86PicLibrary )
                             {
                                 // This is a hack to get "Resume" to work on x86 with the old
@@ -500,22 +502,24 @@ public class CoreInterface
                     }
                 } );
             }
-            
+
             // Ensure the auto-save is loaded if the operating system stops & restarts the activity
             sIsRestarting = false;
-            
+
             // Start the core on its own thread
+
+            sIsPaused = false;
             sCoreThread.start();
         }
     }
-    
+
     public static synchronized void shutdownEmulator()
     {
         if( sCoreThread != null )
         {
             // Tell the core to quit
             NativeExports.emuStop();
-            
+
             // Now wait for the core thread to quit
             try
             {
@@ -526,89 +530,100 @@ public class CoreInterface
                 Log.i( "CoreInterface", "Problem stopping core thread: " + e );
             }
             sCoreThread = null;
-            
+
             // Unload the native libraries
             NativeExports.unloadLibraries();
         }
     }
-    
+
     public static synchronized void resumeEmulator()
     {
         if( sCoreThread != null )
         {
+            sIsPaused = false;
             NativeExports.emuResume();
         }
     }
-    
+
     public static synchronized void pauseEmulator( boolean autoSave, String latestSave )
     {
         if( sCoreThread != null )
         {
+            sIsPaused = true;
             NativeExports.emuPause();
-            
+
             // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
             if( autoSave && latestSave != null)
-            {                
-                
+            {
+
                 Notifier.showToast( sActivity, R.string.toast_savingSession );
-                
+
                 Log.i("CoreInterface", "Saving file: " + latestSave);
                 NativeExports.emuSaveFile( latestSave );
             }
         }
     }
-    
+
     public static void togglePause()
     {
         int state = NativeExports.emuGetState();
-        if( state == NativeConstants.EMULATOR_STATE_PAUSED )
+        if( state == NativeConstants.EMULATOR_STATE_PAUSED ) {
+            sIsPaused = false;
             NativeExports.emuResume();
-        else if( state == NativeConstants.EMULATOR_STATE_RUNNING )
+        }
+        else if( state == NativeConstants.EMULATOR_STATE_RUNNING ){
+            sIsPaused = true;
             NativeExports.emuPause();
+        }
     }
-    
+
+    public static boolean isPaused()
+    {
+        return sIsPaused;
+    }
+
     public static void toggleFramelimiter()
     {
         boolean state = NativeExports.emuGetFramelimiter();
         NativeExports.emuSetFramelimiter( !state );
     }
-    
+
     public static void setSlot( int value )
     {
         int slot = value % NUM_SLOTS;
         NativeExports.emuSetSlot( slot );
     }
-    
+
     public static void incrementSlot()
     {
         int slot = NativeExports.emuGetSlot();
         setSlot( slot + 1 );
     }
-    
+
     public static void saveSlot(final OnSaveLoadListener onSaveLoadListener)
     {
         int slot = NativeExports.emuGetSlot();
         Notifier.showToast( sActivity, R.string.toast_savingSlot, slot );
         NativeExports.emuSaveSlot();
-        
+
         if(onSaveLoadListener != null)
         {
             onSaveLoadListener.onSaveLoad();
         }
     }
-    
+
     public static void loadSlot(final OnSaveLoadListener onSaveLoadListener)
     {
         int slot = NativeExports.emuGetSlot();
         Notifier.showToast( sActivity, R.string.toast_loadingSlot, slot );
         NativeExports.emuLoadSlot();
-        
+
         if(onSaveLoadListener != null)
         {
             onSaveLoadListener.onSaveLoad();
         }
     }
-    
+
     public static void saveFileFromPrompt()
     {
         CharSequence title = sActivity.getText( R.string.menuItem_fileSave );
@@ -626,7 +641,7 @@ public class CoreInterface
             }
         } );
     }
-    
+
     public static void loadFileFromPrompt(final OnSaveLoadListener onSaveLoadListener)
     {
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
@@ -639,7 +654,7 @@ public class CoreInterface
                 if( which >= 0 )
                 {
                     loadState( file );
-                    
+
                     if(onSaveLoadListener != null)
                     {
                         onSaveLoadListener.onSaveLoad();
@@ -649,7 +664,7 @@ public class CoreInterface
             }
         } );
     }
-    
+
     public static void loadAutoSaveFromPrompt(final OnSaveLoadListener onSaveLoadListener)
     {
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoadAutoSave );
@@ -662,7 +677,7 @@ public class CoreInterface
                 if( which >= 0 )
                 {
                     loadState( file );
-                    
+
                     if(onSaveLoadListener != null)
                     {
                         onSaveLoadListener.onSaveLoad();
@@ -672,19 +687,19 @@ public class CoreInterface
             }
         } );
     }
-    
+
     public static void saveState( final String filename )
     {
         sCurrentSaveStateFile = new File( sGamePrefs.userSaveDir + "/" + filename );
-        
+
         if( sCurrentSaveStateFile.exists() )
         {
             String title = sActivity.getString( R.string.confirm_title );
             String message = sActivity.getString( R.string.confirmOverwriteFile_message, filename );
-            
+
             ConfirmationDialog confirmationDialog =
                 ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
-            
+
             FragmentManager fm = sActivity.getSupportFragmentManager();
             confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
         }
@@ -692,26 +707,26 @@ public class CoreInterface
         {
             Notifier.showToast( sActivity, R.string.toast_savingFile, sCurrentSaveStateFile.getName() );
             NativeExports.emuSaveFile( sCurrentSaveStateFile.getAbsolutePath() );
-            
+
             if(sActivity instanceof OnSaveLoadListener)
             {
                 ((OnSaveLoadListener)sActivity).onSaveLoad();
             }
         }
     }
-    
+
     public static void loadState( File file )
     {
         Notifier.showToast( sActivity, R.string.toast_loadingFile, file.getName() );
         NativeExports.emuLoadFile( file.getAbsolutePath() );
     }
-    
+
     public static void screenshot()
     {
         Notifier.showToast( sActivity, R.string.toast_savingScreenshot );
         NativeExports.emuScreenshot();
     }
-    
+
     public static void setCustomSpeedFromPrompt(final OnPromptFinishedListener promptFinishedListener)
     {
         final CharSequence title = sActivity.getText( R.string.menuItem_setSpeed );
@@ -724,7 +739,7 @@ public class CoreInterface
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
                             setCustomSpeed( value );
-                            
+
                             if(promptFinishedListener != null)
                             {
                                 promptFinishedListener.onPromptFinished();
@@ -733,11 +748,11 @@ public class CoreInterface
                     }
                 } );
     }
-    
+
     public static void setSlotFromPrompt(final OnPromptFinishedListener promptFinishedListener)
     {
-        final CharSequence title = sActivity.getString(R.string.menuItem_selectSlot, NativeExports.emuGetSlot());
-            
+        final CharSequence title = sActivity.getString(R.string.menuItem_selectSlot);
+
         Prompt.promptRadioInteger( sActivity, title, NativeExports.emuGetSlot(), 0, 2, 5,
                 new PromptIntegerListener()
                 {
@@ -747,7 +762,7 @@ public class CoreInterface
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
                             setSlot( value );
-                            
+
                             if(promptFinishedListener != null)
                             {
                                 promptFinishedListener.onPromptFinished();
@@ -756,64 +771,66 @@ public class CoreInterface
                     }
                 } );
     }
-    
+
     public static void incrementCustomSpeed()
     {
         setCustomSpeed( sCustomSpeed + DELTA_SPEED );
     }
-    
+
     public static void decrementCustomSpeed()
     {
         setCustomSpeed( sCustomSpeed - DELTA_SPEED );
     }
-    
+
     public static void setCustomSpeed( int value )
     {
         sCustomSpeed = Utility.clamp( value, MIN_SPEED, MAX_SPEED );
         sUseCustomSpeed = true;
         NativeExports.emuSetSpeed( sCustomSpeed );
     }
-    
+
     public static void toggleSpeed()
     {
         sUseCustomSpeed = !sUseCustomSpeed;
         int speed = sUseCustomSpeed ? sCustomSpeed : BASELINE_SPEED;
         NativeExports.emuSetSpeed( speed );
     }
-    
+
     public static void fastForward( boolean pressed )
     {
         int speed = pressed ? sCustomSpeed : BASELINE_SPEED;
         NativeExports.emuSetSpeed( speed );
     }
-    
+
     public static void advanceFrame()
     {
         NativeExports.emuPause();
         NativeExports.emuAdvanceFrame();
     }
-    
+
     public static synchronized void restartEmulator()
     {
         CoreInterface.shutdownEmulator();
         CoreInterface.startupEmulator(null);
     }
-    
+
     public static synchronized void restart()
-    {        
+    {
+        sIsPaused = true;
         NativeExports.emuPause();
         String title = sActivity.getString( R.string.confirm_title );
         String message = sActivity.getString( R.string.confirmResetGame_message );
-        
+
         ConfirmationDialog confirmationDialog =
             ConfirmationDialog.newInstance(RESTART_CONFIRM_DIALOG_ID, title, message);
-        
+
         FragmentManager fm = sActivity.getSupportFragmentManager();
         confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
     }
-    
+
     public static void exit()
     {
+        sIsPaused = true;
         NativeExports.emuPause();
         String title = sActivity.getString( R.string.confirm_title );
         String message = sActivity.getString( R.string.confirmExitGame_message );
