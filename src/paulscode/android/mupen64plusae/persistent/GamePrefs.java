@@ -180,6 +180,9 @@ public class GamePrefs
     /** Render 2D texrects in native resolution to fix misalignment between parts of 2D image */
     public final boolean gliden64EnableNativeResTexrects;
 
+    /** Do not use shaders to emulate N64 blending modes. Works faster on slow GPU. Can cause glitches. */
+    public final boolean gliden64EnableLegacyBlending;
+
     /** Enable frame and|or depth buffer emulation. */
     public final boolean gliden64EnableFBEmulation;
 
@@ -517,6 +520,7 @@ public class GamePrefs
         gliden64EnableShadersStorage = emulationProfile.get( "EnableShadersStorage", "True" ).equals( "True" );
         gliden64CorrectTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 1);
         gliden64EnableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "True" ).equals( "True" );
+        gliden64EnableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );
         gliden64EnableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
         gliden64BufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);
         gliden64EnableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 2);

@@ -196,6 +196,10 @@
             android:defaultValue="False"
             android:key="EnableNativeResTexrects"
             android:title="@string/gliden64_enable_native_res_texrects_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="EnableLegacyBlending"
+            android:title="@string/gliden64_enable_legacy_blending_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
