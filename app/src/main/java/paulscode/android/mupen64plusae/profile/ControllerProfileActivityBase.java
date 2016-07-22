@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.profile;
 
 import java.util.List;
 
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;

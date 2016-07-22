@@ -27,7 +27,7 @@ import android.support.v7.preference.PreferenceManager;
 
 import com.bda.controller.Controller;
 
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;

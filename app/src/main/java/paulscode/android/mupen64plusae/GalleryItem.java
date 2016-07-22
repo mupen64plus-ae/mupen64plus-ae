@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import paulscode.android.mupen64plusae.task.LoadBitmapTask;
 import android.content.Context;

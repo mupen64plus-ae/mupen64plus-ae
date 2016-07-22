@@ -1,13 +1,5 @@
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,6 +10,15 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
+import org.mupen64plusae.v3.fzurita.R;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 public class ExtractTexturesActivity extends AppCompatActivity implements OnItemClickListener
 {    

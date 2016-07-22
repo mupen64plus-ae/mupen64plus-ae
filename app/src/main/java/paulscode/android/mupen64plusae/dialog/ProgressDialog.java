@@ -1,6 +1,6 @@
 package paulscode.android.mupen64plusae.dialog;
 
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
