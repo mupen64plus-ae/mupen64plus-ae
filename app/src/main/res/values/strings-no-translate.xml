@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Proper names, trademarks, etc. -->
-    <string name="app_name" translatable="false">Mupen64Plus</string>
+    <string name="app_name" translatable="false">Mupen64Plus FZ Edition</string>
 
     <!-- Web links, email addresses, etc. -->
     <string name="uri_forum" translatable="false">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
