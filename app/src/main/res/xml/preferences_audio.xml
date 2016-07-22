@@ -44,7 +44,7 @@
     ***********************************************************************************
 -->
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
+    xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.fzurita"
     android:key="screenRoot" >
 
     <paulscode.android.mupen64plusae.preference.CompatListPreference

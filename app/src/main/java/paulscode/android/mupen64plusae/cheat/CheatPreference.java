@@ -20,7 +20,7 @@
  */
 package paulscode.android.mupen64plusae.cheat;
 
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import paulscode.android.mupen64plusae.cheat.OptionDialog.Listener;
 import android.app.AlertDialog;

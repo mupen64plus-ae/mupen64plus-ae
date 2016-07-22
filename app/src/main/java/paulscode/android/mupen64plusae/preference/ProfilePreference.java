@@ -34,7 +34,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

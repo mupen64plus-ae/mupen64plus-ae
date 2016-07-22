@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity.CheatAddressData;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity.CheatOptionData;

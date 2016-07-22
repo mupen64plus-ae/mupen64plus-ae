@@ -20,7 +20,7 @@
  */
 package paulscode.android.mupen64plusae.preference;
 
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;

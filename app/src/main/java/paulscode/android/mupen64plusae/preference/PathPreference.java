@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.preference;
 
+import java.io.File;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -33,7 +35,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.R;
 
 import java.io.File;
 import java.util.ArrayList;

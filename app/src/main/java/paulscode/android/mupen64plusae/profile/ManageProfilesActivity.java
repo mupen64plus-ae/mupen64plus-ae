@@ -37,8 +37,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.mupen64plusae.v3.alpha.BuildConfig;
-import org.mupen64plusae.v3.alpha.R;
+import org.mupen64plusae.v3.fzurita.BuildConfig;
+import org.mupen64plusae.v3.fzurita.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
