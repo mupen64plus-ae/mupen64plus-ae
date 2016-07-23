@@ -163,10 +163,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             // First run after install/update, greet user with changelog, then help dialog
             Popups.showFaq( this );
             final ChangeLog log = new ChangeLog( getAssets() );
-            if( log.show( this, lastVer + 1, currVer ) )
-            {
-                mAppData.putLastAppVersionCode( currVer );
-            }
+            log.show( this, lastVer + 1, currVer );
+
+            mAppData.putLastAppVersionCode( currVer );
         }
 
         // Get the ROM path if it was passed from another activity/app
