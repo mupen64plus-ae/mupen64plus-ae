@@ -27,6 +27,7 @@ import android.opengl.EGL14;
 import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
 import android.opengl.EGLDisplay;
+import android.opengl.EGLExt;
 import android.opengl.EGLSurface;
 import android.opengl.GLES10;
 import android.util.AttributeSet;
@@ -36,6 +37,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import paulscode.android.mupen64plusae.jni.CoreInterface;
+import paulscode.android.mupen64plusae.persistent.AppData;
 
 /**
  * Represents a graphical area of memory that can be drawn to.
@@ -192,6 +194,7 @@ public class GameSurfaceEGL14 extends GameSurface
      * @see GameSurfaceEGL14#flipBuffers()
      */
     @Override
+    @TargetApi(18)
     public void flipBuffers()
     {
         try
@@ -199,6 +202,11 @@ public class GameSurfaceEGL14 extends GameSurface
             //Don't swap if paused, fixes core dump in some devices.
             if( !CoreInterface.isPaused())
             {
+                if(AppData.IS_JELLY_BEAN_MR2)
+                {
+                    EGLExt.eglPresentationTimeANDROID(mEglDisplay, mEglSurface, System.nanoTime() - 4000);
+                }
+
                 EGL14.eglSwapBuffers( mEglDisplay, mEglSurface );
             }
         }
