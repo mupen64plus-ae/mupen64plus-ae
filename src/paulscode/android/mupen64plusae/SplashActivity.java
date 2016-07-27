@@ -194,7 +194,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             final ImageView splash = (ImageView) findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo_ouya );
         }
-        
+
         requestPermissions();
 
         // Popup a warning if the installation appears to be corrupt
@@ -206,8 +206,10 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
     public void requestPermissions()
     {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-           ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        //This doesn't work reliably with older Android versions
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+           ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) &&
+                AppData.IS_LOLLIPOP)
         {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
