@@ -543,6 +543,20 @@
 
     <string name="r4300Emulator_default" translatable="false">2</string>
 
+    <!-- RSP -->
+    <string-array name="rsp_entries" translatable="false">
+        <item>@string/rsp_hle</item>
+        <item>@string/rsp_cxd4_hle</item>
+        <item>@string/rsp_cxd4_lle</item>
+    </string-array>
+    <string-array name="rsp_values" translatable="false">
+        <item>rsp-hle</item>
+        <item>rsp-cxd4-hle</item>
+        <item>rsp-cxd4-lle</item>
+    </string-array>
+
+    <string name="rsp_default" translatable="false">rsp-hle</string>
+
     <!-- Navigation Mode -->
     <string-array name="navigationMode_entries" translatable="false">
         <item>@string/navigationMode_entryAuto</item>

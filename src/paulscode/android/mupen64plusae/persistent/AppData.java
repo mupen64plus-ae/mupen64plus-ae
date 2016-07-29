@@ -145,9 +145,6 @@ public class AppData
     /** The path of the core library. Deleted on uninstall, not accessible without root. */
     public final String coreLib;
     
-    /** The path of the RSP library. Deleted on uninstall, not accessible without root. */
-    public final String rspLib;
-    
     /** The path of the input library. Deleted on uninstall, not accessible without root. */
     public final String inputLib;
     
@@ -257,8 +254,7 @@ public class AppData
             coreLib = libsDir + "/libmupen64plus-core-pic.so";
         else
             coreLib = libsDir + "/libmupen64plus-core.so";
-        
-        rspLib = libsDir + "/libmupen64plus-rsp-hle.so";
+
         inputLib = libsDir + "/libmupen64plus-input-android.so";
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";

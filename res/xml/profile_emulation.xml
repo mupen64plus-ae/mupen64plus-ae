@@ -11,6 +11,13 @@
         android:summary="@string/selectedValue"
         android:title="@string/r4300Emulator_title" />
     <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/rsp_default"
+        android:entries="@array/rsp_entries"
+        android:entryValues="@array/rsp_values"
+        android:key="rspSetting"
+        android:summary="@string/selectedValue"
+        android:title="@string/rsp_title" />
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/videoPlugin_default"
         android:entries="@array/videoPlugin_entries"
         android:entryValues="@array/videoPlugin_values"

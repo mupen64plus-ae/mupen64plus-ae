@@ -144,7 +144,13 @@ public class NativeConfigFiles
 
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + audioPluginString + '"' );                            // Filename of audio plugin
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin
-        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + appData.rspLib + '"' );                                       // Filename of RSP plugin
+        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + game.rspPluginPath + '"' );                                       // Filename of RSP plugin
+
+        mupen64plus_cfg.put( "rsp-cxd4", "Version", "1" );
+        mupen64plus_cfg.put( "rsp-cxd4", "DisplayListToGraphicsPlugin", boolToNum(game.rspHleVideo) );
+        mupen64plus_cfg.put( "rsp-cxd4", "AudioListToAudioPlugin", "0" );
+        mupen64plus_cfg.put( "rsp-cxd4", "WaitForCPUHost", "0" );
+        mupen64plus_cfg.put( "rsp-cxd4", "SupportCPUSemaphoreLock", "0" );
 
         mupen64plus_cfg.put( "Video-General", "Fullscreen", "False" );                                                      // Use fullscreen mode if True, or windowed mode if False
         mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( game.videoRenderWidth ) );                     // Width of output window or fullscreen width
@@ -159,8 +165,6 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( global.videoPolygonOffset ) );     // Is multiplied by an implementation-specific value to create a constant depth offset
         mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
-
-
 
         String aspectRatio = "0";
         if( game.emulationProfile.get( "WidescreenHack", "False" ).equals("True") )

@@ -83,6 +83,12 @@ public class GamePrefs
     /** The selected R4300 emulator. */
     public final String r4300Emulator;
 
+    /** The selected RSP Plugin. */
+    public final String rspPluginPath;
+
+    /** True if we want the RSP to be in HLE video mode, false if LLE */
+    public final boolean rspHleVideo;
+
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
 
@@ -475,6 +481,25 @@ public class GamePrefs
 
         // Emulation prefs
         r4300Emulator = emulationProfile.get( "r4300Emulator", "2" );
+        String rspSetting = emulationProfile.get( "rspSetting", "rsp-hle" );
+
+        if(rspSetting.equals("rsp-hle"))
+        {
+            rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-hle.so";
+            rspHleVideo = true;
+        }
+        else if(rspSetting.equals("rsp-cxd4-hle"))
+        {
+            rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-cxd4.so";
+            rspHleVideo = true;
+        }
+        else
+        {
+            rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-cxd4.so";
+            rspHleVideo = false;
+        }
+
+
         final Plugin tempVideoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
         if( tempVideoPlugin.name.contains( "%1$s" ))
             videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin", "videoSubPlugin" );
