@@ -29,7 +29,7 @@ set -e
 cd ..
 BASE_DIR=`pwd`
 
-COMPONENTS_ALL="audio-sdl core rsp-hle ui-console video-glide64mk2 video-rice"
+COMPONENTS_ALL="audio-sdl core rsp-hle rsp-cxd4 ui-console video-glide64mk2 video-rice"
 DEFAULT_ORG="mupen64plus"
 DEFAULT_BRANCH="master"
 DEFAULT_REV="HEAD"

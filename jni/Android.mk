@@ -31,6 +31,7 @@ include $(JNI_LOCAL_PATH)/mupen64plus-audio-sles/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-core.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-input-android/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-rsp-hle.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-rsp-cxd4.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-ui-console.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-gliden64/src/osal/mupen64plus-video-osal.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-gliden64/src/GLideNHQ/mupen64plus-video-glidenhq.mk
