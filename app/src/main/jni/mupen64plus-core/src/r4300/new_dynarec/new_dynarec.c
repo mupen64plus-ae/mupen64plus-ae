@@ -2365,7 +2365,7 @@ static void alu_assemble(int i,struct regstat *i_regs)
       signed char s1l,s1h,s2l,s2h,th,tl;
       tl=get_reg(i_regs->regmap,rt1[i]);
       th=get_reg(i_regs->regmap,rt1[i]|64);
-      if(!((i_regs->was32>>rs1[i])&(i_regs->was32>>rs2[i])&1)&&th>=0)
+      if(!((i_regs->was32>>rs1[i])&(i_regs->was32>>rs2[i])&1)&&(th>=0)&&!((i_regs->uu>>rt1[i])&1))
       {
         assert(tl>=0);
         if(tl>=0) {
