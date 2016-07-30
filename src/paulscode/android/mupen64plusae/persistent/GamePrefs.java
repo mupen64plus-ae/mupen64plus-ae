@@ -577,7 +577,7 @@ public class GamePrefs
         gliden64GammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
 
         final String scaling = mPreferences.getString( "displayScaling", "original" );
-        mStretch = scaling.equals( "stretch" );
+        mStretch = scaling.equals( "stretch" ) || emulationProfile.get( "WidescreenHack", "False" ).equals("True");
         final int hResolution = getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
 
         videoSurfaceWidth = globalPrefs.getResolutionWidth(mStretch, 0);
