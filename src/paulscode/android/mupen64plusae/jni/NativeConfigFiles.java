@@ -345,10 +345,10 @@ public class NativeConfigFiles
         String glideN64settingValue = glideN64ConfigFile.get(headerNameURL, setting);
         // TODO: A lot of devices have issues with EnableCopyColorToRDRAM=2 for GLES 2.0
         // due to incompatibility with Android Native buffers, due to this, don't load
-        // default values from GLideN64.custom.ini because it could be set that way there.
-
-        /*
-        if(glideN64settingValue != null && game.emulationProfile.isBuiltin)
+        // default values from GLideN64.custom.ini when running with GLES 2.0 for EnableCopyColorToRDRAM
+        // because it could be set that way there.
+        if(glideN64settingValue != null && game.emulationProfile.isBuiltin &&
+            !(game.isGliden64_GLES2Enabled && game.gliden64EnableCopyColorToRDRAM == 2))
         {
             mupenConfigFile.put( "Video-GLideN64", setting, glideN64settingValue);
         }
@@ -356,10 +356,6 @@ public class NativeConfigFiles
         {
             mupenConfigFile.put( "Video-GLideN64", setting, value);
         }
-        */
-
-        mupenConfigFile.put( "Video-GLideN64", setting, value);
-
     }
 
 }
