@@ -101,6 +101,9 @@ public class GamePrefs
     /** True if glide64 video plug-in is enabled. */
     public final boolean isGlide64Enabled;
 
+    /** True if gliden64 video plug-in is enabled. */
+    public final boolean isGliden64Enabled;
+
     /** The maximum frameskip in the gln64 library. */
     public final int gln64MaxFrameskip;
 
@@ -533,8 +536,8 @@ public class GamePrefs
         isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
         glide64MaxFrameskip = Math.abs( maxFrameskip );
 
-
         // Video prefs - GLideN64
+        isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64" );
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
         gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);
         gliden64MaxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
@@ -577,7 +580,8 @@ public class GamePrefs
         gliden64GammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
 
         final String scaling = mPreferences.getString( "displayScaling", "original" );
-        mStretch = scaling.equals( "stretch" ) || emulationProfile.get( "WidescreenHack", "False" ).equals("True");
+        mStretch = scaling.equals( "stretch" ) ||
+                (emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled);
         final int hResolution = getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
 
         videoSurfaceWidth = globalPrefs.getResolutionWidth(mStretch, 0);
