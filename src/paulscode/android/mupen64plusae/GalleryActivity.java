@@ -884,14 +884,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         final GalleryItem item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
                             zipPath, extracted.equals("true"), artPath, lastPlayed);
                         items.add(item);
-                        if (mGlobalPrefs.isRecentShown && currentTime - item.lastPlayed <= 60 * 60 * 24 * 7) // 7
-                                                                                                             // days
+                        boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
+                        if (mGlobalPrefs.isRecentShown && isNotOld )
                         {
                             recentItems.add(item);
                         }
+
                         // Delete any old files that already exist inside a zip
                         // file
-                        else if (!zipPath.equals("") && extracted.equals("true"))
+                        if ((!isNotOld || !mGlobalPrefs.cacheRecentlyPlayed) &&
+                                !zipPath.equals("") && extracted.equals("true"))
                         {
                             final File deleteFile = new File(romPath);
                             deleteFile.delete();

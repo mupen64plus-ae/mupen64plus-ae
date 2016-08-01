@@ -54,8 +54,12 @@
         android:title="@string/showRecentlyPlayed_title" />
     <android.support.v7.preference.CheckBoxPreference
         android:defaultValue="true"
+        android:key="cacheRecentlyPlayed"
+        android:summary="@string/cacheRecentlyPlayed_summary"
+        android:title="@string/cacheRecentlyPlayed_title" />
+    <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="true"
         android:key="showFullNames"
         android:summary="@string/showFullNames_summary"
         android:title="@string/showFullNames_title" />
-
 </android.support.v7.preference.PreferenceScreen>

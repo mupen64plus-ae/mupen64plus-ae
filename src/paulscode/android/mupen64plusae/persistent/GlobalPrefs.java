@@ -170,6 +170,9 @@ public class GlobalPrefs
     /** True if the recently played section of the gallery should be shown. */
     public final boolean isRecentShown;
 
+    /** True if we should cache recently played games for faster load times */
+    public final boolean cacheRecentlyPlayed;
+
     /** True if the full ROM rip info should be shown. */
     public final boolean isFullNameShown;
 
@@ -381,6 +384,7 @@ public class GlobalPrefs
 
         // Library prefs
         isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
+        cacheRecentlyPlayed = mPreferences.getBoolean( "cacheRecentlyPlayed", true );
         isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
 
         // Touchscreen prefs
