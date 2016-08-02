@@ -722,11 +722,9 @@ public class GamePrefs
     {
         final String name = prefs.getString( key, defaultName );
 
-        if( TextUtils.isEmpty( name ) )
-            return null;
-        else if( custom.keySet().contains( name ) )
+        if( !TextUtils.isEmpty( name ) && custom.keySet().contains( name ) )
             return new Profile( false, custom.get( name ) );
-        else if( builtin.keySet().contains( name ) )
+        else if( !TextUtils.isEmpty( name ) && builtin.keySet().contains( name ) )
             return new Profile( true, builtin.get( name ) );
         else if( custom.keySet().contains( defaultName ) )
             return new Profile( false, custom.get( defaultName ) );
