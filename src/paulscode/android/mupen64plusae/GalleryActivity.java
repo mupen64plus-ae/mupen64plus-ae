@@ -1035,7 +1035,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         }
 
                         final String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
-                        lbFound = computedMd5.equals(md5);
+                        lbFound = computedMd5 != null && computedMd5.equals(md5);
 
                         //only deleye the file if we extracted our selves
                         if(!lbFound && !fileExisted)
