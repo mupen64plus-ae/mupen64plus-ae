@@ -505,15 +505,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return true;
         case R.id.menuItem_categoryLibrary:
+            mRefreshNeeded = true;
             ActivityHelper.startLibraryPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryDisplay:
+            mRefreshNeeded = true;
             ActivityHelper.startDisplayPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryAudio:
             ActivityHelper.startAudioPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryTouchscreen:
+            mRefreshNeeded = true;
             ActivityHelper.startTouchscreenPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryInput:
@@ -792,6 +795,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     void refreshGrid( ){
 
+        //Reload global prefs
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+
         final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
 
         final String query = mSearchQuery.toLowerCase( Locale.US );
@@ -850,7 +856,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     //We can't really do much if the rompath is null
                     if (romPath != null)
                     {
-
                         if (countryCodeString != null)
                         {
                             countryCode = Byte.parseByte(countryCodeString);
