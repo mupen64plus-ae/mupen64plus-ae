@@ -4,8 +4,14 @@
 /// while maintaining the original pitch by using a time domain WSOLA-like 
 /// method with several performance-increasing tweaks.
 ///
-/// Note : MMX optimized functions reside in a separate, platform-specific 
-/// file, e.g. 'mmx_win.cpp' or 'mmx_gcc.cpp'
+/// Notes : MMX optimized functions reside in a separate, platform-specific 
+/// file, e.g. 'mmx_win.cpp' or 'mmx_gcc.cpp'.
+///
+/// This source file contains OpenMP optimizations that allow speeding up the
+/// corss-correlation algorithm by executing it in several threads / CPU cores 
+/// in parallel. See the following article link for more detailed discussion 
+/// about SoundTouch OpenMP optimizations:
+/// http://www.softwarecoven.com/parallel-computing-in-embedded-mobile-devices
 ///
 /// Author        : Copyright (c) Olli Parviainen
 /// Author e-mail : oparviai 'at' iki.fi
@@ -13,10 +19,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2015-08-09 00:00:15 +0300 (Sun, 09 Aug 2015) $
+// Last changed  : $Date: 2016-01-05 20:42:45 +0000 (Tue, 05 Jan 2016) $
 // File revision : $Revision: 1.12 $
 //
-// $Id: TDStretch.cpp 226 2015-08-08 21:00:15Z oparviai $
+// $Id: TDStretch.cpp 236 2016-01-05 20:42:45Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -297,7 +303,7 @@ int TDStretch::seekBestOverlapPositionFull(const SAMPLETYPE *refPos)
     int i;
     double norm;
 
-    bestCorr = FLT_MIN;
+    bestCorr = -FLT_MAX;
     bestOffs = 0;
 
     // Scans for the best correlation value by testing each possible position
@@ -373,12 +379,10 @@ int TDStretch::seekBestOverlapPositionQuick(const SAMPLETYPE *refPos)
 
     // note: 'float' types used in this function in case that the platform would need to use software-fp
 
-    bestCorr = FLT_MIN;
-    bestOffs = SCANWIND;
-    bestCorr2 = FLT_MIN;
-    bestOffs2 = 0;
-
-    int best = 0;
+    bestCorr =
+    bestCorr2 = -FLT_MAX;
+    bestOffs = 
+    bestOffs2 = SCANWIND;
 
     // Scans for the best correlation value by testing each possible position
     // over the permitted range. Look for two best matches on the first pass to
@@ -436,7 +440,6 @@ int TDStretch::seekBestOverlapPositionQuick(const SAMPLETYPE *refPos)
         {
             bestCorr = corr;
             bestOffs = i;
-            best = 1;
         }
     }
 
@@ -458,7 +461,6 @@ int TDStretch::seekBestOverlapPositionQuick(const SAMPLETYPE *refPos)
         {
             bestCorr = corr;
             bestOffs = i;
-            best = 2;
         }
     }
 
