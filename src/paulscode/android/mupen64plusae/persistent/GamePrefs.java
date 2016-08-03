@@ -564,12 +564,13 @@ public class GamePrefs
         gliden64EnableCopyDepthToRDRAM = getSafeInt( emulationProfile, "EnableCopyDepthToRDRAM", 0 );
         gliden64EnableCopyColorFromRDRAM = emulationProfile.get( "EnableCopyColorFromRDRAM", "False" ).equals( "True" );
         gliden64EnableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
-        gliden64UseNativeResolutionFactor = getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);
+        gliden64UseNativeResolutionFactor = gliden64EnableNativeResTexrects ?
+                0 :getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);
         gliden64DisableFBInfo = emulationProfile.get( "DisableFBInfo", "True" ).equals( "True" );
         gliden64FBInfoReadColorChunk = emulationProfile.get( "FBInfoReadColorChunk", "False" ).equals( "True" );
         gliden64FBInfoReadDepthChunk = emulationProfile.get( "FBInfoReadDepthChunk", "True" ).equals( "True" );
         gliden64TxFilterMode = getSafeInt( emulationProfile, "txFilterMode}]", 0);
-        gliden64TxEnhancementMode = getSafeInt( emulationProfile, "txEnhancementMode", 0);
+        gliden64TxEnhancementMode = gliden64EnableNativeResTexrects ? 0 :getSafeInt( emulationProfile, "txEnhancementMode", 0);
         gliden64TxDeposterize = emulationProfile.get( "txDeposterize", "False" ).equals( "True" );
         gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "False" ).equals( "True" );
         gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 256);
