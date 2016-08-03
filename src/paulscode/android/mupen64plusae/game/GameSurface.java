@@ -35,6 +35,7 @@ public abstract class GameSurface extends SurfaceView
         void onGameSurfaceCreated();
     }
 
+    protected boolean mTryFullGl = false;
 
     // LogCat strings for debugging, defined here to simplify maintenance/lookup
     protected static final String TAG = "GameSurface";
@@ -137,4 +138,12 @@ public abstract class GameSurface extends SurfaceView
      */
     public abstract void flipBuffers();
 
+    /**
+     * Set to true if we want to attempt a full OpenGL context
+     * @param tryFullGL Set to true if we want to attempt a full OpenGL context
+     */
+    public void setFullGLStatus(boolean tryFullGL)
+    {
+        mTryFullGl = tryFullGL;
+    }
 }

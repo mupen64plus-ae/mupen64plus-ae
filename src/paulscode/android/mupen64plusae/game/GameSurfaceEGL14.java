@@ -237,7 +237,7 @@ public class GameSurfaceEGL14 extends GameSurface
         // Get an EGL display connection for the native display
         if ( mEglDisplay == null || mEglDisplay == EGL14.EGL_NO_DISPLAY )
         {
-            mFullOpenGL = EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
+            mFullOpenGL = mTryFullGl && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
 
             mEglDisplay = EGL14.eglGetDisplay( EGL14.EGL_DEFAULT_DISPLAY );
             if( mEglDisplay == EGL14.EGL_NO_DISPLAY )

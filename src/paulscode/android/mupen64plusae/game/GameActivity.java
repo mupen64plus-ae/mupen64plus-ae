@@ -236,6 +236,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             this.setContentView( R.layout.game_activity_egl14);
             mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
 
+            mSurface.setFullGLStatus(mGamePrefs.isGliden64_FullGLEnabled);
+
         }
         else
         {
