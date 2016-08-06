@@ -237,7 +237,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
 
             mSurface.setFullGLStatus(mGamePrefs.isGliden64_FullGLEnabled);
-
         }
         else
         {
@@ -917,8 +916,11 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
     private void tryPausing()
     {
-        if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_PAUSED )
-            CoreInterface.pauseEmulator( false, null );
+        final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+        CoreInterface.pauseEmulator( true, saveFileName );
+        mAutoSaveManager.clearOldest();
+
+        CoreInterface.shutdownEmulator();
     }
 
     @Override
