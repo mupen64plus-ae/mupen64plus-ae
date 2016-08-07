@@ -1,11 +1,5 @@
 package paulscode.android.mupen64plusae.dialog;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.mupen64plusae.v3.alpha.R;
-
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -21,6 +15,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class ProfileNameEditDialog extends DialogFragment
 {
@@ -113,7 +113,7 @@ public class ProfileNameEditDialog extends DialogFragment
                 if (getActivity() instanceof OnProfileNameDialogButtonListener)
                 {
                     ((OnProfileNameDialogButtonListener) getActivity()).onProfileNameDialogButton(dialogId, which,
-                        editName.getText().toString(), editComment.getText().toString());
+                        editName.getText().toString().trim(), editComment.getText().toString());
                 }
                 else
                 {
@@ -185,6 +185,7 @@ public class ProfileNameEditDialog extends DialogFragment
      */
     private String isValidName(List<String> profileNames, String oldName, String newName, boolean allowSameName)
     {
+        newName = newName.trim();
         boolean isNotEmpty = !TextUtils.isEmpty(newName);
         boolean isLegal = !Pattern.matches(".*[\\[\\]].*", newName);
         boolean isSameName = oldName.equals(newName);
