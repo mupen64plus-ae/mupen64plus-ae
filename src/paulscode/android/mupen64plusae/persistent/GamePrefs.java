@@ -451,6 +451,18 @@ public class GamePrefs
                 globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
                 globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
 
+        if( emulationProfile == null)
+        {
+            throw new Error( "Invalid emulation profile: " +
+                " preferences_null=" + (mPreferences == null) +
+                    " EMULATION_PROFILE=" + EMULATION_PROFILE +
+                    " global_default=" + globalPrefs.getEmulationProfileDefault() +
+                    " global_default_backup=" + GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT +
+                    " emulation_profile_config=" + globalPrefs.emulationProfiles_cfg +
+                    " builtin_emulation_profile_config=" + appData.profilesDir + "/emulation.cfg" +
+                " ");
+        }
+
         // Touchscreen profile
         if(globalPrefs.isBigScreenMode)
         {
