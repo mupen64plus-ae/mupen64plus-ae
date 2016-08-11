@@ -20,15 +20,6 @@
  */
 package paulscode.android.mupen64plusae.preference;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -41,6 +32,16 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ArrayAdapter;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 /**
  * A {@link DialogPreference} that is specifically for choosing a directory path or file on a device.
@@ -170,18 +171,28 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         // If the user clicked a list item...
         if( which >= 0 && which < mPaths.size() )
         {
-            mNewValue = mPaths.get( which );
-            File path = new File( mNewValue );
-            if( path.isDirectory() )
+            //Don't allow setting path outside default storage dir. We don't support external
+            //SD cards or drives
+            if(mPaths.get( which ).contains(STORAGE_DIR))
             {
-                // ...navigate into...
-                populate( mNewValue );
-                mDoReclick = true;
+                mNewValue = mPaths.get( which );
+                File path = new File( mNewValue );
+
+                if( path.isDirectory())
+                {
+                    // ...navigate into...
+                    populate( mNewValue );
+                    mDoReclick = true;
+                }
+                else
+                {
+                    // ...or close dialog positively
+                    which = DialogInterface.BUTTON_POSITIVE;
+                }
             }
             else
             {
-                // ...or close dialog positively
-                which = DialogInterface.BUTTON_POSITIVE;
+                mDoReclick = true;
             }
         }
     }
