@@ -5,16 +5,22 @@
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="menuItem_toggleSpeed">Velocidad %1$d %%</string>
-  <string name="menuItem_slotSave">Guardar slot</string>
-  <string name="menuItem_slotLoad">Cargar slot</string>
-  <string name="menuItem_setSlot">Slot %1$d</string>
-  <string name="menuItem_fileSave">Guardar a archivo…</string>
+  <string name="menuItem_slotSave">Guardar en ranura</string>
+  <string name="menuItem_slotLoad">Cargar ranura</string>
+  <string name="menuItem_setSlot">Ranura %1$d</string>
+  <string name="menuItem_selectSlot">Seleccionar ranura</string>
+  <string name="menuItem_fileSave">Guardar en archivo…</string>
   <string name="menuItem_fileLoad">Cargar desde archivo…</string>
+  <string name="menuItem_fileLoadAutoSave">Cargar desde autoguardado…</string>
   <string name="menuItem_screenshot">Captura de pantalla</string>
   <string name="menuItem_setSpeed">Velocidad del juego</string>
   <string name="menuItem_enableFramelimiter">Sincronizar Audio</string>
   <string name="menuItem_disableFramelimiter">Desincronizar audio</string>
-  <string name="menuItem_paks">Controller Paks</string>
+  <string name="menuItem_player_one">Jugador 1</string>
+  <string name="menuItem_player_two">Jugador 2</string>
+  <string name="menuItem_player_three">Jugador 3</string>
+  <string name="menuItem_player_four">Jugador 4</string>
+  <string name="menuItem_paks">Control Paks</string>
   <!--capitalize since trademark-->
   <string name="menuItem_pak1_empty">Jugador 1: Vacío</string>
   <string name="menuItem_pak1_mem">Jugador 1: Memory Pak</string>
@@ -43,10 +49,13 @@
   <string name="menuItem_sensitivity">Sensibilidad</string>
   <string name="menuItem_unmapAll">Desasignar todo</string>
   <!--Menu Activity-->
+  <string name="menuItem_search">Buscar</string>
   <string name="menuItem_play">Iniciar emulación</string>
   <string name="menuItem_refreshRoms">Actualizar ROMs</string>
   <string name="menuItem_settings">Opciones</string>
   <string name="menuItem_globalSettings">Configuración global</string>
+  <string name="menuItem_sensorConfiguration">Configurar Sensor</string>
+  <string name="menuItem_profiles">Perfiles</string>
   <string name="menuItem_emulationProfiles">Perfiles de emulación</string>
   <string name="menuItem_touchscreenProfiles">Perfiles de pantalla táctil</string>
   <string name="menuItem_controllerProfiles">Perfiles del controlador</string>
@@ -55,19 +64,22 @@
   <string name="menuItem_faq">Preguntas frecuentes</string>
   <string name="menuItem_helpForum">Foro de ayuda</string>
   <string name="menuItem_controllerDiagnostics">Diagnósticos del mando</string>
-  <string name="menuItem_reportBug">Reportar bug</string>
+  <string name="menuItem_reportBug">Reportar fallo</string>
   <string name="menuItem_about">Acerca de</string>
   <string name="menuItem_credits">Créditos</string>
   <string name="menuItem_appVersion">Versión de la aplicación</string>
   <string name="menuItem_changelog">Registro de cambios</string>
-  <string name="menuItem_logcat">Logcat</string>
+  <string name="menuItem_logcat">Registro de sistema</string>
   <string name="menuItem_hardwareInfo">Informacion de hardware</string>
+      <string name="menuItem_Tools">Herramientas</string>
+    <string name="menuItem_Extract">Agregar paquete de texturas</string>
+    <string name="menuItem_Clear">Limpiar paquete de texturas y cache</string>
   <string name="menuItem_localeOverride">Idioma</string>
   <!--ManageProfilesActivity-->
   <string name="menuItem_new">Nuevo</string>
-  <string name="menuItem_hideBuiltins">No mostrar built-ins</string>
-  <string name="menuItem_showBuiltins">Mostrar built-ins</string>
-  <string name="popup_titleBuiltin">%1$s (built-in)</string>
+  <string name="menuItem_hideBuiltins">No mostrar incorporado</string>
+  <string name="menuItem_showBuiltins">Mostrar incorporado</string>
+  <string name="popup_titleBuiltin">%1$s (incorporado)</string>
   <string name="popup_titleCustom">%1$s</string>
   <string name="profile_name_cannot_be_empty">Nombre no puede estar vacio</string>
   <string name="profile_name_cannot_contain_brackets">El nombre no puede contener soportes</string>
@@ -77,8 +89,8 @@
   <string name="popup_faq">Mupen64Plus es programado y mantenido por voluntarios.<small>\n\nPara corregir errores gráficos, prueba cambiando el <i>plugin de vídeo</i>.\n\nPara corregir el lag, intenta cambiando el <i>frameskip de vídeo</i> o el <i>plugin de vídeo</i>.\n\nPara ROMS que no se ejecutan, intenta descomprimiendo el ROM antes o intentando con una versión distinta del ROM.\n\nPara corregir problemas con la pantalla táctil, intenta cambiando el <i>tamaño de los botones</i> o la <i>disposición de botones</i>.\n\nPara otros problemas, o si todavía estás atascado, por favor toca el boton <i>FAQ</i> ubicado en la parte baja. Para errores que no se relacionan con algún juego, toca el botón <i>Reportar error</i> ubicado en la parte baja. Respondemos a la gran mayoría de las consultas dentro de las 24 horas siguientes. Sinceramente.\n\n</small>¡Gracias por ayudarnos a mejorar la aplicación!</string>
   <string name="popup_version">Versión: %1$s\nCódigo de versión: %2$d</string>
   <!--Lists-->
-  <string name="listItem_setDefault">Colocar predeterminados</string>
-  <string name="listItem_unsetDefault">No colocar predeterminados</string>
+  <string name="listItem_setDefault">Establecer predeterminados</string>
+  <string name="listItem_unsetDefault">No establecer predeterminados</string>
   <string name="listItem_edit">Editar</string>
   <string name="listItem_rename">Renombrar</string>
   <string name="listItem_copy">Copiar</string>
@@ -92,12 +104,12 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Regenerando base de datos de cheats…</string>
+  <string name="toast_rebuildingCheats">Regenerando base de datos de trucos…</string>
   <string name="toast_launchingEmulator">Iniciando emulador…</string>
   <string name="toast_loadingSession">Reanudando juego…</string>
   <string name="toast_savingSession">Creando guardado automático…</string>
-  <string name="toast_loadingSlot">Cargando slot %1$d…</string>
-  <string name="toast_savingSlot">Guardando slot %1$d…</string>
+  <string name="toast_loadingSlot">Cargando ranura %1$d…</string>
+  <string name="toast_savingSlot">Guardando ranura %1$d…</string>
   <string name="toast_loadingFile">Cargando %1$s…</string>
   <string name="toast_savingFile">Guardando %1$s…</string>
   <string name="toast_overwritingFile">Sobrescribiendo %1$s…</string>
@@ -148,14 +160,16 @@
   <!--Preference Screens-->
   <string name="screenGlobalSettings_title">Configuración global</string>
   <string name="screenGlobalSettings_summary">Ajustes de pantalla, audio, almacenamiento y depuración</string>
-  <string name="screenCheats_title">Cheats</string>
+  <string name="screenCheats_title">Trucos</string>
   <string name="screenCheats_summaryEnabled">Habilitado</string>
   <string name="screenCheats_summaryDisabled">Deshabilitado</string>
   <!--Preference Categories-->
-  <string name="categoryCheats_title">Ajustes de cheats (mantén oprimido para mostrar notas)</string>
+  <string name="categoryCheats_title">Ajustes de trucos (mantén oprimido para mostrar notas)</string>
   <string name="categoryGln64_title">Opciones del plugin Gln64</string>
   <string name="categoryRice_title">Opciones del plugin Rice</string>
   <string name="categoryGlide64_title">Opciones del plugin Glide64</string>
+  <string name="categoryGliden64_title">Opciones de GlideN64</string>
+  <string name="categoryLibrary_title">Biblioteca</string>
   <string name="categoryDisplay_title">Pantalla</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryTouchscreen_title">Pantalla táctil</string>
@@ -165,7 +179,7 @@
   <string name="categoryGameSettings_title">Ajustes específicos del juego</string>
   <string name="categoryGameSettings_titleNamed">Opciones %1$s</string>
   <!--Checkbox Preferences-->
-  <string name="playShowCheats_title">Habilitar cheats</string>
+  <string name="playShowCheats_title">Habilitar trucos</string>
   <string name="playShowCheats_summary">La carga del menú es más lenta cuando se encuentran activados</string>
   <string name="touchscreenFeedback_title">Retroalimentación háptica</string>
   <string name="touchscreenFeedback_summary">Vibrar al pulsar un botón</string>
@@ -174,7 +188,7 @@
   <string name="inputVolumeMappable_summary">Permitir que las teclas de volumen sean asignadas a controles</string>
   <string name="inputShareController_title">Compartir mando</string>
   <string name="inputShareController_summary">Permite que un único dispositivo de entrada controle a varios jugadores al mismo tiempo</string>
-  <string name="displayImmersiveMode_title">Modo de inmersivo</string>
+  <string name="displayImmersiveMode_title">Modo inmersivo</string>
   <string name="displayImmersiveMode_summary">Ocultar completamente barras de navegación y de estado</string>
   <string name="gln64Fog_title">Niebla</string>
   <string name="gln64Fog_summary">(todavía en desarrollo)</string>
@@ -200,13 +214,22 @@
   <string name="audioSynchronize_summary">Minimiza la latencia, pero puede causar errores en algunos juegos/dispositivos</string>
   <string name="audioSwapChannels_title">Intercambiar canales de audio</string>
   <string name="audioSwapChannels_summary">Intercambia los canales de audio izquierdo y derecho</string>
+  <string name="showRecentlyPlayed_title">Recientes Jugados</string>
+  <string name="showRecentlyPlayed_summary">Mostrar juegos jugados en los ultimos 7 días</string>
+  <string name="showFullNames_title">Nombres completos</string>
+  <string name="showFullNames_summary">Mostrar la región y datos del dump para cada juego</string>
+  <string name="cacheRecentlyPlayed_title">Cache de juegos recientes</string>
+  <string name="cacheRecentlyPlayed_summary">Extraer cache de juegos recientes para cargar mas rapido</string>
+
   <!--Gallery sections-->
+  <string name="galleryRecentlyPlayed">Recientemente jugados</string>
+  <string name="galleryLibrary">Biblioteca de Juegos</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Mantener botones automaticamente</string>
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitado</string>
   <string name="touchscreenAutoHold_entryLongPress">Al mantener apretado</string>
   <string name="touchscreenAutoHold_entrySlideOut">Al deslizar</string>
-  <string name="touchscreenAnimation_title">Feedback Visual</string>
+  <string name="touchscreenAnimation_title">Retroalimentacion Visual</string>
   <string name="touchscreenAnimation_summary">Joystick Animado</string>
   <string name="touchscreenStyle_title">Estilo de botón</string>
   <string name="touchscreenStyle_entryOutline">Líneas de borde</string>
@@ -234,8 +257,8 @@
   <string name="displayScaling_title">Tamaño de la pantalla</string>
   <string name="displayScaling_entryNone">Nada\n<small>Usar exactamente la resolución seleccionada arriba</small></string>
   <string name="displayScaling_entryZoom">Acercamiento\n<small>Rellena la pantalla, sin distorsión (agrega barras negras)</small></string>
-  <string name="displayScaling_entryCrop">Crop\n<small>Rellena la pantalla, sin distorsión (corta las gráficas)</small></string>
-  <string name="displayScaling_entryStretch">Estirar\n<small>Rellana la pantalla, sin barras negras (agrega distorsión)</small></string>
+  <string name="displayScaling_entryCrop">Cortar\n<small>Rellena la pantalla, sin distorsión (corta las gráficas)</small></string>
+  <string name="displayScaling_entryStretch">Estirar\n<small>Rellena la pantalla, sin barras negras (agrega distorsión)</small></string>
   <string name="displayFps_title">Velocidad de Cuadros</string>
   <string name="displayFps_summary">Mostrar FPS en Pantalla</string>
   <string name="videoPlugin_title">Plugin de video</string>
@@ -285,7 +308,101 @@
   <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
   <string name="riceTextureEnhancement_entrySharpen">Agudo</string>
   <string name="riceTextureEnhancement_entrySharpen_more">Mas agudo</string>
-  <string name="navigationMode_title">Accesibilidad</string>
+  <string name="gliden64_category_texture_title">Textura</string>
+    <string name="gliden64_multisampling_title">Nivel multisampling</string>
+    <string name="gliden64_multisampling_entry_none">Apagado</string>
+    <string name="gliden64_multisampling_entry_two">2</string>
+    <string name="gliden64_multisampling_entry_four">4</string>
+    <string name="gliden64_multisampling_entry_eight">8</string>
+    <string name="gliden64_multisampling_entry_sixteen">16</string>
+    <string name="gliden64_bilinear_mode_title">Modo de filtro bilinear</string>
+    <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-puntos</string>
+    <string name="gliden64_bilinear_mode_entry_standard">Estandar</string>
+    <string name="gliden64_max_anisotropic_filtering_title">Max level of anisotropic filtering</string>
+    <string name="gliden64_tx_cache_title">Tamaño de textura en megabytes</string>
+    <string name="gliden64_category_general_title">General</string>
+    <string name="gliden64_widescreen_hack_title">Hack de pantalla ancha</string>
+    <string name="gliden64_enable_noise_title">Habilitar emulación de ruido</string>
+    <string name="gliden64_enable_lod_title">Activar la emulación de LOD</string>
+    <string name="gliden64_enable_hw_lighting_title">Activar el hardware iluminación por píxel</string>
+    <string name="gliden64_enable_shader_storage_title">Utilice el almacenamiento persistente para shaders compiladas</string>
+    <string name="gliden64_correct_texrect_coords_title">Hacer que el textrect coordina continua</string>
+    <string name="gliden64_correct_texrect_coords_off">Activado</string>
+    <string name="gliden64_correct_texrect_coords_auto">Auto</string>
+    <string name="gliden64_correct_texrect_coords_force">Forzar</string>
+    <string name="gliden64_enable_native_res_texrects_title">Fix texrect image mis-aligment (slowdown)</string>
+    <string name="gliden64_enable_legacy_blending_title">Enable legacy blending (faster but less accurate)</string>
+    <string name="gliden64_category_fb_title">Frame Buffer Emulation</string>
+    <string name="gliden64_enable_fb_emulation_title">Habilitar emulación de marco y / o buffer de profundidad</string>
+    <string name="gliden64_swap_frame_buffers_title">Marcos de memoria de intercambio</string>
+    <string name="gliden64_swap_frame_buffers_entry_on_vi_update">La VI convocatoria de actualización</string>
+    <string name="gliden64_swap_frame_buffers_entry_on_vi_origin_change">El cambio VI origen</string>
+    <string name="gliden64_swap_frame_buffers_entry_on_buffer_update">En la actualización búfer</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_title">Copiar bufer de color a RDRAM</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_off">No copiar</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode">Copiar en modo sincronizado</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode">Copiar en modo asicrono</string>
+    <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Habilitar copia de bufer auxiliar en RDRAM</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_title">Copiar buffer de profundidad de RDRAM</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">No copiar</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">Renderizador de Hardware</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Renderizador de Software</string>
+    <string name="gliden64_enable_color_buffer_from_RDRAM_title">Habilitar bufer de copia a color a RDRAM</string>
+    <string name="gliden64_enable_n64_depth_compare_title">Habilitar profundidad N64 comparar (Experimental)</string>
+    <string name="gliden64_use_native_resolution_factor_title">Usar factor de resolucion nativo</string>
+    <string name="gliden64_use_native_resolution_factor_off">Apagado</string>
+    <string name="gliden64_use_native_resolution_factor_1x">1x</string>
+    <string name="gliden64_use_native_resolution_factor_2x">2x</string>
+    <string name="gliden64_use_native_resolution_factor_3x">3x</string>
+    <string name="gliden64_use_native_resolution_factor_4x">4x</string>
+    <string name="gliden64_disable_fbinfo">Deshabilitar búferes  la lectura / escritura con FBInfo</string>
+    <string name="gliden64_read_color_buffer_by_4kb_chunks">Leer la memoria de color en trozos de 4 KB</string>
+    <string name="gliden64_read_depth_buffer_by_4kb_chunks">Leer el búfer de profundidad en trozos de 4 KB</string>
+    <string name="gliden64_category_texture_filtering_title">Filtro de texturas</string>
+    <string name="gliden64_tx_filter_mode_title">Modo de filtro de texturas</string>
+    <string name="gliden64_tx_filter_mode_entry_none">Ninguno</string>
+    <string name="gliden64_tx_filter_mode_entry_smooth1">Suave 1</string>
+    <string name="gliden64_tx_filter_mode_entry_smooth2">Suave 2</string>
+    <string name="gliden64_tx_filter_mode_entry_smooth3">Suave 3</string>
+    <string name="gliden64_tx_filter_mode_entry_sharp1">Agudo 1</string>
+    <string name="gliden64_tx_filter_mode_entry_sharp2">Agudo 2</string>
+    <string name="gliden64_tx_enhancement_title">Mejora de textura</string>
+    <string name="gliden64_tx_enhancement_entry_none">Ninguna</string>
+    <string name="gliden64_tx_enhancement_entry_store_as_is">Almacenar como</string>
+    <string name="gliden64_tx_enhancement_entry_X2">X2</string>
+    <string name="gliden64_tx_enhancement_entry_X2SAI">X2SAI</string>
+    <string name="gliden64_tx_enhancement_entry_HQ2X">HQ2X</string>
+    <string name="gliden64_tx_enhancement_entry_HQ2XS">HQ2XS</string>
+    <string name="gliden64_tx_enhancement_entry_LQ2X">LQ2X</string>
+    <string name="gliden64_tx_enhancement_entry_LQ2XS">LQ2XS</string>
+    <string name="gliden64_tx_enhancement_entry_HQ4X">HQ4X</string>
+    <string name="gliden64_tx_enhancement_entry_2xBRZ">2xBRZ</string>
+    <string name="gliden64_tx_enhancement_entry_3xBRZ">3xBRZ</string>
+    <string name="gliden64_tx_enhancement_entry_4xBRZ">4xBRZ</string>
+    <string name="gliden64_tx_enhancement_entry_5xBRZ">5xBRZ</string>
+    <string name="gliden64_tx_enhancement_entry_6xBRZ">6xBRZ</string>
+    <string name="gliden64_tx_deposterize_title">Deposterize textura antes de mejora</string>
+    <string name="gliden64_tx_filter_ignore_BG_title">No filtrar texturas de fondo</string>
+    <string name="gliden64_tx_cache_size_title">Tamaño de caché de texturas filtrada en megabytes</string>
+    <string name="gliden64_tx_hi_res_enable_title">Utilice textura paquetes de alta resolución si están disponibles</string>
+    <string name="gliden64_tx_hi_res_full_alpha_channel_title">Permitir el uso del canal alfa de la textura de alta resolución totalmente</string>
+    <string name="gliden64_tx_hi_res_alt_crc_title">Utilice cálculo alternativo CRC</string>
+    <string name="gliden64_tx_cache_compression_title">Cache de textura en formato zip</string>
+    <string name="gliden64_tx_force_16bpp_title">Fuerza formato de textura de 16 bits para las texturas de alta definición</string>
+    <string name="gliden64_tx_save_cache_title">Textura caché segura en el disco (desaceleración al salir)</string>
+    <string name="gliden64_category_bloom_title">Florecer</string>
+    <string name="gliden64_enable_bloom_title">Habilitar el filtro de la floración</string>
+    <string name="gliden64_bloom_threshold_level_title">Nivel de umbral de luminosidad para la floración</string>
+    <string name="gliden64_bloom_blend_mode_title">Modo de mezcla</string>
+    <string name="gliden64_bloom_blend_mode_entry_strong">Fuerte</string>
+    <string name="gliden64_bloom_blend_mode_entry_mild">Medio</string>
+    <string name="gliden64_bloom_blend_mode_entry_light">Ligero</string>
+    <string name="gliden64_bloom_blur_amount_title">Desenfoque de radio</string>
+    <string name="gliden64_bloom_blur_strength_title">Resistencia a la falta de definición</string>
+    <string name="gliden64_category_gamma_title">Correccion Gama</string>
+    <string name="gliden64_force_gamma_correction_title">Forzar correccion gama</string>
+    <string name="gliden64_gamma_correction_level">Valor de correccion gama</string>
+    <string name="navigationMode_title">Accesibilidad</string>
   <string name="navigationMode_summary">Modo de navegación del menú: %1$s</string>
   <string name="navigationMode_entryAuto">Seleccionar automáticamente a partir de la configuración del dispositivo</string>
   <string name="navigationMode_entryStandard">Modo estándar</string>
@@ -298,6 +415,27 @@
   <string name="audioPlugin_entryNone">Ninguno (audio deshabilitado)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Ninguna depuración(audio desactivado, sin límite de velocidad)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
+    <string name="audioSDLBufferSize_title">Tamaño del bufer de audio</string>
+    <string name="audioSDLBufferSize_entry2048">Por defecto</string>
+    <string name="audioSDLBufferSize_entry128">Latencia baja (experimental)</string>
+    <string name="audioSDLBufferSize_entry8">Latencia ultra baja (experimental)</string>
+    <string name="audioSLESBufferSize_title">Tamaño del bufer del audio</string>
+    <string name="audioSLESBufferSize_entry2048">2048</string>
+    <string name="audioSLESBufferSize_entry1024">1024</string>
+    <string name="audioSLESBufferSize_entry512">512</string>
+    <string name="audioSLESBufferSize_entry256">256</string>
+    <string name="audioSLESBufferSize_entry128">128</string>
+    <string name="audioSLESBufferNbr_title">Numero de bufer de audio</string>
+    <string name="audioSLESRate_title">Tasa de muestreo</string>
+    <string name="audioSLESRate_entry_orig">Fijar por juego</string>
+    <string name="audioSLESRate_entry16">16kHz</string>
+    <string name="audioSLESRate_entry24">24kHz</string>
+    <string name="audioSLESRate_entry32">32kHz</string>
+    <string name="audioSLESRate_entry441">44.1kHz</string>
+    <string name="audioSLESRate_entry48">48kHz</string>
+    <string name="audioSLESFloatingPoint_title">Flotación de puntos de muestras</string>
+    <string name="audioSLESFloatingPoint_summary">FP de audio de mayor calidad. Algunos dispositivos pueden no ser compatibles.</string>    
   <string name="localeOverride_entrySystemDefault">Predeterminado del sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparencia de botones en la pantalla táctil</string>
@@ -315,6 +453,8 @@
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multijugador</string>
   <string name="playerMap_summary">Definir los mandos de cada jugador</string>
+   <string name="playerMap_needed">Por favor, definir asignaciones de control en la configuración del juego de multijugador</string>
+
   <!--Profile Preferences-->
   <string name="emulationProfile_title">Perfil de emulación</string>
   <string name="touchscreenProfile_title">Perfil de pantalla táctil</string>
@@ -323,7 +463,11 @@
   <string name="controllerProfile2_title">Perfil de mando 2</string>
   <string name="controllerProfile3_title">Perfil de mando 3</string>
   <string name="controllerProfile4_title">Perfil de mando 4</string>
-  <!--**************************************************************************-->
+    <string name="default_profile_title">Por defecto global</string> 
+    <!-- Other Preferences -->
+    <string name="GameAutoSavesMax_title">Maximos autoguardados por juego</string>
+    
+ <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
   <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
@@ -331,28 +475,35 @@
   <!--Confirmation Dialogs-->
   <string name="confirm_title">Confirmación</string>
   <string name="confirmResetGame_message">¿En serio quieres reiniciar el juego? Se perderá todo el progreso realizado desde la última vez que guardaste.</string>
+  <string name="confirmExitGame_message">¿Seguro que quieres dejar de jugar?</string>
   <string name="confirmOverwriteFile_message">¿Sobrescribir %1$s?</string>
   <string name="confirmUnmapAll_message">¿Desasignar todas las entradas para %1$s?</string>
   <string name="confirmDeleteProfile_message">¿Eliminar perfil \"%1$s\"?</string>
+  <string name="confirmClearData_message">¿Seguro que desea borrar todos los paquetes de texturas de alta resolución instaladas y cachés?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Registro de cambios</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Advertencia</string>
   <string name="invalidInstall_message">Puede que Mupen64 Plus AE no se haya instalado correctamente. Por favor prueba a reinstalar la aplicación si experimentas crasheos.</string>
   <!--Text Editor Hints (start lower-case)-->
-  <string name="hintFileSave">nombre de archivo</string>
+  <string name="hintFileSave">Nombre de archivo</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Inicializando</string>
   <string name="assetExtractor_progress">%1$.0f%% completado: %2$s</string>
   <string name="assetExtractor_finished">Completado</string>
   <string name="assetExtractor_failed">Error al extraer datos de la aplicación.\nPor favor desconecte el cable USB, reinicie el dispositivo, y vuelva a iniciar la aplicación.\nSi requiere ayuda, por favor visite %1$s.</string>
+  <string name="assetExtractor_error">Error</string>
+    <string name="assetExtractor_failed_permissions">Esta aplicación no puede proceder sin estos permisos</string>
+    <string name="assetExtractor_permissions_title">Permisos</string>
+    <string name="assetExtractor_permissions_rationale">Mupen64Plus AE debe ser capaz de: \n Leer su almacenamiento para cargar archivos ROM, los estados de guardar, y la configuración tambien. \n Escribir a su almacenamiento para guardar los datos.</string>
+
   <!--Cheats Configuration-->
-  <string name="cheats_defaultName">Cheat %1$d</string>
+  <string name="cheats_defaultName">Truco %1$d</string>
   <string name="cheats_longPress">(mantén oprimido para mostrar el texto completo)</string>
   <string name="cheat_disabled">(deshabilitado)</string>
   <string name="cheatOption_title">Texto Completo</string>
   <string name="cheatNotes_title">Notas</string>
-  <string name="cheatNotes_none">(no hay notas disponibles para este cheat)</string>
+  <string name="cheatNotes_none">(no hay notas disponibles para este truco)</string>
   <!--Cheat Editor-->
   <string name="menuItem_cheatEditor">Editor de trucos</string>
   <string name="cheatEditor_empty">Truco vacío</string>
@@ -388,8 +539,10 @@
   <string name="cheatEditor_saveConfirm">¿Guardar archivo del truco?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Extrayendo texturas</string>
-  <string name="pathHiResTexturesTask_message">Por favor, sé paciente. Este proceso puede tomar algo de tiempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">¡Error al extraer texturas!</string>
+  <string name="pathHiResTexturesTask_message">Sea paciente. Este proceso puede llevar tiempo</string>
+   <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Error: archivo HTC debe coincidir con este formato [GAME_HEADER]__HIRESTEXTURES.htc</string>
+ 
   <!--Scan Roms Dialog-->
   <string name="scanRomsDialog_selectRom">Seleccionar un ROM o Carpeta para Escanear</string>
   <string name="scanRomsDialog_searchZips">Buscar archivos ZIP</string>
@@ -423,6 +576,17 @@
   <string name="touchscreenProfileActivity_horizontalSlider">Horizontal: %1$d %%</string>
   <string name="touchscreenProfileActivity_verticalSlider">Vertical: %1$d %%</string>
   <string name="touchscreenProfileActivity_autoHoldable">Mantener Automaticamente</string>
+      <!-- Sensor configuration -->
+    <string name="sensorConfig_hideJoystick">Ocultar cuando el sensor este activo</string>
+    <string name="sensorConfig_activateOnStart">Activar cuando el juego inicia</string>
+    <string name="sensorConfig_joystickXEmulation">Joystick X axis emulacion</string>
+    <string name="sensorConfig_joystickYEmulation">Joystick Y axis emulacion</string>
+    <string name="sensorConfig_sensorX">Usar acelerometro\'s X axis</string>
+    <string name="sensorConfig_sensorY">Usar acelerometro\'s Y axis</string>
+    <string name="sensorConfig_angle">Angulo IDLE (°)</string>
+    <string name="sensorConfig_invertAxis">Invertir axis</string>
+    <string name="sensorConfig_axisCustom">Personalizado</string>
+    <string name="sensorConfig_axisDisabled">Disactivado</string>
   <!--Controller button names-->
   <string name="controller_analog">Stick analógico</string>
   <string name="controller_dpad">Pad direccional</string>
@@ -437,7 +601,7 @@
   <string name="controller_buttonL">Botón L</string>
   <string name="controller_buttonR">Botón R</string>
   <string name="controller_buttonZ">Botón Z</string>
-  <string name="controller_buttonS">Botón start</string>
+  <string name="controller_buttonS">Botón Start</string>
   <string name="controller_fps">Indicador de FPS</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Presiona un botón, tecla, o palanca de mando para mapear...\n\nActualmente mapeados:\n%1$s</string>
@@ -457,11 +621,11 @@
   <string name="inputMapActivity_btnDL">D-pad ←</string>
   <string name="inputMapActivity_btnDD">D-pad ↓</string>
   <string name="inputMapActivity_btnDU">D-pad ↑</string>
-  <string name="inputMapActivity_btnAR">Analog →</string>
-  <string name="inputMapActivity_btnAL">Analog ←</string>
-  <string name="inputMapActivity_btnAD">Analog ↓</string>
-  <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <string name="inputMapActivity_incrementSlot">Incrementar slot</string>
+  <string name="inputMapActivity_btnAR">Analogo →</string>
+  <string name="inputMapActivity_btnAL">Analogo ←</string>
+  <string name="inputMapActivity_btnAD">Analogo ↓</string>
+  <string name="inputMapActivity_btnAU">Analogo ↑</string>
+  <string name="inputMapActivity_incrementSlot">Incrementar ranura</string>
   <string name="inputMapActivity_reset">Reiniciar</string>
   <string name="inputMapActivity_pause">Pausa</string>
   <string name="inputMapActivity_stop">Parar</string>
@@ -477,3 +641,4 @@
   <string name="diagnosticActivity_textKey_text">Presiona un botón o tecla…</string>
   <string name="diagnosticActivity_textMotion_text">Pantalla táctil o joystick…</string>
 </resources>
+
