@@ -727,7 +727,7 @@ EXPORT void CALL AiLenChanged(void)
     bool limiterEnabled = isSpeedLimiterEnabled();
     
     timespec time;
-    clock_gettime(CLOCK_REALTIME, &time);
+    clock_gettime(CLOCK_MONOTONIC_RAW, &time);
     double timeDouble = static_cast<double>(time.tv_sec) +
           static_cast<double>(time.tv_nsec)/1.0e9;
 
@@ -780,12 +780,12 @@ EXPORT void CALL AiLenChanged(void)
              double endTime = timeDouble + sleepNeeded;
 
              timespec time;
-             clock_gettime(CLOCK_REALTIME, &time);
+             clock_gettime(CLOCK_MONOTONIC_RAW, &time);
              double currTime = static_cast<double>(time.tv_sec) +
                    static_cast<double>(time.tv_nsec)/1.0e9;
              while(currTime < endTime)
              {
-                clock_gettime(CLOCK_REALTIME, &time);
+                clock_gettime(CLOCK_MONOTONIC_RAW, &time);
                 currTime = static_cast<double>(time.tv_sec) +
                       static_cast<double>(time.tv_nsec)/1.0e9;
              }
@@ -886,7 +886,7 @@ void* audioConsumer(void* param)
 
       struct threadmsg msg;
 
-      clock_gettime(CLOCK_REALTIME, &prevTime);
+      clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
       int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
 
       if( result != ETIMEDOUT )
@@ -955,7 +955,7 @@ void* audioConsumer(void* param)
          //}
 
          //Calculate rates
-         clock_gettime(CLOCK_REALTIME, &currTime);
+         clock_gettime(CLOCK_MONOTONIC_RAW, &currTime);
 
          //Figure out how much to slow down by
          float timeDiff = TimeDiff(&currTime, &prevTime);
