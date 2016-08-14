@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.game;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.text.DateFormat;
@@ -10,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
-import android.util.Log;
 
 public class GameAutoSaveManager
 {
@@ -104,7 +105,7 @@ public class GameAutoSaveManager
             //Sort by file name
             Collections.sort(result);
 
-            while(result.size() > (mMaxAutoSave-1))
+            while(result.size() > mMaxAutoSave)
             {
                 Log.i("GameAutoSaveManager", "Deleting old autosave file: " + result.get(0).getName());
                 result.get(0).delete();

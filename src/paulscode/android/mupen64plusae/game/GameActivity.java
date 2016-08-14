@@ -671,7 +671,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         NativeExports.notifySDLSurfaceDestroyed();
         mSurface.setEGLContextNotReady();
         mIsSurface = false;
-        tryPausing();
     }
 
     @Override
@@ -699,12 +698,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
     {
         if(shouldExit)
         {
-            // Never go directly from running to stopped; always pause (and autosave) first
-            final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-            CoreInterface.pauseEmulator( true, saveFileName );
-            mAutoSaveManager.clearOldest();
-            CoreInterface.shutdownEmulator();
-
             mMogaController.exit();
 
             this.finish();
@@ -916,6 +909,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
     private void tryPausing()
     {
+        // Never go directly from running to stopped; always pause (and autosave) first
         final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
         CoreInterface.pauseEmulator( true, saveFileName );
         mAutoSaveManager.clearOldest();
