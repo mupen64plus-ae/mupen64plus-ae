@@ -20,6 +20,23 @@
  */
 package paulscode.android.mupen64plusae.task;
 
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Process;
+import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
+import android.util.Log;
+
+import org.mupen64plusae.v3.alpha.R;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -36,8 +53,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
@@ -47,20 +62,6 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
-import android.os.Process;
-import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
-import android.util.Log;
 
 public class CacheRomInfoService extends Service
 {
@@ -327,10 +328,16 @@ public class CacheRomInfoService extends Service
         if( mDownloadArt )
         {
             if( mbStopped ) return;
-            mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_downloadingArt );
-            Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
-            downloadFile( detail.artUrl, artPath );
-            Log.i( "CacheRomInfoService", "End art download: " +  artPath);
+
+            //Only download art if it's not already present
+            if(!(new File(artPath)).exists())
+            {
+                mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_downloadingArt );
+                Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
+                downloadFile( detail.artUrl, artPath );
+
+                Log.i( "CacheRomInfoService", "End art download: " +  artPath);
+            }
         }
         
         if( mbStopped ) return;
