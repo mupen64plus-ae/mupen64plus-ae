@@ -962,6 +962,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             Log.e( "GalleryActivity", "SD Card not accessible" );
             Notifier.showToast( this, R.string.toast_sdInaccessible );
+
+            mAppData.putAssetVersion(0);
+            ActivityHelper.startSplashActivity(this);
+            finish();
             return;
         }
 

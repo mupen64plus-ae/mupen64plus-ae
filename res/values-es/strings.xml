@@ -133,7 +133,7 @@
   <string name="toast_nativeMainFailure13">El núcleo falló al añadir el plugin.</string>
   <string name="toast_nativeMainFailureUnknown">Error de inicio desconocido.</string>
   <string name="toast_usingSlot">Usando ahora el slot %1$d.</string>
-  <string name="toast_sdInaccessible">Tarjeta SD no accesible (desconecta el cable USB e intenta de nuevo).</string>
+  <string name="toast_sdInaccessible">Data de la applicación no disponible, recargando.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
   <!--Developers: Please follow naming conventions described in preferences.xml-->

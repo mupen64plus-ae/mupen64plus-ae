@@ -151,7 +151,7 @@
     <string name="toast_nativeMainFailure13">Core failed to attach plugin.</string>
     <string name="toast_nativeMainFailureUnknown">Unknown launch error.</string>
     <string name="toast_usingSlot">Now using slot %1$d.</string>
-    <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
+    <string name="toast_sdInaccessible">App data missing, attempting to reload.</string>
 
     <!-- ************************************************************************** -->
     <!-- Preference Menu Strings -->
