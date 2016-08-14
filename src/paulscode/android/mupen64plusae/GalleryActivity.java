@@ -977,7 +977,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             if(zipPath != null)
             {
-                ExtractFileIfNeeded(romMd5, config, romPath, zipPath, extracted);
+                romPath = ExtractFileIfNeeded(romMd5, config, romPath, zipPath, extracted);
             }
 
             config.save();
@@ -1006,14 +1006,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     romArtPath, romGoodName, romLegacySaveFileName, isRestarting );
     }
 
-    private void ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)
+    private String ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)
     {
         final File romFile = new File(romPath);
+        String romFileName = romFile.getName();
+        final File extractedRomFile = new File(mGlobalPrefs.unzippedRomsDir + "/" + romFileName);
         final RomHeader romHeader = new RomHeader( zipPath );
 
         final boolean isZip = romHeader.isZip;
 
-        if(isZip && (!romFile.exists() || !isExtracted))
+        if(isZip && (!extractedRomFile.exists() || !isExtracted))
         {
             boolean lbFound = false;
 
@@ -1071,6 +1073,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 config.put(md5, "extracted", "true");
             }
         }
+
+        return extractedRomFile.getPath();
     }
 
     @Override
