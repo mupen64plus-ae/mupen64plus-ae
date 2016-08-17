@@ -175,7 +175,7 @@ public class NativeConfigFiles
         // gln64 config file
         final ConfigFile glideN64_conf = new ConfigFile( appData.glideN64_conf );
 
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "12" );
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "13" );
 
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
@@ -191,8 +191,9 @@ public class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableHWLighting", boolToTF( game.gliden64EnableHWLighting ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableShadersStorage", boolToTF( game.gliden64EnableShadersStorage) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CorrectTexrectCoords", String.valueOf( game.gliden64CorrectTexrectCoords ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "enableNativeResTexrects", boolToTF( game.gliden64EnableNativeResTexrects) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "enableLegacyBlending", boolToTF( game.gliden64EnableLegacyBlending) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableNativeResTexrects", boolToTF( game.gliden64EnableNativeResTexrects) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableLegacyBlending", boolToTF( game.gliden64EnableLegacyBlending) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableFragmentDepthWrite", boolToTF( game.gliden64EnableFragmentDepthWrite) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableFBEmulation", boolToTF( game.gliden64EnableFBEmulation ));
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "BufferSwapMode", String.valueOf( game.gliden64BufferSwapMode ));
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorToRDRAM", String.valueOf( game.gliden64EnableCopyColorToRDRAM ) );

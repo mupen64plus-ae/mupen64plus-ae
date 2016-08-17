@@ -202,11 +202,18 @@
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="EnableNativeResTexrects"
+            android:summary="@string/gliden64_enable_native_res_texrects_summary"
             android:title="@string/gliden64_enable_native_res_texrects_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableLegacyBlending"
+            android:summary="@string/gliden64_enable_legacy_blending_summary"
             android:title="@string/gliden64_enable_legacy_blending_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="EnableFragmentDepthWrite"
+            android:summary="@string/gliden64_enable_fragment_depth_write_summary"
+            android:title="@string/gliden64_enable_fragment_depth_write_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
@@ -326,6 +333,7 @@
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="False"
             android:key="txSaveCache"
+            android:summary="@string/gliden64_tx_save_cache_summary"
             android:title="@string/gliden64_tx_save_cache_title" />
     </android.support.v7.preference.PreferenceCategory>
         

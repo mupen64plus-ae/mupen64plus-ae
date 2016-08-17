@@ -198,6 +198,9 @@ public class GamePrefs
     /** Do not use shaders to emulate N64 blending modes. Works faster on slow GPU. Can cause glitches. */
     public final boolean gliden64EnableLegacyBlending;
 
+    /** Enable writing of fragment depth. Some mobile GPUs do not support it, thus it made optional. Leave enabled. */
+    public final boolean gliden64EnableFragmentDepthWrite;
+
     /** Enable frame and|or depth buffer emulation. */
     public final boolean gliden64EnableFBEmulation;
 
@@ -569,6 +572,7 @@ public class GamePrefs
         gliden64CorrectTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 1);
         gliden64EnableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "False" ).equals( "True" );
         gliden64EnableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );
+        gliden64EnableFragmentDepthWrite = emulationProfile.get( "EnableFragmentDepthWrite", "False" ).equals( "True" );
         gliden64EnableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
         gliden64BufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);
         gliden64EnableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 2);
