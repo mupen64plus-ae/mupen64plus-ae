@@ -37,6 +37,7 @@ public:
 	bool usesLOD() const { return (m_nInputs & (1 << LOD_FRACTION)) != 0; }
 	bool usesShade() const { return (m_nInputs & ((1 << SHADE) | (1 << SHADE_ALPHA))) != 0; }
 	bool usesShadeColor() const { return (m_nInputs & (1 << SHADE)) != 0; }
+	bool usesHwLighting() const { return (m_nInputs & (1 << HW_LIGHT)) != 0; }
 
 	friend std::ostream & operator<< (std::ostream & _os, const ShaderCombiner & _combiner);
 	friend std::istream & operator>> (std::istream & _os, ShaderCombiner & _combiner);
@@ -48,7 +49,7 @@ private:
 	friend class UniformSet;
 
 	struct iUniform	{
-		GLint loc;
+		GLint loc = -1;
 		int val;
 		void set(int _val, bool _force) {
 			if (loc >= 0 && (_force || val != _val)) {
@@ -59,7 +60,7 @@ private:
 	};
 
 	struct fUniform {
-		GLint loc;
+		GLint loc = -1;
 		float val;
 		void set(float _val, bool _force) {
 			if (loc >= 0 && (_force || val != _val)) {
@@ -70,7 +71,7 @@ private:
 	};
 
 	struct fv2Uniform {
-		GLint loc;
+		GLint loc = -1;
 		float val[2];
 		void set(float _val1, float _val2, bool _force) {
 			if (loc >= 0 && (_force || val[0] != _val1 || val[1] != _val2)) {
@@ -82,7 +83,7 @@ private:
 	};
 
 	struct iv2Uniform {
-		GLint loc;
+		GLint loc = -1;
 		int val[2];
 		void set(int _val1, int _val2, bool _force) {
 			if (loc >= 0 && (_force || val[0] != _val1 || val[1] != _val2)) {
@@ -94,7 +95,7 @@ private:
 	};
 
 	struct i4Uniform {
-		GLint loc;
+		GLint loc = -1;
 		int val0, val1, val2, val3;
 		void set(int _val0, int _val1, int _val2, int _val3, bool _force) {
 			if (loc < 0)
