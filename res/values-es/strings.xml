@@ -222,7 +222,7 @@
   <string name="cacheRecentlyPlayed_summary">Extraer cache de juegos recientes para cargar mas rapido</string>
 
   <!--Gallery sections-->
-  <string name="galleryRecentlyPlayed">Recientemente jugados</string>
+  <string name="galleryRecentlyPlayed">Jugado Reciente</string>
   <string name="galleryLibrary">Biblioteca de Juegos</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Mantener botones automaticamente</string>
