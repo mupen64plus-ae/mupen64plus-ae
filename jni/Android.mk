@@ -2,6 +2,7 @@ JNI_LOCAL_PATH := $(call my-dir)
 
 AE_BRIDGE_INCLUDES := $(JNI_LOCAL_PATH)/ae-bridge/
 M64P_API_INCLUDES := $(JNI_LOCAL_PATH)/mupen64plus-core/src/api/
+LIBRETRO_INCLUDES := $(JNI_LOCAL_PATH)/libretro/
 SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
 PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 SAMPLERATE_INCLUDES := $(JNI_LOCAL_PATH)/libsamplerate/
@@ -39,3 +40,5 @@ include $(JNI_LOCAL_PATH)/mupen64plus-video-gliden64/src/mupen64plus-video-glide
 include $(JNI_LOCAL_PATH)/mupen64plus-video-glide64mk2.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-gln64/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-video-rice.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-video-angrylion.mk
+
