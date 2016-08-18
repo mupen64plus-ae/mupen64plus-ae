@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := mupen64plus-video-angrylion
 
-MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -DM64P_PLUGIN_API
+MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -DM64P_PLUGIN_API -DM64P_CORE_PROTOTYPES
 
 LOCAL_MODULE := mupen64plus-video-angrylion
 LOCAL_ARM_MODE := arm
@@ -21,6 +21,8 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/src/n64video_main.c \
     $(SRCDIR)/src/n64video_vi.c \
     $(SRCDIR)/osal_dynamiclib_unix.c \
+    $(SRCDIR)/main.c \
+    $(SRCDIR)/config_functions.c \
     ../$(LIBRETRO_INCLUDES)/libretro_custom.c \
     ../$(LIBRETRO_INCLUDES)/RefreshScreen.c \
     ../$(LIBRETRO_INCLUDES)/Graphics/plugins.c
