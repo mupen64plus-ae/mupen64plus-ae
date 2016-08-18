@@ -110,6 +110,9 @@ public class GamePrefs
     /** True if GlideN64 full OpenGL video plug-in is enabled */
     public final boolean isGliden64_FullGLEnabled;
 
+    /** True if angrylion video plug-in is enabled. */
+    public final boolean isAngrylionEnabled;
+
     /** The maximum frameskip in the gln64 library. */
     public final int gln64MaxFrameskip;
 
@@ -608,17 +611,18 @@ public class GamePrefs
         gliden64GammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
 
         //Video preferences for angrylion
+        isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion.so" );
         angrylionVIOverlayEnabled = emulationProfile.get( "VIOverlay", "False" ).equals( "True" );
 
         final String scaling = mPreferences.getString( "displayScaling", "original" );
-        mStretch = scaling.equals( "stretch" ) ||
-                (emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled);
+        mStretch = (scaling.equals( "stretch" ) ||
+                (emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled)) && !isAngrylionEnabled;
         final int hResolution = getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
 
         videoSurfaceWidth = globalPrefs.getResolutionWidth(mStretch, 0);
         videoSurfaceHeight = globalPrefs.getResolutionHeight(mStretch, 0);
-        videoRenderWidth = globalPrefs.getResolutionWidth(mStretch, hResolution);
-        videoRenderHeight = globalPrefs.getResolutionHeight(mStretch, hResolution);
+        videoRenderWidth = isAngrylionEnabled ? 640 : globalPrefs.getResolutionWidth(mStretch, hResolution);
+        videoRenderHeight = isAngrylionEnabled ? 480 : globalPrefs.getResolutionHeight(mStretch, hResolution);
 
         videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
 
