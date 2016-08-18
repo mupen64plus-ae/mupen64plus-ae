@@ -7,7 +7,7 @@ static const char* vertex_shader =
 "#version 300 es \n"
 "layout(location = 0) in vec3 vertexPosition_modelspace;           \n"
 "                                                                  \n"
-"out vec2 UV;                                                      \n"
+"out lowp vec2 UV;                                                 \n"
 "                                                                  \n"
 "void main(){                                                      \n"
 "	gl_Position = vec4(vertexPosition_modelspace,1);               \n"
@@ -17,7 +17,7 @@ static const char* vertex_shader =
 
 static const char* fragment_shader =
 "#version 300 es \n"
-"in vec2 UV;                                                      \n"
+"in lowp vec2 UV;                                                 \n"
 "                                                                 \n"
 "layout(location = 0) out lowp vec4 color;                        \n"
 "                                                                 \n"

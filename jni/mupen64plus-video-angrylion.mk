@@ -12,7 +12,11 @@ LOCAL_ARM_MODE := arm
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES) $(LIBRETRO_INCLUDES)/libretro-common/include $(LIBRETRO_INCLUDES) \
     $(LOCAL_PATH)/GLES3/include/
 
-ifeq ($(TARGET_ARCH_ABI), x86)
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+    # Use for ARM7a:
+    MY_LOCAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp -ftree-vectorize -mvectorize-with-neon-quad -ftree-vectorizer-verbose=2 -funsafe-math-optimizations
+
+else ifeq ($(TARGET_ARCH_ABI), x86)
     MY_LOCAL_CFLAGS += -DUSE_SSE_SUPPORT
 endif
 
