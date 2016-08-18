@@ -152,6 +152,9 @@ public class GamePrefs
     /** True if fog is enabled in the rice library. */
     public final boolean isRiceFogEnabled;
 
+    /** True if VI Overlay is enabled in Angrylion */
+    public final boolean angrylionVIOverlayEnabled;
+
     /** The maximum frameskip in the glide64 library. */
     public final int glide64MaxFrameskip;
 
@@ -603,6 +606,9 @@ public class GamePrefs
         gliden64BlurStrength = getSafeInt( emulationProfile, "blurStrength", 20);
         gliden64ForceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gliden64GammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
+
+        //Video preferences for angrylion
+        angrylionVIOverlayEnabled = emulationProfile.get( "VIOverlay", "False" ).equals( "True" );
 
         final String scaling = mPreferences.getString( "displayScaling", "original" );
         mStretch = scaling.equals( "stretch" ) ||

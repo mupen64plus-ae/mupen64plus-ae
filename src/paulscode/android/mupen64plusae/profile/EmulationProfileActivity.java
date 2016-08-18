@@ -50,7 +50,8 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_GLIDEN64_TEXTURE_FILTERING = "categoryGliden64TextureFiltering";
     private static final String CATEGORY_GLIDEN64_BLOOM = "categoryGliden64Bloom";
     private static final String CATEGORY_GLIDEN64_GAMMA = "categoryGliden64Gamma";
-    
+    private static final String CATEGORY_ANGRYLION = "categoryAngrylion";
+
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
@@ -64,10 +65,11 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String LIBGLIDEN64_SO = "libmupen64plus-video-gliden64%1$s.so";
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
+    private static final String LIBANGRYLION_SO = "libmupen64plus-video-angrylion.so";
     private static final String GLES20 = "-gles20";
     private static final String GLES31 = "-gles31";
     private static final String FULLOGL = "-egl";
-    
+
     // Preference menu items
     private PreferenceGroup mScreenRoot = null;
     private PreferenceCategory mCategoryN64 = null;
@@ -79,7 +81,9 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryGliden64TextureFiltering = null;
     private PreferenceCategory mCategoryGliden64Bloom = null;
     private PreferenceCategory mCategoryGliden64Gamma = null;
-    
+    private PreferenceCategory mCategoryAngrylion = null;
+
+
     private CompatListPreference mPreferenceVideoSubPlugin = null;
     
     @Override
@@ -139,6 +143,7 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryGliden64TextureFiltering = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE_FILTERING );
         mCategoryGliden64Bloom = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_BLOOM );
         mCategoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
+        mCategoryAngrylion = (PreferenceCategory) findPreference( CATEGORY_ANGRYLION );
 
         mPreferenceVideoSubPlugin = (CompatListPreference) findPreference( VIDEO_SUB_PLUGIN );
         
@@ -226,6 +231,18 @@ public class EmulationProfileActivity extends ProfileActivity
             else
             {
                 mScreenRoot.removePreference( mCategoryGlide64 );
+            }
+        }
+
+        if(mCategoryAngrylion != null)
+        {
+            if( LIBANGRYLION_SO.equals( videoPlugin ) )
+            {
+                mScreenRoot.addPreference( mCategoryAngrylion );
+            }
+            else
+            {
+                mScreenRoot.removePreference( mCategoryAngrylion );
             }
         }
 

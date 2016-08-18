@@ -397,5 +397,13 @@
             mupen64:saveType="string"
             mupen64:units="" />
     </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
+        android:key="categoryAngrylion"
+        android:title="@string/categoryAngrylion_title" >
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="VIOverlay"
+            android:title="@string/angrylion_vi_overlay_title" />
+    </android.support.v7.preference.PreferenceCategory>
        
 </android.support.v7.preference.PreferenceScreen>
