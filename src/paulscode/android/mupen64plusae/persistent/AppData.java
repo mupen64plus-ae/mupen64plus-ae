@@ -36,6 +36,7 @@ import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
@@ -243,6 +244,25 @@ public class AppData
         libsDir = _libsDir;
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
         profilesDir = coreSharedDataDir + "/profiles";
+
+        //Generate .nomedia files to prevent android from adding these to gallery apps
+        File file = new File(touchscreenSkinsDir + "Outline/.nomedia");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        file = new File(touchscreenSkinsDir + "Shaded/.nomedia");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         
         // Files
         String arch = System.getProperty("os.arch");
