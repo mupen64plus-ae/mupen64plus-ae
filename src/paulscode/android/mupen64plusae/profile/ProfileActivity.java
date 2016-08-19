@@ -159,7 +159,7 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        refreshViews();
+//        refreshViews();
     }
     
     private static void transcribe( ConfigFile source, SharedPreferences target, String sectionName )

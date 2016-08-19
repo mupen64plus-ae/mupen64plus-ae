@@ -88,6 +88,8 @@ public class EmulationProfileActivity extends ProfileActivity
     private CompatListPreference mPreferenceRspPlugin = null;
     private CompatListPreference mPreferenceVideoPlugin = null;
     private CompatListPreference mPreferenceVideoSubPlugin = null;
+
+    private String mCurrentVideoPlugin = null;
     
     @Override
     protected int getPrefsResId()
@@ -152,6 +154,10 @@ public class EmulationProfileActivity extends ProfileActivity
         mPreferenceVideoPlugin = (CompatListPreference) findPreference( VIDEO_PLUGIN );
 
         mPreferenceVideoSubPlugin = (CompatListPreference) findPreference( VIDEO_SUB_PLUGIN );
+
+        // Get the current values
+        String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
+        String videoSubPlugin = mPrefs.getString( VIDEO_SUB_PLUGIN, null );
         
         String openGlVersion = AppData.getOpenGlEsVersion(this);
 
@@ -203,16 +209,8 @@ public class EmulationProfileActivity extends ProfileActivity
 
                 mPreferenceVideoSubPlugin.setEntries(entriesArray);
                 mPreferenceVideoSubPlugin.setEntryValues(valuesArray);
-
-                mPreferenceVideoSubPlugin.setValue(valuesArray[0]);
-                mPrefs.edit().apply();
-
             }
         }
-                
-        // Get the current values
-        String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
-        String videoSubPlugin = mPrefs.getString( VIDEO_SUB_PLUGIN, null );
         
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
@@ -349,8 +347,26 @@ public class EmulationProfileActivity extends ProfileActivity
             mPreferenceRspPlugin.setEntries(entriesArray);
             mPreferenceRspPlugin.setEntryValues(valuesArray);
 
-            mPreferenceRspPlugin.setValue(valuesArray[0]);
-            mPrefs.edit().apply();
+            //Only update the selected option if the plugin changed
+            if(mCurrentVideoPlugin != null && !mCurrentVideoPlugin.equals(videoPlugin))
+            {
+                if(mPreferenceRspPlugin != null)
+                {
+                    mPreferenceRspPlugin.setValue(mPreferenceRspPlugin.getEntryValues()[0].toString());
+                }
+
+                if(mPreferenceVideoSubPlugin != null)
+                {
+                    mPreferenceVideoSubPlugin.setValue(mPreferenceVideoSubPlugin.getEntryValues()[0].toString());
+                }
+
+                mPrefs.edit().apply();
+            }
+        }
+
+        if(videoPlugin != null)
+        {
+            mCurrentVideoPlugin = videoPlugin;
         }
     }
 }
