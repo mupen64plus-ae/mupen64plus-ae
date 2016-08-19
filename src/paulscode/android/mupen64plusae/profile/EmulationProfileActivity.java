@@ -31,6 +31,7 @@ import android.support.v7.preference.PreferenceGroup;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -52,6 +53,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_GLIDEN64_GAMMA = "categoryGliden64Gamma";
     private static final String CATEGORY_ANGRYLION = "categoryAngrylion";
 
+    private static final String RSP_PLUGIN = "rspSetting";
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
@@ -83,7 +85,8 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryGliden64Gamma = null;
     private PreferenceCategory mCategoryAngrylion = null;
 
-
+    private CompatListPreference mPreferenceRspPlugin = null;
+    private CompatListPreference mPreferenceVideoPlugin = null;
     private CompatListPreference mPreferenceVideoSubPlugin = null;
     
     @Override
@@ -145,18 +148,34 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
         mCategoryAngrylion = (PreferenceCategory) findPreference( CATEGORY_ANGRYLION );
 
+        mPreferenceRspPlugin = (CompatListPreference) findPreference( RSP_PLUGIN );
+        mPreferenceVideoPlugin = (CompatListPreference) findPreference( VIDEO_PLUGIN );
+
         mPreferenceVideoSubPlugin = (CompatListPreference) findPreference( VIDEO_SUB_PLUGIN );
         
         String openGlVersion = AppData.getOpenGlEsVersion(this);
-        
-        if(mPreferenceVideoSubPlugin != null)
+
+        //Remove or add options depending on GLES version
+        if(openGlVersion.equals("2.0"))
         {
-            if(openGlVersion.equals("2.0"))
-            {
+            if(mPreferenceVideoSubPlugin != null) {
+                //Don't allow GLideN64 3.0 or 3.1
                 mScreenRoot.removePreference(mPreferenceVideoSubPlugin);
             }
-            else
-            {
+
+            if(mPreferenceVideoPlugin != null) {
+                //Don't allow angrylion
+                ArrayList<CharSequence> videoEntriesArray = new ArrayList<CharSequence>(Arrays.asList(mPreferenceVideoPlugin.getEntries()));
+                ArrayList<CharSequence> videoValuesArray = new ArrayList<CharSequence>(Arrays.asList(mPreferenceVideoPlugin.getEntryValues()));
+                videoEntriesArray.remove(videoEntriesArray.indexOf(getText(R.string.videoPlugin_entryAngrylion)));
+                videoValuesArray.remove(videoValuesArray.indexOf("libmupen64plus-video-angrylion.so"));
+                mPreferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[videoEntriesArray.size()]));
+                mPreferenceVideoPlugin.setEntryValues(videoValuesArray.toArray(new CharSequence[videoValuesArray.size()]));
+            }
+        }
+        else
+        {
+            if(mPreferenceVideoSubPlugin != null) {
                 ArrayList<String> entries = new ArrayList<String>();
                 ArrayList<String> values = new ArrayList<String>();
 
@@ -165,8 +184,7 @@ public class EmulationProfileActivity extends ProfileActivity
                     entries.add(getString(R.string.videoSubPlugin_entryGles30));
                     values.add("-gles20");
                     values.add("-gles30");
-                }
-                else if (openGlVersion.equals("3.1")) {
+                } else if (openGlVersion.equals("3.1")) {
                     entries.add(getString(R.string.videoSubPlugin_entryGles20));
                     entries.add(getString(R.string.videoSubPlugin_entryGles30));
                     entries.add(getString(R.string.videoSubPlugin_entryGles31));
@@ -175,17 +193,20 @@ public class EmulationProfileActivity extends ProfileActivity
                     values.add("-gles31");
                 }
 
-                if(AppData.doesSupportFullGL())
-                {
+                if (AppData.doesSupportFullGL()) {
                     entries.add(getString(R.string.videoSubPlugin_entryEgl));
                     values.add("-egl");
                 }
 
-                String [] entriesArray = entries.toArray(new String[entries.size()]);
-                String [] valuesArray = values.toArray(new String[values.size()]);
+                String[] entriesArray = entries.toArray(new String[entries.size()]);
+                String[] valuesArray = values.toArray(new String[values.size()]);
 
                 mPreferenceVideoSubPlugin.setEntries(entriesArray);
                 mPreferenceVideoSubPlugin.setEntryValues(valuesArray);
+
+                mPreferenceVideoSubPlugin.setValue(valuesArray[0]);
+                mPrefs.edit().apply();
+
             }
         }
                 
@@ -281,13 +302,55 @@ public class EmulationProfileActivity extends ProfileActivity
                 mScreenRoot.removePreference( mCategoryGliden64Gamma );
             }
         }
-        
+
+        //Don't allow a subplugin if not GLideN64
         if(mPreferenceVideoSubPlugin != null && !openGlVersion.equals("2.0"))
         {
             if( videoPlugin.contains( "%1$s" ) )
                 mScreenRoot.addPreference( mPreferenceVideoSubPlugin );
             else
                 mScreenRoot.removePreference( mPreferenceVideoSubPlugin );
+        }
+
+        //Limit RSP options based on plugin
+        if(mPreferenceRspPlugin != null)
+        {
+            ArrayList<String> entries = new ArrayList<String>();
+            ArrayList<String> values = new ArrayList<String>();
+
+            if( LIBGLN64_SO.equals( videoPlugin ) || LIBRICE_SO.equals( videoPlugin ) || LIBGLIDE64_SO.equals( videoPlugin ))
+            {
+                //Don't allow LLE mode
+                entries.add(getString(R.string.rsp_hle));
+                entries.add(getString(R.string.rsp_cxd4_hle));
+                values.add("rsp-hle");
+                values.add("rsp-cxd4-hle");
+            }
+            else if(LIBANGRYLION_SO.equals( videoPlugin ))
+            {
+                //Don't allow HLE
+                entries.add(getString(R.string.rsp_cxd4_lle));
+                values.add("rsp-cxd4-lle");
+            }
+            else if(LIBGLIDEN64_SO.equals( videoPlugin ))
+            {
+                //All options available
+                entries.add(getString(R.string.rsp_hle));
+                entries.add(getString(R.string.rsp_cxd4_hle));
+                entries.add(getString(R.string.rsp_cxd4_lle));
+                values.add("rsp-hle");
+                values.add("rsp-cxd4-hle");
+                values.add("rsp-cxd4-lle");
+            }
+
+            String[] entriesArray = entries.toArray(new String[entries.size()]);
+            String[] valuesArray = values.toArray(new String[values.size()]);
+
+            mPreferenceRspPlugin.setEntries(entriesArray);
+            mPreferenceRspPlugin.setEntryValues(valuesArray);
+
+            mPreferenceRspPlugin.setValue(valuesArray[0]);
+            mPrefs.edit().apply();
         }
     }
 }
