@@ -86,6 +86,7 @@
     <string name="menuItem_Extract">Add Texture Pack</string>
     <string name="menuItem_Clear">Clear Texture Packs/Caches</string>
     <string name="menuItem_localeOverride">Language</string>
+    <string name="menuItem_donate">Tip Developer</string>
 
     <!-- ManageProfilesActivity -->
     <string name="menuItem_new">New</string>
@@ -247,6 +248,10 @@
     <!-- Gallery sections -->
     <string name="galleryRecentlyPlayed">Recently played</string>
     <string name="galleryLibrary">Library</string>
+    <string name="galleryDonateDialogTitle">Tip Developer</string>
+    <string name="galleryDonationValueNotAvailable">Not available</string>
+    <string name="galleryDonationThankYou">Thank You!</string>
+    <string name="galleryDonationError">Error with transaction</string>
 
     <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
     <string name="touchscreenAutoHold_title">Button auto-hold</string>

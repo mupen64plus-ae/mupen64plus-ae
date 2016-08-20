@@ -33,6 +33,7 @@ import android.util.Log;
 import com.android.vending.billing.IInAppBillingService;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1112,5 +1113,29 @@ public class IabHelper {
 
     void logWarn(String msg) {
         Log.w(mDebugTag, "In-app billing warning: " + msg);
+    }
+
+    public String getPricesDev(String packageName, String skuId) throws RemoteException, JSONException{
+
+        ArrayList<String> skuList = new ArrayList<String>();
+        skuList.add("full.discount.fetch");
+        skuList.add(skuId);
+        Bundle querySkus = new Bundle();
+        querySkus.putStringArrayList("ITEM_ID_LIST", skuList);
+
+        Bundle skuDetails = mService.getSkuDetails(3,packageName, "inapp", querySkus);
+
+
+        int response = skuDetails.getInt("RESPONSE_CODE");
+        if (response == 0) {
+            ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
+
+            for (String thisResponse : responseList) {
+                JSONObject object = new JSONObject(thisResponse);
+                String sku = object.getString("productId");
+                return object.getString("price");
+            }
+        }
+        return null;
     }
 }
