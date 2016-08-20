@@ -77,6 +77,7 @@
     <string name="menuItem_Extract">Agregar paquete de texturas</string>
     <string name="menuItem_Clear">Limpiar paquete de texturas y cache</string>
   <string name="menuItem_localeOverride">Idioma</string>
+  <string name="menuItem_donate">Propina para Desarrollador</string>
   <!--ManageProfilesActivity-->
   <string name="menuItem_new">Nuevo</string>
   <string name="menuItem_hideBuiltins">No mostrar incorporado</string>
@@ -226,6 +227,11 @@
   <!--Gallery sections-->
   <string name="galleryRecentlyPlayed">Jugado Reciente</string>
   <string name="galleryLibrary">Biblioteca de Juegos</string>
+  <string name="galleryDonateDialogTitle">Propina para Desarrollador</string>
+  <string name="galleryDonationValueNotAvailable">No disponible</string>
+  <string name="galleryDonationThankYou">¡Gracias!</string>
+  <string name="galleryDonationError">Error con la transacción</string>
+
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Mantener botones automaticamente</string>
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitado</string>
