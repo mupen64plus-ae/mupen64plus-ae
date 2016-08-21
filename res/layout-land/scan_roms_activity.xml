@@ -53,6 +53,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/scanRomsDialog_clearGallery" />
+            <CheckBox
+                android:id="@+id/checkBox4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/scanRomsDialog_scanSubdirectories" />
         </LinearLayout>
 
         <RelativeLayout

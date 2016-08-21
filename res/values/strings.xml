@@ -600,6 +600,7 @@
     <string name="scanRomsDialog_searchZips">Search zip files</string>
     <string name="scanRomsDialog_downloadArt">Download cover art</string>
     <string name="scanRomsDialog_clearGallery">Clear gallery before adding</string>
+    <string name="scanRomsDialog_scanSubdirectories">Scan subdirectories</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>

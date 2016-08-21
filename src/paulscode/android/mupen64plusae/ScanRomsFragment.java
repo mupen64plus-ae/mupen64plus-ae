@@ -21,9 +21,16 @@
 
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
 
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -31,12 +38,6 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService.CacheRomInfoListener;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService.LocalBinder;
-import android.app.Activity;
-import android.support.v4.app.Fragment;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
-import android.os.Bundle;
-import android.os.IBinder;
 
 public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
 {    
@@ -60,6 +61,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     private boolean mSearchZips = false;
     private boolean mDownloadArt = false;
     private boolean mClearGallery = false;
+    private boolean mSearchSubdirectories = false;
     
     private boolean mInProgress = false;
 
@@ -164,12 +166,13 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     }
 
     public void refreshRoms( File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery,
-        AppData appData, GlobalPrefs globalPrefs )
+        boolean searchSubdirectories, AppData appData, GlobalPrefs globalPrefs )
     {
         this.mStartDir = startDir;
         this.mSearchZips = searchZips;
         this.mDownloadArt = downloadArt;
         this.mClearGallery = clearGallery;
+        this.mSearchSubdirectories = searchSubdirectories;
         this.mAppData = appData;
         this.mGlobalPrefs = globalPrefs;
         
@@ -215,7 +218,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         ActivityHelper.startCacheRomInfoService(activity.getApplicationContext(), mServiceConnection,
             mStartDir.getAbsolutePath(), mAppData.mupen64plus_ini, mGlobalPrefs.romInfoCache_cfg,
             mGlobalPrefs.coverArtDir, mGlobalPrefs.unzippedRomsDir, mSearchZips,
-            mDownloadArt, mClearGallery);
+            mDownloadArt, mClearGallery, mSearchSubdirectories);
     }
     
     public boolean IsInProgress()

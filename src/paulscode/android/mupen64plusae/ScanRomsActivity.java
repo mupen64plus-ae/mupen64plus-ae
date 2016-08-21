@@ -1,13 +1,5 @@
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +12,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.util.FileUtil;
+
 public class ScanRomsActivity extends AppCompatActivity implements OnItemClickListener
 {    
     private List<CharSequence> mNames;
@@ -27,6 +28,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
     private CheckBox mCheckBox1;
     private CheckBox mCheckBox2;
     private CheckBox mCheckBox3;
+    private CheckBox mCheckBox4;
     private Button mCancelButton;
     private Button mOkButton;
     
@@ -60,9 +62,11 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
         mCheckBox1 = (CheckBox) findViewById( R.id.checkBox1 );
         mCheckBox2 = (CheckBox) findViewById( R.id.checkBox2 );
         mCheckBox3 = (CheckBox) findViewById( R.id.checkBox3 );
+        mCheckBox4 = (CheckBox) findViewById( R.id.checkBox4 );
         mCheckBox1.setChecked( true );
         mCheckBox2.setChecked( true );
-        mCheckBox3.setChecked( true );
+        mCheckBox3.setChecked( false );
+        mCheckBox4.setChecked( true );
         
         mCancelButton = (Button) findViewById( R.id.buttonCancel );
         mCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +84,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
                 data.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, mCheckBox1.isChecked());
                 data.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, mCheckBox2.isChecked());
                 data.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());
+                data.putExtra(ActivityHelper.Keys.SEARCH_SUBDIR, mCheckBox4.isChecked());
                 ScanRomsActivity.this.setResult(RESULT_OK, data);
                 ScanRomsActivity.this.finish();
             }

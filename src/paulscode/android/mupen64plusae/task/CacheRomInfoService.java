@@ -73,6 +73,7 @@ public class CacheRomInfoService extends Service
     private boolean mSearchZips;
     private boolean mDownloadArt;
     private boolean mClearGallery;
+    private boolean mSearchSubdirectories;
     private boolean mbStopped;
     
     private int mStartId;
@@ -269,6 +270,7 @@ public class CacheRomInfoService extends Service
             mSearchZips = extras.getBoolean( ActivityHelper.Keys.SEARCH_ZIPS );
             mDownloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
             mClearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
+            mSearchSubdirectories = extras.getBoolean( ActivityHelper.Keys.SEARCH_SUBDIR );
         }
 
         mbStopped = false;
@@ -281,7 +283,7 @@ public class CacheRomInfoService extends Service
     private List<File> getAllFiles( File searchPath )
     {
         List<File> result = new ArrayList<File>();
-        if( searchPath.isDirectory() )
+        if( searchPath.isDirectory())
         {
             File[] allFiles = searchPath.listFiles();
             if(allFiles != null)
@@ -289,7 +291,16 @@ public class CacheRomInfoService extends Service
                 for( File file : allFiles )
                 {
                     if( mbStopped ) break;
-                    result.addAll( getAllFiles( file ) );
+
+                    if(mSearchSubdirectories)
+                    {
+                        result.addAll( getAllFiles( file ) );
+                    }
+                    else if(!file.isDirectory())
+                    {
+                        result.add(file);
+                    }
+
                 }
             }
         }

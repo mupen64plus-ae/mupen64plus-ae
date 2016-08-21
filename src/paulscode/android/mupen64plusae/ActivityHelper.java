@@ -20,6 +20,14 @@
 
 package paulscode.android.mupen64plusae;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.net.Uri;
+import android.text.TextUtils;
+
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
@@ -38,13 +46,6 @@ import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.net.Uri;
-import android.text.TextUtils;
 
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
@@ -79,6 +80,7 @@ public class ActivityHelper
         public static final String SEARCH_ZIPS          = NAMESPACE + "GALLERY_SEARCH_ZIP";
         public static final String DOWNLOAD_ART         = NAMESPACE + "GALLERY_DOWNLOAD_ART";
         public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
+        public static final String SEARCH_SUBDIR        = NAMESPACE + "GALLERY_SEARCH_SUBDIR";
         //@formatter:on
     }
     
@@ -254,17 +256,18 @@ public class ActivityHelper
     
     public static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
         String searchPath, String databasePath, String configPath, String artDir, String unzipDir,
-        boolean searchZips, boolean downloadArt, boolean clearGallery)
+        boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
     {
         Intent intent = new Intent(context, CacheRomInfoService.class);
-        intent.putExtra(ActivityHelper.Keys.SEARCH_PATH, searchPath);
-        intent.putExtra(ActivityHelper.Keys.DATABASE_PATH, databasePath);
-        intent.putExtra(ActivityHelper.Keys.CONFIG_PATH, configPath);
-        intent.putExtra(ActivityHelper.Keys.ART_DIR, artDir);
-        intent.putExtra(ActivityHelper.Keys.UNZIP_DIR, unzipDir);
-        intent.putExtra(ActivityHelper.Keys.SEARCH_ZIPS, searchZips);
-        intent.putExtra(ActivityHelper.Keys.DOWNLOAD_ART, downloadArt);
-        intent.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, clearGallery);
+        intent.putExtra(Keys.SEARCH_PATH, searchPath);
+        intent.putExtra(Keys.DATABASE_PATH, databasePath);
+        intent.putExtra(Keys.CONFIG_PATH, configPath);
+        intent.putExtra(Keys.ART_DIR, artDir);
+        intent.putExtra(Keys.UNZIP_DIR, unzipDir);
+        intent.putExtra(Keys.SEARCH_ZIPS, searchZips);
+        intent.putExtra(Keys.DOWNLOAD_ART, downloadArt);
+        intent.putExtra(Keys.CLEAR_GALLERY, clearGallery);
+        intent.putExtra(Keys.SEARCH_SUBDIR, searchSubdirectories);
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
