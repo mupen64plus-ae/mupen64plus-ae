@@ -48,7 +48,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -164,7 +166,7 @@ public class CacheRomInfoService extends Service
                 {
                     cacheFile( file, database, config, null );
                 }
-                else if( header.isZip && mSearchZips )
+                else if( header.isZip && mSearchZips && !ConfigHasZip(config, file.getPath()))
                 {
                     Log.i( "CacheRomInfoService", "Found zip file " + file.getName() );
                     try
@@ -488,5 +490,24 @@ public class CacheRomInfoService extends Service
     public void Stop()
     {
         mbStopped = true;        
+    }
+
+    /**
+     * Return true if the config file already contains the given zip file
+     * @param zipFile Zip file to search config file for
+     * @return true if zip file is present
+     */
+    private boolean ConfigHasZip(ConfigFile theConfigFile, String zipFile)
+    {
+        Set<String> keys = theConfigFile.keySet();
+        boolean found = false;
+
+        Iterator iter = keys.iterator();
+        while (iter.hasNext() && !found) {
+            String key = (String) iter.next();
+            String foundZipPath = theConfigFile.get(key, "zipPath");
+            found = foundZipPath != null && foundZipPath.equals(zipFile);
+        }
+        return found;
     }
 }
