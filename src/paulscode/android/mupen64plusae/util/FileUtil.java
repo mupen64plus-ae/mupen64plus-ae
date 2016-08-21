@@ -149,7 +149,7 @@ public final class FileUtil
      * @param folder The folder to delete.
      */
     public static void deleteFolder(File folder) {
-        if (folder.isDirectory())
+        if (folder.exists() && folder.isDirectory() && folder.listFiles() != null)
             for (File child : folder.listFiles())
                 deleteFolder(child);
 
