@@ -19,16 +19,6 @@
  */
 package paulscode.android.mupen64plusae.preference;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.profile.Profile;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -42,6 +32,17 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ArrayAdapter;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.mupen64plusae.v3.alpha.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.profile.Profile;
 
 public class ProfilePreference extends ListPreference implements OnPreferenceDialogListener
 {
@@ -100,12 +101,16 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
     }
     
     public void populateProfiles( ConfigFile configBuiltin, ConfigFile configCustom, String defaultValue,
-        List<Profile> exclusions )
+        List<Profile> exclusions, boolean showBuiltins )
     {
         //ConfigFile configBuiltin = new ConfigFile( builtinPath );
         //ConfigFile configCustom = new ConfigFile( customPath );
         List<Profile> profiles = new ArrayList<Profile>();
-        profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
+        if(showBuiltins)
+        {
+            profiles.addAll( Profile.getProfiles( configBuiltin, true ) );
+        }
+
         profiles.addAll( Profile.getProfiles( configCustom, false ) );
         
         if(exclusions != null)

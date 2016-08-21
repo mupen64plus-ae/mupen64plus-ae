@@ -20,24 +20,6 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.BuildConfig;
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.MenuListView;
-import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
-import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
-import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
-import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog;
-import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog.OnProfileNameDialogButtonListener;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -54,6 +36,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.mupen64plusae.v3.alpha.BuildConfig;
+import org.mupen64plusae.v3.alpha.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.MenuListView;
+import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
+import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog;
+import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog.OnProfileNameDialogButtonListener;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 abstract public class ManageProfilesActivity extends AppCompatListActivity implements OnDialogMenuItemSelectedListener, OnProfileNameDialogButtonListener,
     PromptConfirmListener
@@ -431,12 +432,11 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
         return prefs.getBoolean( getBuiltinVisibilityKey(), true );
     }
-    
-    private String getBuiltinVisibilityKey()
-    {
-        // Get the subclass-specific key for persisting builtin visibility
-        return "builtinsVisible" + getClass().getSimpleName();
-    }
+
+    /*
+     * Key to use when showing builtin profiles
+     */
+    abstract protected String getBuiltinVisibilityKey();
     
     protected void refreshList()
     {

@@ -50,6 +50,9 @@ import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
+import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
+import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
+import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 
@@ -256,6 +259,15 @@ public class GlobalPrefs
 
     /** The player map for multi-player gaming. */
     public final PlayerMap playerMap;
+
+    /** True if we want to show built in emulation profiles */
+    public final boolean showBuiltInEmulationProfiles;
+
+    /** True if we want to show built in touchscreen profiles */
+    public final boolean showBuiltInTouchscreenProfiles;
+
+    /** True if we want to show built in touchscreen profiles */
+    public final boolean showBuiltInControllerProfiles;
 
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
@@ -498,6 +510,10 @@ public class GlobalPrefs
         numControllers += controllerProfile4 != null ? 1 : 0;
 
         playerMap.setEnabled( numControllers > 1 && !isControllerShared );
+
+        showBuiltInEmulationProfiles = mPreferences.getBoolean(ManageEmulationProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
+        showBuiltInTouchscreenProfiles = mPreferences.getBoolean(ManageTouchscreenProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
+        showBuiltInControllerProfiles = mPreferences.getBoolean(ManageControllerProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
     }
 
     public void enforceLocale( Activity activity )

@@ -20,6 +20,13 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
+
+import com.bda.controller.Controller;
+
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
@@ -29,12 +36,6 @@ import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Bundle;
-import android.support.v7.preference.PreferenceManager;
-
-import com.bda.controller.Controller;
 
 public class InputPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener,
     PromptInputCodeListener
@@ -131,28 +132,32 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
         if (mControllerProfile1 != null)
         {
             mControllerProfile1.populateProfiles(mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(1), null);
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(1), null,
+                    mGlobalPrefs.showBuiltInControllerProfiles);
             mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
         }
 
         if (mControllerProfile2 != null)
         {
             mControllerProfile2.populateProfiles(mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(2), null);
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(2), null,
+                    mGlobalPrefs.showBuiltInControllerProfiles);
             mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
         }
 
         if (mControllerProfile3 != null)
         {
             mControllerProfile3.populateProfiles(mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(3), null);
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(3), null,
+                    mGlobalPrefs.showBuiltInControllerProfiles);
             mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue());
         }
 
         if (mControllerProfile4 != null)
         {
             mControllerProfile4.populateProfiles(mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(4), null);
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(4), null,
+                    mGlobalPrefs.showBuiltInControllerProfiles);
             mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
         }
 

@@ -27,6 +27,8 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 
 public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
 {
+    public static final String SHOW_BUILT_IN_PREF_KEY = "ShowBuiltIns_ManageTouchscreenProfilesActivity";
+
     @Override
     protected ConfigFile getConfigFile( boolean isBuiltin )
     {
@@ -61,5 +63,11 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     protected int getWindowTitleResource()
     {
         return R.string.ManageTouchscreenProfilesActivity_title;
+    }
+
+    @Override
+    protected String getBuiltinVisibilityKey()
+    {
+        return SHOW_BUILT_IN_PREF_KEY;
     }
 }

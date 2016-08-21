@@ -29,6 +29,8 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 public class ManageEmulationProfilesActivity extends ManageProfilesActivity
 {
+    public static final String SHOW_BUILT_IN_PREF_KEY = "ShowBuiltIns_ManageEmulationProfilesActivity";
+
     @Override
     protected ConfigFile getConfigFile( boolean isBuiltin )
     {
@@ -89,5 +91,11 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
         {
             RemoveProfile("GlideN64-Full-OpenGL");
         }
+    }
+
+    @Override
+    protected String getBuiltinVisibilityKey()
+    {
+        return SHOW_BUILT_IN_PREF_KEY;
     }
 }

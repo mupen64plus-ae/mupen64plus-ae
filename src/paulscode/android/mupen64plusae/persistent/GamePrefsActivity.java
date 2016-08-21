@@ -322,42 +322,48 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             }
 
             mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),
-                mGlobalPrefs.GetEmulationProfilesConfig(), mGlobalPrefs.getEmulationProfileDefault(), exclusions);
+                mGlobalPrefs.GetEmulationProfilesConfig(), mGlobalPrefs.getEmulationProfileDefault(),
+                    exclusions, mGlobalPrefs.showBuiltInEmulationProfiles);
             mEmulationProfile.setSummary(mEmulationProfile.getCurrentValue());
         }
 
         if(mTouchscreenProfile != null)
         {
             mTouchscreenProfile.populateProfiles( mAppData.GetTouchscreenProfilesConfig(),
-                mGlobalPrefs.GetTouchscreenProfilesConfig(), mGlobalPrefs.getTouchscreenProfileDefault(), null );
+                mGlobalPrefs.GetTouchscreenProfilesConfig(), mGlobalPrefs.getTouchscreenProfileDefault(), null,
+                    mGlobalPrefs.showBuiltInTouchscreenProfiles );
             mTouchscreenProfile.setSummary(mTouchscreenProfile.getCurrentValue());
         }
 
         if(mControllerProfile1 != null)
         {
             mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(1), null );
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(1), null,
+                    mGlobalPrefs.showBuiltInControllerProfiles );
             mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
         }
 
         if(mControllerProfile2 != null)
         {
             mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(2), null );
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(2), null,
+                    mGlobalPrefs.showBuiltInControllerProfiles );
             mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
         }
 
         if(mControllerProfile3 != null)
         {
             mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(3), null );
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(3), null,
+                    mGlobalPrefs.showBuiltInControllerProfiles );
             mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue());
         }
 
         if(mControllerProfile4 != null)
         {
             mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(4), null );
+                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(4), null,
+                    mGlobalPrefs.showBuiltInControllerProfiles );
             mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
         }
 

@@ -27,6 +27,8 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 
 public class ManageControllerProfilesActivity extends ManageProfilesActivity
 {
+    public static final String SHOW_BUILT_IN_PREF_KEY = "ShowBuiltIns_ManageControllerProfilesActivity";
+
     @Override
     protected ConfigFile getConfigFile( boolean isBuiltin )
     {
@@ -68,5 +70,11 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     protected int getWindowTitleResource()
     {
         return R.string.ManageControllerProfilesActivity_title;
+    }
+
+    @Override
+    protected String getBuiltinVisibilityKey()
+    {
+        return SHOW_BUILT_IN_PREF_KEY;
     }
 }
