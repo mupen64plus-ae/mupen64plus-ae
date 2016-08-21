@@ -28,7 +28,6 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +35,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAssetsTask.Failure>>
 {
@@ -141,7 +142,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
             // srcPath is a directory
             
             // Ensure the parent directories exist
-            new File( dstPath ).mkdirs();
+            FileUtil.makeDirs(dstPath);
             
             // Recurse into each subdirectory
             for( String srcSubPath : srcSubPaths )

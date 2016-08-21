@@ -173,7 +173,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
         // Make sure custom skin directory exist
-        new File( mGlobalPrefs.touchscreenCustomSkinsDir ).mkdirs();
+        FileUtil.makeDirs(mGlobalPrefs.touchscreenCustomSkinsDir);
 
         // Initialize the OUYA interface if running on OUYA
         if( AppData.IS_OUYA_HARDWARE )

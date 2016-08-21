@@ -522,7 +522,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
             // Also reset any manual overrides the user may have made in the config file
             final File configFile = new File( mGamePrefs.mupen64plus_cfg );
-            if( configFile.exists() )
+            if( configFile.exists() && !configFile.isDirectory())
                 configFile.delete();
 
             // Rebuild the menu system by restarting the activity

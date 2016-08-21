@@ -901,7 +901,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                                 !zipPath.equals("") && extracted.equals("true"))
                         {
                             final File deleteFile = new File(romPath);
-                            deleteFile.delete();
+
+                            if(!deleteFile.isDirectory())
+                            {
+                                deleteFile.delete();
+                            }
 
                             config.put(md5, "extracted", "false");
                         }
@@ -1049,7 +1053,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         lbFound = computedMd5 != null && computedMd5.equals(md5);
 
                         //only delete the file if we extracted our selves
-                        if(!lbFound && !fileExisted && tempRomPath != null)
+                        if(!lbFound && !fileExisted && tempRomPath != null && !tempRomPath.isDirectory())
                         {
                             tempRomPath.delete();
                         }

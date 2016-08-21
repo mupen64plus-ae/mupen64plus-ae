@@ -202,8 +202,8 @@ public final class FileUtil
         {
             boolean success = true;
             String[] files = src.list();
-            
-            dest.mkdirs();
+
+            FileUtil.makeDirs(dest.getPath());
             
             for( String file : files )
             {
@@ -220,8 +220,9 @@ public final class FileUtil
                 Log.e( "FileUtil", "dest parent folder null in method 'copyFile'" );
                 return false;
             }
-            
-            f.mkdirs();
+
+            FileUtil.makeDirs(f.getPath());
+
             if( dest.exists() && makeBackups )
                 backupFile( dest );
             
@@ -363,7 +364,7 @@ public final class FileUtil
                     f = f.getParentFile();
                     if( f != null )
                     {
-                        f.mkdirs();
+                        FileUtil.makeDirs(f.getPath());
                         unzipEntry( zipfile, entry, outputDir );
                     }
                 }
@@ -486,6 +487,21 @@ public final class FileUtil
         {
             Log.w( "FileUtil", e );
             return null;
+        }
+    }
+
+    /*
+     * Makes directory structure if it doesn't already exist
+     * @param destDir Destination directory to create
+     */
+    public static void makeDirs( String destDir )
+    {
+        // Ensure the parent directories exist
+        File destFile = new File( destDir );
+
+        if(!destFile.exists())
+        {
+            destFile.mkdirs();
         }
     }
 }

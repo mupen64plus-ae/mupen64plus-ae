@@ -20,6 +20,9 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -33,8 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
-import android.text.TextUtils;
-import android.util.Log;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 /**
  * The ConfigFile class is used to load the parameters from a config file.
@@ -230,7 +232,7 @@ public class ConfigFile
         }
         
         // Ensure parent directories exist before writing file
-        new File( mFilename ).getParentFile().mkdirs();
+        FileUtil.makeDirs(new File( mFilename ).getParentFile().getPath());
         
         // Write data to file
         FileWriter fw = null;

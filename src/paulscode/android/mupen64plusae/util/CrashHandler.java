@@ -20,6 +20,9 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -28,8 +31,6 @@ import java.util.Locale;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import android.content.Context;
-import android.util.Log;
 
 public class CrashHandler implements UncaughtExceptionHandler
 {
@@ -65,7 +66,7 @@ public class CrashHandler implements UncaughtExceptionHandler
             String filename = String.format( Locale.US, "%s/Crash_%s_%03d.txt",
                     globalPrefs.crashLogDir, Utility.getDateString(), System.currentTimeMillis() % 1000 );
             File log = new File( filename );
-            log.getParentFile().mkdirs();
+            FileUtil.makeDirs(log.getParentFile().getPath());
             
             // Write to crash log
             try

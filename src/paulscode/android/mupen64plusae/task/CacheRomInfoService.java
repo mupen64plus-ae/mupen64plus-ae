@@ -132,8 +132,8 @@ public class CacheRomInfoService extends Service
                 throw new IllegalArgumentException( "Unzip directory cannot be null or empty" );
             
             // Ensure destination directories exist
-            new File( mArtDir ).mkdirs();
-            new File( mUnzipDir ).mkdirs();
+            FileUtil.makeDirs(mArtDir);
+            FileUtil.makeDirs(mUnzipDir);
             
             // Create .nomedia file to hide cover art from Android Photo Gallery
             // http://android2know.blogspot.com/2013/01/create-nomedia-file.html
@@ -184,7 +184,7 @@ public class CacheRomInfoService extends Service
                                 File extractedFile = FileUtil.extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
                                 
                                 if( mbStopped ) break;
-                                if( extractedFile != null )
+                                if( extractedFile != null)
                                 {
                                     RomHeader extractedHeader = new RomHeader( extractedFile );
                                     if(extractedHeader.isValid)
@@ -375,7 +375,7 @@ public class CacheRomInfoService extends Service
         Throwable returnThrowable = null;
 
         // Be sure destination directory exists
-        destFile.getParentFile().mkdirs();
+        FileUtil.makeDirs(destFile.getParentFile().getPath());
         
         // Download file
         InputStream inStream = null;
@@ -429,7 +429,7 @@ public class CacheRomInfoService extends Service
                 }
         }
         
-        if (!fileCreationSuccess)
+        if (!fileCreationSuccess && !destFile.isDirectory())
         {
             // Delete any remnants if there was an exception. We don't want a
             // corrupted graphic

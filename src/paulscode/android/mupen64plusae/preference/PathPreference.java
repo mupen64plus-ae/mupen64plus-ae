@@ -299,9 +299,9 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
             
             // Ensure the parent directories exist if requested
             File file = new File( value );
-            if( forceParentDirs )
-                file.mkdirs();
-            else if( !file.exists() )
+            if( forceParentDirs ) {
+                FileUtil.makeDirs(value);
+            }else if( !file.exists() )
                 value = STORAGE_DIR;
         }
         return value;

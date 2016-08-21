@@ -20,27 +20,6 @@
  */
 package paulscode.android.mupen64plusae.cheat;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.MenuListView;
-import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
-import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
-import paulscode.android.mupen64plusae.dialog.EditCheatAdvancedDialog;
-import paulscode.android.mupen64plusae.dialog.EditCheatAdvancedDialog.OnAdvancedEditCompleteListener;
-import paulscode.android.mupen64plusae.dialog.EditCheatDialog;
-import paulscode.android.mupen64plusae.dialog.EditCheatDialog.OnEditCompleteListener;
-import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
-import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
-import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -57,6 +36,29 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.MenuListView;
+import paulscode.android.mupen64plusae.cheat.CheatUtils.Cheat;
+import paulscode.android.mupen64plusae.compat.AppCompatListActivity;
+import paulscode.android.mupen64plusae.dialog.EditCheatAdvancedDialog;
+import paulscode.android.mupen64plusae.dialog.EditCheatAdvancedDialog.OnAdvancedEditCompleteListener;
+import paulscode.android.mupen64plusae.dialog.EditCheatDialog;
+import paulscode.android.mupen64plusae.dialog.EditCheatDialog.OnEditCompleteListener;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
+import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 public class CheatEditorActivity extends AppCompatListActivity implements ExtractCheatListener,
     OnDialogMenuItemSelectedListener, OnEditCompleteListener, OnAdvancedEditCompleteListener
@@ -210,8 +212,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         combinedCheats.addAll(systemCheats);
         combinedCheats.addAll(userCheats);
         Collections.sort(combinedCheats);
-        
-        new File( mGlobalPrefs.customCheats_txt ).getParentFile().mkdirs();
+
+        FileUtil.makeDirs(new File( mGlobalPrefs.customCheats_txt ).getParentFile().getPath());
         
         CheatFile usrcheat_txt = new CheatFile( mGlobalPrefs.customCheats_txt, true );
         CheatFile mupencheat_txt = new CheatFile( mAppData.mupencheat_txt, true );

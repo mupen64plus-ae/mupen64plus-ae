@@ -50,6 +50,7 @@ import paulscode.android.mupen64plusae.game.GameSurface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 
@@ -72,23 +73,23 @@ public class CoreInterface
     {
         /**
          * Called when an emulator state/parameter has changed
-         * 
+         *
          * @param paramChanged The parameter ID.
          * @param newValue The new value of the parameter.
          */
         public void onStateCallback( int paramChanged, int newValue );
     }
-    
+
     public interface OnFpsChangedListener
     {
         /**
          * Called when the frame rate has changed.
-         * 
+         *
          * @param newValue The new FPS value.
          */
         public void onFpsChanged( int newValue );
     }
-    
+
     public interface OnPromptFinishedListener
     {
         /**
@@ -96,7 +97,7 @@ public class CoreInterface
          */
         public void onPromptFinished();
     }
-    
+
     public interface OnSaveLoadListener
     {
         /**
@@ -104,7 +105,7 @@ public class CoreInterface
          */
         public void onSaveLoad();
     }
-    
+
     public interface OnExitListener
     {
         /**
@@ -194,17 +195,22 @@ public class CoreInterface
         sGamePrefs = gamePrefs;
         NativeConfigFiles.syncConfigFiles( sGamePrefs, sGlobalPrefs, sAppData );
 
-        // Make sure various directories exist so that we can write to them
-        new File( sGamePrefs.sramDataDir ).mkdirs();
-        new File( sGamePrefs.autoSaveDir ).mkdirs();
-        new File( sGamePrefs.slotSaveDir ).mkdirs();
-        new File( sGamePrefs.userSaveDir ).mkdirs();
-        new File( sGamePrefs.screenshotDir ).mkdirs();
-        new File( sGamePrefs.coreUserConfigDir ).mkdirs();
-        new File( sGlobalPrefs.coreUserDataDir ).mkdirs();
-        new File( sGlobalPrefs.coreUserCacheDir ).mkdirs();
-
+        makeDirs();
         moveFromLegacy();
+    }
+
+    private static void makeDirs()
+    {
+        // Make sure various directories exist so that we can write to them
+        FileUtil.makeDirs(sGamePrefs.sramDataDir);
+        FileUtil.makeDirs(sGamePrefs.sramDataDir);
+        FileUtil.makeDirs(sGamePrefs.autoSaveDir);
+        FileUtil.makeDirs(sGamePrefs.slotSaveDir);
+        FileUtil.makeDirs(sGamePrefs.userSaveDir);
+        FileUtil.makeDirs(sGamePrefs.screenshotDir);
+        FileUtil.makeDirs(sGamePrefs.coreUserConfigDir);
+        FileUtil.makeDirs(sGlobalPrefs.coreUserDataDir);
+        FileUtil.makeDirs(sGlobalPrefs.coreUserCacheDir);
     }
 
     /**

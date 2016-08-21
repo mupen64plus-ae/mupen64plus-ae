@@ -108,7 +108,12 @@ public class GameAutoSaveManager
             while(result.size() > mMaxAutoSave)
             {
                 Log.i("GameAutoSaveManager", "Deleting old autosave file: " + result.get(0).getName());
-                result.get(0).delete();
+                File theResult = result.get(0);
+
+                if(!theResult.isDirectory())
+                {
+                    theResult.delete();
+                }
                 result.remove(0);
             }
         }
