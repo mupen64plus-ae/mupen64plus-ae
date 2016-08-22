@@ -126,8 +126,20 @@
         <item>original</item>
         <item>stretch</item>
     </string-array>
-
     <string name="displayScaling_default" translatable="false">original</string>
+
+    <!-- Screen Scaling List -->
+    <string-array name="displayScalingGame_entries" translatable="false">
+        <item>@string/default_profile_title</item>
+        <item>@string/displayScaling_entryOriginal</item>
+        <item>@string/displayScaling_entryStretch</item>
+    </string-array>
+    <string-array name="displayScalingGame_values" translatable="false">
+        <item>default</item>
+        <item>original</item>
+        <item>stretch</item>
+    </string-array>
+    <string name="displayScalingGame_default" translatable="false">default</string>
 
     <!-- Hardware Profile List -->
     <string-array name="videoHardwareType_entries" translatable="false">

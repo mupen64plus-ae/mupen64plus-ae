@@ -615,8 +615,14 @@ public class GamePrefs
         angrylionVIOverlayEnabled = emulationProfile.get( "VIOverlay", "False" ).equals( "True" );
 
         final String scaling = mPreferences.getString( "displayScaling", "original" );
-        mStretch = (scaling.equals( "stretch" ) ||
-                (emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled)) && !isAngrylionEnabled;
+
+        boolean stretchScreen = scaling.equals("default") ? globalPrefs.stretchScreen : scaling.equals( "stretch" );
+
+        //Stretch screen if the GLideN64 wide screen hack is enabled and the current video plugin is GLideN64
+        //Do not stretch the screen if the current video plugin is Angrylion
+        mStretch = (stretchScreen ||
+                (emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled))
+                && !isAngrylionEnabled;
         final int hResolution = getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
 
         videoSurfaceWidth = globalPrefs.getResolutionWidth(mStretch, 0);

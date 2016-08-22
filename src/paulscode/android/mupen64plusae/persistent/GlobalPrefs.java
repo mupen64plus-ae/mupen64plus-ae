@@ -182,6 +182,9 @@ public class GlobalPrefs
     /** Default resolution */
     public final int displayResolution;
 
+    /** Default resolution */
+    public final boolean stretchScreen;
+
     /** The width of the viewing surface, in pixels with the correct aspect ratio. */
     public int videoSurfaceWidthOriginal;
 
@@ -407,6 +410,7 @@ public class GlobalPrefs
 
         // Video prefs
         displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 0 );
+        stretchScreen = mPreferences.getString( "displayScaling", "original" ).equals("stretch");
         DetermineResolutionData(context);
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         displayPosition = getSafeInt( mPreferences, "displayPosition", Gravity.CENTER_VERTICAL );
