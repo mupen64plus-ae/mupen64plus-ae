@@ -335,7 +335,7 @@
     <string name="gliden64_enable_legacy_blending_title">Habilitar blending antiguo</string>
     <string name="gliden64_enable_legacy_blending_summary">Al desactivar esta opción produce iluminación y niebla más correcta, pero es más lento en algunos dispositivos.</string>
     <string name="gliden64_enable_fragment_depth_write_title">Habilitar profundidad basado en fragment</string>
-    <string name="gliden64_enable_fragment_depth_write_summary">Esto arregla sombras en Pilotwings 64, pero algunos dispostivos no son compatibles.</string>
+    <string name="gliden64_enable_fragment_depth_write_summary">Ocupa un fragment shader para actualizar profundidad, pero algunos dispostivos no son compatibles.</string>
     <string name="gliden64_category_fb_title">Frame Buffer Emulation</string>
     <string name="gliden64_enable_fb_emulation_title">Habilitar emulación de buffer de marco</string>
     <string name="gliden64_swap_frame_buffers_title">Marcos de memoria de intercambio</string>
