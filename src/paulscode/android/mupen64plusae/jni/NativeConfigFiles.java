@@ -315,7 +315,8 @@ public class NativeConfigFiles
             {
                 try
                 {
-                    gzipStream.close();
+                    if(gzipStream != null)
+                        gzipStream.close();
                 }
                 catch (final IOException e)
                 {
