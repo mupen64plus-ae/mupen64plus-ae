@@ -614,7 +614,7 @@ public class GamePrefs
         isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion.so" );
         angrylionVIOverlayEnabled = emulationProfile.get( "VIOverlay", "False" ).equals( "True" );
 
-        final String scaling = mPreferences.getString( "displayScaling", "original" );
+        final String scaling = mPreferences.getString( "displayScaling", "default" );
 
         boolean stretchScreen = scaling.equals("default") ? globalPrefs.stretchScreen : scaling.equals( "stretch" );
 
