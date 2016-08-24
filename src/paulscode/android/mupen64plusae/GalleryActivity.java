@@ -846,8 +846,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     final String romPath = config.get( md5, "romPath" );
                     String zipPath = config.get( md5, "zipPath" );
                     final String artFullPath = config.get( md5, "artPath" );
-                    String artPath = new File(artFullPath).getName();
-                    artPath = mGlobalPrefs.coverArtDir + "/" + artPath;
+
+                    //We get the file name to support the old gallery format
+                    String artPath = !TextUtils.isEmpty(artFullPath) ? new File(artFullPath).getName() : null;
+
+                    if(artPath != null)
+                        artPath = mGlobalPrefs.coverArtDir + "/" + artPath;
                     
                     String crc = config.get( md5, "crc" );
                     String headerName = config.get( md5, "headerName" );
