@@ -7686,7 +7686,7 @@ void new_dynarec_init()
   // Copy this into local area so we don't have to put it in every literal pool
   invc_ptr=invalid_code;
 #endif
-  stop_after_jal=0;
+  stop_after_jal=1;
   // TLB
   using_tlb=0;
   for(n=0;n<524288;n++) // 0 .. 0x7FFFFFFF
