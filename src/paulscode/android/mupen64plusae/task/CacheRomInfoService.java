@@ -222,6 +222,8 @@ public class CacheRomInfoService extends Service
                 }
                 mListener.GetProgressDialog().incrementProgress( 1 );
             }
+
+            CleanupMissingFiles(config);
             config.save();
             
             if (mListener != null)
@@ -493,7 +495,8 @@ public class CacheRomInfoService extends Service
     }
 
     /**
-     * Return true if the config file already contains the given zip file
+     * Return true if the config file already contains the given zip file, this is because
+     * exctracting zip files takes a long time
      * @param zipFile Zip file to search config file for
      * @return true if zip file is present
      */
@@ -509,5 +512,62 @@ public class CacheRomInfoService extends Service
             found = foundZipPath != null && foundZipPath.equals(zipFile);
         }
         return found;
+    }
+
+    /**
+     * Cleanup any missing files from the config file
+     * @param theConfigFile
+     */
+    private void CleanupMissingFiles(ConfigFile theConfigFile)
+    {
+        Set<String> keys = theConfigFile.keySet();
+
+        Iterator iter = keys.iterator();
+        while (iter.hasNext()) {
+            String key = (String) iter.next();
+            String foundZipPath = theConfigFile.get(key, "zipPath");
+            String foundRomPath = theConfigFile.get(key, "romPath");
+
+            //Check if this is a zip file first
+            if(!TextUtils.isEmpty(foundZipPath))
+            {
+                File zipFile = new File(foundZipPath);
+
+                //Zip file doesn't exist, check if the ROM path exists
+                if(!zipFile.exists())
+                {
+                    if(!TextUtils.isEmpty(foundRomPath))
+                    {
+                        File romFile = new File(foundRomPath);
+
+                        //Cleanup the ROM file since this is a zip file
+                        if(!romFile.exists())
+                        {
+                            Log.w( "CacheRomInfoService", "Removing md5=" + key );
+                            if(!romFile.isDirectory()) romFile.delete();
+                        }
+                    }
+
+                    theConfigFile.remove(key);
+                    keys = theConfigFile.keySet();
+                    iter = keys.iterator();
+                }
+            }
+            //This was not a zip file, just check the ROM path
+            else if(!TextUtils.isEmpty(foundRomPath))
+            {
+                File romFile = new File(foundRomPath);
+
+                //Cleanup the ROM file since this is a zip file
+                if(!romFile.exists())
+                {
+                    Log.w( "CacheRomInfoService", "Removing md5=" + key );
+
+                    theConfigFile.remove(key);
+                    keys = theConfigFile.keySet();
+                    iter = keys.iterator();
+                }
+            }
+        }
     }
 }
