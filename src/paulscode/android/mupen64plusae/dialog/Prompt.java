@@ -20,17 +20,11 @@
  */
 package paulscode.android.mupen64plusae.dialog;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.util.FileUtil;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,9 +36,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.util.FileUtil;
 
 /**
  * A utility class that generates dialogs to prompt the user for information.
@@ -244,11 +246,12 @@ public final class Prompt
      * @param includeDirs   True to include child directories in list
      * @param includeFiles  True to include child files in list
      * @param dirsSelectable True if directories can be selected
+     * @param extension Only list files with a specific extension
      * @param listener  The listener to process the file, when selected.
      */
     public static void promptFile( Context context, CharSequence title, CharSequence message,
             final File startPath, boolean includeParent, boolean includeDirs, boolean includeFiles,
-            boolean dirsSelectable, final PromptFileListener listener )
+            boolean dirsSelectable, final String extension, final PromptFileListener listener )
     {
         // Don't even open the dialog if the path doesn't exist
         if( !startPath.exists() )
@@ -258,6 +261,28 @@ public final class Prompt
         final List<CharSequence> names = new ArrayList<CharSequence>();
         final List<String> paths = new ArrayList<String>();
         FileUtil.populate( startPath, includeParent, includeDirs, includeFiles, names, paths );
+
+        //Remove files that don't match the extension
+        if(!TextUtils.isEmpty(extension))
+        {
+            Iterator<CharSequence> iter = names.iterator();
+            while (iter.hasNext()) {
+                CharSequence name = iter.next();
+                if(!name.toString().endsWith(extension))
+                {
+                    iter.remove();
+                }
+            }
+
+            Iterator<String> iterPaths = paths.iterator();
+            while (iterPaths.hasNext()) {
+                String name = iterPaths.next();
+                if(!name.endsWith(extension))
+                {
+                    iterPaths.remove();
+                }
+            }
+        }
         
         // When the user clicks a file, notify the downstream listener
         OnClickListener internalListener = new OnClickListener()
@@ -294,12 +319,13 @@ public final class Prompt
      * @param title     The title of the dialog.
      * @param message   The message to be shown inside the dialog.
      * @param startPath The directory holding the files to select from.
+     * @param extension True to only list files with a specific extension
      * @param listener  The listener to process the file, when selected.
      */
     public static void promptFile( Context context, CharSequence title, CharSequence message,
-            File startPath, final PromptFileListener listener )
+            File startPath, final String extension, final PromptFileListener listener )
     {
-        promptFile( context, title, message, startPath, false, false, true, false, listener );
+        promptFile( context, title, message, startPath, false, false, true, false, extension, listener );
     }
     
     /**
@@ -314,7 +340,7 @@ public final class Prompt
     public static void promptDirectory( Context context, CharSequence title, CharSequence message,
             File startPath, final PromptFileListener listener )
     {
-        promptFile( context, title, message, startPath, false, true, false, false, listener );
+        promptFile( context, title, message, startPath, false, true, false, false, "", listener );
     }
     
     /**

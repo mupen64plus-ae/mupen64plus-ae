@@ -33,6 +33,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -123,6 +124,8 @@ public class CoreInterface
          */
         public void onRestart(boolean shouldRestart);
     }
+
+    public static final String COMPLETE_EXTENSION = "complete";
 
     private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 0;
     private static final String SAVE_STATE_FILE_CONFIRM_DIALOG_STATE = "SAVE_STATE_FILE_CONFIRM_DIALOG_STATE";
@@ -551,7 +554,7 @@ public class CoreInterface
         }
     }
 
-    public static synchronized void pauseEmulator( boolean autoSave, String latestSave )
+    public static synchronized void pauseEmulator( boolean autoSave, final String latestSave )
     {
         if( sCoreThread != null )
         {
@@ -561,8 +564,29 @@ public class CoreInterface
             // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
             if( autoSave && latestSave != null)
             {
-
                 Notifier.showToast( sActivity, R.string.toast_savingSession );
+
+                addOnStateCallbackListener( new OnStateCallbackListener()
+                {
+                    @Override
+                    public void onStateCallback( int paramChanged, int newValue )
+                    {
+                        if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
+                        {
+                            removeOnStateCallbackListener( this );
+
+                            //newValue == 1, then it was successful
+                            if(newValue == 1)
+                            {
+                                try {
+                                    new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile();
+                                } catch (IOException e) {
+                                    Log.i("CoreInterface", "Unable to save file: " + latestSave);
+                                }
+                            }
+                        }
+                    }
+                } );
 
                 Log.i("CoreInterface", "Saving file: " + latestSave);
                 NativeExports.emuSaveFile( latestSave );
@@ -652,7 +676,7 @@ public class CoreInterface
     {
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
         File startPath = new File( sGamePrefs.userSaveDir );
-        Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
+        Prompt.promptFile( sActivity, title, null, startPath, "", new PromptFileListener()
         {
             @Override
             public void onDialogClosed( File file, int which )
@@ -675,7 +699,7 @@ public class CoreInterface
     {
         CharSequence title = sActivity.getText( R.string.menuItem_fileLoadAutoSave );
         File startPath = new File( sGamePrefs.autoSaveDir );
-        Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
+        Prompt.promptFile( sActivity, title, null, startPath, "sav", new PromptFileListener()
         {
             @Override
             public void onDialogClosed( File file, int which )

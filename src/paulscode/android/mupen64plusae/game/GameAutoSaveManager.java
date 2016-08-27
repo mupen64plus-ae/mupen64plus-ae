@@ -11,15 +11,18 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 
 public class GameAutoSaveManager
 {
+    public static final String V2 = "v2";
+
     private final GamePrefs mGamePrefs;
     private final String mAutoSavePath;
     private final int mMaxAutoSave;
     public static final String sFormatString = "yyyy-MM-dd-HH-mm-ss";
-    private static final String sMatcherString = "^\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d\\.sav$";
+    private static final String sMatcherString = "^\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d\\..*sav$";
     private static final String sDefaultString = "yyyy-mm-dd-hh-mm-ss.sav";
 
     public GameAutoSaveManager(GamePrefs gamePrefs, int maxAutoSaves)
@@ -54,7 +57,13 @@ public class GameAutoSaveManager
         {
             for( final File file : fileList )
             {
-                result.add( file.getPath() );
+                //Do not attempt to load states that are missing a corresponding ".complete" file
+                //but only check for .complete if it's a V2 file
+                File completeFile = new File(file.getPath() + "." + CoreInterface.COMPLETE_EXTENSION);
+                if(!file.getPath().contains(V2) || completeFile.exists())
+                {
+                    result.add( file.getPath() );
+                }
             }
         }
 
@@ -83,7 +92,7 @@ public class GameAutoSaveManager
 
         if(savePath.listFiles() != null && savePath.listFiles().length != 0)
         {
-            //Only find files that end with .sav
+            //Only find files that match the matcher string
             final FileFilter fileFilter = new FileFilter(){
 
                 @Override
@@ -113,6 +122,11 @@ public class GameAutoSaveManager
                 if(!theResult.isDirectory())
                 {
                     theResult.delete();
+
+                    //Also remove the corresponding ".complete" file
+                    String completeFile = theResult.getAbsolutePath();
+                    completeFile = completeFile + "." + CoreInterface.COMPLETE_EXTENSION;
+                    new File(completeFile).delete();
                 }
                 result.remove(0);
             }
@@ -123,7 +137,7 @@ public class GameAutoSaveManager
     {
         final DateFormat dateFormat = new SimpleDateFormat(sFormatString, java.util.Locale.getDefault());
         final String dateAndTime = dateFormat.format(new Date()).toString();
-        final String fileName = dateAndTime + ".sav";
+        final String fileName = dateAndTime + "." + V2 + ".sav";
 
         return mAutoSavePath + fileName;
     }
