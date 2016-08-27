@@ -20,6 +20,12 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import android.annotation.TargetApi;
+import android.util.Log;
+import android.util.SparseArray;
+import android.view.InputDevice;
+import android.view.KeyEvent;
+
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
@@ -31,11 +37,6 @@ import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.annotation.TargetApi;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.InputDevice;
-import android.view.KeyEvent;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
@@ -54,7 +55,8 @@ public class PeripheralController extends AbstractController implements
     private final float mDeadzoneFraction;
     
     /** The analog sensitivity, the amount by which to scale stick values, nominally 1. */
-    private final float mSensitivityFraction;
+    private final float mSensitivityFractionX;
+    private final float mSensitivityFractionY;
     
     /** The state change listener. */
     private final OnStateChangedListener mListener;
@@ -87,18 +89,20 @@ public class PeripheralController extends AbstractController implements
      * @param playerMap The map from hardware identifiers to players.
      * @param inputMap  The map from input codes to N64/Mupen commands.
      * @param inputDeadzone The analog deadzone in percent.
-     * @param inputSensitivity The analog sensitivity in percent.
+     * @param inputSensitivityX The analog X sensitivity in percent.
+     * @param inputSensitivityY The analog X sensitivity in percent.
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
-            int inputDeadzone, int inputSensitivity, OnStateChangedListener listener, SensorController sensorController, AbstractProvider... providers )
+            int inputDeadzone, int inputSensitivityX, int inputSensitivityY, OnStateChangedListener listener, SensorController sensorController, AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
         // Assign the maps
         mPlayerMap = playerMap;
         mDeadzoneFraction = ( (float) inputDeadzone ) / 100f;
-        mSensitivityFraction = ( (float) inputSensitivity ) / 100f;
+        mSensitivityFractionX = ( (float) inputSensitivityX ) / 100f;
+        mSensitivityFractionY = ( (float) inputSensitivityY ) / 100f;
         mListener = listener;
         mSensorController = sensorController;
         
@@ -215,8 +219,8 @@ public class PeripheralController extends AbstractController implements
             }
             
             // Calculate the net position of the analog stick
-            float rawX = mSensitivityFraction * ( mStrengthXpos - mStrengthXneg );
-            float rawY = mSensitivityFraction * ( mStrengthYpos - mStrengthYneg );
+            float rawX = mSensitivityFractionX * ( mStrengthXpos - mStrengthXneg );
+            float rawY = mSensitivityFractionY * ( mStrengthYpos - mStrengthYneg );
             float magnitude = (float) Math.sqrt( ( rawX * rawX ) + ( rawY * rawY ) );
             
             // Update controller state

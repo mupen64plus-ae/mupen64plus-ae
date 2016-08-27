@@ -5,8 +5,11 @@
         android:id="@+id/menuItem_deadzone"
         android:title="@string/menuItem_deadzone"/>
     <item
-        android:id="@+id/menuItem_sensitivity"
-        android:title="@string/menuItem_sensitivity"/>
+        android:id="@+id/menuItem_sensitivity_x"
+        android:title="@string/menuItem_sensitivity_x"/>
+    <item
+        android:id="@+id/menuItem_sensitivity_y"
+        android:title="@string/menuItem_sensitivity_y"/>
     <item
         android:id="@+id/menuItem_unmapAll"
         android:title="@string/menuItem_unmapAll"/>

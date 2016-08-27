@@ -30,7 +30,8 @@ public class ControllerProfile extends Profile
     
     private static final String KEY_MAP = "map";
     private static final String KEY_DEADZONE = "deadzone";
-    private static final String KEY_SENSITIVITY = "sensitivity";
+    private static final String KEY_SENSITIVITY_X = "sensitivity_x";
+    private static final String KEY_SENSITIVITY_Y = "sensitivity_y";
     
     public InputMap getMap()
     {
@@ -42,9 +43,14 @@ public class ControllerProfile extends Profile
         return getInt( KEY_DEADZONE, DEFAULT_DEADZONE );
     }
     
-    public int getSensitivity()
+    public int getSensitivityX()
     {
-        return getInt( KEY_SENSITIVITY, DEFAULT_SENSITIVITY );
+        return getInt( KEY_SENSITIVITY_X, DEFAULT_SENSITIVITY );
+    }
+
+    public int getSensitivityY()
+    {
+        return getInt( KEY_SENSITIVITY_Y, DEFAULT_SENSITIVITY );
     }
     
     public void putMap( InputMap map )
@@ -57,9 +63,14 @@ public class ControllerProfile extends Profile
         putInt( KEY_DEADZONE, deadzone );
     }
     
-    public void putSensitivity( int sensitivity )
+    public void putSensitivityX( int sensitivity )
     {
-        putInt( KEY_SENSITIVITY, sensitivity );
+        putInt( KEY_SENSITIVITY_X, sensitivity );
+    }
+
+    public void putSensitivityY( int sensitivity )
+    {
+        putInt( KEY_SENSITIVITY_Y, sensitivity );
     }
     
     public ControllerProfile( boolean isBuiltin, String name, String comment )

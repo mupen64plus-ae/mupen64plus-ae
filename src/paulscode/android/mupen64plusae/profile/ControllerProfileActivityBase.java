@@ -221,8 +221,11 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
             case R.id.menuItem_deadzone:
                 setDeadzone();
                 return true;
-            case R.id.menuItem_sensitivity:
-                setSensitivity();
+            case R.id.menuItem_sensitivity_x:
+                setSensitivityX();
+                return true;
+            case R.id.menuItem_sensitivity_y:
+                setSensitivityY();
                 return true;
             case R.id.menuItem_exit:
                 finish();
@@ -273,11 +276,11 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
                 } );
     }
     
-    private void setSensitivity()
+    private void setSensitivityX()
     {
-        final CharSequence title = getText( R.string.menuItem_sensitivity );
+        final CharSequence title = getText( R.string.menuItem_sensitivity_x );
         
-        Prompt.promptInteger( this, title, "%1$d %%", mProfile.getSensitivity(), MIN_SENSITIVITY,
+        Prompt.promptInteger( this, title, "%1$d %%", mProfile.getSensitivityX(), MIN_SENSITIVITY,
                 MAX_SENSITIVITY, new PromptIntegerListener()
                 {
                     @Override
@@ -285,7 +288,25 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
                     {
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
-                            mProfile.putSensitivity( value );
+                            mProfile.putSensitivityX( value );
+                        }
+                    }
+                } );
+    }
+
+    private void setSensitivityY()
+    {
+        final CharSequence title = getText( R.string.menuItem_sensitivity_y );
+
+        Prompt.promptInteger( this, title, "%1$d %%", mProfile.getSensitivityY(), MIN_SENSITIVITY,
+                MAX_SENSITIVITY, new PromptIntegerListener()
+                {
+                    @Override
+                    public void onDialogClosed( Integer value, int which )
+                    {
+                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        {
+                            mProfile.putSensitivityY( value );
                         }
                     }
                 } );

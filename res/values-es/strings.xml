@@ -46,7 +46,9 @@
   <string name="menuItem_exit">Salir</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_deadzone">Punto muerto</string>
-  <string name="menuItem_sensitivity">Sensibilidad</string>
+    <string name="menuItem_sensitivity">Sensibilidad</string>
+  <string name="menuItem_sensitivity_x">X-axis Sensibilidad</string>
+    <string name="menuItem_sensitivity_y">Y-axis Sensibilidad</string>
   <string name="menuItem_unmapAll">Desasignar todo</string>
   <!--Menu Activity-->
   <string name="menuItem_search">Buscar</string>
