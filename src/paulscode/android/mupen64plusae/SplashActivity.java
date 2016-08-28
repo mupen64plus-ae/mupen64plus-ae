@@ -36,13 +36,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.mupen64plusae.v3.alpha.R;
 
-import java.io.File;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
@@ -130,12 +130,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
         //Check for invalid data path
         String dataPathString = mPrefs.getString( DATA_PATH, null );
+        String defaultRelPath = res.getString(R.string.pathGameSaves_default);
 
-        if(dataPathString == null || dataPathString.isEmpty() ||
-                dataPathString.contains(res.getString(R.string.pathGameSaves_default)))
+        if(TextUtils.isEmpty(dataPathString) || dataPathString.contains(defaultRelPath))
         {
-            String defValue = res.getString( R.string.pathGameSaves_default );
-            String newDefValue = PathPreference.validate( defValue);
+            String newDefValue = PathPreference.validate(defaultRelPath);
 
             mPrefs.edit().putString( DATA_PATH, newDefValue ).commit();
         }
@@ -350,7 +349,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private void extractAssets()
     {
         // Extract and merge the assets if they are out of date
-        FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
         mAssetsExtracted = 0;
         new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
     }

@@ -33,12 +33,16 @@ import android.content.res.Configuration;
 import android.opengl.EGL14;
 import android.os.Build;
 import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
+
+import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
+import paulscode.android.mupen64plusae.preference.PathPreference;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import tv.ouya.console.api.OuyaFacade;
 
@@ -235,7 +239,16 @@ public class AppData
         appVersionCode = versionCode;
         
         // Directories
-        userDataDir = mPreferences.getString( "pathGameSaves", "" );
+        String tempUserDataDir = mPreferences.getString( "pathGameSaves", "" );
+        String defaultRelPath = context.getString(R.string.pathGameSaves_default);
+
+        if(TextUtils.isEmpty(tempUserDataDir) || tempUserDataDir.contains(defaultRelPath))
+        {
+            tempUserDataDir = PathPreference.validate(defaultRelPath);
+        }
+
+        userDataDir = tempUserDataDir;
+
         coreSharedDataDir = userDataDir + "/AppData";
         tempDir = coreSharedDataDir + "/tmp";
         String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";

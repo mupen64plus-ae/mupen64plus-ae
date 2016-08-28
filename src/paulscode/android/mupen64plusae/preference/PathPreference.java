@@ -58,7 +58,8 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
     public static final int SELECTION_MODE_ANY = 2;
     
     private static final String STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
-    
+    private static final String DEFAULT_DIR = "mupen64plus";
+
     private final boolean mUseDefaultSummary;
     private int mSelectionMode = SELECTION_MODE_ANY;
     private boolean mDoReclick = false;
@@ -281,29 +282,17 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         if( TextUtils.isEmpty( value ) )
         {
             // Use storage directory if value is empty
-            value = STORAGE_DIR;
+            value = STORAGE_DIR + "/" + DEFAULT_DIR;
         }
-        else
+        else if(value.startsWith( "!" ))
         {
-            // Non-empty string provided
-            // Prefixes encode additional information:
-            // ! and ~ mean path is relative to storage dir
-            // ! means parent dirs should be created if path does not exist
-            // ~ means storage dir should be used if path does not exist
-            boolean isRelativePath = value.startsWith( "!" ) || value.startsWith( "~" );
-            boolean forceParentDirs = value.startsWith( "!" );
-            
             // Build the absolute path if necessary
-            if( isRelativePath )
-                value = STORAGE_DIR + "/" + value.substring( 1 );
-            
-            // Ensure the parent directories exist if requested
-            File file = new File( value );
-            if( forceParentDirs ) {
-                FileUtil.makeDirs(value);
-            }else if( !file.exists() )
-                value = STORAGE_DIR;
+            value = STORAGE_DIR + "/" + value.substring( 1 );
         }
+
+        // Ensure the parent directories exist if requested
+        FileUtil.makeDirs(value);
+
         return value;
     }
 
