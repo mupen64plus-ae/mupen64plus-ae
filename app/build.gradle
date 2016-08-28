@@ -21,7 +21,7 @@ model {
             applicationId = "org.mupen64plusae.v3.alpha"
             minSdkVersion.apiLevel = 15
             targetSdkVersion.apiLevel = 24
-            versionCode = 83
+            versionCode = 85
             versionName = "3.0.10 (beta)"
 
             buildConfigFields {

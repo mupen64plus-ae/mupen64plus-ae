@@ -20,8 +20,6 @@
  */
 package paulscode.android.mupen64plusae.preference;
 
-import java.io.File;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -60,7 +58,7 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
     public static final int SELECTION_MODE_ANY = 2;
     
     private static final String STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
-    private static final String DEFAULT_DIR = "mupen64plus";
+    private static final String DEFAULT_DIR = "mupen64plus-fz";
 
     private final boolean mUseDefaultSummary;
     private int mSelectionMode = SELECTION_MODE_ANY;
