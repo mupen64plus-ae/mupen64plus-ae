@@ -409,7 +409,7 @@ public class GlobalPrefs
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
 
         // Video prefs
-        displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 0 );
+        displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 480 );
         stretchScreen = mPreferences.getString( "displayScaling", "original" ).equals("stretch");
         DetermineResolutionData(context);
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
