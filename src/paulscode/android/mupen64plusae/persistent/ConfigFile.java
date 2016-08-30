@@ -31,7 +31,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
@@ -455,6 +457,37 @@ public class ConfigFile
             // Got it
             return confParam.value;
         }
+
+        /**
+         * Remove instances of this parameter.
+         * @param parameter
+         */
+        private void removePreviousInstance(String parameter)
+        {
+            //Create a copy first
+            ArrayList<String> keys = new ArrayList<String>(parameters.keySet());
+
+            //Remove from parameters
+            for(String key : keys)
+            {
+                if(key.toLowerCase().equals(parameter.toLowerCase()))
+                {
+                    parameters.remove(key);
+                }
+            }
+
+            //Remove from lines
+            String lineParameterTest = parameter + " = ";
+            Iterator<ConfigLine> iter = lines.iterator();
+            while (iter.hasNext()) {
+                ConfigLine line = iter.next();
+
+                if(line.strLine.toLowerCase().startsWith(lineParameterTest.toLowerCase()))
+                {
+                    iter.remove();
+                }
+            }
+        }
         
         /**
          * Adds the specified parameter to this config section, updates the value if it already
@@ -465,21 +498,14 @@ public class ConfigFile
          */
         public void put( String parameter, String value )
         {
-            ConfigParameter confParam = parameters.get( parameter );
-            if( confParam == null ) // New parameter
+            removePreviousInstance(parameter);
+
+            if( !TextUtils.isEmpty( value ) )
             {
-                if( !TextUtils.isEmpty( value ) )
-                {
-                    confParam = new ConfigParameter( parameter, value );
-                    lines.add( new ConfigLine( ConfigLine.LINE_PARAM, parameter + "=" + value
-                            + "\n", confParam ) );
-                    parameters.put( parameter, confParam );
-                }
-            }
-            else
-            {
-                // Change the parameter's value
-                confParam.value = value;
+                ConfigParameter confParam = new ConfigParameter( parameter, value );
+                lines.add( new ConfigLine( ConfigLine.LINE_PARAM, parameter + "=" + value
+                        + "\n", confParam ) );
+                parameters.put( parameter, confParam );
             }
         }
         
@@ -494,8 +520,9 @@ public class ConfigFile
         {
             for( ConfigLine line : lines )
             {
-                if( line != null )
-                    line.save( fw );
+                if( line != null ) {
+                    line.save(fw);
+                }
             }
         }
     }
