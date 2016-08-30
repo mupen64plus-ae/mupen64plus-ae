@@ -107,6 +107,12 @@ public class GamePrefs
     /** True if gliden64 GLES2.0 video plug-in is enabled. */
     public final boolean isGliden64_GLES2Enabled;
 
+    /** True if gliden64 GLES3.0 video plug-in is enabled. */
+    public final boolean isGliden64_GLES3Enabled;
+
+    /** True if gliden64 GLES3.1 video plug-in is enabled. */
+    public final boolean isGliden64_GLES31Enabled;
+
     /** True if GlideN64 full OpenGL video plug-in is enabled */
     public final boolean isGliden64_FullGLEnabled;
 
@@ -566,6 +572,8 @@ public class GamePrefs
         // Video prefs - GLideN64
         isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64" );
         isGliden64_GLES2Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles20.so" );
+        isGliden64_GLES3Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles30.so" );
+        isGliden64_GLES31Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles31.so" );
         isGliden64_FullGLEnabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-egl.so" );
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
         gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);

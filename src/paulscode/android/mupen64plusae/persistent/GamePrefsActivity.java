@@ -313,6 +313,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             }
             else if (openGlVersion.equals("3.0"))
             {
+                exclusions.add(new Profile(true, "GlideN64-GLES-3.1", null));
                 exclusions.add(new Profile(true, "GlideN64-GLES-3.1-tx-pack", null));
             }
 
