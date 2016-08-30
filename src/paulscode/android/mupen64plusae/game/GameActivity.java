@@ -260,7 +260,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
         mGameSidebar.setTitle(romGoodName);
         // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( this, mSurface, mGamePrefs, mRomPath, mRomMd5, cheatArgs, doRestart );
+        CoreInterface.initialize( this, mSurface, mGamePrefs, mRomPath, cheatArgs, doRestart,
+                AppData.getOpenGlEsVersion(this) );
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);

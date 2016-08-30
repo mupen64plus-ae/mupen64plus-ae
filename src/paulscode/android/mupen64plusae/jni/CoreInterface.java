@@ -184,8 +184,8 @@ public class CoreInterface
     private static boolean sIsPaused = false;
 
     public static void initialize(AppCompatActivity activity,
-                                  GameSurface surface, GamePrefs gamePrefs, String romPath, String romMd5,
-                                  String cheatArgs, boolean isRestarting )
+                                  GameSurface surface, GamePrefs gamePrefs, String romPath,
+                                  String cheatArgs, boolean isRestarting, String openGlEsVersion)
     {
         sRomPath = romPath;
         sCheatOptions = cheatArgs;
@@ -196,7 +196,7 @@ public class CoreInterface
         sAppData = new AppData( sActivity );
         sGlobalPrefs = new GlobalPrefs( sActivity, sAppData );
         sGamePrefs = gamePrefs;
-        NativeConfigFiles.syncConfigFiles( sGamePrefs, sGlobalPrefs, sAppData );
+        NativeConfigFiles.syncConfigFiles( sGamePrefs, sGlobalPrefs, sAppData, openGlEsVersion );
 
         makeDirs();
         moveFromLegacy();

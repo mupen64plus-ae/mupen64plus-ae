@@ -51,7 +51,8 @@ public class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    public static void syncConfigFiles( GamePrefs game, GlobalPrefs global, AppData appData )
+    public static void syncConfigFiles( GamePrefs game, GlobalPrefs global, AppData appData,
+                                        String openGlEsVersion )
     {
         //@formatter:off
 
@@ -128,7 +129,27 @@ public class NativeConfigFiles
 
         mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );                                                         // Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );                                      // Directory in which to search for plugins
-        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + game.videoPlugin.path + '"' );                              // Filename of video plugin
+
+
+        //Add safety checks to prevent users from manually inputting unsupported plugins for their device
+        String videoPluginString = game.videoPlugin.path;
+        if (openGlEsVersion.equals("2.0") && (game.isGliden64_GLES3Enabled || game.isGliden64_GLES31Enabled || game.isGliden64_FullGLEnabled))
+        {
+            videoPluginString = videoPluginString.replace("libmupen64plus-video-gliden64-gles30.so", "libmupen64plus-video-gliden64-gles20.so");
+            videoPluginString = videoPluginString.replace("libmupen64plus-video-gliden64-gles31.so", "libmupen64plus-video-gliden64-gles20.so");
+            videoPluginString = videoPluginString.replace("libmupen64plus-video-gliden64-egl.so", "libmupen64plus-video-gliden64-gles20.so");
+        }
+        else if (openGlEsVersion.equals("3.0") && (game.isGliden64_GLES31Enabled || game.isGliden64_FullGLEnabled ))
+        {
+            videoPluginString = videoPluginString.replace("libmupen64plus-video-gliden64-gles31.so", "libmupen64plus-video-gliden64-gles30.so");
+            videoPluginString = videoPluginString.replace("libmupen64plus-video-gliden64-egl.so", "libmupen64plus-video-gliden64-gles30.so");
+        }
+        else if(openGlEsVersion.equals("3.1") && game.isGliden64_FullGLEnabled)
+        {
+            videoPluginString = videoPluginString.replace("libmupen64plus-video-gliden64-egl.so", "libmupen64plus-video-gliden64-gles31.so");
+        }
+
+        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + videoPluginString + '"' );                              // Filename of video plugin
 
         //Use the FP version of the SLES audio plugin if the API level is high enough
         String audioPluginString = global.audioPlugin.path;

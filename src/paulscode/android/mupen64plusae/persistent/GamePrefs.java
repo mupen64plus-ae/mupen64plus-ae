@@ -575,6 +575,7 @@ public class GamePrefs
         isGliden64_GLES3Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles30.so" );
         isGliden64_GLES31Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles31.so" );
         isGliden64_FullGLEnabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-egl.so" );
+
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
         gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);
         gliden64MaxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
