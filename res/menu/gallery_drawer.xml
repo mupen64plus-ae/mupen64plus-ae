@@ -32,10 +32,6 @@
         </menu>
     </item>
     <item
-        android:id="@+id/menuItem_localeOverride"
-        android:icon="@drawable/ic_location"
-        android:title="@string/menuItem_localeOverride"/>
-    <item
         android:id="@+id/menuItem_profiles"
         android:icon="@drawable/ic_sliders"
         android:title="@string/menuItem_profiles">
@@ -105,5 +101,9 @@
                 android:title="@string/menuItem_credits"/>
         </menu>
     </item>
+    <item
+        android:id="@+id/menuItem_localeOverride"
+        android:icon="@drawable/ic_location"
+        android:title="@string/menuItem_localeOverride"/>
 
 </menu>
