@@ -559,7 +559,6 @@ public class CoreInterface
         if( sCoreThread != null )
         {
             sIsPaused = true;
-            NativeExports.emuPause();
 
             // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
             if( autoSave && latestSave != null)
@@ -590,6 +589,8 @@ public class CoreInterface
 
                 Log.i("CoreInterface", "Saving file: " + latestSave);
                 NativeExports.emuSaveFile( latestSave );
+
+                NativeExports.emuPause();
             }
         }
     }
