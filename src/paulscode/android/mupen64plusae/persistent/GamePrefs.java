@@ -3,6 +3,7 @@ package paulscode.android.mupen64plusae.persistent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -466,17 +467,7 @@ public class GamePrefs
                 globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
                 globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
 
-        if( emulationProfile == null)
-        {
-            throw new Error( "Invalid emulation profile: " +
-                " preferences_null=" + (mPreferences == null) +
-                    " EMULATION_PROFILE=" + EMULATION_PROFILE +
-                    " global_default=" + globalPrefs.getEmulationProfileDefault() +
-                    " global_default_backup=" + GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT +
-                    " emulation_profile_config=" + globalPrefs.emulationProfiles_cfg +
-                    " builtin_emulation_profile_config=" + appData.profilesDir + "/emulation.cfg" +
-                " ");
-        }
+        Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());
 
         // Touchscreen profile
         if(globalPrefs.isBigScreenMode)
@@ -767,6 +758,13 @@ public class GamePrefs
         String appDefault, ConfigFile custom, ConfigFile builtin )
     {
         final String name = prefs.getString( key, defaultName );
+
+        Log.i("GamePrefs", "Profile: " +
+                " key=" + key +
+                " defaultName=" + defaultName +
+                " appDefault=" + appDefault +
+                " name=" + (name==null?"null":name)
+        );
 
         if( !TextUtils.isEmpty( name ) && custom.keySet().contains( name ) )
             return new Profile( false, custom.get( name ) );
