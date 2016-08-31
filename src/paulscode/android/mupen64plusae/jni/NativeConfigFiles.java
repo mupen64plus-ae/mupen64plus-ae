@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -199,7 +201,6 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "13" );
 
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );
@@ -376,10 +377,13 @@ public class NativeConfigFiles
             !(game.isGliden64_GLES2Enabled && game.gliden64EnableCopyColorToRDRAM == 2))
         {
             mupenConfigFile.put( "Video-GLideN64", setting, glideN64settingValue);
+
+            Log.i("NativeConfigFile", "(built-in) param=" + setting + " value=" + value);
         }
         else
         {
             mupenConfigFile.put( "Video-GLideN64", setting, value);
+            Log.i("NativeConfigFile", "param=" + setting + " value=" + value);
         }
     }
 
