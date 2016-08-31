@@ -156,6 +156,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
     private GameAutoSaveManager mAutoSaveManager;
     private boolean mFirstStart;
     private boolean mWaitingOnConfirmation = false;
+    private boolean mShuttingDown = false;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -324,13 +325,17 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             @Override
             public void onDrawerClosed(View arg0)
             {
-                CoreInterface.resumeEmulator();
+                if(!mShuttingDown)
+                {
+                    CoreInterface.resumeEmulator();
+                }
+
             }
 
             @Override
             public void onDrawerOpened(View arg0)
             {
-                CoreInterface.pauseEmulator(false, null);
+                CoreInterface.pauseEmulator();
                 ReloadAllMenus();
             }
 
@@ -700,8 +705,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         if(shouldExit)
         {
             mMogaController.exit();
-
-            this.finish();
+            mShuttingDown = true;
+            shutdownEmulator();
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
         {
@@ -908,14 +913,55 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         }
     }
 
+    private void shutdownEmulator()
+    {
+        CoreInterface.addOnStateCallbackListener( new CoreInterface.OnStateCallbackListener()
+        {
+            @Override
+            public void onStateCallback( int paramChanged, int newValue )
+            {
+                if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
+                {
+                    CoreInterface.removeOnStateCallbackListener( this );
+
+                    GameActivity.this.runOnUiThread( new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            CoreInterface.shutdownEmulator();
+                            GameActivity.this.finish();
+                        }
+                    } );
+                }
+            }
+        } );
+
+        //Generate auto save file
+        final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+        CoreInterface.autoSaveState( saveFileName );
+        mAutoSaveManager.clearOldest();
+    }
+
     private void tryPausing()
     {
-        // Never go directly from running to stopped; always pause (and autosave) first
-        final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-        CoreInterface.pauseEmulator( true, saveFileName );
-        mAutoSaveManager.clearOldest();
+        CoreInterface.addOnStateCallbackListener( new CoreInterface.OnStateCallbackListener()
+        {
+            @Override
+            public void onStateCallback( int paramChanged, int newValue )
+            {
+                if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
+                {
+                    CoreInterface.removeOnStateCallbackListener( this );
+                    CoreInterface.pauseEmulator();
+                }
+            }
+        } );
 
-        CoreInterface.shutdownEmulator();
+        //Generate auto save file
+        final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+        CoreInterface.autoSaveState( saveFileName );
+        mAutoSaveManager.clearOldest();
     }
 
     @Override

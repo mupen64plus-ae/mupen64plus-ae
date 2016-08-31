@@ -528,7 +528,6 @@ public class CoreInterface
         {
             // Tell the core to quit
             NativeExports.emuStop();
-
             // Now wait for the core thread to quit
             try
             {
@@ -539,7 +538,6 @@ public class CoreInterface
                 Log.i( "CoreInterface", "Problem stopping core thread: " + e );
             }
             sCoreThread = null;
-
             // Unload the native libraries
             NativeExports.unloadLibraries();
         }
@@ -554,44 +552,74 @@ public class CoreInterface
         }
     }
 
-    public static synchronized void pauseEmulator( boolean autoSave, final String latestSave )
+
+    public static synchronized void autoSaveState( final String latestSave )
+    {
+        // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
+
+        //Resume to allow save to take place
+        resumeEmulator();
+        Notifier.showToast( sActivity, R.string.toast_savingSession );
+
+        addOnStateCallbackListener( new OnStateCallbackListener()
+        {
+            @Override
+            public void onStateCallback( int paramChanged, int newValue )
+            {
+                if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
+                {
+                    removeOnStateCallbackListener( this );
+
+                    //newValue == 1, then it was successful
+                    if(newValue == 1)
+                    {
+                        try {
+                            new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile();
+                        } catch (IOException e) {
+                            Log.i("CoreInterface", "Unable to save file: " + latestSave);
+                        }
+                    }
+                }
+            }
+        } );
+
+        Log.i("CoreInterface", "Saving file: " + latestSave);
+        NativeExports.emuSaveFile( latestSave );
+    }
+
+    public static void saveState( final String filename )
+    {
+        sCurrentSaveStateFile = new File( sGamePrefs.userSaveDir + "/" + filename );
+
+        if( sCurrentSaveStateFile.exists() )
+        {
+            String title = sActivity.getString( R.string.confirm_title );
+            String message = sActivity.getString( R.string.confirmOverwriteFile_message, filename );
+
+            ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
+
+            FragmentManager fm = sActivity.getSupportFragmentManager();
+            confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
+        }
+        else
+        {
+            Notifier.showToast( sActivity, R.string.toast_savingFile, sCurrentSaveStateFile.getName() );
+            NativeExports.emuSaveFile( sCurrentSaveStateFile.getAbsolutePath() );
+
+            if(sActivity instanceof OnSaveLoadListener)
+            {
+                ((OnSaveLoadListener)sActivity).onSaveLoad();
+            }
+        }
+    }
+
+    public static synchronized void pauseEmulator(  )
     {
         if( sCoreThread != null )
         {
             sIsPaused = true;
-
-            // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
-            if( autoSave && latestSave != null)
-            {
-                Notifier.showToast( sActivity, R.string.toast_savingSession );
-
-                addOnStateCallbackListener( new OnStateCallbackListener()
-                {
-                    @Override
-                    public void onStateCallback( int paramChanged, int newValue )
-                    {
-                        if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
-                        {
-                            removeOnStateCallbackListener( this );
-
-                            //newValue == 1, then it was successful
-                            if(newValue == 1)
-                            {
-                                try {
-                                    new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile();
-                                } catch (IOException e) {
-                                    Log.i("CoreInterface", "Unable to save file: " + latestSave);
-                                }
-                            }
-                        }
-                    }
-                } );
-
-                Log.i("CoreInterface", "Saving file: " + latestSave);
-                NativeExports.emuSaveFile( latestSave );
-
-                NativeExports.emuPause();
-            }
+            NativeExports.emuPause();
         }
     }
 
@@ -717,33 +745,6 @@ public class CoreInterface
 
             }
         } );
-    }
-
-    public static void saveState( final String filename )
-    {
-        sCurrentSaveStateFile = new File( sGamePrefs.userSaveDir + "/" + filename );
-
-        if( sCurrentSaveStateFile.exists() )
-        {
-            String title = sActivity.getString( R.string.confirm_title );
-            String message = sActivity.getString( R.string.confirmOverwriteFile_message, filename );
-
-            ConfirmationDialog confirmationDialog =
-                ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
-
-            FragmentManager fm = sActivity.getSupportFragmentManager();
-            confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
-        }
-        else
-        {
-            Notifier.showToast( sActivity, R.string.toast_savingFile, sCurrentSaveStateFile.getName() );
-            NativeExports.emuSaveFile( sCurrentSaveStateFile.getAbsolutePath() );
-
-            if(sActivity instanceof OnSaveLoadListener)
-            {
-                ((OnSaveLoadListener)sActivity).onSaveLoad();
-            }
-        }
     }
 
     public static void loadState( File file )
