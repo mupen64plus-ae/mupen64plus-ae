@@ -383,7 +383,11 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
         Log.i( "GameActivity", "onPause" );
         mIsResumed = false;
-        tryPausing();
+
+        if(!mShuttingDown)
+        {
+            tryPausing();
+        }
 
         if (mSensorController != null) {
             mSensorController.onPause();
@@ -705,7 +709,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         if(shouldExit)
         {
             mMogaController.exit();
-            mShuttingDown = true;
             shutdownEmulator();
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
@@ -915,6 +918,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
     private void shutdownEmulator()
     {
+        mShuttingDown = true;
+
         CoreInterface.addOnStateCallbackListener( new CoreInterface.OnStateCallbackListener()
         {
             @Override
