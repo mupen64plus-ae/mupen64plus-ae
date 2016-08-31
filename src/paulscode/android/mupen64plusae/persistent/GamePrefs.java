@@ -591,7 +591,7 @@ public class GamePrefs
         gliden64DisableFBInfo = emulationProfile.get( "DisableFBInfo", "True" ).equals( "True" );
         gliden64FBInfoReadColorChunk = emulationProfile.get( "FBInfoReadColorChunk", "False" ).equals( "True" );
         gliden64FBInfoReadDepthChunk = emulationProfile.get( "FBInfoReadDepthChunk", "True" ).equals( "True" );
-        gliden64TxFilterMode = getSafeInt( emulationProfile, "txFilterMode}]", 0);
+        gliden64TxFilterMode = getSafeInt( emulationProfile, "txFilterMode", 0);
         gliden64TxEnhancementMode = gliden64EnableNativeResTexrects ? 0 :getSafeInt( emulationProfile, "txEnhancementMode", 0);
         gliden64TxDeposterize = emulationProfile.get( "txDeposterize", "False" ).equals( "True" );
         gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "False" ).equals( "True" );
