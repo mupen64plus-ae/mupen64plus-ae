@@ -80,7 +80,6 @@
     <string name="menuItem_about">About</string>
     <string name="menuItem_credits">Credits</string>
     <string name="menuItem_appVersion">App version</string>
-    <string name="menuItem_changelog">Changelog</string>
     <string name="menuItem_logcat">Logcat</string>
     <string name="menuItem_hardwareInfo">Hardware info</string>
     <string name="menuItem_Tools">Tools</string>
@@ -536,9 +535,6 @@
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
     <string name="confirmClearData_message">Are you sure you want to clear all installed high resolution texture packs and caches?</string>
-
-    <!-- Change Log -->
-    <string name="changeLog_dialogTitle">Change log</string>
 
     <!-- Corrupt Installation Warning -->
     <string name="invalidInstall_title">Warning</string>

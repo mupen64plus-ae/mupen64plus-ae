@@ -324,16 +324,6 @@ public class AppData
     }
     
     /**
-     * Gets the version code when the user last ran the app
-     * 
-     * @return The app version.
-     */
-    public int getLastAppVersionCode()
-    {
-        return getInt( KEY_LAST_APP_VERSION_CODE, DEFAULT_LAST_APP_VERSION_CODE );
-    }
-    
-    /**
      * Persists the asset version.
      * 
      * @param value The asset version.
@@ -342,17 +332,7 @@ public class AppData
     {
         putInt( KEY_ASSET_VERSION, value );
     }
-    
-    /**
-     * Persists the version code when the user last ran the app.
-     * 
-     * @param value The app version code.
-     */
-    public void putLastAppVersionCode( int value )
-    {
-        putInt( KEY_LAST_APP_VERSION_CODE, value );
-    }
-    
+
     private int getInt( String key, int defaultValue )
     {
         return mPreferences.getInt( key, defaultValue );

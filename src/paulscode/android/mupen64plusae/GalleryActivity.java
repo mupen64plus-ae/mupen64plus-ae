@@ -62,7 +62,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
-import paulscode.android.mupen64plusae.dialog.ChangeLog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
@@ -155,18 +154,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
-
-        final int lastVer = mAppData.getLastAppVersionCode();
-        final int currVer = mAppData.appVersionCode;
-        if( lastVer != currVer )
-        {
-            // First run after install/update, greet user with changelog, then help dialog
-            Popups.showFaq( this );
-            final ChangeLog log = new ChangeLog( getAssets() );
-            log.show( this, lastVer + 1, currVer );
-
-            mAppData.putLastAppVersionCode( currVer );
-        }
 
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
@@ -548,9 +535,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return true;
         case R.id.menuItem_appVersion:
             Popups.showAppVersion(this);
-            return true;
-        case R.id.menuItem_changelog:
-            new ChangeLog(getAssets()).show(this, 0, mAppData.appVersionCode);
             return true;
         case R.id.menuItem_logcat:
             Popups.showLogcat(this);
