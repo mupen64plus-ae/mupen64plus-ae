@@ -490,8 +490,8 @@ grSstWinOpen(
   ConfigOpenSection("Video-Glide64mk2", &video_glide64mk2_section);
   int aalevel = ConfigGetParamInt(video_glide64mk2_section, "wrpAntiAliasing");
 
-  width = ConfigGetParamInt(video_general_section, "ScreenWidth");
-  height = ConfigGetParamInt(video_general_section, "ScreenHeight");
+  screen_width = width = ConfigGetParamInt(video_general_section, "ScreenWidth");
+  screen_height = height = ConfigGetParamInt(video_general_section, "ScreenHeight");
   fullscreen = ConfigGetParamBool(video_general_section, "Fullscreen");
   int vsync = ConfigGetParamBool(video_general_section, "VerticalSync");
 

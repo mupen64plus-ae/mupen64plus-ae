@@ -55,7 +55,6 @@ ifeq ("$(UNAME)","OpenBSD")
   OS = FREEBSD
   SO_EXTENSION = so
   SHARED = -shared
-  $(warning OS type "$(UNAME)" not officially supported.')
 endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
@@ -114,6 +113,7 @@ ifneq ("$(filter arm%,$(HOST_CPU))","")
     ARCH_DETECTED := 32BITS
     PIC ?= 1
     NO_ASM := 1
+    NO_SSE := 1
     $(warning Architecture "$(HOST_CPU)" not officially supported.')
   endif
 endif
@@ -212,9 +212,14 @@ CFLAGS += $(LIBPNG_CFLAGS)
 LDLIBS += $(LIBPNG_LDLIBS)
 
 # search for OpenGL libraries
+ifeq ($(VC), 1)
+  GL_CFLAGS += -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux
+  GL_LDLIBS += -lm -L/opt/vc/lib -lEGL -lbcm_host
+  USE_GLES=1
+endif
 ifeq ($(USE_GLES), 1)
   CFLAGS += -DUSE_GLES
-  GL_LDLIBS = -lGLESv2
+  GL_LDLIBS += -lGLESv2
 endif
 ifeq ($(OS), OSX)
   GL_LDLIBS = -framework OpenGL
@@ -431,6 +436,7 @@ targets:
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    NO_ASM=1      == build without inline assembly code (x86 MMX/SSE)"
 	@echo "    USE_GLES=1    == build against GLESv2 instead of OpenGL"
+	@echo "    VC=1          == build against Broadcom Videocore GLESv2"
 	@echo "    NO_SSE=1      == build without SSE support"
 	@echo "    USE_FRAMESKIPPER=1 == build with frameskipper feature"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
