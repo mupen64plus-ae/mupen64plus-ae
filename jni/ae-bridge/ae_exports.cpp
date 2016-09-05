@@ -54,6 +54,7 @@ typedef int         (*pAeiInit)         (JNIEnv* env, jclass cls);
 typedef int         (*pSdlInit)         (JNIEnv* env, jclass cls);
 typedef void        (*pSdlSetScreen)    (int width, int height, Uint32 format);
 typedef void        (*pVoidFunc)        ();
+typedef m64p_error  (*pCoreShutdown)    (void);
 typedef m64p_error  (*pCoreDoCommand)   (m64p_command, int, void *);
 typedef int         (*pFrontMain)       (int argc, char* argv[]);
 typedef void        (*pNativeResume)    (JNIEnv* env, jclass cls);
@@ -65,6 +66,7 @@ static pSdlInit         sdlInit         = NULL;
 static pSdlSetScreen    sdlSetScreen    = NULL;
 static pVoidFunc        sdlMainReady    = NULL;
 static pCoreDoCommand   coreDoCommand   = NULL;
+static pCoreShutdown    coreShutdown    = NULL;
 static pFrontMain       frontMain       = NULL;
 static pNativeResume    nativeResume    = NULL;
 static pNativePause     nativePause     = NULL;
@@ -177,12 +179,13 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     sdlSetScreen  = (pSdlSetScreen)  locateFunction(handleSDL,   "SDL2",                   "Android_SetScreenResolution");
     sdlMainReady  = (pVoidFunc)      locateFunction(handleSDL,   "SDL2",                   "SDL_SetMainReady");
     coreDoCommand = (pCoreDoCommand) locateFunction(handleCore,  coreLibraryName,          "CoreDoCommand");
+    coreShutdown  = (pCoreShutdown)  locateFunction(handleCore,  coreLibraryName,          "CoreShutdown");
     frontMain     = (pFrontMain)     locateFunction(handleFront, "mupen64plus-ui-console", "SDL_main");
     nativeResume  = (pNativeResume)  locateFunction(handleSDL,   "SDL2",                   "Java_org_libsdl_app_SDLActivity_nativeResume");
     nativePause   = (pNativePause)   locateFunction(handleSDL,   "SDL2",                   "Java_org_libsdl_app_SDLActivity_nativePause");
 
     // Make sure we don't have any typos
-    if (!aeiInit || !sdlInit || !sdlSetScreen || !sdlMainReady || !coreDoCommand || !frontMain || !nativeResume || !nativePause)
+    if (!aeiInit || !sdlInit || !sdlSetScreen || !sdlMainReady || !coreDoCommand || !frontMain || !nativeResume || !nativePause || !coreShutdown)
     {
         LOGE("Could not load library functions: be sure they are named and typedef'd correctly");
     }
@@ -264,6 +267,11 @@ extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStop(JNIEnv* env, jclass cls)
 {
     if (coreDoCommand) coreDoCommand(M64CMD_STOP, 0, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuShutdown(JNIEnv* env, jclass cls)
+{
+    if (coreShutdown) coreShutdown();
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuResume(JNIEnv* env, jclass cls)

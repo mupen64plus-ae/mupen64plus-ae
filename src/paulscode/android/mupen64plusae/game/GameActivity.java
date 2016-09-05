@@ -384,7 +384,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         Log.i( "GameActivity", "onPause" );
         mIsResumed = false;
 
-        if(!mShuttingDown)
+        if(!mShuttingDown && CoreInterface.isCoreRunning())
         {
             tryPausing();
         }
@@ -394,6 +394,21 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         }
 
         mMogaController.onPause();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+
+        Log.i( "GameActivity", "onDestroy" );
+
+        if(!mShuttingDown)
+        {
+            //Something bad happened, we are shutting down without being signaled first
+            mMogaController.exit();
+            CoreInterface.killEmulator();
+        }
     }
 
     @Override
@@ -920,32 +935,39 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
     {
         mShuttingDown = true;
 
-        CoreInterface.addOnStateCallbackListener( new CoreInterface.OnStateCallbackListener()
+        if(CoreInterface.isCoreRunning())
         {
-            @Override
-            public void onStateCallback( int paramChanged, int newValue )
+            CoreInterface.addOnStateCallbackListener( new CoreInterface.OnStateCallbackListener()
             {
-                if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
+                @Override
+                public void onStateCallback( int paramChanged, int newValue )
                 {
-                    CoreInterface.removeOnStateCallbackListener( this );
-
-                    GameActivity.this.runOnUiThread( new Runnable()
+                    if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
                     {
-                        @Override
-                        public void run()
-                        {
-                            CoreInterface.shutdownEmulator();
-                            GameActivity.this.finish();
-                        }
-                    } );
-                }
-            }
-        } );
+                        CoreInterface.removeOnStateCallbackListener( this );
 
-        //Generate auto save file
-        final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-        CoreInterface.autoSaveState( saveFileName );
-        mAutoSaveManager.clearOldest();
+                        GameActivity.this.runOnUiThread( new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                CoreInterface.shutdownEmulator();
+                                GameActivity.this.finish();
+                            }
+                        } );
+                    }
+                }
+            } );
+
+            //Generate auto save file
+            final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+            CoreInterface.autoSaveState( saveFileName );
+            mAutoSaveManager.clearOldest();
+        }
+        else
+        {
+            GameActivity.this.finish();
+        }
     }
 
     private void tryPausing()

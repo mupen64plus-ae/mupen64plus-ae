@@ -183,6 +183,8 @@ public class CoreInterface
 
     private static boolean sIsPaused = false;
 
+    private static boolean sIsCoreRunning = false;
+
     public static void initialize(AppCompatActivity activity,
                                   GameSurface surface, GamePrefs gamePrefs, String romPath,
                                   String cheatArgs, boolean isRestarting, String openGlEsVersion)
@@ -200,6 +202,11 @@ public class CoreInterface
 
         makeDirs();
         moveFromLegacy();
+    }
+
+    public static boolean isCoreRunning()
+    {
+        return sIsCoreRunning;
     }
 
     private static void makeDirs()
@@ -380,6 +387,8 @@ public class CoreInterface
                 {
                     android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 
+                    sIsCoreRunning = true;
+
                     // Initialize input-android plugin (even if we aren't going to use it)
                     NativeInput.init();
                     NativeInput.setConfig( 0, sGamePrefs.isPlugged1, sGlobalPrefs.getPakType( 1 ).getNativeValue() );
@@ -403,7 +412,12 @@ public class CoreInterface
                         arglist.add( sCheatOptions );
                     }
                     arglist.add( sRomPath );
+
                     int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
+                    sIsCoreRunning = false;
+
+                    Log.e( "CoreInterface", "Core thread exit!");
+
                     if( result != 0 )
                     {
                         // Messages match return codes from mupen64plus-ui-console/main.c
@@ -460,9 +474,14 @@ public class CoreInterface
                             public void run()
                             {
                                 Notifier.showToast( sActivity, message );
+                                sActivity.finish();
                             }
                         } );
+
+
                     }
+
+
                 }
             }, "CoreThread" );
 
@@ -543,6 +562,21 @@ public class CoreInterface
         }
     }
 
+    public static synchronized void killEmulator()
+    {
+        if( sCoreThread != null )
+        {
+
+            // Tell the core to quit
+            NativeExports.emuStop();
+            NativeExports.emuShutdown();
+            // Unload the native libraries
+            NativeExports.unloadLibraries();
+
+            sCoreThread = null;
+        }
+    }
+
     public static synchronized void resumeEmulator()
     {
         if( sCoreThread != null )
@@ -552,14 +586,13 @@ public class CoreInterface
         }
     }
 
-
     public static synchronized void autoSaveState( final String latestSave )
     {
         // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
 
         //Resume to allow save to take place
         resumeEmulator();
-        Notifier.showToast( sActivity, R.string.toast_savingSession );
+        Log.i("CoreInterface", "Saving file: " + latestSave);
 
         addOnStateCallbackListener( new OnStateCallbackListener()
         {
@@ -576,14 +609,21 @@ public class CoreInterface
                         try {
                             new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile();
                         } catch (IOException e) {
-                            Log.i("CoreInterface", "Unable to save file: " + latestSave);
+                            Log.e("CoreInterface", "Unable to save file due to file write failure: " + latestSave);
                         }
                     }
+                    else
+                    {
+                        Log.e("CoreInterface", "Unable to save file due to bad return: " + latestSave);
+                    }
+                }
+                else
+                {
+                    Log.e("CoreInterface", "Param changed = " + paramChanged + " value = " + newValue);
                 }
             }
         } );
 
-        Log.i("CoreInterface", "Saving file: " + latestSave);
         NativeExports.emuSaveFile( latestSave );
     }
 

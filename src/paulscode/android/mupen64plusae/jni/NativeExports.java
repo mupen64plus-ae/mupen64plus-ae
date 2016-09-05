@@ -44,6 +44,8 @@ public class NativeExports
     public static native int emuStart( String userDataPath, String userCachePath, Object[] args );
     
     public static native void emuStop();
+
+    public static native void emuShutdown();
     
     public static native void emuResume();
     
