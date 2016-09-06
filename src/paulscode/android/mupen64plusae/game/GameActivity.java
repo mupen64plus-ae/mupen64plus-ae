@@ -937,37 +937,14 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
         if(CoreInterface.isCoreRunning())
         {
-            CoreInterface.addOnStateCallbackListener( new CoreInterface.OnStateCallbackListener()
-            {
-                @Override
-                public void onStateCallback( int paramChanged, int newValue )
-                {
-                    if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
-                    {
-                        CoreInterface.removeOnStateCallbackListener( this );
-
-                        GameActivity.this.runOnUiThread( new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                CoreInterface.shutdownEmulator();
-                                GameActivity.this.finish();
-                            }
-                        } );
-                    }
-                }
-            } );
-
             //Generate auto save file
             final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
             CoreInterface.autoSaveState( saveFileName );
             mAutoSaveManager.clearOldest();
+            CoreInterface.shutdownEmulator();
         }
-        else
-        {
-            GameActivity.this.finish();
-        }
+
+        GameActivity.this.finish();
     }
 
     private void tryPausing()
