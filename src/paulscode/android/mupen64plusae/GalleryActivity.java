@@ -83,9 +83,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     // Saved instance states
     private static final String STATE_QUERY = "query";
     private static final String STATE_SIDEBAR = "sidebar";
-    private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "cache_rom_info_fragment";
+    private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "STATE_CACHE_ROM_INFO_FRAGMENT";
     private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
-    private static final String STATE_GALLERY_REFRESH_NEEDED= "gallery_refresh_needed";
+    private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
+    private static final String STATE_CLOSE_SIDEBAR_NEEDED= "STATE_CLOSE_SIDEBAR_NEEDED";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
     private static final int RESTART_CONFIRM_DIALOG_ID = 0;
@@ -126,6 +127,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
+
+    //The side bar will be closed next time the Gallery Activity is resumed
+    boolean mCloseSidebarNeeded = false;
 
     @Override
     protected void onNewIntent( Intent intent )
@@ -330,6 +334,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mSearchQuery = query;
 
             mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
+            mCloseSidebarNeeded = savedInstanceState.getBoolean(STATE_CLOSE_SIDEBAR_NEEDED);
         }
 
         // find the retained fragment on activity restarts
@@ -369,7 +374,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             mGameSidebar.setVisibility( View.GONE );
             mDrawerList.setVisibility( View.VISIBLE );
+        }
 
+        if(mCloseSidebarNeeded)
+        {
             //Close the drawer without an animation
             final View view = mDrawerLayout.getChildAt(mDrawerLayout.getChildCount() - 1);
             final ViewTreeObserver vto = view.getViewTreeObserver();
@@ -380,7 +388,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 public boolean onPreDraw()
                 {
                     final DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(view.getWidth(), view
-                        .getHeight());
+                            .getHeight());
                     lp.gravity = GravityCompat.START;
                     view.setLayoutParams(lp);
                     view.setLeft(-view.getMeasuredWidth());
@@ -400,6 +408,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( mSelectedItem != null )
             savedInstanceState.putString( STATE_SIDEBAR, mSelectedItem.md5 );
         savedInstanceState.putBoolean(STATE_GALLERY_REFRESH_NEEDED, mRefreshNeeded);
+        savedInstanceState.putBoolean(STATE_CLOSE_SIDEBAR_NEEDED, mCloseSidebarNeeded);
 
         super.onSaveInstanceState( savedInstanceState );
     }
@@ -980,7 +989,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             config.save();
         }
 
-        mRefreshNeeded = true;
+        mCloseSidebarNeeded = true;
         mSelectedItem = null;
         
         String romLegacySaveFileName;
