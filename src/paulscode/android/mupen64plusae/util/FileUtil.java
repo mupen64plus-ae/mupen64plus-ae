@@ -449,7 +449,7 @@ public final class FileUtil
         
         // This entry appears to be a valid ROM, extract it
         Log.i( "FileUtil", "Found zip entry " + zipEntry.getName() );
-
+        makeDirs(destDir.getPath());
         String entryName = new File( zipEntry.getName() ).getName();
         File extractedFile = new File( destDir, entryName );
         try

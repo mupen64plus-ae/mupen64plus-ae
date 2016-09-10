@@ -59,6 +59,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
@@ -71,11 +72,9 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
-import paulscode.android.mupen64plusae.task.ComputeMd5Task.ComputeMd5Listener;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener
@@ -159,35 +158,22 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGlobalPrefs.enforceLocale( this );
 
+        if(!mGlobalPrefs.cacheRecentlyPlayed)
+        {
+            FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
+        }
+
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
-        if( extras != null )
+        if( extras != null)
         {
             final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+
             if( !TextUtils.isEmpty( givenRomPath ) )
             {
-                // Asynchronously compute MD5 and launch game when finished
-                Notifier.showToast( this, getString( R.string.toast_loadingGameInfo ) );
-                final ComputeMd5Task task = new ComputeMd5Task( new File( givenRomPath ), new ComputeMd5Listener()
-                {
-                    @Override
-                    public void onComputeMd5Finished( File file, String md5 )
-                    {
-                        final RomHeader header = new RomHeader(file);
-
-                        final RomDatabase database = RomDatabase.getInstance();
-
-                        if(!database.hasDatabaseFile())
-                        {
-                            database.setDatabaseFile(mAppData.mupen64plus_ini);
-                        }
-
-                        final RomDetail detail = database.lookupByMd5WithFallback( md5, file, header.crc );
-                        launchGameActivity( file.getAbsolutePath(), null, true, md5, header.crc, header.name,
-                            header.countryCode, null, detail.goodName, false );
-                    }
-                } );
-                task.execute();
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
+                launchGameOnCreation(givenRomPath);
+                finish();
             }
         }
 
@@ -225,7 +211,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             toolbar.setNextFocusDownId(firstGridChild.getId());
         }
-
 
         setSupportActionBar( toolbar );
 
@@ -487,6 +472,39 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         return super.onCreateOptionsMenu( menu );
+    }
+
+    private void launchGameOnCreation(String givenRomPath)
+    {
+        String finalRomPath = givenRomPath;
+
+        boolean isZip = givenRomPath.toLowerCase().endsWith("zip");
+
+        if(isZip)
+        {
+            finalRomPath = ExtractFirstROMFromZip(givenRomPath);
+        }
+
+        // Asynchronously compute MD5 and launch game when finished
+        final String computedMd5 = ComputeMd5Task.computeMd5( new File( finalRomPath ) );
+
+        if(computedMd5 != null)
+        {
+            final RomHeader header = new RomHeader(finalRomPath);
+
+            final RomDatabase database = RomDatabase.getInstance();
+
+            if(!database.hasDatabaseFile())
+            {
+                database.setDatabaseFile(mAppData.mupen64plus_ini);
+            }
+
+            final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, new File( finalRomPath), header.crc );
+            String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
+
+            launchGameActivity( finalRomPath, null, true, computedMd5, header.crc, header.name,
+                    header.countryCode, artPath, detail.goodName, false );
+        }
     }
 
     @Override
@@ -895,8 +913,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                         // Delete any old files that already exist inside a zip
                         // file
-                        if ((!isNotOld || !mGlobalPrefs.cacheRecentlyPlayed) &&
-                                !zipPath.equals("") && extracted.equals("true"))
+                        if (!isNotOld && !zipPath.equals("") && extracted.equals("true"))
                         {
                             final File deleteFile = new File(romPath);
 
@@ -957,7 +974,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
-            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting )
+            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting)
     {
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
@@ -994,8 +1011,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         
         String romLegacySaveFileName;
         
-        
-        
+        //Convoluted way of moving legacy save file names to the new format
         if(zipPath != null)
         {
             File zipFile = new File(zipPath);
@@ -1010,6 +1026,50 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Launch the game activity
         ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
                     romArtPath, romGoodName, romLegacySaveFileName, isRestarting );
+    }
+
+    private String ExtractFirstROMFromZip(String zipPath)
+    {
+        try
+        {
+            ZipFile zipFile = new ZipFile( zipPath );
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while( entries.hasMoreElements() )
+            {
+                ZipEntry zipEntry = entries.nextElement();
+
+                try
+                {
+                    InputStream zipStream = zipFile.getInputStream( zipEntry );
+                    File extractedFile = FileUtil.extractRomFile( new File( mGlobalPrefs.unzippedRomsDir ), zipEntry, zipStream );
+
+                    if( extractedFile != null)
+                    {
+                        zipStream.close();
+                        return extractedFile.getPath();
+                    }
+                }
+                catch( IOException e )
+                {
+                    Log.w( "CacheRomInfoService", e );
+                }
+            }
+            zipFile.close();
+        }
+        catch( ZipException e )
+        {
+            Log.w( "GalleryActivity", e );
+        }
+        catch( IOException e )
+        {
+            Log.w( "GalleryActivity", e );
+        }
+        catch( ArrayIndexOutOfBoundsException e )
+        {
+            Log.w( "GalleryActivity", e );
+        }
+
+        return null;
     }
 
     private String ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)
