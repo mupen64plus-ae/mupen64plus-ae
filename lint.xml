@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<lint>
-    <issue id="TypographyDashes" severity="ignore" />
-    <issue id="TypographyEllipsis" severity="ignore" />
-    <issue id="UnusedResources">
-        <ignore path="res/raw/ouya_key.der" />
-        <ignore path="res/values/colors.xml" />
-    </issue>
-</lint>

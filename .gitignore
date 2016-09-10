@@ -23,15 +23,19 @@ gdbserver
 .settings/
 .externalToolBuilders/
 proguard/
+gradle/
+build/
 .buildpath
 .classpath
 .cproject
 .loadpath
 .metadata
 .project
+.gradle
 *.launch
 *.pydevproject
 local.properties
+gradle.properties
 
 # Intellij project files
 .idea/

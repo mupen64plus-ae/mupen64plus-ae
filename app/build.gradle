@@ -1,0 +1,97 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+apply plugin: 'com.android.model.application'
+apply plugin: 'signing'
+
+model {
+
+    android {
+        compileSdkVersion = 24
+        buildToolsVersion = "24.0.0"
+
+        allprojects {
+            tasks.withType(JavaCompile) {
+                options.compilerArgs << "-Xlint:deprecation"
+            }
+        }
+
+        lintOptions.checkReleaseBuilds = false
+
+        defaultConfig {
+            applicationId = "org.mupen64plusae.v3.alpha"
+            minSdkVersion.apiLevel = 15
+            targetSdkVersion.apiLevel = 24
+            versionCode = 83
+            versionName = "3.0.10 (beta)"
+
+            buildConfigFields {
+                create() {
+                    type = "int"
+                    name = "VALUE"
+                    value = "1"
+                }
+            }
+
+            ndk {
+                moduleName = "mupen64plus"
+                stl = 'gnustl_shared'
+            }
+        }
+        buildTypes {
+
+            release {
+                minifyEnabled = false
+                proguardFiles.add(file("proguard-rules.pro"))
+            }
+        }
+
+        sources.main {
+            jni {
+                source {
+                    srcDirs = ['src/main/none']
+                }
+            }
+            jniLibs {
+                source {
+                    srcDirs = ['src/main/libs']
+                }
+            }
+        }
+    }
+}
+
+// call regular ndk-build(.cmd) script from app directory
+task ndkBuild(type: Exec) {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'ndk-build.cmd', '--jobs', Runtime.runtime.availableProcessors(), '-C', file('src/main').absolutePath
+    } else {
+        commandLine 'ndk-build', '--jobs', Runtime.runtime.availableProcessors(), '-C', file('src/main').absolutePath
+    }
+}
+
+task cleanNative(type: Exec, description: 'Clean JNI object files') {
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine "ndk-build.cmd", '-C', file('src/main').absolutePath, 'clean'
+    }else {
+        commandLine 'ndk-build', '-C', file('src/main').absolutePath, 'clean'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn ndkBuild
+}
+
+clean.dependsOn 'cleanNative'
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:preference-v7:24.1.1'
+    compile 'com.android.support:preference-v14:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
+    compile 'com.android.support:support-v13:24.1.1'
+    testCompile 'junit:junit:4.12'
+}
+
