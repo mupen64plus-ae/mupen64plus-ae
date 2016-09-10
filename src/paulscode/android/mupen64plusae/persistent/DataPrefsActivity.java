@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,13 +38,14 @@ import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmLi
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 
 public class DataPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
-    PromptConfirmListener
+    PromptConfirmListener, SharedPreferences.OnSharedPreferenceChangeListener
 {
     private static final int RESET_GLOBAL_PREFS_CONFIRM_DIALOG_ID = 0;
     private static final String RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE = "RESET_GLOBAL_PREFS_CONFIRM_DIALOG_STATE";
 
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String PATH_GAME_SAVES = "pathGameSaves";
+    private static final String PATH_APP_DATA = "pathAppData";
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
 
@@ -72,6 +74,21 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     }
 
     @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        mPrefs.registerOnSharedPreferenceChangeListener( this );
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        mPrefs.unregisterOnSharedPreferenceChangeListener( this );
+    }
+
+    @Override
     public boolean onPreferenceClick(Preference preference)
     {
         // Handle the clicks on certain menu items that aren't actually
@@ -88,8 +105,10 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         }
         else if (key.equals(PATH_GAME_SAVES))
         {
-            //Force reload of assets
-            mAppData.putAssetVersion( 0 );
+            return false;
+        }
+        else if (key.equals(PATH_APP_DATA))
+        {
             return false;
         }
         else
@@ -141,5 +160,23 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.setOnPreferenceClickListener(this, ACTION_RELOAD_ASSETS, this);
         PrefUtil.setOnPreferenceClickListener(this, ACTION_RESET_USER_PREFS, this);
         PrefUtil.setOnPreferenceClickListener(this, PATH_GAME_SAVES, this);
+        PrefUtil.setOnPreferenceClickListener(this, PATH_APP_DATA, this);
+    }
+
+    @TargetApi( 16 )
+    @Override
+    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
+    {
+        if(key.equals(PATH_APP_DATA))
+        {
+            //Force reload of assets
+            mAppData.putAssetVersion( 0 );
+            ActivityHelper.startSplashActivity(this);
+
+            if( AppData.IS_JELLY_BEAN)
+            {
+                finishAffinity();
+            }
+        }
     }
 }

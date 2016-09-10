@@ -549,6 +549,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             ActivityHelper.startInputPrefsActivity( this );
             return true;
         case R.id.menuItem_categoryData:
+            mRefreshNeeded = true;
             ActivityHelper.startDataPrefsActivity( this );
             return true;
         case R.id.menuItem_emulationProfiles:
@@ -820,6 +821,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     void refreshGrid( ){
 
         //Reload global prefs
+        mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
         final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );

@@ -751,7 +751,7 @@ public class GamePrefs
     public static String getGameDataPath( String romMd5, String headerName, String countrySymbol,
         AppData appData)
     {
-        return String.format( "%s/GameData/%s %s %s", appData.userDataDir, headerName, countrySymbol, romMd5 );
+        return String.format( "%s/%s %s %s", appData.gameDataDir, headerName, countrySymbol, romMd5 );
     }
 
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,

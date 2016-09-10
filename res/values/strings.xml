@@ -499,6 +499,7 @@
     <string name="pathHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Game save folder</string>
+    <string name="pathAppData_title">App data folder</string>
 
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multi-player</string>

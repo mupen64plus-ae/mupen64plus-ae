@@ -113,7 +113,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize2";
     private static final String TOUCHSCREEN_AUTO_HOLD = "touchscreenAutoHold";
     private static final String NAVIGATION_MODE = "navigationMode";
-    private static final String DATA_PATH = "pathGameSaves";
+    private static final String GAME_DATA_PATH = "pathGameSaves";
+    private static final String APP_DATA_PATH = "pathAppData";
 
     /*
      * (non-Javadoc)
@@ -129,14 +130,21 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
 
         //Check for invalid data path
-        String dataPathString = mPrefs.getString( DATA_PATH, null );
         String defaultRelPath = res.getString(R.string.pathGameSaves_default);
 
-        if(TextUtils.isEmpty(dataPathString) || dataPathString.contains(defaultRelPath))
+        String gameDataPathString = mPrefs.getString( GAME_DATA_PATH, null );
+        if(TextUtils.isEmpty(gameDataPathString) || gameDataPathString.contains(defaultRelPath))
         {
             String newDefValue = PathPreference.validate(defaultRelPath);
+            mPrefs.edit().putString( GAME_DATA_PATH, newDefValue ).commit();
+            gameDataPathString = mPrefs.getString( GAME_DATA_PATH, null );
+        }
 
-            mPrefs.edit().putString( DATA_PATH, newDefValue ).commit();
+
+        String appDataPathString = mPrefs.getString( APP_DATA_PATH, null );
+        if(TextUtils.isEmpty(appDataPathString) || appDataPathString.contains(defaultRelPath))
+        {
+            mPrefs.edit().putString( APP_DATA_PATH, gameDataPathString ).commit();
         }
 
         // Get app data and user preferences

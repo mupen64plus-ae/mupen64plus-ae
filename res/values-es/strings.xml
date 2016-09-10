@@ -456,6 +456,7 @@
   <string name="pathHiResTextures_summary">Aplicar texturas personalizadas (en formato ZIP) a un juego</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Directorio de partidas de juego</string>
+  <string name="pathAppData_title">Directorio de datos de la applicación</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multijugador</string>
   <string name="playerMap_summary">Definir los mandos de cada jugador</string>

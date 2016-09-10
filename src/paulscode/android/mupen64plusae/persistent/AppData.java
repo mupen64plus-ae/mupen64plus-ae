@@ -197,6 +197,9 @@ public class AppData
 
     /** The parent directory containing all user-writable data files. */
     public final String userDataDir;
+
+    /** The parent directory containing all user-writable data files. */
+    public final String gameDataDir;
     
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
@@ -239,15 +242,24 @@ public class AppData
         appVersionCode = versionCode;
         
         // Directories
-        String tempUserDataDir = mPreferences.getString( "pathGameSaves", "" );
+
         String defaultRelPath = context.getString(R.string.pathGameSaves_default);
 
+        //App data
+        String tempUserDataDir = mPreferences.getString( "pathAppData", "" );
         if(TextUtils.isEmpty(tempUserDataDir) || tempUserDataDir.contains(defaultRelPath))
         {
             tempUserDataDir = PathPreference.validate(defaultRelPath);
         }
-
         userDataDir = tempUserDataDir;
+
+        //Game data
+        String tempGameDataDir = mPreferences.getString( "pathGameSaves", "" );
+        if(TextUtils.isEmpty(tempGameDataDir) || tempGameDataDir.contains(defaultRelPath))
+        {
+            tempGameDataDir = userDataDir;
+        }
+        gameDataDir = tempGameDataDir + "/GameData";
 
         coreSharedDataDir = userDataDir + "/AppData";
         tempDir = coreSharedDataDir + "/tmp";
