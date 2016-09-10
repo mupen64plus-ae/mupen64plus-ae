@@ -311,7 +311,6 @@
   <string name="pathHiResTextures_summary">Primjeni korisničke teksture (ZIP format)</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Mapa spremnika</string>
-  <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Više igrača</string>
   <string name="playerMap_summary">Definiranje kontrolera svakog igrača</string>

@@ -311,7 +311,6 @@
   <string name="pathHiResTextures_summary">Benutzerdefinierte Texturen (ZIP-Format) auf ein Spiel anwenden</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Speicherstand-Ordner</string>
-  <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multiplayer</string>
   <string name="playerMap_summary">Controller jedes Spielers festlegen</string>

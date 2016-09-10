@@ -311,7 +311,6 @@
   <string name="pathHiResTextures_summary">Käytä kustom tekstuureja (ZIP muoto) peliin</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Pelitallennuskansio</string>
-  <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Moninpeli</string>
   <string name="playerMap_summary">Määritä kunkin pelaajan ohjaimet</string>

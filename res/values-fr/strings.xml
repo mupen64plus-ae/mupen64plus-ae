@@ -314,7 +314,6 @@
   <string name="pathHiResTextures_summary">Utiliser des textures personnalisées (au format .ZIP) dans un jeu</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Dossier de sauvegardes</string>
-  <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multijoueur</string>
   <string name="playerMap_summary">Définir la manette de chaque joueur</string>

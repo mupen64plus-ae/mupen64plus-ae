@@ -311,7 +311,6 @@
   <string name="pathHiResTextures_summary">Aplicar texturas customizadas (formato ZIP) para um jogo</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Diretório para salvar jogo</string>
-  <string name="pathGameSaves_default">!mupen64plusae-v3-alpha</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Multi-jogador</string>
   <string name="playerMap_summary">Define controle de cada jogador</string>
