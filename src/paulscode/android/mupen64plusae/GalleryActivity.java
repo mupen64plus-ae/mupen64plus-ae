@@ -138,13 +138,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // specified in the manifest (launchMode = singleTask). In that situation, any activities
         // above this on the stack (e.g. GameActivity, GamePrefsActivity) will be destroyed
         // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
-        // called again on this instance. Currently, the only info that may be passed via the intent
-        // is the selected game path, so we only need to refresh that aspect of the UI. This will
-        // happen anyhow in onResume(), so we don't really need to do much here.
+        // called again on this instance.
         super.onNewIntent( intent );
 
         // Only remember the last intent used
         setIntent( intent );
+
+        // Get the ROM path if it was passed from another activity/app
+        final Bundle extras = getIntent().getExtras();
+        if( extras != null)
+        {
+            final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+
+            if( !TextUtils.isEmpty( givenRomPath ) )
+            {
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
+                launchGameOnCreation(givenRomPath);
+                finish();
+            }
+        }
     }
 
     @SuppressWarnings("deprecation")
