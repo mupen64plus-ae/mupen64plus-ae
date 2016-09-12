@@ -15,5 +15,5 @@ for i in $M64P_COMPONENTS; do
     echo
     echo
     echo "DIFF: mupen64plus-${i}"
-    git --no-pager diff --color=auto --stat "m64p-${i}/master:src/" "HEAD:jni/mupen64plus-${i}/src/"
+    git --no-pager diff --color=auto --stat "m64p-${i}/master:src/" "HEAD:app/src/main/jni/mupen64plus-${i}/src/"
 done
