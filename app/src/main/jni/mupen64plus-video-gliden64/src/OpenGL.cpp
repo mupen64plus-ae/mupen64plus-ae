@@ -112,6 +112,18 @@ bool isGLError()
 
 bool OGLVideo::isExtensionSupported(const char *extension)
 {
+#ifdef GL_NUM_EXTENSIONS
+	GLint count = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &count);
+	for (u32 i = 0; i < count; ++i) {
+		const char* name = (const char*)glGetStringi(GL_EXTENSIONS, i);
+		if (name == nullptr)
+			continue;
+		if (strcmp(extension, name) == 0)
+			return true;
+	}
+	return false;
+#else
 	GLubyte *where = (GLubyte *)strchr(extension, ' ');
 	if (where || *extension == '\0')
 		return false;
@@ -133,6 +145,7 @@ bool OGLVideo::isExtensionSupported(const char *extension)
 	}
 
 	return false;
+#endif // GL_NUM_EXTENSIONS
 }
 
 void OGLVideo::start()
@@ -459,6 +472,7 @@ void OGLRender::TexrectDrawer::add()
 			draw();
 			memcpy(pRect, rect, sizeof(rect));
 			render._updateTextures(rsTexRect);
+			CombinerInfo::get().updateParameters(rsTexRect);
 		}
 	}
 
@@ -476,7 +490,7 @@ void OGLRender::TexrectDrawer::add()
 
 		CombinerInfo::get().update();
 		glDisable(GL_DEPTH_TEST);
-		glDepthMask(FALSE);
+		glDepthMask(GL_FALSE);
 		glDisable(GL_BLEND);
 
 		if (m_pBuffer == nullptr)
@@ -1045,16 +1059,16 @@ void OGLRender::updateScissor(FrameBuffer * _pBuffer) const
 void OGLRender::_updateDepthUpdate() const
 {
 	if (gDP.otherMode.depthUpdate != 0)
-		glDepthMask( TRUE );
+		glDepthMask( GL_TRUE );
 	else
-		glDepthMask( FALSE );
+		glDepthMask( GL_FALSE );
 }
 
 void OGLRender::_updateDepthCompare() const
 {
-	if (config.frameBufferEmulation.N64DepthCompare) {
+	if (config.frameBufferEmulation.N64DepthCompare != 0) {
 		glDisable( GL_DEPTH_TEST );
-		glDepthMask( FALSE );
+		glDepthMask( GL_FALSE );
 	} else if ((gDP.changed & (CHANGED_RENDERMODE | CHANGED_CYCLETYPE)) != 0) {
 		if (((gSP.geometryMode & G_ZBUFFER) || gDP.otherMode.depthSource == G_ZS_PRIM) && gDP.otherMode.cycleType <= G_CYC_2CYCLE) {
 			if (gDP.otherMode.depthCompare != 0) {
@@ -1161,12 +1175,17 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 
 #ifndef GLES2
 	if (gDP.colorImage.address == gDP.depthImageAddress &&
-		gDP.otherMode.cycleType != G_CYC_FILL &&
+		config.generalEmulation.enableFragmentDepthWrite != 0 &&
+		config.frameBufferEmulation.N64DepthCompare == 0 &&
 		(config.generalEmulation.hacks & hack_ZeldaMM) == 0
 	) {
-		FrameBuffer * pCurBuf = frameBufferList().getCurrent();
-		if (pCurBuf != nullptr && pCurBuf->m_pDepthBuffer != nullptr) {
-			if (gDP.otherMode.depthCompare != 0) {
+		// Current render target is depth buffer.
+		// Shader will set gl_FragDepth to shader color, see ShaderCombiner ctor
+		// Here we enable depth buffer write.
+		if (gDP.otherMode.depthCompare != 0) {
+			// Render to depth buffer with depth compare. Need to get copy of current depth buffer.
+			FrameBuffer * pCurBuf = frameBufferList().getCurrent();
+			if (pCurBuf != nullptr && pCurBuf->m_pDepthBuffer != nullptr) {
 				CachedTexture * pDepthTexture = pCurBuf->m_pDepthBuffer->copyDepthBufferTexture(pCurBuf);
 				if (pDepthTexture == nullptr)
 					return;
@@ -1176,11 +1195,14 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			}
-			glEnable(GL_DEPTH_TEST);
-			glDepthFunc(GL_ALWAYS);
-			glDepthMask(TRUE);
-			gDP.changed |= CHANGED_RENDERMODE;
+		} else if (frameBufferList().getCurrent() == nullptr) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_ZERO, GL_ONE);
 		}
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
+		glDepthMask(GL_TRUE);
+		gDP.changed |= CHANGED_RENDERMODE;
 	}
 #endif
 }
@@ -1320,7 +1342,9 @@ void OGLRender::drawTriangles()
 	glDrawElements(GL_TRIANGLES, triangles.num, GL_UNSIGNED_BYTE, triangles.elements);
 //	glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
 
-	if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdSoftwareRender && gDP.otherMode.depthUpdate != 0) {
+	if (config.frameBufferEmulation.enable != 0 &&
+		config.frameBufferEmulation.copyDepthToRDRAM == Config::cdSoftwareRender &&
+		gDP.otherMode.depthUpdate != 0) {
 		renderTriangles(triangles.vertices, triangles.elements, triangles.num);
 		FrameBuffer * pCurrentDepthBuffer = frameBufferList().findBuffer(gDP.depthImageAddress);
 		if (pCurrentDepthBuffer != nullptr)
@@ -1443,8 +1467,12 @@ bool texturedRectShadowMap(const OGLRender::TexturedRectParams &)
 	if (pCurrentBuffer != nullptr) {
 		if (gDP.textureImage.size == 2 && gDP.textureImage.address >= gDP.depthImageAddress &&  gDP.textureImage.address < (gDP.depthImageAddress + gDP.colorImage.width*gDP.colorImage.width * 6 / 4)) {
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
-			pCurrentBuffer->m_pDepthBuffer->activateDepthBufferTexture(pCurrentBuffer);
-			SetDepthFogCombiner();
+			if (video().getRender().isImageTexturesSupported()) {
+				pCurrentBuffer->m_pDepthBuffer->activateDepthBufferTexture(pCurrentBuffer);
+				SetDepthFogCombiner();
+			}
+			else
+				return true;
 #else
 			return true;
 #endif
@@ -1593,9 +1621,11 @@ void OGLRender::drawTexturedRect(const TexturedRectParams & _params)
 {
 	gSP.changed &= ~CHANGED_GEOMETRYMODE; // Don't update cull mode
 	if (!m_texrectDrawer.isEmpty()) {
-		CombinerInfo::get().update();
+		CombinerInfo & cmbInfo = CombinerInfo::get();
+		cmbInfo.update();
 		currentCombiner()->updateRenderState();
 		_updateTextures(rsTexRect);
+		cmbInfo.updateParameters(rsTexRect);
 		if (CombinerInfo::get().isChanged())
 			_setTexCoordArrays();
 	} else {
@@ -1827,21 +1857,21 @@ void OGLRender::drawText(const char *_pText, float x, float y)
 	TextDrawer::get().renderText(_pText, x, y);
 }
 
-void OGLRender::clearDepthBuffer(u32 _uly, u32 _lry)
+void OGLRender::clearDepthBuffer(u32 _ulx, u32 _uly, u32 _lrx, u32 _lry)
 {
 	if (!_canDraw())
 		return;
 
-	depthBufferList().clearBuffer(_uly, _lry);
+	depthBufferList().clearBuffer(_ulx, _uly, _lrx, _lry);
 
 	glDisable( GL_SCISSOR_TEST );
 
 #ifdef ANDROID
-	glDepthMask( FALSE );
+	glDepthMask( GL_FALSE );
 	glClear( GL_DEPTH_BUFFER_BIT );
 #endif
 
-	glDepthMask( TRUE );
+	glDepthMask( GL_TRUE );
 	glClear( GL_DEPTH_BUFFER_BIT );
 
 	_updateDepthUpdate();
@@ -1919,7 +1949,7 @@ void OGLRender::_initStates()
 		glDisable( GL_DEPTH_TEST );
 		glDisable( GL_POLYGON_OFFSET_FILL );
 		glDepthFunc( GL_ALWAYS );
-		glDepthMask( FALSE );
+		glDepthMask( GL_FALSE );
 	} else {
 #ifdef ANDROID
 		if(config.generalEmulation.forcePolygonOffset != 0)
@@ -2085,7 +2115,7 @@ void OGLRender::copyTexturedRect(GLint _srcX0, GLint _srcY0, GLint _srcX1, GLint
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
-	glDepthMask(FALSE);
+	glDepthMask(GL_FALSE);
 	glDisable(GL_SCISSOR_TEST);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glEnable(GL_SCISSOR_TEST);

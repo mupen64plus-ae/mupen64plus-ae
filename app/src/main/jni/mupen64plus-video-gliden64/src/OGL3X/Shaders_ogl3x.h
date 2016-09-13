@@ -271,14 +271,15 @@ static const char* fragment_shader_header_calc_light =
 static const char* fragment_shader_header_mipmap =
 	"mediump float mipmap(out lowp vec4 readtex0, out lowp vec4 readtex1);\n";
 static const char* fragment_shader_header_readTex =
-	"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in bool fbFixedAlpha);\n";
+	"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in lowp int fbFixedAlpha);\n";
 #ifdef GL_MULTISAMPLING_SUPPORT
 static const char* fragment_shader_header_readTexMS =
-	"lowp vec4 readTexMS(in lowp sampler2DMS mstex, in mediump vec2 texCoord, in lowp int fbMonochrome, in bool fbFixedAlpha);\n";
+	"lowp vec4 readTexMS(in lowp sampler2DMS mstex, in mediump vec2 texCoord, in lowp int fbMonochrome, in lowp int fbFixedAlpha);\n";
 #endif // GL_MULTISAMPLING_SUPPORT
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 static const char* fragment_shader_header_depth_compare =
-	"bool depth_compare();\n";
+"bool depth_compare();\n"
+"bool depth_render(highp float Z);\n";
 #endif  // GL_IMAGE_TEXTURES_SUPPORT
 static const char* fragment_shader_header_noise_dither =
 	"void colorNoiseDither(in lowp float _noise, inout lowp vec3 _color);\n"
@@ -320,12 +321,15 @@ static const char* fragment_shader_header_main =
 "void main()						\n"
 "{									\n"
 "  writeDepth();                                                                                    \n"
-"  lowp mat4 muxPM = mat4(vec4(0.0), vec4(0.0), uBlendColor, uFogColor);							\n"
-"  lowp vec4 muxA = vec4(0.0, uFogColor.a, vShadeColor.a, 0.0);										\n"
-"  lowp vec4 muxB = vec4(0.0, 1.0, 1.0, 0.0);														\n"
 "  lowp vec4 vec_color, combined_color;																\n"
 "  lowp float alpha1, alpha2;																		\n"
 "  lowp vec3 color1, color2, input_color;															\n"
+;
+
+static const char* fragment_shader_blend_mux =
+"  lowp mat4 muxPM = mat4(vec4(0.0), vec4(0.0), uBlendColor, uFogColor);							\n"
+"  lowp vec4 muxA = vec4(0.0, uFogColor.a, vShadeColor.a, 0.0);										\n"
+"  lowp vec4 muxB = vec4(0.0, 1.0, 1.0, 0.0);														\n"
 ;
 
 static const char* fragment_shader_dither =
@@ -458,13 +462,13 @@ static const char* fragment_shader_fake_mipmap =
 
 static const char* fragment_shader_readtex =
 AUXILIARY_SHADER_VERSION
-"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in bool fbFixedAlpha)	\n"
+"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in lowp int fbFixedAlpha)	\n"
 "{												\n"
 "  lowp vec4 texColor = texture(tex, texCoord);	\n"
 "  if (fbMonochrome == 1) texColor = vec4(texColor.r);	\n"
 "  else if (fbMonochrome == 2) 						\n"
 "    texColor.rgb = vec3(dot(vec3(0.2126, 0.7152, 0.0722), texColor.rgb));	\n"
-"  if (fbFixedAlpha) texColor.a = 0.825;		\n"
+"  if (fbFixedAlpha == 1) texColor.a = 0.825;		\n"
 "  return texColor;								\n"
 "}												\n"
 ;
@@ -486,7 +490,7 @@ AUXILIARY_SHADER_VERSION
 "  lowp vec4 c2 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));	\n"
 "  return c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0);				\n"
 "}																			\n"
-"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in bool fbFixedAlpha)	\n"
+"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in lowp int fbFixedAlpha)	\n"
 "{																			\n"
 "  lowp vec4 texStandard = texture(tex, texCoord); 							\n"
 "  lowp vec4 tex3Point = filter3point(tex, texCoord); 						\n"
@@ -494,7 +498,7 @@ AUXILIARY_SHADER_VERSION
 "  if (fbMonochrome == 1) texColor = vec4(texColor.r);						\n"
 "  else if (fbMonochrome == 2) 												\n"
 "    texColor.rgb = vec3(dot(vec3(0.2126, 0.7152, 0.0722), texColor.rgb));	\n"
-"  if (fbFixedAlpha) texColor.a = 0.825;									\n"
+"  if (fbFixedAlpha == 1) texColor.a = 0.825;									\n"
 "  return texColor;															\n"
 "}																			\n"
 ;
@@ -512,7 +516,7 @@ AUXILIARY_SHADER_VERSION
 "  return texel * uMSAAScale;												\n"
 "}																			\n"
 "																			\n"
-"lowp vec4 readTexMS(in lowp sampler2DMS mstex, in mediump vec2 texCoord, in lowp int fbMonochrome, in bool fbFixedAlpha)	\n"
+"lowp vec4 readTexMS(in lowp sampler2DMS mstex, in mediump vec2 texCoord, in lowp int fbMonochrome, in lowp int fbFixedAlpha)	\n"
 "{																			\n"
 "  mediump vec2 msTexSize = vec2(textureSize(mstex));						\n"
 "  mediump ivec2 itexCoord = ivec2(msTexSize * texCoord);					\n"
@@ -520,7 +524,7 @@ AUXILIARY_SHADER_VERSION
 "  if (fbMonochrome == 1) texColor = vec4(texColor.r);						\n"
 "  else if (fbMonochrome == 2) 												\n"
 "    texColor.rgb = vec3(dot(vec3(0.2126, 0.7152, 0.0722), texColor.rgb));	\n"
-"  if (fbFixedAlpha) texColor.a = 0.825;									\n"
+"  if (fbFixedAlpha == 1) texColor.a = 0.825;									\n"
 "  return texColor;															\n"
 "}																			\n"
 ;
@@ -623,6 +627,30 @@ static const char* depth_compare_shader_float =
 "}														\n"
 ;
 
+static const char* depth_render_shader =
+#ifndef GLESX
+"#version 430								\n"
+"layout(binding = 2, rg32f) uniform coherent image2D uDepthImage;\n"
+#else
+"layout(binding = 2, rgba32f) highp uniform coherent image2D uDepthImage;\n"
+#endif
+"uniform lowp int uEnableDepthCompare;					\n"
+"bool depth_render(highp float Z)						\n"
+"{														\n"
+"  ivec2 coord = ivec2(gl_FragCoord.xy);				\n"
+"  if (uEnableDepthCompare != 0) {						\n"
+"    highp vec4 depth = imageLoad(uDepthImage,coord);	\n"
+"    highp float bufZ = depth.r;						\n"
+"    highp float curZ = gl_FragDepth;					\n"
+"    if (curZ >= bufZ) return false;					\n"
+"  }													\n"
+"  highp vec4 depth_out = vec4(Z, 0.0, 1.0, 1.0);		\n"
+"  imageStore(uDepthImage,coord, depth_out);			\n"
+"  memoryBarrierImage();								\n"
+"  return true;											\n"
+"}														\n"
+;
+
 static const char* shadow_map_fragment_shader_float =
 #ifndef GLESX
 "#version 420 core											\n"
@@ -704,16 +732,6 @@ MAIN_SHADER_VERSION
 "}														\n"
 ;
 #endif
-
-static const char* depth_texture_fragment_shader =
-MAIN_SHADER_VERSION
-"uniform sampler2D uTex0;						\n"
-"in mediump vec2 vTexCoord0;					\n"
-"void main()									\n"
-"{												\n"
-"  gl_FragDepth = texture(uTex0, vTexCoord0).r;	\n"
-"}												\n"
-;
 
 const char * strTexrectDrawerVertexShader =
 MAIN_SHADER_VERSION

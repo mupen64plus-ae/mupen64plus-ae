@@ -27,11 +27,11 @@ static GLuint  g_calc_mipmap_shader_object;
 static GLuint  g_calc_noise_shader_object;
 static GLuint  g_write_depth_shader_object;
 static GLuint  g_calc_depth_shader_object;
+static GLuint  g_render_depth_shader_object;
 static GLuint  g_readtex_shader_object;
 static GLuint  g_readtex_ms_shader_object;
 static GLuint  g_dither_shader_object;
 static GLuint  g_monochrome_image_program = 0;
-static GLuint  g_depth_texture_program = 0;
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 GLuint g_draw_shadow_map_program = 0;
@@ -97,6 +97,8 @@ void NoiseTexture::destroy()
 
 void NoiseTexture::update()
 {
+	if (m_PBO == 0 || m_pTexture == nullptr)
+		return;
 	if (m_DList == video().getBuffersSwapCount() || config.generalEmulation.enableNoise == 0)
 		return;
 	const u32 dataSize = VI.width*VI.height;
@@ -228,29 +230,13 @@ void InitShaderCombiner()
 	const int texLoc = glGetUniformLocation(g_monochrome_image_program, "uColorImage");
 	glUniform1i(texLoc, 0);
 
-	if (config.generalEmulation.enableFragmentDepthWrite != 0 &&
-		(config.generalEmulation.hacks&hack_LoadDepthTextures) != 0) {
-		GLuint depth_texture_shader_object = _createShader(GL_FRAGMENT_SHADER, depth_texture_fragment_shader);
-		g_depth_texture_program = glCreateProgram();
-		glBindAttribLocation(g_depth_texture_program, SC_POSITION, "aPosition");
-		glBindAttribLocation(g_depth_texture_program, SC_TEXCOORD0, "aTexCoord0");
-		glAttachShader(g_depth_texture_program, g_vertex_shader_object);
-		glAttachShader(g_depth_texture_program, depth_texture_shader_object);
-		glLinkProgram(g_depth_texture_program);
-		glDeleteShader(depth_texture_shader_object);
-		assert(checkProgramLinkStatus(g_depth_texture_program));
-		glUseProgram(g_depth_texture_program);
-		int loc = glGetUniformLocation(g_depth_texture_program, "uTex0");
-		glUniform1i(loc, 0);
-		loc = glGetUniformLocation(g_depth_texture_program, "uRenderState");
-		glUniform1i(loc, OGLRender::rsTexRect);
-	}
-
 	glUseProgram(0);
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
-	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
+	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0) {
 		g_calc_depth_shader_object = _createShader(GL_FRAGMENT_SHADER, depth_compare_shader_float);
+		g_render_depth_shader_object = _createShader(GL_FRAGMENT_SHADER, depth_render_shader);
+	}
 
 	InitZlutTexture();
 	InitShadowMapShader();
@@ -280,6 +266,8 @@ void DestroyShaderCombiner() {
 	g_write_depth_shader_object = 0;
 	glDeleteShader(g_dither_shader_object);
 	g_dither_shader_object = 0;
+	glDeleteShader(g_render_depth_shader_object);
+	g_render_depth_shader_object = 0;
 	glDeleteShader(g_calc_depth_shader_object);
 	g_calc_depth_shader_object = 0;
 #endif // GLESX
@@ -287,8 +275,6 @@ void DestroyShaderCombiner() {
 	glDeleteProgram(g_monochrome_image_program);
 	g_monochrome_image_program = 0;
 	noiseTex.destroy();
-	glDeleteProgram(g_depth_texture_program);
-	g_depth_texture_program = 0;
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 	DestroyZlutTexture();
@@ -364,6 +350,8 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 		strFragmentShader.append(fragment_shader_header_calc_light);
 
 	strFragmentShader.append(fragment_shader_header_main);
+	if (config.generalEmulation.enableLegacyBlending == 0)
+		strFragmentShader.append(fragment_shader_blend_mux);
 
 	if (bUseLod) {
 		strFragmentShader.append("  lowp vec4 readtex0, readtex1; \n");
@@ -373,37 +361,41 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 		if (usesTile(0)) {
 			if (config.video.multisampling > 0) {
 				strFragmentShader.append("  lowp vec4 readtex0; \n");
-				strFragmentShader.append("  if (uMSTexEnabled[0] == 0) readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0] != 0); \n");
-				strFragmentShader.append("  else readtex0 = readTexMS(uMSTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0] != 0); \n");
+				strFragmentShader.append("  if (uMSTexEnabled[0] == 0) readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0]); \n");
+				strFragmentShader.append("  else readtex0 = readTexMS(uMSTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0]); \n");
 			} else
-				strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0] != 0); \n");
+				strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0]); \n");
 		}
 		if (usesTile(1)) {
 			if (config.video.multisampling > 0) {
 				strFragmentShader.append("  lowp vec4 readtex1; \n");
-				strFragmentShader.append("  if (uMSTexEnabled[1] == 0) readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1] != 0); \n");
-				strFragmentShader.append("  else readtex1 = readTexMS(uMSTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1] != 0); \n");
+				strFragmentShader.append("  if (uMSTexEnabled[1] == 0) readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1]); \n");
+				strFragmentShader.append("  else readtex1 = readTexMS(uMSTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1]); \n");
 			} else
-				strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1] != 0); \n");
+				strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1]); \n");
 		}
 #else
 		if (usesTile(0))
-			strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0] != 0); \n");
+			strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0]); \n");
 		if (usesTile(1))
-			strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1] != 0); \n");
+			strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1]); \n");
 #endif // GL_MULTISAMPLING_SUPPORT
 	}
+
 	if (bUseHWLight)
 		strFragmentShader.append("  calc_light(vNumLights, vShadeColor.rgb, input_color); \n");
 	else
 		strFragmentShader.append("  input_color = vShadeColor.rgb;\n");
+
 	strFragmentShader.append("  vec_color = vec4(input_color, vShadeColor.a); \n");
 	strFragmentShader.append(strCombiner);
 
-	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
-		strFragmentShader.append("  if (!depth_compare()) discard; \n");
-
-	if (config.generalEmulation.enableFragmentDepthWrite != 0){
+	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0) {
+		strFragmentShader.append(
+			"  if (uRenderTarget != 0) { if (!depth_render(fragColor.r)) discard; } \n"
+			"  else if (!depth_compare()) discard; \n"
+		);
+	} else if (config.generalEmulation.enableFragmentDepthWrite != 0) {
 		strFragmentShader.append(
 			"  if (uRenderTarget != 0) {					\n"
 			"    if (uRenderTarget > 1) {					\n"
@@ -440,8 +432,10 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 #endif
 	}
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
-	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
+	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0) {
 		strFragmentShader.append(depth_compare_shader_float);
+		strFragmentShader.append(depth_render_shader);
+	}
 #endif
 	if (config.generalEmulation.enableNoise != 0) {
 		strFragmentShader.append(fragment_shader_noise);
@@ -477,8 +471,10 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 		if (config.video.multisampling > 0)
 			glAttachShader(m_program, g_readtex_ms_shader_object);
 	}
-	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0)
+	if (video().getRender().isImageTexturesSupported() && config.frameBufferEmulation.N64DepthCompare != 0) {
 		glAttachShader(m_program, g_calc_depth_shader_object);
+		glAttachShader(m_program, g_render_depth_shader_object);
+	}
 	if (config.generalEmulation.enableNoise != 0) {
 		glAttachShader(m_program, g_calc_noise_shader_object);
 		glAttachShader(m_program, g_dither_shader_object);
@@ -609,14 +605,14 @@ void ShaderCombiner::updateRenderState(bool _bForce)
 
 void ShaderCombiner::updateRenderTarget(bool _bForce)
 {
+	if (config.generalEmulation.enableFragmentDepthWrite == 0)
+		return;
+
 	int renderTarget = 0;
 	if (gDP.colorImage.address == gDP.depthImageAddress &&
-		gDP.otherMode.cycleType != G_CYC_FILL &&
 		(config.generalEmulation.hacks & hack_ZeldaMM) == 0
 	) {
-		FrameBuffer * pCurBuf = frameBufferList().getCurrent();
-		if (pCurBuf != nullptr && pCurBuf->m_pDepthBuffer != nullptr)
-			renderTarget = gDP.otherMode.depthCompare + 1;
+		renderTarget = gDP.otherMode.depthCompare + 1;
 	}
 	m_uniforms.uRenderTarget.set(renderTarget, _bForce);
 }
@@ -910,14 +906,4 @@ void SetMonochromeCombiner()
 {
 	glUseProgram(g_monochrome_image_program);
 	gDP.changed |= CHANGED_COMBINE;
-}
-
-bool SetDepthTextureCombiner()
-{
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_ALWAYS);
-	glDepthMask(TRUE);
-	glUseProgram(g_depth_texture_program);
-	gDP.changed |= CHANGED_COMBINE | CHANGED_RENDERMODE;
-	return true;
 }

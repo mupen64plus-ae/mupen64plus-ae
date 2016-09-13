@@ -65,7 +65,6 @@ if(EXISTS "/opt/vc/include/bcm_host.h")
   add_definitions(
     -DVC
     -DUSE_DEPTH_RENDERBUFFER
-    -DARM_ASM
   )
   include_directories(
     "/opt/vc/include"
@@ -167,7 +166,6 @@ if(PANDORA)
   -DPANDORA
   -DPowerVR_SGX_540
   -DGLES2
-  -DARM_ASM
    )
 endif(PANDORA)
 
@@ -185,14 +183,20 @@ if(VEC4_OPT)
   )
 endif(VEC4_OPT)
 
-if(CRC_OPT)
-  list(APPEND GLideN64_SOURCES
-    CRC_OPT.cpp
-  )
+if(CRC_OPT OR CRC_ARMV8)
   list(REMOVE_ITEM GLideN64_SOURCES
     CRC.cpp
   )
-endif(CRC_OPT)
+  if(CRC_OPT)
+    list(APPEND GLideN64_SOURCES
+      CRC_OPT.cpp
+    )
+  elseif(CRC_ARMV8)
+    list(APPEND GLideN64_SOURCES
+      CRC_ARMV8.cpp
+    )
+  endif(CRC_OPT)
+endif(CRC_OPT OR CRC_ARMV8)
 
 if(NEON_OPT)
   add_definitions(

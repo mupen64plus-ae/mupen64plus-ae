@@ -382,19 +382,24 @@ CachedTexture * FrameBuffer::_getSubTexture(u32 _t)
 
 CachedTexture * FrameBuffer::getTexture(u32 _t)
 {
+	const bool getDepthTexture = m_isDepthBuffer &&
+								 gDP.colorImage.address == gDP.depthImageAddress &&
+								 m_pDepthBuffer != nullptr &&
+								 (config.generalEmulation.hacks & hack_ZeldaMM) == 0;
+	CachedTexture *pTexture = getDepthTexture ? m_pDepthBuffer->m_pDepthBufferTexture : m_pTexture;
+
 	const u32 shift = (gSP.textureTile[_t]->imageAddress - m_startAddress) >> (m_size - 1);
 	const u32 factor = m_width;
 	if (m_loadType == LOADTYPE_TILE) {
-		m_pTexture->offsetS = (float)(m_loadTileOrigin.uls + (shift % factor));
-		m_pTexture->offsetT = (float)(m_height - (m_loadTileOrigin.ult + shift / factor));
+		pTexture->offsetS = (float)(m_loadTileOrigin.uls + (shift % factor));
+		pTexture->offsetT = (float)(m_height - (m_loadTileOrigin.ult + shift / factor));
 	} else {
-		m_pTexture->offsetS = (float)(shift % factor);
-		m_pTexture->offsetT = (float)(m_height - shift / factor);
+		pTexture->offsetS = (float)(shift % factor);
+		pTexture->offsetT = (float)(m_height - shift / factor);
 	}
 
-	CachedTexture *pTexture = m_pTexture;
 //	if (gSP.textureTile[_t]->loadType == LOADTYPE_TILE && pTexture->size > 1)
-	if (gSP.textureTile[_t]->clamps == 0 || gSP.textureTile[_t]->clampt == 0)
+	if (!getDepthTexture && (gSP.textureTile[_t]->clamps == 0 || gSP.textureTile[_t]->clampt == 0))
 		pTexture = _getSubTexture(_t);
 
 	pTexture->scaleS = m_scaleX / (float)pTexture->realWidth;
@@ -548,7 +553,11 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 	}
 
 	OGLVideo & ogl = video();
+	bool bPrevIsDepth = false;
+
 	if (m_pCurrent != nullptr) {
+		bPrevIsDepth = m_pCurrent->m_isDepthBuffer;
+
 		// Correct buffer's end address
 		if (!m_pCurrent->isAuxiliary()) {
 			if (gDP.colorImage.height > 200)
@@ -582,7 +591,7 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 		if ((m_pCurrent->m_startAddress != _address) ||
 			(m_pCurrent->m_width != _width) ||
 			//(current->height != height) ||
-			//(current->size != size) ||  // TODO FIX ME
+			(m_pCurrent->m_size < _size) ||
 			(m_pCurrent->m_scaleX != scaleX) ||
 			(m_pCurrent->m_scaleY != scaleY))
 		{
@@ -633,6 +642,13 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 		address, (depthBuffer.top != nullptr && depthBuffer.top->renderbuf > 0) ? depthBuffer.top->address : 0
 	);
 #endif
+
+	if (m_pCurrent->isAuxiliary() && m_pCurrent->m_pDepthBuffer != nullptr && bPrevIsDepth) {
+		// N64 games may use partial depth buffer clear for aux buffers
+		// It will not work for GL, so we have to force clear depth buffer for aux buffer
+		const DepthBuffer * pDepth = m_pCurrent->m_pDepthBuffer;
+		ogl.getRender().clearDepthBuffer(pDepth->m_ulx, pDepth->m_uly, pDepth->m_lrx, pDepth->m_lry);
+	}
 
 	m_pCurrent->m_isDepthBuffer = _address == gDP.depthImageAddress;
 	m_pCurrent->m_isPauseScreen = m_pCurrent->m_isOBScreen = false;
@@ -791,6 +807,8 @@ void FrameBufferList::renderBuffer(u32 _address)
 	OGLRender & render = ogl.getRender();
 	GLint srcY0, srcY1, dstY0, dstY1;
 	GLint X0, X1, Xwidth;
+	GLint Xoffset = 0;
+	GLint Xdivot = 0;
 	GLint srcPartHeight = 0;
 	GLint dstPartHeight = 0;
 
@@ -817,7 +835,10 @@ void FrameBufferList::renderBuffer(u32 _address)
 		isLowerField = vStart > vStartPrev;
 	vStartPrev = vStart;
 
-	srcY0 = ((_address - pBuffer->m_startAddress) << 1 >> pBuffer->m_size) / (*REG.VI_WIDTH);
+	const u32 addrOffset = ((_address - pBuffer->m_startAddress) << 1 >> pBuffer->m_size);
+	srcY0 = addrOffset / (*REG.VI_WIDTH);
+	if ((*REG.VI_WIDTH != addrOffset * 2) && (addrOffset % (*REG.VI_WIDTH) != 0))
+		Xoffset = (*REG.VI_WIDTH) - addrOffset % (*REG.VI_WIDTH);
 	if (isLowerField) {
 		if (srcY0 > 0)
 			--srcY0;
@@ -840,14 +861,19 @@ void FrameBufferList::renderBuffer(u32 _address)
 
 	FrameBuffer * pFilteredBuffer = PostProcessor::get().doBlur(PostProcessor::get().doGammaCorrection(pBuffer));
 
+	const bool vi_fsaa = (*REG.VI_STATUS & 512) == 0;
+	const bool vi_divot = (*REG.VI_STATUS & 16) != 0;
+	if (vi_fsaa && vi_divot)
+		Xdivot = 1;
+
 	const f32 viScaleX = _FIXED2FLOAT(_SHIFTR(*REG.VI_X_SCALE, 0, 12), 10);
 	const f32 srcScaleX = pFilteredBuffer->m_scaleX;
 	const f32 dstScaleX = ogl.getScaleX();
 	const s32 h0 = (isPAL ? 128 : 108);
 	const s32 hx0 = max(0, hStart - h0);
 	const s32 hx1 = max(0, h0 + 640 - hEnd);
-	X0 = (GLint)(hx0 * viScaleX * dstScaleX);
-	Xwidth = (GLint)((min((f32)VI.width, (hEnd - hStart)*viScaleX)) * srcScaleX);
+	X0 = (GLint)((hx0 * viScaleX + Xoffset) * dstScaleX);
+	Xwidth = (GLint)((min((f32)VI.width, (hEnd - hStart)*viScaleX - Xoffset - Xdivot)) * srcScaleX);
 	X1 = ogl.getWidth() - (GLint)(hx1 *viScaleX * dstScaleX);
 
 	const f32 srcScaleY = pFilteredBuffer->m_scaleY;

@@ -217,7 +217,7 @@ static const char* fragment_shader_header_common_functions =
 "lowp float snoise();						\n"
 "void calc_light(in lowp float fLights, in lowp vec3 input_color, out lowp vec3 output_color);\n"
 "mediump float mipmap(out lowp vec4 readtex0, out lowp vec4 readtex1);		\n"
-"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in bool fbFixedAlpha);	\n"
+"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in lowp int fbFixedAlpha);	\n"
 #ifdef USE_TOONIFY
 "void toonify(in mediump float intensity);	\n"
 #endif
@@ -252,12 +252,15 @@ static const char* fragment_shader_header_main =
 "									\n"
 "void main()						\n"
 "{									\n"
-"  lowp mat4 muxPM = mat4(vec4(0.0), vec4(0.0), uBlendColor, uFogColor);	\n"
-"  lowp vec4 muxA = vec4(0.0, uFogColor.a, vShadeColor.a, 0.0);				\n"
-"  lowp vec4 muxB = vec4(0.0, 1.0, 1.0, 0.0);								\n"
 "  lowp vec4 vec_color, combined_color;										\n"
 "  lowp float alpha1, alpha2;												\n"
 "  lowp vec3 color1, color2, input_color;									\n"
+;
+
+static const char* fragment_shader_blend_mux =
+"  lowp mat4 muxPM = mat4(vec4(0.0), vec4(0.0), uBlendColor, uFogColor);							\n"
+"  lowp vec4 muxA = vec4(0.0, uFogColor.a, vShadeColor.a, 0.0);										\n"
+"  lowp vec4 muxB = vec4(0.0, 1.0, 1.0, 0.0);														\n"
 ;
 
 #ifdef USE_TOONIFY
@@ -291,13 +294,13 @@ static const char* fragment_shader_fake_mipmap =
 ;
 
 static const char* fragment_shader_readtex =
-"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in bool fbFixedAlpha)	\n"
+"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in lowp int fbFixedAlpha)	\n"
 "{																			\n"
 "  lowp vec4 texColor = texture2D(tex, texCoord); 							\n"
 "  if (fbMonochrome == 1) texColor = vec4(texColor.r);						\n"
 "  else if (fbMonochrome == 2) 												\n"
 "    texColor.rgb = vec3(dot(vec3(0.2126, 0.7152, 0.0722), texColor.rgb));	\n"
-"  if (fbFixedAlpha) texColor.a = 0.825;									\n"
+"  if (fbFixedAlpha == 1) texColor.a = 0.825;									\n"
 "  return texColor;															\n"
 "}																			\n"
 ;
@@ -317,7 +320,7 @@ static const char* fragment_shader_readtex_3point =
 "  mediump vec2 texSize;		\n"
 "  if (nCurrentTile == 0)		\n"
 "    texSize = uTextureSize[0];		\n"
-"  else if (nCurrentTile == 1)		\n"
+"  else		\n"
 "    texSize = uTextureSize[1];		\n"
 #endif
 "  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));	\n"
@@ -327,7 +330,7 @@ static const char* fragment_shader_readtex_3point =
 "  lowp vec4 c2 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));	\n"
 "  return c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0);				\n"
 "}																			\n"
-"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in bool fbFixedAlpha)	\n"
+"lowp vec4 readTex(in sampler2D tex, in mediump vec2 texCoord, in lowp int fbMonochrome, in lowp int fbFixedAlpha)	\n"
 "{																			\n"
 "  lowp vec4 texStandard = texture2D(tex, texCoord); 						\n"
 "  lowp vec4 tex3Point = filter3point(tex, texCoord); 						\n"
@@ -335,7 +338,7 @@ static const char* fragment_shader_readtex_3point =
 "  if (fbMonochrome == 1) texColor = vec4(texColor.r);						\n"
 "  else if (fbMonochrome == 2) 												\n"
 "    texColor.rgb = vec3(dot(vec3(0.2126, 0.7152, 0.0722), texColor.rgb));	\n"
-"  if (fbFixedAlpha) texColor.a = 0.825;									\n"
+"  if (fbFixedAlpha == 1) texColor.a = 0.825;									\n"
 "  return texColor;															\n"
 "}																			\n"
 ;

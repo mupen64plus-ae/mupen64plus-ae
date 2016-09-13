@@ -155,7 +155,11 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 			strFragmentShader.append(fragment_shader_header_common_variables_blend_mux_2cycle);
 		strFragmentShader.append(fragment_shader_header_common_functions_notex);
 	}
+
 	strFragmentShader.append(fragment_shader_header_main);
+	if (config.generalEmulation.enableLegacyBlending == 0)
+		strFragmentShader.append(fragment_shader_blend_mux);
+
 	const bool bUseLod = usesLOD();
 	if (bUseLod) {
 		strFragmentShader.append("  lowp vec4 readtex0, readtex1; \n");
@@ -163,18 +167,20 @@ ShaderCombiner::ShaderCombiner(Combiner & _color, Combiner & _alpha, const gDPCo
 	} else {
 		if (usesTile(0)) {
 			strFragmentShader.append("  nCurrentTile = 0; \n");
-			strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0] != 0); \n");
+			strFragmentShader.append("  lowp vec4 readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0]); \n");
 		}
 		if (usesTile(1)) {
 			strFragmentShader.append("  nCurrentTile = 1; \n");
-			strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1] != 0); \n");
+			strFragmentShader.append("  lowp vec4 readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1]); \n");
 		}
 	}
+
 	const bool bUseHWLight = config.generalEmulation.enableHWLighting != 0 && GBI.isHWLSupported() && usesShadeColor();
 	if (bUseHWLight)
 		strFragmentShader.append("  calc_light(vNumLights, vShadeColor.rgb, input_color); \n");
 	else
 		strFragmentShader.append("  input_color = vShadeColor.rgb;\n");
+
 	strFragmentShader.append("  vec_color = vec4(input_color, vShadeColor.a); \n");
 	strFragmentShader.append(strCombiner);
 	strFragmentShader.append("  gl_FragColor = fragColor; \n");
