@@ -168,7 +168,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         //Update activity on resume just in case user updated profile list when
         //managing profiles when clicking on profile settings
-        updateActivity();
+        refreshViews();
 
         mPrefs.registerOnSharedPreferenceChangeListener( this );
         mMogaController.onResume();
