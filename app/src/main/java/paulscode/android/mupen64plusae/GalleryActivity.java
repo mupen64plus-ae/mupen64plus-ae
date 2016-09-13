@@ -992,7 +992,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         //Close drawer without animation
         mDrawerLayout.closeDrawer( GravityCompat.START, false );
-        
+        mRefreshNeeded = true;
+
         mSelectedItem = null;
         
         String romLegacySaveFileName;
