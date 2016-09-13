@@ -18,7 +18,7 @@ model {
         lintOptions.checkReleaseBuilds = false
 
         defaultConfig {
-            applicationId = "org.mupen64plusae.v3.alpha"
+            applicationId = "org.mupen64plusae.v3.fzurita"
             minSdkVersion.apiLevel = 15
             targetSdkVersion.apiLevel = 24
             versionCode = 85
