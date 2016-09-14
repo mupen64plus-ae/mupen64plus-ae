@@ -95,7 +95,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     // Widgets
     private RecyclerView mGridView;
-    private DrawerLayout mDrawerLayout;
+    private DrawerLayout mDrawerLayout = null;
     private ActionBarDrawerToggle mDrawerToggle;
     private MenuListView mDrawerList;
     private GameSidebar mGameSidebar;
@@ -990,8 +990,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             config.save();
         }
 
-        //Close drawer without animation
-        mDrawerLayout.closeDrawer( GravityCompat.START, false );
+        ///Drawer layout can be null if this method is called from onCreate
+        if(mDrawerLayout != null)
+        {
+            //Close drawer without animation
+            mDrawerLayout.closeDrawer( GravityCompat.START, false );
+        }
         mRefreshNeeded = true;
 
         mSelectedItem = null;
