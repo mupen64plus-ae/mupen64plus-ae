@@ -23,7 +23,6 @@ gdbserver
 .settings/
 .externalToolBuilders/
 proguard/
-gradle/
 build/
 .buildpath
 .classpath
