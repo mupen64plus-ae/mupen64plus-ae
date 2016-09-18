@@ -31,7 +31,6 @@ MY_LOCAL_SRC_FILES :=            \
 
 MY_LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
-    -DUSE_SRC           \
     -fpermissive        \
 
 include $(CLEAR_VARS)
@@ -41,7 +40,7 @@ LOCAL_SHARED_LIBRARIES := soundtouch
 LOCAL_C_INCLUDES := $(MY_LOCAL_C_INCLUDES)
 LOCAL_SRC_FILES := $(MY_LOCAL_SRC_FILES)
 LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS) -D__SOFTFP__ -DANDROID
-LOCAL_LDLIBS := -lOpenSLES -L$(SYSROOT)/usr/lib -llog 
+LOCAL_LDLIBS := -lOpenSLES -llog
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -54,9 +53,9 @@ LOCAL_SRC_FILES := $(MY_LOCAL_SRC_FILES)
 LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS) -DFP_ENABLED
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-    LOCAL_LDLIBS        += -lOpenSLES -L$(LOCAL_PATH)/../SLES/lib/arm/ -llog 
+    LOCAL_LDLIBS        += -lOpenSLES -llog
 else ifeq ($(TARGET_ARCH_ABI), x86)
-    LOCAL_LDLIBS        += -lOpenSLES -L$(LOCAL_PATH)/../SLES/lib/x86/ -llog
+    LOCAL_LDLIBS        += -lOpenSLES -llog
 endif
 
 
