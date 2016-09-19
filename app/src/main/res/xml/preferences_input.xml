@@ -60,11 +60,6 @@
         android:key="inputVolumeMappable"
         android:summary="@string/inputVolumeMappable_summary"
         android:title="@string/inputVolumeMappable_title" />
-    <android.support.v7.preference.CheckBoxPreference
-        android:defaultValue="false"
-        android:key="inputShareController"
-        android:summary="@string/inputShareController_summary"
-        android:title="@string/inputShareController_title" />
 
     <paulscode.android.mupen64plusae.preference.ProfilePreference
         android:icon="@drawable/ic_gamepad"
@@ -94,7 +89,6 @@
         android:title="@string/controllerProfile4_title"
         mupen64:allowDisable="true"
         mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-
     <paulscode.android.mupen64plusae.preference.PlayerMapPreference
         android:icon="@drawable/ic_users"
         android:key="playerMapV2"

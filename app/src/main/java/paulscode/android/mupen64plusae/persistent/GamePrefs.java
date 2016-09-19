@@ -391,6 +391,9 @@ public class GamePrefs
     /** True if any type of AbstractController is enabled for Player 4. */
     public final boolean isPlugged4;
 
+    /** True if a single peripheral device can control multiple players concurrently. */
+    public final boolean isControllerShared;
+
     /** True if the touchscreen joystick is animated. */
     public final boolean isTouchscreenAnimated;
 
@@ -695,6 +698,9 @@ public class GamePrefs
 
         isTouchscreenHidden = !isTouchscreenEnabled || globalPrefs.touchscreenTransparency == 0;
 
+        // Peripheral share mode
+        isControllerShared = mPreferences.getBoolean( "inputShareController", false );
+
         // Determine which peripheral controllers are enabled
         isControllerEnabled1 = controllerProfile1 != null;
         isControllerEnabled2 = controllerProfile2 != null;
@@ -707,7 +713,7 @@ public class GamePrefs
         numControllers += isControllerEnabled2 ? 1 : 0;
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
-        playerMap.setEnabled( numControllers > 1 && !globalPrefs.isControllerShared );
+        playerMap.setEnabled( numControllers > 1 && !isControllerShared );
 
         // Determine which players are "plugged in"
         isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled;

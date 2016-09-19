@@ -164,9 +164,6 @@ public class GlobalPrefs
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
-    /** True if a single peripheral device can control multiple players concurrently. */
-    public final boolean isControllerShared;
-
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
 
@@ -468,9 +465,6 @@ public class GlobalPrefs
         else
             isBigScreenMode = AppData.IS_OUYA_HARDWARE || appData.isAndroidTv; // TODO: Add other systems as they enter market
 
-        // Peripheral share mode
-        isControllerShared = mPreferences.getBoolean( "inputShareController", false );
-
         maxAutoSaves = mPreferences.getInt( "gameAutoSaves", 5 );
 
         // Determine the key codes that should not be mapped to controls
@@ -513,7 +507,7 @@ public class GlobalPrefs
         numControllers += controllerProfile3 != null ? 1 : 0;
         numControllers += controllerProfile4 != null ? 1 : 0;
 
-        playerMap.setEnabled( numControllers > 1 && !isControllerShared );
+        playerMap.setEnabled( numControllers > 1 );
 
         showBuiltInEmulationProfiles = mPreferences.getBoolean(ManageEmulationProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
         showBuiltInTouchscreenProfiles = mPreferences.getBoolean(ManageTouchscreenProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
