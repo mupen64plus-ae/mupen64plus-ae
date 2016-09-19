@@ -209,8 +209,6 @@
     <string name="touchscreenFeedback_summary">Vibrate on button press</string>
     <string name="inputVolumeMappable_title">Mappable volume keys</string>
     <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
-    <string name="inputShareController_title">Share controller</string>
-    <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
     <string name="displayImmersiveMode_title">Immersive mode</string>
     <string name="displayImmersiveMode_summary">Completely hide navigation and status bars</string>
     <string name="gln64Fog_title">Fog</string>
@@ -505,6 +503,10 @@
     <string name="playerMap_title">Multi-player</string>
     <string name="playerMap_summary">Define each player\'s controller(s)</string>
     <string name="playerMap_needed">Please define multi-player controller mappings in game settings</string>
+    <string name="inputShareController_title">Share controller</string>
+    <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
+    <string name="playerMap_useDefaultPlayerMap_title">Use default player mapping</string>
+    <string name="playerMap_useDefaultPlayerMap_summary">Uncheck this to specify custom player mapping for this game</string>
 
     <!-- Profile Preferences -->
     <string name="emulationProfile_title">Emulation profile</string>

@@ -499,9 +499,10 @@ public class GamePrefs
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
         // Player map
+        boolean useDefaultPlayerMapping = mPreferences.getBoolean( "useDefaultPlayerMapping", true );
         String playerMapString = mPreferences.getString( PLAYER_MAP, "" );
 
-        if( playerMapString.isEmpty() )
+        if( playerMapString.isEmpty() || useDefaultPlayerMapping)
             playerMapString = globalPrefs.getString( PLAYER_MAP, "" );
 
         playerMap = new PlayerMap( playerMapString );
@@ -713,7 +714,7 @@ public class GamePrefs
         numControllers += isControllerEnabled2 ? 1 : 0;
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
-        playerMap.setEnabled( numControllers > 1 && !isControllerShared );
+        playerMap.setEnabled( numControllers > 1 && !isControllerShared && !useDefaultPlayerMapping);
 
         // Determine which players are "plugged in"
         isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled;

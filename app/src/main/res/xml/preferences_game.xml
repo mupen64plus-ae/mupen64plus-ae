@@ -31,6 +31,27 @@
         android:summary="@string/selectedValue"
         android:title="@string/displayScaling_title" />
 
+
+    <android.support.v7.preference.PreferenceScreen
+        android:icon="@drawable/ic_key"
+        android:key="screenCheats"
+        android:title="@string/screenCheats_title" >
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="playShowCheats"
+            android:title="@string/playShowCheats_title" />
+
+        <android.support.v7.preference.Preference
+            android:key="actionCheatEditor"
+            android:summary="@string/actionCheatEditor_summary"
+            android:title="@string/actionCheatEditor_title" >
+        </android.support.v7.preference.Preference>
+
+        <android.support.v7.preference.PreferenceCategory
+            android:key="categoryCheats"
+            android:title="@string/categoryCheats_title" />
+    </android.support.v7.preference.PreferenceScreen>
+
     <paulscode.android.mupen64plusae.preference.ProfilePreference
         android:icon="@drawable/ic_circuit"
         android:key="emulationProfile"
@@ -78,32 +99,17 @@
         android:key="inputShareController"
         android:summary="@string/inputShareController_summary"
         android:title="@string/inputShareController_title" />
+    <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="useDefaultPlayerMapping"
+        android:summary="@string/playerMap_useDefaultPlayerMap_summary"
+        android:title="@string/playerMap_useDefaultPlayerMap_title" />
 
     <paulscode.android.mupen64plusae.preference.PlayerMapPreference
         android:icon="@drawable/ic_users"
         android:key="playerMapV2"
         android:summary="@string/playerMap_summary"
         android:title="@string/playerMap_title" />
-
-    <android.support.v7.preference.PreferenceScreen
-        android:icon="@drawable/ic_key"
-        android:key="screenCheats"
-        android:title="@string/screenCheats_title" >
-        <android.support.v7.preference.CheckBoxPreference
-            android:defaultValue="false"
-            android:key="playShowCheats"
-            android:title="@string/playShowCheats_title" />
-
-        <android.support.v7.preference.Preference
-            android:key="actionCheatEditor"
-            android:summary="@string/actionCheatEditor_summary"
-            android:title="@string/actionCheatEditor_title" >
-        </android.support.v7.preference.Preference>
-
-        <android.support.v7.preference.PreferenceCategory
-            android:key="categoryCheats"
-            android:title="@string/categoryCheats_title" />
-    </android.support.v7.preference.PreferenceScreen>
 
     <android.support.v7.preference.Preference
         android:icon="@drawable/ic_help"
