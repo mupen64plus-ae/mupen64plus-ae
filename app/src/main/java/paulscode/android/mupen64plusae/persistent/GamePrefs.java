@@ -482,17 +482,17 @@ public class GamePrefs
         }
 
         // Controller profiles
-        controllerProfile1 = loadControllerProfile( mPreferences, globalPrefs, CONTROLLER_PROFILE1,
-                globalPrefs.getControllerProfileDefault(1),
+        controllerProfile1 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
+                globalPrefs.getControllerProfileDefault(1), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile2 = loadControllerProfile( mPreferences, globalPrefs, CONTROLLER_PROFILE2,
-                globalPrefs.getControllerProfileDefault(2),
+        controllerProfile2 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
+                globalPrefs.getControllerProfileDefault(2), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile3 = loadControllerProfile( mPreferences, globalPrefs, CONTROLLER_PROFILE3,
-                globalPrefs.getControllerProfileDefault(3),
+        controllerProfile3 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
+                globalPrefs.getControllerProfileDefault(3), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile4 = loadControllerProfile( mPreferences, globalPrefs, CONTROLLER_PROFILE4,
-                globalPrefs.getControllerProfileDefault(4),
+        controllerProfile4 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
+                globalPrefs.getControllerProfileDefault(4), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
         // Player map
@@ -782,20 +782,30 @@ public class GamePrefs
             return null;
     }
 
-    private static ControllerProfile loadControllerProfile( SharedPreferences prefs, GlobalPrefs globalPrefs,
-            String key, String defaultName, ConfigFile custom, ConfigFile builtin )
+    private static ControllerProfile loadControllerProfile( SharedPreferences prefs, String key, String defaultName,
+                                        String appDefault, ConfigFile custom, ConfigFile builtin )
     {
-        final String globalName = globalPrefs.getString( key, defaultName );
-        final String name = prefs.getString( key, globalName );
+        final String name = prefs.getString( key, defaultName );
 
-        if( custom.keySet().contains( name ) )
+        Log.i("GamePrefs", "Profile: " +
+                " key=" + key +
+                " defaultName=" + defaultName +
+                " appDefault=" + appDefault +
+                " name=" + (name==null?"null":name)
+        );
+
+        if( !TextUtils.isEmpty( name ) && custom.keySet().contains( name ) )
             return new ControllerProfile( false, custom.get( name ) );
-        else if( builtin.keySet().contains( name ) )
+        else if( !TextUtils.isEmpty( name ) && builtin.keySet().contains( name ) )
             return new ControllerProfile( true, builtin.get( name ) );
         else if( custom.keySet().contains( defaultName ) )
             return new ControllerProfile( false, custom.get( defaultName ) );
         else if( builtin.keySet().contains( defaultName ) )
             return new ControllerProfile( true, builtin.get( defaultName ) );
+        else if( custom.keySet().contains( appDefault ) )
+            return new ControllerProfile( false, custom.get( appDefault ) );
+        else if( builtin.keySet().contains( appDefault ) )
+            return new ControllerProfile( true, builtin.get( appDefault ) );
         else
             return null;
     }

@@ -327,7 +327,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             }
 
             mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),
-                mGlobalPrefs.GetEmulationProfilesConfig(), mGlobalPrefs.getEmulationProfileDefault(),
+                mGlobalPrefs.GetEmulationProfilesConfig(), true, mGlobalPrefs.getEmulationProfileDefault(),
                     exclusions, mGlobalPrefs.showBuiltInEmulationProfiles);
             mEmulationProfile.setSummary(mEmulationProfile.getCurrentValue());
         }
@@ -335,7 +335,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(mTouchscreenProfile != null)
         {
             mTouchscreenProfile.populateProfiles( mAppData.GetTouchscreenProfilesConfig(),
-                mGlobalPrefs.GetTouchscreenProfilesConfig(), mGlobalPrefs.getTouchscreenProfileDefault(), null,
+                mGlobalPrefs.GetTouchscreenProfilesConfig(), true, mGlobalPrefs.getTouchscreenProfileDefault(), null,
                     mGlobalPrefs.showBuiltInTouchscreenProfiles );
             mTouchscreenProfile.setSummary(mTouchscreenProfile.getCurrentValue());
         }
@@ -343,7 +343,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(mControllerProfile1 != null)
         {
             mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(1), null,
+                mGlobalPrefs.GetControllerProfilesConfig(), true, mGlobalPrefs.getControllerProfileDefault(1), null,
                     mGlobalPrefs.showBuiltInControllerProfiles );
             mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
         }
@@ -351,7 +351,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(mControllerProfile2 != null)
         {
             mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(2), null,
+                mGlobalPrefs.GetControllerProfilesConfig(), true, mGlobalPrefs.getControllerProfileDefault(2), null,
                     mGlobalPrefs.showBuiltInControllerProfiles );
             mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
         }
@@ -359,7 +359,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(mControllerProfile3 != null)
         {
             mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(3), null,
+                mGlobalPrefs.GetControllerProfilesConfig(), true, mGlobalPrefs.getControllerProfileDefault(3), null,
                     mGlobalPrefs.showBuiltInControllerProfiles );
             mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue());
         }
@@ -367,7 +367,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(mControllerProfile4 != null)
         {
             mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), mGlobalPrefs.getControllerProfileDefault(4), null,
+                mGlobalPrefs.GetControllerProfilesConfig(), true, mGlobalPrefs.getControllerProfileDefault(4), null,
                     mGlobalPrefs.showBuiltInControllerProfiles );
             mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
         }

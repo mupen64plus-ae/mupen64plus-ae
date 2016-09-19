@@ -44,13 +44,13 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     @Override
     protected String getDefaultProfile()
     {
-        return mGlobalPrefs.getControllerProfileDefault( 1 );
+        return "";
     }
     
     @Override
     protected void putDefaultProfile( String name )
     {
-        mGlobalPrefs.putControllerProfileDefault( name );
+
     }
     
     @Override
@@ -76,5 +76,12 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     protected String getBuiltinVisibilityKey()
     {
         return SHOW_BUILT_IN_PREF_KEY;
+    }
+
+    @Override
+    protected int getMenuResource(boolean isBuiltin) {
+        return isBuiltin
+                ? R.menu.profile_click_menu_builtin_controller
+                : R.menu.profile_click_menu_custom_controller;
     }
 }

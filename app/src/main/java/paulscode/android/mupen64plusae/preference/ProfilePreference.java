@@ -100,8 +100,8 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
         }
     }
     
-    public void populateProfiles( ConfigFile configBuiltin, ConfigFile configCustom, String defaultValue,
-        List<Profile> exclusions, boolean showBuiltins )
+    public void populateProfiles( ConfigFile configBuiltin, ConfigFile configCustom, boolean allowDefaultProfile,
+        String defaultValue, List<Profile> exclusions, boolean showBuiltins )
     {
         //ConfigFile configBuiltin = new ConfigFile( builtinPath );
         //ConfigFile configCustom = new ConfigFile( customPath );
@@ -119,45 +119,43 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
         }
         
         Collections.sort( profiles );
-        
-        //Find the default profile and add it
+
         Profile defaultProfile = null;
-        if( configCustom.keySet().contains( defaultValue ) )
-        {
-            defaultProfile =  new Profile( false, configCustom.get( defaultValue ) );
-        }
-        else if( configBuiltin.keySet().contains( defaultValue ) )
-        {
-            defaultProfile = new Profile( true, configBuiltin.get( defaultValue ) );
-        }
-        
-        //This is a fake profile that doesn't exist in any config file.
-        //Selecting this profile will make us fall back to the current default profile
-        CharSequence defaultProfileTitle = getContext().getText( R.string.default_profile_title );
-        
-        //Label it as default
-        if(defaultProfile != null)
-        {
-            String defaultProfileComment = defaultProfile.getName();
-            
-            if(defaultProfile.getComment() != null)
-            {
-                defaultProfileComment +=  ": " + defaultProfile.getComment();
+        CharSequence defaultProfileTitle = null;
+
+        //Add Global default option
+        if(allowDefaultProfile) {
+            //Find the default profile and add it
+            if (configCustom.keySet().contains(defaultValue)) {
+                defaultProfile = new Profile(false, configCustom.get(defaultValue));
+            } else if (configBuiltin.keySet().contains(defaultValue)) {
+                defaultProfile = new Profile(true, configBuiltin.get(defaultValue));
             }
-            defaultProfile.setComment(defaultProfileComment);
-            defaultProfile.setName(defaultProfileTitle.toString());
-            
-            //Add it at the beginning
-            profiles.add(0, defaultProfile);
+
+            //This is a fake profile that doesn't exist in any config file.
+            //Selecting this profile will make us fall back to the current default profile
+            defaultProfileTitle = getContext().getText(R.string.default_profile_title);
+
+            //Label it as default
+            if (defaultProfile != null) {
+                String defaultProfileComment = defaultProfile.getName();
+
+                if (defaultProfile.getComment() != null) {
+                    defaultProfileComment += ": " + defaultProfile.getComment();
+                }
+                defaultProfile.setComment(defaultProfileComment);
+                defaultProfile.setName(defaultProfileTitle.toString());
+
+                //Add it at the beginning
+                profiles.add(0, defaultProfile);
+            } else if (mAllowDisable) {
+                defaultProfile = new Profile(true, defaultProfileTitle.toString(), getContext().getText(
+                        R.string.listItem_disabled).toString());
+                // Add it at the beginning
+                profiles.add(0, defaultProfile);
+            }
         }
-        else if (mAllowDisable)
-        {
-            defaultProfile = new Profile(true, defaultProfileTitle.toString(), getContext().getText(
-                R.string.listItem_disabled).toString());
-            // Add it at the beginning
-            profiles.add(0, defaultProfile);
-        }
-        
+
         int offset = mAllowDisable ? 1 : 0;
         int numEntries = profiles.size() + offset;
         CharSequence[] entries = new CharSequence[numEntries];
@@ -181,8 +179,21 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
         setEntries( entries );
         setEntryValues( values );
         String selectedValue = getPersistedString( null );
+
+        //If the provided selected value no longer exists, revert to the default
         if( !ArrayUtils.contains( values, selectedValue ) )
-            persistString( defaultProfileTitle.toString() );
+        {
+            //If a default is allowed, use the default, otherwise use disabled
+            if(allowDefaultProfile && defaultProfile != null)
+            {
+                persistString( defaultProfileTitle.toString() );
+            }
+            else if(mAllowDisable)
+            {
+                persistString("");
+            }
+        }
+
         selectedValue = getPersistedString( null );
         setValue( selectedValue );
     }

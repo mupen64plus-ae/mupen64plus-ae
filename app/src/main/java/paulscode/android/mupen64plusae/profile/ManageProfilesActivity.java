@@ -218,6 +218,19 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
                 return super.onOptionsItemSelected( item );
         }
     }
+
+    /**
+     * Returns the menu resource assicated with a specific profile
+     * @param isBuiltin True if the menu resource should be the built in one
+     * @return The menu resource based on whether it's a built in type
+     */
+    protected int getMenuResource(final boolean isBuiltin)
+    {
+        return isBuiltin
+                ? R.menu.profile_click_menu_builtin
+                : R.menu.profile_click_menu_custom;
+    }
+
     
     @Override
     protected void onListItemClick( ListView l, View v, int position, long id )
@@ -227,9 +240,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         final Profile profile = (Profile) getListView().getItemAtPosition( position );
         if( profile != null )
         {
-            int resId = profile.isBuiltin
-                    ? R.menu.profile_click_menu_builtin
-                    : R.menu.profile_click_menu_custom;
+            int resId = getMenuResource(profile.isBuiltin);
 
             int stringId = profile.isBuiltin
                     ? R.string.popup_titleBuiltin
@@ -460,9 +471,9 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         profiles2.addAll( Profile.getProfiles( mConfigBuiltin, true ) );
         
         // Add reserved profile names
-        CharSequence defaultProfileTitle = getText( R.string.default_profile_title );
-        profiles2.add(new Profile( true, defaultProfileTitle.toString(), null));
-        
+        profiles2.add(new Profile( true, getText( R.string.default_profile_title ).toString(), null));
+        profiles2.add(new Profile( true, getText( R.string.listItem_disabled ).toString(), null));
+
         mProfileNames.clear();
         for( Profile profile : profiles2 )
             mProfileNames.add( profile.name );
