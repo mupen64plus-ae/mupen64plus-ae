@@ -714,7 +714,7 @@ public class GamePrefs
         numControllers += isControllerEnabled2 ? 1 : 0;
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
-        playerMap.setEnabled( numControllers > 1 && !isControllerShared && !useDefaultPlayerMapping);
+        playerMap.setEnabled( numControllers > 1 && !isControllerShared);
 
         // Determine which players are "plugged in"
         isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled;
