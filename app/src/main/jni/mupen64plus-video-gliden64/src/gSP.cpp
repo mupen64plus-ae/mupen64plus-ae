@@ -1803,6 +1803,7 @@ void gSPObjLoadTxtr( u32 tx )
 				break;
 			case G_OBJLT_TXTRTILE:
 				gDPSetTextureImage( 0, 1, (objTxtr->tile.twidth + 1) << 1, objTxtr->tile.image );
+				gDPSetTile( 0, 1, (objTxtr->tile.twidth + 1) >> 2, objTxtr->tile.tmem, 0, 0, 0, 0, 0, 0, 0, 0 );
 				gDPSetTile( 0, 1, (objTxtr->tile.twidth + 1) >> 2, objTxtr->tile.tmem, 7, 0, 0, 0, 0, 0, 0, 0 );
 				gDPLoadTile( 7, 0, 0, (((objTxtr->tile.twidth + 1) << 1) - 1) << 2, (((objTxtr->tile.theight + 1) >> 2) - 1) << 2 );
 				break;
@@ -1940,30 +1941,31 @@ struct ObjCoordinates
 static
 void gSPDrawObjRect(const ObjCoordinates & _coords)
 {
-	u32 v0 = 0, v1 = 1, v2 = 2, v3 = 3;
 	OGLRender & render = video().getRender();
-	SPVertex & vtx0 = render.getVertex(v0);
+	render.setDMAVerticesSize(4);
+	SPVertex * pVtx = render.getDMAVerticesData();
+	SPVertex & vtx0 = pVtx[0];
 	vtx0.x = _coords.ulx;
 	vtx0.y = _coords.uly;
 	vtx0.z = _coords.z;
 	vtx0.w = _coords.w;
 	vtx0.s = _coords.uls;
 	vtx0.t = _coords.ult;
-	SPVertex & vtx1 = render.getVertex(v1);
+	SPVertex & vtx1 = pVtx[1];
 	vtx1.x = _coords.lrx;
 	vtx1.y = _coords.uly;
 	vtx1.z = _coords.z;
 	vtx1.w = _coords.w;
 	vtx1.s = _coords.lrs;
 	vtx1.t = _coords.ult;
-	SPVertex & vtx2 = render.getVertex(v2);
+	SPVertex & vtx2 = pVtx[2];
 	vtx2.x = _coords.ulx;
 	vtx2.y = _coords.lry;
 	vtx2.z = _coords.z;
 	vtx2.w = _coords.w;
 	vtx2.s = _coords.uls;
 	vtx2.t = _coords.lrt;
-	SPVertex & vtx3 = render.getVertex(v3);
+	SPVertex & vtx3 = pVtx[3];
 	vtx3.x = _coords.lrx;
 	vtx3.y = _coords.lry;
 	vtx3.z = _coords.z;
@@ -1971,7 +1973,7 @@ void gSPDrawObjRect(const ObjCoordinates & _coords)
 	vtx3.s = _coords.lrs;
 	vtx3.t = _coords.lrt;
 
-	render.drawLLETriangle(4);
+	render.drawScreenSpaceTriangle(4);
 	gDP.colorImage.height = (u32)(max(gDP.colorImage.height, (u32)gDP.scissor.lry));
 }
 
@@ -2207,32 +2209,32 @@ void gSPObjSprite(u32 _sp)
 	}
 	const float z = (gDP.otherMode.depthSource == G_ZS_PRIM) ? gDP.primDepth.z : gSP.viewport.nearz;
 
-	s32 v0 = 0, v1 = 1, v2 = 2, v3 = 3;
-
 	OGLRender & render = video().getRender();
+	render.setDMAVerticesSize(4);
+	SPVertex * pVtx = render.getDMAVerticesData();
 
-	SPVertex & vtx0 = render.getVertex(v0);
+	SPVertex & vtx0 = pVtx[0];
 	vtx0.x = gSP.objMatrix.A * ulx + gSP.objMatrix.B * uly + gSP.objMatrix.X;
 	vtx0.y = gSP.objMatrix.C * ulx + gSP.objMatrix.D * uly + gSP.objMatrix.Y;
 	vtx0.z = z;
 	vtx0.w = 1.0f;
 	vtx0.s = uls;
 	vtx0.t = ult;
-	SPVertex & vtx1 = render.getVertex(v1);
+	SPVertex & vtx1 = pVtx[1];
 	vtx1.x = gSP.objMatrix.A * lrx + gSP.objMatrix.B * uly + gSP.objMatrix.X;
 	vtx1.y = gSP.objMatrix.C * lrx + gSP.objMatrix.D * uly + gSP.objMatrix.Y;
 	vtx1.z = z;
 	vtx1.w = 1.0f;
 	vtx1.s = lrs;
 	vtx1.t = ult;
-	SPVertex & vtx2 = render.getVertex(v2);
+	SPVertex & vtx2 = pVtx[2];
 	vtx2.x = gSP.objMatrix.A * ulx + gSP.objMatrix.B * lry + gSP.objMatrix.X;
 	vtx2.y = gSP.objMatrix.C * ulx + gSP.objMatrix.D * lry + gSP.objMatrix.Y;
 	vtx2.z = z;
 	vtx2.w = 1.0f;
 	vtx2.s = uls;
 	vtx2.t = lrt;
-	SPVertex & vtx3 = render.getVertex(v3);
+	SPVertex & vtx3 = pVtx[3];
 	vtx3.x = gSP.objMatrix.A * lrx + gSP.objMatrix.B * lry + gSP.objMatrix.X;
 	vtx3.y = gSP.objMatrix.C * lrx + gSP.objMatrix.D * lry + gSP.objMatrix.Y;
 	vtx3.z = z;
@@ -2240,7 +2242,7 @@ void gSPObjSprite(u32 _sp)
 	vtx3.s = lrs;
 	vtx3.t = lrt;
 
-	render.drawLLETriangle(4);
+	render.drawScreenSpaceTriangle(4);
 
 	frameBufferList().setBufferChanged();
 	gDP.colorImage.height = (u32)(max( gDP.colorImage.height, (u32)gDP.scissor.lry ));
@@ -2352,31 +2354,32 @@ void gSPSprite2DBase(u32 _base)
 		}
 		*/
 
-		s32 v0 = 0, v1 = 1, v2 = 2, v3 = 3;
 		OGLRender & render = video().getRender();
+		render.setDMAVerticesSize(4);
+		SPVertex * pVtx = render.getDMAVerticesData();
 
-		SPVertex & vtx0 = render.getVertex(v0);
+		SPVertex & vtx0 = pVtx[0];
 		vtx0.x = ulx;
 		vtx0.y = uly;
 		vtx0.z = z;
 		vtx0.w = w;
 		vtx0.s = uls;
 		vtx0.t = ult;
-		SPVertex & vtx1 = render.getVertex(v1);
+		SPVertex & vtx1 = pVtx[1];
 		vtx1.x = lrx;
 		vtx1.y = uly;
 		vtx1.z = z;
 		vtx1.w = w;
 		vtx1.s = lrs;
 		vtx1.t = ult;
-		SPVertex & vtx2 = render.getVertex(v2);
+		SPVertex & vtx2 = pVtx[2];
 		vtx2.x = ulx;
 		vtx2.y = lry;
 		vtx2.z = z;
 		vtx2.w = w;
 		vtx2.s = uls;
 		vtx2.t = lrt;
-		SPVertex & vtx3 = render.getVertex(v3);
+		SPVertex & vtx3 = pVtx[3];
 		vtx3.x = lrx;
 		vtx3.y = lry;
 		vtx3.z = z;
@@ -2385,7 +2388,7 @@ void gSPSprite2DBase(u32 _base)
 		vtx3.t = lrt;
 
 		if (pSprite->stride > 0)
-			render.drawLLETriangle(4);
+			render.drawScreenSpaceTriangle(4);
 	} while (RSP.nextCmd == 0xBD || RSP.nextCmd == 0xBE);
 }
 

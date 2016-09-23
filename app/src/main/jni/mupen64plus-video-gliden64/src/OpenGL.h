@@ -95,7 +95,7 @@ class OGLRender
 public:
 	void addTriangle(int _v0, int _v1, int _v2);
 	void drawTriangles();
-	void drawLLETriangle(u32 _numVtx);
+	void drawScreenSpaceTriangle(u32 _numVtx);
 	void drawDMATriangles(u32 _numVtx);
 	void drawLine(int _v0, int _v1, float _width);
 	void drawRect(int _ulx, int _uly, int _lrx, int _lry, float * _pColor);
@@ -197,16 +197,13 @@ private:
 	void _updateStates(RENDER_STATE _renderState) const;
 	void _prepareDrawTriangle(bool _dma);
 	bool _canDraw() const;
+	void _drawThickLine(int _v0, int _v1, float _width);
 
 	struct {
 		SPVertex vertices[VERTBUFF_SIZE];
 		std::vector<SPVertex> dmaVertices;
 		GLubyte elements[ELEMBUFF_SIZE];
 		int num;
-		u32 indexmap[INDEXMAP_SIZE];
-		u32 indexmapinv[VERTBUFF_SIZE];
-		u32 indexmap_prev;
-		u32 indexmap_nomap;
 	} triangles;
 
 	struct GLVertex
@@ -250,8 +247,10 @@ private:
 	TexturedRectParams m_texrectParams;
 	GLVertex m_rect[4];
 	u32 m_modifyVertices;
+	GLfloat m_maxLineWidth;
 	bool m_bImageTexture;
 	bool m_bFlatColors;
+	bool m_bDmaVertices;
 	TexrectDrawer m_texrectDrawer;
 
 	GLuint m_programCopyTex;

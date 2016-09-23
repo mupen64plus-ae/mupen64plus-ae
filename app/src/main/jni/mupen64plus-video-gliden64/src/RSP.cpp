@@ -216,7 +216,7 @@ void RSP_ProcessDList()
 		}
 	}
 
-	if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdCopyFromVRam) {
+	if (config.frameBufferEmulation.copyDepthToRDRAM != Config::cdDisable) {
 		if ((config.generalEmulation.hacks & hack_rectDepthBufferCopyCBFD) != 0) {
 			; // do nothing
 		} else if ((config.generalEmulation.hacks & hack_rectDepthBufferCopyPD) != 0) {
@@ -355,6 +355,9 @@ void RSP_Init()
 		config.generalEmulation.hacks |= hack_doNotResetTLUTmode;
 	else if (strstr(RSP.romname, (const char *)"quarterback_club_98") != nullptr)
 		config.generalEmulation.hacks |= hack_LoadDepthTextures;
+	else if (strstr(RSP.romname, (const char *)"WIN BACK") != nullptr ||
+		strstr(RSP.romname, (const char *)"OPERATION WINBACK") != nullptr)
+		config.generalEmulation.hacks |= hack_WinBack;
 
 	api().FindPluginPath(RSP.pluginpath);
 
