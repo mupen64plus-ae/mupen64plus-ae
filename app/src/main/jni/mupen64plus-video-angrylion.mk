@@ -27,9 +27,9 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/osal_dynamiclib_unix.c \
     $(SRCDIR)/main.c \
     $(SRCDIR)/config_functions.c \
-    ../$(LIBRETRO_INCLUDES)/libretro_custom.c \
-    ../$(LIBRETRO_INCLUDES)/RefreshScreen.c \
-    ../$(LIBRETRO_INCLUDES)/Graphics/plugins.c
+    $(LIBRETRO_INCLUDES)/libretro_custom.c \
+    $(LIBRETRO_INCLUDES)/RefreshScreen.c \
+    $(LIBRETRO_INCLUDES)/Graphics/plugins.c
 
 LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
