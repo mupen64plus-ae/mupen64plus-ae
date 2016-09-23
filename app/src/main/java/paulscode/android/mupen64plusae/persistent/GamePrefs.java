@@ -801,9 +801,12 @@ public class GamePrefs
                 " name=" + (name==null?"null":name)
         );
 
-        if( !TextUtils.isEmpty( name ) && custom.keySet().contains( name ) )
+        //Length zero profile is the "disabled" profile
+        if(name != null && name.length() == 0)
+            return null;
+        else if( custom.keySet().contains( name ) )
             return new ControllerProfile( false, custom.get( name ) );
-        else if( !TextUtils.isEmpty( name ) && builtin.keySet().contains( name ) )
+        else if( builtin.keySet().contains( name ) )
             return new ControllerProfile( true, builtin.get( name ) );
         else if( custom.keySet().contains( defaultName ) )
             return new ControllerProfile( false, custom.get( defaultName ) );
