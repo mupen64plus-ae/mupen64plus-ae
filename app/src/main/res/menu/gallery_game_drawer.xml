@@ -16,4 +16,10 @@
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menuItem_settings"/>
+    <item
+        android:id="@+id/menuItem_remove"
+        android:icon="@drawable/ic_storage"
+        android:title="@string/actionRemove_title"
+        android:titleCondensed="@string/actionRemove_summary"/>
+
 </menu>

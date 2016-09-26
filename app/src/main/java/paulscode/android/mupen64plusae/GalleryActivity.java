@@ -614,6 +614,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 break;
 
             }
+            case R.id.menuItem_remove:
+            {
+                final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
+                config.remove(item.md5);
+                config.save();
+                mDrawerLayout.closeDrawer( GravityCompat.START, false );
+                refreshGrid();
+            }
             default:
         }
     }

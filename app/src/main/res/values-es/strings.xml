@@ -146,6 +146,8 @@
     <string name="actionResume_summary">Impredecible si se aplican cheats</string>
     <string name="actionRestart_title">Reiniciar</string>
     <string name="actionRestart_summary">Recomendado si se aplican cheats</string>
+    <string name="actionRemove_title">Eliminar</string>
+    <string name="actionRemove_summary">Eliminar de la librería</string>
     <string name="actionWiki_title">Wiki</string>
     <string name="actionWiki_summary">Ayuda comunitaria para este juego</string>
     <string name="actionReloadAssets_title">Recargar los recursos de la aplicación</string>
