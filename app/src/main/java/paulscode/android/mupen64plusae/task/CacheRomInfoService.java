@@ -157,7 +157,7 @@ public class CacheRomInfoService extends Service
             for( final File file : files )
             {
                 mListener.GetProgressDialog().setSubtext( "" );
-                mListener.GetProgressDialog().setText( file.getAbsolutePath().substring( mSearchPath.length() ) );
+                mListener.GetProgressDialog().setText( file.getName() );
                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searching );
                 
                 if( mbStopped ) break;
@@ -176,7 +176,7 @@ public class CacheRomInfoService extends Service
                         while( entries.hasMoreElements() )
                         {
                             ZipEntry zipEntry = entries.nextElement();
-                            mListener.GetProgressDialog().setSubtext( zipEntry.getName() );
+                            mListener.GetProgressDialog().setSubtext( new File(zipEntry.getName()).getName() );
                             mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
                             
                             if( mbStopped ) break;
@@ -224,6 +224,8 @@ public class CacheRomInfoService extends Service
             }
 
             CleanupMissingFiles(config);
+            downloadCoverArt(database, config);
+
             config.save();
             
             if (mListener != null)
@@ -334,28 +336,11 @@ public class CacheRomInfoService extends Service
         config.put( md5, "artPath", artPath );
         config.put( md5, "crc", header.crc );
         config.put( md5, "headerName", header.name );
-        
-        //String countryCodeString = String.format( "%02x", header.countryCode ).substring( 0, 2 );
+
         String countryCodeString = Byte.toString(header.countryCode);
         config.put( md5, "countryCode",  countryCodeString);
         config.put( md5, "extracted", "false" );
-        
-        if( mDownloadArt )
-        {
-            if( mbStopped ) return;
 
-            //Only download art if it's not already present
-            if(!(new File(artPath)).exists())
-            {
-                mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_downloadingArt );
-                Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
-                downloadFile( detail.artUrl, artPath );
-
-                Log.i( "CacheRomInfoService", "End art download: " +  artPath);
-            }
-        }
-        
-        if( mbStopped ) return;
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_refreshingUI );
     }
     
@@ -567,6 +552,45 @@ public class CacheRomInfoService extends Service
                     keys = theConfigFile.keySet();
                     iter = keys.iterator();
                 }
+            }
+        }
+    }
+
+    private void downloadCoverArt(RomDatabase database, ConfigFile theConfigFile)
+    {
+        if( mDownloadArt )
+        {
+            Set<String> keys = theConfigFile.keySet();
+
+            mListener.GetProgressDialog().setMaxProgress( keys.size() );
+            mListener.GetProgressDialog().setSubtext( getString(R.string.cacheRomInfo_downloadingArt) );
+
+            Iterator iter = keys.iterator();
+            while (iter.hasNext()) {
+                String key = (String) iter.next();
+                String artPath = theConfigFile.get(key, "artPath");
+                String romFile = theConfigFile.get(key, "romPath");
+                String crc = theConfigFile.get(key, "crc");
+
+                if(!TextUtils.isEmpty(artPath) && !TextUtils.isEmpty(romFile) && !TextUtils.isEmpty(crc))
+                {
+                    RomDetail detail = database.lookupByMd5WithFallback( key, new File(romFile), crc );
+
+                    mListener.GetProgressDialog().setText( new File(romFile).getName() );
+
+                    //Only download art if it's not already present
+                    if(!(new File(artPath)).exists())
+                    {
+                        Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
+                        downloadFile( detail.artUrl, artPath );
+
+                        Log.i( "CacheRomInfoService", "End art download: " +  artPath);
+                    }
+                }
+
+                mListener.GetProgressDialog().incrementProgress(1);
+
+                if( mbStopped ) return;
             }
         }
     }
