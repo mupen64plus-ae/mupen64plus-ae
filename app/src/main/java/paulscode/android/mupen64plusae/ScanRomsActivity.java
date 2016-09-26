@@ -1,9 +1,11 @@
 package paulscode.android.mupen64plusae;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -33,11 +35,16 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
     private Button mOkButton;
     
     private File mCurrentPath = null;
+    private SharedPreferences mPrefs = null;
+
+    private static final String ROM_SCAN_START_PATH = "RomScanStartPath";
  
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate(savedInstanceState);
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         String currentPath = null;
         
@@ -51,9 +58,19 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             mCurrentPath = new File(currentPath);
         }
         else
-        {            
-            // Pick the root of the storage directory by default
-            mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+        {
+            String romScanStartPath = mPrefs.getString(ROM_SCAN_START_PATH, null);
+
+            if(romScanStartPath == null || !new File(romScanStartPath).exists())
+            {
+                // Pick the root of the storage directory by default
+                mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+            }
+            //Else use saved directory
+            else
+            {
+                mCurrentPath = new File( romScanStartPath );
+            }
         }
          
         setContentView(R.layout.scan_roms_activity);
@@ -86,6 +103,9 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
                 data.putExtra(ActivityHelper.Keys.CLEAR_GALLERY, mCheckBox3.isChecked());
                 data.putExtra(ActivityHelper.Keys.SEARCH_SUBDIR, mCheckBox4.isChecked());
                 ScanRomsActivity.this.setResult(RESULT_OK, data);
+
+                //Save the selected directory
+                mPrefs.edit().putString( ROM_SCAN_START_PATH, mCurrentPath.getPath() ).commit();
                 ScanRomsActivity.this.finish();
             }
         });
