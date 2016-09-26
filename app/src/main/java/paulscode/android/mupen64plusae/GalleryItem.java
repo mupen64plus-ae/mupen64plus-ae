@@ -20,13 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-import java.util.Comparator;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.task.LoadBitmapTask;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +33,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+import java.util.Comparator;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.task.LoadBitmapTask;
 
 public class GalleryItem
 {
@@ -56,9 +57,10 @@ public class GalleryItem
     public final Context context;
     public final boolean isHeading;
     public BitmapDrawable artBitmap;
+    public final float scale;
     
     public GalleryItem( Context context, String md5, String crc, String headerName, byte countryCode, String goodName, String romPath,
-            String zipPath, boolean extracted, String artPath, int lastPlayed )
+            String zipPath, boolean extracted, String artPath, int lastPlayed, float scale )
     {
         this.md5 = md5;
         this.crc = crc;
@@ -71,6 +73,7 @@ public class GalleryItem
         this.lastPlayed = lastPlayed;
         this.isHeading = false;
         this.isExtracted = extracted;
+        this.scale = scale;
         
         this.romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
         this.zipFile = TextUtils.isEmpty( zipPath ) ? null : new File( zipPath );
@@ -91,6 +94,7 @@ public class GalleryItem
         this.isExtracted = false;
         this.romFile = null;
         this.zipFile = null;
+        this.scale = 1.0f;
     }
     
     public void loadBitmap()
@@ -253,7 +257,7 @@ public class GalleryItem
                             activity.galleryHalfSpacing, activity.galleryHalfSpacing,
                             activity.galleryHalfSpacing );
                     tv1.setPadding( 0, 0, 0, 0 );
-                    tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 13.0f );
+                    tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 13.0f*item.scale );
                     artView.setVisibility( View.VISIBLE );
                     
                     artView.setImageResource( R.drawable.default_coverart );
@@ -267,6 +271,7 @@ public class GalleryItem
                     
                     LinearLayout layout = (LinearLayout) view.findViewById( R.id.info );
                     layout.getLayoutParams().width = activity.galleryWidth;
+                    layout.getLayoutParams().height = (int)(activity.getResources().getDimension( R.dimen.galleryTextHeight )*item.scale);
                 }
             }
         }

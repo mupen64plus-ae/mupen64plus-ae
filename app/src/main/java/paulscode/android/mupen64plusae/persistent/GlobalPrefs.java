@@ -176,6 +176,9 @@ public class GlobalPrefs
     /** True if the full ROM rip info should be shown. */
     public final boolean isFullNameShown;
 
+    /** Factor applied to the cover art scale */
+    public final float coverArtScale;
+
     /** Default resolution */
     public final int displayResolution;
 
@@ -398,6 +401,7 @@ public class GlobalPrefs
         isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
         cacheRecentlyPlayed = mPreferences.getBoolean( "cacheRecentlyPlayed", true );
         isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
+        coverArtScale = ( mPreferences.getInt( "libraryArtScale", 100 ) ) / 100.0f;
 
         // Touchscreen prefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );

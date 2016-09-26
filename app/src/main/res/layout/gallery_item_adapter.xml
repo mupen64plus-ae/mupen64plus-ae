@@ -12,13 +12,15 @@
         android:id="@+id/imageArt"
         android:layout_width="@dimen/galleryImageWidth"
         android:layout_height="@dimen/galleryImageHeight"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/default_coverart" />
 
     <LinearLayout
         android:id="@+id/info"
         android:layout_width="@dimen/galleryImageWidth"
-        android:layout_height="50dip"
+        android:layout_height="@dimen/galleryTextHeight"
         android:orientation="horizontal" >
         
         <TextView

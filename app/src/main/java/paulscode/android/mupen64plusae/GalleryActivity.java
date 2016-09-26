@@ -189,26 +189,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGridView = (RecyclerView) findViewById( R.id.gridview );
         refreshGrid();
 
-        // Update the grid layout
-        galleryMaxWidth = (int) getResources().getDimension( R.dimen.galleryImageWidth );
-        galleryHalfSpacing = (int) getResources().getDimension( R.dimen.galleryHalfSpacing );
-        galleryAspectRatio = galleryMaxWidth * 1.0f
-                / getResources().getDimension( R.dimen.galleryImageHeight );
-
-        final DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics( metrics );
-
-        final int width = metrics.widthPixels - galleryHalfSpacing * 2;
-        galleryColumns = (int) Math
-                .ceil( width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
-        galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
-
-        final GridLayoutManager layoutManager = (GridLayoutManager) mGridView.getLayoutManager();
-        layoutManager.setSpanCount( galleryColumns );
-        mGridView.getAdapter().notifyDataSetChanged();
-        mGridView.setFocusable(false);
-        mGridView.setFocusableInTouchMode(false);
-
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         final Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         toolbar.setTitle( R.string.app_name );
@@ -887,7 +867,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             lastPlayed = Integer.parseInt(lastPlayedStr);
 
                         final GalleryItem item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
-                            zipPath, extracted.equals("true"), artPath, lastPlayed);
+                            zipPath, extracted.equals("true"), artPath, lastPlayed, mGlobalPrefs.coverArtScale);
                         items.add(item);
                         boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
                         if (mGlobalPrefs.isRecentShown && isNotOld )
@@ -955,6 +935,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         } );
 
         mGridView.setLayoutManager( layoutManager );
+
+        // Update the grid layout
+        galleryMaxWidth = (int) (getResources().getDimension( R.dimen.galleryImageWidth ) * mGlobalPrefs.coverArtScale);
+        galleryHalfSpacing = (int) getResources().getDimension( R.dimen.galleryHalfSpacing );
+        galleryAspectRatio = galleryMaxWidth * 1.0f
+                / getResources().getDimension( R.dimen.galleryImageHeight )/mGlobalPrefs.coverArtScale;
+
+        final DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics( metrics );
+
+        final int width = metrics.widthPixels - galleryHalfSpacing * 2;
+        galleryColumns = (int) Math
+                .ceil( width * 1.0 / ( galleryMaxWidth + galleryHalfSpacing * 2 ) );
+        galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
+
+        layoutManager.setSpanCount( galleryColumns );
+        mGridView.getAdapter().notifyDataSetChanged();
+        mGridView.setFocusable(false);
+        mGridView.setFocusableInTouchMode(false);
     }
 
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,

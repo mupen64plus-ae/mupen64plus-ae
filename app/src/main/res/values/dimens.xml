@@ -7,6 +7,7 @@
     <dimen name="inputMapPreferenceButtonSizeX5">200dp</dimen>
     <dimen name="galleryImageWidth">175dp</dimen>
     <dimen name="galleryImageHeight">121dp</dimen> <!-- galleryImageWidth * 177 / 256 -->
+    <dimen name="galleryTextHeight">50dp</dimen>
     <dimen name="galleryHalfSpacing">5dp</dimen>
 
 </resources>
