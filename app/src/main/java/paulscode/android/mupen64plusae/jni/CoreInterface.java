@@ -160,7 +160,8 @@ public class CoreInterface
 
     // Activity and threading objects - used internally
     private static AppCompatActivity sActivity = null;
-    private static Thread sCoreThread;
+    private static Thread sCoreThread = null;
+    private static Thread sShutdownThread = null;
 
     // Startup info - used internally
     protected static String sRomPath = null;
@@ -376,15 +377,25 @@ public class CoreInterface
         Log.i("CoreInterface", "Startup emulator");
         if( sCoreThread == null )
         {
-            // Load the native libraries
-            NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
-
             // Start the core thread if not already running
             sCoreThread = new Thread( new Runnable()
             {
                 @Override
                 public void run()
                 {
+                    //Wait for previous instance to finish shutting down
+                    if(sShutdownThread != null)
+                    {
+                        try {
+                            sShutdownThread.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    // Load the native libraries
+                    NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
+
                     android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 
                     sIsCoreRunning = true;
@@ -545,21 +556,32 @@ public class CoreInterface
     {
         if( sCoreThread != null )
         {
-            // Tell the core to quit
-            NativeExports.emuStop();
-            // Now wait for the core thread to quit
-            try
+            sShutdownThread = new Thread( new Runnable()
             {
-                sCoreThread.join();
-            }
-            catch( InterruptedException e )
-            {
-                Log.i( "CoreInterface", "Problem stopping core thread: " + e );
-            }
-            sCoreThread = null;
-            // Unload the native libraries
-            NativeExports.unloadLibraries();
+                @Override
+                public void run()
+                {
+                    // Tell the core to quit
+                    NativeExports.emuStop();
+                    // Now wait for the core thread to quit
+                    try
+                    {
+                        sCoreThread.join();
+                    }
+                    catch( InterruptedException e )
+                    {
+                        Log.i( "CoreInterface", "Problem stopping core thread: " + e );
+                    }
+                    sCoreThread = null;
+                    // Unload the native libraries
+                    NativeExports.unloadLibraries();
+                }
+            }, "ShutdownThread" );
+
+            sShutdownThread.start();
         }
+
+
     }
 
     public static synchronized void killEmulator()
@@ -882,7 +904,24 @@ public class CoreInterface
 
     public static synchronized void restartEmulator()
     {
-        CoreInterface.shutdownEmulator();
+        if( sCoreThread != null )
+        {
+            // Tell the core to quit
+            NativeExports.emuStop();
+            // Now wait for the core thread to quit
+            try
+            {
+                sCoreThread.join();
+            }
+            catch( InterruptedException e )
+            {
+                Log.i( "CoreInterface", "Problem stopping core thread: " + e );
+            }
+            sCoreThread = null;
+            // Unload the native libraries
+            NativeExports.unloadLibraries();
+        }
+
         CoreInterface.startupEmulator(null);
     }
 
