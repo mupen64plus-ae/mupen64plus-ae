@@ -262,10 +262,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
         else
         {
-            // Extract the assets in a separate thread and launch the menu activity
-            // Handler.postDelayed ensures this runs only after activity has resumed
-            final Handler handler = new Handler();
-            handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
+            checkExtractAssets();
         }
     }
 
@@ -317,10 +314,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             else
             {
                 //Permissions already granted, continue
-                // Extract the assets in a separate thread and launch the menu activity
-                // Handler.postDelayed ensures this runs only after activity has resumed
-                final Handler handler = new Handler();
-                handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
+                checkExtractAssets();
             }
             return;
         }
@@ -330,24 +324,32 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
     }
 
+    private final void checkExtractAssets()
+    {
+        if( mAppData.getAssetVersion() != ASSET_VERSION )
+        {
+            // Extract the assets in a separate thread and launch the menu activity
+            // Handler.postDelayed ensures this runs only after activity has resumed
+            final Handler handler = new Handler();
+            handler.postDelayed( extractAssetsTaskLauncher, SPLASH_DELAY );
+        }
+        else
+        {
+            // Assets already extracted, just launch gallery activity, passing ROM path if it was provided externally
+            ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent().getData() );
+
+            // We never want to come back to this activity, so finish it
+            finish();
+        }
+    }
+
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
     private final Runnable extractAssetsTaskLauncher = new Runnable()
     {
         @Override
         public void run()
         {
-            if( mAppData.getAssetVersion() != ASSET_VERSION )
-            {
-                extractAssets();
-            }
-            else
-            {
-                // Assets already extracted, just launch gallery activity, passing ROM path if it was provided externally
-                ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent().getData() );
-
-                // We never want to come back to this activity, so finish it
-                finish();
-            }
+            extractAssets();
         }
     };
 
