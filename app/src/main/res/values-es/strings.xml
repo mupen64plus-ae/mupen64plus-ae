@@ -492,6 +492,8 @@
     <string name="confirmUnmapAll_message">¿Desasignar todas las entradas para %1$s?</string>
     <string name="confirmDeleteProfile_message">¿Eliminar perfil \"%1$s\"?</string>
     <string name="confirmClearData_message">¿Seguro que desea borrar todos los paquetes de texturas de alta resolución instaladas y cachés?</string>
+    <string name="confirmRemoveFromLibrary_message">¿Seguro que desea eliminar ese juego de la librería?</string>
+
     <!--Change Log-->
     <string name="changeLog_dialogTitle">Registro de cambios</string>
     <!--Corrupt Installation Warning-->

@@ -86,8 +86,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
+    private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
     private static final int RESTART_CONFIRM_DIALOG_ID = 0;
     private static final int CLEAR_CONFIRM_DIALOG_ID = 1;
+    private static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 2;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -616,11 +618,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
             case R.id.menuItem_remove:
             {
-                final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-                config.remove(item.md5);
-                config.save();
-                mDrawerLayout.closeDrawer( GravityCompat.START, false );
-                refreshGrid();
+                final CharSequence title = getText( R.string.confirm_title );
+                final CharSequence message = getText( R.string.confirmRemoveFromLibrary_message );
+
+                final ConfirmationDialog confirmationDialog =
+                        ConfirmationDialog.newInstance(REMOVE_FROM_LIBRARY_DIALOG_ID, title.toString(), message.toString());
+
+                final FragmentManager fm = getSupportFragmentManager();
+                confirmationDialog.show(fm, STATE_REMOVE_FROM_LIBRARY_DIALOG);
             }
             default:
         }
@@ -639,10 +644,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     mSelectedItem.headerName, mSelectedItem.countryCode, mSelectedItem.artPath,
                     mSelectedItem.goodName, true );
             }
-            if(id == CLEAR_CONFIRM_DIALOG_ID)
+            else if(id == CLEAR_CONFIRM_DIALOG_ID)
             {
                 FileUtil.deleteFolder(new File(mGlobalPrefs.coreUserDataDir));
                 FileUtil.deleteFolder(new File(mGlobalPrefs.coreUserCacheDir));
+            }
+            else if(id == REMOVE_FROM_LIBRARY_DIALOG_ID)
+            {
+                final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
+                config.remove(mSelectedItem.md5);
+                config.save();
+                mDrawerLayout.closeDrawer( GravityCompat.START, false );
+                refreshGrid();
             }
         }
     }
