@@ -288,6 +288,15 @@ public class AppData
                 e.printStackTrace();
             }
         }
+
+        file = new File(touchscreenSkinsDir + "JoshaGibs/.nomedia");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         
         // Files
         String arch = System.getProperty("os.arch");

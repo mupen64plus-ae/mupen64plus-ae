@@ -63,6 +63,9 @@
                     android:id="@+id/menuItem_shaded"
                     android:title="@string/touchscreenStyle_entryShaded"/>
                 <item
+                    android:id="@+id/menuItem_joshagibs"
+                    android:title="@string/touchscreenStyle_entryJoshaGibs"/>
+                <item
                     android:id="@+id/menuItem_custom"
                     android:title="@string/touchscreenStyle_entryCustom"/>
             </group>

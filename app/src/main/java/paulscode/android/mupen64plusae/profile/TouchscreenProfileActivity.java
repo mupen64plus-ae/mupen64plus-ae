@@ -20,26 +20,6 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import java.io.File;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.MenuListView;
-import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
-import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
-import paulscode.android.mupen64plusae.game.GameOverlay;
-import paulscode.android.mupen64plusae.input.AbstractController;
-import paulscode.android.mupen64plusae.input.map.TouchMap;
-import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -64,6 +44,27 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+
+import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.MenuListView;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
+import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
+import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
+import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
+import paulscode.android.mupen64plusae.game.GameOverlay;
+import paulscode.android.mupen64plusae.input.AbstractController;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
+import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener, OnDialogMenuItemSelectedListener
 {
@@ -333,6 +334,11 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             case R.id.menuItem_shaded:
                 touchscreenSkin = mAppData.touchscreenSkinsDir + "Shaded";
                 mProfile.put( "touchscreenSkin", "Shaded" );
+                refresh();
+                return;
+            case R.id.menuItem_joshagibs:
+                touchscreenSkin = mAppData.touchscreenSkinsDir + "JoshaGibs";
+                mProfile.put( "touchscreenSkin", "JoshaGibs" );
                 refresh();
                 return;
             case R.id.menuItem_custom:
