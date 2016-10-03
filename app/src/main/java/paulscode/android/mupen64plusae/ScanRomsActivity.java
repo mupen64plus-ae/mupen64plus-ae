@@ -70,6 +70,11 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             else
             {
                 mCurrentPath = new File( romScanStartPath );
+
+                if(mCurrentPath.isFile())
+                {
+                    mCurrentPath = mCurrentPath.getParentFile();
+                }
             }
         }
          
