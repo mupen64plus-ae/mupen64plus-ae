@@ -3501,6 +3501,13 @@ gn Banjo-Kazooie
  cn Do Shock Spring Jump From Anywhere
   cd Press A Button. Do not use with Take Off And Fly From Anywhere
   8037C1D2 0002
+ cn 60 FPS
+  cd Game runs at 60 FPS if the device can handle it
+  8024BD9B 0004
+  8024C367 0003
+  80275C92 000D
+  8033DD57 0002
+  81371E20 3F00
 
 crc C2E9AA9A-475D70AA-C:45
 gn Banjo-Tooie (U)
