@@ -52,7 +52,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
@@ -175,13 +174,14 @@ public class CacheRomInfoService extends Service
                         Enumeration<? extends ZipEntry> entries = zipFile.entries();
                         while( entries.hasMoreElements() )
                         {
-                            ZipEntry zipEntry = entries.nextElement();
-                            mListener.GetProgressDialog().setSubtext( new File(zipEntry.getName()).getName() );
-                            mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
-                            
-                            if( mbStopped ) break;
                             try
                             {
+                                ZipEntry zipEntry = entries.nextElement();
+                                mListener.GetProgressDialog().setSubtext( new File(zipEntry.getName()).getName() );
+                                mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
+
+                                if( mbStopped ) break;
+
                                 InputStream zipStream = zipFile.getInputStream( zipEntry );
                                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
                                 File extractedFile = FileUtil.extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
@@ -200,22 +200,14 @@ public class CacheRomInfoService extends Service
 
                                 zipStream.close();
                             }
-                            catch( IOException e )
+                            catch( IOException|IllegalArgumentException e  )
                             {
                                 Log.w( "CacheRomInfoService", e );
                             }
                         }
                         zipFile.close();
                     }
-                    catch( ZipException e )
-                    {
-                        Log.w( "CacheRomInfoService", e );
-                    }
-                    catch( IOException e )
-                    {
-                        Log.w( "CacheRomInfoService", e );
-                    }
-                    catch( ArrayIndexOutOfBoundsException e )
+                    catch( IOException|ArrayIndexOutOfBoundsException e )
                     {
                         Log.w( "CacheRomInfoService", e );
                     }
