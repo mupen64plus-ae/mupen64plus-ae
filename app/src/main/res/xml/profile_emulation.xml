@@ -10,6 +10,10 @@
         android:key="r4300Emulator"
         android:summary="@string/selectedValue"
         android:title="@string/r4300Emulator_title" />
+    <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+        android:defaultValue="False"
+        android:key="DisableExtraMem"
+        android:title="@string/disableExtraMem_title" />
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/rsp_default"
         android:entries="@array/rsp_entries"

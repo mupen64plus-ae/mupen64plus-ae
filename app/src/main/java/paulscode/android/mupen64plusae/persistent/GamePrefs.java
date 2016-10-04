@@ -84,6 +84,9 @@ public class GamePrefs
     /** The selected R4300 emulator. */
     public final String r4300Emulator;
 
+    /** The selected R4300 emulator. */
+    public final boolean disableExpansionPak;
+
     /** The selected RSP Plugin. */
     public final String rspPluginPath;
 
@@ -512,6 +515,7 @@ public class GamePrefs
 
         // Emulation prefs
         r4300Emulator = emulationProfile.get( "r4300Emulator", "2" );
+        disableExpansionPak = emulationProfile.get( "DisableExtraMem", "False" ).equals( "True" );
         String rspSetting = emulationProfile.get( "rspSetting", "rsp-hle" );
 
         if(rspSetting.equals("rsp-hle"))

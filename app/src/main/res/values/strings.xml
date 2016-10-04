@@ -453,6 +453,7 @@
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
+    <string name="disableExtraMem_title">Disable expansion pak</string>
     <string name="rsp_title">RSP</string>
     <string name="rsp_hle">HLE</string>
     <string name="rsp_cxd4_hle">CXD4 HLE Video</string>

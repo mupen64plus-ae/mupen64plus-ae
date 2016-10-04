@@ -269,6 +269,7 @@
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptación de GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryRice">rice\<small>(adaptación de Rice Video v6.1.0(b))</small></string>
     <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptación de Glide64 Final (10mo Aniversario))</small></string>
+    <string name="videoSubPlugin_title">Variante de plugin de video</string>
     <string name="videoHardwareType_title">Reducción del parpadeo</string>
     <string name="videoHardwareType_entryDisableHack">Desactivar Hack de Reducción de Parpadeo</string>
     <string name="videoHardwareType_entryAuto">Detectar automáticamente a partir del modelo de teléfono/tablet</string>
@@ -419,6 +420,7 @@
     <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
     <string name="r4300Emulator_entryCachedInterpreter">Intérprete en caché</string>
     <string name="r4300Emulator_entryDynarec">Recompilador dinámico (dynarec)</string>
+    <string name="disableExtraMem_title">Desactivar el expansion pak</string>
     <string name="audioPlugin_title">Plugin de audio</string>
     <string name="audioPlugin_entryNone">Ninguno (audio deshabilitado)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">Ninguna depuración(audio desactivado, sin límite de velocidad)</string>
