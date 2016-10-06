@@ -239,11 +239,13 @@ void FrameBuffer::copyRdram()
 	memcpy(m_RdramCopy.data(), RDRAM + m_startAddress, dataSize);
 }
 
-bool FrameBuffer::isValid() const
+bool FrameBuffer::isValid(bool _forceCheck) const
 {
-	if (m_validityChecked == video().getBuffersSwapCount())
-		return true; // Already checked
-	m_validityChecked = video().getBuffersSwapCount();
+	if (!_forceCheck) {
+		if (m_validityChecked == video().getBuffersSwapCount())
+			return true; // Already checked
+		m_validityChecked = video().getBuffersSwapCount();
+	}
 
 	const u32 * const pData = (const u32*)RDRAM;
 
@@ -961,9 +963,9 @@ void FrameBufferList::fillRDRAM(s32 ulx, s32 uly, s32 lrx, s32 lry)
 	if (m_pCurrent == nullptr)
 		return;
 
-	ulx = max(0, ulx);
-	lrx = min(gDP.colorImage.width, (u32)lrx);
-	uly = max(0, uly);
+	ulx = min(max((float)ulx, gDP.scissor.ulx), gDP.scissor.lrx);
+	lrx = min(max((float)lrx, gDP.scissor.ulx), gDP.scissor.lrx);
+	uly = min(max((float)uly, gDP.scissor.uly), gDP.scissor.lry);
 	lry = min(max((float)lry, gDP.scissor.uly), gDP.scissor.lry);
 
 	const u32 stride = gDP.colorImage.width << gDP.colorImage.size >> 1;
