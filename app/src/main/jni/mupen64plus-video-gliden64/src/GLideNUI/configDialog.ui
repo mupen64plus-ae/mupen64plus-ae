@@ -47,7 +47,7 @@
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="QLabel" name="fullScreenResolutionLabel">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Full screen resolution:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This sets the full screen resolution. All the resolutions that your video card/monitor supports should be displayed.&lt;/p&gt;&lt;p&gt;[Recommended: &lt;span style=&quot; font-style:italic;&quot;&gt;native (max) resolution of your monitor - unless performance becomes an issue&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -57,14 +57,21 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
+           <item row="0" column="2">
             <widget class="QComboBox" name="fullScreenRefreshRateComboBox">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Full screen resolution:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This sets the full screen resolution. All the resolutions that your video card/monitor supports should be displayed.&lt;/p&gt;&lt;p&gt;[Recommended: &lt;span style=&quot; font-style:italic;&quot;&gt;native (max) resolution of your monitor - unless performance becomes an issue&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="1" column="1">
+            <widget class="QComboBox" name="windowedResolutionComboBox">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Resolution:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This option selects resolution for windowed mode. You also may select &lt;span style=&quot; font-style:italic;&quot;&gt;custom&lt;/span&gt; and enter necessary window sizes.&lt;/p&gt;&lt;p&gt;[Recommended: &lt;span style=&quot; font-style:italic;&quot;&gt;640x480, 800x600, 1024x768&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
             <widget class="QLabel" name="windowedResolutionLabel">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Resolution:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This option selects resolution for windowed mode. You also may select &lt;span style=&quot; font-style:italic;&quot;&gt;custom&lt;/span&gt; and enter necessary window sizes.&lt;/p&gt;&lt;p&gt;[Recommended: &lt;span style=&quot; font-style:italic;&quot;&gt;640x480, 800x600, 1024x768&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -74,37 +81,10 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="0" column="1">
             <widget class="QComboBox" name="fullScreenResolutionComboBox"/>
            </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="label_18">
-             <property name="text">
-              <string>Refresh rate:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="label_17">
-             <property name="text">
-              <string>Resolution:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="windowedResolutionComboBox">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Resolution:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This option selects resolution for windowed mode. You also may select &lt;span style=&quot; font-style:italic;&quot;&gt;custom&lt;/span&gt; and enter necessary window sizes.&lt;/p&gt;&lt;p&gt;[Recommended: &lt;span style=&quot; font-style:italic;&quot;&gt;640x480, 800x600, 1024x768&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
+           <item row="1" column="2">
             <layout class="QHBoxLayout" name="horizontalLayout_21">
              <item>
               <widget class="QLabel" name="label_32">
@@ -143,6 +123,100 @@
                </property>
                <property name="maximum">
                 <number>1080</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_35">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Crop image:&lt;/span&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This option allows user to crop black boarders from resulted image. It has two modes:&lt;br/&gt;&lt;br/&gt;* Auto - plugin sets crop automatically using game's frame scissor.&lt;/p&gt;&lt;p&gt;* Custom - crop using user defined vaules. User should set number of pixels to crop from original native-res image.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="locale">
+              <locale language="English" country="UnitedStates"/>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crop image&lt;span style=&quot; vertical-align:super;&quot;&gt;*:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="cropImageComboBox">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Crop image:&lt;/span&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This option allows user to crop black boarders from resulted image. It has two modes:&lt;br/&gt;&lt;br/&gt;* Auto - plugin sets crop automatically using game's frame scissor.&lt;/p&gt;&lt;p&gt;* Custom - crop using user defined vaules. User should set number of pixels to crop from original native-res image.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="locale">
+              <locale language="English" country="UnitedStates"/>
+             </property>
+             <item>
+              <property name="text">
+               <string>Disable</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Auto</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Custom</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_23">
+             <item>
+              <widget class="QLabel" name="label_36">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Crop image:&lt;/span&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This option allows user to crop black boarders from resulted image. It has two modes:&lt;br/&gt;&lt;br/&gt;* Auto - plugin sets crop automatically using game's frame scissor.&lt;/p&gt;&lt;p&gt;* Custom - crop using user defined vaules. User should set number of pixels to crop from original native-res image.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="locale">
+                <locale language="English" country="UnitedStates"/>
+               </property>
+               <property name="text">
+                <string>W:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="cropImageWidthSpinBox">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Crop image:&lt;/span&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This option allows user to crop black boarders from resulted image. It has two modes:&lt;br/&gt;&lt;br/&gt;* Auto - plugin sets crop automatically using game's frame scissor.&lt;/p&gt;&lt;p&gt;* Custom - crop using user defined vaules. User should set number of pixels to crop from original native-res image.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="locale">
+                <locale language="English" country="UnitedStates"/>
+               </property>
+               <property name="maximum">
+                <number>64</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_37">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Crop image:&lt;/span&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This option allows user to crop black boarders from resulted image. It has two modes:&lt;br/&gt;&lt;br/&gt;* Auto - plugin sets crop automatically using game's frame scissor.&lt;/p&gt;&lt;p&gt;* Custom - crop using user defined vaules. User should set number of pixels to crop from original native-res image.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="locale">
+                <locale language="English" country="UnitedStates"/>
+               </property>
+               <property name="text">
+                <string>H:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="cropImageHeightSpinBox">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Crop image:&lt;/span&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This option allows user to crop black boarders from resulted image. It has two modes:&lt;br/&gt;&lt;br/&gt;* Auto - plugin sets crop automatically using game's frame scissor.&lt;/p&gt;&lt;p&gt;* Custom - crop using user defined vaules. User should set number of pixels to crop from original native-res image.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="locale">
+                <locale language="English" country="UnitedStates"/>
+               </property>
+               <property name="maximum">
+                <number>48</number>
                </property>
               </widget>
              </item>
@@ -1342,137 +1416,43 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
-             <layout class="QGridLayout" name="gridLayout">
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_8">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select color of text messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Message color:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_9">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select font and font size for text messages, displayed during texture cache or texture pack save/load.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Message font:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="fontNameLabel">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select font and font size for text messages, displayed during texture cache or texture pack save/load.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Arial</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLabel" name="fontColorLabel">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select color of text messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Green</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
-               <widget class="QPushButton" name="PickFontColorButton">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select color of text messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Pick</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QPushButton" name="selectFontButton">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select font and font size for text messages, displayed during texture cache or texture pack save/load.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Select</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_12">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select path to folder with HD textures packs.&lt;br/&gt;Default: Plugin/hires_texture&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Texture pack path:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLabel" name="txPathLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select path to folder with HD textures packs.&lt;br/&gt;Default: Plugin/hires_texture&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string notr="true"/>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2">
-               <widget class="QPushButton" name="texPackPathButton">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select path to folder with HD textures packs.&lt;br/&gt;Default: Plugin/hires_texture&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Choose</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QLabel" name="label_12">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select path to folder with HD textures packs.&lt;br/&gt;Default: Plugin/hires_texture&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Texture pack path:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="txPathLabel">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="texPackPathButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select path to folder with HD textures packs.&lt;br/&gt;Default: Plugin/hires_texture&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Choose</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -1506,6 +1486,16 @@
          </property>
          <property name="text">
           <string>Save texture cache to hard disk</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_5" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
         </widget>
        </item>
@@ -1788,6 +1778,253 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="osdTab">
+      <attribute name="title">
+       <string>On screen display</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_17">
+       <item>
+        <widget class="QGroupBox" name="osdFontParametersGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Font parameters</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_18">
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="1" column="1">
+             <widget class="QLabel" name="fontColorLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select color of text messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Green</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QPushButton" name="PickFontColorButton">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select color of text messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Pick</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="selectFontButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select font and font size for on screen text messages.&lt;br/&gt;Warning: not all fonts installed in your system can be used. If you do not see OSD messages, switch back to default font.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Select</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select font and font size for on screen text messages.&lt;br/&gt;Warning: not all fonts installed in your system can be used. If you do not see OSD messages, switch back to default font.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Message font:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="fontNameLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select font and font size for on screen text messages.&lt;br/&gt;Warning: not all fonts installed in your system can be used. If you do not see OSD messages, switch back to default font.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Arial</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select color of text messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Message color:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="performanceGroupBox">
+         <property name="title">
+          <string>Performance counters</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_19">
+          <item>
+           <widget class="QCheckBox" name="fpsCheckBox">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show &lt;span style=&quot; font-weight:600;&quot;&gt;Frames Per Second&lt;/span&gt; counter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>FPS</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="visCheckBox">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show &lt;span style=&quot; font-weight:600;&quot;&gt;Video Interrupts per second&lt;/span&gt; counter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>VI/S</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="percentCheckBox">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show &lt;span style=&quot; font-weight:600;&quot;&gt;Performance in percents&lt;/span&gt; counter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>%</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_42">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Counters displayed in a corner of the screen. Select left or right corner.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Horisontal position:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_43">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Counters displayed in a corner of the screen. Select top or bottom corner.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Vertical position:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QRadioButton" name="leftRadioButton">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Counters displayed in a corner of the screen. Select left or right corner.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>left</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">horisontalPositionButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QRadioButton" name="topRadioButton">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Counters displayed in a corner of the screen. Select top or bottom corner.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>top</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">verticalPositionButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QRadioButton" name="rightRadioButton">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Counters displayed in a corner of the screen. Select left or right corner.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>right</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">horisontalPositionButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QRadioButton" name="bottoRadioButton">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Counters displayed in a corner of the screen. Select top or bottom corner.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>bottom</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">verticalPositionButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_6" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -1816,8 +2053,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>351</x>
-     <y>602</y>
+     <x>360</x>
+     <y>710</y>
     </hint>
     <hint type="destinationlabel">
      <x>316</x>
@@ -1832,44 +2069,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>331</x>
-     <y>602</y>
+     <x>340</x>
+     <y>710</y>
     </hint>
     <hint type="destinationlabel">
      <x>276</x>
      <y>460</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>anisotropicSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>anisotropicLabelVal</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>107</x>
-     <y>347</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>459</x>
-     <y>346</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>aliasingSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>aliasingLabelVal</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>107</x>
-     <y>243</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>459</x>
-     <y>242</y>
     </hint>
    </hints>
   </connection>
@@ -1880,12 +2085,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>219</x>
-     <y>96</y>
+     <x>362</x>
+     <y>138</y>
     </hint>
     <hint type="destinationlabel">
-     <x>459</x>
-     <y>115</y>
+     <x>535</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>
@@ -1896,44 +2101,28 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>216</x>
-     <y>126</y>
+     <x>359</x>
+     <y>178</y>
     </hint>
     <hint type="destinationlabel">
-     <x>459</x>
-     <y>148</y>
+     <x>535</x>
+     <y>178</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>blurStrengthSlider</sender>
+   <sender>aliasingSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>label_23</receiver>
+   <receiver>aliasingLabelVal</receiver>
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>147</x>
-     <y>161</y>
+     <x>122</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
-     <x>459</x>
-     <y>181</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>forceGammaCorrectionCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>gammaLevelSpinBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>102</x>
-     <y>226</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>173</x>
-     <y>258</y>
+     <x>529</x>
+     <y>333</y>
     </hint>
    </hints>
   </connection>
@@ -1944,22 +2133,72 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>168</y>
+     <x>415</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
-     <x>457</x>
-     <y>174</y>
+     <x>529</x>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>forceGammaCorrectionCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gammaLevelSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>283</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>269</x>
+     <y>317</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>anisotropicSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>anisotropicLabelVal</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>122</x>
+     <y>453</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>529</x>
+     <y>452</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blurStrengthSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_23</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>535</x>
+     <y>218</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <buttongroups>
+  <buttongroup name="verticalPositionButtonGroup"/>
+  <buttongroup name="bloomBlendModeButtonGroup"/>
   <buttongroup name="bilinearButtonGroup"/>
   <buttongroup name="copyDepthBufferButtonGroup"/>
-  <buttongroup name="bloomBlendModeButtonGroup"/>
-  <buttongroup name="copyFrameBufferButtonGroup"/>
   <buttongroup name="screenshotButtonGroup"/>
+  <buttongroup name="horisontalPositionButtonGroup"/>
+  <buttongroup name="copyFrameBufferButtonGroup"/>
   <buttongroup name="aspectButtonGroup"/>
   <buttongroup name="fixTexrectCoordsButtonGroup"/>
  </buttongroups>

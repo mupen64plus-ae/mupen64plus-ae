@@ -26,6 +26,9 @@ void _loadSettings(QSettings & settings)
 	config.video.windowedHeight = settings.value("windowedHeight", config.video.windowedHeight).toInt();
 	config.video.fullscreenRefresh = settings.value("fullscreenRefresh", config.video.fullscreenRefresh).toInt();
 	config.video.multisampling = settings.value("multisampling", config.video.multisampling).toInt();
+	config.video.cropMode = settings.value("cropMode", config.video.cropMode).toInt();
+	config.video.cropWidth = settings.value("cropWidth", config.video.cropWidth).toInt();
+	config.video.cropHeight = settings.value("cropHeight", config.video.cropHeight).toInt();
 	settings.endGroup();
 
 	settings.beginGroup("texture");
@@ -105,6 +108,14 @@ void _loadSettings(QSettings & settings)
 	config.gammaCorrection.force = settings.value("force", config.gammaCorrection.force).toInt();
 	config.gammaCorrection.level = settings.value("level", config.gammaCorrection.level).toFloat();
 	settings.endGroup();
+
+	settings.beginGroup("onScreenDispaly");
+	config.onScreenDisplay.fps = settings.value("showFPS", config.onScreenDisplay.fps).toInt();
+	config.onScreenDisplay.vis = settings.value("showVIS", config.onScreenDisplay.vis).toInt();
+	config.onScreenDisplay.percent = settings.value("showPercent", config.onScreenDisplay.percent).toInt();
+	config.onScreenDisplay.horisontalPos = settings.value("osdHorisontalPos", config.onScreenDisplay.horisontalPos).toInt();
+	config.onScreenDisplay.verticalPos = settings.value("osdVerticalPos", config.onScreenDisplay.verticalPos).toInt();
+	settings.endGroup();
 }
 
 void loadSettings(const QString & _strIniFolder)
@@ -142,6 +153,9 @@ void writeSettings(const QString & _strIniFolder)
 	settings.setValue("windowedHeight", config.video.windowedHeight);
 	settings.setValue("fullscreenRefresh", config.video.fullscreenRefresh);
 	settings.setValue("multisampling", config.video.multisampling);
+	settings.setValue("cropMode", config.video.cropMode);
+	settings.setValue("cropWidth", config.video.cropWidth);
+	settings.setValue("cropHeight", config.video.cropHeight);
 	settings.endGroup();
 
 	settings.beginGroup("texture");
@@ -209,6 +223,14 @@ void writeSettings(const QString & _strIniFolder)
 	settings.beginGroup("gammaCorrection");
 	settings.setValue("force", config.gammaCorrection.force);
 	settings.setValue("level", config.gammaCorrection.level);
+	settings.endGroup();
+
+	settings.beginGroup("onScreenDispaly");
+	settings.setValue("showFPS", config.onScreenDisplay.fps);
+	settings.setValue("showVIS", config.onScreenDisplay.vis);
+	settings.setValue("showPercent", config.onScreenDisplay.percent);
+	settings.setValue("osdHorisontalPos", config.onScreenDisplay.horisontalPos);
+	settings.setValue("osdVerticalPos", config.onScreenDisplay.verticalPos);
 	settings.endGroup();
 }
 

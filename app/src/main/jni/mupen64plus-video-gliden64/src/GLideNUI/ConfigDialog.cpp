@@ -30,7 +30,7 @@ struct
 	{ 1440, 1080, "1440 x 1080" },
 	{ 1600, 1024, "1600 x 1024" },
 	{ 1600, 1200, "1600 x 1200" },
-	{ 640, 480, "custom" }
+	{ 640, 480, "Custom" }
 };
 static
 const unsigned int numWindowedModes = sizeof(WindowedModes) / sizeof(WindowedModes[0]);
@@ -68,9 +68,9 @@ void ConfigDialog::_init()
 {
 	// Video settings
 	QStringList windowedModesList;
-	const int windowedModesCustom = numWindowedModes - 1;
-	int windowedModesCurrent = windowedModesCustom;
-	for (int i = 0; i < numWindowedModes; ++i) {
+	const unsigned int windowedModesCustom = numWindowedModes - 1;
+	unsigned int windowedModesCurrent = windowedModesCustom;
+	for (unsigned int i = 0; i < numWindowedModes; ++i) {
 		windowedModesList.append(WindowedModes[i].description);
 		if (i != windowedModesCustom &&
 			WindowedModes[i].width == config.video.windowedWidth &&
@@ -79,6 +79,11 @@ void ConfigDialog::_init()
 	}
 	ui->windowedResolutionComboBox->insertItems(0, windowedModesList);
 	ui->windowedResolutionComboBox->setCurrentIndex(windowedModesCurrent);
+	ui->cropImageComboBox->setCurrentIndex(config.video.cropMode);
+	ui->cropImageWidthSpinBox->setValue(config.video.cropWidth);
+	ui->cropImageWidthSpinBox->setEnabled(config.video.cropMode == Config::cmCustom);
+	ui->cropImageHeightSpinBox->setValue(config.video.cropHeight);
+	ui->cropImageHeightSpinBox->setEnabled(config.video.cropMode == Config::cmCustom);
 
 	QStringList fullscreenModesList, fullscreenRatesList;
 	int fullscreenMode, fullscreenRate;
@@ -210,21 +215,6 @@ void ConfigDialog::_init()
 
 	ui->txPathLabel->setText(QString::fromWCharArray(config.textureFilter.txPath));
 
-	QString fontName(config.font.name.c_str());
-	m_font = QFont(fontName.left(fontName.indexOf(".ttf")), config.font.size);
-	QString strSize;
-	strSize.setNum(m_font.pointSize());
-	ui->fontNameLabel->setText(m_font.family() + " - " + strSize);
-
-	m_color = QColor(config.font.color[0], config.font.color[1], config.font.color[2]);
-	ui->fontColorLabel->setFont(m_font);
-	ui->fontColorLabel->setText(m_color.name());
-	QPalette palette;
-	palette.setColor(QPalette::Window, Qt::black);
-	palette.setColor(QPalette::WindowText, m_color);
-	ui->fontColorLabel->setAutoFillBackground(true);
-	ui->fontColorLabel->setPalette(palette);
-
 	// Post filter settings
 	ui->bloomGroupBox->setChecked(config.bloomFilter.enable != 0);
 	switch (config.bloomFilter.blendMode) {
@@ -242,9 +232,37 @@ void ConfigDialog::_init()
 	ui->blurAmountSlider->setValue(config.bloomFilter.blurAmount);
 	ui->blurStrengthSlider->setValue(config.bloomFilter.blurStrength);
 
-	ui->forceGammaCorrectionCheckBox->setChecked(config.gammaCorrection.force  != 0);
+	ui->forceGammaCorrectionCheckBox->setChecked(config.gammaCorrection.force != 0);
 	ui->gammaLevelSpinBox->setValue(config.gammaCorrection.level);
 	ui->gammaLevelSpinBox->setEnabled(ui->forceGammaCorrectionCheckBox->isChecked());
+
+	// OSD settings
+	QString fontName(config.font.name.c_str());
+	m_font = QFont(fontName.left(fontName.indexOf(".ttf")), config.font.size);
+	QString strSize;
+	strSize.setNum(m_font.pointSize());
+	ui->fontNameLabel->setText(m_font.family() + " - " + strSize);
+
+	m_color = QColor(config.font.color[0], config.font.color[1], config.font.color[2]);
+	ui->fontColorLabel->setFont(m_font);
+	ui->fontColorLabel->setText(m_color.name());
+	QPalette palette;
+	palette.setColor(QPalette::Window, Qt::black);
+	palette.setColor(QPalette::WindowText, m_color);
+	ui->fontColorLabel->setAutoFillBackground(true);
+	ui->fontColorLabel->setPalette(palette);
+
+	ui->fpsCheckBox->setChecked(config.onScreenDisplay.fps != 0);
+	ui->visCheckBox->setChecked(config.onScreenDisplay.vis != 0);
+	ui->percentCheckBox->setChecked(config.onScreenDisplay.percent != 0);
+	if (config.onScreenDisplay.horisontalPos == Config::posLeft)
+		ui->leftRadioButton->setChecked(true);
+	else
+		ui->rightRadioButton->setChecked(true);
+	if (config.onScreenDisplay.verticalPos == Config::posTop)
+		ui->topRadioButton->setChecked(true);
+	else
+		ui->bottoRadioButton->setChecked(true);
 }
 
 void ConfigDialog::_getTranslations(QStringList & _translationFiles) const
@@ -305,6 +323,10 @@ void ConfigDialog::accept()
 
 	getFullscreenResolutions(ui->fullScreenResolutionComboBox->currentIndex(), config.video.fullscreenWidth, config.video.fullscreenHeight);
 	getFullscreenRefreshRate(ui->fullScreenRefreshRateComboBox->currentIndex(), config.video.fullscreenRefresh);
+
+	config.video.cropMode = ui->cropImageComboBox->currentIndex();
+	config.video.cropWidth = ui->cropImageWidthSpinBox->value();
+	config.video.cropHeight = ui->cropImageHeightSpinBox->value();
 
 	config.video.multisampling = ui->aliasingSlider->value();
 	config.texture.maxAnisotropy = ui->anisotropicSlider->value();
@@ -394,6 +416,22 @@ void ConfigDialog::accept()
 	if (!txPath.isEmpty())
 		config.textureFilter.txPath[txPath.toWCharArray(config.textureFilter.txPath)] = L'\0';
 
+	// Post filter settings
+	config.bloomFilter.enable = ui->bloomGroupBox->isChecked() ? 1 : 0;
+	if (ui->bloomStrongRadioButton->isChecked())
+		config.bloomFilter.blendMode = 0;
+	else if (ui->bloomMildRadioButton->isChecked())
+		config.bloomFilter.blendMode = 1;
+	else if (ui->bloomLightRadioButton->isChecked())
+		config.bloomFilter.blendMode = 2;
+	config.bloomFilter.thresholdLevel = ui->bloomThresholdSlider->value();
+	config.bloomFilter.blurAmount = ui->blurAmountSlider->value();
+	config.bloomFilter.blurStrength = ui->blurStrengthSlider->value();
+
+	config.gammaCorrection.force = ui->forceGammaCorrectionCheckBox->isChecked() ? 1 : 0;
+	config.gammaCorrection.level = ui->gammaLevelSpinBox->value();
+
+	// OSD settings
 	config.font.size = m_font.pointSize();
 	QString fontName = m_font.family() + ".ttf";
 #ifdef OS_WINDOWS
@@ -410,20 +448,11 @@ void ConfigDialog::accept()
 	config.font.colorf[2] = m_color.blueF();
 	config.font.colorf[3] = m_color.alphaF();
 
-	// Post filter settings
-	config.bloomFilter.enable = ui->bloomGroupBox->isChecked() ? 1 : 0;
-	if (ui->bloomStrongRadioButton->isChecked())
-		config.bloomFilter.blendMode = 0;
-	else if (ui->bloomMildRadioButton->isChecked())
-		config.bloomFilter.blendMode = 1;
-	else if (ui->bloomLightRadioButton->isChecked())
-		config.bloomFilter.blendMode = 2;
-	config.bloomFilter.thresholdLevel = ui->bloomThresholdSlider->value();
-	config.bloomFilter.blurAmount = ui->blurAmountSlider->value();
-	config.bloomFilter.blurStrength = ui->blurStrengthSlider->value();
-
-	config.gammaCorrection.force = ui->forceGammaCorrectionCheckBox->isChecked() ? 1 : 0;
-	config.gammaCorrection.level = ui->gammaLevelSpinBox->value();
+	config.onScreenDisplay.fps = ui->fpsCheckBox->isChecked() ? 1 : 0;
+	config.onScreenDisplay.vis = ui->visCheckBox->isChecked() ? 1 : 0;
+	config.onScreenDisplay.percent = ui->percentCheckBox->isChecked() ? 1 : 0;
+	config.onScreenDisplay.horisontalPos = ui->leftRadioButton->isChecked() ? Config::posLeft : Config::posRight;
+	config.onScreenDisplay.verticalPos = ui->topRadioButton->isChecked() ? Config::posTop : Config::posBottom;
 
 	writeSettings(m_strIniPath);
 
@@ -517,4 +546,11 @@ void ConfigDialog::on_nativeRes2D_checkBox_toggled(bool checked)
 	ui->fixTexrectDisableRadioButton->setEnabled(!checked);
 	ui->fixTexrectSmartRadioButton->setEnabled(!checked);
 	ui->fixTexrectForceRadioButton->setEnabled(!checked);
+}
+
+void ConfigDialog::on_cropImageComboBox_currentIndexChanged(int index)
+{
+	const bool bCustom = index == Config::cmCustom;
+	ui->cropImageWidthSpinBox->setEnabled(bCustom);
+	ui->cropImageHeightSpinBox->setEnabled(bCustom);
 }

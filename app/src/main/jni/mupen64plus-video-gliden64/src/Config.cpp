@@ -23,6 +23,8 @@ void Config::resetToDefaults()
 	video.fullscreenRefresh = 60;
 	video.multisampling = 0;
 	video.verticalSync = 0;
+	video.cropMode = cmDisable;
+	video.cropWidth = video.cropHeight = 0;
 
 	texture.maxAnisotropy = 0;
 	texture.bilinearMode = BILINEAR_STANDARD;
@@ -109,4 +111,10 @@ void Config::resetToDefaults()
 
 	gammaCorrection.force = 0;
 	gammaCorrection.level = 2.0f;
+
+	onScreenDisplay.vis = 0;
+	onScreenDisplay.fps = 0;
+	onScreenDisplay.percent = 0;
+	onScreenDisplay.verticalPos = posBottom;
+	onScreenDisplay.horisontalPos = posLeft;
 }
