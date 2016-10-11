@@ -711,12 +711,13 @@ bool isSpeedLimiterEnabled(void)
 EXPORT void CALL AiLenChanged(void)
 {
     static const bool sleepPerfFixEnabled = false;
-    static const double minSleepNeeded = -0.05;
+    static const double minSleepNeeded = -0.1;
     static const double maxSleepNeeded = 0.05;
     static bool resetOnce = false;
     static unsigned long totalElapsedSamples = 0;
     static double gameStartTime = 0;
     static int lastSpeedFactor = 100;
+    static bool lastSpeedLimiterEnabledState = false;
 
     if (critical_failure == 1)
         return;
@@ -732,12 +733,13 @@ EXPORT void CALL AiLenChanged(void)
           static_cast<double>(time.tv_nsec)/1.0e9;
 
     //if this is the first time or we are resuming from pause
-    if(gameStartTime == 0 || !resetOnce || lastSpeedFactor != speed_factor)
+    if(gameStartTime == 0 || !resetOnce || lastSpeedFactor != speed_factor || lastSpeedLimiterEnabledState != limiterEnabled)
     {
-       gameStartTime = timeDouble;
-       totalElapsedSamples = 0;
-       resetOnce = true;
-       totalElapsedSamples = 0;
+        lastSpeedLimiterEnabledState = limiterEnabled;
+        gameStartTime = timeDouble;
+        totalElapsedSamples = 0;
+        resetOnce = true;
+        totalElapsedSamples = 0;
     }
 
     lastSpeedFactor = speed_factor;
@@ -761,13 +763,19 @@ EXPORT void CALL AiLenChanged(void)
     //Slow the game down if sync game to audio is enabled
     if(!limiterEnabled)
     {
-       double totalRealTimeElapsed = timeDouble - gameStartTime;
-       double sleepNeeded = totalElapsedGameTime - totalRealTimeElapsed;
+        double totalRealTimeElapsed = timeDouble - gameStartTime;
+        double sleepNeeded = totalElapsedGameTime - totalRealTimeElapsed;
 
-       if(sleepNeeded < minSleepNeeded || sleepNeeded > (maxSleepNeeded/speedFactor))
-       {
-          resetOnce = false;
-       }
+        if(sleepNeeded > (maxSleepNeeded/speedFactor))
+        {
+            resetOnce = false;
+        }
+
+        //We don't want to let the game get too far ahead, otherwise we may have a sudden burst of speed
+        if(sleepNeeded < minSleepNeeded)
+        {
+            gameStartTime -= minSleepNeeded;
+        }
 
        //Useful logging
        //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, time=%f, speed=%d, sleep_before_factor=%f",
