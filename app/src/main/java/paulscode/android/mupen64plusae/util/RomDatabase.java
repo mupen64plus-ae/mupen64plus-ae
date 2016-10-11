@@ -19,16 +19,17 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import org.apache.commons.lang.NullArgumentException;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.commons.lang.NullArgumentException;
-
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * This class wraps the <a href=https://github.com/mupen64plus/mupen64plus-core/tree/master/data>ROM
@@ -140,7 +141,7 @@ public class RomDatabase
         if( detail == null )
         {
             RomDetail[] romDetails = lookupByCrc( crc );
-            if( romDetails.length == 0 )
+            if( romDetails.length == 0 || romDetails.length > 1)
             {
                 // CRC not in the database; create best guess
                 Log.w( "RomDetail", "No meta-info entry found for ROM " + file.getAbsolutePath() );
@@ -149,16 +150,6 @@ public class RomDatabase
                 Log.i( "RomDetail", "Constructing a best guess for the meta-info" );
                 String goodName = file.getName().split( "\\." )[0];
                 detail = new RomDetail( crc, goodName );
-            }
-            else if( romDetails.length > 1 )
-            {
-                // CRC in the database more than once; let user pick best match
-                // TODO Implement popup selector
-                Log.w( "RomDetail", "Multiple meta-info entries found for ROM " + file.getAbsolutePath() );
-                Log.w( "RomDetail", "MD5: " + md5 );
-                Log.w( "RomDetail", "CRC: " + crc );
-                Log.i( "RomDetail", "Defaulting to first entry" );
-                detail = romDetails[0];
             }
             else
             {
@@ -278,9 +269,16 @@ public class RomDatabase
             crc = assumedCrc;
             goodName = assumedGoodName;
             baseName = goodName.split( " \\(" )[0].trim();
-            artName = null;
-            artUrl = null;
-            wikiUrl = null;
+            // Generate the cover art URL string
+            artName = baseName.replaceAll( "['\\.!]", "" ).replaceAll( "\\W+", "_" ) + ".png";
+            artUrl = String.format( ART_URL_TEMPLATE, artName );
+
+            // Generate wiki page URL string
+            String _wikiUrl = null;
+            _wikiUrl = String.format( WIKI_URL_TEMPLATE, baseName.replaceAll( " ", "_" ) );
+            if( goodName.contains( "(Kiosk" ) )
+                _wikiUrl += "_(Kiosk_Demo)";
+            wikiUrl = _wikiUrl;
             saveType = null;
             status = 0;
             players = 4;

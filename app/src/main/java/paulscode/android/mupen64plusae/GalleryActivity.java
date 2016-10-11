@@ -864,19 +864,17 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         final String lastPlayedStr = config.get(md5, "lastPlayed");
                         String extracted = config.get(md5, "extracted");
 
-                        if (zipPath == null || crc == null || headerName == null || countryCodeString == null
+                        if (crc == null || headerName == null || countryCodeString == null
                             || extracted == null)
                         {
                             final File file = new File(romPath);
                             final RomHeader header = new RomHeader(file);
 
-                            zipPath = "";
                             crc = header.crc;
                             headerName = header.name;
                             countryCode = header.countryCode;
                             extracted = "false";
 
-                            config.put(md5, "zipPath", zipPath);
                             config.put(md5, "crc", crc);
                             config.put(md5, "headerName", headerName);
                             config.put(md5, "countryCode", Byte.toString(countryCode));
@@ -898,7 +896,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                         // Delete any old files that already exist inside a zip
                         // file
-                        if (!isNotOld && !zipPath.equals("") && extracted.equals("true"))
+                        if (!isNotOld && !TextUtils.isEmpty(zipPath) && extracted.equals("true"))
                         {
                             final File deleteFile = new File(romPath);
 
@@ -1002,7 +1000,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             config.put( romMd5, "lastPlayed", lastPlayed );
 
-            if(zipPath != null)
+            if(!TextUtils.isEmpty(zipPath))
             {
                 romPath = ExtractFileIfNeeded(romMd5, config, romPath, zipPath, extracted);
             }
