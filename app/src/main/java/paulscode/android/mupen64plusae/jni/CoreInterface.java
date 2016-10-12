@@ -375,6 +375,20 @@ public class CoreInterface
     public static synchronized void startupEmulator(final String saveToLoad)
     {
         Log.i("CoreInterface", "Startup emulator");
+
+        //Wait for previous instance to finish shutting down
+        if(sShutdownThread != null)
+        {
+            try {
+                sShutdownThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Load the native libraries
+        NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
+
         if( sCoreThread == null )
         {
             // Start the core thread if not already running
@@ -383,18 +397,6 @@ public class CoreInterface
                 @Override
                 public void run()
                 {
-                    //Wait for previous instance to finish shutting down
-                    if(sShutdownThread != null)
-                    {
-                        try {
-                            sShutdownThread.join();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    // Load the native libraries
-                    NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
 
                     // Only increase priority if we have more than one processor. The call to check the number of
                     // processors is only available in API level 17
@@ -548,6 +550,7 @@ public class CoreInterface
 
             // Ensure the auto-save is loaded if the operating system stops & restarts the activity
             sIsRestarting = false;
+            sUseCustomSpeed = false;
 
             // Start the core on its own thread
 
