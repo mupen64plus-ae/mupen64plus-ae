@@ -396,7 +396,11 @@ public class CoreInterface
                     // Load the native libraries
                     NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
 
-                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+                    // Only increase priority if we have more than one processor. The call to check the number of
+                    // processors is only available in API level 17
+                    if(AppData.IS_JELLY_BEAN_MR1 && Runtime.getRuntime().availableProcessors() > 1) {
+                        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+                    }
 
                     sIsCoreRunning = true;
 
