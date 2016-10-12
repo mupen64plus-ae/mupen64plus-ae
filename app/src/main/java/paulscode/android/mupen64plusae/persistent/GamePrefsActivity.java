@@ -108,6 +108,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private PreferenceGroup mCategoryCheats = null;
 
     private boolean mClearCheats = false;
+    private boolean mInCheatsScreen = false;
     
     Semaphore refreshCheatsMutex = new Semaphore(1);
 
@@ -168,7 +169,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         //Update activity on resume just in case user updated profile list when
         //managing profiles when clicking on profile settings
-        refreshViews();
+        if(!mInCheatsScreen)
+        {
+            refreshViews();
+        }
 
         mPrefs.registerOnSharedPreferenceChangeListener( this );
         mMogaController.onResume();
@@ -546,6 +550,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     {
         if(key.equals(SCREEN_CHEATS))
         {
+            mInCheatsScreen = true;
             mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );
             mCategoryCheats = (PreferenceGroup) findPreference( CATEGORY_CHEATS );
 
@@ -556,6 +561,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
         else //then we are the root view
         {
+            mInCheatsScreen = false;
             updateActivity();
         }
     }
