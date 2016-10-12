@@ -173,8 +173,14 @@ public class EmulationProfileActivity extends ProfileActivity
                 //Don't allow angrylion
                 ArrayList<CharSequence> videoEntriesArray = new ArrayList<CharSequence>(Arrays.asList(mPreferenceVideoPlugin.getEntries()));
                 ArrayList<CharSequence> videoValuesArray = new ArrayList<CharSequence>(Arrays.asList(mPreferenceVideoPlugin.getEntryValues()));
-                videoEntriesArray.remove(videoEntriesArray.indexOf(getText(R.string.videoPlugin_entryAngrylion)));
-                videoValuesArray.remove(videoValuesArray.indexOf("libmupen64plus-video-angrylion.so"));
+
+                int angryLionIndex = videoEntriesArray.indexOf(getText(R.string.videoPlugin_entryAngrylion));
+                if(angryLionIndex != -1)
+                {
+                    videoEntriesArray.remove(angryLionIndex);
+                    videoValuesArray.remove(videoValuesArray.indexOf("libmupen64plus-video-angrylion.so"));
+                }
+
                 mPreferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[videoEntriesArray.size()]));
                 mPreferenceVideoPlugin.setEntryValues(videoValuesArray.toArray(new CharSequence[videoValuesArray.size()]));
             }
