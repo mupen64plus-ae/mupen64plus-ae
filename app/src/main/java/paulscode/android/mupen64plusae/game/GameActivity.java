@@ -938,8 +938,12 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         if(CoreInterface.isCoreRunning())
         {
             //Generate auto save file
-            final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-            CoreInterface.autoSaveState( saveFileName );
+            if(mGlobalPrefs.maxAutoSaves != 0)
+            {
+                final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+                CoreInterface.autoSaveState( saveFileName );
+            }
+
             mAutoSaveManager.clearOldest();
             CoreInterface.shutdownEmulator();
         }
@@ -963,8 +967,12 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         } );
 
         //Generate auto save file
-        final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-        CoreInterface.autoSaveState( saveFileName );
+        if(mGlobalPrefs.maxAutoSaves != 0)
+        {
+            final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
+            CoreInterface.autoSaveState( saveFileName );
+        }
+
         mAutoSaveManager.clearOldest();
     }
 

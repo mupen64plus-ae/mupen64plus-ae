@@ -64,7 +64,7 @@
         android:key="gameAutoSaves"
         android:title="@string/GameAutoSavesMax_title"
         mupen64:maximumValue="10"
-        mupen64:minimumValue="1"
+        mupen64:minimumValue="0"
         mupen64:stepSize="1"
         mupen64:units="" />
 
