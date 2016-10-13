@@ -551,6 +551,7 @@ public class CoreInterface
             // Ensure the auto-save is loaded if the operating system stops & restarts the activity
             sIsRestarting = false;
             sUseCustomSpeed = false;
+            NativeExports.emuSetSpeed( BASELINE_SPEED );
 
             // Start the core on its own thread
 
