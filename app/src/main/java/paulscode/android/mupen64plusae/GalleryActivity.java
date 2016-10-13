@@ -686,7 +686,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final File[] allFilesInSavePath = autoSavePathFile.listFiles();
 
         //No saves, go ahead and remove it
-        final boolean visible = allFilesInSavePath != null && allFilesInSavePath.length != 0;
+        final boolean visible = allFilesInSavePath != null && allFilesInSavePath.length != 0 &&
+                mGlobalPrefs.maxAutoSaves > 0;
 
         if (visible)
         {
