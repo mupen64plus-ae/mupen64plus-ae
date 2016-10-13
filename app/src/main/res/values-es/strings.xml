@@ -144,6 +144,7 @@
     <!--Actions (simply launch an action, aren't related to persistent data)-->
     <string name="actionResume_title">Reanudar</string>
     <string name="actionResume_summary">Impredecible si se aplican cheats</string>
+    <string name="actionStart_title">Iniciar</string>
     <string name="actionRestart_title">Reiniciar</string>
     <string name="actionRestart_summary">Recomendado si se aplican cheats</string>
     <string name="actionRemove_title">Eliminar</string>

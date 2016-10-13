@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
@@ -699,6 +700,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             // Disable the action handler
             mGameSidebar.getMenu().removeItem(R.id.menuItem_resume);
+
+            final MenuItem restartItem = mGameSidebar.getMenu().findItem(R.id.menuItem_restart);
+            restartItem.setTitle(getString(R.string.actionStart_title));
+            restartItem.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_play));
+
             mGameSidebar.reload();
             mRestartPromptEnabled = false;
         }

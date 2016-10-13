@@ -164,6 +164,7 @@
     <!-- Actions (simply launch an action, aren't related to persistent data) -->
     <string name="actionResume_title">Resume</string>
     <string name="actionResume_summary">Unpredictable if cheats are used</string>
+    <string name="actionStart_title">Start</string>
     <string name="actionRestart_title">Restart</string>
     <string name="actionRestart_summary">Recommended if cheats are used</string>
     <string name="actionRemove_title">Remove</string>
