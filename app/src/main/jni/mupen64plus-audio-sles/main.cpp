@@ -711,6 +711,7 @@ bool isSpeedLimiterEnabled(void)
 EXPORT void CALL AiLenChanged(void)
 {
     static const bool sleepPerfFixEnabled = false;
+    static const double minSleepNeededForReset = -5.0;
     static const double minSleepNeeded = -0.1;
     static const double maxSleepNeeded = 0.05;
     static bool resetOnce = false;
@@ -766,7 +767,7 @@ EXPORT void CALL AiLenChanged(void)
         double totalRealTimeElapsed = timeDouble - gameStartTime;
         double sleepNeeded = totalElapsedGameTime - totalRealTimeElapsed;
 
-        if(sleepNeeded > (maxSleepNeeded/speedFactor))
+        if(sleepNeeded < minSleepNeededForReset || sleepNeeded > (maxSleepNeeded/speedFactor))
         {
             resetOnce = false;
         }
