@@ -20,16 +20,20 @@
  */
 package paulscode.android.mupen64plusae.game;
 
-import paulscode.android.mupen64plusae.input.map.TouchMap;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 
 // Android's DrawerLayout intercepts touches along the left edge of the screen
 // so it can have the drawer peek out when you press and hold on the left edge.
@@ -43,10 +47,39 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
     private TouchMap mTouchMap;
     private List<MotionEvent> ignore = new ArrayList<MotionEvent>();
     private long mLastEdgeTime = 0;
+    private boolean mForceDrawer = false;
     
     public GameDrawerLayout( Context context, AttributeSet attrs )
     {
         super( context, attrs );
+
+        addDrawerListener(new DrawerLayout.DrawerListener(){
+
+            @Override
+            public void onDrawerClosed(View arg0)
+            {
+                mForceDrawer = false;
+            }
+
+            @Override
+            public void onDrawerOpened(View arg0)
+            {
+
+            }
+
+            @Override
+            public void onDrawerSlide(View arg0, float arg1)
+            {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState)
+            {
+
+            }
+
+        });
         mTouchMap = null;
     }
     
@@ -58,6 +91,9 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
     @Override
     public boolean onInterceptTouchEvent( MotionEvent event )
     {
+        final int edgeXSidebarTrigger = 30;
+        final int edgeIgnorePeriod = 250;
+
         // Only intercept this touch event if it is not directly over a touchscreen input
         // (So the game sidebar is never accidentally triggered)
         
@@ -73,10 +109,12 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
         {
             int actionIndex = MotionEventCompat.getActionIndex( event );
             int xLocation = (int) event.getX( actionIndex );
-            if( xLocation < 10 )
+            if( xLocation < edgeXSidebarTrigger )
                 mLastEdgeTime = currentEventTime;
         }
-        
+
+        long lastEdgeTime = currentEventTime - mLastEdgeTime;
+
         if( ignore.contains( event ) )
         {
             if( upAction )
@@ -84,11 +122,34 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
             return false;
         }
         else if( actionCode == MotionEvent.ACTION_POINTER_DOWN
-                || ( actionCode == MotionEvent.ACTION_DOWN && currentEventTime - mLastEdgeTime < 250 ) )
+                || ( actionCode == MotionEvent.ACTION_DOWN && lastEdgeTime < edgeIgnorePeriod ) )
         {
+
             // Ignore secondary inputs and inputs too close to the most recent one (0.25 seconds)
             ignore.add( event );
             return false;
+        }
+        else if(mForceDrawer ||
+                (actionCode == MotionEvent.ACTION_DOWN || actionCode == MotionEvent.ACTION_POINTER_DOWN) &&
+                        lastEdgeTime >= edgeIgnorePeriod )
+        {
+            int actionIndex = MotionEventCompat.getActionIndex( event );
+            int xLocation = (int) event.getX( actionIndex );
+
+            if( xLocation < edgeXSidebarTrigger || mForceDrawer)
+            {
+                mForceDrawer = true;
+
+                // Let the parent DrawerLayout deal with it
+                try
+                {
+                    return super.onInterceptTouchEvent( event );
+                }
+                catch( Exception ex )
+                {
+                    return false;
+                }
+            }
         }
         else if( actionCode == MotionEvent.ACTION_DOWN && !isDrawerOpen( GravityCompat.START )
                 && mTouchMap != null )
@@ -130,21 +191,21 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
                 }
             }
         }
-        
-        // Let the parent DrawerLayout deal with it
-        try
+
+        if(actionCode != MotionEvent.ACTION_DOWN && actionCode != MotionEvent.ACTION_MOVE)
         {
-            return super.onInterceptTouchEvent( event );
+            // Let the parent DrawerLayout deal with it
+            try
+            {
+                return super.onInterceptTouchEvent( event );
+            }
+            catch( Exception ex )
+            {
+                return false;
+            }
         }
-        catch( Exception ex )
-        {
-            // For some reason this is very prone to crashing here when using multitouch:
-            // android.support.v4.widget.ViewDragHelper.shouldInterceptTouchEvent
-            // But fortunately this is very unimportant, so we can safely ignore it
-            // The source code is here if you want to attempt a fix:
-            // https://github.com/android/platform_frameworks_support/blob/master/v4/java/android/support/v4/widget/ViewDragHelper.java
-            return false;
-        }
+
+        return false;
     }
     
     @SuppressLint("ClickableViewAccessibility")
