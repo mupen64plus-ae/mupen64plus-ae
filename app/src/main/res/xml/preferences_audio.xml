@@ -61,6 +61,11 @@
         android:key="audioSDLBufferSize"
         android:summary="@string/selectedValue"
         android:title="@string/audioSDLBufferSize_title" />
+    <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="audioSLESTimeStretch"
+        android:summary="@string/audioSLESTimeStretch_summary"
+        android:title="@string/audioSLESTimeStretch_title" />
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/audioSLESBufferSize_default"
         android:entries="@array/audioSLESBufferSize_entries"
@@ -70,7 +75,7 @@
         android:title="@string/audioSLESBufferSize_title" />
 
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
-        android:defaultValue="12"
+        android:defaultValue="10"
         android:key="audioSLESBufferNbr2"
         android:title="@string/audioSLESBufferNbr_title"
         mupen64:maximumValue="50"

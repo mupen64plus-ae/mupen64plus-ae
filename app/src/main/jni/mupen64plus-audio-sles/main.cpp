@@ -95,10 +95,10 @@ static int primaryBufferBytes = 0;
 static unsigned int PrimaryBufferSize = PRIMARY_BUFFER_SIZE;
 /* Pointer to secondary buffers */
 static unsigned char ** secondaryBuffers = NULL;
-/* Size of a single secondary buffer */
-static int secondaryBufferBytes = 0;
 /* Size of a single secondary audio buffer in output samples */
 static unsigned int SecondaryBufferSize = SECONDARY_BUFFER_SIZE;
+/** Time stretched audio enabled */
+static int TimeStretchEnabled = true;
 /* Index of the next secondary buffer available */
 static int secondaryBufferIndex = 0;
 /* Number of secondary buffers */
@@ -125,7 +125,8 @@ typedef struct queueData_
 } queueData;
 
 void processAudio(const unsigned char* buffer, unsigned int length);
-static void* audioConsumer(void*);
+static void* audioConsumerStretch(void*);
+static void* audioConsumerNoStretch(void*);
 static pthread_t audioConsumerThread;
 static struct threadqueue audioConsumerQueue;
 
@@ -220,7 +221,6 @@ static void CloseAudio(void)
                 secondaryBuffers[i] = NULL;
             }
         }
-        secondaryBufferBytes = 0;
         free(secondaryBuffers);
         secondaryBuffers = NULL;
     }
@@ -301,8 +301,6 @@ static int CreateSecondaryBuffers(void)
         memset(secondaryBuffers[i], 0, secondaryBytes);
     }
 
-    secondaryBufferBytes = secondaryBytes;
-
     return status;
 }
 
@@ -317,10 +315,13 @@ static void InitializeAudio(int freq)
 {
 
    /* reload these because they gets re-assigned from data below, and InitializeAudio can be called more than once */
+   GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
+   SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
    PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
    SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
    TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
    SamplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
+   TimeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
 
     SLuint32 sample_rate;
 
@@ -516,7 +517,14 @@ static void InitializeAudio(int freq)
 
     thread_queue_init(&audioConsumerQueue);
     shutdown = false;
-    pthread_create( &audioConsumerThread, NULL, audioConsumer, NULL);
+    if(TimeStretchEnabled)
+    {
+        pthread_create( &audioConsumerThread, NULL, audioConsumerStretch, NULL);
+    }
+    else
+    {
+        pthread_create( &audioConsumerThread, NULL, audioConsumerNoStretch, NULL);
+    }
 
     return;
 }
@@ -530,6 +538,7 @@ static void ReadConfig(void)
     SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
     TargetSecondaryBuffers = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR");
     SamplingRateSelection = ConfigGetParamInt(l_ConfigAudio, "SAMPLING_RATE");
+    TimeStretchEnabled = ConfigGetParamBool(l_ConfigAudio, "TIME_STRETCH_ENABLED");
 }
 
 /* Mupen64Plus plugin functions */
@@ -630,6 +639,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR" , SECONDARY_BUFFER_NBR,  "Number of secondary buffers.");
     ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_RATE" ,        0,                     "Sampling rate, (0=game original, 16, 24, 32, 441, 48");
+    ConfigSetDefaultBool(l_ConfigAudio, "TIME_STRETCH_ENABLED", 1,                     "Enable audio time stretching to prevent crackling");
 
     if (bSaveConfig && ConfigAPIVersion >= 0x020100)
         ConfigSaveSection("Audio-OpenSLES");
@@ -828,7 +838,7 @@ float GetAverageTime( float* feedTimes, int numTimes)
 }
 
 
-void* audioConsumer(void* param)
+void* audioConsumerStretch(void* param)
 {
    /*
    static int sequenceLenMS = 63;
@@ -847,8 +857,6 @@ void* audioConsumer(void* param)
    
    double bufferMultiplier = (double)OutputFreq/DEFAULT_FREQUENCY;
 
-   int prevQueueSize = thread_queue_length(&audioConsumerQueue);
-   int currQueueSize = prevQueueSize;
    int maxQueueSize = TargetSecondaryBuffers + 30.0*bufferMultiplier;
    int minQueueSize = (double)TargetSecondaryBuffers*bufferMultiplier;
    bool drainQueue = false;
@@ -868,8 +876,8 @@ void* audioConsumer(void* param)
    int increments = 4;
    const double catchUpOffset = increments*2/100.0;
    queueData* currQueueData = NULL;
-   struct timespec currTime;
-   struct timespec prevTime;
+    struct timespec prevTime;
+    struct timespec currTime;
 
    //How long to wait for some data
    struct timespec waitTime;
@@ -881,7 +889,6 @@ void* audioConsumer(void* param)
    int feedTimeWindowSize = fmin(TargetSecondaryBuffers, maxWindowSize);
    int feedTimeIndex = 0;
    bool feedTimesSet = false;
-   float timePerBuffer = 1.0*SecondaryBufferSize/GameFreq;
    float feedTimes[feedTimeWindowSize];
    float gameTimes[feedTimeWindowSize];
    float averageGameTime = 0.01666;
@@ -990,6 +997,55 @@ void* audioConsumer(void* param)
    }
 
    return 0;
+}
+
+
+void* audioConsumerNoStretch(void* param)
+{
+    soundTouch.setSampleRate(GameFreq);
+    soundTouch.setChannels(2);
+    soundTouch.setSetting( SETTING_USE_QUICKSEEK, 1 );
+    soundTouch.setSetting( SETTING_USE_AA_FILTER, 1 );
+
+    soundTouch.setRate((double)GameFreq/(double)OutputFreq);
+    queueData* currQueueData = NULL;
+    struct timespec prevTime;
+
+    int lastSpeedFactor = speed_factor;
+
+    //How long to wait for some data
+    struct timespec waitTime;
+    waitTime.tv_sec = 1;
+    waitTime.tv_nsec = 0;
+
+    while(!shutdown)
+    {
+        struct threadmsg msg;
+
+        clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
+        int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
+
+        if( result != ETIMEDOUT )
+        {
+            currQueueData = (queueData*)msg.data;
+            int dataLength = currQueueData->lenght;
+
+            if(lastSpeedFactor != speed_factor)
+            {
+                lastSpeedFactor = speed_factor;
+                double speedFactor = static_cast<double>(speed_factor)/100.0;
+                soundTouch.setTempo(speedFactor);
+            }
+
+
+            processAudio(currQueueData->data, dataLength);
+
+            free(currQueueData->data);
+            free(currQueueData);
+        }
+    }
+
+    return 0;
 }
 
 /* This callback handler is called every time a buffer finishes playing */

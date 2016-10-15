@@ -238,6 +238,8 @@
     <string name="audioSynchronize_summary">Minimizes latency, but may cause crackling in some games/devices</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
+    <string name="audioSLESTimeStretch_title">Time stretch audio</string>
+    <string name="audioSLESTimeStretch_summary">Enable time stretch audio to reduce crackling, but introduces audio lag</string>
     <string name="showRecentlyPlayed_title">Recently played</string>
     <string name="showRecentlyPlayed_summary">Show games played within the past week</string>
     <string name="showFullNames_title">Full names</string>

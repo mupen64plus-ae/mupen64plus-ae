@@ -227,6 +227,9 @@ public class GlobalPrefs
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
 
+    /** Stretch audio to prevent crackling in SLES audio plugin */
+    public final boolean enableSLESAudioTimeSretching;
+
     /** Size of secondary buffer in output samples. This is SDL's hardware buffer, which directly affects latency. */
     public final int audioSDLSecondaryBufferSize;
 
@@ -449,6 +452,7 @@ public class GlobalPrefs
 
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
+        enableSLESAudioTimeSretching = mPreferences.getBoolean( "audioSLESTimeStretch", true );
         audioSDLSecondaryBufferSize = getSafeInt( mPreferences, "audioSDLBufferSize", 2048 );
         audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize2", 256 );
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 10 );
