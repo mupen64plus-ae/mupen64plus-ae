@@ -492,21 +492,44 @@ public class GamePrefs
                 globalPrefs.getControllerProfileDefault(1), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile2 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
-                globalPrefs.getControllerProfileDefault(2), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.getControllerProfileDefault(2), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile3 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
-                globalPrefs.getControllerProfileDefault(3), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.getControllerProfileDefault(3), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile4 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
-                globalPrefs.getControllerProfileDefault(4), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.getControllerProfileDefault(4), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
+
+        if(controllerProfile1 != null) {
+            Log.i("GamePrefs", "controler 1 profile found: " + controllerProfile1.getName());
+        }else  {
+            Log.i("GamePrefs", "controler 1 profile NOT found");
+        }
+        if(controllerProfile2 != null) {
+            Log.i("GamePrefs", "controler 2 profile found: " + controllerProfile2.getName());
+        }else  {
+            Log.i("GamePrefs", "controler 2 profile NOT found");
+        }
+        if(controllerProfile3 != null) {
+            Log.i("GamePrefs", "controler 3 profile found: " + controllerProfile3.getName());
+        }else  {
+            Log.i("GamePrefs", "controler 3 profile NOT found");
+        }
+        if(controllerProfile4 != null) {
+            Log.i("GamePrefs", "controler 4 profile found: " + controllerProfile4.getName());
+        }else  {
+            Log.i("GamePrefs", "controler 4 profile NOT found");
+        }
 
         // Player map
         boolean useDefaultPlayerMapping = mPreferences.getBoolean( "useDefaultPlayerMapping", true );
         String playerMapString = mPreferences.getString( PLAYER_MAP, "" );
 
-        if( playerMapString.isEmpty() || useDefaultPlayerMapping)
-            playerMapString = globalPrefs.getString( PLAYER_MAP, "" );
+        if( playerMapString.isEmpty() || useDefaultPlayerMapping) {
+            playerMapString = globalPrefs.getString(PLAYER_MAP, "");
+            Log.i("GamePrefs", "Using default player mapping");
+        }
 
         playerMap = new PlayerMap( playerMapString );
 
@@ -718,7 +741,14 @@ public class GamePrefs
         numControllers += isControllerEnabled2 ? 1 : 0;
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
-        playerMap.setEnabled( numControllers > 1 && !isControllerShared);
+
+        boolean playerMappingEnabled = numControllers > 1 && !isControllerShared;
+
+        if(playerMappingEnabled)
+        {
+            Log.i("GamePrefs", "Player mapping is enabled!");
+        }
+        playerMap.setEnabled( playerMappingEnabled);
 
         // Determine which players are "plugged in"
         isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled;
@@ -808,9 +838,9 @@ public class GamePrefs
         //Length zero profile is the "disabled" profile
         if(name != null && name.length() == 0)
             return null;
-        else if( custom.keySet().contains( name ) )
+        else if( name != null && custom.keySet().contains( name ) )
             return new ControllerProfile( false, custom.get( name ) );
-        else if( builtin.keySet().contains( name ) )
+        else if( name != null && builtin.keySet().contains( name ) )
             return new ControllerProfile( true, builtin.get( name ) );
         else if( custom.keySet().contains( defaultName ) )
             return new ControllerProfile( false, custom.get( defaultName ) );

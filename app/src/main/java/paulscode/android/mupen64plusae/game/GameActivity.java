@@ -842,11 +842,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
             if( needs1 || needs2 || needs3 || needs4 )
             {
-// TODO FIXME
-//                  @SuppressWarnings( "deprecation" )
-//                  PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
-//                  pref.show();
-//                  return;
                 Popups.showNeedsPlayerMap( this );
             }
         }
@@ -863,24 +858,28 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             final ControllerProfile p = mGamePrefs.controllerProfile1;
             mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, mSensorController, mKeyProvider, axisProvider, mogaProvider ) );
+            Log.i("GameActivity", "Player 1 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile2;
             mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, null, mKeyProvider, axisProvider, mogaProvider ) );
+            Log.i("GameActivity", "Player 2 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile3;
             mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, null, mKeyProvider, axisProvider, mogaProvider ) );
+            Log.i("GameActivity", "Player 3 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile4;
             mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, null, mKeyProvider, axisProvider, mogaProvider ) );
+            Log.i("GameActivity", "Player 4 has been enabled");
         }
     }
 
