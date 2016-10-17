@@ -55,7 +55,6 @@ public:
     float m_fScreenViewportMultX;
     float m_fScreenViewportMultY;
 
-
     uint32  m_dwTexturePerspective;
     BOOL    m_bAlphaTestEnable;
 
@@ -68,18 +67,16 @@ public:
 
     uint32  m_dwAlpha;
 
-    uint64      m_Mux;
-    BOOL    m_bBlendModeValid;
+    uint64  m_modes64; // used to find hacks
 
     CColorCombiner *m_pColorCombiner;
     CBlender *m_pAlphaBlender;
-    
     
     virtual ~CRender();
     
     inline bool IsTexel0Enable() {return m_pColorCombiner->m_bTex0Enabled;}
     inline bool IsTexel1Enable() {return m_pColorCombiner->m_bTex1Enabled;}
-    inline bool IsTextureEnabled() { return (m_pColorCombiner->m_bTex0Enabled||m_pColorCombiner->m_bTex1Enabled); }
+    inline bool IsTextureEnabled() { return (m_pColorCombiner->m_bTexelsEnable); }
 
     inline RenderTexture& GetCurrentTexture() { return g_textures[gRSP.curTile]; }
     inline RenderTexture& GetTexture(uint32 dwTile) { return g_textures[dwTile]; }
@@ -99,8 +96,6 @@ public:
         DEBUGGER_IF_DUMP( (gRSP.bFogEnabled != bEnable && logFog ), TRACE1("Set Fog %s", bEnable? "enable":"disable"));
         gRSP.bFogEnabled = bEnable&&(options.fogMethod > 0);
     }
-    virtual void SetFogMinMax(float fMin, float fMax) = 0;
-    virtual void TurnFogOnOff(bool flag)=0;
 
     virtual void SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a) 
     { 
@@ -137,7 +132,7 @@ public:
 
     virtual void RenderReset();
     virtual void SetCombinerAndBlender();
-    virtual void SetMux(uint32 dwMux0, uint32 dwMux1);
+            void SetCombineMode(uint32 dwMux0, uint32 dwMux1);
     virtual void SetCullMode(bool bCullFront, bool bCullBack) { gRSP.bCullFront = bCullFront; gRSP.bCullBack = bCullBack; }
 
     virtual void BeginRendering(void) {CRender::gRenderReferenceCount++;}       // For DirectX only
@@ -171,8 +166,6 @@ public:
 
     void SetVertexTextureUVCoord(TLITVERTEX &v, float fTex0S, float fTex0T, float fTex1S, float fTex1T);
     void SetVertexTextureUVCoord(TLITVERTEX &v, float fTex0S, float fTex0T);
-    virtual COLOR PostProcessDiffuseColor(COLOR curDiffuseColor)=0;
-    virtual COLOR PostProcessSpecularColor()=0;
     
     bool DrawTriangles();
     virtual bool RenderFlushTris()=0;
@@ -219,7 +212,7 @@ public:
     void DrawSprite(uObjTxSprite &sprite, bool rectR = true);
     void DrawObjBGCopy(uObjBg &info);
     virtual void DrawSpriteR_Render(){};
-    virtual void DrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, COLOR spe, float z, float rhw)=0;
+    virtual void DrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, float z, float rhw)=0;
     void DrawFrameBuffer(bool useVIreg=false, uint32 left=0, uint32 top=0, uint32 width=0, uint32 height=0);
     void DrawObjBG1CYC(uObjScaleBg &bg, bool scaled=true);
 
@@ -251,7 +244,7 @@ protected:
     TexCord         m_texRectTex2UV[2];
 
     // DrawSimple2DTexture
-    virtual void    StartDrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, COLOR spe, float z, float rhw);
+    virtual void    StartDrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, float z, float rhw);
 
     // DrawSimpleRect
     virtual void    StartDrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor, float depth, float rhw);

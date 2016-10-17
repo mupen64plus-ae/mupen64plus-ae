@@ -64,29 +64,14 @@ public:
     float       m_fXScale;      // = m_dwCorrectedWidth/m_dwWidth
     float       m_fYScale;      // = m_dwCorrectedHeight/m_dwWidth
 
-    bool        m_bScaledS;
-    bool        m_bScaledT;
-
-    bool        m_bClampedS;
-    bool        m_bClampedT;
-
     bool        m_bIsEnhancedTexture;
     
     TextureUsage    m_Usage;
-
-    virtual void ScaleImageToSurface(bool scaleS=true, bool scaleT=true);
-    virtual void ClampImageToSurfaceS();
-    virtual void ClampImageToSurfaceT();
 
     virtual LPRICETEXTURE GetTexture() { return m_pTexture; }
 
     uint32          GetPixelSize();
     TextureFmt      GetSurfaceFormat(void); // Surface pixel format...
-    inline void     SetOthersVariables(void)
-    {
-        m_bClampedS = m_bScaledS = (m_dwWidth == m_dwCreatedTextureWidth);
-        m_bClampedT = m_bScaledT = (m_dwHeight == m_dwCreatedTextureHeight);
-    }
 
     // Provides access to "surface"
     virtual bool StartUpdate(DrawInfo *di)=0;

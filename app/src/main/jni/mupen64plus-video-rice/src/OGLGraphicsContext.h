@@ -25,10 +25,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 class COGLGraphicsContext : public CGraphicsContext
 {
-    friend class OGLRender;
-    friend class COGLRenderTexture;
 public:
     virtual ~COGLGraphicsContext();
+
+    static inline COGLGraphicsContext* Get(void) { return (COGLGraphicsContext*)CGraphicsContext::m_pGraphicsContext; };
 
     bool Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed );
     bool ResizeInitialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed );
@@ -38,29 +38,34 @@ public:
     void UpdateFrame(bool swaponly=false);
     int ToggleFullscreen();     // return 0 as the result is windowed
 
-    bool IsExtensionSupported(const char* pExtName);
-    static void InitDeviceParameters();
-
     //Get methods (TODO, remove all friend class and use get methods instead)
-    bool IsSupportAnisotropicFiltering();
-    int  getMaxAnisotropicFiltering();
+    inline bool IsSupportAnisotropicFiltering() { return m_bSupportAnisotropicFiltering; };
+    inline int  getMaxAnisotropicFiltering() { return m_maxAnisotropicFiltering; };
+    inline int  getMaxTextureImageUnits() { return m_maxTextureImageUnits; };
+    inline bool IsSupportTextureFormatBGRA() { return m_bSupportTextureFormatBGRA; };
+    inline bool IsSupportDepthClampNV() { return m_bSupportDepthClampNV; };
 
 protected:
     friend class OGLDeviceBuilder;
     COGLGraphicsContext();
+    void InitLimits(void);
     void InitState(void);
     void InitOGLExtension(void);
     bool SetFullscreenMode();
     bool SetWindowMode();
 
-    // Optional OGL extension features;
+private:
+    const unsigned char* m_pExtensionStr;
+
+    // OpenGL limits
+    int m_maxTextureImageUnits;
+
+    // Optional OGL extension features
+    bool IsExtensionSupported(const char* pExtName);
     bool m_bSupportAnisotropicFiltering;
     int  m_maxAnisotropicFiltering;
-
-    const unsigned char* m_pVendorStr;
-    const unsigned char* m_pRenderStr;
-    const unsigned char* m_pExtensionStr;
-    const unsigned char* m_pVersionStr;
+    bool m_bSupportTextureFormatBGRA;
+    bool m_bSupportDepthClampNV;
 };
 
 #endif

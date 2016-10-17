@@ -30,8 +30,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 typedef enum
 {
     OGL_DEVICE,
-    OGL_1_1_DEVICE,
-    OGL_1_4_DEVICE,
     OGL_FRAGMENT_PROGRAM,
 } SupportedDeviceType;
 

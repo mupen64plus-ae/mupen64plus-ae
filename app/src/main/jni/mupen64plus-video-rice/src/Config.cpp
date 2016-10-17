@@ -307,26 +307,32 @@ BOOL InitConfiguration(void)
     if (ConfigParamsVersion < CONFIG_PARAM_VERSION)
     {
         DebugMessage(M64MSG_WARNING, "Old parameter config version detected : %d, updating to %d;", ConfigParamsVersion, CONFIG_PARAM_VERSION);
-        if (ConfigParamsVersion == 0) /* From v0 to v1: Remove OGL_TNT2_DEVICE and NVIDIA_OGL device */
+        if (ConfigParamsVersion == 0) /* From v0 to v1: Remove OGL_TNT2_DEVICE and NVIDIA_OGL device, Remove force fog method option */
         {
             int oldOglDevice;
             if (ConfigGetParameter(l_ConfigVideoRice, "OpenGLRenderSetting", M64TYPE_INT, &oldOglDevice, sizeof(int)) == M64ERR_SUCCESS)
             {
-                /* OGL_1.2 was 2, OGL_1.3 was 3, OGL_1.4_V2 was 5, OGL_TNT2_DEVICE was 6, NVIDIA_OGL was 7 but doesnt exist anymore: Put to auto*/
-                if ((oldOglDevice == 2) || (oldOglDevice == 3) || (oldOglDevice == 5) || (oldOglDevice == 6) || (oldOglDevice == 7))
+                /* OGL_1.1 was 1, OGL_1.2 was 2, OGL_1.3 was 3, OGL_1.4 was 4, OGL_1.4_V2 was 5, OGL_TNT2_DEVICE was 6, NVIDIA_OGL was 7 but doesnt exist anymore: Put to auto*/
+                if ((oldOglDevice == 1) || (oldOglDevice == 2) || (oldOglDevice == 3) || (oldOglDevice == 4) || (oldOglDevice == 5) || (oldOglDevice == 6) || (oldOglDevice == 7))
                 {
                     oldOglDevice = 0; // auto
                 }
-                if (oldOglDevice == 4) /* OGL_1.4 (was 4) is now 2*/
+                else if (oldOglDevice >= 8) /* OGL_FRAGMENT_PROGRAM (was 8+) is now 1*/
                 {
-                    oldOglDevice = 2;
-                }
-                else if (oldOglDevice >= 8) /* OGL_FRAGMENT_PROGRAM (was 8+) is now 4*/
-                {
-                    oldOglDevice = 3;
+                    oldOglDevice = 1;
                 }
                 ConfigSetParameter(l_ConfigVideoRice, "OpenGLRenderSetting", M64TYPE_INT, &oldOglDevice);
-                ConfigSetParameterHelp(l_ConfigVideoRice, "OpenGLRenderSetting", "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.4, 3=OGL_FRAGMENT_PROGRAM)");
+                ConfigSetParameterHelp(l_ConfigVideoRice, "OpenGLRenderSetting", "OpenGL level to support (0=auto, 1=OGL_FRAGMENT_PROGRAM)");
+            }
+            int fogMethod;
+            if (ConfigGetParameter(l_ConfigVideoRice, "FogMethod", M64TYPE_INT, &fogMethod, sizeof(int)) == M64ERR_SUCCESS)
+            {
+                if ( fogMethod > 1 ) // if FogMethod was "Force Fog"
+                {
+                    fogMethod = 1;
+                    ConfigSetParameter(l_ConfigVideoRice, "FogMethod", M64TYPE_INT, &fogMethod);
+                }
+                ConfigSetParameterHelp(l_ConfigVideoRice, "FogMethod", "Enable, Disable fog generation (0=Disable, 1=Enable)");
             }
             ConfigParamsVersion = 1;
         } // place others update stuff here and increment "ConfigParamsVersion" and CONFIG_PARAM_VERSION each time.
@@ -369,7 +375,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultBool(l_ConfigVideoRice, "ShowFPS", FALSE, "Display On-screen FPS");
 
     ConfigSetDefaultInt(l_ConfigVideoRice, "Mipmapping", 2, "Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear");
-    ConfigSetDefaultInt(l_ConfigVideoRice, "FogMethod", 0, "Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "FogMethod", 1, "Enable, Disable fog generation (0=Disable, 1=Enable)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ForceTextureFilter", 0, "Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancement", 0, "Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancementControl", 0, "Secondary texture enhancement filter (0 = none, 1-4 = filtered)");
@@ -377,7 +383,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting", 16, "Z-buffer depth (only 16 or 32)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "MultiSampling", 0, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ColorQuality", TEXTURE_FMT_A8R8G8B8, "Color bit depth for rendering window (0=32 bits, 1=16 bits)");
-    ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.4, 3=OGL_FRAGMENT_PROGRAM)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_FRAGMENT_PROGRAM)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "AnisotropicFiltering", 0, "Enable/Disable Anisotropic Filtering for Mipmapping (0=no filtering, 2-16=quality). This is uneffective if Mipmapping is 0. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering");
 
     ConfigSetDefaultBool(l_ConfigVideoRice, "ForcePolygonOffset", FALSE, "If true, use polygon offset values specified below");

@@ -115,7 +115,8 @@ typedef struct {
 } GGBI1_Vtx;
 
 typedef struct {
-    unsigned int vend:8;
+    unsigned int :1;
+    unsigned int vend:7;
     unsigned int :4;
     unsigned int n:8;
     unsigned int :4;

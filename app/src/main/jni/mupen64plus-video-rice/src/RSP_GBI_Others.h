@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Timing.h"
 #include "osal_preproc.h"
 
+#undef min
+#undef max
+
 uint32 dwConkerVtxZAddr=0;
 
 static void RDP_GFX_DumpVtxInfoDKR(uint32 dwAddr, uint32 dwV0, uint32 dwN);
@@ -449,8 +452,6 @@ void DLParser_Bomberman2TextRect(Gfx *gfx)
     uint32 dwTile   = gRSP.curTile;
 
     PrepareTextures();
-    
-    //CRender::g_pRender->SetCombinerAndBlender();
 
     uObjTxSprite drawinfo;
     memcpy( &(drawinfo.sprite), info, sizeof(uObjSprite));
@@ -562,11 +563,6 @@ void RSP_DMA_Tri_DKR(Gfx *gfx)
             CRender::g_pRender->SetVtxTextureCoord(dwV1, s1, t1);
             CRender::g_pRender->SetVtxTextureCoord(dwV2, s2, t2);
 
-            if( !bTrisAdded )
-            {
-                CRender::g_pRender->SetCombinerAndBlender();
-            }
-
             bTrisAdded = true;
             PrepareTriangle(dwV0, dwV1, dwV2);
         }
@@ -577,6 +573,7 @@ void RSP_DMA_Tri_DKR(Gfx *gfx)
 
     if (bTrisAdded) 
     {
+        CRender::g_pRender->SetCombinerAndBlender();
         CRender::g_pRender->DrawTriangles();
     }
     gRSP.DKRVtxCount=0;
@@ -638,11 +635,6 @@ void RSP_Tri4_PD(Gfx *gfx)
                     InitVertexTextureConstants();
                 }
 
-                if( !bTrisAdded )
-                {
-                    CRender::g_pRender->SetCombinerAndBlender();
-                }
-
                 bTrisAdded = true;
                 PrepareTriangle(v0, v2, v1);
             }
@@ -662,6 +654,7 @@ void RSP_Tri4_PD(Gfx *gfx)
 
     if (bTrisAdded) 
     {
+        CRender::g_pRender->SetCombinerAndBlender();
         CRender::g_pRender->DrawTriangles();
     }
 
@@ -716,11 +709,6 @@ void DLParser_Tri4_Conker(Gfx *gfx)
                     InitVertexTextureConstants();
                 }
 
-                if( !bTrisAdded )
-                {
-                    CRender::g_pRender->SetCombinerAndBlender();
-                }
-
                 bTrisAdded = true;
                 PrepareTriangle(v0, v1, v2);
             }
@@ -740,6 +728,7 @@ void DLParser_Tri4_Conker(Gfx *gfx)
 
     if (bTrisAdded) 
     {
+        CRender::g_pRender->SetCombinerAndBlender();
         CRender::g_pRender->DrawTriangles();
     }
 

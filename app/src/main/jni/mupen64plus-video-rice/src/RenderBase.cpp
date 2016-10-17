@@ -26,9 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "CombinerDefs.h"
 #include "Config.h"
 #include "Debugger.h"
-#include "DecodedMux.h"
 #include "DeviceBuilder.h"
-#include "IColor.h"
 #include "RSP_Parser.h"
 #include "Render.h"
 #include "RenderBase.h"
@@ -39,6 +37,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m64p_plugin.h"
 #include "osal_preproc.h"
 #include "typedefs.h"
+
+#undef min
+#undef max
 
 extern FiddledVtx * g_pVtxBase;
 
@@ -731,9 +732,7 @@ void InitRenderBase()
     gRSP.bNearClip  = false;
     gRSP.bRejectVtx = false;
 
-    gRDP.texturesAreReloaded = false;
     gRDP.textureIsChanged = false;
-    gRDP.colorsAreReloaded = false;
 
     memset(&gRDP.otherMode,0,sizeof(RDP_OtherMode));
     memset(&gRDP.tiles,0,sizeof(Tile)*8);
@@ -762,11 +761,6 @@ void SetFogMinMax(float fMin, float fMax, float fMul, float fOffset)
     }
 
     gRSPfFogDivider = 255/(gRSPfFogMax-gRSPfFogMin);
-    CRender::g_pRender->SetFogMinMax(fMin, fMax);
-}
-
-void InitVertexColors()
-{
 }
 
 void InitVertexTextureConstants()
@@ -876,22 +870,6 @@ void InitVertex(uint32 dwV, uint32 vtxIndex, bool bTexture)
         //v.z = g_vecProjected[dwV].z;  // DirectX minZ=0, maxZ=1
         v.rhw = g_vecProjected[dwV].w;
         VTX_DUMP(TRACE4("  Proj : x=%f, y=%f, z=%f, rhw=%f",  v.x,v.y,v.z,v.rhw));
-
-        if( gRSP.bProcessSpecularColor )
-        {
-            v.dcSpecular = CRender::g_pRender->PostProcessSpecularColor();
-            if( gRSP.bFogEnabled )
-            {
-                v.dcSpecular &= 0x00FFFFFF;
-                uint32  fogFct = 0xFF-(uint8)((g_fFogCoord[dwV]-gRSPfFogMin)*gRSPfFogDivider);
-                v.dcSpecular |= (fogFct<<24);
-            }
-        }
-        else if( gRSP.bFogEnabled )
-        {
-            uint32  fogFct = 0xFF-(uint8)((g_fFogCoord[dwV]-gRSPfFogMin)*gRSPfFogDivider);
-            v.dcSpecular = (fogFct<<24);
-        }
     }
     VTX_DUMP(TRACE2("  (U,V): %f, %f",  g_fVtxTxtCoords[dwV].x,g_fVtxTxtCoords[dwV].y));
 
@@ -906,10 +884,6 @@ void InitVertex(uint32 dwV, uint32 vtxIndex, bool bTexture)
         v.dcDiffuse |= 0xFF000000;
     }
 
-    if( gRSP.bProcessDiffuseColor )
-    {
-        v.dcDiffuse = CRender::g_pRender->PostProcessDiffuseColor(v.dcDiffuse);
-    }
     if( options.bWinFrameMode )
     {
         v.dcDiffuse = g_dwVtxDifColor[dwV];
@@ -984,7 +958,7 @@ void InitVertex(uint32 dwV, uint32 vtxIndex, bool bTexture)
 
     if( g_curRomInfo.bEnableTxtLOD && vtxIndex == 1 && gRDP.otherMode.text_lod )
     {
-        if( CRender::g_pRender->IsTexel1Enable() && CRender::g_pRender->m_pColorCombiner->m_pDecodedMux->isUsed(MUX_LODFRAC) )
+        if( CRender::g_pRender->IsTexel1Enable() && CRender::g_pRender->m_pColorCombiner->m_bLODFracEnabled )
         {
             ComputeLOD();
         }
@@ -994,7 +968,7 @@ void InitVertex(uint32 dwV, uint32 vtxIndex, bool bTexture)
         }
     }
 
-    VTX_DUMP(TRACE2("  DIF(%08X), SPE(%08X)",   v.dcDiffuse, v.dcSpecular));
+    VTX_DUMP(TRACE2("  DIF(%08X)",   v.dcDiffuse));
     VTX_DUMP(TRACE0(""));
 }
 
@@ -1369,11 +1343,7 @@ void ProcessVertexDataSSE(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
             }
             else
             {
-                register IColor &color = *(IColor*)&g_dwVtxDifColor[i];
-                color.b = vert.rgba.r;
-                color.g = vert.rgba.g;
-                color.r = vert.rgba.b;
-                color.a = vert.rgba.a;
+                g_dwVtxDifColor[i] = COLOR_RGBA(vert.rgba.r, vert.rgba.g, vert.rgba.b, vert.rgba.a);
             }
         }
 
@@ -1485,11 +1455,7 @@ void ProcessVertexDataNoSSE(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
             }
             else
             {
-                register IColor &color = *(IColor*)&g_dwVtxDifColor[i];
-                color.b = vert.rgba.r;
-                color.g = vert.rgba.g;
-                color.r = vert.rgba.b;
-                color.a = vert.rgba.a;
+                g_dwVtxDifColor[i] = COLOR_RGBA(vert.rgba.r, vert.rgba.g, vert.rgba.b, vert.rgba.a);
             }
         }
 
@@ -1599,24 +1565,6 @@ bool IsTriangleVisible(uint32 dwV0, uint32 dwV1, uint32 dwV2)
 #endif
 
     return true;
-}
-
-
-void SetPrimitiveColor(uint32 dwCol, uint32 LODMin, uint32 LODFrac)
-{
-    gRDP.colorsAreReloaded = true;
-    gRDP.primitiveColor = dwCol;
-    gRDP.primLODMin = LODMin;
-    gRDP.primLODFrac = LODFrac;
-    if( gRDP.primLODFrac < gRDP.primLODMin )
-    {
-        gRDP.primLODFrac = gRDP.primLODMin;
-    }
-
-    gRDP.fvPrimitiveColor[0] = ((dwCol>>16)&0xFF)/255.0f;  //r
-    gRDP.fvPrimitiveColor[1] = ((dwCol>>8)&0xFF)/255.0f;   //g
-    gRDP.fvPrimitiveColor[2] = ((dwCol)&0xFF)/255.0f;      //b
-    gRDP.fvPrimitiveColor[3] = ((dwCol>>24)&0xFF)/255.0f;  //a
 }
 
 void SetPrimitiveDepth(uint32 z, uint32 dwDZ)

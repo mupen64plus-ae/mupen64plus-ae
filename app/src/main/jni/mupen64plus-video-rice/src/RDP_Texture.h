@@ -24,6 +24,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "Render.h"
 
+#undef min
+#undef max
+
 uint32 g_TmemFlag[16];
 void SetTmemFlag(uint32 tmemAddr, uint32 size);
 bool IsTmemFlagValid(uint32 tmemAddr);
@@ -1118,9 +1121,7 @@ TxtrCacheEntry* LoadTexture(uint32 tileno)
 
 void PrepareTextures()
 {
-    if( gRDP.textureIsChanged || !currentRomOptions.bFastTexCRC ||
-        CRender::g_pRender->m_pColorCombiner->m_pDecodedMux->m_ColorTextureFlag[0] ||
-        CRender::g_pRender->m_pColorCombiner->m_pDecodedMux->m_ColorTextureFlag[1] )
+    if( gRDP.textureIsChanged || !currentRomOptions.bFastTexCRC )
     {
         status.UseLargerTile[0]=false;
         status.UseLargerTile[1]=false;
@@ -1141,45 +1142,36 @@ void PrepareTextures()
         {
             if( tilenos[i] < 0 )    continue;
 
-            if( CRender::g_pRender->m_pColorCombiner->m_pDecodedMux->m_ColorTextureFlag[i] )
+            TxtrCacheEntry *pEntry = LoadTexture(tilenos[i]);
+            if (pEntry && pEntry->pTexture )
             {
-                TxtrCacheEntry *pEntry = gTextureManager.GetConstantColorTexture(CRender::g_pRender->m_pColorCombiner->m_pDecodedMux->m_ColorTextureFlag[i]);
-                CRender::g_pRender->SetCurrentTexture( tilenos[i], pEntry->pTexture, 4, 4, pEntry);
+                if( pEntry->txtrBufIdx <= 0 )
+                {
+                    if( pEntry->pEnhancedTexture && pEntry->dwEnhancementFlag == TEXTURE_EXTERNAL && !options.bLoadHiResTextures )
+                    {
+                        SAFE_DELETE(pEntry->pEnhancedTexture);
+                    }
+
+                    if( options.bLoadHiResTextures && (pEntry->pEnhancedTexture == NULL || pEntry->dwEnhancementFlag < TEXTURE_EXTERNAL ) )
+                    {
+                        LoadHiresTexture(*pEntry);
+                    }
+
+                    if( pEntry->pEnhancedTexture == NULL || (pEntry->dwEnhancementFlag != options.textureEnhancement && pEntry->dwEnhancementFlag < TEXTURE_EXTERNAL ) )
+                    {
+                        EnhanceTexture(pEntry);
+                    }
+                }
+
+                CRender::g_pRender->SetCurrentTexture( tilenos[i], 
+                    (pEntry->pEnhancedTexture)?pEntry->pEnhancedTexture:pEntry->pTexture,
+                    pEntry->ti.WidthToLoad, pEntry->ti.HeightToLoad, pEntry);
             }
             else
             {
-                TxtrCacheEntry *pEntry = LoadTexture(tilenos[i]);
-                if (pEntry && pEntry->pTexture )
-                {
-                    if( pEntry->txtrBufIdx <= 0 )
-                    {
-                        if( pEntry->pEnhancedTexture && pEntry->dwEnhancementFlag == TEXTURE_EXTERNAL && !options.bLoadHiResTextures )
-                        {
-                            SAFE_DELETE(pEntry->pEnhancedTexture);
-                        }
-
-                        if( options.bLoadHiResTextures && (pEntry->pEnhancedTexture == NULL || pEntry->dwEnhancementFlag < TEXTURE_EXTERNAL ) )
-                        {
-                            LoadHiresTexture(*pEntry);
-                        }
-
-                        if( pEntry->pEnhancedTexture == NULL || (pEntry->dwEnhancementFlag != options.textureEnhancement && pEntry->dwEnhancementFlag < TEXTURE_EXTERNAL ) )
-                        {
-                            EnhanceTexture(pEntry);
-                        }
-                    }
-
-                    CRender::g_pRender->SetCurrentTexture( tilenos[i], 
-                        (pEntry->pEnhancedTexture)?pEntry->pEnhancedTexture:pEntry->pTexture,
-                        pEntry->ti.WidthToLoad, pEntry->ti.HeightToLoad, pEntry);
-                }
-                else
-                {
-                    pEntry = gTextureManager.GetBlackTexture();
-                    CRender::g_pRender->SetCurrentTexture( tilenos[i], pEntry->pTexture, 4, 4, pEntry);
-                    _VIDEO_DisplayTemporaryMessage("Fail to load texture, use black to replace");
-                }
-
+                pEntry = gTextureManager.GetBlackTexture();
+                CRender::g_pRender->SetCurrentTexture( tilenos[i], pEntry->pTexture, 4, 4, pEntry);
+                _VIDEO_DisplayTemporaryMessage("Fail to load texture, use black to replace");
             }
         }
 

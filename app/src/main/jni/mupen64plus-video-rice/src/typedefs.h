@@ -41,7 +41,13 @@ typedef struct _COORDRECT
    int x1,y1;
    int x2,y2;
 } COORDRECT;
-#define COLOR_RGBA(r,g,b,a) (((r&0xFF)<<16) | ((g&0xFF)<<8) | ((b&0xFF)<<0) | ((a&0xFF)<<24))
+
+// convert rgba values (0-255 per channel) to a DWORD in A8R8G8B8 order
+#define COLOR_RGBA(r,g,b,a) ((r&0xFF)<<16 | (g&0xFF)<<8 | (b&0xFF)<<0 | (a&0xFF)<<24)
+
+// convert DWORD R8G8B8A8 order to A8R8G8B8
+#define RGBA_TO_ARGB(rgba) ((rgba&0x000000FF)<<24 | (rgba&0xFF000000)>>8 | (rgba&0x00FF0000)>>8 | (rgba&0x0000FF00)>>8)
+
 #define SURFFMT_A8R8G8B8 21
 
 #define RGBA_GETALPHA(rgb)      ((rgb) >> 24)
@@ -169,24 +175,8 @@ typedef struct {
             uint8 a;
         };
     };
-    COLOR  dcSpecular;
     TexCord tcord[2];
 } TLITVERTEX, *LPTLITVERTEX;
-
-typedef struct {
-    float x,y,z;
-    union {
-        COLOR  dcDiffuse;
-        struct {
-            uint8 b;
-            uint8 g;
-            uint8 r;
-            uint8 a;
-        };
-    };
-    COLOR  dcSpecular;
-    TexCord tcord[2];
-} UTLITVERTEX, *LPUTLITVERTEX;
 
 typedef struct {
     float x,y,z;
@@ -200,7 +190,6 @@ typedef struct {
             uint8 a;
         };
     };
-    COLOR  dcSpecular;
 } LITVERTEX, *LPLITVERTEX;
 
 
@@ -212,7 +201,6 @@ typedef struct {
 } FILLRECTVERTEX, *LPFILLRECTVERTEX;
 
 #include "COLOR.h"
-#include "IColor.h"
 
 typedef struct
 {
@@ -284,14 +272,6 @@ typedef struct
 
 typedef struct
 {
-    char na;
-    char nz;    // b
-    char ny;    //g
-    char nx;    //r
-}NormalStruct;
-
-typedef struct
-{
     short y;
     short x;
     
@@ -308,7 +288,12 @@ typedef struct
             uint8 g;
             uint8 r;
         } rgba;
-        NormalStruct norma;
+        struct {
+            char na;
+            char nz;    // b
+            char ny;    //g
+            char nx;    //r
+        } norma;
     };
 } FiddledVtx;
 

@@ -339,7 +339,6 @@ static bool StartVideo(void)
 
     try {
         CDeviceBuilder::GetBuilder()->CreateGraphicsContext();
-        CGraphicsContext::InitWindowInfo();
 
         bool res = CGraphicsContext::Get()->Initialize(640, 480, !windowSetting.bDisplayFullscreen);
         if (!res)
@@ -828,9 +827,6 @@ EXPORT int CALL InitiateGFX(GFX_INFO Gfx_Info)
         DebugMessage(M64MSG_ERROR, "Failed to read configuration data");
         return FALSE;
     }
-
-    CGraphicsContext::InitWindowInfo();
-    CGraphicsContext::InitDeviceParameters();
 
     return(TRUE);
 }

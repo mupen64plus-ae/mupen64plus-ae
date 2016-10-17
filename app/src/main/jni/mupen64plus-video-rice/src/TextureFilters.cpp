@@ -793,7 +793,6 @@ void EnhanceTexture(TxtrCacheEntry *pEntry)
             pSurfaceHandler->EndUpdate(&destInfo);  
         }
     
-        pSurfaceHandler->SetOthersVariables();
         pSurfaceHandler->m_bIsEnhancedTexture = true;
     }
 
@@ -2116,7 +2115,6 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
         }
 
         entry.pEnhancedTexture->EndUpdate(&info);
-        entry.pEnhancedTexture->SetOthersVariables();
         entry.pEnhancedTexture->m_bIsEnhancedTexture = true;
         entry.dwEnhancementFlag = TEXTURE_EXTERNAL;
 

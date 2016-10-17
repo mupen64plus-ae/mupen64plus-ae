@@ -20,12 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _COMBINER_H_
 #define _COMBINER_H_
 
-#include <stddef.h>
-
-#include "CSortedList.h"
-#include "CombinerDefs.h"
-#include "DecodedMux.h"
 #include "typedefs.h"
+#include "CombinerDefs.h"
+#include "CSortedList.h"
 
 class CRender;
 
@@ -36,69 +33,67 @@ class CColorCombiner
     friend class CRender;
 public:
     virtual ~CColorCombiner() {};
-    COLOR GetConstFactor(uint32 colorFlag, uint32 alphaFlag, uint32 defaultColor = 0);
     virtual void InitCombinerMode(void);
 
     virtual bool Initialize(void)=0;
     virtual void CleanUp(void) {};
-    virtual void UpdateCombiner(uint32 dwMux0, uint32 dwMux1);
+    virtual void SetCombineMode(uint32 dwMux0, uint32 dwMux1);
     virtual void InitCombinerBlenderForSimpleTextureDraw(uint32 tile=0)=0;
     virtual void DisableCombiner(void)=0;
+    bool    m_bLODFracEnabled; // TODO: Find a way to remove that.
 
-#ifdef DEBUGGER
-    virtual void DisplaySimpleMuxString(void);
-    virtual void DisplayMuxString(void);
-#endif
-
-    DecodedMux *m_pDecodedMux;
 protected:
     CColorCombiner(CRender *pRender) : 
-        m_pDecodedMux(NULL), m_bTex0Enabled(false),m_bTex1Enabled(false),m_bTexelsEnable(false),
-        m_bCycleChanged(false), m_supportedStages(1),m_pRender(pRender)
+        m_combineMode1(0),m_combineMode2(0),m_bTex0Enabled(false),m_bTex1Enabled(false),m_bTexelsEnable(false),
+        m_bCycleChanged(false),m_pRender(pRender)
     {
+            for(int i=0; i<16; i++)
+            {
+                m_sources[i] = -1;
+            }
     }
 
     virtual void InitCombinerCycleCopy(void)=0;
     virtual void InitCombinerCycleFill(void)=0;
     virtual void InitCombinerCycle12(void)=0;
 
-    bool    m_bTex0Enabled;
-    bool    m_bTex1Enabled;
-    bool    m_bTexelsEnable;
+    enum SourceIndex {
+        CS_COLOR_A0 = 0, // index for Color A, cycle 1
+        CS_COLOR_B0,
+        CS_COLOR_C0,
+        CS_COLOR_D0,
+        CS_ALPHA_A0,     // index for Alpha A,cycle 1
+        CS_ALPHA_B0,
+        CS_ALPHA_C0,
+        CS_ALPHA_D0,
+        CS_COLOR_A1,     // index for Color A, cycle 2
+        CS_COLOR_B1,
+        CS_COLOR_C1,
+        CS_COLOR_D1,
+        CS_ALPHA_A1,     // index for Alpha A, cycle 2
+        CS_ALPHA_B1,
+        CS_ALPHA_C1,
+        CS_ALPHA_D1
+    };
 
-    bool    m_bCycleChanged;    // A flag will be set if cycle is changed to FILL or COPY
+    uint8  m_sources[16];
+    uint32 m_combineMode1;
+    uint32 m_combineMode2;
 
-    int     m_supportedStages;
+    bool   m_bTex0Enabled;
+    bool   m_bTex1Enabled;
+    bool   m_bTexelsEnable;
+
+    bool   m_bCycleChanged;    // A flag will be set if cycle is changed to FILL or COPY
 
     CRender *m_pRender;
 
-    CSortedList<uint64, DecodedMux> m_DecodedMuxList;
+private:
+    static const SourceIndex color_indices[8];
+    static const SourceIndex alpha_indices[8];
 };
 
-uint32 GetTexelNumber(N64CombinerType &m);
-int CountTexel1Cycle(N64CombinerType &m);
-bool IsTxtrUsed(N64CombinerType &m);
-
 void swap(uint8 &a, uint8 &b);
-
-
-inline bool isEqual(uint8 val1, uint8 val2)
-{
-    if( (val1&MUX_MASK) == (val2&MUX_MASK) )
-        return true;
-    else
-        return false;
-}
-
-inline bool isTexel(uint8 val)
-{
-    if( (val&MUX_MASK) == MUX_TEXEL0 || (val&MUX_MASK) == MUX_TEXEL1 )
-        return true;
-    else
-        return false;
-}
-
-COLOR CalculateConstFactor(uint32 colorOp, uint32 alphaOp, uint32 curCol=0);
 
 #endif
 

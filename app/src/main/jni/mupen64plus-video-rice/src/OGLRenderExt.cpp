@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "osal_opengl.h"
+
+#include "OGLExtensions.h"
 #include "OGLRender.h"
 #include "RSP_Parser.h"
 #include "RSP_S2DEX.h"
@@ -23,7 +26,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "RenderBase.h"
 #include "Video.h"
 #include "m64p_types.h"
-#include "osal_opengl.h"
 #include "osal_preproc.h"
 #include "typedefs.h"
 
@@ -43,33 +45,6 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
-
-#ifndef USE_GLES
-
-    glBegin(GL_TRIANGLES);
-    glColor4fv(gRDP.fvPrimitiveColor);
-
-    OGLRender::TexCoord(g_texRectTVtx[0]);
-    glVertex3f(g_texRectTVtx[0].x, g_texRectTVtx[0].y, -g_texRectTVtx[0].z);
-
-    OGLRender::TexCoord(g_texRectTVtx[1]);
-    glVertex3f(g_texRectTVtx[1].x, g_texRectTVtx[1].y, -g_texRectTVtx[1].z);
-
-    OGLRender::TexCoord(g_texRectTVtx[2]);
-    glVertex3f(g_texRectTVtx[2].x, g_texRectTVtx[2].y, -g_texRectTVtx[2].z);
-
-    OGLRender::TexCoord(g_texRectTVtx[0]);
-    glVertex3f(g_texRectTVtx[0].x, g_texRectTVtx[0].y, -g_texRectTVtx[0].z);
-
-    OGLRender::TexCoord(g_texRectTVtx[2]);
-    glVertex3f(g_texRectTVtx[2].x, g_texRectTVtx[2].y, -g_texRectTVtx[2].z);
-
-    OGLRender::TexCoord(g_texRectTVtx[3]);
-    glVertex3f(g_texRectTVtx[3].x, g_texRectTVtx[3].y, -g_texRectTVtx[3].z);
-
-    glEnd();
-
-#else
 
     GLfloat colour[] = {
             gRDP.fvPrimitiveColor[0], gRDP.fvPrimitiveColor[1], gRDP.fvPrimitiveColor[2], gRDP.fvPrimitiveColor[3],
@@ -127,8 +102,6 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][0]));
     glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u));
     glVertexAttribPointer(VS_TEXCOORD1,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u));
-
-#endif
 
     if( cullface ) glEnable(GL_CULL_FACE);
 }

@@ -30,32 +30,17 @@
 #include "osal_preproc.h"
 #include "typedefs.h"
 
-CGraphicsContext* CGraphicsContext::g_pGraphicsContext = NULL;
-bool CGraphicsContext::m_deviceCapsIsInitialized = false;
+CGraphicsContext* CGraphicsContext::m_pGraphicsContext = NULL;
 bool CGraphicsContext::needCleanScene = false;
-
-CGraphicsContext * CGraphicsContext::Get(void)
-{   
-    return CGraphicsContext::g_pGraphicsContext;
-}
     
 CGraphicsContext::CGraphicsContext() :
     m_bReady(false),
-    m_bActive(false),
     m_bWindowed(true)
 {
 }
 CGraphicsContext::~CGraphicsContext()
 {
     g_pFrameBufferManager->CloseUp();
-}
-
-uint32 CGraphicsContext::m_dwWindowStyle=0;         // Saved window style for mode switches
-uint32 CGraphicsContext::m_dwWindowExStyle=0;       // Saved window style for mode switches
-uint32 CGraphicsContext::m_dwStatusWindowStyle=0;   // Saved window style for mode switches
-
-void CGraphicsContext::InitWindowInfo()
-{
 }
 
 bool CGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed)
@@ -73,7 +58,6 @@ bool CGraphicsContext::ResizeInitialize(uint32 dwWidth, uint32 dwHeight, BOOL bW
 
 void CGraphicsContext::CleanUp()
 {
-    m_bActive = false;
     m_bReady  = false;
 }
 
@@ -108,12 +92,5 @@ int __cdecl SortResolutionsCallback( const void* arg1, const void* arg2 )
         else
             return 0;
     }
-}
-
-// This is a static function, will be called when the plugin DLL is initialized
-void CGraphicsContext::InitDeviceParameters(void)
-{
-    // To initialze device parameters for OpenGL
-    COGLGraphicsContext::InitDeviceParameters();
 }
 

@@ -37,10 +37,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "version.h"
 
 COGLGraphicsContext::COGLGraphicsContext() :
-    m_pVendorStr(NULL),
-    m_pRenderStr(NULL),
-    m_pExtensionStr(NULL),
-    m_pVersionStr(NULL)
+    m_pExtensionStr(NULL)
 {
 }
 
@@ -135,11 +132,24 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     CoreVideo_SetCaption(caption);
     SetWindowMode();
 
+    m_pExtensionStr = glGetString(GL_EXTENSIONS);
+
+    const unsigned char* renderStr  = glGetString(GL_RENDERER);
+    const unsigned char* versionStr = glGetString(GL_VERSION);
+    const unsigned char* vendorStr  = glGetString(GL_VENDOR);
+
+    if (renderStr == NULL || versionStr == NULL || vendorStr == NULL)
+    {
+        DebugMessage(M64MSG_ERROR, "Can't get OpenGL informations. It's maybe a problem with your driver.");
+        CoreVideo_Quit();
+        return false;
+    }
+
+    DebugMessage(M64MSG_INFO, "Using OpenGL: %.60s - %.128s : %.60s", renderStr, versionStr, vendorStr);
+
+    InitLimits();
     InitState();
     InitOGLExtension();
-    sprintf(m_strDeviceStats, "%.60s - %.128s : %.60s", m_pVendorStr, m_pRenderStr, m_pVersionStr);
-    TRACE0(m_strDeviceStats);
-    DebugMessage(M64MSG_INFO, "Using OpenGL: %s", m_strDeviceStats);
 
     Unlock();
 
@@ -147,7 +157,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     UpdateFrame();
     Clear(CLEAR_COLOR_AND_DEPTH_BUFFER);
     UpdateFrame();
-    
+
     m_bReady = true;
 
     return true;
@@ -206,17 +216,15 @@ bool COGLGraphicsContext::ResizeInitialize(uint32 dwWidth, uint32 dwHeight, BOOL
     return true;
 }
 
+// Init limiting OpenGL values
+void COGLGraphicsContext::InitLimits(void)
+{
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,&m_maxTextureImageUnits);
+    OPENGL_CHECK_ERRORS;
+}
+
 void COGLGraphicsContext::InitState(void)
 {
-    m_pRenderStr    = glGetString(GL_RENDERER);
-    m_pExtensionStr = glGetString(GL_EXTENSIONS);
-    m_pVersionStr   = glGetString(GL_VERSION);
-    m_pVendorStr    = glGetString(GL_VENDOR);
-    glMatrixMode(GL_PROJECTION);
-    OPENGL_CHECK_ERRORS;
-    glLoadIdentity();
-    OPENGL_CHECK_ERRORS;
-
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     OPENGL_CHECK_ERRORS;
     glClearDepth(1.0f);
@@ -225,10 +233,6 @@ void COGLGraphicsContext::InitState(void)
 #ifndef USE_GLES
     glShadeModel(GL_SMOOTH);
     OPENGL_CHECK_ERRORS;
-
-    //position viewer 
-    //glMatrixMode(GL_MODELVIEW);
-    //glLoadIdentity();
 
     glDisable(GL_ALPHA_TEST);
     OPENGL_CHECK_ERRORS;
@@ -247,7 +251,6 @@ void COGLGraphicsContext::InitState(void)
     glDisable(GL_NORMALIZE);
     OPENGL_CHECK_ERRORS;
 #endif
-
     glDepthFunc(GL_LEQUAL);
     OPENGL_CHECK_ERRORS;
     glEnable(GL_DEPTH_TEST);
@@ -263,17 +266,9 @@ void COGLGraphicsContext::InitState(void)
 #ifndef USE_GLES
     glEnable(GL_ALPHA_TEST);
     OPENGL_CHECK_ERRORS;
-
-    glMatrixMode(GL_PROJECTION);
-    OPENGL_CHECK_ERRORS;
-    glLoadIdentity();
-    OPENGL_CHECK_ERRORS;
-    
-    glDepthRange(-1, 1);
-
-#else
-    glDepthRangef(0.0f, 1.0f);
 #endif
+
+    glDepthRange(0.0f, 1.0f);
     OPENGL_CHECK_ERRORS;
 }
 
@@ -305,6 +300,9 @@ void COGLGraphicsContext::InitOGLExtension(void)
         if((uint32) m_maxAnisotropicFiltering > options.anisotropicFiltering)
         m_maxAnisotropicFiltering = options.anisotropicFiltering;
     }
+
+    m_bSupportTextureFormatBGRA = IsExtensionSupported("GL_EXT_texture_format_BGRA8888");
+    m_bSupportDepthClampNV      = IsExtensionSupported("GL_NV_depth_clamp");
 }
 
 bool COGLGraphicsContext::IsExtensionSupported(const char* pExtName)
@@ -402,7 +400,17 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
    
    // if emulator defined a render callback function, call it before buffer swap
    if(renderCallback)
+   {
+       // For OGLFT (used by OSD) to work, we need to disable shaders
+       // (which implicitly passe OpenGL in fixed pipeline mode)
+       GLint program;
+       glGetIntegerv(GL_CURRENT_PROGRAM ,&program);
+       glUseProgram(0);
+
        (*renderCallback)(status.bScreenIsDrawn);
+
+       glUseProgram(program);
+   }
 
    CoreVideo_GL_SwapBuffers();
    
@@ -462,20 +470,4 @@ int COGLGraphicsContext::ToggleFullscreen()
     }
 
     return m_bWindowed?0:1;
-}
-
-// This is a static function, will be called when the plugin DLL is initialized
-void COGLGraphicsContext::InitDeviceParameters()
-{
-}
-
-// Get methods
-bool COGLGraphicsContext::IsSupportAnisotropicFiltering()
-{
-    return m_bSupportAnisotropicFiltering;
-}
-
-int COGLGraphicsContext::getMaxAnisotropicFiltering()
-{
-    return m_maxAnisotropicFiltering;
 }

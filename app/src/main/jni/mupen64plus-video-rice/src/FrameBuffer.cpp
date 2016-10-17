@@ -36,6 +36,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Video.h"
 #include "m64p_plugin.h"
 
+#undef min
+#undef max
+
 extern TMEMLoadMapInfo g_tmemLoadAddrMap[0x200];    // Totally 4KB TMEM;
 
 // 0 keeps the most recent CI info
@@ -1648,14 +1651,14 @@ void FrameBufferManager::ActiveTextureBuffer(void)
 
             //Clear(CLEAR_COLOR_AND_DEPTH_BUFFER,0x80808080,1.0f);
             if( frameBufferOptions.bFillRectNextTextureBuffer )
-                CGraphicsContext::g_pGraphicsContext->Clear(CLEAR_COLOR_BUFFER,gRDP.fillColor,1.0f);
+                CGraphicsContext::Get()->Clear(CLEAR_COLOR_BUFFER,gRDP.fillColor,1.0f);
             else if( options.enableHackForGames == HACK_FOR_MARIO_TENNIS && g_pRenderTextureInfo->N64Width > 64 && g_pRenderTextureInfo->N64Width < 300 )
             {
-                CGraphicsContext::g_pGraphicsContext->Clear(CLEAR_COLOR_BUFFER,0,1.0f);
+                CGraphicsContext::Get()->Clear(CLEAR_COLOR_BUFFER,0,1.0f);
             }
             else if( options.enableHackForGames == HACK_FOR_MARIO_TENNIS && g_pRenderTextureInfo->N64Width < 64 && g_pRenderTextureInfo->N64Width > 32 )
             {
-                CGraphicsContext::g_pGraphicsContext->Clear(CLEAR_COLOR_BUFFER,0,1.0f);
+                CGraphicsContext::Get()->Clear(CLEAR_COLOR_BUFFER,0,1.0f);
             }
 
             m_curRenderTextureIndex = idxToUse;
@@ -2035,7 +2038,7 @@ void FrameBufferManager::SaveBackBuffer(int ciInfoIdx, RECT* pSrcRect, bool forc
 
     if( ciInfoIdx == 1 )    // to save the current front buffer
     {
-        CGraphicsContext::g_pGraphicsContext->UpdateFrame(true);
+        CGraphicsContext::Get()->UpdateFrame(true);
     }
 
     if( frameBufferOptions.bWriteBackBufToRDRAM || forceToSaveToRDRAM )
@@ -2055,7 +2058,7 @@ void FrameBufferManager::SaveBackBuffer(int ciInfoIdx, RECT* pSrcRect, bool forc
         g_uRecentCIInfoPtrs[ciInfoIdx]->bCopied = true;
         if( ciInfoIdx == 1 )    // to save the current front buffer
         {
-            CGraphicsContext::g_pGraphicsContext->UpdateFrame(true);
+            CGraphicsContext::Get()->UpdateFrame(true);
         }
         return;
     }

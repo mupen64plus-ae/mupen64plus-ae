@@ -176,6 +176,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define RDP_TFILTER_AVERAGE     (3 << RSP_SETOTHERMODE_SHIFT_TEXTFILT)
 #define RDP_TFILTER_BILERP      (2 << RSP_SETOTHERMODE_SHIFT_TEXTFILT)
 
+/* G_SETOTHERMODE_H gSetCombineKey */
+#define RDP_COMBKEY_NONE   (0 << RSP_SETOTHERMODE_SHIFT_COMBKEY)
+#define RDP_COMBKEY_KEY    (1 << RSP_SETOTHERMODE_SHIFT_COMBKEY)
+
 // RSP_SETOTHERMODE_L gSetAlphaCompare 
 #define RDP_ALPHA_COMPARE_NONE          (0 << RSP_SETOTHERMODE_SHIFT_ALPHACOMPARE)
 #define RDP_ALPHA_COMPARE_THRESHOLD     (1 << RSP_SETOTHERMODE_SHIFT_ALPHACOMPARE)
@@ -468,16 +472,17 @@ typedef struct{
 } Sprite2DInfo;
 
 
+// Blender equation: (A*P+B*M)/(A+B)
 typedef struct
 {
-    unsigned int    c2_m2b:2;
-    unsigned int    c1_m2b:2;
-    unsigned int    c2_m2a:2;
-    unsigned int    c1_m2a:2;
-    unsigned int    c2_m1b:2;
-    unsigned int    c1_m1b:2;
-    unsigned int    c2_m1a:2;
-    unsigned int    c1_m1a:2;
+    unsigned int    c2_m2b:2; // M (cycle 2)
+    unsigned int    c1_m2b:2; // M (cycle 1)
+    unsigned int    c2_m2a:2; // B (cycle 2)
+    unsigned int    c1_m2a:2; // B (cycle 1)
+    unsigned int    c2_m1b:2; // P (cycle 2)
+    unsigned int    c1_m1b:2; // P (cycle 1)
+    unsigned int    c2_m1a:2; // A (cycle 2)
+    unsigned int    c1_m1a:2; // A (cycle 1)
 } RDP_BlenderSetting;
 
 typedef struct
@@ -505,7 +510,7 @@ typedef struct
             unsigned int        force_bl : 1;               // 14
             unsigned int        tex_edge : 1;               // 15 - Not used
 
-            unsigned int        blender : 16;               // 16..31
+            unsigned int        blender : 16;               // 16..31 (Defined in RDP_BlenderSetting)
 
             // High bits
             unsigned int        blend_mask : 4;             // 0..3 - not supported

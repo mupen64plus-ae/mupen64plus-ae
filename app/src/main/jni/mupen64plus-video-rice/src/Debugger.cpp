@@ -397,7 +397,6 @@ void DumpCachedTexture(uint32 index)
         DebuggerAppendMsg("Display cached texture #%d of %d\n", index, gTextureManager.GetNumOfCachedTexture());
         DebuggerAppendMsg("W:%d, H:%d, RealW:%d, RealH:%d, D3DW:%d, D3DH: %d", p->ti.WidthToCreate, p->ti.HeightToCreate,
             p->ti.WidthToLoad, p->ti.HeightToLoad, p->pTexture->m_dwCreatedTextureWidth, p->pTexture->m_dwCreatedTextureHeight);
-        DebuggerAppendMsg("ScaledS:%s, ScaledT:%s", p->pTexture->m_bScaledS?"T":"F", p->pTexture->m_bScaledT?"T":"F");
     }
     else
     {

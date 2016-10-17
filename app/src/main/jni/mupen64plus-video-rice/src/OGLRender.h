@@ -75,23 +75,15 @@ public:
     void SetTextureVFlag(TextureUVFlag dwFlag, uint32 tile);
     virtual void BindTexture(GLuint texture, int unitno);
     virtual void DisBindTexture(GLuint texture, int unitno);
-    virtual void TexCoord2f(float u, float v);
-    virtual void TexCoord(TLITVERTEX &vtxInfo);
 
-    void DrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, COLOR spe, float z, float rhw);
+    void DrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, float z, float rhw);
     void DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor, float depth, float rhw);
-    void InitCombinerBlenderForSimpleRectDraw(uint32 tile=0);
     void DrawSpriteR_Render();
     void DrawObjBGCopy(uObjBg &info);
     void DrawText(const char* str, RECT *rect);
 
-    void SetFogMinMax(float fMin, float fMax);
-    void SetFogEnable(bool bEnable);
-    void TurnFogOnOff(bool flag);
     void SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a);
 
-    void DisableMultiTexture();
-    void EnableMultiTexture() {m_bEnableMultiTexture=true;}
     void EndRendering(void);
 
     void glViewportWrapper(GLint x, GLint y, GLsizei width, GLsizei height, bool flag=true);
@@ -100,8 +92,6 @@ public:
     virtual void SetTexWrapT(int unitno,GLuint flag);
 
 protected:
-    COLOR PostProcessDiffuseColor(COLOR curDiffuseColor);
-    COLOR PostProcessSpecularColor();
 
     // Basic render drawing functions
     bool RenderFlushTris();
@@ -110,9 +100,9 @@ protected:
     bool RenderLine3D();
 
     GLuint  m_curBoundTex[8];
-    BOOL    m_texUnitEnabled[8];
 
-    bool m_bEnableMultiTexture;
+    GLint m_maxTexUnits;
+    int m_textureUnitMap[8];
 };
 
 #endif

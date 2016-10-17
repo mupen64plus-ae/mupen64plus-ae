@@ -55,6 +55,44 @@ enum
     MUX_ERR = 0xFF,
 };
 
+#define CCMUX_COMBINED        0
+#define CCMUX_TEXEL0          1
+#define CCMUX_TEXEL1          2
+#define CCMUX_PRIMITIVE       3
+#define CCMUX_SHADE           4
+#define CCMUX_ENVIRONMENT     5
+#define CCMUX_CENTER          6
+#define CCMUX_SCALE           6
+#define CCMUX_COMBINED_ALPHA  7
+#define CCMUX_TEXEL0_ALPHA    8
+#define CCMUX_TEXEL1_ALPHA    9
+#define CCMUX_PRIMITIVE_ALPHA 10
+#define CCMUX_SHADE_ALPHA     11
+#define CCMUX_ENV_ALPHA       12
+#define CCMUX_LOD_FRACTION    13
+#define CCMUX_PRIM_LOD_FRAC   14
+#define CCMUX_NOISE           7
+#define CCMUX_K4              7
+#define CCMUX_K5              15
+#define CCMUX_1               6
+#define CCMUX_0               31
+
+#define ACMUX_COMBINED      0
+#define ACMUX_TEXEL0        1
+#define ACMUX_TEXEL1        2
+#define ACMUX_PRIMITIVE     3
+#define ACMUX_SHADE         4
+#define ACMUX_ENVIRONMENT   5
+#define ACMUX_LOD_FRACTION  0
+#define ACMUX_PRIM_LOD_FRAC 6
+#define ACMUX_1             6
+#define ACMUX_0             7
+
+#define CVG_DST_CLAMP 0
+#define CVG_DST_WRAP  1
+#define CVG_DST_FULL  2
+#define CVG_DST_SAVE  3
+
 
 enum CombinerFormatType
 {

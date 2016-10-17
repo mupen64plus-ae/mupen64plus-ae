@@ -34,10 +34,20 @@ public:
     void EndUpdate(DrawInfo *di);
 
     GLuint m_dwTextureName;
-    GLuint m_glFmt;
+
 protected:
     friend class OGLDeviceBuilder;
     COGLTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage = AS_NORMAL);
+
+private:
+    /* Note for the futur, the implmentation dependant values can be
+     * retrieved using (OGL 4.3 et OGLES 3):
+     * GLenum format, type;
+     * glGetInternalformativ(GL_TEXTURE_2D, GL_RGBA, GL_TEXTURE_IMAGE_FORMAT, 1, &format);
+     * glGetInternalformativ(GL_TEXTURE_2D, GL_RGBA, GL_TEXTURE_IMAGE_TYPE, 1, &type); */
+    GLuint m_glInternalFmt;
+    GLuint m_glFmt;
+    GLuint m_glType;
 };
 
 

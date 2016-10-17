@@ -63,7 +63,7 @@ public:
     uint32 TLutFmt;
     uint32 Palette;
     
-    BOOL  bSwapped;
+    BOOL  bSwapped; // if true: odd lines are WORD swapped
     
     uint32 maskS;
     uint32 maskT;
@@ -122,12 +122,6 @@ public:
             clampT == sec.clampT
             );
     }
-
-    inline bool isEqual(const TxtrInfo& sec)
-    {
-        return (*this == sec);
-    }
-    
 } ;
 
 
@@ -156,7 +150,6 @@ typedef struct TxtrCacheEntry
     uint32  dwUses;         // Total times used (for stats)
     uint32  dwTimeLastUsed; // timeGetTime of time of last usage
     uint32  FrameLastUsed;  // Frame # that this was last used
-    uint32  FrameLastUpdated;
 
     CTexture    *pTexture;
     CTexture    *pEnhancedTexture;
@@ -221,14 +214,6 @@ protected:
     uint32 m_numOfCachedTxtrList;
 
     TxtrCacheEntry m_blackTextureEntry;
-    TxtrCacheEntry m_PrimColorTextureEntry;
-    TxtrCacheEntry m_EnvColorTextureEntry;
-    TxtrCacheEntry m_LODFracTextureEntry;
-    TxtrCacheEntry m_PrimLODFracTextureEntry;
-    TxtrCacheEntry * GetPrimColorTexture(uint32 color);
-    TxtrCacheEntry * GetEnvColorTexture(uint32 color);
-    TxtrCacheEntry * GetLODFracTexture(uint8 fac);
-    TxtrCacheEntry * GetPrimLODFracTexture(uint8 fac);
 
     void MakeTextureYoungest(TxtrCacheEntry *pEntry);
     unsigned int m_currentTextureMemUsage;
@@ -240,7 +225,6 @@ public:
     ~CTextureManager();
 
     TxtrCacheEntry * GetBlackTexture(void);
-    TxtrCacheEntry * GetConstantColorTexture(uint32 constant);
     TxtrCacheEntry * GetTexture(TxtrInfo * pgti, bool fromTMEM, bool doCRCCheck=true, bool AutoExtendTexture = false);
     
     void PurgeOldTextures();

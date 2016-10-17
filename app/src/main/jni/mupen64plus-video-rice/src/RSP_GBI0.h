@@ -282,11 +282,6 @@ void RSP_GBI1_Line3D(Gfx *gfx)
                     InitVertexTextureConstants();
                 }
 
-                if( !bTrisAdded )
-                {
-                    CRender::g_pRender->SetCombinerAndBlender();
-                }
-
                 bTrisAdded = true;
                 PrepareTriangle(dwV0, dwV1, dwV2);
             }
@@ -299,11 +294,6 @@ void RSP_GBI1_Line3D(Gfx *gfx)
                 {
                     PrepareTextures();
                     InitVertexTextureConstants();
-                }
-
-                if( !bTrisAdded )
-                {
-                    CRender::g_pRender->SetCombinerAndBlender();
                 }
 
                 bTrisAdded = true;
@@ -322,6 +312,7 @@ void RSP_GBI1_Line3D(Gfx *gfx)
 
         if (bTrisAdded) 
         {
+            CRender::g_pRender->SetCombinerAndBlender();
             CRender::g_pRender->DrawTriangles();
         }
     }
@@ -486,7 +477,7 @@ void RSP_GBI1_Texture(Gfx *gfx)
     LOG_UCODE("    ScaleS: %f, ScaleT: %f", fTextureScaleS*32.0f, fTextureScaleT*32.0f);
 }
 
-extern void RSP_RDP_InsertMatrix(uint32 word0, uint32 word1);
+extern void RSP_RDP_InsertMatrix(Gfx *gfx);
 void RSP_GBI1_MoveWord(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_MoveWord);
@@ -724,7 +715,6 @@ void RSP_GBI1_Tri1(Gfx *gfx)
                     PrepareTextures();
                     InitVertexTextureConstants();
                 }
-                CRender::g_pRender->SetCombinerAndBlender();
                 bTrisAdded = true;
             }
             PrepareTriangle(dwV0, dwV1, dwV2);
@@ -743,6 +733,7 @@ void RSP_GBI1_Tri1(Gfx *gfx)
 
     if (bTrisAdded) 
     {
+        CRender::g_pRender->SetCombinerAndBlender();
         CRender::g_pRender->DrawTriangles();
     }
 
@@ -783,11 +774,6 @@ void RSP_GBI0_Tri4(Gfx *gfx)
                     InitVertexTextureConstants();
                 }
 
-                if( !bTrisAdded )
-                {
-                    CRender::g_pRender->SetCombinerAndBlender();
-                }
-
                 bTrisAdded = true;
                 PrepareTriangle(v0, v2, v1);
             }
@@ -808,6 +794,7 @@ void RSP_GBI0_Tri4(Gfx *gfx)
 
     if (bTrisAdded) 
     {
+        CRender::g_pRender->SetCombinerAndBlender();
         CRender::g_pRender->DrawTriangles();
     }
     
@@ -852,46 +839,21 @@ void RSP_RDP_Nothing(Gfx *gfx)
 
 void RSP_RDP_InsertMatrix(Gfx *gfx)
 {
-    float fraction;
-
     UpdateCombinedMatrix();
+
+    int x = ((gfx->words.w0) & 0x1F) >> 1;
+    int y = x >> 2;
+    x &= 3;
 
     if ((gfx->words.w0) & 0x20)
     {
-        int x = ((gfx->words.w0) & 0x1F) >> 1;
-        int y = x >> 2;
-        x &= 3;
-
-        fraction = ((gfx->words.w1)>>16)/65536.0f;
-        gRSPworldProject.m[y][x] = (float)(int)gRSPworldProject.m[y][x];
-        gRSPworldProject.m[y][x] += fraction;
-
-        fraction = ((gfx->words.w1)&0xFFFF)/65536.0f;
-        gRSPworldProject.m[y][x+1] = (float)(int)gRSPworldProject.m[y][x+1];
-        gRSPworldProject.m[y][x+1] += fraction;
+        gRSPworldProject.m[y][x]   = (float)(int)gRSPworldProject.m[y][x] + ((float)(gfx->words.w1 >> 16) / 65536.0f);
+        gRSPworldProject.m[y][x+1] = (float)(int)gRSPworldProject.m[y][x+1] + ((float)(gfx->words.w1 & 0xFFFF) / 65536.0f);
     }
     else
     {
-        int x = ((gfx->words.w0) & 0x1F) >> 1;
-        int y = x >> 2;
-        x &= 3;
-
-        float integer = (float)(short)((gfx->words.w1)>>16);
-        fraction      = (float)fabs(gRSPworldProject.m[y][x] - (int)gRSPworldProject.m[y][x]);
-
-        if(integer >= 0.0f)
-            gRSPworldProject.m[y][x] = integer + fraction;
-        else
-            gRSPworldProject.m[y][x] = integer - fraction;
-
-
-        integer  = (float)(short)((gfx->words.w1)&0xFFFF);
-        fraction = (float)fabs(gRSPworldProject.m[y][x+1] - (int)gRSPworldProject.m[y][x+1]);
-
-        if(integer >= 0.0f)
-            gRSPworldProject.m[y][x+1] = integer + fraction;
-        else
-            gRSPworldProject.m[y][x+1] = integer - fraction;
+        gRSPworldProject.m[y][x] = (float)(short)(gfx->words.w1 >> 16);
+        gRSPworldProject.m[y][x+1] = (float)(short)(gfx->words.w1 & 0xFFFF);
     }
 
     gRSP.bMatrixIsUpdated = false;

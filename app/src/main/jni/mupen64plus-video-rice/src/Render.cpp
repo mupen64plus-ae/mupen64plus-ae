@@ -40,6 +40,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m64p_types.h"
 #include "osal_preproc.h"
 
+#undef min
+#undef max
+
 extern FiddledVtx * g_pVtxBase;
 CRender * CRender::g_pRender=NULL;
 int CRender::gRenderReferenceCount=0;
@@ -81,8 +84,7 @@ CRender::CRender() :
     m_dwMinFilter(FILTER_POINT),
     m_dwMagFilter(FILTER_POINT),
         m_dwAlpha(0xFF),
-        m_Mux(0),
-        m_bBlendModeValid(FALSE)
+        m_modes64(0)
 {
     int i;
     InitRenderBase();
@@ -307,14 +309,13 @@ void CRender::SetWorldProjectMatrix(Matrix &mtx)
     gRSP.bCombinedMatrixIsUpdated = true;
 }
 
-void CRender::SetMux(uint32 dwMux0, uint32 dwMux1)
+void CRender::SetCombineMode(uint32 dwMux0, uint32 dwMux1)
 {
-    uint64 tempmux = (((uint64)dwMux0) << 32) | (uint64)dwMux1;
-    if( m_Mux != tempmux )
+    uint64 tempModes64 = (((uint64)dwMux0) << 32) | (uint64)dwMux1;
+    if( m_modes64 != tempModes64 )
     {
-        m_Mux = tempmux;
-        m_bBlendModeValid = FALSE;
-        m_pColorCombiner->UpdateCombiner(dwMux0, dwMux1);
+        m_modes64 = tempModes64;
+        m_pColorCombiner->SetCombineMode(dwMux0, dwMux1);
     }
 }
 
@@ -331,6 +332,8 @@ void CRender::SetCombinerAndBlender()
         m_pAlphaBlender->InitBlenderMode();
 
     m_pColorCombiner->InitCombinerMode();
+
+    ApplyTextureFilter();
 }
 
 void CRender::RenderReset()
@@ -383,7 +386,7 @@ bool CRender::FillRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor)
     // I don't know why this does not work for OpenGL
     if( gRDP.otherMode.cycle_type == CYCLE_TYPE_FILL && nX0 == 0 && nY0 == 0 && ((nX1==windowSetting.uViWidth && nY1==windowSetting.uViHeight)||(nX1==windowSetting.uViWidth-1 && nY1==windowSetting.uViHeight-1)) )
     {
-        CGraphicsContext::g_pGraphicsContext->Clear(CLEAR_COLOR_BUFFER,dwColor);
+        CGraphicsContext::Get()->Clear(CLEAR_COLOR_BUFFER,dwColor);
     }
     else
     */
@@ -402,18 +405,11 @@ bool CRender::FillRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor)
         {
             ZBufferEnable(FALSE);
         }
-        else
-        {
-            //dwColor = PostProcessDiffuseColor(0);
-            dwColor = PostProcessDiffuseColor(gRDP.primitiveColor);
-        }
 
         float depth = (gRDP.otherMode.depth_source == 1 ? gRDP.fPrimitiveDepth : 0 );
 
         ApplyRDPScissor();
-        TurnFogOnOff(false);
         res = RenderFillRect(dwColor, depth);
-        TurnFogOnOff(gRSP.bFogEnabled);
 
         if( gRDP.otherMode.cycle_type  >= CYCLE_TYPE_COPY )
         {
@@ -424,9 +420,9 @@ bool CRender::FillRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor)
     if( options.bWinFrameMode ) SetFillMode(RICE_FILLMODE_WINFRAME );
 
     DEBUGGER_PAUSE_AND_DUMP_COUNT_N( NEXT_FILLRECT, {DebuggerAppendMsg("FillRect: X0=%d, Y0=%d, X1=%d, Y1=%d, Color=0x%08X", nX0, nY0, nX1, nY1, dwColor);
-            DebuggerAppendMsg("Pause after FillRect: Color=%08X\n", dwColor);if( logCombiners ) m_pColorCombiner->DisplayMuxString();});
+            DebuggerAppendMsg("Pause after FillRect: Color=%08X\n", dwColor);});
     DEBUGGER_PAUSE_AND_DUMP_COUNT_N( NEXT_FLUSH_TRI, {DebuggerAppendMsg("FillRect: X0=%d, Y0=%d, X1=%d, Y1=%d, Color=0x%08X", nX0, nY0, nX1, nY1, dwColor);
-            DebuggerAppendMsg("Pause after FillRect: Color=%08X\n", dwColor);if( logCombiners ) m_pColorCombiner->DisplayMuxString();});
+            DebuggerAppendMsg("Pause after FillRect: Color=%08X\n", dwColor);});
 
     return res;
 }
@@ -457,14 +453,12 @@ bool CRender::Line3D(uint32 dwV0, uint32 dwV1, uint32 dwWidth)
     m_line3DVtx[0].x = ViewPortTranslatef_x(g_vecProjected[dwV0].x);
     m_line3DVtx[0].y = ViewPortTranslatef_y(g_vecProjected[dwV0].y);
     m_line3DVtx[0].rhw = g_vecProjected[dwV0].w;
-    m_line3DVtx[0].dcDiffuse = PostProcessDiffuseColor(g_dwVtxDifColor[dwV0]);
-    m_line3DVtx[0].dcSpecular = PostProcessSpecularColor();
+    m_line3DVtx[0].dcDiffuse = g_dwVtxDifColor[dwV0];
 
     m_line3DVtx[1].x = ViewPortTranslatef_x(g_vecProjected[dwV1].x);
     m_line3DVtx[1].y = ViewPortTranslatef_y(g_vecProjected[dwV1].y);
     m_line3DVtx[1].rhw = g_vecProjected[dwV1].w;
-    m_line3DVtx[1].dcDiffuse = PostProcessDiffuseColor(g_dwVtxDifColor[dwV1]);
-    m_line3DVtx[1].dcSpecular = m_line3DVtx[0].dcSpecular;
+    m_line3DVtx[1].dcDiffuse = g_dwVtxDifColor[dwV1];
 
     float width = dwWidth*0.5f+1.5f;
 
@@ -714,35 +708,35 @@ bool CRender::TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, 
     if( accurate && !tile0.bMirrorT && RemapTextureCoordinate(t0v0, t0v1, tex0.m_dwTileHeight, tile0.dwMaskT, heightDiv, m_texRectTex1UV[0].v, m_texRectTex1UV[1].v) )
         SetTextureVFlag(TEXTURE_UV_FLAG_CLAMP, gRSP.curTile);
     
-    COLOR speColor = PostProcessSpecularColor();
     COLOR difColor;
     if( colorFlag )
-        difColor = PostProcessDiffuseColor(diffuseColor);
+        difColor = diffuseColor;
     else
-        //difColor = PostProcessDiffuseColor(0);
-        difColor = PostProcessDiffuseColor(gRDP.primitiveColor);
+        difColor = gRDP.primitiveColor;
 
     g_texRectTVtx[0].x = ViewPortTranslatei_x(nX0);
     g_texRectTVtx[0].y = ViewPortTranslatei_y(nY0);
     g_texRectTVtx[0].dcDiffuse = difColor;
-    g_texRectTVtx[0].dcSpecular = speColor;
 
     g_texRectTVtx[1].x = ViewPortTranslatei_x(nX1);
     g_texRectTVtx[1].y = ViewPortTranslatei_y(nY0);
     g_texRectTVtx[1].dcDiffuse = difColor;
-    g_texRectTVtx[1].dcSpecular = speColor;
 
     g_texRectTVtx[2].x = ViewPortTranslatei_x(nX1);
     g_texRectTVtx[2].y = ViewPortTranslatei_y(nY1);
     g_texRectTVtx[2].dcDiffuse = difColor;
-    g_texRectTVtx[2].dcSpecular = speColor;
 
     g_texRectTVtx[3].x = ViewPortTranslatei_x(nX0);
     g_texRectTVtx[3].y = ViewPortTranslatei_y(nY1);
     g_texRectTVtx[3].dcDiffuse = difColor;
-    g_texRectTVtx[3].dcSpecular = speColor;
 
     float depth = (gRDP.otherMode.depth_source == 1 ? gRDP.fPrimitiveDepth : 0 );
+    
+    // -0.02 : hack here (arbitrary value...). I guess this offset has do be found "somewhere"
+    if( depth > 0.02 )
+    {
+        depth -= 0.02;
+    }
 
     g_texRectTVtx[0].z = g_texRectTVtx[1].z = g_texRectTVtx[2].z = g_texRectTVtx[3].z = depth;
     g_texRectTVtx[0].rhw = g_texRectTVtx[1].rhw = g_texRectTVtx[2].rhw = g_texRectTVtx[3].rhw = 1;
@@ -806,7 +800,6 @@ bool CRender::TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, 
 
 
     bool res;
-    TurnFogOnOff(false);
     if( TileUFlags[gRSP.curTile]==TEXTURE_UV_FLAG_CLAMP && TileVFlags[gRSP.curTile]==TEXTURE_UV_FLAG_CLAMP && options.forceTextureFilter == FORCE_DEFAULT_FILTER )
     {
         TextureFilter dwFilter = m_dwMagFilter;
@@ -832,7 +825,6 @@ bool CRender::TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, 
         ApplyRDPScissor();
         res = RenderTexRect();
     }
-    TurnFogOnOff(gRSP.bFogEnabled);
 
     if( gRDP.otherMode.cycle_type  >= CYCLE_TYPE_COPY || !gRDP.otherMode.z_cmp  )
     {
@@ -848,9 +840,8 @@ bool CRender::TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, 
         {
             DebuggerAppendMsg("   Tex1: u0=%f, v0=%f, u1=%f, v1=%f\n",  m_texRectTex2UV[0].u, m_texRectTex2UV[0].v, m_texRectTex2UV[1].u, m_texRectTex2UV[1].v);
         }
-        DebuggerAppendMsg("color=%08X, %08X\n", g_texRectTVtx[0].dcDiffuse, g_texRectTVtx[0].dcSpecular);
+        DebuggerAppendMsg("color=%08X\n", g_texRectTVtx[0].dcDiffuse);
         DebuggerAppendMsg("Pause after TexRect\n");
-        if( logCombiners ) m_pColorCombiner->DisplayMuxString();
     });
 
     return res;
@@ -892,29 +883,24 @@ bool CRender::TexRectFlip(int nX0, int nY0, int nX1, int nY1, float fS0, float f
 
     SetCombinerAndBlender();
 
-    COLOR speColor = PostProcessSpecularColor();
-    COLOR difColor = PostProcessDiffuseColor(gRDP.primitiveColor);
+    COLOR difColor = gRDP.primitiveColor;
 
     // Same as TexRect, but with texcoords 0,2 swapped
     g_texRectTVtx[0].x = ViewPortTranslatei_x(nX0);
     g_texRectTVtx[0].y = ViewPortTranslatei_y(nY0);
     g_texRectTVtx[0].dcDiffuse = difColor;
-    g_texRectTVtx[0].dcSpecular = speColor;
 
     g_texRectTVtx[1].x = ViewPortTranslatei_x(nX1);
     g_texRectTVtx[1].y = ViewPortTranslatei_y(nY0);
     g_texRectTVtx[1].dcDiffuse = difColor;
-    g_texRectTVtx[1].dcSpecular = speColor;
 
     g_texRectTVtx[2].x = ViewPortTranslatei_x(nX1);
     g_texRectTVtx[2].y = ViewPortTranslatei_y(nY1);
     g_texRectTVtx[2].dcDiffuse = difColor;
-    g_texRectTVtx[2].dcSpecular = speColor;
 
     g_texRectTVtx[3].x = ViewPortTranslatei_x(nX0);
     g_texRectTVtx[3].y = ViewPortTranslatei_y(nY1);
     g_texRectTVtx[3].dcDiffuse = difColor;
-    g_texRectTVtx[3].dcSpecular = speColor;
 
     g_texRectTVtx[0].z = g_texRectTVtx[1].z = g_texRectTVtx[2].z = g_texRectTVtx[3].z = depth;
     g_texRectTVtx[0].rhw = g_texRectTVtx[1].rhw = g_texRectTVtx[2].rhw = g_texRectTVtx[3].rhw = 1.0f;
@@ -924,11 +910,8 @@ bool CRender::TexRectFlip(int nX0, int nY0, int nX1, int nY1, float fS0, float f
     SetVertexTextureUVCoord(g_texRectTVtx[2], t0u1, t0v1);
     SetVertexTextureUVCoord(g_texRectTVtx[3], t0u1, t0v0);
 
-    TurnFogOnOff(false);
     ApplyRDPScissor();
     bool res = RenderTexRect();
-
-    TurnFogOnOff(gRSP.bFogEnabled);
 
     // Restore state
     ZBufferEnable( m_savedZBufferFlag );
@@ -939,19 +922,17 @@ bool CRender::TexRectFlip(int nX0, int nY0, int nX1, int nY1, float fS0, float f
         DebuggerAppendMsg("       : x0=%f, y0=%f, x1=%f, y1=%f\n",  g_texRectTVtx[0].x, g_texRectTVtx[0].y, g_texRectTVtx[2].x, g_texRectTVtx[2].y);
         DebuggerAppendMsg("   Tex0: u0=%f, v0=%f, u1=%f, v1=%f\n",  g_texRectTVtx[0].tcord[0].u, g_texRectTVtx[0].tcord[0].v, g_texRectTVtx[2].tcord[0].u, g_texRectTVtx[2].tcord[0].v);
         TRACE0("Pause after TexRectFlip\n");
-        if( logCombiners ) m_pColorCombiner->DisplayMuxString();
     });
 
     return res;
 }
 
 
-void CRender::StartDrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, COLOR spe, float z, float rhw)
+void CRender::StartDrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, float z, float rhw)
 {
     g_texRectTVtx[0].x = ViewPortTranslatei_x(x0);  // << Error here, shouldn't divid by 4
     g_texRectTVtx[0].y = ViewPortTranslatei_y(y0);
     g_texRectTVtx[0].dcDiffuse = dif;
-    g_texRectTVtx[0].dcSpecular = spe;
     g_texRectTVtx[0].tcord[0].u = u0;
     g_texRectTVtx[0].tcord[0].v = v0;
 
@@ -959,21 +940,18 @@ void CRender::StartDrawSimple2DTexture(float x0, float y0, float x1, float y1, f
     g_texRectTVtx[1].x = ViewPortTranslatei_x(x1);
     g_texRectTVtx[1].y = ViewPortTranslatei_y(y0);
     g_texRectTVtx[1].dcDiffuse = dif;
-    g_texRectTVtx[1].dcSpecular = spe;
     g_texRectTVtx[1].tcord[0].u = u1;
     g_texRectTVtx[1].tcord[0].v = v0;
 
     g_texRectTVtx[2].x = ViewPortTranslatei_x(x1);
     g_texRectTVtx[2].y = ViewPortTranslatei_y(y1);
     g_texRectTVtx[2].dcDiffuse = dif;
-    g_texRectTVtx[2].dcSpecular = spe;
     g_texRectTVtx[2].tcord[0].u = u1;
     g_texRectTVtx[2].tcord[0].v = v1;
 
     g_texRectTVtx[3].x = ViewPortTranslatei_x(x0);
     g_texRectTVtx[3].y = ViewPortTranslatei_y(y1);
     g_texRectTVtx[3].dcDiffuse = dif;
-    g_texRectTVtx[3].dcSpecular = spe;
     g_texRectTVtx[3].tcord[0].u = u0;
     g_texRectTVtx[3].tcord[0].v = v1;
 
@@ -1210,11 +1188,6 @@ bool CRender::DrawTriangles()
         }
     }
 
-    if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
-    {
-        TurnFogOnOff(false);
-    }
-
     for( int t=0; t<2; t++ )
     {
         float halfscaleS = 1;
@@ -1321,13 +1294,7 @@ bool CRender::DrawTriangles()
 
     DEBUGGER_PAUSE_AND_DUMP_COUNT_N(NEXT_FLUSH_TRI, {
         TRACE0("Pause after DrawTriangles\n");
-        if( logCombiners ) m_pColorCombiner->DisplayMuxString();
     });
-
-    if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
-    {
-        TurnFogOnOff(true);
-    }
 
     return res;
 }
@@ -1695,7 +1662,7 @@ void CRender::SetVertexTextureUVCoord(TLITVERTEX &v, float fTex0S, float fTex0T)
 }
 void CRender::SetVertexTextureUVCoord(TLITVERTEX &v, float fTex0S, float fTex0T, float fTex1S, float fTex1T)
 {
-    if( (options.enableHackForGames == HACK_FOR_ZELDA||options.enableHackForGames == HACK_FOR_ZELDA_MM) && m_Mux == 0x00262a60150c937fLL && gRSP.curTile == 0 )
+    if( (options.enableHackForGames == HACK_FOR_ZELDA||options.enableHackForGames == HACK_FOR_ZELDA_MM) && m_modes64 == 0x00262a60150c937fLL && gRSP.curTile == 0 )
     {
         // Hack for Zelda Sun
         Tile &t0 = gRDP.tiles[0];
@@ -1864,8 +1831,10 @@ void CRender::UpdateScissorWithClipRatio()
     {
         w.clipping.needToClip = false;
     }
-    w.clipping.width = (uint32)((gRSP.real_clip_scissor_right-gRSP.real_clip_scissor_left+1)*windowSetting.fMultX);
-    w.clipping.height = (uint32)((gRSP.real_clip_scissor_bottom-gRSP.real_clip_scissor_top+1)*windowSetting.fMultY);
+    // CF63 return real_clip_scissor_left bigger than real_clip_scissor_right
+    // bringing to negative width. We use max to ensure the value is always 0+
+    w.clipping.width = (uint32)std::max((gRSP.real_clip_scissor_right-gRSP.real_clip_scissor_left+1)*windowSetting.fMultX, 0.0f);
+    w.clipping.height = (uint32)std::max((gRSP.real_clip_scissor_bottom-gRSP.real_clip_scissor_top+1)*windowSetting.fMultY, 0.0f);
 
     float halfx = gRSP.nVPWidthN/2.0f;
     float halfy = gRSP.nVPHeightN/2.0f;
@@ -1884,8 +1853,6 @@ void CRender::UpdateScissorWithClipRatio()
 // Set other modes not covered by color combiner or alpha blender
 void CRender::InitOtherModes(void)
 {
-    ApplyTextureFilter();
-
     //
     // I can't think why the hand in mario's menu screen is rendered with an opaque rendermode,
     // and no alpha threshold. We set the alpha reference to 1 to ensure that the transparent pixels
@@ -1927,7 +1894,7 @@ void CRender::InitOtherModes(void)
         }
     }
 
-    if( options.enableHackForGames == HACK_FOR_SOUTH_PARK_RALLY && m_Mux == 0x00121824ff33ffffLL &&
+    if( options.enableHackForGames == HACK_FOR_SOUTH_PARK_RALLY && m_modes64 == 0x00121824ff33ffffLL &&
         gRSP.bCullFront && gRDP.otherMode.aa_en && gRDP.otherMode.z_cmp && gRDP.otherMode.z_upd )
     {
         SetZCompare(FALSE);
@@ -1946,7 +1913,7 @@ void CRender::InitOtherModes(void)
     }
 
     /*
-    if( options.enableHackForGames == HACK_FOR_SOUTH_PARK_RALLY && m_Mux == 0x00121824ff33ffff &&
+    if( options.enableHackForGames == HACK_FOR_SOUTH_PARK_RALLY && m_modes64 == 0x00121824ff33ffff &&
         gRSP.bCullFront && gRDP.otherMode.z_cmp && gRDP.otherMode.z_upd )//&& gRDP.otherMode.aa_en )
     {
         SetZCompare(FALSE);
