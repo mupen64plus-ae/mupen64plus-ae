@@ -19,21 +19,14 @@ LOCAL_C_INCLUDES :=                     \
 LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/Blender.cpp               \
     $(SRCDIR)/Combiner.cpp              \
-    $(SRCDIR)/CombinerTable.cpp         \
     $(SRCDIR)/Config.cpp                \
     $(SRCDIR)/ConvertImage.cpp          \
     $(SRCDIR)/ConvertImage16.cpp        \
     $(SRCDIR)/Debugger.cpp              \
-    $(SRCDIR)/DecodedMux.cpp            \
     $(SRCDIR)/DeviceBuilder.cpp         \
     $(SRCDIR)/FrameBuffer.cpp           \
-    $(SRCDIR)/GeneralCombiner.cpp       \
     $(SRCDIR)/GraphicsContext.cpp       \
     $(SRCDIR)/OGLCombiner.cpp           \
-    $(SRCDIR)/OGLDecodedMux.cpp         \
-    $(SRCDIR)/OGLExtCombiner.cpp        \
-    $(SRCDIR)/OGLExtRender.cpp          \
-    $(SRCDIR)/OGLES2FragmentShaders.cpp \
     $(SRCDIR)/OGLGraphicsContext.cpp    \
     $(SRCDIR)/OGLRender.cpp             \
     $(SRCDIR)/OGLRenderExt.cpp          \
