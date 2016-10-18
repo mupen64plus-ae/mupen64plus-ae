@@ -474,11 +474,11 @@ public class NativeConfigFiles
         // default values from GLideN64.custom.ini when running with GLES 2.0 for EnableCopyColorToRDRAM
         // because it could be set that way there.
         if(glideN64settingValue != null && game.emulationProfile.isBuiltin &&
-            !(game.isGliden64_GLES2Enabled && game.gliden64EnableCopyColorToRDRAM == 2))
+            !(game.isGliden64_GLES2Enabled && setting.equals("EnableCopyColorToRDRAM")))
         {
             mupenConfigFile.put( "Video-GLideN64", setting, glideN64settingValue);
 
-            Log.i("NativeConfigFile", "(built-in) param=" + setting + " value=" + value);
+            Log.i("NativeConfigFile", "(built-in) param=" + setting + " value=" + glideN64settingValue);
         }
         else
         {
