@@ -345,12 +345,10 @@
     <!-- GLideN64 depth buffer copy to RDRAM list-->
     <string-array name="gliden64_depth_buffer_copy_to_RDRAM_entries">
         <item>@string/gliden64_enable_copy_depth_to_RDRAM_entry_off</item>
-        <item>@string/gliden64_enable_copy_depth_to_RDRAM_entry_hardware</item>
         <item>@string/gliden64_enable_copy_depth_to_RDRAM_entry_software</item>
     </string-array>
     <string-array name="gliden64_depth_buffer_copy_to_RDRAM_values" translatable="false">
         <item>0</item>
-        <item>1</item>
         <item>2</item>
     </string-array>
     <string name="gliden64_depth_buffer_copy_to_RDRAM_default" translatable="false">0</string>

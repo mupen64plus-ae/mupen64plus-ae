@@ -59,7 +59,6 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
     private static final String GLIDEN64_ENABLE_LOD = "EnableLOD";
     private static final String GLIDEN64_ENABLE_SHADER_STORAGE = "EnableShadersStorage";
-    private static final String GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM = "EnableCopyDepthToRDRAM";
     private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
 
     // These constants must match the entry-values found in arrays.xml
@@ -293,7 +292,6 @@ public class EmulationProfileActivity extends ProfileActivity
                 findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 || isOGL );
                 findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
-                findPreference( GLIDEN64_ENABLE_COPY_DEPTH_TO_RDRAM ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 || isOGL);
             }
             else
