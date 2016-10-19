@@ -60,6 +60,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String GLIDEN64_ENABLE_LOD = "EnableLOD";
     private static final String GLIDEN64_ENABLE_SHADER_STORAGE = "EnableShadersStorage";
     private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
+    private static final String GLIDEN64_ENABLE_FRAGMENT_DEPTH_WRITE = "EnableFragmentDepthWrite";
 
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
@@ -293,6 +294,8 @@ public class EmulationProfileActivity extends ProfileActivity
                 findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 || isOGL);
+                findPreference( GLIDEN64_ENABLE_FRAGMENT_DEPTH_WRITE ).setEnabled(!isGles20);
+
             }
             else
             {
