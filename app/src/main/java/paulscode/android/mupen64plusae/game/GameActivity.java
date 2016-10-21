@@ -758,8 +758,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             }
             else
             {
-                mWaitingOnConfirmation = true;
-                CoreInterface.exit();
+                mDrawerLayout.openDrawer( GravityCompat.START );
             }
             return true;
         }
