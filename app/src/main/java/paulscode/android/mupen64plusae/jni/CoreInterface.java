@@ -399,7 +399,6 @@ public class CoreInterface
                 @Override
                 public void run()
                 {
-
                     // Only increase priority if we have more than one processor. The call to check the number of
                     // processors is only available in API level 17
                     if(AppData.IS_JELLY_BEAN_MR1 && Runtime.getRuntime().availableProcessors() > 1) {
@@ -421,6 +420,13 @@ public class CoreInterface
                     arglist.add( sAppData.coreLib );
                     arglist.add( "--configdir" );
                     arglist.add( sGamePrefs.coreUserConfigDir );
+
+                    if(!sIsRestarting && !sAppData.useX86PicLibrary)
+                    {
+                        arglist.add( "--savestate" );
+                        arglist.add( saveToLoad );
+                    }
+
                     if( !sGlobalPrefs.isFramelimiterEnabled )
                     {
                         arglist.add( "--nospeedlimit" );
@@ -504,7 +510,7 @@ public class CoreInterface
             }, "CoreThread" );
 
             // Auto-load state if desired
-            if( !sIsRestarting)
+            if( !sIsRestarting && sAppData.useX86PicLibrary )
             {
                 addOnStateCallbackListener( new OnStateCallbackListener()
                 {
@@ -532,8 +538,6 @@ public class CoreInterface
                                         }
                                     }, 1000);
                             }
-                            else
-                                NativeExports.emuLoadFile( saveToLoad );
 
                             synchronized (sActivity)
                             {
@@ -553,10 +557,10 @@ public class CoreInterface
                         }
                     }
                 } );
+                 // Ensure the auto-save is loaded if the operating system stops & restarts the activity
+                sIsRestarting = false;
             }
 
-            // Ensure the auto-save is loaded if the operating system stops & restarts the activity
-            sIsRestarting = false;
             sUseCustomSpeed = false;
             NativeExports.emuSetSpeed( BASELINE_SPEED );
 
