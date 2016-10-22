@@ -946,6 +946,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             CoreInterface.shutdownEmulator();
         }
 
+        CoreInterface.detachActivity();
         GameActivity.this.finish();
     }
 

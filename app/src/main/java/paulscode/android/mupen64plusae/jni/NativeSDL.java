@@ -51,73 +51,82 @@ public class NativeSDL extends CoreInterface
      */
     public static boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
     {
-        boolean result = sSurface.createGLContext( majorVersion, minorVersion, configSpec, false );
-        
-        if( !result )
+        boolean result = false;
+
+        synchronized (sSurface)
         {
-            // Some devices don't seem to like the EGL_BUFFER_SIZE request. If context creation
-            // fails, try it again without the buffer size request.
-            // TODO: Solve the root issue rather than applying this bandaid.
-            int i = 0;
-            int j = 0;
-            while( configSpec[i] != EGL10.EGL_NONE )
+            if(sSurface != null)
             {
-                // Copy all config elements except the buffer size element
-                if( configSpec[i] != EGL10.EGL_BUFFER_SIZE )
+                result = sSurface.createGLContext( majorVersion, minorVersion, configSpec, false );
+
+                if( !result )
                 {
-                    configSpec[j] = configSpec[i];
-                    configSpec[j + 1] = configSpec[i + 1];
-                    j += 2;
+                    // Some devices don't seem to like the EGL_BUFFER_SIZE request. If context creation
+                    // fails, try it again without the buffer size request.
+                    // TODO: Solve the root issue rather than applying this bandaid.
+                    int i = 0;
+                    int j = 0;
+                    while( configSpec[i] != EGL10.EGL_NONE )
+                    {
+                        // Copy all config elements except the buffer size element
+                        if( configSpec[i] != EGL10.EGL_BUFFER_SIZE )
+                        {
+                            configSpec[j] = configSpec[i];
+                            configSpec[j + 1] = configSpec[i + 1];
+                            j += 2;
+                        }
+                        else
+                        {
+                            Log.w( "CoreInterfaceNative", "Retrying GL context creation without EGL_BUFFER_SIZE=" + configSpec[i + 1] );
+                        }
+                        i += 2;
+                    }
+                    configSpec[j] = EGL10.EGL_NONE;
+                    result = sSurface.createGLContext( majorVersion, minorVersion, configSpec, true );
+
+                    if( !result )
+                    {
+                        // Secondary fallback, ignore SDL's requested config and just use what we had been using in SDL 1.3
+                        Log.w( "CoreInterfaceNative", "Retrying GL context creation using legacy settings" );
+
+                        // Generate a bit mask to limit the configuration search to compatible GLES versions
+                        final int UNKNOWN = 0;
+                        final int EGL_OPENGL_ES_BIT = 1;
+                        final int EGL_OPENGL_ES2_BIT = 4;
+                        final int renderableType;
+
+                        // Determine which version of EGL we're using.
+                        switch( majorVersion )
+                        {
+                            case 1:
+                                renderableType = EGL_OPENGL_ES_BIT;
+                                break;
+
+                            case 2:
+                                renderableType = EGL_OPENGL_ES2_BIT;
+                                break;
+
+                            default: // Shouldn't happen.
+                                renderableType = UNKNOWN;
+                                break;
+                        }
+
+                        // Specify the desired EGL frame buffer configuration
+                        // @formatter:off
+                        final int[] configSpec1;
+                        configSpec1 = new int[]
+                                {
+                                        EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                                        EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                                        EGL10.EGL_NONE                              // terminate array
+                                };
+                        // @formatter:on
+                        result = sSurface.createGLContext( majorVersion, minorVersion, configSpec1, true );
+                    }
                 }
-                else
-                {
-                    Log.w( "CoreInterfaceNative", "Retrying GL context creation without EGL_BUFFER_SIZE=" + configSpec[i + 1] );
-                }
-                i += 2;
-            }
-            configSpec[j] = EGL10.EGL_NONE;
-            result = sSurface.createGLContext( majorVersion, minorVersion, configSpec, true );
-            
-            if( !result )
-            {
-                // Secondary fallback, ignore SDL's requested config and just use what we had been using in SDL 1.3
-                Log.w( "CoreInterfaceNative", "Retrying GL context creation using legacy settings" );
-                
-                // Generate a bit mask to limit the configuration search to compatible GLES versions
-                final int UNKNOWN = 0;
-                final int EGL_OPENGL_ES_BIT = 1;
-                final int EGL_OPENGL_ES2_BIT = 4;
-                final int renderableType;
-                
-                // Determine which version of EGL we're using.
-                switch( majorVersion )
-                {
-                    case 1:
-                        renderableType = EGL_OPENGL_ES_BIT;
-                        break;
-                    
-                    case 2:
-                        renderableType = EGL_OPENGL_ES2_BIT;
-                        break;
-                    
-                    default: // Shouldn't happen.
-                        renderableType = UNKNOWN;
-                        break;
-                }
-                
-                // Specify the desired EGL frame buffer configuration
-                // @formatter:off
-                final int[] configSpec1;
-                configSpec1 = new int[] 
-                { 
-                    EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
-                    EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
-                    EGL10.EGL_NONE                              // terminate array
-                };
-                // @formatter:on            
-                result = sSurface.createGLContext( majorVersion, minorVersion, configSpec1, true );
             }
         }
+
         return result;
     }
     
@@ -128,7 +137,13 @@ public class NativeSDL extends CoreInterface
      */
     public static void deleteGLContext()
     {
-        sSurface.destroyGLContext();
+        synchronized (sSurface)
+        {
+            if(sSurface != null)
+            {
+                sSurface.destroyGLContext();
+            }
+        }
     }
     
     /**
@@ -138,19 +153,25 @@ public class NativeSDL extends CoreInterface
      */
     public static void flipBuffers()
     {
-        sSurface.flipBuffers();
-        
-        // Update frame rate info
-        if( sFpsRecalcPeriod > 0 && sFpsListener != null )
+        synchronized (sSurface)
         {
-            sFrameCount++;
-            if( sFrameCount >= sFpsRecalcPeriod )
+            if(sSurface != null)
             {
-                long currentTime = System.currentTimeMillis();
-                float fFPS = ( (float) sFrameCount / (float) ( currentTime - sLastFpsTime ) ) * 1000.0f;
-                sFpsListener.onFpsChanged( Math.round( fFPS ) );
-                sFrameCount = 0;
-                sLastFpsTime = currentTime;
+                sSurface.flipBuffers();
+
+                // Update frame rate info
+                if( sFpsRecalcPeriod > 0 && sFpsListener != null )
+                {
+                    sFrameCount++;
+                    if( sFrameCount >= sFpsRecalcPeriod )
+                    {
+                        long currentTime = System.currentTimeMillis();
+                        float fFPS = ( (float) sFrameCount / (float) ( currentTime - sLastFpsTime ) ) * 1000.0f;
+                        sFpsListener.onFpsChanged( Math.round( fFPS ) );
+                        sFrameCount = 0;
+                        sLastFpsTime = currentTime;
+                    }
+                }
             }
         }
     }

@@ -204,6 +204,19 @@ public class CoreInterface
         moveFromLegacy();
     }
 
+    public static void detachActivity()
+    {
+        synchronized (sActivity)
+        {
+            sActivity = null;
+        }
+
+        synchronized (sSurface)
+        {
+            sSurface = null;
+        }
+    }
+
     public static boolean isCoreRunning()
     {
         return sIsCoreRunning;
@@ -424,70 +437,69 @@ public class CoreInterface
 
                     Log.e( "CoreInterface", "Core thread exit!");
 
-                    if( result != 0 )
+                    synchronized (sActivity)
                     {
-                        // Messages match return codes from mupen64plus-ui-console/main.c
-                        final String message;
-                        switch( result )
+                        if( result != 0 && sActivity != null)
                         {
-                            case 1:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure01 );
-                                break;
-                            case 2:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure02 );
-                                break;
-                            case 3:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure03 );
-                                break;
-                            case 4:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure04 );
-                                break;
-                            case 5:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure05 );
-                                break;
-                            case 6:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure06 );
-                                break;
-                            case 7:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure07 );
-                                break;
-                            case 8:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure08 );
-                                break;
-                            case 9:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure09 );
-                                break;
-                            case 10:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure10 );
-                                break;
-                            case 11:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure11 );
-                                break;
-                            case 12:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure12 );
-                                break;
-                            case 13:
-                                message = sActivity.getString( R.string.toast_nativeMainFailure13 );
-                                break;
-                            default:
-                                message = sActivity.getString( R.string.toast_nativeMainFailureUnknown );
-                                break;
-                        }
-                        Log.e( "CoreInterface", "Launch failure: " + message );
-                        sActivity.runOnUiThread( new Runnable()
-                        {
-                            @Override
-                            public void run()
+                            // Messages match return codes from mupen64plus-ui-console/main.c
+                            final String message;
+                            switch( result )
                             {
-                                Notifier.showToast( sActivity, message );
-                                sActivity.finish();
+                                case 1:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure01 );
+                                    break;
+                                case 2:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure02 );
+                                    break;
+                                case 3:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure03 );
+                                    break;
+                                case 4:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure04 );
+                                    break;
+                                case 5:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure05 );
+                                    break;
+                                case 6:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure06 );
+                                    break;
+                                case 7:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure07 );
+                                    break;
+                                case 8:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure08 );
+                                    break;
+                                case 9:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure09 );
+                                    break;
+                                case 10:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure10 );
+                                    break;
+                                case 11:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure11 );
+                                    break;
+                                case 12:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure12 );
+                                    break;
+                                case 13:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailure13 );
+                                    break;
+                                default:
+                                    message = sActivity.getString( R.string.toast_nativeMainFailureUnknown );
+                                    break;
                             }
-                        } );
-
-
+                            Log.e( "CoreInterface", "Launch failure: " + message );
+                            sActivity.runOnUiThread( new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    Notifier.showToast( sActivity, message );
+                                    sActivity.finish();
+                                }
+                            } );
+                        }
                     }
-
-
                 }
             }, "CoreThread" );
 
@@ -523,15 +535,21 @@ public class CoreInterface
                             else
                                 NativeExports.emuLoadFile( saveToLoad );
 
-                            sActivity.runOnUiThread(new Runnable()
+                            synchronized (sActivity)
                             {
-                                @Override
-                                public void run()
+                                if(sActivity != null)
                                 {
-                                    Notifier.showToast(sActivity, R.string.toast_loadingSession);
+                                    sActivity.runOnUiThread(new Runnable()
+                                    {
+                                        @Override
+                                        public void run()
+                                        {
+                                            Notifier.showToast(sActivity, R.string.toast_loadingSession);
 
+                                        }
+                                    });
                                 }
-                            });
+                            }
                         }
                     }
                 } );
@@ -641,23 +659,30 @@ public class CoreInterface
 
         if( sCurrentSaveStateFile.exists() )
         {
-            String title = sActivity.getString( R.string.confirm_title );
-            String message = sActivity.getString( R.string.confirmOverwriteFile_message, filename );
+            if(sActivity != null)
+            {
+                String title = sActivity.getString( R.string.confirm_title );
+                String message = sActivity.getString( R.string.confirmOverwriteFile_message, filename );
 
-            ConfirmationDialog confirmationDialog =
-                    ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
+                ConfirmationDialog confirmationDialog =
+                        ConfirmationDialog.newInstance(SAVE_STATE_FILE_CONFIRM_DIALOG_ID, title, message);
 
-            FragmentManager fm = sActivity.getSupportFragmentManager();
-            confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
+                FragmentManager fm = sActivity.getSupportFragmentManager();
+                confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
+            }
         }
         else
         {
-            Notifier.showToast( sActivity, R.string.toast_savingFile, sCurrentSaveStateFile.getName() );
             NativeExports.emuSaveFile( sCurrentSaveStateFile.getAbsolutePath() );
 
-            if(sActivity instanceof OnSaveLoadListener)
+            if(sActivity != null)
             {
-                ((OnSaveLoadListener)sActivity).onSaveLoad();
+                Notifier.showToast( sActivity, R.string.toast_savingFile, sCurrentSaveStateFile.getName() );
+
+                if(sActivity instanceof OnSaveLoadListener)
+                {
+                    ((OnSaveLoadListener)sActivity).onSaveLoad();
+                }
             }
         }
     }
@@ -710,7 +735,12 @@ public class CoreInterface
     public static void saveSlot(final OnSaveLoadListener onSaveLoadListener)
     {
         int slot = NativeExports.emuGetSlot();
-        Notifier.showToast( sActivity, R.string.toast_savingSlot, slot );
+
+        if(sActivity != null)
+        {
+            Notifier.showToast( sActivity, R.string.toast_savingSlot, slot );
+        }
+
         NativeExports.emuSaveSlot();
 
         if(onSaveLoadListener != null)
@@ -722,7 +752,12 @@ public class CoreInterface
     public static void loadSlot(final OnSaveLoadListener onSaveLoadListener)
     {
         int slot = NativeExports.emuGetSlot();
-        Notifier.showToast( sActivity, R.string.toast_loadingSlot, slot );
+
+        if(sActivity != null)
+        {
+            Notifier.showToast( sActivity, R.string.toast_loadingSlot, slot );
+        }
+
         NativeExports.emuLoadSlot();
 
         if(onSaveLoadListener != null)
@@ -733,123 +768,145 @@ public class CoreInterface
 
     public static void saveFileFromPrompt()
     {
-        CharSequence title = sActivity.getText( R.string.menuItem_fileSave );
-        CharSequence hint = sActivity.getText( R.string.hintFileSave );
-        int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( sActivity, title, null, null, hint, inputType, new PromptTextListener()
+        if(sActivity != null)
         {
-            @Override
-            public void onDialogClosed( CharSequence text, int which )
+            CharSequence title = sActivity.getText( R.string.menuItem_fileSave );
+            CharSequence hint = sActivity.getText( R.string.hintFileSave );
+            int inputType = InputType.TYPE_CLASS_TEXT;
+            Prompt.promptText( sActivity, title, null, null, hint, inputType, new PromptTextListener()
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
+                @Override
+                public void onDialogClosed( CharSequence text, int which )
                 {
-                    saveState( text.toString() );
+                    if( which == DialogInterface.BUTTON_POSITIVE )
+                    {
+                        saveState( text.toString() );
+                    }
                 }
-            }
-        } );
+            } );
+        }
     }
 
     public static void loadFileFromPrompt(final OnSaveLoadListener onSaveLoadListener)
     {
-        CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
-        File startPath = new File( sGamePrefs.userSaveDir );
-        Prompt.promptFile( sActivity, title, null, startPath, "", new PromptFileListener()
+        if(sActivity != null)
         {
-            @Override
-            public void onDialogClosed( File file, int which )
+            CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
+            File startPath = new File( sGamePrefs.userSaveDir );
+            Prompt.promptFile( sActivity, title, null, startPath, "", new PromptFileListener()
             {
-                if( which >= 0 )
+                @Override
+                public void onDialogClosed( File file, int which )
                 {
-                    loadState( file );
-
-                    if(onSaveLoadListener != null)
+                    if( which >= 0 )
                     {
-                        onSaveLoadListener.onSaveLoad();
+                        loadState( file );
+
+                        if(onSaveLoadListener != null)
+                        {
+                            onSaveLoadListener.onSaveLoad();
+                        }
                     }
                 }
-
-            }
-        } );
+            } );
+        }
     }
 
     public static void loadAutoSaveFromPrompt(final OnSaveLoadListener onSaveLoadListener)
     {
-        CharSequence title = sActivity.getText( R.string.menuItem_fileLoadAutoSave );
-        File startPath = new File( sGamePrefs.autoSaveDir );
-        Prompt.promptFile( sActivity, title, null, startPath, "sav", new PromptFileListener()
+        if(sActivity != null)
         {
-            @Override
-            public void onDialogClosed( File file, int which )
+            CharSequence title = sActivity.getText( R.string.menuItem_fileLoadAutoSave );
+            File startPath = new File( sGamePrefs.autoSaveDir );
+            Prompt.promptFile( sActivity, title, null, startPath, "sav", new PromptFileListener()
             {
-                if( which >= 0 )
+                @Override
+                public void onDialogClosed( File file, int which )
                 {
-                    loadState( file );
-
-                    if(onSaveLoadListener != null)
+                    if( which >= 0 )
                     {
-                        onSaveLoadListener.onSaveLoad();
-                    }
-                }
+                        loadState( file );
 
-            }
-        } );
+                        if(onSaveLoadListener != null)
+                        {
+                            onSaveLoadListener.onSaveLoad();
+                        }
+                    }
+
+                }
+            } );
+        }
     }
 
     public static void loadState( File file )
     {
-        Notifier.showToast( sActivity, R.string.toast_loadingFile, file.getName() );
+        if(sActivity != null)
+        {
+            Notifier.showToast( sActivity, R.string.toast_loadingFile, file.getName() );
+        }
+
         NativeExports.emuLoadFile( file.getAbsolutePath() );
     }
 
     public static void screenshot()
     {
-        Notifier.showToast( sActivity, R.string.toast_savingScreenshot );
+        if(sActivity != null)
+        {
+            Notifier.showToast( sActivity, R.string.toast_savingScreenshot );
+        }
+
         NativeExports.emuScreenshot();
     }
 
     public static void setCustomSpeedFromPrompt(final OnPromptFinishedListener promptFinishedListener)
     {
-        final CharSequence title = sActivity.getText( R.string.menuItem_setSpeed );
-        Prompt.promptInteger( sActivity, title, "%1$d %%", sCustomSpeed, MIN_SPEED, MAX_SPEED,
-                new PromptIntegerListener()
-                {
-                    @Override
-                    public void onDialogClosed( Integer value, int which )
+        if(sActivity != null)
+        {
+            final CharSequence title = sActivity.getText( R.string.menuItem_setSpeed );
+            Prompt.promptInteger( sActivity, title, "%1$d %%", sCustomSpeed, MIN_SPEED, MAX_SPEED,
+                    new PromptIntegerListener()
                     {
-                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        @Override
+                        public void onDialogClosed( Integer value, int which )
                         {
-                            setCustomSpeed( value );
-
-                            if(promptFinishedListener != null)
+                            if( which == DialogInterface.BUTTON_POSITIVE )
                             {
-                                promptFinishedListener.onPromptFinished();
+                                setCustomSpeed( value );
+
+                                if(promptFinishedListener != null)
+                                {
+                                    promptFinishedListener.onPromptFinished();
+                                }
                             }
                         }
-                    }
-                } );
+                    } );
+        }
     }
 
     public static void setSlotFromPrompt(final OnPromptFinishedListener promptFinishedListener)
     {
-        final CharSequence title = sActivity.getString(R.string.menuItem_selectSlot);
+        if(sActivity != null)
+        {
+            final CharSequence title = sActivity.getString(R.string.menuItem_selectSlot);
 
-        Prompt.promptRadioInteger( sActivity, title, NativeExports.emuGetSlot(), 0, 2, 5,
-                new PromptIntegerListener()
-                {
-                    @Override
-                    public void onDialogClosed( Integer value, int which )
+            Prompt.promptRadioInteger( sActivity, title, NativeExports.emuGetSlot(), 0, 2, 5,
+                    new PromptIntegerListener()
                     {
-                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        @Override
+                        public void onDialogClosed( Integer value, int which )
                         {
-                            setSlot( value );
-
-                            if(promptFinishedListener != null)
+                            if( which == DialogInterface.BUTTON_POSITIVE )
                             {
-                                promptFinishedListener.onPromptFinished();
+                                setSlot( value );
+
+                                if(promptFinishedListener != null)
+                                {
+                                    promptFinishedListener.onPromptFinished();
+                                }
                             }
                         }
-                    }
-                } );
+                    } );
+        }
     }
 
     public static void incrementCustomSpeed()
@@ -896,30 +953,37 @@ public class CoreInterface
 
     public static synchronized void restart()
     {
-        sIsPaused = true;
-        NativeExports.emuPause();
-        String title = sActivity.getString( R.string.confirm_title );
-        String message = sActivity.getString( R.string.confirmResetGame_message );
+        if(sActivity != null)
+        {
+            sIsPaused = true;
+            NativeExports.emuPause();
+            String title = sActivity.getString( R.string.confirm_title );
+            String message = sActivity.getString( R.string.confirmResetGame_message );
 
-        ConfirmationDialog confirmationDialog =
-            ConfirmationDialog.newInstance(RESTART_CONFIRM_DIALOG_ID, title, message);
+            ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(RESTART_CONFIRM_DIALOG_ID, title, message);
 
-        FragmentManager fm = sActivity.getSupportFragmentManager();
-        confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
+            FragmentManager fm = sActivity.getSupportFragmentManager();
+            confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
+        }
     }
 
     public static void exit()
     {
         sIsPaused = true;
         NativeExports.emuPause();
-        String title = sActivity.getString( R.string.confirm_title );
-        String message = sActivity.getString( R.string.confirmExitGame_message );
-        
-        ConfirmationDialog confirmationDialog =
-            ConfirmationDialog.newInstance(EXIT_CONFIRM_DIALOG_ID, title, message);
-        
-        FragmentManager fm = sActivity.getSupportFragmentManager();
-        confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
+
+        if(sActivity != null)
+        {
+            String title = sActivity.getString( R.string.confirm_title );
+            String message = sActivity.getString( R.string.confirmExitGame_message );
+
+            ConfirmationDialog confirmationDialog =
+                    ConfirmationDialog.newInstance(EXIT_CONFIRM_DIALOG_ID, title, message);
+
+            FragmentManager fm = sActivity.getSupportFragmentManager();
+            confirmationDialog.show(fm, EXIT_CONFIRM_DIALOG_STATE);
+        }
     }
 
     public static void onPromptDialogClosed(int id, int which)
@@ -928,26 +992,29 @@ public class CoreInterface
         {
             if (which == DialogInterface.BUTTON_POSITIVE)
             {
-                Notifier.showToast(sActivity, R.string.toast_overwritingFile, sCurrentSaveStateFile.getName());
                 NativeExports.emuSaveFile(sCurrentSaveStateFile.getAbsolutePath());
 
-                if(sActivity instanceof OnSaveLoadListener)
+                if(sActivity != null)
                 {
-                    ((OnSaveLoadListener)sActivity).onSaveLoad();
+                    Notifier.showToast(sActivity, R.string.toast_overwritingFile, sCurrentSaveStateFile.getName());
+                    if(sActivity instanceof OnSaveLoadListener)
+                    {
+                        ((OnSaveLoadListener)sActivity).onSaveLoad();
+                    }
                 }
             }
 
         }
         else if (id == RESTART_CONFIRM_DIALOG_ID)
-        {            
-            if(sActivity instanceof OnRestartListener)
+        {
+            if(sActivity != null && sActivity instanceof OnRestartListener)
             {
                 ((OnRestartListener)sActivity).onRestart( which == DialogInterface.BUTTON_POSITIVE );
             }
         }
         else if (id == EXIT_CONFIRM_DIALOG_ID)
         {
-            if(sActivity instanceof OnExitListener)
+            if(sActivity != null && sActivity instanceof OnExitListener)
                 ((OnExitListener)sActivity).onExit( which == DialogInterface.BUTTON_POSITIVE );
         }
 
