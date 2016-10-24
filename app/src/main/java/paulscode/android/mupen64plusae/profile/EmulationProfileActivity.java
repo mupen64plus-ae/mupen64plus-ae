@@ -337,7 +337,7 @@ public class EmulationProfileActivity extends ProfileActivity
                 entries.add(getString(R.string.rsp_cxd4_lle));
                 values.add("rsp-cxd4-lle");
             }
-            else if(LIBGLIDEN64_SO.equals( videoPlugin ))
+            else
             {
                 //All options available
                 entries.add(getString(R.string.rsp_hle));
@@ -357,12 +357,12 @@ public class EmulationProfileActivity extends ProfileActivity
             //Only update the selected option if the plugin changed
             if(mCurrentVideoPlugin != null && !mCurrentVideoPlugin.equals(videoPlugin))
             {
-                if(mPreferenceRspPlugin != null)
+                if(mPreferenceRspPlugin != null && mPreferenceRspPlugin.getEntryValues().length != 0)
                 {
                     mPreferenceRspPlugin.setValue(mPreferenceRspPlugin.getEntryValues()[0].toString());
                 }
 
-                if(mPreferenceVideoSubPlugin != null)
+                if(mPreferenceVideoSubPlugin != null && mPreferenceVideoSubPlugin.getEntryValues().length != 0)
                 {
                     mPreferenceVideoSubPlugin.setValue(mPreferenceVideoSubPlugin.getEntryValues()[0].toString());
                 }
