@@ -148,7 +148,14 @@ public class RomDatabase
                 Log.w( "RomDetail", "MD5: " + md5 );
                 Log.w( "RomDetail", "CRC: " + crc );
                 Log.i( "RomDetail", "Constructing a best guess for the meta-info" );
-                String goodName = file.getName().split( "\\." )[0];
+                String goodName = file.getName();
+                int lastIndexOfPeriod = goodName.lastIndexOf('.');
+
+                if(lastIndexOfPeriod != -1)
+                {
+                    goodName = goodName.substring(0, goodName.lastIndexOf('.'));
+                }
+
                 detail = new RomDetail( crc, goodName );
             }
             else
