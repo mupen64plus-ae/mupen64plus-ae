@@ -164,7 +164,7 @@
             mupen64:saveType="string"
             mupen64:units="x" />
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="256"
+            android:defaultValue="64"
             android:key="CacheSize"
             android:title="@string/gliden64_tx_cache_title"
             mupen64:maximumValue="1024"
@@ -313,7 +313,7 @@
             android:key="txFilterIgnoreBG"
             android:title="@string/gliden64_tx_filter_ignore_BG_title" />
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="256"
+            android:defaultValue="64"
             android:key="txCacheSize"
             android:title="@string/gliden64_tx_cache_size_title"
             mupen64:maximumValue="1024"

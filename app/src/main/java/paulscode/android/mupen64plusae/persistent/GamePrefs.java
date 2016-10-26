@@ -608,7 +608,7 @@ public class GamePrefs
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
         gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);
         gliden64MaxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
-        gliden64CacheSize = getSafeInt( emulationProfile, "CacheSize", 256);
+        gliden64CacheSize = getSafeInt( emulationProfile, "CacheSize", 64);
         gliden64EnableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         gliden64EnableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         gliden64EnableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
@@ -633,7 +633,7 @@ public class GamePrefs
         gliden64TxEnhancementMode = gliden64EnableNativeResTexrects ? 0 :getSafeInt( emulationProfile, "txEnhancementMode", 0);
         gliden64TxDeposterize = emulationProfile.get( "txDeposterize", "False" ).equals( "True" );
         gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "False" ).equals( "True" );
-        gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 256);
+        gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 64);
         gliden64TxHiresEnable = emulationProfile.get( "txHiresEnable", "False" ).equals( "True" );
         gliden64TxHiresFullAlphaChannel = emulationProfile.get( "txHiresFullAlphaChannel", "False" ).equals( "True" );
         gliden64TxHresAltCRC = emulationProfile.get( "txHresAltCRC", "False" ).equals( "True" );
