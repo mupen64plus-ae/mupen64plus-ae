@@ -257,7 +257,7 @@ public class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CropMode", String.valueOf( 1 ) ); // Crop resulted image (0=disable, 1=auto crop, 2=user defined crop)"
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CropMode", String.valueOf( game.gliden64CropMode ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MultiSampling", String.valueOf( game.gliden64MultiSampling ));
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bilinearMode", String.valueOf( game.gliden64BilinearMode ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MaxAnisotropy", String.valueOf( game.gliden64MaxAnisotropy ) );

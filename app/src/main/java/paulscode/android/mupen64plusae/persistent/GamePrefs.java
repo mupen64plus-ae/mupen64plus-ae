@@ -174,6 +174,12 @@ public class GamePrefs
     /** True if auto-frameskip is enabled in the glide64 library. */
     public final boolean isGlide64AutoFrameskipEnabled;
 
+    /** Crop resulted image (
+     * 0=disable,
+     * 1=auto crop,
+     * 2=user defined crop) */
+    public final int gliden64CropMode;
+
     /** Enable/Disable MultiSampling (
      * 0=off,
      * 2,4,8,16=quality) */
@@ -598,6 +604,7 @@ public class GamePrefs
         isGliden64_GLES31Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles31.so" );
         isGliden64_FullGLEnabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-egl.so" );
 
+        gliden64CropMode = getSafeInt( emulationProfile, "CropMode", 1);
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
         gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);
         gliden64MaxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
