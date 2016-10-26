@@ -143,7 +143,12 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mConfigFile = new ConfigFile( mGlobalPrefs.touchscreenProfiles_cfg );
         ConfigSection section = mConfigFile.get( name );
         if( section == null )
-            throw new Error( "Invalid usage: profile name not found in config file" );
+        {
+            Profile profile = new Profile(false, name, "");
+            profile.writeTo(mConfigFile);
+            mConfigFile.save();
+            section = mConfigFile.get( name );
+        }
         mProfile = new Profile( false, section );
         
         // Define the map from N64 button indices to readable button names
