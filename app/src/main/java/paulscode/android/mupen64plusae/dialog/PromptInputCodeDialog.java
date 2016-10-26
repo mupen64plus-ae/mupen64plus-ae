@@ -1,18 +1,5 @@
 package paulscode.android.mupen64plusae.dialog;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mupen64plusae.v3.alpha.R;
-
-import com.bda.controller.Controller;
-
-import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import paulscode.android.mupen64plusae.input.provider.AxisProvider;
-import paulscode.android.mupen64plusae.input.provider.KeyProvider;
-import paulscode.android.mupen64plusae.input.provider.MogaProvider;
-import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
-import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -27,6 +14,20 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bda.controller.Controller;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
+import paulscode.android.mupen64plusae.input.provider.AxisProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import paulscode.android.mupen64plusae.input.provider.MogaProvider;
+
 public class PromptInputCodeDialog extends DialogFragment
 {
     private static final String STATE_TITLE = "STATE_TITLE";
@@ -38,7 +39,7 @@ public class PromptInputCodeDialog extends DialogFragment
     /**
      * The listener interface for receiving an input code provided by the user.
      * 
-     * @see Prompt#promptInputCode
+     * @see PromptInputCodeDialog
      */
     public interface PromptInputCodeListener
     {
@@ -157,6 +158,7 @@ public class PromptInputCodeDialog extends DialogFragment
 
         OnInputListener inputListener = new OnInputListener()
         {
+            private float[] mStrengths = null;
             @Override
             public void onInput(int[] inputCodes, float[] strengths, int hardwareId)
             {
@@ -164,27 +166,38 @@ public class PromptInputCodeDialog extends DialogFragment
                     return;
 
                 // Find the strongest input
-                float maxStrength = 0;
+                float maxStrength = -1;
                 int strongestInputCode = 0;
+                Log.e("PromptInputCodeDialog", "Inputs start");
                 for (int i = 0; i < inputCodes.length; i++)
                 {
-                    // Identify the strongest input
-                    float strength = strengths[i];
-                    if (strength > maxStrength)
+                    if(strengths[i] != 0.0f)
+                        Log.e("PromptInputCodeDialog", "Inputs[" + i + "] = " + strengths[i] + " maxStrength = " + maxStrength);
+
+                    // Identify the strongest input and last one to have changed
+                    if (Math.abs(strengths[i]) > maxStrength && mStrengths != null && !compareStrengths(mStrengths[i], strengths[i], 0.1f))
                     {
-                        maxStrength = strength;
+                        Log.e("PromptInputCodeDialog", "Detected change in " + i);
+
+                        maxStrength = strengths[i];
                         strongestInputCode = inputCodes[i];
                     }
                 }
+                Log.e("PromptInputCodeDialog", "Inputs end");
+                //Only allow the input if a significant change is detected
+                if(mStrengths != null)
+                {
+                    // Call the overloaded method with the strongest found
+                    onInput(strongestInputCode, maxStrength, hardwareId);
+                }
 
-                // Call the overloaded method with the strongest found
-                onInput(strongestInputCode, maxStrength, hardwareId);
+                mStrengths = strengths;
             }
 
             @Override
             public void onInput(int inputCode, float strength, int hardwareId)
             {
-                if (inputCode != 0 && strength > AbstractProvider.STRENGTH_THRESHOLD)
+                if (inputCode != 0)
                 {
                     onInputCommon(providers, getActivity(), inputCode, hardwareId, DialogInterface.BUTTON_POSITIVE);
 
@@ -199,6 +212,20 @@ public class PromptInputCodeDialog extends DialogFragment
         
         
         return promptInputCodeDialog;
+    }
+
+    /**
+     * Returns true if the two float arrays are about the same
+     * @param strengths1
+     * @param strengths2
+     * @return true if the two float arrays are about the same
+     */
+    private boolean compareStrengths(float strengths1, float strengths2, float delta)
+    {
+        boolean areTheyAboutSame = true;
+        areTheyAboutSame = Math.abs(strengths1 - strengths2) < delta;
+
+        return areTheyAboutSame;
     }
 
     @Override
