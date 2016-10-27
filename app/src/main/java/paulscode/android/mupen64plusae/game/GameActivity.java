@@ -403,13 +403,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         super.onDestroy();
 
         Log.i( "GameActivity", "onDestroy" );
-
-        if(!mShuttingDown)
-        {
-            //Something bad happened, we are shutting down without being signaled first
-            mMogaController.exit();
-            CoreInterface.killEmulator();
-        }
     }
 
     @Override
