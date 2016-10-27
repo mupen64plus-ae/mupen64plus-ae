@@ -248,6 +248,9 @@ public class GlobalPrefs
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
 
+    /** True if we are using the swipe gesture for the in-game menu, false if we are using the back key */
+    public final boolean inGameMenuIsSwipGesture;
+
     /** Maximum number of auto saves */
     public final int maxAutoSaves;
 
@@ -472,6 +475,9 @@ public class GlobalPrefs
             isBigScreenMode = false;
         else
             isBigScreenMode = AppData.IS_OUYA_HARDWARE || appData.isAndroidTv; // TODO: Add other systems as they enter market
+
+        final String inGameMenuMode = mPreferences.getString( "inGameMenu", "back-key" );
+        inGameMenuIsSwipGesture = inGameMenuMode.equals("swipe");
 
         maxAutoSaves = mPreferences.getInt( "gameAutoSaves", 5 );
 

@@ -455,6 +455,10 @@
     <string name="navigationMode_entryAuto">Auto-select from device configuration</string>
     <string name="navigationMode_entryStandard">Standard mode</string>
     <string name="navigationMode_entryBigScreen">Big-screen mode (no touchscreen; gamepad/keyboard input only)</string>
+    <string name="inGameMenuSetting_title">Show in-game menu</string>
+    <string name="inGameMenuSetting_entryBackKey">When back key is pressed</string>
+    <string name="inGameMenuSetting_entrySwipe">When slide gesture is used</string>
+
     <string name="r4300Emulator_title">R4300 emulator</string>
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>

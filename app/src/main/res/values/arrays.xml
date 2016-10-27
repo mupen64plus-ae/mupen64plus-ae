@@ -593,6 +593,17 @@
 
     <string name="navigationMode_default" translatable="false">auto</string>
 
+    <!-- In game menu -->
+    <string-array name="inGameMenuSetting_entries" translatable="false">
+        <item>@string/inGameMenuSetting_entryBackKey</item>
+        <item>@string/inGameMenuSetting_entrySwipe</item>
+    </string-array>
+    <string-array name="inGameMenuSetting_values" translatable="false">
+        <item>back-key</item>
+        <item>swipe</item>
+    </string-array>
+    <string name="inGameMenuSetting_default" translatable="false">back-key</string>
+
     <!-- Big-Screen Input Mapping Screen -->
     <string-array name="inputMapActivity_entries" translatable="false">
         <item>@string/inputMapActivity_btnL</item>

@@ -422,6 +422,9 @@
     <string name="navigationMode_entryAuto">Seleccionar automáticamente a partir de la configuración del dispositivo</string>
     <string name="navigationMode_entryStandard">Modo estándar</string>
     <string name="navigationMode_entryBigScreen">Modo de pantalla enorme (sin touchscreen; solo entrada de gemepad/teclado)</string>
+    <string name="inGameMenuSetting_title">Mostrar el menú dentro del juego</string>
+    <string name="inGameMenuSetting_entryBackKey">Cuando se presiona el botón de atrás</string>
+    <string name="inGameMenuSetting_entrySwipe">Cuando se desliza el dedo desde la izquierda de la pantalla</string>
     <string name="r4300Emulator_title">Emulador R4300</string>
     <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
     <string name="r4300Emulator_entryCachedInterpreter">Intérprete en caché</string>

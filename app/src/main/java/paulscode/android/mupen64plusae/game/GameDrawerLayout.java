@@ -53,10 +53,6 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
     {
         super( context, attrs );
 
-        //Disable the slideout gesture, too many users are complaining about inadvertently activating the drawer
-        //It can now be activated using the back key
-        setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
         addDrawerListener(new DrawerLayout.DrawerListener(){
 
             @Override
@@ -91,7 +87,19 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
     {
         mTouchMap = touchMap;
     }
-    
+
+    public void setSwipGestureEnabled( boolean enable )
+    {
+        if(enable)
+        {
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+        else
+        {
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+    }
+
     @Override
     public boolean onInterceptTouchEvent( MotionEvent event )
     {

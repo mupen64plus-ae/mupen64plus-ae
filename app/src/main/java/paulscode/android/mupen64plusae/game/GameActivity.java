@@ -251,6 +251,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
         // Don't darken the game screen when the drawer is open
         mDrawerLayout.setScrimColor(0x0);
+        mDrawerLayout.setSwipGestureEnabled(mGlobalPrefs.inGameMenuIsSwipGesture);
 
         // Make the background solid black
         mSurface.getRootView().setBackgroundColor(0xFF000000);
@@ -758,7 +759,17 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             }
             else
             {
-                mDrawerLayout.openDrawer( GravityCompat.START );
+                //We are using the slide gesture for the menu, so the back key can be used to exit
+                if(mGlobalPrefs.inGameMenuIsSwipGesture)
+                {
+                    mWaitingOnConfirmation = true;
+                    CoreInterface.exit();
+                }
+                //Else the back key bring up the in-game menu
+                else
+                {
+                    mDrawerLayout.openDrawer( GravityCompat.START );
+                }
             }
             return true;
         }
