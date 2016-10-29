@@ -257,7 +257,7 @@ extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
         jstring jarg = (jstring) env->GetObjectArrayElement(jargv, i);
         const char *arg = env->GetStringUTFChars(jarg, 0);
 
-        if(arg != nullptr)
+        if(arg != NULL)
         {
             argv[i] = strdup(arg);
             env->ReleaseStringUTFChars(jarg, arg);
