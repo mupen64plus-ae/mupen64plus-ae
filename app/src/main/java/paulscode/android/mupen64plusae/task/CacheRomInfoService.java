@@ -141,7 +141,7 @@ public class CacheRomInfoService extends Service
             // http://android2know.blogspot.com/2013/01/create-nomedia-file.html
             touchFile( mArtDir + "/.nomedia" );
             
-            final List<File> files = getAllFiles( searchPathFile );
+            final List<File> files = getAllFiles( searchPathFile, 0 );
             final RomDatabase database = RomDatabase.getInstance();
             if(!database.hasDatabaseFile())
             {
@@ -278,7 +278,13 @@ public class CacheRomInfoService extends Service
         return START_STICKY;
     }
 
-    private List<File> getAllFiles( File searchPath )
+    /**
+     * Get all files in a directory and subdirectories
+     * @param searchPath Path to start search on
+     * @param count How many levels deep we currently are
+     * @return List of files
+     */
+    private List<File> getAllFiles( File searchPath, int count )
     {
         List<File> result = new ArrayList<File>();
         if( searchPath.isDirectory())
@@ -290,9 +296,10 @@ public class CacheRomInfoService extends Service
                 {
                     if( mbStopped ) break;
 
-                    if(mSearchSubdirectories)
+                    //Search subdirectories if option is enabled and we less than 10 levels deep
+                    if(mSearchSubdirectories && count < 10)
                     {
-                        result.addAll( getAllFiles( file ) );
+                        result.addAll( getAllFiles( file, ++count ) );
                     }
                     else if(!file.isDirectory())
                     {
