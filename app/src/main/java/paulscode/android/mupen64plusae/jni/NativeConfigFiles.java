@@ -54,6 +54,7 @@ public class NativeConfigFiles
         GLES20("libmupen64plus-video-gliden64-gles20.so", 20),
         GLES30("libmupen64plus-video-gliden64-gles30.so", 30),
         GLES31("libmupen64plus-video-gliden64-gles31.so", 31),
+        GLES32("libmupen64plus-video-gliden64-gles31.so", 31),
         EGL("libmupen64plus-video-gliden64-egl.so", 45);
 
         private final String mLibraryName;
@@ -102,6 +103,8 @@ public class NativeConfigFiles
                     return GLES30;
                 case "3.1":
                     return GLES31;
+                case "3.2":
+                    return GLES32;
                 case "EGL":
                     return EGL;
                 default:

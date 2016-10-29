@@ -196,7 +196,7 @@ public class EmulationProfileActivity extends ProfileActivity
                     entries.add(getString(R.string.videoSubPlugin_entryGles30));
                     values.add("-gles20");
                     values.add("-gles30");
-                } else if (openGlVersion.equals("3.1")) {
+                } else if (openGlVersion.equals("3.1") || openGlVersion.equals("3.2")) {
                     entries.add(getString(R.string.videoSubPlugin_entryGles20));
                     entries.add(getString(R.string.videoSubPlugin_entryGles30));
                     entries.add(getString(R.string.videoSubPlugin_entryGles31));
