@@ -256,8 +256,12 @@ extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     {
         jstring jarg = (jstring) env->GetObjectArrayElement(jargv, i);
         const char *arg = env->GetStringUTFChars(jarg, 0);
-        argv[i] = strdup(arg);
-        env->ReleaseStringUTFChars(jarg, arg);
+
+        if(arg != nullptr)
+        {
+            argv[i] = strdup(arg);
+            env->ReleaseStringUTFChars(jarg, arg);
+        }
     }
 
     // Launch main emulator loop (continues until emuStop is called)
