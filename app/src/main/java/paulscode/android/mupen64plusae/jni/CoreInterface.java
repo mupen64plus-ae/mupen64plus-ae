@@ -952,6 +952,7 @@ public class CoreInterface
     public static synchronized void restartEmulator()
     {
         CoreInterface.shutdownEmulator();
+        sIsRestarting = true;
         CoreInterface.startupEmulator(null);
     }
 
