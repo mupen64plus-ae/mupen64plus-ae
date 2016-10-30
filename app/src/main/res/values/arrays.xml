@@ -290,15 +290,11 @@
         <item>@string/gliden64_multisampling_entry_none</item>
         <item>@string/gliden64_multisampling_entry_two</item>
         <item>@string/gliden64_multisampling_entry_four</item>
-        <item>@string/gliden64_multisampling_entry_eight</item>
-        <item>@string/gliden64_multisampling_entry_sixteen</item>
     </string-array>
     <string-array name="gliden64_multisampling_values" translatable="false">
         <item>0</item>
         <item>2</item>
         <item>4</item>
-        <item>8</item>
-        <item>16</item>
     </string-array>
     <string name="gliden64_multisampling_default" translatable="false">0</string>
 
