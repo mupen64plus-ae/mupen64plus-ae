@@ -723,7 +723,7 @@ EXPORT void CALL AiLenChanged(void)
     static const bool sleepPerfFixEnabled = false;
     static const double minSleepNeededForReset = -5.0;
     static const double minSleepNeeded = -0.1;
-    static const double maxSleepNeeded = 0.05;
+    static const double maxSleepNeeded = 0.5;
     static bool resetOnce = false;
     static unsigned long totalElapsedSamples = 0;
     static double gameStartTime = 0;
