@@ -964,7 +964,12 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
                 if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
                 {
                     CoreInterface.removeOnStateCallbackListener( this );
-                    CoreInterface.pauseEmulator();
+
+                    //Don't pause if by the time we finished saving, we have been resumed
+                    if(!mIsResumed)
+                    {
+                        CoreInterface.pauseEmulator();
+                    }
                 }
             }
         } );
