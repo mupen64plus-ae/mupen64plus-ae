@@ -980,6 +980,10 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
             CoreInterface.autoSaveState( saveFileName );
         }
+        else
+        {
+            CoreInterface.pauseEmulator();
+        }
 
         mAutoSaveManager.clearOldest();
     }
