@@ -281,16 +281,20 @@ int compileCombiner(Combiner & _color, Combiner & _alpha, std::string & _strShad
 	_strShader.append(
 		"  if (uEnableAlphaTest != 0) {							\n"
 		"    lowp float alphaTestValue = (uAlphaCompareMode == 3) ? snoise() : uAlphaTestValue;	\n"
-		"    lowp float alphaValue = clamp(alpha1, 0.0, 1.0);	\n"
-		"    if  (uAlphaCvgSel != 0) {							\n"
-		"       if (uCvgXAlpha == 0) alphaValue = 0.125;		\n"
-		"    }													\n"
+	    "    lowp float alphaValue;								\n"
+		"    if ((uAlphaCvgSel != 0) && (uCvgXAlpha == 0)) {	\n"
+	    "      alphaValue = 0.125;								\n"
+	    "    } else {											\n"
+	    "      alphaValue = clamp(alpha1, 0.0, 1.0);			\n"
+	    "    }													\n"
 		"    if (alphaValue < alphaTestValue) discard;			\n"
 		"  }													\n"
 		);
 
 	_strShader.append("  color1 = ");
 	nInputs |= _compileCombiner(_color.stage[0], ColorInput, _strShader);
+	// Simulate N64 color sign-extend.
+	_strShader.append("  color1 += vec3(-2.0) * (vec3(1.0) - step(color1, vec3(1.0))); \n");
 
 	_strShader.append("  combined_color = vec4(color1, alpha1); \n");
 	if (_alpha.numStages == 2) {
