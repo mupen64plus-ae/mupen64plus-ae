@@ -548,14 +548,18 @@ public class AppData
     private static int getMinorVersion(int glEsVersion) {
         return glEsVersion & 0xffff;
     }
-    
+
     public static String getOpenGlEsVersion(Activity activity)
     {
         PixelBuffer buffer = new PixelBuffer(320,240);
         String versionString = buffer.getGLVersion();
-        Log.i("AppData", "GL Version = " + versionString);
-        versionString = versionString.toLowerCase();
-        int firstDot = versionString.indexOf('.');
+        int firstDot = -1;
+        if(versionString != null)
+        {
+            Log.i("AppData", "GL Version = " + versionString);
+            versionString = versionString.toLowerCase();
+            firstDot = versionString.indexOf('.');
+        }
 
         //Version string is not valid, fallback to secondary method
         if(firstDot == -1 || firstDot == 0 || firstDot == versionString.length() - 1)
