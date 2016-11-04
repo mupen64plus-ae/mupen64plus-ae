@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mupen64Plus</string>
+    <string name="actionCheatEditor_summary">Pridėti, keisti ir ištrinti tinkintus kodus</string>
+    <string name="actionCheatEditor_title">Įgalinti kodus</string>
+    <string name="actionReloadAssets_summary">Neliečia naudotojo nustatymų, ROM, žaidimų išsaugojim ir kitų duomenų</string>
+    <string name="actionReloadAssets_title">Perkrauti programėlės resursus</string>
+    <string name="actionResetGamePrefs_summary">Atkurti numatytus žaidimo nustatymus</string>
+    <string name="actionShare_title">Dalintis</string>
+    <string name="actionWiki_title">Wiki</string>
+    <string name="assetExtractor_finished">Užbaigta</string>
+    <string name="audioPlugin_title">Audio plėtinys</string>
+    <string name="cheatEditor_title2">Pavadinimas</string>
+    <string name="cheatEditor_saveConfirm"></string>
+    <string name="cheatEditor_title">Kodo pavadinimas</string>
+    <string name="cheatEditor_title_desc">Keisti kodo pavadinimą</string>
+    <string name="controller_buttonL">L mygtukas</string>
+    <string name="controller_buttonR">R mygtukas</string>
+    <string name="controller_buttonS">Pradžios mygtukas</string>
+    <string name="controller_buttonZ">Z mygtukas</string>
+    <string name="controller_dpad"></string>
+    <string name="controller_groupC">C mygtukai</string>
+    <string name="listItem_copy">Kopijuoti</string>
+    <string name="listItem_delete">Ištrinti</string>
+    <string name="listItem_disabled"></string>
+    <string name="listItem_edit">Keisti</string>
+    <string name="listItem_rename">Pervadinti</string>
+    <string name="menuItem_about">Apie</string>
+    <string name="menuItem_appVersion">Programėlės versija</string>
+    <string name="menuItem_exit">Išeiti</string>
+    <string name="menuItem_faq">DUK</string>
+    <string name="menuItem_new">Naujas</string>
+    <string name="menuItem_settings">Nustatymai</string>
+    <string name="navigationMode_title">Prieinamumas</string>
+    <string name="riceFog_title">Rūkas</string>
+    <string name="screenCheats_title">Kodai</string>
+    <string name="touchscreenProfileActivity_remove">Pašalinti</string>
+</resources>
