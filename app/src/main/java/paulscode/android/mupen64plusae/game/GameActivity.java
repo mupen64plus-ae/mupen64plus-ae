@@ -357,11 +357,11 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
 
     @SuppressWarnings("deprecation")
     @Override
-    protected void onResume()
+    protected void onStart()
     {
-        super.onResume();
+        super.onStart();
 
-        Log.i("GameActivity", "onResume");
+        Log.i("GameActivity", "onStart");
         mIsResumed = true;
 
         tryRunning();
@@ -378,11 +378,11 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
     }
 
     @Override
-    protected void onPause()
+    protected void onStop()
     {
-        super.onPause();
+        super.onStop();
 
-        Log.i( "GameActivity", "onPause" );
+        Log.i( "GameActivity", "onStop" );
         mIsResumed = false;
 
         if(!mShuttingDown && CoreInterface.isCoreRunning())
