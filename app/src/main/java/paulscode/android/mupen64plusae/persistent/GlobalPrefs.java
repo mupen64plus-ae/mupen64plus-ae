@@ -224,6 +224,9 @@ public class GlobalPrefs
     /** The polygon offset to use. */
     public final float videoPolygonOffset;
 
+    /** Enable hack to fix up upside down screen in GLideN64 GLES 3.0 for some devices */
+    public final boolean enableBlitScreenWorkaround;
+
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
 
@@ -451,6 +454,8 @@ public class GlobalPrefs
                 videoPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "videoPolygonOffset", "-3.0" ), -3.0f );
                 break;
         }
+
+        enableBlitScreenWorkaround = mPreferences.getBoolean( "enableBlitScreenWorkaround", false );
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
 
         // Audio prefs

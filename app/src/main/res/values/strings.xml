@@ -289,6 +289,8 @@
     <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
     <string name="displayFps_title">Framerate</string>
     <string name="displayFps_summary">Display FPS on screen</string>
+    <string name="fix_GLideN64_title">Fix upside down screen</string>
+    <string name="fix_GLideN64_summary">Fixes issues with some devices that show an upside down screen with GLideN64-GLES-3.0</string>
     <string name="videoPlugin_title">Video plugin</string>
     <string name="videoPlugin_entryNone">None (video disabled)</string>
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>

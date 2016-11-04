@@ -267,6 +267,8 @@
     <string name="displayScaling_entryStretch">Estirar\n<small>Rellena la pantalla, sin barras negras (agrega distorsión)</small></string>
     <string name="displayFps_title">Velocidad de Cuadros</string>
     <string name="displayFps_summary">Mostrar FPS en Pantalla</string>
+    <string name="fix_GLideN64_title">Corregir la pantalla invertida</string>
+    <string name="fix_GLideN64_summary">Soluciona problemas con algunos dispositivos que muestran una pantalla invertida con GLideN64-GLES-3.0</string>
     <string name="videoPlugin_title">Plugin de video</string>
     <string name="videoPlugin_entryNone">Ninguno (video deshabilitado)</string>
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptación de GLN64 v0.4.1)</small></string>
