@@ -49,8 +49,9 @@
 
 typedef struct threadLock_
 {
-  volatile int value;
-  volatile int limit;
+    volatile int value;
+    volatile int limit;
+    volatile int errors;
 } threadLock;
 
 /* Default start-time size of primary buffer (in equivalent output samples).
@@ -407,7 +408,8 @@ static void InitializeAudio(int freq)
        return;
     }
 
-    lock.value = lock.limit = SecondaryBufferNbr;
+    lock.value = lock.limit = SecondaryBufferNbr*bufferMultiplier;
+    lock.errors = 0;
 
     /* Engine object */
     SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
@@ -446,7 +448,7 @@ static void InitializeAudio(int freq)
        return;
     }
 
-    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, SecondaryBufferNbr};
+    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, SecondaryBufferNbr*bufferMultiplier};
 
 #ifdef FP_ENABLED
 
@@ -845,7 +847,7 @@ void* audioConsumerStretch(void* param)
    static int seekWindowMS = 16;
    static int overlapMS = 7;*/
 
-   soundTouch.setSampleRate(GameFreq);
+   soundTouch.setSampleRate((uint)GameFreq);
    soundTouch.setChannels(2);
    soundTouch.setSetting( SETTING_USE_QUICKSEEK, 1 );
    soundTouch.setSetting( SETTING_USE_AA_FILTER, 1 );
@@ -857,8 +859,8 @@ void* audioConsumerStretch(void* param)
    
    double bufferMultiplier = (double)OutputFreq/DEFAULT_FREQUENCY;
 
-   int maxQueueSize = TargetSecondaryBuffers + 30.0*bufferMultiplier;
-   int minQueueSize = (double)TargetSecondaryBuffers*bufferMultiplier;
+   int maxQueueSize = (int)(TargetSecondaryBuffers + 30.0*bufferMultiplier);
+   int minQueueSize = (int)(TargetSecondaryBuffers*bufferMultiplier);
    bool drainQueue = false;
 
    //Sound queue ran dry, device is running slow
@@ -872,9 +874,8 @@ void* audioConsumerStretch(void* param)
    const double returnSpeed = 0.10;
    const double minSlowValue = 0.2;
    const double maxSlowValue = 3.0;
-   //Adjust tempo in x% increments so it's more steady
-   int increments = 4;
-   const double catchUpOffset = increments*2/100.0;
+   const float maxSpeedUpRate = 0.5;
+   const float slowRate = 0.05;
    queueData* currQueueData = NULL;
     struct timespec prevTime;
     struct timespec currTime;
@@ -884,9 +885,7 @@ void* audioConsumerStretch(void* param)
    waitTime.tv_sec = 1;
    waitTime.tv_nsec = 0;
 
-   //use the smallest of the two
-   const int maxWindowSize = 10;
-   int feedTimeWindowSize = fmin(TargetSecondaryBuffers, maxWindowSize);
+   int feedTimeWindowSize = 50;
    int feedTimeIndex = 0;
    bool feedTimesSet = false;
    float feedTimes[feedTimeWindowSize];
@@ -918,13 +917,13 @@ void* audioConsumerStretch(void* param)
          if((slesQueueLength > maxQueueSize || drainQueue) && !ranDry)
          {
             drainQueue = true;
-            currAdjustment = temp + catchUpOffset;
+            currAdjustment = temp + (float)(slesQueueLength - minQueueSize)/(float)(lock.limit - minQueueSize)*maxSpeedUpRate;
          }
          //Device can't keep up with the game or we have too much in the queue after slowing it down
          else if(ranDry)
          {
             drainQueue = false;
-            currAdjustment = temp - catchUpOffset/2.0;
+            currAdjustment = temp - slowRate;
          }
          else if(!ranDry && slesQueueLength < maxQueueSize)
          {
@@ -934,22 +933,8 @@ void* audioConsumerStretch(void* param)
          //Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
          if( currAdjustment > minSlowValue && currAdjustment < maxSlowValue)
          {
-            if(fabs(currAdjustment - 1.0) < fabs(slowAdjustment - 1.0))
-            {
-               if(currAdjustment - slowAdjustment > returnSpeed)
-               {
-                  slowAdjustment += returnSpeed;
-               }
-               else
-               {
-                  slowAdjustment = currAdjustment;
-               }
-            }
-            else
-            {
-               slowAdjustment = currAdjustment;
-            }
-
+            slowAdjustment = currAdjustment;
+            static const int increments = 4;
             //Adjust tempo in x% increments so it's more steady
             int temp2 = ((int)(slowAdjustment*100))/increments;
             temp2 *= increments;
@@ -966,8 +951,8 @@ void* audioConsumerStretch(void* param)
          //Useful logging
          //if(slesQueueLength == 0)
          //{
-         //   DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f",
-         //      slesQueueLength, threadQueueLength, ranDry, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime);
+         //   DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, raw_rate=%f",
+          //     slesQueueLength, threadQueueLength, ranDry, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, temp);
          //}
 
          //Calculate rates
@@ -1116,7 +1101,14 @@ void processAudio(const unsigned char* buffer, unsigned int length)
          SLresult result = (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex],
             outSamples*SLES_SAMPLE_BYTES);
 
-         --lock.value;
+          if(result != SL_RESULT_SUCCESS)
+          {
+              lock.errors++;
+          }
+          else
+          {
+              --lock.value;
+          }
 
          secondaryBufferIndex++;
 
