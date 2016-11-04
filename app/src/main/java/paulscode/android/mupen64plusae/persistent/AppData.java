@@ -44,6 +44,7 @@ import java.util.Locale;
 
 import paulscode.android.mupen64plusae.preference.PathPreference;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
+import paulscode.android.mupen64plusae.util.PixelBuffer;
 import tv.ouya.console.api.OuyaFacade;
 
 /**
@@ -550,13 +551,29 @@ public class AppData
     
     public static String getOpenGlEsVersion(Activity activity)
     {
-        final ActivityManager activityManager = 
-            (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo = 
-            activityManager.getDeviceConfigurationInfo();
-        
-        return "" + getMajorVersion(configurationInfo.reqGlEsVersion) +
-            "." + getMinorVersion(configurationInfo.reqGlEsVersion);
+        PixelBuffer buffer = new PixelBuffer(320,240);
+        String versionString = buffer.getGLVersion();
+        Log.i("AppData", "GL Version = " + versionString);
+        versionString = versionString.toLowerCase();
+        int firstDot = versionString.indexOf('.');
+
+        //Version string is not valid, fallback to secondary method
+        if(firstDot == -1 || firstDot == 0 || firstDot == versionString.length() - 1)
+        {
+            final ActivityManager activityManager =
+                    (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
+            final ConfigurationInfo configurationInfo =
+                    activityManager.getDeviceConfigurationInfo();
+
+            return "" + getMajorVersion(configurationInfo.reqGlEsVersion) +
+                    "." + getMinorVersion(configurationInfo.reqGlEsVersion);
+        }
+        else
+        {
+            String parsedString = versionString.substring(firstDot-1, firstDot + 2);
+            Log.i("AppData", "GL Version = " + parsedString);
+            return parsedString;
+        }
     }
 
     @TargetApi(17)
