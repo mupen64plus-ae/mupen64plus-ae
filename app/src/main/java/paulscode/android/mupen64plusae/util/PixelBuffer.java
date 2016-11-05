@@ -18,6 +18,7 @@ import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.EGL14.EGL_CONTEXT_CLIENT_VERSION;
+import static android.opengl.EGL14.EGL_OPENGL_ES2_BIT;
 import static javax.microedition.khronos.egl.EGL10.EGL_ALPHA_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_BLUE_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_DEFAULT_DISPLAY;
@@ -122,11 +123,7 @@ public class PixelBuffer {
 
     private EGLConfig chooseConfig() {
         int[] attribList = new int[] {
-                EGL_DEPTH_SIZE, 0,
-                EGL_STENCIL_SIZE, 0,
-                EGL_RED_SIZE, 5,
-                EGL_GREEN_SIZE, 6,
-                EGL_BLUE_SIZE, 5,
+                EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                 EGL_NONE
         };
 

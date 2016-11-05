@@ -585,7 +585,11 @@ public class AppData
     {
         if(AppData.IS_JELLY_BEAN_MR1)
         {
-            return EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
+            boolean supportsFullGl = EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
+
+            //Return back to the original after we determine that full GL is supported
+            EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
+            return supportsFullGl;
         }
         else
         {
