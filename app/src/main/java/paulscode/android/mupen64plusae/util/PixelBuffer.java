@@ -19,16 +19,10 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.EGL14.EGL_CONTEXT_CLIENT_VERSION;
 import static android.opengl.EGL14.EGL_OPENGL_ES2_BIT;
-import static javax.microedition.khronos.egl.EGL10.EGL_ALPHA_SIZE;
-import static javax.microedition.khronos.egl.EGL10.EGL_BLUE_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_DEFAULT_DISPLAY;
-import static javax.microedition.khronos.egl.EGL10.EGL_DEPTH_SIZE;
-import static javax.microedition.khronos.egl.EGL10.EGL_GREEN_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_HEIGHT;
 import static javax.microedition.khronos.egl.EGL10.EGL_NONE;
 import static javax.microedition.khronos.egl.EGL10.EGL_NO_CONTEXT;
-import static javax.microedition.khronos.egl.EGL10.EGL_RED_SIZE;
-import static javax.microedition.khronos.egl.EGL10.EGL_STENCIL_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_WIDTH;
 import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
 import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
@@ -146,17 +140,62 @@ public class PixelBuffer {
         Log.i(TAG, "Config List {");
 
         for (EGLConfig config : mEGLConfigs) {
-            int d, s, r, g, b, a;
+            int mineEGL_ALPHA_SIZE = getConfigAttrib(config, EGL10.EGL_ALPHA_SIZE);
+            int mineEGL_ALPHA_MASK_SIZE = getConfigAttrib(config, EGL10.EGL_ALPHA_MASK_SIZE);
+            int mineEGL_BLUE_SIZE = getConfigAttrib(config, EGL10.EGL_BLUE_SIZE);
+            int mineEGL_BUFFER_SIZE = getConfigAttrib(config, EGL10.EGL_BUFFER_SIZE);
+            int mineEGL_COLOR_BUFFER_TYPE = getConfigAttrib(config, EGL10.EGL_COLOR_BUFFER_TYPE);
+            int mineEGL_CONFIG_CAVEAT = getConfigAttrib(config, EGL10.EGL_CONFIG_CAVEAT);
+            int mineEGL_CONFIG_ID = getConfigAttrib(config, EGL10.EGL_CONFIG_ID);
+            int mineEGL_DEPTH_SIZE = getConfigAttrib(config, EGL10.EGL_DEPTH_SIZE);
+            int mineEGL_GREEN_SIZE = getConfigAttrib(config, EGL10.EGL_GREEN_SIZE);
+            int mineEGL_LEVEL = getConfigAttrib(config, EGL10.EGL_LEVEL);
+            int mineEGL_LUMINANCE_SIZE = getConfigAttrib(config, EGL10.EGL_LUMINANCE_SIZE);
+            int mineEGL_MAX_PBUFFER_WIDTH = getConfigAttrib(config, EGL10.EGL_MAX_PBUFFER_WIDTH);
+            int mineEGL_MAX_PBUFFER_HEIGHT = getConfigAttrib(config, EGL10.EGL_MAX_PBUFFER_HEIGHT);
+            int mineEGL_MAX_PBUFFER_PIXELS = getConfigAttrib(config, EGL10.EGL_MAX_PBUFFER_PIXELS);
+            int mineEGL_NATIVE_RENDERABLE = getConfigAttrib(config, EGL10.EGL_NATIVE_RENDERABLE);
+            int mineEGL_NATIVE_VISUAL_ID = getConfigAttrib(config, EGL10.EGL_NATIVE_VISUAL_ID);
+            int mineEGL_NATIVE_VISUAL_TYPE = getConfigAttrib(config, EGL10.EGL_NATIVE_VISUAL_TYPE);
+            int mineEGL_RED_SIZE = getConfigAttrib(config, EGL10.EGL_RED_SIZE);
+            int mineEGL_RENDERABLE_TYPE = getConfigAttrib(config, EGL10.EGL_RENDERABLE_TYPE);
+            int mineEGL_SAMPLE_BUFFERS = getConfigAttrib(config, EGL10.EGL_SAMPLE_BUFFERS);
+            int mineEGL_SAMPLES = getConfigAttrib(config, EGL10.EGL_SAMPLES);
+            int mineEGL_STENCIL_SIZE = getConfigAttrib(config, EGL10.EGL_STENCIL_SIZE);
+            int mineEGL_SURFACE_TYPE = getConfigAttrib(config, EGL10.EGL_SURFACE_TYPE);
+            int mineEGL_TRANSPARENT_TYPE = getConfigAttrib(config, EGL10.EGL_TRANSPARENT_TYPE);
+            int mineEGL_TRANSPARENT_RED_VALUE = getConfigAttrib(config, EGL10.EGL_TRANSPARENT_RED_VALUE);
+            int mineEGL_TRANSPARENT_GREEN_VALUE = getConfigAttrib(config, EGL10.EGL_TRANSPARENT_GREEN_VALUE);
+            int mineEGL_TRANSPARENT_BLUE_VALUE = getConfigAttrib(config, EGL10.EGL_TRANSPARENT_BLUE_VALUE);
 
-            // Expand on this logic to dump other attributes
-            d = getConfigAttrib(config, EGL_DEPTH_SIZE);
-            s = getConfigAttrib(config, EGL_STENCIL_SIZE);
-            r = getConfigAttrib(config, EGL_RED_SIZE);
-            g = getConfigAttrib(config, EGL_GREEN_SIZE);
-            b = getConfigAttrib(config, EGL_BLUE_SIZE);
-            a = getConfigAttrib(config, EGL_ALPHA_SIZE);
-            Log.i(TAG, "    <d,s,r,g,b,a> = <" + d + "," + s + "," +
-                    r + "," + g + "," + b + "," + a + ">");
+            Log.i(TAG, ""
+                    + " EGL_RED_SIZE=" + mineEGL_RED_SIZE
+                    + " EGL_GREEN_SIZE=" + mineEGL_GREEN_SIZE
+                    + " EGL_BLUE_SIZE=" + mineEGL_BLUE_SIZE
+                    + " EGL_ALPHA_SIZE=" + mineEGL_ALPHA_SIZE
+                    + " EGL_DEPTH_SIZE=" + mineEGL_DEPTH_SIZE
+                    + " EGL_ALPHA_MASK_SIZE=" + mineEGL_ALPHA_MASK_SIZE
+                    + " EGL_BUFFER_SIZE=" + mineEGL_BUFFER_SIZE
+                    + " EGL_COLOR_BUFFER_TYPE=" + mineEGL_COLOR_BUFFER_TYPE
+                    + " EGL_CONFIG_CAVEAT=" + mineEGL_CONFIG_CAVEAT
+                    + " EGL_CONFIG_ID=" + mineEGL_CONFIG_ID
+                    + " EGL_LEVEL=" + mineEGL_LEVEL
+                    + " EGL_LUMINANCE_SIZE=" + mineEGL_LUMINANCE_SIZE
+                    + " EGL_MAX_PBUFFER_WIDTH=" + mineEGL_MAX_PBUFFER_WIDTH
+                    + " EGL_MAX_PBUFFER_HEIGHT=" + mineEGL_MAX_PBUFFER_HEIGHT
+                    + " EGL_MAX_PBUFFER_PIXELS=" + mineEGL_MAX_PBUFFER_PIXELS
+                    + " EGL_NATIVE_RENDERABLE=" + mineEGL_NATIVE_RENDERABLE
+                    + " EGL_NATIVE_VISUAL_ID=" + mineEGL_NATIVE_VISUAL_ID
+                    + " EGL_NATIVE_VISUAL_TYPE=" + mineEGL_NATIVE_VISUAL_TYPE
+                    + " EGL_RENDERABLE_TYPE=" + mineEGL_RENDERABLE_TYPE
+                    + " EGL_SAMPLE_BUFFERS=" + mineEGL_SAMPLE_BUFFERS
+                    + " EGL_SAMPLES=" + mineEGL_SAMPLES
+                    + " EGL_STENCIL_SIZE=" + mineEGL_STENCIL_SIZE
+                    + " EGL_SURFACE_TYPE=" + mineEGL_SURFACE_TYPE
+                    + " EGL_TRANSPARENT_TYPE=" + mineEGL_TRANSPARENT_TYPE
+                    + " EGL_TRANSPARENT_RED_VALUE=" + mineEGL_TRANSPARENT_RED_VALUE
+                    + " EGL_TRANSPARENT_GREEN_VALUE=" + mineEGL_TRANSPARENT_GREEN_VALUE
+                    + " EGL_TRANSPARENT_BLUE_VALUE=" + mineEGL_TRANSPARENT_BLUE_VALUE);
         }
 
         Log.i(TAG, "}");
