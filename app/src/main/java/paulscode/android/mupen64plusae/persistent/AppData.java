@@ -553,6 +553,8 @@ public class AppData
     {
         PixelBuffer buffer = new PixelBuffer(320,240);
         String versionString = buffer.getGLVersion();
+        buffer.destroyGlContext();
+
         int firstDot = -1;
         if(versionString != null)
         {

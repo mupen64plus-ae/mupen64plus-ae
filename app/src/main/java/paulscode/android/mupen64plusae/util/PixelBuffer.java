@@ -23,6 +23,7 @@ import static javax.microedition.khronos.egl.EGL10.EGL_DEFAULT_DISPLAY;
 import static javax.microedition.khronos.egl.EGL10.EGL_HEIGHT;
 import static javax.microedition.khronos.egl.EGL10.EGL_NONE;
 import static javax.microedition.khronos.egl.EGL10.EGL_NO_CONTEXT;
+import static javax.microedition.khronos.egl.EGL10.EGL_NO_SURFACE;
 import static javax.microedition.khronos.egl.EGL10.EGL_WIDTH;
 import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
 import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
@@ -74,6 +75,13 @@ public class PixelBuffer {
 
         // Record thread owner of OpenGL context
         mThreadOwner = Thread.currentThread().getName();
+    }
+
+    public void destroyGlContext()
+    {
+        mEGL.eglMakeCurrent(mEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        mEGL.eglDestroySurface( mEGLDisplay, mEGLSurface );
+        mEGL.eglDestroyContext(mEGLDisplay, mEGLContext);
     }
 
     public void setRenderer(GLSurfaceView.Renderer renderer) {
