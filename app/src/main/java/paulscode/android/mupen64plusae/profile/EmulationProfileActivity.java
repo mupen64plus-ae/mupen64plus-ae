@@ -57,7 +57,6 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
     private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
-    private static final String GLIDEN64_ENABLE_LOD = "EnableLOD";
     private static final String GLIDEN64_ENABLE_SHADER_STORAGE = "EnableShadersStorage";
     private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
     private static final String GLIDEN64_ENABLE_FRAGMENT_DEPTH_WRITE = "EnableFragmentDepthWrite";
@@ -291,7 +290,6 @@ public class EmulationProfileActivity extends ProfileActivity
                 boolean isGles31 = GLES31.equals( videoSubPlugin );
                 boolean isOGL = FULLOGL.equals( videoSubPlugin );
                 findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 || isOGL );
-                findPreference( GLIDEN64_ENABLE_LOD ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
                 findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 || isOGL);
                 findPreference( GLIDEN64_ENABLE_FRAGMENT_DEPTH_WRITE ).setEnabled(!isGles20);
