@@ -347,7 +347,6 @@ public class GameSurfaceEGL14 extends GameSurface
         // Create EGL rendering context
         if( forceCreate || mEglContext == null || mEglContext == EGL14.EGL_NO_CONTEXT )
         {
-            final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
             int[] contextAttrs = null;
 
             if(mFullOpenGL)
@@ -357,7 +356,7 @@ public class GameSurfaceEGL14 extends GameSurface
             else
             {
                 contextAttrs = new int[] {
-                        EGL_CONTEXT_CLIENT_VERSION,
+                        EGL14.EGL_CONTEXT_CLIENT_VERSION,
                         mGlMajorVersion,
                         EGL14.EGL_NONE };
             }
