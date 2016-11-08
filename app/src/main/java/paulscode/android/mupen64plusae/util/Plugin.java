@@ -20,8 +20,9 @@
  */
 package paulscode.android.mupen64plusae.util;
 
-import paulscode.android.mupen64plusae.profile.Profile;
 import android.content.SharedPreferences;
+
+import paulscode.android.mupen64plusae.profile.Profile;
 
 /**
  * A tiny class containing inter-dependent plug-in information.
@@ -48,7 +49,7 @@ public class Plugin
     {
         name = prefs.getString( key, "" );
         enabled = name.endsWith( ".so" );
-        path = enabled ? libsDir + name : "dummy";
+        path = enabled ? libsDir + "/" + name : "dummy";
     }
     
     /**
@@ -62,7 +63,7 @@ public class Plugin
     {
         name = profile.get( key, "" );
         enabled = name.endsWith( ".so" );
-        path = enabled ? libsDir + name : "dummy";
+        path = enabled ? libsDir + "/" + name : "dummy";
     }
     
     /**
@@ -78,6 +79,6 @@ public class Plugin
         String nameTemplate = profile.get( key, "" );
         name = String.format( nameTemplate, profile.get( subkey, "" ) );
         enabled = name.endsWith( ".so" );
-        path = enabled ? libsDir + name : "dummy";
+        path = enabled ? libsDir + "/" + name : "dummy";
     }
 }
