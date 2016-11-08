@@ -1,1 +1,1 @@
-#define PLUGIN_REVISION "51ee866"
+#define PLUGIN_REVISION "a68c0da"
