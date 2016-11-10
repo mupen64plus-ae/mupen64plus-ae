@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'signing'
 
 android {
-    compileSdkVersion = 24
-    buildToolsVersion = "24.0.2"
+    compileSdkVersion = 25
+    buildToolsVersion = "25.0.0"
 
     allprojects {
         tasks.withType(JavaCompile) {
@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId = "org.mupen64plusae.v3.alpha"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode = 83
         versionName = "3.0.10 (beta)"
     }
@@ -49,12 +49,12 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:preference-v7:24.2.1'
-    compile 'com.android.support:preference-v14:24.2.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
-    compile 'com.android.support:support-v13:24.2.1'
+    compile 'com.android.support:preference-v7:25.0.0'
+    compile 'com.android.support:preference-v14:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:recyclerview-v7:25.0.0'
+    compile 'com.android.support:support-v13:25.0.0'
     testCompile 'junit:junit:4.12'
 }
 
