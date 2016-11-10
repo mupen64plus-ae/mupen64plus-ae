@@ -740,8 +740,12 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         {
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
                 mDrawerLayout.closeDrawer( GravityCompat.START );
-            else
-                mDrawerLayout.openDrawer( GravityCompat.START );
+            else {
+                CoreInterface.pauseEmulator();
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                mGameSidebar.requestFocus();
+                mGameSidebar.smoothScrollToPosition(0);
+            }
             return true;
         }
         else if( keyDown && keyCode == KeyEvent.KEYCODE_BACK )
@@ -761,7 +765,10 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
                 //Else the back key bring up the in-game menu
                 else
                 {
+                    CoreInterface.pauseEmulator();
                     mDrawerLayout.openDrawer( GravityCompat.START );
+                    mGameSidebar.requestFocus();
+                    mGameSidebar.smoothScrollToPosition(0);
                 }
             }
             return true;

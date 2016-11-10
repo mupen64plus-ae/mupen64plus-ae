@@ -711,6 +711,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Open the navigation drawer
         mDrawerLayout.openDrawer(GravityCompat.START);
+
+        mGameSidebar.requestFocus();
+        mGameSidebar.setSelection(0);
     }
 
     public boolean onGalleryItemLongClick( GalleryItem item )

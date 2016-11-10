@@ -20,8 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
@@ -34,6 +32,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.mupen64plusae.v3.alpha.R;
+
 public class GameSidebar extends MenuListView
 {
     private ImageView mInfoArt;
@@ -42,7 +42,7 @@ public class GameSidebar extends MenuListView
     private GameSidebarActionHandler mActionHandler;
     private View mHeader;
     
-    boolean mFocusScrolling;
+    private boolean mFocusScrolling;
     
     public GameSidebar( Context context, AttributeSet attrs )
     {
