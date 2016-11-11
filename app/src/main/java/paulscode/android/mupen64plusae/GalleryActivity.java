@@ -240,6 +240,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 // Hide the game information sidebar
                 mDrawerList.setVisibility( View.VISIBLE );
                 mGameSidebar.setVisibility( View.GONE );
+                mGridView.requestFocus();
+
+                if(mGridView.getAdapter().getItemCount() != 0)
+                {
+                    mGridView.getAdapter().notifyItemChanged(0);
+                }
+
                 mSelectedItem = null;
 
                 super.onDrawerClosed( drawerView );
