@@ -25,6 +25,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.KeyEvent;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -35,7 +36,6 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 
 /**
@@ -81,6 +81,9 @@ public class PeripheralController extends AbstractController implements
     
     /** The negative analogy-y strength, between 0 and 1, inclusive. */
     private float mStrengthYneg;
+
+    /** Called for menu and back keys */
+    private View.OnKeyListener mKeyListener;
     
     /**
      * Instantiates a new peripheral controller.
@@ -93,8 +96,9 @@ public class PeripheralController extends AbstractController implements
      * @param inputSensitivityY The analog X sensitivity in percent.
      * @param providers The user input providers. Null elements are safe.
      */
-    public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
-            int inputDeadzone, int inputSensitivityX, int inputSensitivityY, OnStateChangedListener listener, SensorController sensorController, AbstractProvider... providers )
+    public PeripheralController(int player, PlayerMap playerMap, InputMap inputMap,
+                                int inputDeadzone, int inputSensitivityX, int inputSensitivityY, OnStateChangedListener listener,
+                                View.OnKeyListener keyListener, SensorController sensorController, AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
@@ -104,6 +108,7 @@ public class PeripheralController extends AbstractController implements
         mSensitivityFractionX = ( (float) inputSensitivityX ) / 100f;
         mSensitivityFractionY = ( (float) inputSensitivityY ) / 100f;
         mListener = listener;
+        mKeyListener = keyListener;
         mSensorController = sensorController;
         
         // Populate the entry map
@@ -291,14 +296,16 @@ public class PeripheralController extends AbstractController implements
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
                     NativeExports.emuGameShark( true );
                     break;
-                case InputMap.FUNC_SIMULATE_BACK:
-                    String[] back_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_BACK ) };
-                    SafeMethods.exec( back_cmd, false );
+                case InputMap.FUNC_SIMULATE_BACK: {
+                    KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
+                    mKeyListener.onKey(null, KeyEvent.KEYCODE_BACK, event);
                     break;
-                case InputMap.FUNC_SIMULATE_MENU:
-                    String[] menu_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_MENU ) };
-                    SafeMethods.exec( menu_cmd, false );
+                }
+                case InputMap.FUNC_SIMULATE_MENU: {
+                    KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
+                    mKeyListener.onKey(null, KeyEvent.KEYCODE_MENU, event);
                     break;
+                }
                 case InputMap.FUNC_SCREENSHOT:
                     Log.v( "PeripheralController", "FUNC_SCREENSHOT" );
                     CoreInterface.screenshot();
