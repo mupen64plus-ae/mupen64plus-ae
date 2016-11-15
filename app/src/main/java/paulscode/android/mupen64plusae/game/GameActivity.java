@@ -918,7 +918,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         return mIsResumed && mIsSurface;
     }
 
-    private void tryRunning()
+    private synchronized void tryRunning()
     {
         final int state = NativeExports.emuGetState();
         if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ))

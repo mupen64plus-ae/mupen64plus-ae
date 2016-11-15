@@ -386,10 +386,10 @@ public class CoreInterface
 
     public static synchronized void startupEmulator(final String saveToLoad)
     {
-        Log.i("CoreInterface", "Startup emulator");
-
         if( sCoreThread == null )
         {
+            Log.i("CoreInterface", "Startup emulator");
+            
             // Load the native libraries
             NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
 
