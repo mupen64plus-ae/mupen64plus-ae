@@ -192,9 +192,6 @@ void initGLFunctions()
 	glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC)glGetProcAddress( "glFramebufferTexture2D" );
 	glTexImage2DMultisample = (PFNGLTEXIMAGE2DMULTISAMPLEPROC)glGetProcAddress("glTexImage2DMultisample");
 	glTexStorage2DMultisample = (PFNGLTEXSTORAGE2DMULTISAMPLEPROC)glGetProcAddress("glTexStorage2DMultisample");
-	if (glTexStorage2DMultisample == nullptr)
-		// Dirty hack to enable MSAA for GL below 4.3
-		glTexStorage2DMultisample = (PFNGLTEXSTORAGE2DMULTISAMPLEPROC)glTexImage2DMultisample;
 	glGenRenderbuffers = (PFNGLGENRENDERBUFFERSPROC)glGetProcAddress( "glGenRenderbuffers" );
 	glBindRenderbuffer = (PFNGLBINDRENDERBUFFERPROC)glGetProcAddress( "glBindRenderbuffer" );
 	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEPROC)glGetProcAddress( "glRenderbufferStorage" );
