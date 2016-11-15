@@ -257,6 +257,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             {
                 hideSoftKeyboard();
                 super.onDrawerOpened( drawerView );
+
+                mDrawerList.requestFocus();
+                mDrawerList.setSelection(0);
             }
         };
         mDrawerLayout.setDrawerListener( mDrawerToggle );
