@@ -281,6 +281,8 @@ public class GlobalPrefs
     /** True if we want to show built in touchscreen profiles */
     public final boolean showBuiltInControllerProfiles;
 
+    public final boolean useHighPriorityThread;
+
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     private static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -531,6 +533,8 @@ public class GlobalPrefs
         showBuiltInEmulationProfiles = mPreferences.getBoolean(ManageEmulationProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
         showBuiltInTouchscreenProfiles = mPreferences.getBoolean(ManageTouchscreenProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
         showBuiltInControllerProfiles = mPreferences.getBoolean(ManageControllerProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
+
+        useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread", false );
     }
 
     public void enforceLocale( Activity activity )

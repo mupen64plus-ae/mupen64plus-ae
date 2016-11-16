@@ -210,6 +210,8 @@
     <string name="playShowCheats_title">Enable cheats</string>
     <string name="touchscreenFeedback_title">Haptic feedback</string>
     <string name="touchscreenFeedback_summary">Vibrate on button press</string>
+    <string name="useHighPriorityThread_title">Use high priority thread</string>
+    <string name="useHighPriorityThread_summary">Core will run using a high priority thread, this can cause stutters on some devices</string>
     <string name="inputVolumeMappable_title">Mappable volume keys</string>
     <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
     <string name="displayImmersiveMode_title">Immersive mode</string>

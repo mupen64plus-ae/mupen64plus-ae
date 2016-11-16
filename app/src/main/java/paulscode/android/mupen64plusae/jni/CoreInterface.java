@@ -401,8 +401,9 @@ public class CoreInterface
                 {
                     // Only increase priority if we have more than one processor. The call to check the number of
                     // processors is only available in API level 17
-                    if(AppData.IS_JELLY_BEAN_MR1 && Runtime.getRuntime().availableProcessors() > 1) {
+                    if(AppData.IS_JELLY_BEAN_MR1 && Runtime.getRuntime().availableProcessors() > 1 && sGlobalPrefs.useHighPriorityThread) {
                         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+                        Log.i("CoreInterface", "Using high priority mode");
                     }
 
                     sIsCoreRunning = true;

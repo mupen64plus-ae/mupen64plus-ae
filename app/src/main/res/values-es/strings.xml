@@ -188,6 +188,8 @@
     <string name="playShowCheats_summary">La carga del menú es más lenta cuando se encuentran activados</string>
     <string name="touchscreenFeedback_title">Retroalimentación háptica</string>
     <string name="touchscreenFeedback_summary">Vibrar al pulsar un botón</string>
+    <string name="useHighPriorityThread_title">Usar modo de alta prioridad</string>
+    <string name="useHighPriorityThread_summary">El core se ejecutará utilizando un modo de alta prioridad, esto puede causar tartamudeos en algunos dispositivos</string>
     <string name="touchpadEnabled_title">Habilitar touchpad</string>
     <string name="inputVolumeMappable_title">Teclas de volumen asignables</string>
     <string name="inputVolumeMappable_summary">Permitir que las teclas de volumen sean asignadas a controles</string>
