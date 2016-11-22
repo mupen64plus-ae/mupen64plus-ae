@@ -363,9 +363,14 @@ OGLRender::TexrectDrawer::TexrectDrawer()
 	, m_uly(0)
 	, m_lry(0)
 	, m_Z(0)
+	, m_max_lrx(0)
+	, m_max_lry(0)
 	, m_FBO(0)
 	, m_programTex(0)
 	, m_programClean(0)
+	, m_enableAlphaTestLoc(-1)
+	, m_textureBoundsLoc(-1)
+	, m_scissor(gDPScissor())
 	, m_pTexture(nullptr)
 	, m_pBuffer(nullptr)
 {}
@@ -1138,9 +1143,9 @@ void OGLRender::_updateTextures(RENDER_STATE _renderState) const
 				textureCache().activateDummy(t);
 		}
 		pCurrentCombiner->updateFrameBufferInfo();
+		if (pCurrentCombiner->usesTexture() && (_renderState == rsTriangle || _renderState == rsLine))
+			cmbInfo.updateTextureParameters();
 	}
-	if (pCurrentCombiner->usesTexture() && (_renderState == rsTriangle || _renderState == rsLine))
-		cmbInfo.updateTextureParameters();
 	gDP.changed &= ~(CHANGED_TILE | CHANGED_TMEM);
 	gSP.changed &= ~(CHANGED_TEXTURE);
 }
@@ -2089,7 +2094,7 @@ void OGLRender::_initExtensions()
 
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 #ifndef GLESX
-	m_bImageTexture = (majorVersion >= 4) && (minorVersion >= 3) && (glBindImageTexture != nullptr);
+	m_bImageTexture = (((majorVersion >= 4) && (minorVersion >= 3)) || OGLVideo::isExtensionSupported("GL_ARB_shader_image_load_store")) && (glBindImageTexture != nullptr);
 #elif defined(GLES3_1)
 	m_bImageTexture = (majorVersion >= 3) && (minorVersion >= 1) && (glBindImageTexture != nullptr);
 #else

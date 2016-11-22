@@ -847,9 +847,12 @@ void FrameBufferList::renderBuffer(u32 _address)
 	srcY0 = addrOffset / (*REG.VI_WIDTH);
 	if ((*REG.VI_WIDTH != addrOffset * 2) && (addrOffset % (*REG.VI_WIDTH) != 0))
 		Xoffset = (*REG.VI_WIDTH) - addrOffset % (*REG.VI_WIDTH);
+	if (Xoffset == VI.width)
+		Xoffset = 0;
+
 	if (isLowerField) {
-		if (srcY0 > 0)
-			--srcY0;
+//		if (srcY0 > 0)
+//			--srcY0;
 		if (dstY0 > 0)
 			--dstY0;
 	}
