@@ -104,8 +104,12 @@ bool isGLError()
 
 	if ((errCode = glGetError()) != GL_NO_ERROR) {
 		errString = GLErrorString(errCode);
-		if (errString != nullptr)
-			fprintf (stderr, "OpenGL Error: %s\n", errString);
+		if (errString != nullptr) {
+			LOG(LOG_ERROR, "OpenGL Error: %s (%x)", errString, errCode);
+		} else {
+			LOG(LOG_ERROR, "OpenGL Error: %x", errCode);
+		}
+
 		return true;
 	}
 	return false;
@@ -1171,7 +1175,7 @@ void OGLRender::_updateStates(RENDER_STATE _renderState) const
 	if (gSP.changed & CHANGED_VIEWPORT)
 		_updateViewport();
 
-	if (gSP.changed & CHANGED_LIGHT)
+	if (gSP.changed & CHANGED_HW_LIGHT)
 		cmbInfo.updateLightParameters();
 
 	if ((gSP.changed & CHANGED_TEXTURE) ||
@@ -2095,10 +2099,8 @@ void OGLRender::_initExtensions()
 #ifdef GL_IMAGE_TEXTURES_SUPPORT
 #ifndef GLESX
 	m_bImageTexture = (((majorVersion >= 4) && (minorVersion >= 3)) || OGLVideo::isExtensionSupported("GL_ARB_shader_image_load_store")) && (glBindImageTexture != nullptr);
-#elif defined(GLES3_1)
-	m_bImageTexture = (majorVersion >= 3) && (minorVersion >= 1) && (glBindImageTexture != nullptr);
 #else
-	m_bImageTexture = false;
+	m_bImageTexture = (majorVersion >= 3) && (minorVersion >= 1) && (glBindImageTexture != nullptr);
 #endif
 #else
 	m_bImageTexture = false;
