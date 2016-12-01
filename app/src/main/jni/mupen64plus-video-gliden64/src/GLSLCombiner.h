@@ -50,7 +50,7 @@ private:
 
 	struct iUniform	{
 		GLint loc = -1;
-		int val;
+		int val = -999;
 		void set(int _val, bool _force) {
 			if (loc >= 0 && (_force || val != _val)) {
 				val = _val;
@@ -61,7 +61,7 @@ private:
 
 	struct fUniform {
 		GLint loc = -1;
-		float val;
+		float val = -9999.9f;
 		void set(float _val, bool _force) {
 			if (loc >= 0 && (_force || val != _val)) {
 				val = _val;
@@ -72,11 +72,11 @@ private:
 
 	struct fv2Uniform {
 		GLint loc = -1;
-		float val[2];
+		float val1 = -9999.9f, val2 = -9999.9f;
 		void set(float _val1, float _val2, bool _force) {
-			if (loc >= 0 && (_force || val[0] != _val1 || val[1] != _val2)) {
-				val[0] = _val1;
-				val[1] = _val2;
+			if (loc >= 0 && (_force || val1 != _val1 || val2 != _val2)) {
+				val1 = _val1;
+				val2 = _val2;
 				glUniform2f(loc, _val1, _val2);
 			}
 		}
@@ -84,11 +84,11 @@ private:
 
 	struct iv2Uniform {
 		GLint loc = -1;
-		int val[2];
+		int val1 = -999, val2 = -999;
 		void set(int _val1, int _val2, bool _force) {
-			if (loc >= 0 && (_force || val[0] != _val1 || val[1] != _val2)) {
-				val[0] = _val1;
-				val[1] = _val2;
+			if (loc >= 0 && (_force || val1 != _val1 || val2 != _val2)) {
+				val1 = _val1;
+				val2 = _val2;
 				glUniform2i(loc, _val1, _val2);
 			}
 		}
@@ -96,7 +96,7 @@ private:
 
 	struct i4Uniform {
 		GLint loc = -1;
-		int val0, val1, val2, val3;
+		int val0 = -999, val1 = -999, val2 = -999, val3 = -999;
 		void set(int _val0, int _val1, int _val2, int _val3, bool _force) {
 			if (loc < 0)
 				return;
