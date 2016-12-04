@@ -110,10 +110,15 @@ public class CoreInterface
     public interface OnExitListener
     {
         /**
-         * Called when a game is exited
+         * Called when a game is requested to exited
          * @param shouldExit True if we want to exit
          */
-        public void onExit(boolean shouldExit);
+        public void onExitRequested(boolean shouldExit);
+
+        /**
+         * Called when a game is done exiting
+         */
+        public void onExitFinished();
     }
 
     public interface OnRestartListener
@@ -389,9 +394,6 @@ public class CoreInterface
         if( sCoreThread == null )
         {
             Log.i("CoreInterface", "Startup emulator");
-            
-            // Load the native libraries
-            NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
 
             // Start the core thread if not already running
             sCoreThread = new Thread( new Runnable()
@@ -399,6 +401,10 @@ public class CoreInterface
                 @Override
                 public void run()
                 {
+
+                    // Load the native libraries
+                    NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
+
                     // Only increase priority if we have more than one processor. The call to check the number of
                     // processors is only available in API level 17
                     if(AppData.IS_JELLY_BEAN_MR1 && Runtime.getRuntime().availableProcessors() > 1 && sGlobalPrefs.useHighPriorityThread) {
@@ -439,6 +445,7 @@ public class CoreInterface
                     }
                     arglist.add( sRomPath );
 
+                    sIsRestarting = false;
                     int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
                     sIsCoreRunning = false;
 
@@ -507,6 +514,26 @@ public class CoreInterface
                             } );
                         }
                     }
+
+                    sCoreThread = null;
+
+                    // Unload the native libraries
+                    NativeExports.unloadLibraries();
+                    sActivity.runOnUiThread( new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            if(sActivity != null && sActivity instanceof OnExitListener && !sIsRestarting)
+                                ((OnExitListener)sActivity).onExitFinished();
+                        }
+                    } );
+
+                    if(sIsRestarting)
+                    {
+                        CoreInterface.startupEmulator(null);
+                    }
+
                 }
             }, "CoreThread" );
 
@@ -558,7 +585,7 @@ public class CoreInterface
                         }
                     }
                 } );
-                 // Ensure the auto-save is loaded if the operating system stops & restarts the activity
+
                 sIsRestarting = false;
             }
 
@@ -578,18 +605,6 @@ public class CoreInterface
         {
             // Tell the core to quit
             NativeExports.emuStop();
-            // Now wait for the core thread to quit
-            try
-            {
-                sCoreThread.join();
-            }
-            catch(InterruptedException e)
-            {
-                Log.i("CoreInterface", "Problem stopping core thread: " + e);
-            }
-            sCoreThread = null;
-            // Unload the native libraries
-            NativeExports.unloadLibraries();
         }
     }
 
@@ -952,9 +967,8 @@ public class CoreInterface
 
     public static synchronized void restartEmulator()
     {
-        CoreInterface.shutdownEmulator();
         sIsRestarting = true;
-        CoreInterface.startupEmulator(null);
+        CoreInterface.shutdownEmulator();
     }
 
     public static synchronized void restart()
@@ -1021,7 +1035,7 @@ public class CoreInterface
         else if (id == EXIT_CONFIRM_DIALOG_ID)
         {
             if(sActivity != null && sActivity instanceof OnExitListener)
-                ((OnExitListener)sActivity).onExit( which == DialogInterface.BUTTON_POSITIVE );
+                ((OnExitListener)sActivity).onExitRequested( which == DialogInterface.BUTTON_POSITIVE );
         }
 
     }

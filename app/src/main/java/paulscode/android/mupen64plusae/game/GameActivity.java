@@ -713,7 +713,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
     }
 
     @Override
-    public void onExit(boolean shouldExit)
+    public void onExitRequested(boolean shouldExit)
     {
         if(shouldExit)
         {
@@ -726,6 +726,13 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         }
 
         mWaitingOnConfirmation = false;
+    }
+
+    @Override
+    public void onExitFinished()
+    {
+        CoreInterface.detachActivity();
+        GameActivity.this.finish();
     }
 
     @Override
@@ -956,9 +963,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             mAutoSaveManager.clearOldest();
             CoreInterface.shutdownEmulator();
         }
-
-        CoreInterface.detachActivity();
-        GameActivity.this.finish();
     }
 
     private void tryPausing()
