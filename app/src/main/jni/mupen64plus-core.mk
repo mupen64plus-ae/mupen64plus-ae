@@ -24,18 +24,21 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/api/debugger.c                    \
     $(SRCDIR)/api/frontend.c                    \
     $(SRCDIR)/api/vidext.c                      \
+    $(SRCDIR)/backends/audio_out_backend.c      \
+    $(SRCDIR)/backends/clock_backend.c          \
+    $(SRCDIR)/backends/controller_input_backend.c \
+    $(SRCDIR)/backends/rumble_backend.c         \
+    $(SRCDIR)/backends/storage_backend.c        \
     $(SRCDIR)/main/cheat.c                      \
-    $(SRCDIR)/main/eep_file.c                   \
+    $(SRCDIR)/main/device.c                      \
     $(SRCDIR)/main/eventloop.c                  \
-    $(SRCDIR)/main/fla_file.c                   \
     $(SRCDIR)/main/main.c                       \
     $(SRCDIR)/main/md5.c                        \
-    $(SRCDIR)/main/mpk_file.c                   \
     $(SRCDIR)/main/profile.c                    \
     $(SRCDIR)/main/rom.c                        \
     $(SRCDIR)/main/savestates.c                 \
+    $(SRCDIR)/main/storage_file.c               \
     $(SRCDIR)/main/sdl_key_converter.c          \
-    $(SRCDIR)/main/sra_file.c                   \
     $(SRCDIR)/main/util.c                       \
     $(SRCDIR)/main/zip/ioapi.c                  \
     $(SRCDIR)/main/zip/unzip.c                  \
