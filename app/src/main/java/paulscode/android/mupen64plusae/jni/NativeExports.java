@@ -70,6 +70,8 @@ public class NativeExports
     public static native void emuScreenshot();
     
     public static native void emuGameShark( boolean pressed );
+
+    public static native void emuRestartVideo();
     
     public static native int emuGetState();
     

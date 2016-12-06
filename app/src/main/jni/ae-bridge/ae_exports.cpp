@@ -345,6 +345,15 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
     if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK, &p);
 }
 
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuRestartVideo(JNIEnv* env, jclass cls)
+{
+    int lnState1 = M64VIDEO_WINDOWED;
+    int lnState2 = M64VIDEO_FULLSCREEN;
+
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_VIDEO_MODE, &lnState1);
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_VIDEO_MODE, &lnState2);
+}
+
 extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_emuGetState(JNIEnv* env, jclass cls)
 {
     int state = 0;

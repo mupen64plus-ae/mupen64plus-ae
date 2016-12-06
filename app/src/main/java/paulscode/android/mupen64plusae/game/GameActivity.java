@@ -403,6 +403,15 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         super.onDestroy();
 
         Log.i( "GameActivity", "onDestroy" );
+
+        //This can happen when a controller is plugged in while the emulator
+        //is running
+        if(!mShuttingDown)
+        {
+            mSurface.destroyGLContext();
+            CoreInterface.detachActivity();
+            CoreInterface.setUnexpectedVideoLoss(true);
+        }
     }
 
     @Override
@@ -715,6 +724,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
     @Override
     public void onExitRequested(boolean shouldExit)
     {
+        Log.i( "GameActivity", "onExitRequested" );
         if(shouldExit)
         {
             mMogaController.exit();
@@ -1005,6 +1015,12 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation)
         {
             CoreInterface.resumeEmulator();
+
+            if(CoreInterface.isUnexpectedVideoLoss())
+            {
+                NativeExports.emuRestartVideo();
+                CoreInterface.setUnexpectedVideoLoss(false);
+            }
         }
         else
         {

@@ -190,6 +190,8 @@ public class CoreInterface
 
     private static boolean sIsCoreRunning = false;
 
+    private static boolean sUnexpectedVideoLoss = false;
+
     public static void initialize(AppCompatActivity activity,
                                   GameSurface surface, GamePrefs gamePrefs, String romPath,
                                   String cheatArgs, boolean isRestarting, String openGlEsVersion)
@@ -225,6 +227,16 @@ public class CoreInterface
     public static boolean isCoreRunning()
     {
         return sIsCoreRunning;
+    }
+
+    public static void setUnexpectedVideoLoss(boolean unexpectedVideoLoss)
+    {
+        sUnexpectedVideoLoss = unexpectedVideoLoss;
+    }
+
+    public static boolean isUnexpectedVideoLoss()
+    {
+        return sUnexpectedVideoLoss;
     }
 
     private static void makeDirs()
