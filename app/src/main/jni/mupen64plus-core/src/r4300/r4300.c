@@ -59,6 +59,8 @@
 
 unsigned int r4300emu = 0;
 unsigned int count_per_op = COUNT_PER_OP_DEFAULT;
+int g_alternate_vi_timing = ALTERNATE_VI_TIMING_DEFAULT;
+int g_count_per_scanline = DEFAULT_COUNT_PER_SCANLINE;
 int rompause;
 unsigned int llbit;
 #if NEW_DYNAREC != NEW_DYNAREC_ARM
