@@ -295,7 +295,7 @@ public class GlobalPrefs
     // Shared preferences default values
     public static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Fast";
     public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = AppData.IS_OUYA_HARDWARE ? "" : "Analog";
-    public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = AppData.IS_OUYA_HARDWARE ? "OUYA" : "";
+    public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = AppData.IS_OUYA_HARDWARE ? "OUYA" : "Android Gamepad";
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
@@ -417,7 +417,7 @@ public class GlobalPrefs
         // Touchscreen prefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
         touchscreenScale = ( mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
-        touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 100 ) ) / 100;
+        touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 60 ) ) / 100;
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
 
         // Video prefs
@@ -585,9 +585,9 @@ public class GlobalPrefs
     {
         switch( player )
         {
-        case 2: return getString( GamePrefs.CONTROLLER_PROFILE2, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
-        case 3: return getString( GamePrefs.CONTROLLER_PROFILE3, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
-        case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+        case 2: return getString( GamePrefs.CONTROLLER_PROFILE2, "" );
+        case 3: return getString( GamePrefs.CONTROLLER_PROFILE3, "" );
+        case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, "" );
         default: break;
         }
 
