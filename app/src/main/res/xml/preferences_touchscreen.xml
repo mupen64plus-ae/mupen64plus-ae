@@ -57,7 +57,7 @@
         mupen64:units="%" />
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="60"
-        android:key="touchscreenTransparency"
+        android:key="touchscreenTransparencyV2"
         android:title="@string/touchscreenTransparency_title"
         mupen64:maximumValue="100"
         mupen64:stepSize="10"

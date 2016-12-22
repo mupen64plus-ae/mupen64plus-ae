@@ -417,7 +417,7 @@ public class GlobalPrefs
         // Touchscreen prefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
         touchscreenScale = ( mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
-        touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparency", 60 ) ) / 100;
+        touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparencyV2", 60 ) ) / 100;
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
 
         // Video prefs

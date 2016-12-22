@@ -20,6 +20,11 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
+import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.util.DisplayMetrics;
+import android.util.Log;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import paulscode.android.mupen64plusae.game.GameOverlay;
@@ -28,10 +33,6 @@ import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.util.DisplayMetrics;
-import android.util.Log;
 
 /**
  * A kind of touch map that can be drawn on a canvas.
@@ -161,14 +162,7 @@ public class VisibleTouchMap extends TouchMap
         
         if( metrics != null )
         {
-            // Scale buttons to match the skin designer's proportions
-            float scaleW = 1f;
-            float scaleH = 1f;
-            if( mReferenceWidth > 0 )
-                scaleW = Math.max( metrics.widthPixels, metrics.heightPixels ) / (float) mReferenceWidth;
-            if( mReferenceHeight > 0 )
-                scaleH = Math.min( metrics.widthPixels, metrics.heightPixels ) / (float) mReferenceHeight;
-            scale = Math.min( scaleW, scaleH );
+            scale = metrics.densityDpi/220.0f;
         }
         // Apply the global scaling factor (derived from user prefs)
         scale *= mScalingFactor;
