@@ -83,6 +83,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private static final String BUTTON_Z = "buttonZ";
     private static final String BUTTON_S = "buttonS";
     private static final String BUTTON_SENSOR = "buttonSen";
+    private static final String FPS = "fps";
     private static final String TAG_X = "-x";
     private static final String TAG_Y = "-y";
     private static final String SCALE = "-scale";
@@ -191,6 +192,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mOverlay.setOnTouchListener( this );
         
         mPopupBeingShown = false;
+
+        //Always show FPS
+        enableFps();
     }
     
     private void refresh()
@@ -377,7 +381,15 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mProfile.putInt( assetName + TAG_Y, newPosition );
         refresh();
     }
-    
+
+    private void enableFps()
+    {
+        String assetName = FPS;
+        mProfile.putInt( assetName + TAG_X, 0 );
+        mProfile.putInt( assetName + TAG_Y, 0 );
+        refresh();
+    }
+
     private void loadCustomSkinFromPrompt()
     {
         CharSequence title = this.getText( R.string.touchscreenStyle_entryCustom );
