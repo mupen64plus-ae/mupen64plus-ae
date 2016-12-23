@@ -461,17 +461,18 @@ public class CoreInterface
                     arglist.add( sRomPath );
 
                     sIsRestarting = false;
-                    int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
+                    final int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
                     sIsCoreRunning = false;
 
                     Log.e( "CoreInterface", "Core thread exit!");
 
                     synchronized (sActivitySync)
                     {
+                        // Messages match return codes from mupen64plus-ui-console/main.c
+                        String message = null;
+
                         if( result != 0 && sActivity != null)
                         {
-                            // Messages match return codes from mupen64plus-ui-console/main.c
-                            final String message;
                             switch( result )
                             {
                                 case 1:
@@ -518,31 +519,31 @@ public class CoreInterface
                                     break;
                             }
                             Log.e( "CoreInterface", "Launch failure: " + message );
-                            sActivity.runOnUiThread( new Runnable()
+                        }
+
+                        final String finalMessage = message;
+
+                        sCoreThread = null;
+
+                        // Unload the native libraries
+                        NativeExports.unloadLibraries();
+                        sActivity.runOnUiThread( new Runnable()
+                        {
+                            @Override
+                            public void run()
                             {
-                                @Override
-                                public void run()
+                                if(sActivity != null && result != 0 && finalMessage != null)
                                 {
-                                    Notifier.showToast( sActivity, message );
+                                    Notifier.showToast( sActivity, finalMessage );
                                     sActivity.finish();
                                 }
-                            } );
-                        }
+
+
+                                if(sActivity != null && sActivity instanceof OnExitListener && !sIsRestarting)
+                                    ((OnExitListener)sActivity).onExitFinished();
+                            }
+                        } );
                     }
-
-                    sCoreThread = null;
-
-                    // Unload the native libraries
-                    NativeExports.unloadLibraries();
-                    sActivity.runOnUiThread( new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            if(sActivity != null && sActivity instanceof OnExitListener && !sIsRestarting)
-                                ((OnExitListener)sActivity).onExitFinished();
-                        }
-                    } );
 
                     if(sIsRestarting)
                     {
