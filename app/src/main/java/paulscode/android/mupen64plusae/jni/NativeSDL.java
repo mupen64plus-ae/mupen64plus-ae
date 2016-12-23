@@ -53,7 +53,7 @@ public class NativeSDL extends CoreInterface
     {
         boolean result = false;
 
-        synchronized (sSurface)
+        synchronized (sSurfaceSync)
         {
             if(sSurface != null)
             {
@@ -137,7 +137,7 @@ public class NativeSDL extends CoreInterface
      */
     public static void deleteGLContext()
     {
-        synchronized (sSurface)
+        synchronized (sSurfaceSync)
         {
             if(sSurface != null)
             {
@@ -153,7 +153,7 @@ public class NativeSDL extends CoreInterface
      */
     public static void flipBuffers()
     {
-        synchronized (sSurface)
+        synchronized (sSurfaceSync)
         {
             if(sSurface != null)
             {

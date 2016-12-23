@@ -192,6 +192,9 @@ public class CoreInterface
 
     private static boolean sUnexpectedVideoLoss = false;
 
+    private static Object sActivitySync = new Object();
+    protected static Object sSurfaceSync = new Object();
+
     public static void initialize(AppCompatActivity activity,
                                   GameSurface surface, GamePrefs gamePrefs, String romPath,
                                   String cheatArgs, boolean isRestarting, String openGlEsVersion)
@@ -213,12 +216,12 @@ public class CoreInterface
 
     public static void detachActivity()
     {
-        synchronized (sActivity)
+        synchronized (sActivitySync)
         {
             sActivity = null;
         }
 
-        synchronized (sSurface)
+        synchronized (sSurfaceSync)
         {
             sSurface = null;
         }
@@ -463,7 +466,7 @@ public class CoreInterface
 
                     Log.e( "CoreInterface", "Core thread exit!");
 
-                    synchronized (sActivity)
+                    synchronized (sActivitySync)
                     {
                         if( result != 0 && sActivity != null)
                         {
@@ -579,7 +582,7 @@ public class CoreInterface
                                     }, 1000);
                             }
 
-                            synchronized (sActivity)
+                            synchronized (sActivitySync)
                             {
                                 if(sActivity != null)
                                 {
@@ -687,12 +690,13 @@ public class CoreInterface
 
     public static void saveState( final String filename )
     {
-        sCurrentSaveStateFile = new File( sGamePrefs.userSaveDir + "/" + filename );
-
-        if( sCurrentSaveStateFile.exists() )
+        if(sActivity != null)
         {
-            if(sActivity != null)
+            sCurrentSaveStateFile = new File( sGamePrefs.userSaveDir + "/" + filename );
+
+            if( sCurrentSaveStateFile.exists() )
             {
+
                 String title = sActivity.getString( R.string.confirm_title );
                 String message = sActivity.getString( R.string.confirmOverwriteFile_message, filename );
 
@@ -702,13 +706,10 @@ public class CoreInterface
                 FragmentManager fm = sActivity.getSupportFragmentManager();
                 confirmationDialog.show(fm, SAVE_STATE_FILE_CONFIRM_DIALOG_STATE);
             }
-        }
-        else
-        {
-            NativeExports.emuSaveFile( sCurrentSaveStateFile.getAbsolutePath() );
-
-            if(sActivity != null)
+            else
             {
+                NativeExports.emuSaveFile( sCurrentSaveStateFile.getAbsolutePath() );
+
                 Notifier.showToast( sActivity, R.string.toast_savingFile, sCurrentSaveStateFile.getName() );
 
                 if(sActivity instanceof OnSaveLoadListener)
