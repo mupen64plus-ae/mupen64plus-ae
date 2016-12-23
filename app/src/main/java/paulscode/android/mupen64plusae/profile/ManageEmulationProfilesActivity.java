@@ -77,14 +77,11 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
         if(openGlVersion.equals("2.0"))
         {
             RemoveProfile("GlideN64-GLES-3.0");
-            RemoveProfile("GlideN64-GLES-3.0-tx-pack");
             RemoveProfile("GlideN64-GLES-3.1");
-            RemoveProfile("GlideN64-GLES-3.1-tx-pack");
         }
         else if(openGlVersion.equals("3.0"))
         {
             RemoveProfile("GlideN64-GLES-3.1");
-            RemoveProfile("GlideN64-GLES-3.1-tx-pack");
         }
 
         if(!AppData.doesSupportFullGL())
