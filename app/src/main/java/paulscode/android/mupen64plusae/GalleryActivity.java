@@ -66,6 +66,7 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -162,6 +163,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+
+        //Make sure the core is shutdown at this point. This
+        //won't be necessary once the core runs as a service
+        //or fragment
+        CoreInterface.shutdownEmulator();
 
         // Get app data and user preferences
         mAppData = new AppData( this );
