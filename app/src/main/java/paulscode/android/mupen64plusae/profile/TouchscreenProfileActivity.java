@@ -68,10 +68,10 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener, OnDialogMenuItemSelectedListener
 {
-    private static final String TOUCHSCREEN_AUTOHOLDABLES = "touchscreenAutoHoldables";
+    private static final String TOUCHSCREEN_NOT_AUTOHOLDABLES = "touchscreenNotAutoHoldables";
     private static final String INVERT_TOUCH_X_AXIS = "invertTouchXAxis";
     private static final String INVERT_TOUCH_Y_AXIS = "invertTouchYAxis";
-    private static final String AUTOHOLDABLES_DELIMITER = "~";
+    private static final String NOT_AUTOHOLDABLES_DELIMITER = "~";
     private static final String STATE_MENU_DIALOG_FRAGMENT = "STATE_MENU_DIALOG_FRAGMENT";
     
     private static final String ANALOG = "analog";
@@ -412,33 +412,33 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         } );
     }
     
-    private void setHoldable( int n64Index, boolean holdable )
+    private void setNotHoldable( int n64Index, boolean holdable )
     {
         String index = String.valueOf( n64Index );
         
         // Get the serialized list from the profile
-        String serialized = mProfile.get( TOUCHSCREEN_AUTOHOLDABLES, "" );
-        String[] holdables = serialized.split( AUTOHOLDABLES_DELIMITER );
+        String serialized = mProfile.get(TOUCHSCREEN_NOT_AUTOHOLDABLES, "" );
+        String[] notHoldables = serialized.split(NOT_AUTOHOLDABLES_DELIMITER);
         
         // Modify the list as necessary
-        if( !holdable )
+        if( holdable )
         {
-            holdables = (String[]) ArrayUtils.removeElement( holdables, index );
+            notHoldables = (String[]) ArrayUtils.removeElement( notHoldables, index );
         }
-        else if( !ArrayUtils.contains( holdables, index ) )
+        else if( !ArrayUtils.contains( notHoldables, index ) )
         {
-            holdables = (String[]) ArrayUtils.add( holdables, index );
+            notHoldables = (String[]) ArrayUtils.add( notHoldables, index );
         }
         
         // Put the serialized list back into the profile
-        serialized = TextUtils.join( AUTOHOLDABLES_DELIMITER, holdables );
-        mProfile.put( TOUCHSCREEN_AUTOHOLDABLES, serialized );
+        serialized = TextUtils.join(NOT_AUTOHOLDABLES_DELIMITER, notHoldables );
+        mProfile.put(TOUCHSCREEN_NOT_AUTOHOLDABLES, serialized );
     }
     
-    private boolean getHoldable( int n64Index )
+    private boolean getNotHoldable( int n64Index )
     {
-        String serialized = mProfile.get( TOUCHSCREEN_AUTOHOLDABLES, "" );
-        String[] holdables = serialized.split( AUTOHOLDABLES_DELIMITER );
+        String serialized = mProfile.get(TOUCHSCREEN_NOT_AUTOHOLDABLES, "" );
+        String[] holdables = serialized.split(NOT_AUTOHOLDABLES_DELIMITER);
         return ArrayUtils.contains( holdables, String.valueOf( n64Index ) );
     }
     
@@ -714,13 +714,13 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         }
         else
         {
-            holdable.setChecked( getHoldable( holdableIndex ) );
+            holdable.setChecked( !getNotHoldable( holdableIndex ) );
             holdable.setOnCheckedChangeListener( new OnCheckedChangeListener()
             {
                 @Override
                 public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
                 {
-                    setHoldable( holdableIndex, isChecked );
+                    setNotHoldable( holdableIndex, isChecked );
                 }
             } );
         }

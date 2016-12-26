@@ -346,8 +346,8 @@ public class GamePrefs
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
 
-    /** The set of auto-holdable button commands. */
-    public final Set<Integer> touchscreenAutoHoldables;
+    /** The set of NOT auto-holdable button commands. */
+    public final Set<Integer> touchscreenNotAutoHoldables;
 
     /** Invert the touch controller X axis */
     public final boolean invertTouchXAxis;
@@ -684,7 +684,7 @@ public class GamePrefs
             isTouchscreenAnimated = touchscreenProfile.get( "touchscreenAnimated", "False" ).equals( "True" );
 
             // Determine the touchscreen auto-holdables
-            touchscreenAutoHoldables = getSafeIntSet( touchscreenProfile, "touchscreenAutoHoldables" );
+            touchscreenNotAutoHoldables = getSafeIntSet( touchscreenProfile, "touchscreenNotAutoHoldables" );
 
             //Axis inversion
             invertTouchXAxis = touchscreenProfile.get( "invertTouchXAxis", "False" ).equals( "True" );
@@ -727,7 +727,7 @@ public class GamePrefs
         else
         {
             isTouchscreenAnimated = false;
-            touchscreenAutoHoldables = null;
+            touchscreenNotAutoHoldables = null;
             invertTouchXAxis = false;
             invertTouchYAxis = false;
             touchscreenSkin = "";

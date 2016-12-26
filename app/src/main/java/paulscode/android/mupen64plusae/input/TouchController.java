@@ -93,7 +93,7 @@ public class TouchController extends AbstractController implements OnTouchListen
     private final int mAutoHoldMethod;
     
     /** The set of auto-holdable buttons. */
-    private final Set<Integer> mAutoHoldables;
+    private final Set<Integer> mNotAutoHoldables;
     
     /** Whether touchscreen feedback is enabled. */
     private final boolean mTouchscreenFeedback;
@@ -142,12 +142,12 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param vibrator            The haptic feedback device. MUST BE NULL if vibrate permission not granted.
      * @param autoHoldMethod      The method for auto-holding buttons.
      * @param touchscreenFeedback True if haptic feedback should be used.
-     * @param autoHoldableButtons The N64 commands that correspond to auto-holdable buttons.
+     * @param notAutoHoldableButtons The N64 commands that correspond to NOT auto-holdable buttons.
      * @param
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
             Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
-            Set<Integer> autoHoldableButtons, SensorController sensorController,
+            Set<Integer> notAutoHoldableButtons, SensorController sensorController,
             boolean invertXAxis, boolean invertYAxis )
     {
         mListener = listener;
@@ -155,7 +155,7 @@ public class TouchController extends AbstractController implements OnTouchListen
         mVibrator = vibrator;
         mAutoHoldMethod = autoHoldMethod;
         mTouchscreenFeedback = touchscreenFeedback;
-        mAutoHoldables = autoHoldableButtons;
+        mNotAutoHoldables = notAutoHoldableButtons;
         mSensorController = sensorController;
         mInvertXAxis = invertXAxis;
         mInvertYAxis = invertYAxis;
@@ -489,7 +489,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     private boolean isAutoHoldable( int commandIndex )
     {
-        return mAutoHoldables != null && mAutoHoldables.contains( commandIndex );
+        return mNotAutoHoldables == null || !mNotAutoHoldables.contains( commandIndex );
     }
     
     /**
