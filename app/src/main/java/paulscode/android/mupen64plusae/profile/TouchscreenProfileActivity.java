@@ -674,26 +674,26 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 @Override
                 public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
                 {
-                    mProfile.put( "touchscreenAnimated", ( isChecked ? "True" : "False" ) );
+                    mProfile.put( "touchscreenAnimated", isChecked ? "True" : "False" );
                     refresh();
                 }
             } );
             hide.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mProfile.put("touchscreenHideAnalogWhenSensor", String.valueOf(isChecked));
+                    mProfile.put("touchscreenHideAnalogWhenSensor", ( isChecked ? "True" : "False" ));
                 }
             } );
             invertTouchXAxis.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mProfile.put(INVERT_TOUCH_X_AXIS, String.valueOf(isChecked));
+                    mProfile.put(INVERT_TOUCH_X_AXIS, isChecked ? "True" : "False");
                 }
             } );
             invertTouchYAxis.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mProfile.put(INVERT_TOUCH_Y_AXIS, String.valueOf(isChecked));
+                    mProfile.put(INVERT_TOUCH_Y_AXIS, isChecked ? "True" : "False");
                 }
             } );
         }

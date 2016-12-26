@@ -572,7 +572,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             
             // Store the axis values in the super fields (screen y is inverted)
             mState.axisFractionX = p * dX / displacement * (mInvertXAxis ? -1.0f:1.0f);
-            mState.axisFractionY = -p * dY / displacement * (mInvertXAxis ? -1.0f:1.0f);
+            mState.axisFractionY = -p * dY / displacement * (mInvertYAxis ? -1.0f:1.0f);
             
             // Analog state changed
             return true;

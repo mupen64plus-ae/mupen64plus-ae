@@ -687,8 +687,8 @@ public class GamePrefs
             touchscreenAutoHoldables = getSafeIntSet( touchscreenProfile, "touchscreenAutoHoldables" );
 
             //Axis inversion
-            invertTouchXAxis = Boolean.valueOf(touchscreenProfile.get("invertTouchXAxis"));
-            invertTouchYAxis = Boolean.valueOf(touchscreenProfile.get("invertTouchYAxis"));
+            invertTouchXAxis = touchscreenProfile.get( "invertTouchXAxis", "False" ).equals( "True" );
+            invertTouchYAxis = touchscreenProfile.get( "invertTouchYAxis", "False" ).equals( "True" );
 
             // Determine the touchscreen layout
             final String layout = touchscreenProfile.get( "touchscreenSkin", "Outline" );
