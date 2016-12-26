@@ -238,6 +238,8 @@
     <string name="touchscreenAutoHold_entrySlideOut">Al deslizar</string>
     <string name="touchscreenAnimation_title">Retroalimentacion Visual</string>
     <string name="touchscreenAnimation_summary">Joystick Animado</string>
+    <string name="touchscreenInvertTouchXAxis_summary">Invertir axis X</string>
+    <string name="touchscreenInvertTouchYAxis_summary">Invertir axis Y</string>
     <string name="touchscreenStyle_title">Estilo de botón</string>
     <string name="touchscreenStyle_entryOutline">Líneas de borde</string>
     <string name="touchscreenStyle_entryShaded">Sombreado</string>

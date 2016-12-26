@@ -349,6 +349,12 @@ public class GamePrefs
     /** The set of auto-holdable button commands. */
     public final Set<Integer> touchscreenAutoHoldables;
 
+    /** Invert the touch controller X axis */
+    public final boolean invertTouchXAxis;
+
+    /** Invert the touch controller Y axis */
+    public final boolean invertTouchYAxis;
+
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
 
@@ -678,8 +684,11 @@ public class GamePrefs
             isTouchscreenAnimated = touchscreenProfile.get( "touchscreenAnimated", "False" ).equals( "True" );
 
             // Determine the touchscreen auto-holdables
-            touchscreenAutoHoldables = getSafeIntSet( touchscreenProfile,
-                    "touchscreenAutoHoldables" );
+            touchscreenAutoHoldables = getSafeIntSet( touchscreenProfile, "touchscreenAutoHoldables" );
+
+            //Axis inversion
+            invertTouchXAxis = Boolean.valueOf(touchscreenProfile.get("invertTouchXAxis"));
+            invertTouchYAxis = Boolean.valueOf(touchscreenProfile.get("invertTouchYAxis"));
 
             // Determine the touchscreen layout
             final String layout = touchscreenProfile.get( "touchscreenSkin", "Outline" );
@@ -719,6 +728,8 @@ public class GamePrefs
         {
             isTouchscreenAnimated = false;
             touchscreenAutoHoldables = null;
+            invertTouchXAxis = false;
+            invertTouchYAxis = false;
             touchscreenSkin = "";
 
             isAnalogHiddenWhenSensor = false;

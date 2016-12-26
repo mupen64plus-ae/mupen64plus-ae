@@ -834,7 +834,7 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             final TouchController touchscreenController = new TouchController( mTouchscreenMap,
                     inputSource, mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,
                     mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenAutoHoldables,
-                    mSensorController );
+                    mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis );
             mControllers.add( touchscreenController );
 
             mDrawerLayout.setTouchMap( mTouchscreenMap );

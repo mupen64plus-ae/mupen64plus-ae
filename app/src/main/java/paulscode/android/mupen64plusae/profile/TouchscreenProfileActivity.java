@@ -69,6 +69,8 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener, OnDialogMenuItemSelectedListener
 {
     private static final String TOUCHSCREEN_AUTOHOLDABLES = "touchscreenAutoHoldables";
+    private static final String INVERT_TOUCH_X_AXIS = "invertTouchXAxis";
+    private static final String INVERT_TOUCH_Y_AXIS = "invertTouchYAxis";
     private static final String AUTOHOLDABLES_DELIMITER = "~";
     private static final String STATE_MENU_DIALOG_FRAGMENT = "STATE_MENU_DIALOG_FRAGMENT";
     
@@ -657,10 +659,16 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Setup the visual feedback checkbox
         CheckBox feedback = (CheckBox) view.findViewById( R.id.checkBox_feedback );
         CheckBox hide = (CheckBox) view.findViewById( R.id.checkBox_hideJoystick );
+        CheckBox invertTouchXAxis = (CheckBox) view.findViewById( R.id.checkBox_invertTouchXAxis );
+        CheckBox invertTouchYAxis = (CheckBox) view.findViewById( R.id.checkBox_invertTouchYAxis );
+
+
         if( assetName.equals("analog") )
         {
             feedback.setChecked(Boolean.valueOf(mProfile.get("touchscreenAnimated", "False")));
             hide.setChecked(Boolean.valueOf(mProfile.get("touchscreenHideAnalogWhenSensor")));
+            invertTouchXAxis.setChecked(Boolean.valueOf(mProfile.get(INVERT_TOUCH_X_AXIS, "False")));
+            invertTouchYAxis.setChecked(Boolean.valueOf(mProfile.get(INVERT_TOUCH_Y_AXIS, "False")));
             feedback.setOnCheckedChangeListener( new OnCheckedChangeListener()
             {
                 @Override
@@ -676,11 +684,25 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                     mProfile.put("touchscreenHideAnalogWhenSensor", String.valueOf(isChecked));
                 }
             } );
+            invertTouchXAxis.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mProfile.put(INVERT_TOUCH_X_AXIS, String.valueOf(isChecked));
+                }
+            } );
+            invertTouchYAxis.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mProfile.put(INVERT_TOUCH_Y_AXIS, String.valueOf(isChecked));
+                }
+            } );
         }
         else
         {
             feedback.setVisibility( View.GONE);
             hide.setVisibility(View.GONE);
+            invertTouchXAxis.setVisibility(View.GONE);
+            invertTouchYAxis.setVisibility(View.GONE);
         }
         
         // Setup the auto-holdability checkbox

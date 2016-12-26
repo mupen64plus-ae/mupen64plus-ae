@@ -20,9 +20,6 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import java.util.Set;
-
-import paulscode.android.mupen64plusae.input.map.TouchMap;
 import android.annotation.SuppressLint;
 import android.graphics.Point;
 import android.os.Vibrator;
@@ -30,6 +27,10 @@ import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+
+import java.util.Set;
+
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 
 /**
  * A class for generating N64 controller commands from a touchscreen.
@@ -111,6 +112,12 @@ public class TouchController extends AbstractController implements OnTouchListen
     
     /** The time between press and release of each pointer. */
     private final long[] mElapsedTime = new long[MAX_POINTER_IDS];
+
+    /** Invert the analog x axis */
+    private final boolean mInvertXAxis;
+
+    /** Invert the analog y axis */
+    private final boolean mInvertYAxis;
     
     /**
      * The identifier of the pointer associated with the analog stick. -1 indicates the stick has
@@ -136,10 +143,12 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param autoHoldMethod      The method for auto-holding buttons.
      * @param touchscreenFeedback True if haptic feedback should be used.
      * @param autoHoldableButtons The N64 commands that correspond to auto-holdable buttons.
+     * @param
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
             Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
-            Set<Integer> autoHoldableButtons, SensorController sensorController )
+            Set<Integer> autoHoldableButtons, SensorController sensorController,
+            boolean invertXAxis, boolean invertYAxis )
     {
         mListener = listener;
         mTouchMap = touchMap;
@@ -148,6 +157,8 @@ public class TouchController extends AbstractController implements OnTouchListen
         mTouchscreenFeedback = touchscreenFeedback;
         mAutoHoldables = autoHoldableButtons;
         mSensorController = sensorController;
+        mInvertXAxis = invertXAxis;
+        mInvertYAxis = invertYAxis;
         view.setOnTouchListener( this );
     }
     
@@ -275,10 +286,13 @@ public class TouchController extends AbstractController implements OnTouchListen
         
         // Call the super method to send the input to the core
         notifyChanged();
+
+        float invertXAxis = mInvertXAxis ? -1.0f:1.0f;
+        float invertYAxis = mInvertYAxis ? -1.0f:1.0f;
         
         // Update the skin if the virtual analog stick moved
         if( analogMoved && mListener != null )
-            mListener.onAnalogChanged( mState.axisFractionX, mState.axisFractionY );
+            mListener.onAnalogChanged( mState.axisFractionX*invertXAxis, mState.axisFractionY*invertYAxis );
     }
     
     /**
@@ -557,8 +571,8 @@ public class TouchController extends AbstractController implements OnTouchListen
             float p = mTouchMap.getAnalogStrength( displacement );
             
             // Store the axis values in the super fields (screen y is inverted)
-            mState.axisFractionX = p * dX / displacement;
-            mState.axisFractionY = -p * dY / displacement;
+            mState.axisFractionX = p * dX / displacement * (mInvertXAxis ? -1.0f:1.0f);
+            mState.axisFractionY = -p * dY / displacement * (mInvertXAxis ? -1.0f:1.0f);
             
             // Analog state changed
             return true;
