@@ -477,12 +477,14 @@ public class ConfigFile
             }
 
             //Remove from lines
-            String lineParameterTest = parameter + " = ";
+            String lineParameterTest1 = parameter + " = ";
+            String lineParameterTest2 = parameter + "=";
             Iterator<ConfigLine> iter = lines.iterator();
             while (iter.hasNext()) {
                 ConfigLine line = iter.next();
 
-                if(line.strLine.toLowerCase().startsWith(lineParameterTest.toLowerCase()))
+                if(line.strLine.toLowerCase().startsWith(lineParameterTest1.toLowerCase()) ||
+                        line.strLine.toLowerCase().startsWith(lineParameterTest2.toLowerCase()))
                 {
                     iter.remove();
                 }
