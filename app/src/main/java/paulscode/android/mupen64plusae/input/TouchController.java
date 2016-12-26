@@ -344,6 +344,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                     {
                         // Slid off a non-auto-hold button
                         setTouchState( prevIndex, false );
+                        if( mListener != null )
+                            mListener.onAutoHold( false, prevIndex );
                     }
                     else
                     {
@@ -437,6 +439,9 @@ public class TouchController extends AbstractController implements OnTouchListen
             // Set the controller state accordingly
             if( touched || !isAutoHoldable( index ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
+                if( mListener != null )
+                    mListener.onAutoHold( touched, index );
+
                 // Finger just touched a button (any kind) OR
                 // Finger just lifted off non-auto-holdable button
                 setTouchState( index, touched );
