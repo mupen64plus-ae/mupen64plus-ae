@@ -112,7 +112,12 @@ public class MogaHack
         }
         else
         {
-            controller.init();
+            try{
+                controller.init();
+            }
+            catch (SecurityException e){
+                Log.e( "MogaHack", "MOGA Security exception (set)", e );
+            }
         }
     }
 }
