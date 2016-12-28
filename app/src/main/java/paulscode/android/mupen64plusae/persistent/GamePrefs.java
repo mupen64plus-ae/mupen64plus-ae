@@ -760,7 +760,7 @@ public class GamePrefs
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
 
-        boolean playerMappingEnabled = numControllers > 1 && !isControllerShared;
+        boolean playerMappingEnabled = (numControllers > 1 || playerMap.getNumberOfMappedPlayers() !=0) && !isControllerShared;
 
         if(playerMappingEnabled)
         {

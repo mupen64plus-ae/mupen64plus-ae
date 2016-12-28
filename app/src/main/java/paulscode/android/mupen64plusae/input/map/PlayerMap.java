@@ -20,16 +20,17 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
+import android.content.Context;
+import android.util.Log;
+
+import org.mupen64plusae.v3.alpha.R;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import android.content.Context;
-import android.util.Log;
 
 public class PlayerMap extends SerializableMap
 {
@@ -158,6 +159,11 @@ public class PlayerMap extends SerializableMap
     public boolean isMapped( int player )
     {
         return mMap.indexOfValue( player ) >= 0;
+    }
+
+    public int getNumberOfMappedPlayers()
+    {
+        return mMap.size();
     }
     
     public void map( int hardwareId, int player )
