@@ -355,26 +355,36 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         });
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void onStart()
     {
         super.onStart();
-
         Log.i("GameActivity", "onStart");
-        mIsResumed = true;
+    }
 
-        tryRunning();
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        Log.i("GameActivity", "onResume");
 
-        if (mSensorController != null) {
-            mSensorController.onResume();
+        if(!mIsResumed)
+        {
+            tryRunning();
+
+            if (mSensorController != null) {
+                mSensorController.onResume();
+            }
+
+            // Set the sidebar opacity
+            mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
+                    mGlobalPrefs.displayActionBarTransparency));
+
+            mMogaController.onResume();
+
+            mIsResumed = true;
         }
-
-        // Set the sidebar opacity
-        mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
-            mGlobalPrefs.displayActionBarTransparency));
-
-        mMogaController.onResume();
     }
 
     @Override
