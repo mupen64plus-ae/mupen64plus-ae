@@ -50,7 +50,7 @@
         <item>2</item>
     </string-array>
 
-    <string name="touchscreenAutoHold_default" translatable="false">2</string>
+    <string name="touchscreenAutoHold_default" translatable="false">0</string>
     
     <!-- Sensor configuration axis List -->
     <string-array name="sensorConfig_axis_entries" translatable="false">

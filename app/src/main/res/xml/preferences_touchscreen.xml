@@ -73,7 +73,7 @@
         android:defaultValue="@string/touchscreenAutoHold_default"
         android:entries="@array/touchscreenAutoHold_entries"
         android:entryValues="@array/touchscreenAutoHold_values"
-        android:key="touchscreenAutoHold"
+        android:key="touchscreenAutoHoldV2"
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenAutoHold_title" />
 
