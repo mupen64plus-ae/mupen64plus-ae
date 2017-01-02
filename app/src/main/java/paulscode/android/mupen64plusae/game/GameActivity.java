@@ -825,7 +825,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 // Android to handle the event (menu button, vol keys).
                 if( mKeyProvider != null )
                 {
-                    mOverlay.onTouchControlsHide();
+                    if(keyDown)
+                    {
+                        mOverlay.onTouchControlsHide();
+                    }
                     return mKeyProvider.onKey(view, keyCode, event);
                 }
             }
