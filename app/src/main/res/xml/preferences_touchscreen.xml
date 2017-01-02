@@ -77,4 +77,12 @@
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenAutoHold_title" />
 
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="5"
+        android:key="touchscreenAutoHideSeconds"
+        android:title="@string/touchscreenAutoHide_title"
+        mupen64:maximumValue="20"
+        mupen64:stepSize="1"
+        mupen64:units="sec" />
+
 </android.support.v7.preference.PreferenceScreen>

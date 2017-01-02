@@ -1062,12 +1062,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         public void run() {
             Calendar calendar = Calendar.getInstance();
             int seconds = calendar.get(Calendar.SECOND);
-            Log.i("GameActivity", "Last touch time = " + (seconds - mLastTouchTime));
 
-            if(seconds - mLastTouchTime > 4)
+            if(seconds - mLastTouchTime > mGlobalPrefs.touchscreenAutoHideSeconds)
             {
-                Log.i("GameActivity", "Hiding controls");
-
                 mOverlay.onTouchControlsHide();
             }
 

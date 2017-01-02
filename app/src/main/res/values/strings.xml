@@ -507,6 +507,7 @@
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
     <string name="touchscreenTransparency_title">Button opacity</string>
     <string name="touchscreenScale_title">Button scale</string>
+    <string name="touchscreenAutoHide_title">Hide buttons when not used</string>
     <string name="libraryScale_title">Cover art scale</string>
     <string name="displayActionBarTransparency_title">Action bar opacity</string>
 

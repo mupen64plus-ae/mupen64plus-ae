@@ -164,6 +164,9 @@ public class GlobalPrefs
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
+    /** How long before auto hiding touchscreen buttons */
+    public final int touchscreenAutoHideSeconds;
+
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
 
@@ -419,6 +422,7 @@ public class GlobalPrefs
         touchscreenScale = ( mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparencyV2", 60 ) ) / 100;
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldV2", 0 );
+        touchscreenAutoHideSeconds = mPreferences.getInt( "touchscreenAutoHideSeconds", 5 );
 
         // Video prefs
         displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 480 );
