@@ -20,15 +20,16 @@
  */
 package paulscode.android.mupen64plusae.game;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.util.AttributeSet;
+import android.view.View;
+
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.util.AttributeSet;
-import android.view.View;
 
 public class GameOverlay extends View implements TouchController.OnStateChangedListener, CoreInterface.OnFpsChangedListener
 {
@@ -136,5 +137,20 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
             mTouchMap.setAnalogEnabled(!sensorEnabled);
         }
         onAutoHold(sensorEnabled, TouchMap.TOGGLE_SENSOR);
+    }
+
+    @Override
+    public void onTouchControlsShow()
+    {
+        // Show touch controls
+        if( mTouchMap != null && mTouchMap.showTouchController() )
+            postInvalidate();
+    }
+
+    @Override
+    public void onTouchControlsHide() {
+        // Hide touch controls
+        if( mTouchMap != null && mTouchMap.hideTouchController() )
+            postInvalidate();
     }
 }

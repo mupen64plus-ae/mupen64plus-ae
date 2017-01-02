@@ -28,6 +28,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -38,6 +39,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.Window;
@@ -51,6 +53,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
@@ -61,7 +64,6 @@ import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
-import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.SensorController;
 import paulscode.android.mupen64plusae.input.TouchController;
@@ -126,7 +128,8 @@ import paulscode.android.mupen64plusae.util.RomHeader;
 //@formatter:on
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback, GameSidebarActionHandler,
-OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedListener, OnExitListener, OnRestartListener
+        OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedListener, OnExitListener, OnRestartListener, View.OnTouchListener,
+        View.OnGenericMotionListener
 {
     // Activity and views
     private GameSurface mSurface;
@@ -135,11 +138,14 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
     private GameSidebar mGameSidebar;
 
     // Input resources
-    private ArrayList<AbstractController> mControllers;
     private VisibleTouchMap mTouchscreenMap;
     private KeyProvider mKeyProvider;
+    private AxisProvider mAxisProvider;
     private Controller mMogaController;
+    TouchController mTouchscreenController;
     private SensorController mSensorController;
+    private int mLastTouchTime;
+    private Handler mHandler;
 
     // Intent data
     private String mRomPath;
@@ -174,7 +180,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
 
-        mControllers = new ArrayList<AbstractController>();
         mMogaController = Controller.getInstance( this );
 
         // Get the intent data
@@ -353,6 +358,13 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             }
 
         });
+
+        // Check periodically for touch input to determine if we should
+        // hide the controls
+        mHandler = new Handler();
+        Calendar calendar = Calendar.getInstance();
+        mLastTouchTime = calendar.get(Calendar.SECOND);
+        mHandler.postDelayed(mLastTouchChecker, 500);
     }
 
     @Override
@@ -413,6 +425,8 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         super.onDestroy();
 
         Log.i( "GameActivity", "onDestroy" );
+
+        mHandler.removeCallbacks(mLastTouchChecker);
 
         //This can happen when a controller is plugged in while the emulator
         //is running
@@ -810,7 +824,10 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
                 // they return true. Else they return false, signaling
                 // Android to handle the event (menu button, vol keys).
                 if( mKeyProvider != null )
-                    return mKeyProvider.onKey( view, keyCode, event );
+                {
+                    mOverlay.onTouchControlsHide();
+                    return mKeyProvider.onKey(view, keyCode, event);
+                }
             }
 
             return false;
@@ -833,7 +850,6 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
                 mSensorController = new SensorController(sensorManager, mOverlay, mGamePrefs.sensorAxisX,
                         mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAngleX, mGamePrefs.sensorAxisY,
                         mGamePrefs.sensorSensitivityY, mGamePrefs.sensorAngleY);
-                mControllers.add(mSensorController);
                 if (mGamePrefs.sensorActivateOnStart) {
                     mSensorController.setSensorEnabled(true);
                     mOverlay.onSensorEnabled(true);
@@ -841,12 +857,11 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             }
 
             // Create the touchscreen controller
-            final TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,
+            mTouchscreenController = new TouchController( mTouchscreenMap,
+                    mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,
                     mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenNotAutoHoldables,
                     mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis );
-            mControllers.add( touchscreenController );
-
+            inputSource.setOnTouchListener(this);
             mDrawerLayout.setTouchMap( mTouchscreenMap );
         }
 
@@ -887,35 +902,38 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
         mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
                 mGlobalPrefs.unmappableKeyCodes );
         final MogaProvider mogaProvider = new MogaProvider( mMogaController );
-        final AbstractProvider axisProvider = new AxisProvider( inputSource );
+        mAxisProvider = new AxisProvider();
+        inputSource.setOnGenericMotionListener(this);
 
+        // Request focus for proper listening
+        inputSource.requestFocus();
         // Create the peripheral controls to handle key/stick presses
         if( mGamePrefs.isControllerEnabled1 && !needs1)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile1;
-            mControllers.add( new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, mSensorController, mKeyProvider, axisProvider, mogaProvider ) );
+            new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, mSensorController, mKeyProvider, mAxisProvider, mogaProvider );
             Log.i("GameActivity", "Player 1 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile2;
-            mControllers.add( new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, axisProvider, mogaProvider ) );
+            new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
             Log.i("GameActivity", "Player 2 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile3;
-            mControllers.add( new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, axisProvider, mogaProvider ) );
+            new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
             Log.i("GameActivity", "Player 3 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile4;
-            mControllers.add( new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, axisProvider, mogaProvider ) );
+            new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
             Log.i("GameActivity", "Player 4 has been enabled");
         }
     }
@@ -1037,5 +1055,43 @@ OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedList
             //Advance 1 frame so that something is shown instead of a black screen
             CoreInterface.advanceFrame();
         }
+    }
+
+    Runnable mLastTouchChecker = new Runnable() {
+        @Override
+        public void run() {
+            Calendar calendar = Calendar.getInstance();
+            int seconds = calendar.get(Calendar.SECOND);
+            Log.i("GameActivity", "Last touch time = " + (seconds - mLastTouchTime));
+
+            if(seconds - mLastTouchTime > 4)
+            {
+                Log.i("GameActivity", "Hiding controls");
+
+                mOverlay.onTouchControlsHide();
+            }
+
+            mHandler.postDelayed(mLastTouchChecker, 500);
+        }
+    };
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+
+        Calendar calendar = Calendar.getInstance();
+        mLastTouchTime = calendar.get(Calendar.SECOND);
+
+        return mTouchscreenController.onTouch(view, motionEvent);
+    }
+
+    @Override
+    public boolean onGenericMotion(View view, MotionEvent motionEvent) {
+
+        mOverlay.onTouchControlsHide();
+
+        // Attempt to reconnect any disconnected devices
+        mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( motionEvent ) );
+
+        return mAxisProvider.onGenericMotion(view, motionEvent);
     }
 }

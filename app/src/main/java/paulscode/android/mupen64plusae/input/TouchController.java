@@ -62,6 +62,16 @@ public class TouchController extends AbstractController implements OnTouchListen
          *            true if enabled, false if disabled
          */
         void onSensorEnabled(boolean enabled);
+
+        /**
+         * Called when the touch controls should be shown
+         */
+        public void onTouchControlsShow();
+
+        /**
+         * Called when the touch controls should be hidden
+         */
+        public void onTouchControlsHide();
     }
     
     public static final int AUTOHOLD_METHOD_DISABLED = 0;
@@ -137,7 +147,6 @@ public class TouchController extends AbstractController implements OnTouchListen
      * Instantiates a new touch controller.
      * 
      * @param touchMap            The map from touch coordinates to N64 controls.
-     * @param view                The view receiving touch event data.
      * @param listener            The listener for controller state changes.
      * @param vibrator            The haptic feedback device. MUST BE NULL if vibrate permission not granted.
      * @param autoHoldMethod      The method for auto-holding buttons.
@@ -145,7 +154,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param notAutoHoldableButtons The N64 commands that correspond to NOT auto-holdable buttons.
      * @param
      */
-    public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
+    public TouchController( TouchMap touchMap, OnStateChangedListener listener,
             Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
             Set<Integer> notAutoHoldableButtons, SensorController sensorController,
             boolean invertXAxis, boolean invertYAxis )
@@ -159,7 +168,6 @@ public class TouchController extends AbstractController implements OnTouchListen
         mSensorController = sensorController;
         mInvertXAxis = invertXAxis;
         mInvertYAxis = invertYAxis;
-        view.setOnTouchListener( this );
     }
     
     /**
@@ -307,11 +315,12 @@ public class TouchController extends AbstractController implements OnTouchListen
     private void processButtonTouch( boolean touched, int xLocation, int yLocation,
             long timeElapsed, int pid, int actionCode )
     {
+        mListener.onTouchControlsShow();
         // Determine the index of the button that was pressed
         int index = touched
                 ? mTouchMap.getButtonPress( xLocation, yLocation )
                 : mPointerMap.get( pid, TouchMap.UNMAPPED );
-                
+
         // Update the pointer map
         if( !touched )
         {
@@ -322,10 +331,10 @@ public class TouchController extends AbstractController implements OnTouchListen
         {
             // Determine where the finger came from if is was slid
             int prevIndex = mPointerMap.get( pid, TouchMap.UNMAPPED );
-            
+
             // Finger touched somewhere on screen, remember what this pointer is touching
             mPointerMap.put( pid, index );
-            
+
             if( prevIndex != index )
             {
                 // Finger slid from somewhere else, act accordingly
@@ -333,10 +342,10 @@ public class TouchController extends AbstractController implements OnTouchListen
                 // - old button --> new button
                 // - nothing --> new button
                 // - old button --> nothing
-                
+
                 // Reset this pointer's start time
                 mStartTime[pid] = System.currentTimeMillis();
-                
+
                 if( prevIndex != TouchMap.UNMAPPED )
                 {
                     // Slid off a valid button
@@ -358,7 +367,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                                     mListener.onAutoHold( false, prevIndex );
                                 setTouchState( prevIndex, false );
                                 break;
-                            
+
                             case AUTOHOLD_METHOD_SLIDEOUT:
                                 // Using slide-off method, engage auto-hold button
                                 if( mVibrator != null )
@@ -375,11 +384,11 @@ public class TouchController extends AbstractController implements OnTouchListen
                 }
             }
         }
-        
+
         if( index != TouchMap.UNMAPPED )
         {
             // Finger is on a valid button
-            
+
             // process the TOGGLE_SENSOR button
             if (index == TouchMap.TOGGLE_SENSOR && mSensorController != null
                     && (actionCode == MotionEvent.ACTION_DOWN || actionCode == MotionEvent.ACTION_POINTER_DOWN)) {
@@ -428,14 +437,14 @@ public class TouchController extends AbstractController implements OnTouchListen
                             break;
                     }
                 }
-                
+
                 if( firstTouched )
                 {
                     mVibrator.cancel();
                     mVibrator.vibrate( FEEDBACK_VIBRATE_TIME );
                 }
             }
-            
+
             // Set the controller state accordingly
             if( touched || !isAutoHoldable( index ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
@@ -458,7 +467,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                             mListener.onAutoHold( false, index );
                         setTouchState( index, false );
                         break;
-                    
+
                     case AUTOHOLD_METHOD_LONGPRESS:
                         if( timeElapsed < AUTOHOLD_LONGPRESS_TIME )
                         {
@@ -484,7 +493,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             }
         }
     }
-    
+
     /**
      * Checks if the button mapped to an N64 command is auto-holdable.
      * 

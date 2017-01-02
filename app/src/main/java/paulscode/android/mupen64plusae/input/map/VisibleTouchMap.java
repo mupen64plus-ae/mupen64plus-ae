@@ -98,12 +98,18 @@ public class VisibleTouchMap extends TouchMap
     
     /** Auto-hold overlay images. */
     public final Image[] autoHoldImages;
+
+    /** Auto-hold overlay images pressed status */
+    public final boolean[] autoHoldImagesPressed;
     
     /** X-coordinates of the AutoHold mask, in percent. */
     private final int[] autoHoldX;
     
     /** Y-coordinates of the AutoHold mask, in percent. */
     private final int[] autoHoldY;
+
+    /** True if touch controls are currently being shown */
+    private boolean controlsShown = true;
     
     /**
      * Instantiates a new visible touch map.
@@ -116,6 +122,7 @@ public class VisibleTouchMap extends TouchMap
         mFpsDigits = new CopyOnWriteArrayList<Image>();
         mNumerals = new Image[10];
         autoHoldImages = new Image[NUM_N64_PSEUDOBUTTONS];
+        autoHoldImagesPressed = new boolean[NUM_N64_PSEUDOBUTTONS];
         autoHoldX = new int[NUM_N64_PSEUDOBUTTONS];
         autoHoldY = new int[NUM_N64_PSEUDOBUTTONS];
     }
@@ -137,7 +144,10 @@ public class VisibleTouchMap extends TouchMap
         for( int i = 0; i < mNumerals.length; i++ )
             mNumerals[i] = null;
         for( int i = 0; i < autoHoldImages.length; i++ )
+        {
+            autoHoldImagesPressed[i] = false;
             autoHoldImages[i] = null;
+        }
         for( int i = 0; i < autoHoldX.length; i++ )
             autoHoldX[i] = 0;
         for( int i = 0; i < autoHoldY.length; i++ )
@@ -376,6 +386,8 @@ public class VisibleTouchMap extends TouchMap
      */
     public boolean updateAutoHold( boolean pressed, int index )
     {
+        autoHoldImagesPressed[index] = pressed;
+
         if( autoHoldImages[index] != null )
         {
             if( pressed )
@@ -549,6 +561,70 @@ public class VisibleTouchMap extends TouchMap
             }
         }
     }
+
+    /**
+     * Hides the touch controller
+     */
+    public boolean hideTouchController()
+    {
+        if(!controlsShown)
+            return false;
+
+        // Set the transparency of the images
+        for( Image buttonImage : buttonImages )
+        {
+            if(buttonImage != null)
+                buttonImage.setAlpha( 0 );
+        }
+
+        for( Image autoHoldImage : autoHoldImages)
+        {
+            if(autoHoldImage != null )
+                autoHoldImage.setAlpha( 0 );
+        }
+
+        if( analogBackImage != null )
+        {
+            analogBackImage.setAlpha( 0 );
+        }
+        if( analogForeImage != null )
+        {
+            analogForeImage.setAlpha( 0 );
+        }
+
+        controlsShown = false;
+        return true;
+    }
+
+    /**
+     * Shows the touch controller
+     */
+    public boolean showTouchController()
+    {
+        if(controlsShown)
+            return false;
+
+        // Set the transparency of the images
+        for( Image buttonImage : buttonImages )
+        {
+            if(buttonImage != null)
+                buttonImage.setAlpha( mTouchscreenTransparency );
+        }
+
+        for( int index = 0; index < autoHoldImages.length; ++index)
+        {
+
+            Image autoHoldImage = autoHoldImages[index];
+            if(autoHoldImage != null && autoHoldImagesPressed[index] )
+                autoHoldImage.setAlpha( mTouchscreenTransparency );
+        }
+
+        setAnalogEnabled(isAnalogEnabled);
+
+        controlsShown = true;
+        return true;
+    }
+
 
     /**
      * Loads FPS indicator assets and properties from the filesystem.

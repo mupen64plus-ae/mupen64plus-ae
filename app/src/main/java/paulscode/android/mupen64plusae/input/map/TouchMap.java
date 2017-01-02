@@ -20,6 +20,12 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
+import android.content.res.Resources;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.util.Log;
+import android.util.SparseArray;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -31,11 +37,6 @@ import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.content.res.Resources;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.Log;
-import android.util.SparseArray;
 
 /**
  * A class for mapping digitizer coordinates to N64 buttons/axes.

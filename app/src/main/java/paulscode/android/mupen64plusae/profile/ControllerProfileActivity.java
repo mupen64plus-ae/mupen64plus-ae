@@ -20,6 +20,13 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -28,12 +35,6 @@ import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
 
 public class ControllerProfileActivity extends ControllerProfileActivityBase implements OnClickListener
 {    
@@ -137,6 +138,6 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
     @Override
     public boolean onGenericMotionEvent(MotionEvent event)
     {
-        return mAxisProvider.onGenericMotion(event) || super.onGenericMotionEvent(event);
+        return mAxisProvider.onGenericMotion(null, event) || super.onGenericMotionEvent(event);
     }
 }
