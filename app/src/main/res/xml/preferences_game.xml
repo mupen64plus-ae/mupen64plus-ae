@@ -5,8 +5,8 @@
 
     <paulscode.android.mupen64plusae.preference.CompatListPreference
         android:defaultValue="@string/displayResolution_default_game"
-        android:entries="@array/displayResolution_entries"
-        android:entryValues="@array/displayResolution_values"
+        android:entries="@array/displayResolutionGame_entries"
+        android:entryValues="@array/displayResolutionGame_values"
         android:icon="@drawable/ic_display"
         android:key="displayResolution"
         android:summary="@string/selectedValue"
@@ -30,6 +30,15 @@
         android:key="displayScaling"
         android:summary="@string/selectedValue"
         android:title="@string/displayScaling_title" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/touchscreenAutoHoldGame_default"
+        android:entries="@array/touchscreenAutoHoldGame_entries"
+        android:entryValues="@array/touchscreenAutoHoldGame_values"
+        android:key="touchscreenAutoHoldV2"
+        android:summary="@string/selectedValue"
+        android:icon="@drawable/ic_phone"
+        android:title="@string/touchscreenAutoHold_title" />
 
 
     <android.support.v7.preference.PreferenceScreen

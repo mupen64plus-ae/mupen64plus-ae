@@ -861,7 +861,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             // Create the touchscreen controller
             mTouchscreenController = new TouchController( mTouchscreenMap,
-                    mOverlay, vibrator, mGlobalPrefs.touchscreenAutoHold,
+                    mOverlay, vibrator, mGamePrefs.touchscreenAutoHold,
                     mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenNotAutoHoldables,
                     mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis );
             inputSource.setOnTouchListener(this);

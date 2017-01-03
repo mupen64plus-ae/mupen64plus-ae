@@ -433,6 +433,9 @@ public class GamePrefs
     /** If display mode is stretch*/
     public final boolean mStretch;
 
+    /** The method used for auto holding buttons. */
+    public final int touchscreenAutoHold;
+
     /** Game CRC */
     public final String crc;
 
@@ -743,6 +746,15 @@ public class GamePrefs
         }
 
         isTouchscreenHidden = !isTouchscreenEnabled || globalPrefs.touchscreenTransparency == 0;
+
+        int tmpTouchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldV2", -1 );
+
+        if(tmpTouchscreenAutoHold == -1)
+        {
+            tmpTouchscreenAutoHold = globalPrefs.touchscreenAutoHold;
+        }
+
+        touchscreenAutoHold = tmpTouchscreenAutoHold;
 
         // Peripheral share mode
         isControllerShared = mPreferences.getBoolean( "inputShareController", false );

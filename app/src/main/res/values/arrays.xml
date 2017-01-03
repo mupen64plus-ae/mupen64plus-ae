@@ -49,8 +49,22 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-
     <string name="touchscreenAutoHold_default" translatable="false">0</string>
+
+    <!-- Touchscreen Auto-Hold Methods -->
+    <string-array name="touchscreenAutoHoldGame_entries" translatable="false">
+        <item>@string/default_profile_title</item>
+        <item>@string/touchscreenAutoHold_entryDisabled</item>
+        <item>@string/touchscreenAutoHold_entryLongPress</item>
+        <item>@string/touchscreenAutoHold_entrySlideOut</item>
+    </string-array>
+    <string-array name="touchscreenAutoHoldGame_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="touchscreenAutoHoldGame_default" translatable="false">-1</string>
     
     <!-- Sensor configuration axis List -->
     <string-array name="sensorConfig_axis_entries" translatable="false">
@@ -115,8 +129,29 @@
         <item>240</item>
         <item>120</item>
     </string-array>
-
     <string name="displayResolution_default" translatable="false">480</string>
+
+    <!-- Screen Resolution List -->
+    <string-array name="displayResolutionGame_entries" translatable="false">
+        <item>@string/default_profile_title</item>
+        <item>@string/displayResolution_entryNative</item>
+        <item>@string/displayResolution_entry960x720</item>
+        <item>@string/displayResolution_entry800x600</item>
+        <item>@string/displayResolution_entry640x480</item>
+        <item>@string/displayResolution_entry480x360</item>
+        <item>@string/displayResolution_entry320x240</item>
+        <item>@string/displayResolution_entry160x120</item>
+    </string-array>
+    <string-array name="displayResolutionGame_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>720</item>
+        <item>600</item>
+        <item>480</item>
+        <item>360</item>
+        <item>240</item>
+        <item>120</item>
+    </string-array>
     <string name="displayResolution_default_game" translatable="false">-1</string>
 
     <!-- Screen Scaling List -->
