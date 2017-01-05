@@ -49,7 +49,7 @@
 
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="100"
-        android:key="touchscreenScale"
+        android:key="touchscreenScaleV2"
         android:title="@string/touchscreenScale_title"
         mupen64:maximumValue="400"
         mupen64:minimumValue="50"

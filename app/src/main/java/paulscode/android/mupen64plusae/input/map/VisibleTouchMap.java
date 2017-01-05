@@ -172,7 +172,7 @@ public class VisibleTouchMap extends TouchMap
         
         if( metrics != null )
         {
-            scale = metrics.densityDpi/220.0f;
+            scale = metrics.densityDpi/260.0f;
         }
         // Apply the global scaling factor (derived from user prefs)
         scale *= mScalingFactor;
