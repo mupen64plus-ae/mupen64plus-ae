@@ -193,6 +193,10 @@
     <string name="touchpadEnabled_title">Habilitar touchpad</string>
     <string name="inputVolumeMappable_title">Teclas de volumen asignables</string>
     <string name="inputVolumeMappable_summary">Permitir que las teclas de volumen sean asignadas a controles</string>
+    <string name="inputBackMappable_title">Tecla de atrás asignable</string>
+    <string name="inputBackMappable_summary">Permitir que las tecla de atrás sea asignada a controles, esto obligará el uso de la gestura para abrir el menu del juego</string>
+    <string name="inputMenuMappable_title">Tecla de menú asignable</string>
+    <string name="inputMenuMappable_summary">Permitir que las tecla de menú sea asignada a controles, esto obligará el uso de la gestura para abrir el menu del juego</string>
     <string name="displayImmersiveMode_title">Modo inmersivo</string>
     <string name="displayImmersiveMode_summary">Ocultar completamente barras de navegación y de estado</string>
     <string name="gln64Fog_title">Niebla</string>

@@ -75,6 +75,18 @@
         android:summary="@string/inputVolumeMappable_summary"
         android:title="@string/inputVolumeMappable_title" />
 
+    <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="inputBackMappable"
+        android:summary="@string/inputBackMappable_summary"
+        android:title="@string/inputBackMappable_title" />
+
+    <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="inputMenuMappable"
+        android:summary="@string/inputMenuMappable_summary"
+        android:title="@string/inputMenuMappable_title" />
+
     <paulscode.android.mupen64plusae.preference.ProfilePreference
         android:icon="@drawable/ic_gamepad"
         android:key="controllerProfile1"

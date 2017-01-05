@@ -769,72 +769,82 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         GameActivity.this.finish();
     }
 
+    /**
+     * Handle view onKey callbacks
+     * @param view If view is NULL then this keycode will not be handled by the key provider. This is to avoid
+     *             the situation where user maps the menu key to the menu command.
+     * @param keyCode
+     * @param event
+     * @return
+     */
     @Override
     public boolean onKey( View view, int keyCode, KeyEvent event )
     {
         final boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
 
+        boolean handled = false;
+
         // Attempt to reconnect any disconnected devices
         mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( event ) );
 
-        if( keyDown && keyCode == KeyEvent.KEYCODE_MENU )
+        if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
         {
-            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
-                mDrawerLayout.closeDrawer( GravityCompat.START );
-            else {
-                CoreInterface.pauseEmulator();
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                mGameSidebar.requestFocus();
-                mGameSidebar.smoothScrollToPosition(0);
-            }
-            return true;
-        }
-        else if( keyDown && keyCode == KeyEvent.KEYCODE_BACK )
-        {
-            if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            // If PeripheralControllers exist and handle the event,
+            // they return true. Else they return false, signaling
+            // Android to handle the event (menu button, vol keys).
+            if( mKeyProvider != null && view != null)
             {
-                mDrawerLayout.closeDrawer( GravityCompat.START );
-            }
-            else
-            {
-                //We are using the slide gesture for the menu, so the back key can be used to exit
-                if(mGlobalPrefs.inGameMenuIsSwipGesture)
+                handled = mKeyProvider.onKey(view, keyCode, event);
+
+                if(handled && keyCode != KeyEvent.KEYCODE_MENU && keyCode != KeyEvent.KEYCODE_BACK )
                 {
-                    mWaitingOnConfirmation = true;
-                    CoreInterface.exit();
+                    mOverlay.onTouchControlsHide();
                 }
-                //Else the back key bring up the in-game menu
-                else
-                {
+            }
+        }
+
+        if(!handled)
+        {
+            if( keyDown && keyCode == KeyEvent.KEYCODE_MENU )
+            {
+                if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+                    mDrawerLayout.closeDrawer( GravityCompat.START );
+                else {
                     CoreInterface.pauseEmulator();
-                    mDrawerLayout.openDrawer( GravityCompat.START );
+                    mDrawerLayout.openDrawer(GravityCompat.START);
                     mGameSidebar.requestFocus();
                     mGameSidebar.smoothScrollToPosition(0);
                 }
+                return true;
             }
-            return true;
-        }
-
-        // Let the PeripheralControllers and Android handle everything else
-        else
-        {
-            if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
+            else if( keyDown && keyCode == KeyEvent.KEYCODE_BACK )
             {
-                // If PeripheralControllers exist and handle the event,
-                // they return true. Else they return false, signaling
-                // Android to handle the event (menu button, vol keys).
-                if( mKeyProvider != null )
+                if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
                 {
-                    if(keyDown)
-                    {
-                        mOverlay.onTouchControlsHide();
-                    }
-                    return mKeyProvider.onKey(view, keyCode, event);
+                    mDrawerLayout.closeDrawer( GravityCompat.START );
                 }
+                else
+                {
+                    //We are using the slide gesture for the menu, so the back key can be used to exit
+                    if(mGlobalPrefs.inGameMenuIsSwipGesture)
+                    {
+                        mWaitingOnConfirmation = true;
+                        CoreInterface.exit();
+                    }
+                    //Else the back key bring up the in-game menu
+                    else
+                    {
+                        CoreInterface.pauseEmulator();
+                        mDrawerLayout.openDrawer( GravityCompat.START );
+                        mGameSidebar.requestFocus();
+                        mGameSidebar.smoothScrollToPosition(0);
+                    }
+                }
+                return true;
             }
-
-            return false;
         }
+
+        return handled;
     }
 
     @SuppressLint( "InlinedApi" )

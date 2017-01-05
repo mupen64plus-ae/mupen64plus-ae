@@ -488,18 +488,27 @@ public class GlobalPrefs
             isBigScreenMode = AppData.IS_OUYA_HARDWARE || appData.isAndroidTv; // TODO: Add other systems as they enter market
 
         final String inGameMenuMode = mPreferences.getString( "inGameMenu", "back-key" );
-        inGameMenuIsSwipGesture = inGameMenuMode.equals("swipe");
 
         maxAutoSaves = mPreferences.getInt( "gameAutoSaves", 5 );
 
         // Determine the key codes that should not be mapped to controls
         final boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
-        final List<Integer> unmappables = new ArrayList<Integer>();
-        unmappables.add( KeyEvent.KEYCODE_MENU );
+        final boolean backKeyMappable = mPreferences.getBoolean( "inputBackMappable", false );
+        final boolean menuKeyMappable = mPreferences.getBoolean( "inputMenuMappable", false );
 
+        inGameMenuIsSwipGesture = inGameMenuMode.equals("swipe") || menuKeyMappable || backKeyMappable;
+
+        final List<Integer> unmappables = new ArrayList<Integer>();
+
+        if(!menuKeyMappable)
+        {
+            unmappables.add( KeyEvent.KEYCODE_MENU );
+        }
+        if(!backKeyMappable)
+        {
             // Back key is needed to show/hide the action bar in HC+
             unmappables.add( KeyEvent.KEYCODE_BACK );
-
+        }
         if( !volKeysMappable )
         {
             unmappables.add( KeyEvent.KEYCODE_VOLUME_UP );
