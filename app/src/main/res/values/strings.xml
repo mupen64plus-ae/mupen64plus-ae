@@ -623,7 +623,7 @@
     <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Error: HTC file must match this format [GAME_HEADER]__HIRESTEXTURES.htc</string>
 
     <!-- Scan Roms Dialog -->
-    <string name="scanRomsDialog_selectRom">Select a ROM file or an entire folder to scan</string>
+    <string name="scanRomsDialog_selectRom">Select a ROM file or an entire folder to scan (zip/n64/z64 files supported)</string>
     <string name="scanRomsDialog_searchZips">Search zip files</string>
     <string name="scanRomsDialog_downloadArt">Download cover art</string>
     <string name="scanRomsDialog_clearGallery">Clear gallery before adding</string>
