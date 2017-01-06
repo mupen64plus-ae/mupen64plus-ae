@@ -122,8 +122,6 @@ public class CacheRomInfoService extends Service
             
             if( mSearchPath == null )
                 throw new IllegalArgumentException( "Root path cannot be null" );
-            if( !searchPathFile.exists() )
-                throw new IllegalArgumentException( "Root path does not exist: " + searchPathFile.getAbsolutePath() );
             if( TextUtils.isEmpty( mDatabasePath ) )
                 throw new IllegalArgumentException( "ROM database path cannot be null or empty" );
             if( TextUtils.isEmpty( mConfigPath ) )
