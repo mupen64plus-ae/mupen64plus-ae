@@ -174,6 +174,12 @@ public class PromptInputCodeDialog extends DialogFragment
                     if(strengths[i] != 0.0f)
                         Log.e("PromptInputCodeDialog", "Inputs[" + i + "] = " + strengths[i] + " maxStrength = " + maxStrength);
 
+                    //The size of the strength array changed. We need to reset
+                    if(mStrengths != null && mStrengths.length != inputCodes.length)
+                    {
+                        mStrengths = null;
+                    }
+
                     // Identify the strongest input and last one to have changed
                     if (Math.abs(strengths[i]) > maxStrength && mStrengths != null && !compareStrengths(mStrengths[i], strengths[i], 0.1f))
                     {
