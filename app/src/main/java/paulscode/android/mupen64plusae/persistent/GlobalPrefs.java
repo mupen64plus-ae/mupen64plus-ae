@@ -164,6 +164,9 @@ public class GlobalPrefs
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
+    /** Enable touchscreen auto-hide */
+    public final boolean touchscreenAutoHideEnabled;
+
     /** How long before auto hiding touchscreen buttons */
     public final int touchscreenAutoHideSeconds;
 
@@ -422,6 +425,7 @@ public class GlobalPrefs
         touchscreenScale = ( mPreferences.getInt( "touchscreenScaleV2", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparencyV2", 60 ) ) / 100;
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldV2", 0 );
+        touchscreenAutoHideEnabled = mPreferences.getBoolean( "touchscreenAutoHideEnabled", true );
         touchscreenAutoHideSeconds = mPreferences.getInt( "touchscreenAutoHideSeconds", 5 );
 
         // Video prefs

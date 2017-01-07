@@ -210,6 +210,8 @@
     <string name="playShowCheats_title">Enable cheats</string>
     <string name="touchscreenFeedback_title">Haptic feedback</string>
     <string name="touchscreenFeedback_summary">Vibrate on button press</string>
+    <string name="touchscreenAutoHideEnabled_title">Hide buttons when not used</string>
+    <string name="touchscreenAutoHideEnabled_summary">Hide buttons when not used by the number of seconds specified.</string>
     <string name="useHighPriorityThread_title">Use high priority thread</string>
     <string name="useHighPriorityThread_summary">Core will run using a high priority thread, this can cause stutters on some devices</string>
     <string name="inputVolumeMappable_title">Mappable volume keys</string>
@@ -511,7 +513,7 @@
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
     <string name="touchscreenTransparency_title">Button opacity</string>
     <string name="touchscreenScale_title">Button scale</string>
-    <string name="touchscreenAutoHide_title">Hide buttons when not used</string>
+    <string name="touchscreenAutoHide_title">Number of seconds before hiding touchscreen buttons</string>
     <string name="libraryScale_title">Cover art scale</string>
     <string name="displayActionBarTransparency_title">Action bar opacity</string>
 

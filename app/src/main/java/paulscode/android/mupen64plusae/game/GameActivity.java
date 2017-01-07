@@ -364,7 +364,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mHandler = new Handler();
         Calendar calendar = Calendar.getInstance();
         mLastTouchTime = calendar.get(Calendar.SECOND);
-        mHandler.postDelayed(mLastTouchChecker, 500);
+
+        if(mGlobalPrefs.touchscreenAutoHideEnabled)
+            mHandler.postDelayed(mLastTouchChecker, 500);
     }
 
     @Override

@@ -76,7 +76,11 @@
         android:key="touchscreenAutoHoldV2"
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenAutoHold_title" />
-
+    <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="touchscreenAutoHideEnabled"
+        android:summary="@string/touchscreenAutoHideEnabled_summary"
+        android:title="@string/touchscreenAutoHideEnabled_title" />
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="5"
         android:key="touchscreenAutoHideSeconds"

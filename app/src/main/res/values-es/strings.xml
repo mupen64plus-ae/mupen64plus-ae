@@ -188,6 +188,8 @@
     <string name="playShowCheats_summary">La carga del menú es más lenta cuando se encuentran activados</string>
     <string name="touchscreenFeedback_title">Retroalimentación háptica</string>
     <string name="touchscreenFeedback_summary">Vibrar al pulsar un botón</string>
+    <string name="touchscreenAutoHideEnabled_title">Ocultar botones cuando no se usan</string>
+    <string name="touchscreenAutoHideEnabled_summary">Ocultar botones cuando no se utilizan por el número especificado de segundos.</string>
     <string name="useHighPriorityThread_title">Usar modo de alta prioridad</string>
     <string name="useHighPriorityThread_summary">El core se ejecutará utilizando un modo de alta prioridad, esto puede causar tartamudeos en algunos dispositivos</string>
     <string name="touchpadEnabled_title">Habilitar touchpad</string>
@@ -469,7 +471,7 @@
     <!--Seek Bar Preferences (selected value and units will become the summary-->
     <string name="touchscreenTransparency_title">Transparencia de botones en la pantalla táctil</string>
     <string name="touchscreenScale_title">Escala del boton</string>
-    <string name="touchscreenAutoHide_title">Esconder botones cuando no se usan</string>
+    <string name="touchscreenAutoHide_title">Número de segundos antes de ocultar los botones de la pantalla táctil</string>
     <string name="libraryScale_title">Escala de las carátulas</string>
     <string name="displayActionBarTransparency_title">Opacidad de la barra de acciones</string>
     <!--Path Preferences (selected path will become the summary)-->
