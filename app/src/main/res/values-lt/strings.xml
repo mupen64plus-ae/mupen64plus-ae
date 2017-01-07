@@ -35,4 +35,22 @@
     <string name="riceFog_title">Rūkas</string>
     <string name="screenCheats_title">Kodai</string>
     <string name="touchscreenProfileActivity_remove">Pašalinti</string>
+    <string name="actionResetGamePrefs_title">Numatytieji</string>
+    <string name="actionResetUserPrefs_title">Numatytieji</string>
+    <string name="actionRestart_title">Paleisti iš naujo</string>
+    <string name="actionResume_title">Tęsti</string>
+    <string name="assetExtractor_error">Klaida</string>
+    <string name="assetExtractor_initializing">Pradedama</string>
+    <string name="assetExtractor_permissions_title">Leidimai</string>
+    <string name="categoryData_title">Duomenys</string>
+    <string name="categoryAudio_title">Garsas</string>
+    <string name="categoryDisplay_title">Ekranas</string>
+    <string name="cheatEditor_confirm">Ar esate tuo tikras?</string>
+    <string name="cheatEditor_delete">Ištrinti kodą</string>
+    <string name="cheatEditor_edit">Keisti kodus</string>
+    <string name="cheatEditor_help">Pagalba</string>
+    <string name="inputMapActivity_pause">Pauzė</string>
+    <string name="invalidInstall_title">Įspėjimas</string>
+    <string name="menuItem_credits">Kreditai</string>
+    <string name="menuItem_help">Pagalba</string>
 </resources>
