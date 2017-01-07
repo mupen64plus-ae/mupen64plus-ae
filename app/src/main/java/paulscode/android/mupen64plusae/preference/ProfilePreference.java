@@ -76,7 +76,7 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
             ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
                 context, R.layout.list_preference, getEntries());
             
-            int currentIndex = findIndexOfValue(getCurrentValue());
+            int currentIndex = findIndexOfValue(getCurrentValue(null));
             builder.setTitle(getTitle());
             builder.setPositiveButton(null, null);
             builder.setSingleChoiceItems(adapter, currentIndex, new OnClickListener()
@@ -99,7 +99,17 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
             } );
         }
     }
-    
+
+    /**
+     *
+     * @param configBuiltin
+     * @param configCustom
+     * @param allowDefaultProfile
+     * @param defaultValue This has dual use. If a global default is enabled, it's used for its value. Otherwise
+     *                     it's used for the default value if one isn't defined
+     * @param exclusions
+     * @param showBuiltins
+     */
     public void populateProfiles( ConfigFile configBuiltin, ConfigFile configCustom, boolean allowDefaultProfile,
         String defaultValue, List<Profile> exclusions, boolean showBuiltins )
     {
@@ -183,10 +193,15 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
         //If the provided selected value no longer exists, revert to the default
         if( !ArrayUtils.contains( values, selectedValue ) )
         {
-            //If a default is allowed, use the default, otherwise use disabled
+            //If a global default is allowed, use the default, if not, use provided
+            // default directly, else use disabled
             if(allowDefaultProfile && defaultProfile != null)
             {
                 persistString( defaultProfileTitle.toString() );
+            }
+            else if (defaultValue != null)
+            {
+                persistString( defaultValue );
             }
             else if(mAllowDisable)
             {
@@ -198,9 +213,9 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
         setValue( selectedValue );
     }
     
-    public String getCurrentValue()
+    public String getCurrentValue(String defaultValue)
     {
-        return getPersistedString( null );
+        return getPersistedString( defaultValue );
     }
 
     @Override

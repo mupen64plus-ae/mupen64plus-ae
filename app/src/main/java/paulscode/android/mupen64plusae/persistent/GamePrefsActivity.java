@@ -307,7 +307,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),
                 mGlobalPrefs.GetEmulationProfilesConfig(), true, mGlobalPrefs.getEmulationProfileDefault(),
                     exclusions, mGlobalPrefs.showBuiltInEmulationProfiles);
-            mEmulationProfile.setSummary(mEmulationProfile.getCurrentValue());
+            mEmulationProfile.setSummary(mEmulationProfile.getCurrentValue(null));
         }
 
         if(mTouchscreenProfile != null)
@@ -315,7 +315,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mTouchscreenProfile.populateProfiles( mAppData.GetTouchscreenProfilesConfig(),
                 mGlobalPrefs.GetTouchscreenProfilesConfig(), true, mGlobalPrefs.getTouchscreenProfileDefault(), null,
                     mGlobalPrefs.showBuiltInTouchscreenProfiles );
-            mTouchscreenProfile.setSummary(mTouchscreenProfile.getCurrentValue());
+            mTouchscreenProfile.setSummary(mTouchscreenProfile.getCurrentValue(null));
         }
 
         if(mControllerProfile1 != null)
@@ -323,7 +323,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mControllerProfile1.populateProfiles( mAppData.GetControllerProfilesConfig(),
                 mGlobalPrefs.GetControllerProfilesConfig(), true, mGlobalPrefs.getControllerProfileDefault(1), null,
                     mGlobalPrefs.showBuiltInControllerProfiles );
-            mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
+            mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue(null));
         }
 
         if(mControllerProfile2 != null)
@@ -331,7 +331,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mControllerProfile2.populateProfiles( mAppData.GetControllerProfilesConfig(),
                 mGlobalPrefs.GetControllerProfilesConfig(), true, mGlobalPrefs.getControllerProfileDefault(2), null,
                     mGlobalPrefs.showBuiltInControllerProfiles );
-            mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
+            mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue(null));
         }
 
         if(mControllerProfile3 != null)
@@ -339,7 +339,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mControllerProfile3.populateProfiles( mAppData.GetControllerProfilesConfig(),
                 mGlobalPrefs.GetControllerProfilesConfig(), true, mGlobalPrefs.getControllerProfileDefault(3), null,
                     mGlobalPrefs.showBuiltInControllerProfiles );
-            mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue());
+            mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue(null));
         }
 
         if(mControllerProfile4 != null)
@@ -347,7 +347,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             mControllerProfile4.populateProfiles( mAppData.GetControllerProfilesConfig(),
                 mGlobalPrefs.GetControllerProfilesConfig(), true, mGlobalPrefs.getControllerProfileDefault(4), null,
                     mGlobalPrefs.showBuiltInControllerProfiles );
-            mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
+            mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue(null));
         }
 
         // Refresh the preferences objects in case populate* changed a value

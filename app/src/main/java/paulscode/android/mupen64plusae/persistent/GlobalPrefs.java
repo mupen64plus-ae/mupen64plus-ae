@@ -292,7 +292,6 @@ public class GlobalPrefs
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     private static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
-    private static final String KEY_CONTROLLER_PROFILE_DEFAULT = "controllerProfileDefault";
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
@@ -608,7 +607,7 @@ public class GlobalPrefs
         default: break;
         }
 
-        return getString( GamePrefs.CONTROLLER_PROFILE1, getString( KEY_CONTROLLER_PROFILE_DEFAULT, DEFAULT_CONTROLLER_PROFILE_DEFAULT ) );
+        return getString( GamePrefs.CONTROLLER_PROFILE1, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
     }
 
     public PakType getPakType( int player )

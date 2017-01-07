@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
+import android.util.Log;
 
 import com.bda.controller.Controller;
 
@@ -124,41 +125,41 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         // Get and update the controller profile information
-        final ProfilePreference mControllerProfile1 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE1);
-        final ProfilePreference mControllerProfile2 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE2);
-        final ProfilePreference mControllerProfile3 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE3);
-        final ProfilePreference mControllerProfile4 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE4);
+        final ProfilePreference controllerProfile1 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE1);
+        final ProfilePreference controllerProfile2 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE2);
+        final ProfilePreference controllerProfile3 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE3);
+        final ProfilePreference controllerProfile4 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE4);
 
-        if (mControllerProfile1 != null)
+        if (controllerProfile1 != null)
         {
-            mControllerProfile1.populateProfiles(mAppData.GetControllerProfilesConfig(),
-                mGlobalPrefs.GetControllerProfilesConfig(), false, null, null,
+            controllerProfile1.populateProfiles(mAppData.GetControllerProfilesConfig(),
+                mGlobalPrefs.GetControllerProfilesConfig(), false, GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT, null,
                     mGlobalPrefs.showBuiltInControllerProfiles);
-            mControllerProfile1.setSummary(mControllerProfile1.getCurrentValue());
+            controllerProfile1.setSummary(controllerProfile1.getCurrentValue(null));
         }
 
-        if (mControllerProfile2 != null)
+        if (controllerProfile2 != null)
         {
-            mControllerProfile2.populateProfiles(mAppData.GetControllerProfilesConfig(),
+            controllerProfile2.populateProfiles(mAppData.GetControllerProfilesConfig(),
                 mGlobalPrefs.GetControllerProfilesConfig(), false, null, null,
                     mGlobalPrefs.showBuiltInControllerProfiles);
-            mControllerProfile2.setSummary(mControllerProfile2.getCurrentValue());
+            controllerProfile2.setSummary(controllerProfile2.getCurrentValue(null));
         }
 
-        if (mControllerProfile3 != null)
+        if (controllerProfile3 != null)
         {
-            mControllerProfile3.populateProfiles(mAppData.GetControllerProfilesConfig(),
+            controllerProfile3.populateProfiles(mAppData.GetControllerProfilesConfig(),
                 mGlobalPrefs.GetControllerProfilesConfig(), false, null, null,
                     mGlobalPrefs.showBuiltInControllerProfiles);
-            mControllerProfile3.setSummary(mControllerProfile3.getCurrentValue());
+            controllerProfile3.setSummary(controllerProfile3.getCurrentValue(null));
         }
 
-        if (mControllerProfile4 != null)
+        if (controllerProfile4 != null)
         {
-            mControllerProfile4.populateProfiles(mAppData.GetControllerProfilesConfig(),
+            controllerProfile4.populateProfiles(mAppData.GetControllerProfilesConfig(),
                 mGlobalPrefs.GetControllerProfilesConfig(), false, null, null,
                     mGlobalPrefs.showBuiltInControllerProfiles);
-            mControllerProfile4.setSummary(mControllerProfile4.getCurrentValue());
+            controllerProfile4.setSummary(controllerProfile4.getCurrentValue(null));
         }
 
         // Enable/disable player map item as necessary
