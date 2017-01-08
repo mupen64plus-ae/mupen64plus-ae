@@ -488,7 +488,6 @@ public class AppData
             
             else if(   hardware.contains( "liberty" )
                     || hardware.contains( "gt-s5830" )
-                    || hardware.contains( "qualcomm" )
                     || hardware.contains( "zeus" ) )
                 hardwareType = HARDWARE_TYPE_QUALCOMM;
             
