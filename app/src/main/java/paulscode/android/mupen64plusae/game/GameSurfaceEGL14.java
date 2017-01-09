@@ -37,6 +37,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import paulscode.android.mupen64plusae.jni.CoreInterface;
+import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.persistent.AppData;
 
 /**
@@ -202,7 +203,7 @@ public class GameSurfaceEGL14 extends GameSurface
             //Don't swap if paused, fixes core dump in some devices.
             if( !CoreInterface.isPaused())
             {
-                if(AppData.IS_JELLY_BEAN_MR2)
+                if(AppData.IS_JELLY_BEAN_MR2 && NativeExports.emuGetSpeed() > 100)
                 {
                     EGLExt.eglPresentationTimeANDROID(mEglDisplay, mEglSurface, System.nanoTime() - 4000);
                 }
