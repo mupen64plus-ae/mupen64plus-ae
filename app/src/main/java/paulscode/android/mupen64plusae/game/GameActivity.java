@@ -86,9 +86,9 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
+import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
-import paulscode.android.mupen64plusae.util.RomHeader;
 
 //@formatter:off
 /**
@@ -207,7 +207,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGlobalPrefs = new GlobalPrefs( this, appData );
 
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, romHeaderName, romGoodName,
-            RomHeader.countryCodeToSymbol(romCountryCode), appData, mGlobalPrefs, legacySaveName );
+            CountryCode.getCountryCode(romCountryCode).toString(), appData, mGlobalPrefs, legacySaveName );
         String cheatArgs =  mGamePrefs.getCheatArgs();
 
         mAutoSaveManager = new GameAutoSaveManager(mGamePrefs, mGlobalPrefs.maxAutoSaves);
@@ -229,7 +229,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // If the orientation changes, the screensize info changes, so we must refresh dependencies
         mGlobalPrefs = new GlobalPrefs( this, appData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, romHeaderName, romGoodName,
-                RomHeader.countryCodeToSymbol(romCountryCode), appData, mGlobalPrefs, legacySaveName );
+                CountryCode.getCountryCode(romCountryCode).toString(), appData, mGlobalPrefs, legacySaveName );
 
         mFirstStart = true;
 

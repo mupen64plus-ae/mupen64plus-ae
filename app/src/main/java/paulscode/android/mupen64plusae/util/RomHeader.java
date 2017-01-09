@@ -20,12 +20,12 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import android.util.Log;
 
 /**
  * Utility class for retrieving information
@@ -49,7 +49,7 @@ public final class RomHeader
     public final int unknown3;                   // 0x34
     public final int manufacturerId;             // 0x38
     public final short cartridgeId;              // 0x3C - Game serial number
-    public final byte countryCode;               // 0x3E
+    public final CountryCode countryCode;               // 0x3E
     // @formatter:on
     public final String crc;
     public final String countrySymbol;
@@ -110,7 +110,7 @@ public final class RomHeader
             unknown3 = 0;
             manufacturerId = 0;
             cartridgeId = 0;
-            countryCode = 0;
+            countryCode = CountryCode.UNKNOWN;
             crc = "";
         }
         else
@@ -131,11 +131,11 @@ public final class RomHeader
             unknown3 = readInt( buffer, 0x34 );
             manufacturerId = readInt( buffer, 0x38 );
             cartridgeId = readShort( buffer, 0x3C );
-            countryCode = buffer[0x3E];
+            countryCode = CountryCode.getCountryCode(buffer[0x3E]);
             crc = String.format( "%08X %08X", crc1, crc2 );
         }
         
-        countrySymbol = countryCodeToSymbol(countryCode);
+        countrySymbol = countryCode.toString();
 
         
         isValid = init_PI_BSB_DOM1_LAT_REG == (byte) 0x80
@@ -148,62 +148,7 @@ public final class RomHeader
                 && init_PI_BSB_DOM1_PWD_REG == (byte) 0x03
                 && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x04;
     }
-    
-    public static String countryCodeToSymbol(byte countryCode)
-    {
-        String countrySymbol;
-        
-        // Symbols match mappings from mupen64plus-core/util.c
-        // See also https://code.google.com/p/mupen64plus/wiki/RomBrowserColumns
-        switch( countryCode )
-        {
-            case 0x00: // Demo
-                countrySymbol = "(Demo)";
-                break;
-            case 0x07: // Beta
-                countrySymbol = "(Beta)";
-                break;
-            case 0x41: // 'A' - Japan / USA
-                countrySymbol = "(JU)";
-                break;
-            case 0x44: // 'D' - Germany
-                countrySymbol = "(G)";
-                break;
-            case 0x45: // 'E' - USA
-                countrySymbol = "(U)";
-                break;
-            case 0x46: // 'F' - France
-                countrySymbol = "(F)";
-                break;
-            case 0x49: // 'I' - Italy
-                countrySymbol = "(I)";
-                break;
-            case 0x4a: // 'J' - Japan
-                countrySymbol = "(J)";
-                break;
-            case 0x53: // 'S' - Spain
-                countrySymbol = "(S)";
-                break;
-            case 0x55: // 'U' - Australia
-            case 0x59: // 'Y' - Australia (alt)
-                countrySymbol = "(A)";
-                break;
-            case 0x50: // 'P' - Europe
-            case 0x58: // 'X' - Europe (alt)
-            case 0x20: // ' ' - Europe (alt)
-            case 0x21: // '!' - Europe (alt)
-            case 0x38: // '8' - Europe (alt)
-            case 0x70: // 'p' - Europe (alt)
-                countrySymbol = "(E)";
-                break;
-            default:
-                countrySymbol = String.format("(%02X)", countryCode );
-                break;
-        }
-        
-        return countrySymbol;
-    }
-    
+
     private static byte[] readFile( File file )
     {
         byte[] buffer = new byte[0x40];

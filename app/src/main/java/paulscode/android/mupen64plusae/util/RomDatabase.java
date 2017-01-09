@@ -137,11 +137,32 @@ public class RomDatabase
     
     public RomDetail lookupByMd5WithFallback( String md5, File file, String crc )
     {
+        RomHeader romHeader = new RomHeader(file);
         RomDetail detail = lookupByMd5( md5 );
         if( detail == null )
         {
             RomDetail[] romDetails = lookupByCrc( crc );
-            if( romDetails.length == 0 || romDetails.length > 1)
+            if(romDetails.length > 1)
+            {
+                // CRC in the database more than once;
+                // Attempt to auto-select the correct match based on country code of rom
+                for(RomDetail romDetail : romDetails)
+                {
+                    if(romDetail.goodName.contains(romHeader.countryCode.toString())) {
+                        detail = romDetail;
+                        break;
+                    }
+                }
+
+                // Catch if something went wrong
+                if(detail==null)
+                {
+                    String goodName = file.getName();
+                    detail = new RomDetail( crc, generateGoodNameFromFileName(goodName) );
+                }
+
+            }
+            else if( romDetails.length == 0)
             {
                 // CRC not in the database; create best guess
                 Log.w( "RomDetail", "No meta-info entry found for ROM " + file.getAbsolutePath() );
@@ -149,14 +170,8 @@ public class RomDatabase
                 Log.w( "RomDetail", "CRC: " + crc );
                 Log.i( "RomDetail", "Constructing a best guess for the meta-info" );
                 String goodName = file.getName();
-                int lastIndexOfPeriod = goodName.lastIndexOf('.');
 
-                if(lastIndexOfPeriod != -1)
-                {
-                    goodName = goodName.substring(0, goodName.lastIndexOf('.'));
-                }
-
-                detail = new RomDetail( crc, goodName );
+                detail = new RomDetail( crc, generateGoodNameFromFileName(goodName) );
             }
             else
             {
@@ -166,6 +181,19 @@ public class RomDatabase
         }
         return detail;
     }
+
+    private static String generateGoodNameFromFileName(String fileName)
+    {
+        int lastIndexOfPeriod = fileName.lastIndexOf('.');
+
+        if(lastIndexOfPeriod != -1)
+        {
+            fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+        }
+
+        return fileName;
+    }
+
     
     public RomDetail lookupByMd5( String md5 )
     {

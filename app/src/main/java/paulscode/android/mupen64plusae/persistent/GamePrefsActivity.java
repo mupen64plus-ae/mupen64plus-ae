@@ -57,9 +57,9 @@ import paulscode.android.mupen64plusae.preference.ProfilePreference;
 import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
+import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
-import paulscode.android.mupen64plusae.util.RomHeader;
 
 
 public class GamePrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
@@ -141,7 +141,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs, mLegacySaveName );
+            CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mLegacySaveName );
         mGlobalPrefs.enforceLocale( this );
         mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
 
@@ -281,7 +281,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Refresh the preferences objects
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs, mLegacySaveName );
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mLegacySaveName );
 
         // Populate the profile preferences
         if(mEmulationProfile != null)
@@ -353,7 +353,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Refresh the preferences objects in case populate* changed a value
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-            RomHeader.countryCodeToSymbol(mRomCountryCode), mAppData, mGlobalPrefs, mLegacySaveName );
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mLegacySaveName );
 
         // Set cheats screen summary text
         mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );

@@ -41,13 +41,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.task.LoadBitmapTask;
+import paulscode.android.mupen64plusae.util.CountryCode;
 
 public class GalleryItem
 {
     public final String md5;
     public final String crc;
     public final String headerName;
-    public final byte countryCode;
+    public final CountryCode countryCode;
     public final String goodName;
     public final String artPath;
     public final int lastPlayed;
@@ -59,7 +60,7 @@ public class GalleryItem
     public BitmapDrawable artBitmap;
     public final float scale;
     
-    public GalleryItem( Context context, String md5, String crc, String headerName, byte countryCode, String goodName, String romPath,
+    public GalleryItem( Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName, String romPath,
             String zipPath, boolean extracted, String artPath, int lastPlayed, float scale )
     {
         this.md5 = md5;
@@ -87,7 +88,7 @@ public class GalleryItem
         this.md5 = null;
         this.crc = null;
         this.headerName = null;
-        this.countryCode = 0;
+        this.countryCode = CountryCode.UNKNOWN;
         this.artPath = null;
         this.artBitmap = null;
         this.lastPlayed = 0;

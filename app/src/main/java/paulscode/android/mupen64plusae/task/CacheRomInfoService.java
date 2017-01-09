@@ -334,7 +334,7 @@ public class CacheRomInfoService extends Service
         config.put( md5, "crc", header.crc );
         config.put( md5, "headerName", header.name );
 
-        String countryCodeString = Byte.toString(header.countryCode);
+        String countryCodeString = Byte.toString(header.countryCode.getValue());
         config.put( md5, "countryCode",  countryCodeString);
         config.put( md5, "extracted", "false" );
 
