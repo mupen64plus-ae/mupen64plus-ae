@@ -23,7 +23,6 @@ package paulscode.android.mupen64plusae.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -33,7 +32,6 @@ import android.os.Vibrator;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -169,16 +167,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         Log.i( "GameActivity", "onCreate" );
         super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat_NoActionBar );
-
-        //Allow volume keys to control media volume if they are not mapped
-        final SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final boolean volKeyMapped = mPreferences.getBoolean("inputVolumeMappable", false);
         final AppData appData = new AppData( this );
-        final GlobalPrefs globalPrefs = new GlobalPrefs(this, appData);
-        if (!volKeyMapped && globalPrefs.audioPlugin.enabled)
-        {
-            setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        }
 
         mMogaController = Controller.getInstance( this );
 
@@ -205,6 +194,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Get app data and user preferences
         mGlobalPrefs = new GlobalPrefs( this, appData );
+
+        //Allow volume keys to control media volume if they are not mapped
+
+        if (!mGlobalPrefs.volKeysMappable && mGlobalPrefs.audioPlugin.enabled)
+        {
+            setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        }
 
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, romHeaderName, romGoodName,
             CountryCode.getCountryCode(romCountryCode).toString(), appData, mGlobalPrefs, legacySaveName );
@@ -798,7 +794,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             {
                 handled = mKeyProvider.onKey(view, keyCode, event);
 
-                if(handled && keyCode != KeyEvent.KEYCODE_MENU && keyCode != KeyEvent.KEYCODE_BACK )
+                //Don't use built in keys in the device to hide the touch controls
+                if(handled &&
+                        keyCode != KeyEvent.KEYCODE_MENU &&
+                        keyCode != KeyEvent.KEYCODE_BACK &&
+                        keyCode != KeyEvent.KEYCODE_VOLUME_UP &&
+                        keyCode != KeyEvent.KEYCODE_VOLUME_DOWN &&
+                        keyCode != KeyEvent.KEYCODE_VOLUME_MUTE
+                        )
                 {
                     mOverlay.onTouchControlsHide();
                 }

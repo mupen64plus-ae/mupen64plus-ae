@@ -263,6 +263,9 @@ public class GlobalPrefs
     /** Maximum number of auto saves */
     public final int maxAutoSaves;
 
+    /** True of volume keys are mappable*/
+    public final boolean volKeysMappable;
+
     /** The input profile for Player 1. */
     public final ControllerProfile controllerProfile1;
 
@@ -495,7 +498,7 @@ public class GlobalPrefs
         maxAutoSaves = mPreferences.getInt( "gameAutoSaves", 5 );
 
         // Determine the key codes that should not be mapped to controls
-        final boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
+        volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
         final boolean backKeyMappable = mPreferences.getBoolean( "inputBackMappable", false );
         final boolean menuKeyMappable = mPreferences.getBoolean( "inputMenuMappable", false );
 
