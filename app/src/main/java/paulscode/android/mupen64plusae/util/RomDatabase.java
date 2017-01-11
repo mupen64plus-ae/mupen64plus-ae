@@ -137,30 +137,30 @@ public class RomDatabase
     
     public RomDetail lookupByMd5WithFallback( String md5, File file, String crc )
     {
-        RomHeader romHeader = new RomHeader(file);
         RomDetail detail = lookupByMd5( md5 );
         if( detail == null )
         {
             RomDetail[] romDetails = lookupByCrc( crc );
             if(romDetails.length > 1)
             {
+                RomHeader romHeader = new RomHeader(file);
+                int count = 0;
                 // CRC in the database more than once;
                 // Attempt to auto-select the correct match based on country code of rom
                 for(RomDetail romDetail : romDetails)
                 {
                     if(romDetail.goodName.contains(romHeader.countryCode.toString())) {
                         detail = romDetail;
-                        break;
+                        ++count;
                     }
                 }
 
-                // Catch if something went wrong
-                if(detail==null)
+                // Catch if none was found or we could not narrow things to only 1 entry
+                if(detail==null || count > 1)
                 {
                     String goodName = file.getName();
                     detail = new RomDetail( crc, generateGoodNameFromFileName(goodName) );
                 }
-
             }
             else if( romDetails.length == 0)
             {

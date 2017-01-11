@@ -160,12 +160,12 @@ public final class RomHeader
         }
         catch( IOException e )
         {
-            Log.w( "RomHeader", "ROM file could not be read" );
+            Log.w( "RomHeader", "ROM file could not be read: " + file );
             buffer = null;
         }
         catch( NullPointerException e )
         {
-            Log.w( "RomHeader", "File does not exist" );
+            Log.w( "RomHeader", "File does not exist: " + file );
             buffer = null;
         }
         finally
@@ -177,7 +177,7 @@ public final class RomHeader
             }
             catch( IOException e )
             {
-                Log.w( "RomHeader", "ROM file could not be closed" );
+                Log.w( "RomHeader", "ROM file could not be closed: " + file );
             }
         }
         return buffer;
