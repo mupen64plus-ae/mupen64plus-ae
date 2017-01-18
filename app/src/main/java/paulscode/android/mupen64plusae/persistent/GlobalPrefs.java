@@ -594,7 +594,7 @@ public class GlobalPrefs
         builder.create().show();
     }
 
-    public String getEmulationProfileDefault()
+    public String getEmulationProfileDefaultDefault()
     {
         String defaultEmulationProfile = DEFAULT_EMULATION_PROFILE_DEFAULT;
 
@@ -607,7 +607,12 @@ public class GlobalPrefs
             defaultEmulationProfile = "GlideN64-GLES-3.1";
         }
 
-        return getString( KEY_EMULATION_PROFILE_DEFAULT, defaultEmulationProfile );
+        return defaultEmulationProfile;
+    }
+
+    public String getEmulationProfileDefault()
+    {
+        return getString( KEY_EMULATION_PROFILE_DEFAULT, getEmulationProfileDefaultDefault() );
     }
 
     public String getTouchscreenProfileDefault()

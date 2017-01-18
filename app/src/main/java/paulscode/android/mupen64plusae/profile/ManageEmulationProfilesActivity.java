@@ -25,7 +25,6 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 public class ManageEmulationProfilesActivity extends ManageProfilesActivity
 {
@@ -40,7 +39,7 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     @Override
     protected String getNoDefaultProfile()
     {
-        return GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT;
+        return mGlobalPrefs.getEmulationProfileDefaultDefault();
     }
     
     @Override

@@ -24,6 +24,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
 public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
 {
@@ -38,7 +39,7 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     @Override
     protected String getNoDefaultProfile()
     {
-        return "";
+        return GlobalPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT;
     }
     
     @Override
