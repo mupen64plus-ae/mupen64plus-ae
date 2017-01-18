@@ -21,7 +21,6 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.UiModeManager;
 import android.content.Context;
@@ -548,7 +547,7 @@ public class AppData
         return glEsVersion & 0xffff;
     }
 
-    public static String getOpenGlEsVersion(Activity activity)
+    public static String getOpenGlEsVersion(Context activity)
     {
         PixelBuffer buffer = new PixelBuffer(320,240);
         String versionString = buffer.getGLVersion();

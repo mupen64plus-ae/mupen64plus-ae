@@ -315,6 +315,8 @@ public class GlobalPrefs
     private final String[] mLocaleNames;
     private final String[] mLocaleCodes;
 
+    private final String supportedGlesVersion;
+
     //Pak Type
     public enum PakType {
         NONE(NativeConstants.PAK_TYPE_NONE, R.string.menuItem_pak_empty),
@@ -554,6 +556,8 @@ public class GlobalPrefs
         showBuiltInControllerProfiles = mPreferences.getBoolean(ManageControllerProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
 
         useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread", false );
+
+        supportedGlesVersion = AppData.getOpenGlEsVersion(context);
     }
 
     public void enforceLocale( Activity activity )
@@ -592,7 +596,18 @@ public class GlobalPrefs
 
     public String getEmulationProfileDefault()
     {
-        return getString( KEY_EMULATION_PROFILE_DEFAULT, DEFAULT_EMULATION_PROFILE_DEFAULT );
+        String defaultEmulationProfile = DEFAULT_EMULATION_PROFILE_DEFAULT;
+
+        if(AppData.doesSupportFullGL())
+        {
+            defaultEmulationProfile = "GlideN64-Full-OpenGL";
+        }
+        else if(supportedGlesVersion.equals("3.1"))
+        {
+            defaultEmulationProfile = "GlideN64-GLES-3.1";
+        }
+
+        return getString( KEY_EMULATION_PROFILE_DEFAULT, defaultEmulationProfile );
     }
 
     public String getTouchscreenProfileDefault()
