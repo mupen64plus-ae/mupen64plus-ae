@@ -604,7 +604,7 @@ public class GlobalPrefs
         }
         else if(supportedGlesVersion.equals("3.1"))
         {
-            defaultEmulationProfile = "GlideN64-GLES-3.1";
+            defaultEmulationProfile = "Glide64-Accurate";
         }
 
         return defaultEmulationProfile;
