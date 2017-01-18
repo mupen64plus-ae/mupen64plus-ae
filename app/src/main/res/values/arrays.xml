@@ -394,7 +394,7 @@
         <item>0</item>
         <item>2</item>
     </string-array>
-    <string name="gliden64_depth_buffer_copy_to_RDRAM_default" translatable="false">0</string>
+    <string name="gliden64_depth_buffer_copy_to_RDRAM_default" translatable="false">2</string>
     
     <!-- GLideN64 color buffer copy to RDRAM list-->
     <string-array name="gliden64_use_native_resolution_factor_entries">

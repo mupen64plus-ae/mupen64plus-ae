@@ -615,22 +615,22 @@ public class GamePrefs
 
         gliden64CropMode = getSafeInt( emulationProfile, "CropMode", 1);
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
-        gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 1);
+        gliden64BilinearMode = getSafeInt( emulationProfile, "bilinearMode", 0);
         gliden64MaxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
         gliden64CacheSize = getSafeInt( emulationProfile, "CacheSize", 64);
         gliden64EnableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         gliden64EnableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         gliden64EnableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
         gliden64EnableShadersStorage = emulationProfile.get( "EnableShadersStorage", "True" ).equals( "True" );
-        gliden64CorrectTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 1);
+        gliden64CorrectTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
         gliden64EnableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "False" ).equals( "True" );
         gliden64EnableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );
         gliden64EnableFragmentDepthWrite = emulationProfile.get( "EnableFragmentDepthWrite", "False" ).equals( "True" );
         gliden64EnableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
         gliden64BufferSwapMode = getSafeInt( emulationProfile, "BufferSwapMode", 2);
-        gliden64EnableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 2);
+        gliden64EnableCopyColorToRDRAM = getSafeInt( emulationProfile, "EnableCopyColorToRDRAM", 0);
         gliden64EnableCopyAuxiliaryToRDRAM = emulationProfile.get( "EnableCopyAuxiliaryToRDRAM", "False" ).equals( "True" );
-        gliden64EnableCopyDepthToRDRAM = getSafeInt( emulationProfile, "EnableCopyDepthToRDRAM", 0 );
+        gliden64EnableCopyDepthToRDRAM = getSafeInt( emulationProfile, "EnableCopyDepthToRDRAM", 2 );
         gliden64EnableCopyColorFromRDRAM = emulationProfile.get( "EnableCopyColorFromRDRAM", "False" ).equals( "True" );
         gliden64EnableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
         gliden64UseNativeResolutionFactor = gliden64EnableNativeResTexrects ?
