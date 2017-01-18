@@ -476,8 +476,9 @@ public class NativeConfigFiles
         // due to incompatibility with Android Native buffers, due to this, don't load
         // default values from GLideN64.custom.ini when running with GLES 2.0 for EnableCopyColorToRDRAM
         // because it could be set that way there.
+        // For GLES-3.0/3.1, some devices don't support fast async reads
         if(glideN64settingValue != null && game.emulationProfile.isBuiltin &&
-            !(game.isGliden64_GLES2Enabled && setting.equals("EnableCopyColorToRDRAM")))
+                !(!game.isGliden64_FullGLEnabled && setting.equals("EnableCopyColorToRDRAM")))
         {
             mupenConfigFile.put( "Video-GLideN64", setting, glideN64settingValue);
 
