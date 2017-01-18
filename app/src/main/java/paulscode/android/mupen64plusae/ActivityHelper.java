@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
@@ -99,7 +100,14 @@ public class ActivityHelper
     
     public static void launchUri( Context context, Uri uri )
     {
-        context.startActivity( new Intent( Intent.ACTION_VIEW, uri ) );
+        try
+        {
+            context.startActivity( new Intent( Intent.ACTION_VIEW, uri ) );
+        }
+        catch(java.lang.SecurityException e)
+        {
+            Log.e("ActivityHelper", "Failed to launch link to due security exception: " + e.toString());
+        }
     }
     
     @SuppressLint( "InlinedApi" )
