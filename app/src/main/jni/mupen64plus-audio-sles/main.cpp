@@ -228,7 +228,7 @@ static void CloseAudio(void)
     }
 
     /* Destroy buffer queue audio player object, and invalidate all associated interfaces */
-    if (playerObject != NULL)
+    if (playerObject != NULL && playerPlay != NULL)
     {
         SLuint32 state = SL_PLAYSTATE_PLAYING;
         (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_STOPPED);
