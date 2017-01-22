@@ -195,7 +195,8 @@ public class GameSurfaceEGL10 extends GameSurface
         try
         {
             //Don't swap if paused, fixes core dump in some devices.
-            if(mEgl != null && !CoreInterface.isPaused())
+            if(mEgl != null && mEglDisplay != null && mEglSurface != null &&
+                    !CoreInterface.isPaused())
             {
                 mEgl.eglSwapBuffers( mEglDisplay, mEglSurface );
             }

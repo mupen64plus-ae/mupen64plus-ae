@@ -201,7 +201,7 @@ public class GameSurfaceEGL14 extends GameSurface
         try
         {
             //Don't swap if paused, fixes core dump in some devices.
-            if( !CoreInterface.isPaused())
+            if( !CoreInterface.isPaused() && mEglDisplay != null && mEglSurface != null )
             {
                 if(AppData.IS_JELLY_BEAN_MR2 && NativeExports.emuGetSpeed() > 100)
                 {
