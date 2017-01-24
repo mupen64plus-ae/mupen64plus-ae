@@ -470,11 +470,11 @@ public class VisibleTouchMap extends TouchMap
         
         super.load( skinDir, profile, animated );
         ConfigFile skin_ini = new ConfigFile( skinFolder + "/skin.ini" );
-        mReferenceWidth = SafeMethods.toInt( skin_ini.get( "INFO", "referenceScreenWidth" ), 0 );
-        mReferenceHeight = SafeMethods.toInt( skin_ini.get( "INFO", "referenceScreenHeight" ), 0 );
-        mFpsTextX = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numx" ), 50 );
+        mReferenceWidth = SafeMethods.toInt( skin_ini.get( "INFO", "referenceScreenWidth" ), 1280 );
+        mReferenceHeight = SafeMethods.toInt( skin_ini.get( "INFO", "referenceScreenHeight" ), 720 );
+        mFpsTextX = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numx" ), 27 );
         mFpsTextY = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numy" ), 50 );
-        mFpsMinPixels = SafeMethods.toInt( skin_ini.get( "INFO", "fps-minPixels" ), 0 );
+        mFpsMinPixels = SafeMethods.toInt( skin_ini.get( "INFO", "fps-minPixels" ), 75 );
         
         // Scale the assets to the last screensize used
         resize( cacheWidth, cacheHeight, cacheMetrics );
