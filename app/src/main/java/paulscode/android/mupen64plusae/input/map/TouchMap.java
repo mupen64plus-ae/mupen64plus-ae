@@ -221,8 +221,26 @@ public class TouchMap
         analogPadding = 32;
         analogDeadzone = 2;
         analogMaximum = 360;
-        for( int i = 0; i < mN64ToColor.length; i++ )
-            mN64ToColor[i] = -1;
+
+        //Defaults in case skin.ini is not present
+        mN64ToColor[AbstractController.DPD_R] = 0x00FFF0;
+        mN64ToColor[AbstractController.DPD_L] = 0xD62D4D;
+        mN64ToColor[AbstractController.DPD_D] = 0xCC00FF;
+        mN64ToColor[AbstractController.DPD_U] = 0xFF0000;
+        mN64ToColor[AbstractController.START] = 0xB45D5D;
+        mN64ToColor[AbstractController.BTN_Z] = 0x42A6EC;
+        mN64ToColor[AbstractController.BTN_B] = 0x4B4B4B;
+        mN64ToColor[AbstractController.BTN_A] = 0x007F46;
+        mN64ToColor[AbstractController.CPD_R] = 0xFF635C;
+        mN64ToColor[AbstractController.CPD_L] = 0x5A6B1F;
+        mN64ToColor[AbstractController.CPD_D] = 0x84A1D5;
+        mN64ToColor[AbstractController.CPD_U] = 0x00E0CA;
+        mN64ToColor[AbstractController.BTN_R] = 0x6B1F49;
+        mN64ToColor[AbstractController.BTN_L] = 0xFFB400;
+        mN64ToColor[DPD_RU] = 0xFFFC00;
+        mN64ToColor[DPD_RD] = 0xFF9600;
+        mN64ToColor[DPD_LD] = 0xA000FF;
+        mN64ToColor[DPD_LU] = 0x00FF5A;
     }
     
     /**
@@ -482,8 +500,8 @@ public class TouchMap
      */
     public void updateButton( Profile profile, String name, int w, int h )
     {
-        int x = profile.getInt( name + "-x", -1 );
-        int y = profile.getInt( name + "-y", -1 );
+        int x = profile.getInt( name + "-x", 0 );
+        int y = profile.getInt( name + "-y", 95 );
         
         if( x >= 0 && y >= 0 )
         {
@@ -545,7 +563,6 @@ public class TouchMap
                     }
                     catch( NumberFormatException ex )
                     {
-                        mN64ToColor[index] = -1;
                         Log.w( "TouchMap", "Invalid mask color '" + val + "' in " + skinFolder + "/skin.ini" );
                     }
                 }
