@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import android.util.Log;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
@@ -73,7 +74,27 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     {
         mInputCodes = inputCodeFilter.clone();
     }
-    
+
+    private static float getCenteredAxis(MotionEvent event, InputDevice device, int axis)
+    {
+        final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
+
+        // A joystick at rest does not always report an absolute position of
+        // (0,0). Use the getFlat() method to determine the range of values
+        // bounding the joystick axis center.
+        if (range != null) {
+            final float flat = range.getFlat();
+            final float value = event.getAxisValue(axis);
+            // Ignore axis values that are within the 'flat' region of the
+            // joystick axis center.
+            if (Math.abs(value) > flat) {
+                return value;
+            }
+        }
+
+        return 0;
+    }
+
     /**
      * Manually dispatches a MotionEvent through the provider's listening chain.
      * 
@@ -84,8 +105,10 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     @Override
     public boolean onGenericMotion(View v, MotionEvent event )
     {
-        boolean isJoystick = (event.getSource() & InputDevice.SOURCE_JOYSTICK) ==
-                InputDevice.SOURCE_JOYSTICK;
+        boolean isJoystick = (event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
+            event.getAction() == MotionEvent.ACTION_MOVE;
+
+        Log.e("AxisProvider", "source=" + event.getSource() + " action=" + event.getAction());
 
         // Ignore motion events from non-joysticks (mice are a problem)
         if(!isJoystick)
@@ -104,10 +127,10 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
             int axisCode = inputToAxisCode( inputCode );
 
             // Get the analog value using the Android API
-            float strength = event.getAxisValue( axisCode );
+            float strength = getCenteredAxis(event, device, axisCode);
 
             // Modify strength if necessary
-            strength = normalizeStrength( strength, axisInfo, device, axisCode );
+            strength = strength != 0 ? normalizeStrength( strength, axisInfo, device, axisCode ) : 0.0f;
 
             // If the strength points in the correct direction, record it
             boolean direction1 = inputToAxisDirection( inputCode );
@@ -121,7 +144,8 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         // Notify listeners about new input data
         notifyListeners( mInputCodes, strengths, getHardwareId( event ) );
 
-        return true;    }
+        return true;
+    }
 
     private float normalizeStrength( float strength, AxisMap axisInfo, InputDevice device,
                                      int axisCode )
@@ -129,6 +153,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         if( axisInfo != null )
         {
             int axisClass = axisInfo.getClass( axisCode );
+            float tempStrengh = 0;
 
             if( axisClass == AxisMap.AXIS_CLASS_IGNORED )
             {
@@ -145,11 +170,17 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
                     {
                         case AxisMap.AXIS_CLASS_STICK:
                             // Normalize to [-1,1]
-                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange() * 2f - 1f;
+                            //strength = ( strength - motionRange.getMin() ) / motionRange.getRange() * 2f - 1f;
+                            tempStrengh = (Math.abs(strength) - motionRange.getFlat()) / (1.0f - motionRange.getFlat());
+                            //Restore sign
+                            strength = tempStrengh * Math.signum(strength);
+
                             break;
                         case AxisMap.AXIS_CLASS_TRIGGER:
                             // Normalize to [0,1]
-                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
+                            tempStrengh = (Math.abs(strength) - motionRange.getFlat()) / (1.0f - motionRange.getFlat());
+                            //Restore sign
+                            strength = tempStrengh * Math.signum(strength);
                             break;
                         case AxisMap.AXIS_CLASS_N64_USB_STICK:
                             // Normalize to [-1,1]

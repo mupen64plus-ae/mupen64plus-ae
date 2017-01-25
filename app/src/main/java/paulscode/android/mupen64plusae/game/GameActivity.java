@@ -126,8 +126,7 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 //@formatter:on
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback, GameSidebarActionHandler,
-        OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedListener, OnExitListener, OnRestartListener, View.OnTouchListener,
-        View.OnGenericMotionListener
+        OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedListener, OnExitListener, OnRestartListener, View.OnTouchListener
 {
     // Activity and views
     private GameSurface mSurface;
@@ -800,8 +799,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         keyCode != KeyEvent.KEYCODE_BACK &&
                         keyCode != KeyEvent.KEYCODE_VOLUME_UP &&
                         keyCode != KeyEvent.KEYCODE_VOLUME_DOWN &&
-                        keyCode != KeyEvent.KEYCODE_VOLUME_MUTE
-                        )
+                        keyCode != KeyEvent.KEYCODE_VOLUME_MUTE &&
+                        mGlobalPrefs.touchscreenAutoHideEnabled)
                 {
                     mOverlay.onTouchControlsHide();
                 }
@@ -921,7 +920,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mGlobalPrefs.unmappableKeyCodes );
         final MogaProvider mogaProvider = new MogaProvider( mMogaController );
         mAxisProvider = new AxisProvider();
-        inputSource.setOnGenericMotionListener(this);
 
         // Request focus for proper listening
         inputSource.requestFocus();
@@ -1100,13 +1098,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
-    public boolean onGenericMotion(View view, MotionEvent motionEvent) {
-
-        mOverlay.onTouchControlsHide();
+    public boolean onGenericMotionEvent(MotionEvent motionEvent) {
+        if(mGlobalPrefs.touchscreenAutoHideEnabled)
+            mOverlay.onTouchControlsHide();
 
         // Attempt to reconnect any disconnected devices
         mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( motionEvent ) );
 
-        return mAxisProvider.onGenericMotion(view, motionEvent);
+        return mAxisProvider.onGenericMotion(null, motionEvent) || super.onGenericMotionEvent(motionEvent);
     }
 }
