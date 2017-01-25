@@ -380,6 +380,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if(!mIsResumed)
         {
+            mIsResumed = true;
+
             tryRunning();
 
             if (mSensorController != null) {
@@ -391,8 +393,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     mGlobalPrefs.displayActionBarTransparency));
 
             mMogaController.onResume();
-
-            mIsResumed = true;
         }
     }
 
