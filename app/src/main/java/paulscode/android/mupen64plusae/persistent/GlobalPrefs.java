@@ -218,6 +218,12 @@ public class GlobalPrefs
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
 
+    /** FPS display x position */
+    public final int fpsXPosition;
+
+    /** FPS display y position */
+    public final int fpsYPosition;
+
     /** True if immersive mode should be used (KitKat only). */
     public final boolean isImmersiveModeEnabled;
 
@@ -444,7 +450,45 @@ public class GlobalPrefs
         displayPosition = getSafeInt( mPreferences, "displayPosition", Gravity.CENTER_VERTICAL );
         final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 80 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
-        isFpsEnabled = mPreferences.getBoolean( "displayFps", false );
+
+        String fpsPosition = mPreferences.getString( "displayFpsV2", "off" );
+
+
+        isFpsEnabled = !fpsPosition.equals("off");
+
+        int tempFpsXPosition = 0;
+        int tempFpsYPosition = 0;
+
+        switch(fpsPosition)
+        {
+            case "topLeft":
+                tempFpsXPosition = 0;
+                tempFpsYPosition = 0;
+                break;
+            case "topCenter":
+                tempFpsXPosition = 50;
+                tempFpsYPosition = 0;
+                break;
+            case "topRight":
+                tempFpsXPosition = 100;
+                tempFpsYPosition = 0;
+                break;
+            case "bottomLeft":
+                tempFpsXPosition = 0;
+                tempFpsYPosition = 100;
+                break;
+            case "bottomCenter":
+                tempFpsXPosition = 50;
+                tempFpsYPosition = 100;
+                break;
+            case "bottomRight":
+                tempFpsXPosition = 100;
+                tempFpsYPosition = 100;
+                break;
+        }
+        fpsXPosition = tempFpsXPosition;
+        fpsYPosition = tempFpsYPosition;
+
         final int selectedHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
         isPolygonOffsetHackEnabled = selectedHardwareType > -2;
         videoHardwareType = selectedHardwareType < 0 ? appData.hardwareInfo.hardwareType : selectedHardwareType;

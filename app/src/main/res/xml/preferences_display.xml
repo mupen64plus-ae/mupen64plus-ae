@@ -91,10 +91,12 @@
         mupen64:stepSize="10"
         mupen64:units="%" />
 
-    <android.support.v7.preference.CheckBoxPreference
-        android:defaultValue="false"
-        android:key="displayFps"
-        android:summary="@string/displayFps_summary"
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/displayFps_default"
+        android:entries="@array/displayFps_entries"
+        android:entryValues="@array/displayFps_values"
+        android:key="displayFpsV2"
+        android:summary="@string/selectedValue"
         android:title="@string/displayFps_title" />
 
     <android.support.v7.preference.CheckBoxPreference

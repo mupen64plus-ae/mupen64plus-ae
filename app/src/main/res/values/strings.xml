@@ -298,7 +298,13 @@
     <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
     <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
     <string name="displayFps_title">Framerate</string>
-    <string name="displayFps_summary">Display FPS on screen</string>
+    <string name="displayFps_entryOff">Off</string>
+    <string name="displayFps_entryTopLeft">Top left</string>
+    <string name="displayFps_entryTopCenter">Top center</string>
+    <string name="displayFps_entryTopRight">Top right</string>
+    <string name="displayFps_entryBottomLeft">Bottom left</string>
+    <string name="displayFps_entryBottomCenter">Bottom center</string>
+    <string name="displayFps_entryBottomRight">Bottom right</string>
     <string name="fix_GLideN64_title">Fix upside down screen</string>
     <string name="fix_GLideN64_summary">Fixes issues with some devices that show an upside down screen with GLideN64-GLES-3.0</string>
     <string name="videoPlugin_title">Video plugin</string>

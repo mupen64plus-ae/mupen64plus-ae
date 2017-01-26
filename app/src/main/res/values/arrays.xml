@@ -165,6 +165,27 @@
     </string-array>
     <string name="displayScaling_default" translatable="false">original</string>
 
+    <!-- FPS position List -->
+    <string-array name="displayFps_entries" translatable="false">
+        <item>@string/displayFps_entryOff</item>
+        <item>@string/displayFps_entryTopLeft</item>
+        <item>@string/displayFps_entryTopCenter</item>
+        <item>@string/displayFps_entryTopRight</item>
+        <item>@string/displayFps_entryBottomLeft</item>
+        <item>@string/displayFps_entryBottomCenter</item>
+        <item>@string/displayFps_entryBottomRight</item>
+    </string-array>
+    <string-array name="displayFps_values" translatable="false">
+        <item>off</item>
+        <item>topLeft</item>
+        <item>topCenter</item>
+        <item>topRight</item>
+        <item>bottomLeft</item>
+        <item>bottomCenter</item>
+        <item>bottomRight</item>
+    </string-array>
+    <string name="displayFps_default" translatable="false">off</string>
+
     <!-- Screen Scaling List -->
     <string-array name="displayScalingGame_entries" translatable="false">
         <item>@string/default_profile_title</item>

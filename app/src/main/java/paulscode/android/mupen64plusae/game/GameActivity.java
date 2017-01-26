@@ -293,8 +293,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( this.getResources() );
             mTouchscreenMap.load( mGamePrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
-                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled,
-                    mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
+                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled, mGlobalPrefs.fpsXPosition,
+                    mGlobalPrefs.fpsYPosition, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
             mOverlay.initialize(mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGlobalPrefs.isFpsEnabled,
                     mGamePrefs.isAnalogHiddenWhenSensor, mGlobalPrefs.isTouchscreenAnimated);
         }

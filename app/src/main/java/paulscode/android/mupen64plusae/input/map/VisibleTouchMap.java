@@ -68,6 +68,12 @@ public class VisibleTouchMap extends TouchMap
     
     /** True if the FPS indicator should be drawn. */
     private boolean mFpsEnabled;
+
+    /* FPS indicator X position */
+    private int mFpsXPos;
+
+    /* FPS indicator Y position */
+    private int mFpsYPos;
     
     /** The factor to scale images by. */
     private float mScalingFactor = 1.0f;
@@ -462,9 +468,12 @@ public class VisibleTouchMap extends TouchMap
      * @param scale      The factor to scale images by.
      * @param alpha      The opacity of the visible elements.
      */
-    public void load( String skinDir, Profile profile, boolean animated, boolean fpsEnabled, float scale, int alpha )
+    public void load( String skinDir, Profile profile, boolean animated, boolean fpsEnabled, int fpsXPos, int fpsYPos,
+                      float scale, int alpha )
     {
         mFpsEnabled = fpsEnabled;
+        mFpsXPos = fpsXPos;
+        mFpsYPos = fpsYPos;
         mScalingFactor = scale;
         mTouchscreenTransparency = alpha;
         
@@ -475,7 +484,7 @@ public class VisibleTouchMap extends TouchMap
         mFpsTextX = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numx" ), 27 );
         mFpsTextY = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numy" ), 50 );
         mFpsMinPixels = SafeMethods.toInt( skin_ini.get( "INFO", "fps-minPixels" ), 75 );
-        
+
         // Scale the assets to the last screensize used
         resize( cacheWidth, cacheHeight, cacheMetrics );
     }
@@ -520,7 +529,7 @@ public class VisibleTouchMap extends TouchMap
         // Load the FPS and autohold images
         if( profile != null )
         {
-            loadFpsIndicator( profile );
+            loadFpsIndicator();
             if( mSplitAB  )
             {
                 loadAutoHoldImages( profile, "buttonA-holdA" );
@@ -628,19 +637,14 @@ public class VisibleTouchMap extends TouchMap
 
     /**
      * Loads FPS indicator assets and properties from the filesystem.
-     * 
-     * @param profile The touchscreen profile containing the FPS properties.
      */
-    private void loadFpsIndicator( Profile profile )
+    private void loadFpsIndicator()
     {
-        int x = profile.getInt( "fps-x", -1 );
-        int y = profile.getInt( "fps-y", -1 );
-        
-        if( x >= 0 && y >= 0 )
+        if( mFpsXPos >= 0 && mFpsYPos >= 0 )
         {
             // Position (percentages of the screen dimensions)
-            mFpsFrameX = x;
-            mFpsFrameY = y;
+            mFpsFrameX = mFpsXPos;
+            mFpsFrameY = mFpsYPos;
             
             // Load frame image
             mFpsFrame = new Image( mResources, skinFolder + "/fps.png" );
