@@ -409,9 +409,6 @@ public class GamePrefs
     /** True if a single peripheral device can control multiple players concurrently. */
     public final boolean isControllerShared;
 
-    /** True if the touchscreen joystick is animated. */
-    public final boolean isTouchscreenAnimated;
-
     /** True if the touchscreen joystick is hidden when sensor is enabled. */
     public final boolean isAnalogHiddenWhenSensor;
 
@@ -684,8 +681,6 @@ public class GamePrefs
 
         if ( isTouchscreenEnabled )
         {
-            isTouchscreenAnimated = touchscreenProfile.get( "touchscreenAnimated", "False" ).equals( "True" );
-
             // Determine the touchscreen auto-holdables
             touchscreenNotAutoHoldables = getSafeIntSet( touchscreenProfile, "touchscreenNotAutoHoldables" );
 
@@ -701,8 +696,8 @@ public class GamePrefs
                 touchscreenSkin = appData.touchscreenSkinsDir + layout;
 
             // Sensor prefs
-            isAnalogHiddenWhenSensor = Boolean.valueOf(touchscreenProfile.get("touchscreenHideAnalogWhenSensor"));
-            sensorActivateOnStart = Boolean.valueOf(touchscreenProfile.get("sensorActivateOnStart"));
+            isAnalogHiddenWhenSensor = touchscreenProfile.get("touchscreenHideAnalogWhenSensor", "False").equals( "True" );
+            sensorActivateOnStart = touchscreenProfile.get("sensorActivateOnStart", "False").equals( "True" );
             sensorAxisX = touchscreenProfile.get("sensorAxisX", "");
             sensorAngleX = SafeMethods.toFloat(touchscreenProfile.get("sensorAngleX"), 0);
             int sensitivity;
@@ -729,7 +724,6 @@ public class GamePrefs
         }
         else
         {
-            isTouchscreenAnimated = false;
             touchscreenNotAutoHoldables = null;
             invertTouchXAxis = false;
             invertTouchYAxis = false;

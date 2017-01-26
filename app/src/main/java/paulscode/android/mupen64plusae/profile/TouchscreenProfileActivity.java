@@ -202,10 +202,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private void refresh()
     {
         // Reposition the assets and refresh the overlay and options menu
-        boolean isTouchscreenAnimated = Boolean.valueOf(mProfile.get( "touchscreenAnimated", "False" ));
-        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, false, isTouchscreenAnimated);
+        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, false, mGlobalPrefs.isTouchscreenAnimated);
         mTouchscreenMap.load( touchscreenSkin, mProfile,
-                isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
+                mGlobalPrefs.isTouchscreenAnimated, true, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
         mOverlay.postInvalidate();
         invalidateOptionsMenu();
@@ -657,7 +656,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 } );
         
         // Setup the visual feedback checkbox
-        CheckBox feedback = (CheckBox) view.findViewById( R.id.checkBox_feedback );
         CheckBox hide = (CheckBox) view.findViewById( R.id.checkBox_hideJoystick );
         CheckBox invertTouchXAxis = (CheckBox) view.findViewById( R.id.checkBox_invertTouchXAxis );
         CheckBox invertTouchYAxis = (CheckBox) view.findViewById( R.id.checkBox_invertTouchYAxis );
@@ -665,19 +663,10 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
 
         if( assetName.equals("analog") )
         {
-            feedback.setChecked(Boolean.valueOf(mProfile.get("touchscreenAnimated", "False")));
             hide.setChecked(Boolean.valueOf(mProfile.get("touchscreenHideAnalogWhenSensor")));
             invertTouchXAxis.setChecked(Boolean.valueOf(mProfile.get(INVERT_TOUCH_X_AXIS, "False")));
             invertTouchYAxis.setChecked(Boolean.valueOf(mProfile.get(INVERT_TOUCH_Y_AXIS, "False")));
-            feedback.setOnCheckedChangeListener( new OnCheckedChangeListener()
-            {
-                @Override
-                public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
-                {
-                    mProfile.put( "touchscreenAnimated", isChecked ? "True" : "False" );
-                    refresh();
-                }
-            } );
+
             hide.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -699,7 +688,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         }
         else
         {
-            feedback.setVisibility( View.GONE);
             hide.setVisibility(View.GONE);
             invertTouchXAxis.setVisibility(View.GONE);
             invertTouchYAxis.setVisibility(View.GONE);

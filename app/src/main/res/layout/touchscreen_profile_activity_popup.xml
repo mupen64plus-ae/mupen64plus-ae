@@ -14,12 +14,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/touchscreenProfileActivity_autoHoldable" />
-        
-        <CheckBox
-            android:id="@+id/checkBox_feedback"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/touchscreenAnimation_summary" />
 
         <CheckBox
             android:id="@+id/checkBox_invertTouchXAxis"

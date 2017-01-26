@@ -170,6 +170,9 @@ public class GlobalPrefs
     /** How long before auto hiding touchscreen buttons */
     public final int touchscreenAutoHideSeconds;
 
+    /** True if the touchscreen joystick is animated. */
+    public final boolean isTouchscreenAnimated;
+
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
 
@@ -431,6 +434,7 @@ public class GlobalPrefs
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldV2", 0 );
         touchscreenAutoHideEnabled = mPreferences.getBoolean( "touchscreenAutoHideEnabled", true );
         touchscreenAutoHideSeconds = mPreferences.getInt( "touchscreenAutoHideSeconds", 5 );
+        isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimated", false );
 
         // Video prefs
         displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 480 );
