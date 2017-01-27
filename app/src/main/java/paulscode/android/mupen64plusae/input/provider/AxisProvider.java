@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
-import android.util.Log;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
@@ -108,8 +107,6 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         boolean isJoystick = (event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
             event.getAction() == MotionEvent.ACTION_MOVE;
 
-        Log.e("AxisProvider", "source=" + event.getSource() + " action=" + event.getAction());
-
         // Ignore motion events from non-joysticks (mice are a problem)
         if(!isJoystick)
             return false;
@@ -144,7 +141,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         // Notify listeners about new input data
         notifyListeners( mInputCodes, strengths, getHardwareId( event ) );
 
-        return false;
+        return true;
     }
 
     private float normalizeStrength( float strength, AxisMap axisInfo, InputDevice device,

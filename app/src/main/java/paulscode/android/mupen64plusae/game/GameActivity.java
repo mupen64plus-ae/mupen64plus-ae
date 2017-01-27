@@ -1105,6 +1105,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Attempt to reconnect any disconnected devices
         mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( motionEvent ) );
 
-        return mAxisProvider.onGenericMotion(null, motionEvent) || super.onGenericMotionEvent(motionEvent);
+        return (mAxisProvider.onGenericMotion(null, motionEvent) && !mDrawerLayout.isDrawerOpen( GravityCompat.START )) ||
+                super.onGenericMotionEvent(motionEvent);
     }
 }
