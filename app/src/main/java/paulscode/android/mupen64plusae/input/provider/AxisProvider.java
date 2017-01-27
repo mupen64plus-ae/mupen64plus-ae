@@ -144,7 +144,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         // Notify listeners about new input data
         notifyListeners( mInputCodes, strengths, getHardwareId( event ) );
 
-        return true;
+        return false;
     }
 
     private float normalizeStrength( float strength, AxisMap axisInfo, InputDevice device,
