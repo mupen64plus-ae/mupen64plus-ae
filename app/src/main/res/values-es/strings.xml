@@ -276,7 +276,13 @@
     <string name="displayScaling_entryCrop">Cortar\n<small>Rellena la pantalla, sin distorsión (corta las gráficas)</small></string>
     <string name="displayScaling_entryStretch">Estirar\n<small>Rellena la pantalla, sin barras negras (agrega distorsión)</small></string>
     <string name="displayFps_title">Velocidad de Cuadros</string>
-    <string name="displayFps_summary">Mostrar FPS en Pantalla</string>
+    <string name="displayFps_entryOff">No mostrar</string>
+    <string name="displayFps_entryTopLeft">Arriba a la izquierda</string>
+    <string name="displayFps_entryTopCenter">Arriba en el centro</string>
+    <string name="displayFps_entryTopRight">Arriba a la derecha</string>
+    <string name="displayFps_entryBottomLeft">Abajo a la izquierda</string>
+    <string name="displayFps_entryBottomCenter">Abajo en el centro</string>
+    <string name="displayFps_entryBottomRight">Abajo a la derecha</string>
     <string name="fix_GLideN64_title">Corregir la pantalla invertida</string>
     <string name="fix_GLideN64_summary">Soluciona problemas con algunos dispositivos que muestran una pantalla invertida con GLideN64-GLES-3.0</string>
     <string name="videoPlugin_title">Plugin de video</string>
