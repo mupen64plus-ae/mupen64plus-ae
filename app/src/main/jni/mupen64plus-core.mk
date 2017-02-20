@@ -49,6 +49,8 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/osal/dynamiclib_unix.c                            \
     $(SRCDIR)/osal/files_unix.c                                 \
     $(SRCDIR)/osd/screenshot.cpp                                \
+    $(SRCDIR)/device/gb/gb_cart.c                               \
+    $(SRCDIR)/device/gb/mbc3_rtc.c                              \
     $(SRCDIR)/device/pi/cart_rom.c                              \
     $(SRCDIR)/device/pi/flashram.c                              \
     $(SRCDIR)/device/pi/pi_controller.c                         \
