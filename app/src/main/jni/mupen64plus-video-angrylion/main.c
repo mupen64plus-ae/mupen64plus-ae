@@ -10,6 +10,7 @@
 #include "api/libretro.h"
 #include "src/Gfx #1.3.h"
 #include <android/log.h>
+#include <freetype/include/config/ftstdlib.h>
 
 extern retro_log_printf_t log_cb;
 extern unsigned int screen_width, screen_height;
@@ -213,4 +214,9 @@ EXPORT m64p_error CALL PluginShutdown(void)
    CoreVideo_Quit();
 
    return M64ERR_SUCCESS;
+}
+
+int irand(void)
+{
+   return rand();
 }

@@ -14,7 +14,7 @@ LOCAL_C_INCLUDES := $(M64P_API_INCLUDES) $(LIBRETRO_INCLUDES)/libretro-common/in
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
-    MY_LOCAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp -ftree-vectorize -mvectorize-with-neon-quad -ftree-vectorizer-verbose=2 -funsafe-math-optimizations
+    MY_LOCAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp -ftree-vectorize -funsafe-math-optimizations
 
 else ifeq ($(TARGET_ARCH_ABI), x86)
     MY_LOCAL_CFLAGS += -DUSE_SSE_SUPPORT
@@ -27,9 +27,9 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/osal_dynamiclib_unix.c \
     $(SRCDIR)/main.c \
     $(SRCDIR)/config_functions.c \
-    $(LIBRETRO_INCLUDES)/libretro_custom.c \
-    $(LIBRETRO_INCLUDES)/RefreshScreen.c \
-    $(LIBRETRO_INCLUDES)/Graphics/plugins.c
+    $(SRCDIR)/../libretro/libretro_custom.c \
+    $(SRCDIR)/../libretro/RefreshScreen.c \
+    $(SRCDIR)/../libretro/Graphics/plugins.c
 
 LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
