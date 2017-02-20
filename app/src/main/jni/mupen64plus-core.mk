@@ -146,7 +146,7 @@ endif
 ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI))","")
     ifeq ($(HOST_OS),windows)
         # mkdir on windows fail with paths using a forward-slash path separator
-        $(shell mkdir jni\mupen64plus-core\src\asm_defines\$(TARGET_ARCH_ABI))
+        $(shell mkdir src\main\jni\mupen64plus-core\src\asm_defines\$(TARGET_ARCH_ABI))
     else
         $(shell mkdir $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI))
     endif
