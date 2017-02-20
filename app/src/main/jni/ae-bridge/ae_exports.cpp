@@ -144,14 +144,6 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     strcpy(path, libPath);
     env->ReleaseStringUTFChars(jlibPath, libPath);
 
-#ifdef __i386__ // ARM libraries are already PIC-compliant
-    // Check if PIC libraries are needed
-    if (jandroidSDK >= ANDROID_SDK_VERSION_M)
-    {
-        coreLibraryName = "mupen64plus-core-pic";
-    }
-#endif
-
     // Open shared libraries
     handleAEI      = loadLibrary(path, "ae-imports");
     handleSDL      = loadLibrary(path, "SDL2");

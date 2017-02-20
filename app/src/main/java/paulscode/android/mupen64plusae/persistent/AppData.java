@@ -135,9 +135,6 @@ public class AppData
     /** The directory for temporary files. Contents deleted on uninstall. */
     public final String tempDir;
     
-    /** True if using x86 on Marshmallow or later. */
-    public final boolean useX86PicLibrary;
-    
     /** The directory containing the native Mupen64Plus libraries. Contents deleted on uninstall, not accessible without root. */
     public final String libsDir;
     
@@ -300,15 +297,8 @@ public class AppData
         
         // Files
         String arch = System.getProperty("os.arch");
-        
-        // Check for x86, ignore 'arch64' or 'x86_64' for now
-        useX86PicLibrary = arch.equals( "i686" ) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-        
-        if (useX86PicLibrary)
-            coreLib = libsDir + "/libmupen64plus-core-pic.so";
-        else
-            coreLib = libsDir + "/libmupen64plus-core.so";
 
+        coreLib = libsDir + "/libmupen64plus-core.so";
         inputLib = libsDir + "/libmupen64plus-input-android.so";
         gln64_conf = coreSharedDataDir + "/gln64.conf";
         glide64mk2_ini = coreSharedDataDir + "/Glide64mk2.ini";

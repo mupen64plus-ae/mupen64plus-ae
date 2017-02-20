@@ -38,8 +38,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.Prompt;
@@ -54,8 +52,6 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
-
-import static android.R.id.message;
 
 /**
  * A class that consolidates all interactions with the emulator core.
@@ -445,7 +441,7 @@ public class CoreInterface
                     arglist.add( "--configdir" );
                     arglist.add( sGamePrefs.coreUserConfigDir );
 
-                    if(!sIsRestarting && !sAppData.useX86PicLibrary)
+                    if(!sIsRestarting)
                     {
                         arglist.add( "--savestate" );
                         arglist.add( saveToLoad );
@@ -556,58 +552,6 @@ public class CoreInterface
 
                 }
             }, "CoreThread" );
-
-            // Auto-load state if desired
-            if( !sIsRestarting && sAppData.useX86PicLibrary )
-            {
-                addOnStateCallbackListener( new OnStateCallbackListener()
-                {
-                    @Override
-                    public void onStateCallback( int paramChanged, int newValue )
-                    {
-                        if( paramChanged == NativeConstants.M64CORE_EMU_STATE
-                                && newValue == NativeConstants.EMULATOR_STATE_RUNNING
-                                && saveToLoad != null)
-                        {
-                            removeOnStateCallbackListener( this );
-
-                            if( sAppData.useX86PicLibrary )
-                            {
-                                // This is a hack to get "Resume" to work on x86 with the old
-                                // dynamic recompiler. Remove it once the new dynamic recompiler
-                                // works on x86 Marshmallow and later.
-                                new Timer("Resume Game").schedule(
-                                    new TimerTask()
-                                    {
-                                        @Override
-                                        public void run()
-                                        {
-                                            NativeExports.emuLoadFile( saveToLoad );
-                                        }
-                                    }, 1000);
-                            }
-
-                            synchronized (sActivitySync)
-                            {
-                                if(sActivity != null)
-                                {
-                                    sActivity.runOnUiThread(new Runnable()
-                                    {
-                                        @Override
-                                        public void run()
-                                        {
-                                            Notifier.showToast(sActivity, R.string.toast_loadingSession);
-
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    }
-                } );
-
-                sIsRestarting = false;
-            }
 
             sUseCustomSpeed = false;
             NativeExports.emuSetSpeed( BASELINE_SPEED );
