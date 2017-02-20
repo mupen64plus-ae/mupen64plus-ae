@@ -14,7 +14,7 @@
 #include "DepthBuffer.h"
 #include "VI.h"
 #include "Config.h"
-
+using namespace gln64Convert;
 
 //thank rice_video for this:
 bool _IsRenderTexture()

@@ -36,6 +36,7 @@ LOCAL_SRC_FILES :=                  \
     $(SRCDIR)/2xSAI.cpp             \
     $(SRCDIR)/3DMath.cpp            \
     $(SRCDIR)/Config.cpp            \
+    $(SRCDIR)/convert.cpp           \
     $(SRCDIR)/CRC.cpp               \
     $(SRCDIR)/DepthBuffer.cpp       \
     $(SRCDIR)/F3D.cpp               \

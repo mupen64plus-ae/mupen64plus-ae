@@ -28,6 +28,7 @@
 #include "CRC.h"
 #include "Debug.h"
 
+using namespace gln64Convert;
 u32 uc_crc, uc_dcrc;
 char uc_str[256];
 

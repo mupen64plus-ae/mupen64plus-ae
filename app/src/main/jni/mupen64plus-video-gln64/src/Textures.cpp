@@ -1,6 +1,9 @@
 #include <time.h>
 #include <stdlib.h>
 #include <memory.h>
+#include "convert.h"
+
+using namespace gln64Convert;
 
 #ifndef min
 #define min(a,b) ((a) < (b) ? (a) : (b))
