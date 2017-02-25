@@ -46,7 +46,6 @@ import org.mupen64plusae.v3.alpha.R;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
-import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.preference.PathPreference;
@@ -203,12 +202,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
 
         requestPermissions();
-
-        // Popup a warning if the installation appears to be corrupt
-        if( !mAppData.isValidInstallation() )
-        {
-            Popups.showInvalidInstall( this );
-        }
     }
 
     public void requestPermissions()
