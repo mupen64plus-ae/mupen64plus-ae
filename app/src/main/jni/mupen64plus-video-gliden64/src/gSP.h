@@ -18,13 +18,10 @@
 #define CLIP_X      0x03
 #define CLIP_NEGX   0x01
 #define CLIP_POSX   0x02
-
 #define CLIP_Y      0x0C
 #define CLIP_NEGY   0x04
 #define CLIP_POSY   0x08
-
 #define CLIP_W      0x10
-
 #define CLIP_ALL	0x1F // CLIP_NEGX|CLIP_POSX|CLIP_NEGY|CLIP_POSY|CLIP_W
 
 #define MODIFY_XY	0x000000FF
@@ -32,13 +29,6 @@
 #define MODIFY_ST	0x00FF0000
 #define MODIFY_RGBA	0xFF000000
 #define MODIFY_ALL	0xFFFFFFFF
-
-#define SC_POSITION             1
-#define SC_COLOR                2
-#define SC_TEXCOORD0            3
-#define SC_TEXCOORD1            4
-#define SC_NUMLIGHTS            5
-#define SC_MODIFY               6
 
 struct SPVertex
 {
@@ -156,6 +146,7 @@ void gSPCBFDVertex( u32 v, u32 n, u32 v0 );
 void gSPDisplayList( u32 dl );
 void gSPBranchList( u32 dl );
 void gSPBranchLessZ( u32 branchdl, u32 vtx, u32 zval );
+void gSPBranchLessW( u32 branchdl, u32 vtx, u32 wval );
 void gSPDlistCount(u32 count, u32 v);
 void gSPSprite2DBase(u32 _base );
 void gSPDMATriangles( u32 tris, u32 n );
@@ -223,4 +214,5 @@ extern void (*gSPLightVertex)(SPVertex & _vtx);
 extern void (*gSPPointLightVertex)(SPVertex & _vtx, float * _vPos);
 extern void (*gSPBillboardVertex)(u32 v, u32 i);
 void gSPSetupFunctions();
+void gSPFlushTriangles();
 #endif

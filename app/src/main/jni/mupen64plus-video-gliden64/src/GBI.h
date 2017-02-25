@@ -17,13 +17,15 @@
 #define F3DPD		8
 #define F3DDKR		9
 #define F3DJFG		10
-#define F3DSWSE		11
-#define F3DWRUS		12
+#define F3DGOLDEN	11
+#define F3DBETA		12
 #define F3DEX2CBFD	13
 #define Turbo3D		14
 #define ZSortp		15
 #define F3DSETA		16
-#define NONE		17
+#define F3DEX2MM	17
+#define F3DTEXA		18
+#define NONE		19
 
 // Fixed point conversion factors
 #define FIXED2FLOATRECIP1	0.5f
@@ -587,7 +589,7 @@ extern u32 G_TEXTURE;
 extern u32 G_DMA_IO, G_DMA_DL, G_DMA_TRI, G_DMA_MTX, G_DMA_VTX, G_DMA_TEX_OFFSET, G_DMA_OFFSETS;
 extern u32 G_SPECIAL_1, G_SPECIAL_2, G_SPECIAL_3;
 extern u32 G_VTX, G_MODIFYVTX, G_VTXCOLORBASE;
-extern u32 G_TRI1, G_TRI2, G_TRI4;
+extern u32 G_TRI1, G_TRI2, G_TRIX;
 extern u32 G_QUAD, G_LINE3D;
 extern u32 G_RESERVED0, G_RESERVED1, G_RESERVED2, G_RESERVED3;
 extern u32 G_SPRITE2D_BASE;
@@ -683,7 +685,6 @@ struct MicrocodeInfo
 	bool NoN;
 	bool textureGen;
 	bool texturePersp;
-	bool branchLessZ;
 };
 
 struct GBIInfo
@@ -700,7 +701,6 @@ struct GBIInfo
 	bool isNoN() const { return m_pCurrent != nullptr ? m_pCurrent->NoN : false; }
 	bool isTextureGen() const { return m_pCurrent != nullptr ? m_pCurrent->textureGen: true; }
 	bool isTexturePersp() const { return m_pCurrent != nullptr ? m_pCurrent->texturePersp: true; }
-	bool isBranchLessZ() const { return m_pCurrent != nullptr ? m_pCurrent->branchLessZ : true; }
 
 private:
 	void _flushCommands();

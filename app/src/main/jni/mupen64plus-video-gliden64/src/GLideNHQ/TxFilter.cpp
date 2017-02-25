@@ -49,7 +49,6 @@ void TxFilter::clear()
 	/* clear other stuff */
 	delete _txImage;
 	delete _txQuantize;
-	delete _txUtil;
 }
 
 TxFilter::~TxFilter()
@@ -60,7 +59,7 @@ TxFilter::~TxFilter()
 TxFilter::TxFilter(int maxwidth, int maxheight, int maxbpp, int options,
 	int cachesize, const wchar_t * path, const wchar_t * texPackPath, const wchar_t * ident,
 				   dispInfoFuncExt callback) :
-	_tex1(nullptr), _tex2(nullptr), _txQuantize(nullptr), _txTexCache(nullptr), _txHiResCache(nullptr), _txUtil(nullptr), _txImage(nullptr)
+	_tex1(nullptr), _tex2(nullptr), _txQuantize(nullptr), _txTexCache(nullptr), _txHiResCache(nullptr), _txImage(nullptr)
 {
 	/* HACKALERT: the emulator misbehaves and sometimes forgets to shutdown */
 	if ((ident && wcscmp(ident, wst("DEFAULT")) != 0 && _ident.compare(ident) == 0) &&
@@ -90,10 +89,9 @@ TxFilter::TxFilter(int maxwidth, int maxheight, int maxbpp, int options,
 
 	_txImage      = new TxImage();
 	_txQuantize   = new TxQuantize();
-	_txUtil       = new TxUtil();
 
 	/* get number of CPU cores. */
-	_numcore = _txUtil->getNumberofProcessors();
+	_numcore = TxUtil::getNumberofProcessors();
 
 	_initialized = 0;
 
@@ -116,7 +114,7 @@ TxFilter::TxFilter(int maxwidth, int maxheight, int maxbpp, int options,
 	if (ident && wcscmp(ident, wst("DEFAULT")) != 0)
 		_ident.assign(ident);
 
-	if (TxMemBuf::getInstance()->init(_maxwidth, _maxheight, (_options & DEPOSTERIZE) ? 1 : 0)) {
+	if (TxMemBuf::getInstance()->init(_maxwidth, _maxheight)) {
 		if (!_tex1)
 			_tex1 = TxMemBuf::getInstance()->get(0);
 
@@ -161,7 +159,7 @@ TxFilter::filter(uint8 *src, int srcwidth, int srcheight, uint16 srcformat, uint
 
 		/* calculate checksum of source texture */
 		if (!g64crc)
-			g64crc = (uint64)(_txUtil->checksumTx(texture, srcwidth, srcheight, srcformat));
+			g64crc = (uint64)(TxUtil::checksumTx(texture, srcwidth, srcheight, srcformat));
 
 		DBG_INFO(80, wst("filter: crc:%08X %08X %d x %d gfmt:%x\n"),
 				 (uint32)(g64crc >> 32), (uint32)(g64crc & 0xffffffff), srcwidth, srcheight, srcformat);
@@ -312,7 +310,8 @@ TxFilter::filter(uint8 *src, int srcwidth, int srcheight, uint16 srcformat, uint
 																srcwidth,
 																blkheight,
 																(uint32*)_tmptex,
-																filter));
+																filter,
+																i));
 						_texture += srcStride;
 						_tmptex  += destStride;
 					}
@@ -321,13 +320,14 @@ TxFilter::filter(uint8 *src, int srcwidth, int srcheight, uint16 srcformat, uint
 															srcwidth,
 															srcheight - blkheight * i,
 															(uint32*)_tmptex,
-															filter));
+															filter,
+															i));
 					for (i = 0; i < numcore; i++) {
 						thrd[i]->join();
 						delete thrd[i];
 					}
 				} else {
-					filter_8888((uint32*)_texture, srcwidth, srcheight, (uint32*)_tmptex, filter);
+					filter_8888((uint32*)_texture, srcwidth, srcheight, (uint32*)_tmptex, filter, 0);
 				}
 
 				if (filter & ENHANCEMENT_MASK) {
@@ -561,7 +561,7 @@ uint64
 TxFilter::checksum64(uint8 *src, int width, int height, int size, int rowStride, uint8 *palette)
 {
 	if (_options & (HIRESTEXTURES_MASK|DUMP_TEX))
-		return _txUtil->checksum64(src, width, height, size, rowStride, palette);
+		return TxUtil::checksum64(src, width, height, size, rowStride, palette);
 
 	return 0;
 }

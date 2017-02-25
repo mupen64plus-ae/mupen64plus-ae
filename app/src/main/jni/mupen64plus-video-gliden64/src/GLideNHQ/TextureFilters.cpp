@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 #include "TextureFilters.h"
 #include "TxUtil.h"
 
@@ -744,19 +745,22 @@ void deposterizeV(uint32* data, uint32* out, int w, int h, int l, int u) {
 }
 
 static
-void DePosterize(uint32* source, uint32* dest, int width, int height) {
-	uint32 * buf = (uint32*)TxMemBuf::getInstance()->get(3);
+void DePosterize(uint32* source, uint32* dest, uint32* buf, int width, int height) {
 	deposterizeH(source, buf, width, 0, height);
 	deposterizeV(buf, dest, width, height, 0, height);
 	deposterizeH(dest, buf, width, 0, height);
 	deposterizeV(buf, dest, width, height, 0, height);
 }
 
-void filter_8888(uint32 *src, uint32 srcwidth, uint32 srcheight, uint32 *dest, uint32 filter) {
+void filter_8888(uint32 *src, uint32 srcwidth, uint32 srcheight, uint32 *dest, uint32 filter, uint32 threadId) {
 	if (filter & DEPOSTERIZE) {
-		uint32 * tex = (uint32*)TxMemBuf::getInstance()->get(2);
-		DePosterize(src, tex, srcwidth, srcheight);
-		src = tex;
+		const auto bufSize = srcwidth * srcheight;
+		uint32 * tex = TxMemBuf::getInstance()->getThreadBuf(threadId, 0, bufSize);
+		uint32 * buf = TxMemBuf::getInstance()->getThreadBuf(threadId, 1, bufSize);
+		if (tex != nullptr && buf != nullptr) {
+			DePosterize(src, tex, buf, srcwidth, srcheight);
+			src = tex;
+		}
 	}
 	switch (filter & ENHANCEMENT_MASK) {
 	case BRZ2X_ENHANCEMENT:

@@ -19,41 +19,45 @@
 #include "S2DEX.h"
 #include "S2DEX2.h"
 #include "F3DDKR.h"
-#include "F3DSWSE.h"
-#include "F3DWRUS.h"
+#include "F3DBETA.h"
 #include "F3DPD.h"
 #include "F3DSETA.h"
+#include "F3DGOLDEN.h"
 #include "F3DEX2CBFD.h"
+#include "F3DEX2MM.h"
+#include "F3DTEXA.h"
 #include "ZSort.h"
 #include "CRC.h"
 #include "Log.h"
-#include "OpenGL.h"
 #include "Debug.h"
+#include "Graphics/Context.h"
+#include "Graphics/Parameters.h"
 
 u32 last_good_ucode = (u32) -1;
 
 SpecialMicrocodeInfo specialMicrocodes[] =
 {
-	{ F3D,		false,	0xe62a706d, "Fast3D" },
-	{ F3D,		false,	0x7d372819, "Fast3D" },
-	{ F3D,		false,	0xe01e14be, "Fast3D" },
-	{ F3D,		false,	0x4AED6B3B, "Fast3D" }, //Vivid Dolls [ALECK64]
+	{ F3D,			false,	0xe62a706d, "Fast3D" },
+	{ F3D,			false,	0x7d372819, "Fast3D" },
+	{ F3D,			false,	0xe01e14be, "Fast3D" },
+	{ F3D,			false,	0x4AED6B3B, "Fast3D" }, //Vivid Dolls [ALECK64]
 
-	{ F3DSETA,	false,	0x2edee7be, "RSP SW Version: 2.0D, 04-01-96" },
-	{ F3DWRUS,	false,	0xd17906e2, "RSP SW Version: 2.0D, 04-01-96" },
-	{ F3DSWSE,	false,	0x94c4c833, "RSP SW Version: 2.0D, 04-01-96" },
-	{ F3DEX,	true,	0x637b4b58, "RSP SW Version: 2.0D, 04-01-96" },
-	{ F3D,		true,	0x54c558ba, "RSP SW Version: 2.0D, 04-01-96" }, // Pilot Wings
-	{ F3D,		true,	0x302bca09, "RSP SW Version: 2.0G, 09-30-96" }, // GoldenEye
+	{ F3DSETA,		false,	0x2edee7be, "RSP SW Version: 2.0D, 04-01-96" },
+	{ F3DBETA,		false,	0xd17906e2, "RSP SW Version: 2.0D, 04-01-96" }, // Wave Race (U)
+	{ F3DBETA,		false,	0x94c4c833, "RSP SW Version: 2.0D, 04-01-96" }, // Star Wars Shadows of Empire
+	{ F3DEX,		true,	0x637b4b58, "RSP SW Version: 2.0D, 04-01-96" },
+	{ F3D,			true,	0x54c558ba, "RSP SW Version: 2.0D, 04-01-96" }, // Pilot Wings
+	{ F3DGOLDEN,	true,	0x302bca09, "RSP SW Version: 2.0G, 09-30-96" }, // GoldenEye
 
-	{ S2DEX,	false,	0x9df31081, "RSP Gfx ucode S2DEX  1.06 Yoshitaka Yasumoto Nintendo." },
+	{ S2DEX,		false,	0x9df31081, "RSP Gfx ucode S2DEX  1.06 Yoshitaka Yasumoto Nintendo." },
 
-	{ F3DDKR,	false,	0x8d91244f, "Diddy Kong Racing" },
-	{ F3DDKR,	false,	0x6e6fc893, "Diddy Kong Racing" },
-	{ F3DJFG,	false,	0xbde9d1fb, "Jet Force Gemini" },
-	{ F3DPD,	true,	0x1c4f7869, "Perfect Dark" },
-	{ Turbo3D,	false,	0x2bdcfc8a, "Turbo3D" },
-	{ F3DEX2CBFD, true, 0x1b4ace88, "Conker's Bad Fur Day" }
+	{ F3DDKR,		false,	0x8d91244f, "Diddy Kong Racing" },
+	{ F3DDKR,		false,	0x6e6fc893, "Diddy Kong Racing" },
+	{ F3DJFG,		false,	0xbde9d1fb, "Jet Force Gemini" },
+	{ F3DPD,		true,	0x1c4f7869, "Perfect Dark" },
+	{ Turbo3D,		false,	0x2bdcfc8a, "Turbo3D" },
+	{ F3DEX2CBFD,	true,	0x1b4ace88, "Conker's Bad Fur Day" },
+	{ F3DEX2MM,	true,	0xd39a0d4f, "Animal Forest" }
 };
 
 u32 G_RDPHALF_1, G_RDPHALF_2, G_RDPHALF_CONT;
@@ -68,7 +72,7 @@ u32 G_TEXTURE;
 u32 G_DMA_IO, G_DMA_DL, G_DMA_TRI, G_DMA_MTX, G_DMA_VTX, G_DMA_TEX_OFFSET, G_DMA_OFFSETS;
 u32 G_SPECIAL_1, G_SPECIAL_2, G_SPECIAL_3;
 u32 G_VTX, G_MODIFYVTX, G_VTXCOLORBASE;
-u32 G_TRI1, G_TRI2, G_TRI4;
+u32 G_TRI1, G_TRI2, G_TRIX;
 u32 G_QUAD, G_LINE3D;
 u32 G_RESERVED0, G_RESERVED1, G_RESERVED2, G_RESERVED3;
 u32 G_SPRITE2D_BASE;
@@ -165,52 +169,54 @@ void GBIInfo::_makeCurrent(MicrocodeInfo * _pCurrent)
 
 		RDP_Init();
 
-		G_TRI1 = G_TRI2 = G_TRI4 = G_QUAD = -1; // For correct work of gSPFlushTriangles()
+		G_TRI1 = G_TRI2 = G_TRIX = G_QUAD = -1; // For correct work of gSPFlushTriangles()
 
 		switch (m_pCurrent->type) {
-			case F3D:		F3D_Init();		break;
-			case F3DEX:		F3DEX_Init();	break;
-			case F3DEX2:	F3DEX2_Init();	break;
-			case L3D:		L3D_Init();		break;
-			case L3DEX:		L3DEX_Init();	break;
-			case L3DEX2:	L3DEX2_Init();	break;
-			case S2DEX:		S2DEX_Init();	break;
-			case S2DEX2:	S2DEX2_Init();	break;
-			case F3DDKR:	F3DDKR_Init();	break;
-			case F3DJFG:	F3DJFG_Init();	break;
-			case F3DSWSE:	F3DSWSE_Init();	break;
-			case F3DWRUS:	F3DWRUS_Init();	break;
-			case F3DPD:		F3DPD_Init();	break;
-			case Turbo3D:	F3D_Init();		break;
-			case ZSortp:	ZSort_Init();	break;
-			case F3DEX2CBFD:F3DEX2CBFD_Init(); break;
-			case F3DSETA:	F3DSETA_Init();	break;
+			case F3D:		F3D_Init();			break;
+			case F3DEX:		F3DEX_Init();		break;
+			case F3DEX2:	F3DEX2_Init();		break;
+			case L3D:		L3D_Init();			break;
+			case L3DEX:		L3DEX_Init();		break;
+			case L3DEX2:	L3DEX2_Init();		break;
+			case S2DEX:		S2DEX_Init();		break;
+			case S2DEX2:	S2DEX2_Init();		break;
+			case F3DDKR:	F3DDKR_Init();		break;
+			case F3DJFG:	F3DJFG_Init();		break;
+			case F3DBETA:	F3DBETA_Init();		break;
+			case F3DPD:		F3DPD_Init();		break;
+			case Turbo3D:	F3D_Init();			break;
+			case ZSortp:	ZSort_Init();		break;
+			case F3DEX2CBFD:F3DEX2CBFD_Init();	break;
+			case F3DSETA:	F3DSETA_Init();		break;
+			case F3DGOLDEN:	F3DGOLDEN_Init();	break;
+			case F3DEX2MM:	F3DEX2MM_Init();	break;
+			case F3DTEXA:	F3DTEXA_Init();		break;
 		}
 
-#ifndef GLESX
-		if (m_pCurrent->NoN) {
-			// Disable near and far plane clipping
-			glEnable(GL_DEPTH_CLAMP);
-			// Enable Far clipping plane in vertex shader
-			glEnable(GL_CLIP_DISTANCE0);
-		} else {
-			glDisable(GL_DEPTH_CLAMP);
-			glDisable(GL_CLIP_DISTANCE0);
+		if (gfxContext.isSupported(graphics::SpecialFeatures::NearPlaneClipping)) {
+			if (m_pCurrent->NoN) {
+				// Disable near and far plane clipping
+				gfxContext.enable(graphics::enable::DEPTH_CLAMP, true);
+				// Enable Far clipping plane in vertex shader
+				gfxContext.enable(graphics::enable::CLIP_DISTANCE0, true);
+			} else {
+				gfxContext.enable(graphics::enable::DEPTH_CLAMP, false);
+				gfxContext.enable(graphics::enable::CLIP_DISTANCE0, false);
+			}
 		}
-#endif
 	} else if (m_pCurrent->NoN != _pCurrent->NoN) {
-#ifndef GLESX
-		if (_pCurrent->NoN) {
-			// Disable near and far plane clipping
-			glEnable(GL_DEPTH_CLAMP);
-			// Enable Far clipping plane in vertex shader
-			glEnable(GL_CLIP_DISTANCE0);
+		if (gfxContext.isSupported(graphics::SpecialFeatures::NearPlaneClipping)) {
+			if (_pCurrent->NoN) {
+				// Disable near and far plane clipping
+				gfxContext.enable(graphics::enable::DEPTH_CLAMP, true);
+				// Enable Far clipping plane in vertex shader
+				gfxContext.enable(graphics::enable::CLIP_DISTANCE0, true);
+			}
+			else {
+				gfxContext.enable(graphics::enable::DEPTH_CLAMP, false);
+				gfxContext.enable(graphics::enable::CLIP_DISTANCE0, false);
+			}
 		}
-		else {
-			glDisable(GL_DEPTH_CLAMP);
-			glDisable(GL_CLIP_DISTANCE0);
-		}
-#endif
 	}
 	m_pCurrent = _pCurrent;
 }
@@ -241,7 +247,6 @@ void GBIInfo::loadMicrocode(u32 uc_start, u32 uc_dstart, u16 uc_dsize)
 	current.NoN = false;
 	current.textureGen = true;
 	current.texturePersp = true;
-	current.branchLessZ = true;
 	current.type = NONE;
 
 	// See if we can identify it by CRC
@@ -287,7 +292,9 @@ void GBIInfo::loadMicrocode(u32 uc_start, u32 uc_dstart, u16 uc_dsize)
 					if (strncmp(&uc_str[14], "F3DF", 4) == 0)
 						current.textureGen = false;
 					else if (strncmp(&uc_str[14], "F3DZ", 4) == 0)
-						current.branchLessZ = false;
+						type = F3DEX2MM;
+					else if (strncmp(&uc_str[14], "F3DTEX/A", 8) == 0)
+						type = F3DTEXA;
 					else if (strncmp(&uc_str[14], "F3DLX.Rej", 9) == 0)
 						current.NoN = true;
 					else if (strncmp(&uc_str[14], "F3DLP.Rej", 9) == 0) {

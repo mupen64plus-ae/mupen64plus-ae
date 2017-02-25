@@ -25,6 +25,7 @@
 #include "TxDbg.h"
 #include <zlib.h>
 #include <malloc.h>
+#include <assert.h>
 
 #if defined (OS_MAC_OS_X)
 #include <sys/param.h>
@@ -490,7 +491,7 @@ int
 TxUtil::getNumberofProcessors()
 {
 	int numcore = 1;
-#ifndef ANDROID
+#ifndef OS_ANDROID
 	try {
 #if defined (OS_WINDOWS)
 		SYSTEM_INFO sysinfo;
@@ -518,7 +519,7 @@ TxUtil::getNumberofProcessors()
 	}
 
 	if (numcore > MAX_NUMCORE) numcore = MAX_NUMCORE;
-#endif // ANDROID
+#endif // OS_ANDROID
 	DBG_INFO(80, wst("Number of processors : %d\n"), numcore);
 
 	return numcore;
@@ -529,8 +530,7 @@ TxUtil::getNumberofProcessors()
  ******************************************************************************/
 TxMemBuf::TxMemBuf()
 {
-	int i;
-	for (i = 0; i < 4; i++) {
+	for (uint32 i = 0; i < 2; i++) {
 		_tex[i] = nullptr;
 		_size[i] = 0;
 	}
@@ -542,44 +542,79 @@ TxMemBuf::~TxMemBuf()
 }
 
 boolean
-TxMemBuf::init(int maxwidth, int maxheight, boolean deposterize)
+TxMemBuf::init(int maxwidth, int maxheight)
 {
-	_numBufs = deposterize ? 4 : 2;
-	for (uint32 i = 0; i < _numBufs; i++) {
-		if (!_tex[i]) {
-			_tex[i] = (uint8 *)malloc(maxwidth * maxheight * 4);
-			_size[i] = maxwidth * maxheight * 4;
+	try {
+		for (uint32 i = 0; i < 2; i++) {
+			if (_tex[i] == nullptr) {
+				_tex[i] = (uint8 *)malloc(maxwidth * maxheight * 4);
+				_size[i] = maxwidth * maxheight * 4;
+			}
+
+			if (_tex[i] == nullptr) {
+				shutdown();
+				return 0;
+			}
 		}
 
-		if (!_tex[i]) {
-			shutdown();
-			return 0;
+		if (_bufs.empty()) {
+			const int numcore = TxUtil::getNumberofProcessors();
+			const size_t numBuffers = numcore*2;
+			_bufs.resize(numBuffers);
 		}
+	} catch(std::bad_alloc) {
+		shutdown();
+		return 0;
 	}
+
 	return 1;
 }
 
 void
 TxMemBuf::shutdown()
 {
-	int i;
-	for (i = 0; i < _numBufs; i++) {
-		if (_tex[i]) free(_tex[i]);
+	for (int i = 0; i < 2; i++) {
+		if (_tex[i] != nullptr)
+			free(_tex[i]);
 		_tex[i] = nullptr;
 		_size[i] = 0;
+	}
+
+	for (auto i: _bufs) {
+		i.clear();
 	}
 }
 
 uint8*
-TxMemBuf::get(unsigned int num)
+TxMemBuf::get(uint32 num)
 {
-	return ((num < _numBufs) ? _tex[num] : nullptr);
+	assert(num < 2);
+	return _tex[num];
 }
 
 uint32
-TxMemBuf::size_of(unsigned int num)
+TxMemBuf::size_of(uint32 num)
 {
-	return ((num < _numBufs) ? _size[num] : 0);
+	assert(num < 2);
+	return _size[num];
+}
+
+uint32*
+TxMemBuf::getThreadBuf(uint32 threadIdx, uint32 num, uint32 size)
+{
+	assert(num < 2);
+	const auto idx = threadIdx * 2 + num;
+	auto& buf = _bufs[idx];
+
+	if (buf.size() < size) {
+		try {
+			buf.resize(size, 0);
+		} catch(std::bad_alloc) {
+			return nullptr;
+		}
+	}
+
+	return buf.data();
 }
 
 void setTextureFormat(uint16 internalFormat, GHQTexInfo * info)
