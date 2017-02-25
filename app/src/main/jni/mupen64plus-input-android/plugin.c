@@ -20,6 +20,7 @@
  */
 
 #include <string.h>
+#include <stdio.h>
 #include <jni.h>
 #include <android/log.h>
 
@@ -44,7 +45,7 @@
 #define RD_RESETCONTROLLER  		0xff   	// reset controller
 
 // Internal constants
-static const unsigned short const BUTTON_BITS[] =
+static const unsigned short BUTTON_BITS[] =
 {
         0x0001,  // R_DPAD
         0x0002,  // L_DPAD
