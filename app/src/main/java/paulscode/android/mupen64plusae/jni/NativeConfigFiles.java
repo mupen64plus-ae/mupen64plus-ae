@@ -49,71 +49,6 @@ public class NativeConfigFiles
     private static boolean force16bpp = false;
     private static boolean fullAlphaChannel = false;
 
-    private enum GLideN64Version
-    {
-        GLES20("libmupen64plus-video-gliden64-gles20.so", 20),
-        GLES30("libmupen64plus-video-gliden64-gles30.so", 30),
-        GLES31("libmupen64plus-video-gliden64-gles31.so", 31),
-        GLES32("libmupen64plus-video-gliden64-gles31.so", 31),
-        EGL("libmupen64plus-video-gliden64-egl.so", 45);
-
-        private final String mLibraryName;
-        private final int mValue;
-
-        GLideN64Version(String libraryName, int value)
-        {
-            mLibraryName = libraryName;
-            mValue = value;
-        }
-
-        /**
-         * Get the smallest version of GLideN64
-         * @param value1 First value to compare
-         * @param value2 Second value to compare
-         * @return The smallest of the two
-         */
-        public static GLideN64Version smallest(GLideN64Version value1, GLideN64Version value2)
-        {
-            if(value1.mValue >= value2.mValue)
-                return value2;
-            else
-                return value1;
-        }
-
-        /**
-         * Get the library name
-         * @return The library name
-         */
-        public String getLibraryName()
-        {
-            return mLibraryName;
-        }
-
-        /**
-         * Given a GL version string, this will return the GLideN64 version
-         * @param name Gets a GLideN64 version from a GL version string
-         * @return GLideN64Version of the correct type for the string
-         */
-        public static GLideN64Version fromString(String name) {
-
-            switch(name){
-                case "2.0":
-                    return GLES20;
-                case "3.0":
-                    return GLES30;
-                case "3.1":
-                    return GLES31;
-                case "3.2":
-                    return GLES32;
-                case "EGL":
-                    return EGL;
-                default:
-                    return GLES20;
-            }
-        }
-    }
-
-
     /**
      * Populates the core configuration files with the user preferences.
      */
@@ -204,7 +139,9 @@ public class NativeConfigFiles
 
         if(game.isGliden64Enabled)
         {
-            videoPluginString = fixGLideN64(game, openGlEsVersion, videoPluginString);
+            // Fix old format GLideN64 library using regular expression, for example, this will replace
+            // libmupen64plus-video-gliden64-gles3.so with libmupen64plus-video-gliden64.so
+            videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-gliden64.*so", "libmupen64plus-video-gliden64.so");
         }
 
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + videoPluginString + '"' );                              // Filename of video plugin
@@ -342,56 +279,6 @@ public class NativeConfigFiles
         mupen64plus_cfg.save();
 
         //@formatter:on
-    }
-
-    /**
-     * Fix up unsupported GLideN64 versions, this is in case a user manages to select an unsupported GLideN64 Version
-     * @param game Gameprefs data
-     * @param openGlEsVersion Device supported GLES version
-     * @param videoPlugin Video plugin path
-     * @return Updated video plugin path
-     */
-    private static String fixGLideN64(GamePrefs game,
-                                      String openGlEsVersion, String videoPlugin)
-    {
-        String videoPluginString = videoPlugin;
-        boolean supportsFullGl = AppData.doesSupportFullGL();
-
-        GLideN64Version supportedGLESVersion = GLideN64Version.fromString(openGlEsVersion);
-
-        // If the selected version is the Full GL version and we don't support it,
-        // then attempt to use version GLES 3.1 or max supported
-        if(!supportsFullGl && game.isGliden64_FullGLEnabled )
-        {
-            GLideN64Version maxGLideN64Version = GLideN64Version.GLES31;
-            GLideN64Version selectedGLideN64Version = GLideN64Version.smallest(supportedGLESVersion, maxGLideN64Version);
-
-            videoPluginString = videoPluginString.replace(GLideN64Version.GLES30.getLibraryName(), selectedGLideN64Version.getLibraryName());
-            videoPluginString = videoPluginString.replace(GLideN64Version.GLES31.getLibraryName(), selectedGLideN64Version.getLibraryName());
-            videoPluginString = videoPluginString.replace(GLideN64Version.EGL.getLibraryName(), selectedGLideN64Version.getLibraryName());
-        }
-        else if (!supportsFullGl)
-        {
-            GLideN64Version selectedGLideN64Version = GLideN64Version.GLES20;
-
-            if(game.isGliden64_GLES31Enabled)
-            {
-                selectedGLideN64Version = GLideN64Version.GLES31;
-            }
-            else if(game.isGliden64_GLES3Enabled)
-            {
-                selectedGLideN64Version = GLideN64Version.GLES30;
-            }
-            else if(game.isGliden64_GLES2Enabled)
-            {
-                selectedGLideN64Version = GLideN64Version.GLES20;
-            }
-
-            videoPluginString = videoPluginString.replace(GLideN64Version.GLES30.getLibraryName(), selectedGLideN64Version.getLibraryName());
-            videoPluginString = videoPluginString.replace(GLideN64Version.GLES31.getLibraryName(), selectedGLideN64Version.getLibraryName());
-        }
-
-        return videoPluginString;
     }
 
     private static String boolToTF( boolean b )
