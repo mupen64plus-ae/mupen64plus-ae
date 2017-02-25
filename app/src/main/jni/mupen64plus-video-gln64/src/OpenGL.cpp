@@ -663,7 +663,10 @@ void OGL_UpdateStates()
     }
 
     if ((gDP.changed & CHANGED_BLENDCOLOR) || (gDP.changed & CHANGED_RENDERMODE))
-        SC_SetUniform1f(uAlphaRef, (gDP.otherMode.cvgXAlpha) ? 0.5f : gDP.blendColor.a);
+    {
+        float newCvgXAlpha = (gDP.otherMode.cvgXAlpha) ? 0.5f : gDP.blendColor.a;
+        SC_SetUniform1f(uAlphaRef, newCvgXAlpha);
+    }
 
     if (gDP.changed & CHANGED_SCISSOR)
         OGL_UpdateScissor();

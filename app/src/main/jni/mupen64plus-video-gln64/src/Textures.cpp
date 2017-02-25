@@ -513,7 +513,7 @@ void TextureCache_Remove( CachedTexture *texture )
 
 #ifdef __HASHMAP_OPT
     CachedTexture* tex= cache.hash.find(texture->crc);
-    if (tex == texture);
+    if (tex == texture)
         cache.hash.insert(texture->crc, NULL);
 #endif
 

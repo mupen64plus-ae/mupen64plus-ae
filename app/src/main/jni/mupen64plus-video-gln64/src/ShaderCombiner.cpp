@@ -530,7 +530,9 @@ void _update_uniforms()
     SC_SetUniform1f(uRenderState, OGL.renderState);
     SC_SetUniform1f(uFogMultiplier, (float) gSP.fog.multiplier / 255.0f);
     SC_SetUniform1f(uFogOffset, (float) gSP.fog.offset / 255.0f);
-    SC_SetUniform1f(uAlphaRef, (gDP.otherMode.cvgXAlpha) ? 0.5 : gDP.blendColor.a);
+
+    float newAlphaRef = (gDP.otherMode.cvgXAlpha) ? 0.5 : gDP.blendColor.a;
+    SC_SetUniform1f(uAlphaRef, newAlphaRef);
     SC_SetUniform1f(uK4, gDP.convert.k4);
     SC_SetUniform1f(uK5, gDP.convert.k5);
 

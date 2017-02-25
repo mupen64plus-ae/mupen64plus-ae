@@ -50,6 +50,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
 EXPORT m64p_error CALL PluginShutdown(void)
 {
     OGL_Stop();  // paulscode, OGL_Stop missing from Yongzh's code
+
+    return M64ERR_SUCCESS;
 }
 
 EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType,
