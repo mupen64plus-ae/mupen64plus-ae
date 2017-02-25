@@ -66,7 +66,7 @@ LOCAL_CFLAGS :=         \
     -DUSE_GLES          \
     -fsigned-char       \
     
-LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
+LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value
     
 LOCAL_CPP_FEATURES := exceptions
 
