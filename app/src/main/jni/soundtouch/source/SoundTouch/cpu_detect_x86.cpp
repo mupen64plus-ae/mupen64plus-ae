@@ -52,10 +52,6 @@
        // windows non-gcc
        #include <intrin.h>
    #endif
-
-   #define bit_MMX     (1 << 23)
-   #define bit_SSE     (1 << 25)
-   #define bit_SSE2    (1 << 26)
 #endif
 
 

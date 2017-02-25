@@ -235,7 +235,7 @@ void BPMDetect::updateXCorr(int process_samples)
         }
         xcorr[offs] *= xcorr_decay;   // decay 'xcorr' here with suitable time constant.
 
-        xcorr[offs] += (float)fabs(sum);
+        xcorr[offs] += (float)fabs(static_cast<float>(sum));
     }
 }
 
