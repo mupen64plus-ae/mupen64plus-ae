@@ -94,6 +94,8 @@ EXPORT m64p_error CALL InitiateGFX (GFX_INFO Gfx_Info)
 {
    gfx_info = Gfx_Info;
    angrylionInitiateGFX(Gfx_Info);
+
+   return M64ERR_SUCCESS;
 }
 
  
@@ -122,6 +124,8 @@ EXPORT void CALL RomClosed (void)
 EXPORT m64p_error CALL RomOpen (void)
 {
    angrylionRomOpen();
+
+   return M64ERR_SUCCESS;
 }
 
 EXPORT void CALL UpdateScreen(void)
@@ -189,7 +193,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
 
    retro_init();
 
-   if(ConfigGetParamBool == NULL)
+   if(&ConfigGetParamBool == NULL)
    {
    __android_log_print(ANDROID_LOG_ERROR, "Angrylion", "ConfigGetParamBool IS NULL");
    }
