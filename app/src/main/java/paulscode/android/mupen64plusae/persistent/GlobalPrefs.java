@@ -648,7 +648,7 @@ public class GlobalPrefs
 
         if(AppData.doesSupportFullGL())
         {
-            defaultEmulationProfile = "GlideN64-Full-OpenGL";
+            defaultEmulationProfile = "GlideN64-Very-Accurate";
         }
         else if(supportedGlesVersion.equals("3.1"))
         {
