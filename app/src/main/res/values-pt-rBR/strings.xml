@@ -259,8 +259,6 @@
 <small>(adaptado de Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Redução de Flicker</string>
   <string name="videoHardwareType_entryDisableHack">Desativar hack de redução de flicker</string>
-  <string name="videoSubPlugin_entryGles30">OpenGL ES 3.0\n<small>(Requer Android 4.3+ e dispotivo com suporte)</small></string>
-  <string name="videoSubPlugin_entryGles31">OpenGL ES 3.1\n<small>(Requer Android 5.0+ e dispotivo com suporte)</small></string>
   <string name="videoHardwareType_entryAuto">Auto detectar pelo modelo do celular/tablet</string>
   <string name="videoHardwareType_entryStandard">Perfil padrão</string>
   <string name="videoHardwareType_entryI">Perfil I</string>

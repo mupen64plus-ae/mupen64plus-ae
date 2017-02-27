@@ -55,11 +55,6 @@ public class EmulationProfileActivity extends ProfileActivity
 
     private static final String RSP_PLUGIN = "rspSetting";
     private static final String VIDEO_PLUGIN = "videoPlugin";
-    private static final String VIDEO_SUB_PLUGIN = "videoSubPlugin";
-    private static final String GLIDEN64_MULTI_SAMPLING = "MultiSampling";
-    private static final String GLIDEN64_ENABLE_SHADER_STORAGE = "EnableShadersStorage";
-    private static final String GLIDEN64_ENABLE_N64_DEPTH_COMPARE = "EnableN64DepthCompare";
-    private static final String GLIDEN64_ENABLE_FRAGMENT_DEPTH_WRITE = "EnableFragmentDepthWrite";
 
     // These constants must match the entry-values found in arrays.xml
     private static final String LIBGLIDE64_SO = "libmupen64plus-video-glide64mk2.so";
@@ -67,9 +62,6 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
     private static final String LIBANGRYLION_SO = "libmupen64plus-video-angrylion.so";
-    private static final String GLES20 = "-gles20";
-    private static final String GLES31 = "-gles31";
-    private static final String FULLOGL = "-egl";
 
     // Preference menu items
     private PreferenceGroup mScreenRoot = null;
@@ -86,7 +78,6 @@ public class EmulationProfileActivity extends ProfileActivity
 
     private CompatListPreference mPreferenceRspPlugin = null;
     private CompatListPreference mPreferenceVideoPlugin = null;
-    private CompatListPreference mPreferenceVideoSubPlugin = null;
 
     private String mCurrentVideoPlugin = null;
     
@@ -117,7 +108,7 @@ public class EmulationProfileActivity extends ProfileActivity
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        if(key.equals("videoPlugin") || key.equals("videoSubPlugin"))
+        if(key.equals("videoPlugin"))
         {
             resetPreferences();
         }
@@ -152,22 +143,14 @@ public class EmulationProfileActivity extends ProfileActivity
         mPreferenceRspPlugin = (CompatListPreference) findPreference( RSP_PLUGIN );
         mPreferenceVideoPlugin = (CompatListPreference) findPreference( VIDEO_PLUGIN );
 
-        mPreferenceVideoSubPlugin = (CompatListPreference) findPreference( VIDEO_SUB_PLUGIN );
-
         // Get the current values
         String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
-        String videoSubPlugin = mPrefs.getString( VIDEO_SUB_PLUGIN, null );
         
         String openGlVersion = AppData.getOpenGlEsVersion(this);
 
         //Remove or add options depending on GLES version
         if(openGlVersion.equals("2.0"))
         {
-            if(mPreferenceVideoSubPlugin != null) {
-                //Don't allow GLideN64 3.0 or 3.1
-                mScreenRoot.removePreference(mPreferenceVideoSubPlugin);
-            }
-
             if(mPreferenceVideoPlugin != null) {
                 //Don't allow angrylion
                 ArrayList<CharSequence> videoEntriesArray = new ArrayList<CharSequence>(Arrays.asList(mPreferenceVideoPlugin.getEntries()));
@@ -182,38 +165,6 @@ public class EmulationProfileActivity extends ProfileActivity
 
                 mPreferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[videoEntriesArray.size()]));
                 mPreferenceVideoPlugin.setEntryValues(videoValuesArray.toArray(new CharSequence[videoValuesArray.size()]));
-            }
-        }
-        else
-        {
-            if(mPreferenceVideoSubPlugin != null) {
-                ArrayList<String> entries = new ArrayList<String>();
-                ArrayList<String> values = new ArrayList<String>();
-
-                if (openGlVersion.equals("3.0")) {
-                    entries.add(getString(R.string.videoSubPlugin_entryGles20));
-                    entries.add(getString(R.string.videoSubPlugin_entryGles30));
-                    values.add("-gles20");
-                    values.add("-gles30");
-                } else if (openGlVersion.equals("3.1") || openGlVersion.equals("3.2")) {
-                    entries.add(getString(R.string.videoSubPlugin_entryGles20));
-                    entries.add(getString(R.string.videoSubPlugin_entryGles30));
-                    entries.add(getString(R.string.videoSubPlugin_entryGles31));
-                    values.add("-gles20");
-                    values.add("-gles30");
-                    values.add("-gles31");
-                }
-
-                if (AppData.doesSupportFullGL()) {
-                    entries.add(getString(R.string.videoSubPlugin_entryEgl));
-                    values.add("-egl");
-                }
-
-                String[] entriesArray = entries.toArray(new String[entries.size()]);
-                String[] valuesArray = values.toArray(new String[values.size()]);
-
-                mPreferenceVideoSubPlugin.setEntries(entriesArray);
-                mPreferenceVideoSubPlugin.setEntryValues(valuesArray);
             }
         }
         
@@ -285,15 +236,6 @@ public class EmulationProfileActivity extends ProfileActivity
                 mScreenRoot.addPreference( mCategoryGliden64TextureFiltering );
                 mScreenRoot.addPreference( mCategoryGliden64Bloom );
                 mScreenRoot.addPreference( mCategoryGliden64Gamma );
-
-                boolean isGles20 = GLES20.equals( videoSubPlugin );
-                boolean isGles31 = GLES31.equals( videoSubPlugin );
-                boolean isOGL = FULLOGL.equals( videoSubPlugin );
-                findPreference( GLIDEN64_MULTI_SAMPLING ).setEnabled( isGles31 || isOGL );
-                findPreference( GLIDEN64_ENABLE_SHADER_STORAGE ).setEnabled( !isGles20 );
-                findPreference( GLIDEN64_ENABLE_N64_DEPTH_COMPARE ).setEnabled( isGles31 || isOGL);
-                findPreference( GLIDEN64_ENABLE_FRAGMENT_DEPTH_WRITE ).setEnabled(!isGles20);
-
             }
             else
             {
@@ -304,15 +246,6 @@ public class EmulationProfileActivity extends ProfileActivity
                 mScreenRoot.removePreference( mCategoryGliden64Bloom );
                 mScreenRoot.removePreference( mCategoryGliden64Gamma );
             }
-        }
-
-        //Don't allow a subplugin if not GLideN64
-        if(mPreferenceVideoSubPlugin != null && !openGlVersion.equals("2.0"))
-        {
-            if( videoPlugin.contains( "%1$s" ) )
-                mScreenRoot.addPreference( mPreferenceVideoSubPlugin );
-            else
-                mScreenRoot.removePreference( mPreferenceVideoSubPlugin );
         }
 
         //Limit RSP options based on plugin
@@ -358,11 +291,6 @@ public class EmulationProfileActivity extends ProfileActivity
                 if(mPreferenceRspPlugin != null && mPreferenceRspPlugin.getEntryValues().length != 0)
                 {
                     mPreferenceRspPlugin.setValue(mPreferenceRspPlugin.getEntryValues()[0].toString());
-                }
-
-                if(mPreferenceVideoSubPlugin != null && mPreferenceVideoSubPlugin.getEntryValues().length != 0)
-                {
-                    mPreferenceVideoSubPlugin.setValue(mPreferenceVideoSubPlugin.getEntryValues()[0].toString());
                 }
 
                 mPrefs.edit().apply();

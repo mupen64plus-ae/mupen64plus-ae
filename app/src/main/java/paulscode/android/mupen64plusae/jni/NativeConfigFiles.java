@@ -49,13 +49,17 @@ public class NativeConfigFiles
     private static boolean force16bpp = false;
     private static boolean fullAlphaChannel = false;
 
+    //True if this device supports full GL mode
+    private static boolean supportsFullGl = false;
+
     /**
      * Populates the core configuration files with the user preferences.
      */
-    public static void syncConfigFiles( GamePrefs game, GlobalPrefs global, AppData appData,
-                                        String openGlEsVersion )
+    public static void syncConfigFiles( GamePrefs game, GlobalPrefs global, AppData appData)
     {
         //@formatter:off
+
+        supportsFullGl = appData.doesSupportFullGL();
 
         // gln64 config file
         final ConfigFile gln64_conf = new ConfigFile( appData.gln64_conf );
@@ -191,7 +195,7 @@ public class NativeConfigFiles
         // gln64 config file
         final ConfigFile glideN64_conf = new ConfigFile( appData.glideN64_conf );
 
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "17" );
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "16" );
 
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
@@ -365,7 +369,7 @@ public class NativeConfigFiles
         // because it could be set that way there.
         // For GLES-3.0/3.1, some devices don't support fast async reads
         if(glideN64settingValue != null && game.emulationProfile.isBuiltin &&
-                !(!game.isGliden64_FullGLEnabled && setting.equals("EnableCopyColorToRDRAM")))
+                !(!supportsFullGl && setting.equals("EnableCopyColorToRDRAM")))
         {
             mupenConfigFile.put( "Video-GLideN64", setting, glideN64settingValue);
 

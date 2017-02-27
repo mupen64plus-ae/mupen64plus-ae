@@ -308,11 +308,6 @@
 	<string name="videoPlugin_entryAngrylion">angrylion\n<small>(angrylion программный визуализатолр)</small></string>
 	<string name="videoPlugin_entryGlide64">glide64\n<small>(адаптация Glide64 Final (10th Anniversary))</small></string>
 	<string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 beta)</small></string>
-	<string name="videoSubPlugin_title">Вариант видео плагина</string>
-	<string name="videoSubPlugin_entryGles20">OpenGL ES 2.0</string>
-	<string name="videoSubPlugin_entryGles30">OpenGL ES 3.0\n<small>(требует Android 4.3+ и поддержку устройства)</small></string>
-	<string name="videoSubPlugin_entryGles31">OpenGL ES 3.1\n<small>(требует Android 5.0+ и поддержку устройства)</small></string>
-	<string name="videoSubPlugin_entryEgl">Full OpenGL\n<small>(требует Android 5.0+ and и поддержку устройства)</small></string>
 	<string name="videoHardwareType_title">Уменьшение мерцания</string>
 	<string name="videoHardwareType_entryDisableHack">Хак отключения уменьшения мерцания</string>
 	<string name="videoHardwareType_entryAuto">Автоматическое считывание модели смартфона/планшета</string>

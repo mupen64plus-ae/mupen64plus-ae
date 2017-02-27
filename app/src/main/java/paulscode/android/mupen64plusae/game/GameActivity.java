@@ -237,7 +237,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             this.setContentView( R.layout.game_activity_egl14);
             mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
 
-            mSurface.setFullGLStatus(mGamePrefs.isGliden64_FullGLEnabled);
+            mSurface.setFullGLStatus(mGamePrefs.isGliden64Enabled);
         }
         else
         {
@@ -262,8 +262,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mGameSidebar.setTitle(romGoodName);
         // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( this, mSurface, mGamePrefs, mRomPath, cheatArgs, doRestart,
-                AppData.getOpenGlEsVersion(this) );
+        CoreInterface.initialize( this, mSurface, mGamePrefs, mRomPath, cheatArgs, doRestart);
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);

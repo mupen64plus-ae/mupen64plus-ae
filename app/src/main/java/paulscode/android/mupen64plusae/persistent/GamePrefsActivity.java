@@ -54,7 +54,6 @@ import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
-import paulscode.android.mupen64plusae.profile.Profile;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
 import paulscode.android.mupen64plusae.util.CountryCode;
@@ -286,27 +285,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         // Populate the profile preferences
         if(mEmulationProfile != null)
         {
-            final String openGlVersion = AppData.getOpenGlEsVersion(this);
-            final ArrayList<Profile> exclusions = new ArrayList<Profile>();
-
-            if (openGlVersion.equals("2.0"))
-            {
-                exclusions.add(new Profile(true, "GlideN64-GLES-3.0", null));
-                exclusions.add(new Profile(true, "GlideN64-GLES-3.1", null));
-            }
-            else if (openGlVersion.equals("3.0"))
-            {
-                exclusions.add(new Profile(true, "GlideN64-GLES-3.1", null));
-            }
-
-            if(!AppData.doesSupportFullGL())
-            {
-                exclusions.add(new Profile(true, "GlideN64-Full-OpenGL", null));
-            }
-
             mEmulationProfile.populateProfiles( mAppData.GetEmulationProfilesConfig(),
                 mGlobalPrefs.GetEmulationProfilesConfig(), true, mGlobalPrefs.getEmulationProfileDefault(),
-                    exclusions, mGlobalPrefs.showBuiltInEmulationProfiles);
+                    null, mGlobalPrefs.showBuiltInEmulationProfiles);
             mEmulationProfile.setSummary(mEmulationProfile.getCurrentValue(null));
         }
 

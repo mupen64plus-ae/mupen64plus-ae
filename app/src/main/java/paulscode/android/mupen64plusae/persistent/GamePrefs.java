@@ -108,18 +108,6 @@ public class GamePrefs
     /** True if gliden64 video plug-in is enabled. */
     public final boolean isGliden64Enabled;
 
-    /** True if gliden64 GLES2.0 video plug-in is enabled. */
-    public final boolean isGliden64_GLES2Enabled;
-
-    /** True if gliden64 GLES3.0 video plug-in is enabled. */
-    public final boolean isGliden64_GLES3Enabled;
-
-    /** True if gliden64 GLES3.1 video plug-in is enabled. */
-    public final boolean isGliden64_GLES31Enabled;
-
-    /** True if GlideN64 full OpenGL video plug-in is enabled */
-    public final boolean isGliden64_FullGLEnabled;
-
     /** True if angrylion video plug-in is enabled. */
     public final boolean isAngrylionEnabled;
 
@@ -570,11 +558,7 @@ public class GamePrefs
         }
 
 
-        final Plugin tempVideoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
-        if( tempVideoPlugin.name.contains( "%1$s" ))
-            videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin", "videoSubPlugin" );
-        else
-            videoPlugin = tempVideoPlugin;
+        videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
 
         // Video prefs - gln64
         isGln64Enabled = videoPlugin.name.equals( "libmupen64plus-video-gln64.so" );
@@ -604,11 +588,7 @@ public class GamePrefs
         glide64MaxFrameskip = Math.abs( maxFrameskip );
 
         // Video prefs - GLideN64
-        isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64" );
-        isGliden64_GLES2Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles20.so" );
-        isGliden64_GLES3Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles30.so" );
-        isGliden64_GLES31Enabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-gles31.so" );
-        isGliden64_FullGLEnabled = videoPlugin.name.equals( "libmupen64plus-video-gliden64-egl.so" );
+        isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64.so" );
 
         gliden64CropMode = getSafeInt( emulationProfile, "CropMode", 1);
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);

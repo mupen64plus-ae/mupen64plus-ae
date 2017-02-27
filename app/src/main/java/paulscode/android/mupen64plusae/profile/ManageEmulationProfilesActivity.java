@@ -23,7 +23,6 @@ package paulscode.android.mupen64plusae.profile;
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 
 public class ManageEmulationProfilesActivity extends ManageProfilesActivity
@@ -64,29 +63,6 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     protected int getWindowTitleResource()
     {
         return R.string.ManageEmulationProfilesActivity_title;
-    }
-    
-    @Override
-    protected void refreshList()
-    {
-        super.refreshList();
-        
-        String openGlVersion = AppData.getOpenGlEsVersion(this);
-        
-        if(openGlVersion.equals("2.0"))
-        {
-            RemoveProfile("GlideN64-GLES-3.0");
-            RemoveProfile("GlideN64-GLES-3.1");
-        }
-        else if(openGlVersion.equals("3.0"))
-        {
-            RemoveProfile("GlideN64-GLES-3.1");
-        }
-
-        if(!AppData.doesSupportFullGL())
-        {
-            RemoveProfile("GlideN64-Full-OpenGL");
-        }
     }
 
     @Override
