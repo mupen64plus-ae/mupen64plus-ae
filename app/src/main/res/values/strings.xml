@@ -306,7 +306,7 @@
     <string name="displayFps_entryBottomCenter">Bottom center</string>
     <string name="displayFps_entryBottomRight">Bottom right</string>
     <string name="fix_GLideN64_title">Fix upside down screen</string>
-    <string name="fix_GLideN64_summary">Fixes issues with some devices that show an upside down screen with GLideN64-GLES-3.0</string>
+    <string name="fix_GLideN64_summary">Fixes issues with some devices that show an upside down screen with GLideN64</string>
     <string name="videoPlugin_title">Video plugin</string>
     <string name="videoPlugin_entryNone">None (video disabled)</string>
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>

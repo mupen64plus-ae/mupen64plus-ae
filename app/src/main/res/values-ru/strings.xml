@@ -300,7 +300,7 @@
 	<string name="displayFps_title">Частота кадров</string>
 	<string name="displayFps_summary">Отображать FPS на экране</string>
 	<string name="fix_GLideN64_title">Исправить перевёрнутый экран</string>
-	<string name="fix_GLideN64_summary">Исправляет проблемы с перевёрнутым экраном, которые возникают на некоторых устройствах при использовании GLideN64-GLES-3.0</string>
+	<string name="fix_GLideN64_summary">Исправляет проблемы с перевёрнутым экраном, которые возникают на некоторых устройствах при использовании GLideN64</string>
 	<string name="videoPlugin_title">Видео плагин</string>
 	<string name="videoPlugin_entryNone">Нет (Видео отключено)</string>
 	<string name="videoPlugin_entryGln64">gln64\n<small>(адаптация GLN64 v0.4.1)</small></string>

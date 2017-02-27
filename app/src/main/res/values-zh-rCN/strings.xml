@@ -466,7 +466,7 @@
     <string name="displayFps_entryTopCenter">顶部中心</string>
     <string name="displayFps_entryTopLeft">左上方</string>
     <string name="displayFps_entryTopRight">右上方</string>
-    <string name="fix_GLideN64_summary">修复了一些设备屏幕显示上下颠倒与 GLideN64-GLES-3.0 的问题</string>
+    <string name="fix_GLideN64_summary">修复了一些设备屏幕显示上下颠倒与 GLideN64 的问题</string>
     <string name="fix_GLideN64_title">修复屏幕倒置</string>
     <string name="galleryDonateDialogTitle">赞助开发人员</string>
     <string name="galleryDonationError">处理错误</string>
