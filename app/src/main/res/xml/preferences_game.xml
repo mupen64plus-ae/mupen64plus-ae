@@ -131,8 +131,8 @@
             android:defaultValue="0"
             android:key="screenAdvancedCountPerOp"
             android:title="@string/screenAdvanced_CountPerOpTitle"
-            mupen64:maximumValue="0"
-            mupen64:minimumValue="4"
+            mupen64:maximumValue="4"
+            mupen64:minimumValue="0"
             mupen64:stepSize="1"
             mupen64:units=""/>
 
@@ -140,8 +140,8 @@
             android:defaultValue="0"
             android:key="screenAdvancedCountPerScanline"
             android:title="@string/screenAdvanced_CountPerScanline"
-            mupen64:maximumValue="0"
-            mupen64:minimumValue="3000"
+            mupen64:maximumValue="3000"
+            mupen64:minimumValue="0"
             mupen64:stepSize="50"
             mupen64:units=""/>
     </android.support.v7.preference.PreferenceScreen>
