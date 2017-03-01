@@ -122,6 +122,30 @@
         android:summary="@string/playerMap_summary"
         android:title="@string/playerMap_title" />
 
+    <android.support.v7.preference.PreferenceScreen
+        android:icon="@drawable/ic_settings"
+        android:key="screenAdvanced"
+        android:title="@string/screenAdvanced_title" >
+
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="screenAdvancedCountPerOp"
+            android:title="@string/screenAdvanced_CountPerOpTitle"
+            mupen64:maximumValue="0"
+            mupen64:minimumValue="4"
+            mupen64:stepSize="1"
+            mupen64:units=""/>
+
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="screenAdvancedCountPerScanline"
+            android:title="@string/screenAdvanced_CountPerScanline"
+            mupen64:maximumValue="0"
+            mupen64:minimumValue="3000"
+            mupen64:stepSize="50"
+            mupen64:units=""/>
+    </android.support.v7.preference.PreferenceScreen>
+
     <android.support.v7.preference.Preference
         android:icon="@drawable/ic_help"
         android:key="actionWiki"

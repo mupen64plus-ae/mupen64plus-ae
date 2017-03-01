@@ -418,11 +418,17 @@ public class GamePrefs
     /** If display mode is stretch*/
     public final boolean mStretch;
 
+    /** Core CountPerOp setting */
+    public final int countPerOp;
+
+    /** Core CountPerScanline setting */
+    public final int countPerScanline;
+
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
     /** Game CRC */
-    public final String crc;
+    public final String gameCrc;
 
     private final SharedPreferences mPreferences;
 
@@ -454,6 +460,7 @@ public class GamePrefs
         gameHeaderName = headerName;
         gameGoodName = goodName;
         legacySaveFileName = legacySave;
+        gameCrc = crc;
         
         sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
@@ -759,7 +766,10 @@ public class GamePrefs
         isPlugged2 = isControllerEnabled2;
         isPlugged3 = isControllerEnabled3;
         isPlugged4 = isControllerEnabled4;
-        this.crc = crc;
+
+        //A value of zero means default for the game as specified in mupen64plus.ini
+        countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+        countPerScanline = mPreferences.getInt( "screenAdvancedCountPerScanline", 0 );
     }
 
     public String getCheatArgs()
@@ -767,7 +777,7 @@ public class GamePrefs
         if( !isCheatOptionsShown )
             return "";
 
-        final Pattern pattern = Pattern.compile( "^" + crc + " Cheat(\\d+)" );
+        final Pattern pattern = Pattern.compile( "^" + gameCrc + " Cheat(\\d+)" );
         StringBuilder builder = null;
         final Map<String, ?> map = mPreferences.getAll();
         for (final String key : map.keySet())

@@ -338,9 +338,14 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
         // Set cheats screen summary text
         mScreenCheats = (PreferenceScreen) findPreference( SCREEN_CHEATS );
-        mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
-                ? R.string.screenCheats_summaryEnabled
-                : R.string.screenCheats_summaryDisabled );
+
+        // This is null when entering sub screens other than "SCREEN_CHEATS"
+        if(mScreenCheats != null)
+        {
+            mScreenCheats.setSummary( mGamePrefs.isCheatOptionsShown
+                    ? R.string.screenCheats_summaryEnabled
+                    : R.string.screenCheats_summaryDisabled );
+        }
 
         // Enable/disable player map item as necessary
         PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP, mGamePrefs.playerMap.isEnabled() );
