@@ -594,8 +594,8 @@ public class GamePrefs
         isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
         glide64MaxFrameskip = Math.abs( maxFrameskip );
 
-        // Video prefs - GLideN64
-        isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64.so" );
+        // Video prefs - GLideN64, this is a more broad search because there used to be more than one GLideN64 version
+        isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64" );
 
         gliden64CropMode = getSafeInt( emulationProfile, "CropMode", 1);
         gliden64MultiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
