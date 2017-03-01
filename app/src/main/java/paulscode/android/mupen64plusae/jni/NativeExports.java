@@ -80,6 +80,8 @@ public class NativeExports
     public static native boolean emuGetFramelimiter();
     
     public static native int emuGetSlot();
+
+    public static native int emuReset();
     
     public static native void notifySDLSurfaceDestroyed();
     

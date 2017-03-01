@@ -381,6 +381,12 @@ extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_
     return (jint) slot;
 }
 
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuReset(JNIEnv* env, jclass cls)
+{
+    if (coreDoCommand) coreDoCommand(M64CMD_RESET, 0, NULL);
+}
+
+
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_notifySDLSurfaceDestroyed(JNIEnv* env, jclass cls)
 {
     if (nativePause) nativePause(env, cls);

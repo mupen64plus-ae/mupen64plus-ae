@@ -458,7 +458,6 @@ public class CoreInterface
                     }
                     arglist.add( sRomPath );
 
-                    sIsRestarting = false;
                     final int result = NativeExports.emuStart( sGlobalPrefs.coreUserDataDir, sGlobalPrefs.coreUserCacheDir, arglist.toArray() );
                     sIsCoreRunning = false;
 
@@ -538,18 +537,12 @@ public class CoreInterface
                                         sActivity.finish();
                                     }
 
-                                    if(sActivity != null && sActivity instanceof OnExitListener && !sIsRestarting)
+                                    if(sActivity != null && sActivity instanceof OnExitListener)
                                         ((OnExitListener)sActivity).onExitFinished();
                                 }
                             } );
                         }
                     }
-
-                    if(sIsRestarting)
-                    {
-                        CoreInterface.startupEmulator(null);
-                    }
-
                 }
             }, "CoreThread" );
 
@@ -929,8 +922,7 @@ public class CoreInterface
 
     public static synchronized void restartEmulator()
     {
-        sIsRestarting = true;
-        CoreInterface.shutdownEmulator();
+        NativeExports.emuReset();
     }
 
     public static synchronized void restart()
