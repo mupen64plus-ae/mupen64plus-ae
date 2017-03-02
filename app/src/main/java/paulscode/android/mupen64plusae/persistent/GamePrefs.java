@@ -467,13 +467,23 @@ public class GamePrefs
 
         // Game-specific data
         gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol, appData);
-        sramDataDir = gameDataDir + "/" + SRAM_DATA_DIR;
         autoSaveDir = gameDataDir + "/" + AUTO_SAVES_DIR;
-        slotSaveDir = gameDataDir + "/" + SLOT_SAVES_DIR;
         userSaveDir = gameDataDir + "/" + USER_SAVES_DIR;
-        screenshotDir = gameDataDir + "/" + SCREENSHOTS_DIR;
         coreUserConfigDir = gameDataDir + "/" + CORE_CONFIG_DIR;
         mupen64plus_cfg = coreUserConfigDir + "/" + MUPEN_CONFIG_FILE;
+
+        if(globalPrefs.useFlatGameDataPath)
+        {
+            sramDataDir = appData.gameDataDir;
+            slotSaveDir = appData.gameDataDir;
+            screenshotDir = appData.gameDataDir;
+        }
+        else
+        {
+            sramDataDir = gameDataDir + "/" + SRAM_DATA_DIR;
+            slotSaveDir = gameDataDir + "/" + SLOT_SAVES_DIR;
+            screenshotDir = gameDataDir + "/" + SCREENSHOTS_DIR;
+        }
 
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,

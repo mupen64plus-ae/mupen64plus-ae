@@ -552,7 +552,8 @@
     
     <!-- Other Preferences -->
     <string name="GameAutoSavesMax_title">Max auto saves per game</string>
-    
+    <string name="useFlatGameDataPath_title">Use flat game data folder structure</string>
+    <string name="useFlatGameDataPath_summary">Keep all slot saves, screenshots, and in-game saves in the same folder</string>
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback -->

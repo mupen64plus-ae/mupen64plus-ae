@@ -272,6 +272,9 @@ public class GlobalPrefs
     /** Maximum number of auto saves */
     public final int maxAutoSaves;
 
+    /** True if specific game data should be saved in a flat file structure */
+    public final boolean useFlatGameDataPath;
+
     /** True of volume keys are mappable*/
     public final boolean volKeysMappable;
 
@@ -546,6 +549,8 @@ public class GlobalPrefs
         final String inGameMenuMode = mPreferences.getString( "inGameMenu", "back-key" );
 
         maxAutoSaves = mPreferences.getInt( "gameAutoSaves", 5 );
+
+        useFlatGameDataPath = mPreferences.getBoolean( "useFlatGameDataPath", false );
 
         // Determine the key codes that should not be mapped to controls
         volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );

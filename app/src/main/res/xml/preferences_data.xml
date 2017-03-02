@@ -68,6 +68,12 @@
         mupen64:stepSize="1"
         mupen64:units="" />
 
+    <android.support.v7.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="useFlatGameDataPath"
+        android:summary="@string/useFlatGameDataPath_summary"
+        android:title="@string/useFlatGameDataPath_title" />
+
     <android.support.v7.preference.Preference
         android:key="actionReloadAssets"
         android:summary="@string/actionReloadAssets_summary"

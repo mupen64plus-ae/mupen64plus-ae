@@ -512,6 +512,8 @@
     <string name="default_profile_title">Por defecto global</string>
     <!-- Other Preferences -->
     <string name="GameAutoSavesMax_title">Maximos autoguardados por juego</string>
+    <string name="useFlatGameDataPath_title">Usar la estructura de carpetas de datos de juegos planos</string>
+    <string name="useFlatGameDataPath_summary">Mantener todas las guardas de ranura, capturas de pantalla, y guardas dentro del juego en la misma carpeta</string>
 
     <!--**************************************************************************-->
     <!--Dialogs and Other Feedback-->
