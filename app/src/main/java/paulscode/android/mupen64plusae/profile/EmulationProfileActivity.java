@@ -302,4 +302,29 @@ public class EmulationProfileActivity extends ProfileActivity
             mCurrentVideoPlugin = videoPlugin;
         }
     }
+
+    /**
+     * Check for override for a specific key
+     * @param key Key to check for override value
+     * @param currentValue The current value for the key
+     * @return The overriden value for the key
+     */
+    @Override
+    protected String checkForOverride(final String key, final String currentValue)
+    {
+        String value = currentValue;
+        if(value != null)
+        {
+            //Support older string value for video plugin that could support multiple GLideN64 versions
+            //There is now only one version
+            if(key.equals("videoPlugin") &&
+                    value.contains("libmupen64plus-video-gliden64") &&
+                    !value.equals("libmupen64plus-video-gliden64.so"))
+            {
+                value = "libmupen64plus-video-gliden64.so";
+            }
+        }
+
+        return value;
+    }
 }

@@ -94,6 +94,17 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
      * preference value has changed.
      */
     abstract protected void refreshViews();
+
+    /**
+     * Check for override for a specific key
+     * @param key Key to check for override value
+     * @param currentValue The current value for the key
+     * @return The overriden value for the key
+     */
+    protected String checkForOverride(final String key, final String currentValue)
+    {
+        return currentValue;
+    }
     
     // Working cache for preference data while activity is running
     protected SharedPreferences mPrefs = null;
@@ -162,7 +173,7 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
 //        refreshViews();
     }
     
-    private static void transcribe( ConfigFile source, SharedPreferences target, String sectionName )
+    private void transcribe( ConfigFile source, SharedPreferences target, String sectionName )
     {
         // Copy key-value data from config section to shared prefs object
         ConfigSection section = source.get( sectionName );
@@ -172,7 +183,8 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
             editor.clear();
             for( String key : section.keySet() )
             {
-                editor.putString( key, section.get( key ) );
+                String value = checkForOverride(key, section.get( key ));
+                editor.putString( key, value );
             }
 
             editor.commit();
