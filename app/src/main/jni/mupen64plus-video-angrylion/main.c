@@ -95,7 +95,7 @@ EXPORT m64p_error CALL InitiateGFX (GFX_INFO Gfx_Info)
    gfx_info = Gfx_Info;
    angrylionInitiateGFX(Gfx_Info);
 
-   return M64ERR_SUCCESS;
+   return 1;
 }
 
  
@@ -125,7 +125,7 @@ EXPORT m64p_error CALL RomOpen (void)
 {
    angrylionRomOpen();
 
-   return M64ERR_SUCCESS;
+   return 1;
 }
 
 EXPORT void CALL UpdateScreen(void)
