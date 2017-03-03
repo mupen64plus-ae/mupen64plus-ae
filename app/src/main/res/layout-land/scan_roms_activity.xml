@@ -69,6 +69,14 @@
             android:padding="10dp" >
 
             <Button
+                android:id="@+id/buttonReset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/buttonCancel"
+                android:layout_toStartOf="@+id/buttonCancel"
+                android:text="@string/scanRomsDialog_reset" />
+
+            <Button
                 android:id="@+id/buttonCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

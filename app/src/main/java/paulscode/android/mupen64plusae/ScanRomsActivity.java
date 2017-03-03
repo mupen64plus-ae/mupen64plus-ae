@@ -33,6 +33,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
     private CheckBox mCheckBox4;
     private Button mCancelButton;
     private Button mOkButton;
+    private Button mResetButton;
     
     private File mCurrentPath = null;
     private SharedPreferences mPrefs = null;
@@ -89,7 +90,15 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
         mCheckBox2.setChecked( true );
         mCheckBox3.setChecked( false );
         mCheckBox4.setChecked( true );
-        
+
+        mResetButton = (Button) findViewById( R.id.buttonReset );
+        mResetButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
+                PopulateFileList();
+            }
+        });
+
         mCancelButton = (Button) findViewById( R.id.buttonCancel );
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

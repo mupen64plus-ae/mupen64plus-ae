@@ -599,6 +599,8 @@
     <string name="scanRomsDialog_downloadArt">Descargar Portada</string>
     <string name="scanRomsDialog_clearGallery">Vaciar galería antes de agregar</string>
     <string name="scanRomsDialog_scanSubdirectories">Buscar archivos en sub-directorios</string>
+    <string name="scanRomsDialog_reset">Reiniciar</string>
+
     <!--ROM Scanning-->
     <string name="scanning_title">Escaneando...</string>
     <!--ROM information calculation-->
