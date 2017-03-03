@@ -3508,6 +3508,12 @@ gn Banjo-Kazooie
   80275C92 000D
   8033DD57 0002
   81371E20 3F00
+ cn No culling
+  cd Disables culling in widescreen mode
+  80277A0C 0046
+  80277A10 0046
+  80277A18 0046
+  80277A20 0046
 
 crc C2E9AA9A-475D70AA-C:45
 gn Banjo-Tooie (U)
@@ -3687,6 +3693,18 @@ gn Banjo-Tooie (U)
   cd Bottles Revenge is a Beta mode from Banjo Tooie that the RWP team recently uncovered after an extraordinary amount of effort. Bottles the Spirit transforms into Bottles the Devil and posses enemies nearby and allows a second player hooked up to Pad 2 to play as that Posses character to try to foil Banjos Plans. As player one goes about its business, player two uses every enemy nearby to try to nab Banjo and take away some life. This mode is incredible, and you can control almost every enemy in the game: slot machines, flying creatures, uggers, zubbas...and this is just the beginning. (Congrats Rare Witch Project)
   8012B3F2 0001
   800810C1 0002
+ cn 60 FPS
+  cd Highly experimental 60 FPS mode. It can lead to freezes or game bugs
+  D207913F 0000
+  8007913F 0001
+  81125D10 3CA4
+  81125D12 8889
+  80125D19 00A4
+  80125D1D 00A4
+  D0127633 0005
+  8003F4F2 0002
+  D2127633 0005
+  8003F4F2 000D
 
 crc 8C138BE0-95700E46-C:45
 gn In-Fisherman Bass Hunter 64 (U)
