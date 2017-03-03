@@ -180,7 +180,7 @@ extern void set_PC(unsigned int address);
  * As C pre-processor logic seems incapable of interpreting type storage,
  * stuff like #if (1U << 31 == 1U << ~0U) will generally just fail.
  */
-#if defined(ARCH_MIN_SSE2)
+#if defined(ARCH_MIN_SSE2) && !defined(SSE2NEON)
 #define MASK_SA(sa) (sa)
 #define IW_RD(inst) ((u16)(inst) >> 11)
 #else

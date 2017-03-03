@@ -360,6 +360,7 @@ VECTOR_OPERATION VLT(v16 vs, v16 vt)
 #endif
     do_lt(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -384,6 +385,7 @@ VECTOR_OPERATION VEQ(v16 vs, v16 vt)
 #endif
     do_eq(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -408,6 +410,7 @@ VECTOR_OPERATION VNE(v16 vs, v16 vt)
 #endif
     do_ne(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -432,6 +435,7 @@ VECTOR_OPERATION VGE(v16 vs, v16 vt)
 #endif
     do_ge(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -456,6 +460,7 @@ VECTOR_OPERATION VCL(v16 vs, v16 vt)
 #endif
     do_cl(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -480,6 +485,7 @@ VECTOR_OPERATION VCH(v16 vs, v16 vt)
 #endif
     do_ch(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -504,6 +510,7 @@ VECTOR_OPERATION VCR(v16 vs, v16 vt)
 #endif
     do_cr(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -528,6 +535,7 @@ VECTOR_OPERATION VMRG(v16 vs, v16 vt)
 #endif
     do_mrg(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else

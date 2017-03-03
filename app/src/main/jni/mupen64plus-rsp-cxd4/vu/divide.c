@@ -1139,6 +1139,7 @@ VECTOR_OPERATION VRCP(v16 vs, v16 vt)
     VR[result][source & 07] = (i16)DivOut;
     DPH = SP_DIV_PRECISION_SINGLE;
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VR[result];
     return (vs);
 #else
@@ -1166,6 +1167,7 @@ VECTOR_OPERATION VRCPL(v16 vs, v16 vt)
     VR[result][source & 07] = (i16)DivOut;
     DPH = SP_DIV_PRECISION_SINGLE;
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VR[result];
     return (vs);
 #else
@@ -1191,6 +1193,7 @@ VECTOR_OPERATION VRCPH(v16 vs, v16 vt)
     VR[result][source & 07] = DivOut >> 16;
     DPH = SP_DIV_PRECISION_DOUBLE;
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VR[result];
     return (vs);
 #else
@@ -1213,6 +1216,7 @@ VECTOR_OPERATION VMOV(v16 vs, v16 vt)
 #endif
     VR[result][source & 07] = VACC_L[element];
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VR[result];
     return (vs);
 #else
@@ -1239,6 +1243,7 @@ VECTOR_OPERATION VRSQ(v16 vs, v16 vt)
     VR[result][source & 07] = (i16)DivOut;
     DPH = SP_DIV_PRECISION_SINGLE;
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VR[result];
     return (vs);
 #else
@@ -1266,6 +1271,7 @@ VECTOR_OPERATION VRSQL(v16 vs, v16 vt)
     VR[result][source & 07] = (i16)DivOut;
     DPH = SP_DIV_PRECISION_SINGLE;
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VR[result];
     return (vs);
 #else
@@ -1291,6 +1297,7 @@ VECTOR_OPERATION VRSQH(v16 vs, v16 vt)
     VR[result][source & 07] = DivOut >> 16;
     DPH = SP_DIV_PRECISION_DOUBLE;
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VR[result];
     return (vs);
 #else

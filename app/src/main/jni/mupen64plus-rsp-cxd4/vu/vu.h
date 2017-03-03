@@ -15,7 +15,7 @@
 #ifndef _VU_H_
 #define _VU_H_
 
-#ifdef ARCH_MIN_SSE2
+#if defined(ARCH_MIN_SSE2) && !defined(SSE2NEON)
 #include <emmintrin.h>
 #endif
 

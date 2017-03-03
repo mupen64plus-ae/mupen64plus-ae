@@ -227,6 +227,7 @@ VECTOR_OPERATION VADD(v16 vs, v16 vt)
 #endif
     clr_ci(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -251,6 +252,7 @@ VECTOR_OPERATION VSUB(v16 vs, v16 vt)
 #endif
     clr_bi(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -275,6 +277,7 @@ VECTOR_OPERATION VABS(v16 vs, v16 vt)
 #endif
     do_abs(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -299,6 +302,7 @@ VECTOR_OPERATION VADDC(v16 vs, v16 vt)
 #endif
     set_co(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -323,6 +327,7 @@ VECTOR_OPERATION VSUBC(v16 vs, v16 vt)
 #endif
     set_bo(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else

@@ -447,6 +447,7 @@ VECTOR_OPERATION VMACF(v16 vs, v16 vt)
 #endif
     do_macf(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else
@@ -471,6 +472,7 @@ VECTOR_OPERATION VMACU(v16 vs, v16 vt)
 #endif
     do_macu(VD, VS, VT);
 #ifdef ARCH_MIN_SSE2
+    COMPILER_FENCE();
     vs = *(v16 *)VD;
     return (vs);
 #else

@@ -1827,7 +1827,7 @@ PROFILE_MODE void MWC2_load(u32 inst)
     const unsigned int vt      = (inst >> 16) % (1 << 5);
     const unsigned int element = (inst >>  7) % (1 << 4);
 
-#ifdef ARCH_MIN_SSE2
+#if defined(ARCH_MIN_SSE2) && !defined(SSE2NEON)
     offset   = (s16)inst;
     offset <<= 5 + 4; /* safe on x86, skips 5-bit rd, 4-bit element */
     offset >>= 5 + 4;
@@ -1843,7 +1843,7 @@ PROFILE_MODE void MWC2_store(u32 inst)
     const unsigned int vt      = (inst >> 16) % (1 << 5);
     const unsigned int element = (inst >>  7) % (1 << 4);
 
-#ifdef ARCH_MIN_SSE2
+#if defined(ARCH_MIN_SSE2) && !defined(SSE2NEON)
     offset = (s16)inst;
     offset <<= 5 + 4; /* safe on x86, skips 5-bit rd, 4-bit element */
     offset >>= 5 + 4;
@@ -1913,6 +1913,12 @@ PROFILE_MODE void COP2(u32 inst)
     case 022:
     case 023:
 #ifdef ARCH_MIN_SSE2
+#ifdef __ARM_NEON__
+        target = (v16)vld1q_u16(&VR[vt][0 + op - 0x12]);
+        target = (v16)vshlq_n_u32((uint32x4_t)target, 16);
+        target = (v16)vorrq_u16((uint16x8_t)target,
+                                (uint16x8_t)vshrq_n_u32((uint32x4_t)target, 16));
+#else
         shuffle_temporary[0] = VR[vt][0 + op - 0x12];
         shuffle_temporary[2] = VR[vt][2 + op - 0x12];
         shuffle_temporary[4] = VR[vt][4 + op - 0x12];
@@ -1920,6 +1926,7 @@ PROFILE_MODE void COP2(u32 inst)
         target = *(v16 *)(&shuffle_temporary[0]);
         target = _mm_shufflehi_epi16(target, _MM_SHUFFLE(2, 2, 0, 0));
         target = _mm_shufflelo_epi16(target, _MM_SHUFFLE(2, 2, 0, 0));
+#endif
         *(v16 *)(VR[vd]) = COP2_C2[func](*(v16 *)VR[vs], target);
 #else
         for (i = 0; i < N; i++)
@@ -1933,11 +1940,16 @@ PROFILE_MODE void COP2(u32 inst)
     case 026:
     case 027:
 #ifdef ARCH_MIN_SSE2
+#ifdef __ARM_NEON__
+        target = (v16)vcombine_s16(vdup_n_s16(VR[vt][0 + op - 0x14]),
+                                   vdup_n_s16(VR[vt][4 + op - 0x14]));
+#else
         target = _mm_setzero_si128();
         target = _mm_insert_epi16(target, VR[vt][0 + op - 0x14], 0);
         target = _mm_insert_epi16(target, VR[vt][4 + op - 0x14], 4);
         target = _mm_shufflehi_epi16(target, _MM_SHUFFLE(0, 0, 0, 0));
         target = _mm_shufflelo_epi16(target, _MM_SHUFFLE(0, 0, 0, 0));
+#endif
         *(v16 *)(VR[vd]) = COP2_C2[func](*(v16 *)VR[vs], target);
 #else
         for (i = 0; i < N; i++)
