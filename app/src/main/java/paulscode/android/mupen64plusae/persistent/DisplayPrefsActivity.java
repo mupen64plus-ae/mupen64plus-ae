@@ -20,14 +20,15 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import paulscode.android.mupen64plusae.preference.PrefUtil;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.preference.PrefUtil;
 
 public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
 {
@@ -88,13 +89,6 @@ public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements
     {
         // Refresh the preferences object
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
-        
-
-        // Hide certain categories altogether if they're not applicable. Normally we just rely on
-        // the built-in dependency disabler, but here the categories are so large that hiding them
-        // provides a better user experience.
-        if( !AppData.IS_KITKAT )
-            PrefUtil.removePreference( this, SCREEN_ROOT, DISPLAY_IMMERSIVE_MODE );
 
         // Enable polygon offset pref if flicker reduction is custom
         PrefUtil.enablePreference(this, VIDEO_POLYGON_OFFSET,

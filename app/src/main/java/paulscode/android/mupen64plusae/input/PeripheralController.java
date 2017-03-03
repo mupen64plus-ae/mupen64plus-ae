@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import android.annotation.TargetApi;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
@@ -35,7 +34,6 @@ import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeExports;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Utility;
 
 /**
@@ -132,7 +130,6 @@ public class PeripheralController extends AbstractController implements
      * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int,
      * float, int)
      */
-    @TargetApi( 16 )
     @Override
     public void onInput( int inputCode, float strength, int hardwareId )
     {
@@ -140,12 +137,9 @@ public class PeripheralController extends AbstractController implements
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
         {
             // Update the registered vibrator for this player
-            if( AppData.IS_JELLY_BEAN )
-            {
-                InputDevice device = InputDevice.getDevice( hardwareId );
-                if( device != null )
-                    CoreInterface.registerVibrator( mPlayerNumber, device.getVibrator() );
-            }
+            InputDevice device = InputDevice.getDevice( hardwareId );
+            if( device != null )
+                CoreInterface.registerVibrator( mPlayerNumber, device.getVibrator() );
             
             // Apply user changes to the controller state
             apply( inputCode, strength );

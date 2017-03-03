@@ -21,7 +21,6 @@
 
 package paulscode.android.mupen64plusae.game;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;
@@ -38,12 +37,10 @@ import java.io.StringWriter;
 
 import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.jni.NativeExports;
-import paulscode.android.mupen64plusae.persistent.AppData;
 
 /**
  * Represents a graphical area of memory that can be drawn to.
  */
-@TargetApi(17)
 public class GameSurfaceEGL14 extends GameSurface
 {
     // Internal EGL objects, created/destroyed in first-in/last-out order
@@ -195,7 +192,6 @@ public class GameSurfaceEGL14 extends GameSurface
      * @see GameSurfaceEGL14#flipBuffers()
      */
     @Override
-    @TargetApi(18)
     public void flipBuffers()
     {
         try
@@ -203,7 +199,7 @@ public class GameSurfaceEGL14 extends GameSurface
             //Don't swap if paused, fixes core dump in some devices.
             if( !CoreInterface.isPaused() && mEglDisplay != null && mEglSurface != null )
             {
-                if(AppData.IS_JELLY_BEAN_MR2 && NativeExports.emuGetSpeed() > 100)
+                if(NativeExports.emuGetSpeed() > 100)
                 {
                     EGLExt.eglPresentationTimeANDROID(mEglDisplay, mEglSurface, System.nanoTime() - 4000);
                 }

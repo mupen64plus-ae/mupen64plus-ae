@@ -232,18 +232,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         super.onCreate( savedInstanceState );
 
         // Lay out content and get the views
-        if(AppData.IS_JELLY_BEAN_MR1)
-        {
-            this.setContentView( R.layout.game_activity_egl14);
-            mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
-
-            mSurface.setFullGLStatus(mGamePrefs.isGliden64Enabled);
-        }
-        else
-        {
-            this.setContentView( R.layout.game_activity_egl10);
-            mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl10 );
-        }
+        this.setContentView( R.layout.game_activity_egl14);
+        mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
+        mSurface.setFullGLStatus(mGamePrefs.isGliden64Enabled);
 
         mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
         mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
@@ -953,22 +944,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
-    @SuppressLint( "InlinedApi" )
     private void hideSystemBars()
     {
         if( mDrawerLayout != null )
         {
-            if( AppData.IS_KITKAT && mGlobalPrefs.isImmersiveModeEnabled )
+            if( mGlobalPrefs.isImmersiveModeEnabled )
             {
                 mDrawerLayout.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
-            }
-            else
-            {
-                mDrawerLayout.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
             }
         }
     }

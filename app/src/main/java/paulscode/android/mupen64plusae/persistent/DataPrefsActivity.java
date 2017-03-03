@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -163,7 +162,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.setOnPreferenceClickListener(this, PATH_APP_DATA, this);
     }
 
-    @TargetApi( 16 )
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
@@ -173,10 +171,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
             mAppData.putAssetVersion( 0 );
             ActivityHelper.startSplashActivity(this);
 
-            if( AppData.IS_JELLY_BEAN)
-            {
-                finishAffinity();
-            }
+            finishAffinity();
         }
     }
 }

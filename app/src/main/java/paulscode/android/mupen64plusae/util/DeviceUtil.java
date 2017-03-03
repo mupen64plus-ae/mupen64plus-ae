@@ -20,14 +20,7 @@
  */
 package paulscode.android.mupen64plusae.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import paulscode.android.mupen64plusae.input.map.AxisMap;
-import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
@@ -37,6 +30,12 @@ import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import paulscode.android.mupen64plusae.input.map.AxisMap;
 
 public final class DeviceUtil
 {
@@ -118,7 +117,6 @@ public final class DeviceUtil
      * 
      * @return The peripheral info string.
      */
-    @TargetApi(16)
     public static String getPeripheralInfo()
     {
         StringBuilder builder = new StringBuilder();
@@ -133,12 +131,11 @@ public final class DeviceUtil
                 {
                     builder.append("Device: " + device.getName() + "\n");
                     builder.append("Id: " + device.getId() + "\n");
-                    if (AppData.IS_JELLY_BEAN)
-                    {
-                        builder.append("Descriptor: " + device.getDescriptor() + "\n");
-                        if (device.getVibrator().hasVibrator())
-                            builder.append("Vibrator: true\n");
-                    }
+
+                    builder.append("Descriptor: " + device.getDescriptor() + "\n");
+                    if (device.getVibrator().hasVibrator())
+                        builder.append("Vibrator: true\n");
+
                     builder.append("Class: " + getSourceClassesString(device.getSources()) + "\n");
 
                     List<MotionRange> ranges = getPeripheralMotionRanges(device);

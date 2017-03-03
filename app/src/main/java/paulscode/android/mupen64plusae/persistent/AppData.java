@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.UiModeManager;
 import android.content.Context;
@@ -87,18 +86,7 @@ import tv.ouya.console.api.OuyaFacade;
  * </pre>
  */
 public class AppData
-{    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
-    public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    
-    /** True if device is running Jellybean or later (17 - Android 4.1.x) */
-    public static final boolean IS_JELLY_BEAN_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
-
-    /** True if device is running Jellybean or later (18 - Android 4.1.x) */
-    public static final boolean IS_JELLY_BEAN_MR2 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
-    
-    /** True if device is running KitKat or later (19 - Android 4.4.x) */
-    public static final boolean IS_KITKAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    
+{
     /** True if device is running Lollipop or later (21 - Android 5.0.x) */
     public static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     
@@ -429,9 +417,7 @@ public class AppData
                     || hardware.contains( "smdkv" )
                     || hardware.contains( "herring" )
                     || hardware.contains( "aries" )
-                    || hardware.contains( "expresso10" )
-                    || ( hardware.contains( "tuna" )
-                         && !IS_JELLY_BEAN ) )
+                    || hardware.contains( "expresso10" ))
                 hardwareType = HARDWARE_TYPE_OMAP;
             
             else if(   hardware.contains( "tuna" )
@@ -540,21 +526,13 @@ public class AppData
         }
     }
 
-    @TargetApi(17)
     public static boolean doesSupportFullGL()
     {
-        if(AppData.IS_JELLY_BEAN_MR1)
-        {
-            boolean supportsFullGl = EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
+        boolean supportsFullGl = EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
 
-            //Return back to the original after we determine that full GL is supported
-            EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
-            return supportsFullGl;
-        }
-        else
-        {
-            return false;
-        }
+        //Return back to the original after we determine that full GL is supported
+        EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
+        return supportsFullGl;
     }
     
 }

@@ -449,7 +449,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         View view = mSurface.getRootView();
         if( view != null )
         {
-            if( AppData.IS_KITKAT && mGlobalPrefs.isImmersiveModeEnabled )
+            if( mGlobalPrefs.isImmersiveModeEnabled )
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -476,7 +476,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             dragging = false;
             dragAsset = "";
             
-            if( AppData.IS_KITKAT && mGlobalPrefs.isImmersiveModeEnabled )
+            if( mGlobalPrefs.isImmersiveModeEnabled )
             {
                 // ignore edge swipes.
                 // unfortunately KitKat lacks a way to do this on its own,

@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -837,7 +836,6 @@ public class GlobalPrefs
             return null;
     }
 
-    @TargetApi( 17 )
     private void DetermineResolutionData(Context context)
     {
         // Determine the pixel dimensions of the rendering context and view surface
@@ -849,8 +847,7 @@ public class GlobalPrefs
         {
             videoSurfaceWidthStretch = videoSurfaceHeightStretch = 0;
         }
-        //Kit Kat (19) adds support for immersive mode
-        else if( AppData.IS_KITKAT && isImmersiveModeEnabled )
+        else if(isImmersiveModeEnabled )
         {
             final Point dimensions = new Point();
             display.getRealSize(dimensions);

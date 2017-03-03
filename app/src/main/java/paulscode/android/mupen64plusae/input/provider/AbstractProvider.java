@@ -20,14 +20,14 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import android.view.InputDevice;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import tv.ouya.console.api.OuyaController;
-import android.annotation.SuppressLint;
-import android.view.InputDevice;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 
 /**
  * The base class for transforming arbitrary input data into a common format.
@@ -251,15 +251,13 @@ public abstract class AbstractProvider
      * 
      * @return The unique name of the device, or null if hardware not found.
      */
-
-    @SuppressLint("NewApi")
 	public static String getUniqueName( int id )
     {
         if( id > HARDWARE_ID_MOGA_OFFSET && id <= HARDWARE_ID_MOGA_MAX )
         {
             return mogaPrefix + ( id - HARDWARE_ID_MOGA_OFFSET );
         }
-        else if( AppData.IS_JELLY_BEAN )
+        else
         {
             InputDevice device = InputDevice.getDevice( id );
             
