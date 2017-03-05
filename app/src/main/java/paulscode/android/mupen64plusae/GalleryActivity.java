@@ -165,11 +165,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     {
         super.onCreate( savedInstanceState );
 
-        //Make sure the core is shutdown at this point. This
-        //won't be necessary once the core runs as a service
-        //or fragment
-        CoreInterface.shutdownEmulator();
-
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
@@ -356,6 +351,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public void onResume()
     {
         super.onResume();
+        
+        //Make sure the core is shutdown at this point. This
+        //won't be necessary once the core runs as a service
+        //or fragment
+        CoreInterface.shutdownEmulator();
 
         //mRefreshNeeded will be set to true whenever a game is launched
         if(mRefreshNeeded)
