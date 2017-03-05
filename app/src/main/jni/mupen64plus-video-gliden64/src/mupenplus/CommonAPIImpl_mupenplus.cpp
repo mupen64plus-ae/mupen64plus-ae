@@ -3,6 +3,9 @@
 #include <Platform.h>
 #include "../PluginAPI.h"
 #include "../RSP.h"
+#include <string>
+#include <sstream>
+#include <iostream>
 
 int PluginAPI::InitiateGFX(const GFX_INFO & _gfxInfo)
 {

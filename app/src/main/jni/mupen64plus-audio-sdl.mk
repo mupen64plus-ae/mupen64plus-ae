@@ -7,7 +7,6 @@ SRCDIR := mupen64plus-audio-sdl/src
 
 LOCAL_MODULE := mupen64plus-audio-sdl
 LOCAL_SHARED_LIBRARIES := SDL2
-#LOCAL_STATIC_LIBRARIES := samplerate
 #LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=         \
