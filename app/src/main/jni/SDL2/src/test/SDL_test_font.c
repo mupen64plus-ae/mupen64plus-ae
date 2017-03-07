@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -3116,9 +3116,9 @@ static SDL_Texture *SDLTest_CharTextureCache[256];
 
 int SDLTest_DrawCharacter(SDL_Renderer *renderer, int x, int y, char c)
 {
-    const Uint32 charWidth = 8;
-    const Uint32 charHeight = 8;
-    const Uint32 charSize = 8;
+	const Uint32 charWidth = FONT_CHARACTER_SIZE;
+	const Uint32 charHeight = FONT_CHARACTER_SIZE;
+	const Uint32 charSize = FONT_CHARACTER_SIZE;
     SDL_Rect srect;
     SDL_Rect drect;
     int result;
@@ -3221,7 +3221,7 @@ int SDLTest_DrawCharacter(SDL_Renderer *renderer, int x, int y, char c)
 
 int SDLTest_DrawString(SDL_Renderer * renderer, int x, int y, const char *s)
 {
-    const Uint32 charWidth = 8;
+	const Uint32 charWidth = FONT_CHARACTER_SIZE;
     int result = 0;
     int curx = x;
     int cury = y;

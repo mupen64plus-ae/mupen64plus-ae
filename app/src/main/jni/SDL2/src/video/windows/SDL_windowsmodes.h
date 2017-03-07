@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifndef _SDL_windowsmodes_h
 #define _SDL_windowsmodes_h
@@ -31,10 +31,17 @@ typedef struct
 typedef struct
 {
     DEVMODE DeviceMode;
+    float ScaleX;
+    float ScaleY;
+    float DiagDPI;
+    float HorzDPI;
+    float VertDPI;
 } SDL_DisplayModeData;
 
 extern int WIN_InitModes(_THIS);
 extern int WIN_GetDisplayBounds(_THIS, SDL_VideoDisplay * display, SDL_Rect * rect);
+extern int WIN_GetDisplayUsableBounds(_THIS, SDL_VideoDisplay * display, SDL_Rect * rect);
+extern int WIN_GetDisplayDPI(_THIS, SDL_VideoDisplay * display, float * ddpi, float * hdpi, float * vdpi);
 extern void WIN_GetDisplayModes(_THIS, SDL_VideoDisplay * display);
 extern int WIN_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode);
 extern void WIN_QuitModes(_THIS);

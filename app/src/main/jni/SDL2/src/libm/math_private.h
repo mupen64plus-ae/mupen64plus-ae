@@ -17,9 +17,9 @@
 #ifndef _MATH_PRIVATE_H_
 #define _MATH_PRIVATE_H_
 
-/*#include <endian.h>*/
+/* #include <endian.h> */
 #include "SDL_endian.h"
-/*#include <sys/types.h>*/
+/* #include <sys/types.h> */
 
 #define attribute_hidden
 #define libm_hidden_proto(x)
@@ -40,6 +40,7 @@ typedef unsigned int u_int32_t;
 #define scalbn          SDL_uclibc_scalbn
 #define sin             SDL_uclibc_sin
 #define __ieee754_sqrt  SDL_uclibc_sqrt
+#define tan             SDL_uclibc_tan
 
 /* The original fdlibm code used statements like:
 	n0 = ((*(int*)&one)>>29)^1;		* index of high word *

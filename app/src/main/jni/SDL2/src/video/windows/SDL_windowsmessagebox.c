@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,11 +18,13 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_DRIVER_WINDOWS
 
-#include "SDL.h"
+#include "../../core/windows/SDL_windows.h"
+
+#include "SDL_assert.h"
 #include "SDL_windowsvideo.h"
 
 
@@ -233,9 +235,7 @@ static SDL_bool AddDialogButton(WIN_DialogData *dialog, int x, int y, int w, int
 
 static void FreeDialogData(WIN_DialogData *dialog)
 {
-    if (dialog->data) {
-        SDL_free(dialog->data);
-    }
+    SDL_free(dialog->data);
     SDL_free(dialog);
 }
 
@@ -297,9 +297,12 @@ static WIN_DialogData *CreateDialogData(int w, int h, const char *caption)
 
         /* Font size - convert to logical font size for dialog parameter. */
         {
-            HDC ScreenDC = GetDC(0);
-            WordToPass = (WORD)(-72 * NCM.lfMessageFont.lfHeight / GetDeviceCaps(ScreenDC, LOGPIXELSY));
-            ReleaseDC(0, ScreenDC);
+            HDC ScreenDC = GetDC(NULL);
+            int LogicalPixelsY = GetDeviceCaps(ScreenDC, LOGPIXELSY);
+            if (!LogicalPixelsY) /* This can happen if the application runs out of GDI handles */
+                LogicalPixelsY = 72;
+            WordToPass = (WORD)(-72 * NCM.lfMessageFont.lfHeight / LogicalPixelsY);
+            ReleaseDC(NULL, ScreenDC);
         }
 
         if (!AddDialogData(dialog, &WordToPass, 2)) {
@@ -342,7 +345,8 @@ int
 WIN_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonid)
 {
     WIN_DialogData *dialog;
-    int i, x, y, which;
+    int i, x, y;
+    UINT_PTR which;
     const SDL_MessageBoxButtonData *buttons = messageboxdata->buttons;
     HFONT DialogFont;
     SIZE Size;
@@ -448,9 +452,9 @@ WIN_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonid)
     }
 
     /* Align the buttons to the right/bottom. */
-    x = Size.cx - ButtonWidth - ButtonMargin;
+    x = Size.cx - (ButtonWidth + ButtonMargin) * messageboxdata->numbuttons;
     y = Size.cy - ButtonHeight - ButtonMargin;
-    for (i = 0; i < messageboxdata->numbuttons; ++i) {
+    for (i = messageboxdata->numbuttons - 1; i >= 0; --i) {
         SDL_bool isDefault;
 
         if (buttons[i].flags & SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT) {
@@ -462,7 +466,7 @@ WIN_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonid)
             FreeDialogData(dialog);
             return -1;
         }
-        x -= ButtonWidth + ButtonMargin;
+        x += ButtonWidth + ButtonMargin;
     }
 
     /* FIXME: If we have a parent window, get the Instance and HWND for them */

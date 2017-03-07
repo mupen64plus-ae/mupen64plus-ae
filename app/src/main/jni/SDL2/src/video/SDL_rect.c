@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 
 #include "SDL_rect.h"
 #include "SDL_rect_c.h"
@@ -296,15 +296,16 @@ SDL_EnclosePoints(const SDL_Point * points, int count, const SDL_Rect * clip,
 #define CODE_LEFT   4
 #define CODE_RIGHT  8
 
-static int ComputeOutCode(const SDL_Rect * rect, int x, int y)
+static int
+ComputeOutCode(const SDL_Rect * rect, int x, int y)
 {
     int code = 0;
-    if (y < 0) {
+    if (y < rect->y) {
         code |= CODE_TOP;
     } else if (y >= rect->y + rect->h) {
         code |= CODE_BOTTOM;
     }
-    if (x < 0) {
+    if (x < rect->x) {
         code |= CODE_LEFT;
     } else if (x >= rect->x + rect->w) {
         code |= CODE_RIGHT;

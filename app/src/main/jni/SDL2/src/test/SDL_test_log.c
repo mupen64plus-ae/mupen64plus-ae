@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -39,7 +39,7 @@
 
 #include "SDL_test.h"
 
-/*!
+/* !
  * Converts unix timestamp to its ascii representation in localtime
  *
  * Note: Uses a static buffer internally, so the return value
@@ -55,12 +55,11 @@ char *SDLTest_TimestampToString(const time_t timestamp)
     time_t copy;
     static char buffer[64];
     struct tm *local;
-    const char *fmt = "%x %X";
 
     SDL_memset(buffer, 0, sizeof(buffer));
     copy = timestamp;
     local = localtime(&copy);
-    strftime(buffer, sizeof(buffer), fmt, local);
+    strftime(buffer, sizeof(buffer), "%x %X", local);
 
     return buffer;
 }
@@ -68,7 +67,7 @@ char *SDLTest_TimestampToString(const time_t timestamp)
 /*
  * Prints given message with a timestamp in the TEST category and INFO priority.
  */
-void SDLTest_Log(const char *fmt, ...)
+void SDLTest_Log(SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list list;
     char logMessage[SDLTEST_MAX_LOGMESSAGE_LENGTH];
@@ -86,7 +85,7 @@ void SDLTest_Log(const char *fmt, ...)
 /*
  * Prints given message with a timestamp in the TEST category and the ERROR priority.
  */
-void SDLTest_LogError(const char *fmt, ...)
+void SDLTest_LogError(SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
     va_list list;
     char logMessage[SDLTEST_MAX_LOGMESSAGE_LENGTH];

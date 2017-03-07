@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_RENDER_PSP
 
@@ -50,6 +50,8 @@ static SDL_Renderer *PSP_CreateRenderer(SDL_Window * window, Uint32 flags);
 static void PSP_WindowEvent(SDL_Renderer * renderer,
                              const SDL_WindowEvent *event);
 static int PSP_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture);
+static int PSP_SetTextureColorMod(SDL_Renderer * renderer,
+                                   SDL_Texture * texture);
 static int PSP_UpdateTexture(SDL_Renderer * renderer, SDL_Texture * texture,
                               const SDL_Rect * rect, const void *pixels,
                               int pitch);
@@ -359,6 +361,7 @@ PSP_CreateRenderer(SDL_Window * window, Uint32 flags)
 
     renderer->WindowEvent = PSP_WindowEvent;
     renderer->CreateTexture = PSP_CreateTexture;
+    renderer->SetTextureColorMod = PSP_SetTextureColorMod;
     renderer->UpdateTexture = PSP_UpdateTexture;
     renderer->LockTexture = PSP_LockTexture;
     renderer->UnlockTexture = PSP_UnlockTexture;
@@ -375,7 +378,7 @@ PSP_CreateRenderer(SDL_Window * window, Uint32 flags)
     renderer->DestroyTexture = PSP_DestroyTexture;
     renderer->DestroyRenderer = PSP_DestroyRenderer;
     renderer->info = PSP_RenderDriver.info;
-    renderer->info.flags = SDL_RENDERER_ACCELERATED;
+    renderer->info.flags = (SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     renderer->driverdata = data;
     renderer->window = window;
 
@@ -458,8 +461,8 @@ PSP_WindowEvent(SDL_Renderer * renderer, const SDL_WindowEvent *event)
 static int
 PSP_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture)
 {
-//      PSP_RenderData *renderdata = (PSP_RenderData *) renderer->driverdata;
-    PSP_TextureData* psp_texture = (PSP_TextureData*) SDL_calloc(1, sizeof(*psp_texture));;
+/*      PSP_RenderData *renderdata = (PSP_RenderData *) renderer->driverdata; */
+    PSP_TextureData* psp_texture = (PSP_TextureData*) SDL_calloc(1, sizeof(*psp_texture));
 
     if(!psp_texture)
         return -1;
@@ -501,6 +504,11 @@ PSP_CreateTexture(SDL_Renderer * renderer, SDL_Texture * texture)
     return 0;
 }
 
+static int
+PSP_SetTextureColorMod(SDL_Renderer * renderer, SDL_Texture * texture)
+{
+    return SDL_Unsupported();
+}
 
 void
 TextureActivate(SDL_Texture * texture)
@@ -528,7 +536,7 @@ static int
 PSP_UpdateTexture(SDL_Renderer * renderer, SDL_Texture * texture,
                    const SDL_Rect * rect, const void *pixels, int pitch)
 {
-//  PSP_TextureData *psp_texture = (PSP_TextureData *) texture->driverdata;
+/*  PSP_TextureData *psp_texture = (PSP_TextureData *) texture->driverdata; */
     const Uint8 *src;
     Uint8 *dst;
     int row, length,dpitch;
@@ -853,7 +861,7 @@ PSP_RenderReadPixels(SDL_Renderer * renderer, const SDL_Rect * rect,
                     Uint32 pixel_format, void * pixels, int pitch)
 
 {
-        return 0;
+    return SDL_Unsupported();
 }
 
 
@@ -895,8 +903,8 @@ PSP_RenderCopyEx(SDL_Renderer * renderer, SDL_Texture * texture,
         sceGuColor(0xFFFFFFFF);
     }
 
-//      x += width * 0.5f;
-//      y += height * 0.5f;
+/*      x += width * 0.5f; */
+/*      y += height * 0.5f; */
     x += centerx;
     y += centery;
 
@@ -904,8 +912,8 @@ PSP_RenderCopyEx(SDL_Renderer * renderer, SDL_Texture * texture,
 
     MathSincos(degToRad(angle), &s, &c);
 
-//      width *= 0.5f;
-//      height *= 0.5f;
+/*      width *= 0.5f; */
+/*      height *= 0.5f; */
     width  -= centerx;
     height -= centery;
 
@@ -968,7 +976,7 @@ PSP_RenderPresent(SDL_Renderer * renderer)
     sceGuFinish();
     sceGuSync(0,0);
 
-//  if(data->vsync)
+/*  if(data->vsync) */
         sceDisplayWaitVblankStart();
 
     data->backbuffer = data->frontbuffer;
@@ -988,10 +996,7 @@ PSP_DestroyTexture(SDL_Renderer * renderer, SDL_Texture * texture)
     if(psp_texture == 0)
         return;
 
-    if(psp_texture->data != 0)
-    {
-        SDL_free(psp_texture->data);
-    }
+    SDL_free(psp_texture->data);
     SDL_free(psp_texture);
     texture->driverdata = NULL;
 }
@@ -1007,8 +1012,8 @@ PSP_DestroyRenderer(SDL_Renderer * renderer)
         StartDrawing(renderer);
 
         sceGuTerm();
-//      vfree(data->backbuffer);
-//      vfree(data->frontbuffer);
+/*      vfree(data->backbuffer); */
+/*      vfree(data->frontbuffer); */
 
         data->initialized = SDL_FALSE;
         data->displayListAvail = SDL_FALSE;

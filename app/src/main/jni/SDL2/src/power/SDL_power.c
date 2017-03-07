@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 #include "SDL_power.h"
 
 /*
@@ -29,14 +29,17 @@ typedef SDL_bool
     (*SDL_GetPowerInfo_Impl) (SDL_PowerState * state, int *seconds,
                               int *percent);
 
+SDL_bool SDL_GetPowerInfo_Linux_sys_class_power_supply(SDL_PowerState *, int *, int *);
 SDL_bool SDL_GetPowerInfo_Linux_proc_acpi(SDL_PowerState *, int *, int *);
 SDL_bool SDL_GetPowerInfo_Linux_proc_apm(SDL_PowerState *, int *, int *);
 SDL_bool SDL_GetPowerInfo_Windows(SDL_PowerState *, int *, int *);
 SDL_bool SDL_GetPowerInfo_MacOSX(SDL_PowerState *, int *, int *);
-SDL_bool SDL_GetPowerInfo_BeOS(SDL_PowerState *, int *, int *);
+SDL_bool SDL_GetPowerInfo_Haiku(SDL_PowerState *, int *, int *);
 SDL_bool SDL_GetPowerInfo_UIKit(SDL_PowerState *, int *, int *);
 SDL_bool SDL_GetPowerInfo_Android(SDL_PowerState *, int *, int *);
 SDL_bool SDL_GetPowerInfo_PSP(SDL_PowerState *, int *, int *);
+SDL_bool SDL_GetPowerInfo_WinRT(SDL_PowerState *, int *, int *);
+SDL_bool SDL_GetPowerInfo_Emscripten(SDL_PowerState *, int *, int *);
 
 #ifndef SDL_POWER_DISABLED
 #ifdef SDL_POWER_HARDWIRED
@@ -56,6 +59,7 @@ SDL_GetPowerInfo_Hardwired(SDL_PowerState * state, int *seconds, int *percent)
 static SDL_GetPowerInfo_Impl implementations[] = {
 #ifndef SDL_POWER_DISABLED
 #ifdef SDL_POWER_LINUX          /* in order of preference. More than could work. */
+    SDL_GetPowerInfo_Linux_sys_class_power_supply,
     SDL_GetPowerInfo_Linux_proc_acpi,
     SDL_GetPowerInfo_Linux_proc_apm,
 #endif
@@ -68,14 +72,20 @@ static SDL_GetPowerInfo_Impl implementations[] = {
 #ifdef SDL_POWER_MACOSX         /* handles Mac OS X, Darwin. */
     SDL_GetPowerInfo_MacOSX,
 #endif
-#ifdef SDL_POWER_BEOS           /* handles BeOS, Zeta, with euc.jp apm driver. */
-    SDL_GetPowerInfo_BeOS,
+#ifdef SDL_POWER_HAIKU          /* with BeOS euc.jp apm driver. Does this work on Haiku? */
+    SDL_GetPowerInfo_Haiku,
 #endif
 #ifdef SDL_POWER_ANDROID        /* handles Android. */
     SDL_GetPowerInfo_Android,
 #endif
 #ifdef SDL_POWER_PSP        /* handles PSP. */
     SDL_GetPowerInfo_PSP,
+#endif
+#ifdef SDL_POWER_WINRT          /* handles WinRT */
+    SDL_GetPowerInfo_WinRT,
+#endif
+#ifdef SDL_POWER_EMSCRIPTEN     /* handles Emscripten */
+    SDL_GetPowerInfo_Emscripten,
 #endif
 
 #ifdef SDL_POWER_HARDWIRED
@@ -89,7 +99,7 @@ SDL_GetPowerInfo(int *seconds, int *percent)
 {
     const int total = sizeof(implementations) / sizeof(implementations[0]);
     int _seconds, _percent;
-    SDL_PowerState retval;
+    SDL_PowerState retval = SDL_POWERSTATE_UNKNOWN;
     int i;
 
     /* Make these never NULL for platform-specific implementations. */
@@ -102,7 +112,7 @@ SDL_GetPowerInfo(int *seconds, int *percent)
     }
 
     for (i = 0; i < total; i++) {
-        if (implementations[i] (&retval, seconds, percent)) {
+        if (implementations[i](&retval, seconds, percent)) {
             return retval;
         }
     }

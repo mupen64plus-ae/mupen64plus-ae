@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -43,7 +43,7 @@
 #define HAVE_STDINT_H   1
 #define HAVE_CTYPE_H    1
 #define HAVE_MATH_H 1
-#define HAVE_SIGNAL_H   1
+#define HAVE_SIGNAL_H 1
 
 /* C library functions */
 #define HAVE_MALLOC 1
@@ -76,17 +76,18 @@
 #define HAVE_STRTOULL   1
 #define HAVE_STRTOD 1
 #define HAVE_ATOI   1
-#define HAVE_ATOF   1
+#define HAVE_ATOF 1
 #define HAVE_STRCMP 1
 #define HAVE_STRNCMP    1
 #define HAVE_STRCASECMP 1
 #define HAVE_STRNCASECMP 1
-#define HAVE_SSCANF 1
-#define HAVE_SNPRINTF   1
+#define HAVE_VSSCANF 1
 #define HAVE_VSNPRINTF  1
 #define HAVE_M_PI   1
 #define HAVE_ATAN   1
 #define HAVE_ATAN2  1
+#define HAVE_ACOS  1
+#define HAVE_ASIN  1
 #define HAVE_CEIL   1
 #define HAVE_COPYSIGN   1
 #define HAVE_COS    1
@@ -99,10 +100,14 @@
 #define HAVE_SIN    1
 #define HAVE_SINF   1
 #define HAVE_SQRT   1
-#define HAVE_SIGACTION  1
+#define HAVE_SQRTF  1
+#define HAVE_TAN    1
+#define HAVE_TANF   1
+#define HAVE_SIGACTION 1
 #define HAVE_SETJMP 1
 #define HAVE_NANOSLEEP  1
 #define HAVE_SYSCONF    1
+#define HAVE_CLOCK_GETTIME	1
 
 #define SIZEOF_VOIDP 4
 
@@ -127,12 +132,17 @@
 /* Enable various video drivers */
 #define SDL_VIDEO_DRIVER_ANDROID 1
 
-/* Enable OpenGL ES2 */
-#define SDL_VIDEO_OPENGL_ES2	1
+/* Enable OpenGL ES */
+#define SDL_VIDEO_OPENGL_ES 1
+#define SDL_VIDEO_OPENGL_ES2 1
+#define SDL_VIDEO_OPENGL_EGL 1
 #define SDL_VIDEO_RENDER_OGL_ES 1
 #define SDL_VIDEO_RENDER_OGL_ES2    1
 
 /* Enable system power support */
 #define SDL_POWER_ANDROID 1
+
+/* Enable the filesystem driver */
+#define SDL_FILESYSTEM_ANDROID   1
 
 #endif /* _SDL_config_android_h */

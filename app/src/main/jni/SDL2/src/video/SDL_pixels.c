@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 
 /* General (mostly internal) pixel/color manipulation routines for SDL */
 
@@ -122,6 +122,8 @@ SDL_GetPixelFormatName(Uint32 format)
     CASE(SDL_PIXELFORMAT_YUY2)
     CASE(SDL_PIXELFORMAT_UYVY)
     CASE(SDL_PIXELFORMAT_YVYU)
+    CASE(SDL_PIXELFORMAT_NV12)
+    CASE(SDL_PIXELFORMAT_NV21)
 #undef CASE
     default:
         return "SDL_PIXELFORMAT_UNKNOWN";
@@ -707,9 +709,7 @@ SDL_FreePalette(SDL_Palette * palette)
     if (--palette->refcount > 0) {
         return;
     }
-    if (palette->colors) {
-        SDL_free(palette->colors);
-    }
+    SDL_free(palette->colors);
     SDL_free(palette);
 }
 
@@ -985,10 +985,8 @@ SDL_InvalidateMap(SDL_BlitMap * map)
     map->dst = NULL;
     map->src_palette_version = 0;
     map->dst_palette_version = 0;
-    if (map->info.table) {
-        SDL_free(map->info.table);
-        map->info.table = NULL;
-    }
+    SDL_free(map->info.table);
+    map->info.table = NULL;
 }
 
 int
@@ -1103,9 +1101,7 @@ SDL_CalculateGammaRamp(float gamma, Uint16 * ramp)
 
     /* 0.0 gamma is all black */
     if (gamma == 0.0f) {
-        for (i = 0; i < 256; ++i) {
-            ramp[i] = 0;
-        }
+        SDL_memset(ramp, 0, 256 * sizeof(Uint16));
         return;
     } else if (gamma == 1.0f) {
         /* 1.0 gamma is identity */

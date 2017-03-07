@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,12 +18,13 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_THREAD_WINDOWS
 
 /* Win32 thread management routines for SDL */
 
+#include "SDL_hints.h"
 #include "SDL_thread.h"
 #include "../SDL_thread_c.h"
 #include "../SDL_systhread.h"
@@ -32,6 +33,10 @@
 #ifndef SDL_PASSED_BEGINTHREAD_ENDTHREAD
 /* We'll use the C library from this DLL */
 #include <process.h>
+
+#ifndef STACK_SIZE_PARAM_IS_A_RESERVATION
+#define STACK_SIZE_PARAM_IS_A_RESERVATION 0x00010000
+#endif
 
 /* Cygwin gcc-3 ... MingW64 (even with a i386 host) does this like MSVC. */
 #if (defined(__MINGW32__) && (__GNUC__ < 4))
@@ -106,7 +111,7 @@ SDL_SYS_CreateThread(SDL_Thread * thread, void *args,
                      pfnSDL_CurrentBeginThread pfnBeginThread,
                      pfnSDL_CurrentEndThread pfnEndThread)
 {
-#elif defined(__CYGWIN__)
+#elif defined(__CYGWIN__) || defined(__WINRT__)
 int
 SDL_SYS_CreateThread(SDL_Thread * thread, void *args)
 {
@@ -116,11 +121,12 @@ SDL_SYS_CreateThread(SDL_Thread * thread, void *args)
 int
 SDL_SYS_CreateThread(SDL_Thread * thread, void *args)
 {
-    pfnSDL_CurrentBeginThread pfnBeginThread = _beginthreadex;
-    pfnSDL_CurrentEndThread pfnEndThread = _endthreadex;
+    pfnSDL_CurrentBeginThread pfnBeginThread = (pfnSDL_CurrentBeginThread)_beginthreadex;
+    pfnSDL_CurrentEndThread pfnEndThread = (pfnSDL_CurrentEndThread)_endthreadex;
 #endif /* SDL_PASSED_BEGINTHREAD_ENDTHREAD */
     pThreadStartParms pThreadParms =
         (pThreadStartParms) SDL_malloc(sizeof(tThreadStartParms));
+    const DWORD flags = thread->stacksize ? STACK_SIZE_PARAM_IS_A_RESERVATION : 0;
     if (!pThreadParms) {
         return SDL_OutOfMemory();
     }
@@ -129,15 +135,18 @@ SDL_SYS_CreateThread(SDL_Thread * thread, void *args)
     /* Also save the real parameters we have to pass to thread function */
     pThreadParms->args = args;
 
+    /* thread->stacksize == 0 means "system default", same as win32 expects */
     if (pfnBeginThread) {
         unsigned threadid = 0;
         thread->handle = (SYS_ThreadHandle)
-            ((size_t) pfnBeginThread(NULL, 0, RunThreadViaBeginThreadEx,
-                                     pThreadParms, 0, &threadid));
+            ((size_t) pfnBeginThread(NULL, (unsigned int) thread->stacksize,
+                                     RunThreadViaBeginThreadEx,
+                                     pThreadParms, flags, &threadid));
     } else {
         DWORD threadid = 0;
-        thread->handle = CreateThread(NULL, 0, RunThreadViaCreateThread,
-                                      pThreadParms, 0, &threadid);
+        thread->handle = CreateThread(NULL, thread->stacksize,
+                                      RunThreadViaCreateThread,
+                                      pThreadParms, flags, &threadid);
     }
     if (thread->handle == NULL) {
         return SDL_SetError("Not enough resources to create thread");
@@ -145,7 +154,6 @@ SDL_SYS_CreateThread(SDL_Thread * thread, void *args)
     return 0;
 }
 
-#ifdef _MSC_VER
 #pragma pack(push,8)
 typedef struct tagTHREADNAME_INFO
 {
@@ -155,31 +163,27 @@ typedef struct tagTHREADNAME_INFO
     DWORD dwFlags; /* reserved for future use, must be zero */
 } THREADNAME_INFO;
 #pragma pack(pop)
-#endif
 
 void
 SDL_SYS_SetupThread(const char *name)
 {
-    if (name != NULL) {
-        #if 0  /* !!! FIXME: __except needs C runtime, which we don't link against. */
-        #ifdef _MSC_VER  /* !!! FIXME: can we do SEH on other compilers yet? */
-        /* This magic tells the debugger to name a thread if it's listening. */
+    if ((name != NULL) && IsDebuggerPresent()) {
         THREADNAME_INFO inf;
+
+        /* C# and friends will try to catch this Exception, let's avoid it. */
+        if (SDL_GetHintBoolean(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, SDL_FALSE)) {
+            return;
+        }
+
+        /* This magic tells the debugger to name a thread if it's listening. */
+        SDL_zero(inf);
         inf.dwType = 0x1000;
         inf.szName = name;
         inf.dwThreadID = (DWORD) -1;
         inf.dwFlags = 0;
 
-        __try
-        {
-            RaiseException(0x406D1388, 0, sizeof(inf)/sizeof(DWORD), (DWORD*)&inf);
-        }
-        __except(EXCEPTION_CONTINUE_EXECUTION)
-        {
-            /* The program itself should ignore this bogus exception. */
-        }
-        #endif
-        #endif
+        /* The debugger catches this, renames the thread, continues on. */
+        RaiseException(0x406D1388, 0, sizeof(inf) / sizeof(ULONG), (const ULONG_PTR*) &inf);
     }
 }
 
@@ -210,7 +214,13 @@ SDL_SYS_SetThreadPriority(SDL_ThreadPriority priority)
 void
 SDL_SYS_WaitThread(SDL_Thread * thread)
 {
-    WaitForSingleObject(thread->handle, INFINITE);
+    WaitForSingleObjectEx(thread->handle, INFINITE, FALSE);
+    CloseHandle(thread->handle);
+}
+
+void
+SDL_SYS_DetachThread(SDL_Thread * thread)
+{
     CloseHandle(thread->handle);
 }
 

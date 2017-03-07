@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 
 /* This a stretch blit implementation based on ideas given to me by
    Tomasz Cejner - thanks! :)
@@ -38,7 +38,7 @@
      (defined(__GNUC__) && defined(__i386__))) && SDL_ASSEMBLY_ROUTINES
 /* There's a bug with gcc 4.4.1 and -O2 where srcp doesn't get the correct
  * value after the first scanline.  FIXME? */
-/*#define USE_ASM_STRETCH*/
+/* #define USE_ASM_STRETCH */
 #endif
 
 #ifdef USE_ASM_STRETCH

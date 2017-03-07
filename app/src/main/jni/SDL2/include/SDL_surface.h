@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -48,12 +48,12 @@ extern "C" {
  *  \internal
  *  Used internally (read-only).
  */
-/*@{*/
+/* @{ */
 #define SDL_SWSURFACE       0           /**< Just here for compatibility */
 #define SDL_PREALLOC        0x00000001  /**< Surface uses preallocated memory */
 #define SDL_RLEACCEL        0x00000002  /**< Surface is RLE encoded */
 #define SDL_DONTFREE        0x00000004  /**< Surface is referenced internally */
-/*@}*//*Surface flags*/
+/* @} *//* Surface flags */
 
 /**
  *  Evaluates to true if the surface needs to be locked before access.
@@ -118,6 +118,8 @@ typedef int (*SDL_blit) (struct SDL_Surface * src, SDL_Rect * srcrect,
 extern DECLSPEC SDL_Surface *SDLCALL SDL_CreateRGBSurface
     (Uint32 flags, int width, int height, int depth,
      Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask);
+extern DECLSPEC SDL_Surface *SDLCALL SDL_CreateRGBSurfaceWithFormat
+    (Uint32 flags, int width, int height, int depth, Uint32 format);
 extern DECLSPEC SDL_Surface *SDLCALL SDL_CreateRGBSurfaceFrom(void *pixels,
                                                               int width,
                                                               int height,
@@ -127,6 +129,8 @@ extern DECLSPEC SDL_Surface *SDLCALL SDL_CreateRGBSurfaceFrom(void *pixels,
                                                               Uint32 Gmask,
                                                               Uint32 Bmask,
                                                               Uint32 Amask);
+extern DECLSPEC SDL_Surface *SDLCALL SDL_CreateRGBSurfaceWithFormatFrom
+    (void *pixels, int width, int height, int depth, int pitch, Uint32 format);
 extern DECLSPEC void SDLCALL SDL_FreeSurface(SDL_Surface * surface);
 
 /**
@@ -183,6 +187,12 @@ extern DECLSPEC SDL_Surface *SDLCALL SDL_LoadBMP_RW(SDL_RWops * src,
 
 /**
  *  Save a surface to a seekable SDL data stream (memory or file).
+ *
+ *  Surfaces with a 24-bit, 32-bit and paletted 8-bit format get saved in the
+ *  BMP directly. Other RGB formats with 8-bit or higher get converted to a
+ *  24-bit surface or, if they have an alpha mask or a colorkey, to a 32-bit
+ *  surface before they are saved. YUV and paletted 1-bit and 4-bit formats are
+ *  not supported.
  *
  *  If \c freedst is non-zero, the stream will be closed after being written.
  *
@@ -357,7 +367,7 @@ extern DECLSPEC void SDLCALL SDL_GetClipRect(SDL_Surface * surface,
  *  surface.
  */
 extern DECLSPEC SDL_Surface *SDLCALL SDL_ConvertSurface
-    (SDL_Surface * src, SDL_PixelFormat * fmt, Uint32 flags);
+    (SDL_Surface * src, const SDL_PixelFormat * fmt, Uint32 flags);
 extern DECLSPEC SDL_Surface *SDLCALL SDL_ConvertSurfaceFormat
     (SDL_Surface * src, Uint32 pixel_format, Uint32 flags);
 
