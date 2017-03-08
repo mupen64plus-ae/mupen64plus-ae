@@ -191,8 +191,9 @@ struct gDPInfo
 
 	struct Color
 	{
+		Color() : r(0), g(0), b(0), a(0) {}
 		f32 r, g, b, a;
-	} fogColor,  blendColor, envColor;
+	} fogColor,  blendColor, envColor, rectColor;
 
 	struct
 	{
@@ -220,7 +221,6 @@ struct gDPInfo
 	{
 		u32 format, size, width, height, bpl;
 		u32 address, changed;
-		u32 depthImage;
 	} colorImage;
 
 	u32	depthImageAddress;

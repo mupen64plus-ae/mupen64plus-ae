@@ -26,25 +26,6 @@ DepthBuffer::DepthBuffer() : m_address(0), m_width(0), m_ulx(0), m_uly(0), m_lrx
 	}
 }
 
-DepthBuffer::DepthBuffer(DepthBuffer && _other) :
-	m_address(_other.m_address), m_width(_other.m_width),
-	m_ulx(_other.m_ulx), m_uly(_other.m_uly), m_lrx(_other.m_lrx), m_lry(_other.m_lry),
-	m_pDepthImageZTexture(_other.m_pDepthImageZTexture),
-	m_pDepthImageDeltaZTexture(_other.m_pDepthImageDeltaZTexture), m_pDepthBufferTexture(_other.m_pDepthBufferTexture),
-	m_depthRenderbuffer(_other.m_depthRenderbuffer), m_depthRenderbufferWidth(_other.m_depthRenderbufferWidth),
-	m_cleared(_other.m_cleared), m_pResolveDepthBufferTexture(_other.m_pResolveDepthBufferTexture), m_resolved(_other.m_resolved),
-	m_pDepthBufferCopyTexture(_other.m_pDepthBufferCopyTexture), m_copied(_other.m_copied)
-{
-	_other.m_pDepthImageZTexture = nullptr;
-	_other.m_pDepthImageDeltaZTexture = nullptr;
-	_other.m_pDepthBufferTexture = nullptr;
-	_other.m_depthRenderbuffer = ObjectHandle::null;
-	_other.m_pResolveDepthBufferTexture = nullptr;
-	_other.m_resolved = false;
-	_other.m_pDepthBufferCopyTexture = nullptr;
-	_other.m_copied = false;
-}
-
 DepthBuffer::~DepthBuffer()
 {
 	gfxContext.deleteFramebuffer(m_depthRenderbuffer);
@@ -417,10 +398,32 @@ void DepthBufferList::removeBuffer(u32 _address )
 		}
 }
 
+void DepthBufferList::_createScreenSizeBuffer(u32 _address)
+{
+	FrameBuffer * pFrameBuffer = frameBufferList().findBuffer(VI.width*2);
+	if (pFrameBuffer == nullptr)
+		return;
+
+	m_list.emplace_front();
+	DepthBuffer & buffer = m_list.front();
+
+	buffer.m_address = _address;
+	buffer.m_width = pFrameBuffer->m_width;
+
+	buffer.initDepthBufferTexture(pFrameBuffer);
+
+	m_pCurrent = &buffer;
+	frameBufferList().attachDepthBuffer();
+	m_pCurrent = nullptr;
+}
+
 void DepthBufferList::saveBuffer(u32 _address)
 {
-	if (!config.frameBufferEmulation.enable)
+	if (config.frameBufferEmulation.enable == 0) {
+		if (m_list.empty())
+			_createScreenSizeBuffer(_address);
 		return;
+	}
 
 	FrameBuffer * pFrameBuffer = frameBufferList().findBuffer(_address);
 	if (pFrameBuffer != nullptr)

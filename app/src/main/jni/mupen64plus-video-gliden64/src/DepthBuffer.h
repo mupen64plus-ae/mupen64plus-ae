@@ -11,7 +11,6 @@ struct FrameBuffer;
 struct DepthBuffer
 {
 	DepthBuffer();
-	DepthBuffer(DepthBuffer && _other);
 	~DepthBuffer();
 	void initDepthImageTexture(FrameBuffer * _pBuffer);
 	void initDepthBufferTexture(FrameBuffer * _pBuffer);
@@ -66,6 +65,8 @@ private:
 	DepthBufferList();
 	DepthBufferList(const DepthBufferList &);
 	~DepthBufferList();
+
+	void _createScreenSizeBuffer(u32 _address);
 
 	typedef std::list<DepthBuffer> DepthBuffers;
 	DepthBuffers m_list;

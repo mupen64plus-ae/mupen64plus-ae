@@ -148,10 +148,10 @@ void gDPSetColorImage( u32 format, u32 size, u32 width, u32 address )
 		else
 			height = VI.height > 0 ? VI.height : gDP.scissor.lry;
 
-		if (config.frameBufferEmulation.enable) {
-				frameBufferList().saveBuffer(address, (u16)format, (u16)size, (u16)width, height, false);
-				gDP.colorImage.height = 0;
-		} else
+		frameBufferList().saveBuffer(address, (u16)format, (u16)size, (u16)width, height, false);
+		if (config.frameBufferEmulation.enable != 0)
+			gDP.colorImage.height = 0;
+		else
 			gDP.colorImage.height = height;
 	}
 
@@ -777,10 +777,10 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 
 	if (depthBuffer != dbCleared) {
 		frameBufferList().setBufferChanged();
-		f32 fillColor[4];
-		gDPGetFillColor(fillColor);
 
 		if (gDP.otherMode.cycleType == G_CYC_FILL) {
+			f32 fillColor[4];
+			gDPGetFillColor(fillColor);
 			if ((depthBuffer == dbNone) &&
 				(ulx == 0) &&
 				(uly == 0) &&
@@ -788,10 +788,17 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 				(lry == gDP.scissor.lry)) {
 				frameBufferList().fillRDRAM(ulx, uly, lrx, lry);
 				drawer.clearColorBuffer(fillColor);
-			} else
-				drawer.drawRect(ulx, uly, lrx, lry, fillColor);
-		} else
-			drawer.drawRect(ulx, uly, lrx, lry, fillColor);
+			} else {
+				gDP.rectColor.r = fillColor[0];
+				gDP.rectColor.g = fillColor[1];
+				gDP.rectColor.b = fillColor[2];
+				gDP.rectColor.a = fillColor[3];
+				drawer.drawRect(ulx, uly, lrx, lry);
+			}
+		} else {
+			gDP.rectColor = gDPInfo::Color();
+			drawer.drawRect(ulx, uly, lrx, lry);
+		}
 	}
 
 	if (lrx == gDP.colorImage.width) {
@@ -868,6 +875,12 @@ void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f3
 	} else {
 		lrs = s + (lrx - ulx - 1) * dsdx;
 		lrt = t + (lry - uly - 1) * dtdy;
+	}
+
+	gDP.rectColor = gDPInfo::Color();
+	if (gDP.otherMode.cycleType < G_CYC_COPY) {
+		if (gDP.combine.mA0 == G_ACMUX_0 && gDP.combine.aA0 == G_ACMUX_SHADE)
+			gDP.rectColor.a = 1.0f;
 	}
 
 	GraphicsDrawer & drawer = dwnd().getDrawer();
