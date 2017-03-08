@@ -190,7 +190,7 @@ public class NativeSDL extends CoreInterface
 
     public static int captureOpen(int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames)
     {
-        return 0;
+        return -1;
     }
 
     public static int captureReadShortBuffer(short[] buffer, boolean blocking)
