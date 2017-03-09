@@ -99,9 +99,6 @@ public class AppData
     /** True if device is an OUYA. */
     public static final boolean IS_OUYA_HARDWARE = OuyaFacade.getInstance().isRunningOnOUYAHardware();
     
-    /** Debug option: download data to SD card (default true). */
-    public static final boolean DOWNLOAD_TO_SDCARD = true;
-    
     /** The hardware info, refreshed at the beginning of every session. */
     public final HardwareInfo hardwareInfo;
     
@@ -282,9 +279,6 @@ public class AppData
                 e.printStackTrace();
             }
         }
-        
-        // Files
-        String arch = System.getProperty("os.arch");
 
         coreLib = libsDir + "/libmupen64plus-core.so";
         inputLib = libsDir + "/libmupen64plus-input-android.so";
@@ -528,7 +522,15 @@ public class AppData
 
     public static boolean doesSupportFullGL()
     {
-        boolean supportsFullGl = EGL14.eglBindAPI(EGL14.EGL_OPENGL_API);
+
+        // Files
+        String arch = System.getProperty("os.arch");
+
+        // Check for x86, older versions of AndroidX86 report GL support, but it doesn't work
+        boolean itsX86 = arch.equals( "i686" );
+
+        boolean supportsFullGl = (itsX86 && IS_MARSHMELLOW && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API)) ||
+                (!itsX86 && EGL14.eglBindAPI(EGL14.EGL_OPENGL_API));
 
         //Return back to the original after we determine that full GL is supported
         EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
