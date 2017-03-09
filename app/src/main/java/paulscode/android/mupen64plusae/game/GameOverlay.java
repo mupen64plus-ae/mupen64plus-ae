@@ -54,8 +54,6 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         mFpsEnabled = fpsEnabled;
         mIsAnalogHiddenWhenSensor = isAnalogHiddenWhenSensor;
         mHatRefreshPeriod = joystickAnimated ? 3 : 0;
-        
-        CoreInterface.setOnFpsChangedListener( this, fpsEnabled ? 15 : 0 );
     }
     
     @Override

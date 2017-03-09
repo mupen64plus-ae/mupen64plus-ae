@@ -6,7 +6,7 @@ LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./mupen64plus-ui-console/src
 
 LOCAL_MODULE := mupen64plus-ui-console
-LOCAL_SHARED_LIBRARIES := ae-imports
+LOCAL_SHARED_LIBRARIES := ae-imports ae-vidext
 #LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=         \
@@ -30,6 +30,7 @@ LOCAL_CFLAGS :=                                 \
     -DNO_ASM                                    \
     -DCALLBACK_HEADER=ae_imports.h              \
     -DCALLBACK_FUNC=Android_JNI_StateCallback   \
+    -DVIDEXT_HEADER=ae_vidext.h                 \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 

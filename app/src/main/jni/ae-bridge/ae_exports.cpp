@@ -42,34 +42,22 @@ static void* mReserved;
 
 // Library handles
 static void *handleAEI;      // libae-imports.so
-static void *handleSDL;      // libSDL2.so
 static void *handleFreetype; // libfreetype.so
 static void *handleCore;     // libmupen64plus-core.so
 static void *handleFront;    // libmupen64plus-ui-console.so
 
 // Function types
 typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
-typedef void        (*pJNI_OnUnload)    (JavaVM *vm, void *reserved);
 typedef int         (*pAeiInit)         (JNIEnv* env, jclass cls);
-typedef int         (*pSdlInit)         (JNIEnv* env, jclass cls);
-typedef void        (*pSdlSetScreen)    (int width, int height, Uint32 format);
-typedef void        (*pVoidFunc)        ();
 typedef m64p_error  (*pCoreShutdown)    (void);
 typedef m64p_error  (*pCoreDoCommand)   (m64p_command, int, void *);
 typedef int         (*pFrontMain)       (int argc, char* argv[]);
-typedef void        (*pNativeResume)    (JNIEnv* env, jclass cls);
-typedef void        (*pNativePause)     (JNIEnv* env, jclass cls);
 
 // Function pointers
 static pAeiInit         aeiInit         = NULL;
-static pSdlInit         sdlInit         = NULL;
-static pSdlSetScreen    sdlSetScreen    = NULL;
-static pVoidFunc        sdlMainReady    = NULL;
 static pCoreDoCommand   coreDoCommand   = NULL;
 static pCoreShutdown    coreShutdown    = NULL;
 static pFrontMain       frontMain       = NULL;
-static pNativeResume    nativeResume    = NULL;
-static pNativePause     nativePause     = NULL;
 
 static const int ANDROID_SDK_VERSION_M = 23;
 
@@ -146,38 +134,29 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 
     // Open shared libraries
     handleAEI      = loadLibrary(path, "ae-imports");
-    handleSDL      = loadLibrary(path, "SDL2");
     handleFreetype = loadLibrary(path, "freetype");
     handleCore     = loadLibrary(path, coreLibraryName);
     handleFront    = loadLibrary(path, "mupen64plus-ui-console");
 
     // Make sure we don't have any typos
-    if (!handleAEI || !handleSDL || !handleFreetype || !handleCore || !handleFront )
+    if (!handleAEI || !handleFreetype || !handleCore || !handleFront )
     {
         LOGE("Could not load libraries: be sure the paths are correct");
     }
 
     // Find and call the JNI_OnLoad functions manually since we aren't loading the libraries from Java
     pJNI_OnLoad JNI_OnLoad0 = (pJNI_OnLoad) locateFunction(handleAEI, "ae-imports", "JNI_OnLoad");
-    pJNI_OnLoad JNI_OnLoad1 = (pJNI_OnLoad) locateFunction(handleSDL, "SDL2",       "JNI_OnLoad");
     JNI_OnLoad0(mVm, mReserved);
-    JNI_OnLoad1(mVm, mReserved);
     JNI_OnLoad0 = NULL;
-    JNI_OnLoad1 = NULL;
 
     // Find library functions
     aeiInit       = (pAeiInit)       locateFunction(handleAEI,   "ae-imports",             "Android_JNI_InitImports");
-    sdlInit       = (pSdlInit)       locateFunction(handleSDL,   "SDL2",                   "SDL_Android_Init");
-    sdlSetScreen  = (pSdlSetScreen)  locateFunction(handleSDL,   "SDL2",                   "Android_SetScreenResolution");
-    sdlMainReady  = (pVoidFunc)      locateFunction(handleSDL,   "SDL2",                   "SDL_SetMainReady");
     coreDoCommand = (pCoreDoCommand) locateFunction(handleCore,  coreLibraryName,          "CoreDoCommand");
     coreShutdown  = (pCoreShutdown)  locateFunction(handleCore,  coreLibraryName,          "CoreShutdown");
     frontMain     = (pFrontMain)     locateFunction(handleFront, "mupen64plus-ui-console", "SDL_main");
-    nativeResume  = (pNativeResume)  locateFunction(handleSDL,   "SDL2",                   "Java_org_libsdl_app_SDLActivity_nativeResume");
-    nativePause   = (pNativePause)   locateFunction(handleSDL,   "SDL2",                   "Java_org_libsdl_app_SDLActivity_nativePause");
 
     // Make sure we don't have any typos
-    if (!aeiInit || !sdlInit || !sdlSetScreen || !sdlMainReady || !coreDoCommand || !frontMain || !nativeResume || !nativePause || !coreShutdown)
+    if (!aeiInit || !coreDoCommand || !frontMain || !coreShutdown)
     {
         LOGE("Could not load library functions: be sure they are named and typedef'd correctly");
     }
@@ -191,33 +170,21 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     // Clear stale error messages
     dlerror();
 
-    // Find and call the JNI_OnUnLoad functions from the SDL2 library
-    pJNI_OnUnload JNI_OnUnLoad = (pJNI_OnUnload) locateFunction(handleSDL, "SDL2",       "JNI_OnUnload");
-    JNI_OnUnLoad(mVm, mReserved);
-    JNI_OnUnLoad = NULL;
-
     // Nullify function pointers so that they can no longer be used
     aeiInit         = NULL;
-    sdlInit         = NULL;
-    sdlSetScreen    = NULL;
-    sdlMainReady    = NULL;
     coreDoCommand   = NULL;
     frontMain       = NULL;
-    nativeResume    = NULL;
-    nativePause     = NULL;
 
     // Close shared libraries
     unloadLibrary(handleFront,    "mupen64plus-ui-console");
     unloadLibrary(handleCore,     coreLibraryName);
     unloadLibrary(handleFreetype, "freetype");
-    unloadLibrary(handleSDL,      "SDL2");
     unloadLibrary(handleAEI,      "ae-imports");
 
     // Nullify handles so that they can no longer be used
     handleFront    = NULL;
     handleCore     = NULL;
     handleFreetype = NULL;
-    handleSDL      = NULL;
     handleAEI      = NULL;
 
     coreLibraryName = "mupen64plus-core";
@@ -235,11 +202,7 @@ extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 
     // Initialize dependencies
     jclass nativeImports = env->FindClass("paulscode/android/mupen64plusae/jni/NativeImports");
-    jclass nativeSDL = env->FindClass("paulscode/android/mupen64plusae/jni/NativeSDL");
     aeiInit(env, nativeImports);
-    sdlInit(env, nativeSDL);
-    sdlSetScreen(0, 0, SDL_PIXELFORMAT_RGB565);
-    sdlMainReady();
 
     // Repackage the command-line args
     int argc = env->GetArrayLength(jargv);
@@ -337,15 +300,6 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
     if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK, &p);
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuRestartVideo(JNIEnv* env, jclass cls)
-{
-    int lnState1 = M64VIDEO_WINDOWED;
-    int lnState2 = M64VIDEO_FULLSCREEN;
-
-    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_VIDEO_MODE, &lnState1);
-    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_VIDEO_MODE, &lnState2);
-}
-
 extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_emuGetState(JNIEnv* env, jclass cls)
 {
     int state = 0;
@@ -384,16 +338,5 @@ extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuReset(JNIEnv* env, jclass cls)
 {
     if (coreDoCommand) coreDoCommand(M64CMD_RESET, 0, NULL);
-}
-
-
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_notifySDLSurfaceDestroyed(JNIEnv* env, jclass cls)
-{
-    if (nativePause) nativePause(env, cls);
-}
-
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_notifySDLSurfaceReady(JNIEnv* env, jclass cls)
-{
-    if (nativeResume) nativeResume(env, cls);
 }
 

@@ -21,6 +21,8 @@
 package paulscode.android.mupen64plusae.jni;
 
 
+import android.view.Surface;
+
 /**
  * Call-outs made from Java to the native ae-exports library. Any function names changed here should
  * also be changed in the corresponding C code, and vice versa.
@@ -33,6 +35,7 @@ public class NativeExports
     static
     {
         System.loadLibrary( "ae-exports" );
+        System.loadLibrary( "ae-vidext" );
     }
     
     // TODO: Add javadoc
@@ -71,7 +74,7 @@ public class NativeExports
     
     public static native void emuGameShark( boolean pressed );
 
-    public static native void emuRestartVideo();
+    public static native void emuDestroySurface();
     
     public static native int emuGetState();
     
@@ -82,8 +85,6 @@ public class NativeExports
     public static native int emuGetSlot();
 
     public static native int emuReset();
-    
-    public static native void notifySDLSurfaceDestroyed();
-    
-    public static native void notifySDLSurfaceReady();
+
+    public static native void setNativeWindow(Surface surface);
 }

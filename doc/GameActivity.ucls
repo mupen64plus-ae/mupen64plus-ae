@@ -24,33 +24,7 @@
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
-  </class>  
-  <class id="4" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.game.GameSurface" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameSurface.java" binary="false">    
-    <position height="-1" width="-1" x="501" y="690"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="true" private="false"/>    
-    </display>  
-  </class>  
-  <interface id="5" corner="BOTTOM_RIGHT" language="java" 
-    name="paulscode.android.mupen64plusae.game.GameSurface.OnFpsChangedListener" project="mupen64plus" 
-    file="/mupen64plus/src/paulscode/android/mupen64plusae/GameSurface.java" binary="false">    
-    <position height="-1" width="-1" x="404" y="833"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="true" private="false"/>    
-    </display>  
-  </interface>  
-  <interface id="6" corner="BOTTOM_RIGHT" language="java" 
-    name="paulscode.android.mupen64plusae.game.GameSurface.CoreLifecycleListener" project="mupen64plus" 
-    file="/mupen64plus/src/paulscode/android/mupen64plusae/GameSurface.java" binary="false">    
-    <position height="-1" width="-1" x="600" y="842"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="true" private="false"/>    
-    </display>  
-  </interface>  
+  </class>
   <class id="7" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.AbstractController" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/AbstractController.java" 
     binary="false">    

@@ -21,7 +21,7 @@
 package paulscode.android.mupen64plusae.jni;
 
 import android.content.DialogInterface;
-import android.media.AudioTrack;
+import android.view.SurfaceView;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentManager;
@@ -45,7 +45,6 @@ import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.game.GameAutoSaveManager;
-import paulscode.android.mupen64plusae.game.GameSurface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -64,7 +63,6 @@ import paulscode.android.mupen64plusae.util.Utility;
  * @see NativeExports
  * @see NativeImports
  * @see NativeInput
- * @see NativeSDL
  */
 public class CoreInterface
 {
@@ -146,20 +144,10 @@ public class CoreInterface
     protected static final ArrayList<OnStateCallbackListener> sStateCallbackListeners = new ArrayList<OnStateCallbackListener>();
     protected static final Object sStateCallbackLock = new Object();
 
-    // User/app data - used by NativeImports, NativeSDL
+    // User/app data - used by NativeImports
     protected static AppData sAppData = null;
     protected static GlobalPrefs sGlobalPrefs = null;
     protected static GamePrefs sGamePrefs = null;
-
-    // Audio/video objects - used by NativeSDL
-    protected static AudioTrack sAudioTrack = null;
-    protected static GameSurface sSurface = null;
-
-    // Frame rate info - used by NativeSDL
-    protected static OnFpsChangedListener sFpsListener;
-    protected static int sFpsRecalcPeriod = 0;
-    protected static int sFrameCount = -1;
-    protected static long sLastFpsTime = 0;
 
     // Activity and threading objects - used internally
     private static AppCompatActivity sActivity = null;
@@ -188,13 +176,10 @@ public class CoreInterface
 
     private static boolean sIsCoreRunning = false;
 
-    private static boolean sUnexpectedVideoLoss = false;
-
     private static Object sActivitySync = new Object();
-    protected static Object sSurfaceSync = new Object();
 
     public static void initialize(AppCompatActivity activity,
-                                  GameSurface surface, GamePrefs gamePrefs, String romPath,
+                                  SurfaceView surface, GamePrefs gamePrefs, String romPath,
                                   String cheatArgs, boolean isRestarting)
     {
         sRomPath = romPath;
@@ -202,7 +187,6 @@ public class CoreInterface
         sIsRestarting = isRestarting;
 
         sActivity = activity;
-        sSurface = surface;
         sAppData = new AppData( sActivity );
         sGlobalPrefs = new GlobalPrefs( sActivity, sAppData );
         sGamePrefs = gamePrefs;
@@ -218,26 +202,11 @@ public class CoreInterface
         {
             sActivity = null;
         }
-
-        synchronized (sSurfaceSync)
-        {
-            sSurface = null;
-        }
     }
 
     public static boolean isCoreRunning()
     {
         return sIsCoreRunning;
-    }
-
-    public static void setUnexpectedVideoLoss(boolean unexpectedVideoLoss)
-    {
-        sUnexpectedVideoLoss = unexpectedVideoLoss;
-    }
-
-    public static boolean isUnexpectedVideoLoss()
-    {
-        return sUnexpectedVideoLoss;
     }
 
     private static void makeDirs()
@@ -394,12 +363,6 @@ public class CoreInterface
         {
             sStateCallbackListeners.remove( listener );
         }
-    }
-
-    public static void setOnFpsChangedListener( OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
-    {
-        sFpsListener = fpsListener;
-        sFpsRecalcPeriod = fpsRecalcPeriod;
     }
 
     public static synchronized void startupEmulator(final String saveToLoad)

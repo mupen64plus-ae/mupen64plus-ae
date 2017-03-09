@@ -40,6 +40,12 @@
 #include "plugin.h"
 #include "version.h"
 
+#ifdef VIDEXT_HEADER
+#define xstr(s) str(s)
+#define str(s) #s
+#include xstr(VIDEXT_HEADER)
+#endif
+
 /* Version number for UI-Console config section parameters */
 #define CONFIG_PARAM_VERSION     1.00
 
@@ -649,6 +655,16 @@ int main(int argc, char *argv[])
         DetachCoreLib();
         return 3;
     }
+
+#ifdef VIDEXT_HEADER
+    rval = CoreOverrideVidExt(&vidExtFunctions);
+    if (rval != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_ERROR, "couldn't start VidExt library.");
+        DetachCoreLib();
+        return 14;
+    }
+#endif
 
     /* Open configuration sections */
     rval = OpenConfigurationHandles();

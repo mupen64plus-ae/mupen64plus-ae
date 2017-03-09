@@ -38,6 +38,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.Window;
@@ -126,10 +127,10 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 //@formatter:on
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback, GameSidebarActionHandler,
-        OnPromptFinishedListener, OnSaveLoadListener, GameSurface.GameSurfaceCreatedListener, OnExitListener, OnRestartListener, View.OnTouchListener
+        OnPromptFinishedListener, OnSaveLoadListener, OnExitListener, OnRestartListener, View.OnTouchListener
 {
     // Activity and views
-    private GameSurface mSurface;
+    private SurfaceView mSurface;
     private GameOverlay mOverlay;
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
@@ -232,9 +233,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         super.onCreate( savedInstanceState );
 
         // Lay out content and get the views
-        this.setContentView( R.layout.game_activity_egl14);
-        mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
-        mSurface.setFullGLStatus(mGamePrefs.isGliden64Enabled && AppData.doesSupportFullGL());
+        this.setContentView( R.layout.game_activity);
+        mSurface = (SurfaceView) this.findViewById( R.id.gameSurface );
 
         mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
         mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
@@ -246,7 +246,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Make the background solid black
         mSurface.getRootView().setBackgroundColor(0xFF000000);
-        mSurface.SetGameSurfaceCreatedListener(this);
 
         if (!TextUtils.isEmpty(artPath) && new File(artPath).exists())
             mGameSidebar.setImage(new BitmapDrawable(this.getResources(), artPath));
@@ -264,7 +263,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );
 
-        // Update the GameSurface size
+        // Update the SurfaceView size
         mSurface.getHolder().setFixedSize( mGamePrefs.videoRenderWidth, mGamePrefs.videoRenderHeight );
         final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
@@ -419,9 +418,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         //is running
         if(!mShuttingDown)
         {
-            mSurface.destroyGLContext();
             CoreInterface.detachActivity();
-            CoreInterface.setUnexpectedVideoLoss(true);
         }
     }
 
@@ -698,8 +695,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
         Log.i( "GameActivity", "surfaceChanged" );
-        NativeExports.notifySDLSurfaceReady();
         mIsSurface = true;
+        NativeExports.setNativeWindow(holder.getSurface());
+        if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) || mWaitingOnConfirmation)
+            CoreInterface.advanceFrame();
         tryRunning();
     }
 
@@ -707,8 +706,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void surfaceDestroyed( SurfaceHolder holder )
     {
         Log.i( "GameActivity", "surfaceDestroyed" );
-        NativeExports.notifySDLSurfaceDestroyed();
-        mSurface.setEGLContextNotReady();
+        NativeExports.emuDestroySurface();
         mIsSurface = false;
     }
 
@@ -976,7 +974,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     CoreInterface.startupEmulator(latestSave);
                     break;
                 case NativeConstants.EMULATOR_STATE_PAUSED:
-                    if( mSurface.isEGLContextReady() && !mDrawerLayout.isDrawerOpen( GravityCompat.START )
+                    if( !mDrawerLayout.isDrawerOpen( GravityCompat.START )
                         && !mWaitingOnConfirmation)
                         CoreInterface.resumeEmulator();
                     break;
@@ -1036,26 +1034,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         mAutoSaveManager.clearOldest();
-    }
-
-    @Override
-    public void onGameSurfaceCreated()
-    {
-        if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation)
-        {
-            CoreInterface.resumeEmulator();
-
-            if(CoreInterface.isUnexpectedVideoLoss())
-            {
-                NativeExports.emuRestartVideo();
-                CoreInterface.setUnexpectedVideoLoss(false);
-            }
-        }
-        else
-        {
-            //Advance 1 frame so that something is shown instead of a black screen
-            CoreInterface.advanceFrame();
-        }
     }
 
     Runnable mLastTouchChecker = new Runnable() {

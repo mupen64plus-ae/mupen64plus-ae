@@ -78,7 +78,7 @@ public class NativeConfigFiles
 
         // glide64 config file
         final ConfigFile glide64_conf = new ConfigFile( appData.glide64mk2_ini );
-        glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                       // Stretch to GameSurface, Java will manage aspect ratio
+        glide64_conf.put( "DEFAULT", "aspect", "2" );                                                                       // Stretch to SurfaceView, Java will manage aspect ratio
 
         // Core and rice config file
         final ConfigFile mupen64plus_cfg = new ConfigFile( game.mupen64plus_cfg );
