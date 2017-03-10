@@ -635,7 +635,7 @@ public class GamePrefs
         gliden64TxFilterMode = getSafeInt( emulationProfile, "txFilterMode", 0);
         gliden64TxEnhancementMode = gliden64EnableNativeResTexrects ? 0 :getSafeInt( emulationProfile, "txEnhancementMode", 0);
         gliden64TxDeposterize = emulationProfile.get( "txDeposterize", "False" ).equals( "True" );
-        gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "False" ).equals( "True" );
+        gliden64TxFilterIgnoreBG = emulationProfile.get( "txFilterIgnoreBG", "True" ).equals( "True" );
         gliden64TxCacheSize = getSafeInt( emulationProfile, "txCacheSize", 128);
         gliden64TxHiresEnable = emulationProfile.get( "txHiresEnable", "False" ).equals( "True" );
         gliden64TxHiresFullAlphaChannel = emulationProfile.get( "txHiresFullAlphaChannel", "False" ).equals( "True" );
