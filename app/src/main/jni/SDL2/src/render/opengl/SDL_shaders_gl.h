@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 /* OpenGL shader implementation */
 
@@ -26,7 +26,9 @@ typedef enum {
     SHADER_NONE,
     SHADER_SOLID,
     SHADER_RGB,
-    SHADER_YV12,
+    SHADER_YUV,
+    SHADER_NV12,
+    SHADER_NV21,
     NUM_SHADERS
 } GL_Shader;
 

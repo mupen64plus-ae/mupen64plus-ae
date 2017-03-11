@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -30,6 +30,7 @@
 
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
+#include "SDL_rwops.h"
 #include "SDL_joystick.h"
 
 #include "begin_code.h"
@@ -42,7 +43,7 @@ extern "C" {
  *  \file SDL_gamecontroller.h
  *
  *  In order to use these functions, SDL_Init() must have been called
- *  with the ::SDL_INIT_JOYSTICK flag.  This causes SDL to scan the system
+ *  with the ::SDL_INIT_GAMECONTROLLER flag.  This causes SDL to scan the system
  *  for game controllers, and load appropriate drivers.
  *
  *  If you would like to receive controller updates while the application
@@ -92,7 +93,7 @@ typedef struct SDL_GameControllerButtonBind
  *      }
  *  }
  *
- *  Using the SDL_HINT_GAMECONTROLLERCONFIG hint or the SDL_GameControllerAddMapping you can add support for controllers SDL is unaware of or cause an existing controller to have a different binding. The format is:
+ *  Using the SDL_HINT_GAMECONTROLLERCONFIG hint or the SDL_GameControllerAddMapping() you can add support for controllers SDL is unaware of or cause an existing controller to have a different binding. The format is:
  *  guid,name,mappings
  *
  *  Where GUID is the string value from SDL_JoystickGetGUIDString(), name is the human readable string for the device and mappings are controller mappings to joystick ones.
@@ -109,6 +110,23 @@ typedef struct SDL_GameControllerButtonBind
  */
 
 /**
+ *  Load a set of mappings from a seekable SDL data stream (memory or file), filtered by the current SDL_GetPlatform()
+ *  A community sourced database of controllers is available at https://raw.github.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt
+ *
+ *  If \c freerw is non-zero, the stream will be closed after being read.
+ * 
+ * \return number of mappings added, -1 on error
+ */
+extern DECLSPEC int SDLCALL SDL_GameControllerAddMappingsFromRW( SDL_RWops * rw, int freerw );
+
+/**
+ *  Load a set of mappings from a file, filtered by the current SDL_GetPlatform()
+ *
+ *  Convenience macro.
+ */
+#define SDL_GameControllerAddMappingsFromFile(file)   SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(file, "rb"), 1)
+
+/**
  *  Add or update an existing mapping configuration
  *
  * \return 1 if mapping is added, 0 if updated, -1 on error
@@ -118,14 +136,14 @@ extern DECLSPEC int SDLCALL SDL_GameControllerAddMapping( const char* mappingStr
 /**
  *  Get a mapping string for a GUID
  *
- *  \return the mapping string.  Must be freed with SDL_free.  Returns NULL if no mapping is available
+ *  \return the mapping string.  Must be freed with SDL_free().  Returns NULL if no mapping is available
  */
 extern DECLSPEC char * SDLCALL SDL_GameControllerMappingForGUID( SDL_JoystickGUID guid );
 
 /**
  *  Get a mapping string for an open GameController
  *
- *  \return the mapping string.  Must be freed with SDL_free.  Returns NULL if no mapping is available
+ *  \return the mapping string.  Must be freed with SDL_free().  Returns NULL if no mapping is available
  */
 extern DECLSPEC char * SDLCALL SDL_GameControllerMapping( SDL_GameController * gamecontroller );
 
@@ -145,12 +163,18 @@ extern DECLSPEC const char *SDLCALL SDL_GameControllerNameForIndex(int joystick_
 /**
  *  Open a game controller for use.
  *  The index passed as an argument refers to the N'th game controller on the system.
- *  This index is the value which will identify this controller in future controller
- *  events.
+ *  This index is not the value which will identify this controller in future
+ *  controller events.  The joystick's instance id (::SDL_JoystickID) will be
+ *  used there instead.
  *
  *  \return A controller identifier, or NULL if an error occurred.
  */
 extern DECLSPEC SDL_GameController *SDLCALL SDL_GameControllerOpen(int joystick_index);
+
+/**
+ * Return the SDL_GameController associated with an instance id.
+ */
+extern DECLSPEC SDL_GameController *SDLCALL SDL_GameControllerFromInstanceID(SDL_JoystickID joyid);
 
 /**
  *  Return the name for this currently opened controller
@@ -223,7 +247,8 @@ SDL_GameControllerGetBindForAxis(SDL_GameController *gamecontroller,
 /**
  *  Get the current state of an axis control on a game controller.
  *
- *  The state is a value ranging from -32768 to 32767.
+ *  The state is a value ranging from -32768 to 32767 (except for the triggers,
+ *  which range from 0 to 32767).
  *
  *  The axis indices start at index 0.
  */

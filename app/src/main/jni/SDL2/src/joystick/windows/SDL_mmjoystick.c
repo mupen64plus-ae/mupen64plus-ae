@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifdef SDL_JOYSTICK_WINMM
 
@@ -33,6 +33,11 @@
 #include "../SDL_sysjoystick.h"
 #include "../SDL_joystick_c.h"
 
+#ifdef REGSTR_VAL_JOYOEMNAME 
+#undef REGSTR_VAL_JOYOEMNAME 
+#endif
+#define REGSTR_VAL_JOYOEMNAME "OEMName"
+
 #define MAX_JOYSTICKS   16
 #define MAX_AXES    6       /* each joystick can have up to 6 axes */
 #define MAX_BUTTONS 32      /* and 32 buttons                      */
@@ -45,7 +50,7 @@
 
 /* array to hold joystick ID values */
 static UINT SYS_JoystickID[MAX_JOYSTICKS];
-static JOYCAPS SYS_Joystick[MAX_JOYSTICKS];
+static JOYCAPSA SYS_Joystick[MAX_JOYSTICKS];
 static char *SYS_JoystickName[MAX_JOYSTICKS];
 
 /* The private structure used to keep track of a joystick */
@@ -138,8 +143,7 @@ GetJoystickName(int index, const char *szRegKey)
 static int SDL_SYS_numjoysticks = 0;
 
 /* Function to scan the system for joysticks.
- * This function should set SDL_numjoysticks to the number of available
- * joysticks.  Joystick 0 should be the system default joystick.
+ * Joystick 0 should be the system default joystick.
  * It should return 0, or -1 on an unrecoverable fatal error.
  */
 int
@@ -148,7 +152,7 @@ SDL_SYS_JoystickInit(void)
     int i;
     int maxdevs;
     JOYINFOEX joyinfo;
-    JOYCAPS joycaps;
+    JOYCAPSA joycaps;
     MMRESULT result;
 
     /* Reset the joystick ID & name mapping tables */
@@ -166,7 +170,7 @@ SDL_SYS_JoystickInit(void)
         joyinfo.dwFlags = JOY_RETURNALL;
         result = joyGetPosEx(i, &joyinfo);
         if (result == JOYERR_NOERROR) {
-            result = joyGetDevCaps(i, &joycaps, sizeof(joycaps));
+            result = joyGetDevCapsA(i, &joycaps, sizeof(joycaps));
             if (result == JOYERR_NOERROR) {
                 SYS_JoystickID[SDL_SYS_numjoysticks] = i;
                 SYS_Joystick[SDL_SYS_numjoysticks] = joycaps;
@@ -188,11 +192,6 @@ void SDL_SYS_JoystickDetect()
 {
 }
 
-SDL_bool SDL_SYS_JoystickNeedsPolling()
-{
-    return SDL_FALSE;
-}
-
 /* Function to get the device-dependent name of a joystick */
 const char *
 SDL_SYS_JoystickNameForDeviceIndex(int device_index)
@@ -211,7 +210,7 @@ SDL_JoystickID SDL_SYS_GetInstanceIdOfDeviceIndex(int device_index)
 }
 
 /* Function to open a joystick for use.
-   The joystick to open is specified by the index field of the joystick.
+   The joystick to open is specified by the device index.
    This should fill the nbuttons and naxes fields of the joystick structure.
    It returns 0, or -1 if there is an error.
  */
@@ -272,7 +271,7 @@ SDL_SYS_JoystickOpen(SDL_Joystick * joystick, int device_index)
     return (0);
 }
 
-/* Function to determine is this joystick is attached to the system right now */
+/* Function to determine if this joystick is attached to the system right now */
 SDL_bool SDL_SYS_JoystickAttached(SDL_Joystick *joystick)
 {
     return SDL_TRUE;
@@ -384,11 +383,7 @@ SDL_SYS_JoystickUpdate(SDL_Joystick * joystick)
 void
 SDL_SYS_JoystickClose(SDL_Joystick * joystick)
 {
-    if (joystick->hwdata != NULL) {
-        /* free system specific hardware data */
-        SDL_free(joystick->hwdata);
-        joystick->hwdata = NULL;
-    }
+    SDL_free(joystick->hwdata);
 }
 
 /* Function to perform any system-specific joystick related cleanup */
@@ -397,10 +392,8 @@ SDL_SYS_JoystickQuit(void)
 {
     int i;
     for (i = 0; i < MAX_JOYSTICKS; i++) {
-        if (SYS_JoystickName[i] != NULL) {
-            SDL_free(SYS_JoystickName[i]);
-            SYS_JoystickName[i] = NULL;
-        }
+        SDL_free(SYS_JoystickName[i]);
+        SYS_JoystickName[i] = NULL;
     }
 }
 

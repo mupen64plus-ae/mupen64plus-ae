@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,7 +24,7 @@
  *
  *  Include file for SDL joystick event handling
  *
- * The term "device_index" identifies currently plugged in joystick devices between 0 and SDL_NumJoysticks, with the exact joystick
+ * The term "device_index" identifies currently plugged in joystick devices between 0 and SDL_NumJoysticks(), with the exact joystick
  *   behind a device_index changing as joysticks are plugged and unplugged.
  *
  * The term "instance_id" is the current instantiation of a joystick device in the system, if the joystick is removed and then re-inserted
@@ -71,6 +71,16 @@ typedef struct {
 
 typedef Sint32 SDL_JoystickID;
 
+typedef enum
+{
+    SDL_JOYSTICK_POWER_UNKNOWN = -1,
+    SDL_JOYSTICK_POWER_EMPTY,
+    SDL_JOYSTICK_POWER_LOW,
+    SDL_JOYSTICK_POWER_MEDIUM,
+    SDL_JOYSTICK_POWER_FULL,
+    SDL_JOYSTICK_POWER_WIRED,
+    SDL_JOYSTICK_POWER_MAX
+} SDL_JoystickPowerLevel;
 
 /* Function prototypes */
 /**
@@ -87,13 +97,19 @@ extern DECLSPEC const char *SDLCALL SDL_JoystickNameForIndex(int device_index);
 
 /**
  *  Open a joystick for use.
- *  The index passed as an argument refers tothe N'th joystick on the system.
- *  This index is the value which will identify this joystick in future joystick
- *  events.
+ *  The index passed as an argument refers to the N'th joystick on the system.
+ *  This index is not the value which will identify this joystick in future
+ *  joystick events.  The joystick's instance id (::SDL_JoystickID) will be used
+ *  there instead.
  *
  *  \return A joystick identifier, or NULL if an error occurred.
  */
 extern DECLSPEC SDL_Joystick *SDLCALL SDL_JoystickOpen(int device_index);
+
+/**
+ * Return the SDL_Joystick associated with an instance id.
+ */
+extern DECLSPEC SDL_Joystick *SDLCALL SDL_JoystickFromInstanceID(SDL_JoystickID joyid);
 
 /**
  *  Return the name for this currently opened joystick.
@@ -115,7 +131,7 @@ extern DECLSPEC SDL_JoystickGUID SDLCALL SDL_JoystickGetGUID(SDL_Joystick * joys
  *  Return a string representation for this guid. pszGUID must point to at least 33 bytes
  *  (32 for the string plus a NULL terminator).
  */
-extern DECLSPEC void SDL_JoystickGetGUIDString(SDL_JoystickGUID guid, char *pszGUID, int cbGUID);
+extern DECLSPEC void SDLCALL SDL_JoystickGetGUIDString(SDL_JoystickGUID guid, char *pszGUID, int cbGUID);
 
 /**
  *  convert a string into a joystick formatted guid
@@ -187,9 +203,9 @@ extern DECLSPEC Sint16 SDLCALL SDL_JoystickGetAxis(SDL_Joystick * joystick,
 /**
  *  \name Hat positions
  */
-/*@{*/
+/* @{ */
 #define SDL_HAT_CENTERED    0x00
-#define SDL_HAT_UP      0x01
+#define SDL_HAT_UP          0x01
 #define SDL_HAT_RIGHT       0x02
 #define SDL_HAT_DOWN        0x04
 #define SDL_HAT_LEFT        0x08
@@ -197,7 +213,7 @@ extern DECLSPEC Sint16 SDLCALL SDL_JoystickGetAxis(SDL_Joystick * joystick,
 #define SDL_HAT_RIGHTDOWN   (SDL_HAT_RIGHT|SDL_HAT_DOWN)
 #define SDL_HAT_LEFTUP      (SDL_HAT_LEFT|SDL_HAT_UP)
 #define SDL_HAT_LEFTDOWN    (SDL_HAT_LEFT|SDL_HAT_DOWN)
-/*@}*/
+/* @} */
 
 /**
  *  Get the current state of a POV hat on a joystick.
@@ -241,6 +257,10 @@ extern DECLSPEC Uint8 SDLCALL SDL_JoystickGetButton(SDL_Joystick * joystick,
  */
 extern DECLSPEC void SDLCALL SDL_JoystickClose(SDL_Joystick * joystick);
 
+/**
+ *  Return the battery level of this joystick
+ */
+extern DECLSPEC SDL_JoystickPowerLevel SDLCALL SDL_JoystickCurrentPowerLevel(SDL_Joystick * joystick);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #include "../../video/SDL_blit.h"
 
@@ -51,11 +51,12 @@ do { \
 
 #define DRAW_SETPIXEL_BLEND(getpixel, setpixel) \
 do { \
-    unsigned sr, sg, sb, sa; (void) sa; \
+    unsigned sr, sg, sb, sa = 0xFF; \
     getpixel; \
     sr = DRAW_MUL(inva, sr) + r; \
     sg = DRAW_MUL(inva, sg) + g; \
     sb = DRAW_MUL(inva, sb) + b; \
+    sa = DRAW_MUL(inva, sa) + a; \
     setpixel; \
 } while (0)
 

@@ -232,9 +232,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         super.onCreate( savedInstanceState );
 
         // Lay out content and get the views
-        this.setContentView( R.layout.game_activity_egl14);
-        mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
-        mSurface.setFullGLStatus(mGamePrefs.isGliden64Enabled);
+        this.setContentView( R.layout.game_activity);
+        mSurface = (GameSurface) this.findViewById( R.id.gameSurface );
 
         mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
         mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
@@ -419,7 +418,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         //is running
         if(!mShuttingDown)
         {
-            mSurface.destroyGLContext();
             CoreInterface.detachActivity();
             CoreInterface.setUnexpectedVideoLoss(true);
         }
@@ -708,7 +706,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         Log.i( "GameActivity", "surfaceDestroyed" );
         NativeExports.notifySDLSurfaceDestroyed();
-        mSurface.setEGLContextNotReady();
         mIsSurface = false;
     }
 
@@ -976,7 +973,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     CoreInterface.startupEmulator(latestSave);
                     break;
                 case NativeConstants.EMULATOR_STATE_PAUSED:
-                    if( mSurface.isEGLContextReady() && !mDrawerLayout.isDrawerOpen( GravityCompat.START )
+                    if( !mDrawerLayout.isDrawerOpen( GravityCompat.START )
                         && !mWaitingOnConfirmation)
                         CoreInterface.resumeEmulator();
                     break;

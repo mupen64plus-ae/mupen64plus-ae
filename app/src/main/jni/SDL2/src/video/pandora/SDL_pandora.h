@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,7 +24,7 @@
 
 #include <GLES/egl.h>
 
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 #include "../SDL_sysvideo.h"
 
 typedef struct SDL_VideoData
@@ -77,7 +77,7 @@ void PND_raisewindow(_THIS, SDL_Window * window);
 void PND_maximizewindow(_THIS, SDL_Window * window);
 void PND_minimizewindow(_THIS, SDL_Window * window);
 void PND_restorewindow(_THIS, SDL_Window * window);
-void PND_setwindowgrab(_THIS, SDL_Window * window);
+void PND_setwindowgrab(_THIS, SDL_Window * window, SDL_bool grabbed);
 void PND_destroywindow(_THIS, SDL_Window * window);
 
 /* Window manager function */

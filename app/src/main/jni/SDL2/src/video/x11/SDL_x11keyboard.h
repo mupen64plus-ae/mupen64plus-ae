@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifndef _SDL_x11keyboard_h
 #define _SDL_x11keyboard_h
@@ -26,6 +26,10 @@
 extern int X11_InitKeyboard(_THIS);
 extern void X11_UpdateKeymap(_THIS);
 extern void X11_QuitKeyboard(_THIS);
+extern void X11_StartTextInput(_THIS);
+extern void X11_StopTextInput(_THIS);
+extern void X11_SetTextInputRect(_THIS, SDL_Rect *rect);
+extern KeySym X11_KeyCodeToSym(_THIS, KeyCode, unsigned char group);
 
 #endif /* _SDL_x11keyboard_h */
 

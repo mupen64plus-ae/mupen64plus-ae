@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #if SDL_VIDEO_RENDER_OGL_ES2
 
@@ -46,7 +46,10 @@ typedef enum
     GLES2_SHADER_FRAGMENT_TEXTURE_ABGR_SRC,
     GLES2_SHADER_FRAGMENT_TEXTURE_ARGB_SRC,
     GLES2_SHADER_FRAGMENT_TEXTURE_BGR_SRC,
-    GLES2_SHADER_FRAGMENT_TEXTURE_RGB_SRC
+    GLES2_SHADER_FRAGMENT_TEXTURE_RGB_SRC,
+    GLES2_SHADER_FRAGMENT_TEXTURE_YUV_SRC,
+    GLES2_SHADER_FRAGMENT_TEXTURE_NV12_SRC,
+    GLES2_SHADER_FRAGMENT_TEXTURE_NV21_SRC
 } GLES2_ShaderType;
 
 #define GLES2_SOURCE_SHADER (GLenum)-1
