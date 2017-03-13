@@ -697,8 +697,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i( "GameActivity", "surfaceChanged" );
         mIsSurface = true;
         NativeExports.setNativeWindow(holder.getSurface());
-        if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) || mWaitingOnConfirmation)
-            CoreInterface.advanceFrame();
         tryRunning();
     }
 

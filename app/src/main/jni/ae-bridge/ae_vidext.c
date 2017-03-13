@@ -81,12 +81,19 @@ extern DECLSPEC m64p_error VidExtFuncInit()
 
 extern DECLSPEC m64p_error VidExtFuncQuit()
 {
-    if (surface != EGL_NO_SURFACE)
+    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    if (surface != EGL_NO_SURFACE) {
         eglDestroySurface(display, surface);
-    if (context != EGL_NO_CONTEXT)
+        surface = EGL_NO_SURFACE;
+    }
+    if (context != EGL_NO_CONTEXT) {
         eglDestroyContext(display, context);
-    if (display != EGL_NO_DISPLAY)
+        context = EGL_NO_CONTEXT;
+    }
+    if (display != EGL_NO_DISPLAY) {
         eglTerminate(display);
+        display = EGL_NO_DISPLAY;
+    }
     free(attribList);
     free(windowAttribList);
     free(contextAttribs);
