@@ -28,7 +28,6 @@ include $(JNI_LOCAL_PATH)/png/Android.mk
 include $(JNI_LOCAL_PATH)/freetype.mk
 include $(JNI_LOCAL_PATH)/libsamplerate/Android.mk
 include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
-include $(JNI_LOCAL_PATH)/mupen64plus-audio-sdl.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-audio-sles/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-core.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-input-android/Android.mk

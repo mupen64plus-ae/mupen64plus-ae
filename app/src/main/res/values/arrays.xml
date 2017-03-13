@@ -525,31 +525,15 @@
     <string-array name="audioPlugin_entries" translatable="false">
         <item>@string/audioPlugin_entryNone</item>
         <item>@string/audioPlugin_entryNoneNoSpeedLimit</item>
-        <item>@string/audioPlugin_entrySdl</item>
         <item>@string/audioPlugin_entrySles</item>
     </string-array>
     <string-array name="audioPlugin_values" translatable="false">
         <item></item>
         <item>nospeedlimit</item>
-        <item>libmupen64plus-audio-sdl.so</item>
         <item>libmupen64plus-audio-sles.so</item>
     </string-array>
 
     <string name="audioPlugin_default" translatable="false">libmupen64plus-audio-sles.so</string>
-
-    <!-- Audio SDL Buffer Size -->
-    <string-array name="audioSDLBufferSize_entries" translatable="false">
-        <item>@string/audioSDLBufferSize_entry2048</item>
-        <item>@string/audioSDLBufferSize_entry128</item>
-        <item>@string/audioSDLBufferSize_entry8</item>
-    </string-array>
-    <string-array name="audioSDLBufferSize_values" translatable="false">
-        <item>2048</item>
-        <item>128</item>
-        <item>8</item>
-    </string-array>
-    
-    <string name="audioSDLBufferSize_default" translatable="false">8</string>
     
     <!-- Audio SLES Buffer Size -->
     <string-array name="audioSLESBufferSize_entries" translatable="false">

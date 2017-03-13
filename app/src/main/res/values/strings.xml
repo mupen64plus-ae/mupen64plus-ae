@@ -490,12 +490,7 @@
     <string name="audioPlugin_title">Audio plugin</string>
     <string name="audioPlugin_entryNone">None (audio disabled)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
-    <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSDLBufferSize_title">Audio buffer size</string>
-    <string name="audioSDLBufferSize_entry2048">Default</string>
-    <string name="audioSDLBufferSize_entry128">Low-latency (experimental)</string>
-    <string name="audioSDLBufferSize_entry8">Ultra-low latency (experimental)</string>
     <string name="audioSLESBufferSize_title">Audio buffer size</string>
     <string name="audioSLESBufferSize_entry2048">2048</string>
     <string name="audioSLESBufferSize_entry1024">1024</string>

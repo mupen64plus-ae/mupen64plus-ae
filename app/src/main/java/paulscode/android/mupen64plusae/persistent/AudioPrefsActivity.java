@@ -33,7 +33,6 @@ import paulscode.android.mupen64plusae.preference.PrefUtil;
 public class AudioPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
-    private static final String AUDIO_SDL_BUFFER_SIZE = "audioSDLBufferSize";
     private static final String AUDIO_SLES_TIME_STRETCH = "audioSLESTimeStretch";
     private static final String AUDIO_SLES_BUFFER_SIZE = "audioSLESBufferSize2";
     private static final String AUDIO_SLES_BUFFER_NBR = "audioSLESBufferNbr2";
@@ -42,7 +41,6 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
     private static final String AUDIO_SYNCHRONIZE = "audioSynchronize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
 
-    private static final String AUDIO_SDL_PLUGIN = "libmupen64plus-audio-sdl.so";
     private static final String AUDIO_SLES_PLUGIN = "libmupen64plus-audio-sles.so";
 
     private static final String ROOT = "screenRoot";
@@ -101,7 +99,6 @@ public class AudioPrefsActivity extends AppCompatPreferenceActivity implements O
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         // Enable audio prefs if audio is enabled
-        PrefUtil.enablePreference(this, AUDIO_SDL_BUFFER_SIZE, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SDL_PLUGIN));
         PrefUtil.enablePreference(this, AUDIO_SLES_TIME_STRETCH, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN));
         PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_SIZE, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN) && mGlobalPrefs.enableSLESAudioTimeSretching);
         PrefUtil.enablePreference(this, AUDIO_SLES_BUFFER_NBR, mGlobalPrefs.audioPlugin.name.equals(AUDIO_SLES_PLUGIN) && mGlobalPrefs.enableSLESAudioTimeSretching);

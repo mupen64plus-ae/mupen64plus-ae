@@ -83,10 +83,6 @@ public class NativeConfigFiles
         // Core and rice config file
         final ConfigFile mupen64plus_cfg = new ConfigFile( game.mupen64plus_cfg );
 
-        mupen64plus_cfg.put( "Audio-SDL", "Version", "1.000000" );                                                          // Mupen64Plus SDL Audio Plugin config parameter version number
-        mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );                          // Swaps left and right channels
-        mupen64plus_cfg.put( "Audio-SDL", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSDLSecondaryBufferSize ) );  // Size of secondary buffer in output samples. This is SDL's hardware buffer.
-
         mupen64plus_cfg.put( "Audio-OpenSLES", "Version", "1.000000" );                                                          // Mupen64Plus OpenSLES Audio Plugin config parameter version number
         mupen64plus_cfg.put( "Audio-OpenSLES", "SWAP_CHANNELS", boolToTF( global.audioSwapChannels ) );                          // Swaps left and right channels
         mupen64plus_cfg.put( "Audio-OpenSLES", "SECONDARY_BUFFER_SIZE", String.valueOf( global.audioSLESSecondaryBufferSize ) ); // Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.

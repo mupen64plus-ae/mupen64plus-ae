@@ -54,13 +54,6 @@
         android:key="audioPlugin"
         android:summary="@string/selectedValue"
         android:title="@string/audioPlugin_title" />
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
-        android:defaultValue="@string/audioSDLBufferSize_default"
-        android:entries="@array/audioSDLBufferSize_entries"
-        android:entryValues="@array/audioSDLBufferSize_values"
-        android:key="audioSDLBufferSize"
-        android:summary="@string/selectedValue"
-        android:title="@string/audioSDLBufferSize_title" />
     <android.support.v7.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="audioSLESTimeStretch"
