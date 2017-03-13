@@ -333,6 +333,7 @@ DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_setNativeWi
 
 DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroySurface(JNIEnv* env, jclass cls)
 {
-    eglDestroySurface(display, surface);
+    if (display != EGL_NO_DISPLAY && surface != EGL_NO_SURFACE)
+        eglDestroySurface(display, surface);
     surface = EGL_NO_SURFACE;
 }
