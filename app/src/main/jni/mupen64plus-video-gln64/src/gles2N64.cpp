@@ -22,6 +22,19 @@
 
 ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = NULL;
 
+/* definitions of pointers to Core video extension functions */
+ptr_VidExt_Init                  CoreVideo_Init = NULL;
+ptr_VidExt_Quit                  CoreVideo_Quit = NULL;
+ptr_VidExt_ListFullscreenModes   CoreVideo_ListFullscreenModes = NULL;
+ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
+ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
+ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
+ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = NULL;
+ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
+ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
+ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
+ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
+
 static FrameSkipper frameSkipper;
 
 u32         last_good_ucode = (u32) -1;
@@ -35,6 +48,19 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
 {
     ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath)
             dlsym(CoreLibHandle, "ConfigGetSharedDataFilepath");
+
+    /* Get the core Video Extension function pointers from the library handle */
+    CoreVideo_Init = (ptr_VidExt_Init) dlsym(CoreLibHandle, "VidExt_Init");
+    CoreVideo_Quit = (ptr_VidExt_Quit) dlsym(CoreLibHandle, "VidExt_Quit");
+    CoreVideo_ListFullscreenModes = (ptr_VidExt_ListFullscreenModes) dlsym(CoreLibHandle, "VidExt_ListFullscreenModes");
+    CoreVideo_SetVideoMode = (ptr_VidExt_SetVideoMode) dlsym(CoreLibHandle, "VidExt_SetVideoMode");
+    CoreVideo_SetCaption = (ptr_VidExt_SetCaption) dlsym(CoreLibHandle, "VidExt_SetCaption");
+    CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) dlsym(CoreLibHandle, "VidExt_ToggleFullScreen");
+    CoreVideo_ResizeWindow = (ptr_VidExt_ResizeWindow) dlsym(CoreLibHandle, "VidExt_ResizeWindow");
+    CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) dlsym(CoreLibHandle, "VidExt_GL_GetProcAddress");
+    CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) dlsym(CoreLibHandle, "VidExt_GL_SetAttribute");
+    CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) dlsym(CoreLibHandle, "VidExt_GL_GetAttribute");
+    CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) dlsym(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
 #ifdef __NEON_OPT
     if (android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM &&

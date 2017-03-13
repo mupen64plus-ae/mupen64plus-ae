@@ -4,12 +4,7 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include "gSP.h"
-
-#ifdef USE_SDL
-//    #include <EGL/egl.h>  // Android 2.3 only
-//    #include <GLES2/gl2extimg.h>
-    #include <SDL.h>
-#endif
+#include "m64p_vidext.h"
 
 #ifndef min
 #define min(a,b) ((a) < (b) ? (a) : (b))
@@ -74,23 +69,6 @@ struct GLcolor
 
 struct GLInfo
 {
-#ifdef USE_SDL
-// TODO: More EGL stuff, need to do this in Java
-    SDL_Surface *hScreen;  // TODO: Do we really need this?  Only using it in one place AFAICT..
-/*
-    struct
-    {
-        EGLint		            version_major, version_minor;
-        EGLDisplay              display;
-        EGLContext              context;
-        EGLConfig               config;
-        EGLSurface              surface;
-        EGLNativeDisplayType    device;
-        EGLNativeWindowType     handle;
-    } EGL;
-*/
-#endif
-
     bool    screenUpdate;
 
     struct
@@ -167,5 +145,17 @@ void OGL_ReadScreen( void *dest, int *width, int *height );
 
 int  OGL_CheckError();
 int  OGL_IsExtSupported( const char *extension );
+
+extern ptr_VidExt_Init                  CoreVideo_Init;
+extern ptr_VidExt_Quit                  CoreVideo_Quit;
+extern ptr_VidExt_ListFullscreenModes   CoreVideo_ListFullscreenModes;
+extern ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode;
+extern ptr_VidExt_SetCaption            CoreVideo_SetCaption;
+extern ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen;
+extern ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow;
+extern ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress;
+extern ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute;
+extern ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute;
+extern ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers;
 #endif
 

@@ -24,13 +24,11 @@ include $(CLEAR_VARS)
 SRCDIR := src
 
 LOCAL_MODULE := mupen64plus-video-gln64
-LOCAL_SHARED_LIBRARIES := SDL2
 LOCAL_STATIC_LIBRARIES := cpufeatures
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=         \
     $(M64P_API_INCLUDES)    \
-    $(SDL_INCLUDES)         \
 
 LOCAL_SRC_FILES :=                  \
     $(SRCDIR)/2xSAI.cpp             \
@@ -72,9 +70,7 @@ LOCAL_CFLAGS :=         \
     -D__TRIBUFFER_OPT   \
     -D__VEC4_OPT        \
     -DANDROID           \
-    -DUSE_SDL           \
     -fsigned-char       \
-    #-DSDL_NO_COMPAT     \
     
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
     

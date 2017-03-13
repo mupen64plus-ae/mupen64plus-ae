@@ -6,16 +6,6 @@
 #include <time.h>
 #include <unistd.h>
 
-//// paulscode, added for SDL linkage:
-#ifdef USE_SDL
-    #include <SDL.h>
-     // TODO: Remove this bandaid for SDL 2.0 compatibility (needed for SDL_SetVideoMode)
-    #if SDL_VERSION_ATLEAST(2,0,0)
-    #include "sdl2_compat.h" // Slightly hacked version of core/vidext_sdl2_compat.h
-    #endif
-#endif
-////
-
 #include "Common.h"
 #include "gles2N64.h"
 #include "OpenGL.h"
@@ -230,17 +220,11 @@ void OGL_ResizeWindow(int x, int y, int width, int height)
             config.framebuffer.width, config.framebuffer.height);
 }
 
-////// paulscode, added for SDL linkage
-#ifdef USE_SDL
-bool OGL_SDL_Start()
+bool OGL_VidExt_Start()
 {
-    /* Initialize SDL */
-    LOG(LOG_MINIMAL, "Initializing SDL video subsystem...\n" );
-    if (SDL_InitSubSystem( SDL_INIT_VIDEO ) == -1)
-    {
-         LOG(LOG_ERROR, "Error initializing SDL video subsystem: %s\n", SDL_GetError() );
-        return FALSE;
-    }
+    /* Initialize VidExt */
+    LOG(LOG_MINIMAL, "Initializing video subsystem...\n" );
+    CoreVideo_Init();
 
     int current_w = config.window.width;
     int current_h = config.window.height;
@@ -251,12 +235,10 @@ bool OGL_SDL_Start()
     // TODO: I should actually check what the pixelformat is, rather than assuming 16 bpp (RGB_565) or 32 bpp (RGBA_8888):
     int bitsPP = 16;
 
-    // TODO: Replace SDL_SetVideoMode with something that is SDL 2.0 compatible
-    //       Better yet, eliminate all SDL calls by using the Mupen64Plus core api
-    if (!(OGL.hScreen = SDL_SetVideoMode( current_w, current_h, bitsPP, SDL_HWSURFACE )))
+    if (CoreVideo_SetVideoMode(current_w, current_h, bitsPP, M64VIDEO_FULLSCREEN, (m64p_video_flags)0) == M64ERR_INVALID_STATE)
     {
-        LOG(LOG_ERROR, "Problem setting videomode %dx%d: %s\n", current_w, current_h, SDL_GetError() );
-        SDL_QuitSubSystem( SDL_INIT_VIDEO );
+        LOG(LOG_ERROR, "Problem setting videomode %dx%d\n", current_w, current_h);
+        CoreVideo_Quit();
         return FALSE;
     }
 
@@ -289,22 +271,14 @@ bool OGL_SDL_Start()
 ////
     return true;
 }
-#endif
-//////
-
 
 bool OGL_Start()
 {
-// paulscode, initialize SDL
-#ifdef USE_SDL
-    if (!OGL_SDL_Start())
+    if (!OGL_VidExt_Start())
         return false;
-#endif
-//
 
     OGL_InitStates();
 
-#ifdef USE_SDL
 /////// paulscode, graphics bug-fixes
     float depth = gDP.fillColor.z ;
     glDisable( GL_SCISSOR_TEST );
@@ -314,13 +288,12 @@ bool OGL_Start()
     glClearColor( 0, 0, 0, 1 );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glFinish();
-    SDL_GL_SwapBuffers();  // paulscode, fix for black-screen bug
+    CoreVideo_GL_SwapBuffers();  // paulscode, fix for black-screen bug
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glFinish();
     OGL_UpdateDepthUpdate();
     glEnable( GL_SCISSOR_TEST );
 ////////
-#endif
 
     //create framebuffer
     if (config.framebuffer.enable)
@@ -414,9 +387,7 @@ void OGL_Stop()
 {
     LOG(LOG_MINIMAL, "Stopping OpenGL\n");
 
-#ifdef USE_SDL
-    SDL_QuitSubSystem( SDL_INIT_VIDEO );
-#endif
+    CoreVideo_Quit();
 
     if (config.framebuffer.enable)
     {
@@ -1275,7 +1246,7 @@ void OGL_SwapBuffers()
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (float*)vert + 2);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-        SDL_GL_SwapBuffers(); // paulscode, fix for black-screen bug
+        CoreVideo_GL_SwapBuffers(); // paulscode, fix for black-screen bug
 
         glBindFramebuffer(GL_FRAMEBUFFER, OGL.framebuffer.fb);
         OGL_UpdateViewport();
@@ -1284,7 +1255,7 @@ void OGL_SwapBuffers()
     }
     else
     {
-    	SDL_GL_SwapBuffers(); // paulscode, fix for black-screen bug
+        CoreVideo_GL_SwapBuffers(); // paulscode, fix for black-screen bug
     }
 
     // if emulator defined a render callback function, call it before
@@ -1327,10 +1298,10 @@ void OGL_ReadScreen( void *dest, int *width, int *height )
             GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer );
 
     //Convert RGBA to RGB
-    for (Uint32 y=0; y<config.framebuffer.height; y++)
+    for (uint32_t y=0; y<config.framebuffer.height; y++)
     {
         unsigned char *ptr = (unsigned char *) frameBuffer + (config.framebuffer.width * 4 * y);
-        for (Uint32 x=0; x<config.framebuffer.width; x++)
+        for (uint32_t x=0; x<config.framebuffer.width; x++)
         {
             line[x*3]   = ptr[0];  // red
             line[x*3+1] = ptr[1];  // green
