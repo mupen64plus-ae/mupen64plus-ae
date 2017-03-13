@@ -75,6 +75,8 @@ public class NativeExports
     public static native void emuGameShark( boolean pressed );
 
     public static native void emuDestroySurface();
+
+    public static native void FPSEnabled(int recalc);
     
     public static native int emuGetState();
     

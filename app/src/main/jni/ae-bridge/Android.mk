@@ -42,6 +42,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := ae-vidext
 
+LOCAL_SHARED_LIBRARIES := ae-imports
+
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES) $(SDL_INCLUDES) $(GL_INCLUDES)
 
 LOCAL_SRC_FILES := ae_vidext.c

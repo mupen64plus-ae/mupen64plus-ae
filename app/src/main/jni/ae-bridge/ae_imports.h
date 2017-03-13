@@ -50,6 +50,8 @@ extern void         Android_JNI_InitImports(JNIEnv* env, jclass cls);
 // Called by mupen64plus-ui-console
 extern void         Android_JNI_StateCallback(void* context, m64p_core_param paramChanged, int newValue);
 
+// Called by ae-vidext
+extern void         Android_JNI_FPSCounter(int fps);
 #ifdef __cplusplus
 }
 #endif

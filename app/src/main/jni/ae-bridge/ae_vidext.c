@@ -6,6 +6,8 @@
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include <string.h>
+#include <time.h>
+#include <math.h>
 
 EGLDisplay display;
 EGLConfig config;
@@ -14,6 +16,9 @@ EGLSurface surface;
 ANativeWindow* native_window;
 int isGLES2;
 int new_surface;
+int FPSRecalcPeriod;
+uint32_t frameCount;
+int64_t oldTime;
 
 PFNGLGETINTEGERVPROC g_glGetIntegerv = NULL;
 PFNGLGETSTRINGPROC g_glGetString = NULL;
@@ -58,6 +63,7 @@ size_t FindIndex( const int a[], size_t size, int value )
 extern DECLSPEC m64p_error VidExtFuncInit()
 {
     new_surface = 0;
+    frameCount = 0;
     surface = EGL_NO_SURFACE;
     context = EGL_NO_CONTEXT;
     display = EGL_NO_DISPLAY;
@@ -320,8 +326,21 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
         }
         new_surface = 0;
     }
-    if (surface != EGL_NO_SURFACE)
+    if (surface != EGL_NO_SURFACE) {
         eglSwapBuffers(display, surface);
+        if (FPSRecalcPeriod > 0) {
+            frameCount++;
+            if (frameCount >= FPSRecalcPeriod) {
+                struct timespec spec;
+                clock_gettime(CLOCK_MONOTONIC, &spec);
+                int64_t currentTime = (int64_t) spec.tv_sec*1000000000LL + spec.tv_nsec;
+                float fFPS = ( (float) frameCount / (float) ( currentTime - oldTime ) ) * 1000000000.0f;
+                Android_JNI_FPSCounter(lround(fFPS));
+                frameCount = 0;
+                oldTime = currentTime;
+            }
+        }
+    }
     return M64ERR_SUCCESS;
 }
 
@@ -336,4 +355,9 @@ DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroyS
     if (display != EGL_NO_DISPLAY && surface != EGL_NO_SURFACE)
         eglDestroySurface(display, surface);
     surface = EGL_NO_SURFACE;
+}
+
+DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_FPSEnabled(JNIEnv* env, jclass cls, int recalc)
+{
+    FPSRecalcPeriod = recalc;
 }

@@ -149,6 +149,9 @@ public class CoreInterface
     protected static GlobalPrefs sGlobalPrefs = null;
     protected static GamePrefs sGamePrefs = null;
 
+    //Frame rate info - used by ae-vidext
+    protected static OnFpsChangedListener sFpsListener;
+
     // Activity and threading objects - used internally
     private static AppCompatActivity sActivity = null;
     private static Thread sCoreThread = null;
@@ -363,6 +366,12 @@ public class CoreInterface
         {
             sStateCallbackListeners.remove( listener );
         }
+    }
+
+    public static void setOnFpsChangedListener( OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
+    {
+        sFpsListener = fpsListener;
+        NativeExports.FPSEnabled(fpsRecalcPeriod);
     }
 
     public static synchronized void startupEmulator(final String saveToLoad)

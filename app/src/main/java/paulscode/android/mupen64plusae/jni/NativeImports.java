@@ -48,4 +48,9 @@ public class NativeImports extends CoreInterface
             }
         }
     }
+
+    public static void FPSCounter (int fps)
+    {
+        sFpsListener.onFpsChanged(fps);
+    }
 }
