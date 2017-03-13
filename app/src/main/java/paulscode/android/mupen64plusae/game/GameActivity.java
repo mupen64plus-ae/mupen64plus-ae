@@ -234,7 +234,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity_egl14);
         mSurface = (GameSurface) this.findViewById( R.id.gameSurfaceEgl14 );
-        mSurface.setFullGLStatus(mGamePrefs.isGliden64Enabled);
+        mSurface.setFullGLStatus(mGamePrefs.isGliden64Enabled && AppData.doesSupportFullGL());
 
         mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
         mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
