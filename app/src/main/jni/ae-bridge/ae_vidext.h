@@ -28,6 +28,9 @@
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern m64p_error VidExtFuncInit(void);
 extern m64p_error VidExtFuncQuit(void);
 extern m64p_error VidExtFuncListModes(m64p_2d_size *SizeArray, int *NumSizes);
@@ -35,7 +38,7 @@ extern m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerPixel, int
 extern m64p_error VidExtFuncSetCaption(const char *Title);
 extern m64p_error VidExtFuncToggleFS(void);
 extern m64p_error VidExtFuncResizeWindow(int Width, int Height);
-extern void * VidExtFuncGLGetProc(const char* Proc);
+extern void *VidExtFuncGLGetProc(const char *Proc);
 extern m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value);
 extern m64p_error VidExtFuncGLGetAttr(m64p_GLattr Attr, int *pValue);
 extern m64p_error VidExtFuncGLSwapBuf(void);
@@ -52,4 +55,7 @@ m64p_video_extension_functions vidExtFunctions = {11,
                                                   VidExtFuncSetCaption,
                                                   VidExtFuncToggleFS,
                                                   VidExtFuncResizeWindow};
+#ifdef __cplusplus
+}
+#endif
 #endif

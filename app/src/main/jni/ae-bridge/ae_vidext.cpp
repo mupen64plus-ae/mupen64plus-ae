@@ -51,13 +51,13 @@ EGLint* attribList;
 EGLint* windowAttribList;
 EGLint* contextAttribs;
 
-size_t FindIndex( const int a[], size_t size, int value )
+size_t FindIndex( const EGLint a[], size_t size, int value )
 {
     size_t index = 0;
 
-    while ( index < size && a[index] != value ) ++index;
+    while ( index < (size/sizeof(EGLint)) && a[index] != value ) ++index;
 
-    return ( index == size ? -1 : index );
+    return ( index == (size/sizeof(EGLint)) ? -1 : index );
 }
 
 extern DECLSPEC m64p_error VidExtFuncInit()
@@ -67,11 +67,11 @@ extern DECLSPEC m64p_error VidExtFuncInit()
     surface = EGL_NO_SURFACE;
     context = EGL_NO_CONTEXT;
     display = EGL_NO_DISPLAY;
-    attribList = malloc(sizeof(defaultAttributeList));
+    attribList = (EGLint*)malloc(sizeof(defaultAttributeList));
     memcpy(attribList, defaultAttributeList, sizeof(defaultAttributeList));
-    windowAttribList = malloc(sizeof(defaultWindowAttribs));
+    windowAttribList = (EGLint*)malloc(sizeof(defaultWindowAttribs));
     memcpy(windowAttribList, defaultWindowAttribs, sizeof(defaultWindowAttribs));
-    contextAttribs = malloc(sizeof(defaultContextAttribs));
+    contextAttribs = (EGLint*)malloc(sizeof(defaultContextAttribs));
     memcpy(contextAttribs, defaultContextAttribs, sizeof(defaultContextAttribs));
 
     if ((display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
@@ -159,7 +159,7 @@ extern DECLSPEC m64p_error VidExtFuncResizeWindow(int Width, int Height)
 
 extern DECLSPEC void * VidExtFuncGLGetProc(const char* Proc)
 {
-    return eglGetProcAddress(Proc);
+    return (void*)eglGetProcAddress(Proc);
 }
 
 extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)
@@ -344,20 +344,20 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
     return M64ERR_SUCCESS;
 }
 
-DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_setNativeWindow(JNIEnv* env, jclass cls, jobject native_surface)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_setNativeWindow(JNIEnv* env, jclass cls, jobject native_surface)
 {
     native_window = ANativeWindow_fromSurface(env, native_surface);
     new_surface = 1;
 }
 
-DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroySurface(JNIEnv* env, jclass cls)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroySurface(JNIEnv* env, jclass cls)
 {
     if (display != EGL_NO_DISPLAY && surface != EGL_NO_SURFACE)
         eglDestroySurface(display, surface);
     surface = EGL_NO_SURFACE;
 }
 
-DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_FPSEnabled(JNIEnv* env, jclass cls, int recalc)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_FPSEnabled(JNIEnv* env, jclass cls, int recalc)
 {
     FPSRecalcPeriod = recalc;
 }
