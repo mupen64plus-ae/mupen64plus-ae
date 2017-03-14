@@ -6,7 +6,6 @@ LIBRETRO_INCLUDES := $(JNI_LOCAL_PATH)/libretro/
 SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
 PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 GL_INCLUDES := $(JNI_LOCAL_PATH)/GL/
-SAMPLERATE_INCLUDES := $(JNI_LOCAL_PATH)/libsamplerate/
 FREETYPE_INCLUDES := $(JNI_LOCAL_PATH)/freetype/include/
 SOUNDTOUCH_INCLUDES := $(JNI_LOCAL_PATH)/soundtouch/include/
 ANDROID_FRAMEWORK_INCLUDES := $(JNI_LOCAL_PATH)/android_framework/include/
@@ -26,7 +25,6 @@ include $(JNI_LOCAL_PATH)/SDL2/Android.mk
 include $(JNI_LOCAL_PATH)/soundtouch/source/Android-lib/jni/Android.mk
 include $(JNI_LOCAL_PATH)/png/Android.mk
 include $(JNI_LOCAL_PATH)/freetype.mk
-include $(JNI_LOCAL_PATH)/libsamplerate/Android.mk
 include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-audio-sles/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-core.mk
