@@ -15,10 +15,12 @@ EGLContext context;
 EGLSurface surface;
 ANativeWindow* native_window;
 int isGLES2;
-int new_surface;
-int FPSRecalcPeriod;
-uint32_t frameCount;
+int new_surface = 0;
+int FPSRecalcPeriod = 0;
+uint32_t frameCount = 0;
 int64_t oldTime;
+int vsync = 1;
+int oldVsync = 1;
 
 PFNGLGETINTEGERVPROC g_glGetIntegerv = NULL;
 PFNGLGETSTRINGPROC g_glGetString = NULL;
@@ -206,7 +208,6 @@ extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)
                 attribList[my_index + 1] = Value;
             break;
         case M64P_GL_SWAP_CONTROL:
-            eglSwapInterval(display, Value);
             break;
         case M64P_GL_MULTISAMPLEBUFFERS:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_SAMPLE_BUFFERS);
@@ -326,6 +327,11 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
         }
         new_surface = 0;
     }
+
+    if (vsync != oldVsync) {
+        eglSwapInterval(display, vsync);
+        oldVsync = vsync;
+    }
     if (surface != EGL_NO_SURFACE) {
         eglSwapBuffers(display, surface);
         if (FPSRecalcPeriod > 0) {
@@ -360,4 +366,9 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_FPSEnabled(JNIEnv* env, jclass cls, int recalc)
 {
     FPSRecalcPeriod = recalc;
+}
+
+extern DECLSPEC void vsyncEnabled(int enabled)
+{
+    vsync = enabled;
 }

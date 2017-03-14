@@ -24,6 +24,7 @@
 #include "SDL.h"
 #include "m64p_types.h"
 #include "ae_imports.h"
+#include "ae_vidext.h"
 
 #ifdef M64P_BIG_ENDIAN
   #define sl(mot) mot
@@ -251,6 +252,10 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuSetSpeed(JNIEnv* env, jclass cls, jint percent)
 {
     int speed_factor = (int) percent;
+    if (speed_factor > 100)
+        vsyncEnabled(0);
+    else
+        vsyncEnabled(1);
     if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &speed_factor);
 }
 
