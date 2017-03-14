@@ -339,4 +339,3 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 {
     if (coreDoCommand) coreDoCommand(M64CMD_RESET, 0, NULL);
 }
-

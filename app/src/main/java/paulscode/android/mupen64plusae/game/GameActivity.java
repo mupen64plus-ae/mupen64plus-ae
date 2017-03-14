@@ -975,6 +975,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     if( !mDrawerLayout.isDrawerOpen( GravityCompat.START )
                         && !mWaitingOnConfirmation)
                         CoreInterface.resumeEmulator();
+                    else
+                        CoreInterface.advanceFrame();
                     break;
                 default:
                     break;
