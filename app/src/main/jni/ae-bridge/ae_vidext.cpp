@@ -49,9 +49,9 @@ EGLint const defaultWindowAttribs[] = {
         EGL_NONE
 };
 
-EGLint* attribList;
-EGLint* windowAttribList;
-EGLint* contextAttribs;
+EGLint attribList[sizeof(defaultAttributeList) / sizeof(EGLint)];
+EGLint windowAttribList[sizeof(defaultWindowAttribs) / sizeof(EGLint)];
+EGLint contextAttribs[sizeof(defaultContextAttribs) / sizeof(EGLint)];
 
 size_t FindIndex( const EGLint a[], size_t size, int value )
 {
@@ -69,11 +69,8 @@ extern DECLSPEC m64p_error VidExtFuncInit()
     surface = EGL_NO_SURFACE;
     context = EGL_NO_CONTEXT;
     display = EGL_NO_DISPLAY;
-    attribList = (EGLint*)malloc(sizeof(defaultAttributeList));
     memcpy(attribList, defaultAttributeList, sizeof(defaultAttributeList));
-    windowAttribList = (EGLint*)malloc(sizeof(defaultWindowAttribs));
     memcpy(windowAttribList, defaultWindowAttribs, sizeof(defaultWindowAttribs));
-    contextAttribs = (EGLint*)malloc(sizeof(defaultContextAttribs));
     memcpy(contextAttribs, defaultContextAttribs, sizeof(defaultContextAttribs));
 
     if ((display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
@@ -102,9 +99,6 @@ extern DECLSPEC m64p_error VidExtFuncQuit()
         eglTerminate(display);
         display = EGL_NO_DISPLAY;
     }
-    free(attribList);
-    free(windowAttribList);
-    free(contextAttribs);
     return M64ERR_SUCCESS;
 }
 
@@ -239,10 +233,11 @@ extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)
                     break;
                 case M64P_GL_CONTEXT_PROFILE_CORE:
                 case M64P_GL_CONTEXT_PROFILE_COMPATIBILITY:
-                    eglBindAPI(EGL_OPENGL_API);
-                    my_index = FindIndex(attribList, sizeof(attribList), EGL_RENDERABLE_TYPE);
-                    if (my_index != -1)
-                        attribList[my_index + 1] = EGL_OPENGL_BIT;
+                    if (eglBindAPI(EGL_OPENGL_API)) {
+                        my_index = FindIndex(attribList, sizeof(attribList), EGL_RENDERABLE_TYPE);
+                        if (my_index != -1)
+                            attribList[my_index + 1] = EGL_OPENGL_BIT;
+                    }
                     break;
             }
             break;
