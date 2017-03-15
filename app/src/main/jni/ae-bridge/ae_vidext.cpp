@@ -114,6 +114,15 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
         LOGE("eglChooseConfig() returned error %d", eglGetError());
         return M64ERR_INVALID_STATE;
     }
+    if (num_config == 0) {
+        //Try to fallback to GLES context
+        eglBindAPI(EGL_OPENGL_ES_API);
+        attribList[FindIndex(attribList, sizeof(attribList), EGL_RENDERABLE_TYPE) + 1] = EGL_OPENGL_ES2_BIT;
+        if (!eglChooseConfig(display, attribList, &config, 1, &num_config)) {
+            LOGE("eglChooseConfig() returned error %d", eglGetError());
+            return M64ERR_INVALID_STATE;
+        }
+    }
     if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
         LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
         return M64ERR_INVALID_STATE;
@@ -164,79 +173,65 @@ extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)
     switch (Attr) {
         case M64P_GL_DOUBLEBUFFER:
             my_index = FindIndex(windowAttribList, sizeof(windowAttribList), EGL_RENDER_BUFFER);
-            if (my_index != -1) {
-                if (Value == 0)
-                    windowAttribList[my_index + 1] = EGL_SINGLE_BUFFER;
-                else
-                    windowAttribList[my_index + 1] = EGL_BACK_BUFFER;
-            }
+            if (Value == 0)
+                windowAttribList[my_index + 1] = EGL_SINGLE_BUFFER;
+            else
+                windowAttribList[my_index + 1] = EGL_BACK_BUFFER;
             break;
         case M64P_GL_BUFFER_SIZE:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_BUFFER_SIZE);
-            if (my_index != -1)
-                attribList[my_index + 1] = Value;
+            attribList[my_index + 1] = Value;
             break;
         case M64P_GL_DEPTH_SIZE:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_DEPTH_SIZE);
-            if (my_index != -1)
-                attribList[my_index + 1] = Value;
+            attribList[my_index + 1] = Value;
             break;
         case M64P_GL_RED_SIZE:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_RED_SIZE);
-            if (my_index != -1)
-                attribList[my_index + 1] = Value;
+            attribList[my_index + 1] = Value;
             break;
         case M64P_GL_GREEN_SIZE:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_GREEN_SIZE);
-            if (my_index != -1)
-                attribList[my_index + 1] = Value;
+            attribList[my_index + 1] = Value;
             break;
         case M64P_GL_BLUE_SIZE:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_BLUE_SIZE);
-            if (my_index != -1)
-                attribList[my_index + 1] = Value;
+            attribList[my_index + 1] = Value;
             break;
         case M64P_GL_ALPHA_SIZE:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_ALPHA_SIZE);
-            if (my_index != -1)
-                attribList[my_index + 1] = Value;
+            attribList[my_index + 1] = Value;
             break;
         case M64P_GL_SWAP_CONTROL:
             break;
         case M64P_GL_MULTISAMPLEBUFFERS:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_SAMPLE_BUFFERS);
-            if (my_index != -1)
-                attribList[my_index + 1] = Value;
+            attribList[my_index + 1] = Value;
             break;
         case M64P_GL_MULTISAMPLESAMPLES:
             my_index = FindIndex(attribList, sizeof(attribList), EGL_SAMPLES);
-            if (my_index != -1)
-                attribList[my_index + 1] = Value;
+            attribList[my_index + 1] = Value;
             break;
         case M64P_GL_CONTEXT_MAJOR_VERSION:
             my_index = FindIndex(contextAttribs, sizeof(contextAttribs), EGL_CONTEXT_MAJOR_VERSION_KHR);
-            if (my_index != -1)
-                contextAttribs[my_index + 1]= Value;
+            contextAttribs[my_index + 1]= Value;
             break;
         case M64P_GL_CONTEXT_MINOR_VERSION:
             my_index = FindIndex(contextAttribs, sizeof(contextAttribs), EGL_CONTEXT_MINOR_VERSION_KHR);
-            if (my_index != -1)
-                contextAttribs[my_index + 1]= Value;
+            contextAttribs[my_index + 1]= Value;
             break;
         case M64P_GL_CONTEXT_PROFILE_MASK:
             switch (Value) {
                 case M64P_GL_CONTEXT_PROFILE_ES:
                     eglBindAPI(EGL_OPENGL_ES_API);
                     my_index = FindIndex(attribList, sizeof(attribList), EGL_RENDERABLE_TYPE);
-                    if (my_index != -1)
-                        attribList[my_index + 1] = EGL_OPENGL_ES2_BIT;
+                    attribList[my_index + 1] = EGL_OPENGL_ES2_BIT;
                     break;
                 case M64P_GL_CONTEXT_PROFILE_CORE:
                 case M64P_GL_CONTEXT_PROFILE_COMPATIBILITY:
                     if (eglBindAPI(EGL_OPENGL_API)) {
                         my_index = FindIndex(attribList, sizeof(attribList), EGL_RENDERABLE_TYPE);
-                        if (my_index != -1)
-                            attribList[my_index + 1] = EGL_OPENGL_BIT;
+                        attribList[my_index + 1] = EGL_OPENGL_BIT;
                     }
                     break;
             }
