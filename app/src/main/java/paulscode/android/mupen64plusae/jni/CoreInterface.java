@@ -21,7 +21,6 @@
 package paulscode.android.mupen64plusae.jni;
 
 import android.content.DialogInterface;
-import android.view.SurfaceView;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentManager;
@@ -181,8 +180,7 @@ public class CoreInterface
 
     private static Object sActivitySync = new Object();
 
-    public static void initialize(AppCompatActivity activity,
-                                  SurfaceView surface, GamePrefs gamePrefs, String romPath,
+    public static void initialize(AppCompatActivity activity, GamePrefs gamePrefs, String romPath,
                                   String cheatArgs, boolean isRestarting)
     {
         sRomPath = romPath;

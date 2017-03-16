@@ -252,7 +252,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mGameSidebar.setTitle(romGoodName);
         // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( this, mSurface, mGamePrefs, mRomPath, cheatArgs, doRestart);
+        CoreInterface.initialize( this, mGamePrefs, mRomPath, cheatArgs, doRestart);
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
