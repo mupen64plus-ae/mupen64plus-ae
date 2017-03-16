@@ -29,40 +29,10 @@ struct
 	{ 1280, 1024, "1280 x 1024" },
 	{ 1440, 1080, "1440 x 1080" },
 	{ 1600, 1024, "1600 x 1024" },
-	{ 1600, 1200, "1600 x 1200" },
-	{ 640, 480, "Custom" }
+	{ 1600, 1200, "1600 x 1200" }
 };
 static
 const unsigned int numWindowedModes = sizeof(WindowedModes) / sizeof(WindowedModes[0]);
-
-static const unsigned int numFilters = 7U;
-static const char * cmbTexFilter_choices[numFilters] = {
-	"None",
-	"Smooth filtering 1",
-	"Smooth filtering 2",
-	"Smooth filtering 3",
-	"Smooth filtering 4",
-	"Sharp filtering 1",
-	"Sharp filtering 2"
-};
-
-static const unsigned int numEnhancements = 14U;
-static const char * cmbTexEnhancement_choices[numEnhancements] = {
-	"None",
-	"Store",
-	"X2",
-	"X2SAI",
-	"HQ2X",
-	"HQ2XS",
-	"LQ2X",
-	"LQ2XS",
-	"HQ4X",
-	"2xBRZ",
-	"3xBRZ",
-	"4xBRZ",
-	"5xBRZ",
-	"6xBRZ"
-};
 
 static
 u32 pow2(u32 dim)
@@ -95,7 +65,7 @@ void ConfigDialog::_init()
 {
 	// Video settings
 	QStringList windowedModesList;
-	const unsigned int windowedModesCustom = numWindowedModes - 1;
+	const unsigned int windowedModesCustom = numWindowedModes;
 	unsigned int windowedModesCurrent = windowedModesCustom;
 	for (unsigned int i = 0; i < numWindowedModes; ++i) {
 		windowedModesList.append(WindowedModes[i].description);
@@ -221,16 +191,7 @@ void ConfigDialog::_init()
 	ui->readDepthChunkCheckBox->setEnabled(fbEmulationEnabled && config.frameBufferEmulation.fbInfoDisabled == 0);
 
 	// Texture filter settings
-	QStringList textureFiltersList;
-	for (unsigned int i = 0; i < numFilters; ++i)
-		textureFiltersList.append(cmbTexFilter_choices[i]);
-	ui->filterComboBox->insertItems(0, textureFiltersList);
 	ui->filterComboBox->setCurrentIndex(config.textureFilter.txFilterMode);
-
-	QStringList textureEnhancementList;
-	for (unsigned int i = 0; i < numEnhancements; ++i)
-		textureEnhancementList.append(cmbTexEnhancement_choices[i]);
-	ui->enhancementComboBox->insertItems(0, textureEnhancementList);
 	ui->enhancementComboBox->setCurrentIndex(config.textureFilter.txEnhancementMode);
 
 	ui->textureFilterCacheSpinBox->setValue(config.textureFilter.txCacheSize / gc_uMegabyte);
@@ -593,7 +554,7 @@ void ConfigDialog::on_texPackPathButton_clicked()
 
 void ConfigDialog::on_windowedResolutionComboBox_currentIndexChanged(int index)
 {
-	const bool bCustom = index == numWindowedModes - 1;
+	const bool bCustom = index == numWindowedModes;
 	ui->windowWidthSpinBox->setValue(bCustom ? config.video.windowedWidth : WindowedModes[index].width);
 	ui->windowHeightSpinBox->setValue(bCustom ? config.video.windowedHeight : WindowedModes[index].height);
 	ui->windowedResolutionCustomFrame->setVisible(bCustom);

@@ -60,12 +60,7 @@ void gSPTriangle(s32 v0, s32 v1, s32 v2)
 		if (drawer.isClipped(v0, v1, v2))
 			return;
 		drawer.addTriangle(v0, v1, v2);
-		if (config.frameBufferEmulation.N64DepthCompare != 0)
-			drawer.drawTriangles();
 	}
-
-	frameBufferList().setBufferChanged();
-	gDP.colorImage.height = (u32)max( gDP.colorImage.height, (u32)gDP.scissor.lry );
 }
 
 void gSP1Triangle( const s32 v0, const s32 v1, const s32 v2)
@@ -2044,7 +2039,6 @@ void gSPDrawObjRect(const ObjCoordinates & _coords)
 	vtx3.t = _coords.lrt;
 
 	drawer.drawScreenSpaceTriangle(4);
-	gDP.colorImage.height = (u32)(max(gDP.colorImage.height, (u32)gDP.scissor.lry));
 }
 
 static
@@ -2078,7 +2072,7 @@ void _drawYUVImageToFrameBuffer(const ObjCoordinates & _objCoords)
 	const u32 lrx = (u32)_objCoords.lrx;
 	const u32 lry = (u32)_objCoords.lry;
 	const u32 ci_width = gDP.colorImage.width;
-	const u32 ci_height = gDP.colorImage.height;
+	const u32 ci_height = gDP.scissor.lry;
 	if (ulx >= ci_width)
 		return;
 	if (uly >= ci_height)
@@ -2328,9 +2322,6 @@ void gSPObjSprite(u32 _sp)
 	vtx3.t = lrt;
 
 	drawer.drawScreenSpaceTriangle(4);
-
-	frameBufferList().setBufferChanged();
-	gDP.colorImage.height = (u32)(max( gDP.colorImage.height, (u32)gDP.scissor.lry ));
 }
 
 static

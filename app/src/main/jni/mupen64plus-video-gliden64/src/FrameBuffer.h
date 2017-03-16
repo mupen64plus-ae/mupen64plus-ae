@@ -17,8 +17,8 @@ struct FrameBuffer
 {
 	FrameBuffer();
 	~FrameBuffer();
-	void init(u32 _address, u16 _format, u16 _size, u16 _width, u16 _height, bool _cfb);
-	void reinit(u16 _height);
+	void init(u32 _address, u16 _format, u16 _size, u16 _width, bool _cfb);
+	void updateEndAddress();
 	void resolveMultisampledTexture(bool _bForce = false);
 	CachedTexture * getTexture(u32 _t);
 	CachedTexture * getTextureBG(u32 _t);
@@ -30,7 +30,7 @@ struct FrameBuffer
 
 	u32 m_startAddress, m_endAddress;
 	u32 m_size, m_width, m_height;
-	float m_scaleX, m_scaleY;
+	float m_scale;
 	bool m_copiedToRdram;
 	bool m_fingerprint;
 	bool m_cleared;
@@ -39,7 +39,7 @@ struct FrameBuffer
 	bool m_isDepthBuffer;
 	bool m_isPauseScreen;
 	bool m_isOBScreen;
-	bool m_needHeightCorrection;
+	bool m_isMainBuffer;
 	bool m_readable;
 
 	struct {
@@ -80,7 +80,7 @@ class FrameBufferList
 public:
 	void init();
 	void destroy();
-	void saveBuffer(u32 _address, u16 _format, u16 _size, u16 _width, u16 _height, bool _cfb);
+	void saveBuffer(u32 _address, u16 _format, u16 _size, u16 _width, bool _cfb);
 	void removeAux();
 	void copyAux();
 	void removeBuffer(u32 _address);
@@ -90,9 +90,8 @@ public:
 	FrameBuffer * findBuffer(u32 _startAddress);
 	FrameBuffer * findTmpBuffer(u32 _address);
 	FrameBuffer * getCurrent() const {return m_pCurrent;}
-	void renderBuffer(u32 _address);
-	void setBufferChanged();
-	void correctHeight();
+	void renderBuffer();
+	void setBufferChanged(f32 _maxY);
 	void clearBuffersChanged();
 	void setCurrentDrawBuffer() const;
 	void fillRDRAM(s32 ulx, s32 uly, s32 lrx, s32 lry);
@@ -108,7 +107,7 @@ private:
 	FrameBufferList() : m_pCurrent(nullptr), m_pCopy(nullptr) {}
 	FrameBufferList(const FrameBufferList &);
 
-	FrameBuffer * _findBuffer(u32 _startAddress, u32 _endAddress, u32 _width);
+	void removeIntersections();
 
 	void _createScreenSizeBuffer();
 	void _renderScreenSizeBuffer();
@@ -127,6 +126,7 @@ FrameBufferList & frameBufferList()
 }
 
 u32 cutHeight(u32 _address, u32 _height, u32 _stride);
+void calcCoordsScales(const FrameBuffer * _pBuffer, f32 & _scaleX, f32 & _scaleY);
 
 void FrameBuffer_Init();
 void FrameBuffer_Destroy();

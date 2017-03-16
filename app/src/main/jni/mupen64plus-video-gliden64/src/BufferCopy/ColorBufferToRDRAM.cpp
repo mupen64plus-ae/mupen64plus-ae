@@ -35,7 +35,6 @@ ColorBufferToRDRAM::ColorBufferToRDRAM()
 	, m_frameCount(-1)
 	, m_startAddress(-1)
 	, m_lastBufferWidth(-1)
-	, m_lastBufferHeight(-1)
 {
 	m_allowedRealWidths[0] = 320;
 	m_allowedRealWidths[1] = 480;
@@ -75,8 +74,8 @@ void ColorBufferToRDRAM::_initFBTexture(void)
 	m_pTexture->mirrorT = 0;
 	//The actual VI width is not used for texture width because most texture widths
 	//cause slowdowns in the glReadPixels call, at least on Android
-	m_pTexture->realWidth = _getRealWidth(m_lastBufferWidth);
-	m_pTexture->realHeight = m_lastBufferHeight;
+	m_pTexture->realWidth = m_lastBufferWidth;
+	m_pTexture->realHeight = VI_GetMaxBufferHeight(m_lastBufferWidth);
 	m_pTexture->textureBytes = m_pTexture->realWidth * m_pTexture->realHeight * fbTexFormat.colorFormatBytes;
 	textureCache().addFrameBufferTextureSize(m_pTexture->textureBytes);
 
@@ -132,12 +131,12 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 	if (VI.width == 0 || frameBufferList().getCurrent() == nullptr)
 		return false;
 
-	DisplayWindow & wnd = dwnd();
-	const u32 curFrame = wnd.getBuffersSwapCount();
 	FrameBuffer * pBuffer = frameBufferList().findBuffer(_startAddress);
-
 	if (pBuffer == nullptr || pBuffer->m_isOBScreen)
 		return false;
+
+	DisplayWindow & wnd = dwnd();
+	const u32 curFrame = wnd.getBuffersSwapCount();
 
 	if (m_frameCount == curFrame && pBuffer == m_pCurFrameBuffer && m_startAddress != _startAddress)
 		return true;
@@ -152,18 +151,18 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 		return false;
 
 	if(m_pTexture == nullptr ||
-		(m_lastBufferWidth != pBuffer->m_width || m_lastBufferHeight != pBuffer->m_height))
+		m_pTexture->realWidth != _getRealWidth(pBuffer->m_width) ||
+		m_pTexture->realHeight != VI_GetMaxBufferHeight(m_lastBufferWidth))
 	{
 		_destroyFBTexure();
 
-		m_lastBufferWidth = pBuffer->m_width;
-		m_lastBufferHeight = pBuffer->m_height;
+		m_lastBufferWidth = _getRealWidth(pBuffer->m_width);
 		_initFBTexture();
 	}
 
 	m_pCurFrameBuffer = pBuffer;
 
-	if ((config.generalEmulation.hacks & hack_subscreen) != 0 && m_pCurFrameBuffer->m_width == VI.width && m_pCurFrameBuffer->m_height == VI.height) {
+	if ((config.generalEmulation.hacks & hack_subscreen) != 0 && m_pCurFrameBuffer->m_isMainBuffer) {
 		copyWhiteToRDRAM(m_pCurFrameBuffer);
 		return false;
 	}
@@ -177,11 +176,10 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 		readBuffer = m_pCurFrameBuffer->m_FBO;
 	}
 
-	if (m_pCurFrameBuffer->m_scaleX != 1.0f || m_pCurFrameBuffer->m_scaleY != 1.0f) {
+	if (m_pCurFrameBuffer->m_scale != 1.0f) {
 		u32 x0 = 0;
-		u32 width, height;
+		u32 width;
 		if (config.frameBufferEmulation.nativeResFactor == 0) {
-			height = wnd.getHeight();
 			const u32 screenWidth = wnd.getWidth();
 			width = screenWidth;
 			if (wnd.isAdjustScreen()) {
@@ -190,8 +188,8 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 			}
 		} else {
 			width = m_pCurFrameBuffer->m_pTexture->realWidth;
-			height = m_pCurFrameBuffer->m_pTexture->realHeight;
 		}
+		u32 height = (u32)(bufferHeight * m_pCurFrameBuffer->m_scale);
 
 		CachedTexture * pInputTexture = m_pCurFrameBuffer->m_pTexture;
 		GraphicsDrawer::BlitOrCopyRectParams blitParams;
@@ -203,8 +201,8 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 		blitParams.srcHeight = pInputTexture->realHeight;
 		blitParams.dstX0 = 0;
 		blitParams.dstY0 = 0;
-		blitParams.dstX1 = VI.width;
-		blitParams.dstY1 = VI.height;
+		blitParams.dstX1 = m_pCurFrameBuffer->m_width;
+		blitParams.dstY1 = bufferHeight;
 		blitParams.dstWidth = m_pTexture->realWidth;
 		blitParams.dstHeight = m_pTexture->realHeight;
 		blitParams.filter = textureParameters::FILTER_NEAREST;
@@ -242,7 +240,7 @@ u32 ColorBufferToRDRAM::_RGBAtoRGBA32(u32 _c) {
 void ColorBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress, bool _sync)
 {
 	const u32 stride = m_pCurFrameBuffer->m_width << m_pCurFrameBuffer->m_size >> 1;
-	const u32 max_height = std::min(480U, cutHeight(_startAddress, m_pCurFrameBuffer->m_height, stride));
+	const u32 max_height = std::min((u32)VI_GetMaxBufferHeight(m_pCurFrameBuffer->m_width), cutHeight(_startAddress, m_pCurFrameBuffer->m_height, stride));
 
 	u32 numPixels = (_endAddress - _startAddress) >> (m_pCurFrameBuffer->m_size - 1);
 	if (numPixels / m_pCurFrameBuffer->m_width > max_height) {
@@ -324,17 +322,16 @@ void copyWhiteToRDRAM(FrameBuffer * _pBuffer)
 	if (_pBuffer->m_size == G_IM_SIZ_32b) {
 		u32 *ptr_dst = (u32*)(RDRAM + _pBuffer->m_startAddress);
 
-		for (u32 y = 0; y < VI.height; ++y) {
-			for (u32 x = 0; x < VI.width; ++x)
-				ptr_dst[x + y*VI.width] = 0xFFFFFFFF;
+		for (u32 y = 0; y < _pBuffer->m_height; ++y) {
+			for (u32 x = 0; x < _pBuffer->m_width; ++x)
+				ptr_dst[x + y*_pBuffer->m_width] = 0xFFFFFFFF;
 		}
-	}
-	else {
+	} else {
 		u16 *ptr_dst = (u16*)(RDRAM + _pBuffer->m_startAddress);
 
-		for (u32 y = 0; y < VI.height; ++y) {
-			for (u32 x = 0; x < VI.width; ++x) {
-				ptr_dst[(x + y*VI.width) ^ 1] = 0xFFFF;
+		for (u32 y = 0; y < _pBuffer->m_height; ++y) {
+			for (u32 x = 0; x < _pBuffer->m_width; ++x) {
+				ptr_dst[(x + y*_pBuffer->m_width) ^ 1] = 0xFFFF;
 			}
 		}
 	}

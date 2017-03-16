@@ -95,7 +95,7 @@ void DepthBuffer::initDepthImageTexture(FrameBuffer * _pBuffer)
 
 	gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER, _pBuffer->m_FBO);
 
-	depthBufferList().clearBuffer(0, 0, VI.width, VI.height);
+	depthBufferList().clearBuffer(0, 0, _pBuffer->m_width, _pBuffer->m_height);
 }
 
 void DepthBuffer::_initDepthBufferTexture(FrameBuffer * _pBuffer, CachedTexture * _pTexture, bool _multisample)
@@ -107,18 +107,19 @@ void DepthBuffer::_initDepthBufferTexture(FrameBuffer * _pBuffer, CachedTexture 
 		_pTexture->height = (u32)(_pBuffer->m_pTexture->height);
 		_pTexture->address = _pBuffer->m_startAddress;
 		_pTexture->clampWidth = _pBuffer->m_width;
-		_pTexture->clampHeight = _pBuffer->m_height;
+		_pTexture->clampHeight = VI_GetMaxBufferHeight(_pBuffer->m_width);
 	} else {
+		const u16 maxHeight = VI_GetMaxBufferHeight(VI.width);
 		if (config.frameBufferEmulation.nativeResFactor == 0) {
 			_pTexture->width = dwnd().getWidth();
-			_pTexture->height = dwnd().getHeight();
+			_pTexture->height = (u16)(u32)(maxHeight * dwnd().getScaleX());
 		} else {
 			_pTexture->width = VI.width * config.frameBufferEmulation.nativeResFactor;
-			_pTexture->height = VI.height * config.frameBufferEmulation.nativeResFactor;
+			_pTexture->height = maxHeight * config.frameBufferEmulation.nativeResFactor;
 		}
 		_pTexture->address = gDP.depthImageAddress;
 		_pTexture->clampWidth = VI.width;
-		_pTexture->clampHeight = VI.height;
+		_pTexture->clampHeight = maxHeight;
 	}
 	_pTexture->format = 0;
 	_pTexture->size = 2;
@@ -169,10 +170,10 @@ void DepthBuffer::_initDepthBufferRenderbuffer(FrameBuffer * _pBuffer)
 	} else {
 		if (config.frameBufferEmulation.nativeResFactor == 0) {
 			m_depthRenderbufferWidth = dwnd().getWidth();
-			height = dwnd().getHeight();
+			height = (u32)(VI_GetMaxBufferHeight(VI.width) * dwnd().getScaleX());
 		} else {
 			m_depthRenderbufferWidth = VI.width * config.frameBufferEmulation.nativeResFactor;
-			height = VI.height * config.frameBufferEmulation.nativeResFactor;
+			height = VI_GetMaxBufferHeight(VI.width) * config.frameBufferEmulation.nativeResFactor;
 		}
 	}
 
@@ -436,7 +437,7 @@ void DepthBufferList::saveBuffer(u32 _address)
 		pDepthBuffer = nullptr;
 	}
 
-	if (pDepthBuffer == nullptr && VI.height != 0) {
+	if (pDepthBuffer == nullptr) {
 		m_list.emplace_front();
 		DepthBuffer & buffer = m_list.front();
 
@@ -448,14 +449,11 @@ void DepthBufferList::saveBuffer(u32 _address)
 		pDepthBuffer = &buffer;
 	}
 
-	//Check for null since the depth buffer will not be initialized if VI.height == 0
-	if(pDepthBuffer != nullptr) {
-		DepthBuffer * pCurrent = m_pCurrent;
-		m_pCurrent = pDepthBuffer;
-		frameBufferList().attachDepthBuffer();
-		if (pDepthBuffer->m_address != gDP.depthImageAddress)
-			m_pCurrent = pCurrent;
-	}
+	DepthBuffer * pCurrent = m_pCurrent;
+	m_pCurrent = pDepthBuffer;
+	frameBufferList().attachDepthBuffer();
+	if (pDepthBuffer->m_address != gDP.depthImageAddress)
+		m_pCurrent = pCurrent;
 
 #ifdef DEBUG
 	DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "DepthBuffer_SetBuffer( 0x%08X ); color buffer is 0x%08X\n",
@@ -468,8 +466,6 @@ void DepthBufferList::clearBuffer(u32 _ulx, u32 _uly, u32 _lrx, u32 _lry)
 {
 	if (m_pCurrent == nullptr)
 		return;
-
-	const FramebufferTextureFormats & fbTexFormats = gfxContext.getFramebufferTextureFormats();
 
 	m_pCurrent->m_cleared = true;
 	m_pCurrent->m_ulx = _ulx;

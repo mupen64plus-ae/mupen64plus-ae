@@ -208,6 +208,9 @@ public:
 				ss << "#extension GL_ARB_shader_image_load_store : enable" << std::endl
 					<< "#extension GL_ARB_shading_language_420pack : enable" << std::endl;
 			}
+			if (_glinfo.imageTextures && _glinfo.majorVersion * 10 + _glinfo.minorVersion < 43) {
+				ss << "#extension GL_ARB_compute_shader : enable" << std::endl;
+			}
 			ss << "# define IN in" << std::endl << "# define OUT out" << std::endl;
 			m_part = ss.str();
 		}
@@ -248,8 +251,6 @@ public:
 			"{																\n"
 			"    vec2 texCoordOut = texCoord*uCacheShiftScale[idx];			\n"
 			"    texCoordOut -= uTexOffset[idx];							\n"
-			"    if (uCacheFrameBuffer[idx] != 0)							\n"
-			"      texCoordOut.t = -texCoordOut.t;							\n"
 			"    return (uCacheOffset[idx] + texCoordOut)* uCacheScale[idx];\n"
 			"}																\n"
 			"																\n"
@@ -274,6 +275,7 @@ public:
 			"    if ((aModify[3]) != 0.0)									\n"
 			"      vNumLights = 0.0;										\n"
 			"  }															\n"
+			"  gl_Position.y = -gl_Position.y;								\n"
 			"  if (uFogUsage == 1) {										\n"
 			"    lowp vec4 shadeColor = aColor;								\n"
 			"    if (aPosition.z < -aPosition.w && aModify[1] == 0.0)		\n"
@@ -328,6 +330,7 @@ public:
 			"    if ((aModify[3]) != 0.0)									\n"
 			"      vNumLights = 0.0;										\n"
 			"  }															\n"
+			"  gl_Position.y = -gl_Position.y;								\n"
 			"  if (uFogUsage == 1) {										\n"
 			"    lowp float fp;												\n"
 			"    if (aPosition.z < -aPosition.w && aModify[1] == 0.0)		\n"
@@ -366,6 +369,7 @@ public:
 			"{													\n"
 			"  gl_Position = aRectPosition;						\n"
 			"  vShadeColor = uRectColor;						\n"
+			"  gl_Position.y = -gl_Position.y;					\n"
 			"  vTexCoord0 = aTexCoord0;							\n"
 			"  vTexCoord1 = aTexCoord1;							\n"
 		;
@@ -394,6 +398,7 @@ public:
 			"{													\n"
 			"  gl_Position = aRectPosition;						\n"
 			"  vShadeColor = uRectColor;						\n"
+			"  gl_Position.y = -gl_Position.y;					\n"
 			;
 		if (!_glinfo.isGLESX) {
 			m_part +=
@@ -439,6 +444,9 @@ public:
 			if (_glinfo.imageTextures && _glinfo.majorVersion * 10 + _glinfo.minorVersion < 42) {
 				ss << "#extension GL_ARB_shader_image_load_store : enable" << std::endl
 					<< "#extension GL_ARB_shading_language_420pack : enable" << std::endl;
+			}
+			if (_glinfo.imageTextures && _glinfo.majorVersion * 10 + _glinfo.minorVersion < 43) {
+				ss << "#extension GL_ARB_compute_shader : enable" << std::endl;
 			}
 			ss << "# define IN in" << std::endl
 				<< "# define OUT out" << std::endl

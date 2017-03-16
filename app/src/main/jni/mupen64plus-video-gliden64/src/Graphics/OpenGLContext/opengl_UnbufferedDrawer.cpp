@@ -38,9 +38,6 @@ bool UnbufferedDrawer::_updateAttribPointer(u32 _index, const void * _ptr)
 
 void UnbufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParameters & _params)
 {
-	if (config.frameBufferEmulation.N64DepthCompare != 0)
-		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-
 	{
 		m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::position, true);
 		const void * ptr = &_params.vertices->x;
@@ -84,7 +81,16 @@ void UnbufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParame
 		return;
 	}
 
-	glDrawElements(GLenum(_params.mode), _params.elementsCount, GL_UNSIGNED_BYTE, _params.elements);
+	if (config.frameBufferEmulation.N64DepthCompare == 0) {
+		glDrawElements(GLenum(_params.mode), _params.elementsCount, GL_UNSIGNED_BYTE, _params.elements);
+		return;
+	}
+
+	// Draw polygons one by one
+	for (GLint i = 0; i < _params.elementsCount; i += 3) {
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		glDrawElements(GLenum(_params.mode), 3, GL_UNSIGNED_BYTE, (u8*)_params.elements + i);
+	}
 }
 
 void UnbufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _params)
@@ -96,7 +102,7 @@ void UnbufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _
 			glVertexAttribPointer(rectAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(RectVertex), ptr);
 	}
 
-	if (_params.combiner->usesTile(0)) {
+	if (_params.texrect && _params.combiner->usesTile(0)) {
 		m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord0, true);
 		const void * ptr = &_params.vertices->s0;
 		if (_updateAttribPointer(rectAttrib::texcoord0, ptr))
@@ -104,7 +110,7 @@ void UnbufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _
 	} else
 		m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord0, false);
 
-	if (_params.combiner->usesTile(1)) {
+	if (_params.texrect && _params.combiner->usesTile(1)) {
 		m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord1, true);
 		const void * ptr = &_params.vertices->s1;
 		if (_updateAttribPointer(rectAttrib::texcoord1, ptr))
