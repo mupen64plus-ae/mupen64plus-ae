@@ -218,6 +218,7 @@ void microcheck ();
 #include "ucode07.h"
 #include "ucode08.h"
 #include "ucode09.h"
+#include "ucode10.h"
 #include "ucode.h"
 #include "ucode09rdp.h"
 #include "turbo3D.h"
@@ -1639,7 +1640,7 @@ static void rdp_setothermode()
 
   LRDP("rdp_setothermode\n");
 
-  if ((settings.ucode == ucode_F3DEX2) || (settings.ucode == ucode_CBFD))
+  if ((settings.ucode == ucode_F3DEX2) || (settings.ucode == ucode_CBFD) || (settings.ucode == ucode_F3DEX2MM))
   {
     int cmd0 = rdp.cmd0;
     F3DEX2_SETOTHERMODE(0xE2, 0, 32, rdp.cmd1);         // SETOTHERMODE_L

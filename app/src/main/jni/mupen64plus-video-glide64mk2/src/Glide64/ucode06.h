@@ -774,7 +774,7 @@ static void uc6_bg (bool bg_1cyc)
     return;
   }
 
-  if (settings.ucode == ucode_F3DEX2 || (settings.hacks&hack_PPL))
+  if (settings.ucode == ucode_F3DEX2 || settings.ucode == ucode_F3DEX2MM || (settings.hacks&hack_PPL))
   {
     if ( (d.imagePtr != rdp.cimg) && (d.imagePtr != rdp.ocimg) && d.imagePtr) //can't draw from framebuffer
       DrawImage (d);

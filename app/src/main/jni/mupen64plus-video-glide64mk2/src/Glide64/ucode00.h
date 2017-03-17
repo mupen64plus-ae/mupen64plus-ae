@@ -47,6 +47,7 @@
 #define ucode_PerfectDark 7
 #define ucode_CBFD 8
 #define ucode_zSort 9
+#define ucode_F3DEX2MM 10
 #define ucode_Turbo3d 21
 
 static void rsp_vertex(int v0, int n)
@@ -831,7 +832,7 @@ static void uc0_setothermode_h()
   LRDP("uc0:setothermode_h: ");
 
   int shift, len;
-  if ((settings.ucode == ucode_F3DEX2) || (settings.ucode == ucode_CBFD))
+  if ((settings.ucode == ucode_F3DEX2) || (settings.ucode == ucode_F3DEX2MM) || (settings.ucode == ucode_CBFD))
   {
     len = (rdp.cmd0 & 0xFF) + 1;
     shift = 32 - ((rdp.cmd0 >> 8) & 0xFF) - len;
@@ -909,7 +910,7 @@ static void uc0_setothermode_l()
   LRDP("uc0:setothermode_l ");
 
   int shift, len;
-  if ((settings.ucode == ucode_F3DEX2) || (settings.ucode == ucode_CBFD))
+  if ((settings.ucode == ucode_F3DEX2) || (settings.ucode == ucode_F3DEX2MM) || (settings.ucode == ucode_CBFD))
   {
     len = (rdp.cmd0 & 0xFF) + 1;
     shift = 32 - ((rdp.cmd0 >> 8) & 0xFF) - len;

@@ -41,7 +41,7 @@ typedef void (*rdp_instr)();
 
 // RDP graphic instructions pointer table
 
-static rdp_instr gfx_instruction[10][256] =
+static rdp_instr gfx_instruction[11][256] =
 {
     {
         // uCode 0 - RSP SW 2.0X
@@ -788,5 +788,81 @@ static rdp_instr gfx_instruction[10][256] =
         rdp_loadtile,           rdp_settile,            rdp_fillrect,           rdp_setfillcolor,
         rdp_setfogcolor,        rdp_setblendcolor,      rdp_setprimcolor,       rdp_setenvcolor,
         rdp_setcombine,         rdp_settextureimage,    rdp_setdepthimage,      rdp_setcolorimage
+        },
+
+        {
+		// uCode 10 - F3DEX 2.XX
+		// games: Zelda Majora's mask
+		// 00-3f
+		spnoop,                                 uc2_vertex,                             uc2_modifyvtx,                          uc2_culldl,
+		uc10_branch_w,                          uc2_tri1,                               uc2_quad,                               uc2_quad,
+		uc2_line3d,                             uc6_bg_1cyc,                            uc6_bg_copy,                            uc6_obj_rendermode/*undef*/,
+		undef,                                  undef,                                  undef,                                  undef,
+		uc0_tri4,                               uc0_tri4,                               uc0_tri4,                               uc0_tri4,
+		uc0_tri4,                               uc0_tri4,                               uc0_tri4,                               uc0_tri4,
+		uc0_tri4,                               uc0_tri4,                               uc0_tri4,                               uc0_tri4,
+		uc0_tri4,                               uc0_tri4,                               uc0_tri4,                               uc0_tri4,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+
+		// 40-7f: unused
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+
+		// 80-bf: unused
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+		undef,                                  undef,                                  undef,                                  undef,
+
+		// c0-ff: RDP commands mixed with uc2 commands
+		rdp_noop,               undef,                  undef,                  undef,
+		undef,                  undef,                  undef,                  undef,
+		rdp_trifill,            rdp_trifillz,           rdp_tritxtr,            rdp_tritxtrz,
+		rdp_trishade,           rdp_trishadez,          rdp_trishadetxtr,       rdp_trishadetxtrz,
+		undef,                  undef,                  undef,                  uc2_special3,
+		uc2_special2,           uc2_dlist_cnt,          uc2_dma_io,             uc0_texture,
+		uc2_pop_matrix,         uc2_geom_mode,          uc2_matrix,             uc2_moveword,
+		uc2_movemem,            uc2_load_ucode,         uc0_displaylist,        uc0_enddl,
+		spnoop,                 uc1_rdphalf_1,          uc0_setothermode_l,     uc0_setothermode_h,
+		rdp_texrect,            rdp_texrect,            rdp_loadsync,           rdp_pipesync,
+		rdp_tilesync,           rdp_fullsync,           rdp_setkeygb,           rdp_setkeyr,
+		rdp_setconvert,         rdp_setscissor,         rdp_setprimdepth,       rdp_setothermode,
+		rdp_loadtlut,           uc2_rdphalf_2,          rdp_settilesize,        rdp_loadblock,
+		rdp_loadtile,           rdp_settile,            rdp_fillrect,           rdp_setfillcolor,
+		rdp_setfogcolor,        rdp_setblendcolor,      rdp_setprimcolor,       rdp_setenvcolor,
+		rdp_setcombine,         rdp_settextureimage,    rdp_setdepthimage,      rdp_setcolorimage
         },
 };

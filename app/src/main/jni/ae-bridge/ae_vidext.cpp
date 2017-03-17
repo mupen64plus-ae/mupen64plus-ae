@@ -8,6 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+//#include <android/native_app_glue/android_native_app_glue.h>
 
 EGLDisplay display;
 EGLConfig config;

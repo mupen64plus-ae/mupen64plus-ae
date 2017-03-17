@@ -155,8 +155,9 @@ static void uc1_branch_z()
 {
   wxUint32 addr = segoffset(branch_dl);
   FRDP ("uc1:branch_less_z, addr: %08lx\n", addr);
-  wxUint32 vtx = (rdp.cmd0 & 0xFFF) >> 1;
-  if( fabs(rdp.vtx[vtx].z) <= (rdp.cmd1/*&0xFFFF*/) )
+  wxUint32 vtx = (rdp.cmd0 >> 1) & 0x7FF;
+  const wxUint32 zTest = wxUint32((rdp.vtx[vtx].z / rdp.vtx[vtx].w) * 1023.0f);
+  if (zTest > 0x03FF || zTest <= rdp.cmd1)
   {
     rdp.pc[rdp.pc_i] = addr;
   }
