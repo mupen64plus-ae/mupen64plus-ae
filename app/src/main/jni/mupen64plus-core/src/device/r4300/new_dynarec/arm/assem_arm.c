@@ -1,5 +1,3 @@
-#include <assert.h>
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - assem_arm.c                                             *
  *   Copyright (C) 2009-2011 Ari64                                         *
