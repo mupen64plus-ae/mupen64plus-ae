@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  Module Subsystem Interface to SP Interpreter Core                  *
 * Authors:  Iconoclast                                                         *
-* Release:  2015.11.14                                                         *
+* Release:  2016.11.05                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -69,6 +69,12 @@ typedef enum {
  */
 #define CHARACTERS_PER_LINE     (80)
 /* typical standard DOS text file limit per line */
+
+/*
+ * When using a graphics plugin from specs version 1.2, LLE is not supported.
+ * The behavior of requesting the GBI lists should be adjusted accordingly.
+ */
+extern p_func GBI_phase;
 
 NOINLINE extern void update_conf(const char* source);
 

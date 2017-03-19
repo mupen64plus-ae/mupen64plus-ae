@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Scalar Unit Operations                    *
 * Authors:  Iconoclast                                                         *
-* Release:  2016.03.26                                                         *
+* Release:  2016.11.05                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -156,9 +156,7 @@ static void MT_CMD_END(unsigned int rt)
     if (GET_RCP_REG(DPC_BUFBUSY_REG))
         message("MTC0\nCMD_END"); /* This is just CA-related. */
     GET_RCP_REG(DPC_END_REG) = SR[rt] & 0xFFFFFFF8ul;
-    if (GET_RSP_INFO(ProcessRdpList) == NULL) /* zilmar GFX #1.2 */
-        return;
-    GET_RSP_INFO(ProcessRdpList)();
+    GBI_phase();
     return;
 }
 static void MT_CMD_STATUS(unsigned int rt)
@@ -386,7 +384,7 @@ PROFILE_MODE void SLTI(u32 inst)
     const unsigned int rs = (inst >> 21) % (1 << 5);
     const unsigned int rt = (inst >> 16) % (1 << 5);
 
-    SR[rt] = ((s32)(SR[rs]) < (s16)(immediate)) ? 1 : 0;
+    SR[rt] = ((s32)(SR[rs]) < (s32)SIGNED_IMM16(immediate)) ? 1 : 0;
     SR[zero] = 0x00000000;
 }
 PROFILE_MODE void SLTIU(u32 inst)
@@ -395,7 +393,7 @@ PROFILE_MODE void SLTIU(u32 inst)
     const unsigned int rs = (inst >> 21) % (1 << 5);
     const unsigned int rt = (inst >> 16) % (1 << 5);
 
-    SR[rt] = ((u32)(SR[rs]) < (u16)(immediate)) ? 1 : 0;
+    SR[rt] = ((u32)(SR[rs]) < (u32)SIGNED_IMM16(immediate)) ? 1 : 0;
     SR[zero] = 0x00000000;
 }
 
@@ -2122,5 +2120,6 @@ set_branch_delay:
     }
 RSP_halted_CPU_exit_point:
     GET_RCP_REG(SP_PC_REG) = 0x04001000 | FIT_IMEM(PC);
+
     return;
 }

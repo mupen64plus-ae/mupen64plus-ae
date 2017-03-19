@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  Basic MIPS R4000 Instruction Set for Scalar Unit Operations        *
 * Authors:  Iconoclast                                                         *
-* Release:  2016.03.23                                                         *
+* Release:  2016.11.05                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -179,13 +179,17 @@ extern void set_PC(unsigned int address);
  *
  * As C pre-processor logic seems incapable of interpreting type storage,
  * stuff like #if (1U << 31 == 1U << ~0U) will generally just fail.
+ *
+ * Some of these also will only work assuming 2's complement (e.g., Intel).
  */
 #if defined(ARCH_MIN_SSE2) && !defined(SSE2NEON)
-#define MASK_SA(sa) (sa)
-#define IW_RD(inst) ((u16)(inst) >> 11)
+#define MASK_SA(sa)             (sa)
+#define IW_RD(inst)             ((u16)(inst) >> 11)
+#define SIGNED_IMM16(imm)       (s16)(imm)
 #else
-#define MASK_SA(sa) ((sa) & 31)
-#define IW_RD(inst) (u8)(((inst) >> 11) % (1 << 5))
+#define MASK_SA(sa)             ((sa) & 31)
+#define IW_RD(inst)             (u8)(((inst) >> 11) % (1 << 5))
+#define SIGNED_IMM16(imm)       (s16)(((imm) & 0x8000u) ? -(~(imm) + 1) : (imm))
 #endif
 
 /*

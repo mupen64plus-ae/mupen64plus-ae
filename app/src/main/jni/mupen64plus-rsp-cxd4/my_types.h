@@ -377,7 +377,6 @@ typedef void(*p_func)(void);
 #endif
 #endif
 
-
 /*
  * Commonly, Ultra64 will refer to these common symbols.
  * They seem to be fairly widely used outside of just <windows.h>.

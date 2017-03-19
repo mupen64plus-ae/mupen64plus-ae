@@ -1,0 +1,9 @@
+*.asm
+*.s
+*.o
+
+/obj
+
+*.obj
+*.dll
+*.exe
