@@ -678,11 +678,6 @@ void _calcTileSizes(u32 _t, TileSizes & _sizes, gDPTile * _pLoadTile)
 	_sizes.clampWidth = (pTile->clamps && gDP.otherMode.cycleType != G_CYC_COPY) ? tileWidth : width;
 	_sizes.clampHeight = (pTile->clampt && gDP.otherMode.cycleType != G_CYC_COPY) ? tileHeight : height;
 
-	if (_sizes.clampWidth > 256)
-		pTile->clamps = 0;
-	if (_sizes.clampHeight > 256)
-		pTile->clampt = 0;
-
 	// Make sure masking is valid
 	if (maskWidth > width) {
 		pTile->masks = powof(width);
@@ -1535,16 +1530,22 @@ void TextureCache::update(u32 _t)
 	if (locations_iter != m_lruTextureLocations.end()) {
 		Textures::iterator iter = locations_iter->second;
 		CachedTexture & current = *iter;
-		m_textures.splice(m_textures.begin(), m_textures, iter);
 
-		assert(current.width == sizes.width);
-		assert(current.height == sizes.height);
-		assert(current.format == pTile->format);
-		assert(current.size == pTile->size);
+		if (current.width == sizes.width && current.height == sizes.height) {
+			m_textures.splice(m_textures.begin(), m_textures, iter);
 
-		activateTexture(_t, &current);
-		m_hits++;
-		return;
+			assert(current.format == pTile->format);
+			assert(current.size == pTile->size);
+
+			activateTexture(_t, &current);
+			m_hits++;
+			return;
+		}
+
+		m_cachedBytes -= current.textureBytes;
+		gfxContext.deleteTexture(current.name);
+		m_lruTextureLocations.erase(locations_iter);
+		m_textures.erase(iter);
 	}
 
 	m_misses++;
