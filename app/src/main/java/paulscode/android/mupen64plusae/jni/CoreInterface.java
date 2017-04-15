@@ -492,8 +492,6 @@ public class CoreInterface
 
                             final String finalMessage = message;
 
-                            sCoreThread = null;
-
                             // Unload the native libraries
                             NativeExports.unloadLibraries();
                             sActivity.runOnUiThread( new Runnable()
@@ -532,6 +530,20 @@ public class CoreInterface
         {
             // Tell the core to quit
             NativeExports.emuStop();
+        }
+    }
+
+    public static synchronized void waitForEmulatorThreadToFinish()
+    {
+        if( sCoreThread != null )
+        {
+            try {
+                sCoreThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            sCoreThread = null;
         }
     }
 

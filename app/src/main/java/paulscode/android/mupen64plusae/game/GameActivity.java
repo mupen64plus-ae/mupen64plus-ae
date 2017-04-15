@@ -38,8 +38,8 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
@@ -749,6 +749,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onExitFinished()
     {
         CoreInterface.detachActivity();
+        CoreInterface.waitForEmulatorThreadToFinish();
         GameActivity.this.finish();
     }
 
