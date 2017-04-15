@@ -871,6 +871,11 @@ public class CoreInterface
         NativeExports.emuSetSpeed( sCustomSpeed );
     }
 
+    public static int getCurrentSpeed()
+    {
+        return sUseCustomSpeed ? sCustomSpeed : BASELINE_SPEED;
+    }
+
     public static void toggleSpeed()
     {
         sUseCustomSpeed = !sUseCustomSpeed;

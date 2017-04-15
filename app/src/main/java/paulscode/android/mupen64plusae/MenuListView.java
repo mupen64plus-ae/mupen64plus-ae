@@ -20,10 +20,9 @@
  */
 package paulscode.android.mupen64plusae;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import android.app.Activity;
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.support.v7.view.menu.MenuBuilder;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -35,10 +34,13 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.mupen64plusae.v3.alpha.R;
 
 /* ExpandableListView which stores its data set as a Menu hierarchy */
 
@@ -324,7 +326,52 @@ public class MenuListView extends ExpandableListView
             return mMenuViews.get(menuId);
         }
     }
-    
+
+    class AdapterDataSetObserver extends DataSetObserver {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+
+            refreshVisibleViews();
+        }
+
+        @Override
+        public void onInvalidated() {
+            super.onInvalidated();
+
+            refreshVisibleViews();
+        }
+    }
+
+    //The below code is to force updating of existing views
+    private DataSetObserver mDataSetObserver = new AdapterDataSetObserver();
+    private ExpandableListAdapter mListAdapter;
+
+    @Override
+    public void setAdapter(ExpandableListAdapter adapter) {
+        super.setAdapter(adapter);
+
+        if (mListAdapter != null) {
+            mListAdapter.unregisterDataSetObserver(mDataSetObserver);
+        }
+        mListAdapter = adapter;
+
+        mListAdapter.registerDataSetObserver(mDataSetObserver);
+    }
+
+    void refreshVisibleViews() {
+        if (mListAdapter != null) {
+            for (int i = getFirstVisiblePosition(); i <= getLastVisiblePosition(); i ++) {
+                final int dataPosition = i - getHeaderViewsCount();
+                final int childPosition = i - getFirstVisiblePosition();
+                if (dataPosition >= 0 && dataPosition < mListAdapter.getGroupCount()
+                        && getChildAt(childPosition) != null) {
+                    mListAdapter.getGroupView(dataPosition, false, getChildAt(childPosition), this);
+                }
+            }
+        }
+    }
+
     public interface OnClickListener
     {        
         public void onClick( MenuItem menuItem );

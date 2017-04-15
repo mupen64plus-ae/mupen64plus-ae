@@ -452,7 +452,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         //Reload currently selected speed setting
         final MenuItem toggleSpeedItem =
             mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
-        toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
+        toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, CoreInterface.getCurrentSpeed()));
 
         //Reload currently selected slot
         final MenuItem slotItem = mGameSidebar.getMenu().findItem(R.id.menuItem_set_slot);
@@ -506,7 +506,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         //Reload the menu with the new speed
         final MenuItem toggleSpeedItem =
             mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
-        toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
+        toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, CoreInterface.getCurrentSpeed()));
 
         mGameSidebar.reload();
     }
@@ -535,7 +535,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             //Reload the menu with the new speed
             final MenuItem toggleSpeedItem =
                 mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
-            toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, NativeExports.emuGetSpeed()));
+            toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, CoreInterface.getCurrentSpeed()));
             mGameSidebar.reload();
             break;
         case R.id.menuItem_set_speed:
