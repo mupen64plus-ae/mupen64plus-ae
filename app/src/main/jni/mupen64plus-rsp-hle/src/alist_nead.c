@@ -92,7 +92,7 @@ static void ADPCM(struct hle_t* hle, uint32_t w1, uint32_t w2)
 static void CLEARBUFF(struct hle_t* hle, uint32_t w1, uint32_t w2)
 {
     uint16_t dmem  = w1;
-    uint16_t count = w2;
+    uint16_t count = w2 & 0xfff;
 
     if (count == 0)
         return;
