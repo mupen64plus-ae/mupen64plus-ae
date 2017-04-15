@@ -88,28 +88,16 @@ End:
 #endif // WIN32_ASM
 }
 
-
-float DotProduct(const float v0[3], const float v1[3])
+void InverseTransformVectorNormalize2x(float src[2][3], float dst[2][3], float mtx[4][4] )
 {
-	float	dot;
-#ifdef WIN32_ASM
-	__asm {
-		mov		esi, dword ptr [v0]
-		mov		edi, dword ptr [v1]
-		lea		ebx, [dot]
+	InverseTransformVectorNormalize((float(*))src[0], (float(*))dst[0], mtx);
+	InverseTransformVectorNormalize((float(*))src[1], (float(*))dst[1], mtx);
+}
 
-		fld		dword ptr [esi]
-		fmul	dword ptr [edi]
-		fld		dword ptr [esi+04h]
-		fmul	dword ptr [edi+04h]
-		fld		dword ptr [esi+08h]
-		fmul	dword ptr [edi+08h]
-		fadd
-		fadd
-		fstp	dword ptr [ebx]
-	}
-#else // WIN32_ASM
-	dot = v0[0]*v1[0] + v0[1]*v1[1] + v0[2]*v1[2];
-#endif // WIN32_ASM
-	return dot;
+void InverseTransformVectorNormalize4x(float src[4][3], float dst[4][3], float mtx[4][4] )
+{
+	InverseTransformVectorNormalize((float(*))src[0], (float(*))dst[0], mtx);
+	InverseTransformVectorNormalize((float(*))src[1], (float(*))dst[1], mtx);
+	InverseTransformVectorNormalize((float(*))src[2], (float(*))dst[2], mtx);
+	InverseTransformVectorNormalize((float(*))src[3], (float(*))dst[3], mtx);
 }

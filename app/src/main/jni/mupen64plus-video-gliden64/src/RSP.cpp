@@ -21,112 +21,6 @@ using namespace std;
 
 RSPInfo		RSP;
 
-void RSP_LoadMatrix( f32 mtx[4][4], u32 address )
-{
-	f32 recip = 1.5258789e-05f;
-#ifdef WIN32_ASM
-	__asm {
-		mov		esi, dword ptr [RDRAM];
-		add		esi, dword ptr [address];
-		mov		edi, dword ptr [mtx];
-
-		mov		ecx, 4
-LoadLoop:
-		fild	word ptr [esi+02h]
-		movzx	eax, word ptr [esi+22h]
-		mov		dword ptr [edi], eax
-		fild	dword ptr [edi]
-		fmul	dword ptr [recip]
-		fadd
-		fstp	dword ptr [edi]
-
-		fild	word ptr [esi+00h]
-		movzx	eax, word ptr [esi+20h]
-		mov		dword ptr [edi+04h], eax
-		fild	dword ptr [edi+04h]
-		fmul	dword ptr [recip]
-		fadd
-		fstp	dword ptr [edi+04h]
-
-		fild	word ptr [esi+06h]
-		movzx	eax, word ptr [esi+26h]
-		mov		dword ptr [edi+08h], eax
-		fild	dword ptr [edi+08h]
-		fmul	dword ptr [recip]
-		fadd
-		fstp	dword ptr [edi+08h]
-
-		fild	word ptr [esi+04h]
-		movzx	eax, word ptr [esi+24h]
-		mov		dword ptr [edi+0Ch], eax
-		fild	dword ptr [edi+0Ch]
-		fmul	dword ptr [recip]
-		fadd
-		fstp	dword ptr [edi+0Ch]
-
-		add		esi, 08h
-		add		edi, 10h
-		loop	LoadLoop
-	}
-#else // WIN32_ASM
-# ifdef X86_ASM
-	__asm__ __volatile__(
-	".intel_syntax noprefix"					"\n\t"
-	"LoadLoop:"									"\n\t"
-	"	fild	word ptr [esi+0x02]"			"\n\t"
-	"	movzx	eax, word ptr [esi+0x22]"		"\n\t"
-	"	mov		dword ptr [edi], eax"			"\n\t"
-	"	fild	dword ptr [edi]"				"\n\t"
-	"	fmul	%0"								"\n\t"
-	"	fadd"									"\n\t"
-	"	fstp	dword ptr [edi]"				"\n\t"
-
-	"	fild	word ptr [esi+0x00]"			"\n\t"
-	"	movzx	eax, word ptr [esi+0x20]"		"\n\t"
-	"	mov		dword ptr [edi+0x04], eax"		"\n\t"
-	"	fild	dword ptr [edi+0x04]"			"\n\t"
-	"	fmul	%0"								"\n\t"
-	"	fadd"									"\n\t"
-	"	fstp	dword ptr [edi+0x04]"			"\n\t"
-
-	"	fild	word ptr [esi+0x06]"			"\n\t"
-	"	movzx	eax, word ptr [esi+0x26]"		"\n\t"
-	"	mov		dword ptr [edi+0x08], eax"		"\n\t"
-	"	fild	dword ptr [edi+0x08]"			"\n\t"
-	"	fmul	%0"								"\n\t"
-	"	fadd"									"\n\t"
-	"	fstp	dword ptr [edi+0x08]"			"\n\t"
-
-	"	fild	word ptr [esi+0x04]"			"\n\t"
-	"	movzx	eax, word ptr [esi+0x24]"		"\n\t"
-	"	mov		dword ptr [edi+0x0C], eax"		"\n\t"
-	"	fild	dword ptr [edi+0x0C]"			"\n\t"
-	"	fmul	%0"								"\n\t"
-	"	fadd"									"\n\t"
-	"	fstp	dword ptr [edi+0x0C]"			"\n\t"
-
-	"	add		esi, 0x08"						"\n\t"
-	"	add		edi, 0x10"						"\n\t"
-	"	loop	LoadLoop"						"\n\t"
-	".att_syntax prefix"						"\n\t"
-	: /* no output */
-	: "f"(recip), "S"((int)RDRAM+address), "D"(mtx), "c"(4)
-	: "memory" );
-# else // X86_ASM
-	struct _N64Matrix
-	{
-		SHORT integer[4][4];
-		WORD fraction[4][4];
-	} *n64Mat = (struct _N64Matrix *)&RDRAM[address];
-	int i, j;
-
-	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++)
-			mtx[i][j] = (f32)(n64Mat->integer[i][j^1]) + (f32)(n64Mat->fraction[i][j^1]) * recip;
-# endif // !X86_ASM
-#endif // WIN32_ASM
-}
-
 void RSP_CheckDLCounter()
 {
 	if (RSP.count != -1) {
@@ -241,7 +135,7 @@ void RSP_SetDefaultState()
 	gDP.loadTile = &gDP.tiles[7];
 	gSP.textureTile[0] = &gDP.tiles[0];
 	gSP.textureTile[1] = &gDP.tiles[1];
-	gSP.lookat[0].y = gSP.lookat[1].x = 1.0f;
+	gSP.lookat.xyz[0][Y] = gSP.lookat.xyz[1][X] = 1.0f;
 	gSP.lookatEnable = true;
 
 	gSP.objMatrix.A = 1.0f;
@@ -346,8 +240,10 @@ void RSP_Init()
 		config.generalEmulation.hacks |= hack_legoRacers;
 	else if (strstr(RSP.romname, (const char *)"Blast") != nullptr)
 		config.generalEmulation.hacks |= hack_blastCorps;
-	else if (strstr(RSP.romname, (const char *)"SPACE INVADERS") != nullptr)
-		config.generalEmulation.hacks |= hack_ignoreVIHeightChange;
+	else if (strstr(RSP.romname, (const char *)"PACHINKO365NICHI") != nullptr ||
+			 strstr(RSP.romname, // Eikou no Saint Andrews (J)
+				(const char *)"\xb4\xb2\xba\xb3\xc9\xbe\xdd\xc4\xb1\xdd\xc4\xde\xd8\xad\xb0\xbd\x00") != nullptr)
+		config.generalEmulation.hacks |= hack_NegativeViewport;
 	else if (strstr(RSP.romname, (const char *)"MASK") != nullptr) // Zelda MM
 		config.generalEmulation.hacks |= hack_ZeldaMM;
 	else if (strstr(RSP.romname, (const char *)"Perfect Dark") != nullptr ||
@@ -365,6 +261,11 @@ void RSP_Init()
 		config.generalEmulation.hacks |= hack_WinBack;
 	else if (strstr(RSP.romname, (const char *)"POKEMON SNAP") != nullptr)
 		config.generalEmulation.hacks |= hack_Snap;
+	else if (strstr(RSP.romname, (const char *)"MARIOKART64") != nullptr)
+		config.generalEmulation.hacks |= hack_MK64;
+	else if (strstr(RSP.romname, (const char *)"Resident Evil II") ||
+			 strstr(RSP.romname, (const char *)"BioHazard II"))
+		config.generalEmulation.hacks |= hack_RE2 | hack_ModifyVertexXyInShader | hack_LoadDepthTextures;
 
 	api().FindPluginPath(RSP.pluginpath);
 

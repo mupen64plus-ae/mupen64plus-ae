@@ -547,6 +547,9 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 	if (_width > 640)
 		return;
 
+	if (_width == 512 && (config.generalEmulation.hacks & hack_RE2) != 0)
+		_width = *REG.VI_WIDTH;
+
 	if (config.frameBufferEmulation.enable == 0) {
 		if (m_list.empty())
 			_createScreenSizeBuffer();
@@ -704,6 +707,13 @@ void FrameBufferList::removeBuffers(u32 _width)
 	}
 }
 
+void FrameBufferList::depthBufferCopyRdram()
+{
+	FrameBuffer * pCurrentDepthBuffer = findBuffer(gDP.depthImageAddress);
+	if (pCurrentDepthBuffer != nullptr)
+		pCurrentDepthBuffer->copyRdram();
+}
+
 void FrameBufferList::fillBufferInfo(void * _pinfo, u32 _size)
 {
 	FBInfo::FrameBufferInfo* pInfo = reinterpret_cast<FBInfo::FrameBufferInfo*>(_pinfo);
@@ -728,8 +738,6 @@ void FrameBufferList::attachDepthBuffer()
 		return;
 
 	DepthBuffer * pDepthBuffer = depthBufferList().getCurrent();
-	if (pCurrent->m_pDepthBuffer == pDepthBuffer)
-		return;
 
 	if (pCurrent->m_FBO.isNotNull() && pDepthBuffer != nullptr) {
 		pDepthBuffer->initDepthImageTexture(pCurrent);
@@ -1008,13 +1016,13 @@ void FrameBufferList::renderBuffer()
 
 	dstY0 = rdpRes.vi_v_start;
 
-	const f32 xScale = _FIXED2FLOAT(rdpRes.vi_x_add, 10);
-	const f32 yScale = _FIXED2FLOAT(rdpRes.vi_y_add, 10);
 	const u32 vFullHeight = rdpRes.vi_ispal ? 288 : 240;
 	const float dstScaleY = (float)wnd.getHeight() / float(vFullHeight);
 
 	const u32 addrOffset = ((rdpRes.vi_origin - pBuffer->m_startAddress) << 1 >> pBuffer->m_size);
 	srcY0 = addrOffset / pBuffer->m_width;
+	if ((addrOffset != 0) && (pBuffer->m_width == addrOffset * 2))
+		srcY0 = 1;
 
 	if ((rdpRes.vi_width != addrOffset * 2) && (addrOffset % rdpRes.vi_width != 0))
 		Xoffset = rdpRes.vi_width - addrOffset % rdpRes.vi_width;
@@ -1039,13 +1047,11 @@ void FrameBufferList::renderBuffer()
 
 	if (pNextBuffer != nullptr) {
 		dstPartHeight = srcY0;
-//		srcY0 = (s32)(srcY0*yScale);
 		srcPartHeight = srcY0;
 		srcY1 = srcHeight;
 		dstY1 = dstY0 + rdpRes.vi_vres - dstPartHeight;
 	} else {
 		dstY1 = dstY0 + rdpRes.vi_vres;
-//		srcY0 = (s32)(srcY0*yScale);
 		srcY1 = srcY0 + srcHeight;
 	}
 	PostProcessor & postProcessor = PostProcessor::get();
@@ -1235,15 +1241,22 @@ void FrameBuffer_CopyChunkToRDRAM(u32 _address)
 
 bool FrameBuffer_CopyDepthBuffer( u32 address )
 {
-	FrameBuffer * pCopyBuffer = frameBufferList().getCopyBuffer();
+	FrameBufferList & fblist = frameBufferList();
+	FrameBuffer * pCopyBuffer = fblist.getCopyBuffer();
 	if (pCopyBuffer != nullptr) {
 		// This code is mainly to emulate Zelda MM camera.
 		ColorBufferToRDRAM::get().copyToRDRAM(pCopyBuffer->m_startAddress, true);
 		pCopyBuffer->m_RdramCopy.resize(0); // To disable validity check by RDRAM content. CPU may change content of the buffer for some unknown reason.
-		frameBufferList().setCopyBuffer(nullptr);
+		fblist.setCopyBuffer(nullptr);
 		return true;
-	} else
-		return DepthBufferToRDRAM::get().copyToRDRAM(address);
+	}
+
+	if (DepthBufferToRDRAM::get().copyToRDRAM(address)) {
+		fblist.depthBufferCopyRdram();
+		return true;
+	}
+
+	return false;
 }
 
 bool FrameBuffer_CopyDepthBufferChunk(u32 address)

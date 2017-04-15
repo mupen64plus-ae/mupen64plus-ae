@@ -184,7 +184,7 @@ struct Config
 #define hack_pilotWings				(1<<5)  //Special blend mode for PilotWings.
 #define hack_subscreen				(1<<6)  //Fix subscreen delay in Zelda OOT and Doubutsu no Mori
 #define hack_blastCorps				(1<<7)  //Blast Corps black polygons
-#define hack_ignoreVIHeightChange	(1<<8)  //Do not reset FBO when VI height is changed. Space Invaders need it.
+#define hack_NegativeViewport		(1<<8)  //Reverse negative viewport when game set it. Eikou no Saint Andrews, pachinko nichi 365
 #define hack_rectDepthBufferCopyPD	(1<<9)  //Copy depth buffer only when game need it. Optimized for PD
 #define hack_rectDepthBufferCopyCBFD (1<<10) //Copy depth buffer only when game need it. Optimized for CBFD
 #define hack_WinBack				(1<<11) //Hack for WinBack to remove gray rectangle in HLE mode
@@ -194,6 +194,8 @@ struct Config
 #define hack_doNotResetTLUTmode		(1<<15) //Don't set TLUT mode to none after dlist end. Quake 64
 #define hack_LoadDepthTextures		(1<<16) //Load textures for depth buffer
 #define hack_Snap					(1<<17) //Frame buffer settings for camera detection in Pokemon Snap. Copy aux buffers at fullsync
+#define hack_MK64					(1<<18) //Hack for load MK64 HD textures properly.
+#define hack_RE2					(1<<19) //RE2 hacks.
 
 extern Config config;
 

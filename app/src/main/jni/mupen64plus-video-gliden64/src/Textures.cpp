@@ -551,11 +551,7 @@ void TextureCache::destroy()
 
 void TextureCache::_checkCacheSize()
 {
-#ifdef VC
-	const size_t maxCacheSize = 15000;
-#else
-	const size_t maxCacheSize = 16384;
-#endif
+	const size_t maxCacheSize = 8000;
 	if (m_textures.size() >= maxCacheSize) {
 		CachedTexture& clsTex = m_textures.back();
 		m_cachedBytes -= clsTex.textureBytes;
@@ -678,6 +674,11 @@ void _calcTileSizes(u32 _t, TileSizes & _sizes, gDPTile * _pLoadTile)
 	_sizes.clampWidth = (pTile->clamps && gDP.otherMode.cycleType != G_CYC_COPY) ? tileWidth : width;
 	_sizes.clampHeight = (pTile->clampt && gDP.otherMode.cycleType != G_CYC_COPY) ? tileHeight : height;
 
+	if (_sizes.clampWidth > 256)
+		pTile->clamps = 0;
+	if (_sizes.clampHeight > 256)
+		pTile->clampt = 0;
+
 	// Make sure masking is valid
 	if (maskWidth > width) {
 		pTile->masks = powof(width);
@@ -715,7 +716,7 @@ void _calcTileSizes(u32 _t, TileSizes & _sizes, gDPTile * _pLoadTile)
 }
 
 inline
-void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture)
+void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture, int _scale)
 {
 	_pTexture->textureBytes = _info.width * _info.height;
 
@@ -731,11 +732,9 @@ void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture)
 
 	_pTexture->realWidth = _info.width;
 	_pTexture->realHeight = _info.height;
+	_pTexture->scaleS = 1.0f / (f32)(_info.width / _scale);
+	_pTexture->scaleT = 1.0f / (f32)(_info.height / _scale);
 	_pTexture->bHDTexture = true;
-	/*
-	_pTexture->scaleS = 1.0f / (f32)(_pTexture->realWidth);
-	_pTexture->scaleT = 1.0f / (f32)(_pTexture->realHeight);
-	*/
 }
 
 bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture)
@@ -780,7 +779,7 @@ bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture)
 		gfxContext.init2DTexture(params);
 
 		assert(!gfxContext.isError());
-		_updateCachedTexture(ghqTexInfo, _pTexture);
+		_updateCachedTexture(ghqTexInfo, _pTexture, ghqTexInfo.width / tile_width);
 		return true;
 	}
 	return false;
@@ -843,6 +842,13 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 		}
 	}
 
+	if ((config.generalEmulation.hacks&hack_LoadDepthTextures) != 0 && gDP.colorImage.address == gDP.depthImageAddress) {
+		_loadDepthTexture(pTexture, (u16*)pDest);
+		free(pDest);
+		free(pSwapped);
+		return;
+	}
+
 	bool bLoaded = false;
 	if ((config.textureFilter.txEnhancementMode | config.textureFilter.txFilterMode) != 0 &&
 			config.textureFilter.txFilterIgnoreBG == 0 &&
@@ -869,7 +875,7 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 			params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 			params.data = ghqTexInfo.data;
 			gfxContext.init2DTexture(params);
-			_updateCachedTexture(ghqTexInfo, pTexture);
+			_updateCachedTexture(ghqTexInfo, pTexture, ghqTexInfo.width / pTexture->realWidth);
 			bLoaded = true;
 		}
 	}
@@ -908,8 +914,15 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 	if (info.loadType == LOADTYPE_TILE) {
 		bpl = info.texWidth << info.size >> 1;
 		addr += (info.ult * bpl) + (((info.uls << info.size) + 1) >> 1);
-	}
-	else {
+
+		tile_width = min(info.width, info.texWidth);
+		if (info.size > _pTexture->size)
+			tile_width <<= info.size - _pTexture->size;
+
+		tile_height = info.height;
+		if ((config.generalEmulation.hacks & hack_MK64) != 0 && (tile_height % 2) != 0)
+			tile_height--;
+	} else {
 		if (gSP.textureTile[_tile]->size == G_IM_SIZ_32b)
 			bpl = gSP.textureTile[_tile]->line << 4;
 		else if (info.dxt == 0)
@@ -951,7 +964,7 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 		params.data = ghqTexInfo.data;
 		gfxContext.init2DTexture(params);
 		assert(!gfxContext.isError());
-		_updateCachedTexture(ghqTexInfo, _pTexture);
+		_updateCachedTexture(ghqTexInfo, _pTexture, ghqTexInfo.width / tile_width);
 		return true;
 	}
 
@@ -963,14 +976,6 @@ void TextureCache::_loadDepthTexture(CachedTexture * _pTexture, u16* _pDest)
 	if (!gfxContext.isSupported(SpecialFeatures::FragmentDepthWrite))
 		return;
 
-	const u32 numTexels = _pTexture->realWidth * _pTexture->realHeight;
-	_pTexture->textureBytes = numTexels * sizeof(f32);
-	f32 * pDestF = (f32*)malloc(_pTexture->textureBytes);
-	assert(pDestF != nullptr);
-
-	for (u32 t = 0; t < numTexels; ++t)
-		pDestF[t] = _pDest[t] / 65535.0f;
-
 	Context::InitTextureParams params;
 	params.handle = _pTexture->name;
 	params.mipMapLevel = 0;
@@ -979,10 +984,9 @@ void TextureCache::_loadDepthTexture(CachedTexture * _pTexture, u16* _pDest)
 	params.height = _pTexture->realHeight;
 	params.internalFormat = internalcolorFormat::RED;
 	params.format = colorFormat::RED;
-	params.dataType = datatype::FLOAT;
-	params.data = pDestF;
+	params.dataType = datatype::UNSIGNED_SHORT;
+	params.data = _pDest;
 	gfxContext.init2DTexture(params);
-	free(pDestF);
 }
 
 /*
@@ -1189,7 +1193,7 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 				params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 				params.data = ghqTexInfo.data;
 				gfxContext.init2DTexture(params);
-				_updateCachedTexture(ghqTexInfo, _pTexture);
+				_updateCachedTexture(ghqTexInfo, _pTexture, ghqTexInfo.width / tmptex.realWidth);
 				bLoaded = true;
 			}
 		}
@@ -1504,6 +1508,8 @@ void TextureCache::update(u32 _t)
 		pTile = gSP.textureTile[_t];
 	}
 
+	TileSizes sizes;
+	_calcTileSizes(_t, sizes, gDP.loadTile);
 	TextureParams params;
 	params.flags = pTile->masks	|
 		(pTile->maskt   << 4)	|
@@ -1514,8 +1520,6 @@ void TextureCache::update(u32 _t)
 		(pTile->size   << 12)	|
 		(pTile->format << 14)	|
 		(gDP.otherMode.textureLUT << 17);
-	TileSizes sizes;
-	_calcTileSizes(_t, sizes, gDP.loadTile);
 	params.width = sizes.realWidth;
 	params.height = sizes.realHeight;
 

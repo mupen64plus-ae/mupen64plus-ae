@@ -369,10 +369,11 @@ public:
 
 	void update(bool _force) override
 	{
-		if (config.frameBufferEmulation.nativeResFactor == 0)
+		FrameBuffer * pBuffer = frameBufferList().getCurrent();
+		if (pBuffer == nullptr)
 			uScreenScale.set(dwnd().getScaleX(), dwnd().getScaleY(), _force);
 		else
-			uScreenScale.set(float(config.frameBufferEmulation.nativeResFactor), float(config.frameBufferEmulation.nativeResFactor), _force);
+			uScreenScale.set(pBuffer->m_scale, pBuffer->m_scale, _force);
 	}
 
 private:
@@ -764,8 +765,8 @@ public:
 	void update(bool _force) override
 	{
 		for (s32 i = 0; i <= gSP.numLights; ++i) {
-			uLightDirection[i].set(&gSP.lights[i].ix, _force);
-			uLightColor[i].set(&gSP.lights[i].r, _force);
+			uLightDirection[i].set(gSP.lights.i_xyz[i], _force);
+			uLightColor[i].set(gSP.lights.rgb[i], _force);
 		}
 	}
 

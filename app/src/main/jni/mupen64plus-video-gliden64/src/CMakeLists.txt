@@ -46,6 +46,7 @@ set(GLideN64_SOURCES
   PostProcessor.cpp
   RDP.cpp
   RSP.cpp
+  RSP_LoadMatrix.cpp
   S2DEX2.cpp
   S2DEX.cpp
   SoftwareRender.cpp
@@ -176,12 +177,12 @@ endif(MINGW)
 if(WIN32)
   list(APPEND GLideN64_SOURCES ${GLideN64_SOURCES_WIN})
   add_definitions(
-	-DOS_WINDOWS
-	-D__WIN32__
-	-DWIN32
-	-D_WIN32_ASM
-	-D_CRT_SECURE_NO_WARNINGS
-	-D__MSC__
+    -DOS_WINDOWS
+    -D__WIN32__
+    -DWIN32
+    -D_WIN32_ASM
+    -D_CRT_SECURE_NO_WARNINGS
+    -D__MSC__
   )
 endif(WIN32)
 
@@ -224,6 +225,14 @@ if(CRC_ARMV8)
   list(APPEND GLideN64_SOURCES
 	CRC32_ARMV8.cpp
   )
+elseif(CRC_OPT)
+  list(REMOVE_ITEM GLideN64_SOURCES
+        CRC32.cpp
+  )
+  list(APPEND GLideN64_SOURCES
+        CRC_OPT.cpp
+        xxHash/xxhash.c
+  )
 endif(CRC_ARMV8)
 
 if(NEON_OPT)
@@ -231,13 +240,24 @@ if(NEON_OPT)
     -D__NEON_OPT
   )
   list(APPEND GLideN64_SOURCES
-    3DMathNeon.cpp
-    gSPNeon.cpp
+    Neon/3DMathNeon.cpp
+    Neon/gSPNeon.cpp
+    Neon/RSP_LoadMatrixNeon.cpp
   )
   list(REMOVE_ITEM GLideN64_SOURCES
     3DMath.cpp
+    RSP_LoadMatrix.cpp
   )
 endif(NEON_OPT)
+
+if(X86_OPT)
+  list(APPEND GLideN64_SOURCES
+    RSP_LoadMatrixX86.cpp
+  )
+  list(REMOVE_ITEM GLideN64_SOURCES
+    RSP_LoadMatrix.cpp
+  )
+endif(X86_OPT)
 
 # Build type
 

@@ -26,7 +26,7 @@ NoiseTexture::NoiseTexture()
 {
 }
 
-typedef std::array<std::vector<u16>, NOISE_TEX_NUM> NoiseTexturesData;
+typedef std::array<std::vector<u8>, NOISE_TEX_NUM> NoiseTexturesData;
 
 static
 void FillTextureData(u32 _seed, NoiseTexturesData * _pData, u32 _start, u32 _stop)
@@ -36,7 +36,7 @@ void FillTextureData(u32 _seed, NoiseTexturesData * _pData, u32 _start, u32 _sto
 		auto & vec = _pData->at(i);
 		const size_t sz = vec.size();
 		for (size_t t = 0; t < sz; ++t)
-			vec[t] = rand() & 0xFFFF;
+			vec[t] = rand() & 0xFF;
 	}
 }
 
@@ -47,11 +47,11 @@ void NoiseTexture::init()
 
 	NoiseTexturesData texData;
 	for (auto& vec : texData)
-		vec.resize(NOISE_TEX_WIDTH * NOISE_TEX_HEIGHT / 2);
+		vec.resize(NOISE_TEX_WIDTH * NOISE_TEX_HEIGHT);
 
 	const u32 concurentThreadsSupported = std::thread::hardware_concurrency();
-	if (concurentThreadsSupported > 2) {
-		const u32 numThreads = concurentThreadsSupported - 1;
+	if (concurentThreadsSupported > 1) {
+		const u32 numThreads = concurentThreadsSupported;
 		u32 chunk = NOISE_TEX_NUM / numThreads;
 		if (NOISE_TEX_NUM % numThreads != 0)
 			chunk++;
@@ -71,7 +71,9 @@ void NoiseTexture::init()
 				start,
 				std::min(start + chunk, static_cast<u32>(texData.size())));
 			start += chunk;
-		} while (start < NOISE_TEX_NUM);
+		} while (start < NOISE_TEX_NUM - chunk);
+
+		FillTextureData(generator(), &texData, start, texData.size());
 
 		for (auto& t : threads)
 			t.join();
