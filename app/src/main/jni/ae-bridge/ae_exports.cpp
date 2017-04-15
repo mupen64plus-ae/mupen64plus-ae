@@ -236,11 +236,13 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuResume(JNIEnv* env, jclass cls)
 {
+    resumeEmulator();
     if (coreDoCommand) coreDoCommand(M64CMD_RESUME, 0, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuPause(JNIEnv* env, jclass cls)
 {
+    pauseEmulator();
     if (coreDoCommand) coreDoCommand(M64CMD_PAUSE, 0, NULL);
 }
 

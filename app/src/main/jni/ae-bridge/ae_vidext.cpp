@@ -22,6 +22,7 @@ uint32_t frameCount = 0;
 int64_t oldTime;
 int vsync = 1;
 int oldVsync = 1;
+bool isPaused = false;
 
 PFNGLGETINTEGERVPROC g_glGetIntegerv = NULL;
 PFNGLGETSTRINGPROC g_glGetString = NULL;
@@ -323,7 +324,7 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
         eglSwapInterval(display, vsync);
         oldVsync = vsync;
     }
-    if (surface != EGL_NO_SURFACE) {
+    if (surface != EGL_NO_SURFACE && !isPaused) {
         eglSwapBuffers(display, surface);
         if (FPSRecalcPeriod > 0) {
             frameCount++;
@@ -362,4 +363,15 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 extern DECLSPEC void vsyncEnabled(int enabled)
 {
     vsync = enabled;
+}
+
+extern DECLSPEC void pauseEmulator()
+{
+    isPaused = true;
+}
+
+extern DECLSPEC void resumeEmulator()
+{
+    isPaused = false;
+
 }
