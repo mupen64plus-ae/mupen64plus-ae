@@ -26,8 +26,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,8 +40,6 @@ public class GameSidebar extends MenuListView
     private GameSidebarActionHandler mActionHandler;
     private View mHeader;
     
-    private boolean mFocusScrolling;
-    
     public GameSidebar( Context context, AttributeSet attrs )
     {
         super( context, attrs );
@@ -54,61 +50,9 @@ public class GameSidebar extends MenuListView
         mInfoArt = (ImageView) mHeader.findViewById( R.id.imageArt );
         mImageLayout = (LinearLayout) mHeader.findViewById( R.id.imageLayout );
         mGameTitle = (TextView) mHeader.findViewById( R.id.gameTitle );
-        mFocusScrolling = false;
-
-        // Disable scrolling portrait effect
-        setOnItemSelectedListener(new OnItemSelectedListener()
-        {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                mFocusScrolling = true;
-                mImageLayout.setPadding( 0, 0, 0, 0 );
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-                mFocusScrolling = false;
-            }
-            
-        });
-     
-        // Scrolling portrait effect
-        setOnScrollListener(new OnScrollListener()
-        {
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-                // Nothing to do here
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                //Portrait effect doesn't work with focus scrolling for some reason
-                if(!mFocusScrolling)
-                {
-                    PerformPortraitEffect();
-                }
-            }
-
-        });
         
         setClipToPadding(true);
         addHeaderView(mHeader, null, false);
-    }
-    
-    private void PerformPortraitEffect()
-    {
-        if(GameSidebar.this.getChildAt(0) == mHeader)
-        {
-            int top =  GameSidebar.this.getChildAt(0).getTop();
-            int scrollY = top*-1;
-            mImageLayout.setPadding( 0, scrollY / 2, 0, 0 );
-        }
     }
     
     public void setActionHandler(GameSidebarActionHandler actionHandler, int menuResource)
