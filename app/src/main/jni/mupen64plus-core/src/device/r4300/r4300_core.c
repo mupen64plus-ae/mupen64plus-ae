@@ -154,6 +154,7 @@ void run_r4300(struct r4300_core* r4300)
     {
         DebugMessage(M64MSG_INFO, "Starting R4300 emulator: Dynamic Recompiler");
         r4300->emumode = EMUMODE_DYNAREC;
+        init_blocks(r4300);
 
 #ifdef NEW_DYNAREC
         new_dynarec_init();
@@ -166,6 +167,7 @@ void run_r4300(struct r4300_core* r4300)
 #if defined(PROFILE_R4300)
         profile_write_end_of_code_blocks(r4300);
 #endif
+        free_blocks(r4300);
     }
 #endif
     else /* if (r4300->emumode == EMUMODE_INTERPRETER) */
@@ -183,6 +185,7 @@ void run_r4300(struct r4300_core* r4300)
         r4300->cp0.last_addr = *r4300_pc();
 
         run_cached_interpreter(r4300);
+
         free_blocks(r4300);
     }
 

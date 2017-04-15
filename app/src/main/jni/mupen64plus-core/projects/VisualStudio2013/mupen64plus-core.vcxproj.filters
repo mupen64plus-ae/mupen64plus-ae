@@ -73,6 +73,9 @@
     <Filter Include="device\pifbootrom">
       <UniqueIdentifier>{0628d2cb-f4d7-4b1e-ad47-00501bd18048}</UniqueIdentifier>
     </Filter>
+    <Filter Include="device\gb">
+      <UniqueIdentifier>{8f670ceb-ce46-4a21-a0bf-8540bcae178c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\device\ai\ai_controller.c">
@@ -219,9 +222,6 @@
     <ClCompile Include="..\..\src\device\si\af_rtc.c">
       <Filter>device\si</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\device\si\cic.c">
-      <Filter>device\si</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\device\si\eeprom.c">
       <Filter>device\si</Filter>
     </ClCompile>
@@ -285,85 +285,16 @@
     <ClCompile Include="..\..\src\device\r4300\x86\assemble.c">
       <Filter>device\r4300\x86</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gbc.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gcop0.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gcop1.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gcop1_d.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gcop1_l.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gcop1_s.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gcop1_w.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gr4300.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gregimm.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gspecial.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\gtlb.c">
+    <ClCompile Include="..\..\src\device\r4300\x86\dynarec.c">
       <Filter>device\r4300\x86</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\device\r4300\x86\regcache.c">
       <Filter>device\r4300\x86</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86\rjump.c">
-      <Filter>device\r4300\x86</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\device\r4300\x86_64\assemble.c">
       <Filter>device\r4300\x86_64</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gbc.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gcop0.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gcop1.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gcop1_d.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gcop1_l.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gcop1_s.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gcop1_w.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gr4300.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gregimm.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gspecial.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\gtlb.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\device\r4300\x86_64\regcache.c">
-      <Filter>device\r4300\x86_64</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\x86_64\rjump.c">
       <Filter>device\r4300\x86_64</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\device\r4300\new_dynarec\new_dynarec.c">
@@ -416,6 +347,18 @@
     </ClCompile>
     <ClCompile Include="..\..\src\plugin\get_time_using_time_plus_delta.c">
       <Filter>plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\device\gb\gb_cart.c">
+      <Filter>device\gb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\device\gb\mbc3_rtc.c">
+      <Filter>device\gb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\device\si\cic.c">
+      <Filter>device\si</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\device\si\transferpak.c">
+      <Filter>device\si</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -743,27 +686,18 @@
     <ClInclude Include="..\..\src\plugin\get_time_using_time_plus_delta.h">
       <Filter>plugin</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\device\gb\gb_cart.h">
+      <Filter>device\gb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\device\gb\mbc3_rtc.h">
+      <Filter>device\gb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\device\si\transferpak.h">
+      <Filter>device\si</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\device\r4300\interpreter.def">
-      <Filter>device\r4300</Filter>
-    </None>
-    <None Include="..\..\src\device\r4300\interpreter_cop0.def">
-      <Filter>device\r4300</Filter>
-    </None>
-    <None Include="..\..\src\device\r4300\interpreter_cop1.def">
-      <Filter>device\r4300</Filter>
-    </None>
-    <None Include="..\..\src\device\r4300\interpreter_r4300.def">
-      <Filter>device\r4300</Filter>
-    </None>
-    <None Include="..\..\src\device\r4300\interpreter_regimm.def">
-      <Filter>device\r4300</Filter>
-    </None>
-    <None Include="..\..\src\device\r4300\interpreter_special.def">
-      <Filter>device\r4300</Filter>
-    </None>
-    <None Include="..\..\src\device\r4300\interpreter_tlb.def">
+    <None Include="..\..\src\device\r4300\mips_instructions.def">
       <Filter>device\r4300</Filter>
     </None>
     <None Include="..\..\src\device\r4300\new_dynarec\arm\linkage_arm.S">
