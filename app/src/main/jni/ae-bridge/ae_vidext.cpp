@@ -46,6 +46,11 @@ EGLint const defaultContextAttribs[] = {
         EGL_NONE
 };
 
+EGLint const defaultGlEsContextAttribs[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+};
+
 EGLint const defaultWindowAttribs[] = {
         EGL_RENDER_BUFFER, EGL_BACK_BUFFER,
         EGL_NONE
@@ -133,7 +138,7 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
     if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs))) {
         //If creating the context failed, just try to create a GLES2/3 context
         //This is useful because GLideN64 requests an OpenGL 3.3 core context.
-        if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, defaultContextAttribs))) {
+        if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, defaultGlEsContextAttribs))) {
             LOGE("eglCreateContext() returned error %d", eglGetError());
             return M64ERR_INVALID_STATE;
         }
