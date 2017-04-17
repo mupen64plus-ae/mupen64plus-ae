@@ -460,32 +460,35 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     {
         String finalRomPath = givenRomPath;
 
-        boolean isZip = givenRomPath.toLowerCase().endsWith("zip");
+        boolean isZip = givenRomPath != null && givenRomPath.toLowerCase().endsWith("zip");
 
         if(isZip)
         {
             finalRomPath = ExtractFirstROMFromZip(givenRomPath);
         }
 
-        // Asynchronously compute MD5 and launch game when finished
-        final String computedMd5 = ComputeMd5Task.computeMd5( new File( finalRomPath ) );
-
-        if(computedMd5 != null)
+        if(finalRomPath != null)
         {
-            final RomHeader header = new RomHeader(finalRomPath);
+            // Asynchronously compute MD5 and launch game when finished
+            final String computedMd5 = ComputeMd5Task.computeMd5( new File( finalRomPath ) );
 
-            final RomDatabase database = RomDatabase.getInstance();
-
-            if(!database.hasDatabaseFile())
+            if(computedMd5 != null)
             {
-                database.setDatabaseFile(mAppData.mupen64plus_ini);
+                final RomHeader header = new RomHeader(finalRomPath);
+
+                final RomDatabase database = RomDatabase.getInstance();
+
+                if(!database.hasDatabaseFile())
+                {
+                    database.setDatabaseFile(mAppData.mupen64plus_ini);
+                }
+
+                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, new File( finalRomPath), header.crc );
+                String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
+
+                launchGameActivity( finalRomPath, null, true, computedMd5, header.crc, header.name,
+                        header.countryCode.getValue(), artPath, detail.goodName, false );
             }
-
-            final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, new File( finalRomPath), header.crc );
-            String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
-
-            launchGameActivity( finalRomPath, null, true, computedMd5, header.crc, header.name,
-                    header.countryCode.getValue(), artPath, detail.goodName, false );
         }
     }
 
