@@ -300,7 +300,7 @@ static void ADDMIXER(struct hle_t* hle, uint32_t w1, uint32_t w2)
 static void HILOGAIN(struct hle_t* hle, uint32_t w1, uint32_t w2)
 {
     int8_t   gain  = (w1 >> 16); /* Q4.4 signed */
-    uint16_t count = w1;
+    uint16_t count = w1 & 0xfff;
     uint16_t dmem  = (w2 >> 16);
 
     alist_multQ44(hle, dmem, count, gain);
