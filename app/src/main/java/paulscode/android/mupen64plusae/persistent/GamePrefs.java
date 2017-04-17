@@ -617,7 +617,7 @@ public class GamePrefs
         gliden64EnableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
         gliden64EnableShadersStorage = emulationProfile.get( "EnableShadersStorage", "True" ).equals( "True" );
         gliden64CorrectTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
-        gliden64EnableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "False" ).equals( "True" );
+
         gliden64EnableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );
         gliden64EnableFragmentDepthWrite = emulationProfile.get( "EnableFragmentDepthWrite", "False" ).equals( "True" );
         gliden64EnableFBEmulation = emulationProfile.get( "EnableFBEmulation", "True" ).equals( "True" );
@@ -627,8 +627,19 @@ public class GamePrefs
         gliden64EnableCopyDepthToRDRAM = getSafeInt( emulationProfile, "EnableCopyDepthToRDRAM", 2 );
         gliden64EnableCopyColorFromRDRAM = emulationProfile.get( "EnableCopyColorFromRDRAM", "False" ).equals( "True" );
         gliden64EnableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
-        gliden64UseNativeResolutionFactor = gliden64EnableNativeResTexrects ?
-                0 :getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);
+
+        if(gliden64EnableCopyColorFromRDRAM)
+        {
+            gliden64EnableNativeResTexrects = false;
+            gliden64UseNativeResolutionFactor = 1;
+        }
+        else
+        {
+            gliden64EnableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "False" ).equals( "True" );
+            gliden64UseNativeResolutionFactor = gliden64EnableNativeResTexrects ?
+                    0 :getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);
+        }
+
         gliden64DisableFBInfo = emulationProfile.get( "DisableFBInfo", "True" ).equals( "True" );
         gliden64FBInfoReadColorChunk = emulationProfile.get( "FBInfoReadColorChunk", "False" ).equals( "True" );
         gliden64FBInfoReadDepthChunk = emulationProfile.get( "FBInfoReadDepthChunk", "True" ).equals( "True" );
