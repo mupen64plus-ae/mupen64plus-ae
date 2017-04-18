@@ -165,6 +165,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
+        super.onCreate( savedInstanceState );
+
         Log.i( "GameActivity", "onCreate" );
         super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat_NoActionBar );
         final AppData appData = new AppData( this );
@@ -229,8 +231,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mFirstStart = true;
 
-        //TODO: Figure out why we call this in the middle
-        super.onCreate( savedInstanceState );
+        // Initialize the objects and data files interfacing to the emulator core
+        CoreInterface.initialize( this, mGamePrefs, mRomPath, cheatArgs, doRestart);
 
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
@@ -251,8 +253,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mGameSidebar.setImage(new BitmapDrawable(this.getResources(), artPath));
 
         mGameSidebar.setTitle(romGoodName);
-        // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( this, mGamePrefs, mRomPath, cheatArgs, doRestart);
+
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);

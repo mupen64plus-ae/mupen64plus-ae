@@ -168,6 +168,7 @@ public class CoreInterface
     private static final int DELTA_SPEED = 10;
     private static boolean sUseCustomSpeed = false;
     private static int sCustomSpeed = DEFAULT_SPEED;
+    private static boolean sLibrariesLoaded = false;
 
     private static File sCurrentSaveStateFile = null;
 
@@ -195,6 +196,14 @@ public class CoreInterface
 
         makeDirs();
         moveFromLegacy();
+
+        if(!sLibrariesLoaded)
+        {
+            // Load the native libraries, this must be done outside the thread to prevent race conditions
+            // that depend on the libraries being loaded after this call is made
+            NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
+            sLibrariesLoaded = true;
+        }
     }
 
     public static void detachActivity()
@@ -203,6 +212,13 @@ public class CoreInterface
         {
             sActivity = null;
         }
+
+        if(sLibrariesLoaded)
+        {
+            sLibrariesLoaded = false;// Unload the native libraries
+            NativeExports.unloadLibraries();
+        }
+
     }
 
     public static boolean isCoreRunning()
@@ -385,9 +401,6 @@ public class CoreInterface
                 public void run()
                 {
 
-                    // Load the native libraries
-                    NativeExports.loadLibraries( sAppData.libsDir, Build.VERSION.SDK_INT );
-
                     // Only increase priority if we have more than one processor. The call to check the number of
                     // processors is only available in API level 17
                     if(Runtime.getRuntime().availableProcessors() > 1 && sGlobalPrefs.useHighPriorityThread) {
@@ -492,8 +505,6 @@ public class CoreInterface
 
                             final String finalMessage = message;
 
-                            // Unload the native libraries
-                            NativeExports.unloadLibraries();
                             sActivity.runOnUiThread( new Runnable()
                             {
                                 @Override
