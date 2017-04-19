@@ -513,7 +513,6 @@ public class CoreInterface
                                     if(sActivity != null && result != 0 && finalMessage != null)
                                     {
                                         Notifier.showToast( sActivity, finalMessage );
-                                        sActivity.finish();
                                     }
 
                                     if(sActivity != null && sActivity instanceof OnExitListener)
