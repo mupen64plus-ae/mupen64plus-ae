@@ -20,11 +20,11 @@ void GLInfo::init() {
 		glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
 		glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
 	}
-	LOG(LOG_MINIMAL, "%s major version: %d\n", isGLESX ? "OpenGL ES" : "OpenGL", majorVersion);
-	LOG(LOG_MINIMAL, "%s minor version: %d\n", isGLESX ? "OpenGL ES" : "OpenGL", minorVersion);
+	LOG(LOG_VERBOSE, "%s major version: %d\n", isGLESX ? "OpenGL ES" : "OpenGL", majorVersion);
+	LOG(LOG_VERBOSE, "%s minor version: %d\n", isGLESX ? "OpenGL ES" : "OpenGL", minorVersion);
 
 
-	LOG(LOG_MINIMAL, "OpenGL vendor: %s\n", glGetString(GL_VENDOR));
+	LOG(LOG_VERBOSE, "OpenGL vendor: %s\n", glGetString(GL_VENDOR));
 	const GLubyte * strRenderer = glGetString(GL_RENDERER);
 
 	if (std::regex_match((const char*)strRenderer, std::regex("Adreno.*5\\d\\d") ))
@@ -35,7 +35,7 @@ void GLInfo::init() {
 		renderer = Renderer::VideoCore;
 	else if (strstr((const char*)strRenderer, "Intel") != nullptr)
 		renderer = Renderer::Intel;
-	LOG(LOG_MINIMAL, "OpenGL renderer: %s\n", strRenderer);
+	LOG(LOG_VERBOSE, "OpenGL renderer: %s\n", strRenderer);
 
 	int numericVersion = majorVersion * 10 + minorVersion;
 	if (isGLES2) {

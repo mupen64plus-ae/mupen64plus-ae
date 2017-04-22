@@ -4,6 +4,7 @@
 #include "Context.h"
 #include "Parameters.h"
 #include <algorithm>
+#include <cstring>
 
 namespace graphics {
 
@@ -20,15 +21,15 @@ namespace graphics {
 		std::copy_n(_gpuData, m_tempPixelData.size(), m_tempPixelData.data());
 		u8* pixelDataAlloc = m_pixelData.data();
 		float* pixelData = reinterpret_cast<float*>(m_tempPixelData.data());
-		int colorsPerPixel = 4;
-		int widthPixels = _width * colorsPerPixel;
-		int stridePixels = _stride * colorsPerPixel;
+		const u32 colorsPerPixel = 4;
+		const u32 widthPixels = _width * colorsPerPixel;
+		const u32 stridePixels = _stride * colorsPerPixel;
 
-		for (unsigned int index = 0; index < _height; ++index) {
-			for (unsigned int widthIndex = 0; widthIndex < widthPixels; ++widthIndex) {
+		for (u32 index = 0; index < _height; ++index) {
+			for (u32 widthIndex = 0; widthIndex < widthPixels; ++widthIndex) {
 				u8& dest = *(pixelDataAlloc + index*widthPixels + widthIndex);
 				float& src = *(pixelData + (index+_heightOffset)*stridePixels + widthIndex);
-				dest = static_cast<u8>(_float2int(src*255.0));
+				dest = static_cast<u8>(src*255.0);
 			}
 		}
 
@@ -38,12 +39,12 @@ namespace graphics {
 	const u8* ColorBufferReader::_convertIntegerTextureBuffer(const u8* _gpuData, u32 _width, u32 _height,
 		u32 _heightOffset, u32 _stride)
 	{
-		int colorsPerPixel = 4;
-		size_t widthBytes = _width * colorsPerPixel;
-		int strideBytes = _stride * colorsPerPixel;
+		const u32 colorsPerPixel = 4;
+		const u32 widthBytes = _width * colorsPerPixel;
+		const u32 strideBytes = _stride * colorsPerPixel;
 
 		u8* pixelDataAlloc = m_pixelData.data();
-		for (unsigned int lnIndex = 0; lnIndex < _height; ++lnIndex) {
+		for (u32 lnIndex = 0; lnIndex < _height; ++lnIndex) {
 			memcpy(pixelDataAlloc + lnIndex*widthBytes, _gpuData + ((lnIndex+_heightOffset)*strideBytes), widthBytes);
 		}
 
@@ -66,8 +67,7 @@ namespace graphics {
 			params.colorFormat = fbTexFormat.colorFormat;
 			params.colorType = fbTexFormat.colorType;
 			params.colorFormatBytes = fbTexFormat.colorFormatBytes;
-		}
-		else {
+		} else {
 			params.colorFormat = fbTexFormat.monochromeFormat;
 			params.colorType = fbTexFormat.monochromeType;
 			params.colorFormatBytes = fbTexFormat.monochromeFormatBytes;
@@ -81,9 +81,9 @@ namespace graphics {
 			return nullptr;
 
 		if(params.colorType == datatype::FLOAT) {
-			return _convertFloatTextureBuffer(pixelData, params.width, params.height, 0, m_pTexture->realWidth);
+			return _convertFloatTextureBuffer(pixelData, params.width, params.height, heightOffset, stride);
 		} else {
-			return _convertIntegerTextureBuffer(pixelData, params.width, params.height, 0, m_pTexture->realWidth);
+			return _convertIntegerTextureBuffer(pixelData, params.width, params.height, heightOffset, stride);
 		}
 	}
 }

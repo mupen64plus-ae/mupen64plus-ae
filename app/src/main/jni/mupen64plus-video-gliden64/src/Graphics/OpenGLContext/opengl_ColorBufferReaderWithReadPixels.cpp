@@ -22,7 +22,7 @@ const u8 * ColorBufferReaderWithReadPixels::_readPixels(const ReadColorBufferPar
 	glReadPixels(_params.x0, _params.y0, m_pTexture->realWidth, _params.height, format, type, gpuData);
 
 	_heightOffset = 0;
-	_stride = 0;
+	_stride = m_pTexture->realWidth;
 
 	return gpuData;
 }
