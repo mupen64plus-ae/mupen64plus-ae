@@ -177,12 +177,49 @@ public class NativeConfigFiles
 
         mupen64plus_cfg.put( "Video-Glide64mk2", "vsync", "False" );                                                        // Vertical sync
         mupen64plus_cfg.put( "Video-Glide64mk2", "wrpAnisotropic", "False" );                                               // Wrapper Anisotropic Filtering
-        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_read_always", "0" );                                                   // Read framebuffer every frame (may be slow use only for effects that need it e.g. Banjo Kazooie, DK64 transitions)
         mupen64plus_cfg.put( "Video-Glide64mk2", "force_polygon_offset", boolToNum( global.isPolygonOffsetHackEnabled ) );  // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_factor", String.valueOf( global.videoPolygonOffset ) );    // Specifies a scale factor that is used to create a variable depth offset for each polygon
         mupen64plus_cfg.put( "Video-Glide64mk2", "polygon_offset_units", String.valueOf( global.videoPolygonOffset ) );     // Is multiplied by an implementation-specific value to create a constant depth offset
-        mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.isGlide64AutoFrameskipEnabled ) );
-        mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64MaxFrameskip ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "autoframeskip", boolToNum( game.glide64mk2Prefs.autoFrameskipEnabled ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "maxframeskip", String.valueOf( game.glide64mk2Prefs.maxFrameskip ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "filtering", String.valueOf( game.glide64mk2Prefs.filtering ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fog", String.valueOf( game.glide64mk2Prefs.fog ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "buff_clear", String.valueOf( game.glide64mk2Prefs.buff_clear ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "swapmode", String.valueOf( game.glide64mk2Prefs.swapmode ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "lodmode", String.valueOf( game.glide64mk2Prefs.lodmode ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_smart", String.valueOf( game.glide64mk2Prefs.fb_smart ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_hires", String.valueOf( game.glide64mk2Prefs.fb_hires ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_get_info", String.valueOf( game.glide64mk2Prefs.fb_get_info ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_render", String.valueOf( game.glide64mk2Prefs.fb_render ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_crc_mode", String.valueOf( game.glide64mk2Prefs.fb_crc_mode ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "read_back_to_screen", String.valueOf( game.glide64mk2Prefs.read_back_to_screen ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "detect_cpu_write", String.valueOf( game.glide64mk2Prefs.detect_cpu_write ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "alt_tex_size", String.valueOf( game.glide64mk2Prefs.alt_tex_size ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "use_sts1_only", String.valueOf( game.glide64mk2Prefs.use_sts1_only ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fast_crc", String.valueOf( game.glide64mk2Prefs.fast_crc ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "force_microcheck", String.valueOf( game.glide64mk2Prefs.force_microcheck ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "force_quad3d", String.valueOf( game.glide64mk2Prefs.force_quad3d ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "optimize_texrect", String.valueOf( game.glide64mk2Prefs.optimize_texrect ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "hires_buf_clear", String.valueOf( game.glide64mk2Prefs.hires_buf_clear ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_read_alpha", String.valueOf( game.glide64mk2Prefs.fb_read_alpha ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "force_calc_sphere", String.valueOf( game.glide64mk2Prefs.force_calc_sphere ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "texture_correction", String.valueOf( game.glide64mk2Prefs.texture_correction ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "increase_texrect_edge", String.valueOf( game.glide64mk2Prefs.increase_texrect_edge ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "decrease_fillrect_edge", String.valueOf( game.glide64mk2Prefs.decrease_fillrect_edge ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "stipple_mode", String.valueOf( game.glide64mk2Prefs.stipple_mode ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "stipple_pattern", String.valueOf( game.glide64mk2Prefs.stipple_pattern ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "clip_zmax", String.valueOf( game.glide64mk2Prefs.clip_zmax ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "clip_zmin", String.valueOf( game.glide64mk2Prefs.clip_zmin ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "adjust_aspect", String.valueOf( game.glide64mk2Prefs.adjust_aspect ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "correct_viewport", String.valueOf( game.glide64mk2Prefs.correct_viewport ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "aspect", String.valueOf( game.glide64mk2Prefs.aspect ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "zmode_compare_less", String.valueOf( game.glide64mk2Prefs.zmode_compare_less ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "old_style_adither", String.valueOf( game.glide64mk2Prefs.old_style_adither ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "n64_z_scale", String.valueOf( game.glide64mk2Prefs.n64_z_scale ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "pal230", String.valueOf( game.glide64mk2Prefs.pal230 ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "ignore_aux_copy", String.valueOf( game.glide64mk2Prefs.ignore_aux_copy ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "useless_is_useless", String.valueOf( game.glide64mk2Prefs.useless_is_useless ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "fb_read_always", String.valueOf( game.glide64mk2Prefs.fb_read_always ) );
 
         String aspectRatio = "0";
         if( game.emulationProfile.get( "WidescreenHack", "False" ).equals("True") )

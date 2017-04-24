@@ -105,6 +105,8 @@ public class GamePrefs
     /** True if glide64 video plug-in is enabled. */
     public final boolean isGlide64Enabled;
 
+    public final Glide64mk2Prefs glide64mk2Prefs;
+
     /** True if gliden64 video plug-in is enabled. */
     public final boolean isGliden64Enabled;
 
@@ -155,12 +157,6 @@ public class GamePrefs
 
     /** True if VI Overlay is enabled in Angrylion */
     public final boolean angrylionVIOverlayEnabled;
-
-    /** The maximum frameskip in the glide64 library. */
-    public final int glide64MaxFrameskip;
-
-    /** True if auto-frameskip is enabled in the glide64 library. */
-    public final boolean isGlide64AutoFrameskipEnabled;
 
     public final GLideN64Prefs glideN64Prefs;
 
@@ -433,9 +429,7 @@ public class GamePrefs
 
         // Video prefs - glide64
         isGlide64Enabled = videoPlugin.name.equals( "libmupen64plus-video-glide64mk2.so" );
-        maxFrameskip = getSafeInt( emulationProfile, "glide64Frameskip", 0 );
-        isGlide64AutoFrameskipEnabled = maxFrameskip < 0;
-        glide64MaxFrameskip = Math.abs( maxFrameskip );
+        glide64mk2Prefs = new Glide64mk2Prefs(emulationProfile);
 
         // Video prefs - GLideN64, this is a more broad search because there used to be more than one GLideN64 version
         isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64" );
