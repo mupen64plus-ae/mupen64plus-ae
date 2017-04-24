@@ -199,40 +199,40 @@ public class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CropMode", String.valueOf( game.gliden64CropMode ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MultiSampling", String.valueOf( game.gliden64MultiSampling ));
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bilinearMode", String.valueOf( game.gliden64BilinearMode ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MaxAnisotropy", String.valueOf( game.gliden64MaxAnisotropy ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CacheSize", String.valueOf( game.gliden64CacheSize ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableNoise", boolToTF( game.gliden64EnableNoise ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableLOD", boolToTF( game.gliden64EnableLOD ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableHWLighting", boolToTF( game.gliden64EnableHWLighting ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableShadersStorage", boolToTF( game.gliden64EnableShadersStorage) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CorrectTexrectCoords", String.valueOf( game.gliden64CorrectTexrectCoords ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableNativeResTexrects", boolToTF( game.gliden64EnableNativeResTexrects) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableLegacyBlending", boolToTF( game.gliden64EnableLegacyBlending) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableFragmentDepthWrite", boolToTF( game.gliden64EnableFragmentDepthWrite) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CropMode", String.valueOf( game.glideN64Prefs.cropMode ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MultiSampling", String.valueOf( game.glideN64Prefs.multiSampling ));
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bilinearMode", String.valueOf( game.glideN64Prefs.bilinearMode ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MaxAnisotropy", String.valueOf( game.glideN64Prefs.maxAnisotropy ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CacheSize", String.valueOf( game.glideN64Prefs.cacheSize ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableNoise", boolToTF( game.glideN64Prefs.enableNoise ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableLOD", boolToTF( game.glideN64Prefs.enableLOD ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableHWLighting", boolToTF( game.glideN64Prefs.enableHWLighting ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableShadersStorage", boolToTF( game.glideN64Prefs.enableShadersStorage) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CorrectTexrectCoords", String.valueOf( game.glideN64Prefs.correctTexrectCoords ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableNativeResTexrects", boolToTF( game.glideN64Prefs.enableNativeResTexrects) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableLegacyBlending", boolToTF( game.glideN64Prefs.enableLegacyBlending) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableFragmentDepthWrite", boolToTF( game.glideN64Prefs.enableFragmentDepthWrite) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableBlitScreenWorkaround", boolToTF( global.enableBlitScreenWorkaround) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableFBEmulation", boolToTF( game.gliden64EnableFBEmulation ));
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "BufferSwapMode", String.valueOf( game.gliden64BufferSwapMode ));
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorToRDRAM", String.valueOf( game.gliden64EnableCopyColorToRDRAM ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyAuxiliaryToRDRAM", boolToTF( game.gliden64EnableCopyAuxiliaryToRDRAM ));
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyDepthToRDRAM", String.valueOf( game.gliden64EnableCopyDepthToRDRAM ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorFromRDRAM", boolToTF( game.gliden64EnableCopyColorFromRDRAM ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableN64DepthCompare", boolToTF( game.gliden64EnableN64DepthCompare ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "UseNativeResolutionFactor", String.valueOf( game.gliden64UseNativeResolutionFactor ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "DisableFBInfo", boolToTF( game.gliden64DisableFBInfo ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "FBInfoReadColorChunk", boolToTF( game.gliden64FBInfoReadColorChunk ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "FBInfoReadDepthChunk", boolToTF( game.gliden64FBInfoReadDepthChunk ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txFilterMode", String.valueOf( game.gliden64TxFilterMode ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txEnhancementMode", String.valueOf( game.gliden64TxEnhancementMode ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txDeposterize", boolToTF( game.gliden64TxDeposterize ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txFilterIgnoreBG", boolToTF( game.gliden64TxFilterIgnoreBG ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCacheSize", String.valueOf( game.gliden64TxCacheSize ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresEnable", boolToTF( game.gliden64TxHiresEnable ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableFBEmulation", boolToTF( game.glideN64Prefs.enableFBEmulation ));
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "BufferSwapMode", String.valueOf( game.glideN64Prefs.bufferSwapMode ));
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorToRDRAM", String.valueOf( game.glideN64Prefs.enableCopyColorToRDRAM ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyAuxiliaryToRDRAM", boolToTF( game.glideN64Prefs.enableCopyAuxiliaryToRDRAM ));
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyDepthToRDRAM", String.valueOf( game.glideN64Prefs.enableCopyDepthToRDRAM ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorFromRDRAM", boolToTF( game.glideN64Prefs.enableCopyColorFromRDRAM ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableN64DepthCompare", boolToTF( game.glideN64Prefs.enableN64DepthCompare ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "UseNativeResolutionFactor", String.valueOf( game.glideN64Prefs.useNativeResolutionFactor ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "DisableFBInfo", boolToTF( game.glideN64Prefs.disableFBInfo ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "FBInfoReadColorChunk", boolToTF( game.glideN64Prefs.fbInfoReadColorChunk ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "FBInfoReadDepthChunk", boolToTF( game.glideN64Prefs.fbInfoReadDepthChunk ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txFilterMode", String.valueOf( game.glideN64Prefs.txFilterMode ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txEnhancementMode", String.valueOf( game.glideN64Prefs.txEnhancementMode ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txDeposterize", boolToTF( game.glideN64Prefs.txDeposterize ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txFilterIgnoreBG", boolToTF( game.glideN64Prefs.txFilterIgnoreBG ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCacheSize", String.valueOf( game.glideN64Prefs.txCacheSize ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresEnable", boolToTF( game.glideN64Prefs.txHiresEnable ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txPath", global.hiResTextureDir);
         
-        if(hiresTexHTCPresent && game.gliden64TxHiresEnable)
+        if(hiresTexHTCPresent && game.glideN64Prefs.txHiresEnable)
         {
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresFullAlphaChannel", boolToTF( fullAlphaChannel ) );
             putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCacheCompression", boolToTF( zipTextureCache ) );
@@ -241,22 +241,22 @@ public class NativeConfigFiles
         }
         else
         {
-            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresFullAlphaChannel", boolToTF( game.gliden64TxHiresFullAlphaChannel ) );
-            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCacheCompression", boolToTF( game.gliden64TxCacheCompression ) );
-            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txForce16bpp", boolToTF( game.gliden64TxForce16bpp ) );
-            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txSaveCache", boolToTF( game.gliden64TxSaveCache ) );
+            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresFullAlphaChannel", boolToTF( game.glideN64Prefs.txHiresFullAlphaChannel ) );
+            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txCacheCompression", boolToTF( game.glideN64Prefs.txCacheCompression ) );
+            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txForce16bpp", boolToTF( game.glideN64Prefs.txForce16bpp ) );
+            putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txSaveCache", boolToTF( game.glideN64Prefs.txSaveCache ) );
         }
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHresAltCRC", boolToTF( game.gliden64TxHresAltCRC ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHresAltCRC", boolToTF( game.glideN64Prefs.txHresAltCRC ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontName", "DroidSans.ttf" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontSize", "18" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontColor", "B5E61D" );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableBloom", boolToTF( game.gliden64EnableBloom ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bloomThresholdLevel", String.valueOf( game.gliden64BloomThresholdLevel ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bloomBlendMode", String.valueOf( game.gliden64BloomBlendMode ) );                                                        // Bloom blend mode (0=Strong, 1=Mild, 2=Light)
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "blurAmount", String.valueOf( game.gliden64BlurAmount ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "blurStrength", String.valueOf( game.gliden64BlurStrength ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForceGammaCorrection", boolToTF( game.gliden64ForceGammaCorrection ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "GammaCorrectionLevel", String.valueOf( game.gliden64GammaCorrectionLevel ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableBloom", boolToTF( game.glideN64Prefs.enableBloom ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bloomThresholdLevel", String.valueOf( game.glideN64Prefs.bloomThresholdLevel ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bloomBlendMode", String.valueOf( game.glideN64Prefs.bloomBlendMode ) );                                                        // Bloom blend mode (0=Strong, 1=Mild, 2=Light)
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "blurAmount", String.valueOf( game.glideN64Prefs.blurAmount ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "blurStrength", String.valueOf( game.glideN64Prefs.blurStrength ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForceGammaCorrection", boolToTF( game.glideN64Prefs.forceGammaCorrection ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "GammaCorrectionLevel", String.valueOf( game.glideN64Prefs.gammaCorrectionLevel ) );
 
         mupen64plus_cfg.put( "Video-Rice", "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );           // If true, use polygon offset values specified below
         mupen64plus_cfg.put( "Video-Rice", "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );            // Specifies a scale factor that is used to create a variable depth offset for each polygon
