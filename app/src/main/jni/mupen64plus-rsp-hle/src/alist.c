@@ -50,7 +50,7 @@ static void swap(int16_t **a, int16_t **b)
 
 static int16_t* sample(struct hle_t* hle, unsigned pos)
 {
-    return (int16_t*)hle->alist_buffer + (pos ^ S);
+    return (int16_t*)hle->alist_buffer + ((pos ^ S) & 0xfff);
 }
 
 static uint8_t* alist_u8(struct hle_t* hle, uint16_t dmem)
