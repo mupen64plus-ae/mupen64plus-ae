@@ -131,6 +131,269 @@
             android:title="@string/glide64Frameskip_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
+        android:key="categoryGlide64Advanced"
+        android:title="@string/categoryGlide64Advanced_title" >
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_filtering_default"
+            android:entries="@array/glide64mk2_filtering_entries"
+            android:entryValues="@array/glide64mk2_filtering_values"
+            android:key="glide64mk2_filtering"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_filtering_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fog_default"
+            android:entries="@array/glide64mk2_fog_entries"
+            android:entryValues="@array/glide64mk2_fog_values"
+            android:key="glide64mk2_fog"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fog_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_buff_clear_default"
+            android:entries="@array/glide64mk2_buff_clear_entries"
+            android:entryValues="@array/glide64mk2_buff_clear_values"
+            android:key="glide64mk2_buff_clear"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_buff_clear_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_swapmode_default"
+            android:entries="@array/glide64mk2_swapmode_entries"
+            android:entryValues="@array/glide64mk2_swapmode_values"
+            android:key="glide64mk2_swapmode"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_swapmode_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_lodmode_default"
+            android:entries="@array/glide64mk2_lodmode_entries"
+            android:entryValues="@array/glide64mk2_lodmode_values"
+            android:key="glide64mk2_lodmode"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_lodmode_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fb_smart_default"
+            android:entries="@array/glide64mk2_fb_smart_entries"
+            android:entryValues="@array/glide64mk2_fb_smart_values"
+            android:key="glide64mk2_fb_smart"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fb_smart_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fb_hires_default"
+            android:entries="@array/glide64mk2_fb_hires_entries"
+            android:entryValues="@array/glide64mk2_fb_hires_values"
+            android:key="glide64mk2_fb_hires"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fb_hires_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fb_get_info_default"
+            android:entries="@array/glide64mk2_fb_get_info_entries"
+            android:entryValues="@array/glide64mk2_fb_get_info_values"
+            android:key="glide64mk2_fb_get_info"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fb_get_info_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fb_render_default"
+            android:entries="@array/glide64mk2_fb_render_entries"
+            android:entryValues="@array/glide64mk2_fb_render_values"
+            android:key="glide64mk2_fb_render"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fb_render_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fb_crc_mode_default"
+            android:entries="@array/glide64mk2_fb_crc_mode_entries"
+            android:entryValues="@array/glide64mk2_fb_crc_mode_values"
+            android:key="glide64mk2_fb_crc_mode"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fb_crc_mode_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_read_back_to_screen_default"
+            android:entries="@array/glide64mk2_read_back_to_screen_entries"
+            android:entryValues="@array/glide64mk2_read_back_to_screen_values"
+            android:key="glide64mk2_read_back_to_screen"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_read_back_to_screen_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_detect_cpu_write_default"
+            android:entries="@array/glide64mk2_detect_cpu_write_entries"
+            android:entryValues="@array/glide64mk2_detect_cpu_write_values"
+            android:key="glide64mk2_detect_cpu_write"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_detect_cpu_write_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_alt_tex_size_default"
+            android:entries="@array/glide64mk2_alt_tex_size_entries"
+            android:entryValues="@array/glide64mk2_alt_tex_size_values"
+            android:key="glide64mk2_alt_tex_size"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_alt_tex_size_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_use_sts1_only_default"
+            android:entries="@array/glide64mk2_use_sts1_only_entries"
+            android:entryValues="@array/glide64mk2_use_sts1_only_values"
+            android:key="glide64mk2_use_sts1_only"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_use_sts1_only_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fast_crc_default"
+            android:entries="@array/glide64mk2_fast_crc_entries"
+            android:entryValues="@array/glide64mk2_fast_crc_values"
+            android:key="glide64mk2_fast_crc"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fast_crc_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_force_microcheck_default"
+            android:entries="@array/glide64mk2_force_microcheck_entries"
+            android:entryValues="@array/glide64mk2_force_microcheck_values"
+            android:key="glide64mk2_force_microcheck"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_force_microcheck_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_force_quad3d_default"
+            android:entries="@array/glide64mk2_force_quad3d_entries"
+            android:entryValues="@array/glide64mk2_force_quad3d_values"
+            android:key="glide64mk2_force_quad3d"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_force_quad3d_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_optimize_texrect_default"
+            android:entries="@array/glide64mk2_optimize_texrect_entries"
+            android:entryValues="@array/glide64mk2_optimize_texrect_values"
+            android:key="glide64mk2_optimize_texrect"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_optimize_texrect_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_hires_buf_clear_default"
+            android:entries="@array/glide64mk2_hires_buf_clear_entries"
+            android:entryValues="@array/glide64mk2_hires_buf_clear_values"
+            android:key="glide64mk2_hires_buf_clear"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_hires_buf_clear_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fb_read_alpha_default"
+            android:entries="@array/glide64mk2_fb_read_alpha_entries"
+            android:entryValues="@array/glide64mk2_fb_read_alpha_values"
+            android:key="glide64mk2_fb_read_alpha"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fb_read_alpha_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_force_calc_sphere_default"
+            android:entries="@array/glide64mk2_force_calc_sphere_entries"
+            android:entryValues="@array/glide64mk2_force_calc_sphere_values"
+            android:key="glide64mk2_force_calc_sphere"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_force_calc_sphere_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_texture_correction_default"
+            android:entries="@array/glide64mk2_texture_correction_entries"
+            android:entryValues="@array/glide64mk2_texture_correction_values"
+            android:key="glide64mk2_texture_correction"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_texture_correction_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_increase_texrect_edge_default"
+            android:entries="@array/glide64mk2_increase_texrect_edge_entries"
+            android:entryValues="@array/glide64mk2_increase_texrect_edge_values"
+            android:key="glide64mk2_increase_texrect_edge"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_increase_texrect_edge_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_decrease_fillrect_edge_default"
+            android:entries="@array/glide64mk2_decrease_fillrect_edge_entries"
+            android:entryValues="@array/glide64mk2_decrease_fillrect_edge_values"
+            android:key="glide64mk2_decrease_fillrect_edge"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_decrease_fillrect_edge_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_stipple_mode_default"
+            android:entries="@array/glide64mk2_stipple_mode_entries"
+            android:entryValues="@array/glide64mk2_stipple_mode_values"
+            android:key="glide64mk2_stipple_mode"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_stipple_mode_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_clip_zmax_default"
+            android:entries="@array/glide64mk2_clip_zmax_entries"
+            android:entryValues="@array/glide64mk2_clip_zmax_values"
+            android:key="glide64mk2_clip_zmax"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_clip_zmax_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_clip_zmin_default"
+            android:entries="@array/glide64mk2_clip_zmin_entries"
+            android:entryValues="@array/glide64mk2_clip_zmin_values"
+            android:key="glide64mk2_clip_zmin"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_clip_zmin_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_adjust_aspect_default"
+            android:entries="@array/glide64mk2_adjust_aspect_entries"
+            android:entryValues="@array/glide64mk2_adjust_aspect_values"
+            android:key="glide64mk2_adjust_aspect"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_adjust_aspect_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_correct_viewport_default"
+            android:entries="@array/glide64mk2_correct_viewport_entries"
+            android:entryValues="@array/glide64mk2_correct_viewport_values"
+            android:key="glide64mk2_correct_viewport"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_correct_viewport_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_aspect_default"
+            android:entries="@array/glide64mk2_aspect_entries"
+            android:entryValues="@array/glide64mk2_aspect_values"
+            android:key="glide64mk2_aspect"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_aspect_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_zmode_compare_less_default"
+            android:entries="@array/glide64mk2_zmode_compare_less_entries"
+            android:entryValues="@array/glide64mk2_zmode_compare_less_values"
+            android:key="glide64mk2_zmode_compare_less"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_zmode_compare_less_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_old_style_adither_default"
+            android:entries="@array/glide64mk2_old_style_adither_entries"
+            android:entryValues="@array/glide64mk2_old_style_adither_values"
+            android:key="glide64mk2_old_style_adither"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_old_style_adither_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_n64_z_scale_default"
+            android:entries="@array/glide64mk2_n64_z_scale_entries"
+            android:entryValues="@array/glide64mk2_n64_z_scale_values"
+            android:key="glide64mk2_n64_z_scale"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_n64_z_scale_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_pal230_default"
+            android:entries="@array/glide64mk2_pal230_entries"
+            android:entryValues="@array/glide64mk2_pal230_values"
+            android:key="glide64mk2_pal230"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_pal230_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_ignore_aux_copy_default"
+            android:entries="@array/glide64mk2_ignore_aux_copy_entries"
+            android:entryValues="@array/glide64mk2_ignore_aux_copy_values"
+            android:key="glide64mk2_ignore_aux_copy"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_ignore_aux_copy_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_useless_is_useless_default"
+            android:entries="@array/glide64mk2_useless_is_useless_entries"
+            android:entryValues="@array/glide64mk2_useless_is_useless_values"
+            android:key="glide64mk2_useless_is_useless"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_useless_is_useless_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_fb_read_always_default"
+            android:entries="@array/glide64mk2_fb_read_always_entries"
+            android:entryValues="@array/glide64mk2_fb_read_always_values"
+            android:key="glide64mk2_fb_read_always"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_fb_read_always_title" />
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:key="categoryGliden64Texture"
         android:title="@string/gliden64_category_texture_title" >
         <paulscode.android.mupen64plusae.preference.CompatListPreference

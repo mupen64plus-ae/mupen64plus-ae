@@ -45,6 +45,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_RICE = "categoryRice";
     private static final String CATEGORY_GLN64 = "categoryGln64";
     private static final String CATEGORY_GLIDE64 = "categoryGlide64";
+    private static final String CATEGORY_GLIDE64_ADVANCED = "categoryGlide64Advanced";
     private static final String CATEGORY_GLIDEN64_TEXTURE = "categoryGliden64Texture";
     private static final String CATEGORY_GLIDEN64_GENERAL = "categoryGliden64General";
     private static final String CATEGORY_GLIDEN64_FRAME_BUFFER = "categoryGliden64FrameBuffer";
@@ -68,6 +69,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryN64 = null;
     private PreferenceCategory mCategoryRice = null;
     private PreferenceCategory mCategoryGlide64 = null;
+    private PreferenceCategory mCategoryGlide64Advanced = null;
     private PreferenceCategory mCategoryGliden64Texture = null;
     private PreferenceCategory mCategoryGliden64General = null;
     private PreferenceCategory mCategoryGliden64FrameBuffer = null;
@@ -132,6 +134,7 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryN64 = (PreferenceCategory) findPreference( CATEGORY_GLN64 );
         mCategoryRice = (PreferenceCategory) findPreference( CATEGORY_RICE );
         mCategoryGlide64 = (PreferenceCategory) findPreference( CATEGORY_GLIDE64 );
+        mCategoryGlide64Advanced = (PreferenceCategory) findPreference( CATEGORY_GLIDE64_ADVANCED);
         mCategoryGliden64Texture = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE );
         mCategoryGliden64General = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GENERAL );
         mCategoryGliden64FrameBuffer = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_FRAME_BUFFER );
@@ -197,15 +200,18 @@ public class EmulationProfileActivity extends ProfileActivity
 
         }
 
-        if(mCategoryGlide64 != null)
+        if(mCategoryGlide64 != null &&
+            mCategoryGlide64 != null)
         {
             if( LIBGLIDE64_SO.equals( videoPlugin ) )
             {
                 mScreenRoot.addPreference( mCategoryGlide64 );
+                mScreenRoot.addPreference( mCategoryGlide64Advanced );
             }
             else
             {
                 mScreenRoot.removePreference( mCategoryGlide64 );
+                mScreenRoot.removePreference( mCategoryGlide64Advanced );
             }
         }
 

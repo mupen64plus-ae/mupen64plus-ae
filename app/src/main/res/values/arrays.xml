@@ -285,6 +285,503 @@
 
     <string name="glide64Frameskip_default" translatable="false">-5</string>
 
+    <!-- Glide64mk2 filtering options-->
+    <string-array name="glide64mk2_filtering_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_filtering_automatic</item>
+        <item>@string/glide64mk2_filtering_force_bilinear</item>
+        <item>@string/glide64mk2_filtering_force_point_samples</item>
+    </string-array>
+    <string-array name="glide64mk2_filtering_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="glide64mk2_filtering_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fog options-->
+    <string-array name="glide64mk2_fog_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_fog_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_fog_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 buff_clear options-->
+    <string-array name="glide64mk2_buff_clear_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_buff_clear_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_buff_clear_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 swapmode options-->
+    <string-array name="glide64mk2_swapmode_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_swapmode_vi_ocurred</item>
+        <item>@string/glide64mk2_swapmode_conditional</item>
+        <item>@string/glide64mk2_swapmode_mix</item>
+    </string-array>
+    <string-array name="glide64mk2_swapmode_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="glide64mk2_swapmode_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 lodmode options-->
+    <string-array name="glide64mk2_lodmode_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_lodmode_fast</item>
+        <item>@string/glide64mk2_lodmode_precise</item>
+    </string-array>
+    <string-array name="glide64mk2_lodmode_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="glide64mk2_lodmode_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fb_smart options-->
+    <string-array name="glide64mk2_fb_smart_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_fb_smart_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_fb_smart_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fb_hires options-->
+    <string-array name="glide64mk2_fb_hires_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_fb_hires_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_fb_hires_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fb_get_info options-->
+    <string-array name="glide64mk2_fb_get_info_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_fb_get_info_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_fb_get_info_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fb_render options-->
+    <string-array name="glide64mk2_fb_render_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_fb_render_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_fb_render_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fb_crc_mode options-->
+    <string-array name="glide64mk2_fb_crc_mode_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_fb_crc_mode_disable</item>
+        <item>@string/glide64mk2_fb_crc_mode_fast</item>
+        <item>@string/glide64mk2_fb_crc_mode_safe</item>
+    </string-array>
+    <string-array name="glide64mk2_fb_crc_mode_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="glide64mk2_fb_crc_mode_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 read_back_to_screen options-->
+    <string-array name="glide64mk2_read_back_to_screen_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_read_back_to_screen_mode1</item>
+        <item>@string/glide64mk2_read_back_to_screen_mode2</item>
+    </string-array>
+    <string-array name="glide64mk2_read_back_to_screen_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="glide64mk2_read_back_to_screen_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 detect_cpu_write options-->
+    <string-array name="glide64mk2_detect_cpu_write_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_detect_cpu_write_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_detect_cpu_write_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 alt_tex_size options-->
+    <string-array name="glide64mk2_alt_tex_size_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_alt_tex_size_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_alt_tex_size_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 use_sts1_only options-->
+    <string-array name="glide64mk2_use_sts1_only_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_use_sts1_only_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_use_sts1_only_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fast_crc options-->
+    <string-array name="glide64mk2_fast_crc_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_fast_crc_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_fast_crc_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 force_microcheck options-->
+    <string-array name="glide64mk2_force_microcheck_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_force_microcheck_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_force_microcheck_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 force_quad3d options-->
+    <string-array name="glide64mk2_force_quad3d_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_force_quad3d_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_force_quad3d_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 optimize_texrect options-->
+    <string-array name="glide64mk2_optimize_texrect_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_optimize_texrect_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_optimize_texrect_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 hires_buf_clear options-->
+    <string-array name="glide64mk2_hires_buf_clear_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_hires_buf_clear_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_hires_buf_clear_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fb_read_alpha options-->
+    <string-array name="glide64mk2_fb_read_alpha_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_fb_read_alpha_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_fb_read_alpha_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 force_calc_sphere options-->
+    <string-array name="glide64mk2_force_calc_sphere_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_force_calc_sphere_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_force_calc_sphere_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 texture_correction options-->
+    <string-array name="glide64mk2_texture_correction_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_texture_correction_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_texture_correction_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 increase_texrect_edge options-->
+    <string-array name="glide64mk2_increase_texrect_edge_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_increase_texrect_edge_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_increase_texrect_edge_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 increase_texrect_edge options-->
+    <string-array name="glide64mk2_decrease_fillrect_edge_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_decrease_fillrect_edge_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_decrease_fillrect_edge_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 stipple_mode options-->
+    <string-array name="glide64mk2_stipple_mode_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_stipple_mode_disable</item>
+        <item>@string/glide64mk2_stipple_mode_pattern</item>
+        <item>@string/glide64mk2_stipple_mode_rotate</item>
+    </string-array>
+    <string-array name="glide64mk2_stipple_mode_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="glide64mk2_stipple_mode_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 clip_zmax options-->
+    <string-array name="glide64mk2_clip_zmax_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_clip_zmax_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_clip_zmax_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 clip_zmin options-->
+    <string-array name="glide64mk2_clip_zmin_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_clip_zmin_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_clip_zmin_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 adjust_aspect options-->
+    <string-array name="glide64mk2_adjust_aspect_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_adjust_aspect_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_adjust_aspect_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 correct_viewport options-->
+    <string-array name="glide64mk2_correct_viewport_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_correct_viewport_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_correct_viewport_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 aspect options-->
+    <string-array name="glide64mk2_aspect_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_aspect_force_4_3</item>
+        <item>@string/glide64mk2_aspect_force_16_9</item>
+        <item>@string/glide64mk2_aspect_stretch</item>
+        <item>@string/glide64mk2_aspect_original</item>
+    </string-array>
+    <string-array name="glide64mk2_aspect_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string name="glide64mk2_aspect_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 zmode_compare_less options-->
+    <string-array name="glide64mk2_zmode_compare_less_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_zmode_compare_less_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_zmode_compare_less_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 old_style_adither options-->
+    <string-array name="glide64mk2_old_style_adither_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_old_style_adither_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_old_style_adither_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 n64_z_scale options-->
+    <string-array name="glide64mk2_n64_z_scale_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_n64_z_scale_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_n64_z_scale_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 pal230 options-->
+    <string-array name="glide64mk2_pal230_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_pal230_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_pal230_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 ignore_aux_copy options-->
+    <string-array name="glide64mk2_ignore_aux_copy_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_ignore_aux_copy_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_ignore_aux_copy_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 useless_is_useless options-->
+    <string-array name="glide64mk2_useless_is_useless_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_useless_is_useless_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_useless_is_useless_default" translatable="false">-1</string>
+
+    <!-- Glide64mk2 fb_read_always options-->
+    <string-array name="glide64mk2_fb_read_always_entries" translatable="false">
+        <item>@string/glide64mk2_game_default</item>
+        <item>@string/glide64mk2_disable</item>
+        <item>@string/glide64mk2_enable</item>
+    </string-array>
+    <string-array name="glide64mk2_fb_read_always_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="glide64mk2_fb_read_always_default" translatable="false">0</string>
+
     <!-- Rice Screen Update List -->
     <string-array name="riceScreenUpdate_entries">
         <item>@string/riceScreenUpdate_entryRomDefault</item>
