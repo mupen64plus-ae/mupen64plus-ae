@@ -527,6 +527,12 @@
     <string name="glide64mk2_ignore_aux_copy_title">Do not copy auxiliary frame buffers</string>
     <string name="glide64mk2_useless_is_useless_title">Handle unchanged fb</string>
     <string name="glide64mk2_fb_read_always_title">Read framebuffer every frame (may be slow use only for effects that need it e.g. Banjo Kazooie, DK64 transitions</string>
+    <string name="glide64mk2_wrpAnisotropic_title">Anisotropic filtering setting</string>
+    <string name="glide64mk2_wrpAnisotropic_1x">1x</string>
+    <string name="glide64mk2_wrpAnisotropic_2x">2x</string>
+    <string name="glide64mk2_wrpAnisotropic_4x">4x</string>
+    <string name="glide64mk2_wrpAnisotropic_8x">8x</string>
+    <string name="glide64mk2_wrpAnisotropic_16x">16x</string>
 
     <string name="navigationMode_title">Accessibility</string>
     <string name="navigationMode_summary">Menu navigation mode: %1$s</string>

@@ -392,6 +392,13 @@
             android:key="glide64mk2_fb_read_always"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fb_read_always_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/glide64mk2_wrpAnisotropic_default"
+            android:entries="@array/glide64mk2_wrpAnisotropic_entries"
+            android:entryValues="@array/glide64mk2_wrpAnisotropic_values"
+            android:key="glide64mk2_wrpAnisotropic"
+            android:summary="@string/selectedValue"
+            android:title="@string/glide64mk2_wrpAnisotropic_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryGliden64Texture"

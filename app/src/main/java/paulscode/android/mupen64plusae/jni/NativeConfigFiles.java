@@ -220,6 +220,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Glide64mk2", "ignore_aux_copy", String.valueOf( game.glide64mk2Prefs.ignore_aux_copy ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "useless_is_useless", String.valueOf( game.glide64mk2Prefs.useless_is_useless ) );
         mupen64plus_cfg.put( "Video-Glide64mk2", "fb_read_always", String.valueOf( game.glide64mk2Prefs.fb_read_always ) );
+        mupen64plus_cfg.put( "Video-Glide64mk2", "wrpAnisotropic", String.valueOf( game.glide64mk2Prefs.wrpAnisotropic ) );
 
         String aspectRatio = "0";
         if( game.emulationProfile.get( "WidescreenHack", "False" ).equals("True") )

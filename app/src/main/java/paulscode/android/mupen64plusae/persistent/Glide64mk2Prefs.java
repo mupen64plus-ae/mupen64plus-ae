@@ -125,14 +125,17 @@ public class Glide64mk2Prefs {
     /** Do not copy auxiliary frame buffers: -1=Game default, 0=disable. 1=enable */
     public final int ignore_aux_copy;
 
-    /** Handle unchanged fb: -1=Game default, 0=disable. 1=enable */
-    public final int useless_is_useless;
+    /** Anisotropic filtering setting*/
+    public final int wrpAnisotropic;
 
     /** Read framebuffer every frame (may be slow use only for effects that need it e.g. Banjo Kazooie, DK64 transitions):
      * -1=Game default
      * 0=disable
      * 1=enable */
     public final int fb_read_always;
+
+    /** Handle unchanged fb: -1=Game default, 0=disable. 1=enable */
+    public final int useless_is_useless;
 
     Glide64mk2Prefs(final Profile emulationProfile)
     {
@@ -178,5 +181,6 @@ public class Glide64mk2Prefs {
         ignore_aux_copy = getSafeInt( emulationProfile, "glide64mk2_ignore_aux_copy", -1);
         useless_is_useless = getSafeInt( emulationProfile, "glide64mk2_useless_is_useless", -1);
         fb_read_always = getSafeInt( emulationProfile, "glide64mk2_fb_read_always", 0);
+        wrpAnisotropic = getSafeInt( emulationProfile, "glide64mk2_wrpAnisotropic", 1);
     }
 }

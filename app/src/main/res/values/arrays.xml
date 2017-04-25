@@ -782,6 +782,23 @@
     </string-array>
     <string name="glide64mk2_fb_read_always_default" translatable="false">0</string>
 
+    <!-- Glide64mk2 wrpAnisotropic options-->
+    <string-array name="glide64mk2_wrpAnisotropic_entries" translatable="false">
+        <item>@string/glide64mk2_wrpAnisotropic_1x</item>
+        <item>@string/glide64mk2_wrpAnisotropic_2x</item>
+        <item>@string/glide64mk2_wrpAnisotropic_4x</item>
+        <item>@string/glide64mk2_wrpAnisotropic_8x</item>
+        <item>@string/glide64mk2_wrpAnisotropic_16x</item>
+    </string-array>
+    <string-array name="glide64mk2_wrpAnisotropic_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+        <item>16</item>
+    </string-array>
+    <string name="glide64mk2_wrpAnisotropic_default" translatable="false">1</string>
+
     <!-- Rice Screen Update List -->
     <string-array name="riceScreenUpdate_entries">
         <item>@string/riceScreenUpdate_entryRomDefault</item>
