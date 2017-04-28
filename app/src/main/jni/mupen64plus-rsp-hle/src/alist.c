@@ -55,7 +55,7 @@ static int16_t* sample(struct hle_t* hle, unsigned pos)
 
 static uint8_t* alist_u8(struct hle_t* hle, uint16_t dmem)
 {
-    return u8(hle->alist_buffer, dmem);
+    return (uint8_t*)(hle->alist_buffer + ((dmem ^ S8) & 0xfff));
 }
 
 static int16_t* alist_s16(struct hle_t* hle, uint16_t dmem)

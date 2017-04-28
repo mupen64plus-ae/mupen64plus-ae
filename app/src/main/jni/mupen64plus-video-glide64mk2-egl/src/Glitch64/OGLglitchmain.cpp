@@ -34,10 +34,10 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
-#include "glide.h"
-#include "g3ext.h"
-#include "glitchmain.h"
-#include "m64p.h"
+#include <glide.h>
+#include <g3ext.h>
+#include <glitchmain.h>
+#include <m64p.h>
 
 #ifdef VPDEBUG
 #include <IL/il.h>
@@ -533,6 +533,8 @@ grSstWinOpen(
   sprintf(caption, "Glide64mk2");
 # endif // _DEBUG
   CoreVideo_SetCaption(caption);
+
+	EGLLoader::loadEGLFunctions();
 
   glViewport(0, viewport_offset, width, height);
   lfb_color_fmt = color_format;

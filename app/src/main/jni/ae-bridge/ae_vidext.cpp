@@ -1,6 +1,6 @@
+#include <GL/EGLLoader.h>
 #include "ae_vidext.h"
 #include "ae_imports.h"
-#include "GL/glcorearb.h"
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <android/native_window.h>
@@ -23,9 +23,6 @@ int64_t oldTime;
 int vsync = 1;
 int oldVsync = 1;
 bool isPaused = false;
-
-PFNGLGETINTEGERVPROC g_glGetIntegerv = NULL;
-PFNGLGETSTRINGPROC g_glGetString = NULL;
 
 EGLint const defaultAttributeList[] = {
         EGL_BUFFER_SIZE, 0,
@@ -147,10 +144,12 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
         LOGE("eglMakeCurrent() returned error %d", eglGetError());
         return M64ERR_INVALID_STATE;
     }
-    g_glGetIntegerv = (PFNGLGETINTEGERVPROC) eglGetProcAddress("glGetIntegerv");
-    g_glGetString = (PFNGLGETSTRINGPROC) eglGetProcAddress("glGetString");
+
+	EGLLoader::loadEGLFunctions();
+
     const char * strVersion = (const char*)g_glGetString(GL_VERSION);
     isGLES2 = strstr(strVersion, "OpenGL ES 2") != NULL;
+
     return M64ERR_SUCCESS;
 }
 

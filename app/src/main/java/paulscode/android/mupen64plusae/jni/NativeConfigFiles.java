@@ -146,6 +146,12 @@ public class NativeConfigFiles
             videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-gliden64.*so", "libmupen64plus-video-gliden64.so");
         }
 
+        if(game.isGlide64Enabled && supportsFullGl)
+        {
+            //Use the full GL version of Glide64mk2 if it's supported by the device
+            videoPluginString = videoPluginString.replace("libmupen64plus-video-glide64mk2.so", "libmupen64plus-video-glide64mk2-egl.so");
+        }
+
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + videoPluginString + '"' );                              // Filename of video plugin
 
         //Use the FP version of the SLES audio plugin if the API level is high enough
