@@ -436,7 +436,7 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-    <string name="glide64mk2_read_back_to_screen_default" translatable="false">-1</string>
+    <string name="glide64mk2_read_back_to_screen_default" translatable="false">0</string>
 
     <!-- Glide64mk2 detect_cpu_write options-->
     <string-array name="glide64mk2_detect_cpu_write_entries" translatable="false">
