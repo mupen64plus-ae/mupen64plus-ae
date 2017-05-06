@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
-import paulscode.android.mupen64plusae.jni.NativeInput;
+import paulscode.android.mupen64plusae.jni.CoreFragment;
 
 /**
  * The abstract base class for implementing all N64 controllers.
@@ -131,6 +131,8 @@ public abstract class AbstractController
     
     /** The player number, between 1 and 4, inclusive. */
     protected int mPlayerNumber = 1;
+
+    private CoreFragment mCoreFragment;
     
     /** The factor by which the axis fractions are scaled before going to the core. */
     private static final float AXIS_SCALE = 80;
@@ -146,8 +148,9 @@ public abstract class AbstractController
     /**
      * Instantiates a new abstract controller.
      */
-    protected AbstractController()
+    protected AbstractController(CoreFragment coreFragment)
     {
+        mCoreFragment = coreFragment;
         mState = sStates.get( 0 );
     }
     
@@ -158,7 +161,7 @@ public abstract class AbstractController
     {
         int axisX = Math.round( AXIS_SCALE * mState.axisFractionX );
         int axisY = Math.round( AXIS_SCALE * mState.axisFractionY );
-        NativeInput.setState( mPlayerNumber - 1, mState.buttons, axisX, axisY );
+        mCoreFragment.setControllerState( mPlayerNumber - 1, mState.buttons, axisX, axisY );
     }
     
     /**

@@ -20,11 +20,14 @@
  */
 package paulscode.android.mupen64plusae;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -66,7 +69,6 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
-import paulscode.android.mupen64plusae.jni.CoreInterface;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -351,11 +353,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public void onResume()
     {
         super.onResume();
-        
-        //Make sure the core is shutdown at this point. This
-        //won't be necessary once the core runs as a service
-        //or fragment
-        CoreInterface.shutdownEmulator();
+
+        //Make sure the core is not running at this point
+        ActivityHelper.stopCoreService(getApplicationContext(), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        });
 
         //mRefreshNeeded will be set to true whenever a game is launched
         if(mRefreshNeeded)

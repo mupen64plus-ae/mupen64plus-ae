@@ -31,6 +31,7 @@ import android.view.View.OnTouchListener;
 import java.util.Set;
 
 import paulscode.android.mupen64plusae.input.map.TouchMap;
+import paulscode.android.mupen64plusae.jni.CoreFragment;
 
 /**
  * A class for generating N64 controller commands from a touchscreen.
@@ -145,20 +146,25 @@ public class TouchController extends AbstractController implements OnTouchListen
     
     /**
      * Instantiates a new touch controller.
-     * 
+     *
+     * @param coreFragment        Core fragment
      * @param touchMap            The map from touch coordinates to N64 controls.
      * @param listener            The listener for controller state changes.
      * @param vibrator            The haptic feedback device. MUST BE NULL if vibrate permission not granted.
      * @param autoHoldMethod      The method for auto-holding buttons.
      * @param touchscreenFeedback True if haptic feedback should be used.
      * @param notAutoHoldableButtons The N64 commands that correspond to NOT auto-holdable buttons.
-     * @param
+     * @param sensorController Sensor controller instance
+     * @param invertXAxis True if X axis should be inverted
+     * @param invertYAxis True if Y axis should be inverted
      */
-    public TouchController( TouchMap touchMap, OnStateChangedListener listener,
-            Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
-            Set<Integer> notAutoHoldableButtons, SensorController sensorController,
-            boolean invertXAxis, boolean invertYAxis )
+    public TouchController(CoreFragment coreFragment, TouchMap touchMap, OnStateChangedListener listener,
+                           Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
+                           Set<Integer> notAutoHoldableButtons, SensorController sensorController,
+                           boolean invertXAxis, boolean invertYAxis )
     {
+        super(coreFragment);
+
         mListener = listener;
         mTouchMap = touchMap;
         mVibrator = vibrator;

@@ -29,6 +29,9 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.ArrayList;
+
+import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
@@ -82,6 +85,19 @@ public class ActivityHelper
         public static final String DOWNLOAD_ART         = NAMESPACE + "GALLERY_DOWNLOAD_ART";
         public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
         public static final String SEARCH_SUBDIR        = NAMESPACE + "GALLERY_SEARCH_SUBDIR";
+        public static final String CHEAT_ARGS           = NAMESPACE + "CHEAT_ARGS";
+        public static final String SAVE_TO_LOAD         = NAMESPACE + "SAVE_TO_LOAD";
+        public static final String CORE_LIB             = NAMESPACE + "CORE_LIB";
+        public static final String HIGH_PRIORITY_THREAD = NAMESPACE + "HIGH_PRIORITY_THREAD";
+        public static final String PAK_TYPE_ARRAY       = NAMESPACE + "PAK_TYPE_ARRAY";
+        public static final String IS_PLUGGED_ARRAY     = NAMESPACE + "IS_PLUGGED_ARRAY";
+        public static final String IS_FPS_LIMIT_ENABLED = NAMESPACE + "IS_FPS_LIMIT_ENABLED";
+        public static final String CORE_USER_DATA_DIR   = NAMESPACE + "CORE_USER_DATA_DIR";
+        public static final String CORE_USER_CACHE_DIR  = NAMESPACE + "CORE_USER_CACHE_DIR";
+        public static final String CORE_USER_CONFIG_DIR = NAMESPACE + "CORE_USER_CONFIG_DIR";
+        public static final String USER_SAVE_DIR        = NAMESPACE + "USER_SAVE_DIR";
+        public static final String LIBS_DIR             = NAMESPACE + "LIBS_DIR";
+
         //@formatter:on
     }
     
@@ -151,7 +167,7 @@ public class ActivityHelper
     {
         Intent intent = new Intent( context, GalleryActivity.class );
         if( !TextUtils.isEmpty( romPath ) )
-            intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+            intent.putExtra( Keys.ROM_PATH, romPath );
         context.startActivity( intent );
     }
     
@@ -160,15 +176,15 @@ public class ActivityHelper
             boolean doRestart)
     {
         Intent intent = new Intent( context, GameActivity.class );
-        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
-        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
-        intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
-        intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
-        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
-        intent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, romArtPath );
-        intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
-        intent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, romLegacySave );
-        intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
+        intent.putExtra( Keys.ROM_PATH, romPath );
+        intent.putExtra( Keys.ROM_MD5, romMd5 );
+        intent.putExtra( Keys.ROM_CRC, romCrc );
+        intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( Keys.ROM_COUNTRY_CODE, romCountryCode );
+        intent.putExtra( Keys.ROM_ART_PATH, romArtPath );
+        intent.putExtra( Keys.ROM_GOOD_NAME, romGoodName );
+        intent.putExtra( Keys.ROM_LEGACY_SAVE, romLegacySave );
+        intent.putExtra( Keys.DO_RESTART, doRestart );
         context.startActivity( intent );
     }
     
@@ -212,13 +228,13 @@ public class ActivityHelper
         String romCrc, String romHeaderName, String romGoodName, byte romCountryCode, String romLegacySave )
     {
         Intent intent = new Intent( context, GamePrefsActivity.class );
-        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
-        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
-        intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
-        intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
-        intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
-        intent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, romLegacySave );
-        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
+        intent.putExtra( Keys.ROM_PATH, romPath );
+        intent.putExtra( Keys.ROM_MD5, romMd5 );
+        intent.putExtra( Keys.ROM_CRC, romCrc );
+        intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( Keys.ROM_GOOD_NAME, romGoodName );
+        intent.putExtra( Keys.ROM_LEGACY_SAVE, romLegacySave );
+        intent.putExtra( Keys.ROM_COUNTRY_CODE, romCountryCode );
         context.startActivity( intent );
     }
     
@@ -240,28 +256,28 @@ public class ActivityHelper
     public static void startEmulationProfileActivity( Context context, String profileName )
     {
         Intent intent = new Intent( context, EmulationProfileActivity.class );
-        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
+        intent.putExtra( Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }
     
     public static void startTouchscreenProfileActivity( Context context, String profileName )
     {
         Intent intent = new Intent( context, TouchscreenProfileActivity.class );
-        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
+        intent.putExtra( Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }
     
     public static void startControllerProfileActivity( Context context, String profileName )
     {
         Intent intent = new Intent( context, ControllerProfileActivity.class );
-        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
+        intent.putExtra( Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }
     
     public static void startControllerProfileActivityBigScreen( Context context, String profileName )
     {
         Intent intent = new Intent( context, ControllerProfileActivityBigScreen.class );
-        intent.putExtra( ActivityHelper.Keys.PROFILE_NAME, profileName );
+        intent.putExtra( Keys.PROFILE_NAME, profileName );
         context.startActivity( intent );
     }
     
@@ -307,7 +323,7 @@ public class ActivityHelper
         String searchPath)
     {
         Intent intent = new Intent(context, ExtractTexturesService.class);
-        intent.putExtra(ActivityHelper.Keys.SEARCH_PATH, searchPath);
+        intent.putExtra(Keys.SEARCH_PATH, searchPath);
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -325,5 +341,49 @@ public class ActivityHelper
     {
         Intent intent = new Intent(activity, ExtractTexturesActivity.class);
         activity.startActivityForResult( intent, EXTRACT_TEXTURES_CODE );
+    }
+
+    public static void startCoreService(Context context, ServiceConnection serviceConnection, String romGoodName,
+        String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
+        String romLegacySave, String cheatOptions, boolean isRestarting, String saveToLoad, String coreLib,
+        boolean useHighPriorityThread, ArrayList<Integer> pakTypes, boolean[] isPlugged, boolean isFrameLimiterEnabled,
+        String coreUserDataDir, String coreUserCacheDir, String coreUserConfigDir, String userSaveDir, String libsDir)
+    {
+        Intent intent = new Intent(context, CoreService.class);
+        intent.putExtra(Keys.ROM_GOOD_NAME, romGoodName);
+        intent.putExtra(Keys.ROM_PATH, romPath);
+        intent.putExtra(Keys.CHEAT_ARGS, cheatOptions);
+        intent.putExtra(Keys.DO_RESTART, isRestarting);
+        intent.putExtra(Keys.SAVE_TO_LOAD, saveToLoad);
+        intent.putExtra(Keys.CORE_LIB, coreLib);
+        intent.putExtra(Keys.HIGH_PRIORITY_THREAD, useHighPriorityThread);
+        intent.putIntegerArrayListExtra(Keys.PAK_TYPE_ARRAY, pakTypes);
+        intent.putExtra(Keys.IS_PLUGGED_ARRAY, isPlugged);
+        intent.putExtra(Keys.IS_FPS_LIMIT_ENABLED, isFrameLimiterEnabled);
+        intent.putExtra(Keys.CORE_USER_DATA_DIR, coreUserDataDir);
+        intent.putExtra(Keys.CORE_USER_CACHE_DIR, coreUserCacheDir);
+        intent.putExtra(Keys.CORE_USER_CONFIG_DIR, coreUserConfigDir);
+        intent.putExtra(Keys.USER_SAVE_DIR, userSaveDir);
+        intent.putExtra(Keys.LIBS_DIR, libsDir);
+
+        intent.putExtra(Keys.ROM_MD5, romMd5);
+        intent.putExtra(Keys.ROM_CRC, romCrc);
+        intent.putExtra(Keys.ROM_HEADER_NAME, romHeaderName);
+        intent.putExtra(Keys.ROM_COUNTRY_CODE, romCountryCode);
+        intent.putExtra(Keys.ROM_ART_PATH, romArtPath);
+        intent.putExtra(Keys.ROM_LEGACY_SAVE, romLegacySave);
+
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public static void stopCoreService(Context context, ServiceConnection serviceConnection)
+    {
+        if(CoreService.IsServiceRunning())
+        {
+            Intent intent = new Intent(context, CoreService.class);
+            context.unbindService(serviceConnection);
+            context.stopService(intent);
+        }
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  *
  * Copyright (C) 2013 Paul Lamb
@@ -29,6 +29,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -72,14 +73,9 @@ import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
-import paulscode.android.mupen64plusae.jni.CoreInterface;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnExitListener;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnPromptFinishedListener;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnRestartListener;
-import paulscode.android.mupen64plusae.jni.CoreInterface.OnSaveLoadListener;
+import paulscode.android.mupen64plusae.jni.CoreFragment;
+import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
-import paulscode.android.mupen64plusae.jni.NativeExports;
-import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -126,11 +122,10 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 */
 //@formatter:on
 
-public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback, GameSidebarActionHandler,
-        OnPromptFinishedListener, OnSaveLoadListener, OnExitListener, OnRestartListener, View.OnTouchListener
+public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback,
+        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener
 {
     // Activity and views
-    private SurfaceView mSurface;
     private GameOverlay mOverlay;
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
@@ -149,18 +144,28 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private String mRomPath;
     private String mRomMd5;
     private String mRomCrc;
+    private String mRomGoodName;
+    private String mRomHeaderName = null;
+    private byte mRomCountryCode = 0;
+    private String mRomArtPath = null;
+    private String mRomLegacySave = null;
+    private boolean mDoRestart;
 
     // Lifecycle state tracking
     private boolean mIsResumed = false;     // true if the activity is resumed
     private boolean mIsSurface = false;     // true if the surface is available
 
     // App data and user preferences
+    private AppData mAppData;
     private GlobalPrefs mGlobalPrefs;
     private GamePrefs mGamePrefs;
-    private GameAutoSaveManager mAutoSaveManager;
+    private GameDataManager mGameDataManager;
     private boolean mFirstStart;
     private boolean mWaitingOnConfirmation = false;
     private boolean mShuttingDown = false;
+
+    private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
+    private CoreFragment mCoreFragment = null;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -169,9 +174,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         Log.i( "GameActivity", "onCreate" );
         super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat_NoActionBar );
-        final AppData appData = new AppData( this );
+        mAppData = new AppData( this );
 
         mMogaController = Controller.getInstance( this );
+
+        // Initialize the objects and data files interfacing to the emulator core
+        final FragmentManager fm = getSupportFragmentManager();
+        mCoreFragment = (CoreFragment) fm.findFragmentByTag(STATE_CORE_FRAGMENT);
+
+        if(mCoreFragment == null)
+        {
+            mCoreFragment = new CoreFragment();
+            fm.beginTransaction().add(mCoreFragment, STATE_CORE_FRAGMENT).commit();
+        }
 
         // Get the intent data
         final Bundle extras = this.getIntent().getExtras();
@@ -180,12 +195,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
-        String romHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
-        byte romCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
-        String artPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
-        String romGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
-        String legacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
-        boolean doRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
+        mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
+        mRomArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
+        mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+        mRomLegacySave = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
+        mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
 
@@ -195,7 +210,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         MogaHack.init( mMogaController, this );
 
         // Get app data and user preferences
-        mGlobalPrefs = new GlobalPrefs( this, appData );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
         //Allow volume keys to control media volume if they are not mapped
 
@@ -204,11 +219,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
 
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, romHeaderName, romGoodName,
-            CountryCode.getCountryCode(romCountryCode).toString(), appData, mGlobalPrefs, legacySaveName );
-        String cheatArgs =  mGamePrefs.getCheatArgs();
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+            CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mRomLegacySave );
 
-        mAutoSaveManager = new GameAutoSaveManager(mGamePrefs, mGlobalPrefs.maxAutoSaves);
+        mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
+        mGameDataManager.makeDirs();
+        mGameDataManager.moveFromLegacy();
 
         mGlobalPrefs.enforceLocale( this );
 
@@ -225,18 +241,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         this.setRequestedOrientation( mGlobalPrefs.displayOrientation );
 
         // If the orientation changes, the screensize info changes, so we must refresh dependencies
-        mGlobalPrefs = new GlobalPrefs( this, appData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, romHeaderName, romGoodName,
-                CountryCode.getCountryCode(romCountryCode).toString(), appData, mGlobalPrefs, legacySaveName );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mRomLegacySave );
 
         mFirstStart = true;
 
-        // Initialize the objects and data files interfacing to the emulator core
-        CoreInterface.initialize( this, mGamePrefs, mRomPath, cheatArgs, doRestart);
-
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
-        mSurface = (SurfaceView) this.findViewById( R.id.gameSurface );
+        SurfaceView surfaceView = (SurfaceView) this.findViewById( R.id.gameSurface );
 
         mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
         mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
@@ -247,26 +260,23 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mDrawerLayout.setSwipGestureEnabled(mGlobalPrefs.inGameMenuIsSwipGesture);
 
         // Make the background solid black
-        mSurface.getRootView().setBackgroundColor(0xFF000000);
+        surfaceView.getRootView().setBackgroundColor(0xFF000000);
 
-        if (!TextUtils.isEmpty(artPath) && new File(artPath).exists())
-            mGameSidebar.setImage(new BitmapDrawable(this.getResources(), artPath));
+        if (!TextUtils.isEmpty(mRomArtPath) && new File(mRomArtPath).exists())
+            mGameSidebar.setImage(new BitmapDrawable(this.getResources(), mRomArtPath));
 
-        mGameSidebar.setTitle(romGoodName);
+        mGameSidebar.setTitle(mRomGoodName);
 
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
 
-        //Reload menus
-        ReloadAllMenus();
-
         // Listen to game surface events (created, changed, destroyed)
-        mSurface.getHolder().addCallback( this );
+        surfaceView.getHolder().addCallback( this );
 
         // Update the SurfaceView size
-        mSurface.getHolder().setFixedSize( mGamePrefs.videoRenderWidth, mGamePrefs.videoRenderHeight );
-        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
+        surfaceView.getHolder().setFixedSize( mGamePrefs.videoRenderWidth, mGamePrefs.videoRenderHeight );
+        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) surfaceView.getLayoutParams();
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
 
@@ -275,7 +285,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         else
             params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
 
-        mSurface.setLayoutParams( params );
+        surfaceView.setLayoutParams( params );
 
         // Initialize the screen elements
         if( mGamePrefs.isTouchscreenEnabled || mGlobalPrefs.isFpsEnabled )
@@ -285,7 +295,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mTouchscreenMap.load( mGamePrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
                     mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled, mGlobalPrefs.fpsXPosition,
                     mGlobalPrefs.fpsYPosition, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
-            mOverlay.initialize(mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGlobalPrefs.isFpsEnabled,
+            mOverlay.initialize(mCoreFragment, mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGlobalPrefs.isFpsEnabled,
                     mGamePrefs.isAnalogHiddenWhenSensor, mGlobalPrefs.isTouchscreenAnimated);
         }
 
@@ -318,7 +328,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             {
                 if(!mShuttingDown)
                 {
-                    CoreInterface.resumeEmulator();
+                    mCoreFragment.resumeEmulator();
                 }
 
             }
@@ -326,7 +336,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             @Override
             public void onDrawerOpened(View arg0)
             {
-                CoreInterface.pauseEmulator();
+                mCoreFragment.pauseEmulator();
                 ReloadAllMenus();
             }
 
@@ -394,7 +404,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i( "GameActivity", "onStop" );
         mIsResumed = false;
 
-        if(!mShuttingDown && CoreInterface.isCoreRunning())
+        if(!mShuttingDown && mCoreFragment.hasServiceStarted())
         {
             tryPausing();
         }
@@ -414,13 +424,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i( "GameActivity", "onDestroy" );
 
         mHandler.removeCallbacks(mLastTouchChecker);
-
-        //This can happen when a controller is plugged in while the emulator
-        //is running
-        if(!mShuttingDown)
-        {
-            CoreInterface.detachActivity();
-        }
     }
 
     @Override
@@ -445,7 +448,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onPromptDialogClosed(int id, int which)
     {
-        CoreInterface.onPromptDialogClosed(id, which);
+        mCoreFragment.onPromptDialogClosed(id, which);
     }
 
     private void ReloadAllMenus()
@@ -453,13 +456,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         //Reload currently selected speed setting
         final MenuItem toggleSpeedItem =
             mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
-        toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, CoreInterface.getCurrentSpeed()));
+        toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, mCoreFragment.getCurrentSpeed()));
 
         //Reload currently selected slot
         final MenuItem slotItem = mGameSidebar.getMenu().findItem(R.id.menuItem_set_slot);
-        slotItem.setTitle(this.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
+        slotItem.setTitle(this.getString(R.string.menuItem_setSlot, mCoreFragment.getSlot()));
 
-        final int resId = NativeExports.emuGetFramelimiter() ?
+        final int resId = mCoreFragment.getFramelimiter() ?
             R.string.menuItem_enableFramelimiter :
             R.string.menuItem_disableFramelimiter;
 
@@ -502,12 +505,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         //reload menu item with new slot
         final MenuItem slotItem = mGameSidebar.getMenu().findItem(R.id.menuItem_set_slot);
-        slotItem.setTitle(this.getString(R.string.menuItem_setSlot, NativeExports.emuGetSlot()));
+        slotItem.setTitle(this.getString(R.string.menuItem_setSlot, mCoreFragment.getSlot()));
 
         //Reload the menu with the new speed
         final MenuItem toggleSpeedItem =
             mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
-        toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, CoreInterface.getCurrentSpeed()));
+        toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, mCoreFragment.getCurrentSpeed()));
 
         mGameSidebar.reload();
     }
@@ -528,49 +531,50 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
         case R.id.menuItem_exit:
             mWaitingOnConfirmation = true;
-            CoreInterface.exit();
+            mCoreFragment.exit();
             break;
         case R.id.menuItem_toggle_speed:
-            CoreInterface.toggleSpeed();
+            mCoreFragment.toggleSpeed();
 
             //Reload the menu with the new speed
             final MenuItem toggleSpeedItem =
                 mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
-            toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, CoreInterface.getCurrentSpeed()));
+            toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, mCoreFragment.getCurrentSpeed()));
             mGameSidebar.reload();
             break;
         case R.id.menuItem_set_speed:
-            CoreInterface.setCustomSpeedFromPrompt(this);
+            mCoreFragment.setCustomSpeedFromPrompt();
             break;
         case R.id.menuItem_screenshot:
-            CoreInterface.screenshot();
+            mCoreFragment.screenshot();
             break;
         case R.id.menuItem_set_slot:
-            CoreInterface.setSlotFromPrompt(this);
+            mCoreFragment.setSlotFromPrompt();
             break;
         case R.id.menuItem_slot_load:
-            CoreInterface.loadSlot(this);
+            mCoreFragment.loadSlot();
             break;
         case R.id.menuItem_slot_save:
-            CoreInterface.saveSlot(this);
+            mCoreFragment.saveSlot();
+
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
                 mDrawerLayout.closeDrawer( GravityCompat.START );
             }
             break;
         case R.id.menuItem_file_load:
-            CoreInterface.loadFileFromPrompt(this);
+            mCoreFragment.loadFileFromPrompt();
             break;
         case R.id.menuItem_file_save:
-            CoreInterface.saveFileFromPrompt();
+            mCoreFragment.saveFileFromPrompt();
             break;
         case R.id.menuItem_file_load_auto_save:
-            CoreInterface.loadAutoSaveFromPrompt(this);
+            mCoreFragment.loadAutoSaveFromPrompt();
             break;
         case R.id.menuItem_disable_frame_limiter:
-            CoreInterface.toggleFramelimiter();
+            mCoreFragment.toggleFramelimiter();
 
-            final int resId = NativeExports.emuGetFramelimiter() ?
+            final int resId = mCoreFragment.getFramelimiter() ?
                 R.string.menuItem_enableFramelimiter :
                 R.string.menuItem_disableFramelimiter;
 
@@ -600,7 +604,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             break;
         case R.id.menuItem_reset:
             mWaitingOnConfirmation = true;
-            CoreInterface.restart();
+            mCoreFragment.restart();
             break;
         default:
         }
@@ -659,7 +663,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final MenuItem playerMenuItem = GetPlayerMenuItemFromId(player);
 
         //Generate possible pak types
-        final ArrayList<CharSequence> selections = new ArrayList<CharSequence>();
+        final ArrayList<CharSequence> selections = new ArrayList<>();
         for(final PakType pakType:PakType.values())
         {
             selections.add(this.getString(pakType.getResourceString()));
@@ -676,7 +680,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                             mGlobalPrefs.putPakType(player, PakType.values()[value]);
 
                             // Set the pak in the core
-                            NativeInput.setConfig( player - 1, true, PakType.values()[value].getNativeValue() );
+                            mCoreFragment.updateControllerConfig(player - 1, true, PakType.values()[value].getNativeValue());
 
                             //Update the menu
                             playerMenuItem.setTitleCondensed(GameActivity.this.getString(mGlobalPrefs.getPakType(player).getResourceString()));
@@ -697,7 +701,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         Log.i( "GameActivity", "surfaceChanged" );
         mIsSurface = true;
-        NativeExports.setNativeWindow(holder.getSurface());
+        mCoreFragment.setSurface(holder.getSurface());
         tryRunning();
     }
 
@@ -705,7 +709,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void surfaceDestroyed( SurfaceHolder holder )
     {
         Log.i( "GameActivity", "surfaceDestroyed" );
-        NativeExports.emuDestroySurface();
+
+        if(!mShuttingDown)
+        {
+            mCoreFragment.destroySurface();
+        }
+
         mIsSurface = false;
     }
 
@@ -714,7 +723,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         if(shouldRestart)
         {
-            CoreInterface.restartEmulator();
+            mCoreFragment.restartEmulator();
 
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
@@ -723,10 +732,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
         {
-            CoreInterface.resumeEmulator();
+            mCoreFragment.resumeEmulator();
         }
 
         mWaitingOnConfirmation = false;
+    }
+
+    @Override
+    public void onCoreServiceStarted()
+    {
+        ReloadAllMenus();
     }
 
     @Override
@@ -740,7 +755,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
         else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
         {
-            CoreInterface.resumeEmulator();
+            mCoreFragment.resumeEmulator();
         }
 
         mWaitingOnConfirmation = false;
@@ -749,8 +764,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onExitFinished()
     {
-        CoreInterface.detachActivity();
-        CoreInterface.waitForEmulatorThreadToFinish();
         GameActivity.this.finish();
     }
 
@@ -758,9 +771,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
      * Handle view onKey callbacks
      * @param view If view is NULL then this keycode will not be handled by the key provider. This is to avoid
      *             the situation where user maps the menu key to the menu command.
-     * @param keyCode
-     * @param event
-     * @return
+     * @param keyCode key code
+     * @param event key event
+     * @return True if handled
      */
     @Override
     public boolean onKey( View view, int keyCode, KeyEvent event )
@@ -802,7 +815,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
                     mDrawerLayout.closeDrawer( GravityCompat.START );
                 else {
-                    CoreInterface.pauseEmulator();
+                    mCoreFragment.pauseEmulator();
                     mDrawerLayout.openDrawer(GravityCompat.START);
                     mGameSidebar.requestFocus();
                     mGameSidebar.smoothScrollToPosition(0);
@@ -821,12 +834,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     if(mGlobalPrefs.inGameMenuIsSwipGesture)
                     {
                         mWaitingOnConfirmation = true;
-                        CoreInterface.exit();
+                        mCoreFragment.exit();
                     }
                     //Else the back key bring up the in-game menu
                     else
                     {
-                        CoreInterface.pauseEmulator();
+                        mCoreFragment.pauseEmulator();
                         mDrawerLayout.openDrawer( GravityCompat.START );
                         mGameSidebar.requestFocus();
                         mGameSidebar.smoothScrollToPosition(0);
@@ -844,7 +857,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         // By default, send Player 1 rumbles through phone vibrator
         final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-        CoreInterface.registerVibrator( 1, vibrator );
+        //CoreInterface.registerVibrator( 1, vibrator );
 
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
@@ -852,7 +865,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if (!mGamePrefs.sensorAxisX.isEmpty() || !mGamePrefs.sensorAxisY.isEmpty()) {
                 // Create the sensor controller
                 final SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                mSensorController = new SensorController(sensorManager, mOverlay, mGamePrefs.sensorAxisX,
+                mSensorController = new SensorController(mCoreFragment, sensorManager, mOverlay, mGamePrefs.sensorAxisX,
                         mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAngleX, mGamePrefs.sensorAxisY,
                         mGamePrefs.sensorSensitivityY, mGamePrefs.sensorAngleY);
                 if (mGamePrefs.sensorActivateOnStart) {
@@ -862,7 +875,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             // Create the touchscreen controller
-            mTouchscreenController = new TouchController( mTouchscreenMap,
+            mTouchscreenController = new TouchController(mCoreFragment, mTouchscreenMap,
                     mOverlay, vibrator, mGamePrefs.touchscreenAutoHold,
                     mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenNotAutoHoldables,
                     mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis );
@@ -881,8 +894,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         if(!romDatabase.hasDatabaseFile())
         {
-            final AppData appData = new AppData(this);
-            romDatabase.setDatabaseFile(appData.mupen64plus_ini);
+            romDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
         }
 
         final RomDetail romDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
@@ -915,28 +927,28 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if( mGamePrefs.isControllerEnabled1 && !needs1)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile1;
-            new PeripheralController( 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+            new PeripheralController( mCoreFragment, 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, mSensorController, mKeyProvider, mAxisProvider, mogaProvider );
             Log.i("GameActivity", "Player 1 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile2;
-            new PeripheralController( 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+            new PeripheralController( mCoreFragment, 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
             Log.i("GameActivity", "Player 2 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile3;
-            new PeripheralController( 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+            new PeripheralController( mCoreFragment, 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
             Log.i("GameActivity", "Player 3 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile4;
-            new PeripheralController( 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+            new PeripheralController( mCoreFragment, 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
             Log.i("GameActivity", "Player 4 has been enabled");
         }
@@ -964,24 +976,21 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private synchronized void tryRunning()
     {
-        final int state = NativeExports.emuGetState();
-        if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ))
+        if( isSafeToRender())
         {
-            switch( state )
+            if(!mCoreFragment.IsInProgress())
             {
-                case NativeConstants.EMULATOR_STATE_UNKNOWN:
-                    final String latestSave = mAutoSaveManager.getLatestAutoSave();
-                    CoreInterface.startupEmulator(latestSave);
-                    break;
-                case NativeConstants.EMULATOR_STATE_PAUSED:
-                    if( !mDrawerLayout.isDrawerOpen( GravityCompat.START )
-                        && !mWaitingOnConfirmation)
-                        CoreInterface.resumeEmulator();
-                    else
-                        CoreInterface.advanceFrame();
-                    break;
-                default:
-                    break;
+                final String latestSave = mGameDataManager.getLatestAutoSave();
+                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomPath,
+                    mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
+                    mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
+            }
+            else if(mCoreFragment.hasServiceStarted() && mCoreFragment.getState() == NativeConstants.EMULATOR_STATE_PAUSED)
+            {
+                if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation)
+                    mCoreFragment.resumeEmulator();
+                else
+                    mCoreFragment.advanceFrame();
             }
         }
     }
@@ -990,22 +999,23 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         mShuttingDown = true;
 
-        if(CoreInterface.isCoreRunning())
+        if(mCoreFragment.hasServiceStarted())
         {
             //Generate auto save file
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
-                final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-                CoreInterface.autoSaveState( saveFileName );
+                final String saveFileName = mGameDataManager.getAutoSaveFileName();
+                mCoreFragment.autoSaveState(saveFileName);
             }
 
-            mAutoSaveManager.clearOldest();
-            CoreInterface.shutdownEmulator();
+            mGameDataManager.clearOldest();
+            mCoreFragment.shutdownEmulator();
         }
     }
 
     private void tryPausing()
     {
+        /*
         CoreInterface.addOnStateCallbackListener( new CoreInterface.OnStateCallbackListener()
         {
             @Override
@@ -1022,20 +1032,21 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     }
                 }
             }
-        } );
+        } );*/
 
         //Generate auto save file
         if(mGlobalPrefs.maxAutoSaves != 0)
         {
-            final String saveFileName = mAutoSaveManager.getAutoSaveFileName();
-            CoreInterface.autoSaveState( saveFileName );
+            final String saveFileName = mGameDataManager.getAutoSaveFileName();
+            mCoreFragment.autoSaveState(saveFileName);
+            mCoreFragment.pauseEmulator();
         }
         else
         {
-            CoreInterface.pauseEmulator();
+            mCoreFragment.pauseEmulator();
         }
 
-        mAutoSaveManager.clearOldest();
+        mGameDataManager.clearOldest();
     }
 
     Runnable mLastTouchChecker = new Runnable() {

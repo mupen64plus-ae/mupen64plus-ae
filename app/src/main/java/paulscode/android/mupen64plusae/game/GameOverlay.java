@@ -28,10 +28,11 @@ import android.view.View;
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
-import paulscode.android.mupen64plusae.jni.CoreInterface;
+import paulscode.android.mupen64plusae.jni.CoreFragment;
+import paulscode.android.mupen64plusae.jni.NativeImports.OnFpsChangedListener;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 
-public class GameOverlay extends View implements TouchController.OnStateChangedListener, CoreInterface.OnFpsChangedListener
+public class GameOverlay extends View implements TouchController.OnStateChangedListener, OnFpsChangedListener
 {
     private VisibleTouchMap mTouchMap;
     private boolean mDrawingEnabled = true;
@@ -46,8 +47,8 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         requestFocus();
     }
     
-    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, boolean fpsEnabled,
-            boolean isAnalogHiddenWhenSensor, boolean joystickAnimated )
+    public void initialize(CoreFragment coreFragment, VisibleTouchMap touchMap, boolean drawingEnabled, boolean fpsEnabled,
+                           boolean isAnalogHiddenWhenSensor, boolean joystickAnimated )
     {
         mTouchMap = touchMap;
         mDrawingEnabled = drawingEnabled;
@@ -55,7 +56,10 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         mIsAnalogHiddenWhenSensor = isAnalogHiddenWhenSensor;
         mHatRefreshPeriod = joystickAnimated ? 3 : 0;
 
-        CoreInterface.setOnFpsChangedListener( this, fpsEnabled ? 15 : 0 );
+        if(coreFragment != null)
+        {
+            coreFragment.setOnFpsChangedListener( this, fpsEnabled ? 15 : 0 );
+        }
     }
     
     @Override

@@ -90,19 +90,6 @@ extern DECLSPEC m64p_error VidExtFuncInit()
 
 extern DECLSPEC m64p_error VidExtFuncQuit()
 {
-    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    if (surface != EGL_NO_SURFACE) {
-        eglDestroySurface(display, surface);
-        surface = EGL_NO_SURFACE;
-    }
-    if (context != EGL_NO_CONTEXT) {
-        eglDestroyContext(display, context);
-        context = EGL_NO_CONTEXT;
-    }
-    if (display != EGL_NO_DISPLAY) {
-        eglTerminate(display);
-        display = EGL_NO_DISPLAY;
-    }
     return M64ERR_SUCCESS;
 }
 
@@ -357,6 +344,23 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
     if (display != EGL_NO_DISPLAY && surface != EGL_NO_SURFACE)
         eglDestroySurface(display, surface);
     surface = EGL_NO_SURFACE;
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuShutdownEgl(JNIEnv* env, jclass cls)
+{
+    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    if (surface != EGL_NO_SURFACE) {
+        eglDestroySurface(display, surface);
+        surface = EGL_NO_SURFACE;
+    }
+    if (context != EGL_NO_CONTEXT) {
+        eglDestroyContext(display, context);
+        context = EGL_NO_CONTEXT;
+    }
+    if (display != EGL_NO_DISPLAY) {
+        eglTerminate(display);
+        display = EGL_NO_DISPLAY;
+    }
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_FPSEnabled(JNIEnv* env, jclass cls, int recalc)

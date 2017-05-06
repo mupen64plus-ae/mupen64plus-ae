@@ -40,53 +40,55 @@ public class NativeExports
     
     // TODO: Add javadoc
     
-    public static native void loadLibraries( String libPath, int androidSDK );
+    static native void loadLibraries( String libPath, int androidSDK );
     
-    public static native void unloadLibraries();
+    static native void unloadLibraries();
     
-    public static native int emuStart( String userDataPath, String userCachePath, Object[] args );
+    static native int emuStart( String userDataPath, String userCachePath, Object[] args );
     
-    public static native void emuStop();
+    static native void emuStop();
 
-    public static native void emuShutdown();
+    static native void emuShutdown();
     
-    public static native void emuResume();
+    static native void emuResume();
     
-    public static native void emuPause();
+    static native void emuPause();
     
-    public static native void emuAdvanceFrame();
+    static native void emuAdvanceFrame();
     
-    public static native void emuSetSpeed( int percent );
+    static native void emuSetSpeed( int percent );
     
-    public static native void emuSetFramelimiter( boolean enabled );
+    static native void emuSetFramelimiter( boolean enabled );
     
-    public static native void emuSetSlot( int slotID );
+    static native void emuSetSlot( int slotID );
     
-    public static native void emuLoadSlot();
+    static native void emuLoadSlot();
     
-    public static native void emuSaveSlot();
+    static native void emuSaveSlot();
     
-    public static native void emuLoadFile( String filename );
+    static native void emuLoadFile( String filename );
     
-    public static native void emuSaveFile( String filename );
+    static native void emuSaveFile( String filename );
     
-    public static native void emuScreenshot();
+    static native void emuScreenshot();
     
-    public static native void emuGameShark( boolean pressed );
+    static native void emuGameShark( boolean pressed );
 
-    public static native void emuDestroySurface();
+    static native void emuDestroySurface();
 
-    public static native void FPSEnabled(int recalc);
+    static native void FPSEnabled(int recalc);
     
-    public static native int emuGetState();
+    static native int emuGetState();
     
-    public static native int emuGetSpeed();
+    static native int emuGetSpeed();
     
-    public static native boolean emuGetFramelimiter();
+    static native boolean emuGetFramelimiter();
     
-    public static native int emuGetSlot();
+    static native int emuGetSlot();
 
-    public static native int emuReset();
+    static native int emuReset();
 
-    public static native void setNativeWindow(Surface surface);
+    static native void setNativeWindow(Surface surface);
+
+    static native void emuShutdownEgl();
 }

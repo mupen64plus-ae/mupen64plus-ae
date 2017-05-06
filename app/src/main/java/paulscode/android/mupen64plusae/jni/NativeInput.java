@@ -21,6 +21,8 @@
 package paulscode.android.mupen64plusae.jni;
 
 
+import android.os.Vibrator;
+
 /**
  * Calls made between the native input-android library and Java. Any function names changed here
  * should also be changed in the corresponding C code, and vice versa.
@@ -28,7 +30,7 @@ package paulscode.android.mupen64plusae.jni;
  * @see jni/mupen64plus-input-android/plugin.c
  * @see CoreInterface
  */
-public class NativeInput extends CoreInterface
+public class NativeInput
 {
     /** Maximum duration for vibration if no further vibration commands are issued. */
     private static final long VIBRATE_TIMEOUT = 1000;
@@ -37,11 +39,13 @@ public class NativeInput extends CoreInterface
     {
         System.loadLibrary( "mupen64plus-input-android" );
     }
+
+    private static final Vibrator[] sVibrators = new Vibrator[4];
     
     /**
      * Initialize input-android plugin.
      */
-    public static native void init();
+    static native void init();
     
     /**
      * Set the button/axis state of a controller.
@@ -51,7 +55,7 @@ public class NativeInput extends CoreInterface
      * @param axisX The analog value of the x-axis, in the range [-80,80].
      * @param axisY The analog value of the y-axis, in the range [-80,80].
      */
-    public static native void setState( int controllerNum, boolean[] buttons, int axisX, int axisY );
+    static native void setState( int controllerNum, boolean[] buttons, int axisX, int axisY );
     
     /**
      * Set the plugged state and pak type of a controller.
@@ -63,13 +67,13 @@ public class NativeInput extends CoreInterface
      * @see #PAK_TYPE_MEMORY
      * @see #PAK_TYPE_RUMBLE
      */
-    public static native void setConfig( int controllerNum, boolean plugged, int pakType );
+    static native void setConfig( int controllerNum, boolean plugged, int pakType );
     
     /**
      * @deprecated This method should only be called by native code.
      * @see jni/input-android/plugin.c
      */
-    public static void rumble( int controllerNum, boolean active )
+    static void rumble( int controllerNum, boolean active )
     {
         if( sVibrators[controllerNum] == null )
             return;
@@ -78,5 +82,15 @@ public class NativeInput extends CoreInterface
             sVibrators[controllerNum].vibrate( VIBRATE_TIMEOUT );
         else
             sVibrators[controllerNum].cancel();
+    }
+
+    static void registerVibrator( int player, Vibrator vibrator )
+    {
+        boolean hasVibrator = vibrator.hasVibrator();
+
+        if( hasVibrator && player > 0 && player < 5 )
+        {
+            sVibrators[player - 1] = vibrator;
+        }
     }
 }

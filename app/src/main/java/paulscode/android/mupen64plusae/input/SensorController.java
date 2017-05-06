@@ -25,7 +25,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListener;
+import paulscode.android.mupen64plusae.jni.CoreFragment;
 
 /**
  * Emulates a joystick using accelerometer sensor
@@ -45,9 +47,24 @@ public class SensorController extends AbstractController implements SensorEventL
     private boolean isPaused = true;
     private boolean mSensorEnabled = false;
 
-    public SensorController(SensorManager sensorManager, OnStateChangedListener listener, String sensorAxisX,
-            int sensorSensitivityX, float sensorAngleX, String sensorAxisY, int sensorSensitivityY,
-            float sensorAngleY) {
+    /**
+     * Constructor
+     *
+     * @param coreFragment Core fragment
+     * @param sensorManager Sensor manager
+     * @param listener State change listener
+     * @param sensorAxisX Sensor X axis
+     * @param sensorSensitivityX Sensor X sensitivity
+     * @param sensorAngleX Sensor X angle
+     * @param sensorAxisY Sensor Y axis
+     * @param sensorSensitivityY  Sensor Y sensitivity
+     * @param sensorAngleY Sensor Y angle
+     */
+    public SensorController(CoreFragment coreFragment, SensorManager sensorManager, OnStateChangedListener listener,
+                            String sensorAxisX, int sensorSensitivityX, float sensorAngleX, String sensorAxisY,
+                            int sensorSensitivityY, float sensorAngleY) {
+        super(coreFragment);
+
         mSensorManager = sensorManager;
         mListener = listener;
 

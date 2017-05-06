@@ -135,6 +135,7 @@
     <string name="toast_savingScreenshot">Saving screenshot…</string>
     <string name="toast_canceling">Canceling…</string>
     <string name="toast_pleaseWait">Please wait…</string>
+    <string name="toast_paused">Paused…</string>
 
     <!-- Something happened (use '.') -->
     <string name="toast_nativeMainFailure01">Failed to parse initial command line parameters.</string>

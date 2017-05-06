@@ -32,8 +32,7 @@ import paulscode.android.mupen64plusae.input.TouchController.OnStateChangedListe
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import paulscode.android.mupen64plusae.jni.CoreInterface;
-import paulscode.android.mupen64plusae.jni.NativeExports;
+import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.util.Utility;
 
 /**
@@ -43,6 +42,11 @@ import paulscode.android.mupen64plusae.util.Utility;
 public class PeripheralController extends AbstractController implements
         AbstractProvider.OnInputListener
 {
+    /**
+     * Pointer to core fragment
+     */
+    private CoreFragment mCoreFragment = null;
+
     /** The map from hardware identifiers to players. */
     private final PlayerMap mPlayerMap;
     
@@ -85,7 +89,8 @@ public class PeripheralController extends AbstractController implements
     
     /**
      * Instantiates a new peripheral controller.
-     * 
+     *
+     * @param coreFragment Core interface fragment
      * @param player    The player number, between 1 and 4, inclusive.
      * @param playerMap The map from hardware identifiers to players.
      * @param inputMap  The map from input codes to N64/Mupen commands.
@@ -94,10 +99,12 @@ public class PeripheralController extends AbstractController implements
      * @param inputSensitivityY The analog X sensitivity in percent.
      * @param providers The user input providers. Null elements are safe.
      */
-    public PeripheralController(int player, PlayerMap playerMap, InputMap inputMap,
+    public PeripheralController(CoreFragment coreFragment, int player, PlayerMap playerMap, InputMap inputMap,
                                 int inputDeadzone, int inputSensitivityX, int inputSensitivityY, OnStateChangedListener listener,
                                 View.OnKeyListener keyListener, SensorController sensorController, AbstractProvider... providers )
     {
+        super(coreFragment);
+
         setPlayerNumber( player );
         
         // Assign the maps
@@ -108,6 +115,7 @@ public class PeripheralController extends AbstractController implements
         mListener = listener;
         mKeyListener = keyListener;
         mSensorController = sensorController;
+        mCoreFragment = coreFragment;
         
         // Populate the entry map
         mStrengthCalculator = new InputStrengthCalculator( inputMap, mEntryMap );
@@ -139,7 +147,7 @@ public class PeripheralController extends AbstractController implements
             // Update the registered vibrator for this player
             InputDevice device = InputDevice.getDevice( hardwareId );
             if( device != null )
-                CoreInterface.registerVibrator( mPlayerNumber, device.getVibrator() );
+                mCoreFragment.registerVibrator( mPlayerNumber, device.getVibrator() );
             
             // Apply user changes to the controller state
             apply( inputCode, strength );
@@ -248,47 +256,47 @@ public class PeripheralController extends AbstractController implements
             {
                 case InputMap.FUNC_INCREMENT_SLOT:
                     Log.v( "PeripheralController", "FUNC_INCREMENT_SLOT" );
-                    CoreInterface.incrementSlot();
+                    mCoreFragment.incrementSlot();
                     break;
                 case InputMap.FUNC_SAVE_SLOT:
                     Log.v( "PeripheralController", "FUNC_SAVE_SLOT" );
-                    CoreInterface.saveSlot(null);
+                    mCoreFragment.saveSlot();
                     break;
                 case InputMap.FUNC_LOAD_SLOT:
                     Log.v( "PeripheralController", "FUNC_LOAD_SLOT" );
-                    CoreInterface.loadSlot(null);
+                    mCoreFragment.loadSlot();
                     break;
                 case InputMap.FUNC_RESET:
                     Log.v( "PeripheralController", "FUNC_RESET" );
-                    CoreInterface.restartEmulator();
+                    mCoreFragment.restartEmulator();
                     break;
                 case InputMap.FUNC_STOP:
                     Log.v( "PeripheralController", "FUNC_STOP" );
-                    CoreInterface.shutdownEmulator();
+                    mCoreFragment.shutdownEmulator();
                     break;
                 case InputMap.FUNC_PAUSE:
                     Log.v( "PeripheralController", "FUNC_PAUSE" );
-                    CoreInterface.togglePause();
+                    mCoreFragment.togglePause();
                     break;
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    CoreInterface.fastForward( true );
+                    mCoreFragment.fastForward(true);
                     break;
                 case InputMap.FUNC_FRAME_ADVANCE:
                     Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
-                    CoreInterface.advanceFrame();
+                    mCoreFragment.advanceFrame();
                     break;
                 case InputMap.FUNC_SPEED_UP:
                     Log.v( "PeripheralController", "FUNC_SPEED_UP" );
-                    CoreInterface.incrementCustomSpeed();
+                    mCoreFragment.incrementCustomSpeed();
                     break;
                 case InputMap.FUNC_SPEED_DOWN:
                     Log.v( "PeripheralController", "FUNC_SPEED_DOWN" );
-                    CoreInterface.decrementCustomSpeed();
+                    mCoreFragment.decrementCustomSpeed();
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    NativeExports.emuGameShark( true );
+                    mCoreFragment.emuGameShark(true);
                     break;
                 case InputMap.FUNC_SIMULATE_BACK: {
                     KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
@@ -302,7 +310,7 @@ public class PeripheralController extends AbstractController implements
                 }
                 case InputMap.FUNC_SCREENSHOT:
                     Log.v( "PeripheralController", "FUNC_SCREENSHOT" );
-                    CoreInterface.screenshot();
+                    mCoreFragment.screenshot();
                     break;
                 case InputMap.FUNC_SENSOR_TOGGLE:
                     Log.v("PeripheralController", "FUNC_SENSOR_TOGGLE");
@@ -331,11 +339,11 @@ public class PeripheralController extends AbstractController implements
             {
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    CoreInterface.fastForward( false );
+                    mCoreFragment.fastForward( false );
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    NativeExports.emuGameShark( false );
+                    mCoreFragment.emuGameShark(false);
                     break;
                 default:
                     return false;

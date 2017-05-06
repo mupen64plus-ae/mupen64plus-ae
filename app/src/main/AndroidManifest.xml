@@ -265,10 +265,12 @@
             android:name="paulscode.android.mupen64plusae.game.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/GameActivity_title"
+            android:launchMode="singleTask"
             android:theme="@style/appTheme.Black" >
         </activity>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService" />
+        <service android:name="paulscode.android.mupen64plusae.jni.CoreService" />
         <meta-data
             android:name="game_display_name"
             android:resource="@string/app_name" />

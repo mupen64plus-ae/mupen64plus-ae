@@ -20,16 +20,62 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import java.util.ArrayList;
 
 /**
  * Call-ins made from the native ae-imports library to Java. Any function names changed here should
  * also be changed in the corresponding C code, and vice versa.
  * 
  * @see jni/ae-bridge/ae_imports.cpp
- * @see CoreInterface
  */
-public class NativeImports extends CoreInterface
+public class NativeImports
 {
+    public interface OnStateCallbackListener
+    {
+        /**
+         * Called when an emulator state/parameter has changed
+         *
+         * @param paramChanged The parameter ID.
+         * @param newValue The new value of the parameter.
+         */
+        public void onStateCallback( int paramChanged, int newValue );
+    }
+
+    public interface OnFpsChangedListener
+    {
+        /**
+         * Called when the frame rate has changed.
+         *
+         * @param newValue The new FPS value.
+         */
+        public void onFpsChanged( int newValue );
+    }
+
+    // Core state callbacks - used by NativeImports
+    private static final ArrayList<OnStateCallbackListener> sStateCallbackListeners = new ArrayList<OnStateCallbackListener>();
+    private static final Object sStateCallbackLock = new Object();
+
+    //Frame rate info - used by ae-vidext
+    private static OnFpsChangedListener sFpsListener = null;
+
+    static void addOnStateCallbackListener( OnStateCallbackListener listener )
+    {
+        synchronized( sStateCallbackLock )
+        {
+            // Do not allow multiple instances, in case listeners want to remove themselves
+            if( !sStateCallbackListeners.contains( listener ) )
+                sStateCallbackListeners.add( listener );
+        }
+    }
+
+    static void removeOnStateCallbackListener( OnStateCallbackListener listener )
+    {
+        synchronized( sStateCallbackLock )
+        {
+            sStateCallbackListeners.remove( listener );
+        }
+    }
+
     /**
      * Callback for when an emulator's state/parameter has changed.
      * 
@@ -37,7 +83,7 @@ public class NativeImports extends CoreInterface
      * @param newValue The new value of the changed parameter.
      * @see jni/ae-bridge/ae_imports.cpp
      */
-    public static void stateCallback( int paramChanged, int newValue )
+    static void stateCallback( int paramChanged, int newValue )
     {
         synchronized( sStateCallbackLock )
         {
@@ -49,8 +95,15 @@ public class NativeImports extends CoreInterface
         }
     }
 
-    public static void FPSCounter (int fps)
+    static void setOnFpsChangedListener( OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
-        sFpsListener.onFpsChanged(fps);
+        sFpsListener = fpsListener;
+        NativeExports.FPSEnabled(fpsRecalcPeriod);
+    }
+
+    static void FPSCounter (int fps)
+    {
+        if(sFpsListener != null)
+            sFpsListener.onFpsChanged(fps);
     }
 }
