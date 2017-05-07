@@ -249,14 +249,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Keep screen from going to sleep
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
 
-        // Set the screen orientation
-        this.setRequestedOrientation( mGlobalPrefs.displayOrientation );
-
-        // If the orientation changes, the screensize info changes, so we must refresh dependencies
-        mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
-                CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mRomLegacySave );
-
         mFirstStart = true;
 
         // Lay out content and get the views
@@ -291,12 +283,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) surfaceView.getLayoutParams();
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
-
-        if( (mGlobalPrefs.displayOrientation & 1) == 1 )
-            params.gravity = mGlobalPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
-        else
-            params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
-
+        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         surfaceView.setLayoutParams( params );
 
         // Initialize the screen elements

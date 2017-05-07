@@ -25,12 +25,10 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
@@ -53,6 +51,8 @@ import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
+
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
@@ -204,12 +204,6 @@ public class GlobalPrefs
     /** The height of the viewing surface, in pixels with the stretched aspect ratio. */
     public int videoSurfaceHeightStretch;
 
-    /** The screen orientation for the game activity. */
-    public final int displayOrientation;
-
-    /** The vertical screen position. */
-    public final int displayPosition;
-
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
 
@@ -297,7 +291,11 @@ public class GlobalPrefs
     /** True if we want to show built in touchscreen profiles */
     public final boolean showBuiltInControllerProfiles;
 
+    /** True to use a high priority thread for the core */
     public final boolean useHighPriorityThread;
+
+    /** Current screen orientation */
+    public final int screenOrientation;
 
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
@@ -446,8 +444,6 @@ public class GlobalPrefs
         stretchScreen = mPreferences.getString( "displayScaling", "original" ).equals("stretch");
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
         DetermineResolutionData(context);
-        displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
-        displayPosition = getSafeInt( mPreferences, "displayPosition", Gravity.CENTER_VERTICAL );
         final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 80 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
 
@@ -606,6 +602,8 @@ public class GlobalPrefs
         useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread", false );
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
+
+        screenOrientation = context.getResources().getConfiguration().orientation;
     }
 
     public void changeLocale( final Activity activity )
@@ -897,8 +895,7 @@ public class GlobalPrefs
         {
             //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
             //ratio to make it full screen
-            if(displayOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT &&
-                    displayOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)
+            if(screenOrientation == ORIENTATION_PORTRAIT)
             {
                 final float newWidth = tempVideoRenderWidth * widthRatio;
                 tempVideoRenderWidth = Math.round(newWidth);
@@ -914,8 +911,6 @@ public class GlobalPrefs
         {
             hResolution = displayResolution;
         }
-
-        float heightRatio = (float)videoSurfaceHeightStretch/(float)videoSurfaceHeightOriginal;
 
         // Display prefs, default value is the global default
         int tempVideoRenderHeight = 0;
@@ -945,18 +940,6 @@ public class GlobalPrefs
                 break;
             default:
                 break;
-        }
-
-        if(stretch)
-        {
-            //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
-            //ratio to make it full screen
-            if(displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
-                    displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)
-            {
-                final float newWidth = tempVideoRenderHeight * heightRatio;
-                tempVideoRenderHeight = Math.round(newWidth);
-            }
         }
 
         return tempVideoRenderHeight;

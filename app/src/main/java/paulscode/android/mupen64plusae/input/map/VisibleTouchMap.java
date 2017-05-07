@@ -230,7 +230,7 @@ public class VisibleTouchMap extends TouchMap
                 }
                 
                 autoHoldImages[i].setScale( ( scaling * scale ) );
-                autoHoldImages[i].fitPercent( autoHoldX[i], autoHoldY[i], w, h );
+                autoHoldImages[i].fitPercent( autoHoldX[i], getAdjustedYPos(autoHoldY[i]), w, h );
             }
         }
         
