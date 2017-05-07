@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -35,6 +37,7 @@ import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class DataPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
     PromptConfirmListener, SharedPreferences.OnSharedPreferenceChangeListener
@@ -54,6 +57,18 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
     private SharedPreferences mPrefs = null;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -62,7 +77,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
-        mGlobalPrefs.enforceLocale(this);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Load user preference menu structure from XML and update view

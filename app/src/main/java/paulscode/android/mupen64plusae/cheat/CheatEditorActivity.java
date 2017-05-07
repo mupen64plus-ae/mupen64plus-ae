@@ -59,6 +59,7 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask;
 import paulscode.android.mupen64plusae.task.ExtractCheatsTask.ExtractCheatListener;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class CheatEditorActivity extends AppCompatListActivity implements ExtractCheatListener,
     OnDialogMenuItemSelectedListener, OnEditCompleteListener, OnAdvancedEditCompleteListener
@@ -121,6 +122,18 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
     private int mSelectedCheat = 0;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -128,7 +141,6 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         super.onCreate( savedInstanceState );
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGlobalPrefs.enforceLocale( this );
         
         // Get the ROM header info
         Bundle extras = getIntent().getExtras();

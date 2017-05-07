@@ -82,6 +82,7 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
@@ -168,6 +169,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private CoreFragment mCoreFragment = null;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
+
+
+    @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
@@ -225,8 +239,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
         mGameDataManager.makeDirs();
         mGameDataManager.moveFromLegacy();
-
-        mGlobalPrefs.enforceLocale( this );
 
         final Window window = this.getWindow();
 
@@ -371,7 +383,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i("GameActivity", "onStart");
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void onResume()
     {
@@ -389,7 +400,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             // Set the sidebar opacity
-            mGameSidebar.setBackgroundDrawable(new DrawerDrawable(
+            mGameSidebar.setBackground(new DrawerDrawable(
                     mGlobalPrefs.displayActionBarTransparency));
 
             mMogaController.onResume();

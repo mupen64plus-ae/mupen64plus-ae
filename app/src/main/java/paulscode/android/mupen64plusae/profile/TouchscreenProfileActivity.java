@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.profile;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Point;
@@ -65,6 +66,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class TouchscreenProfileActivity extends AppCompatActivity implements OnTouchListener, OnDialogMenuItemSelectedListener
 {
@@ -124,6 +126,18 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     
     // This is to prevent more than one popup appearing at once
     private boolean mPopupBeingShown;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
     
     @SuppressLint( "ClickableViewAccessibility" )
     @Override
@@ -134,7 +148,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Get the user preferences wrapper
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGlobalPrefs.enforceLocale( this );
         
         // Load the profile; fail fast if there are any programmer usage errors
         Bundle extras = getIntent().getExtras();

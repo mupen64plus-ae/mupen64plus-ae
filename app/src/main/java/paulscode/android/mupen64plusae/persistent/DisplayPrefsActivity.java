@@ -20,15 +20,18 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener
 {
@@ -44,6 +47,18 @@ public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements
     private SharedPreferences mPrefs = null;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -52,7 +67,6 @@ public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
-        mGlobalPrefs.enforceLocale(this);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Load user preference menu structure from XML and update view

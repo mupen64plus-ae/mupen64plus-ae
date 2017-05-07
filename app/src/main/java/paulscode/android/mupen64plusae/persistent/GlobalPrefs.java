@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -44,7 +43,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
@@ -52,6 +50,7 @@ import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 
@@ -379,6 +378,7 @@ public class GlobalPrefs
 
         // Locale
         mLocaleCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
+        LocaleContextWrapper.setLocaleCode(mLocaleCode);
         mLocale = TextUtils.isEmpty( mLocaleCode ) ? Locale.getDefault() : createLocale( mLocaleCode );
         final Locale[] availableLocales = Locale.getAvailableLocales();
         String[] values = context.getResources().getStringArray( R.array.localeOverride_values );
@@ -608,16 +608,6 @@ public class GlobalPrefs
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
     }
 
-    public void enforceLocale( Activity activity )
-    {
-        final Configuration config = activity.getBaseContext().getResources().getConfiguration();
-        if( !mLocale.equals( config.locale ) )
-        {
-            config.locale = mLocale;
-            activity.getBaseContext().getResources().updateConfiguration( config, null );
-        }
-    }
-
     public void changeLocale( final Activity activity )
     {
         // Get the index of the current locale
@@ -635,7 +625,7 @@ public class GlobalPrefs
                 if( which >= 0 && which != currentIndex )
                 {
                     mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).apply();
-                    ActivityHelper.restartActivity( activity );
+                    activity.finishAffinity();
                 }
             }
         } );

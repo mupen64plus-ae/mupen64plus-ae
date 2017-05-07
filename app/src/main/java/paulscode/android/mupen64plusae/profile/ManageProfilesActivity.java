@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +56,7 @@ import paulscode.android.mupen64plusae.dialog.ProfileNameEditDialog.OnProfileNam
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 abstract public class ManageProfilesActivity extends AppCompatListActivity implements OnDialogMenuItemSelectedListener, OnProfileNameDialogButtonListener,
     PromptConfirmListener
@@ -143,7 +145,19 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     
     /** Current selectedOperation */
     private int mSelectedOperation = 0;
-    
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
+
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -158,7 +172,6 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGlobalPrefs.enforceLocale( this );
         
         // Get the config files from the subclass-specified paths
         mConfigBuiltin = getConfigFile( true );

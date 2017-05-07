@@ -20,13 +20,28 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import java.util.List;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.SparseArray;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.bda.controller.Controller;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.util.List;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
+import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
@@ -44,19 +59,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.SparseArray;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.bda.controller.Controller;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public abstract class ControllerProfileActivityBase extends AppCompatActivity implements OnInputListener, PromptInputCodeListener,
     PromptConfirmListener
@@ -103,7 +106,19 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     protected boolean mExitMenuItemVisible = false;
     
     private int mSelectedPopupIndex = 0;
-    
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
+
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
@@ -117,7 +132,6 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
         // Get the user preferences wrapper
         AppData appData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, appData );
-        mGlobalPrefs.enforceLocale( this );
         
         // Get the command info
         mCommandNames = getResources().getStringArray( R.array.inputMapActivity_entries );

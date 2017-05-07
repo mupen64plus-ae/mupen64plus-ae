@@ -20,16 +20,32 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.Context;
+import android.os.Bundle;
+import android.text.TextUtils;
+
 import org.mupen64plusae.v3.alpha.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
-import android.os.Bundle;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity
 {
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -39,8 +55,6 @@ public class TouchscreenPrefsActivity extends AppCompatPreferenceActivity
         // Get app data and user preferences
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
-
-        mGlobalPrefs.enforceLocale(this);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_touchscreen);

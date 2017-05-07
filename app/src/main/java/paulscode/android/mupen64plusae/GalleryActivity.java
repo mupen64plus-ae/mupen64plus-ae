@@ -77,6 +77,7 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
@@ -161,7 +162,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
     }
 
-    @SuppressWarnings("deprecation")
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
+
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -170,7 +182,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGlobalPrefs.enforceLocale( this );
 
         if(!mGlobalPrefs.cacheRecentlyPlayed)
         {
@@ -266,7 +277,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mDrawerList.setSelection(0);
             }
         };
-        mDrawerLayout.setDrawerListener( mDrawerToggle );
+        mDrawerLayout.addDrawerListener( mDrawerToggle );
 
         // Configure the list in the navigation drawer
         mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
@@ -343,10 +354,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         // Set the sidebar opacity on the two sidebars
-        mDrawerList.setBackgroundDrawable( new DrawerDrawable(
-                mGlobalPrefs.displayActionBarTransparency ) );
-        mGameSidebar.setBackgroundDrawable( new DrawerDrawable(
-                mGlobalPrefs.displayActionBarTransparency ) );
+        mDrawerList.setBackground( new DrawerDrawable( mGlobalPrefs.displayActionBarTransparency ) );
+        mGameSidebar.setBackground( new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency ) );
     }
 
     @Override

@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
@@ -53,6 +54,7 @@ import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask.ExtractAssetsListener;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask.Failure;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import tv.ouya.console.api.OuyaFacade;
@@ -113,6 +115,18 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String GAME_DATA_PATH = "pathGameSaves";
     private static final String APP_DATA_PATH = "pathAppData";
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -147,7 +161,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mGlobalPrefs.enforceLocale( this );
 
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
         // new release)

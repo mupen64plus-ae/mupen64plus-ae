@@ -20,11 +20,12 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
+import android.text.TextUtils;
 
 import com.bda.controller.Controller;
 
@@ -37,6 +38,7 @@ import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.preference.PlayerMapPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.preference.ProfilePreference;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class InputPrefsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener,
     PromptInputCodeListener
@@ -53,6 +55,18 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
     private final Controller mMogaController = Controller.getInstance(this);
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,LocaleContextWrapper.getLocalCode()));
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -61,7 +75,6 @@ public class InputPrefsActivity extends AppCompatPreferenceActivity implements O
         mAppData = new AppData(this);
         mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
-        mGlobalPrefs.enforceLocale(this);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Initialize MOGA controller API
