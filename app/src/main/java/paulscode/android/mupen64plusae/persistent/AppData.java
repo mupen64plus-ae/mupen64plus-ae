@@ -182,6 +182,8 @@ public class AppData
 
     /** The parent directory containing all user-writable data files. */
     public final String gameDataDir;
+
+    private static String openGlVersion = null;
     
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
@@ -489,35 +491,40 @@ public class AppData
 
     public static String getOpenGlEsVersion(Context activity)
     {
-        PixelBuffer buffer = new PixelBuffer(320,240);
-        String versionString = buffer.getGLVersion();
-        buffer.destroyGlContext();
-
-        int firstDot = -1;
-        if(versionString != null)
+        if(openGlVersion == null)
         {
-            Log.i("AppData", "GL Version = " + versionString);
-            versionString = versionString.toLowerCase();
-            firstDot = versionString.indexOf('.');
+            PixelBuffer buffer = new PixelBuffer(320,240);
+            String versionString = buffer.getGLVersion();
+            buffer.destroyGlContext();
+
+            int firstDot = -1;
+            if(versionString != null)
+            {
+                Log.i("AppData", "GL Version = " + versionString);
+                versionString = versionString.toLowerCase();
+                firstDot = versionString.indexOf('.');
+            }
+
+            //Version string is not valid, fallback to secondary method
+            if(firstDot == -1 || firstDot == 0 || firstDot == versionString.length() - 1)
+            {
+                final ActivityManager activityManager =
+                        (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
+                final ConfigurationInfo configurationInfo =
+                        activityManager.getDeviceConfigurationInfo();
+
+                openGlVersion =  "" + getMajorVersion(configurationInfo.reqGlEsVersion) +
+                        "." + getMinorVersion(configurationInfo.reqGlEsVersion);
+            }
+            else
+            {
+                String parsedString = versionString.substring(firstDot-1, firstDot + 2);
+                Log.i("AppData", "GL Version = " + parsedString);
+                openGlVersion = parsedString;
+            }
         }
 
-        //Version string is not valid, fallback to secondary method
-        if(firstDot == -1 || firstDot == 0 || firstDot == versionString.length() - 1)
-        {
-            final ActivityManager activityManager =
-                    (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
-            final ConfigurationInfo configurationInfo =
-                    activityManager.getDeviceConfigurationInfo();
-
-            return "" + getMajorVersion(configurationInfo.reqGlEsVersion) +
-                    "." + getMinorVersion(configurationInfo.reqGlEsVersion);
-        }
-        else
-        {
-            String parsedString = versionString.substring(firstDot-1, firstDot + 2);
-            Log.i("AppData", "GL Version = " + parsedString);
-            return parsedString;
-        }
+        return openGlVersion;
     }
 
     public static boolean doesSupportFullGL()
