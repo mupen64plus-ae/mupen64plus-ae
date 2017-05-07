@@ -35,7 +35,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
@@ -395,7 +394,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 textHtml += failure.toString() + "<br/>";
             }
             textHtml += "</small>";
-            mTextView.setText( Html.fromHtml( textHtml ) );
+            mTextView.setText( AppData.fromHtml( textHtml ) );
         }
     }
 }

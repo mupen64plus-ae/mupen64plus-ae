@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.util;
 
-import android.text.Html;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -46,6 +45,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+
 /**
  * Utility class that provides methods which simplify file I/O tasks.
  */
@@ -68,7 +69,7 @@ public final class FileUtil
         
         if( includeParent )
         {
-            outNames.add( Html.fromHtml( "<b>..</b>" ) );
+            outNames.add( AppData.fromHtml( "<b>..</b>" ) );
             outPaths.add( startPath.getParentFile().getPath() );
         }
         
@@ -76,7 +77,7 @@ public final class FileUtil
         {
             for( File directory : getContents( startPath, new VisibleDirectoryFilter() ) )
             {
-                outNames.add( Html.fromHtml( "<b>" + directory.getName() + "</b>" ) );
+                outNames.add( AppData.fromHtml( "<b>" + directory.getName() + "</b>" ) );
                 outPaths.add( directory.getPath() );
             }
         }
@@ -85,7 +86,7 @@ public final class FileUtil
         {
             for( File file : getContents( startPath, new VisibleFileFilter() ) )
             {
-                outNames.add( Html.fromHtml( file.getName() ) );
+                outNames.add( AppData.fromHtml( file.getName() ) );
                 outPaths.add( file.getPath() );
             }
         }

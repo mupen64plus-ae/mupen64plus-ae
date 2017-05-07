@@ -31,6 +31,8 @@ import android.content.res.Configuration;
 import android.opengl.EGL14;
 import android.os.Build;
 import android.support.v7.preference.PreferenceManager;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -95,6 +97,9 @@ public class AppData
     
     /** True if device is running marshmallow or later (23 - Android 6.0.x) */
     public static final boolean IS_MARSHMELLOW = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+
+    /** True if device is running marshmallow or later (24 - Android 7.0.x) */
+    public static final boolean IS_NOUGAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
     
     /** True if device is an OUYA. */
     public static final boolean IS_OUYA_HARDWARE = OuyaFacade.getInstance().isRunningOnOUYAHardware();
@@ -543,5 +548,14 @@ public class AppData
         EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
         return supportsFullGl;
     }
-    
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String source)
+    {
+        if (IS_NOUGAT) {
+            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(source);
+        }
+    }
 }

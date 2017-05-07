@@ -27,7 +27,6 @@ import android.content.res.TypedArray;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.preference.ListPreference;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -41,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPreferenceDialogListener;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.profile.Profile;
 
@@ -181,7 +181,7 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
             String entryHtml = profile.name;
             if( !TextUtils.isEmpty( profile.comment ) )
                 entryHtml += "<br><small>" + profile.comment + "</small>";
-            entries[i + offset] = Html.fromHtml( entryHtml );
+            entries[i + offset] = AppData.fromHtml( entryHtml );
             values[i + offset] = profile.name;
         }
         
