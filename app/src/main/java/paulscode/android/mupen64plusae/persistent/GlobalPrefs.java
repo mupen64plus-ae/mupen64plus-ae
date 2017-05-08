@@ -36,6 +36,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -408,8 +410,9 @@ public class GlobalPrefs
         unzippedRomsDir = galleryCacheDir + "/UnzippedRoms";
         profilesDir = appData.userDataDir + "/Profiles";
         crashLogDir = appData.userDataDir + "/CrashLogs";
-        coreUserDataDir = appData.userDataDir + "/CoreConfig/UserData";
-        coreUserCacheDir = appData.userDataDir + "/CoreConfig/UserCache";
+        final String coreConfigDir = appData.userDataDir + "/CoreConfig";
+        coreUserDataDir = coreConfigDir + "/UserData";
+        coreUserCacheDir = coreConfigDir + "/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
         romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
@@ -420,6 +423,16 @@ public class GlobalPrefs
         touchscreenCustomSkinsDir = appData.userDataDir + "/CustomSkins";
         legacyAutoSaves = appData.userDataDir + "/AutoSaves";
         legacySlotSaves = appData.userDataDir + "/SlotSaves";
+
+        //Generate .nomedia files to prevent android from adding these to gallery apps
+        File file = new File(coreConfigDir + "/.nomedia");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         // Plug-ins
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
