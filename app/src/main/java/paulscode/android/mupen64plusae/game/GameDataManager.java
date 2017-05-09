@@ -195,13 +195,13 @@ public class GameDataManager
 
                 if (!targetFile.exists())
                 {
-                    Log.i("CoreInterface", "Found legacy SRAM file: " + file + " Moving to " + targetFile.getPath());
+                    Log.i("GameDataManager", "Found legacy SRAM file: " + file + " Moving to " + targetFile.getPath());
 
                     file.renameTo(targetFile);
                 }
                 else
                 {
-                    Log.i("CoreInterface", "Found legacy SRAM file: " + file + " but can't move");
+                    Log.i("GameDataManager", "Found legacy SRAM file: " + file + " but can't move");
                 }
             }
 
@@ -225,13 +225,13 @@ public class GameDataManager
 
                 if (!targetFile.exists())
                 {
-                    Log.i("CoreInterface", "Found legacy ST file: " + file + " Moving to " + targetFile.getPath());
+                    Log.i("GameDataManager", "Found legacy ST file: " + file + " Moving to " + targetFile.getPath());
 
                     file.renameTo(targetFile);
                 }
                 else
                 {
-                    Log.i("CoreInterface", "Found legacy ST file: " + file + " but can't move");
+                    Log.i("GameDataManager", "Found legacy ST file: " + file + " but can't move");
                 }
             }
         }
@@ -261,14 +261,14 @@ public class GameDataManager
 
                 if(!targetFile.exists())
                 {
-                    Log.i("CoreInterface", "Found legacy SAV file: " + file +
+                    Log.i("GameDataManager", "Found legacy SAV file: " + file +
                             " Moving to " + targetFile.getPath());
 
                     file.renameTo(targetFile);
                 }
                 else
                 {
-                    Log.i("CoreInterface", "Found legacy SAV file: " + file +
+                    Log.i("GameDataManager", "Found legacy SAV file: " + file +
                             " but can't move");
                 }
             }

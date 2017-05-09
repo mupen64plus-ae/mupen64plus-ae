@@ -75,6 +75,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
+import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -855,7 +856,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         // By default, send Player 1 rumbles through phone vibrator
         final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-        //CoreInterface.registerVibrator( 1, vibrator );
+        mCoreFragment.registerVibrator(1, vibrator);
 
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
@@ -1003,7 +1004,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
                 final String saveFileName = mGameDataManager.getAutoSaveFileName();
-                mCoreFragment.autoSaveState(saveFileName);
+                mCoreFragment.autoSaveState(saveFileName, null);
             }
 
             mGameDataManager.clearOldest();
@@ -1013,31 +1014,20 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private void tryPausing()
     {
-        /*
-        CoreInterface.addOnStateCallbackListener( new CoreInterface.OnStateCallbackListener()
-        {
-            @Override
-            public void onStateCallback( int paramChanged, int newValue )
-            {
-                if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
-                {
-                    CoreInterface.removeOnStateCallbackListener( this );
-
-                    //Don't pause if by the time we finished saving, we have been resumed
-                    if(!mIsResumed)
-                    {
-                        CoreInterface.pauseEmulator();
-                    }
-                }
-            }
-        } );*/
-
         //Generate auto save file
         if(mGlobalPrefs.maxAutoSaves != 0)
         {
             final String saveFileName = mGameDataManager.getAutoSaveFileName();
-            mCoreFragment.autoSaveState(saveFileName);
-            mCoreFragment.pauseEmulator();
+            mCoreFragment.autoSaveState(saveFileName, new CoreService.AutoSaveCompleteAction() {
+                @Override
+                public void onSaveStateComplete() {
+                    //Don't pause if by the time we finished saving, we have been resumed
+                    if(!mIsResumed)
+                    {
+                        mCoreFragment.pauseEmulator();
+                    }
+                }
+            });
         }
         else
         {

@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: littleguy77
+ * Authors: fzurita
  */
 package paulscode.android.mupen64plusae.jni;
 
@@ -72,6 +72,14 @@ public class CoreService extends Service
         void onCoreServiceDestroyed();
     }
 
+    public interface AutoSaveCompleteAction
+    {
+        /**
+         * Called when an auto save completes
+         */
+        void onSaveStateComplete();
+    }
+
     private static boolean mIsServiceRunning = false;
 
     public static final String COMPLETE_EXTENSION = "complete";
@@ -122,7 +130,7 @@ public class CoreService extends Service
         NativeExports.emuResume();
     }
 
-    void autoSaveState(final String latestSave)
+    void autoSaveState(final String latestSave, final AutoSaveCompleteAction autoSaveCompleteAction)
     {
         // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
 
@@ -138,6 +146,11 @@ public class CoreService extends Service
                 if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
                 {
                     removeOnStateCallbackListener( this );
+
+                    if(autoSaveCompleteAction != null)
+                    {
+                        autoSaveCompleteAction.onSaveStateComplete();
+                    }
 
                     //newValue == 1, then it was successful
                     if(newValue == 1)

@@ -668,11 +668,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mCoreService.loadState(file);
     }
 
-    public void autoSaveState( final String latestSave )
+    public void autoSaveState( final String latestSave, final CoreService.AutoSaveCompleteAction autoSaveCompleteAction )
     {
         if (mCoreService != null)
         {
-            mCoreService.autoSaveState(latestSave);
+            mCoreService.autoSaveState(latestSave, autoSaveCompleteAction);
         }
     }
 
