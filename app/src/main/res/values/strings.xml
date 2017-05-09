@@ -136,6 +136,7 @@
     <string name="toast_canceling">Canceling…</string>
     <string name="toast_pleaseWait">Please wait…</string>
     <string name="toast_paused">Paused…</string>
+    <string name="toast_running">Running…</string>
 
     <!-- Something happened (use '.') -->
     <string name="toast_nativeMainFailure01">Failed to parse initial command line parameters.</string>

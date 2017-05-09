@@ -120,6 +120,7 @@
     <string name="toast_canceling">Cancelando…</string>
     <string name="toast_pleaseWait">Por Favor, Espere…</string>
     <string name="toast_paused">En pausa…</string>
+    <string name="toast_running">Corriendo…</string>
 
     <!--Something happened (use '.')-->
     <string name="toast_nativeMainFailure01">\'No se pudieron analizar los parámetros iniciales de la línea de comandos.\'</string>

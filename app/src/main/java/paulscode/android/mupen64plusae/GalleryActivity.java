@@ -20,15 +20,13 @@
  */
 package paulscode.android.mupen64plusae;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -69,6 +67,7 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.game.GameFragment;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -82,7 +81,8 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
-public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener
+public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
+        GameFragment.OnGameActivityFinished
 {
     // Saved instance states
     private static final String STATE_QUERY = "query";
@@ -93,9 +93,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
-    private static final int RESTART_CONFIRM_DIALOG_ID = 0;
-    private static final int CLEAR_CONFIRM_DIALOG_ID = 1;
-    private static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 2;
+    private static final String STATE_GAME_FRAGMENT = "STATE_GAME_FRAGMENT";
+    public static final int RESTART_CONFIRM_DIALOG_ID = 0;
+    public static final int CLEAR_CONFIRM_DIALOG_ID = 1;
+    public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 2;
+    public static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
+    public static final int RESET_CONFIRM_DIALOG_ID = 4;
+    public static final int EXIT_CONFIRM_DIALOG_ID = 5;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -133,13 +137,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
 
+    //Game fragment
+    GameFragment mGameFragment = null;
+
     @Override
     protected void onNewIntent( Intent intent )
     {
         // If the activity is already running and is launched again (e.g. from a file manager app),
         // the existing instance will be reused rather than a new one created. This behavior is
         // specified in the manifest (launchMode = singleTask). In that situation, any activities
-        // above this on the stack (e.g. GameActivity, GamePrefsActivity) will be destroyed
+        // above this on the stack (e.g. GameFragment, GamePrefsActivity) will be destroyed
         // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
         // called again on this instance.
         super.onNewIntent( intent );
@@ -340,6 +347,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
         mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
+        mGameFragment = (GameFragment) fm.findFragmentByTag(STATE_GAME_FRAGMENT);
 
         if(mCacheRomInfoFragment == null)
         {
@@ -362,19 +370,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public void onResume()
     {
         super.onResume();
-
-        //Make sure the core is not running at this point
-        ActivityHelper.stopCoreService(getApplicationContext(), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        });
 
         //mRefreshNeeded will be set to true whenever a game is launched
         if(mRefreshNeeded)
@@ -674,6 +669,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public void onPromptDialogClosed(int id, int which)
     {
+        if(mGameFragment != null)
+        {
+            mGameFragment.onPromptDialogClosed(id, which);
+        }
+
         if( which == DialogInterface.BUTTON_POSITIVE )
         {
             if(id == RESTART_CONFIRM_DIALOG_ID && mSelectedItem != null)
@@ -1082,8 +1082,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         // Launch the game activity
-        ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting );
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        mGameFragment = GameFragment.newInstance(romPath, romMd5, romCrc, romHeaderName, romCountryCode,
+                romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
+        ft.replace(android.R.id.content, mGameFragment, STATE_GAME_FRAGMENT);
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    @Override
+    public void onGameActivityFinished() {
+        final FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().remove(mGameFragment).commit();
+        mGameFragment = null;
     }
 
     private String ExtractFirstROMFromZip(String zipPath)

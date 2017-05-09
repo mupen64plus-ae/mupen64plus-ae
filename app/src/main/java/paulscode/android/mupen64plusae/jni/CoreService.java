@@ -46,7 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.game.GameActivity;
+import paulscode.android.mupen64plusae.GalleryActivity;
 
 import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
 import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
@@ -103,6 +103,7 @@ public class CoreService extends Service
     private String mUserSaveDir = null;
     private boolean mIsRunning = false;
     private boolean mIsPaused = false;
+    private String mArtPath = null;
 
     //Service attributes
     private int mStartId;
@@ -128,6 +129,8 @@ public class CoreService extends Service
     {
         mIsPaused = false;
         NativeExports.emuResume();
+
+        updateNotification();
     }
 
     void autoSaveState(final String latestSave, final AutoSaveCompleteAction autoSaveCompleteAction)
@@ -186,6 +189,8 @@ public class CoreService extends Service
     {
         mIsPaused = true;
         NativeExports.emuPause();
+
+        updateNotification();
     }
 
     void togglePause()
@@ -199,6 +204,8 @@ public class CoreService extends Service
             mIsPaused = true;
             NativeExports.emuPause();
         }
+
+        updateNotification();
     }
 
     boolean isPaused()
@@ -367,8 +374,6 @@ public class CoreService extends Service
             }
             arglist.add( mRomPath );
 
-            mIsRunning = true;
-
             //This call blocks until emulation is stopped
             final int result = NativeExports.emuStart( mCoreUserDataDir, mCoreUserCacheDir, arglist.toArray() );
 
@@ -411,6 +416,36 @@ public class CoreService extends Service
         mServiceHandler = new ServiceHandler(serviceLooper);
     }
 
+    private void updateNotification()
+    {
+        //Show the notification
+        Intent notificationIntent = new Intent(this, GalleryActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.icon)
+                .setContentTitle(mRomGoodName)
+                .setContentIntent(pendingIntent);
+
+        if(mIsPaused)
+        {
+            builder.setContentText(getString(R.string.toast_paused));
+        }
+        else
+        {
+            builder.setContentText(getString(R.string.toast_running));
+        }
+
+        if (!TextUtils.isEmpty(mArtPath) && new File(mArtPath).exists())
+        {
+            builder.setLargeIcon(new BitmapDrawable(this.getResources(), mArtPath).getBitmap());
+        }
+        startForeground(ONGOING_NOTIFICATION_ID, builder.build());
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent != null)
@@ -441,12 +476,7 @@ public class CoreService extends Service
             mCoreUserConfigDir = extras.getString( ActivityHelper.Keys.CORE_USER_CONFIG_DIR );
             mUserSaveDir = extras.getString( ActivityHelper.Keys.USER_SAVE_DIR );
 
-            String romMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
-            String romCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
-            String romHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
-            byte romCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
-            String artPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
-            String legacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
+            mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
 
             String libsDir = extras.getString( ActivityHelper.Keys.LIBS_DIR );
             // Load the native libraries, this must be done outside the thread to prevent race conditions
@@ -455,33 +485,7 @@ public class CoreService extends Service
 
             mIsServiceRunning = true;
 
-            //Show the notification
-            Intent notificationIntent = new Intent(this, GameActivity.class);
-            notificationIntent.putExtra( ActivityHelper.Keys.ROM_PATH, mRomPath );
-            notificationIntent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
-            notificationIntent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
-            notificationIntent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
-            notificationIntent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
-            notificationIntent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, artPath );
-            notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
-            notificationIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, legacySaveName );
-            notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
-            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.icon)
-                    .setContentTitle(mRomGoodName)
-                    .setContentText(getString(R.string.toast_paused))
-                    .setContentIntent(pendingIntent);
-
-            if (!TextUtils.isEmpty(artPath) && new File(artPath).exists())
-            {
-                builder.setLargeIcon(new BitmapDrawable(this.getResources(), artPath).getBitmap());
-            }
-            startForeground(ONGOING_NOTIFICATION_ID, builder.build());
+            updateNotification();
         }
 
         mStartId = startId;
@@ -515,6 +519,7 @@ public class CoreService extends Service
 
         if(!mIsRunning)
         {
+            mIsRunning = true;
             // For each start request, send a message to start a job and deliver the
             // start ID so we know which request we're stopping when we finish the job
             Message msg = mServiceHandler.obtainMessage();

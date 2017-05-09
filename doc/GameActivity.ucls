@@ -43,7 +43,7 @@
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="9" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.game.GameActivity" 
+  <class id="9" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.game.GameFragment"
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameActivity.java" binary="false">    
     <position height="-1" width="-1" x="379" y="190"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      

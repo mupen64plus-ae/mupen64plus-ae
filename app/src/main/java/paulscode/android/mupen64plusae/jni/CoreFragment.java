@@ -50,6 +50,9 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 
+import static paulscode.android.mupen64plusae.GalleryActivity.EXIT_CONFIRM_DIALOG_ID;
+import static paulscode.android.mupen64plusae.GalleryActivity.RESET_CONFIRM_DIALOG_ID;
+import static paulscode.android.mupen64plusae.GalleryActivity.SAVE_STATE_FILE_CONFIRM_DIALOG_ID;
 import static paulscode.android.mupen64plusae.jni.NativeConstants.EMULATOR_STATE_UNKNOWN;
 
 public class CoreFragment extends Fragment implements CoreServiceListener
@@ -89,13 +92,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         void onSaveLoad();
     }
 
-    private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 0;
     private static final String SAVE_STATE_FILE_CONFIRM_DIALOG_STATE = "SAVE_STATE_FILE_CONFIRM_DIALOG_STATE";
-
-    private static final int RESTART_CONFIRM_DIALOG_ID = 1;
     private static final String RESTART_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
-
-    private static final int EXIT_CONFIRM_DIALOG_ID = 2;
     private static final String EXIT_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
 
     //Service connection for the progress dialog
@@ -136,6 +134,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private boolean mUseCustomSpeed = false;
     private int mCustomSpeed = DEFAULT_SPEED;
 
+    CoreEventListener mCoreEventListener = null;
+
     // this method is only called once for this fragment
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -172,7 +172,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     @Override
     public void onDestroy()
     {        
-        if(mServiceConnection != null && mIsRunning)
+        if(mServiceConnection != null)
         {
             actuallyStopCore();
         }
@@ -270,6 +270,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mIsRunning = false;
     }
 
+    public void setCoreEventListener(CoreEventListener coreEventListener)
+    {
+        mCoreEventListener = coreEventListener;
+    }
+
     public void startCore( AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName,
         String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
         String romLegacySave, String cheatArgs, boolean isRestarting, String saveToLoad)
@@ -303,60 +308,78 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     
     private void actuallyStartCore(Activity activity)
     {
-        mIsRunning = true;
+        if(!mIsRunning)
+        {
+            mIsRunning = true;
 
-        // Defines callbacks for service binding, passed to bindService()
-        mServiceConnection = new ServiceConnection() {
-            
-            @Override
-            public void onServiceConnected(ComponentName className, IBinder service) {
+            // Defines callbacks for service binding, passed to bindService()
+            mServiceConnection = new ServiceConnection() {
 
-                // We've bound to LocalService, cast the IBinder and get LocalService instance
-                LocalBinder binder = (LocalBinder) service;
-                mCoreService = binder.getService();
-                mCoreService.setCoreServiceListener(CoreFragment.this);
-                mCoreService.setSurface(mSurface);
-                mCoreService.setOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
+                @Override
+                public void onServiceConnected(ComponentName className, IBinder service) {
 
-                if(getActivity() != null && getActivity() instanceof CoreEventListener)
-                {
-                    ((CoreEventListener)getActivity()).onCoreServiceStarted();
+                    // We've bound to LocalService, cast the IBinder and get LocalService instance
+                    LocalBinder binder = (LocalBinder) service;
+                    mCoreService = binder.getService();
+                    mCoreService.setCoreServiceListener(CoreFragment.this);
+                    mCoreService.setSurface(mSurface);
+                    mCoreService.setOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
+
+                    if(mCoreEventListener != null && getActivity() != null)
+                    {
+                        mCoreEventListener.onCoreServiceStarted();
+                    }
                 }
-            }
 
-            @Override
-            public void onServiceDisconnected(ComponentName arg0) {
-                //Nothing to do here
-            }
-        };
+                @Override
+                public void onServiceDisconnected(ComponentName arg0) {
+                    //Nothing to do here
+                }
+            };
 
-        ArrayList<Integer> pakTypes = new ArrayList<>();
-        pakTypes.add(mGlobalPrefs.getPakType(1).getNativeValue());
-        pakTypes.add(mGlobalPrefs.getPakType(2).getNativeValue());
-        pakTypes.add(mGlobalPrefs.getPakType(3).getNativeValue());
-        pakTypes.add(mGlobalPrefs.getPakType(4).getNativeValue());
+            ArrayList<Integer> pakTypes = new ArrayList<>();
+            pakTypes.add(mGlobalPrefs.getPakType(1).getNativeValue());
+            pakTypes.add(mGlobalPrefs.getPakType(2).getNativeValue());
+            pakTypes.add(mGlobalPrefs.getPakType(3).getNativeValue());
+            pakTypes.add(mGlobalPrefs.getPakType(4).getNativeValue());
 
-        boolean[] isPlugged = new boolean[4];
-        isPlugged[0] = mGamePrefs.isPlugged1;
-        isPlugged[1] = mGamePrefs.isPlugged2;
-        isPlugged[2] = mGamePrefs.isPlugged3;
-        isPlugged[3] = mGamePrefs.isPlugged4;
+            boolean[] isPlugged = new boolean[4];
+            isPlugged[0] = mGamePrefs.isPlugged1;
+            isPlugged[1] = mGamePrefs.isPlugged2;
+            isPlugged[2] = mGamePrefs.isPlugged3;
+            isPlugged[3] = mGamePrefs.isPlugged4;
 
-        // Start the core
-        ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomPath,
-                mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
-                mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
-                isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
-                mGlobalPrefs.coreUserCacheDir, mGamePrefs.coreUserConfigDir, mGamePrefs.userSaveDir, mAppData.libsDir);
+            // Start the core
+            ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomPath,
+                    mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
+                    mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
+                    isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
+                    mGlobalPrefs.coreUserCacheDir, mGamePrefs.coreUserConfigDir, mGamePrefs.userSaveDir, mAppData.libsDir);
+        }
     }
 
     private void actuallyStopCore()
     {
-        ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
-
-        if(getActivity() != null && getActivity() instanceof CoreEventListener)
+        if(mIsRunning)
         {
-            ((CoreEventListener)getActivity()).onExitFinished();
+            ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
+
+            mIsRunning = false;
+
+            if(getActivity() != null)
+            {
+                getActivity().runOnUiThread( new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        if(mCoreEventListener != null)
+                        {
+                            mCoreEventListener.onExitFinished();
+                        }
+                    }
+                } );
+            }
         }
     }
 
@@ -433,8 +456,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void exit()
     {
-        if (mCoreService != null)
-        {
+        if (mCoreService != null) {
             mCoreService.pauseEmulator();
         }
 
@@ -481,9 +503,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
             mCoreService.saveSlot();
 
-            if(getActivity() != null && getActivity() instanceof CoreEventListener)
+            if(mCoreEventListener != null)
             {
-                ((CoreEventListener)getActivity()).onSaveLoad();
+                mCoreEventListener.onSaveLoad();
             }
         }
     }
@@ -501,9 +523,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
             mCoreService.loadSlot();
 
-            if(getActivity() != null && getActivity() instanceof CoreEventListener)
+            if(mCoreEventListener != null)
             {
-                ((CoreEventListener)getActivity()).onSaveLoad();
+                mCoreEventListener.onSaveLoad();
             }
         }
     }
@@ -545,9 +567,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                             {
                                 mCoreService.setSlot(value);
 
-                                if(getActivity() != null && getActivity() instanceof CoreEventListener)
+                                if(mCoreEventListener != null)
                                 {
-                                    ((CoreEventListener)getActivity()).onPromptFinished();
+                                    mCoreEventListener.onPromptFinished();
                                 }
                             }
                         }
@@ -600,9 +622,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
                 Notifier.showToast( getActivity(), R.string.toast_savingFile, mCurrentSaveStateFile.getName() );
 
-                if(getActivity() != null && getActivity() instanceof CoreEventListener)
+                if(mCoreEventListener != null)
                 {
-                    ((CoreEventListener)getActivity()).onSaveLoad();
+                    mCoreEventListener.onSaveLoad();
                 }
             }
         }
@@ -623,9 +645,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                     {
                         loadState(file);
 
-                        if(getActivity() != null && getActivity() instanceof CoreEventListener)
+                        if(mCoreEventListener != null)
                         {
-                            ((CoreEventListener)getActivity()).onSaveLoad();
+                            mCoreEventListener.onSaveLoad();
                         }
                     }
                 }
@@ -648,9 +670,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                     {
                         loadState(file);
 
-                        if(getActivity() != null && getActivity() instanceof CoreEventListener)
+                        if(mCoreEventListener != null)
                         {
-                            ((CoreEventListener)getActivity()).onSaveLoad();
+                            mCoreEventListener.onSaveLoad();
                         }
                     }
                 }
@@ -713,7 +735,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                 String message = getActivity().getString( R.string.confirmResetGame_message );
 
                 ConfirmationDialog confirmationDialog =
-                        ConfirmationDialog.newInstance(RESTART_CONFIRM_DIALOG_ID, title, message);
+                        ConfirmationDialog.newInstance(RESET_CONFIRM_DIALOG_ID, title, message);
 
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 confirmationDialog.show(fm, RESTART_CONFIRM_DIALOG_STATE);
@@ -791,9 +813,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                             {
                                 setCustomSpeed( value );
 
-                                if(getActivity() != null && getActivity() instanceof CoreEventListener)
+                                if(mCoreEventListener != null)
                                 {
-                                    ((CoreEventListener)getActivity()).onPromptFinished();
+                                    mCoreEventListener.onPromptFinished();
                                 }
                             }
                         }
@@ -810,23 +832,23 @@ public class CoreFragment extends Fragment implements CoreServiceListener
             if(getActivity() != null)
             {
                 Notifier.showToast(getActivity(), R.string.toast_overwritingFile, mCurrentSaveStateFile.getName());
-                if(getActivity() != null && getActivity() instanceof CoreEventListener)
+                if(mCoreEventListener != null)
                 {
-                    ((CoreEventListener)getActivity()).onSaveLoad();
+                    mCoreEventListener.onSaveLoad();
                 }
             }
         }
-        else if (id == RESTART_CONFIRM_DIALOG_ID)
+        else if (id == RESET_CONFIRM_DIALOG_ID)
         {
-            if(getActivity() != null && getActivity() instanceof CoreEventListener)
+            if(mCoreEventListener != null)
             {
-                ((CoreEventListener)getActivity()).onRestart( which == DialogInterface.BUTTON_POSITIVE );
+                mCoreEventListener.onRestart( which == DialogInterface.BUTTON_POSITIVE );
             }
         }
         else if (id == EXIT_CONFIRM_DIALOG_ID)
         {
-            if(getActivity() != null && getActivity() instanceof CoreEventListener)
-                ((CoreEventListener)getActivity()).onExitRequested( which == DialogInterface.BUTTON_POSITIVE );
+            if(mCoreEventListener != null)
+                mCoreEventListener.onExitRequested( which == DialogInterface.BUTTON_POSITIVE );
         }
     }
     public void setSurface(Surface surface)

@@ -255,12 +255,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="paulscode.android.mupen64plusae.game.GameActivity"
-            android:label="@string/GameActivity_title"
-            android:launchMode="singleTask"
-            android:theme="@style/appTheme.Black" >
-        </activity>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService" />
         <service android:name="paulscode.android.mupen64plusae.jni.CoreService" />
