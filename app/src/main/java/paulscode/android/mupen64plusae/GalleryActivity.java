@@ -68,6 +68,7 @@ import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.game.GameFragment;
+import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -1039,9 +1040,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return;
         }
 
-        // Notify user that the game activity is starting
-        Notifier.showToast( this, R.string.toast_launchingEmulator );
-
         // Update the ConfigSection with the new value for lastPlayed
         final String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
         final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
@@ -1081,13 +1079,23 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             romLegacySaveFileName = romFile.getName();
         }
 
-        // Launch the game activity
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        mGameFragment = GameFragment.newInstance(romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
-        ft.replace(android.R.id.content, mGameFragment, STATE_GAME_FRAGMENT);
-        ft.addToBackStack(null);
-        ft.commit();
+        // Launch the game activity if the service is not running yet
+        if(!CoreService.IsServiceRunning())
+        {
+            // Notify user that the game activity is starting
+            Notifier.showToast( this, R.string.toast_launchingEmulator );
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            mGameFragment = GameFragment.newInstance(romPath, romMd5, romCrc, romHeaderName, romCountryCode,
+                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
+            ft.replace(android.R.id.content, mGameFragment, STATE_GAME_FRAGMENT);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+        else
+        {
+            Notifier.showToast( this, R.string.toast_not_done_shutting_down );
+        }
     }
 
     @Override

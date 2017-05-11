@@ -138,6 +138,7 @@
     <string name="toast_paused">Paused…</string>
     <string name="toast_running">Running…</string>
     <string name="toast_shutting_down">Shutting down…</string>
+    <string name="toast_not_done_shutting_down">Please wait, emulator not done shutting down</string>
 
     <!-- Something happened (use '.') -->
     <string name="toast_nativeMainFailure01">Failed to parse initial command line parameters.</string>
