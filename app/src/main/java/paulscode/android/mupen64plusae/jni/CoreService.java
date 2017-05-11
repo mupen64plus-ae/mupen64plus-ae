@@ -108,6 +108,7 @@ public class CoreService extends Service
     //Service attributes
     private int mStartId;
     private ServiceHandler mServiceHandler;
+    private boolean mIsShuttingDown = false;
 
     private final IBinder mBinder = new LocalBinder();
     private CoreServiceListener mListener = null;
@@ -121,6 +122,9 @@ public class CoreService extends Service
 
     void shutdownEmulator()
     {
+        mIsShuttingDown = true;
+        updateNotification();
+
         // Tell the core to quit
         NativeExports.emuStop();
     }
@@ -421,7 +425,11 @@ public class CoreService extends Service
                 .setContentTitle(mRomGoodName)
                 .setContentIntent(pendingIntent);
 
-        if(mIsPaused)
+        if(mIsShuttingDown)
+        {
+            builder.setContentText(getString(R.string.toast_shutting_down));
+        }
+        else if(mIsPaused)
         {
             builder.setContentText(getString(R.string.toast_paused));
         }
