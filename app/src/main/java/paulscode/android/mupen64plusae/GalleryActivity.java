@@ -1094,6 +1094,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public void onGameActivityFinished() {
         final FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().remove(mGameFragment).commit();
+        fm.popBackStack();
         mGameFragment = null;
     }
 

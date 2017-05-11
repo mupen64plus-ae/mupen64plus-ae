@@ -321,9 +321,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                     // We've bound to LocalService, cast the IBinder and get LocalService instance
                     LocalBinder binder = (LocalBinder) service;
                     mCoreService = binder.getService();
-                    mCoreService.setCoreServiceListener(CoreFragment.this);
                     mCoreService.setSurface(mSurface);
                     mCoreService.setOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
+                    mCoreService.setCoreServiceListener(CoreFragment.this);
 
                     if(mCoreEventListener != null && getActivity() != null)
                     {
@@ -362,8 +362,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     {
         if(mIsRunning)
         {
-            ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
-
             mIsRunning = false;
 
             if(getActivity() != null)
@@ -373,10 +371,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                     @Override
                     public void run()
                     {
-                        if(mCoreEventListener != null)
-                        {
-                            mCoreEventListener.onExitFinished();
-                        }
+                        mCoreService = null;
+                        ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
+
                     }
                 } );
             }
@@ -756,6 +753,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         if (mCoreService != null)
         {
             mCoreService.shutdownEmulator();
+
+            if(mCoreEventListener != null)
+            {
+                mCoreEventListener.onExitFinished();
+            }
         }
     }
 
@@ -865,14 +867,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         if(mCoreService != null)
         {
             mCoreService.destroySurface();
-        }
-    }
-
-    public void shutdownEgl()
-    {
-        if(mCoreService != null)
-        {
-            mCoreService.shutdownEgl();
         }
     }
     

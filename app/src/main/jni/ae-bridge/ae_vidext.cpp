@@ -10,13 +10,13 @@
 #include <math.h>
 //#include <android/native_app_glue/android_native_app_glue.h>
 
-EGLDisplay display;
+EGLDisplay display = EGL_NO_DISPLAY;
 EGLConfig config;
-EGLContext context;
-EGLSurface surface;
-ANativeWindow* native_window;
+EGLContext context = EGL_NO_CONTEXT;
+EGLSurface surface = EGL_NO_SURFACE;
+ANativeWindow* native_window = NULL;
 int isGLES2;
-int new_surface = 0;
+bool new_surface = false;
 int FPSRecalcPeriod = 0;
 uint32_t frameCount = 0;
 int64_t oldTime;
@@ -68,7 +68,6 @@ size_t FindIndex( const EGLint a[], size_t size, int value )
 
 extern DECLSPEC m64p_error VidExtFuncInit()
 {
-    new_surface = 0;
     frameCount = 0;
     surface = EGL_NO_SURFACE;
     context = EGL_NO_CONTEXT;
@@ -85,11 +84,6 @@ extern DECLSPEC m64p_error VidExtFuncInit()
         LOGE("eglInitialize() returned error %d", eglGetError());
         return M64ERR_INVALID_STATE;
     }
-    return M64ERR_SUCCESS;
-}
-
-extern DECLSPEC m64p_error VidExtFuncQuit()
-{
     return M64ERR_SUCCESS;
 }
 
@@ -114,22 +108,33 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
             return M64ERR_INVALID_STATE;
         }
     }
-    if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
-        LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
-        return M64ERR_INVALID_STATE;
-    }
 
-    if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs))) {
-        //If creating the context failed, just try to create a GLES2/3 context
-        //This is useful because GLideN64 requests an OpenGL 3.3 core context.
-        if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, defaultGlEsContextAttribs))) {
-            LOGE("eglCreateContext() returned error %d", eglGetError());
+    if(new_surface)
+    {
+		LOGI("VidExtFuncSetMode: Initializing surface");
+
+        if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
+            LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
             return M64ERR_INVALID_STATE;
         }
-    }
-    if (!eglMakeCurrent(display, surface, surface, context)) {
-        LOGE("eglMakeCurrent() returned error %d", eglGetError());
-        return M64ERR_INVALID_STATE;
+
+        if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs))) {
+            //If creating the context failed, just try to create a GLES2/3 context
+            //This is useful because GLideN64 requests an OpenGL 3.3 core context.
+            if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, defaultGlEsContextAttribs))) {
+                LOGE("eglCreateContext() returned error %d", eglGetError());
+                return M64ERR_INVALID_STATE;
+            }
+        }
+
+        if (!eglMakeCurrent(display, surface, surface, context)) {
+            LOGE("eglMakeCurrent() returned error %d", eglGetError());
+            return M64ERR_INVALID_STATE;
+        }
+
+		new_surface = false;
+    } else {
+        LOGE("VidExtFuncSetMode called before surface has been set");
     }
 
 	EGLLoader::loadEGLFunctions();
@@ -300,6 +305,9 @@ extern DECLSPEC m64p_error VidExtFuncGLGetAttr(m64p_GLattr Attr, int *pValue)
 extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 {
     if (new_surface) {
+
+        LOGI("VidExtFuncGLSwapBuf: New surface has been detected");
+
         if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
             LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
             return M64ERR_INVALID_STATE;
@@ -308,7 +316,7 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
             LOGE("eglMakeCurrent() returned error %d", eglGetError());
             return M64ERR_INVALID_STATE;
         }
-        new_surface = 0;
+        new_surface = false;
     }
 
     if (vsync != oldVsync) {
@@ -335,8 +343,16 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_setNativeWindow(JNIEnv* env, jclass cls, jobject native_surface)
 {
-    native_window = ANativeWindow_fromSurface(env, native_surface);
-    new_surface = 1;
+	LOGI("setNativeWindow: New surface has been set");
+
+	if(native_window != NULL)
+	{
+		ANativeWindow_release(native_window);
+		native_window = NULL;
+	}
+
+	native_window = ANativeWindow_fromSurface(env, native_surface);
+	new_surface = true;
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroySurface(JNIEnv* env, jclass cls)
@@ -346,21 +362,33 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
     surface = EGL_NO_SURFACE;
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuShutdownEgl(JNIEnv* env, jclass cls)
+extern DECLSPEC m64p_error VidExtFuncQuit()
 {
-    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    if (surface != EGL_NO_SURFACE) {
-        eglDestroySurface(display, surface);
-        surface = EGL_NO_SURFACE;
-    }
-    if (context != EGL_NO_CONTEXT) {
-        eglDestroyContext(display, context);
-        context = EGL_NO_CONTEXT;
-    }
-    if (display != EGL_NO_DISPLAY) {
-        eglTerminate(display);
-        display = EGL_NO_DISPLAY;
-    }
+	LOGI("VidExtFuncQuit");
+
+	if(native_window != NULL)
+	{
+		ANativeWindow_release(native_window);
+		native_window = NULL;
+	}
+
+	if (context != EGL_NO_CONTEXT) {
+		eglDestroyContext(display, context);
+		context = EGL_NO_CONTEXT;
+	}
+
+	eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	if (surface != EGL_NO_SURFACE) {
+		eglDestroySurface(display, surface);
+		surface = EGL_NO_SURFACE;
+	}
+
+	if (display != EGL_NO_DISPLAY) {
+		eglTerminate(display);
+		display = EGL_NO_DISPLAY;
+	}
+
+	return M64ERR_SUCCESS;
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_FPSEnabled(JNIEnv* env, jclass cls, int recalc)

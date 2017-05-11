@@ -63,6 +63,14 @@ extern DECLSPEC void Android_JNI_InitImports(JNIEnv* env, jclass cls)
     }
 }
 
+// Called by ae-exports
+extern DECLSPEC void Android_JNI_DestroyImports(JNIEnv* env)
+{
+    LOGI("Android_JNI_DestroyImports()");
+
+    env->DeleteGlobalRef(mActivityClass);
+}
+
 extern DECLSPEC void Android_JNI_StateCallback(void* context, m64p_core_param paramChanged, int newValue)
 {
     /*----ParamChanged-----------------

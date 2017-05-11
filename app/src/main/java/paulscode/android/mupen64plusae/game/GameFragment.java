@@ -31,7 +31,6 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
@@ -459,6 +458,8 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
         Log.i( "GameFragment", "onDestroy" );
 
+        showSystemBars();
+
         mHandler.removeCallbacks(mLastTouchChecker);
         final FragmentManager fm = getActivity().getSupportFragmentManager();
         fm.beginTransaction().remove(mCoreFragment).commit();
@@ -748,10 +749,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     {
         Log.i( "GameFragment", "surfaceDestroyed" );
 
-        if(!mShuttingDown)
-        {
-            mCoreFragment.destroySurface();
-        }
+        mCoreFragment.destroySurface();
 
         mIsSurface = false;
     }
@@ -804,14 +802,6 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     {
         if(getActivity() != null)
         {
-            FragmentManager manager = getActivity().getSupportFragmentManager();
-            FragmentTransaction trans = manager.beginTransaction();
-            trans.remove(this);
-            trans.commit();
-            manager.popBackStack();
-
-            showSystemBars();
-
             if(getActivity() instanceof OnGameActivityFinished)
             {
                 ((OnGameActivityFinished)getActivity()).onGameActivityFinished();

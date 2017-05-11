@@ -311,11 +311,6 @@ public class CoreService extends Service
         NativeExports.emuDestroySurface();
     }
 
-    void shutdownEgl()
-    {
-        NativeExports.emuShutdownEgl();
-    }
-
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
@@ -379,7 +374,7 @@ public class CoreService extends Service
 
             mIsRunning = false;
 
-            Log.i( "CoreService", "Core thread exit!");
+            NativeExports.unloadLibraries();
 
             if(mListener != null)
             {
@@ -390,10 +385,6 @@ public class CoreService extends Service
 
                 mListener.onFinish();
             }
-
-            NativeExports.unloadLibraries();
-
-            mIsServiceRunning = false;
 
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
@@ -497,6 +488,8 @@ public class CoreService extends Service
     @Override
     public void onDestroy()
     {
+        mIsServiceRunning = false;
+
         if (mListener != null)
         {
             mListener.onCoreServiceDestroyed();

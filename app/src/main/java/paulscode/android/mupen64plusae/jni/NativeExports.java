@@ -89,6 +89,4 @@ public class NativeExports
     static native int emuReset();
 
     static native void setNativeWindow(Surface surface);
-
-    static native void emuShutdownEgl();
 }

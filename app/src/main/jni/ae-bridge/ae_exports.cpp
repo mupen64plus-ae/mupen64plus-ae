@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <dlfcn.h>
+#include <unistd.h>
 #include "SDL.h"
 #include "m64p_types.h"
 #include "ae_imports.h"
@@ -43,26 +44,23 @@ static void* mReserved;
 
 // Library handles
 static void *handleAEI;      // libae-imports.so
-static void *handleFreetype; // libfreetype.so
 static void *handleCore;     // libmupen64plus-core.so
 static void *handleFront;    // libmupen64plus-ui-console.so
 
 // Function types
 typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
 typedef int         (*pAeiInit)         (JNIEnv* env, jclass cls);
+typedef int         (*pAeiDestroy)      (JNIEnv* env);
 typedef m64p_error  (*pCoreShutdown)    (void);
 typedef m64p_error  (*pCoreDoCommand)   (m64p_command, int, void *);
 typedef int         (*pFrontMain)       (int argc, char* argv[]);
 
 // Function pointers
 static pAeiInit         aeiInit         = NULL;
+static pAeiDestroy      aeiDestroy      = NULL;
 static pCoreDoCommand   coreDoCommand   = NULL;
 static pCoreShutdown    coreShutdown    = NULL;
 static pFrontMain       frontMain       = NULL;
-
-static const int ANDROID_SDK_VERSION_M = 23;
-
-static const char *coreLibraryName = "mupen64plus-core";
 
 void checkLibraryError(const char* message)
 {
@@ -135,12 +133,11 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 
     // Open shared libraries
     handleAEI      = loadLibrary(path, "ae-imports");
-    handleFreetype = loadLibrary(path, "freetype");
-    handleCore     = loadLibrary(path, coreLibraryName);
+    handleCore     = loadLibrary(path, "mupen64plus-core");
     handleFront    = loadLibrary(path, "mupen64plus-ui-console");
 
     // Make sure we don't have any typos
-    if (!handleAEI || !handleFreetype || !handleCore || !handleFront )
+    if (!handleAEI || !handleCore || !handleFront )
     {
         LOGE("Could not load libraries: be sure the paths are correct");
     }
@@ -152,43 +149,46 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 
     // Find library functions
     aeiInit       = (pAeiInit)       locateFunction(handleAEI,   "ae-imports",             "Android_JNI_InitImports");
-    coreDoCommand = (pCoreDoCommand) locateFunction(handleCore,  coreLibraryName,          "CoreDoCommand");
-    coreShutdown  = (pCoreShutdown)  locateFunction(handleCore,  coreLibraryName,          "CoreShutdown");
+    aeiDestroy    = (pAeiDestroy)    locateFunction(handleAEI,   "ae-imports",             "Android_JNI_DestroyImports");
+    coreDoCommand = (pCoreDoCommand) locateFunction(handleCore,  "mupen64plus-core",       "CoreDoCommand");
+    coreShutdown  = (pCoreShutdown)  locateFunction(handleCore,  "mupen64plus-core",       "CoreShutdown");
     frontMain     = (pFrontMain)     locateFunction(handleFront, "mupen64plus-ui-console", "SDL_main");
 
     // Make sure we don't have any typos
-    if (!aeiInit || !coreDoCommand || !frontMain || !coreShutdown)
+    if (!aeiInit || !aeiDestroy || !coreDoCommand || !frontMain || !coreShutdown)
     {
         LOGE("Could not load library functions: be sure they are named and typedef'd correctly");
-    }
+    } else {
+		// Initialize dependencies
+		jclass nativeImports = env->FindClass("paulscode/android/mupen64plusae/jni/NativeImports");
+		aeiInit(env, nativeImports);
+	}
 }
 
 extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_unloadLibraries(JNIEnv* env, jclass cls)
 {
     // Unload the libraries to ensure that static variables are re-initialized next time
     LOGI("Unloading native libraries");
-
     // Clear stale error messages
     dlerror();
 
+    aeiDestroy(env);
+
     // Nullify function pointers so that they can no longer be used
     aeiInit         = NULL;
+    aeiDestroy      = NULL;
     coreDoCommand   = NULL;
     frontMain       = NULL;
 
     // Close shared libraries
     unloadLibrary(handleFront,    "mupen64plus-ui-console");
-    unloadLibrary(handleCore,     coreLibraryName);
-    unloadLibrary(handleFreetype, "freetype");
+    unloadLibrary(handleCore,     "mupen64plus-core");
     unloadLibrary(handleAEI,      "ae-imports");
 
     // Nullify handles so that they can no longer be used
     handleFront    = NULL;
     handleCore     = NULL;
-    handleFreetype = NULL;
     handleAEI      = NULL;
-
-    coreLibraryName = "mupen64plus-core";
 }
 
 extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring juserDataPath, jstring juserCachePath, jobjectArray jargv)
@@ -200,10 +200,6 @@ extern "C" DECLSPEC jint SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     setenv( "XDG_CACHE_HOME", userCachePath, 1 );
     env->ReleaseStringUTFChars(juserDataPath, userDataPath);
     env->ReleaseStringUTFChars(juserCachePath, userCachePath);
-
-    // Initialize dependencies
-    jclass nativeImports = env->FindClass("paulscode/android/mupen64plusae/jni/NativeImports");
-    aeiInit(env, nativeImports);
 
     // Repackage the command-line args
     int argc = env->GetArrayLength(jargv);
