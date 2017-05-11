@@ -82,6 +82,9 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
+import static paulscode.android.mupen64plusae.ActivityHelper.Keys.RESUME_SERVICE;
+import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
+
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
         GameFragment.OnGameActivityFinished
 {
@@ -141,6 +144,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     //Game fragment
     GameFragment mGameFragment = null;
 
+    boolean mResumingService = false;
+
     @Override
     protected void onNewIntent( Intent intent )
     {
@@ -159,13 +164,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final Bundle extras = getIntent().getExtras();
         if( extras != null)
         {
-            final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+            final String givenRomPath = extras.getString( ROM_PATH );
 
             if( !TextUtils.isEmpty( givenRomPath ) )
             {
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
+                getIntent().removeExtra(ROM_PATH);
                 launchGameOnCreation(givenRomPath);
-                finish();
             }
         }
     }
@@ -200,13 +204,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final Bundle extras = getIntent().getExtras();
         if( extras != null)
         {
-            final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+            final String givenRomPath = extras.getString( ROM_PATH );
+            mResumingService = extras.getBoolean(RESUME_SERVICE);
 
             if( !TextUtils.isEmpty( givenRomPath ) )
             {
-                getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
+                getIntent().removeExtra(ROM_PATH);
+                getIntent().removeExtra(RESUME_SERVICE);
                 launchGameOnCreation(givenRomPath);
-                finish();
             }
         }
 
@@ -1080,8 +1085,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         // Launch the game activity if the service is not running yet
-        if(!CoreService.IsServiceRunning())
+        if(!CoreService.IsServiceRunning() || mResumingService)
         {
+            mResumingService = false;
             // Notify user that the game activity is starting
             Notifier.showToast( this, R.string.toast_launchingEmulator );
 

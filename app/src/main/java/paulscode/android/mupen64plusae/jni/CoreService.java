@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 
+import static paulscode.android.mupen64plusae.ActivityHelper.Keys.RESUME_SERVICE;
+import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
 import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
 
@@ -415,6 +417,8 @@ public class CoreService extends Service
     {
         //Show the notification
         Intent notificationIntent = new Intent(this, GalleryActivity.class);
+        notificationIntent.putExtra(RESUME_SERVICE, true);
+        notificationIntent.putExtra(ROM_PATH, mRomPath);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
