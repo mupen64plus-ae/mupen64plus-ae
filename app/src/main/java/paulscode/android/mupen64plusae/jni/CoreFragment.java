@@ -101,8 +101,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     private boolean mCachedStartCore = false;
 
-    private boolean mCachedCoreFinish = false;
-
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
@@ -155,29 +153,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener
             actuallyStartCore(getActivity());
             mCachedStartCore = false;
         }
-        
-        if(mCachedCoreFinish)
-        {
-            actuallyStopCore();
-            mCachedCoreFinish = false;
-        }
     }
     
     @Override
     public void onDetach()
     {
         super.onDetach();
-    }
-    
-    @Override
-    public void onDestroy()
-    {        
-        if(mServiceConnection != null)
-        {
-            actuallyStopCore();
-        }
-        
-        super.onDestroy();
     }
 
     @Override
@@ -254,14 +235,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     @Override
     public void onFinish()
     {
-        if(getActivity() != null)
-        {
-            actuallyStopCore();
-        }
-        else
-        {
-            mCachedCoreFinish = true;
-        }
+        //Nothing to do here right now
     }
     
     @Override

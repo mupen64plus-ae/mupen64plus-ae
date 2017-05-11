@@ -350,7 +350,7 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_ART_PATH, romArtPath);
 
         context.startService(intent);
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        context.bindService(intent, serviceConnection, 0);
     }
 
     public static void stopCoreService(Context context, ServiceConnection serviceConnection)
