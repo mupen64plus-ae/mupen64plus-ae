@@ -20,18 +20,6 @@
  */
 package paulscode.android.mupen64plusae.task;
 
-import java.io.File;
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.GalleryActivity;
-import paulscode.android.mupen64plusae.dialog.ProgressDialog;
-import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.TextureInfo;
-
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -46,6 +34,19 @@ import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
+
+import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.GalleryActivity;
+import paulscode.android.mupen64plusae.dialog.ProgressDialog;
+import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.TextureInfo;
 
 public class ExtractTexturesService extends Service
 {
@@ -92,12 +93,30 @@ public class ExtractTexturesService extends Service
         @Override
         public void handleMessage(Message msg) {
 
-            File searchPathFile = new File(mZipPath);
-            
+            //Check for error conditions
             if( mZipPath == null )
-                throw new IllegalArgumentException( "Root path cannot be null" );
+            {
+                if (mListener != null)
+                {
+                    mListener.onExtractTexturesFinished();
+                }
+
+                stopSelf(msg.arg1);
+                return;
+            }
+
+            File searchPathFile = new File(mZipPath);
+
             if( !searchPathFile.exists() )
-                throw new IllegalArgumentException( "Root path does not exist: " + searchPathFile.getAbsolutePath() );
+            {
+                if (mListener != null)
+                {
+                    mListener.onExtractTexturesFinished();
+                }
+
+                stopSelf(msg.arg1);
+                return;
+            }
             
             AppData appData = new AppData( ExtractTexturesService.this );
             GlobalPrefs globalPrefs = new GlobalPrefs( ExtractTexturesService.this, appData );
