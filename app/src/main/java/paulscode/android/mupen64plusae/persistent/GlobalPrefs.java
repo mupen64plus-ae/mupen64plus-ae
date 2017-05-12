@@ -908,7 +908,7 @@ public class GlobalPrefs
         {
             //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
             //ratio to make it full screen
-            if(screenOrientation == ORIENTATION_PORTRAIT)
+            if(screenOrientation != ORIENTATION_PORTRAIT)
             {
                 final float newWidth = tempVideoRenderWidth * widthRatio;
                 tempVideoRenderWidth = Math.round(newWidth);
