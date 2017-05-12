@@ -1071,7 +1071,15 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
                 }
                 else
                 {
-                    mCoreFragment.advanceFrame();
+                    mCoreFragment.resumeEmulator();
+
+                    //Sleep for a bit to allow screen to refresh while running, then pause
+                    try {
+                        Thread.sleep(20);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    mCoreFragment.pauseEmulator();
                 }
             }
         }
