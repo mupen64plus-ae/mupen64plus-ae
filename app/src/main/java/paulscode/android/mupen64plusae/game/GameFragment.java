@@ -173,6 +173,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     private boolean mFirstStart;
     private boolean mWaitingOnConfirmation = false;
     private boolean mShuttingDown = false;
+    private boolean mDrawerOpenState = false;
 
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
     private CoreFragment mCoreFragment = null;
@@ -346,6 +347,21 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             }, 1000);
         }
 
+        if(mDrawerOpenState)
+        {
+            Log.e("CoreFragment", "Opening drawer");
+            mDrawerLayout.postDelayed(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    mCoreFragment.pauseEmulator();
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+            }, 1000);
+
+        }
+
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener(){
 
             @Override
@@ -354,6 +370,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
                 if(!mShuttingDown)
                 {
                     mCoreFragment.resumeEmulator();
+                    mDrawerOpenState = false;
                 }
 
             }
@@ -859,6 +876,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
                 else {
                     mCoreFragment.pauseEmulator();
                     mDrawerLayout.openDrawer(GravityCompat.START);
+                    mDrawerOpenState = true;
                     mGameSidebar.requestFocus();
                     mGameSidebar.smoothScrollToPosition(0);
                 }
@@ -884,6 +902,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
                     {
                         mCoreFragment.pauseEmulator();
                         mDrawerLayout.openDrawer( GravityCompat.START );
+                        mDrawerOpenState = true;
                         mGameSidebar.requestFocus();
                         mGameSidebar.smoothScrollToPosition(0);
                     }
@@ -1046,10 +1065,14 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             }
             else if(mCoreFragment.hasServiceStarted() && mCoreFragment.getState() == NativeConstants.EMULATOR_STATE_PAUSED)
             {
-                if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation)
+                if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation && !mDrawerOpenState)
+                {
                     mCoreFragment.resumeEmulator();
+                }
                 else
+                {
                     mCoreFragment.advanceFrame();
+                }
             }
         }
     }
@@ -1064,37 +1087,25 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
                 final String saveFileName = mGameDataManager.getAutoSaveFileName();
-                mCoreFragment.autoSaveState(saveFileName, null);
+                mCoreFragment.autoSaveState(saveFileName, new CoreService.AutoSaveCompleteAction() {
+                    @Override
+                    public void onSaveStateComplete() {
+                        mCoreFragment.shutdownEmulator();
+                    }
+                });
+            }
+            else
+            {
+                mCoreFragment.shutdownEmulator();
             }
 
             mGameDataManager.clearOldest();
-            mCoreFragment.shutdownEmulator();
         }
     }
 
     private void tryPausing()
     {
-        //Generate auto save file
-        if(mGlobalPrefs.maxAutoSaves != 0)
-        {
-            final String saveFileName = mGameDataManager.getAutoSaveFileName();
-            mCoreFragment.autoSaveState(saveFileName, new CoreService.AutoSaveCompleteAction() {
-                @Override
-                public void onSaveStateComplete() {
-                    //Don't pause if by the time we finished saving, we have been resumed
-                    if(!mIsResumed)
-                    {
-                        mCoreFragment.pauseEmulator();
-                    }
-                }
-            });
-        }
-        else
-        {
-            mCoreFragment.pauseEmulator();
-        }
-
-        mGameDataManager.clearOldest();
+        mCoreFragment.pauseEmulator();
     }
 
     Runnable mLastTouchChecker = new Runnable() {
