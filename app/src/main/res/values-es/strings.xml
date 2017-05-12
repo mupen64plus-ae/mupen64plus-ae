@@ -122,7 +122,7 @@
     <string name="toast_paused">En pausa…</string>
     <string name="toast_running">Corriendo…</string>
     <string name="toast_shutting_down">Terminando…</string>
-    <string name="toast_not_done_shutting_down">Por favor espere, emulador todavía no termina</string>
+    <string name="toast_not_done_shutting_down">Por favor espere, guardando cache de texturas</string>
 
     <!--Something happened (use '.')-->
     <string name="toast_nativeMainFailure01">\'No se pudieron analizar los parámetros iniciales de la línea de comandos.\'</string>
