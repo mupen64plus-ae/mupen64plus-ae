@@ -1110,6 +1110,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         fm.beginTransaction().remove(mGameFragment).commit();
         fm.popBackStack();
         mGameFragment = null;
+
+        runOnUiThread( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                refreshGrid();
+            }
+        } );
     }
 
     private String ExtractFirstROMFromZip(String zipPath)
