@@ -292,9 +292,6 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         mDrawerLayout.setSwipGestureEnabled(mGlobalPrefs.inGameMenuIsSwipGesture);
         mDrawerLayout.setBackgroundColor(0xFF000000);
 
-        // Make the background solid black
-        surfaceView.getRootView().setBackgroundColor(0xFF000000);
-
         if (!TextUtils.isEmpty(mRomArtPath) && new File(mRomArtPath).exists())
             mGameSidebar.setImage(new BitmapDrawable(this.getResources(), mRomArtPath));
 
