@@ -267,6 +267,7 @@
     <string name="displayOrientation_entryReverseLandscape">Paisaje invertido</string>
     <string name="displayOrientation_entryPortrait">Retrato</string>
     <string name="displayOrientation_entryReversePortrait">Retrato invertido</string>
+    <string name="displayOrientation_entryAuto">Automatico</string>
     <string name="displayPosition_title">Posición de pantalla vertical</string>
     <string name="displayPosition_entryBottom">Abajo</string>
     <string name="displayPosition_entryMiddle">En medio</string>

@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -278,6 +279,12 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
         // Keep screen from going to sleep
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
+
+        // Set the screen orientation
+        if(mGlobalPrefs.displayOrientation != -1)
+        {
+            getActivity().setRequestedOrientation( mGlobalPrefs.displayOrientation );
+        }
 
         mFirstStart = true;
 
@@ -811,6 +818,12 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         if(getActivity() != null)
         {
             showSystemBars();
+
+            // Set the screen orientation
+            if(mGlobalPrefs.displayOrientation != -1)
+            {
+                getActivity().setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED );
+            }
 
             mHandler.removeCallbacks(mLastTouchChecker);
             final FragmentManager fm = getActivity().getSupportFragmentManager();

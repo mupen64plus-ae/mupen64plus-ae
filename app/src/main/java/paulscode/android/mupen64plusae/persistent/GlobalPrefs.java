@@ -25,6 +25,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -206,6 +207,12 @@ public class GlobalPrefs
     /** The height of the viewing surface, in pixels with the stretched aspect ratio. */
     public int videoSurfaceHeightStretch;
 
+    /** The screen orientation for the game activity. */
+    public final int displayOrientation;
+
+    /** Current screen orientation */
+    public final int currentDisplayOrientation;
+
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
 
@@ -295,9 +302,6 @@ public class GlobalPrefs
 
     /** True to use a high priority thread for the core */
     public final boolean useHighPriorityThread;
-
-    /** Current screen orientation */
-    public final int screenOrientation;
 
     // Shared preferences keys and key templates
     private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
@@ -457,6 +461,7 @@ public class GlobalPrefs
         stretchScreen = mPreferences.getString( "displayScaling", "original" ).equals("stretch");
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
         DetermineResolutionData(context);
+        displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 80 );
         displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
 
@@ -616,7 +621,7 @@ public class GlobalPrefs
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
 
-        screenOrientation = context.getResources().getConfiguration().orientation;
+        currentDisplayOrientation = context.getResources().getConfiguration().orientation;
     }
 
     public void changeLocale( final Activity activity )
@@ -908,7 +913,10 @@ public class GlobalPrefs
         {
             //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
             //ratio to make it full screen
-            if(screenOrientation != ORIENTATION_PORTRAIT)
+            if((displayOrientation != -1 &&
+                displayOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT &&
+                displayOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) ||
+               (displayOrientation == -1 && currentDisplayOrientation != ORIENTATION_PORTRAIT))
             {
                 final float newWidth = tempVideoRenderWidth * widthRatio;
                 tempVideoRenderWidth = Math.round(newWidth);

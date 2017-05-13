@@ -86,12 +86,14 @@
         <item>@string/displayOrientation_entryReverseLandscape</item>
         <item>@string/displayOrientation_entryPortrait</item>
         <item>@string/displayOrientation_entryReversePortrait</item>
+        <item>@string/displayOrientation_entryAuto</item>
     </string-array>
     <string-array name="displayOrientation_values" translatable="false">
         <item>0</item> <!-- ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -->
         <item>8</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -->
         <item>1</item> <!-- ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -->
         <item>9</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -->
+        <item>-1</item>
     </string-array>
 
     <string name="displayOrientation_default" translatable="false">0</string>
