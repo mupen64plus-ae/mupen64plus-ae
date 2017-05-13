@@ -60,7 +60,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
@@ -857,12 +856,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( query.length() > 0 )
             searches = query.split( " " );
 
-        List<GalleryItem> items = new ArrayList<GalleryItem>();
+        List<GalleryItem> items = new ArrayList<>();
         List<GalleryItem> recentItems = null;
         int currentTime = 0;
         if( mGlobalPrefs.isRecentShown )
         {
-            recentItems = new ArrayList<GalleryItem>();
+            recentItems = new ArrayList<>();
             currentTime = (int) ( new Date().getTime() / 1000 );
         }
 
@@ -1149,15 +1148,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
             zipFile.close();
         }
-        catch( ZipException e )
-        {
-            Log.w( "GalleryActivity", e );
-        }
-        catch( IOException e )
-        {
-            Log.w( "GalleryActivity", e );
-        }
-        catch( ArrayIndexOutOfBoundsException e )
+        catch( IOException|ArrayIndexOutOfBoundsException e )
         {
             Log.w( "GalleryActivity", e );
         }
@@ -1218,11 +1209,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
                 zipFile.close();
             }
-            catch( final IOException e)
-            {
-                Log.w( "GalleryActivity", e );
-            }
-            catch(ArrayIndexOutOfBoundsException e )
+            catch( final IOException|ArrayIndexOutOfBoundsException e)
             {
                 Log.w( "GalleryActivity", e );
             }

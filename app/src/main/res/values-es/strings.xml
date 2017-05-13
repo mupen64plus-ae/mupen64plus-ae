@@ -121,7 +121,7 @@
     <string name="toast_pleaseWait">Por Favor, Espere…</string>
     <string name="toast_paused">En pausa…</string>
     <string name="toast_running">Corriendo…</string>
-    <string name="toast_shutting_down">Terminando…</string>
+    <string name="toast_shutting_down">Guardando cache de texturas…</string>
     <string name="toast_not_done_shutting_down">Por favor espere, guardando cache de texturas</string>
 
     <!--Something happened (use '.')-->

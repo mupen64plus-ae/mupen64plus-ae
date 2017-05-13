@@ -325,8 +325,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
             // Start the core
             ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomPath,
-                    mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
-                    mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
+                    mRomArtPath, mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
                     isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
                     mGlobalPrefs.coreUserCacheDir, mGamePrefs.coreUserConfigDir, mGamePrefs.userSaveDir, mAppData.libsDir);
         }

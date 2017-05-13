@@ -137,7 +137,7 @@
     <string name="toast_pleaseWait">Please wait…</string>
     <string name="toast_paused">Paused…</string>
     <string name="toast_running">Running…</string>
-    <string name="toast_shutting_down">Shutting down…</string>
+    <string name="toast_shutting_down">Saving texture cache…</string>
     <string name="toast_not_done_shutting_down">Please wait, saving texture cache</string>
 
     <!-- Something happened (use '.') -->

@@ -327,8 +327,7 @@ public class ActivityHelper
     }
 
     public static void startCoreService(Context context, ServiceConnection serviceConnection, String romGoodName,
-        String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-        String romLegacySave, String cheatOptions, boolean isRestarting, String saveToLoad, String coreLib,
+        String romPath, String romArtPath, String cheatOptions, boolean isRestarting, String saveToLoad, String coreLib,
         boolean useHighPriorityThread, ArrayList<Integer> pakTypes, boolean[] isPlugged, boolean isFrameLimiterEnabled,
         String coreUserDataDir, String coreUserCacheDir, String coreUserConfigDir, String userSaveDir, String libsDir)
     {
