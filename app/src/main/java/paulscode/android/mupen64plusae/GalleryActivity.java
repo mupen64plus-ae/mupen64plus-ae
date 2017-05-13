@@ -144,6 +144,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     GameFragment mGameFragment = null;
 
     boolean mResumingService = false;
+    boolean mAlreadyRunning = false;
 
     @Override
     protected void onNewIntent( Intent intent )
@@ -164,6 +165,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( extras != null)
         {
             final String givenRomPath = extras.getString( ROM_PATH );
+            mResumingService = false;
+            mAlreadyRunning = true;
 
             if( !TextUtils.isEmpty( givenRomPath ) )
             {
@@ -1097,7 +1100,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             ft.addToBackStack(null);
             ft.commit();
         }
-        else
+        else if(!mAlreadyRunning)
         {
             Notifier.showToast( this, R.string.toast_not_done_shutting_down );
         }
