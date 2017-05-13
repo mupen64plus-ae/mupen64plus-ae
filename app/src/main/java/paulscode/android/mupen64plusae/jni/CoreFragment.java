@@ -728,9 +728,16 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         {
             mCoreService.shutdownEmulator();
 
-            if(mCoreEventListener != null)
+            if(mCoreEventListener != null && getActivity() != null)
             {
-                mCoreEventListener.onExitFinished();
+                getActivity().runOnUiThread( new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        mCoreEventListener.onExitFinished();
+                    }
+                } );
             }
         }
     }

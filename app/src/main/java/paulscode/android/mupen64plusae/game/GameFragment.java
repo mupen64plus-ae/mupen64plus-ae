@@ -471,12 +471,6 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         super.onDestroy();
 
         Log.i( "GameFragment", "onDestroy" );
-
-        showSystemBars();
-
-        mHandler.removeCallbacks(mLastTouchChecker);
-        final FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().remove(mCoreFragment).commit();
     }
 
     @Override
@@ -816,6 +810,12 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     {
         if(getActivity() != null)
         {
+            showSystemBars();
+
+            mHandler.removeCallbacks(mLastTouchChecker);
+            final FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction().remove(mCoreFragment).commit();
+
             if(getActivity() instanceof OnGameActivityFinished)
             {
                 ((OnGameActivityFinished)getActivity()).onGameActivityFinished();
