@@ -235,7 +235,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     @Override
     public void onFinish()
     {
-        //Nothing to do here right now
+        mCoreService = null;
     }
     
     @Override
@@ -767,12 +767,19 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     {
         mCustomSpeed = Utility.clamp( value, MIN_SPEED, MAX_SPEED );
         mUseCustomSpeed = true;
-        mCoreService.setCustomSpeed(mCustomSpeed);
+
+        if(mCoreService != null)
+        {
+            mCoreService.setCustomSpeed(mCustomSpeed);
+        }
     }
 
     public void updateControllerConfig(int player, boolean plugged, int value)
     {
-        mCoreService.updateControllerConfig(player, plugged, value);
+        if(mCoreService != null)
+        {
+            mCoreService.updateControllerConfig(player, plugged, value);
+        }
     }
 
     public int getCurrentSpeed()
