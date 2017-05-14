@@ -520,6 +520,7 @@ public class CoreService extends Service
 
     public void setCoreServiceListener(CoreServiceListener coreServiceListener)
     {
+        Log.i("CoreService", "setCoreServiceListener");
         mListener = coreServiceListener;
 
         if(!mIsRunning)

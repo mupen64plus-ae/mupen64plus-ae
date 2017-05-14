@@ -133,6 +133,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        Log.i("CoreFragment", "onCreate");
+
         super.onCreate(savedInstanceState);
         // retain this fragment
         setRetainInstance(true);
@@ -141,6 +143,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
+        Log.i("CoreFragment", "onActivityCreated");
+
         super.onActivityCreated(savedInstanceState);
         
         if(mCachedStartCore)
@@ -153,6 +157,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     @Override
     public void onDetach()
     {
+        Log.i("CoreFragment", "onDetach");
+
         super.onDetach();
     }
 
@@ -230,23 +236,31 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     @Override
     public void onFinish()
     {
+        Log.i("CoreFragment", "onFinish");
+
         mCoreService = null;
     }
     
     @Override
     public void onCoreServiceDestroyed()
     {
+        Log.i("CoreFragment", "onCoreServiceDestroyed");
+
         mIsRunning = false;
     }
 
     public void setCoreEventListener(CoreEventListener coreEventListener)
     {
+        Log.i("CoreFragment", "setCoreEventListener");
+
         mCoreEventListener = coreEventListener;
     }
 
     public void startCore( AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName,
         String romPath, String romArtPath, String cheatArgs, boolean isRestarting, String saveToLoad)
     {
+        Log.i("CoreFragment", "startCore");
+
         mAppData = appData;
         mGlobalPrefs = globalPrefs;
         mGamePrefs = gamePrefs;
@@ -271,6 +285,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     
     private void actuallyStartCore(Activity activity)
     {
+        Log.i("CoreFragment", "actuallyStartCore");
+
         if(!mIsRunning)
         {
             mIsRunning = true;
@@ -290,7 +306,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
                     if(mCoreEventListener != null && getActivity() != null)
                     {
-                        mCoreEventListener.onCoreServiceStarted();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCoreEventListener.onCoreServiceStarted();
+                            }
+                        });
                     }
                 }
 
@@ -322,6 +343,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     private void actuallyStopCore()
     {
+        Log.i("CoreFragment", "actuallyStopCore");
+
         if(mIsRunning)
         {
             mIsRunning = false;
@@ -344,6 +367,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void resumeEmulator()
     {
+        Log.i("CoreFragment", "resumeEmulator");
+
         if(mCoreService != null)
         {
             mCoreService.resumeEmulator();
@@ -352,6 +377,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void advanceFrame()
     {
+        Log.i("CoreFragment", "advanceFrame");
+
         if(mCoreService != null)
         {
             mCoreService.advanceFrame();
@@ -360,6 +387,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void emuGameShark(boolean pressed)
     {
+        Log.i("CoreFragment", "emuGameShark");
+
         if(mCoreService != null)
         {
             mCoreService.emuGameShark(pressed);
@@ -368,6 +397,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void setOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
+        Log.i("CoreFragment", "setOnFpsChangedListener");
+
         mFpsChangeListener = fpsListener;
         mFpsRecalcPeriod = fpsRecalcPeriod;
         if(mCoreService != null)
@@ -386,6 +417,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void registerVibrator( int player, Vibrator vibrator )
     {
+        Log.i("CoreFragment", "registerVibrator");
+
         if(mCoreService != null)
         {
             mCoreService.registerVibrator(player, vibrator);
@@ -394,6 +427,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void pauseEmulator()
     {
+        Log.i("CoreFragment", "pauseEmulator");
+
         if(mCoreService != null)
         {
             mCoreService.pauseEmulator();
@@ -402,6 +437,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void togglePause()
     {
+        Log.i("CoreFragment", "togglePause");
+
         if(mCoreService != null)
         {
             mCoreService.togglePause();
@@ -410,11 +447,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public boolean isRunning()
     {
+        Log.i("CoreFragment", "isRunning");
+
         return mCoreService != null && mCoreService.isRunning();
     }
 
     public void exit()
     {
+        Log.i("CoreFragment", "exit");
+
         if (mCoreService != null) {
             mCoreService.pauseEmulator();
         }
@@ -434,6 +475,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void toggleSpeed()
     {
+        Log.i("CoreFragment", "toggleSpeed");
+
         if (mCoreService != null)
         {
             mUseCustomSpeed = !mUseCustomSpeed;
@@ -444,6 +487,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void fastForward( boolean pressed )
     {
+        Log.i("CoreFragment", "fastForward");
+
         int speed = pressed ? mCustomSpeed : BASELINE_SPEED;
         NativeExports.emuSetSpeed( speed );
     }
@@ -451,6 +496,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void saveSlot()
     {
+        Log.i("CoreFragment", "saveSlot");
+
         if (mCoreService != null)
         {
             int slot = mCoreService.getSlot();
@@ -471,6 +518,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void loadSlot()
     {
+        Log.i("CoreFragment", "loadSlot");
+
         if (mCoreService != null)
         {
             int slot = mCoreService.getSlot();
@@ -491,6 +540,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public int getSlot()
     {
+        Log.i("CoreFragment", "getSlot");
+
         if (mCoreService != null)
         {
             return mCoreService.getSlot();
@@ -503,6 +554,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void incrementSlot()
     {
+        Log.i("CoreFragment", "incrementSlot");
+
         if (mCoreService != null)
         {
             int slot = mCoreService.getSlot();
@@ -512,6 +565,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void setSlotFromPrompt()
     {
+        Log.i("CoreFragment", "setSlotFromPrompt");
+
         if(getActivity() != null)
         {
             final CharSequence title = getActivity().getString(R.string.menuItem_selectSlot);
@@ -538,6 +593,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void saveFileFromPrompt()
     {
+        Log.i("CoreFragment", "saveFileFromPrompt");
+
         if(getActivity() != null)
         {
             CharSequence title = getActivity().getText( R.string.menuItem_fileSave );
@@ -559,6 +616,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void saveState( final String filename )
     {
+        Log.i("CoreFragment", "saveState");
+
         if(getActivity() != null)
         {
             mCurrentSaveStateFile = new File( mGamePrefs.userSaveDir + "/" + filename );
@@ -591,6 +650,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void loadFileFromPrompt()
     {
+        Log.i("CoreFragment", "loadFileFromPrompt");
+
         if(getActivity() != null)
         {
             CharSequence title = getActivity().getText( R.string.menuItem_fileLoad );
@@ -616,6 +677,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void loadAutoSaveFromPrompt()
     {
+        Log.i("CoreFragment", "loadAutoSaveFromPrompt");
+
         if(getActivity() != null)
         {
             CharSequence title = getActivity().getText( R.string.menuItem_fileLoadAutoSave );
@@ -641,6 +704,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void loadState( File file )
     {
+        Log.i("CoreFragment", "loadState");
+
         if(getActivity() != null)
         {
             Notifier.showToast( getActivity(), R.string.toast_loadingFile, file.getName() );
@@ -651,6 +716,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void autoSaveState( final String latestSave, final CoreService.AutoSaveCompleteAction autoSaveCompleteAction )
     {
+        Log.i("CoreFragment", "autoSaveState");
+
         if (mCoreService != null)
         {
             mCoreService.autoSaveState(latestSave, autoSaveCompleteAction);
@@ -659,6 +726,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void screenshot()
     {
+        Log.i("CoreFragment", "screenshot");
+
         if (mCoreService != null)
         {
             if(getActivity() != null)
@@ -672,6 +741,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void toggleFramelimiter()
     {
+        Log.i("CoreFragment", "toggleFramelimiter");
+
         if (mCoreService != null)
         {
             mCoreService.toggleFramelimiter();
@@ -680,11 +751,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public boolean getFramelimiter()
     {
+        Log.i("CoreFragment", "getFramelimiter");
+
         return mCoreService != null &&  mCoreService.getFramelimiter();
     }
 
     public void restart()
     {
+        Log.i("CoreFragment", "restart");
+
         if (mCoreService != null)
         {
             if(getActivity() != null)
@@ -704,6 +779,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void restartEmulator()
     {
+        Log.i("CoreFragment", "restartEmulator");
+
         if (mCoreService != null)
         {
             mCoreService.restart();
@@ -713,6 +790,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     public void shutdownEmulator()
     {
         Log.i( "CoreFragment", "shutdownEmulator" );
+
         if (mCoreService != null)
         {
             mCoreService.shutdownEmulator();
@@ -735,6 +813,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public int getState()
     {
+        Log.i("CoreFragment", "getState");
+
         if (mCoreService != null)
         {
             return mCoreService.getState();
@@ -747,16 +827,22 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void incrementCustomSpeed()
     {
+        Log.i("CoreFragment", "incrementCustomSpeed");
+
         setCustomSpeed( mCustomSpeed + DELTA_SPEED );
     }
 
     public void decrementCustomSpeed()
     {
+        Log.i("CoreFragment", "decrementCustomSpeed");
+
         setCustomSpeed( mCustomSpeed - DELTA_SPEED );
     }
 
     public void setCustomSpeed(int value)
     {
+        Log.i("CoreFragment", "setCustomSpeed");
+
         mCustomSpeed = Utility.clamp( value, MIN_SPEED, MAX_SPEED );
         mUseCustomSpeed = true;
 
@@ -768,6 +854,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void updateControllerConfig(int player, boolean plugged, int value)
     {
+        Log.i("CoreFragment", "updateControllerConfig");
+
         if(mCoreService != null)
         {
             mCoreService.updateControllerConfig(player, plugged, value);
@@ -776,11 +864,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public int getCurrentSpeed()
     {
+        Log.i("CoreFragment", "getCurrentSpeed");
+
         return mUseCustomSpeed ? mCustomSpeed : BASELINE_SPEED;
     }
 
     public void setCustomSpeedFromPrompt()
     {
+        Log.i("CoreFragment", "setCustomSpeedFromPrompt");
+
         if(getActivity() != null)
         {
             final CharSequence title = getActivity().getText( R.string.menuItem_setSpeed );
@@ -806,6 +898,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void onPromptDialogClosed(int id, int which)
     {
+        Log.i("CoreFragment", "onPromptDialogClosed");
+
         if (id == SAVE_STATE_FILE_CONFIRM_DIALOG_ID)
         {
             mCoreService.saveState(mCurrentSaveStateFile.getAbsolutePath());
@@ -834,15 +928,19 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     }
     public void setSurface(Surface surface)
     {
+        Log.e( "CoreFragment", "setSurface" );
         mSurface = surface;
         if(mCoreService != null)
         {
+            Log.e( "CoreFragment", "setSurface2" );
             mCoreService.setSurface(mSurface);
         }
     }
 
     public void destroySurface()
     {
+        Log.i("CoreFragment", "destroySurface");
+
         if(mCoreService != null)
         {
             mCoreService.destroySurface();

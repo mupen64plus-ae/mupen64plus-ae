@@ -183,6 +183,8 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
                                             String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romLegacySave,
                                             boolean doRestart)
     {
+        Log.i("GameFragment", "newInstance");
+
         GameFragment gameFragment = new GameFragment();
         Bundle args = new Bundle();
 
@@ -212,6 +214,8 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     // this method is only called once for this fragment
     public void onCreate(Bundle savedInstanceState)
     {
+        Log.i("GameFragment", "onCreate");
+
         super.onCreate(savedInstanceState);
         // retain this fragment
         setRetainInstance(true);
@@ -219,6 +223,8 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        Log.i("GameFragment", "onActivityCreated");
+
         super.onActivityCreated(savedInstanceState);
         mAppData = new AppData( getActivity() );
 
@@ -319,26 +325,6 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         surfaceView.setLayoutParams( params );
 
-        // Initialize the screen elements
-        if( mGamePrefs.isTouchscreenEnabled || mGlobalPrefs.isFpsEnabled )
-        {
-            // The touch map and overlay are needed to display frame rate and/or controls
-            mTouchscreenMap = new VisibleTouchMap( this.getResources() );
-            mTouchscreenMap.load( mGamePrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
-                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled, mGlobalPrefs.fpsXPosition,
-                    mGlobalPrefs.fpsYPosition, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
-            mOverlay.initialize(mCoreFragment, mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGlobalPrefs.isFpsEnabled,
-                    mGamePrefs.isAnalogHiddenWhenSensor, mGlobalPrefs.isTouchscreenAnimated);
-        }
-
-        // Initialize user interface devices
-        initControllers(mOverlay);
-
-        // Override the peripheral controllers' key provider, to add some extra
-        // functionality
-        mOverlay.setOnKeyListener(this);
-        mOverlay.requestFocus();
-
         if (savedInstanceState == null)
         {
             // Show the drawer at the start and have it hide itself
@@ -402,6 +388,26 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             }
 
         });
+
+        // Initialize the screen elements
+        if( mGamePrefs.isTouchscreenEnabled || mGlobalPrefs.isFpsEnabled )
+        {
+            // The touch map and overlay are needed to display frame rate and/or controls
+            mTouchscreenMap = new VisibleTouchMap( this.getResources() );
+            mTouchscreenMap.load( mGamePrefs.touchscreenSkin, mGamePrefs.touchscreenProfile,
+                    mGlobalPrefs.isTouchscreenAnimated, mGlobalPrefs.isFpsEnabled, mGlobalPrefs.fpsXPosition,
+                    mGlobalPrefs.fpsYPosition, mGlobalPrefs.touchscreenScale, mGlobalPrefs.touchscreenTransparency );
+            mOverlay.initialize(mCoreFragment, mTouchscreenMap, !mGamePrefs.isTouchscreenHidden, mGlobalPrefs.isFpsEnabled,
+                    mGamePrefs.isAnalogHiddenWhenSensor, mGlobalPrefs.isTouchscreenAnimated);
+        }
+
+        // Initialize user interface devices
+        initControllers(mOverlay);
+
+        // Override the peripheral controllers' key provider, to add some extra
+        // functionality
+        mOverlay.setOnKeyListener(this);
+        mOverlay.requestFocus();
 
         // Check periodically for touch input to determine if we should
         // hide the controls
@@ -475,12 +481,16 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     @Override
     public void onDestroy()
     {
-        super.onDestroy();
-
         Log.i( "GameFragment", "onDestroy" );
 
+        super.onDestroy();
+
         //Shut down emulation if it's not shut down by now
-        mCoreFragment.shutdownEmulator();
+        if(mCoreFragment != null)
+        {
+            mCoreFragment.shutdownEmulator();
+            mCoreFragment = null;
+        }
     }
 
     @Override
@@ -767,7 +777,10 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     {
         Log.i( "GameFragment", "surfaceDestroyed" );
 
-        mCoreFragment.destroySurface();
+        if(mCoreFragment != null)
+        {
+            mCoreFragment.destroySurface();
+        }
 
         mIsSurface = false;
     }
@@ -795,6 +808,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     @Override
     public void onCoreServiceStarted()
     {
+        Log.i("GameFragment", "onCoreServiceStarted");
         ReloadAllMenus();
     }
 
@@ -831,8 +845,11 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             mHandler.removeCallbacks(mLastTouchChecker);
 
             mCoreFragment.setCoreEventListener(null);
+            mCoreFragment.destroySurface();
+
             final FragmentManager fm = getActivity().getSupportFragmentManager();
             fm.beginTransaction().remove(mCoreFragment).commit();
+            mCoreFragment = null;
 
             if(getActivity() instanceof OnGameActivityFinished)
             {
@@ -1080,9 +1097,10 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
                 mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomPath,
                     mRomArtPath, mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
             }
-            else if(mCoreFragment.hasServiceStarted() && mCoreFragment.getState() == NativeConstants.EMULATOR_STATE_PAUSED)
+            else if(mCoreFragment.hasServiceStarted() && mCoreFragment.getState() == NativeConstants.EMULATOR_STATE_PAUSED &&
+                    !mWaitingOnConfirmation)
             {
-                if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mWaitingOnConfirmation && !mDrawerOpenState)
+                if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mDrawerOpenState)
                 {
                     mCoreFragment.resumeEmulator();
                 }

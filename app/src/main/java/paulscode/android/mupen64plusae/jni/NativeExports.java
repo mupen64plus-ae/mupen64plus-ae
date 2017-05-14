@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.jni;
 
 
+import android.util.Log;
 import android.view.Surface;
 
 /**
