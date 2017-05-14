@@ -306,7 +306,6 @@
     <string name="videoPlugin_title">视频插件</string>
     <string name="assetExtractor_finished">完成</string>
     <string name="assetExtractor_progress">已完成 %1$.0f%%：%2$s</string>
-    <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
     <string name="confirmOverwriteFile_message">覆盖 %1$s吗？</string>
     <string name="confirmUnmapAll_message">取消映射所有输入的 %1$s？</string>
     <string name="controller_buttonCd">C-pad ↓</string>
@@ -427,25 +426,10 @@
 读取您的存储来读取 ROM 文件，保存状态和配置。
 写入到您的存储来写入配置和保存数据。"</string>
     <string name="assetExtractor_permissions_title">权限</string>
-    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSDLBufferSize_entry128">低延迟（实验）</string>
-    <string name="audioSDLBufferSize_entry2048">默认</string>
-    <string name="audioSDLBufferSize_entry8">超低延迟（实验）</string>
-    <string name="audioSDLBufferSize_title">音频缓冲区大小</string>
     <string name="audioSLESBufferNbr_title">音频缓冲区数</string>
-    <string name="audioSLESBufferSize_entry1024">1024</string>
-    <string name="audioSLESBufferSize_entry128">128</string>
-    <string name="audioSLESBufferSize_entry2048">2048</string>
-    <string name="audioSLESBufferSize_entry256">256</string>
-    <string name="audioSLESBufferSize_entry512">512</string>
     <string name="audioSLESBufferSize_title">音频缓冲区大小</string>
     <string name="audioSLESFloatingPoint_summary">更高质量的 FP 音频。某些设备可能不兼容。</string>
     <string name="audioSLESFloatingPoint_title">浮点采样</string>
-    <string name="audioSLESRate_entry16">16kHz</string>
-    <string name="audioSLESRate_entry24">24kHz</string>
-    <string name="audioSLESRate_entry32">32kHz</string>
-    <string name="audioSLESRate_entry441">44.1kHz</string>
-    <string name="audioSLESRate_entry48">48kHz</string>
     <string name="audioSLESRate_entry_orig">通过游戏设置</string>
     <string name="audioSLESRate_title">采样率</string>
     <string name="audioSLESTimeStretch_summary">启用时间段音频降低爆裂，但引起音频延迟</string>
@@ -627,15 +611,9 @@
     <string name="touchscreenStyle_entryJoshaGibs">JoshaGibs 风格</string>
     <string name="useHighPriorityThread_summary">核心将使用高优先级线程运行，这可能会导致某些设备上的卡顿</string>
     <string name="useHighPriorityThread_title">使用高优先级线程</string>
-    <string name="videoSubPlugin_title">视频插件变量</string>
     <string name="controller_buttonSensor">切换传感器按钮</string>
-    <string name="inputMapActivity_toggle_sensor">切换传感器</string>
-    <string name="app_name">Mupen64Plus FZ 版</string>
+    <string name="inputMapActivity_toggle_sensor">切换传感器</string>getView().findViewById
     <string name="touchscreenStyle_entryCustom">自定义</string>
-    <string name="videoSubPlugin_entryGles30">"OpenGL ES 3.0
-"<small>(要求安卓 4.3+ 和设备支持)</small></string>
-    <string name="videoSubPlugin_entryGles31">"OpenGL ES 3.1
-"<small>(要求安卓 5.0+ 和设备支持)</small></string>
     <string name="angrylion_vi_overlay_title">启用 VI 覆盖过滤器</string>
     <string name="categoryAngrylion_title">Angrylion 设置</string>
     <string name="cheatEditor_add">添加作弊</string>
@@ -670,26 +648,6 @@
     <string name="touchscreenProfileActivity_menuTitle">选择一个选项</string>
     <string name="videoPlugin_entryAngrylion">"angrylion
 "<small>(angrylion 软件渲染器)</small></string>
-    <string name="videoPlugin_entryGliden64">"gliden64
-"<small>(GLideN64 公测)</small></string>
-    <string name="videoSubPlugin_entryEgl">"完整 OpenGL
-"<small>(要求安卓 5.0+ 和设备支持)</small></string>
-    <string name="videoSubPlugin_entryGles20">OpenGL ES 2.0</string>
-    <string name="CheatEditorActivity_title">@string/menuItem_cheatEditor</string>
-    <string name="ControllerProfileActivity_title">@string/app_name</string>
-    <string name="DiagnosticActivity_title">@string/menuItem_controllerDiagnostics</string>
-    <string name="EmulationProfileActivity_title">@string/app_name</string>
-    <string name="ExtractTexturesActivity_title">@string/app_name</string>
-    <string name="GalleryActivity_title">@string/app_name</string>
-    <string name="GameActivity_title">@string/app_name</string>
-    <string name="ManageControllerProfilesActivity_title">@string/menuItem_controllerProfiles</string>
-    <string name="ManageEmulationProfilesActivity_title">@string/menuItem_emulationProfiles</string>
-    <string name="ManageTouchscreenProfilesActivity_title">@string/menuItem_touchscreenProfiles</string>
-    <string name="PlayMenuActivity_title">@string/menuItem_play</string>
-    <string name="ScanRomsActivity_title">@string/app_name</string>
-    <string name="SettingsGlobalActivity_title">@string/menuItem_globalSettings</string>
-    <string name="SplashActivity_title">@string/app_name</string>
-    <string name="TouchscreenProfileActivity_title">@string/app_name</string>
     <string name="abc_font_family_body_1_material">sans-serif</string>
     <string name="abc_font_family_body_2_material">sans-serif-medium</string>
     <string name="abc_font_family_button_material">sans-serif-medium</string>
@@ -701,61 +659,7 @@
     <string name="abc_font_family_headline_material">sans-serif</string>
     <string name="abc_font_family_menu_material">sans-serif</string>
     <string name="abc_font_family_subhead_material">sans-serif</string>
-    <string name="abc_font_family_title_material">sans-serif-medium</string>
-    <string name="appbar_scrolling_view_behavior">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
-    <string name="assetExtractor_uriHelp">tinyurl.com/bfbb4jc</string>
-    <string name="audioPlugin_default">libmupen64plus-audio-sles.so</string>
-    <string name="audioSDLBufferSize_default">8</string>
-    <string name="audioSLESBufferSize_default">256</string>
-    <string name="audioSLESRate_default">0</string>
-    <string name="bottom_sheet_behavior">android.support.design.widget.BottomSheetBehavior</string>
-    <string name="character_counter_pattern">%1$d / %2$d</string>
-    <string name="displayFps_default">关</string>
-    <string name="displayOrientation_default">0</string>
-    <string name="displayPosition_default">48</string>
-    <string name="displayResolution_default">480</string>
-    <string name="displayResolution_default_game">-1</string>
-    <string name="displayScalingGame_default">默认</string>
-    <string name="displayScaling_default">原始</string>
-    <string name="galleryItemAdapter_dummyText">超级玛丽 64 (U) [!]</string>
-    <string name="glide64Frameskip_default">-5</string>
-    <string name="glide64Frameskip_title">@string/gln64Frameskip_title</string>
-    <string name="gliden64_bilinear_default">1</string>
-    <string name="gliden64_bloom_blend_mode_default">0</string>
-    <string name="gliden64_color_buffer_copy_to_RDRAM_default">2</string>
-    <string name="gliden64_cropmode_default">1</string>
-    <string name="gliden64_depth_buffer_copy_to_RDRAM_default">0</string>
-    <string name="gliden64_multisampling_default">0</string>
-    <string name="gliden64_swap_frame_buffer_default">2</string>
-    <string name="gliden64_texrect_coords_default">1</string>
-    <string name="gliden64_texture_enhancement_default">0</string>
-    <string name="gliden64_texture_filter_default">0</string>
-    <string name="gliden64_use_native_resolution_factor_default">0</string>
-    <string name="gln64Frameskip_default">-5</string>
-    <string name="inGameMenuSetting_default">back-key</string>
-    <string name="inputMapActivity_dummyFeedback">KEYCODE_XXXX</string>
-    <string name="inputMapActivity_loadSlot">@string/menuItem_slotLoad</string>
-    <string name="inputMapActivity_saveSlot">@string/menuItem_slotSave</string>
-    <string name="navigationMode_default">auto</string>
-    <string name="password_toggle_content_description">切换密码可见性</string>
-    <string name="pathGameSaves_default">!mupen64plus-fz</string>
-    <string name="path_password_eye">M12,4.5C7,4.5 2.73,7.61 1,12c1.73,4.39 6,7.5 11,7.5s9.27,-3.11 11,-7.5c-1.73,-4.39 -6,-7.5 -11,-7.5zM12,17c-2.76,0 -5,-2.24 -5,-5s2.24,-5 5,-5 5,2.24 5,5 -2.24,5 -5,5zM12,9c-1.66,0 -3,1.34 -3,3s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3z</string>
-    <string name="path_password_eye_mask_strike_through">M2,4.27 L19.73,22 L22.27,19.46 L4.54,1.73 L4.54,1 L23,1 L23,23 L1,23 L1,4.27 Z</string>
-    <string name="path_password_eye_mask_visible">M2,4.27 L2,4.27 L4.54,1.73 L4.54,1.73 L4.54,1 L23,1 L23,23 L1,23 L1,4.27 Z</string>
-    <string name="path_password_strike_through">M3.27,4.27 L19.74,20.74</string>
-    <string name="r4300Emulator_default">2</string>
-    <string name="riceScreenUpdate_default">4</string>
-    <string name="riceTextureEnhancement_default">0</string>
-    <string name="rsp_default">rsp-hle</string>
-    <string name="selectedValue">%1$s</string>
-    <string name="touchscreenAutoHoldGame_default">-1</string>
-    <string name="touchscreenAutoHold_default">0</string>
-    <string name="uri_bugReport">http://github.com/mupen64plus-ae/mupen64plus-ae/issues</string>
-    <string name="uri_credits">http://www.paulscode.com/forum/index.php?topic=836.msg7873#msg7873</string>
-    <string name="uri_forum">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
+    <string name="abc_font_family_title_material">sans-serif-medium</string>getView().findViewById
     <string name="v7_preference_off">关闭</string>
     <string name="v7_preference_on">开启</string>
-    <string name="videoHardwareType_default">-1</string>
-    <string name="videoPlugin_default">libmupen64plus-video-glide64mk2.so</string>
-    <string name="videoSubPlugin_default">-gles20</string>
 </resources>

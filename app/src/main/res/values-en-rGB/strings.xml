@@ -16,25 +16,13 @@
   <string name="menuItem_disableFramelimiter">Desync audio</string>
   <string name="menuItem_paks">Controller Paks</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Player 1: Empty</string>
-  <string name="menuItem_pak1_mem">Player 1: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Player 1: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Player 2: Empty</string>
-  <string name="menuItem_pak2_mem">Player 2: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Player 2: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Player 3: Empty</string>
-  <string name="menuItem_pak3_mem">Player 3: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Player 3: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Player 4: Empty</string>
-  <string name="menuItem_pak4_mem">Player 4: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Player 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Change IME</string>
   <string name="menuItem_exit">Exit</string>
@@ -59,7 +47,6 @@
   <string name="menuItem_about">About</string>
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">App version</string>
-  <string name="menuItem_changelog">Changelog</string>
   <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Hardware info</string>
   <string name="menuItem_localeOverride">Language</string>
@@ -159,17 +146,14 @@
   <string name="categoryDisplay_title">Display</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryTouchscreen_title">Touchscreen</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
   <string name="categoryInput_title">Input</string>
   <string name="categoryData_title">Data</string>
   <string name="categoryGameSettings_title">Game-specific settings</string>
   <string name="categoryGameSettings_titleNamed">%1$s settings</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Enable cheats</string>
-  <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
   <string name="touchscreenFeedback_title">Haptic feedback</string>
   <string name="touchscreenFeedback_summary">Vibrate on button press</string>
-  <string name="touchpadEnabled_title">Enable touchpad</string>
   <string name="inputVolumeMappable_title">Mappable volume keys</string>
   <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
   <string name="inputShareController_title">Share controller</string>
@@ -211,9 +195,6 @@
   <string name="touchscreenStyle_title">Button style</string>
   <string name="touchscreenStyle_entryOutline">Outlines</string>
   <string name="touchscreenStyle_entryShaded">Shaded</string>
-  <string name="touchpadLayout_title">Touchpad layout</string>
-  <string name="touchpadLayout_entryDefault">Left pad: Analogue control; Right pad: C buttons</string>
-  <string name="touchpadLayout_entryReverse">Left pad: C buttons; Right pad: Analogue control</string>
   <string name="displayOrientation_title">Screen orientation</string>
   <string name="displayOrientation_entryLandscape">Landscape</string>
   <string name="displayOrientation_entryReverseLandscape">Reverse landscape</string>
@@ -237,7 +218,6 @@
   <string name="displayScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
   <string name="displayScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
   <string name="displayFps_title">Framerate</string>
-  <string name="displayFps_summary">Display FPS on screen</string>
   <string name="videoPlugin_title">Video plugin</string>
   <string name="videoPlugin_entryNone">None (video disabled)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
@@ -297,7 +277,6 @@
   <string name="audioPlugin_title">Audio plugin</string>
   <string name="audioPlugin_entryNone">None (audio disabled)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_entrySystemDefault">System default</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Button opacity</string>
@@ -334,7 +313,6 @@
   <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
   <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Change log</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Warning</string>
   <string name="invalidInstall_message">Mupen64 Plus AE might not have installed properly. Please try reinstalling the app if you experience any crashes.</string>
@@ -353,37 +331,12 @@
   <string name="cheatNotes_title">Notes</string>
   <string name="cheatNotes_none">(no notes available for this cheat)</string>
   <!--Cheat Editor-->
-  <string name="menuItem_cheatEditor">Cheat editor</string>
-  <string name="cheatEditor_empty">Empty cheat</string>
-  <string name="cheatEditor_added">Empty cheat added at bottom of list</string>
+  <string name="menuItem_cheatEditor">Cheat editor</string>cheatEditor_empty
   <string name="cheatEditor_edit">Edit cheats</string>
-  <string name="cheatEditor_edit_desc">Long press a cheat to edit it</string>
   <string name="cheatEditor_help">Help</string>
-  <string name="cheatEditor_readme1">Welcome to the Mupen64plus AE Cheat editor</string>
-  <string name="cheatEditor_readme2">Please adhere to the following guidelines when adding or editing cheats:</string>
-  <string name="cheatEditor_readme3">1. Titles and descriptions should NOT contain line breaks (the enter button). Any line breaks will be replaced with spaces.</string>
-  <string name="cheatEditor_readme4">2. Hexadecimal numbers must be used in place of the X\'s in the examples given below.</string>
-  <string name="cheatEditor_readme5">3. Cheats must only have one code per line in the format \"XXXXXXXX XXXX\" without quotes or \"XXXXXXXX ????\" without quotes if the cheat code has options. Cheats can have multiple lines.</string>
-  <string name="cheatEditor_readme6">4. Options codes must only have one option per line in the format \"Option Description XXXX\" without quotes. Option codes can also have multiple lines.</string>
-  <string name="cheatEditor_config">Cheat config</string>
-  <string name="cheatEditor_config_desc">Edit cheat configuration</string>
-  <string name="cheatEditor_title">Cheat title</string>
-  <string name="cheatEditor_title_desc">Edit cheat title</string>
-  <string name="cheatEditor_notes">Cheat notes</string>
-  <string name="cheatEditor_notes_desc">Edit cheat notes</string>
-  <string name="cheatEditor_code">Cheat code</string>
-  <string name="cheatEditor_code_desc">Edit cheat code</string>
-  <string name="cheatEditor_badCode">Bad code(s), reverting…</string>
-  <string name="cheatEditor_option">Cheat options</string>
-  <string name="cheatEditor_option_desc">Edit cheat options</string>
-  <string name="cheatEditor_badOption">Bad option(s), reverting…</string>
   <string name="cheatEditor_delete">Delete cheat</string>
   <string name="cheatEditor_confirm">Are you sure?</string>
   <string name="cheatEditor_info">Cheat information</string>
-  <string name="cheatEditor_title2">Title:</string>
-  <string name="cheatEditor_notes2">Notes:</string>
-  <string name="cheatEditor_code2">Code(s):</string>
-  <string name="cheatEditor_option2">Option(s):</string>
   <string name="cheatEditor_saveConfirm">Save cheat file?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Unpacking textures</string>

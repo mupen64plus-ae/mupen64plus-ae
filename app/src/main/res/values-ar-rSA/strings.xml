@@ -16,25 +16,13 @@
   <string name="menuItem_disableFramelimiter">فصل الربط مع الصوت</string>
   <string name="menuItem_paks">مجوعة التحكم بالعبه</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">الاعب 1: غير موجود</string>
-  <string name="menuItem_pak1_mem">الاعب 1: مجموعة الذاكره</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">الاعب 1: مجموعة الذبذبه</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">الاعب 2: غير موجود</string>
-  <string name="menuItem_pak2_mem">الاعب 2: مجموعة الذاكره</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">الاعب 2: مجموعة الذبذبه</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">الاعب 3: غير موجود</string>
-  <string name="menuItem_pak3_mem">الاعب 3: مجموعة الذاكره</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">الاعب 3: مجموعة الذبذبه</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">الاعب 4: غير موجود</string>
-  <string name="menuItem_pak4_mem">الاعب 4: مجموعة الذاكره</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">الاعب 4: مجموعة الذبذبه</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">تعديل IME</string>
   <string name="menuItem_exit">خروج</string>
@@ -59,7 +47,6 @@
   <string name="menuItem_about">حول البرنامج</string>
   <string name="menuItem_credits">المساهمين</string>
   <string name="menuItem_appVersion">اصدار البرنامج</string>
-  <string name="menuItem_changelog">التحديثات</string>
   <string name="menuItem_logcat">للمطورين</string>
   <string name="menuItem_hardwareInfo">معلومات عن الجهاز</string>
   <string name="menuItem_localeOverride">الغة</string>
@@ -159,17 +146,14 @@
   <string name="categoryDisplay_title">الشاشه</string>
   <string name="categoryAudio_title">الصوت</string>
   <string name="categoryTouchscreen_title">شاشة المس</string>
-  <string name="categoryTouchpad_title">المس</string>
   <string name="categoryInput_title">الادخال</string>
   <string name="categoryData_title">البيانات</string>
   <string name="categoryGameSettings_title">اعدادات خاصه لروم</string>
   <string name="categoryGameSettings_titleNamed">اعدادات %1$s</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">تفعيل الهاك</string>
-  <string name="playShowCheats_summary">القائمة ستكون بطيئة التحميل عند التفغيل</string>
   <string name="touchscreenFeedback_title">التحريك عند المس</string>
   <string name="touchscreenFeedback_summary">الارتجاج عند ظغط الازار</string>
-  <string name="touchpadEnabled_title">تفعيل خاصية المس</string>
   <string name="inputVolumeMappable_title">استخدام ازرار الصوت في التحكم</string>
   <string name="inputVolumeMappable_summary">تفعيل استخدام ازرار الصوت في التحكم</string>
   <string name="inputShareController_title">مشاركة التحكم</string>
@@ -206,9 +190,6 @@
   <string name="touchscreenStyle_title">اشكال الازرار</string>
   <string name="touchscreenStyle_entryOutline">الحدود فارغه</string>
   <string name="touchscreenStyle_entryShaded">الحدود ممتلئة</string>
-  <string name="touchpadLayout_title">تصميم شاشة المس</string>
-  <string name="touchpadLayout_entryDefault">التحكم من جهة اليسار: Analog ; التحكم من الجهة اليمنى: زر C</string>
-  <string name="touchpadLayout_entryReverse">التحكم من الجهة اليسر: زر C ; التحكم من الجهة اليمنى :Analog</string>
   <string name="displayOrientation_title">انماط عرض الشاشة</string>
   <string name="displayOrientation_entryLandscape">الشاشة بشكل عرضي </string>
   <string name="displayOrientation_entryReverseLandscape">الشاشه بشكل عرضي مقلوب</string>
@@ -285,7 +266,6 @@
   <string name="confirm_title">التاكيد</string>
   <string name="confirmResetGame_message">اعدة التشغيل؟ جميع مناطق الحفظ سوف تحذف.</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">التحديثات</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">تحذير</string>
   <!--Text Editor Hints (start lower-case)-->
@@ -300,32 +280,12 @@
   <string name="cheatNotes_title">ملاحظات</string>
   <string name="cheatNotes_none">(لا يوجد ملاحظات على هاذا الهاك)</string>
   <!--Cheat Editor-->
-  <string name="menuItem_cheatEditor">محرر الهاك</string>
-  <string name="cheatEditor_empty">هاك فارغ</string>
+  <string name="menuItem_cheatEditor">محرر الهاك</string>cheatEditor_empty
   <string name="cheatEditor_edit">تعديل الهاك</string>
-  <string name="cheatEditor_edit_desc">ظغطه مطوله لتعديل الهاك</string>
   <string name="cheatEditor_help">مساعدة</string>
-  <string name="cheatEditor_readme1">اهلا بك في Mupen64plus AE محرر الهاك</string>
-  <string name="cheatEditor_readme2">يرجى الالتزام بالإرشادات التالية عند تعديل الهاك:</string>
-  <string name="cheatEditor_config">اعدادات الهاك</string>
-  <string name="cheatEditor_config_desc">تعديل اعدادات الهاك</string>
-  <string name="cheatEditor_title">عنوان الهاك</string>
-  <string name="cheatEditor_title_desc">تحرير اسم الهاك</string>
-  <string name="cheatEditor_notes">نص الهاك</string>
-  <string name="cheatEditor_notes_desc">تحرير نص الهاك</string>
-  <string name="cheatEditor_code">كود الهاك</string>
-  <string name="cheatEditor_code_desc">تحرير كود الهاك</string>
-  <string name="cheatEditor_badCode">كود (سيء),اعادة...</string>
-  <string name="cheatEditor_option">خيارات الهاك</string>
-  <string name="cheatEditor_option_desc">تحرير خيارات الهاك</string>
-  <string name="cheatEditor_badOption">اختيار (سيء),اعاده...</string>
   <string name="cheatEditor_delete">حذف الهاك</string>
   <string name="cheatEditor_confirm">هل انت متاكد؟</string>
   <string name="cheatEditor_info">معلومات عن الهاك</string>
-  <string name="cheatEditor_title2">العنوان:</string>
-  <string name="cheatEditor_notes2">ملاحظات:</string>
-  <string name="cheatEditor_code2">الكود(المصدري):</string>
-  <string name="cheatEditor_option2">الخيارات(هاك):</string>
   <string name="cheatEditor_saveConfirm">حفظ الهاك الى ملف؟</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">فك الظغط عن الخامات</string>
@@ -336,7 +296,7 @@
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
-  <string name="pathPreference_parentFolder">المجلد الاول</string>
+  <string name="pathPreference_parentFolder">المجلد الاول</string>j
   <!--Player Mapping-->
   <string name="playerMap_deviceWithoutName">الجهاز %1$d</string>
   <string name="playerMapPreference_popupTitle">الاعب %1$d</string>

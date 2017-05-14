@@ -16,25 +16,13 @@
   <string name="menuItem_disableFramelimiter">Desynkronoi audio</string>
   <string name="menuItem_paks">Ohjain Pak:it</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Pelaaja 1: Tyhjä</string>
-  <string name="menuItem_pak1_mem">Pelaaja 1: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Pelaaja 1: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Pelaaja 2: Tyhjä</string>
-  <string name="menuItem_pak2_mem">Pelaaja 2: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Pelaaja 2: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Pelaaja 3: Tyhjä</string>
-  <string name="menuItem_pak3_mem">Pelaaja 3: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Pelaaja 3: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Pelaaja 4: Tyhjä</string>
-  <string name="menuItem_pak4_mem">Pelaaja 4: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Pelaaja 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Vaihda IME</string>
   <string name="menuItem_exit">Poistu</string>
@@ -59,7 +47,6 @@
   <string name="menuItem_about">Tietoa</string>
   <string name="menuItem_credits">Tekijät</string>
   <string name="menuItem_appVersion">App versio</string>
-  <string name="menuItem_changelog">Muutosloki</string>
   <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Laitetiedot</string>
   <string name="menuItem_localeOverride">Kieli</string>
@@ -159,17 +146,14 @@
   <string name="categoryDisplay_title">Näyttö</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryTouchscreen_title">Kosketusnäyttö</string>
-  <string name="categoryTouchpad_title">Kosketuslevy</string>
   <string name="categoryInput_title">Sisääntulo</string>
   <string name="categoryData_title">Data</string>
   <string name="categoryGameSettings_title">Pelikohtaiset asetukset</string>
   <string name="categoryGameSettings_titleNamed">%1$s asetukset</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Käytä huijauksia</string>
-  <string name="playShowCheats_summary">Valikon lataaminen hitaampaa kun käytössä</string>
   <string name="touchscreenFeedback_title">Haptinen palaute</string>
   <string name="touchscreenFeedback_summary">Värinä painikketta painettaessa</string>
-  <string name="touchpadEnabled_title">Käytä kosketuslevyä</string>
   <string name="inputVolumeMappable_title">Asetettavat ääninäppäimet</string>
   <string name="inputVolumeMappable_summary">Salli ääninäppäimien asetus ohjaimiksi</string>
   <string name="inputShareController_title">Jaa ohjain</string>
@@ -211,9 +195,6 @@
   <string name="touchscreenStyle_title">Painiketyyli</string>
   <string name="touchscreenStyle_entryOutline">Ulkolinjat</string>
   <string name="touchscreenStyle_entryShaded">Varjostettu</string>
-  <string name="touchpadLayout_title">Kosketuslevyasettelu</string>
-  <string name="touchpadLayout_entryDefault">Vasen pädi: Analogiohjaus; Oikea pädi: C-painikkeet</string>
-  <string name="touchpadLayout_entryReverse">Vasen pädi: C-painikkeet; Oikea pädi: Analogiohjaus</string>
   <string name="displayOrientation_title">Näytön suuntaus</string>
   <string name="displayOrientation_entryLandscape">Vaaka</string>
   <string name="displayOrientation_entryReverseLandscape">Käänteinen vaaka</string>
@@ -237,7 +218,6 @@
   <string name="displayScaling_entryCrop">Rajaa\n<small>Täyttää ruudun, ei vääristymistä (leikkaa pois grafiikkaa)</small></string>
   <string name="displayScaling_entryStretch">Venytä\n<small>Täyttää ruudun, ei mustia palkkeja (lisää vääristymisen)</small></string>
   <string name="displayFps_title">Ruudunpäivitysnopeus</string>
-  <string name="displayFps_summary">Näytä FPS ruudulla</string>
   <string name="videoPlugin_title">Videoliitännäinen</string>
   <string name="videoPlugin_entryNone">Ei mitään (video pois käytöstä)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(adaptoitu GLN64 v0.4.1)</small></string>
@@ -297,7 +277,6 @@
   <string name="audioPlugin_title">Audioliitännäinen</string>
   <string name="audioPlugin_entryNone">Ei mitään (audio pois käytöstä)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Ei mitään-debug (audio pois käytöstä, ei nopeusrajaa)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_entrySystemDefault">Järjestelmän oletus</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Painike läpinäkyvyys</string>
@@ -334,7 +313,6 @@
   <string name="confirmUnmapAll_message">Poista kaikki asettelut sisääntulolle %1$s?</string>
   <string name="confirmDeleteProfile_message">Poista profiili \"%1$s\"?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Muutosloki</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Varoitus</string>
   <string name="invalidInstall_message">Mupen64 Plus AE ei ehkä ole asennettu oikein. Ole hyvä ja yritä uudelleenasentaa app jos koet kaatumisia.</string>
@@ -354,37 +332,12 @@
 </string>
   <string name="cheatNotes_none">(merkintöjä ei saatavilla tälle huijakselle)</string>
   <!--Cheat Editor-->
-  <string name="menuItem_cheatEditor">Huijauseditori</string>
-  <string name="cheatEditor_empty">Tyhjennä huijaus</string>
-  <string name="cheatEditor_added">Tyhjennä listan loppuun lisätty huijaus</string>
+  <string name="menuItem_cheatEditor">Huijauseditori</string>cheatEditor_empty
   <string name="cheatEditor_edit">Muokkaa huijauksia</string>
-  <string name="cheatEditor_edit_desc">Paina pitkään huijausta muokataksesi sitä</string>
   <string name="cheatEditor_help">Apua</string>
-  <string name="cheatEditor_readme1">Tervetuloa Mupen64plus AE Huijauseditoriin</string>
-  <string name="cheatEditor_readme2">Ole hyvä ja kiinnitä huomiota seuraaviin ohjesääntöihin huijausia lisättäessä tai muokattaessa:</string>
-  <string name="cheatEditor_readme3">1. Otsikot ja kuvaukset EIVÄT saisi sisältää rivinvaihtoja (enter painike). Rivinvaihdot korvataan välilyönneillä.</string>
-  <string name="cheatEditor_readme4">2. Heksadesimaalinumeroita pitää käyttää X:ien paikalla alla annetuissa esimerkeissä.</string>
-  <string name="cheatEditor_readme5">3. Huijauksissa pitää olla vain yksi koodi riviä kohden muodossa \"XXXXXXXX XXXX\" ilman lainausmerkkejä tai \"XXXXXXXX ????\" ilman lainausmerkkejä jos huijauskoodissa on valintoja. Huijauksilla voi olla monia rivejä.</string>
-  <string name="cheatEditor_readme6">4. Valintakoodeissa pitää olla vain yksi valinta per rivi muodossa \"Valinta Kuvaus XXXX\" ilman lainausmerkkejä. Valintakoodeilla voi myös olla monia rivejä.</string>
-  <string name="cheatEditor_config">Huijauskonfiguraatio</string>
-  <string name="cheatEditor_config_desc">Muokkaa huijauskonfiguraatiota</string>
-  <string name="cheatEditor_title">Huijauksen otsikko</string>
-  <string name="cheatEditor_title_desc">Muokkaa huijauksen otsikkoa</string>
-  <string name="cheatEditor_notes">Huijausmerkinnät</string>
-  <string name="cheatEditor_notes_desc">Muokkaa huijausmerkintöjä</string>
-  <string name="cheatEditor_code">Huijauskoodi</string>
-  <string name="cheatEditor_code_desc">Muokkaa huijaskoodia</string>
-  <string name="cheatEditor_badCode">Huonot koodit, palautetaan…</string>
-  <string name="cheatEditor_option">Huijausvalinnat</string>
-  <string name="cheatEditor_option_desc">Muokkaa huijausvalintoja</string>
-  <string name="cheatEditor_badOption">Huonot valinnat, palautetaan…</string>
   <string name="cheatEditor_delete">Poista huijaus</string>
   <string name="cheatEditor_confirm">Oletko varma?</string>
   <string name="cheatEditor_info">Huijaustiedot</string>
-  <string name="cheatEditor_title2">Otsikko:</string>
-  <string name="cheatEditor_notes2">Merkinnät:</string>
-  <string name="cheatEditor_code2">Koodi(t):</string>
-  <string name="cheatEditor_option2">Valinna(t):</string>
   <string name="cheatEditor_saveConfirm">Tallenna huijaustiedosto?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Puretaan tekstuureja</string>

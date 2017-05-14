@@ -13,25 +13,13 @@
   <string name="menuItem_setSpeed">Spelsnelheid</string>
   <string name="menuItem_paks">Controllerpacks</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Speler 1: Leeg</string>
-  <string name="menuItem_pak1_mem">Speler 1: Memory Pack</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Speler 1: Rumble Pack</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Speler 2: Leeg</string>
-  <string name="menuItem_pak2_mem">Speler 2: Memory Pack</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Speler 2: Rumble Pack</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Speler 3: Leeg</string>
-  <string name="menuItem_pak3_mem">Speler 3: Memory Pack</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Speler 3: Rumble Pack</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Speler 4: Leeg</string>
-  <string name="menuItem_pak4_mem">Speler 4: Memory Pack</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Speler 4: Rumble Pack</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Verander Invoermethode</string>
   <string name="menuItem_exit">Einde</string>
@@ -55,7 +43,6 @@
   <string name="menuItem_about">Over</string>
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_appVersion">Appversie</string>
-  <string name="menuItem_changelog">Wijzigingsgeschiedenis</string>
   <string name="menuItem_hardwareInfo">Hardware informatie</string>
   <string name="menuItem_localeOverride">Taal</string>
   <!--ManageProfilesActivity-->
@@ -125,17 +112,14 @@
   <string name="categoryDisplay_title">Scherm</string>
   <string name="categoryAudio_title">Geluid</string>
   <string name="categoryTouchscreen_title">Aanraakscherm</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
   <string name="categoryInput_title">Invoer</string>
   <string name="categoryData_title">Gegevens</string>
   <string name="categoryGameSettings_title">Spelspecifieke instellingen</string>
   <string name="categoryGameSettings_titleNamed">%1$s instellingen</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Cheats inschakelen</string>
-  <string name="playShowCheats_summary">Menu laadt langzamer indien ingeschakeld</string>
   <string name="touchscreenFeedback_title">Haptische feedback</string>
   <string name="touchscreenFeedback_summary">Trillen bij knopaanraking</string>
-  <string name="touchpadEnabled_title">Touchpad inschakelen</string>
   <string name="inputVolumeMappable_title">Toewijsbare volumeknoppen</string>
   <string name="inputVolumeMappable_summary">Sta het toe om volumeknoppen toe te wijzen</string>
   <string name="inputShareController_title">Deel controller</string>
@@ -171,9 +155,6 @@
   <string name="touchscreenStyle_title">Knopstijl</string>
   <string name="touchscreenStyle_entryOutline">Omtrekken</string>
   <string name="touchscreenStyle_entryShaded">Gearceerd</string>
-  <string name="touchpadLayout_title">Touchpadindeling</string>
-  <string name="touchpadLayout_entryDefault">Links: Analoge controller; Rechts: C-knoppen</string>
-  <string name="touchpadLayout_entryReverse">Links: C-knoppen; Rechts: Analoge controller</string>
   <string name="displayOrientation_title">Schermoriëntatie</string>
   <string name="displayOrientation_entryLandscape">Landschap</string>
   <string name="displayOrientation_entryReverseLandscape">Omgekeerd landschap</string>
@@ -247,7 +228,6 @@
   <string name="audioPlugin_title">Audioplugin</string>
   <string name="audioPlugin_entryNone">Geen (geluid uitgeschakeld)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Geen-debug (audio uitgeschakeld, geen snelheidslimiet)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knoptransparantie</string>
@@ -284,7 +264,6 @@
   <string name="confirmUnmapAll_message">Alle invoertoewijzigingen verwijderen voor %1$s?</string>
   <string name="confirmDeleteProfile_message">Wilt u het profiel \"%1$s\" verwijderen?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Wijzigingsgeschiedenis</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Waarschuwing</string>
   <string name="invalidInstall_message">Mupen64 Plus AE is mogelijk onjuist geïnstalleerd. Installeer de app opnieuw als u last heeft van crashes.</string>
@@ -302,37 +281,12 @@
   <string name="cheatNotes_title">Opmerkingen</string>
   <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
   <!--Cheat Editor-->
-  <string name="menuItem_cheatEditor">Cheat editor</string>
-  <string name="cheatEditor_empty">Lege cheat</string>
-  <string name="cheatEditor_added">Lege cheat is toegevoegd aan de onderkant van de lijst</string>
+  <string name="menuItem_cheatEditor">Cheat editor</string>cheatEditor_empty
   <string name="cheatEditor_edit">Verander cheats</string>
-  <string name="cheatEditor_edit_desc">Druk een cheat lang in om hem te veranderen</string>
   <string name="cheatEditor_help">Help</string>
-  <string name="cheatEditor_readme1">Welkom bij de Mupen64plus AE Cheat editor</string>
-  <string name="cheatEditor_readme2">Volg alstublieft de volgende richtlijnen als u cheats toevoegt of verandert:</string>
-  <string name="cheatEditor_readme3">1. Titels en beschrijvingen mogen GEEN wit regels (de enter knop) bevatten. Elke wit regel zal worden vervangen met een spatie.</string>
-  <string name="cheatEditor_readme4">2. Hexadecimale nummers moeten worden gebruikt op de plaats van de X\'en in de voorbeelden beneden.</string>
-  <string name="cheatEditor_readme5">3. Cheats mogen slechts één code per regel in het formaat \"XXXXXXXX XXXX\" (zonder aanhalingstekens) of \"\"XXXXXXXX ????\"\" (zonder aanhalingstekens) hebben. Cheats kunnen uit meerdere regels bestaan.</string>
-  <string name="cheatEditor_readme6">4. </string>
-  <string name="cheatEditor_config">Cheat configuratie</string>
-  <string name="cheatEditor_config_desc">Configureer cheats</string>
-  <string name="cheatEditor_title">Cheat titel</string>
-  <string name="cheatEditor_title_desc">Verander cheat titel</string>
-  <string name="cheatEditor_notes">Cheat notities</string>
-  <string name="cheatEditor_notes_desc">Verander cheat notities</string>
-  <string name="cheatEditor_code">Cheat code</string>
-  <string name="cheatEditor_code_desc">Verander cheat code</string>
-  <string name="cheatEditor_badCode">Verkeerde code(s), terug aan het gaan...</string>
-  <string name="cheatEditor_option">Cheat opties</string>
-  <string name="cheatEditor_option_desc">Verander cheat opties</string>
-  <string name="cheatEditor_badOption">Verkeerde optie(s), terug aan het gaan...</string>
   <string name="cheatEditor_delete">Verwijder cheat</string>
   <string name="cheatEditor_confirm">Weet u het zeker?</string>
   <string name="cheatEditor_info">Cheat informatie</string>
-  <string name="cheatEditor_title2">Titel:</string>
-  <string name="cheatEditor_notes2">Notities:</string>
-  <string name="cheatEditor_code2">Code(s):</string>
-  <string name="cheatEditor_option2">Optie(s):</string>
   <string name="cheatEditor_saveConfirm">Wilt u de cheat file opslaan?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Texturen uitpakken</string>

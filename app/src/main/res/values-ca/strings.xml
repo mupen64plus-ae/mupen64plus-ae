@@ -14,25 +14,13 @@
   <string name="menuItem_paks">	
 Controller Paks</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Jugador 1: buit</string>
-  <string name="menuItem_pak1_mem">Jugador 1: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Jugador 1: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Jugador 2: buit</string>
-  <string name="menuItem_pak2_mem">Jugador 2: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Jugador 2: Rumble Pak </string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Jugador 3: buit</string>
-  <string name="menuItem_pak3_mem">Jugador 3: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Jugador 3: Rumble Pak </string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Jugador 4: buit</string>
-  <string name="menuItem_pak4_mem">Jugador 4: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Jugador 4: Rumble Pak </string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Modifica IME</string>
   <string name="menuItem_exit">Surt</string>
@@ -50,7 +38,6 @@ Controller Paks</string>
   <string name="menuItem_reportBug">Reporta una errada</string>
   <string name="menuItem_about">Sobre</string>
   <string name="menuItem_credits">Crèdits</string>
-  <string name="menuItem_changelog">Registre de canvis</string>
   <string name="menuItem_localeOverride">Idioma</string>
   <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
@@ -97,16 +84,13 @@ Controller Paks</string>
   <string name="categoryGlide64_title">Configuració de Glide64</string>
   <string name="categoryAudio_title">Àudio</string>
   <string name="categoryTouchscreen_title">Pantalla tàctil</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
   <string name="categoryInput_title">Entrada</string>
   <string name="categoryData_title">Dades</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">	
 Habilita cheats</string>
-  <string name="playShowCheats_summary">La càrrega del menú és més lenta quan es troben activats</string>
   <string name="touchscreenFeedback_title">Retroalimentació hàptica</string>
   <string name="touchscreenFeedback_summary">Vibra en prémer botons</string>
-  <string name="touchpadEnabled_title">Habilita touchpad</string>
   <string name="inputVolumeMappable_title">Tecles de volum assignables</string>
   <string name="inputVolumeMappable_summary">Permetre que les tecles de volum siguin assignades a controls</string>
   <string name="inputShareController_title">Compartir comandament</string>
@@ -142,9 +126,6 @@ Habilita cheats</string>
   <string name="touchscreenStyle_title">Estil del botó</string>
   <string name="touchscreenStyle_entryOutline">Borejat</string>
   <string name="touchscreenStyle_entryShaded">Ombrejat</string>
-  <string name="touchpadLayout_title">Disposició de botons de touchpad</string>
-  <string name="touchpadLayout_entryDefault">Pad esquerre: Control analògic; Pad dret: Botons C</string>
-  <string name="touchpadLayout_entryReverse">Pad esquerre: Botons C; Pad dret: Control analògic</string>
   <string name="displayOrientation_title">Orientació de la pantalla</string>
   <string name="displayOrientation_entryLandscape">Apaïsat</string>
   <string name="displayOrientation_entryReverseLandscape">Apaïsat invertit</string>
@@ -217,7 +198,6 @@ Perfil T</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intèrpret  a cache</string>
   <string name="r4300Emulator_entryDynarec">Recompilador dinàmic (dynarec)</string>
   <string name="audioPlugin_entryNone">Cap (àudio deshabilitat)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Opacitat de la pantalla tàctil</string>
@@ -246,7 +226,6 @@ Perfil T</string>
   <string name="confirmOverwriteFile_message">Sobreescriu %1$s?</string>
   <string name="confirmUnmapAll_message">Desassigna tots el controls per a %$1s?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Registre de canvis</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Advertència</string>
   <string name="invalidInstall_message">Probalbement el Mupen64 Plus AE no s\'ha instal·lat correctament. Si experimentes aquest errors reinstal·la la aplicació si us plau.</string>

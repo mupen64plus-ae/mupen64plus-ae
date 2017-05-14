@@ -16,25 +16,13 @@
   <string name="menuItem_disableFramelimiter">Desinkroniziraj zvuk</string>
   <string name="menuItem_paks">Pakovi kontrolera</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Igrač 1: Prazno</string>
-  <string name="menuItem_pak1_mem">Igrač 1: Memorijski Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Igrač 1; Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Igrač 2: Prazno</string>
-  <string name="menuItem_pak2_mem">Igrač 2: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Igrač 2: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Igrač 3: Prazno</string>
-  <string name="menuItem_pak3_mem">Igrač 3: Memorijski Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Igrač 3: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Igrač 4: Prazno</string>
-  <string name="menuItem_pak4_mem">Igrač 4: Memorijski Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Igrač 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Promjena zadanog unosa</string>
   <string name="menuItem_exit">Izlaz</string>
@@ -59,7 +47,6 @@
   <string name="menuItem_about">O programu</string>
   <string name="menuItem_credits">Zasluge</string>
   <string name="menuItem_appVersion">Inačica programa</string>
-  <string name="menuItem_changelog">Promjene u novoj inačici</string>
   <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Informacije o hardveru</string>
   <string name="menuItem_localeOverride">Jezik</string>
@@ -159,17 +146,14 @@
   <string name="categoryDisplay_title">Prikaz</string>
   <string name="categoryAudio_title">Zvuk</string>
   <string name="categoryTouchscreen_title">Dodirni ekran</string>
-  <string name="categoryTouchpad_title">Dodirna površina</string>
   <string name="categoryInput_title">Unos</string>
   <string name="categoryData_title">Podaci</string>
   <string name="categoryGameSettings_title">Postavke specifične za igru</string>
   <string name="categoryGameSettings_titleNamed">%1$s postavke</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Uključi opcije za varanje</string>
-  <string name="playShowCheats_summary">Usporava učitavanje izbornika ako je uključeno</string>
   <string name="touchscreenFeedback_title">Vibriranje</string>
   <string name="touchscreenFeedback_summary">Vibra pri pritisku tipke</string>
-  <string name="touchpadEnabled_title">Omogući dodirnu površinu</string>
   <string name="inputVolumeMappable_title">Označive tipke za glasnoću zvuka</string>
   <string name="inputVolumeMappable_summary">Tipke za glasnoću zvuka će se moći označiti za kontrolu</string>
   <string name="inputShareController_title">Podjela kontrolera</string>
@@ -211,9 +195,6 @@
   <string name="touchscreenStyle_title">Izgled tipki</string>
   <string name="touchscreenStyle_entryOutline">Obris</string>
   <string name="touchscreenStyle_entryShaded">Osjenčan</string>
-  <string name="touchpadLayout_title">Raspored dodirne površine</string>
-  <string name="touchpadLayout_entryDefault">Lijeva strana: Analogna kontrola; Desna strana: C tipke</string>
-  <string name="touchpadLayout_entryReverse">Lijeva strana: C tipke; Desna strana: Analogna kontrola</string>
   <string name="displayOrientation_title">Orijentacija ekrana</string>
   <string name="displayOrientation_entryLandscape">Pejzaž</string>
   <string name="displayOrientation_entryReverseLandscape">Obrnuti pejzaž</string>
@@ -237,7 +218,6 @@
   <string name="displayScaling_entryCrop">Odreži\n<small>Ispuni ekrank, nema iskrivljenja prikaza (odreže sliku)</small></string>
   <string name="displayScaling_entryStretch">Razvuci\n<small>Ispuni zaslon, bez crnih traka (iskrivljen prikaz)</small></string>
   <string name="displayFps_title">Sličice po sekundi</string>
-  <string name="displayFps_summary">Prikaži sličice po sekundi (FPS) na ekranu</string>
   <string name="videoPlugin_title">Grafički dodatak</string>
   <string name="videoPlugin_entryNone">Nema (grafika isključena)</string>
   <string name="videoPlugin_entryGln64">gln64\n<small>(prilagođena verzija GLN64 v0.4.1)</small></string>
@@ -297,7 +277,6 @@
   <string name="audioPlugin_title">Zvučni dodatak</string>
   <string name="audioPlugin_entryNone">Nema (zvuk isključen)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (zvuk isključen, bez ograničenja brzine)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_entrySystemDefault">Zadano</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Prozirnost</string>
@@ -334,7 +313,6 @@
   <string name="confirmUnmapAll_message">Odznači sve unose za %1$s?</string>
   <string name="confirmDeleteProfile_message">Obrisati profil \"%1$s\"?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Što je novo?</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Upozorenje</string>
   <string name="invalidInstall_message">Mupen64 Plus AE se možda nije ispravno instalirao. Pokušajte ponovno instalirati aplikaciju u slučaju da dođe do grešaka.</string>
@@ -353,37 +331,12 @@
   <string name="cheatNotes_title">Detalji</string>
   <string name="cheatNotes_none">(nema detalja)</string>
   <!--Cheat Editor-->
-  <string name="menuItem_cheatEditor">Uređivanje opcija za varanje</string>
-  <string name="cheatEditor_empty">Prazna opcija za varanje</string>
-  <string name="cheatEditor_added">Prazna opcija za varanje dodana na dno popisa</string>
+  <string name="menuItem_cheatEditor">Uređivanje opcija za varanje</string>cheatEditor_empty
   <string name="cheatEditor_edit">Uređivanje opcija za varanje</string>
-  <string name="cheatEditor_edit_desc">Držati na opciju za varanje za uređivanje</string>
   <string name="cheatEditor_help">Pomoć</string>
-  <string name="cheatEditor_readme1">Dobrodošli u Mupen64plus AE uređivač opcija za varanje</string>
-  <string name="cheatEditor_readme2">Poštujte slijedeće upute pri dodavanju ili uređivanju opcija za varanje:</string>
-  <string name="cheatEditor_readme3">1. Naslovi i opisi ne bi smjeli sadržavati nove retke (sa enter tipkom). Svaka nova linija će biti zamijenjena sa razmaknicom.</string>
-  <string name="cheatEditor_readme4">2. Heksadecimalni brojevi se moraju koristiti pod \"X\"-ovima kao u primjerima ispod.</string>
-  <string name="cheatEditor_readme5">3. Opcije za varanje moraju imati jedan kod po liniju u formatu \"XXXXXXXX XXXX\" bez navodnika ili \"XXXXXXXX ????\" bez navodnika ako ima više opcija. Opcije za varanje mogu imati više linija.</string>
-  <string name="cheatEditor_readme6">4. Opcije moraju imati barem jednu opciju po liniji u formatu \"Opcija Opis XXXX\" bez navodnika. Opcije mogu imati više linija.</string>
-  <string name="cheatEditor_config">Podešavanje opcije varanja</string>
-  <string name="cheatEditor_config_desc">Uredi podešavanje opcije za varanje</string>
-  <string name="cheatEditor_title">Naslov opcije za varanje</string>
-  <string name="cheatEditor_title_desc">Uredi naslov opcije za varanje</string>
-  <string name="cheatEditor_notes">Napomene</string>
-  <string name="cheatEditor_notes_desc">Uredi napomene</string>
-  <string name="cheatEditor_code">Šifra</string>
-  <string name="cheatEditor_code_desc">Uredi šifru</string>
-  <string name="cheatEditor_badCode">Loše šifre, poništavanje...</string>
-  <string name="cheatEditor_option">Opcije</string>
-  <string name="cheatEditor_option_desc">Uređivanje opcija</string>
-  <string name="cheatEditor_badOption">Loše opcije, poništavanje...</string>
   <string name="cheatEditor_delete">Obriši</string>
   <string name="cheatEditor_confirm">Jeste li sigurni?</string>
   <string name="cheatEditor_info">Informacije</string>
-  <string name="cheatEditor_title2">Naslov:</string>
-  <string name="cheatEditor_notes2">Napomene:</string>
-  <string name="cheatEditor_code2">Šifre:</string>
-  <string name="cheatEditor_option2">Opcije:</string>
   <string name="cheatEditor_saveConfirm">Spremiti?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Raspakiravanje teksture</string>

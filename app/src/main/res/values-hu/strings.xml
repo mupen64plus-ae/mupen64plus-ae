@@ -13,25 +13,13 @@
   <string name="menuItem_setSpeed">Játék sebesség</string>
   <string name="menuItem_paks">Controller Paks</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Játékos 1: üres</string>
-  <string name="menuItem_pak1_mem">Játékos 1: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Játékos 1: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Játékos 2: üres</string>
-  <string name="menuItem_pak2_mem">Játékos 2 : Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Játékos 2: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Játékos 3: üres</string>
-  <string name="menuItem_pak3_mem">Játékos 3: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Játékos 3: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Játékos 4: üres</string>
-  <string name="menuItem_pak4_mem">Játékos 4: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Játékos 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">IME változtatása</string>
   <string name="menuItem_exit">Kilépés</string>
@@ -46,7 +34,6 @@
   <string name="menuItem_reportBug">Bug jelentése</string>
   <string name="menuItem_about">Névjegy</string>
   <string name="menuItem_credits">Kreditek</string>
-  <string name="menuItem_changelog">Változások</string>
   <string name="menuItem_localeOverride">Nyelv</string>
   <!--ManageProfilesActivity-->
   <!--Popup Dialogs-->
@@ -89,15 +76,12 @@
   <string name="categoryRice_title">Rice beállítások</string>
   <string name="categoryAudio_title">Hang</string>
   <string name="categoryTouchscreen_title">Érintőpanel</string>
-  <string name="categoryTouchpad_title">Érintőpad</string>
   <string name="categoryInput_title">Bevitel</string>
   <string name="categoryData_title">Adat</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Csalás engedélyezése</string>
-  <string name="playShowCheats_summary">A menü lassaban tölt, ha engedélyezve van</string>
   <string name="touchscreenFeedback_title">Haptic visszajelzés</string>
   <string name="touchscreenFeedback_summary">Gombnyomáskor rezgés</string>
-  <string name="touchpadEnabled_title">Érintőpad bekapcsolása</string>
   <string name="inputVolumeMappable_title">Programozható hangerő gombok</string>
   <string name="inputVolumeMappable_summary">Hangerő gombok programozásának engedélyezése</string>
   <string name="inputShareController_title">Kontroller megosztása</string>
@@ -127,9 +111,6 @@
   <string name="touchscreenAutoHold_entryDisabled">Kikapcsolva</string>
   <string name="touchscreenAutoHold_entryLongPress">Hosszan nyomáskor</string>
   <string name="touchscreenAutoHold_entrySlideOut">Elcsúsztatáskor</string>
-  <string name="touchpadLayout_title">Érintőpad kiosztás</string>
-  <string name="touchpadLayout_entryDefault">Bal pad: analóg irányítás; jobb pad? C gombok</string>
-  <string name="touchpadLayout_entryReverse">Bal pad: C gombok; Jobb pad: Analóg irányítás</string>
   <string name="displayOrientation_title">Képernyő orientáció</string>
   <string name="displayOrientation_entryLandscape">Elforgatott</string>
   <string name="displayOrientation_entryReverseLandscape">Fordított elforgatott</string>
@@ -213,7 +194,6 @@
   <string name="confirmOverwriteFile_message">Felülírod %1$s ?</string>
   <string name="confirmUnmapAll_message"> %1$s beviteli eszköz kiosztásának megszüntetése?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Változások</string>
   <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">Fájl neve</string>

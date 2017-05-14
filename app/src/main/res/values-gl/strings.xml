@@ -13,25 +13,13 @@
   <string name="menuItem_setSpeed">Velocidade do xogo</string>
   <string name="menuItem_paks">Mandos Paks</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Xogador 1: Baleiro</string>
-  <string name="menuItem_pak1_mem">Xogador 1: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Xogador 1: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Xogador 2: Baleiro</string>
-  <string name="menuItem_pak2_mem">Xogador 2: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Xogador 2: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Xogador 3: Baleiro</string>
-  <string name="menuItem_pak3_mem">Xogador 3: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Xogador 3: Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Xogador 4: Baleiro</string>
-  <string name="menuItem_pak4_mem">Xogador 4: Memory Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Xogador 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Cambiar IME</string>
   <string name="menuItem_exit">Saír</string>
@@ -55,7 +43,6 @@
   <string name="menuItem_about">Acerca de</string>
   <string name="menuItem_credits">Créditos</string>
   <string name="menuItem_appVersion">Versión da app</string>
-  <string name="menuItem_changelog">Rexistro de modificacións</string>
   <string name="menuItem_hardwareInfo">Info. do hardware</string>
   <string name="menuItem_localeOverride">Idioma</string>
   <!--ManageProfilesActivity-->
@@ -125,17 +112,14 @@
   <string name="categoryDisplay_title">Amosar</string>
   <string name="categoryAudio_title">Son</string>
   <string name="categoryTouchscreen_title">Pantalla táctil</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
   <string name="categoryInput_title">Entrada</string>
   <string name="categoryData_title">Datos</string>
   <string name="categoryGameSettings_title">Axustes específicos do xogo</string>
   <string name="categoryGameSettings_titleNamed">Axustes de %1$s</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Activar trucos</string>
-  <string name="playShowCheats_summary">A carga do menú é máis lenta cando se activa</string>
   <string name="touchscreenFeedback_title">Resposta táctil</string>
   <string name="touchscreenFeedback_summary">Vibrar ao premer o botón</string>
-  <string name="touchpadEnabled_title">Activar touchpad</string>
   <string name="inputVolumeMappable_title">Teclas de volume asignables</string>
   <string name="inputVolumeMappable_summary">Permitir que as teclas de volume sexan asignables aos controis</string>
   <string name="inputShareController_title">Compartir mando</string>
@@ -171,9 +155,6 @@
   <string name="touchscreenStyle_title">Estilo de botón</string>
   <string name="touchscreenStyle_entryOutline">Contornos</string>
   <string name="touchscreenStyle_entryShaded">Ensombrecido</string>
-  <string name="touchpadLayout_title">Disposición do touchpad</string>
-  <string name="touchpadLayout_entryDefault">Pad esquerdo: control analóxico; pad dereito: Botóns C</string>
-  <string name="touchpadLayout_entryReverse">Pad esquerdo: Botóns C; pad dereito: control analóxico</string>
   <string name="displayOrientation_title">Orientación da pantalla</string>
   <string name="displayOrientation_entryLandscape">Horizontal</string>
   <string name="displayOrientation_entryReverseLandscape">Horizontal inversa</string>
@@ -247,7 +228,6 @@
   <string name="audioPlugin_title">Complemento de son</string>
   <string name="audioPlugin_entryNone">Nada (son desactivado)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Sen depuración (son desactivado, sen límite de velocidade)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_entrySystemDefault">Predefinido do sistema</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparencia da pantalla táctil</string>
@@ -284,7 +264,6 @@
   <string name="confirmUnmapAll_message">Desasignar todas as entradas para %1$s?</string>
   <string name="confirmDeleteProfile_message">Eliminar perfil \"%1$s\"?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Rexistro de modificacións</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Aviso</string>
   <string name="invalidInstall_message">Mupen64 Plus AE non se instalou correctamente. Por favor, probe a reinstalar a aplicación se sufre crebas.</string>
@@ -302,37 +281,12 @@
   <string name="cheatNotes_title">Notas</string>
   <string name="cheatNotes_none">(non hai notas para este truco)</string>
   <!--Cheat Editor-->
-  <string name="menuItem_cheatEditor">Editor de trucos</string>
-  <string name="cheatEditor_empty">Truco baleiro</string>
-  <string name="cheatEditor_added">Truco baleiro engadido ao final da lista</string>
+  <string name="menuItem_cheatEditor">Editor de trucos</string>cheatEditor_empty
   <string name="cheatEditor_edit">Editar trucos</string>
-  <string name="cheatEditor_edit_desc">Manteña pulsado o truco para editalo</string>
   <string name="cheatEditor_help">Axuda</string>
-  <string name="cheatEditor_readme1">Benvido ao editor de trucos do Mupen64plus AE</string>
-  <string name="cheatEditor_readme2">Por favor, segue os seguintes procedementos ao engadir ou editar trucos:</string>
-  <string name="cheatEditor_readme3">1. Os títulos e descricións NON deben conter saltos de liña (tecla intro). Calquera salto de liña será substituída con espazos.</string>
-  <string name="cheatEditor_readme4">2. Números hexadecimais deben ser usados no lugar dos X no exemplo de abaixo.</string>
-  <string name="cheatEditor_readme5">3. Os trucos deben ter só un código por liña, no formato \"XXXXXXXX XXXX\" sen comiñas ou \"XXXXXXXX ????\" sen comiñas se o truco tivese opcións. Os trucos poden ter máis dunha liña.</string>
-  <string name="cheatEditor_readme6">4. Os códigos con opcións só poden ter unha opción por liña, no formato \"Opción Descrición XXXX\" sen comiñas. Códigos con opcións tamén poden ter máis dunha liña.</string>
-  <string name="cheatEditor_config">Axuste de truco</string>
-  <string name="cheatEditor_config_desc">Editar axuste de truco</string>
-  <string name="cheatEditor_title">Título do truco</string>
-  <string name="cheatEditor_title_desc">Editar título do truco</string>
-  <string name="cheatEditor_notes">Notas de trucos</string>
-  <string name="cheatEditor_notes_desc">Editar notas de trucos</string>
-  <string name="cheatEditor_code">Códigos de trucos</string>
-  <string name="cheatEditor_code_desc">Editar códigos de trucos</string>
-  <string name="cheatEditor_badCode">Código(s) malos, revertendo...</string>
-  <string name="cheatEditor_option">Opcións dos trucos</string>
-  <string name="cheatEditor_option_desc">Editar opcións dos trucos</string>
-  <string name="cheatEditor_badOption">Opción(s) malas, revertendo...</string>
   <string name="cheatEditor_delete">Eliminar truco</string>
   <string name="cheatEditor_confirm">Está seguro?</string>
   <string name="cheatEditor_info">Información de trucos</string>
-  <string name="cheatEditor_title2">Título:</string>
-  <string name="cheatEditor_notes2">Notas:</string>
-  <string name="cheatEditor_code2">Código(s):</string>
-  <string name="cheatEditor_option2">Opción(s):</string>
   <string name="cheatEditor_saveConfirm">Gardar arquivo de truco?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Desempaquetando texturas</string>

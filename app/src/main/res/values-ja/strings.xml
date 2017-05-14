@@ -13,25 +13,13 @@
   <string name="menuItem_setSpeed">ゲームの速度</string>
   <string name="menuItem_paks">コントローラパック</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">プレイヤー1：なし</string>
-  <string name="menuItem_pak1_mem">プレーヤー1：メモリ·パック</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">プレーヤー1：振動パック</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">プレイヤー2：なし</string>
-  <string name="menuItem_pak2_mem">プレーヤー2：メモリ·パック</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">プレーヤー2：振動パック</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">プレイヤー3：なし</string>
-  <string name="menuItem_pak3_mem">プレーヤー3：メモリ·パック</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">プレーヤー3：振動パック</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">プレイヤー4：なし</string>
-  <string name="menuItem_pak4_mem">プレーヤー4：メモリ·パック</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">プレーヤー4：振動パック</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">IMEを変更</string>
   <string name="menuItem_exit">終了</string>
@@ -55,7 +43,6 @@
   <string name="menuItem_about">Mupen64Plus AEについて</string>
   <string name="menuItem_credits">クレジット</string>
   <string name="menuItem_appVersion">アプリバージョン</string>
-  <string name="menuItem_changelog">変更履歴</string>
   <string name="menuItem_hardwareInfo">ハードウェア情報</string>
   <string name="menuItem_localeOverride">言語</string>
   <!--ManageProfilesActivity-->
@@ -122,17 +109,14 @@
   <string name="categoryDisplay_title">表示</string>
   <string name="categoryAudio_title">オーディオ</string>
   <string name="categoryTouchscreen_title">タッチスクリーン</string>
-  <string name="categoryTouchpad_title">タッチパッド</string>
   <string name="categoryInput_title">入力</string>
   <string name="categoryData_title">データ</string>
   <string name="categoryGameSettings_title">ゲーム毎の設定</string>
   <string name="categoryGameSettings_titleNamed">%1$sの設定</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">チートを有効化</string>
-  <string name="playShowCheats_summary">有効中は、メニューのロ読み込みが遅くなります。</string>
   <string name="touchscreenFeedback_title">触覚フィードバック</string>
   <string name="touchscreenFeedback_summary">ボタンを押した際に振動</string>
-  <string name="touchpadEnabled_title">タッチパッドを有効</string>
   <string name="inputVolumeMappable_title">ボリュームキーを有効</string>
   <string name="inputVolumeMappable_summary">コントローラのボタンとしてボリュームキーを使用</string>
   <string name="inputShareController_title">共有コントローラ</string>
@@ -168,9 +152,6 @@
   <string name="touchscreenStyle_title">ボタンスタイル</string>
   <string name="touchscreenStyle_entryOutline">輪郭</string>
   <string name="touchscreenStyle_entryShaded">影付きの</string>
-  <string name="touchpadLayout_title">タッチパッド レイアウト</string>
-  <string name="touchpadLayout_entryDefault">左パッド： アナログ; 右パッド： Cボタン</string>
-  <string name="touchpadLayout_entryReverse">左パッド： Cボタ; 右パッド: アナログ</string>
   <string name="displayOrientation_title">画面の向き</string>
   <string name="displayOrientation_entryLandscape">横方向</string>
   <string name="displayOrientation_entryReverseLandscape">反転横向き</string>
@@ -244,7 +225,6 @@
   <string name="audioPlugin_title">オーディオプラグイン</string>
   <string name="audioPlugin_entryNone">なし（オーディオ無効）</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (オーディオ無効、スピード制限なし)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_entrySystemDefault">システムのデフォルト</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">タッチスクリーンの透明度</string>
@@ -281,7 +261,6 @@
   <string name="confirmUnmapAll_message">%1$sに対するすべての割り当てを解除しますか?</string>
   <string name="confirmDeleteProfile_message">プロファイル \"%1$s\"? を削除しますか?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">変更履歴</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">警告</string>
   <string name="invalidInstall_message">Mupen64Plus AEは正しくインストールしていない可能性。 任意のプログラムのクラッシュが発生した場合アプリケーションを再インストールしてください。</string>
@@ -301,28 +280,10 @@
   <!--Cheat Editor-->
   <string name="menuItem_cheatEditor">チート編集</string>
   <string name="cheatEditor_edit">チートの編集</string>
-  <string name="cheatEditor_edit_desc">長押しでチートの編集</string>
   <string name="cheatEditor_help">ヘルプ</string>
-  <string name="cheatEditor_readme1">Mupen64plus AE チートエディタへようこそ</string>
-  <string name="cheatEditor_readme2">チートを追加、編集する場合は、次のガイドラインに従ってください:</string>
-  <string name="cheatEditor_readme3">1. タイトルと説明は改行を含めることはできません。改行はスペースに置き換えられます。</string>
-  <string name="cheatEditor_config">チートの設定</string>
-  <string name="cheatEditor_config_desc">チート設定の編集</string>
-  <string name="cheatEditor_title">チートタイトル</string>
-  <string name="cheatEditor_title_desc">チートタイトルの編集</string>
-  <string name="cheatEditor_notes">チート情報</string>
-  <string name="cheatEditor_notes_desc">チート情報の編集</string>
-  <string name="cheatEditor_code">チートコード</string>
-  <string name="cheatEditor_code_desc">チートコードの編集</string>
-  <string name="cheatEditor_option">チートオプション</string>
-  <string name="cheatEditor_option_desc">チートオプションの編集</string>
   <string name="cheatEditor_delete">チートの削除</string>
   <string name="cheatEditor_confirm">よろしいですか?</string>
   <string name="cheatEditor_info">チート情報</string>
-  <string name="cheatEditor_title2">タイトル:</string>
-  <string name="cheatEditor_notes2">情報:</string>
-  <string name="cheatEditor_code2">コード:</string>
-  <string name="cheatEditor_option2">オプション:</string>
   <string name="cheatEditor_saveConfirm">チートファイルを保存しますか?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">テクスチャの展開中</string>

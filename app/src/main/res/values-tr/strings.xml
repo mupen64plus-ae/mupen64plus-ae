@@ -16,25 +16,13 @@
   <string name="menuItem_disableFramelimiter">Sesi desenkronize et</string>
   <string name="menuItem_paks">Kontrol Paketleri</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Oyuncu 1: Boş</string>
-  <string name="menuItem_pak1_mem">Oyuncu 1: Hafıza paketi</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Kullanıcı 1:Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Oyuncu 2: Boş</string>
-  <string name="menuItem_pak2_mem">Oyuncu 2: Hafıza paketi</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Kullanıcı 2:Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Oyuncu 3: Boş</string>
-  <string name="menuItem_pak3_mem">Oyuncu 3: Hafıza paketi</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Kullanıcı 3:Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Oyuncu 4: Boş</string>
-  <string name="menuItem_pak4_mem">Oyuncu 4: Hafıza paketi</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Kullanıcı 4:Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">IME\'yi değiştir</string>
   <string name="menuItem_exit">Çıkış</string>
@@ -60,7 +48,6 @@
   <string name="menuItem_about">Hakkında</string>
   <string name="menuItem_credits">Katkıda Bulunanlar</string>
   <string name="menuItem_appVersion">Uygulama sürümü</string>
-  <string name="menuItem_changelog">Değişim Kayıtları</string>
   <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Donanim enfermasyonu</string>
   <string name="menuItem_localeOverride">Dil</string>
@@ -135,15 +122,12 @@
   <string name="categoryGlide64_title">Glide64 ayarları</string>
   <string name="categoryAudio_title">Ses</string>
   <string name="categoryTouchscreen_title">Dokunmatik Ekran</string>
-  <string name="categoryTouchpad_title">Dokunmatik yüzey</string>
   <string name="categoryInput_title">Girdi</string>
   <string name="categoryData_title">Veri</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Hileleri etkinleştir</string>
-  <string name="playShowCheats_summary">Etkin olduğunda menü yüklenmesi yavaşlar</string>
   <string name="touchscreenFeedback_title">Dokunsal geri bildirim</string>
   <string name="touchscreenFeedback_summary">Tuşa basıldığında titreşim</string>
-  <string name="touchpadEnabled_title">Dokunmatik yüzeyi etkinleştir</string>
   <string name="inputVolumeMappable_title">Haritalanabilir ses tuşları</string>
   <string name="inputVolumeMappable_summary">Ses tuşlarının denetimler için haritalanmasına izin ver</string>
   <string name="inputShareController_title">Kumandayı paylaş</string>
@@ -176,9 +160,6 @@
   <string name="touchscreenStyle_title">Tuş stili</string>
   <string name="touchscreenStyle_entryOutline">Anahatlar</string>
   <string name="touchscreenStyle_entryShaded">Gölgelenmiş</string>
-  <string name="touchpadLayout_title">Dokunmatik yüzey düzeni</string>
-  <string name="touchpadLayout_entryDefault">Sol tık: Analog kontrol; Sağ tık: C tuşları</string>
-  <string name="touchpadLayout_entryReverse">Sol tık:  C tuşları ; Sağ tık:Analog kontrol</string>
   <string name="displayOrientation_title">Ekran yönlendirmesi</string>
   <string name="displayOrientation_entryLandscape">Manzara</string>
   <string name="displayOrientation_entryReverseLandscape">Ters Manzara</string>
@@ -244,8 +225,6 @@
   <string name="r4300Emulator_entryCachedInterpreter">Önbellekli yorumlayıcı</string>
   <string name="r4300Emulator_entryDynarec">Dinamik derleyici (dynarec)</string>
   <string name="audioPlugin_entryNone">Hiçbiri (ses devre dışı)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioSDLBufferSize_entry2048">Varsayılan</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Dokunmatik ekran şeffaflığı</string>
@@ -275,7 +254,6 @@
   <string name="confirmUnmapAll_message">%1$s için tüm girdilerin eşlemelerini kaldır?</string>
   <string name="confirmDeleteProfile_message">\"%1$s\" profili silinsin mi?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Değişiklik kaydı</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">UYARI</string>
   <string name="invalidInstall_message">Mupen64 Plus AE düzgün yüklenmiş olmayabilir. Herhangi bir hata ile karşılaşıyorsanız lütfen uygulamayı tekrardan yükleyiniz.</string>
@@ -295,10 +273,6 @@
   <!--Cheat Editor-->
   <string name="cheatEditor_help">Yardım</string>
   <string name="cheatEditor_confirm">Emin misiniz?</string>
-  <string name="cheatEditor_title2">Başlık:</string>
-  <string name="cheatEditor_notes2">Notlar</string>
-  <string name="cheatEditor_code2">Kod(lar):</string>
-  <string name="cheatEditor_option2">Seçenek(ler):</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>

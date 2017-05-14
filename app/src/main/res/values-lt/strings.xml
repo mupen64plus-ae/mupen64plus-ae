@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Mupen64Plus</string>
+<resources>getView().findViewById
     <string name="actionCheatEditor_summary">Pridėti, keisti ir ištrinti tinkintus kodus</string>
     <string name="actionCheatEditor_title">Įgalinti kodus</string>
     <string name="actionReloadAssets_summary">Neliečia naudotojo nustatymų, ROM, žaidimų išsaugojim ir kitų duomenų</string>
@@ -10,10 +9,7 @@
     <string name="actionWiki_title">Wiki</string>
     <string name="assetExtractor_finished">Užbaigta</string>
     <string name="audioPlugin_title">Audio plėtinys</string>
-    <string name="cheatEditor_title2">Pavadinimas</string>
     <string name="cheatEditor_saveConfirm"></string>
-    <string name="cheatEditor_title">Kodo pavadinimas</string>
-    <string name="cheatEditor_title_desc">Keisti kodo pavadinimą</string>
     <string name="controller_buttonL">L mygtukas</string>
     <string name="controller_buttonR">R mygtukas</string>
     <string name="controller_buttonS">Pradžios mygtukas</string>

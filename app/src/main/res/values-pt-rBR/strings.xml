@@ -16,25 +16,13 @@
   <string name="menuItem_disableFramelimiter">Desincronização de áudio</string>
   <string name="menuItem_paks">Controles</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_empty">Jogador 1: Vázio</string>
-  <string name="menuItem_pak1_mem">Jogador 1: Memória</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak1_rumble">Jogador 1: Vibração</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_empty">Jogador 2: Vázio</string>
-  <string name="menuItem_pak2_mem">Jogador 2: Memória</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak2_rumble">Jogador 2: Vibração</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_empty">Jogador 3: Vázio</string>
-  <string name="menuItem_pak3_mem">Jogador 3: Memória</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak3_rumble">Jogador 3: Vibração</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_empty">Jogador 4: Vázio</string>
-  <string name="menuItem_pak4_mem">Jogador 4: Memória</string>
   <!--capitalize since trademark-->
-  <string name="menuItem_pak4_rumble">Jogador 4: Vibração</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Mudar IME</string>
   <string name="menuItem_exit">Sair</string>
@@ -60,7 +48,6 @@
   <string name="menuItem_about">Sobre</string>
   <string name="menuItem_credits">Créditos</string>
   <string name="menuItem_appVersion">Versão do aplicativo</string>
-  <string name="menuItem_changelog">Diário de alterações</string>
   <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Informações de Hardware</string>
   <string name="menuItem_localeOverride">Idioma</string>
@@ -160,17 +147,14 @@
   <string name="categoryDisplay_title">Display</string>
   <string name="categoryAudio_title">Áudio</string>
   <string name="categoryTouchscreen_title">Toque na tela</string>
-  <string name="categoryTouchpad_title">Touchpad</string>
   <string name="categoryInput_title">Controle</string>
   <string name="categoryData_title">Dados</string>
   <string name="categoryGameSettings_title">Configurações específicas de jogo</string>
   <string name="categoryGameSettings_titleNamed">%1$s configurações</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Ativar cheats</string>
-  <string name="playShowCheats_summary">O carregamento do menu é mais lento quando habilitado</string>
   <string name="touchscreenFeedback_title">Feedback tátil</string>
   <string name="touchscreenFeedback_summary">Vibrar ao pressionar botões</string>
-  <string name="touchpadEnabled_title">Habilitar touchpad</string>
   <string name="inputVolumeMappable_title">Botões de volume mapeáveis</string>
   <string name="inputVolumeMappable_summary">Permitir que as teclas de volume sejam mapeadas como controles</string>
   <string name="inputShareController_title">Compartilhar controle</string>
@@ -218,9 +202,6 @@
   <string name="touchscreenStyle_title">Estilo de botões</string>
   <string name="touchscreenStyle_entryOutline">Contorno</string>
   <string name="touchscreenStyle_entryShaded">Sombreado</string>
-  <string name="touchpadLayout_title">Posição dos controles de toque</string>
-  <string name="touchpadLayout_entryDefault">Controle esquerdo: controle analógico; Controle direito: Botões C</string>
-  <string name="touchpadLayout_entryReverse">Controle esquerdo: botões C; Controle direito: controle analógico</string>
   <string name="touchscreenStyle_entryCustom">Customizar</string>
   <string name="displayOrientation_title">Orientação de tela</string>
   <string name="displayOrientation_entryLandscape">Paisagem</string>
@@ -248,7 +229,6 @@
   <string name="displayScaling_entryStretch">Esticar
 <small>Preencher tela, sem bordas pretas (adiciona distorção)</small></string>
   <string name="displayFps_title">Framerate</string>
-  <string name="displayFps_summary">Mostrar FPS na tela</string>
   <string name="videoPlugin_title">Plugin de vídeo</string>
   <string name="videoPlugin_entryNone">Nenhum (vídeo desabilitado)</string>
   <string name="videoPlugin_entryGln64">gles2n64
@@ -311,11 +291,6 @@
   <string name="audioPlugin_title">Plugin de áudio</string>
   <string name="audioPlugin_entryNone">Nenhum (áudio desativado)</string>
   <string name="audioPlugin_entryNoneNoSpeedLimit">Nenhum-debug (audio desativado, sem limite de velocidade)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="audioSDLBufferSize_title">Tamanho do buffer de áudio</string>
-  <string name="audioSDLBufferSize_entry2048">Padrão</string>
-  <string name="audioSDLBufferSize_entry128">Baixa latência (experimental)</string>
-  <string name="audioSDLBufferSize_entry8">Ultra-baixa latência (experimental)</string>
   <string name="audioSLESBufferSize_title">Tamanho do buffer de áudio</string>
   <string name="audioSLESBufferNbr_title">Número do buffer de áudio</string>
   <string name="localeOverride_entrySystemDefault">Padrão do sistema</string>
@@ -358,7 +333,6 @@
   <string name="confirmUnmapAll_message">Desmapear todos os controles de %1$s?</string>
   <string name="confirmDeleteProfile_message">Apagar perfil \"%1$s\"?</string>
   <!--Change Log-->
-  <string name="changeLog_dialogTitle">Log de alterações</string>
   <!--Corrupt Installation Warning-->
   <string name="invalidInstall_title">Aviso</string>
   <string name="invalidInstall_message">O Mupen64Plus AE não deve ter sido instalado corretamente. Por favor, tente reinstalar o aplicativo se você tiver algum problema.</string>
@@ -377,37 +351,12 @@
   <string name="cheatNotes_title">Notas</string>
   <string name="cheatNotes_none">(sem notas disponíveis para esse Cheat)</string>
   <!--Cheat Editor-->
-  <string name="menuItem_cheatEditor">Editor de cheats</string>
-  <string name="cheatEditor_empty">Cheat vazio</string>
-  <string name="cheatEditor_added">Cheat vazio adicionado ao fim da lista</string>
+  <string name="menuItem_cheatEditor">Editor de cheats</string>cheatEditor_empty
   <string name="cheatEditor_edit">Editar cheats</string>
-  <string name="cheatEditor_edit_desc">Aperto longo em um cheat para editá-lo</string>
   <string name="cheatEditor_help">Ajuda</string>
-  <string name="cheatEditor_readme1">Bem vindo ao editor de cheats do Mupen64Plus</string>
-  <string name="cheatEditor_readme2">Por favor, respeite os seguintes parâmetros quando adicionar ou editar cheats:</string>
-  <string name="cheatEditor_readme3">1. Títulos e descrições NÃO devem conter quebras de linha (o botão enter). Qualquer quebra de linha será substituída por espaços.</string>
-  <string name="cheatEditor_readme4">2. Números hexadecimais devem ser utilizados no lugar das letras X dados nos exemplos abaixo.</string>
-  <string name="cheatEditor_readme5">3. Cheats devem ter somente um código por linha no formato \"XXXXXXXX XXXX\" - sem o uso das aspas - ou \"XXXXXXXX ????\" - sem o uso das aspas - se o cheat tiver opções. Os cheats em si podem ter múltiplas linhas.</string>
-  <string name="cheatEditor_readme6">4. Os códigos devem ter somente uma opção por linha no formato \"Descrição da opção XXXX\" - sem as aspas. Códigos de opção também podem ter múltiplas linhas.</string>
-  <string name="cheatEditor_config">Configuração de cheats</string>
-  <string name="cheatEditor_config_desc">Editar configuração de cheats</string>
-  <string name="cheatEditor_title">Título do cheat</string>
-  <string name="cheatEditor_title_desc">Editar título do cheat</string>
-  <string name="cheatEditor_notes">Notas do cheat</string>
-  <string name="cheatEditor_notes_desc">Editar notas do cheat</string>
-  <string name="cheatEditor_code">Código cheat</string>
-  <string name="cheatEditor_code_desc">Editar código cheat</string>
-  <string name="cheatEditor_badCode">Código não funciona, revertendo...</string>
-  <string name="cheatEditor_option">Opções de cheat</string>
-  <string name="cheatEditor_option_desc">Editar opções de cheat</string>
-  <string name="cheatEditor_badOption">Opção não funciona, revertendo...</string>
   <string name="cheatEditor_delete">Apagar cheat</string>
   <string name="cheatEditor_confirm">Você tem certeza?</string>
   <string name="cheatEditor_info">Informação do cheat</string>
-  <string name="cheatEditor_title2">Título:</string>
-  <string name="cheatEditor_notes2">Notas:</string>
-  <string name="cheatEditor_code2">Código(s):</string>
-  <string name="cheatEditor_option2">Opção(ões):</string>
   <string name="cheatEditor_saveConfirm">Salvar arquivo cheat?</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesTask_title">Descompactando texturas</string>
