@@ -1073,8 +1073,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             {
                 final String latestSave = mGameDataManager.getLatestAutoSave();
                 mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomPath,
-                    mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
-                    mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
+                    mRomArtPath, mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
             }
             else if(mCoreFragment.hasServiceStarted() && mCoreFragment.getState() == NativeConstants.EMULATOR_STATE_PAUSED)
             {

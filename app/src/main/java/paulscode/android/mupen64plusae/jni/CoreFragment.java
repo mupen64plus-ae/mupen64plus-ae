@@ -106,12 +106,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private GamePrefs mGamePrefs = null;
     private String mRomGoodName = null;
     private String mRomPath = null;
-    private String mRomMd5 = null;
-    private String mRomCrc = null;
-    private String mRomHeaderName = null;
-    private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
-    private String mRomLegacySave = null;
     private String mCheatArgs = null;
     private boolean mIsRestarting = false;
     private String mSaveToLoad = null;
@@ -250,8 +245,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     }
 
     public void startCore( AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName,
-        String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
-        String romLegacySave, String cheatArgs, boolean isRestarting, String saveToLoad)
+        String romPath, String romArtPath, String cheatArgs, boolean isRestarting, String saveToLoad)
     {
         mAppData = appData;
         mGlobalPrefs = globalPrefs;
@@ -261,12 +255,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mCheatArgs = cheatArgs;
         mIsRestarting = isRestarting;
         mSaveToLoad = saveToLoad;
-        mRomMd5 = romMd5;
-        mRomCrc = romCrc;
-        mRomHeaderName = romHeaderName;
-        mRomCountryCode = romCountryCode;
         mRomArtPath = romArtPath;
-        mRomLegacySave = romLegacySave;
 
         NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData );
 
