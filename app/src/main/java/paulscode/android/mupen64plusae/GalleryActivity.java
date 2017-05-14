@@ -204,17 +204,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
+        String givenRomPath = null;
         if( extras != null)
         {
-            final String givenRomPath = extras.getString( ROM_PATH );
+            givenRomPath = extras.getString( ROM_PATH );
             mResumingService = extras.getBoolean(RESUME_SERVICE);
-
-            if( !TextUtils.isEmpty( givenRomPath ) )
-            {
-                getIntent().removeExtra(ROM_PATH);
-                getIntent().removeExtra(RESUME_SERVICE);
-                launchGameOnCreation(givenRomPath);
-            }
         }
 
         // Lay out the content
@@ -357,6 +351,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
         mGameFragment = (GameFragment) fm.findFragmentByTag(STATE_GAME_FRAGMENT);
 
+        if(mGameFragment == null)
+        {
+            Log.e( "GalleryActivity", "OnCreate: GAME FRAGMENT IS NULL" );
+        }
+
         if(mCacheRomInfoFragment == null)
         {
             mCacheRomInfoFragment = new ScanRomsFragment();
@@ -372,6 +371,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Set the sidebar opacity on the two sidebars
         mDrawerList.setBackground( new DrawerDrawable( mGlobalPrefs.displayActionBarTransparency ) );
         mGameSidebar.setBackground( new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency ) );
+
+        if( !TextUtils.isEmpty( givenRomPath ) )
+        {
+            getIntent().removeExtra(ROM_PATH);
+            getIntent().removeExtra(RESUME_SERVICE);
+            launchGameOnCreation(givenRomPath);
+        }
     }
 
     @Override
@@ -677,9 +683,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public void onPromptDialogClosed(int id, int which)
     {
+        Log.i( "GalleryActivity", "onPromptDialogClosed" );
+
         if(mGameFragment != null)
         {
             mGameFragment.onPromptDialogClosed(id, which);
+        }
+        else
+        {
+            Log.e( "GalleryActivity", "GAME FRAGMENT IS NULL" );
         }
 
         if( which == DialogInterface.BUTTON_POSITIVE )
@@ -1035,6 +1047,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting)
     {
+        Log.i( "GalleryActivity", "launchGameActivity" );
+
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
         {
@@ -1089,6 +1103,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Launch the game activity if the service is not running yet
         if(!CoreService.IsServiceRunning() || mResumingService)
         {
+            Log.e( "GalleryActivity", "Starting game fragment" );
+
             mResumingService = false;
             // Notify user that the game activity is starting
             Notifier.showToast( this, R.string.toast_launchingEmulator );
@@ -1099,6 +1115,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             ft.replace(android.R.id.content, mGameFragment, STATE_GAME_FRAGMENT);
             ft.addToBackStack(null);
             ft.commit();
+
+            if(mGameFragment == null)
+            {
+                Log.e( "GalleryActivity", "GAME FRAGMENT IS NULL" );
+            }
         }
         else if(!mAlreadyRunning)
         {
@@ -1108,6 +1129,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     @Override
     public void onGameActivityFinished() {
+        Log.e( "GalleryActivity", "onGameActivityFinished" );
+
         final FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().remove(mGameFragment).commit();
         fm.popBackStack();

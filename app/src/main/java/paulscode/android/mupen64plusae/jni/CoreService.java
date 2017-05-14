@@ -323,7 +323,7 @@ public class CoreService extends Service
      */
     class LocalBinder extends Binder {
         public CoreService getService() {
-            // Return this instance of ExtractTexturesService so clients can call public methods
+            // Return this instance of CoreService so clients can call public methods
             return CoreService.this;
         }
     }
@@ -380,7 +380,7 @@ public class CoreService extends Service
 
             mIsRunning = false;
 
-            NativeExports.unloadLibraries();
+            NativeExports.unloadLibrariesIfLoaded();
 
             if(mListener != null)
             {
@@ -394,7 +394,9 @@ public class CoreService extends Service
 
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
-            stopSelf(msg.arg1);
+            stopForeground(true);
+
+            mIsServiceRunning = false;
         }
     }
 
@@ -484,7 +486,7 @@ public class CoreService extends Service
             String libsDir = extras.getString( ActivityHelper.Keys.LIBS_DIR );
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made
-            NativeExports.loadLibraries( libsDir, Build.VERSION.SDK_INT );
+            NativeExports.loadLibrariesIfNotLoaded( libsDir, Build.VERSION.SDK_INT );
 
             mIsServiceRunning = true;
 
@@ -500,8 +502,6 @@ public class CoreService extends Service
     @Override
     public void onDestroy()
     {
-        mIsServiceRunning = false;
-
         if (mListener != null)
         {
             mListener.onCoreServiceDestroyed();

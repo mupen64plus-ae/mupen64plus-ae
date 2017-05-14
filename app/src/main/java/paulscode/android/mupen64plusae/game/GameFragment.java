@@ -1099,6 +1099,8 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
     private void shutdownEmulator()
     {
+        Log.i( "GameFragment", "shutdownEmulator" );
+
         mShuttingDown = true;
 
         if(mCoreFragment.hasServiceStarted())

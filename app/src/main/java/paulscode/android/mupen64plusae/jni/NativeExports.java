@@ -37,8 +37,30 @@ public class NativeExports
         System.loadLibrary( "ae-exports" );
         System.loadLibrary( "ae-vidext" );
     }
+
+    static boolean mLibrariesLoaded = false;
+
+
     
     // TODO: Add javadoc
+
+    static void loadLibrariesIfNotLoaded(String libPath, int androidSDK )
+    {
+        if(!mLibrariesLoaded)
+        {
+            mLibrariesLoaded = true;
+            loadLibraries( libPath, androidSDK );
+        }
+    }
+
+    static void unloadLibrariesIfLoaded()
+    {
+        if(mLibrariesLoaded)
+        {
+            unloadLibraries();
+            mLibrariesLoaded = false;
+        }
+    }
     
     static native void loadLibraries( String libPath, int androidSDK );
     
