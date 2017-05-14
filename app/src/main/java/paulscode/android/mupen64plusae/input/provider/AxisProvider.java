@@ -112,6 +112,10 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
             return false;
 
         InputDevice device = event.getDevice();
+
+        if(device == null)
+            return false;
+
         AxisMap axisInfo = AxisMap.getMap( device );
 
         // Read all the requested axes
