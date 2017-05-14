@@ -478,6 +478,9 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         super.onDestroy();
 
         Log.i( "GameFragment", "onDestroy" );
+
+        //Shut down emulation if it's not shut down by now
+        mCoreFragment.shutdownEmulator();
     }
 
     @Override
@@ -826,6 +829,8 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             }
 
             mHandler.removeCallbacks(mLastTouchChecker);
+
+            mCoreFragment.setCoreEventListener(null);
             final FragmentManager fm = getActivity().getSupportFragmentManager();
             fm.beginTransaction().remove(mCoreFragment).commit();
 
