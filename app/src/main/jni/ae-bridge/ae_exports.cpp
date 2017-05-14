@@ -111,7 +111,7 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     mVm = vm;
     mReserved = reserved;
-    return JNI_VERSION_1_4;
+    return JNI_VERSION_1_6;
 }
 
 /*******************************************************************************

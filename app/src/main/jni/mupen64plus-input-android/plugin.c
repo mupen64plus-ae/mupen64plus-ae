@@ -115,7 +115,7 @@ static unsigned char DataCRC(unsigned char* data, int length)
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     _javaVM = vm;
-    return JNI_VERSION_1_4;
+    return JNI_VERSION_1_6;
 }
 
 //*****************************************************************************
@@ -178,7 +178,7 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_setS
 JNIEXPORT void JNICALL JNI_Rumble(int controllerNum, int active)
 {
     JNIEnv *env;
-    if ((*_javaVM)->GetEnv(_javaVM, (void**) &env, JNI_VERSION_1_4) != JNI_OK)
+    if ((*_javaVM)->GetEnv(_javaVM, (void**) &env, JNI_VERSION_1_6) != JNI_OK)
         return;
     jboolean a = active == 0 ? JNI_FALSE : JNI_TRUE;
     (*env)->CallStaticVoidMethod(env, _jniClass, _jniRumble, controllerNum, a);

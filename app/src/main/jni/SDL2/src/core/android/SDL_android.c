@@ -89,7 +89,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv *env;
     mJavaVM = vm;
     LOGI("JNI_OnLoad called");
-    if ((*mJavaVM)->GetEnv(mJavaVM, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
+    if ((*mJavaVM)->GetEnv(mJavaVM, (void**) &env, JNI_VERSION_1_6) != JNI_OK) {
         LOGE("Failed to get the environment using GetEnv()");
         return -1;
     }
@@ -104,7 +104,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
         Android_JNI_SetupThread();
     }
 
-    return JNI_VERSION_1_4;
+    return JNI_VERSION_1_6;
 }
 
 void JNI_OnUnload(JavaVM *vm, void *reserved)

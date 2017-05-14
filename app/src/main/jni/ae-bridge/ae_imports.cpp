@@ -26,7 +26,7 @@
  Globals used internally
  *******************************************************************************/
 
-static JavaVM* mJavaVM;
+JavaVM* mJavaVM;
 
 // Imported java class reference
 static jclass mActivityClass;
@@ -43,7 +43,7 @@ static jmethodID midFPSCounter;
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     mJavaVM = vm;
-    return JNI_VERSION_1_4;
+    return JNI_VERSION_1_6;
 }
 
 /*******************************************************************************
@@ -95,7 +95,7 @@ extern DECLSPEC void Android_JNI_StateCallback(void* context, m64p_core_param pa
 	 *            (unsuccessful) 0
      */
     JNIEnv *env;
-    if (mJavaVM->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK)
+    if (mJavaVM->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK)
         return;
     env->CallStaticVoidMethod(mActivityClass, midStateCallback, (int) paramChanged, newValue);
 }
@@ -103,7 +103,7 @@ extern DECLSPEC void Android_JNI_StateCallback(void* context, m64p_core_param pa
 extern DECLSPEC void Android_JNI_FPSCounter(int fps)
 {
     JNIEnv *env;
-    if (mJavaVM->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK)
+    if (mJavaVM->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK)
         return;
     env->CallStaticVoidMethod(mActivityClass, midFPSCounter, fps);
 }
