@@ -845,39 +845,47 @@ public class GlobalPrefs
         final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
         final Display display = windowManager.getDefaultDisplay();
 
+        final Point dimensions = new Point();
+
         if( display == null )
         {
             videoSurfaceWidthStretch = videoSurfaceHeightStretch = 0;
         }
         else if(isImmersiveModeEnabled )
         {
-            final Point dimensions = new Point();
+
             display.getRealSize(dimensions);
             videoSurfaceWidthStretch = dimensions.x;
             videoSurfaceHeightStretch = dimensions.y;
         }
         else
         {
-            final Point dimensions = new Point();
             display.getSize(dimensions);
             videoSurfaceWidthStretch = dimensions.x;
             videoSurfaceHeightStretch = dimensions.y;
         }
 
         final float aspect = 0.75f; // TODO: Handle PAL
-        final boolean isLetterboxed = ( (float) videoSurfaceHeightStretch / (float) videoSurfaceWidthStretch ) > aspect;
-        videoSurfaceWidthOriginal = isLetterboxed ? videoSurfaceWidthStretch : Math.round( videoSurfaceHeightStretch / aspect );
-        videoSurfaceHeightOriginal = isLetterboxed ? Math.round( videoSurfaceWidthStretch * aspect ) : videoSurfaceHeightStretch;
+
+        boolean portrait = videoSurfaceHeightStretch > videoSurfaceWidthStretch;
+        if(portrait)
+        {
+            videoSurfaceWidthOriginal = videoSurfaceWidthStretch;
+            videoSurfaceHeightOriginal = Math.round( videoSurfaceWidthOriginal*aspect);
+        }
+        else
+        {
+            videoSurfaceWidthOriginal = Math.round( videoSurfaceHeightStretch / aspect );
+            videoSurfaceHeightOriginal = videoSurfaceHeightStretch;
+        }
     }
 
-    public int getResolutionWidth(boolean stretch, int hResolution)
+    public int getResolutionWidth(boolean stretch, boolean fixAspect, int hResolution)
     {
         if( hResolution == -1)
         {
             hResolution = displayResolution;
         }
-
-        float widthRatio = (float)videoSurfaceWidthStretch/(float)videoSurfaceWidthOriginal;
 
         // Display prefs, default value is the global default
         int tempVideoRenderWidth = 0;
@@ -903,30 +911,39 @@ public class GlobalPrefs
                 tempVideoRenderWidth = 160;
                 break;
             case 0:
+                hResolution = videoSurfaceHeightOriginal;
                 tempVideoRenderWidth = videoSurfaceWidthOriginal;
                 break;
             default:
                 break;
         }
 
-        if(stretch)
+        boolean isPortrait = (displayOrientation != -1 &&
+                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) ||
+                (displayOrientation == -1 && currentDisplayOrientation == ORIENTATION_PORTRAIT);
+
+        if(stretch || fixAspect)
         {
             //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
             //ratio to make it full screen
-            if((displayOrientation != -1 &&
-                displayOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT &&
-                displayOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) ||
-               (displayOrientation == -1 && currentDisplayOrientation != ORIENTATION_PORTRAIT))
+            if(!isPortrait)
             {
+                float widthRatio = (float)videoSurfaceWidthStretch/(float)videoSurfaceWidthOriginal;
                 final float newWidth = tempVideoRenderWidth * widthRatio;
                 tempVideoRenderWidth = Math.round(newWidth);
+            }
+            else if(fixAspect)
+            {
+                float screenAspect = videoSurfaceHeightStretch*1.0f/videoSurfaceWidthStretch;
+                tempVideoRenderWidth = Math.round(hResolution*screenAspect);
             }
         }
 
         return tempVideoRenderWidth;
     }
 
-    public int getResolutionHeight(boolean stretch, int hResolution)
+    public int getResolutionHeight(boolean stretch, boolean fixAspect, int hResolution)
     {
         if( hResolution == -1)
         {
@@ -938,29 +955,37 @@ public class GlobalPrefs
 
         switch( hResolution )
         {
-            case 720:
-                tempVideoRenderHeight = 720;
-                break;
-            case 600:
-                tempVideoRenderHeight = 600;
-                break;
-            case 480:
-                tempVideoRenderHeight = 480;
-                break;
-            case 360:
-                tempVideoRenderHeight = 360;
-                break;
-            case 240:
-                tempVideoRenderHeight = 240;
-                break;
-            case 120:
-                tempVideoRenderHeight = 120;
-                break;
             case 0:
                 tempVideoRenderHeight = videoSurfaceHeightOriginal;
                 break;
             default:
+                tempVideoRenderHeight = hResolution;
                 break;
+        }
+
+        boolean isPortrait = (displayOrientation != -1 &&
+                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) ||
+                (displayOrientation == -1 && currentDisplayOrientation == ORIENTATION_PORTRAIT);
+
+        if(stretch)
+        {
+            float heightRatio = (float)videoSurfaceHeightStretch/(float)videoSurfaceHeightOriginal;
+
+            //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
+            //ratio to make it full screen
+            if(isPortrait)
+            {
+                final float newWidth = tempVideoRenderHeight * heightRatio;
+                tempVideoRenderHeight = Math.round(newWidth);
+            }
+        }
+
+        if(fixAspect && isPortrait)
+        {
+            int width = getResolutionWidth(false, fixAspect, hResolution);
+            float aspect = videoSurfaceHeightStretch*1.0f/videoSurfaceWidthStretch;
+            tempVideoRenderHeight = Math.round(width/aspect);
         }
 
         return tempVideoRenderHeight;
