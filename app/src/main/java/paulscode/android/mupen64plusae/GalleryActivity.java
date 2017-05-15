@@ -351,11 +351,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
         mGameFragment = (GameFragment) fm.findFragmentByTag(STATE_GAME_FRAGMENT);
 
-        if(mGameFragment == null)
-        {
-            Log.e( "GalleryActivity", "OnCreate: GAME FRAGMENT IS NULL" );
-        }
-
         if(mCacheRomInfoFragment == null)
         {
             mCacheRomInfoFragment = new ScanRomsFragment();
@@ -1103,7 +1098,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Launch the game activity if the service is not running yet
         if(!CoreService.IsServiceRunning() || mResumingService)
         {
-            Log.e( "GalleryActivity", "Starting game fragment" );
+            Log.i( "GalleryActivity", "Starting game fragment" );
 
             mResumingService = false;
             // Notify user that the game activity is starting
@@ -1115,11 +1110,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             ft.replace(android.R.id.content, mGameFragment, STATE_GAME_FRAGMENT);
             ft.addToBackStack(null);
             ft.commit();
-
-            if(mGameFragment == null)
-            {
-                Log.e( "GalleryActivity", "GAME FRAGMENT IS NULL" );
-            }
         }
         else if(!mAlreadyRunning)
         {

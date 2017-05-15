@@ -928,11 +928,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     }
     public void setSurface(Surface surface)
     {
-        Log.e( "CoreFragment", "setSurface" );
+        Log.i( "CoreFragment", "setSurface" );
         mSurface = surface;
         if(mCoreService != null)
         {
-            Log.e( "CoreFragment", "setSurface2" );
             mCoreService.setSurface(mSurface);
         }
     }
