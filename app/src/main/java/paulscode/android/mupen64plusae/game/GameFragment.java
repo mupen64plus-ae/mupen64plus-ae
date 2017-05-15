@@ -465,9 +465,11 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         Log.i( "GameFragment", "onStop" );
         mIsResumed = false;
 
-        if(!mShuttingDown && mCoreFragment.hasServiceStarted())
+        //Don't pause emulation when rotating the screen or the core fragment has been set to null
+        //on a shutdown
+        if(!getActivity().isChangingConfigurations() && mCoreFragment != null)
         {
-            tryPausing();
+            mCoreFragment.pauseEmulator();
         }
 
         if (mSensorController != null) {
@@ -1146,11 +1148,6 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
             mGameDataManager.clearOldest();
         }
-    }
-
-    private void tryPausing()
-    {
-        mCoreFragment.pauseEmulator();
     }
 
     Runnable mLastTouchChecker = new Runnable() {
