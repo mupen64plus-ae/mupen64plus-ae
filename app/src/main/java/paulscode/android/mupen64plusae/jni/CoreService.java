@@ -392,9 +392,9 @@ public class CoreService extends Service
                 mListener.onFinish();
             }
 
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
+            //Stop the service
             stopForeground(true);
+            stopSelf();
 
             mIsServiceRunning = false;
         }
@@ -502,6 +502,7 @@ public class CoreService extends Service
     @Override
     public void onDestroy()
     {
+        Log.i("CoreService", "onDestroy");
         if (mListener != null)
         {
             mListener.onCoreServiceDestroyed();

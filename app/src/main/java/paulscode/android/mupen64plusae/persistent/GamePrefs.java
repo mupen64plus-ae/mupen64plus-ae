@@ -454,7 +454,7 @@ public class GamePrefs
         videoRenderWidth = isAngrylionEnabled ? 640 : globalPrefs.getResolutionWidth(gliden64Widescreenhack, gliden64Widescreenhack, hResolution);
         videoRenderHeight = isAngrylionEnabled ? 480 : globalPrefs.getResolutionHeight(false, gliden64Widescreenhack, hResolution);
 
-        Log.e("GamePrefs", "render_width=" + videoRenderWidth + " render_height=" + videoRenderHeight);
+        Log.i("GamePrefs", "render_width=" + videoRenderWidth + " render_height=" + videoRenderHeight);
 
         videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
 

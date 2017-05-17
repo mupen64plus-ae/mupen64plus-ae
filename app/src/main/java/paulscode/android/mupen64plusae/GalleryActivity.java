@@ -1119,7 +1119,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     @Override
     public void onGameActivityFinished() {
-        Log.e( "GalleryActivity", "onGameActivityFinished" );
+        Log.i( "GalleryActivity", "onGameActivityFinished" );
 
         final FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().remove(mGameFragment).commit();

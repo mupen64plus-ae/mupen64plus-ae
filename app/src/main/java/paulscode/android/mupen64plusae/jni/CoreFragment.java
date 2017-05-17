@@ -100,6 +100,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private ServiceConnection mServiceConnection;
 
     private boolean mCachedStartCore = false;
+    private boolean mCachedStopCore = false;
 
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
@@ -151,6 +152,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         {
             actuallyStartCore(getActivity());
             mCachedStartCore = false;
+        }
+
+        if(mCachedStopCore)
+        {
+            actuallyStopCore();
+            mCachedStopCore = false;
         }
     }
     
