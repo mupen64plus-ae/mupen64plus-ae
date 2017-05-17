@@ -379,11 +379,8 @@ public class ActivityHelper
 
     public static void stopCoreService(Context context, ServiceConnection serviceConnection)
     {
-        if(CoreService.IsServiceRunning())
-        {
-            Intent intent = new Intent(context, CoreService.class);
-            context.unbindService(serviceConnection);
-            context.stopService(intent);
-        }
+        Intent intent = new Intent(context, CoreService.class);
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
     }
 }

@@ -65,7 +65,6 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
-import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -1075,22 +1074,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             romLegacySaveFileName = romFile.getName();
         }
 
-        // Launch the game activity if the service is not running yet
-        if(!CoreService.IsServiceRunning())
-        {
-            Log.i( "GalleryActivity", "Starting game fragment" );
+        // Notify user that the game activity is starting
+        Notifier.showToast(this, R.string.toast_launchingEmulator);
 
-            // Notify user that the game activity is starting
-            Notifier.showToast( this, R.string.toast_launchingEmulator );
-
-            // Launch the game activity
-            ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting );
-        }
-        else if(!mAlreadyRunning)
-        {
-            Notifier.showToast( this, R.string.toast_not_done_shutting_down );
-        }
+        // Launch the game activity
+        ActivityHelper.startGameActivity(this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
+                romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
     }
 
     private String ExtractFirstROMFromZip(String zipPath)

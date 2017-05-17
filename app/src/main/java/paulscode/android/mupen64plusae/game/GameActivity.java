@@ -433,13 +433,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i( "GameActivity", "onDestroy" );
 
         super.onDestroy();
-
-        //Shut down emulation if it's not shut down by now
-        if(!this.isChangingConfigurations() && mCoreFragment != null)
-        {
-            mCoreFragment.shutdownEmulator();
-            mCoreFragment = null;
-        }
     }
 
     @Override

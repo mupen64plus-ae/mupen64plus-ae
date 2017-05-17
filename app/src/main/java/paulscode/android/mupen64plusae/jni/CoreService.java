@@ -80,8 +80,6 @@ public class CoreService extends Service
         void onSaveStateComplete();
     }
 
-    private static boolean mIsServiceRunning = false;
-
     public static final String COMPLETE_EXTENSION = "complete";
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
@@ -399,8 +397,6 @@ public class CoreService extends Service
             //Stop the service
             stopForeground(true);
             stopSelf();
-
-            mIsServiceRunning = false;
         }
     }
 
@@ -503,8 +499,6 @@ public class CoreService extends Service
             // that depend on the libraries being loaded after this call is made
             NativeExports.loadLibrariesIfNotLoaded( libsDir, Build.VERSION.SDK_INT );
 
-            mIsServiceRunning = true;
-
             updateNotification();
         }
 
@@ -521,11 +515,11 @@ public class CoreService extends Service
         if (mListener != null)
         {
             mListener.onCoreServiceDestroyed();
+        }
 
-            if(mIsRunning)
-            {
-                shutdownEmulator();
-            }
+        if(mIsRunning)
+        {
+            shutdownEmulator();
         }
     }
 
@@ -549,10 +543,4 @@ public class CoreService extends Service
             mServiceHandler.sendMessage(msg);
         }
     }
-
-    public static boolean IsServiceRunning()
-    {
-        return mIsServiceRunning;
-    }
-
 }
