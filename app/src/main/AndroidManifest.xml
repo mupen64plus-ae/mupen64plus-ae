@@ -249,9 +249,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="paulscode.android.mupen64plusae.game.GameActivity"
+            android:label="@string/GameActivity_title"
+            android:theme="@style/appTheme.Black"
+            android:process=".GameActivity"/>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService" />
-        <service android:name="paulscode.android.mupen64plusae.jni.CoreService"/>
+        <service
+            android:name="paulscode.android.mupen64plusae.jni.CoreService"
+            android:process=".GameActivity"/>
         <meta-data
             android:name="game_display_name"
             android:resource="@string/app_name" />

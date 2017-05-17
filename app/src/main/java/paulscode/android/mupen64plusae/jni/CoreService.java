@@ -46,10 +46,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.GalleryActivity;
+import paulscode.android.mupen64plusae.game.GameActivity;
 
-import static paulscode.android.mupen64plusae.ActivityHelper.Keys.RESUME_SERVICE;
-import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
 import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
 
@@ -106,6 +104,11 @@ public class CoreService extends Service
     private boolean mIsRunning = false;
     private boolean mIsPaused = false;
     private String mArtPath = null;
+    private String mRomMd5 = null;
+    private String mRomCrc = null;
+    private String mRomHeaderName = null;
+    private byte mRomCountryCode = 0;
+    private String mLegacySaveName = null;
 
     //Service attributes
     private int mStartId;
@@ -419,9 +422,16 @@ public class CoreService extends Service
     private void updateNotification()
     {
         //Show the notification
-        Intent notificationIntent = new Intent(this, GalleryActivity.class);
-        notificationIntent.putExtra(RESUME_SERVICE, true);
-        notificationIntent.putExtra(ROM_PATH, mRomPath);
+        Intent notificationIntent = new Intent(this, GameActivity.class);
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_PATH, mRomPath );
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_MD5, mRomMd5 );
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, mArtPath );
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, mLegacySaveName );
+        notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
@@ -481,7 +491,11 @@ public class CoreService extends Service
             mCoreUserCacheDir = extras.getString( ActivityHelper.Keys.CORE_USER_CACHE_DIR );
             mCoreUserConfigDir = extras.getString( ActivityHelper.Keys.CORE_USER_CONFIG_DIR );
             mUserSaveDir = extras.getString( ActivityHelper.Keys.USER_SAVE_DIR );
-
+            mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
+            mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
+            mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+            mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
+            mLegacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
             mArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
 
             String libsDir = extras.getString( ActivityHelper.Keys.LIBS_DIR );

@@ -31,6 +31,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
@@ -96,7 +97,6 @@ public class ActivityHelper
         public static final String CORE_USER_CONFIG_DIR = NAMESPACE + "CORE_USER_CONFIG_DIR";
         public static final String USER_SAVE_DIR        = NAMESPACE + "USER_SAVE_DIR";
         public static final String LIBS_DIR             = NAMESPACE + "LIBS_DIR";
-        public static final String RESUME_SERVICE       = NAMESPACE + "RESUME_SERVICE";
 
         //@formatter:on
     }
@@ -168,6 +168,23 @@ public class ActivityHelper
         Intent intent = new Intent( context, GalleryActivity.class );
         if( !TextUtils.isEmpty( romPath ) )
             intent.putExtra( Keys.ROM_PATH, romPath );
+        context.startActivity( intent );
+    }
+
+    public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,
+                                          String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romLegacySave,
+                                          boolean doRestart)
+    {
+        Intent intent = new Intent( context, GameActivity.class );
+        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
+        intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
+        intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
+        intent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, romArtPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
+        intent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, romLegacySave );
+        intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
         context.startActivity( intent );
     }
     
@@ -327,7 +344,8 @@ public class ActivityHelper
     }
 
     public static void startCoreService(Context context, ServiceConnection serviceConnection, String romGoodName,
-        String romPath, String romArtPath, String cheatOptions, boolean isRestarting, String saveToLoad, String coreLib,
+        String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
+        String romLegacySave, String cheatOptions, boolean isRestarting, String saveToLoad, String coreLib,
         boolean useHighPriorityThread, ArrayList<Integer> pakTypes, boolean[] isPlugged, boolean isFrameLimiterEnabled,
         String coreUserDataDir, String coreUserCacheDir, String coreUserConfigDir, String userSaveDir, String libsDir)
     {
@@ -347,7 +365,13 @@ public class ActivityHelper
         intent.putExtra(Keys.CORE_USER_CONFIG_DIR, coreUserConfigDir);
         intent.putExtra(Keys.USER_SAVE_DIR, userSaveDir);
         intent.putExtra(Keys.LIBS_DIR, libsDir);
+
+        intent.putExtra(Keys.ROM_MD5, romMd5);
+        intent.putExtra(Keys.ROM_CRC, romCrc);
+        intent.putExtra(Keys.ROM_HEADER_NAME, romHeaderName);
+        intent.putExtra(Keys.ROM_COUNTRY_CODE, romCountryCode);
         intent.putExtra(Keys.ROM_ART_PATH, romArtPath);
+        intent.putExtra(Keys.ROM_LEGACY_SAVE, romLegacySave);
 
         context.startService(intent);
         context.bindService(intent, serviceConnection, 0);

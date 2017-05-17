@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -66,7 +65,6 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
-import paulscode.android.mupen64plusae.game.GameFragment;
 import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
@@ -81,11 +79,9 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
-import static paulscode.android.mupen64plusae.ActivityHelper.Keys.RESUME_SERVICE;
 import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 
-public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
-        GameFragment.OnGameActivityFinished
+public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener
 {
     // Saved instance states
     private static final String STATE_QUERY = "query";
@@ -96,7 +92,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
-    private static final String STATE_GAME_FRAGMENT = "STATE_GAME_FRAGMENT";
     public static final int RESTART_CONFIRM_DIALOG_ID = 0;
     public static final int CLEAR_CONFIRM_DIALOG_ID = 1;
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 2;
@@ -140,10 +135,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
 
-    //Game fragment
-    GameFragment mGameFragment = null;
-
-    boolean mResumingService = false;
     boolean mAlreadyRunning = false;
 
     @Override
@@ -152,7 +143,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // If the activity is already running and is launched again (e.g. from a file manager app),
         // the existing instance will be reused rather than a new one created. This behavior is
         // specified in the manifest (launchMode = singleTask). In that situation, any activities
-        // above this on the stack (e.g. GameFragment, GamePrefsActivity) will be destroyed
+        // above this on the stack (e.g. GameActivity, GamePrefsActivity) will be destroyed
         // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
         // called again on this instance.
         super.onNewIntent( intent );
@@ -165,7 +156,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( extras != null)
         {
             final String givenRomPath = extras.getString( ROM_PATH );
-            mResumingService = false;
             mAlreadyRunning = true;
 
             if( !TextUtils.isEmpty( givenRomPath ) )
@@ -208,7 +198,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( extras != null)
         {
             givenRomPath = extras.getString( ROM_PATH );
-            mResumingService = extras.getBoolean(RESUME_SERVICE);
         }
 
         // Lay out the content
@@ -349,7 +338,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
         mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
-        mGameFragment = (GameFragment) fm.findFragmentByTag(STATE_GAME_FRAGMENT);
 
         if(mCacheRomInfoFragment == null)
         {
@@ -370,7 +358,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( !TextUtils.isEmpty( givenRomPath ) )
         {
             getIntent().removeExtra(ROM_PATH);
-            getIntent().removeExtra(RESUME_SERVICE);
             launchGameOnCreation(givenRomPath);
         }
     }
@@ -680,15 +667,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     {
         Log.i( "GalleryActivity", "onPromptDialogClosed" );
 
-        if(mGameFragment != null)
-        {
-            mGameFragment.onPromptDialogClosed(id, which);
-        }
-        else
-        {
-            Log.e( "GalleryActivity", "GAME FRAGMENT IS NULL" );
-        }
-
         if( which == DialogInterface.BUTTON_POSITIVE )
         {
             if(id == RESTART_CONFIRM_DIALOG_ID && mSelectedItem != null)
@@ -846,6 +824,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
             }
         }
+
+        refreshGrid();
     }
 
     private void refreshRoms(final File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
@@ -1096,44 +1076,21 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         // Launch the game activity if the service is not running yet
-        if(!CoreService.IsServiceRunning() || mResumingService)
+        if(!CoreService.IsServiceRunning())
         {
             Log.i( "GalleryActivity", "Starting game fragment" );
 
-            mResumingService = false;
             // Notify user that the game activity is starting
             Notifier.showToast( this, R.string.toast_launchingEmulator );
 
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            mGameFragment = GameFragment.newInstance(romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
-            ft.replace(android.R.id.content, mGameFragment, STATE_GAME_FRAGMENT);
-            ft.addToBackStack(null);
-            ft.commit();
+            // Launch the game activity
+            ActivityHelper.startGameActivity( this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
+                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting );
         }
         else if(!mAlreadyRunning)
         {
             Notifier.showToast( this, R.string.toast_not_done_shutting_down );
         }
-    }
-
-    @Override
-    public void onGameActivityFinished() {
-        Log.i( "GalleryActivity", "onGameActivityFinished" );
-
-        final FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().remove(mGameFragment).commit();
-        fm.popBackStack();
-        mGameFragment = null;
-
-        runOnUiThread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                refreshGrid();
-            }
-        } );
     }
 
     private String ExtractFirstROMFromZip(String zipPath)

@@ -30,22 +30,19 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
@@ -127,15 +124,9 @@ import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 */
 //@formatter:on
 
-public class GameFragment extends Fragment implements PromptConfirmListener, SurfaceHolder.Callback,
-        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, ViewTreeObserver.OnWindowFocusChangeListener,
-        View.OnGenericMotionListener
+public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback,
+        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener
 {
-    public interface OnGameActivityFinished
-    {
-        void onGameActivityFinished();
-    }
-
     // Activity and views
     private GameOverlay mOverlay;
     private GameDrawerLayout mDrawerLayout;
@@ -152,26 +143,26 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     private Handler mHandler;
 
     // args data
-    private String mRomPath;
-    private String mRomMd5;
-    private String mRomCrc;
-    private String mRomGoodName;
+    private String mRomPath = null;
+    private String mRomMd5 = null;
+    private String mRomCrc = null;
+    private String mRomGoodName = null;
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
     private String mRomLegacySave = null;
-    private boolean mDoRestart;
+    private boolean mDoRestart = false;
 
     // Lifecycle state tracking
     private boolean mIsResumed = false;     // true if the activity is resumed
     private boolean mIsSurface = false;     // true if the surface is available
 
     // App data and user preferences
-    private AppData mAppData;
-    private GlobalPrefs mGlobalPrefs;
-    private GamePrefs mGamePrefs;
-    private GameDataManager mGameDataManager;
-    private boolean mFirstStart;
+    private AppData mAppData = null;
+    private GlobalPrefs mGlobalPrefs = null;
+    private GamePrefs mGamePrefs = null;
+    private GameDataManager mGameDataManager = null;
+    private boolean mFirstStart = false;
     private boolean mWaitingOnConfirmation = false;
     private boolean mShuttingDown = false;
     private boolean mDrawerOpenState = false;
@@ -179,59 +170,18 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
     private CoreFragment mCoreFragment = null;
 
-    public static GameFragment newInstance( String romPath, String romMd5, String romCrc,
-                                            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romLegacySave,
-                                            boolean doRestart)
-    {
-        Log.i("GameFragment", "newInstance");
-
-        GameFragment gameFragment = new GameFragment();
-        Bundle args = new Bundle();
-
-        args.putString( ActivityHelper.Keys.ROM_PATH, romPath );
-        args.putString( ActivityHelper.Keys.ROM_MD5, romMd5 );
-        args.putString( ActivityHelper.Keys.ROM_CRC, romCrc );
-        args.putString( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
-        args.putByte( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
-        args.putString( ActivityHelper.Keys.ROM_ART_PATH, romArtPath );
-        args.putString( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
-        args.putString( ActivityHelper.Keys.ROM_LEGACY_SAVE, romLegacySave );
-        args.putBoolean( ActivityHelper.Keys.DO_RESTART, doRestart );
-        gameFragment.setArguments(args);
-
-        return gameFragment;
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        Log.i("GameFragment", "onCreateView");
-
-        return inflater.inflate(R.layout.game_activity, container, false);
-    }
-
-    @Override
-    // this method is only called once for this fragment
-    public void onCreate(Bundle savedInstanceState)
-    {
-        Log.i("GameFragment", "onCreate");
-
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i("GameActivity", "onCreate");
         super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
-    }
+        super.setTheme( android.support.v7.appcompat.R.style.Theme_AppCompat_NoActionBar );
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        Log.i("GameFragment", "onActivityCreated");
+        mAppData = new AppData( this );
 
-        super.onActivityCreated(savedInstanceState);
-        mAppData = new AppData( getActivity() );
-
-        mMogaController = Controller.getInstance( getActivity() );
+        mMogaController = Controller.getInstance( this );
 
         // Initialize the objects and data files interfacing to the emulator core
-        final FragmentManager fm = getActivity().getSupportFragmentManager();
+        final FragmentManager fm = this.getSupportFragmentManager();
         mCoreFragment = (CoreFragment) fm.findFragmentByTag(STATE_CORE_FRAGMENT);
 
         if(mCoreFragment == null)
@@ -242,42 +192,45 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
         mCoreFragment.setCoreEventListener(this);
 
-        // Get the args data
-        mRomPath = getArguments().getString( ActivityHelper.Keys.ROM_PATH );
-        mRomMd5 = getArguments().getString( ActivityHelper.Keys.ROM_MD5 );
-        mRomCrc = getArguments().getString( ActivityHelper.Keys.ROM_CRC );
-        mRomHeaderName = getArguments().getString( ActivityHelper.Keys.ROM_HEADER_NAME );
-        mRomCountryCode = getArguments().getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
-        mRomArtPath = getArguments().getString( ActivityHelper.Keys.ROM_ART_PATH );
-        mRomGoodName = getArguments().getString( ActivityHelper.Keys.ROM_GOOD_NAME );
-        mRomLegacySave = getArguments().getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
-        mDoRestart = getArguments().getBoolean( ActivityHelper.Keys.DO_RESTART, false );
+        // Get the intent data
+        final Bundle extras = this.getIntent().getExtras();
+        if( extras == null )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
+        mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
+        mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
+        mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
+        mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
+        mRomArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
+        mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+        mRomLegacySave = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
+        mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameFragment" );
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
 
         // Initialize MOGA controller API
         // TODO: Remove hack after MOGA SDK is fixed
         // mMogaController.init();
-        MogaHack.init( mMogaController, getActivity() );
+        MogaHack.init( mMogaController, this );
 
         // Get app data and user preferences
-        mGlobalPrefs = new GlobalPrefs( getActivity(), mAppData );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
         //Allow volume keys to control media volume if they are not mapped
 
         if (!mGlobalPrefs.volKeysMappable && mGlobalPrefs.audioPlugin.enabled)
         {
-            getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+            this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
 
-        mGamePrefs = new GamePrefs( getActivity(), mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
+        mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
             CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mRomLegacySave );
 
         mGameDataManager = new GameDataManager(mGlobalPrefs, mGamePrefs, mGlobalPrefs.maxAutoSaves);
         mGameDataManager.makeDirs();
         mGameDataManager.moveFromLegacy();
 
-        final Window window = getActivity().getWindow();
+        final Window window = this.getWindow();
 
         // Enable full-screen mode
         window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
@@ -289,17 +242,18 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         // Set the screen orientation
         if(mGlobalPrefs.displayOrientation != -1)
         {
-            getActivity().setRequestedOrientation( mGlobalPrefs.displayOrientation );
+            this.setRequestedOrientation( mGlobalPrefs.displayOrientation );
         }
 
         mFirstStart = true;
 
         // Lay out content and get the views
-        SurfaceView surfaceView = (SurfaceView) getView().findViewById( R.id.gameSurface );
+        this.setContentView( R.layout.game_activity);
+        SurfaceView surfaceView = (SurfaceView) this.findViewById( R.id.gameSurface );
 
-        mOverlay = (GameOverlay) getView().findViewById(R.id.gameOverlay);
-        mDrawerLayout = (GameDrawerLayout) getView().findViewById(R.id.drawerLayout);
-        mGameSidebar = (GameSidebar) getView().findViewById(R.id.gameSidebar);
+        mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
+        mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
+        mGameSidebar = (GameSidebar) this.findViewById(R.id.gameSidebar);
 
         // Don't darken the game screen when the drawer is open
         mDrawerLayout.setScrimColor(0x0);
@@ -417,27 +371,20 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
             mHandler.postDelayed(mLastTouchChecker, 500);
-
-        //Callback for onWindowFocusChanged
-        final ViewTreeObserver viewTreeObserver = getView().getViewTreeObserver();
-        viewTreeObserver.addOnWindowFocusChangeListener(this);
-
-        //Callback for onGenericMotion
-        getView().setOnGenericMotionListener(this);
     }
 
     @Override
     public void onStart()
     {
         super.onStart();
-        Log.i("GameFragment", "onStart");
+        Log.i("GameActivity", "onStart");
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        Log.i("GameFragment", "onResume");
+        Log.i("GameActivity", "onResume");
 
         if(!mIsResumed)
         {
@@ -462,12 +409,12 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     {
         super.onStop();
 
-        Log.i( "GameFragment", "onStop" );
+        Log.i( "GameActivity", "onStop" );
         mIsResumed = false;
 
         //Don't pause emulation when rotating the screen or the core fragment has been set to null
         //on a shutdown
-        if(!getActivity().isChangingConfigurations() && mCoreFragment != null)
+        if(!this.isChangingConfigurations() && mCoreFragment != null)
         {
             mCoreFragment.pauseEmulator();
         }
@@ -483,12 +430,12 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     @Override
     public void onDestroy()
     {
-        Log.i( "GameFragment", "onDestroy" );
+        Log.i( "GameActivity", "onDestroy" );
 
         super.onDestroy();
 
         //Shut down emulation if it's not shut down by now
-        if(mCoreFragment != null)
+        if(!this.isChangingConfigurations() && mCoreFragment != null)
         {
             mCoreFragment.shutdownEmulator();
             mCoreFragment = null;
@@ -499,7 +446,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     public void onWindowFocusChanged( boolean hasFocus )
     {
         // Only try to run; don't try to pause. User may just be touching the in-game menu.
-        Log.i( "GameFragment", "onWindowFocusChanged: " + hasFocus );
+        Log.i( "GameActivity", "onWindowFocusChanged: " + hasFocus );
         if( hasFocus )
         {
             hideSystemBars();
@@ -667,7 +614,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             break;
         case R.id.menuItem_setIme:
             final InputMethodManager imeManager = (InputMethodManager)
-                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                this.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imeManager != null)
                 imeManager.showInputMethodPicker();
             break;
@@ -738,7 +685,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             selections.add(this.getString(pakType.getResourceString()));
         }
 
-        Prompt.promptListSelection( getActivity(), title, selections,
+        Prompt.promptListSelection( this, title, selections,
                 new PromptIntegerListener()
                 {
                     @Override
@@ -752,7 +699,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
                             mCoreFragment.updateControllerConfig(player - 1, true, PakType.values()[value].getNativeValue());
 
                             //Update the menu
-                            playerMenuItem.setTitleCondensed(GameFragment.this.getString(mGlobalPrefs.getPakType(player).getResourceString()));
+                            playerMenuItem.setTitleCondensed(GameActivity.this.getString(mGlobalPrefs.getPakType(player).getResourceString()));
                             mGameSidebar.reload();
                         }
                     }
@@ -762,13 +709,13 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     @Override
     public void surfaceCreated( SurfaceHolder holder )
     {
-        Log.i( "GameFragment", "surfaceCreated" );
+        Log.i( "GameActivity", "surfaceCreated" );
     }
 
     @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
-        Log.i( "GameFragment", "surfaceChanged" );
+        Log.i( "GameActivity", "surfaceChanged" );
         mIsSurface = true;
         mCoreFragment.setSurface(holder.getSurface());
         tryRunning();
@@ -777,7 +724,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
-        Log.i( "GameFragment", "surfaceDestroyed" );
+        Log.i( "GameActivity", "surfaceDestroyed" );
 
         if(mCoreFragment != null)
         {
@@ -810,14 +757,14 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     @Override
     public void onCoreServiceStarted()
     {
-        Log.i("GameFragment", "onCoreServiceStarted");
+        Log.i("GameActivity", "onCoreServiceStarted");
         ReloadAllMenus();
     }
 
     @Override
     public void onExitRequested(boolean shouldExit)
     {
-        Log.i( "GameFragment", "onExitRequested" );
+        Log.i( "GameActivity", "onExitRequested" );
         if(shouldExit)
         {
             mMogaController.exit();
@@ -834,30 +781,23 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     @Override
     public void onExitFinished()
     {
-        if(getActivity() != null)
-        {
-            showSystemBars();
+        showSystemBars();
 
-            // Set the screen orientation
-            if(mGlobalPrefs.displayOrientation != -1)
-            {
-                getActivity().setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED );
-            }
-
-            mHandler.removeCallbacks(mLastTouchChecker);
-
-            mCoreFragment.setCoreEventListener(null);
-            mCoreFragment.destroySurface();
-
-            final FragmentManager fm = getActivity().getSupportFragmentManager();
-            fm.beginTransaction().remove(mCoreFragment).commit();
-            mCoreFragment = null;
-
-            if(getActivity() instanceof OnGameActivityFinished)
-            {
-                ((OnGameActivityFinished)getActivity()).onGameActivityFinished();
-            }
+        // Set the screen orientation
+        if (mGlobalPrefs.displayOrientation != -1) {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
+
+        mHandler.removeCallbacks(mLastTouchChecker);
+
+        mCoreFragment.setCoreEventListener(null);
+        mCoreFragment.destroySurface();
+
+        final FragmentManager fm = this.getSupportFragmentManager();
+        fm.beginTransaction().remove(mCoreFragment).commit();
+        mCoreFragment = null;
+
+        finish();
     }
 
     /**
@@ -955,7 +895,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     private void initControllers( View inputSource )
     {
         // By default, send Player 1 rumbles through phone vibrator
-        final Vibrator vibrator = (Vibrator) getActivity().getSystemService( Context.VIBRATOR_SERVICE );
+        final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
         mCoreFragment.registerVibrator(1, vibrator);
 
         // Create the touchscreen controls
@@ -963,7 +903,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         {
             if (!mGamePrefs.sensorAxisX.isEmpty() || !mGamePrefs.sensorAxisY.isEmpty()) {
                 // Create the sensor controller
-                final SensorManager sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+                final SensorManager sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
                 mSensorController = new SensorController(mCoreFragment, sensorManager, mOverlay, mGamePrefs.sensorAxisX,
                         mGamePrefs.sensorSensitivityX, mGamePrefs.sensorAngleX, mGamePrefs.sensorAxisY,
                         mGamePrefs.sensorSensitivityY, mGamePrefs.sensorAngleY);
@@ -1010,7 +950,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
             if( needs1 || needs2 || needs3 || needs4 )
             {
-                Popups.showNeedsPlayerMap( getActivity() );
+                Popups.showNeedsPlayerMap( this );
             }
         }
 
@@ -1028,60 +968,52 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             final ControllerProfile p = mGamePrefs.controllerProfile1;
             new PeripheralController( mCoreFragment, 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, mSensorController, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameFragment", "Player 1 has been enabled");
+            Log.i("GameActivity", "Player 1 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile2;
             new PeripheralController( mCoreFragment, 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameFragment", "Player 2 has been enabled");
+            Log.i("GameActivity", "Player 2 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile3;
             new PeripheralController( mCoreFragment, 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameFragment", "Player 3 has been enabled");
+            Log.i("GameActivity", "Player 3 has been enabled");
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile4;
             new PeripheralController( mCoreFragment, 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameFragment", "Player 4 has been enabled");
+            Log.i("GameActivity", "Player 4 has been enabled");
         }
     }
 
     private void hideSystemBars()
     {
-        if(getActivity() != null)
-        {
-            if( mGlobalPrefs.isImmersiveModeEnabled )
-            {
-                getActivity().getWindow().getDecorView().setSystemUiVisibility(
-                      View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
-            }
+        if (mGlobalPrefs.isImmersiveModeEnabled) {
+            this.getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
     }
 
     private void showSystemBars()
     {
-        if(getActivity() != null)
-        {
+        final Window window = this.getWindow();
 
-            final Window window = getActivity().getWindow();
+        window.clearFlags(LayoutParams.FLAG_FULLSCREEN
+                | LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                | LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-            window.clearFlags(LayoutParams.FLAG_FULLSCREEN
-                    | LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                    | LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-        }
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 
     private boolean isSafeToRender()
@@ -1097,7 +1029,8 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
             {
                 final String latestSave = mGameDataManager.getLatestAutoSave();
                 mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomPath,
-                    mRomArtPath, mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
+                        mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
             }
             else if(mCoreFragment.hasServiceStarted() && mCoreFragment.getState() == NativeConstants.EMULATOR_STATE_PAUSED &&
                     !mWaitingOnConfirmation)
@@ -1124,7 +1057,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
 
     private void shutdownEmulator()
     {
-        Log.i( "GameFragment", "shutdownEmulator" );
+        Log.i( "GameActivity", "shutdownEmulator" );
 
         mShuttingDown = true;
 
@@ -1175,7 +1108,7 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
     }
 
     @Override
-    public boolean onGenericMotion(View v, MotionEvent motionEvent) {
+    public boolean onGenericMotionEvent(MotionEvent motionEvent) {
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
             mOverlay.onTouchControlsHide();
 
@@ -1183,6 +1116,6 @@ public class GameFragment extends Fragment implements PromptConfirmListener, Sur
         mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( motionEvent ) );
 
         return (mAxisProvider.onGenericMotion(null, motionEvent) && !mDrawerLayout.isDrawerOpen( GravityCompat.START )) ||
-                getActivity().onGenericMotionEvent(motionEvent);
+                super.onGenericMotionEvent(motionEvent);
     }
 }
