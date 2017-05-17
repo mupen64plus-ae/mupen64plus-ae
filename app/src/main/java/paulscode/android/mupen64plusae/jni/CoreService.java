@@ -380,8 +380,6 @@ public class CoreService extends Service
 
             mIsRunning = false;
 
-            NativeExports.unloadLibrariesIfLoaded();
-
             if(mListener != null)
             {
                 if(result != 0)
@@ -390,7 +388,10 @@ public class CoreService extends Service
                 }
 
                 mListener.onFinish();
+                mListener = null;
             }
+
+            NativeExports.unloadLibrariesIfLoaded();
 
             //Stop the service
             stopForeground(true);
