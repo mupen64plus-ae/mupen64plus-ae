@@ -8,13 +8,15 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-//#include <android/native_app_glue/android_native_app_glue.h>
+#include <mutex>
+#include <thread>
 
 EGLDisplay display = EGL_NO_DISPLAY;
 EGLConfig config;
 EGLContext context = EGL_NO_CONTEXT;
 EGLSurface surface = EGL_NO_SURFACE;
 ANativeWindow* native_window = NULL;
+std::mutex nativeWindowAccess;
 int isGLES2;
 bool new_surface = false;
 int FPSRecalcPeriod = 0;
@@ -23,6 +25,8 @@ int64_t oldTime;
 int vsync = 1;
 int oldVsync = 1;
 bool isPaused = false;
+
+
 
 EGLint const defaultAttributeList[] = {
         EGL_BUFFER_SIZE, 0,
@@ -68,6 +72,8 @@ size_t FindIndex( const EGLint a[], size_t size, int value )
 
 extern DECLSPEC m64p_error VidExtFuncInit()
 {
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
     frameCount = 0;
     surface = EGL_NO_SURFACE;
     context = EGL_NO_CONTEXT;
@@ -94,6 +100,8 @@ extern DECLSPEC m64p_error VidExtFuncListModes(m64p_2d_size *SizeArray, int *Num
 
 extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerPixel, int ScreenMode, int Flags)
 {
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
     EGLint num_config;
     if (!eglChooseConfig(display, attribList, &config, 1, &num_config)) {
         LOGE("eglChooseConfig() returned error %d", eglGetError());
@@ -167,6 +175,8 @@ extern DECLSPEC void * VidExtFuncGLGetProc(const char* Proc)
 
 extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)
 {
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
     int my_index;
     switch (Attr) {
         case M64P_GL_DOUBLEBUFFER:
@@ -240,6 +250,8 @@ extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)
 
 extern DECLSPEC m64p_error VidExtFuncGLGetAttr(m64p_GLattr Attr, int *pValue)
 {
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
     int value;
     switch (Attr) {
         case M64P_GL_DOUBLEBUFFER:
@@ -304,6 +316,8 @@ extern DECLSPEC m64p_error VidExtFuncGLGetAttr(m64p_GLattr Attr, int *pValue)
 
 extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 {
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
     if (new_surface) {
 
         LOGI("VidExtFuncGLSwapBuf: New surface has been detected");
@@ -319,30 +333,36 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
         new_surface = false;
     }
 
-    if (vsync != oldVsync) {
-        eglSwapInterval(display, vsync);
-        oldVsync = vsync;
-    }
-    if (surface != EGL_NO_SURFACE && !isPaused) {
-        eglSwapBuffers(display, surface);
-        if (FPSRecalcPeriod > 0) {
-            frameCount++;
-            if (frameCount >= FPSRecalcPeriod) {
-                struct timespec spec;
-                clock_gettime(CLOCK_MONOTONIC, &spec);
-                int64_t currentTime = (int64_t) spec.tv_sec*1000000000LL + spec.tv_nsec;
-                float fFPS = ( (float) frameCount / (float) ( currentTime - oldTime ) ) * 1000000000.0f;
-                Android_JNI_FPSCounter(lround(fFPS));
-                frameCount = 0;
-                oldTime = currentTime;
+    if(native_window != NULL)
+    {
+        if (vsync != oldVsync) {
+            eglSwapInterval(display, vsync);
+            oldVsync = vsync;
+        }
+        if (surface != EGL_NO_SURFACE && !isPaused) {
+            eglSwapBuffers(display, surface);
+            if (FPSRecalcPeriod > 0) {
+                frameCount++;
+                if (frameCount >= FPSRecalcPeriod) {
+                    struct timespec spec;
+                    clock_gettime(CLOCK_MONOTONIC, &spec);
+                    int64_t currentTime = (int64_t) spec.tv_sec*1000000000LL + spec.tv_nsec;
+                    float fFPS = ( (float) frameCount / (float) ( currentTime - oldTime ) ) * 1000000000.0f;
+                    Android_JNI_FPSCounter(lround(fFPS));
+                    frameCount = 0;
+                    oldTime = currentTime;
+                }
             }
         }
     }
+
     return M64ERR_SUCCESS;
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_setNativeWindow(JNIEnv* env, jclass cls, jobject native_surface)
 {
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
 	LOGI("setNativeWindow: New surface has been set");
 
 	if(native_window != NULL)
@@ -357,17 +377,34 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroySurface(JNIEnv* env, jclass cls)
 {
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+	LOGI("emuDestroySurface: Deleting native window");
+
     if (display != EGL_NO_DISPLAY && surface != EGL_NO_SURFACE)
         eglDestroySurface(display, surface);
     surface = EGL_NO_SURFACE;
+
+	if(native_window != NULL)
+	{
+		ANativeWindow_release(native_window);
+		native_window = NULL;
+	}
 }
 
 extern DECLSPEC m64p_error VidExtFuncQuit()
 {
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
 	LOGI("VidExtFuncQuit");
 
-	if(native_window != NULL)
-	{
+	eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+
+	if (surface != EGL_NO_SURFACE) {
+		eglDestroySurface(display, surface);
+		surface = EGL_NO_SURFACE;
+	}
+
+	if(native_window != NULL) {
 		ANativeWindow_release(native_window);
 		native_window = NULL;
 	}
@@ -375,12 +412,6 @@ extern DECLSPEC m64p_error VidExtFuncQuit()
 	if (context != EGL_NO_CONTEXT) {
 		eglDestroyContext(display, context);
 		context = EGL_NO_CONTEXT;
-	}
-
-	eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-	if (surface != EGL_NO_SURFACE) {
-		eglDestroySurface(display, surface);
-		surface = EGL_NO_SURFACE;
 	}
 
 	if (display != EGL_NO_DISPLAY) {
