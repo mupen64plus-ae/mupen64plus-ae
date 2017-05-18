@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -50,6 +51,8 @@ import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
@@ -103,6 +106,8 @@ public class ActivityHelper
     
     public static final int SCAN_ROM_REQUEST_CODE = 1;
     public static final int EXTRACT_TEXTURES_CODE = 2;
+
+    public static final String coreServiceName = "paulscode.android.mupen64plusae.jni.CoreService";
 
     public static void launchUri( Context context, int resId )
     {
@@ -383,4 +388,15 @@ public class ActivityHelper
         context.unbindService(serviceConnection);
         context.stopService(intent);
     }
+
+    public static boolean isServiceRunning(Context context, String serviceName) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
+            if(serviceName.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

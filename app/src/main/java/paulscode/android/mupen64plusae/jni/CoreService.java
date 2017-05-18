@@ -22,7 +22,10 @@ package paulscode.android.mupen64plusae.jni;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Binder;
 import android.os.Build;
@@ -81,6 +84,8 @@ public class CoreService extends Service
     }
 
     public static final String COMPLETE_EXTENSION = "complete";
+    public static final String SERVICE_EVENT = "SERVICE_EVENT";
+
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
 
@@ -117,6 +122,23 @@ public class CoreService extends Service
     private CoreServiceListener mListener = null;
 
     final static int ONGOING_NOTIFICATION_ID = 1;
+
+    // Our handler for received Intents. This will be called whenever an Intent
+    // with an action named "SERVICE_EVENT" is broadcasted.
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            boolean message = intent.getBooleanExtra("resume", false);
+
+            if(message)
+            {
+                ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mRomMd5, mRomCrc,
+                        mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mLegacySaveName, mIsRestarting);
+            }
+
+        }
+    };
 
     boolean isRunning()
     {
@@ -413,6 +435,11 @@ public class CoreService extends Service
         // Get the HandlerThread's Looper and use it for our Handler
         Looper serviceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(serviceLooper);
+
+        // Register to receive messages.
+        // We are registering an observer (mMessageReceiver) to receive Intents
+        // with actions named "SERVICE_EVENT".
+        registerReceiver(mMessageReceiver, new IntentFilter(SERVICE_EVENT));
     }
 
     private void updateNotification()
@@ -521,6 +548,9 @@ public class CoreService extends Service
         {
             shutdownEmulator();
         }
+
+        // Unregister since the activity is about to be closed.
+        unregisterReceiver(mMessageReceiver);
     }
 
     @Override

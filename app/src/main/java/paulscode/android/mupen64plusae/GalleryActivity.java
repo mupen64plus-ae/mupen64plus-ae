@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  *
  * Copyright (C) 2013 Paul Lamb
@@ -65,6 +65,7 @@ import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Popups;
+import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -358,6 +359,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             getIntent().removeExtra(ROM_PATH);
             launchGameOnCreation(givenRomPath);
+        }
+
+        if(ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceName))
+        {
+            Log.e("GalleryActivity", "CoreService is running");
+
+            Intent intent = new Intent(CoreService.SERVICE_EVENT);
+            // You can also include some extra data.
+            intent.putExtra("resume", true);
+            sendBroadcast(intent);
         }
     }
 
