@@ -254,12 +254,12 @@
             android:label="@string/GameActivity_title"
             android:windowActionBar="false"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:process=".GameActivity"/>
+            android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService" />
         <service
             android:name="paulscode.android.mupen64plusae.jni.CoreService"
-            android:process=".GameActivity"/>
+            android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <meta-data
             android:name="game_display_name"
             android:resource="@string/app_name" />
