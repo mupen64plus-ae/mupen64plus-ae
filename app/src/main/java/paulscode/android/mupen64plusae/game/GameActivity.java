@@ -84,6 +84,7 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
@@ -755,8 +756,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
         mCoreFragment.registerVibrator(1, vibrator);
-        
+
         ReloadAllMenus();
+
+        if(mCoreFragment.isShuttingDown())
+        {
+            Log.i("GameActivity", "Shutting down because previous instance hasn't finished");
+
+            Notifier.showToast( this, R.string.toast_not_done_shutting_down );
+
+            onExitFinished();
+        }
     }
 
     @Override
@@ -1077,6 +1087,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             mGameDataManager.clearOldest();
+        }
+        else
+        {
+            mCoreFragment.shutdownEmulator();
         }
     }
 

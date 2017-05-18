@@ -131,7 +131,7 @@ public class CoreService extends Service
             // Get extra data included in the Intent
             boolean message = intent.getBooleanExtra("resume", false);
 
-            if(message)
+            if(message && !mIsShuttingDown)
             {
                 ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mRomMd5, mRomCrc,
                         mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mLegacySaveName, mIsRestarting);
@@ -143,6 +143,11 @@ public class CoreService extends Service
     boolean isRunning()
     {
         return mIsRunning;
+    }
+
+    boolean isShuttingDown()
+    {
+        return mIsShuttingDown;
     }
 
     void shutdownEmulator()
@@ -401,8 +406,6 @@ public class CoreService extends Service
             //This call blocks until emulation is stopped
             final int result = NativeExports.emuStart( mCoreUserDataDir, mCoreUserCacheDir, arglist.toArray() );
 
-            mIsRunning = false;
-
             if(mListener != null)
             {
                 if(result != 0)
@@ -419,6 +422,8 @@ public class CoreService extends Service
             //Stop the service
             stopForeground(true);
             stopSelf();
+
+            mIsRunning = false;
         }
     }
 

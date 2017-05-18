@@ -469,6 +469,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         return mCoreService != null && mCoreService.isRunning();
     }
 
+    public  boolean isShuttingDown()
+    {
+        Log.i("CoreFragment", "isShuttingDown");
+
+        return mCoreService != null && mCoreService.isShuttingDown();
+    }
+
     public void exit()
     {
         Log.i("CoreFragment", "exit");
@@ -811,20 +818,20 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         if (mCoreService != null)
         {
             mCoreService.shutdownEmulator();
+        }
 
-            if(mCoreEventListener != null && getActivity() != null)
+        if(mCoreEventListener != null && getActivity() != null)
+        {
+            Log.i( "CoreFragment", "Calling onExitFinished" );
+
+            getActivity().runOnUiThread( new Runnable()
             {
-                Log.i( "CoreFragment", "Calling onExitFinished" );
-
-                getActivity().runOnUiThread( new Runnable()
+                @Override
+                public void run()
                 {
-                    @Override
-                    public void run()
-                    {
-                        mCoreEventListener.onExitFinished();
-                    }
-                } );
-            }
+                    mCoreEventListener.onExitFinished();
+                }
+            } );
         }
     }
 
