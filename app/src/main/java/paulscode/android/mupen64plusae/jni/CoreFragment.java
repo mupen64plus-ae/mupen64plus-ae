@@ -436,8 +436,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void registerVibrator( int player, Vibrator vibrator )
     {
-        Log.i("CoreFragment", "registerVibrator");
-
         if(mCoreService != null)
         {
             mCoreService.registerVibrator(player, vibrator);

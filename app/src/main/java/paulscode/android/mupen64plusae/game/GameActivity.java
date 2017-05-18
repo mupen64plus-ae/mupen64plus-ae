@@ -752,6 +752,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onCoreServiceStarted()
     {
         Log.i("GameActivity", "onCoreServiceStarted");
+
+        final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
+        mCoreFragment.registerVibrator(1, vibrator);
+        
         ReloadAllMenus();
     }
 
@@ -890,7 +894,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         // By default, send Player 1 rumbles through phone vibrator
         final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-        mCoreFragment.registerVibrator(1, vibrator);
 
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
