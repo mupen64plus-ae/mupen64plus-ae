@@ -253,7 +253,7 @@
             android:name="paulscode.android.mupen64plusae.game.GameActivity"
             android:label="@string/GameActivity_title"
             android:windowActionBar="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/Theme.AppCompat.Black"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService" />
