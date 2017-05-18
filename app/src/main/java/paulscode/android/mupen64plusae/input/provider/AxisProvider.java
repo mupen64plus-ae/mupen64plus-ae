@@ -82,8 +82,15 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         // (0,0). Use the getFlat() method to determine the range of values
         // bounding the joystick axis center.
         if (range != null) {
-            final float flat = range.getFlat();
+            float flat = range.getFlat();
             final float value = event.getAxisValue(axis);
+
+            //Some devices with bad drivers report invalid flat regions
+            if(flat > 0.5 || flat < 0.0)
+            {
+                flat = 0.05f;
+            }
+
             // Ignore axis values that are within the 'flat' region of the
             // joystick axis center.
             if (Math.abs(value) > flat) {
