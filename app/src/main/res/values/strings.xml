@@ -692,7 +692,7 @@
 
     <!-- Hi-Res Texture Unpacking -->
     <string name="pathHiResTexturesTask_select_zip">Select the ZIP or HTC file containing the high resolution texture pack</string>
-    <string name="pathHiResTexturesTask_title">Unpacking textures...</string>
+    <string name="pathHiResTexturesTask_title">Unpacking textures…</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
     <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Error: HTC file must match this format [GAME_HEADER]__HIRESTEXTURES.htc</string>
@@ -704,6 +704,11 @@
     <string name="scanRomsDialog_clearGallery">Clear gallery before adding</string>
     <string name="scanRomsDialog_scanSubdirectories">Scan subdirectories</string>
     <string name="scanRomsDialog_reset">Reset</string>
+
+    <!-- ROM unzipping -->
+    <string name="extractRomTask_title">Extracting ROM…</string>
+    <string name="extractRomTask_message">Extracting ROM image</string>
+    <string name="extractRomTask_errorMessage">Problem extracting ROM image</string>
 
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>

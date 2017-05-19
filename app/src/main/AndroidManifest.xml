@@ -257,6 +257,7 @@
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService" />
+        <service android:name="paulscode.android.mupen64plusae.task.ExtractRomService" />
         <service
             android:name="paulscode.android.mupen64plusae.jni.CoreService"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>

@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: littleguy77
+ * Authors: fzurita
  */
 package paulscode.android.mupen64plusae.task;
 

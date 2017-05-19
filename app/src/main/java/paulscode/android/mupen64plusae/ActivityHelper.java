@@ -50,9 +50,11 @@ import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
+import paulscode.android.mupen64plusae.task.ExtractRomService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 
 import static android.content.Context.ACTIVITY_SERVICE;
+import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
@@ -70,6 +72,8 @@ public class ActivityHelper
         private static final String NAMESPACE = Keys.class.getCanonicalName() + ".";
         //@formatter:off
         public static final String ROM_PATH             = NAMESPACE + "ROM_PATH";
+        public static final String ZIP_PATH             = NAMESPACE + "ZIP_PATH";
+        public static final String EXTRACT_ZIP_PATH     = NAMESPACE + "EXTRACT_ZIP_PATH";
         public static final String ROM_MD5              = NAMESPACE + "ROM_MD5";
         public static final String ROM_CRC              = NAMESPACE + "ROM_CRC";
         public static final String ROM_HEADER_NAME      = NAMESPACE + "ROM_HEADER_NAME";
@@ -172,7 +176,7 @@ public class ActivityHelper
     {
         Intent intent = new Intent( context, GalleryActivity.class );
         if( !TextUtils.isEmpty( romPath ) )
-            intent.putExtra( Keys.ROM_PATH, romPath );
+            intent.putExtra( ROM_PATH, romPath );
         context.startActivity( intent );
     }
 
@@ -181,7 +185,7 @@ public class ActivityHelper
                                           boolean doRestart)
     {
         Intent intent = new Intent( context, GameActivity.class );
-        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
+        intent.putExtra( ROM_PATH, romPath );
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
@@ -233,7 +237,7 @@ public class ActivityHelper
         String romCrc, String romHeaderName, String romGoodName, byte romCountryCode, String romLegacySave )
     {
         Intent intent = new Intent( context, GamePrefsActivity.class );
-        intent.putExtra( Keys.ROM_PATH, romPath );
+        intent.putExtra( ROM_PATH, romPath );
         intent.putExtra( Keys.ROM_MD5, romMd5 );
         intent.putExtra( Keys.ROM_CRC, romCrc );
         intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
@@ -356,7 +360,7 @@ public class ActivityHelper
     {
         Intent intent = new Intent(context, CoreService.class);
         intent.putExtra(Keys.ROM_GOOD_NAME, romGoodName);
-        intent.putExtra(Keys.ROM_PATH, romPath);
+        intent.putExtra(ROM_PATH, romPath);
         intent.putExtra(Keys.CHEAT_ARGS, cheatOptions);
         intent.putExtra(Keys.DO_RESTART, isRestarting);
         intent.putExtra(Keys.SAVE_TO_LOAD, saveToLoad);
@@ -397,6 +401,27 @@ public class ActivityHelper
             }
         }
         return false;
+    }
+
+    public static void startExtractRomService(Context context, ServiceConnection serviceConnection,
+       String zipPath, String extractRomPath, String romPath, String romMd5)
+    {
+        Intent intent = new Intent(context, ExtractRomService.class);
+        intent.putExtra(Keys.ZIP_PATH, zipPath);
+        intent.putExtra(Keys.EXTRACT_ZIP_PATH, extractRomPath);
+        intent.putExtra(Keys.ROM_PATH, romPath);
+        intent.putExtra(Keys.ROM_MD5, romMd5);
+
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public static void stopExtractRomService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, ExtractRomService.class);
+
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
     }
 
 }

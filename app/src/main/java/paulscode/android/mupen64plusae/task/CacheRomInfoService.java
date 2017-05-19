@@ -336,7 +336,6 @@ public class CacheRomInfoService extends Service
 
         String countryCodeString = Byte.toString(header.countryCode.getValue());
         config.put( md5, "countryCode",  countryCodeString);
-        config.put( md5, "extracted", "false" );
 
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_refreshingUI );
     }

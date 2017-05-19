@@ -88,6 +88,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_SIDEBAR = "sidebar";
     private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "STATE_CACHE_ROM_INFO_FRAGMENT";
     private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
+    private static final String STATE_EXTRACT_ROM_FRAGMENT= "STATE_EXTRACT_ROM_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
@@ -95,9 +96,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public static final int RESTART_CONFIRM_DIALOG_ID = 0;
     public static final int CLEAR_CONFIRM_DIALOG_ID = 1;
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 2;
-    public static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
-    public static final int RESET_CONFIRM_DIALOG_ID = 4;
-    public static final int EXIT_CONFIRM_DIALOG_ID = 5;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -128,6 +126,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private ScanRomsFragment mCacheRomInfoFragment = null;
     private ExtractTexturesFragment mExtractTexturesFragment = null;
+    private ExtractRomFragment mExtractRomFragment = null;
     
     //True if the restart promp is enabled
     boolean mRestartPromptEnabled = true;
@@ -338,6 +337,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
         mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
+        mExtractRomFragment = (ExtractRomFragment) fm.findFragmentByTag(STATE_EXTRACT_ROM_FRAGMENT);
 
         if(mCacheRomInfoFragment == null)
         {
@@ -349,6 +349,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             mExtractTexturesFragment = new ExtractTexturesFragment();
             fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
+        }
+
+        if(mExtractRomFragment == null)
+        {
+            mExtractRomFragment = new ExtractRomFragment();
+            fm.beginTransaction().add(mExtractRomFragment, STATE_EXTRACT_ROM_FRAGMENT).commit();
         }
 
         // Set the sidebar opacity on the two sidebars
@@ -506,7 +512,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, new File( finalRomPath), header.crc );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
 
-                launchGameActivity( finalRomPath, null, true, computedMd5, header.crc, header.name,
+                launchGameActivity( finalRomPath, null, computedMd5, header.crc, header.name,
                         header.countryCode.getValue(), artPath, detail.goodName, false );
             }
         }
@@ -613,7 +619,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             case R.id.menuItem_resume:
                 launchGameActivity( item.romFile.getAbsolutePath(),
                         item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
-                        item.isExtracted, item.md5, item.crc, item.headerName,
+                        item.md5, item.crc, item.headerName,
                         item.countryCode.getValue(), item.artPath, item.goodName, false );
                 break;
             case R.id.menuItem_restart:
@@ -633,7 +639,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 {
                     launchGameActivity( item.romFile.getAbsolutePath(),
                             item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
-                            item.isExtracted, item.md5, item.crc,
+                            item.md5, item.crc,
                             item.headerName, item.countryCode.getValue(), item.artPath,
                             item.goodName, true );
                 }
@@ -683,7 +689,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             {
                 launchGameActivity( mSelectedItem.romFile.getAbsolutePath(),
                     mSelectedItem.zipFile == null ? null : mSelectedItem.zipFile.getAbsolutePath(),
-                    mSelectedItem.isExtracted, mSelectedItem.md5, mSelectedItem.crc,
+                    mSelectedItem.md5, mSelectedItem.crc,
                     mSelectedItem.headerName, mSelectedItem.countryCode.getValue(), mSelectedItem.artPath,
                     mSelectedItem.goodName, true );
             }
@@ -762,7 +768,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     {
         launchGameActivity( item.romFile.getAbsolutePath(),
             item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
-            item.isExtracted, item.md5, item.crc, item.headerName, item.countryCode.getValue(),
+            item.md5, item.crc, item.headerName, item.countryCode.getValue(),
             item.artPath, item.goodName, false );
         return true;
     }
@@ -916,10 +922,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             countryCode = CountryCode.getCountryCode(Byte.parseByte(countryCodeString));
                         }
                         final String lastPlayedStr = config.get(md5, "lastPlayed");
-                        String extracted = config.get(md5, "extracted");
 
-                        if (crc == null || headerName == null || countryCodeString == null
-                            || extracted == null)
+                        if (crc == null || headerName == null || countryCodeString == null)
                         {
                             final File file = new File(romPath);
                             final RomHeader header = new RomHeader(file);
@@ -927,12 +931,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             crc = header.crc;
                             headerName = header.name;
                             countryCode = header.countryCode;
-                            extracted = "false";
 
                             config.put(md5, "crc", crc);
                             config.put(md5, "headerName", headerName);
                             config.put(md5, "countryCode", Byte.toString(countryCode.getValue()));
-                            config.put(md5, "extracted", extracted);
                         }
 
                         int lastPlayed = 0;
@@ -940,7 +942,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             lastPlayed = Integer.parseInt(lastPlayedStr);
 
                         final GalleryItem item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
-                            zipPath, extracted.equals("true"), artPath, lastPlayed, mGlobalPrefs.coverArtScale);
+                            zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
                         items.add(item);
                         boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
                         if (mGlobalPrefs.isRecentShown && isNotOld )
@@ -950,7 +952,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                         // Delete any old files that already exist inside a zip
                         // file
-                        if (!isNotOld && !TextUtils.isEmpty(zipPath) && extracted.equals("true"))
+                        if (!isNotOld && !TextUtils.isEmpty(zipPath))
                         {
                             final File deleteFile = new File(romPath);
 
@@ -958,8 +960,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             {
                                 deleteFile.delete();
                             }
-
-                            config.put(md5, "extracted", "false");
                         }
                     }
                 }
@@ -977,8 +977,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             combinedItems = new ArrayList<GalleryItem>();
 
-            combinedItems
-                    .add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
+            combinedItems.add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
             combinedItems.addAll( recentItems );
 
             combinedItems.add( new GalleryItem( this, getString( R.string.galleryLibrary ) ) );
@@ -1029,7 +1028,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGridView.setFocusableInTouchMode(false);
     }
 
-    public void launchGameActivity( String romPath, String zipPath, boolean extracted, String romMd5, String romCrc,
+    public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
             String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting)
     {
         Log.i( "GalleryActivity", "launchGameActivity" );
@@ -1049,30 +1048,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Update the ConfigSection with the new value for lastPlayed
         final String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
         final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-        if( config.get(romMd5) != null)
-        {
-            config.put( romMd5, "lastPlayed", lastPlayed );
+        File romFileName = new File(romPath);
 
-            if(!TextUtils.isEmpty(zipPath))
-            {
-                romPath = ExtractFileIfNeeded(romMd5, config, romPath, zipPath, extracted);
-            }
-
-            config.save();
-        }
-
-        ///Drawer layout can be null if this method is called from onCreate
-        if(mDrawerLayout != null)
-        {
-            //Close drawer without animation
-            mDrawerLayout.closeDrawer( GravityCompat.START, false );
-        }
-        mRefreshNeeded = true;
-
-        mSelectedItem = null;
-        
         String romLegacySaveFileName;
-        
+
         //Convoluted way of moving legacy save file names to the new format
         if(zipPath != null)
         {
@@ -1085,12 +1064,40 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             romLegacySaveFileName = romFile.getName();
         }
 
-        // Notify user that the game activity is starting
-        Notifier.showToast(this, R.string.toast_launchingEmulator);
 
-        // Launch the game activity
-        ActivityHelper.startGameActivity(this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
+        config.put(romMd5, "lastPlayed", lastPlayed);
+        config.save();
+
+        ///Drawer layout can be null if this method is called from onCreate
+        if (mDrawerLayout != null) {
+            //Close drawer without animation
+            mDrawerLayout.closeDrawer(GravityCompat.START, false);
+        }
+        mRefreshNeeded = true;
+
+        mSelectedItem = null;
+
+        if(romFileName.exists())
+        {
+            // Notify user that the game activity is starting
+            Notifier.showToast(this, R.string.toast_launchingEmulator);
+
+            // Launch the game activity
+            ActivityHelper.startGameActivity(this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
+                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
+        }
+        else
+        {
+            if( config.get(romMd5) != null)
+            {
+                if(!TextUtils.isEmpty(zipPath))
+                {
+                    mExtractRomFragment.ExtractRom(zipPath, mGlobalPrefs.unzippedRomsDir, romPath, romMd5, romCrc,
+                            romHeaderName, romCountryCode, romArtPath, romGoodName, romLegacySaveFileName,
+                            isRestarting);
+                }
+            }
+        }
     }
 
     private String ExtractFirstROMFromZip(String zipPath)
@@ -1127,73 +1134,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         return null;
-    }
-
-    private String ExtractFileIfNeeded(String md5, ConfigFile config, String romPath, String zipPath, boolean isExtracted)
-    {
-        final File romFile = new File(romPath);
-        String romFileName = romFile.getName();
-        final File extractedRomFile = new File(mGlobalPrefs.unzippedRomsDir + "/" + romFileName);
-        final RomHeader romHeader = new RomHeader( zipPath );
-
-        final boolean isZip = romHeader.isZip;
-
-        if(isZip && (!extractedRomFile.exists() || !isExtracted))
-        {
-            boolean lbFound = false;
-
-            try
-            {
-                final ZipFile zipFile = new ZipFile( zipPath );
-                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                while( entries.hasMoreElements() && !lbFound)
-                {
-                    final ZipEntry zipEntry = entries.nextElement();
-
-                    try
-                    {
-                        final InputStream zipStream = zipFile.getInputStream( zipEntry );
-
-                        final File destDir = new File( mGlobalPrefs.unzippedRomsDir );
-                        final String entryName = new File( zipEntry.getName() ).getName();
-                        File tempRomPath = new File( destDir, entryName );
-                        final boolean fileExisted = tempRomPath.exists();
-
-                        if( !fileExisted )
-                        {
-                            tempRomPath = FileUtil.extractRomFile( destDir, zipEntry, zipStream );
-                        }
-
-                        final String computedMd5 = ComputeMd5Task.computeMd5( tempRomPath );
-                        lbFound = computedMd5 != null && computedMd5.equals(md5);
-
-                        //only delete the file if we extracted our selves
-                        if(!lbFound && !fileExisted && tempRomPath != null && !tempRomPath.isDirectory())
-                        {
-                            tempRomPath.delete();
-                        }
-
-                        zipStream.close();
-                    }
-                    catch( final IOException e )
-                    {
-                        Log.w( "CacheRomInfoTask", e );
-                    }
-                }
-                zipFile.close();
-            }
-            catch( final IOException|ArrayIndexOutOfBoundsException e)
-            {
-                Log.w( "GalleryActivity", e );
-            }
-
-            if(lbFound || romFile.exists())
-            {
-                config.put(md5, "extracted", "true");
-            }
-        }
-
-        return extractedRomFile.getPath();
     }
 
     @Override

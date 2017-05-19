@@ -50,9 +50,6 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 
-import static paulscode.android.mupen64plusae.GalleryActivity.EXIT_CONFIRM_DIALOG_ID;
-import static paulscode.android.mupen64plusae.GalleryActivity.RESET_CONFIRM_DIALOG_ID;
-import static paulscode.android.mupen64plusae.GalleryActivity.SAVE_STATE_FILE_CONFIRM_DIALOG_ID;
 import static paulscode.android.mupen64plusae.jni.NativeConstants.EMULATOR_STATE_UNKNOWN;
 
 public class CoreFragment extends Fragment implements CoreServiceListener
@@ -95,6 +92,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private static final String SAVE_STATE_FILE_CONFIRM_DIALOG_STATE = "SAVE_STATE_FILE_CONFIRM_DIALOG_STATE";
     private static final String RESTART_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
     private static final String EXIT_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
+
+    public static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
+    public static final int RESET_CONFIRM_DIALOG_ID = 4;
+    public static final int EXIT_CONFIRM_DIALOG_ID = 5;
 
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;

@@ -54,14 +54,13 @@ public class GalleryItem
     public final int lastPlayed;
     public final File romFile;
     public final File zipFile;
-    public final boolean isExtracted;
     public final Context context;
     public final boolean isHeading;
     public BitmapDrawable artBitmap;
     public final float scale;
     
     public GalleryItem( Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName, String romPath,
-            String zipPath, boolean extracted, String artPath, int lastPlayed, float scale )
+            String zipPath, String artPath, int lastPlayed, float scale )
     {
         this.md5 = md5;
         this.crc = crc;
@@ -73,7 +72,6 @@ public class GalleryItem
         this.artBitmap = null;
         this.lastPlayed = lastPlayed;
         this.isHeading = false;
-        this.isExtracted = extracted;
         this.scale = scale;
         
         this.romFile = TextUtils.isEmpty( romPath ) ? null : new File( romPath );
@@ -92,7 +90,6 @@ public class GalleryItem
         this.artPath = null;
         this.artBitmap = null;
         this.lastPlayed = 0;
-        this.isExtracted = false;
         this.romFile = null;
         this.zipFile = null;
         this.scale = 1.0f;

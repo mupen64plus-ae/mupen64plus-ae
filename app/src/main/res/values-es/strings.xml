@@ -557,6 +557,12 @@
     <string name="scanRomsDialog_scanSubdirectories">Buscar archivos en sub-directorios</string>
     <string name="scanRomsDialog_reset">Reiniciar</string>
 
+
+    <!-- ROM unzipping -->
+    <string name="extractRomTask_title">Extracción de ROM…</string>
+    <string name="extractRomTask_message">Extrayendo imagen de ROM</string>
+    <string name="extractRomTask_errorMessage">Problema Extrayendo imagen de ROM</string>
+
     <!--ROM Scanning-->
     <string name="scanning_title">Escaneando…</string>
     <!--ROM information calculation-->
