@@ -170,6 +170,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
     private CoreFragment mCoreFragment = null;
+    private boolean mKillProcess = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -1071,13 +1072,27 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             //Generate auto save file
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
+                mKillProcess = true;
                 final String saveFileName = mGameDataManager.getAutoSaveFileName();
                 mCoreFragment.autoSaveState(saveFileName, new CoreService.AutoSaveCompleteAction() {
                     @Override
                     public void onSaveStateComplete() {
+                        mKillProcess = false;
                         mCoreFragment.shutdownEmulator();
                     }
                 });
+
+                //Set a timeout before killing
+                Handler killHandler = new Handler();
+                killHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mKillProcess)
+                        {
+                            Log.e("GameActivity", "Killing Core due to no response");
+                            android.os.Process.killProcess(android.os.Process.myPid());
+                        }
+                    } }, 5000);
             }
             else
             {
