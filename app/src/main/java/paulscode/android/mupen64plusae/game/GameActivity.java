@@ -804,6 +804,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         fm.beginTransaction().remove(mCoreFragment).commit();
         mCoreFragment = null;
 
+        setResult(RESULT_OK, null);
         finish();
     }
 

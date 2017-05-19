@@ -110,6 +110,7 @@ public class ActivityHelper
     
     public static final int SCAN_ROM_REQUEST_CODE = 1;
     public static final int EXTRACT_TEXTURES_CODE = 2;
+    public static final int GAME_ACTIVITY_CODE = 3;
 
     public static final String coreServiceName = "paulscode.android.mupen64plusae.jni.CoreService";
 
@@ -178,6 +179,23 @@ public class ActivityHelper
         if( !TextUtils.isEmpty( romPath ) )
             intent.putExtra( ROM_PATH, romPath );
         context.startActivity( intent );
+    }
+
+    public static void startGameActivity( Activity activity, String romPath, String romMd5, String romCrc,
+                                          String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romLegacySave,
+                                          boolean doRestart)
+    {
+        Intent intent = new Intent( activity, GameActivity.class );
+        intent.putExtra( ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
+        intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
+        intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
+        intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, romCountryCode );
+        intent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, romArtPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
+        intent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, romLegacySave );
+        intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
+        activity.startActivityForResult( intent, GAME_ACTIVITY_CODE );
     }
 
     public static void startGameActivity( Context context, String romPath, String romMd5, String romCrc,

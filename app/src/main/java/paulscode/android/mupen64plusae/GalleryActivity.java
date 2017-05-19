@@ -186,11 +186,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
-        if(!mGlobalPrefs.cacheRecentlyPlayed)
-        {
-            FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
-        }
-
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
         String givenRomPath = null;
@@ -840,8 +835,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
             }
         }
+        else if(requestCode == ActivityHelper.GAME_ACTIVITY_CODE)
+        {
+            refreshGrid();
 
-        refreshGrid();
+            if(!mGlobalPrefs.cacheRecentlyPlayed)
+            {
+                FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
+            }
+        }
     }
 
     private void refreshRoms(final File startDir, boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
