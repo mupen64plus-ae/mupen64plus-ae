@@ -37,7 +37,13 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     
     /** The default number of input codes to listen for. */
     private static final int DEFAULT_NUM_INPUTS = 128;
-    
+
+    /** Max flat value to determine if we should override it */
+    private static final float MAX_FLAT = 0.5f;
+
+    /** Flat value override if the os privided one is above MAX_FLAT */
+    private static final float FLAT_OVERRIDE = 0.25f;
+
     /**
      * Instantiates a new axis provider.
      */
@@ -86,9 +92,9 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
             final float value = event.getAxisValue(axis);
 
             //Some devices with bad drivers report invalid flat regions
-            if(flat > 0.5 || flat < 0.0)
+            if(flat > MAX_FLAT || flat < 0.0)
             {
-                flat = 0.05f;
+                flat = FLAT_OVERRIDE;
             }
 
             // Ignore axis values that are within the 'flat' region of the
@@ -174,19 +180,26 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
                 MotionRange motionRange = device.getMotionRange( axisCode, InputDevice.SOURCE_JOYSTICK );
                 if( motionRange != null )
                 {
+                    float flat = motionRange.getFlat();
+                    //Some devices with bad drivers report invalid flat regions
+                    if(flat > MAX_FLAT || flat < 0.0)
+                    {
+                        flat = FLAT_OVERRIDE;
+                    }
+
                     switch( axisClass )
                     {
                         case AxisMap.AXIS_CLASS_STICK:
                             // Normalize to [-1,1]
                             //strength = ( strength - motionRange.getMin() ) / motionRange.getRange() * 2f - 1f;
-                            tempStrengh = (Math.abs(strength) - motionRange.getFlat()) / (1.0f - motionRange.getFlat());
+                            tempStrengh = (Math.abs(strength) - flat) / (1.0f - flat);
                             //Restore sign
                             strength = tempStrengh * Math.signum(strength);
 
                             break;
                         case AxisMap.AXIS_CLASS_TRIGGER:
                             // Normalize to [0,1]
-                            tempStrengh = (Math.abs(strength) - motionRange.getFlat()) / (1.0f - motionRange.getFlat());
+                            tempStrengh = (Math.abs(strength) - flat) / (1.0f - flat);
                             //Restore sign
                             strength = tempStrengh * Math.signum(strength);
                             break;
