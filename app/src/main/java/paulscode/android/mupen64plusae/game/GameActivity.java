@@ -789,8 +789,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onExitFinished()
     {
-        showSystemBars();
-
         // Set the screen orientation
         if (mGlobalPrefs.displayOrientation != -1) {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
