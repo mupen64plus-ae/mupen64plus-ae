@@ -424,6 +424,8 @@ public class CoreService extends Service
             stopSelf();
 
             mIsRunning = false;
+
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
     }
 

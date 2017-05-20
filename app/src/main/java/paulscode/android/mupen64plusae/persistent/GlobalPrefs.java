@@ -28,7 +28,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.support.v7.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.WindowManager;
@@ -321,7 +320,6 @@ public class GlobalPrefs
     // ... add more as needed
 
     private final SharedPreferences mPreferences;
-    private final Locale mLocale;
     private final String mLocaleCode;
     private final String[] mLocaleNames;
     private final String[] mLocaleCodes;
@@ -383,7 +381,6 @@ public class GlobalPrefs
         // Locale
         mLocaleCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
         LocaleContextWrapper.setLocaleCode(mLocaleCode);
-        mLocale = TextUtils.isEmpty( mLocaleCode ) ? Locale.getDefault() : createLocale( mLocaleCode );
         final Locale[] availableLocales = Locale.getAvailableLocales();
         String[] values = context.getResources().getStringArray( R.array.localeOverride_values );
         String[] entries = new String[values.length];
