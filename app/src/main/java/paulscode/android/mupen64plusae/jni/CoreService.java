@@ -205,6 +205,8 @@ public class CoreService extends Service
 
         if(shutdownOnFinish)
         {
+            mIsShuttingDown = true;
+
             //Set a 10 second timeout to save before killing the core process
             Handler killHandler = new Handler();
             killHandler.postDelayed(new Runnable() {
