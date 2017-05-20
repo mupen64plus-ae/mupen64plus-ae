@@ -340,7 +340,7 @@ public class AppData
     
     private void putInt( String key, int value )
     {
-        mPreferences.edit().putInt( key, value ).commit();
+        mPreferences.edit().putInt( key, value ).apply();
     }
     
     /**

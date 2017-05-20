@@ -119,7 +119,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
                 ScanRomsActivity.this.setResult(RESULT_OK, data);
 
                 //Save the selected directory
-                mPrefs.edit().putString( ROM_SCAN_START_PATH, mCurrentPath.getPath() ).commit();
+                mPrefs.edit().putString( ROM_SCAN_START_PATH, mCurrentPath.getPath() ).apply();
                 ScanRomsActivity.this.finish();
             }
         });

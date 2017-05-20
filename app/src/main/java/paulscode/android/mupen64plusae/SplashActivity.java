@@ -146,7 +146,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         if(TextUtils.isEmpty(gameDataPathString) || gameDataPathString.contains(defaultRelPath))
         {
             String newDefValue = PathPreference.validate(defaultRelPath);
-            mPrefs.edit().putString( GAME_DATA_PATH, newDefValue ).commit();
+            mPrefs.edit().putString( GAME_DATA_PATH, newDefValue ).apply();
             gameDataPathString = mPrefs.getString( GAME_DATA_PATH, null );
         }
 
@@ -154,7 +154,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         String appDataPathString = mPrefs.getString( APP_DATA_PATH, null );
         if(TextUtils.isEmpty(appDataPathString) || appDataPathString.contains(defaultRelPath))
         {
-            mPrefs.edit().putString( APP_DATA_PATH, gameDataPathString ).commit();
+            mPrefs.edit().putString( APP_DATA_PATH, gameDataPathString ).apply();
         }
 
         // Get app data and user preferences

@@ -20,14 +20,15 @@
  */
 package paulscode.android.mupen64plusae.preference;
 
-import org.apache.commons.lang.ArrayUtils;
-
-import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.support.v7.preference.PreferenceGroup;
+
+import org.apache.commons.lang.ArrayUtils;
+
+import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 
 public final class PrefUtil
 {
@@ -62,7 +63,7 @@ public final class PrefUtil
         String[] validValues = res.getStringArray( arrayResId );
         if( !ArrayUtils.contains( validValues, value ) )
         {
-            prefs.edit().putString( key, defValue ).commit();
+            prefs.edit().putString( key, defValue ).apply();
         }
     }
 }

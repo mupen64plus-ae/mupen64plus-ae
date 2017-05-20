@@ -447,7 +447,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     {
         // Persist builtin visibility for this specific subclass
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-        prefs.edit().putBoolean( getBuiltinVisibilityKey(), visible ).commit();
+        prefs.edit().putBoolean( getBuiltinVisibilityKey(), visible ).apply();
     }
     
     private boolean getBuiltinVisibility()

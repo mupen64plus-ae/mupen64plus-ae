@@ -157,7 +157,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         if (id == RESET_GLOBAL_PREFS_CONFIRM_DIALOG_ID && which == DialogInterface.BUTTON_POSITIVE)
         {
             // Reset the user preferences
-            mPrefs.edit().clear().commit();
+            mPrefs.edit().clear().apply();
             PreferenceManager.setDefaultValues(DataPrefsActivity.this, R.xml.preferences_data, true);
 
             // Rebuild the menu system by restarting the activity

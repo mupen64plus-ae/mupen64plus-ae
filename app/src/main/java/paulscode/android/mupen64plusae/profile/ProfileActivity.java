@@ -200,7 +200,7 @@ public abstract class ProfileActivity extends AppCompatPreferenceActivity implem
                 editor.putString( key, value );
             }
 
-            editor.commit();
+            editor.apply();
         }
     }
     
