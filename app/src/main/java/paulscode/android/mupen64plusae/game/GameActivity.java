@@ -76,7 +76,6 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
-import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
@@ -170,7 +169,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
     private CoreFragment mCoreFragment = null;
-    private boolean mKillProcess = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -418,7 +416,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         //on a shutdown
         if(!this.isChangingConfigurations() && mCoreFragment != null)
         {
-            mCoreFragment.autoSaveState(mGameDataManager.getAutoSaveFileName(), null);
+            mCoreFragment.autoSaveState(mGameDataManager.getAutoSaveFileName(), false);
             mCoreFragment.pauseEmulator();
         }
 
@@ -766,7 +764,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             Notifier.showToast( this, R.string.toast_not_done_shutting_down );
 
-            onExitFinished();
+            finishActivity();
         }
     }
 
@@ -787,8 +785,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mWaitingOnConfirmation = false;
     }
 
-    @Override
-    public void onExitFinished()
+    public void finishActivity()
     {
         // Set the screen orientation
         if (mGlobalPrefs.displayOrientation != -1) {
@@ -1073,27 +1070,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             //Generate auto save file
             if(mGlobalPrefs.maxAutoSaves != 0)
             {
-                mKillProcess = true;
                 final String saveFileName = mGameDataManager.getAutoSaveFileName();
-                mCoreFragment.autoSaveState(saveFileName, new CoreService.AutoSaveCompleteAction() {
-                    @Override
-                    public void onSaveStateComplete() {
-                        mKillProcess = false;
-                        mCoreFragment.shutdownEmulator();
-                    }
-                });
-
-                //Set a timeout before killing
-                Handler killHandler = new Handler();
-                killHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(mKillProcess)
-                        {
-                            Log.e("GameActivity", "Killing Core due to no response");
-                            android.os.Process.killProcess(android.os.Process.myPid());
-                        }
-                    } }, 5000);
+                mCoreFragment.autoSaveState(saveFileName, true);
             }
             else
             {
@@ -1102,10 +1080,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             mGameDataManager.clearOldest();
         }
-        else
-        {
-            mCoreFragment.shutdownEmulator();
-        }
+
+        finishActivity();
     }
 
     Runnable mLastTouchChecker = new Runnable() {

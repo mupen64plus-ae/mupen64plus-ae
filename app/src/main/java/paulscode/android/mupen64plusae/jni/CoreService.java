@@ -75,14 +75,6 @@ public class CoreService extends Service
         void onCoreServiceDestroyed();
     }
 
-    public interface AutoSaveCompleteAction
-    {
-        /**
-         * Called when an auto save completes
-         */
-        void onSaveStateComplete();
-    }
-
     public static final String COMPLETE_EXTENSION = "complete";
     public static final String SERVICE_EVENT = "SERVICE_EVENT";
 
@@ -167,7 +159,7 @@ public class CoreService extends Service
         updateNotification();
     }
 
-    void autoSaveState(final String latestSave, final AutoSaveCompleteAction autoSaveCompleteAction)
+    void autoSaveState(final String latestSave, final boolean shutdownOnFinish)
     {
         // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
 
@@ -184,11 +176,6 @@ public class CoreService extends Service
                 {
                     removeOnStateCallbackListener( this );
 
-                    if(autoSaveCompleteAction != null)
-                    {
-                        autoSaveCompleteAction.onSaveStateComplete();
-                    }
-
                     //newValue == 1, then it was successful
                     if(newValue == 1)
                     {
@@ -202,6 +189,11 @@ public class CoreService extends Service
                     {
                         Log.e("CoreService", "Unable to save file due to bad return: " + latestSave);
                     }
+
+                    if(shutdownOnFinish)
+                    {
+                        shutdownEmulator();
+                    }
                 }
                 else
                 {
@@ -211,6 +203,23 @@ public class CoreService extends Service
         } );
 
         NativeExports.emuSaveFile( latestSave );
+
+        if(shutdownOnFinish)
+        {
+            //Set a 10 second timeout to save before killing the core process
+            Handler killHandler = new Handler();
+            killHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("CoreService", "Killing Core due to no response");
+
+                    //Stop the service
+                    stopForeground(true);
+                    stopSelf();
+
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                } }, 10000);
+        }
     }
 
     void saveState(String filename)

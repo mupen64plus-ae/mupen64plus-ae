@@ -68,11 +68,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         void onExitRequested(boolean shouldExit);
 
         /**
-         * Called when a game is done exiting
-         */
-        void onExitFinished();
-
-        /**
          * Called when a game is restarted
          * @param shouldRestart True if we want to restart
          */
@@ -739,13 +734,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mCoreService.loadState(file);
     }
 
-    public void autoSaveState( final String latestSave, final CoreService.AutoSaveCompleteAction autoSaveCompleteAction )
+    public void autoSaveState( final String latestSave, boolean shutdownOnFinish )
     {
         Log.i("CoreFragment", "autoSaveState");
 
         if (mCoreService != null)
         {
-            mCoreService.autoSaveState(latestSave, autoSaveCompleteAction);
+            mCoreService.autoSaveState(latestSave, shutdownOnFinish);
         }
     }
 
@@ -819,20 +814,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         if (mCoreService != null)
         {
             mCoreService.shutdownEmulator();
-        }
-
-        if(mCoreEventListener != null && getActivity() != null)
-        {
-            Log.i( "CoreFragment", "Calling onExitFinished" );
-
-            getActivity().runOnUiThread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    mCoreEventListener.onExitFinished();
-                }
-            } );
         }
     }
 
