@@ -212,6 +212,7 @@ public class ActivityHelper
         intent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, romGoodName );
         intent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, romLegacySave );
         intent.putExtra( ActivityHelper.Keys.DO_RESTART, doRestart );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity( intent );
     }
     
