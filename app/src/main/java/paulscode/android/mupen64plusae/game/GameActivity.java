@@ -302,7 +302,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 @Override
                 public void run()
                 {
-                    mCoreFragment.pauseEmulator();
+                    if(mCoreFragment != null)
+                    {
+                        mCoreFragment.pauseEmulator();
+                    }
                     mDrawerLayout.openDrawer(GravityCompat.START);
                 }
             }, 1000);
@@ -316,7 +319,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             {
                 if(!mShuttingDown)
                 {
-                    mCoreFragment.resumeEmulator();
+                    if(mCoreFragment != null)
+                    {
+                        mCoreFragment.resumeEmulator();
+                    }
+
                     mDrawerOpenState = false;
                 }
 
@@ -325,7 +332,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             @Override
             public void onDrawerOpened(View arg0)
             {
-                mCoreFragment.pauseEmulator();
+                if(mCoreFragment != null)
+                {
+                    mCoreFragment.pauseEmulator();
+                }
                 ReloadAllMenus();
             }
 
@@ -458,12 +468,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onPromptDialogClosed(int id, int which)
     {
-        mCoreFragment.onPromptDialogClosed(id, which);
+        if(mCoreFragment != null)
+        {
+            mCoreFragment.onPromptDialogClosed(id, which);
+        }
     }
 
     private void ReloadAllMenus()
     {
-        //Reload currently selected speed setting
+        if(mCoreFragment == null) return;
+
+            //Reload currently selected speed setting
         final MenuItem toggleSpeedItem =
             mGameSidebar.getMenu().findItem(R.id.menuItem_toggle_speed);
         toggleSpeedItem.setTitle(this.getString(R.string.menuItem_toggleSpeed, mCoreFragment.getCurrentSpeed()));
@@ -511,6 +526,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onPromptFinished()
     {
+        if(mCoreFragment == null) return;
+
         //In here we only reload things that are updated through prompts
 
         //reload menu item with new slot
@@ -537,6 +554,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onGameSidebarAction(MenuItem menuItem)
     {
+        if(mCoreFragment == null) return;
+
         switch (menuItem.getItemId())
         {
         case R.id.menuItem_exit:
@@ -690,7 +709,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                             mGlobalPrefs.putPakType(player, PakType.values()[value]);
 
                             // Set the pak in the core
-                            mCoreFragment.updateControllerConfig(player - 1, true, PakType.values()[value].getNativeValue());
+                            if(mCoreFragment != null)
+                            {
+                                mCoreFragment.updateControllerConfig(player - 1, true, PakType.values()[value].getNativeValue());
+                            }
 
                             //Update the menu
                             playerMenuItem.setTitleCondensed(GameActivity.this.getString(mGlobalPrefs.getPakType(player).getResourceString()));
@@ -711,7 +733,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         Log.i( "GameActivity", "surfaceChanged" );
         mIsSurface = true;
-        mCoreFragment.setSurface(holder.getSurface());
+
+        if(mCoreFragment != null)
+        {
+            mCoreFragment.setSurface(holder.getSurface());
+        }
+
         tryRunning();
     }
 
@@ -733,14 +760,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         if(shouldRestart)
         {
-            mCoreFragment.restartEmulator();
+            if(mCoreFragment != null)
+            {
+                mCoreFragment.restartEmulator();
+            }
 
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
                 mDrawerLayout.closeDrawer( GravityCompat.START );
             }
         }
-        else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
+        else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && mCoreFragment != null)
         {
             mCoreFragment.resumeEmulator();
         }
@@ -752,6 +782,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onCoreServiceStarted()
     {
         Log.i("GameActivity", "onCoreServiceStarted");
+
+        if(mCoreFragment == null) return;
 
         final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
         mCoreFragment.registerVibrator(1, vibrator);
@@ -777,7 +809,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mMogaController.exit();
             shutdownEmulator();
         }
-        else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ))
+        else if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && mCoreFragment != null)
         {
             mCoreFragment.resumeEmulator();
         }
@@ -794,12 +826,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mHandler.removeCallbacks(mLastTouchChecker);
 
-        mCoreFragment.setCoreEventListener(null);
-        mCoreFragment.destroySurface();
+        if(mCoreFragment != null)
+        {
+            mCoreFragment.setCoreEventListener(null);
+            mCoreFragment.destroySurface();
 
-        final FragmentManager fm = this.getSupportFragmentManager();
-        fm.beginTransaction().remove(mCoreFragment).commit();
-        mCoreFragment = null;
+            final FragmentManager fm = this.getSupportFragmentManager();
+            fm.beginTransaction().remove(mCoreFragment).commit();
+            mCoreFragment = null;
+        }
 
         setResult(RESULT_OK, null);
         finish();
@@ -856,7 +891,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     mOverlay.requestFocus();
                 }
                 else {
-                    mCoreFragment.pauseEmulator();
+                    if(mCoreFragment != null)
+                    {
+                        mCoreFragment.pauseEmulator();
+                    }
                     mDrawerLayout.openDrawer(GravityCompat.START);
                     mDrawerOpenState = true;
                     mGameSidebar.requestFocus();
@@ -877,12 +915,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     if(mGlobalPrefs.inGameMenuIsSwipGesture)
                     {
                         mWaitingOnConfirmation = true;
-                        mCoreFragment.exit();
+
+                        if(mCoreFragment != null)
+                        {
+                            mCoreFragment.exit();
+                        }
                     }
                     //Else the back key bring up the in-game menu
                     else
                     {
-                        mCoreFragment.pauseEmulator();
+                        if(mCoreFragment != null)
+                        {
+                            mCoreFragment.pauseEmulator();
+                        }
                         mDrawerLayout.openDrawer( GravityCompat.START );
                         mDrawerOpenState = true;
                         mGameSidebar.requestFocus();
@@ -1027,6 +1072,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private synchronized void tryRunning()
     {
+        if(mCoreFragment == null) return;
+
         if( isSafeToRender())
         {
             if(!mCoreFragment.IsInProgress())
@@ -1065,7 +1112,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         mShuttingDown = true;
 
-        if(mCoreFragment.hasServiceStarted())
+        if(mCoreFragment != null && mCoreFragment.hasServiceStarted())
         {
             //Generate auto save file
             if(mGlobalPrefs.maxAutoSaves != 0)
