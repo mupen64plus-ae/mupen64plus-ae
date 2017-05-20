@@ -15,7 +15,7 @@ EGLDisplay display = EGL_NO_DISPLAY;
 EGLConfig config;
 EGLContext context = EGL_NO_CONTEXT;
 EGLSurface surface = EGL_NO_SURFACE;
-ANativeWindow* native_window = NULL;
+ANativeWindow* native_window = nullptr;
 std::mutex nativeWindowAccess;
 int isGLES2;
 bool new_surface = false;
@@ -25,8 +25,6 @@ int64_t oldTime;
 int vsync = 1;
 int oldVsync = 1;
 bool isPaused = false;
-
-
 
 EGLint const defaultAttributeList[] = {
         EGL_BUFFER_SIZE, 0,
@@ -117,7 +115,7 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
         }
     }
 
-    if(new_surface)
+    if(new_surface && native_window != nullptr)
     {
 		LOGI("VidExtFuncSetMode: Initializing surface");
 
@@ -148,7 +146,7 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
 	EGLLoader::loadEGLFunctions();
 
     const char * strVersion = (const char*)g_glGetString(GL_VERSION);
-    isGLES2 = strstr(strVersion, "OpenGL ES 2") != NULL;
+    isGLES2 = strstr(strVersion, "OpenGL ES 2") != nullptr;
 
     return M64ERR_SUCCESS;
 }
@@ -170,7 +168,7 @@ extern DECLSPEC m64p_error VidExtFuncResizeWindow(int Width, int Height)
 
 extern DECLSPEC void * VidExtFuncGLGetProc(const char* Proc)
 {
-    return (void*)eglGetProcAddress(Proc);
+    return reinterpret_cast<void*>(eglGetProcAddress(Proc));
 }
 
 extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)
@@ -318,43 +316,44 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 {
 	std::unique_lock<std::mutex> guard(nativeWindowAccess);
 
-    if (new_surface) {
+	if(native_window != nullptr)
+	{
+		if (new_surface) {
 
-        LOGI("VidExtFuncGLSwapBuf: New surface has been detected");
+			LOGI("VidExtFuncGLSwapBuf: New surface has been detected");
 
-        if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
-            LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
-            return M64ERR_INVALID_STATE;
-        }
-        if (!eglMakeCurrent(display, surface, surface, context)) {
-            LOGE("eglMakeCurrent() returned error %d", eglGetError());
-            return M64ERR_INVALID_STATE;
-        }
-        new_surface = false;
-    }
+			if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
+				LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
+				return M64ERR_INVALID_STATE;
+			}
+			if (!eglMakeCurrent(display, surface, surface, context)) {
+				LOGE("eglMakeCurrent() returned error %d", eglGetError());
+				return M64ERR_INVALID_STATE;
+			}
+			new_surface = false;
+		}
 
-    if(native_window != NULL)
-    {
-        if (vsync != oldVsync) {
-            eglSwapInterval(display, vsync);
-            oldVsync = vsync;
-        }
-        if (surface != EGL_NO_SURFACE && !isPaused) {
-            eglSwapBuffers(display, surface);
-            if (FPSRecalcPeriod > 0) {
-                frameCount++;
-                if (frameCount >= FPSRecalcPeriod) {
-                    struct timespec spec;
-                    clock_gettime(CLOCK_MONOTONIC, &spec);
-                    int64_t currentTime = (int64_t) spec.tv_sec*1000000000LL + spec.tv_nsec;
-                    float fFPS = ( (float) frameCount / (float) ( currentTime - oldTime ) ) * 1000000000.0f;
-                    Android_JNI_FPSCounter(lround(fFPS));
-                    frameCount = 0;
-                    oldTime = currentTime;
-                }
-            }
-        }
-    }
+		if (vsync != oldVsync) {
+			eglSwapInterval(display, vsync);
+			oldVsync = vsync;
+		}
+
+		if (surface != EGL_NO_SURFACE && !isPaused) {
+			eglSwapBuffers(display, surface);
+			if (FPSRecalcPeriod > 0) {
+				frameCount++;
+				if (frameCount >= FPSRecalcPeriod) {
+					struct timespec spec;
+					clock_gettime(CLOCK_MONOTONIC, &spec);
+					int64_t currentTime = (int64_t) spec.tv_sec * 1000000000LL + spec.tv_nsec;
+					float fFPS = ((float) frameCount / (float) (currentTime - oldTime)) * 1000000000.0f;
+					Android_JNI_FPSCounter(lround(fFPS));
+					frameCount = 0;
+					oldTime = currentTime;
+				}
+			}
+		}
+	}
 
     return M64ERR_SUCCESS;
 }
@@ -365,10 +364,10 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 
 	LOGI("setNativeWindow: New surface has been set");
 
-	if(native_window != NULL)
+	if(native_window != nullptr)
 	{
 		ANativeWindow_release(native_window);
-		native_window = NULL;
+		native_window = nullptr;
 	}
 
 	native_window = ANativeWindow_fromSurface(env, native_surface);
@@ -384,10 +383,10 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
         eglDestroySurface(display, surface);
     surface = EGL_NO_SURFACE;
 
-	if(native_window != NULL)
+	if(native_window != nullptr)
 	{
 		ANativeWindow_release(native_window);
-		native_window = NULL;
+		native_window = nullptr;
 	}
 }
 
@@ -404,9 +403,9 @@ extern DECLSPEC m64p_error VidExtFuncQuit()
 		surface = EGL_NO_SURFACE;
 	}
 
-	if(native_window != NULL) {
+	if(native_window != nullptr) {
 		ANativeWindow_release(native_window);
-		native_window = NULL;
+		native_window = nullptr;
 	}
 
 	if (context != EGL_NO_CONTEXT) {
