@@ -128,7 +128,6 @@ public class CoreService extends Service
                 ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mRomMd5, mRomCrc,
                         mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mLegacySaveName, mIsRestarting);
             }
-
         }
     };
 
@@ -547,8 +546,8 @@ public class CoreService extends Service
 
         mStartId = startId;
 
-        // If we get killed, after returning from here, restart
-        return START_STICKY;
+        // Don't restart service if killed
+        return START_NOT_STICKY;
     }
 
     @Override
