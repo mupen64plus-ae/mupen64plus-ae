@@ -958,7 +958,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         {
                             final File deleteFile = new File(romPath);
 
-                            if(!deleteFile.isDirectory())
+                            if(!deleteFile.isDirectory() && deleteFile.exists())
                             {
                                 deleteFile.delete();
                             }
