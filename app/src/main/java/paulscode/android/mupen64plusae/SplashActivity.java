@@ -75,7 +75,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 122;
+    private static final int ASSET_VERSION = 123;
 
     /** The total number of assets to be extracted (for computing progress %). */
     private static final int TOTAL_ASSETS = 160;
@@ -104,7 +104,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private SharedPreferences mPrefs = null;
 
     // These constants must match the keys used in res/xml/preferences*.xml
-    private static final String DISPLAY_POSITION = "displayPosition";
     private static final String DISPLAY_SCALING = "displayScaling";
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
     private static final String AUDIO_PLUGIN = "audioPlugin";

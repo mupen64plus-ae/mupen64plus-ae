@@ -122,9 +122,6 @@ public class AppData
      */
     public final String coreSharedDataDir;
     
-    /** The directory for temporary files. Contents deleted on uninstall. */
-    public final String tempDir;
-    
     /** The directory containing the native Mupen64Plus libraries. Contents deleted on uninstall, not accessible without root. */
     public final String libsDir;
     
@@ -192,12 +189,10 @@ public class AppData
     
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
-    private static final String KEY_LAST_APP_VERSION_CODE = "lastAppVersion";
     // ... add more as needed
     
     // Shared preferences default values
     private static final int DEFAULT_ASSET_VERSION = 0;
-    private static final int DEFAULT_LAST_APP_VERSION_CODE = 0;
     
     // ... add more as needed
     
@@ -250,8 +245,7 @@ public class AppData
         }
         gameDataDir = tempGameDataDir + "/GameData";
 
-        coreSharedDataDir = userDataDir + "/AppData";
-        tempDir = coreSharedDataDir + "/tmp";
+        coreSharedDataDir = context.getFilesDir().getAbsolutePath();
         String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
         if( !( new File( _libsDir ) ).exists() )
             _libsDir = context.getApplicationInfo().nativeLibraryDir;
