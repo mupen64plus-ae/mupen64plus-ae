@@ -123,7 +123,7 @@ public class CoreService extends Service
             // Get extra data included in the Intent
             boolean message = intent.getBooleanExtra("resume", false);
 
-            if(message && !mIsShuttingDown)
+            if(message && !mIsShuttingDown && mIsRunning)
             {
                 ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mRomMd5, mRomCrc,
                         mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mLegacySaveName, mIsRestarting);
