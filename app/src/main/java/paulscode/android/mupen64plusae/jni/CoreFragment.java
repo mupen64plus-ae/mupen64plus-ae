@@ -315,7 +315,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                     LocalBinder binder = (LocalBinder) service;
                     mCoreService = binder.getService();
                     mCoreService.setSurface(mSurface);
-                    mCoreService.setOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
+                    mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                     mCoreService.setCoreServiceListener(CoreFragment.this);
 
                     if(mCoreEventListener != null && getActivity() != null)
@@ -412,13 +412,13 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
     public void setOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
-        Log.i("CoreFragment", "setOnFpsChangedListener");
+        Log.i("CoreFragment", "addOnFpsChangedListener");
 
         mFpsChangeListener = fpsListener;
         mFpsRecalcPeriod = fpsRecalcPeriod;
         if(mCoreService != null)
         {
-            mCoreService.setOnFpsChangedListener(fpsListener, fpsRecalcPeriod);
+            mCoreService.addOnFpsChangedListener(fpsListener, fpsRecalcPeriod);
         }
     }
 

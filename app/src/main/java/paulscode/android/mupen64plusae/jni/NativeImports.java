@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.jni;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Call-ins made from the native ae-imports library to Java. Any function names changed here should
@@ -30,7 +31,7 @@ import java.util.ArrayList;
  */
 public class NativeImports
 {
-    public interface OnStateCallbackListener
+    interface OnStateCallbackListener
     {
         /**
          * Called when an emulator state/parameter has changed
@@ -56,7 +57,7 @@ public class NativeImports
     private static final Object sStateCallbackLock = new Object();
 
     //Frame rate info - used by ae-vidext
-    private static OnFpsChangedListener sFpsListener = null;
+    private static ArrayList<OnFpsChangedListener> sFpsListeners = new ArrayList<>();
 
     static void addOnStateCallbackListener( OnStateCallbackListener listener )
     {
@@ -95,15 +96,16 @@ public class NativeImports
         }
     }
 
-    static void setOnFpsChangedListener( OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
+    static void addOnFpsChangedListener(OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
-        sFpsListener = fpsListener;
+        sFpsListeners.add(fpsListener);
         NativeExports.FPSEnabled(fpsRecalcPeriod);
     }
 
     static void FPSCounter (int fps)
     {
-        if(sFpsListener != null)
-            sFpsListener.onFpsChanged(fps);
+        for (OnFpsChangedListener listener: sFpsListeners ) {
+            listener.onFpsChanged(fps);
+        }
     }
 }

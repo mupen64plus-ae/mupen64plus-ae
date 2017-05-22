@@ -47,6 +47,7 @@ import org.mupen64plusae.v3.alpha.R;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.game.GameActivity;
@@ -54,7 +55,7 @@ import paulscode.android.mupen64plusae.game.GameActivity;
 import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
 import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
 
-public class CoreService extends Service
+public class CoreService extends Service implements NativeImports.OnFpsChangedListener
 {
     interface CoreServiceListener
     {
@@ -112,6 +113,13 @@ public class CoreService extends Service
 
     private final IBinder mBinder = new LocalBinder();
     private CoreServiceListener mListener = null;
+
+    /**
+     * Last time we received an FPS changed callback. This is used to determine if the core
+     * is locked up since these won't happen if it is.
+     */
+    private int mLastFpsChangedTime;
+    private Handler mFpsCangedHandler;
 
     final static int ONGOING_NOTIFICATION_ID = 1;
 
@@ -206,20 +214,6 @@ public class CoreService extends Service
         if(shutdownOnFinish)
         {
             mIsShuttingDown = true;
-
-            //Set a 10 second timeout to save before killing the core process
-            Handler killHandler = new Handler();
-            killHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Log.e("CoreService", "Killing Core due to no response");
-
-                    //Stop the service
-                    stopForeground(true);
-                    stopSelf();
-
-                    android.os.Process.killProcess(android.os.Process.myPid());
-                } }, 10000);
         }
     }
 
@@ -320,9 +314,9 @@ public class CoreService extends Service
         NativeExports.emuGameShark(pressed);
     }
 
-    void setOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
+    void addOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
-        NativeImports.setOnFpsChangedListener( fpsListener, fpsRecalcPeriod );
+        NativeImports.addOnFpsChangedListener( fpsListener, fpsRecalcPeriod );
     }
 
     void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY )
@@ -582,6 +576,12 @@ public class CoreService extends Service
 
         if(!mIsRunning)
         {
+            mFpsCangedHandler = new Handler();
+            Calendar calendar = Calendar.getInstance();
+            mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+            mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
+            NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
+
             mIsRunning = true;
             // For each start request, send a message to start a job and deliver the
             // start ID so we know which request we're stopping when we finish the job
@@ -589,5 +589,33 @@ public class CoreService extends Service
             msg.arg1 = mStartId;
             mServiceHandler.sendMessage(msg);
         }
+    }
+
+    Runnable mLastFpsChangedChecker = new Runnable() {
+        @Override
+        public void run() {
+            Calendar calendar = Calendar.getInstance();
+            int seconds = calendar.get(Calendar.SECOND);
+
+            //Use a 10 second timeout to save before killing the core process
+            if(seconds - mLastFpsChangedTime > 10)
+            {
+                Log.e("CoreService", "Killing Core due to no response");
+
+                //Stop the service
+                stopForeground(true);
+                stopSelf();
+
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+
+            mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
+        }
+    };
+
+    @Override
+    public void onFpsChanged(int newValue) {
+        Calendar calendar = Calendar.getInstance();
+        mLastFpsChangedTime = calendar.get(Calendar.SECOND);
     }
 }

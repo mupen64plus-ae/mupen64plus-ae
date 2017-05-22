@@ -340,18 +340,19 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 
 		if (surface != EGL_NO_SURFACE && !isPaused) {
 			eglSwapBuffers(display, surface);
-			if (FPSRecalcPeriod > 0) {
-				frameCount++;
-				if (frameCount >= FPSRecalcPeriod) {
-					struct timespec spec;
-					clock_gettime(CLOCK_MONOTONIC, &spec);
-					int64_t currentTime = (int64_t) spec.tv_sec * 1000000000LL + spec.tv_nsec;
-					float fFPS = ((float) frameCount / (float) (currentTime - oldTime)) * 1000000000.0f;
-					Android_JNI_FPSCounter(lround(fFPS));
-					frameCount = 0;
-					oldTime = currentTime;
-				}
-			}
+		}
+	}
+
+	if (FPSRecalcPeriod > 0) {
+		frameCount++;
+		if (frameCount >= FPSRecalcPeriod) {
+			struct timespec spec;
+			clock_gettime(CLOCK_MONOTONIC, &spec);
+			int64_t currentTime = (int64_t) spec.tv_sec * 1000000000LL + spec.tv_nsec;
+			float fFPS = ((float) frameCount / (float) (currentTime - oldTime)) * 1000000000.0f;
+			Android_JNI_FPSCounter(lround(fFPS));
+			frameCount = 0;
+			oldTime = currentTime;
 		}
 	}
 
