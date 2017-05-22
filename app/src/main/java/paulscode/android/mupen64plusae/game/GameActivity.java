@@ -1044,13 +1044,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private void hideSystemBars()
     {
-        if (mGlobalPrefs.isImmersiveModeEnabled) {
-            this.getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        if( mDrawerLayout != null )
+        {
+            if( mGlobalPrefs.isImmersiveModeEnabled )
+            {
+                mDrawerLayout.setSystemUiVisibility( View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
+            }
         }
     }
 
@@ -1062,7 +1065,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 | LayoutParams.FLAG_LAYOUT_IN_SCREEN
                 | LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        if( mDrawerLayout != null )
+        {
+            mDrawerLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        }
     }
 
     private boolean isSafeToRender()
