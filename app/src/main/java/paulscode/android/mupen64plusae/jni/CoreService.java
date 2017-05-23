@@ -597,6 +597,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             Calendar calendar = Calendar.getInstance();
             int seconds = calendar.get(Calendar.SECOND);
 
+            if(mIsPaused)
+            {
+                mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+            }
+
             //Use a 10 second timeout to save before killing the core process
             if(seconds - mLastFpsChangedTime > 10)
             {
