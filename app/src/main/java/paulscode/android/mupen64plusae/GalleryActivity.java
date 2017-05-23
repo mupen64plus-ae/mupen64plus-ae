@@ -885,7 +885,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     goodName = section.get( "baseName" );
 
                 boolean matchesSearch = true;
-                if( searches != null && searches.length > 0 )
+                if( searches != null && searches.length > 0 && goodName != null)
                 {
                     // Make sure the ROM name contains every token in the query
                     final String lowerName = goodName.toLowerCase( Locale.US );
@@ -899,7 +899,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     }
                 }
 
-                if( matchesSearch )
+                if( matchesSearch && goodName != null)
                 {
                     final String romPath = config.get( md5, "romPath" );
                     String zipPath = config.get( md5, "zipPath" );
