@@ -134,8 +134,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
 
-    boolean mAlreadyRunning = false;
-
     @Override
     protected void onNewIntent( Intent intent )
     {
@@ -155,7 +153,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( extras != null)
         {
             final String givenRomPath = extras.getString( ROM_PATH );
-            mAlreadyRunning = true;
 
             if( !TextUtils.isEmpty( givenRomPath ) )
             {
