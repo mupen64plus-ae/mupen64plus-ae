@@ -60,9 +60,8 @@ static uint8_t* alist_u8(struct hle_t* hle, uint16_t dmem)
 
 static int16_t* alist_s16(struct hle_t* hle, uint16_t dmem)
 {
-    return (int16_t*)u16(hle->alist_buffer, dmem);
+    return (int16_t*)(hle->alist_buffer + ((dmem ^ S16) & 0xfff));
 }
-
 
 static void sample_mix(int16_t* dst, int16_t src, int16_t gain)
 {
