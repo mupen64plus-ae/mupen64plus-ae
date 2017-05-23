@@ -602,8 +602,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 mLastFpsChangedTime = calendar.get(Calendar.SECOND);
             }
 
-            //Use a 10 second timeout to save before killing the core process
-            if(seconds - mLastFpsChangedTime > 10)
+            //Use a 5 second timeout to save before killing the core process
+            if(seconds - mLastFpsChangedTime > 5)
             {
                 Log.e("CoreService", "Killing Core due to no response");
 
