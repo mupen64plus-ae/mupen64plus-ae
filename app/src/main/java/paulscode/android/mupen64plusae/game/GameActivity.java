@@ -284,19 +284,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // Show the drawer at the start and have it hide itself
             // automatically
             mDrawerLayout.openDrawer(GravityCompat.START);
-            mDrawerLayout.postDelayed(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                }
-            }, 1000);
         }
 
         if(mDrawerOpenState)
         {
-            Log.e("CoreFragment", "Opening drawer");
             mDrawerLayout.postDelayed(new Runnable()
             {
                 @Override
@@ -789,6 +780,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mCoreFragment.registerVibrator(1, vibrator);
 
         ReloadAllMenus();
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
 
         if(mCoreFragment.isShuttingDown())
         {
