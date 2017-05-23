@@ -417,10 +417,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         //on a shutdown
         if(!this.isChangingConfigurations() && mCoreFragment != null)
         {
-            mCoreFragment.autoSaveState(mGameDataManager.getAutoSaveFileName(), false);
-            mCoreFragment.pauseEmulator();
-        }
+            if(mGlobalPrefs.maxAutoSaves != 0)
+            {
+                mCoreFragment.autoSaveState(mGameDataManager.getAutoSaveFileName(), false);
+            }
 
+            mCoreFragment.pauseEmulator();
+
+            mGameDataManager.clearOldest();
+        }
+        
         if (mSensorController != null) {
             mSensorController.onPause();
         }
