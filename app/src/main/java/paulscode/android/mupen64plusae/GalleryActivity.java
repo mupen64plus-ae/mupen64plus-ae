@@ -690,7 +690,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 FileUtil.deleteFolder(new File(mGlobalPrefs.coreUserDataDir));
                 FileUtil.deleteFolder(new File(mGlobalPrefs.coreUserCacheDir));
             }
-            else if(id == REMOVE_FROM_LIBRARY_DIALOG_ID)
+            else if(id == REMOVE_FROM_LIBRARY_DIALOG_ID && mSelectedItem != null)
             {
                 final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
                 config.remove(mSelectedItem.md5);
