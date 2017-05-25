@@ -145,8 +145,11 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
 
 	EGLLoader::loadEGLFunctions();
 
-    const char * strVersion = (const char*)g_glGetString(GL_VERSION);
-    isGLES2 = strstr(strVersion, "OpenGL ES 2") != nullptr;
+	if(native_window != nullptr)
+	{
+		const char * strVersion = (const char*)g_glGetString(GL_VERSION);
+		isGLES2 = strstr(strVersion, "OpenGL ES 2") != nullptr;
+	}
 
     return M64ERR_SUCCESS;
 }
