@@ -114,6 +114,15 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
             return M64ERR_INVALID_STATE;
         }
     }
+	
+	if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs))) {
+		//If creating the context failed, just try to create a GLES2/3 context
+		//This is useful because GLideN64 requests an OpenGL 3.3 core context.
+		if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, defaultGlEsContextAttribs))) {
+			LOGE("eglCreateContext() returned error %d", eglGetError());
+			return M64ERR_INVALID_STATE;
+		}
+	}
 
     if(new_surface && native_window != nullptr)
     {
@@ -122,15 +131,6 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
         if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
             LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
             return M64ERR_INVALID_STATE;
-        }
-
-        if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs))) {
-            //If creating the context failed, just try to create a GLES2/3 context
-            //This is useful because GLideN64 requests an OpenGL 3.3 core context.
-            if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, defaultGlEsContextAttribs))) {
-                LOGE("eglCreateContext() returned error %d", eglGetError());
-                return M64ERR_INVALID_STATE;
-            }
         }
 
         if (!eglMakeCurrent(display, surface, surface, context)) {
