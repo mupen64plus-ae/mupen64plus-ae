@@ -157,6 +157,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
     private GameDataManager mGameDataManager = null;
+
+    private static final String STATE_DRAWER_OPEN = "STATE_DRAWER_OPEN";
     private boolean mDrawerOpenState = false;
 
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
@@ -274,23 +276,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             // Show the drawer at the start and have it hide itself
             // automatically
             mDrawerLayout.openDrawer(GravityCompat.START);
+            ReloadAllMenus();
         }
-
-        if(mDrawerOpenState)
+        else
         {
-            mDrawerLayout.postDelayed(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    if(mCoreFragment != null)
-                    {
-                        mCoreFragment.pauseEmulator();
-                    }
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                }
-            }, 1000);
-
+            mDrawerOpenState = savedInstanceState.getBoolean(STATE_DRAWER_OPEN);
         }
 
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener(){
@@ -381,6 +371,24 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mGlobalPrefs.displayActionBarTransparency));
 
         mMogaController.onResume();
+
+        if(mDrawerOpenState)
+        {
+            if(mCoreFragment != null)
+            {
+                mCoreFragment.pauseEmulator();
+            }
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            ReloadAllMenus();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState( Bundle savedInstanceState )
+    {
+        savedInstanceState.putBoolean(STATE_DRAWER_OPEN, mDrawerOpenState);
+
+        super.onSaveInstanceState( savedInstanceState );
     }
 
     @Override
@@ -877,6 +885,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         mCoreFragment.pauseEmulator();
                     }
                     mDrawerLayout.openDrawer(GravityCompat.START);
+                    ReloadAllMenus();
                     mDrawerOpenState = true;
                     mGameSidebar.requestFocus();
                     mGameSidebar.smoothScrollToPosition(0);
@@ -908,6 +917,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                             mCoreFragment.pauseEmulator();
                         }
                         mDrawerLayout.openDrawer( GravityCompat.START );
+                        ReloadAllMenus();
                         mDrawerOpenState = true;
                         mGameSidebar.requestFocus();
                         mGameSidebar.smoothScrollToPosition(0);
