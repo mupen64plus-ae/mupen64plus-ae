@@ -793,13 +793,13 @@
         <item>@string/glide64mk2_wrpAnisotropic_16x</item>
     </string-array>
     <string-array name="glide64mk2_wrpAnisotropic_values" translatable="false">
-        <item>1</item>
+        <item>0</item>
         <item>2</item>
         <item>4</item>
         <item>8</item>
         <item>16</item>
     </string-array>
-    <string name="glide64mk2_wrpAnisotropic_default" translatable="false">1</string>
+    <string name="glide64mk2_wrpAnisotropic_default" translatable="false">0</string>
 
     <!-- Rice Screen Update List -->
     <string-array name="riceScreenUpdate_entries">

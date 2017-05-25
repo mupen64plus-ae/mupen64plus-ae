@@ -181,6 +181,6 @@ public class Glide64mk2Prefs {
         ignore_aux_copy = getSafeInt( emulationProfile, "glide64mk2_ignore_aux_copy", -1);
         useless_is_useless = getSafeInt( emulationProfile, "glide64mk2_useless_is_useless", -1);
         fb_read_always = getSafeInt( emulationProfile, "glide64mk2_fb_read_always", 0);
-        wrpAnisotropic = getSafeInt( emulationProfile, "glide64mk2_wrpAnisotropic", 1);
+        wrpAnisotropic = getSafeInt( emulationProfile, "glide64mk2_wrpAnisotropic", 0);
     }
 }
