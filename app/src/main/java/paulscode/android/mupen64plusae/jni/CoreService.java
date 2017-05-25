@@ -151,6 +151,12 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void shutdownEmulator()
     {
+        mFpsCangedHandler = new Handler();
+        Calendar calendar = Calendar.getInstance();
+        mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+        mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
+        NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
+
         mIsShuttingDown = true;
         updateNotification();
 
@@ -216,6 +222,12 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
         if(shutdownOnFinish)
         {
+            mFpsCangedHandler = new Handler();
+            Calendar calendar = Calendar.getInstance();
+            mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+            mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
+            NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
+
             mIsShuttingDown = true;
         }
     }
@@ -579,12 +591,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
         if(!mIsRunning)
         {
-            mFpsCangedHandler = new Handler();
-            Calendar calendar = Calendar.getInstance();
-            mLastFpsChangedTime = calendar.get(Calendar.SECOND);
-            mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
-            NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
-
             mIsRunning = true;
             // For each start request, send a message to start a job and deliver the
             // start ID so we know which request we're stopping when we finish the job
