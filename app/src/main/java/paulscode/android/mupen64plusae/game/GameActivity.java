@@ -76,7 +76,6 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
-import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -153,18 +152,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private String mRomLegacySave = null;
     private boolean mDoRestart = false;
 
-    // Lifecycle state tracking
-    private boolean mIsResumed = false;     // true if the activity is resumed
-    private boolean mIsSurface = false;     // true if the surface is available
-
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
     private GameDataManager mGameDataManager = null;
-    private boolean mFirstStart = false;
-    private boolean mWaitingOnConfirmation = false;
-    private boolean mShuttingDown = false;
     private boolean mDrawerOpenState = false;
 
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
@@ -245,8 +237,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             this.setRequestedOrientation( mGlobalPrefs.displayOrientation );
         }
 
-        mFirstStart = true;
-
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
         SurfaceView surfaceView = (SurfaceView) this.findViewById( R.id.gameSurface );
@@ -308,16 +298,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             @Override
             public void onDrawerClosed(View arg0)
             {
-                if(!mShuttingDown)
-                {
-                    if(mCoreFragment != null)
-                    {
-                        mCoreFragment.resumeEmulator();
-                    }
-
-                    mDrawerOpenState = false;
+                if (mCoreFragment != null) {
+                    mCoreFragment.resumeEmulator();
                 }
 
+                mDrawerOpenState = false;
             }
 
             @Override
@@ -387,22 +372,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         super.onResume();
         Log.i("GameActivity", "onResume");
 
-        if(!mIsResumed)
-        {
-            mIsResumed = true;
-
-            tryRunning();
-
-            if (mSensorController != null) {
-                mSensorController.onResume();
-            }
-
-            // Set the sidebar opacity
-            mGameSidebar.setBackground(new DrawerDrawable(
-                    mGlobalPrefs.displayActionBarTransparency));
-
-            mMogaController.onResume();
+        if (mSensorController != null) {
+            mSensorController.onResume();
         }
+
+        // Set the sidebar opacity
+        mGameSidebar.setBackground(new DrawerDrawable(
+                mGlobalPrefs.displayActionBarTransparency));
+
+        mMogaController.onResume();
     }
 
     @Override
@@ -411,7 +389,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         super.onStop();
 
         Log.i( "GameActivity", "onStop" );
-        mIsResumed = false;
 
         //Don't pause emulation when rotating the screen or the core fragment has been set to null
         //on a shutdown
@@ -451,14 +428,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if( hasFocus )
         {
             hideSystemBars();
-        }
-
-        //We don't want to do this every time the user uses a dialog,
-        //only do it when the activity is first created.
-        if(mFirstStart)
-        {
-            tryRunning();
-            mFirstStart = false;
         }
     }
 
@@ -556,7 +525,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         switch (menuItem.getItemId())
         {
         case R.id.menuItem_exit:
-            mWaitingOnConfirmation = true;
             mCoreFragment.exit();
             break;
         case R.id.menuItem_toggle_speed:
@@ -629,7 +597,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 imeManager.showInputMethodPicker();
             break;
         case R.id.menuItem_reset:
-            mWaitingOnConfirmation = true;
             mCoreFragment.restart();
             break;
         default:
@@ -729,14 +696,35 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
         Log.i( "GameActivity", "surfaceChanged" );
-        mIsSurface = true;
 
         if(mCoreFragment != null)
         {
             mCoreFragment.setSurface(holder.getSurface());
-        }
 
-        tryRunning();
+            if (!mCoreFragment.IsInProgress()) {
+                final String latestSave = mGameDataManager.getLatestAutoSave();
+                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomPath,
+                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
+                        mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
+            }
+
+            if (mCoreFragment.hasServiceStarted()) {
+                if (!mDrawerLayout.isDrawerOpen(GravityCompat.START) && !mDrawerOpenState) {
+                    mCoreFragment.resumeEmulator();
+                } else {
+
+                    mCoreFragment.resumeEmulator();
+
+                    //Sleep for a bit to allow screen to refresh while running, then pause
+                    try {
+                        Thread.sleep(20);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    mCoreFragment.pauseEmulator();
+                }
+            }
+        }
     }
 
     @Override
@@ -748,8 +736,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mCoreFragment.destroySurface();
         }
-
-        mIsSurface = false;
     }
 
     @Override
@@ -771,8 +757,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mCoreFragment.resumeEmulator();
         }
-
-        mWaitingOnConfirmation = false;
     }
 
     @Override
@@ -812,8 +796,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mCoreFragment.resumeEmulator();
         }
-
-        mWaitingOnConfirmation = false;
     }
 
     public void finishActivity()
@@ -913,8 +895,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     //We are using the slide gesture for the menu, so the back key can be used to exit
                     if(mGlobalPrefs.inGameMenuIsSwipGesture)
                     {
-                        mWaitingOnConfirmation = true;
-
                         if(mCoreFragment != null)
                         {
                             mCoreFragment.exit();
@@ -1070,52 +1050,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     }
 
-    private boolean isSafeToRender()
-    {
-        return mIsResumed && mIsSurface && !mShuttingDown;
-    }
-
-    private synchronized void tryRunning()
-    {
-        if(mCoreFragment == null) return;
-
-        if( isSafeToRender())
-        {
-            if(!mCoreFragment.IsInProgress())
-            {
-                final String latestSave = mGameDataManager.getLatestAutoSave();
-                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomPath,
-                        mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
-                        mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
-            }
-            else if(mCoreFragment.hasServiceStarted() && mCoreFragment.getState() == NativeConstants.EMULATOR_STATE_PAUSED &&
-                    !mWaitingOnConfirmation)
-            {
-                if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) && !mDrawerOpenState)
-                {
-                    mCoreFragment.resumeEmulator();
-                }
-                else
-                {
-                    mCoreFragment.resumeEmulator();
-
-                    //Sleep for a bit to allow screen to refresh while running, then pause
-                    try {
-                        Thread.sleep(20);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    mCoreFragment.pauseEmulator();
-                }
-            }
-        }
-    }
-
     private void shutdownEmulator()
     {
         Log.i( "GameActivity", "shutdownEmulator" );
-
-        mShuttingDown = true;
 
         if(mCoreFragment != null && mCoreFragment.hasServiceStarted())
         {

@@ -160,10 +160,13 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void resumeEmulator()
     {
-        mIsPaused = false;
-        NativeExports.emuResume();
+        if(!mIsShuttingDown)
+        {
+            mIsPaused = false;
+            NativeExports.emuResume();
 
-        updateNotification();
+            updateNotification();
+        }
     }
 
     void autoSaveState(final String latestSave, final boolean shutdownOnFinish)
