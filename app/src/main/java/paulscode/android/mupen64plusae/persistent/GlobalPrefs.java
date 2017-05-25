@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
@@ -303,11 +304,11 @@ public class GlobalPrefs
     public final boolean useHighPriorityThread;
 
     // Shared preferences keys and key templates
-    private static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
-    private static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
-    private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
-    private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
-    private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
+    public static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
+    public static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
+    public static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
+    public static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
+    public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     // ... add more as needed
 
     // Shared preferences default values
@@ -639,6 +640,7 @@ public class GlobalPrefs
                 {
                     mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).apply();
                     activity.finishAffinity();
+                    ActivityHelper.startSplashActivity(activity);
                 }
             }
         } );

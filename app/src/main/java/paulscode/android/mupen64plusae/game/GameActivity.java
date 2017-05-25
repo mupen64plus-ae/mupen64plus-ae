@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
@@ -34,6 +35,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -82,9 +84,12 @@ import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
+import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
+
+import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOCALE_OVERRIDE;
 
 //@formatter:off
 /**
@@ -163,6 +168,27 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
     private CoreFragment mCoreFragment = null;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( newBase );
+
+        // Locale
+        String localeCode = preferences.getString( GlobalPrefs.KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
+
+        Log.e("GameActivity", "localeCode="+localeCode);
+
+        if(TextUtils.isEmpty(localeCode))
+        {
+            super.attachBaseContext(newBase);
+        }
+        else
+        {
+            super.attachBaseContext(LocaleContextWrapper.wrap(newBase,localeCode));
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
