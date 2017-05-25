@@ -53,7 +53,7 @@ static void dma_si_write(struct si_controller* si)
     }
 
     update_pif_write(si);
-    cp0_update_count();
+    cp0_update_count(si->r4300);
 
     if (g_delay_si) {
         add_interrupt_event(&si->r4300->cp0, SI_INT, /*0x100*/0x900);
@@ -80,7 +80,7 @@ static void dma_si_read(struct si_controller* si)
         si->ri->rdram.dram[(si->regs[SI_DRAM_ADDR_REG]+i)/4] = sl(*(uint32_t*)(&si->pif.ram[i]));
     }
 
-    cp0_update_count();
+    cp0_update_count(si->r4300);
 
     if (g_delay_si) {
         add_interrupt_event(&si->r4300->cp0, SI_INT, /*0x100*/0x900);
@@ -164,8 +164,9 @@ int write_si_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
     return 0;
 }
 
-void si_end_of_dma_event(struct si_controller* si)
+void si_end_of_dma_event(void* opaque)
 {
+    struct si_controller* si = (struct si_controller*)opaque;
     main_check_inputs();
 
     si->pif.ram[0x3f] = 0x0;

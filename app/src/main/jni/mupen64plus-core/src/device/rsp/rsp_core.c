@@ -40,7 +40,7 @@ static void dma_sp_write(struct rsp_core* sp)
     unsigned int length = ((l & 0xfff) | 7) + 1;
     unsigned int count = ((l >> 12) & 0xff) + 1;
     unsigned int skip = ((l >> 20) & 0xfff);
- 
+
     unsigned int memaddr = sp->regs[SP_MEM_ADDR_REG] & 0xfff;
     unsigned int dramaddr = sp->regs[SP_DRAM_ADDR_REG] & 0xffffff;
 
@@ -143,8 +143,8 @@ static void update_sp_status(struct rsp_core* sp, uint32_t w)
     if (w & 0x800000) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG7;
     if (w & 0x1000000) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG7;
 
-    //if (get_event(&sp->r4300->cp0.q, SP_INT)) return;
-    if (!(w & 0x1) && !(w & 0x4))
+    if (sp->rsp_task_locked && (get_event(&sp->r4300->cp0.q, SP_INT))) return;
+    if (!(w & 0x1) && !(w & 0x4) && !sp->rsp_task_locked)
         return;
 
     if (!(sp->regs[SP_STATUS_REG] & (SP_STATUS_HALT | SP_STATUS_BROKE)))
@@ -167,6 +167,7 @@ void poweron_rsp(struct rsp_core* sp)
     memset(sp->regs, 0, SP_REGS_COUNT*sizeof(uint32_t));
     memset(sp->regs2, 0, SP_REGS2_COUNT*sizeof(uint32_t));
 
+    sp->rsp_task_locked = 0;
     sp->regs[SP_STATUS_REG] = 1;
 }
 
@@ -283,7 +284,13 @@ void do_SP_Task(struct rsp_core* sp)
         sp->regs2[SP_PC_REG] |= save_pc;
         new_frame();
 
-        cp0_update_count();
+        cp0_update_count(sp->r4300);
+        sp->rsp_task_locked = 0;
+        if ((sp->regs[SP_STATUS_REG] & (SP_STATUS_HALT | SP_STATUS_BROKE)) == 0)
+        {
+            sp->rsp_task_locked = 1;
+            sp->r4300->mi.regs[MI_INTR_REG] |= MI_INTR_SP;
+        }
         if (sp->r4300->mi.regs[MI_INTR_REG] & MI_INTR_SP) {
             add_interrupt_event(&sp->r4300->cp0, SP_INT, 1000);
         }
@@ -304,7 +311,13 @@ void do_SP_Task(struct rsp_core* sp)
         timed_section_end(TIMED_SECTION_AUDIO);
         sp->regs2[SP_PC_REG] |= save_pc;
 
-        cp0_update_count();
+        cp0_update_count(sp->r4300);
+        sp->rsp_task_locked = 0;
+        if ((sp->regs[SP_STATUS_REG] & (SP_STATUS_HALT | SP_STATUS_BROKE)) == 0)
+        {
+            sp->rsp_task_locked = 1;
+            sp->r4300->mi.regs[MI_INTR_REG] |= MI_INTR_SP;
+        }
         if (sp->r4300->mi.regs[MI_INTR_REG] & MI_INTR_SP) {
             add_interrupt_event(&sp->r4300->cp0, SP_INT, 4000/*500*/);
         }
@@ -317,7 +330,13 @@ void do_SP_Task(struct rsp_core* sp)
         rsp.doRspCycles(0xffffffff);
         sp->regs2[SP_PC_REG] |= save_pc;
 
-        cp0_update_count();
+        cp0_update_count(sp->r4300);
+        sp->rsp_task_locked = 0;
+        if ((sp->regs[SP_STATUS_REG] & (SP_STATUS_HALT | SP_STATUS_BROKE)) == 0)
+        {
+            sp->rsp_task_locked = 1;
+            sp->r4300->mi.regs[MI_INTR_REG] |= MI_INTR_SP;
+        }
         if (sp->r4300->mi.regs[MI_INTR_REG] & MI_INTR_SP) {
             add_interrupt_event(&sp->r4300->cp0, SP_INT, 0/*100*/);
         }
@@ -326,11 +345,15 @@ void do_SP_Task(struct rsp_core* sp)
     }
 }
 
-void rsp_interrupt_event(struct rsp_core* sp)
+void rsp_interrupt_event(void* opaque)
 {
-    /* XXX: assume task has fully completed */
-    sp->regs[SP_STATUS_REG] |=
-        SP_STATUS_TASKDONE | SP_STATUS_BROKE | SP_STATUS_HALT;
+    struct rsp_core* sp = (struct rsp_core*)opaque;
+    if (!sp->rsp_task_locked)
+    {
+        /* XXX: assume task has fully completed */
+        sp->regs[SP_STATUS_REG] |=
+            SP_STATUS_TASKDONE | SP_STATUS_BROKE | SP_STATUS_HALT;
+    }
 
     if ((sp->regs[SP_STATUS_REG] & SP_STATUS_INTR_BREAK) != 0)
     {

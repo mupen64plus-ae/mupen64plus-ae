@@ -55,11 +55,27 @@ void init_device(struct device* dev,
     /* vi */
     unsigned int vi_clock, unsigned int expected_refresh_rate, unsigned int count_per_scanline, unsigned int alternate_timing)
 {
-    init_r4300(&dev->r4300, emumode, count_per_op, no_compiled_jump);
+    struct interrupt_handler interrupt_handlers[] = {
+        { &dev->vi,        vi_vertical_interrupt_event }, /* VI */
+        { &dev->r4300,     compare_int_handler         }, /* COMPARE */
+        { &dev->r4300,     check_int_handler           }, /* CHECK */
+        { &dev->si,        si_end_of_dma_event         }, /* SI */
+        { &dev->pi,        pi_end_of_dma_event         }, /* PI */
+        { &dev->r4300.cp0, special_int_handler         }, /* SPECIAL */
+        { &dev->ai,        ai_end_of_dma_event         }, /* AI */
+        { &dev->sp,        rsp_interrupt_event         }, /* SP */
+        { &dev->dp,        rdp_interrupt_event         }, /* DP */
+        { &dev->r4300,     hw2_int_handler             }, /* HW2 */
+        { dev,             nmi_int_handler             }, /* NMI */
+        { dev,             reset_hard_handler          }  /* reset_hard */
+    };
+
+    init_r4300(&dev->r4300, &dev->mem, &dev->ri, interrupt_handlers,
+            emumode, count_per_op, no_compiled_jump);
     init_rdp(&dev->dp, &dev->r4300, &dev->sp, &dev->ri);
     init_rsp(&dev->sp, &dev->r4300, &dev->dp, &dev->ri);
     init_ai(&dev->ai, &dev->r4300, &dev->ri, &dev->vi, aout);
-    init_pi(&dev->pi, rom, rom_size, flashram_storage, sram_storage, &dev->r4300, &dev->ri);
+    init_pi(&dev->pi, rom, rom_size, flashram_storage, sram_storage, &dev->r4300, &dev->ri, &dev->si.pif.cic);
     init_ri(&dev->ri, dram, dram_size);
     init_si(&dev->si,
         cins,
@@ -84,6 +100,11 @@ void poweron_device(struct device* dev)
     poweron_si(&dev->si);
     poweron_vi(&dev->vi);
     poweron_memory(&dev->mem);
+
+    /* XXX: somewhat cheating to put it here but not really other option.
+     * Proper fix would probably trigerring the first vi
+     * when VI_CONTROL_REG[1:0] is set to non zero value */
+    add_interrupt_event_count(&dev->r4300.cp0, VI_INT, dev->vi.next_vi);
 }
 
 void run_device(struct device* dev)
@@ -95,7 +116,7 @@ void run_device(struct device* dev)
 void stop_device(struct device* dev)
 {
     /* set stop flag so that r4300 execution will be stopped at next interrupt */
-    *r4300_stop() = 1;
+    *r4300_stop(&dev->r4300) = 1;
 }
 
 void hard_reset_device(struct device* dev)

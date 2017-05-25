@@ -45,12 +45,12 @@ static uint32_t get_remaining_dma_length(struct ai_controller* ai)
     if (ai->fifo[0].duration == 0)
         return 0;
 
-    cp0_update_count();
+    cp0_update_count(ai->r4300);
     next_ai_event = get_event(&ai->r4300->cp0.q, AI_INT);
     if (next_ai_event == 0)
         return 0;
 
-    cp0_regs = r4300_cp0_regs();
+    cp0_regs = r4300_cp0_regs(&ai->r4300->cp0);
     if (next_ai_event <= cp0_regs[CP0_COUNT_REG])
         return 0;
 
@@ -91,7 +91,7 @@ static void do_dma(struct ai_controller* ai, const struct ai_dma* dma)
     audio_out_push_samples(ai->aout, &ai->ri->rdram.dram[dma->address/4], dma->length);
 
     /* schedule end of dma event */
-    cp0_update_count();
+    cp0_update_count(ai->r4300);
     add_interrupt_event(&ai->r4300->cp0, AI_INT, dma->duration);
 }
 
@@ -202,8 +202,9 @@ int write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
     return 0;
 }
 
-void ai_end_of_dma_event(struct ai_controller* ai)
+void ai_end_of_dma_event(void* opaque)
 {
+    struct ai_controller* ai = (struct ai_controller*)opaque;
     fifo_pop(ai);
     raise_rcp_interrupt(ai->r4300, MI_INTR_AI);
 }
