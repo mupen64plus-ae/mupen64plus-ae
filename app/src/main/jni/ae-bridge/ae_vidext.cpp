@@ -17,7 +17,7 @@ EGLContext context = EGL_NO_CONTEXT;
 EGLSurface surface = EGL_NO_SURFACE;
 ANativeWindow* native_window = nullptr;
 std::mutex nativeWindowAccess;
-int isGLES2;
+int isGLES2 = 1;
 bool new_surface = false;
 int FPSRecalcPeriod = 0;
 uint32_t frameCount = 0;
