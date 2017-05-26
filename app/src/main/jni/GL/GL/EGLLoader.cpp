@@ -379,8 +379,5 @@ namespace  EGLLoader {
 		GL_GET_PROC_ADR(PFNGLNAMEDFRAMEBUFFERTEXTUREPROC, glNamedFramebufferTexture);
 		GL_GET_PROC_ADR(PFNGLDRAWELEMENTSBASEVERTEXPROC, glDrawElementsBaseVertex);
 		GL_GET_PROC_ADR(PFNGLFLUSHMAPPEDBUFFERRANGEPROC, glFlushMappedBufferRange);
-
-		const char *strVersion = reinterpret_cast<const char *>(glGetString(GL_VERSION));
-		__android_log_print(ANDROID_LOG_INFO, "EGL", "GL_VERSION: %s", strVersion);
 	}
 }
