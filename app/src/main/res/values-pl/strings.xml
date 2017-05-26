@@ -131,7 +131,6 @@
     <string name="toast_savingScreenshot">Zapisuję zrzut ekranu...</string>
     <string name="toast_canceling">Anulowanie...</string>
     <string name="toast_pleaseWait">Proszę czekać…</string>
-
     <!-- Something happened (use '.') -->
     <string name="toast_nativeMainFailure01">Nie można przeanalizować wstępnych parametrów wiersza polecenia.</string>
     <string name="toast_nativeMainFailure02">Nie można złączyć biblioteki rdzeniowej.</string>
@@ -467,12 +466,12 @@
     <string name="cheatEditor_confirm">Czy na pewno?</string>
     <string name="cheatEditor_info">Informacje cheat\'a</string>
     <string name="cheatEditor_saveConfirm">Zapisać plik cheat\'a?</string>
-    <string name="cheatEditor_edit1">Edytuj cheat\'a</string>
+    <string name="cheatEditor_edit1">Edytuj cheat\\'a</string>
     <string name="cheatEditor_edit2">Zaawansowana edycja cheat\'a</string>
     <string name="cheatEditor_delete">Usuń cheat\'a</string>
     <string name="cheatEditor_add">Dodaj cheat\'a</string>
     <string name="cheatEditor_add_advanced">Dodaj zaawansowanego cheat\'a</string>
-    <string name="cheatEditor_save">Zapisz cheat\'a</string>
+    <string name="cheatEditor_save">Zapisz cheat\\'a</string>
     <string name="cheatEditor_hint_cheatTitle">Tytuł cheat\'a</string>
     <string name="cheatEditor_hint_cheatNotes">Notatki cheat\'a (opcjonalne)</string>
     <string name="cheatEditor_hint_cheatAddress">Adres</string>
@@ -486,7 +485,6 @@
 
     <!-- Hi-Res Texture Unpacking -->
     <string name="pathHiResTexturesTask_select_zip">Wybierz plik ZIP lub HTC zawierający pakiet tekstur o wysokiej rozdzielczości</string>
-    <string name="pathHiResTexturesTask_title">Rozpakowywanie tekstur</string>
     <string name="pathHiResTexturesTask_message">Prosimy o cierpliwość. Może to potrwać kilka minut.</string>
     <string name="pathHiResTexturesTask_errorMessage">Błąd przy rozpakowywaniu tekstur!</string>
     <!-- Scan Roms Dialog -->

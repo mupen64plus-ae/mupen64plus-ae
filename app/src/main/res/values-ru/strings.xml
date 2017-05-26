@@ -135,7 +135,6 @@
     <string name="toast_savingScreenshot">Сохранение скриншота…</string>
     <string name="toast_canceling">Отмена…</string>
     <string name="toast_pleaseWait">Пожалуйста подождите…</string>
-
     <!-- Something happened (use '.') -->
     <string name="toast_nativeMainFailure01">Ошибка разбора начальной команды параметров строки.</string>
     <string name="toast_nativeMainFailure02">Ошибка подключения библиотеки ядра.</string>
@@ -645,7 +644,6 @@
 
     <!-- Hi-Res Texture Unpacking -->
     <string name="pathHiResTexturesTask_select_zip">Выберите ZIP или HTC файл содержащий текстурные паки высокого разрешения</string>
-    <string name="pathHiResTexturesTask_title">Распаковка текстур&#8230;</string>
     <string name="pathHiResTexturesTask_message">Пожалуйста потерпите.этот процесс займёт некоторое время.</string>
     <string name="pathHiResTexturesTask_errorMessage">Возникла проблема во время распаковки текстур!</string>
     <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Ошибка: HTC должен быть следующего формата [Название_Игры]__HIRESTEXTURES.htc</string>

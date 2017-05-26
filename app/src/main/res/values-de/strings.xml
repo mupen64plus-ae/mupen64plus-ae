@@ -129,7 +129,6 @@
     <string name="toast_savingScreenshot">Screenshot wird gespeichert...</string>
     <string name="toast_canceling">Breche ab...</string>
     <string name="toast_pleaseWait">Bitte warten...</string>
-
     <!-- Something happened (use '.') -->
     <string name="toast_nativeMainFailure01">Der Anfangsbefehlszeilenparameter konnte nicht geparsert werden.</string>
     <string name="toast_nativeMainFailure02">Kernbibliothek konnte nicht anhängt werden.</string>
@@ -553,7 +552,6 @@
     <string name="cheatEditor_add_cheats">Cheat hinzufügen</string>
     <string name="cheatEditor_remove_option">Option entfernen</string>
 
-    <string name="pathHiResTexturesTask_title">Texturen werden entpackt</string>
     <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>
     <!-- Scan Roms Dialog -->
