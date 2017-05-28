@@ -128,28 +128,29 @@ extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerP
     {
 		LOGI("VidExtFuncSetMode: Initializing surface");
 
-        if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList))) {
+        if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList)))
+		{
             LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
             return M64ERR_INVALID_STATE;
         }
 
-        if (!eglMakeCurrent(display, surface, surface, context)) {
+        if (!eglMakeCurrent(display, surface, surface, context))
+		{
             LOGE("eglMakeCurrent() returned error %d", eglGetError());
             return M64ERR_INVALID_STATE;
         }
 
 		new_surface = false;
-    } else {
+    } else
+	{
         LOGE("VidExtFuncSetMode called before surface has been set");
+		return M64ERR_INVALID_STATE;
     }
 
 	EGLLoader::loadEGLFunctions();
 
-	if(native_window != nullptr)
-	{
-		const char * strVersion = (const char*)g_glGetString(GL_VERSION);
-		isGLES2 = strstr(strVersion, "OpenGL ES 2") != nullptr;
-	}
+	const char * strVersion = reinterpret_cast<const char*>(g_glGetString(GL_VERSION));
+	isGLES2 = strstr(strVersion, "OpenGL ES 2") != nullptr;
 
     return M64ERR_SUCCESS;
 }
