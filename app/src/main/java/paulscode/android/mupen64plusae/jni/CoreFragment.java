@@ -285,15 +285,20 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mRomArtPath = romArtPath;
         mRomLegacySave = romLegacySave;
 
-        NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData );
+        if(!mIsRunning)
+        {
+            NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData );
 
-        if(getActivity() != null)
-        {
-            actuallyStartCore(getActivity());
-        }
-        else
-        {
-            mCachedStartCore = true;
+            if(getActivity() != null)
+            {
+                actuallyStartCore(getActivity());
+            }
+            else
+            {
+                mCachedStartCore = true;
+            }
+
+            mIsRunning = true;
         }
     }
     
@@ -301,59 +306,54 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     {
         Log.i("CoreFragment", "actuallyStartCore");
 
-        if(!mIsRunning)
-        {
-            mIsRunning = true;
+        // Defines callbacks for service binding, passed to bindService()
+        mServiceConnection = new ServiceConnection() {
 
-            // Defines callbacks for service binding, passed to bindService()
-            mServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder service) {
 
-                @Override
-                public void onServiceConnected(ComponentName className, IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                LocalBinder binder = (LocalBinder) service;
+                mCoreService = binder.getService();
+                mCoreService.setSurface(mSurface);
+                mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
+                mCoreService.setCoreServiceListener(CoreFragment.this);
 
-                    // We've bound to LocalService, cast the IBinder and get LocalService instance
-                    LocalBinder binder = (LocalBinder) service;
-                    mCoreService = binder.getService();
-                    mCoreService.setSurface(mSurface);
-                    mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
-                    mCoreService.setCoreServiceListener(CoreFragment.this);
-
-                    if(mCoreEventListener != null && getActivity() != null)
-                    {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mCoreEventListener.onCoreServiceStarted();
-                            }
-                        });
-                    }
+                if(mCoreEventListener != null && getActivity() != null)
+                {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCoreEventListener.onCoreServiceStarted();
+                        }
+                    });
                 }
+            }
 
-                @Override
-                public void onServiceDisconnected(ComponentName arg0) {
-                    //Nothing to do here
-                }
-            };
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                //Nothing to do here
+            }
+        };
 
-            ArrayList<Integer> pakTypes = new ArrayList<>();
-            pakTypes.add(mGlobalPrefs.getPakType(1).getNativeValue());
-            pakTypes.add(mGlobalPrefs.getPakType(2).getNativeValue());
-            pakTypes.add(mGlobalPrefs.getPakType(3).getNativeValue());
-            pakTypes.add(mGlobalPrefs.getPakType(4).getNativeValue());
+        ArrayList<Integer> pakTypes = new ArrayList<>();
+        pakTypes.add(mGlobalPrefs.getPakType(1).getNativeValue());
+        pakTypes.add(mGlobalPrefs.getPakType(2).getNativeValue());
+        pakTypes.add(mGlobalPrefs.getPakType(3).getNativeValue());
+        pakTypes.add(mGlobalPrefs.getPakType(4).getNativeValue());
 
-            boolean[] isPlugged = new boolean[4];
-            isPlugged[0] = mGamePrefs.isPlugged1;
-            isPlugged[1] = mGamePrefs.isPlugged2;
-            isPlugged[2] = mGamePrefs.isPlugged3;
-            isPlugged[3] = mGamePrefs.isPlugged4;
+        boolean[] isPlugged = new boolean[4];
+        isPlugged[0] = mGamePrefs.isPlugged1;
+        isPlugged[1] = mGamePrefs.isPlugged2;
+        isPlugged[2] = mGamePrefs.isPlugged3;
+        isPlugged[3] = mGamePrefs.isPlugged4;
 
-            // Start the core
-            ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomPath,
-                    mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
-                    mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
-                    isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
-                    mGlobalPrefs.coreUserCacheDir, mGamePrefs.coreUserConfigDir, mGamePrefs.userSaveDir, mAppData.libsDir);
-        }
+        // Start the core
+        ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomPath,
+                mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
+                mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
+                isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
+                mGlobalPrefs.coreUserCacheDir, mGamePrefs.coreUserConfigDir, mGamePrefs.userSaveDir, mAppData.libsDir);
     }
 
     private void actuallyStopCore()
