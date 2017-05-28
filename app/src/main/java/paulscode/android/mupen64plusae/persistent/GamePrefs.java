@@ -433,7 +433,7 @@ public class GamePrefs
 
         // Video prefs - GLideN64, this is a more broad search because there used to be more than one GLideN64 version
         isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64" );
-        glideN64Prefs = new GLideN64Prefs(emulationProfile);
+        glideN64Prefs = new GLideN64Prefs(context, emulationProfile);
 
         //Video preferences for angrylion
         isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion.so" );

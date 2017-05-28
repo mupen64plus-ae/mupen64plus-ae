@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.persistent;
 
+import android.content.Context;
+
 import paulscode.android.mupen64plusae.profile.Profile;
 
 import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
@@ -175,10 +177,12 @@ public class GLideN64Prefs {
     /** Gamma correction value. */
     public final float gammaCorrectionLevel;
 
-    public GLideN64Prefs(final Profile emulationProfile)
+    public GLideN64Prefs(Context context, final Profile emulationProfile)
     {
         cropMode = getSafeInt( emulationProfile, "CropMode", 1);
-        multiSampling = getSafeInt( emulationProfile, "MultiSampling", 0);
+        String glesVersion = AppData.getOpenGlEsVersion(context);
+        multiSampling = (glesVersion.equals("2.0") || glesVersion.equals("3.0")) ?
+                0 : getSafeInt( emulationProfile, "MultiSampling", 0);
         bilinearMode = getSafeInt( emulationProfile, "bilinearMode", 0);
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
         cacheSize = getSafeInt( emulationProfile, "CacheSize", 128);
