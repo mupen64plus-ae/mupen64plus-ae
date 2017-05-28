@@ -381,18 +381,12 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroySurface(JNIEnv* env, jclass cls)
 {
-	std::unique_lock<std::mutex> guard(nativeWindowAccess);
-	LOGI("emuDestroySurface: Deleting native window");
+	LOGI("emuDestroySurface: Deleting surface");
 
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
     if (display != EGL_NO_DISPLAY && surface != EGL_NO_SURFACE)
         eglDestroySurface(display, surface);
     surface = EGL_NO_SURFACE;
-
-	if(native_window != nullptr)
-	{
-		ANativeWindow_release(native_window);
-		native_window = nullptr;
-	}
 }
 
 extern DECLSPEC m64p_error VidExtFuncQuit()
