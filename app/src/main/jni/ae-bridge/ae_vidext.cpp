@@ -337,13 +337,16 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 			new_surface = false;
 		}
 
-		if (vsync != oldVsync) {
-			eglSwapInterval(display, vsync);
-			oldVsync = vsync;
-		}
+		if(surface != EGL_NO_SURFACE)
+		{
+			if (vsync != oldVsync) {
+				eglSwapInterval(display, vsync);
+				oldVsync = vsync;
+			}
 
-		if (surface != EGL_NO_SURFACE && !isPaused) {
-			eglSwapBuffers(display, surface);
+			if (!isPaused) {
+				eglSwapBuffers(display, surface);
+			}
 		}
 	}
 
