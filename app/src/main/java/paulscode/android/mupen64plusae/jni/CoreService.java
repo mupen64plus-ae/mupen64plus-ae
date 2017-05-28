@@ -155,7 +155,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         Calendar calendar = Calendar.getInstance();
         mLastFpsChangedTime = calendar.get(Calendar.SECOND);
         mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
-        NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
 
         mIsShuttingDown = true;
         updateNotification();
@@ -551,6 +550,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made
             NativeExports.loadLibrariesIfNotLoaded( libsDir, Build.VERSION.SDK_INT );
+            NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
 
             updateNotification();
         }
@@ -631,5 +631,13 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     public void onFpsChanged(int newValue) {
         Calendar calendar = Calendar.getInstance();
         mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+
+        //If we are paused and we are still somehow swapping buffers
+        //then pause again. This can happen if the user pauses the emulator
+        //before it's done starting.
+        if(mIsPaused)
+        {
+            NativeExports.emuPause();
+        }
     }
 }
