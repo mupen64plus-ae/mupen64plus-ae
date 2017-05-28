@@ -47,8 +47,6 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
 
     private boolean mCachedResult = false;
     
-    private boolean mCachedExtractFinish = false;
-    
     private String mRomZipPath = null;
     private String mRomExtractPath = null;
     private String mRomPath = null;
@@ -90,12 +88,6 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
             actuallyExtractRom(getActivity());
             mCachedExtractRom = false;
         }
-        
-        if(mCachedExtractFinish)
-        {
-            ActivityHelper.stopExtractRomService(getActivity().getApplicationContext(), mServiceConnection);
-            mCachedExtractFinish = false;
-        }
 
         if (mCachedResult && mInProgress)
         {
@@ -131,14 +123,6 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
     @Override
     public void onExtractRomFinished()
     {
-        if(getActivity() != null)
-        {
-            ActivityHelper.stopExtractRomService(getActivity().getApplicationContext(), mServiceConnection);
-        }
-        else
-        {
-            mCachedExtractFinish = true;
-        }
 
     }
 

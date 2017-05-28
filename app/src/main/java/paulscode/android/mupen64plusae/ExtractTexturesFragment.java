@@ -21,20 +21,21 @@
 
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
+
+import java.io.File;
 
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService.ExtractTexturesListener;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService.LocalBinder;
-import android.app.Activity;
-import android.support.v4.app.Fragment;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
-import android.os.Bundle;
-import android.os.IBinder;
 
 public class ExtractTexturesFragment extends Fragment implements ExtractTexturesListener
 {    
@@ -45,8 +46,6 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     private ServiceConnection mServiceConnection;
     
     private boolean mCachedExtractTextures = false;
-    
-    private boolean mCachedExtractFinish = false;
     
     private File mTexturesZipPath = null;
     
@@ -79,12 +78,6 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
             actuallyExtractTextures(getActivity());
             mCachedExtractTextures = false;
         }
-        
-        if(mCachedExtractFinish)
-        {
-            ActivityHelper.stopExtractTexturesService(getActivity().getApplicationContext(), mServiceConnection);
-            mCachedExtractFinish = false;
-        }
     }
     
     @Override
@@ -113,14 +106,6 @@ public class ExtractTexturesFragment extends Fragment implements ExtractTextures
     @Override
     public void onExtractTexturesFinished()
     {
-        if(getActivity() != null)
-        {
-            ActivityHelper.stopExtractTexturesService(getActivity().getApplicationContext(), mServiceConnection);
-        }
-        else
-        {
-            mCachedExtractFinish = true;
-        }
 
     }
     

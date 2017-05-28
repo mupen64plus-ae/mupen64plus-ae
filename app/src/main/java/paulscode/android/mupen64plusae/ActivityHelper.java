@@ -330,7 +330,7 @@ public class ActivityHelper
         intent.putExtra(Keys.SEARCH_SUBDIR, searchSubdirectories);
 
         context.startService(intent);
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        context.bindService(intent, serviceConnection, 0);
     }
 
     public static void stopCacheRomInfoService(Context context, ServiceConnection serviceConnection)
@@ -354,7 +354,7 @@ public class ActivityHelper
         intent.putExtra(Keys.SEARCH_PATH, searchPath);
 
         context.startService(intent);
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        context.bindService(intent, serviceConnection, 0);
     }
 
     public static void stopExtractTexturesService(Context context, ServiceConnection serviceConnection)
@@ -432,7 +432,7 @@ public class ActivityHelper
         intent.putExtra(Keys.ROM_MD5, romMd5);
 
         context.startService(intent);
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        context.bindService(intent, serviceConnection, 0);
     }
 
     public static void stopExtractRomService(Context context, ServiceConnection serviceConnection)

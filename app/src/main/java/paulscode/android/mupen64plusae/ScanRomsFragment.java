@@ -55,8 +55,6 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     
     private boolean mCachedRefreshRoms = false;
     
-    private boolean mCachedScanFinish = false;
-    
     private File mStartDir = null;
     private boolean mSearchZips = false;
     private boolean mDownloadArt = false;
@@ -98,12 +96,6 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
             ActuallyRefreshRoms(getActivity());
             mCachedRefreshRoms = false;
         }
-        
-        if(mCachedScanFinish)
-        {
-            ActivityHelper.stopCacheRomInfoService(getActivity().getApplicationContext(), mServiceConnection);
-            mCachedScanFinish = false;
-        }
     }
     
     @Override
@@ -132,14 +124,6 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     @Override
     public void onCacheRomInfoFinished()
     {
-        if(getActivity() != null)
-        {
-            ActivityHelper.stopCacheRomInfoService(getActivity().getApplicationContext(), mServiceConnection);
-        }
-        else
-        {
-            mCachedScanFinish = true;
-        }
 
     }
     
