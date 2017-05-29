@@ -450,6 +450,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i( "GameActivity", "onDestroy" );
 
         super.onDestroy();
+
+        if(mCoreFragment != null)
+        {
+            mCoreFragment.clearOnFpsChangedListener();
+        }
     }
 
     @Override

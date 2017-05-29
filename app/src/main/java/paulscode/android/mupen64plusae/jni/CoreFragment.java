@@ -410,6 +410,16 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
+    public void clearOnFpsChangedListener()
+    {
+        Log.i("CoreFragment", "clearOnFpsChangedListener");
+
+        if(mCoreService != null && mFpsChangeListener != null)
+        {
+            mCoreService.removeOnFpsChangedListener(mFpsChangeListener);
+        }
+    }
+
     public void setOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
         Log.i("CoreFragment", "addOnFpsChangedListener");

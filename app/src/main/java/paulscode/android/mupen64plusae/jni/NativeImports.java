@@ -96,16 +96,33 @@ public class NativeImports
         }
     }
 
+    static void removeOnFpsChangedListener(OnFpsChangedListener fpsListener)
+    {
+        synchronized (sFpsListeners)
+        {
+            sFpsListeners.remove(fpsListener);
+        }
+    }
+
     static void addOnFpsChangedListener(OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
-        sFpsListeners.add(fpsListener);
-        NativeExports.FPSEnabled(fpsRecalcPeriod);
+        synchronized (sFpsListeners)
+        {
+            if(!sFpsListeners.contains(fpsListener))
+            {
+                sFpsListeners.add(fpsListener);
+                NativeExports.FPSEnabled(fpsRecalcPeriod);
+            }
+        }
     }
 
     static void FPSCounter (int fps)
     {
-        for (OnFpsChangedListener listener: sFpsListeners ) {
-            listener.onFpsChanged(fps);
+        synchronized (sFpsListeners)
+        {
+            for (OnFpsChangedListener listener: sFpsListeners ) {
+                listener.onFpsChanged(fps);
+            }
         }
     }
 }

@@ -225,7 +225,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             Calendar calendar = Calendar.getInstance();
             mLastFpsChangedTime = calendar.get(Calendar.SECOND);
             mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
-            NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
 
             mIsShuttingDown = true;
         }
@@ -326,6 +325,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     void emuGameShark(boolean pressed)
     {
         NativeExports.emuGameShark(pressed);
+    }
+
+    void removeOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener )
+    {
+        NativeImports.removeOnFpsChangedListener( fpsListener );
     }
 
     void addOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
