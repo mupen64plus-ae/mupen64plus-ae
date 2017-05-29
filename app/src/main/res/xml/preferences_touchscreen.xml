@@ -70,8 +70,8 @@
         android:title="@string/touchscreenFeedback_title" />
 
     <android.support.v7.preference.CheckBoxPreference
-        android:defaultValue="false"
-        android:key="touchscreenAnimated"
+        android:defaultValue="true"
+        android:key="touchscreenAnimated_v2"
         android:title="@string/touchscreenAnimation_summary" />
 
     <paulscode.android.mupen64plusae.preference.CompatListPreference

@@ -452,12 +452,12 @@ public class GlobalPrefs
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldV2", 0 );
         touchscreenAutoHideEnabled = mPreferences.getBoolean( "touchscreenAutoHideEnabled", true );
         touchscreenAutoHideSeconds = mPreferences.getInt( "touchscreenAutoHideSeconds", 5 );
-        isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimated", false );
+        isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimated_v2", true );
 
         // Video prefs
         displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 480 );
         stretchScreen = mPreferences.getString( "displayScaling", "original" ).equals("stretch");
-        isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
+        isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode_v2", true );
         DetermineResolutionData(context);
         displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
         final int transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 80 );

@@ -70,8 +70,8 @@
         android:title="@string/displayOrientation_title" />
 
     <android.support.v7.preference.CheckBoxPreference
-        android:defaultValue="false"
-        android:key="displayImmersiveMode"
+        android:defaultValue="true"
+        android:key="displayImmersiveMode_v2"
         android:summary="@string/displayImmersiveMode_summary"
         android:title="@string/displayImmersiveMode_title" />
 
