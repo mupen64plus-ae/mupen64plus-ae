@@ -178,8 +178,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Locale
         String localeCode = preferences.getString( GlobalPrefs.KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
 
-        Log.e("GameActivity", "localeCode="+localeCode);
-
         if(TextUtils.isEmpty(localeCode))
         {
             super.attachBaseContext(newBase);
