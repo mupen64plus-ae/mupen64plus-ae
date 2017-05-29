@@ -107,6 +107,7 @@ LOCAL_CFLAGS :=         \
     -DNOCRYPT           \
     -DNOUNCRYPT         \
     -DUSE_GLES=1        \
+    -DUSE_SDL
 
 LOCAL_LDFLAGS :=                                                    \
     -Wl,-Bsymbolic                                                  \
