@@ -214,7 +214,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Get the intent data
         final Bundle extras = this.getIntent().getExtras();
         if( extras == null )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
+        {
+            finish();
+        }
+
         mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
