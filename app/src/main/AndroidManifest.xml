@@ -241,6 +241,7 @@
         </activity>
         <activity
             android:name="paulscode.android.mupen64plusae.cheat.CheatEditorActivity"
+            android:exported="false"
             android:label="@string/CheatEditorActivity_title"
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
@@ -251,15 +252,20 @@
         </activity>
         <activity
             android:name="paulscode.android.mupen64plusae.game.GameActivity"
+            android:exported="false"
             android:label="@string/GameActivity_title"
             android:windowActionBar="false"
             android:theme="@style/Theme.AppCompat.Black"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
-        <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService" />
-        <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService" />
-        <service android:name="paulscode.android.mupen64plusae.task.ExtractRomService" />
+        <service android:name="paulscode.android.mupen64plusae.task.CacheRomInfoService"
+                 android:exported="false" />
+        <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService"
+                 android:exported="false" />
+        <service android:name="paulscode.android.mupen64plusae.task.ExtractRomService"
+                 android:exported="false" />
         <service
             android:name="paulscode.android.mupen64plusae.jni.CoreService"
+            android:exported="false"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <meta-data
             android:name="game_display_name"
