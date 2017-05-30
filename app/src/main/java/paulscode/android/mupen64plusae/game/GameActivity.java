@@ -135,6 +135,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private GameOverlay mOverlay;
     private GameDrawerLayout mDrawerLayout;
     private GameSidebar mGameSidebar;
+    private SurfaceView mSurfaceView;
 
     // Input resources
     private VisibleTouchMap mTouchscreenMap;
@@ -265,7 +266,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
-        SurfaceView surfaceView = (SurfaceView) this.findViewById( R.id.gameSurface );
+        mSurfaceView = (SurfaceView) this.findViewById( R.id.gameSurface );
 
         mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
         mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
@@ -285,15 +286,15 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
 
         // Listen to game surface events (created, changed, destroyed)
-        surfaceView.getHolder().addCallback( this );
+        mSurfaceView.getHolder().addCallback( this );
 
         // Update the SurfaceView size
-        surfaceView.getHolder().setFixedSize( mGamePrefs.videoRenderWidth, mGamePrefs.videoRenderHeight );
-        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) surfaceView.getLayoutParams();
+        mSurfaceView.getHolder().setFixedSize( mGamePrefs.videoRenderWidth, mGamePrefs.videoRenderHeight );
+        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-        surfaceView.setLayoutParams( params );
+        mSurfaceView.setLayoutParams( params );
 
         if (savedInstanceState == null)
         {
@@ -455,6 +456,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mCoreFragment.clearOnFpsChangedListener();
         }
+
+        mSurfaceView.getHolder().removeCallback( this );
+
+        mHandler.removeCallbacks(mLastTouchChecker);
     }
 
     @Override
@@ -841,8 +846,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if (mGlobalPrefs.displayOrientation != -1) {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
-
-        mHandler.removeCallbacks(mLastTouchChecker);
 
         if(mCoreFragment != null)
         {
