@@ -737,6 +737,26 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         Log.i( "GameActivity", "surfaceCreated" );
     }
 
+    private void tryRunning()
+    {
+        if (mCoreFragment.hasServiceStarted()) {
+            if (!mDrawerLayout.isDrawerOpen(GravityCompat.START) && !mDrawerOpenState) {
+                mCoreFragment.resumeEmulator();
+            } else {
+
+                mCoreFragment.resumeEmulator();
+
+                //Sleep for a bit to allow screen to refresh while running, then pause
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                mCoreFragment.pauseEmulator();
+            }
+        }
+    }
+
     @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
@@ -753,22 +773,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
             }
 
-            if (mCoreFragment.hasServiceStarted()) {
-                if (!mDrawerLayout.isDrawerOpen(GravityCompat.START) && !mDrawerOpenState) {
-                    mCoreFragment.resumeEmulator();
-                } else {
-
-                    mCoreFragment.resumeEmulator();
-
-                    //Sleep for a bit to allow screen to refresh while running, then pause
-                    try {
-                        Thread.sleep(20);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    mCoreFragment.pauseEmulator();
-                }
-            }
+            // Try running now in case the core service has already started
+            // If it hasn't started running yet, then check again when the core service connection happens
+            // in onCoreServiceStarted
+            tryRunning();
         }
     }
 
@@ -825,6 +833,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             Notifier.showToast( this, R.string.toast_not_done_shutting_down );
 
             finishActivity();
+        }
+        else
+        {
+            //This can happen if GameActivity is killed while service is running
+            tryRunning();
         }
     }
 
