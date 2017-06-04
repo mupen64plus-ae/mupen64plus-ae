@@ -569,18 +569,15 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     public void onDestroy()
     {
         Log.i("CoreService", "onDestroy");
-        if (mListener != null)
-        {
-            mListener.onCoreServiceDestroyed();
-        }
-
-        if(mIsRunning)
-        {
-            shutdownEmulator();
-        }
 
         // Unregister since the activity is about to be closed.
         unregisterReceiver(mMessageReceiver);
+
+        //Stop the service
+        stopForeground(true);
+        stopSelf();
+
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     @Override
