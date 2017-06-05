@@ -474,6 +474,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private void updateNotification()
     {
         //Show the notification
+
+        //Intent for resuming game
         Intent notificationIntent = new Intent(this, GameActivity.class);
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_PATH, mRomPath );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_MD5, mRomMd5 );
@@ -485,8 +487,14 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, mLegacySaveName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Intent for closing the game
+        Intent exitIntent = (Intent) notificationIntent.clone();
+        exitIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, true );
+        exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 0, exitIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
@@ -511,6 +519,9 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         {
             builder.setLargeIcon(new BitmapDrawable(this.getResources(), mArtPath).getBitmap());
         }
+
+        builder.addAction(R.drawable.ic_box, getString(R.string.menuItem_exit), pendingExitIntent);
+
         startForeground(ONGOING_NOTIFICATION_ID, builder.build());
     }
 

@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
@@ -89,6 +90,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
+import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOCALE_OVERRIDE;
 
 //@formatter:off
@@ -148,6 +150,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private Handler mHandler;
 
     // args data
+    private boolean mShouldExit = false;
     private String mRomPath = null;
     private String mRomMd5 = null;
     private String mRomCrc = null;
@@ -190,6 +193,33 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
+    protected void onNewIntent( Intent intent )
+    {
+        // If the activity is already running and is launched again (e.g. from a file manager app),
+        // the existing instance will be reused rather than a new one created. This behavior is
+        // specified in the manifest (launchMode = singleTask). In that situation, any activities
+        // above this on the stack (e.g. GameActivity, GamePrefsActivity) will be destroyed
+        // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
+        // called again on this instance.
+        super.onNewIntent( intent );
+
+        // Only remember the last intent used
+        setIntent( intent );
+        final Bundle extras = this.getIntent().getExtras();
+
+        if(extras != null)
+        {
+            mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
+
+            if(mShouldExit && mCoreFragment != null)
+            {
+                mCoreFragment.shutdownEmulator();
+                finishAffinity();
+            }
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i("GameActivity", "onCreate");
         super.onCreate(savedInstanceState);
@@ -218,7 +248,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             finish();
         }
 
-        mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
+
+        mRomPath = extras.getString( ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
         mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
@@ -228,7 +260,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mRomLegacySave = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
-            throw new Error( "ROM path and MD5 must be passed via the extras bundle when starting GameActivity" );
+            finish();
 
         // Initialize MOGA controller API
         // TODO: Remove hack after MOGA SDK is fixed
@@ -825,6 +857,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         ReloadAllMenus();
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        if(mShouldExit)
+        {
+            mCoreFragment.shutdownEmulator();
+            finishAffinity();
+        }
 
         if(mCoreFragment.isShuttingDown())
         {

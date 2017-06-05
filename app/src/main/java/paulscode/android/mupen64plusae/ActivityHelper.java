@@ -104,6 +104,7 @@ public class ActivityHelper
         public static final String CORE_USER_CONFIG_DIR = NAMESPACE + "CORE_USER_CONFIG_DIR";
         public static final String USER_SAVE_DIR        = NAMESPACE + "USER_SAVE_DIR";
         public static final String LIBS_DIR             = NAMESPACE + "LIBS_DIR";
+        public static final String EXIT_GAME            = NAMESPACE + "EXIT_GAME";
 
         //@formatter:on
     }
