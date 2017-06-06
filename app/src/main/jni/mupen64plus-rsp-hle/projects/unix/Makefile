@@ -248,6 +248,7 @@ SOURCE = \
 	$(SRCDIR)/memory.c \
 	$(SRCDIR)/mp3.c \
 	$(SRCDIR)/musyx.c \
+	$(SRCDIR)/re2.c \
 	$(SRCDIR)/plugin.c
 
 # generate a list of object files build, make a temporary directory for them

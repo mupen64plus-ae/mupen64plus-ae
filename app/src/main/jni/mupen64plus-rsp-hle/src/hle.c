@@ -258,6 +258,10 @@ static bool try_fast_task_dispatching(struct hle_t* hle)
     /* identify task ucode by its type */
     switch (*dmem_u32(hle, TASK_TYPE)) {
     case 1:
+        /* Resident evil 2 */
+        if (*dmem_u32(hle, TASK_DATA_PTR) == 0)
+            return false;
+
         if (FORWARD_GFX) {
             forward_gfx_task(hle);
             return true;
@@ -313,6 +317,14 @@ static void normal_task_dispatching(struct hle_t* hle)
     case 0x130de:
     case 0x278b0:
         jpeg_decode_OB(hle);
+        return;
+
+    /* Resident evil 2 */
+    case 0x29a20: /* USA */
+    case 0x298c5: /* Europe */
+    case 0x298b8: /* USA Rev A */
+    case 0x296d9: /* J */
+        resize_bilinear_task(hle);
         return;
     }
 

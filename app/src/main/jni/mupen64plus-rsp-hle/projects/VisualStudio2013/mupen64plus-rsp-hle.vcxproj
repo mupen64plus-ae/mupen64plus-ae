@@ -173,6 +173,7 @@
     <ClCompile Include="..\..\src\mp3.c" />
     <ClCompile Include="..\..\src\musyx.c" />
     <ClCompile Include="..\..\src\plugin.c" />
+    <ClCompile Include="..\..\src\re2.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\alist.h" />
