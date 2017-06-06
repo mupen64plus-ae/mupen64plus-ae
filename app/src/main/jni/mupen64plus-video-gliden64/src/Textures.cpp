@@ -764,6 +764,7 @@ bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture)
 						tile_height, (unsigned short)(gSP.bgImage.format << 8 | gSP.bgImage.size),
 						bpl, paladdr);
 	GHQTexInfo ghqTexInfo;
+	// TODO: fix problem with zero texture dimensions on GLideNHQ side.
 	if (txfilter_hirestex(_pTexture->crc, ricecrc, palette, &ghqTexInfo) &&
 			ghqTexInfo.width != 0 && ghqTexInfo.height != 0) {
 		ghqTexInfo.format = gfxContext.convertInternalTextureFormat(ghqTexInfo.format);
@@ -951,6 +952,7 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 
 	_ricecrc = txfilter_checksum(addr, tile_width, tile_height, (unsigned short)(_pTexture->format << 8 | _pTexture->size), bpl, paladdr);
 	GHQTexInfo ghqTexInfo;
+	// TODO: fix problem with zero texture dimensions on GLideNHQ side.
 	if (txfilter_hirestex(_pTexture->crc, _ricecrc, palette, &ghqTexInfo) &&
 		ghqTexInfo.width != 0 && ghqTexInfo.height != 0) {
 		ghqTexInfo.format = gfxContext.convertInternalTextureFormat(ghqTexInfo.format);

@@ -7,6 +7,7 @@
 #include <QAbstractButton>
 #include <QMessageBox>
 #include <QCursor>
+#include <QRegExpValidator>
 
 #include "../Config.h"
 #include "ui_configDialog.h"
@@ -68,17 +69,26 @@ void ConfigDialog::_init()
 {
 	// Video settings
 	QStringList windowedModesList;
-	const unsigned int windowedModesCustom = numWindowedModes;
-	unsigned int windowedModesCurrent = windowedModesCustom;
+	int windowedModesCurrent = -1;
 	for (unsigned int i = 0; i < numWindowedModes; ++i) {
 		windowedModesList.append(WindowedModes[i].description);
-		if (i != windowedModesCustom &&
-			WindowedModes[i].width == config.video.windowedWidth &&
+		if (WindowedModes[i].width == config.video.windowedWidth &&
 			WindowedModes[i].height == config.video.windowedHeight)
 			windowedModesCurrent = i;
 	}
 	ui->windowedResolutionComboBox->insertItems(0, windowedModesList);
-	ui->windowedResolutionComboBox->setCurrentIndex(windowedModesCurrent);
+	if (windowedModesCurrent > -1)
+		ui->windowedResolutionComboBox->setCurrentIndex(windowedModesCurrent);
+	else
+		ui->windowedResolutionComboBox->setCurrentText(
+			QString::number(config.video.windowedWidth) + " x " +
+			QString::number(config.video.windowedHeight)
+		);
+
+	// matches w x h where w is 300-7999 and h is 200-3999, spaces around x optional
+	QRegExp windowedRegExp("([3-9][0-9]{2}|[1-7][0-9]{3}) ?x ?([2-9][0-9]{2}|[1-3][0-9]{3})");
+	QValidator *windowedValidator = new QRegExpValidator(windowedRegExp, this);
+	ui->windowedResolutionComboBox->setValidator(windowedValidator);
 
 	ui->cropImageComboBox->setCurrentIndex(config.video.cropMode);
 	ui->cropImageWidthSpinBox->setValue(config.video.cropWidth);
@@ -90,7 +100,6 @@ void ConfigDialog::_init()
 	fillFullscreenResolutionsList(fullscreenModesList, fullscreenMode, fullscreenRatesList, fullscreenRate);
 	ui->fullScreenResolutionComboBox->insertItems(0, fullscreenModesList);
 	ui->fullScreenResolutionComboBox->setCurrentIndex(fullscreenMode);
-	ui->fullScreenRefreshRateComboBox->insertItems(0, fullscreenRatesList);
 	ui->fullScreenRefreshRateComboBox->setCurrentIndex(fullscreenRate);
 
 	ui->aliasingSlider->setValue(powof(config.video.multisampling));
@@ -274,6 +283,11 @@ void ConfigDialog::_init()
 	ui->fpsCheckBox->setChecked(config.onScreenDisplay.fps != 0);
 	ui->visCheckBox->setChecked(config.onScreenDisplay.vis != 0);
 	ui->percentCheckBox->setChecked(config.onScreenDisplay.percent != 0);
+
+	// Buttons
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
+	ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
+	ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)->setText(tr("Restore Defaults"));
 }
 
 void ConfigDialog::_getTranslations(QStringList & _translationFiles) const
@@ -330,8 +344,14 @@ void ConfigDialog::accept()
 {
 	m_accepted = true;
 
-	config.video.windowedWidth = ui->windowWidthSpinBox->value();
-	config.video.windowedHeight = ui->windowHeightSpinBox->value();
+	int windowedValidatorPos = 0;
+	if (ui->windowedResolutionComboBox->validator()->validate(
+		ui->windowedResolutionComboBox->currentText(), windowedValidatorPos
+	) == QValidator::Acceptable) {
+		QStringList windowedResolutionDimensions = ui->windowedResolutionComboBox->currentText().split("x");
+		config.video.windowedWidth = windowedResolutionDimensions[0].trimmed().toInt();
+		config.video.windowedHeight = windowedResolutionDimensions[1].trimmed().toInt();
+	}
 
 	getFullscreenResolutions(ui->fullScreenResolutionComboBox->currentIndex(), config.video.fullscreenWidth, config.video.fullscreenHeight);
 	getFullscreenRefreshRate(ui->fullScreenRefreshRateComboBox->currentIndex(), config.video.fullscreenRefresh);
@@ -510,11 +530,13 @@ void ConfigDialog::on_aliasingSlider_valueChanged(int value)
 void ConfigDialog::on_buttonBox_clicked(QAbstractButton *button)
 {
 	if ((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
-		QMessageBox msgBox(QMessageBox::Question, "GLideN64",
-			"Do you really want to reset all settings to defaults?",
+		QMessageBox msgBox(QMessageBox::Warning, tr("Restore Defaults"),
+			tr("Are you sure you want to reset all settings to default?"),
 			QMessageBox::RestoreDefaults | QMessageBox::Cancel, this
 			);
 		msgBox.setDefaultButton(QMessageBox::Cancel);
+		msgBox.setButtonText(QMessageBox::RestoreDefaults, tr("Restore Defaults"));
+		msgBox.setButtonText(QMessageBox::Cancel, tr("Cancel"));
 		if (msgBox.exec() == QMessageBox::RestoreDefaults) {
 			config.resetToDefaults();
 			_init();
@@ -545,10 +567,14 @@ void ConfigDialog::on_texPackPathButton_clicked()
 
 void ConfigDialog::on_windowedResolutionComboBox_currentIndexChanged(int index)
 {
-	const bool bCustom = index == numWindowedModes;
-	ui->windowWidthSpinBox->setValue(bCustom ? config.video.windowedWidth : WindowedModes[index].width);
-	ui->windowHeightSpinBox->setValue(bCustom ? config.video.windowedHeight : WindowedModes[index].height);
-	ui->windowedResolutionCustomFrame->setVisible(bCustom);
+	if (index < numWindowedModes)
+		ui->windowedResolutionComboBox->clearFocus();
+}
+
+void ConfigDialog::on_windowedResolutionComboBox_currentTextChanged(QString text)
+{
+	if (text == tr("Custom"))
+		ui->windowedResolutionComboBox->setCurrentText("");
 }
 
 void ConfigDialog::on_cropImageComboBox_currentIndexChanged(int index)
@@ -590,7 +616,7 @@ void ConfigDialog::on_fontSizeSpinBox_valueChanged(int value)
 
 void ConfigDialog::on_tabWidget_currentChanged(int tab)
 {
-	if (!m_fontsInited && ui->tabWidget->tabText(tab) == "OSD") {
+	if (!m_fontsInited && ui->tabWidget->tabText(tab) == tr("OSD")) {
 		ui->tabWidget->setCursor(QCursor(Qt::WaitCursor));
 
 		QMap<QString, QStringList> internalFontList;
