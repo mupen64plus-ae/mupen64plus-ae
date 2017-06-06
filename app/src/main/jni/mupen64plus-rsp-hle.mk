@@ -23,6 +23,7 @@ LOCAL_SRC_FILES :=           \
     $(SRCDIR)/mp3.c          \
     $(SRCDIR)/musyx.c        \
     $(SRCDIR)/plugin.c       \
+    $(SRCDIR)/re2.c          \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 
