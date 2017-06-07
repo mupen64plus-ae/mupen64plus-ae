@@ -723,7 +723,6 @@ bool isSpeedLimiterEnabled(void)
 
 EXPORT void CALL AiLenChanged(void)
 {
-    static const bool sleepPerfFixEnabled = false;
     static const double minSleepNeededForReset = -5.0;
     static const double minSleepNeeded = -0.1;
     static const double maxSleepNeeded = 0.5;
@@ -795,31 +794,18 @@ EXPORT void CALL AiLenChanged(void)
        //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, time=%f, speed=%d, sleep_before_factor=%f",
        //             totalRealTimeElapsed, totalElapsedGameTime, sleepNeeded, gameStartTime, timeDouble, speed_factor, sleepNeeded*speedFactor);
 
-       if(sleepNeeded > 0.0 && sleepNeeded < (maxSleepNeeded/speedFactor))
-       {
-          if(sleepPerfFixEnabled)
-          {
-             double endTime = timeDouble + sleepNeeded;
+        if (sleepNeeded > 0.0 && sleepNeeded < (maxSleepNeeded / speedFactor)) {
+            //Assumes sleep time of less than 2 seconds
+            time_t sleepSec = static_cast<time_t>(sleepNeeded);
+            long sleepNanosec = (sleepNeeded - sleepSec) * 1e9;
 
-             timespec time;
-             clock_gettime(CLOCK_MONOTONIC_RAW, &time);
-             double currTime = static_cast<double>(time.tv_sec) +
-                   static_cast<double>(time.tv_nsec)/1.0e9;
-             while(currTime < endTime)
-             {
-                clock_gettime(CLOCK_MONOTONIC_RAW, &time);
-                currTime = static_cast<double>(time.tv_sec) +
-                      static_cast<double>(time.tv_nsec)/1.0e9;
-             }
-          }
-          else
-          {
-             timespec sleepTime;
-             sleepTime.tv_sec = static_cast<time_t>(sleepNeeded);
-             sleepTime.tv_nsec = (sleepNeeded - sleepTime.tv_sec)*1e9;
-             nanosleep(&sleepTime, NULL );
-          }
-       }
+            if (sleepSec > 0 || sleepNanosec != 0) {
+                timespec sleepTime;
+                sleepTime.tv_sec = sleepSec;
+                sleepTime.tv_nsec = sleepNanosec;
+                nanosleep(&sleepTime, NULL);
+            }
+        }
     }
 }
 
