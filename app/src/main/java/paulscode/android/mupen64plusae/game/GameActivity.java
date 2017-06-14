@@ -905,9 +905,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mCoreFragment.setCoreEventListener(null);
             mCoreFragment.destroySurface();
-
-            final FragmentManager fm = this.getSupportFragmentManager();
-            fm.beginTransaction().remove(mCoreFragment).commit();
             mCoreFragment = null;
         }
 
