@@ -520,7 +520,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             builder.setLargeIcon(new BitmapDrawable(this.getResources(), mArtPath).getBitmap());
         }
 
-        builder.addAction(R.drawable.ic_box, getString(R.string.menuItem_exit), pendingExitIntent);
+        builder.addAction(R.drawable.ic_box, getString(R.string.inputMapActivity_stop), pendingExitIntent);
 
         startForeground(ONGOING_NOTIFICATION_ID, builder.build());
     }
