@@ -12,6 +12,7 @@
 #include <FrameBuffer.h>
 #include <GLideNUI/GLideNUI.h>
 #include <DisplayWindow.h>
+#include <cstdlib>
 
 #ifdef VC
 #include <bcm_host.h>

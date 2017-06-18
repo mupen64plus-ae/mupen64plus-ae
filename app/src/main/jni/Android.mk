@@ -15,7 +15,6 @@ COMMON_CFLAGS :=                    \
     -ffast-math                     \
     -fno-strict-aliasing            \
     -fomit-frame-pointer            \
-    -frename-registers              \
     -fvisibility=hidden             \
 
 COMMON_CPPFLAGS :=                  \

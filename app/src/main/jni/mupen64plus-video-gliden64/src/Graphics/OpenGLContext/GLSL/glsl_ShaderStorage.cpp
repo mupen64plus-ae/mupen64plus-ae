@@ -12,6 +12,7 @@
 #include "glsl_ShaderStorage.h"
 #include "glsl_CombinerProgramImpl.h"
 #include "glsl_CombinerProgramUniformFactory.h"
+#include <cstdlib>
 
 using namespace glsl;
 

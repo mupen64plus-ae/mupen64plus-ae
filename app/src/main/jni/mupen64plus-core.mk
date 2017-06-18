@@ -114,14 +114,17 @@ LOCAL_LDFLAGS :=                                                    \
     -Wl,-export-dynamic                                             \
     -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver  \
 
+ASM_DEFINES_INCLUDE += -I$(SYSROOT_INC)/usr/include
+TARGET := ""
+
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/arm/linkage_arm.S
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/arm/arm_cpu_features.c
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=3
-    LOCAL_CFLAGS += -mfloat-abi=softfp
-    LOCAL_CFLAGS += -mfpu=vfp
+    ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/arm-linux-androideabi
+    TARGET := -target armv7-none-linux-androideabi19
 
 else ifeq ($(TARGET_ARCH_ABI), armeabi)
     # Use for pre-ARM7a:
@@ -136,7 +139,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/x86/linkage_x86.asm
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=1
-    LOCAL_ASMFLAGS = -d PIC
+    ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/i686-linux-android
 
 else ifeq ($(TARGET_ARCH_ABI), mips)
     # Use for MIPS:
@@ -156,8 +159,9 @@ ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI))","")
     endif
 endif
 
-$(shell $(TOOLCHAIN_PREFIX)gcc -c -fno-lto $(LOCAL_CFLAGS) -I$(LOCAL_PATH)/mupen64plus-core/src -I$(SYSROOT_INC)/usr/include -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o $(ASM_DEFINE_PATH)/asm_defines.c)
+$(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c -fno-lto $(LOCAL_CFLAGS) -I$(LOCAL_PATH)/mupen64plus-core/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
+#$(shell C:\Users\Francisco\android-sdks\ndk-bundle\toolchains\llvm\prebuilt\windows-x86_64\bin\clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c -fno-lto $(LOCAL_CFLAGS) -I$(LOCAL_PATH)/mupen64plus-core/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
 $(shell $(TOOLCHAIN_PREFIX)nm $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o > $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.dump)
-$(shell $(HOST_AWK) -v dest_dir="$(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)" -f $(LOCAL_PATH)/mupen64plus-core/tools/gen_asm_defines.awk $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.dump)
+$(shell awk -v dest_dir="$(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)" -f $(LOCAL_PATH)/mupen64plus-core/tools/gen_asm_defines.awk $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.dump)
 
 include $(BUILD_SHARED_LIBRARY)
