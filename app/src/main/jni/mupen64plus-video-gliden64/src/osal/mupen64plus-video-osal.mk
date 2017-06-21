@@ -24,4 +24,6 @@ LOCAL_CFLAGS :=         \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -std=c++11 -g -fexceptions
 
+LOCAL_LDFLAGS := $(COMMON_LDFLAGS)
+
 include $(BUILD_SHARED_LIBRARY)

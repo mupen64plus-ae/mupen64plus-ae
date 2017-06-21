@@ -30,7 +30,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_CFLAGS := $(MY_LOCAL_CFLAGS)
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
-LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/rsp_api_export.ver
+LOCAL_LDFLAGS := $(COMMON_LDFLAGS) -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/rsp_api_export.ver
 LOCAL_LDLIBS := -llog
 
 include $(BUILD_SHARED_LIBRARY)

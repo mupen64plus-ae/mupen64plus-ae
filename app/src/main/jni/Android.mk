@@ -16,9 +16,14 @@ COMMON_CFLAGS :=                    \
     -fno-strict-aliasing            \
     -fomit-frame-pointer            \
     -fvisibility=hidden             \
+    -flto                           \
 
 COMMON_CPPFLAGS :=                  \
     -fvisibility-inlines-hidden     \
+
+COMMON_LDFLAGS :=                   \
+    $(COMMON_CFLAGS)                \
+    $(COMMON_CPPFLAGS)              \
 
 include $(JNI_LOCAL_PATH)/GL/GL/Android.mk
 include $(JNI_LOCAL_PATH)/SDL2/Android.mk

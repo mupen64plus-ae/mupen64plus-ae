@@ -34,6 +34,8 @@ LOCAL_CFLAGS :=                                 \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
+LOCAL_LDFLAGS := $(COMMON_LDFLAGS)
+
 LOCAL_LDLIBS := -llog
 
 include $(BUILD_SHARED_LIBRARY)

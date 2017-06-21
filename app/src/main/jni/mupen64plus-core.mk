@@ -110,6 +110,7 @@ LOCAL_CFLAGS :=         \
     -DUSE_SDL
 
 LOCAL_LDFLAGS :=                                                    \
+    $(COMMON_LDFLAGS)                                               \
     -Wl,-Bsymbolic                                                  \
     -Wl,-export-dynamic                                             \
     -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver  \
@@ -159,7 +160,7 @@ ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI))","")
     endif
 endif
 
-$(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c -fno-lto $(LOCAL_CFLAGS) -I$(LOCAL_PATH)/mupen64plus-core/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
+$(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c $(LOCAL_CFLAGS) -fno-lto -I$(LOCAL_PATH)/mupen64plus-core/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
 #$(shell C:\Users\Francisco\android-sdks\ndk-bundle\toolchains\llvm\prebuilt\windows-x86_64\bin\clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c -fno-lto $(LOCAL_CFLAGS) -I$(LOCAL_PATH)/mupen64plus-core/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
 $(shell $(TOOLCHAIN_PREFIX)nm $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o > $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.dump)
 $(shell awk -v dest_dir="$(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)" -f $(LOCAL_PATH)/mupen64plus-core/tools/gen_asm_defines.awk $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.dump)

@@ -65,7 +65,7 @@ LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
     
 LOCAL_CPP_FEATURES := exceptions
 
-LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ver
+LOCAL_LDFLAGS := $(COMMON_LDFLAGS) -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ver
 
 LOCAL_LDLIBS :=         \
     -lGLESv2            \

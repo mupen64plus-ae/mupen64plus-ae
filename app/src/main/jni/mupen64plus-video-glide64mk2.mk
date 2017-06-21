@@ -64,7 +64,7 @@ MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -Wno-unused-value -std=c++11
     
 MY_LOCAL_CPP_FEATURES := exceptions
 
-MY_LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ver
+MY_LOCAL_LDFLAGS := $(COMMON_LDFLAGS) -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ver
 
 MY_LOCAL_LDLIBS :=         \
     -ldl                \
