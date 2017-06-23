@@ -49,9 +49,11 @@
 
 typedef struct slesState
 {
-    volatile int value;
-    volatile int limit;
-    volatile int errors;
+    int value;
+    int limit;
+    int errors;
+    int totalBuffersProcessed;
+
 } slesState;
 
 /* Default start-time size of primary buffer (in equivalent output samples).
@@ -409,6 +411,7 @@ static void InitializeAudio(int freq)
     }
 
     state.value = state.limit = SecondaryBufferNbr;
+    state.totalBuffersProcessed = 0;
     state.errors = 0;
 
     /* Engine object */
@@ -725,7 +728,7 @@ EXPORT void CALL AiLenChanged(void)
     static const double minSleepNeededForReset = -5.0;
     static const double minSleepNeeded = -0.1;
     static const double maxSleepNeeded = 0.5;
-    static bool resetOnce = false;
+    static bool hasBeenReset = false;
     static unsigned long totalElapsedSamples = 0;
     static double gameStartTime = 0;
     static int lastSpeedFactor = 100;
@@ -745,13 +748,14 @@ EXPORT void CALL AiLenChanged(void)
           static_cast<double>(time.tv_nsec)/1.0e9;
 
     //if this is the first time or we are resuming from pause
-    if(gameStartTime == 0 || !resetOnce || lastSpeedFactor != speed_factor || lastSpeedLimiterEnabledState != limiterEnabled)
+    if(gameStartTime == 0 || !hasBeenReset || lastSpeedFactor != speed_factor || lastSpeedLimiterEnabledState != limiterEnabled)
     {
         lastSpeedLimiterEnabledState = limiterEnabled;
         gameStartTime = timeDouble;
         totalElapsedSamples = 0;
-        resetOnce = true;
+        hasBeenReset = true;
         totalElapsedSamples = 0;
+        state.totalBuffersProcessed = 0;
     }
 
     lastSpeedFactor = speed_factor;
@@ -780,7 +784,7 @@ EXPORT void CALL AiLenChanged(void)
 
         if(sleepNeeded < minSleepNeededForReset || sleepNeeded > (maxSleepNeeded/speedFactor))
         {
-            resetOnce = false;
+            hasBeenReset = false;
         }
 
         //We don't want to let the game get too far ahead, otherwise we may have a sudden burst of speed
@@ -857,7 +861,6 @@ void *audioConsumerStretch(void *param) {
     double currAdjustment = 1.0;
 
     //how quickly to return to original speed
-    const double returnSpeed = 0.10;
     const double minSlowValue = 0.2;
     const double maxSlowValue = 3.0;
     const float maxSpeedUpRate = 0.5;
@@ -895,39 +898,46 @@ void *audioConsumerStretch(void *param) {
             currQueueData = (queueData *) msg.data;
             int dataLength = currQueueData->lenght;
 
-            float temp = averageGameTime / averageFeedTime;
+            if (state.totalBuffersProcessed > state.limit) {
 
-            //Game is running too fast speed up audio
-            if ((slesQueueLength > maxQueueSize || drainQueue) && !ranDry) {
-                drainQueue = true;
-                currAdjustment = temp +
-                                 (float) (slesQueueLength - minQueueSize) / (float) (state.limit - minQueueSize) *
-                                 maxSpeedUpRate;
-            }
+                double speedFactor = static_cast<double>(speed_factor)/100.0;
+                soundTouch.setTempo(speedFactor);
+
+                processAudio(currQueueData->data, dataLength);
+
+            } else {
+
+                float temp = averageGameTime / averageFeedTime;
+
+                //Game is running too fast speed up audio
+                if ((slesQueueLength > maxQueueSize || drainQueue) && !ranDry) {
+                    drainQueue = true;
+                    currAdjustment = temp +
+                                     (float) (slesQueueLength - minQueueSize) / (float) (state.limit - minQueueSize) *
+                                     maxSpeedUpRate;
+                }
                 //Device can't keep up with the game or we have too much in the queue after slowing it down
-            else if (ranDry) {
-                drainQueue = false;
-                currAdjustment = temp - slowRate;
-            } else if (!ranDry && slesQueueLength < maxQueueSize) {
-                currAdjustment = temp;
+                else if (ranDry) {
+                    drainQueue = false;
+                    currAdjustment = temp - slowRate;
+                } else if (!ranDry && slesQueueLength < maxQueueSize) {
+                    currAdjustment = temp;
+                }
+
+                //Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
+                if (currAdjustment > minSlowValue && currAdjustment < maxSlowValue) {
+                    slowAdjustment = currAdjustment;
+                    static const int increments = 4;
+                    //Adjust tempo in x% increments so it's more steady
+                    int temp2 = ((int) (slowAdjustment * 100)) / increments;
+                    temp2 *= increments;
+                    slowAdjustment = ((double) temp2) / 100;
+
+                    soundTouch.setTempo(slowAdjustment);
+                }
+
+                processAudio(currQueueData->data, dataLength);
             }
-
-            //Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
-            if (currAdjustment > minSlowValue && currAdjustment < maxSlowValue) {
-                slowAdjustment = currAdjustment;
-                static const int increments = 4;
-                //Adjust tempo in x% increments so it's more steady
-                int temp2 = ((int) (slowAdjustment * 100)) / increments;
-                temp2 *= increments;
-                slowAdjustment = ((double) temp2) / 100;
-
-                soundTouch.setTempo(slowAdjustment);
-            }
-
-            processAudio(currQueueData->data, dataLength);
-
-            free(currQueueData->data);
-            free(currQueueData);
 
             //Useful logging
             //if(slesQueueLength == 0)
@@ -958,6 +968,9 @@ void *audioConsumerStretch(void *param) {
                 feedTimeIndex = 0;
                 feedTimesSet = true;
             }
+
+            free(currQueueData->data);
+            free(currQueueData);
         }
     }
 
@@ -976,7 +989,6 @@ void* audioConsumerNoStretch(void* param)
 
     soundTouch.setRate((double)GameFreq/(double)OutputFreq);
     queueData* currQueueData = NULL;
-    struct timespec prevTime;
 
     int lastSpeedFactor = speed_factor;
 
@@ -989,7 +1001,6 @@ void* audioConsumerNoStretch(void* param)
     {
         struct threadmsg msg;
 
-        clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
         int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
 
         if( result != ETIMEDOUT )
@@ -1003,7 +1014,6 @@ void* audioConsumerNoStretch(void* param)
                 double speedFactor = static_cast<double>(speed_factor)/100.0;
                 soundTouch.setTempo(speedFactor);
             }
-
 
             processAudio(currQueueData->data, dataLength);
 
