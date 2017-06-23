@@ -316,7 +316,6 @@ void OnInitFailure(void)
 
 static void InitializeAudio(int freq)
 {
-
    /* reload these because they gets re-assigned from data below, and InitializeAudio can be called more than once */
    GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
    SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
@@ -335,63 +334,32 @@ static void InitializeAudio(int freq)
     if (critical_failure)
         return;
 
-    /* This is important for the sync */
-    GameFreq = freq;
+	/* This is important for the sync */
+	GameFreq = freq;
+	OutputFreq = SamplingRateSelection;
 
-    if(SamplingRateSelection == 0)
-    {
-       if((freq/1000) <= 11)
-       {
-           OutputFreq = 11025;
-           sample_rate = SL_SAMPLINGRATE_11_025;
-       }
-       else if((freq/1000) <= 22)
-       {
-           OutputFreq = 22050;
-           sample_rate = SL_SAMPLINGRATE_22_05;
-       }
-       else if((freq/1000) <= 32)
-       {
-           OutputFreq = 32000;
-           sample_rate = SL_SAMPLINGRATE_32;
-       }
-       else
-       {
-           OutputFreq = 44100;
-           sample_rate = SL_SAMPLINGRATE_44_1;
-       }
-    }
-    else
-    {
-       switch(SamplingRateSelection)
-       {
-          case 16:
-             OutputFreq = 16000;
-             sample_rate = SL_SAMPLINGRATE_16;
-             break;
-          case 24:
-             OutputFreq = 24000;
-             sample_rate = SL_SAMPLINGRATE_24;
-             break;
-          case 32:
-             OutputFreq = 32000;
-             sample_rate = SL_SAMPLINGRATE_32;
-             break;
-          case 441:
-             OutputFreq = 44100;
-             sample_rate = SL_SAMPLINGRATE_44_1;
-             break;
-          case 48:
-             OutputFreq = 48000;
-             sample_rate = SL_SAMPLINGRATE_48;
-             break;
-       }
-    }
+	switch (SamplingRateSelection) {
+		case 16000:
+			sample_rate = SL_SAMPLINGRATE_16;
+			break;
+		case 24000:
+			sample_rate = SL_SAMPLINGRATE_24;
+			break;
+		case 32000:
+			sample_rate = SL_SAMPLINGRATE_32;
+			break;
+		case 44100:
+			sample_rate = SL_SAMPLINGRATE_44_1;
+			break;
+		case 48000:
+			sample_rate = SL_SAMPLINGRATE_48;
+			break;
+		default:
+			OutputFreq = 44100;
+			sample_rate = SL_SAMPLINGRATE_44_1;
+	}
 
     DebugMessage(M64MSG_VERBOSE, "Requesting frequency: %iHz.", OutputFreq);
-    
-    double bufferMultiplier = (double)OutputFreq/DEFAULT_FREQUENCY;
-    SecondaryBufferSize = bufferMultiplier*(double)SecondaryBufferSize;
 
     /* Close everything because InitializeAudio can be called more than once */
     CloseAudio();

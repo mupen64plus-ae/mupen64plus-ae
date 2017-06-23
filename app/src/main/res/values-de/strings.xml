@@ -449,19 +449,7 @@
     <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">Kein Debug (Audio ist deaktiviert, keine Geschwindigkeitsbegrenzung)</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
-    <string name="audioSLESBufferSize_title">Audio-Puffergröße</string>
-    <string name="audioSLESBufferSize_entry2048">2048</string>
-    <string name="audioSLESBufferSize_entry1024">1024</string>
-    <string name="audioSLESBufferSize_entry512">512</string>
-    <string name="audioSLESBufferSize_entry256">256</string>
-    <string name="audioSLESBufferSize_entry128">128</string>
     <string name="audioSLESBufferNbr_title">Audio-Puffernummer</string>
-    <string name="audioSLESRate_title">Abtastrate</string>
-    <string name="audioSLESRate_entry16">16 kHz</string>
-    <string name="audioSLESRate_entry24">24 kHz</string>
-    <string name="audioSLESRate_entry32">32 kHz</string>
-    <string name="audioSLESRate_entry441">44,1 kHz</string>
-    <string name="audioSLESRate_entry48">48 kHz</string>
     <string name="localeOverride_entrySystemDefault">Systemstandard</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

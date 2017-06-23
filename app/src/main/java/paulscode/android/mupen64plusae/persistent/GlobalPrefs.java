@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
+import android.media.AudioManager;
 import android.support.v7.preference.PreferenceManager;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -56,6 +57,7 @@ import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
+import static java.lang.Integer.parseInt;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
@@ -532,11 +534,12 @@ public class GlobalPrefs
         enableBlitScreenWorkaround = mPreferences.getBoolean( "enableBlitScreenWorkaround", false );
 
         // Audio prefs
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         enableSLESAudioTimeSretching = mPreferences.getBoolean( "audioSLESTimeStretch", true );
-        audioSLESSecondaryBufferSize = getSafeInt( mPreferences, "audioSLESBufferSize2", 256 );
+        audioSLESSecondaryBufferSize = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 10 );
-        audioSLESSamplingRate = getSafeInt( mPreferences, "audioSLESSamplingRate", 0 );
+        audioSLESSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
         audioSLESFloatingPoint = mPreferences.getBoolean( "audioSLESFloatingPoint", false );
 
         if( audioPlugin.enabled )
@@ -782,7 +785,7 @@ public class GlobalPrefs
     {
         try
         {
-            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
+            return parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
         }
         catch( final NumberFormatException ex )
         {

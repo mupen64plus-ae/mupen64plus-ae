@@ -59,13 +59,6 @@
         android:key="audioSLESTimeStretch"
         android:summary="@string/audioSLESTimeStretch_summary"
         android:title="@string/audioSLESTimeStretch_title" />
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
-        android:defaultValue="@string/audioSLESBufferSize_default"
-        android:entries="@array/audioSLESBufferSize_entries"
-        android:entryValues="@array/audioSLESBufferSize_values"
-        android:key="audioSLESBufferSize2"
-        android:summary="@string/selectedValue"
-        android:title="@string/audioSLESBufferSize_title" />
 
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="10"
@@ -76,14 +69,6 @@
         mupen64:saveType="string"
         mupen64:stepSize="1"
         mupen64:units=" buffers" />
-
-    <paulscode.android.mupen64plusae.preference.CompatListPreference
-        android:defaultValue="@string/audioSLESRate_default"
-        android:entries="@array/audioSLESRate_entries"
-        android:entryValues="@array/audioSLESRate_values"
-        android:key="audioSLESSamplingRate"
-        android:summary="@string/selectedValue"
-        android:title="@string/audioSLESRate_title" />
 
     <android.support.v7.preference.CheckBoxPreference
         android:defaultValue="false"
