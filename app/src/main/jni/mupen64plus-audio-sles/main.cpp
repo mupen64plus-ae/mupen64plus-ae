@@ -47,13 +47,12 @@
 
 #include <SLES/OpenSLES_Android.h>
 
-typedef struct threadLock_
+typedef struct slesState
 {
     volatile int value;
     volatile int limit;
     volatile int errors;
-    volatile int count;
-} threadLock;
+} slesState;
 
 /* Default start-time size of primary buffer (in equivalent output samples).
    This is the buffer where audio is loaded after it's extracted from n64's memory. */
@@ -137,8 +136,8 @@ static volatile bool shutdown = true;
 using namespace soundtouch;
 static SoundTouch soundTouch;
 
-/* Thread Lock */
-threadLock lock;
+/* SLES state */
+slesState state;
 
 /* Engine interfaces */
 SLObjectItf engineObject = NULL;
@@ -409,8 +408,8 @@ static void InitializeAudio(int freq)
        return;
     }
 
-    lock.value = lock.limit = SecondaryBufferNbr;
-    lock.errors = 0;
+    state.value = state.limit = SecondaryBufferNbr;
+    state.errors = 0;
 
     /* Engine object */
     SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
@@ -503,7 +502,7 @@ static void InitializeAudio(int freq)
     }
 
     /* register callback on the buffer queue */
-    result = (*bufferQueue)->RegisterCallback(bufferQueue, queueCallback, &lock);
+    result = (*bufferQueue)->RegisterCallback(bufferQueue, queueCallback, &state);
     if(result != SL_RESULT_SUCCESS)
     {
        OnInitFailure();
@@ -826,168 +825,143 @@ float GetAverageTime( float* feedTimes, int numTimes)
    return sum/(float)numTimes;
 }
 
+void *audioConsumerStretch(void *param) {
+    /*
+	static int sequenceLenMS = 63;
+	static int seekWindowMS = 16;
+	static int overlapMS = 7;*/
 
-void* audioConsumerStretch(void* param)
-{
-   /*
-   static int sequenceLenMS = 63;
-   static int seekWindowMS = 16;
-   static int overlapMS = 7;*/
+    soundTouch.setSampleRate((uint) GameFreq);
+    soundTouch.setChannels(2);
+    soundTouch.setSetting(SETTING_USE_QUICKSEEK, 1);
+    soundTouch.setSetting(SETTING_USE_AA_FILTER, 1);
+    //soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
+    //soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
+    //soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
 
-   soundTouch.setSampleRate((uint)GameFreq);
-   soundTouch.setChannels(2);
-   soundTouch.setSetting( SETTING_USE_QUICKSEEK, 1 );
-   soundTouch.setSetting( SETTING_USE_AA_FILTER, 1 );
-   //soundTouch.setSetting( SETTING_SEQUENCE_MS, sequenceLenMS );
-   //soundTouch.setSetting( SETTING_SEEKWINDOW_MS, seekWindowMS );
-   //soundTouch.setSetting( SETTING_OVERLAP_MS, overlapMS );
+    soundTouch.setRate((double) GameFreq / (double) OutputFreq);
+    double speedFactor = static_cast<double>(speed_factor) / 100.0;
+    soundTouch.setTempo(speedFactor);
 
-   soundTouch.setRate((double)GameFreq/(double)OutputFreq);
-   double speedFactor = static_cast<double>(speed_factor)/100.0;
-   soundTouch.setTempo(speedFactor);
-   
-   double bufferMultiplier = (double)OutputFreq/DEFAULT_FREQUENCY;
+    double bufferMultiplier = (double) OutputFreq / DEFAULT_FREQUENCY;
 
-   int maxQueueSize = (int)(TargetSecondaryBuffers + 30.0*bufferMultiplier);
-   int minQueueSize = (int)(TargetSecondaryBuffers*bufferMultiplier);
-   bool drainQueue = false;
+    int maxQueueSize = (int) (TargetSecondaryBuffers + 30.0 * bufferMultiplier);
+    int minQueueSize = (int) (TargetSecondaryBuffers * bufferMultiplier);
+    bool drainQueue = false;
 
-   //Sound queue ran dry, device is running slow
-   int ranDry = 0;
+    //Sound queue ran dry, device is running slow
+    int ranDry = 0;
 
-   //adjustment used when a device running too slow
-   double slowAdjustment = 1.0;
-   double currAdjustment = 1.0;
+    //adjustment used when a device running too slow
+    double slowAdjustment = 1.0;
+    double currAdjustment = 1.0;
 
-   //how quickly to return to original speed
-   const double returnSpeed = 0.10;
-   const double minSlowValue = 0.2;
-   const double maxSlowValue = 3.0;
-   const float maxSpeedUpRate = 0.5;
-   const float slowRate = 0.05;
-   queueData* currQueueData = NULL;
+    //how quickly to return to original speed
+    const double returnSpeed = 0.10;
+    const double minSlowValue = 0.2;
+    const double maxSlowValue = 3.0;
+    const float maxSpeedUpRate = 0.5;
+    const float slowRate = 0.05;
+    queueData *currQueueData = NULL;
     struct timespec prevTime;
     struct timespec currTime;
 
-   //How long to wait for some data
-   struct timespec waitTime;
-   waitTime.tv_sec = 1;
-   waitTime.tv_nsec = 0;
+    //How long to wait for some data
+    struct timespec waitTime;
+    waitTime.tv_sec = 1;
+    waitTime.tv_nsec = 0;
 
-   int feedTimeWindowSize = 50;
-   int feedTimeIndex = 0;
-   bool feedTimesSet = false;
-   float feedTimes[feedTimeWindowSize];
-   float gameTimes[feedTimeWindowSize];
-   float averageGameTime = 0.01666;
-   float averageFeedTime = 0.01666;
+    int feedTimeWindowSize = 50;
+    int feedTimeIndex = 0;
+    bool feedTimesSet = false;
+    float feedTimes[feedTimeWindowSize];
+    float gameTimes[feedTimeWindowSize];
+    float averageGameTime = 0.01666;
+    float averageFeedTime = 0.01666;
 
-   while(!shutdown)
-   {
-      int slesQueueLength = lock.limit - lock.value;
+    while (!shutdown) {
+        int slesQueueLength = state.limit - state.value;
 
-      ranDry = slesQueueLength < minQueueSize;
+        ranDry = slesQueueLength < minQueueSize;
 
-      struct threadmsg msg;
+        struct threadmsg msg;
 
-      clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
-      int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
+        clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
+        int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
 
-      if( result != ETIMEDOUT )
-      {
-         int threadQueueLength = thread_queue_length(&audioConsumerQueue);
+        if (result != ETIMEDOUT) {
+            int threadQueueLength = thread_queue_length(&audioConsumerQueue);
 
-         currQueueData = (queueData*)msg.data;
-         int dataLength = currQueueData->lenght;
+            currQueueData = (queueData *) msg.data;
+            int dataLength = currQueueData->lenght;
 
-         float temp =  averageGameTime/averageFeedTime;
+            float temp = averageGameTime / averageFeedTime;
 
-          // Only start running algorithm once enough samples are built
-          if(lock.count <= lock.limit)
-          {
-              double speedFactor = static_cast<double>(speed_factor)/100.0;
-              soundTouch.setTempo(speedFactor);
+            //Game is running too fast speed up audio
+            if ((slesQueueLength > maxQueueSize || drainQueue) && !ranDry) {
+                drainQueue = true;
+                currAdjustment = temp +
+                                 (float) (slesQueueLength - minQueueSize) / (float) (state.limit - minQueueSize) *
+                                 maxSpeedUpRate;
+            }
+                //Device can't keep up with the game or we have too much in the queue after slowing it down
+            else if (ranDry) {
+                drainQueue = false;
+                currAdjustment = temp - slowRate;
+            } else if (!ranDry && slesQueueLength < maxQueueSize) {
+                currAdjustment = temp;
+            }
 
-              processAudio(currQueueData->data, dataLength);
+            //Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
+            if (currAdjustment > minSlowValue && currAdjustment < maxSlowValue) {
+                slowAdjustment = currAdjustment;
+                static const int increments = 4;
+                //Adjust tempo in x% increments so it's more steady
+                int temp2 = ((int) (slowAdjustment * 100)) / increments;
+                temp2 *= increments;
+                slowAdjustment = ((double) temp2) / 100;
 
-              free(currQueueData->data);
-              free(currQueueData);
+                soundTouch.setTempo(slowAdjustment);
+            }
 
-              //Useful logging
-              //if(slesQueueLength == 0)
-              //{
-              //DebugMessage(M64MSG_ERROR, "sles_length=%d, min_size=%d, count=%d",
-              //             slesQueueLength, minQueueSize, lock.count);
-              //}
-          }
-          else{
-              //Game is running too fast speed up audio
-              if ((slesQueueLength > maxQueueSize || drainQueue) && !ranDry) {
-                  drainQueue = true;
-                  currAdjustment = temp +
-                                   (float) (slesQueueLength - minQueueSize) / (float) (lock.limit - minQueueSize) *
-                                   maxSpeedUpRate;
-              }
-                  //Device can't keep up with the game or we have too much in the queue after slowing it down
-              else if (ranDry) {
-                  drainQueue = false;
-                  currAdjustment = temp - slowRate;
-              }
-              else if (!ranDry && slesQueueLength < maxQueueSize) {
-                  currAdjustment = temp;
-              }
+            processAudio(currQueueData->data, dataLength);
 
-              //Allow the tempo to slow quickly with no minimum value change, but restore original tempo more slowly.
-              if (currAdjustment > minSlowValue && currAdjustment < maxSlowValue) {
-                  slowAdjustment = currAdjustment;
-                  static const int increments = 4;
-                  //Adjust tempo in x% increments so it's more steady
-                  int temp2 = ((int) (slowAdjustment * 100)) / increments;
-                  temp2 *= increments;
-                  slowAdjustment = ((double) temp2) / 100;
+            free(currQueueData->data);
+            free(currQueueData);
 
-                  soundTouch.setTempo(slowAdjustment);
-              }
+            //Useful logging
+            //if(slesQueueLength == 0)
+            //{
+            //DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d",
+            //             slesQueueLength, threadQueueLength, ranDry, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize);
+            //}
 
-              processAudio(currQueueData->data, dataLength);
+            //We don't want to calculate the average until we give everything a time to settle.
+            //Calculate rates
+            clock_gettime(CLOCK_MONOTONIC_RAW, &currTime);
 
-              free(currQueueData->data);
-              free(currQueueData);
+            //Figure out how much to slow down by
+            float timeDiff = TimeDiff(&currTime, &prevTime);
 
-              //Useful logging
-              //if(slesQueueLength == 0)
-              //{
-              //DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, count=%d",
-              //             slesQueueLength, threadQueueLength, ranDry, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, lock.count);
-              //}
+            //sometimes this ends up as less than 0, not sure how
+            if (timeDiff > 0) {
+                feedTimes[feedTimeIndex] = timeDiff;
+            }
 
-              //We don't want to calculate the average until we give everything a time to settle.
-              //Calculate rates
-              clock_gettime(CLOCK_MONOTONIC_RAW, &currTime);
+            averageFeedTime = GetAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
-              //Figure out how much to slow down by
-              float timeDiff = TimeDiff(&currTime, &prevTime);
+            gameTimes[feedTimeIndex] = (float) dataLength / (float) N64_SAMPLE_BYTES / (float) GameFreq;
+            averageGameTime = GetAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
-              //sometimes this ends up as less than 0, not sure how
-              if (timeDiff > 0) {
-                  feedTimes[feedTimeIndex] = timeDiff;
-              }
+            ++feedTimeIndex;
+            if (feedTimeIndex == feedTimeWindowSize) {
+                feedTimeIndex = 0;
+                feedTimesSet = true;
+            }
+        }
+    }
 
-              averageFeedTime = GetAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
-
-              gameTimes[feedTimeIndex] = (float) dataLength / (float) N64_SAMPLE_BYTES / (float) GameFreq;
-              averageGameTime = GetAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
-
-              ++feedTimeIndex;
-              if (feedTimeIndex == feedTimeWindowSize) {
-                  feedTimeIndex = 0;
-                  feedTimesSet = true;
-              }
-          }
-      }
-   }
-
-   return 0;
+    return 0;
 }
 
 
@@ -1044,9 +1018,14 @@ void* audioConsumerNoStretch(void* param)
 /* This callback handler is called every time a buffer finishes playing */
 void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context)
 {
-    threadLock *plock = (threadLock *) context;
+    slesState *state = (slesState *) context;
 
-    plock->value++;
+    SLAndroidSimpleBufferQueueState st;
+    SLresult result = (*bufferQueue)->GetState(bufferQueue, &st);
+
+    if (result == SL_RESULT_SUCCESS) {
+		state->value = state->limit - st.count;
+    }
 }
 
 void processAudio(const unsigned char* buffer, unsigned int length)
@@ -1104,19 +1083,14 @@ void processAudio(const unsigned char* buffer, unsigned int length)
    {
       outSamples = soundTouch.receiveSamples((SAMPLETYPE*)secondaryBuffers[secondaryBufferIndex], SecondaryBufferSize);
 
-      if(outSamples != 0 && lock.value > 0)
+      if(outSamples != 0 && state.value > 0)
       {
          SLresult result = (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex],
             outSamples*SLES_SAMPLE_BYTES);
 
           if(result != SL_RESULT_SUCCESS)
           {
-              lock.errors++;
-          }
-          else
-          {
-              --lock.value;
-              ++lock.count;
+              state.errors++;
           }
 
          secondaryBufferIndex++;
