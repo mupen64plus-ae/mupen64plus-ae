@@ -42,7 +42,6 @@
             android:inputType="textCapCharacters|textNoSuggestions"
             android:minHeight="150dp"
             android:minLines="1"
-            android:singleLine="false"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:typeface="monospace" />
 

@@ -568,7 +568,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             Popups.showAppVersion(this);
             return true;
         case R.id.menuItem_logcat:
-            Popups.showLogcat(this);
+            ActivityHelper.startLogcatActivity(this);
             return true;
         case R.id.menuItem_hardwareInfo:
             Popups.showHardwareInfo(this);

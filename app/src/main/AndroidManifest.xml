@@ -40,7 +40,6 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -81,7 +80,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.GamePrefsActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -92,7 +90,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.AudioPrefsActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -103,7 +100,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.DataPrefsActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -114,7 +110,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.DisplayPrefsActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -125,7 +120,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.InputPrefsActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -136,7 +130,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.LibraryPrefsActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -147,7 +140,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.TouchscreenPrefsActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -158,7 +150,6 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name=".profile.ManageControllerProfilesActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -169,7 +160,6 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name=".profile.ControllerProfileActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -180,7 +170,6 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name=".profile.ControllerProfileActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -191,7 +180,6 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name=".profile.ManageEmulationProfilesActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -202,7 +190,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".profile.EmulationProfileActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -213,7 +200,6 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" >
             <intent-filter>
                 <action android:name=".profile.ManageTouchscreenProfilesActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -224,7 +210,6 @@
             android:theme="@style/Theme.AppCompat.Black.OverlayActionBar" >
            <intent-filter>
                 <action android:name=".profile.TouchscreenProfileActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -235,7 +220,16 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".input.DiagnosticActivity" />
-
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="paulscode.android.mupen64plusae.util.LogcatActivity"
+            android:exported="false"
+            android:label="@string/menuItem_logcat"
+            android:theme="@style/Theme.Mupen64plusaeTheme" >
+            <intent-filter>
+                <action android:name=".util.LogcatActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -246,7 +240,6 @@
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".cheat.CheatEditorActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

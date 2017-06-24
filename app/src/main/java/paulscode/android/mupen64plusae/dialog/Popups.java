@@ -20,37 +20,24 @@
  */
 package paulscode.android.mupen64plusae.dialog;
 
-import org.mupen64plusae.v3.alpha.R;
-
-import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.util.DeviceUtil;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import org.mupen64plusae.v3.alpha.R;
+
+import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.util.DeviceUtil;
+
 public class Popups
 {
-    public static void showInvalidInstall( Context context )
-    {
-        CharSequence title = context.getText( R.string.invalidInstall_title );
-        CharSequence message = context.getText( R.string.invalidInstall_message );
-        new Builder( context ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
     public static void showFaq( Context context )
     {
         CharSequence title = context.getText( R.string.menuItem_faq );
         CharSequence message = context.getText( R.string.popup_faq );
         new Builder( context ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    public static void showLogcat( Context context )
-    {
-        String title = context.getString( R.string.menuItem_logcat );
-        String message = DeviceUtil.getLogCat();
-        showShareableText( context, title, message );
     }
     
     public static void showHardwareInfo( Context context )

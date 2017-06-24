@@ -52,6 +52,7 @@ import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
 import paulscode.android.mupen64plusae.task.ExtractRomService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
+import paulscode.android.mupen64plusae.util.LogcatActivity;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
@@ -313,6 +314,11 @@ public class ActivityHelper
     public static void startDiagnosticActivity( Context context )
     {
         context.startActivity( new Intent( context, DiagnosticActivity.class ) );
+    }
+
+    public static void startLogcatActivity( Context context )
+    {
+        context.startActivity( new Intent( context, LogcatActivity.class) );
     }
     
     public static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
