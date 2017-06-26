@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -328,7 +329,17 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurfaceView.getLayoutParams();
         params.width = Math.round ( mGamePrefs.videoSurfaceWidth * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
         params.height = Math.round ( mGamePrefs.videoSurfaceHeight * ( mGamePrefs.videoSurfaceZoom / 100.f ) );
-        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        params.gravity = Gravity.CENTER_HORIZONTAL;
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
+        {
+            params.gravity |= Gravity.TOP;
+        }
+        else
+        {
+            params.gravity |= Gravity.CENTER_VERTICAL;
+        }
+
         mSurfaceView.setLayoutParams( params );
 
         if (savedInstanceState == null)
