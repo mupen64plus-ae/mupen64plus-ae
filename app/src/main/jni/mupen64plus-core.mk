@@ -151,6 +151,15 @@ else
 
 endif
 
+# Use gawk in linux
+AWK_CMD := gawk
+
+# Use awk in windows
+ifeq ($(HOST_OS),windows)
+    AWK_CMD := awk
+endif
+
+# Create folders if they don't exist
 ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI))","")
     ifeq ($(HOST_OS),windows)
         # mkdir on windows fail with paths using a forward-slash path separator
@@ -160,9 +169,19 @@ ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI))","")
     endif
 endif
 
-$(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c $(LOCAL_CFLAGS) -fno-lto -I$(LOCAL_PATH)/mupen64plus-core/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
-#$(shell C:\Users\Francisco\android-sdks\ndk-bundle\toolchains\llvm\prebuilt\windows-x86_64\bin\clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c -fno-lto $(LOCAL_CFLAGS) -I$(LOCAL_PATH)/mupen64plus-core/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
-$(shell $(TOOLCHAIN_PREFIX)nm $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o > $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.dump)
-$(shell awk -v dest_dir="$(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)" -f $(LOCAL_PATH)/mupen64plus-core/tools/gen_asm_defines.awk $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.dump)
+# Compile asm_defines if it doesn't exist
+ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)","")
+    $(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c $(LOCAL_CFLAGS) -fno-lto -I$(LOCAL_PATH)/mupen64plus-core/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
+endif
+
+# Create asm_defines_gas.h if it doesn't exist
+ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines_gas.h)","")
+    $(shell $(AWK_CMD) -v dest_dir="$(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)" -f $(LOCAL_PATH)/mupen64plus-core/tools/gen_asm_defines.awk $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
+endif
+
+# Create asm_defines_nasm.h if it doesn't exist
+ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines_nasm.h)","")
+    $(shell $(AWK_CMD) -v dest_dir="$(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)" -f $(LOCAL_PATH)/mupen64plus-core/tools/gen_asm_defines.awk $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
+endif
 
 include $(BUILD_SHARED_LIBRARY)
