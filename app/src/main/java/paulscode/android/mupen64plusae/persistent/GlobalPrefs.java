@@ -554,7 +554,7 @@ public class GlobalPrefs
         else if( navMode.equals( "standard" ) )
             isBigScreenMode = false;
         else
-            isBigScreenMode = AppData.IS_OUYA_HARDWARE || appData.isAndroidTv; // TODO: Add other systems as they enter market
+            isBigScreenMode = appData.isAndroidTv;
 
         final String inGameMenuMode = mPreferences.getString( "inGameMenu", "back-key" );
 

@@ -45,7 +45,6 @@ import java.util.Locale;
 import paulscode.android.mupen64plusae.preference.PathPreference;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.PixelBuffer;
-import tv.ouya.console.api.OuyaFacade;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
@@ -100,9 +99,6 @@ public class AppData
 
     /** True if device is running marshmallow or later (24 - Android 7.0.x) */
     public static final boolean IS_NOUGAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-    
-    /** True if device is an OUYA. */
-    public static final boolean IS_OUYA_HARDWARE = OuyaFacade.getInstance().isRunningOnOUYAHardware();
     
     /** The hardware info, refreshed at the beginning of every session. */
     public final HardwareInfo hardwareInfo;

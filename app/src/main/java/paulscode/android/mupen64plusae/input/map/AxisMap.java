@@ -1,14 +1,14 @@
 package paulscode.android.mupen64plusae.input.map;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class AxisMap extends SerializableMap
 {
@@ -23,7 +23,6 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_PS3 = -528816963;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
     private static final int SIGNATURE_HASH_MOGA_PRO = -1933523749;
-    private static final int SIGNATURE_HASH_OUYA = 699487739;
     private static final int SIGNATURE_HASH_AMAZON_FIRE = 2050752785;
     
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
@@ -125,15 +124,6 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_2, AXIS_CLASS_IGNORED );
                 signatureName = "Moga Pro (HID mode)";
-                break;
-                
-            case SIGNATURE_HASH_OUYA:
-                // Ignore phantom triggers
-                setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
-                setClass( MotionEvent.AXIS_GENERIC_2, AXIS_CLASS_IGNORED );
-                setClass( MotionEvent.AXIS_GENERIC_3, AXIS_CLASS_IGNORED );
-                setClass( MotionEvent.AXIS_GENERIC_4, AXIS_CLASS_IGNORED );
-                signatureName = "OUYA controller";
                 break;
                 
             case SIGNATURE_HASH_AMAZON_FIRE:
