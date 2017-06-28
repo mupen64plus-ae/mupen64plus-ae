@@ -850,9 +850,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             {
                 finishAffinity();
             }
-            else
+
+            //Without this some samsung devices produce heavy flickering after exiting a game
+            if(android.os.Build.MANUFACTURER.toLowerCase().contains("samsung"))
             {
-                refreshGrid();
+                super.recreate();
             }
         }
     }
