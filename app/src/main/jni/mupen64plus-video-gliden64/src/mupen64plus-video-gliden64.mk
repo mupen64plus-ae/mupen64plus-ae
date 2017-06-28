@@ -24,6 +24,8 @@ MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/Config.cpp                            \
     $(SRCDIR)/convert.cpp                           \
     $(SRCDIR)/CRC_OPT.cpp                           \
+    $(SRCDIR)/DebugDump.cpp                         \
+    $(SRCDIR)/Debugger.cpp                          \
     $(SRCDIR)/DepthBuffer.cpp                       \
     $(SRCDIR)/DisplayWindow.cpp                     \
     $(SRCDIR)/F3D.cpp                               \
@@ -60,6 +62,7 @@ MY_LOCAL_SRC_FILES :=                               \
     $(SRCDIR)/S2DEX2.cpp                            \
     $(SRCDIR)/S2DEX.cpp                             \
     $(SRCDIR)/SoftwareRender.cpp                    \
+    $(SRCDIR)/T3DUX.cpp                             \
     $(SRCDIR)/TexrectDrawer.cpp                     \
     $(SRCDIR)/TextDrawer.cpp                        \
     $(SRCDIR)/TextureFilterHandler.cpp              \

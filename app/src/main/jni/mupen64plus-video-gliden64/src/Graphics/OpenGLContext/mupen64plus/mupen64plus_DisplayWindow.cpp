@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <cstdlib>
 #include <Graphics/Context.h>
 #include <Graphics/OpenGLContext/GLFunctions.h>
 #include <Graphics/OpenGLContext/opengl_Utils.h>
@@ -12,7 +13,6 @@
 #include <FrameBuffer.h>
 #include <GLideNUI/GLideNUI.h>
 #include <DisplayWindow.h>
-#include <cstdlib>
 
 #ifdef VC
 #include <bcm_host.h>

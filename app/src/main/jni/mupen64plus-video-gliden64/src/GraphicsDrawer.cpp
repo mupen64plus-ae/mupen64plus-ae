@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <thread>
 #include <assert.h>
 #include <cmath>
 #include "Platform.h"
@@ -18,6 +19,7 @@
 #include "DepthBuffer.h"
 #include "FrameBufferInfo.h"
 #include "Config.h"
+#include "Debugger.h"
 #include "RSP.h"
 #include "RDP.h"
 #include "VI.h"
@@ -29,6 +31,12 @@ GraphicsDrawer::GraphicsDrawer()
 , m_bImageTexture(false)
 , m_bFlatColors(false)
 {
+}
+
+GraphicsDrawer::~GraphicsDrawer()
+{
+	while (!m_osdMessages.empty())
+		std::this_thread::sleep_for(Milliseconds(1));
 }
 
 void GraphicsDrawer::addTriangle(int _v0, int _v1, int _v2)
@@ -668,6 +676,7 @@ void GraphicsDrawer::drawTriangles()
 	triParams.elements = triangles.elements.data();
 	triParams.combiner = currentCombiner();
 	gfxContext.drawTriangles(triParams);
+	g_debugger.addTriangles(triParams);
 
 	if (config.frameBufferEmulation.enable != 0) {
 		const f32 maxY = renderTriangles(triangles.vertices.data(), triangles.elements.data(), triangles.num);
@@ -708,6 +717,7 @@ void GraphicsDrawer::drawScreenSpaceTriangle(u32 _numVtx)
 	triParams.vertices = m_dmaVertices.data();
 	triParams.combiner = currentCombiner();
 	gfxContext.drawTriangles(triParams);
+	g_debugger.addTriangles(triParams);
 
 	frameBufferList().setBufferChanged(maxY);
 	gSP.changed |= CHANGED_GEOMETRYMODE;
@@ -727,6 +737,7 @@ void GraphicsDrawer::drawDMATriangles(u32 _numVtx)
 	triParams.vertices = m_dmaVertices.data();
 	triParams.combiner = currentCombiner();
 	gfxContext.drawTriangles(triParams);
+	g_debugger.addTriangles(triParams);
 
 	if (config.frameBufferEmulation.enable != 0) {
 		const f32 maxY = renderTriangles(m_dmaVertices.data(), nullptr, _numVtx);
@@ -901,6 +912,7 @@ void GraphicsDrawer::drawRect(int _ulx, int _uly, int _lrx, int _lry)
 	rectParams.vertices = m_rect;
 	rectParams.combiner = currentCombiner();
 	gfxContext.drawRects(rectParams);
+	g_debugger.addRects(rectParams);
 	gSP.changed |= CHANGED_GEOMETRYMODE | CHANGED_VIEWPORT;
 }
 
@@ -1037,25 +1049,6 @@ bool texturedRectPaletteMod(const GraphicsDrawer::TexturedRectParams & _params)
 	for (u32 i = 0; i < 16; ++i)
 		dst[i ^ 1] = (src[i << 2] & 0x100) ? prim16 : env16;
 	return true;
-}
-
-static
-bool texturedRectMonochromeBackground(const GraphicsDrawer::TexturedRectParams & _params)
-{
-	if (gDP.textureImage.address >= gDP.colorImage.address &&
-		gDP.textureImage.address <= (gDP.colorImage.address + gDP.colorImage.width*gDP.colorImage.height * 2)) {
-
-		FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-		if (pCurrentBuffer != nullptr) {
-			FrameBuffer_ActivateBufferTexture(0, pCurrentBuffer);
-			CombinerInfo::get().setMonochromeCombiner();
-			return false;
-		} else
-			return true;
-
-	}
-
-	return false;
 }
 
 // Special processing of textured rect.
@@ -1260,6 +1253,7 @@ void GraphicsDrawer::drawTexturedRect(const TexturedRectParams & _params)
 		rectParams.vertices = m_rect;
 		rectParams.combiner = currentCombiner();
 		gfxContext.drawRects(rectParams);
+		g_debugger.addRects(rectParams);
 
 		gSP.changed |= CHANGED_GEOMETRYMODE | CHANGED_VIEWPORT;
 	}
@@ -1322,7 +1316,8 @@ void GraphicsDrawer::_drawOSD(const char *_pText, float _x, float & _y)
 
 void GraphicsDrawer::drawOSD()
 {
-	if ((config.onScreenDisplay.fps | config.onScreenDisplay.vis | config.onScreenDisplay.percent) == 0)
+	if ((config.onScreenDisplay.fps | config.onScreenDisplay.vis | config.onScreenDisplay.percent) == 0 &&
+		m_osdMessages.empty())
 		return;
 
 	gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER, ObjectHandle::null);
@@ -1369,7 +1364,24 @@ void GraphicsDrawer::drawOSD()
 		_drawOSD(buf, x, y);
 	}
 
+	for (const std::string & m : m_osdMessages) {
+		_drawOSD(m.c_str(), x, y);
+	}
+
 	frameBufferList().setCurrentDrawBuffer();
+}
+
+void GraphicsDrawer::showMessage(std::string _message, Milliseconds _interval)
+{
+	m_osdMessages.emplace_back(_message);
+	std::thread t(&GraphicsDrawer::_removeOSDMessage, this, std::prev(m_osdMessages.end()), _interval);
+	t.detach();
+}
+
+void GraphicsDrawer::_removeOSDMessage(OSDMessages::iterator _iter, Milliseconds _interval)
+{
+	std::this_thread::sleep_for(_interval);
+	m_osdMessages.erase(_iter);
 }
 
 void GraphicsDrawer::clearDepthBuffer(u32 _ulx, u32 _uly, u32 _lrx, u32 _lry)
@@ -1556,8 +1568,6 @@ void GraphicsDrawer::_setSpecialTexrect() const
 		texturedRectSpecial = texturedRectBGCopy;
 	else if (strstr(name, (const char *)"PAPER MARIO") || strstr(name, (const char *)"MARIO STORY"))
 		texturedRectSpecial = texturedRectPaletteMod;
-	else if (strstr(name, (const char *)"ZELDA"))
-		texturedRectSpecial = texturedRectMonochromeBackground;
 	else
 		texturedRectSpecial = nullptr;
 }

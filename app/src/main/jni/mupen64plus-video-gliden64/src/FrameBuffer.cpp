@@ -13,7 +13,8 @@
 #include "Combiner.h"
 #include "Types.h"
 #include "Config.h"
-#include "Debug.h"
+#include "Debugger.h"
+#include "DebugDump.h"
 #include "PostProcessor.h"
 #include "FrameBufferInfo.h"
 #include "Log.h"
@@ -635,11 +636,7 @@ void FrameBufferList::saveBuffer(u32 _address, u16 _format, u16 _size, u16 _widt
 	else
 		attachDepthBuffer();
 
-#ifdef DEBUG
-	DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "FrameBuffer_SaveBuffer( 0x%08X ); depth buffer is 0x%08X\n",
-		address, (depthBuffer.top != nullptr && depthBuffer.top->renderbuf > 0) ? depthBuffer.top->address : 0
-	);
-#endif
+	DebugMsg( DEBUG_NORMAL, "FrameBuffer_SaveBuffer( 0x%08X )\n", _address);
 
 	if (m_pCurrent->isAuxiliary() &&
 		m_pCurrent->m_pDepthBuffer != nullptr &&
@@ -989,6 +986,11 @@ void FrameBufferList::renderBuffer()
 {
 	if (VI.width == 0 || *REG.VI_WIDTH == 0 || *REG.VI_H_START == 0) // H width is zero. Don't draw
 		return;
+
+	if (g_debugger.isDebugMode()) {
+		g_debugger.draw();
+		return;
+	}
 
 	if (config.frameBufferEmulation.enable == 0) {
 		_renderScreenSizeBuffer();

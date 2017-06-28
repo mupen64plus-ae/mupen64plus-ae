@@ -1,11 +1,12 @@
 #include <algorithm>
 #include <cstring>
-#include "Debug.h"
+#include "DebugDump.h"
 #include "RSP.h"
 #include "RDP.h"
 #include "N64.h"
 #include "F3D.h"
 #include "Turbo3D.h"
+#include "T3DUX.h"
 #include "VI.h"
 #include "Combiner.h"
 #include "FrameBuffer.h"
@@ -28,7 +29,7 @@ void RSP_CheckDLCounter()
 		if (RSP.count == 0) {
 			RSP.count = -1;
 			--RSP.PCi;
-			DebugMsg( DEBUG_LOW | DEBUG_HANDLED, "End of DL\n" );
+			DebugMsg(DEBUG_NORMAL, "End of DL\n");
 		}
 	}
 }
@@ -61,6 +62,12 @@ void RSP_ProcessDList()
 	gDP.changed &= ~CHANGED_CPU_FB_WRITE;
 	gDPSetTexturePersp(G_TP_PERSP);
 
+	// Get the start of the display list and the length of it
+	const u32 dlist_start = *(u32*)(DMEM + 0xFF0);
+	const u32 dlist_length = *(u32*)(DMEM + 0xFF4);
+	DebugMsg(DEBUG_NORMAL, "--- NEW DLIST --- ucode: %d, fbuf: %08lx, fbuf_width: %d, dlist start: %08lx, dlist_length: %d, x_scale: %f, y_scale: %f\n",
+		GBI.getMicrocodeType(), *REG.VI_ORIGIN, *REG.VI_WIDTH, dlist_start, dlist_length, (*REG.VI_X_SCALE & 0xFFF) / 1024.0f, (*REG.VI_Y_SCALE & 0xFFF) / 1024.0f);
+
 	u32 uc_start = *(u32*)&DMEM[0x0FD0];
 	u32 uc_dstart = *(u32*)&DMEM[0x0FD8];
 	u32 uc_dsize = *(u32*)&DMEM[0x0FDC];
@@ -70,25 +77,17 @@ void RSP_ProcessDList()
 
 	depthBufferList().setNotCleared();
 
-	if (GBI.getMicrocodeType() == Turbo3D)
+	switch (GBI.getMicrocodeType()) {
+	case Turbo3D:
 		RunTurbo3D();
-	else {
+		break;
+	case T3DUX:
+		RunT3DUX();
+		break;
+	default:
 		while (!RSP.halt) {
 			if ((RSP.PC[RSP.PCi] + 8) > RDRAMSize) {
-#ifdef DEBUG
-				switch (Debug.level)
-				{
-					case DEBUG_LOW:
-					DebugMsg( DEBUG_LOW | DEBUG_ERROR, "ATTEMPTING TO EXECUTE RSP COMMAND AT INVALID RDRAM LOCATION\n" );
-					break;
-					case DEBUG_MEDIUM:
-					DebugMsg( DEBUG_MEDIUM | DEBUG_ERROR, "Attempting to execute RSP command at invalid RDRAM location\n" );
-					break;
-					case DEBUG_HIGH:
-					DebugMsg( DEBUG_HIGH | DEBUG_ERROR, "// Attempting to execute RSP command at invalid RDRAM location\n" );
-					break;
-				}
-#endif
+				DebugMsg(DEBUG_NORMAL | DEBUG_ERROR, "ATTEMPTING TO EXECUTE RSP COMMAND AT INVALID RDRAM LOCATION\n");
 				break;
 			}
 
@@ -96,10 +95,9 @@ void RSP_ProcessDList()
 			RSP.w1 = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 4];
 			RSP.cmd = _SHIFTR(RSP.w0, 24, 8);
 
-#ifdef DEBUG
-			DebugRSPState( RSP.PCi, RSP.PC[RSP.PCi], _SHIFTR( RSP.w0, 24, 8 ), RSP.w0, RSP.w1 );
-			DebugMsg( DEBUG_LOW | DEBUG_HANDLED, "0x%08lX: CMD=0x%02lX W0=0x%08lX W1=0x%08lX\n", RSP.PC[RSP.PCi], _SHIFTR( RSP.w0, 24, 8 ), RSP.w0, RSP.w1 );
-#endif
+//			DebugRSPState( RSP.PCi, RSP.PC[RSP.PCi], _SHIFTR( RSP.w0, 24, 8 ), RSP.w0, RSP.w1 );
+//			DebugMsg( DEBUG_LOW | DEBUG_HANDLED, "0x%08lX: CMD=0x%02lX W0=0x%08lX W1=0x%08lX\n", RSP.PC[RSP.PCi], _SHIFTR( RSP.w0, 24, 8 ), RSP.w0, RSP.w1 );
+			DebugMsg(DEBUG_LOW, "%08x (w0:%08x, w1:%08x): ", RSP.PC[RSP.PCi], RSP.w0, RSP.w1);
 
 			RSP.PC[RSP.PCi] += 8;
 			u32 pci = RSP.PCi;
@@ -240,10 +238,6 @@ void RSP_Init()
 		config.generalEmulation.hacks |= hack_legoRacers;
 	else if (strstr(RSP.romname, (const char *)"Blast") != nullptr)
 		config.generalEmulation.hacks |= hack_blastCorps;
-	else if (strstr(RSP.romname, (const char *)"PACHINKO365NICHI") != nullptr ||
-			 strstr(RSP.romname, // Eikou no Saint Andrews (J)
-				(const char *)"\xb4\xb2\xba\xb3\xc9\xbe\xdd\xc4\xb1\xdd\xc4\xde\xd8\xad\xb0\xbd\x00") != nullptr)
-		config.generalEmulation.hacks |= hack_NegativeViewport;
 	else if (strstr(RSP.romname, (const char *)"MASK") != nullptr) // Zelda MM
 		config.generalEmulation.hacks |= hack_ZeldaMM;
 	else if (strstr(RSP.romname, (const char *)"Perfect Dark") != nullptr ||

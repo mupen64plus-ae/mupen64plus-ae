@@ -1,9 +1,9 @@
 #include <assert.h>
+#include <cstdlib>
 #include "Config.h"
 #include "VI.h"
 #include "Graphics/Context.h"
 #include "DisplayWindow.h"
-#include <cstdlib>
 
 void DisplayWindow::start()
 {

@@ -1,5 +1,6 @@
 #include <fstream>
 #include <assert.h>
+#include <cstdlib>
 
 #include <Graphics/CombinerProgram.h>
 #include <Graphics/OpenGLContext/opengl_Utils.h>
@@ -12,7 +13,6 @@
 #include "glsl_ShaderStorage.h"
 #include "glsl_CombinerProgramImpl.h"
 #include "glsl_CombinerProgramUniformFactory.h"
-#include <cstdlib>
 
 using namespace glsl;
 

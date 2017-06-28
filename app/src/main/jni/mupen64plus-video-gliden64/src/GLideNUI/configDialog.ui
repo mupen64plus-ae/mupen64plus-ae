@@ -3729,6 +3729,50 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="debugTab">
+      <attribute name="title">
+       <string>Debug</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_36">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="dumpLowCheckBox">
+         <property name="text">
+          <string>Dump low-level info</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="dumpNormalCheckBox">
+         <property name="text">
+          <string>Dump display list commands</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="dumpDetailCheckBox">
+         <property name="text">
+          <string>Dump detailed info (matrices, vertices, etc.)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_10">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -4149,11 +4193,11 @@
   </connection>
  </connections>
  <buttongroups>
+  <buttongroup name="screenshotButtonGroup"/>
+  <buttongroup name="aspectButtonGroup"/>
+  <buttongroup name="osdButtonGroup"/>
+  <buttongroup name="fixTexrectCoordsButtonGroup"/>
   <buttongroup name="bloomBlendModeButtonGroup"/>
   <buttongroup name="factorButtonGroup"/>
-  <buttongroup name="aspectButtonGroup"/>
-  <buttongroup name="fixTexrectCoordsButtonGroup"/>
-  <buttongroup name="screenshotButtonGroup"/>
-  <buttongroup name="osdButtonGroup"/>
  </buttongroups>
 </ui>

@@ -14,6 +14,8 @@ set(GLideN64_SOURCES
   Config.cpp
   convert.cpp
   CRC32.cpp
+  DebugDump.cpp
+  Debugger.cpp
   DepthBuffer.cpp
   DisplayWindow.cpp
   F3D.cpp
@@ -50,6 +52,7 @@ set(GLideN64_SOURCES
   S2DEX2.cpp
   S2DEX.cpp
   SoftwareRender.cpp
+  T3DUX.cpp
   TexrectDrawer.cpp
   TextDrawer.cpp
   TextureFilterHandler.cpp
