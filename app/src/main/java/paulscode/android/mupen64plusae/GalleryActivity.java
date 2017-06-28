@@ -90,9 +90,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
     private static final String STATE_EXTRACT_ROM_FRAGMENT= "STATE_EXTRACT_ROM_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
+    private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
+
     public static final int RESTART_CONFIRM_DIALOG_ID = 0;
     public static final int CLEAR_CONFIRM_DIALOG_ID = 1;
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 2;
@@ -133,6 +135,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
+
+    boolean mGameStartedExternally = false;
 
     @Override
     protected void onNewIntent( Intent intent )
@@ -323,6 +327,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mSearchQuery = query;
 
             mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
+            mGameStartedExternally = savedInstanceState.getBoolean(STATE_GAME_STARTED_EXTERNALLY);
         }
 
         // find the retained fragment on activity restarts
@@ -394,6 +399,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( mSelectedItem != null )
             savedInstanceState.putString( STATE_SIDEBAR, mSelectedItem.md5 );
         savedInstanceState.putBoolean(STATE_GALLERY_REFRESH_NEEDED, mRefreshNeeded);
+        savedInstanceState.putBoolean(STATE_GAME_STARTED_EXTERNALLY, mGameStartedExternally);
 
         super.onSaveInstanceState( savedInstanceState );
     }
@@ -476,6 +482,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private void launchGameOnCreation(String givenRomPath)
     {
+        mGameStartedExternally = true;
         String finalRomPath = givenRomPath;
 
         boolean isZip = givenRomPath != null && givenRomPath.toLowerCase().endsWith("zip");
@@ -834,11 +841,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
         else if(requestCode == ActivityHelper.GAME_ACTIVITY_CODE)
         {
-            refreshGrid();
-
             if(!mGlobalPrefs.cacheRecentlyPlayed)
             {
                 FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
+            }
+
+            if(mGameStartedExternally)
+            {
+                finishAffinity();
+            }
+            else
+            {
+                refreshGrid();
             }
         }
     }
