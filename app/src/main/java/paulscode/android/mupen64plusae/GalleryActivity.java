@@ -846,15 +846,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 FileUtil.deleteFolder(new File(mGlobalPrefs.unzippedRomsDir));
             }
 
-            if(mGameStartedExternally)
-            {
-                finishAffinity();
-            }
-
             //Without this some samsung devices produce heavy flickering after exiting a game
             if(android.os.Build.MANUFACTURER.toLowerCase().contains("samsung"))
             {
-                super.recreate();
+                finish();
+
+                String nullString = null;
+                ActivityHelper.startGalleryActivity( GalleryActivity.this, nullString );
+            }
+
+            if(mGameStartedExternally)
+            {
+                finishAffinity();
             }
         }
     }
