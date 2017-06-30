@@ -115,6 +115,7 @@ LOCAL_LDFLAGS :=                                                    \
     -Wl,-export-dynamic                                             \
     -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver  \
 
+
 ASM_DEFINES_INCLUDE += -I$(SYSROOT_INC)/usr/include
 TARGET := ""
 
@@ -142,6 +143,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_CFLAGS += -DNEW_DYNAREC=1
     LOCAL_ASMFLAGS = -d PIC
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/i686-linux-android
+    TARGET := -target i686-none-linux-android
 
 else ifeq ($(TARGET_ARCH_ABI), mips)
     # Use for MIPS:

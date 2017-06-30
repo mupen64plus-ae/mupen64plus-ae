@@ -47,6 +47,7 @@
  * directly to awk, and extract the values without having to use
  * platform-specific tools (e.g. objdump, dumpbin, nm).
  */
+
 #define _DEFINE(str, sym, val) \
     const struct { \
         char before[sizeof(str)-1]; \
