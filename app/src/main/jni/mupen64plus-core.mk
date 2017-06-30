@@ -140,6 +140,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/x86/linkage_x86.asm
     LOCAL_CFLAGS += -DDYNAREC
     LOCAL_CFLAGS += -DNEW_DYNAREC=1
+    LOCAL_ASMFLAGS = -d PIC
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/i686-linux-android
 
 else ifeq ($(TARGET_ARCH_ABI), mips)
