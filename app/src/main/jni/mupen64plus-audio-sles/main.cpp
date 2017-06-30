@@ -62,7 +62,7 @@ typedef struct slesState
 
 /* Size of a single secondary buffer, in output samples. This is the requested size of OpenSLES's
    hardware buffer, this should be a power of two. */
-#define SECONDARY_BUFFER_SIZE 256
+#define DEFAULT_SECONDARY_BUFFER_SIZE 256
 
 /* This sets default frequency what is used if rom doesn't want to change it.
    Probably only game that needs this is Zelda: Ocarina Of Time Master Quest
@@ -95,11 +95,11 @@ static unsigned char *primaryBuffer = NULL;
 /* Size of the primary buffer */
 static int primaryBufferBytes = 0;
 /* Size of the primary audio buffer in equivalent output samples */
-static unsigned int PrimaryBufferSize = PRIMARY_BUFFER_SIZE;
+static int PrimaryBufferSize = PRIMARY_BUFFER_SIZE;
 /* Pointer to secondary buffers */
 static unsigned char ** secondaryBuffers = NULL;
 /* Size of a single secondary audio buffer in output samples */
-static unsigned int SecondaryBufferSize = SECONDARY_BUFFER_SIZE;
+static int SecondaryBufferSize = DEFAULT_SECONDARY_BUFFER_SIZE;
 /** Time stretched audio enabled */
 static int TimeStretchEnabled = true;
 /* Index of the next secondary buffer available */
@@ -280,7 +280,7 @@ static int CreateSecondaryBuffers(void)
 {
     int i = 0;
     int status = 1;
-    unsigned int secondaryBytes = (unsigned int) (SecondaryBufferSize * SLES_SAMPLE_BYTES);
+    int secondaryBytes = SecondaryBufferSize * SLES_SAMPLE_BYTES;
 
     DebugMessage(M64MSG_VERBOSE, "Allocating memory for %d secondary audio buffers: %i bytes.", SecondaryBufferNbr, secondaryBytes);
 
@@ -293,7 +293,7 @@ static int CreateSecondaryBuffers(void)
     /* Allocate size of each secondary buffers */
     for(i=0;i<SecondaryBufferNbr;i++)
     {
-        secondaryBuffers[i] = (unsigned char*) malloc(secondaryBytes);
+        secondaryBuffers[i] = (unsigned char*) malloc((size_t)secondaryBytes);
 
         if (secondaryBuffers[i] == NULL)
         {
@@ -301,7 +301,7 @@ static int CreateSecondaryBuffers(void)
             break;
         }
 
-        memset(secondaryBuffers[i], 0, secondaryBytes);
+        memset(secondaryBuffers[i], 0, (size_t)secondaryBytes);
     }
 
     return status;
@@ -609,7 +609,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultInt(l_ConfigAudio, "DEFAULT_FREQUENCY",     DEFAULT_FREQUENCY,     "Frequency which is used if rom doesn't want to change it");
     ConfigSetDefaultBool(l_ConfigAudio, "SWAP_CHANNELS",        0,                     "Swaps left and right channels");
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE",   PRIMARY_BUFFER_SIZE,   "Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.");
-    ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.");
+    ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", DEFAULT_SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is OpenSLES's hardware buffer.");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_NBR" , SECONDARY_BUFFER_NBR,  "Number of secondary buffers.");
     ConfigSetDefaultInt(l_ConfigAudio, "SAMPLING_RATE" ,        0,                     "Sampling rate, (0=game original, 16, 24, 32, 441, 48");
     ConfigSetDefaultBool(l_ConfigAudio, "TIME_STRETCH_ENABLED", 1,                     "Enable audio time stretching to prevent crackling");
@@ -815,9 +815,10 @@ void *audioConsumerStretch(void *param) {
     double speedFactor = static_cast<double>(speed_factor) / 100.0;
     soundTouch.setTempo(speedFactor);
 
-    double bufferMultiplier = (double) OutputFreq / DEFAULT_FREQUENCY;
+    double bufferMultiplier = ((double) OutputFreq / DEFAULT_FREQUENCY) *
+            ((double)DEFAULT_SECONDARY_BUFFER_SIZE/SecondaryBufferSize);
 
-    int maxQueueSize = (int) (TargetSecondaryBuffers + 30.0 * bufferMultiplier);
+    int maxQueueSize = (int) ((TargetSecondaryBuffers + 30.0) * bufferMultiplier);
     int minQueueSize = (int) (TargetSecondaryBuffers * bufferMultiplier);
     bool drainQueue = false;
 
