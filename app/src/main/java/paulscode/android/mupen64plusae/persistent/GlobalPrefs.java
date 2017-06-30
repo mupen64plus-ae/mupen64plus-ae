@@ -121,7 +121,7 @@ public class GlobalPrefs
 
     /** The directory containing all custom touchscreen skin folders. */
     public final String touchscreenCustomSkinsDir;
-    
+
     /** Legacy auto save directory */
     public final String legacyAutoSaves;
 
@@ -353,14 +353,14 @@ public class GlobalPrefs
         {
             switch (nativeValue)
             {
-            case NativeConstants.PAK_TYPE_NONE:
-                return NONE;
-            case NativeConstants.PAK_TYPE_MEMORY:
-                return MEMORY;
-            case NativeConstants.PAK_TYPE_RUMBLE:
-                return RAMBLE;
-            default:
-                return NONE;
+                case NativeConstants.PAK_TYPE_NONE:
+                    return NONE;
+                case NativeConstants.PAK_TYPE_MEMORY:
+                    return MEMORY;
+                case NativeConstants.PAK_TYPE_RUMBLE:
+                    return RAMBLE;
+                default:
+                    return NONE;
 
             }
         }
@@ -537,10 +537,31 @@ public class GlobalPrefs
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         enableSLESAudioTimeSretching = mPreferences.getBoolean( "audioSLESTimeStretch", true );
-        audioSLESSecondaryBufferSize = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 10 );
-        audioSLESSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
         audioSLESFloatingPoint = mPreferences.getBoolean( "audioSLESFloatingPoint", false );
+
+        int tempAudioSLESSamplingRate = 44100;
+        try
+        {
+            tempAudioSLESSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+        }
+        catch(java.lang.NumberFormatException e)
+        {
+        }
+
+        audioSLESSamplingRate = tempAudioSLESSamplingRate;
+
+        int tempAudioSLESSecondaryBufferSize = 256;
+        try
+        {
+            tempAudioSLESSecondaryBufferSize = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
+        }
+        catch(java.lang.NumberFormatException e)
+        {
+
+        }
+
+        audioSLESSecondaryBufferSize = tempAudioSLESSecondaryBufferSize;
 
         if( audioPlugin.enabled )
             isFramelimiterEnabled = !mPreferences.getBoolean( "audioSynchronize", true );
@@ -680,10 +701,10 @@ public class GlobalPrefs
     {
         switch( player )
         {
-        case 2: return getString( GamePrefs.CONTROLLER_PROFILE2, "" );
-        case 3: return getString( GamePrefs.CONTROLLER_PROFILE3, "" );
-        case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, "" );
-        default: break;
+            case 2: return getString( GamePrefs.CONTROLLER_PROFILE2, "" );
+            case 3: return getString( GamePrefs.CONTROLLER_PROFILE3, "" );
+            case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, "" );
+            default: break;
         }
 
         return getString( GamePrefs.CONTROLLER_PROFILE1, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
@@ -824,7 +845,7 @@ public class GlobalPrefs
     }
 
     private static ControllerProfile loadControllerProfile( SharedPreferences prefs, String key,
-            String defaultName, ConfigFile custom, ConfigFile builtin )
+                                                            String defaultName, ConfigFile custom, ConfigFile builtin )
     {
         final String name = prefs.getString( key, defaultName );
 
