@@ -1,2 +1,2 @@
-#define PLUGIN_REVISION "fbd13c3"
-#define PLUGIN_REVISION_W L"fbd13c3"
+#define PLUGIN_REVISION "dabbad0"
+#define PLUGIN_REVISION_W L"dabbad0"
