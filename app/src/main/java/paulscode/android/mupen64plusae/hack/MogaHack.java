@@ -20,9 +20,6 @@
  */
 package paulscode.android.mupen64plusae.hack;
 
-import java.util.List;
-
-import paulscode.android.mupen64plusae.persistent.AppData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +29,10 @@ import android.util.Log;
 
 import com.bda.controller.Controller;
 import com.bda.controller.IControllerService;
+
+import java.util.List;
+
+import paulscode.android.mupen64plusae.persistent.AppData;
 
 /**
  * Temporary hack for crash in MOGA library on Lollipop. This hack can be removed once MOGA fixes
@@ -94,8 +95,16 @@ public class MogaHack
                 intent.setComponent( new ComponentName( packageName, className ) );
                 
                 // Start the service explicitly
-                context.startService( intent );
-                context.bindService( intent, mServiceConnection, 1 );
+                try
+                {
+                    context.startService( intent );
+                    context.bindService( intent, mServiceConnection, Context.BIND_AUTO_CREATE );
+                }
+                catch (java.lang.SecurityException e)
+                {
+                    Log.e( "MogaHack", "MOGA Lollipop SecurityException (set)", e );
+                }
+
                 try
                 {
                     fIsBound.setBoolean( controller, true );
