@@ -14,8 +14,7 @@ public class AxisMap extends SerializableMap
 {
     public static final int AXIS_CLASS_UNKNOWN = 0;
     public static final int AXIS_CLASS_IGNORED = 1;
-    public static final int AXIS_CLASS_STICK = 2;
-    public static final int AXIS_CLASS_TRIGGER = 3;
+    public static final int AXIS_CLASS_NORMAL = 2;
     public static final int AXIS_CLASS_N64_USB_STICK = 102;
     
     private static final int SIGNATURE_HASH_XBOX360 = 449832952;
@@ -52,8 +51,8 @@ public class AxisMap extends SerializableMap
         List<Integer> axisCodes = new ArrayList<Integer>();
         for( MotionRange motionRange : motionRanges )
         {
-            boolean isJoystick = (motionRange.getSource() & InputDevice.SOURCE_JOYSTICK) ==
-                InputDevice.SOURCE_JOYSTICK;
+            boolean isJoystick = ((motionRange.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK) ||
+                    ((motionRange.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD);
             
             if( isJoystick)
             {
@@ -73,32 +72,6 @@ public class AxisMap extends SerializableMap
         // Use the signature to override faulty auto-classifications
         switch( mSignature.hashCode() )
         {
-            case SIGNATURE_HASH_XBOX360:
-                // Resting value is -1 on the analog triggers; fix that
-                if( deviceName.contains( "Sony Computer Entertainment Wireless Controller" ) || 
-                    deviceName.contains( "Wireless Controller" ))
-                {
-                    // Note that the PS4 controller uses the same axes but uses different ones for
-                    // the triggers, so we have to differentiate them.
-                    setClass( MotionEvent.AXIS_RX, AXIS_CLASS_TRIGGER );
-                    setClass( MotionEvent.AXIS_RY, AXIS_CLASS_TRIGGER );
-                    signatureName = "PS4 compatible";
-                }
-                else
-                {
-                    setClass( MotionEvent.AXIS_Z, AXIS_CLASS_TRIGGER );
-                    setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_TRIGGER );
-                    signatureName = "Xbox 360 compatible";
-                }
-                break;
-            
-            case SIGNATURE_HASH_XBOX360_WIRELESS:
-                // Resting value is -1 on the analog triggers; fix that
-                setClass( MotionEvent.AXIS_Z, AXIS_CLASS_TRIGGER );
-                setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_TRIGGER );
-                signatureName = "Xbox 360 wireless";
-                break;
-            
             case SIGNATURE_HASH_PS3:
                 // Ignore pressure sensitive buttons (buggy on Android)
                 setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
@@ -110,12 +83,6 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_GENERIC_7, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_8, AXIS_CLASS_IGNORED );
                 signatureName = "PS3 compatible";
-                break;
-            
-            case SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD:
-                // Bug in controller firmware cross-wires throttle and right stick up/down
-                setClass( MotionEvent.AXIS_THROTTLE, AXIS_CLASS_STICK );
-                signatureName = "Logitech Wingman Rumblepad";
                 break;
             
             case SIGNATURE_HASH_MOGA_PRO:
@@ -173,10 +140,7 @@ public class AxisMap extends SerializableMap
     {
         if( motionRange != null )
         {
-            if( motionRange.getMin() == -1 )
-                return AXIS_CLASS_STICK;
-            else if( motionRange.getMin() == 0 )
-                return AXIS_CLASS_TRIGGER;
+            return AXIS_CLASS_NORMAL;
         }
         return AXIS_CLASS_UNKNOWN;
     }

@@ -186,10 +186,8 @@ public final class DeviceUtil
                 return "Unknown";
             case AxisMap.AXIS_CLASS_IGNORED:
                 return "Ignored";
-            case AxisMap.AXIS_CLASS_STICK:
-                return "Stick";
-            case AxisMap.AXIS_CLASS_TRIGGER:
-                return "Trigger";
+            case AxisMap.AXIS_CLASS_NORMAL:
+                return "Normal";
             default:
                 return "";
         }

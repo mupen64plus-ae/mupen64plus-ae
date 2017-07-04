@@ -190,16 +190,9 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
 
                     switch( axisClass )
                     {
-                        case AxisMap.AXIS_CLASS_STICK:
-                            // Normalize to [-1,1]
+                        case AxisMap.AXIS_CLASS_NORMAL:
+                            // Normalize
                             //strength = ( strength - motionRange.getMin() ) / motionRange.getRange() * 2f - 1f;
-                            tempStrengh = (Math.abs(strength) - flat) / (1.0f - flat);
-                            //Restore sign
-                            strength = tempStrengh * Math.signum(strength);
-
-                            break;
-                        case AxisMap.AXIS_CLASS_TRIGGER:
-                            // Normalize to [0,1]
                             tempStrengh = (Math.abs(strength) - flat) / (1.0f - flat);
                             //Restore sign
                             strength = tempStrengh * Math.signum(strength);
