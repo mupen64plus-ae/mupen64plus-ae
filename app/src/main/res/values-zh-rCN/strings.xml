@@ -427,7 +427,6 @@
 写入到您的存储来写入配置和保存数据。"</string>
     <string name="assetExtractor_permissions_title">权限</string>
     <string name="audioSLESBufferNbr_title">音频缓冲区数</string>
-    <string name="audioSLESBufferSize_title">音频缓冲区大小</string>
     <string name="audioSLESFloatingPoint_summary">更高质量的 FP 音频。某些设备可能不兼容。</string>
     <string name="audioSLESFloatingPoint_title">浮点采样</string>
     <string name="audioSLESRate_entry_orig">通过游戏设置</string>

@@ -70,6 +70,14 @@
         mupen64:stepSize="1"
         mupen64:units=" buffers" />
 
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/audioSLESRate_default"
+        android:entries="@array/audioSLESRate_entries"
+        android:entryValues="@array/audioSLESRate_values"
+        android:key="audioSLESSamplingRate2"
+        android:summary="@string/selectedValue"
+        android:title="@string/audioSLESRate_title" />
+
     <android.support.v7.preference.CheckBoxPreference
         android:defaultValue="false"
         android:key="audioSLESFloatingPoint"

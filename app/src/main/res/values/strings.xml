@@ -565,6 +565,9 @@
     <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
     <string name="audioSLESBufferNbr_title">Audio buffer number</string>
+    <string name="audioSLESRate_title">Sampling Rate</string>
+    <string name="audioSLESRate_entry_orig">Set by game</string>
+    <string name="audioSLESRate_best_for_hw">Best for hardware</string>
     <string name="audioSLESFloatingPoint_title">Floating Point Samples</string>
     <string name="audioSLESFloatingPoint_summary">Higher quality FP audio. Some devices may not be compatible.</string>
     <string name="localeOverride_entrySystemDefault">System default</string>

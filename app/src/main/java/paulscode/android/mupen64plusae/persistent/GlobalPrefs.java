@@ -29,6 +29,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.support.v7.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.WindowManager;
@@ -540,13 +541,17 @@ public class GlobalPrefs
         audioSLESSecondaryBufferNbr = getSafeInt( mPreferences, "audioSLESBufferNbr2", 10 );
         audioSLESFloatingPoint = mPreferences.getBoolean( "audioSLESFloatingPoint", false );
 
-        int tempAudioSLESSamplingRate = 44100;
-        try
-        {
-            tempAudioSLESSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
-        }
-        catch(java.lang.NumberFormatException e)
-        {
+        boolean audioSlesSamplingRateGame = mPreferences.getString( "audioSLESSamplingRate2", "game" ).equals("game");
+
+        int tempAudioSLESSamplingRate = 0;
+
+        //If sampling rate is not set to game, then automatically determine best sampling rate
+        if(!audioSlesSamplingRateGame) {
+            try {
+                tempAudioSLESSamplingRate = Integer.parseInt(audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+            } catch (java.lang.NumberFormatException e) {
+                Log.e("GlobalPrefs", "Invalid sampling rate number: " + audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+            }
         }
 
         audioSLESSamplingRate = tempAudioSLESSamplingRate;
@@ -558,7 +563,7 @@ public class GlobalPrefs
         }
         catch(java.lang.NumberFormatException e)
         {
-
+            Log.e("GlobalPrefs", "Invalid frames per buffer number: " + audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
         }
 
         audioSLESSecondaryBufferSize = tempAudioSLESSecondaryBufferSize;

@@ -450,6 +450,7 @@
     <string name="audioPlugin_entryNoneNoSpeedLimit">Kein Debug (Audio ist deaktiviert, keine Geschwindigkeitsbegrenzung)</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
     <string name="audioSLESBufferNbr_title">Audio-Puffernummer</string>
+    <string name="audioSLESRate_title">Abtastrate</string>
     <string name="localeOverride_entrySystemDefault">Systemstandard</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->

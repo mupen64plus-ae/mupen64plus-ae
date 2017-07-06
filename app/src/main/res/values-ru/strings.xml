@@ -517,6 +517,8 @@
     <string name="audioPlugin_entryNoneNoSpeedLimit">Без дебага (аудио отключено, нет ограничения скорсти)</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
     <string name="audioSLESBufferNbr_title">Номер аудио буффера</string>
+    <string name="audioSLESRate_title">Значение сэмплинга</string>
+    <string name="audioSLESRate_entry_orig">Установить по игре</string>
     <string name="audioSLESFloatingPoint_title">Значения с плавающей точкой</string>
     <string name="audioSLESFloatingPoint_summary">более высокое качество FP аудио. Не поддерживается на некоторых устройствах.</string>
     <string name="localeOverride_entrySystemDefault">Системные умолчанья</string>

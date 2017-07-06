@@ -336,30 +336,47 @@ static void InitializeAudio(int freq)
 
 	/* This is important for the sync */
 	GameFreq = freq;
-	OutputFreq = SamplingRateSelection;
 
-	switch (SamplingRateSelection) {
-		case 16000:
-			sample_rate = SL_SAMPLINGRATE_16;
-			break;
-		case 24000:
-			sample_rate = SL_SAMPLINGRATE_24;
-			break;
-		case 32000:
+	if (SamplingRateSelection == 0) {
+		if ((freq / 1000) <= 11) {
+			OutputFreq = 11025;
+			sample_rate = SL_SAMPLINGRATE_11_025;
+		} else if ((freq / 1000) <= 22) {
+			OutputFreq = 22050;
+			sample_rate = SL_SAMPLINGRATE_22_05;
+		} else if ((freq / 1000) <= 32) {
+			OutputFreq = 32000;
 			sample_rate = SL_SAMPLINGRATE_32;
-			break;
-		case 44100:
-			sample_rate = SL_SAMPLINGRATE_44_1;
-			break;
-		case 48000:
-			sample_rate = SL_SAMPLINGRATE_48;
-			break;
-		default:
+		} else {
 			OutputFreq = 44100;
 			sample_rate = SL_SAMPLINGRATE_44_1;
+		}
+	} else {
+		OutputFreq = SamplingRateSelection;
+
+		switch (SamplingRateSelection) {
+			case 16000:
+				sample_rate = SL_SAMPLINGRATE_16;
+				break;
+			case 24000:
+				sample_rate = SL_SAMPLINGRATE_24;
+				break;
+			case 32000:
+				sample_rate = SL_SAMPLINGRATE_32;
+				break;
+			case 44100:
+				sample_rate = SL_SAMPLINGRATE_44_1;
+				break;
+			case 48000:
+				sample_rate = SL_SAMPLINGRATE_48;
+				break;
+			default:
+				OutputFreq = 32000;
+				sample_rate = SL_SAMPLINGRATE_32;
+		}
 	}
 
-    DebugMessage(M64MSG_VERBOSE, "Requesting frequency: %iHz.", OutputFreq);
+    DebugMessage(M64MSG_INFO, "Requesting frequency: %iHz.", OutputFreq);
 
     /* Close everything because InitializeAudio can be called more than once */
     CloseAudio();

@@ -1051,6 +1051,18 @@
 
     <string name="audioPlugin_default" translatable="false">libmupen64plus-audio-sles.so</string>
 
+    <!-- Audio SLES Sampling Rate -->
+    <string-array name="audioSLESRate_entries" translatable="false">
+        <item>@string/audioSLESRate_entry_orig</item>
+        <item>@string/audioSLESRate_best_for_hw</item>
+    </string-array>
+    <string-array name="audioSLESRate_values" translatable="false">
+        <item>game</item>
+        <item>auto</item>
+    </string-array>
+
+    <string name="audioSLESRate_default" translatable="false">game</string>
+
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">
         <item>@string/r4300Emulator_entryPureInterpreter</item>
