@@ -121,10 +121,10 @@ static int OutputFreq;
 /* Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
 static int critical_failure = 0;
 
-typedef struct queueData_
-{
-   unsigned char* data;
-   unsigned int lenght;
+typedef struct queueData_ {
+    unsigned char *data;
+    unsigned int length;
+    timespec timestamp;
 } queueData;
 
 void processAudio(const unsigned char* buffer, unsigned int length);
@@ -733,7 +733,8 @@ EXPORT void CALL AiLenChanged(void)
     
     queueData* theQueueData = (queueData*)malloc(sizeof(queueData));
     theQueueData->data = (unsigned char*)malloc(LenReg);
-    theQueueData->lenght = LenReg;
+    theQueueData->length = LenReg;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &theQueueData->timestamp);
 
     memcpy(theQueueData->data, p, LenReg);
 
@@ -786,7 +787,7 @@ double TimeDiff(struct timespec* currTime, struct timespec* prevTime)
          ((double)prevTime->tv_sec+((double)prevTime->tv_nsec)/1.0e9);
 }
 
-float GetAverageTime( float* feedTimes, int numTimes)
+float GetAverageTime( double* feedTimes, int numTimes)
 {
    float sum = 0;
    for(int index = 0; index < numTimes; ++index)
@@ -838,6 +839,8 @@ void *audioConsumerStretch(void *param) {
     struct timespec prevTime;
     struct timespec currTime;
 
+    clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
+
     //How long to wait for some data
     struct timespec waitTime;
     waitTime.tv_sec = 1;
@@ -846,8 +849,8 @@ void *audioConsumerStretch(void *param) {
     int feedTimeWindowSize = 50;
     int feedTimeIndex = 0;
     bool feedTimesSet = false;
-    float feedTimes[feedTimeWindowSize];
-    float gameTimes[feedTimeWindowSize];
+    double feedTimes[feedTimeWindowSize];
+    double gameTimes[feedTimeWindowSize];
     float averageGameTime = 0.01666;
     float averageFeedTime = 0.01666;
 
@@ -858,25 +861,23 @@ void *audioConsumerStretch(void *param) {
 
         struct threadmsg msg;
 
-        clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
         int result = thread_queue_get(&audioConsumerQueue, &waitTime, &msg);
 
         if (result != ETIMEDOUT) {
             int threadQueueLength = thread_queue_length(&audioConsumerQueue);
 
             currQueueData = (queueData *) msg.data;
-            int dataLength = currQueueData->lenght;
+            unsigned int dataLength = currQueueData->length;
+			float temp = averageGameTime / averageFeedTime;
 
-            if (state.totalBuffersProcessed > state.limit) {
+            if (state.totalBuffersProcessed < state.limit) {
 
-                double speedFactor = static_cast<double>(speed_factor)/100.0;
+                speedFactor = static_cast<double>(speed_factor)/100.0;
                 soundTouch.setTempo(speedFactor);
 
                 processAudio(currQueueData->data, dataLength);
 
             } else {
-
-                float temp = averageGameTime / averageFeedTime;
 
                 //Game is running too fast speed up audio
                 if ((slesQueueLength > maxQueueSize || drainQueue) && !ranDry) {
@@ -898,9 +899,9 @@ void *audioConsumerStretch(void *param) {
                     slowAdjustment = currAdjustment;
                     static const int increments = 4;
                     //Adjust tempo in x% increments so it's more steady
-                    int temp2 = ((int) (slowAdjustment * 100)) / increments;
+                    double temp2 = round((slowAdjustment * 100) / increments);
                     temp2 *= increments;
-                    slowAdjustment = ((double) temp2) / 100;
+                    slowAdjustment = (temp2) / 100;
 
                     soundTouch.setTempo(slowAdjustment);
                 }
@@ -908,19 +909,21 @@ void *audioConsumerStretch(void *param) {
                 processAudio(currQueueData->data, dataLength);
             }
 
+			++state.totalBuffersProcessed;
+
             //Useful logging
             //if(slesQueueLength == 0)
             //{
-            //DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d",
-            //             slesQueueLength, threadQueueLength, ranDry, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize);
+            //DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, count=%d",
+            //             slesQueueLength, threadQueueLength, ranDry, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, state.totalBuffersProcessed);
             //}
 
             //We don't want to calculate the average until we give everything a time to settle.
-            //Calculate rates
-            clock_gettime(CLOCK_MONOTONIC_RAW, &currTime);
 
             //Figure out how much to slow down by
-            float timeDiff = TimeDiff(&currTime, &prevTime);
+            double timeDiff = TimeDiff(&currQueueData->timestamp, &prevTime);
+
+            prevTime = currQueueData->timestamp;
 
             //sometimes this ends up as less than 0, not sure how
             if (timeDiff > 0) {
@@ -975,7 +978,7 @@ void* audioConsumerNoStretch(void* param)
         if( result != ETIMEDOUT )
         {
             currQueueData = (queueData*)msg.data;
-            int dataLength = currQueueData->lenght;
+            int dataLength = currQueueData->length;
 
             if(lastSpeedFactor != speed_factor)
             {
