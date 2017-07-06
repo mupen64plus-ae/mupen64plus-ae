@@ -391,7 +391,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         {
             Cheat cheat = null;
             
-            if (mSelectedCheat != -1)
+            if (mSelectedCheat != -1 && mSelectedCheat < userCheats.size())
             {
                 cheat = userCheats.get(mSelectedCheat);
             }
