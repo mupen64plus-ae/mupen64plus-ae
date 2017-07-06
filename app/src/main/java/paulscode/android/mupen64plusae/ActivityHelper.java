@@ -154,6 +154,7 @@ public class ActivityHelper
         }
 
         intent.putExtra( Intent.EXTRA_TEXT, text );
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // intent.putExtra( Intent.EXTRA_SUBJECT, subject );
         // intent.putExtra( Intent.EXTRA_EMAIL, new String[] { emailTo } );
         context.startActivity( Intent.createChooser( intent, chooserTitle ) );
