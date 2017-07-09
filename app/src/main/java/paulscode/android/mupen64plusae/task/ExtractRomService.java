@@ -171,7 +171,7 @@ public class ExtractRomService extends Service {
                     }
                 }
                 zipFile.close();
-            } catch (final IOException | ArrayIndexOutOfBoundsException e) {
+            } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
                 Log.w("GalleryActivity", e);
             }
         }
