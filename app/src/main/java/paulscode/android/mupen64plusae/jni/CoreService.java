@@ -425,6 +425,12 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             }
             arglist.add( mRomPath );
 
+            Log.i("CoreService", "emuStar args:");
+            for(String arg : arglist)
+            {
+                Log.i("CoreService", arg);
+            }
+
             //This call blocks until emulation is stopped
             final int result = NativeExports.emuStart( mCoreUserDataDir, mCoreUserCacheDir, arglist.toArray() );
 
