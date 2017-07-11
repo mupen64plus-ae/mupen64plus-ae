@@ -29,7 +29,11 @@ import android.text.TextUtils;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
+import paulscode.android.mupen64plusae.preference.CompatListPreference;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
@@ -39,6 +43,7 @@ public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements
     private static final String SCREEN_ROOT = "screenRoot";
     private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
+    private static final String DISPLAY_ORIENTATION = "displayOrientation";
     private static final int VIDEO_HARDWARE_TYPE_CUSTOM = 999;
 
     // App data and user preferences
@@ -107,6 +112,27 @@ public class DisplayPrefsActivity extends AppCompatPreferenceActivity implements
         // Enable polygon offset pref if flicker reduction is custom
         PrefUtil.enablePreference(this, VIDEO_POLYGON_OFFSET,
             mGlobalPrefs.videoHardwareType == VIDEO_HARDWARE_TYPE_CUSTOM);
+
+        if(!AppData.IS_LOLLIPOP)
+        {
+            CompatListPreference orientationPreference = (CompatListPreference) findPreference( DISPLAY_ORIENTATION );
+
+            if(orientationPreference != null)
+            {
+                ArrayList<CharSequence> orientationEntriesArray = new ArrayList<>(Arrays.asList(orientationPreference.getEntries()));
+                ArrayList<CharSequence> orientationValuesArray = new ArrayList<>(Arrays.asList(orientationPreference.getEntryValues()));
+
+                int autoIndexIndex = orientationEntriesArray.indexOf(getText(R.string.displayOrientation_entryAuto));
+                if(autoIndexIndex != -1)
+                {
+                    orientationEntriesArray.remove(autoIndexIndex);
+                    orientationValuesArray.remove(orientationValuesArray.indexOf("-1"));
+                }
+
+                orientationPreference.setEntries(orientationEntriesArray.toArray(new CharSequence[orientationEntriesArray.size()]));
+                orientationPreference.setEntryValues(orientationValuesArray.toArray(new CharSequence[orientationValuesArray.size()]));
+            }
+        }
     }
 
     @Override
