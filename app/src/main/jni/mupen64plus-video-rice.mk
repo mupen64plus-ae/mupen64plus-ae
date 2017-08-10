@@ -70,6 +70,7 @@ LOCAL_LDFLAGS := $(COMMON_LDFLAGS) -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/v
 LOCAL_LDLIBS :=         \
     -lGLESv2            \
     -llog               \
+    -landroid           \
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:

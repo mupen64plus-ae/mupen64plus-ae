@@ -40,8 +40,107 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m64p_types.h"
 #include "osal_preproc.h"
 
+#include <android/log.h>
+
+#define  LOG_TAG    "VR-TESTING"
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+
 #undef min
 #undef max
+
+/////////////////////////////////////
+#define ASENSOR_TYPE_ROTATION_VECTOR 11
+#include <android/looper.h>
+#include <android/sensor.h>
+#include <unistd.h>
+
+void DisplaySensorData(int sensor_type, const ASensorEvent *data) {
+    LOGD("Sensor Type: %d", sensor_type);
+    LOGD("**************** Data: %f", data->data[0]);
+}
+
+int SetupSensor() {
+    ASensorManager* sensor_manager =
+            ASensorManager_getInstance();
+    if (!sensor_manager) {
+        LOGD("**************** Failed to get a sensor manager\n");
+        return 1;
+    }
+    ASensorList sensor_list = NULL;
+    int sensor_count = ASensorManager_getSensorList(sensor_manager, &sensor_list);
+    LOGD("**************** Found %d supported sensors\n", sensor_count);
+    for (int i = 0; i < sensor_count; i++) {
+        LOGD("**************** HAL supports sensor %s\n", ASensor_getName(sensor_list[i]));
+    }
+    const int kLooperId = 1;
+    ASensorEventQueue* queue = ASensorManager_createEventQueue(
+            sensor_manager,
+            ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS),
+            kLooperId,
+            NULL, /* no callback */
+            NULL  /* no private data for a callback  */);
+    if (!queue) {
+        LOGD("**************** Failed to create a sensor event queue\n");
+        return 1;
+    }
+    // Find the first sensor of the specified type that can be opened
+    const int kTimeoutMicroSecs = 1000000;
+    const int kTimeoutMilliSecs = 1000;
+    ASensorRef sensor = NULL;
+    bool sensor_found = false;
+    for (int i = 0; i < sensor_count; i++) {
+        sensor = sensor_list[i];
+        if (ASensor_getType(sensor) != ASENSOR_TYPE_ROTATION_VECTOR)
+            continue;
+        if (ASensorEventQueue_enableSensor(queue, sensor) < 0)
+            continue;
+        if (ASensorEventQueue_setEventRate(queue, sensor, kTimeoutMicroSecs) < 0) {
+            LOGD("**************** Failed to set the %s sample rate\n",
+                    ASensor_getName(sensor));
+            return 1;
+        }
+        // Found an equipped sensor of the specified type.
+        sensor_found = true;
+        break;
+    }
+    if (!sensor_found) {
+        LOGD("**************** No sensor of the specified type found\n");
+        int ret = ASensorManager_destroyEventQueue(sensor_manager, queue);
+        if (ret < 0)
+            LOGD("**************** Failed to destroy event queue: %s\n", strerror(-ret));
+        return 1;
+    }
+    LOGD("\n**************** Sensor %s activated\n", ASensor_getName(sensor));
+    const int kNumEvents = 1;
+    const int kNumSamples = 10;
+    const int kWaitTimeSecs = 1;
+    for (int i = 0; i < kNumSamples; i++) {
+        ASensorEvent data[kNumEvents];
+        memset(data, 0, sizeof(data));
+        ALooper_pollAll(
+                kTimeoutMilliSecs,
+                NULL /* no output file descriptor */,
+                NULL /* no output event */,
+                NULL /* no output data */);
+        if (ASensorEventQueue_getEvents(queue, data, kNumEvents) <= 0) {
+            LOGD("**************** Failed to read data from the sensor.\n");
+            continue;
+        }
+        DisplaySensorData(ASENSOR_TYPE_ROTATION_VECTOR, data);
+        sleep(kWaitTimeSecs);
+    }
+    int ret = ASensorEventQueue_disableSensor(queue, sensor);
+    if (ret < 0) {
+        LOGD("**************** Failed to disable %s: %s\n",
+                ASensor_getName(sensor), strerror(-ret));
+    }
+    ret = ASensorManager_destroyEventQueue(sensor_manager, queue);
+    if (ret < 0) {
+        LOGD("**************** Failed to destroy event queue: %s\n", strerror(-ret));
+        return 1;
+    }
+}
+///////////////////////////////
 
 extern FiddledVtx * g_pVtxBase;
 CRender * CRender::g_pRender=NULL;
@@ -113,7 +212,7 @@ CRender::CRender() :
     m_pColorCombiner->Initialize();
 
     m_pAlphaBlender = CDeviceBuilder::GetBuilder()->CreateAlphaBlender(this);
-
+    SetupSensor();
 }
 
 CRender::~CRender()
@@ -186,7 +285,10 @@ void CRender::SetProjection(const Matrix & mat, bool bPush, bool bReplace)
             gRSP.projectionMtxs[gRSP.projectionMtxTop] = mat * gRSP.projectionMtxs[gRSP.projectionMtxTop];
         }
     }
-    
+
+    XMATRIX vrTransform(0.707,0.707,0,0, -0.707f,0.707,0,0, 0,0,1,0, 0,0,0,1);
+    gRSP.projectionMtxs[gRSP.projectionMtxTop] = vrTransform * gRSP.projectionMtxs[gRSP.projectionMtxTop];
+
     gRSP.bMatrixIsUpdated = true;
 
     DumpMatrix(mat,"Set Projection Matrix");
