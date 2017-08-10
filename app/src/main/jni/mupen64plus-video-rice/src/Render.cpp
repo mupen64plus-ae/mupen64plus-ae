@@ -87,7 +87,7 @@ int SetupSensor() {
         return 1;
     }
     // Find the first sensor of the specified type that can be opened
-    const int kTimeoutMicroSecs = 1000000;
+    const int kTimeoutMicroSecs = 10000;
     bool sensor_found = false;
     for (int i = 0; i < sensor_count; i++) {
         ASensorRef sensor = sensor_list[i];
@@ -136,18 +136,42 @@ int pollForSensorData() {
         return 1;
     }
 
-    float x = data[0].data[0];
-    float y = data[0].data[1];
-    float z = data[0].data[2];
-    float w = data[0].data[3];
+    float q1 = data[0].data[0];
+    float q2 = data[0].data[1];
+    float q3 = data[0].data[2];
+    float q0 = data[0].data[3];
 
-    VR_TRANSFORM_MAT = XMATRIX(
-            1-2*y*y-2*z*z, 2*x*x-2*z*w, 2*x*z+2*y*w, 0,
-            2*x*y+2*z*w, 1-2*x*x-2*z*z, 2*y*z-2*x*w, 0,
-            2*x*z-2*y*w, 2*y*z+2*x*w, 1-2*x*x-2*y*y, 0,
-            0, 0, 0, 1
-    );
+    q0 = 1 - q1*q1 - q2*q2 - q3*q3;
+    q0 = (q0 > 0) ? (float)sqrt(q0) : 0;
 
+    float sq_q1 = 2 * q1 * q1;
+    float sq_q2 = 2 * q2 * q2;
+    float sq_q3 = 2 * q3 * q3;
+    float q1_q2 = 2 * q1 * q2;
+    float q3_q0 = 2 * q3 * q0;
+    float q1_q3 = 2 * q1 * q3;
+    float q2_q0 = 2 * q2 * q0;
+    float q2_q3 = 2 * q2 * q3;
+    float q1_q0 = 2 * q1 * q0;
+
+    XMATRIX R(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+
+    R._11 = 1 - sq_q2 - sq_q3;
+    R._12 = q1_q2 - q3_q0;
+    R._13 = q1_q3 + q2_q0;
+    R._14 = 0.0f;
+    R._21 = q1_q2 + q3_q0;
+    R._22 = 1 - sq_q1 - sq_q3;
+    R._23 = q2_q3 - q1_q0;
+    R._24 = 0.0f;
+    R._31 = q1_q3 - q2_q0;
+    R._32 = q2_q3 + q1_q0;
+    R._33 = 1 - sq_q1 - sq_q2;
+    R._34 = 0.0f;
+
+    XMATRIX BASIS(0,1,0,0, 0,0,1,0, 1,0,0,0, 0,0,0,1);
+
+    VR_TRANSFORM_MAT = BASIS*R*BASIS;
     return 0;
 }
 
