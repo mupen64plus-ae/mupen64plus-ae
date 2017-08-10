@@ -52,14 +52,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define ASENSOR_TYPE_ROTATION_VECTOR 11
 #include <android/looper.h>
 #include <android/sensor.h>
-#include <unistd.h>
 
-void DisplaySensorData(int sensor_type, const ASensorEvent *data) {
-    LOGD("Sensor Type: %d", sensor_type);
-    LOGD("**************** Data: %f", data->data[0]);
-}
+static ASensorEventQueue* VR_SENSOR_QUEUE = NULL;
+static ASensorRef VR_SENSOR = NULL;
+static XMATRIX VR_TRANSFORM_MAT(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
 
 int SetupSensor() {
+    if (VR_SENSOR_QUEUE != NULL) {
+        LOGD("**************** VR_SENSOR_QUEUE Already Initialized!\n");
+        return 1;
+    }
+
     ASensorManager* sensor_manager =
             ASensorManager_getInstance();
     if (!sensor_manager) {
@@ -73,73 +76,93 @@ int SetupSensor() {
         LOGD("**************** HAL supports sensor %s\n", ASensor_getName(sensor_list[i]));
     }
     const int kLooperId = 1;
-    ASensorEventQueue* queue = ASensorManager_createEventQueue(
+    VR_SENSOR_QUEUE = ASensorManager_createEventQueue(
             sensor_manager,
             ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS),
             kLooperId,
             NULL, /* no callback */
             NULL  /* no private data for a callback  */);
-    if (!queue) {
+    if (!VR_SENSOR_QUEUE) {
         LOGD("**************** Failed to create a sensor event queue\n");
         return 1;
     }
     // Find the first sensor of the specified type that can be opened
     const int kTimeoutMicroSecs = 1000000;
-    const int kTimeoutMilliSecs = 1000;
-    ASensorRef sensor = NULL;
     bool sensor_found = false;
     for (int i = 0; i < sensor_count; i++) {
-        sensor = sensor_list[i];
+        ASensorRef sensor = sensor_list[i];
         if (ASensor_getType(sensor) != ASENSOR_TYPE_ROTATION_VECTOR)
             continue;
-        if (ASensorEventQueue_enableSensor(queue, sensor) < 0)
+        if (ASensorEventQueue_enableSensor(VR_SENSOR_QUEUE, sensor) < 0)
             continue;
-        if (ASensorEventQueue_setEventRate(queue, sensor, kTimeoutMicroSecs) < 0) {
+        if (ASensorEventQueue_setEventRate(VR_SENSOR_QUEUE, sensor, kTimeoutMicroSecs) < 0) {
             LOGD("**************** Failed to set the %s sample rate\n",
                     ASensor_getName(sensor));
             return 1;
         }
         // Found an equipped sensor of the specified type.
         sensor_found = true;
+        VR_SENSOR = sensor;
         break;
     }
     if (!sensor_found) {
         LOGD("**************** No sensor of the specified type found\n");
-        int ret = ASensorManager_destroyEventQueue(sensor_manager, queue);
+        int ret = ASensorManager_destroyEventQueue(sensor_manager, VR_SENSOR_QUEUE);
         if (ret < 0)
             LOGD("**************** Failed to destroy event queue: %s\n", strerror(-ret));
+        VR_SENSOR_QUEUE = NULL;
         return 1;
     }
-    LOGD("\n**************** Sensor %s activated\n", ASensor_getName(sensor));
-    const int kNumEvents = 1;
-    const int kNumSamples = 10;
-    const int kWaitTimeSecs = 1;
-    for (int i = 0; i < kNumSamples; i++) {
-        ASensorEvent data[kNumEvents];
-        memset(data, 0, sizeof(data));
-        ALooper_pollAll(
-                kTimeoutMilliSecs,
-                NULL /* no output file descriptor */,
-                NULL /* no output event */,
-                NULL /* no output data */);
-        if (ASensorEventQueue_getEvents(queue, data, kNumEvents) <= 0) {
-            LOGD("**************** Failed to read data from the sensor.\n");
-            continue;
-        }
-        DisplaySensorData(ASENSOR_TYPE_ROTATION_VECTOR, data);
-        sleep(kWaitTimeSecs);
+    LOGD("\n**************** Sensor %s activated\n", ASensor_getName(VR_SENSOR));
+
+    return 0;
+}
+
+int pollForSensorData() {
+    if (!VR_SENSOR_QUEUE || !VR_SENSOR) {
+        LOGD("**************** Sensors not initialized\n");
+        return 1;
     }
-    int ret = ASensorEventQueue_disableSensor(queue, sensor);
+
+    ASensorEvent data[1];
+    memset(data, 0, sizeof(data));
+    ALooper_pollAll(
+            1, // timeout
+            NULL /* no output file descriptor */,
+            NULL /* no output event */,
+            NULL /* no output data */);
+    if (ASensorEventQueue_getEvents(VR_SENSOR_QUEUE, data, 1) <= 0) {
+        //LOGD("**************** Failed to read data from the sensor.\n");
+        return 1;
+    }
+
+    LOGD("**************** Got sample: %f.\n", data[0].data[0]);
+
+    return 0;
+}
+
+int DestroySensor() {
+    ASensorManager* sensor_manager =
+            ASensorManager_getInstance();
+    if (!sensor_manager) {
+        LOGD("**************** Failed to get a sensor manager\n");
+        return 1;
+    }
+
+    int ret = ASensorEventQueue_disableSensor(VR_SENSOR_QUEUE, VR_SENSOR);
     if (ret < 0) {
         LOGD("**************** Failed to disable %s: %s\n",
-                ASensor_getName(sensor), strerror(-ret));
+             ASensor_getName(VR_SENSOR), strerror(-ret));
     }
-    ret = ASensorManager_destroyEventQueue(sensor_manager, queue);
+    ret = ASensorManager_destroyEventQueue(sensor_manager, VR_SENSOR_QUEUE);
     if (ret < 0) {
         LOGD("**************** Failed to destroy event queue: %s\n", strerror(-ret));
         return 1;
     }
+
+    return 0;
 }
+
 ///////////////////////////////
 
 extern FiddledVtx * g_pVtxBase;
@@ -228,6 +251,8 @@ CRender::~CRender()
         CDeviceBuilder::GetBuilder()->DeleteAlphaBlender();
         m_pAlphaBlender = NULL;
     }
+
+    DestroySensor();
 }
 
 void CRender::ResetMatrices()
@@ -286,8 +311,8 @@ void CRender::SetProjection(const Matrix & mat, bool bPush, bool bReplace)
         }
     }
 
-    XMATRIX vrTransform(0.707,0.707,0,0, -0.707f,0.707,0,0, 0,0,1,0, 0,0,0,1);
-    gRSP.projectionMtxs[gRSP.projectionMtxTop] = vrTransform * gRSP.projectionMtxs[gRSP.projectionMtxTop];
+    pollForSensorData();
+    gRSP.projectionMtxs[gRSP.projectionMtxTop] = VR_TRANSFORM_MAT * gRSP.projectionMtxs[gRSP.projectionMtxTop];
 
     gRSP.bMatrixIsUpdated = true;
 
