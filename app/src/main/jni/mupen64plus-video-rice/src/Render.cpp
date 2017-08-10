@@ -127,7 +127,7 @@ int pollForSensorData() {
     ASensorEvent data[1];
     memset(data, 0, sizeof(data));
     ALooper_pollAll(
-            1, // timeout
+            0, // timeout
             NULL /* no output file descriptor */,
             NULL /* no output event */,
             NULL /* no output data */);
@@ -136,7 +136,17 @@ int pollForSensorData() {
         return 1;
     }
 
-    LOGD("**************** Got sample: %f.\n", data[0].data[0]);
+    float x = data[0].data[0];
+    float y = data[0].data[1];
+    float z = data[0].data[2];
+    float w = data[0].data[3];
+
+    VR_TRANSFORM_MAT = XMATRIX(
+            1-2*y*y-2*z*z, 2*x*x-2*z*w, 2*x*z+2*y*w, 0,
+            2*x*y+2*z*w, 1-2*x*x-2*z*z, 2*y*z-2*x*w, 0,
+            2*x*z-2*y*w, 2*y*z+2*x*w, 1-2*x*x-2*y*y, 0,
+            0, 0, 0, 1
+    );
 
     return 0;
 }
