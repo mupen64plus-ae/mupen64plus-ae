@@ -195,6 +195,9 @@ int pollForSensorData() {
     float q3 = data[0].data[2];
     float q0 = data[0].data[3];
 
+    float d = (float) sqrt(q1*q1+q2*q2+q3*q3+q0*q0);
+    q1 /= d; q2 /= d; q3 /= d; q0 /= d;
+
     float sq_q1 = 2 * q1 * q1;
     float sq_q2 = 2 * q2 * q2;
     float sq_q3 = 2 * q3 * q3;
@@ -217,14 +220,10 @@ int pollForSensorData() {
     R._32 = q2_q3 + q1_q0;
     R._33 = 1 - sq_q1 - sq_q2;
 
-    VR_TRANSFORM_MAT = XMATRIX(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
-    remapCoordinateSystem(R, AXIS_Y, AXIS_MINUS_X, VR_TRANSFORM_MAT);
+//    VR_TRANSFORM_MAT = XMATRIX(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+//    remapCoordinateSystem(R, AXIS_Y, AXIS_MINUS_X, VR_TRANSFORM_MAT);
 
-//    LOGD("************************ Quaternion matrix\n");
-//    LOGD("************************ %f %f %f %f", R._11, R._12, R._13, R._14);
-//    LOGD("************************ %f %f %f %f", R._21, R._22, R._23, R._24);
-//    LOGD("************************ %f %f %f %f", R._31, R._32, R._33, R._34);
-//    LOGD("************************ %f %f %f %f", R._41, R._42, R._43, R._44);
+    VR_TRANSFORM_MAT = R;
 
     return 0;
 }
