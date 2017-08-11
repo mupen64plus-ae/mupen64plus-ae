@@ -51,6 +51,7 @@ LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/liblinux/BMGUtils.c       \
     $(SRCDIR)/liblinux/bmp.c            \
     $(SRCDIR)/liblinux/pngrw.c          \
+    $(SRCDIR)/VR.cpp          \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
