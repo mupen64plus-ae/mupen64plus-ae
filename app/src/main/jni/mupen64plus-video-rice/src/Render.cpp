@@ -190,9 +190,6 @@ void CRender::SetProjection(const Matrix & mat, bool bPush, bool bReplace)
         }
     }
 
-    pollForSensorData();
-    gRSP.projectionMtxs[gRSP.projectionMtxTop] = VR_TRANSFORM_MAT * gRSP.projectionMtxs[gRSP.projectionMtxTop];
-
     gRSP.bMatrixIsUpdated = true;
 
     DumpMatrix(mat,"Set Projection Matrix");
@@ -344,6 +341,7 @@ void CRender::SetCombinerAndBlender()
 
 void CRender::RenderReset()
 {
+    pollForSensorData();
     UpdateClipRectangle();
     ResetMatrices();
     SetZBias(0);

@@ -37,6 +37,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m64p_plugin.h"
 #include "osal_preproc.h"
 #include "typedefs.h"
+#include "VR.h"
 
 #undef min
 #undef max
@@ -2287,7 +2288,7 @@ void UpdateCombinedMatrix()
 {
     if( gRSP.bMatrixIsUpdated )
     {
-        gRSPworldProject = gRSP.modelviewMtxs[gRSP.modelViewMtxTop] * gRSP.projectionMtxs[gRSP.projectionMtxTop];
+        gRSPworldProject = gRSP.modelviewMtxs[gRSP.modelViewMtxTop] * VR_TRANSFORM_MAT * gRSP.projectionMtxs[gRSP.projectionMtxTop];
         gRSP.bMatrixIsUpdated = false;
         gRSP.bCombinedMatrixIsUpdated = true;
     }

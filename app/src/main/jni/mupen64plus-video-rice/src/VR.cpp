@@ -178,6 +178,8 @@ int pollForSensorData() {
     VR_TRANSFORM_MAT = XMATRIX(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
     remapCoordinateSystem(R, AXIS_Y, AXIS_MINUS_X, VR_TRANSFORM_MAT);
 
+    while (ASensorEventQueue_getEvents(VR_SENSOR_QUEUE, data, 1) > 0);
+
     return 0;
 }
 
