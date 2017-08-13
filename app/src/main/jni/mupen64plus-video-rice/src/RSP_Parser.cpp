@@ -41,6 +41,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "osal_preproc.h"
 #include "typedefs.h"
 #include "ucode.h"
+#include "VR.h"
 
 #undef min
 #undef max
@@ -874,7 +875,11 @@ void DLParser_Process(OSTask * pTask)
     SetVIScales();
     CRender::g_pRender->RenderReset();
     CRender::g_pRender->BeginRendering();
-    CRender::g_pRender->SetViewport(0, 0, windowSetting.uViWidth, windowSetting.uViHeight, 0x3FF);
+
+    int start = (left_eye? 0 : windowSetting.uViWidth / 2);
+    CRender::g_pRender->SetViewport(start, 0, windowSetting.uViWidth / 2 + start,
+                                    windowSetting.uViHeight, 0x3FF);
+
     CRender::g_pRender->SetFillMode(options.bWinFrameMode? RICE_FILLMODE_WINFRAME : RICE_FILLMODE_SOLID);
 
     try
@@ -901,7 +906,7 @@ void DLParser_Process(OSTask * pTask)
 
             Gfx *pgfx = (Gfx*)&g_pRDRAMu32[(gDlistStack[gDlistStackPointer].pc>>2)];
 #ifdef DEBUGGER
-            LOG_UCODE("0x%08x: %08x %08x %-10s", 
+            LOG_UCODE("0x%08x: %08x %08x %-10s",
                 gDlistStack[gDlistStackPointer].pc, pgfx->words.w0, pgfx->words.w1, (gRSP.ucode!=5&&gRSP.ucode!=10)?ucodeNames_GBI1[(pgfx->words.w0>>24)]:ucodeNames_GBI2[(pgfx->words.w0>>24)]);
 #endif
             gDlistStack[gDlistStackPointer].pc += 8;
