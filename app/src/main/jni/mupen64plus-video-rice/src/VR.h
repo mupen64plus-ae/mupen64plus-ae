@@ -12,4 +12,5 @@ bool remapCoordinateSystem(const XMATRIX &inR, const int X, const int Y, XMATRIX
 int pollForSensorData();
 int DestroySensor();
 extern XMATRIX VR_TRANSFORM_MAT;
+extern bool left_eye;
 #endif

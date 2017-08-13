@@ -7,6 +7,7 @@
 static ASensorEventQueue* VR_SENSOR_QUEUE = NULL;
 static ASensorRef VR_SENSOR = NULL;
 XMATRIX VR_TRANSFORM_MAT(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+bool left_eye = true;
 
 int SetupSensor() {
     if (VR_SENSOR_QUEUE != NULL) {
@@ -174,6 +175,10 @@ int pollForSensorData() {
     VR_TRANSFORM_MAT = XMATRIX(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
     remapCoordinateSystem(R, AXIS_Y, AXIS_MINUS_X, VR_TRANSFORM_MAT);
     VR_TRANSFORM_MAT = XMATRIX(1,0,0,0, 0,0,1,0, 0,-1,0,0, 0,0,0,1) * VR_TRANSFORM_MAT;
+
+    float trans = 200;
+    if (!left_eye) trans *= -1;
+    VR_TRANSFORM_MAT = VR_TRANSFORM_MAT * XMATRIX(1,0,0,0, 0,1,0,0, 0,0,1,0, trans,0,0,1);
 
     while (ASensorEventQueue_getEvents(VR_SENSOR_QUEUE, data, 1) > 0);
 
