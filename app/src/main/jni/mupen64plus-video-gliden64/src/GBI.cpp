@@ -18,6 +18,7 @@
 #include "L3DEX2.h"
 #include "S2DEX.h"
 #include "S2DEX2.h"
+#include "F3DAM.h"
 #include "F3DDKR.h"
 #include "F3DBETA.h"
 #include "F3DPD.h"
@@ -27,6 +28,7 @@
 #include "F3DEX2MM.h"
 #include "F3DTEXA.h"
 #include "F3DEX2ACCLAIM.h"
+#include "F3DSWRS.h"
 #include "ZSort.h"
 #include "CRC.h"
 #include "Log.h"
@@ -55,6 +57,7 @@ SpecialMicrocodeInfo specialMicrocodes[] =
 	{ F3DPD,		true,	true,	0x1c4f7869, "Perfect Dark" },
 	{ Turbo3D,		false,	true,	0x2bdcfc8a, "Turbo3D" },
 	{ F3DEX2CBFD,	true,	true,	0x1b4ace88, "Conker's Bad Fur Day" },
+	{ F3DSWRS,		false,	false,	0xda51ccdb, "Star Wars RS" },
 	{ F3DEX2MM,		true,	true,	0xd39a0d4f,	"Animal Forest" },
 	{ S2DEX2,		false,	true,	0x2c399dd,	"Animal Forest" },
 	{ T3DUX,		false,	true,	0xbad437f2, "T3DUX vers 0.83 for Toukon Road" },
@@ -180,6 +183,7 @@ void GBIInfo::_makeCurrent(MicrocodeInfo * _pCurrent)
 			case F3DJFG:		F3DJFG_Init();			break;
 			case F3DBETA:		F3DBETA_Init();			break;
 			case F3DPD:			F3DPD_Init();			break;
+			case F3DAM:			F3DAM_Init();			break;
 			case Turbo3D:		F3D_Init();				break;
 			case ZSortp:		ZSort_Init();			break;
 			case F3DEX2CBFD:	F3DEX2CBFD_Init();		break;
@@ -189,6 +193,7 @@ void GBIInfo::_makeCurrent(MicrocodeInfo * _pCurrent)
 			case F3DTEXA:		F3DTEXA_Init();			break;
 			case T3DUX:			F3D_Init();				break;
 			case F3DEX2ACCLAIM:	F3DEX2ACCLAIM_Init();	break;
+			case F3DSWRS:	F3DSWRS_Init();		break;
 		}
 
 		if (gfxContext.isSupported(graphics::SpecialFeatures::NearPlaneClipping)) {
@@ -295,6 +300,8 @@ void GBIInfo::loadMicrocode(u32 uc_start, u32 uc_dstart, u16 uc_dsize)
 						type = F3DEX2MM;
 					else if (strncmp(&uc_str[14], "F3DTEX/A", 8) == 0)
 						type = F3DTEXA;
+					else if (strncmp(&uc_str[14], "F3DAM", 5) == 0)
+						type = F3DAM;
 					else if (strncmp(&uc_str[14], "F3DLX.Rej", 9) == 0)
 						current.NoN = true;
 					else if (strncmp(&uc_str[14], "F3DLP.Rej", 9) == 0) {
