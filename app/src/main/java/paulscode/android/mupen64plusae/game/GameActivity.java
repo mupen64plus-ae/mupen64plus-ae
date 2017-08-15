@@ -247,6 +247,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if( extras == null )
         {
             finish();
+            return;
         }
 
         mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
