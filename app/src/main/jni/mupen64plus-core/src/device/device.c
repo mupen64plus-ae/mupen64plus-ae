@@ -38,7 +38,7 @@ void init_device(struct device* dev,
     unsigned int count_per_op,
     int no_compiled_jump,
     /* ai */
-    struct audio_out_backend* aout, unsigned int fixed_audio_pos,
+    struct audio_out_backend* aout,
     /* pi */
     uint8_t* rom, size_t rom_size,
     struct storage_backend* flashram_storage,
@@ -53,6 +53,8 @@ void init_device(struct device* dev,
     uint16_t eeprom_id, struct storage_backend* eeprom_storage,
     struct clock_backend* clock,
     unsigned int delay_si,
+    /* sp */
+    unsigned int audio_signal,
     /* vi */
     unsigned int vi_clock, unsigned int expected_refresh_rate, unsigned int count_per_scanline, unsigned int alternate_timing)
 {
@@ -74,8 +76,8 @@ void init_device(struct device* dev,
     init_r4300(&dev->r4300, &dev->mem, &dev->ri, interrupt_handlers,
             emumode, count_per_op, no_compiled_jump);
     init_rdp(&dev->dp, &dev->r4300, &dev->sp, &dev->ri);
-    init_rsp(&dev->sp, &dev->r4300, &dev->dp, &dev->ri);
-    init_ai(&dev->ai, &dev->r4300, &dev->ri, &dev->vi, aout, fixed_audio_pos);
+    init_rsp(&dev->sp, &dev->r4300, &dev->dp, &dev->ri, audio_signal);
+    init_ai(&dev->ai, &dev->r4300, &dev->ri, &dev->vi, aout);
     init_pi(&dev->pi, rom, rom_size, flashram_storage, sram_storage, &dev->r4300, &dev->ri, &dev->si.pif.cic);
     init_ri(&dev->ri, dram, dram_size);
     init_si(&dev->si,

@@ -119,7 +119,7 @@ DECLARE_INSTRUCTION(LB)
     int64_t *lsrtp = &irt;
     ADD_TO_PC(1);
     unsigned int shift = bshift(lsaddr);
-    *r4300_address(r4300) = lsaddr & ~0x3;
+    *r4300_address(r4300) = lsaddr;
     r4300->rdword = (uint64_t*) lsrtp;
     read_word_in_memory();
     if (*r4300_address(r4300)) {
@@ -136,7 +136,7 @@ DECLARE_INSTRUCTION(LBU)
     int64_t *lsrtp = &irt;
     ADD_TO_PC(1);
     unsigned int shift = bshift(lsaddr);
-    *r4300_address(r4300) = lsaddr & ~0x3;
+    *r4300_address(r4300) = lsaddr;
     r4300->rdword = (uint64_t*) lsrtp;
     read_word_in_memory();
     if (*r4300_address(r4300)) {
@@ -152,7 +152,7 @@ DECLARE_INSTRUCTION(LH)
     int64_t *lsrtp = &irt;
     ADD_TO_PC(1);
     unsigned int shift = hshift(lsaddr);
-    *r4300_address(r4300) = lsaddr & ~0x3;
+    *r4300_address(r4300) = lsaddr;
     r4300->rdword = (uint64_t*) lsrtp;
     read_word_in_memory();
     if (*r4300_address(r4300)) {
@@ -169,7 +169,7 @@ DECLARE_INSTRUCTION(LHU)
     int64_t *lsrtp = &irt;
     ADD_TO_PC(1);
     unsigned int shift = hshift(lsaddr);
-    *r4300_address(r4300) = lsaddr & ~0x3;
+    *r4300_address(r4300) = lsaddr;
     r4300->rdword = (uint64_t*) lsrtp;
     read_word_in_memory();
     if (*r4300_address(r4300)) {
@@ -357,7 +357,7 @@ DECLARE_INSTRUCTION(SB)
     int64_t *lsrtp = &irt;
     ADD_TO_PC(1);
     unsigned int shift = bshift(lsaddr);
-    *r4300_address(r4300) = lsaddr & ~0x3;
+    *r4300_address(r4300) = lsaddr;
     *r4300_wword(r4300) = (uint32_t)*lsrtp << shift;
     *r4300_wmask(r4300) = UINT32_C(0xff) << shift;
     write_word_in_memory();
@@ -371,7 +371,7 @@ DECLARE_INSTRUCTION(SH)
     int64_t *lsrtp = &irt;
     ADD_TO_PC(1);
     unsigned int shift = hshift(lsaddr);
-    *r4300_address(r4300) = lsaddr & ~0x3;
+    *r4300_address(r4300) = lsaddr;
     *r4300_wword(r4300) = (uint32_t)*lsrtp << shift;
     *r4300_wmask(r4300) = UINT32_C(0xffff) << shift;
     write_word_in_memory();
@@ -1161,6 +1161,12 @@ DECLARE_INSTRUCTION(TLBR)
 static void TLBWrite(struct r4300_core* r4300, unsigned int idx)
 {
     uint32_t* cp0_regs = r4300_cp0_regs(&r4300->cp0);
+    uint32_t pc_addr = *r4300_pc(r4300);
+
+    if (pc_addr >= r4300->cp0.tlb.entries[idx].start_even && pc_addr < r4300->cp0.tlb.entries[idx].end_even && r4300->cp0.tlb.entries[idx].v_even)
+        return;
+    if (pc_addr >= r4300->cp0.tlb.entries[idx].start_odd && pc_addr < r4300->cp0.tlb.entries[idx].end_odd && r4300->cp0.tlb.entries[idx].v_odd)
+        return;
 
     if (r4300->emumode != EMUMODE_PURE_INTERPRETER)
     {
@@ -1330,7 +1336,7 @@ DECLARE_INSTRUCTION(TLBWR)
     DECLARE_R4300
     uint32_t* cp0_regs = r4300_cp0_regs(&r4300->cp0);
     cp0_update_count(r4300);
-    cp0_regs[CP0_RANDOM_REG] = (cp0_regs[CP0_COUNT_REG]/2 % (32 - cp0_regs[CP0_WIRED_REG]))
+    cp0_regs[CP0_RANDOM_REG] = (cp0_regs[CP0_COUNT_REG]/r4300->cp0.count_per_op % (32 - cp0_regs[CP0_WIRED_REG]))
         + cp0_regs[CP0_WIRED_REG];
     TLBWrite(r4300, cp0_regs[CP0_RANDOM_REG]);
     ADD_TO_PC(1);
@@ -1356,7 +1362,7 @@ DECLARE_INSTRUCTION(MFC0)
     {
     case CP0_RANDOM_REG:
         cp0_update_count(r4300);
-        cp0_regs[CP0_RANDOM_REG] = (cp0_regs[CP0_COUNT_REG]/2 % (32 - cp0_regs[CP0_WIRED_REG]))
+        cp0_regs[CP0_RANDOM_REG] = (cp0_regs[CP0_COUNT_REG]/r4300->cp0.count_per_op % (32 - cp0_regs[CP0_WIRED_REG]))
             + cp0_regs[CP0_WIRED_REG];
         break;
     case CP0_COUNT_REG:

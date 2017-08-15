@@ -92,12 +92,11 @@ int         g_EmulatorRunning = 0;      // need separate boolean to tell if emul
 
 int g_rom_pause;
 
-/* g_rdram{,_size} are globals to allow plugins early access (before device is initialized).
- * Please use g_dev.ri.rdram.dram{,_size} instead, after device initialization.
- * Initialization and DeInitialization of these variables is done at CoreStartup and CoreShutdown.
+/* g_rdram is a global to allow plugins early access (before device is initialized).
+ * Please use g_dev.ri.rdram.dram instead, after device initialization.
+ * Initialization and DeInitialization of this variable is done at CoreStartup and CoreShutdown.
  */
 void* g_rdram = NULL;
-size_t g_rdram_size = 0;
 
 struct device g_dev;
 
@@ -963,9 +962,11 @@ static void init_gb_ram(void* opaque, struct storage_backend* storage)
 m64p_error main_run(void)
 {
     size_t i;
+    size_t rdram_size;
     unsigned int delay_si;
     unsigned int count_per_op;
     unsigned int emumode;
+    unsigned int disable_extra_mem;
     int alternate_vi_timing, count_per_scanline;
     int no_compiled_jump;
     struct file_storage eep;
@@ -995,10 +996,21 @@ m64p_error main_run(void)
 #ifdef NEW_DYNAREC
     stop_after_jal = ConfigGetParamBool(g_CoreConfig, "DisableSpecRecomp");
 #endif
-    delay_si = ConfigGetParamBool(g_CoreConfig, "DelaySI");
+    if (!ROM_PARAMS.delaysi)
+        delay_si = ROM_PARAMS.delaysi;
+    else
+        delay_si = ConfigGetParamBool(g_CoreConfig, "DelaySI");
+
     count_per_op = ConfigGetParamInt(g_CoreConfig, "CountPerOp");
     alternate_vi_timing = ConfigGetParamInt(g_CoreConfig, "ViTiming");
     count_per_scanline  = ConfigGetParamInt(g_CoreConfig, "CountPerScanline");
+
+    if (ROM_PARAMS.disableextramem)
+        disable_extra_mem = ROM_PARAMS.disableextramem;
+    else
+        disable_extra_mem = ConfigGetParamInt(g_CoreConfig, "DisableExtraMem");
+
+    rdram_size = (disable_extra_mem == 0) ? 0x800000 : 0x400000;
 
     if (count_per_op <= 0)
         count_per_op = ROM_PARAMS.countperop;
@@ -1075,11 +1087,11 @@ m64p_error main_run(void)
                 emumode,
                 count_per_op,
                 no_compiled_jump,
-                &aout, ROM_PARAMS.fixedaudiopos,
+                &aout,
                 g_rom, g_rom_size,
                 &fla_storage,
                 &sra_storage,
-                g_rdram, g_rdram_size,
+                g_rdram, rdram_size,
                 cins,
                 mpk_storages,
                 rumbles,
@@ -1087,6 +1099,7 @@ m64p_error main_run(void)
                 (ROM_SETTINGS.savetype != EEPROM_16KB) ? 0x8000 : 0xc000, &eep_storage,
                 &clock,
                 delay_si,
+                ROM_PARAMS.audiosignal,
                 vi_clock_from_tv_standard(ROM_PARAMS.systemtype), vi_expected_refresh_rate_from_tv_standard(ROM_PARAMS.systemtype), count_per_scanline, alternate_vi_timing);
 
     // Attach rom to plugins
