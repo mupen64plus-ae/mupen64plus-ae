@@ -667,30 +667,42 @@ void GraphicsDrawer::drawTriangles()
 		return;
 	}
 
-	_prepareDrawTriangle();
+    for (int i=0; i<2; i++) {
+        const u32 bufferWidth = VI.width;
+        const u32 bufferHeight = VI_GetMaxBufferHeight(bufferWidth);
+        const f32 viewportScale = DisplayWindow::get().getScaleX();
+        const s32 size = (s32) (bufferWidth * viewportScale) / 2;
+        left_eye = (i==0);
+        const s32 start = (left_eye? 0 : size);
+        gfxContext.setViewport(start, 0, start+size, (s32) (bufferHeight * viewportScale));
 
-	Context::DrawTriangleParameters triParams;
-	triParams.mode = drawmode::TRIANGLES;
-	triParams.flatColors = m_bFlatColors;
-	triParams.elementsType = datatype::UNSIGNED_BYTE;
-	triParams.verticesCount = static_cast<u32>(triangles.maxElement) + 1;
-	triParams.elementsCount = triangles.num;
-	triParams.vertices = triangles.vertices.data();
-	triParams.elements = triangles.elements.data();
-	triParams.combiner = currentCombiner();
-	gfxContext.drawTriangles(triParams);
-	g_debugger.addTriangles(triParams);
+        _prepareDrawTriangle();
 
-	if (config.frameBufferEmulation.enable != 0) {
-		const f32 maxY = renderTriangles(triangles.vertices.data(), triangles.elements.data(), triangles.num);
-		frameBufferList().setBufferChanged(maxY);
-		if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdSoftwareRender &&
-			gDP.otherMode.depthUpdate != 0) {
-			FrameBuffer * pCurrentDepthBuffer = frameBufferList().findBuffer(gDP.depthImageAddress);
-			if (pCurrentDepthBuffer != nullptr)
-				pCurrentDepthBuffer->m_cleared = false;
-		}
-	}
+        Context::DrawTriangleParameters triParams;
+        triParams.mode = drawmode::TRIANGLES;
+        triParams.flatColors = m_bFlatColors;
+        triParams.elementsType = datatype::UNSIGNED_BYTE;
+        triParams.verticesCount = static_cast<u32>(triangles.maxElement) + 1;
+        triParams.elementsCount = triangles.num;
+        triParams.vertices = triangles.vertices.data();
+        triParams.elements = triangles.elements.data();
+        triParams.combiner = currentCombiner();
+        gfxContext.drawTriangles(triParams);
+        g_debugger.addTriangles(triParams);
+
+        if (config.frameBufferEmulation.enable != 0) {
+            const f32 maxY = renderTriangles(triangles.vertices.data(), triangles.elements.data(),
+                                             triangles.num);
+            frameBufferList().setBufferChanged(maxY);
+            if (config.frameBufferEmulation.copyDepthToRDRAM == Config::cdSoftwareRender &&
+                gDP.otherMode.depthUpdate != 0) {
+                FrameBuffer *pCurrentDepthBuffer = frameBufferList().findBuffer(
+                        gDP.depthImageAddress);
+                if (pCurrentDepthBuffer != nullptr)
+                    pCurrentDepthBuffer->m_cleared = false;
+            }
+        }
+    }
 
 	triangles.num = 0;
 	triangles.maxElement = 0;
