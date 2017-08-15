@@ -145,6 +145,7 @@ public class ActivityHelper
         Intent intent = new Intent( android.content.Intent.ACTION_SEND );
         intent.setType( "text/plain" );
         intent.addFlags( Intent.FLAG_ACTIVITY_NEW_DOCUMENT );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         //Put a limit on this to avoid android.os.TransactionTooLargeException exception
         int limit = 1024*1024-1000;
@@ -154,7 +155,6 @@ public class ActivityHelper
         }
 
         intent.putExtra( Intent.EXTRA_TEXT, text );
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // intent.putExtra( Intent.EXTRA_SUBJECT, subject );
         // intent.putExtra( Intent.EXTRA_EMAIL, new String[] { emailTo } );
         context.startActivity( Intent.createChooser( intent, chooserTitle ) );
