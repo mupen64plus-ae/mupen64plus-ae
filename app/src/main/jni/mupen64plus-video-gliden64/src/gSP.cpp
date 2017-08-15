@@ -24,6 +24,7 @@
 #include <Graphics/Context.h>
 #include <Graphics/Parameters.h>
 #include "DisplayWindow.h"
+#include "VR.h"
 
 using namespace std;
 using namespace graphics;
@@ -49,7 +50,9 @@ void gSPFlushTriangles()
 
 void gSPCombineMatrices()
 {
-	MultMatrix(gSP.matrix.projection, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
+    float res_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
+	MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], res_mat);
+	MultMatrix(gSP.matrix.projection, res_mat, gSP.matrix.combined);
 	gSP.changed &= ~CHANGED_MATRIX;
 }
 

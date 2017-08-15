@@ -23,6 +23,7 @@
 #include "RSP.h"
 #include "RDP.h"
 #include "VI.h"
+#include "VR.h"
 
 using namespace graphics;
 
@@ -31,10 +32,12 @@ GraphicsDrawer::GraphicsDrawer()
 , m_bImageTexture(false)
 , m_bFlatColors(false)
 {
+	SetupSensor();
 }
 
 GraphicsDrawer::~GraphicsDrawer()
 {
+	DestroySensor();
 	while (!m_osdMessages.empty())
 		std::this_thread::sleep_for(Milliseconds(1));
 }

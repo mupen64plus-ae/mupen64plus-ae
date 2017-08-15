@@ -26,6 +26,7 @@
 #include <Graphics/Context.h>
 #include <Graphics/Parameters.h>
 #include "DisplayWindow.h"
+#include "VR.h"
 
 using namespace std;
 using namespace graphics;
@@ -984,6 +985,7 @@ bool rdp_update(RdpUpdateResult & _result)
 
 void FrameBufferList::renderBuffer()
 {
+    pollForSensorData();
 	if (VI.width == 0 || *REG.VI_WIDTH == 0 || *REG.VI_H_START == 0) // H width is zero. Don't draw
 		return;
 
