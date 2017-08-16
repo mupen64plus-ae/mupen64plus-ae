@@ -4,6 +4,7 @@
 #include <cstring>
 #include "VR.h"
 #include "3DMath.h"
+#include "gSP.h"
 
 static ASensorEventQueue* VR_SENSOR_QUEUE = NULL;
 static ASensorRef VR_SENSOR = NULL;
@@ -187,11 +188,17 @@ int pollForSensorData() {
 }
 
 void UpdateVRTransform() {
-    float trans = 200;
+    float trans = -200;
     if (left_eye) trans *= -1;
     float trans_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {trans,0,0,1}};
     float res_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
     MultMatrix(trans_mat, ORIENTATION_MAT, res_mat);
+
+    MultMatrix(gSP.matrix.projection, res_mat, VR_TRANSFORM_MAT);
+
+    // Hack around swashed viewport
+    float change_aspect[4][4] = {{2,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
+    MultMatrix(change_aspect, VR_TRANSFORM_MAT, res_mat);
     CopyMatrix(VR_TRANSFORM_MAT, res_mat);
 }
 

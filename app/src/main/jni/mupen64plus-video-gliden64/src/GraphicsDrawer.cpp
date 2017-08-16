@@ -24,6 +24,8 @@
 #include "RDP.h"
 #include "VI.h"
 #include "VR.h"
+#include "3DMath.h"
+#include "gSP.h"
 
 using namespace graphics;
 
@@ -659,6 +661,15 @@ bool GraphicsDrawer::_canDraw() const
 	return config.frameBufferEmulation.enable == 0 || frameBufferList().getCurrent() != nullptr;
 }
 
+void transformVecProperly(SPVertex &v, float mtx[4][4]) {
+    float x = v.x, y = v.y, z = v.z, w = v.w;
+
+    v.x = x * mtx[0][0] + y * mtx[1][0] + z * mtx[2][0] + w * mtx[3][0];
+    v.y = x * mtx[0][1] + y * mtx[1][1] + z * mtx[2][1] + w * mtx[3][1];
+    v.z = x * mtx[0][2] + y * mtx[1][2] + z * mtx[2][2] + w * mtx[3][2];
+    v.w = x * mtx[0][3] + y * mtx[1][3] + z * mtx[2][3] + w * mtx[3][3];
+}
+
 void GraphicsDrawer::drawTriangles()
 {
 	if (triangles.num == 0 || !_canDraw()) {
@@ -666,6 +677,8 @@ void GraphicsDrawer::drawTriangles()
 		triangles.maxElement = 0;
 		return;
 	}
+
+    std::array<SPVertex, 256U> old_verts = std::array<SPVertex, 256U>(triangles.vertices);
 
     for (int i=0; i<2; i++) {
         const u32 bufferWidth = VI.width;
@@ -677,7 +690,24 @@ void GraphicsDrawer::drawTriangles()
         const s32 start = (left_eye? 0 : size);
         gfxContext.setViewport((s32) (start * viewportScale), 0, (s32) (size * viewportScale), (s32) (bufferHeight * viewportScale));
 
-        gSPCombineMatrices(); // Update left_eye
+        for (unsigned int j=0; j<triangles.vertices.size(); j++) {
+            SPVertex &vtx = triangles.vertices.at(j);
+            vtx.x = vtx.orig_x;
+            vtx.y = vtx.orig_y;
+            vtx.z = vtx.orig_z;
+            vtx.w = vtx.orig_w;
+            vtx.nx = vtx.orig_nx;
+            vtx.ny = vtx.orig_ny;
+            vtx.nz = vtx.orig_nz;
+            vtx.flag = vtx.orig_flag;
+            vtx.clip = vtx.orig_clip;
+            vtx.modify = vtx.orig_modify;
+            vtx.HWLight = vtx.orig_HWLight;
+
+            gSPCombineMatrices();
+            gSPProcessVertex(j);
+            gSPClipVertex(j);
+        }
 
         _prepareDrawTriangle();
 
@@ -705,6 +735,8 @@ void GraphicsDrawer::drawTriangles()
                     pCurrentDepthBuffer->m_cleared = false;
             }
         }
+
+        triangles.vertices = old_verts;
     }
 
 	triangles.num = 0;

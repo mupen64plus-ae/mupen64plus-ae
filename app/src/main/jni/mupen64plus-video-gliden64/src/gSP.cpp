@@ -51,14 +51,7 @@ void gSPFlushTriangles()
 void gSPCombineMatrices()
 {
     UpdateVRTransform();
-    float res_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-	MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], res_mat);
-	MultMatrix(gSP.matrix.projection, res_mat, gSP.matrix.combined);
-
-    // Hack around swashed viewport
-    float change_aspect[4][4] = {{2,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-    MultMatrix(change_aspect, gSP.matrix.combined, res_mat);
-    CopyMatrix(gSP.matrix.combined, res_mat);
+	MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
 
 	gSP.changed &= ~CHANGED_MATRIX;
 }
@@ -335,6 +328,20 @@ void gSPProcessVertex4(u32 v)
 		vPos[i][1] = vtx.y;
 		vPos[i][2] = vtx.z;
 		vtx.modify = 0;
+
+        CopyMatrix(vtx.proj_mtx, gSP.matrix.projection);
+        CopyMatrix(vtx.model_mtx, gSP.matrix.modelView[gSP.matrix.modelViewi]);
+        vtx.orig_x = vtx.x;
+        vtx.orig_y = vtx.y;
+        vtx.orig_z = vtx.z;
+        vtx.orig_w = vtx.w;
+        vtx.orig_nx = vtx.nx;
+        vtx.orig_ny = vtx.ny;
+        vtx.orig_nz = vtx.nz;
+        vtx.orig_flag = vtx.flag;
+        vtx.orig_clip = vtx.clip;
+        vtx.orig_modify = vtx.modify;
+        vtx.orig_HWLight = vtx.HWLight;
 	}
 	gSPTransformVertex4(v, gSP.matrix.combined );
 
@@ -613,7 +620,22 @@ void gSPProcessVertex(u32 v)
 	GraphicsDrawer & drawer = wnd.getDrawer();
 	SPVertex & vtx = drawer.getVertex(v);
 	float vPos[3] = {(float)vtx.x, (float)vtx.y, (float)vtx.z};
-	gSPTransformVertex( &vtx.x, gSP.matrix.combined );
+
+    CopyMatrix(vtx.proj_mtx, gSP.matrix.projection);
+    CopyMatrix(vtx.model_mtx, gSP.matrix.modelView[gSP.matrix.modelViewi]);
+    vtx.orig_x = vtx.x;
+    vtx.orig_y = vtx.y;
+    vtx.orig_z = vtx.z;
+    vtx.orig_w = vtx.w;
+    vtx.orig_nx = vtx.nx;
+    vtx.orig_ny = vtx.ny;
+    vtx.orig_nz = vtx.nz;
+    vtx.orig_flag = vtx.flag;
+    vtx.orig_clip = vtx.clip;
+    vtx.orig_modify = vtx.modify;
+    vtx.orig_HWLight = vtx.HWLight;
+
+    gSPTransformVertex( &vtx.x, gSP.matrix.combined );
 
 	if (wnd.isAdjustScreen() && (gDP.colorImage.width > VI.width * 98 / 100)) {
 		vtx.x *= wnd.getAdjustScale();

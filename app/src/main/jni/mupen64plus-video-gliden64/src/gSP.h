@@ -44,6 +44,16 @@ struct SPVertex
 	u8 HWLight;
 	u8 clip;
 	s16 flag;
+
+    // For VR
+    float proj_mtx[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
+    float model_mtx[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
+    f32 orig_x, orig_y, orig_z, orig_w;
+    f32 orig_nx, orig_ny, orig_nz;
+    u32 orig_modify;
+    u8 orig_HWLight;
+    u8 orig_clip;
+    s16 orig_flag;
 };
 
 struct gSPInfo
@@ -203,6 +213,7 @@ void gSPSetVertexNormaleBase( u32 base );
 void gSPProcessVertex(u32 v);
 void gSPCoordMod(u32 _w0, u32 _w1);
 void gSPCombineMatrices();
+void gSPClipVertex(u32 v);
 
 void gSPTriangleUnknown();
 
