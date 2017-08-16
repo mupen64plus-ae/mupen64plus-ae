@@ -677,6 +677,8 @@ void GraphicsDrawer::drawTriangles()
         const s32 start = (left_eye? 0 : size);
         gfxContext.setViewport((s32) (start * viewportScale), 0, (s32) (size * viewportScale), (s32) (bufferHeight * viewportScale));
 
+        gSPCombineMatrices(); // Update left_eye
+
         _prepareDrawTriangle();
 
         Context::DrawTriangleParameters triParams;

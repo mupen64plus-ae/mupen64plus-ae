@@ -7,6 +7,7 @@
 
 static ASensorEventQueue* VR_SENSOR_QUEUE = NULL;
 static ASensorRef VR_SENSOR = NULL;
+float ORIENTATION_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
 float VR_TRANSFORM_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
 bool left_eye = true;
 
@@ -173,20 +174,25 @@ int pollForSensorData() {
     R[2][1] = q2_q3 + q1_q0;
     R[2][2] = 1 - sq_q1 - sq_q2;
 
-    remapCoordinateSystem(R, AXIS_Y, AXIS_MINUS_X, VR_TRANSFORM_MAT);
+    remapCoordinateSystem(R, AXIS_Y, AXIS_MINUS_X, ORIENTATION_MAT);
 
     float rot_mat[4][4] = {{1,0,0,0}, {0,0,1,0}, {0,-1,0,0}, {0,0,0,1}};
     float res_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-    MultMatrix(VR_TRANSFORM_MAT, rot_mat, res_mat);
-
-    float trans = 200;
-    if (!left_eye) trans *= -1;
-    float trans_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {trans,0,0,1}};
-    MultMatrix(trans_mat, res_mat, VR_TRANSFORM_MAT);
+    MultMatrix(ORIENTATION_MAT, rot_mat, res_mat);
+    CopyMatrix(ORIENTATION_MAT, res_mat);
 
     while (ASensorEventQueue_getEvents(VR_SENSOR_QUEUE, data, 1) > 0);
 
     return 0;
+}
+
+void UpdateVRTransform() {
+    float trans = 200;
+    if (left_eye) trans *= -1;
+    float trans_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {trans,0,0,1}};
+    float res_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
+    MultMatrix(trans_mat, ORIENTATION_MAT, res_mat);
+    CopyMatrix(VR_TRANSFORM_MAT, res_mat);
 }
 
 int DestroySensor() {

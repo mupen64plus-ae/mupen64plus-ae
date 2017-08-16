@@ -50,13 +50,15 @@ void gSPFlushTriangles()
 
 void gSPCombineMatrices()
 {
+    UpdateVRTransform();
     float res_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
 	MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], res_mat);
 	MultMatrix(gSP.matrix.projection, res_mat, gSP.matrix.combined);
 
+    // Hack around swashed viewport
     float change_aspect[4][4] = {{2,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
     MultMatrix(change_aspect, gSP.matrix.combined, res_mat);
-    CopyMatrix(gSP.matrix.combined,res_mat);
+    CopyMatrix(gSP.matrix.combined, res_mat);
 
 	gSP.changed &= ~CHANGED_MATRIX;
 }

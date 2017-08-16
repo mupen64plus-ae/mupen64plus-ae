@@ -8,6 +8,7 @@
 int SetupSensor();
 bool remapCoordinateSystem(float inR[4][4], const int X, const int Y, float outR[4][4]);
 int pollForSensorData();
+void UpdateVRTransform();
 int DestroySensor();
 extern float VR_TRANSFORM_MAT[4][4];
 extern bool left_eye;
