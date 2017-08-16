@@ -671,10 +671,11 @@ void GraphicsDrawer::drawTriangles()
         const u32 bufferWidth = VI.width;
         const u32 bufferHeight = VI_GetMaxBufferHeight(bufferWidth);
         const f32 viewportScale = DisplayWindow::get().getScaleX();
-        const s32 size = (s32) (bufferWidth * viewportScale) / 2;
+
+        const s32 size = bufferWidth / 2;
         left_eye = (i==0);
         const s32 start = (left_eye? 0 : size);
-        gfxContext.setViewport(start, 0, start+size, (s32) (bufferHeight * viewportScale));
+        gfxContext.setViewport((s32) (start * viewportScale), 0, (s32) ((start+size) * viewportScale), (s32) (bufferHeight * viewportScale));
 
         _prepareDrawTriangle();
 
