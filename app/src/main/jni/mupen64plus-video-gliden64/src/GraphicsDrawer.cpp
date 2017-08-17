@@ -264,7 +264,11 @@ void GraphicsDrawer::_updateScreenCoordsViewport() const
 		viewportScale = pCurrentBuffer->m_scale;
 	}
 	const u32 bufferHeight = VI_GetMaxBufferHeight(bufferWidth);
-	gfxContext.setViewport(0, 0, (s32)(bufferWidth * viewportScale), (s32)(bufferHeight * viewportScale));
+
+    const s32 size = bufferWidth / 2;
+    const s32 start = (left_eye? 0 : size);
+
+	gfxContext.setViewport((s32)(start * viewportScale), 0, (s32)(size * viewportScale), (s32)(bufferHeight * viewportScale));
 	gSP.changed |= CHANGED_VIEWPORT;
 }
 
@@ -684,15 +688,8 @@ void GraphicsDrawer::drawTriangles()
     CopyMatrix(old_proj, gSP.matrix.projection);
     CopyMatrix(old_model, gSP.matrix.modelView[gSP.matrix.modelViewi]);
 
-    for (int i=0; i<2; i++) {
-        const u32 bufferWidth = VI.width;
-        const u32 bufferHeight = VI_GetMaxBufferHeight(bufferWidth);
-        const f32 viewportScale = DisplayWindow::get().getScaleX();
-
-        const s32 size = bufferWidth / 2;
+    for (int i=1; i>=0; i--) {
         left_eye = (i==0);
-        const s32 start = (left_eye? 0 : size);
-        gfxContext.setViewport((s32) (start * viewportScale), 0, (s32) (size * viewportScale), (s32) (bufferHeight * viewportScale));
 
         for (unsigned int j=0; j<triangles.vertices.size(); j++) {
             SPVertex &vtx = triangles.vertices.at(j);
@@ -707,6 +704,9 @@ void GraphicsDrawer::drawTriangles()
             vtx.clip = vtx.orig_clip;
             vtx.modify = vtx.orig_modify;
             vtx.HWLight = vtx.orig_HWLight;
+
+            m_modifyVertices = MODIFY_ALL;
+            vtx.modify = MODIFY_ALL;
 
 //			CopyMatrix(gSP.matrix.projection, vtx.proj_mtx);
 //			CopyMatrix(gSP.matrix.modelView[gSP.matrix.modelViewi], vtx.model_mtx);
