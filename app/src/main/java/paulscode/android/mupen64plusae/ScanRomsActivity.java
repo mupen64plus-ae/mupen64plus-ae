@@ -82,16 +82,16 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
         setContentView(R.layout.scan_roms_activity);
                 
         // Set checkbox state
-        mCheckBox1 = (CheckBox) findViewById( R.id.checkBox1 );
-        mCheckBox2 = (CheckBox) findViewById( R.id.checkBox2 );
-        mCheckBox3 = (CheckBox) findViewById( R.id.checkBox3 );
-        mCheckBox4 = (CheckBox) findViewById( R.id.checkBox4 );
+        mCheckBox1 = findViewById( R.id.checkBox1 );
+        mCheckBox2 = findViewById( R.id.checkBox2 );
+        mCheckBox3 = findViewById( R.id.checkBox3 );
+        mCheckBox4 = findViewById( R.id.checkBox4 );
         mCheckBox1.setChecked( true );
         mCheckBox2.setChecked( true );
         mCheckBox3.setChecked( false );
         mCheckBox4.setChecked( true );
 
-        mResetButton = (Button) findViewById( R.id.buttonReset );
+        mResetButton = findViewById( R.id.buttonReset );
         mResetButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
@@ -99,7 +99,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             }
         });
 
-        mCancelButton = (Button) findViewById( R.id.buttonCancel );
+        mCancelButton = findViewById( R.id.buttonCancel );
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ScanRomsActivity.this.setResult(RESULT_CANCELED, null);
@@ -107,7 +107,7 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
             }
         });
         
-        mOkButton = (Button) findViewById( R.id.buttonOk );
+        mOkButton = findViewById( R.id.buttonOk );
         mOkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent data = new Intent();
@@ -141,13 +141,13 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
         setTitle( mCurrentPath.getPath() );
         // Populate the file list
         // Get the filenames and absolute paths
-        mNames = new ArrayList<CharSequence>();
-        mPaths = new ArrayList<String>();
+        mNames = new ArrayList<>();
+        mPaths = new ArrayList<>();
         FileUtil.populate( mCurrentPath, true, true, true, mNames, mPaths );
 
         if(mCurrentPath.isDirectory())
         {
-            ListView listView1 = (ListView) findViewById( R.id.listView1 );
+            ListView listView1 = findViewById( R.id.listView1 );
             ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( this, mPaths, mNames );
             listView1.setAdapter( adapter );
             listView1.setOnItemClickListener( this );   
@@ -157,7 +157,10 @@ public class ScanRomsActivity extends AppCompatActivity implements OnItemClickLi
     @Override
     public void onItemClick( AdapterView<?> parent, View view, int position, long id )
     {
-        mCurrentPath = new File(mPaths.get( position ));
-        PopulateFileList();
+        if(position < mPaths.size())
+        {
+            mCurrentPath = new File(mPaths.get( position ));
+            PopulateFileList();
+        }
     }
 }
