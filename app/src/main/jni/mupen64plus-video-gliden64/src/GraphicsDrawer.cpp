@@ -679,6 +679,10 @@ void GraphicsDrawer::drawTriangles()
 	}
 
     std::array<SPVertex, 256U> old_verts = std::array<SPVertex, 256U>(triangles.vertices);
+    float old_proj[4][4];
+    float old_model[4][4];
+    CopyMatrix(old_proj, gSP.matrix.combined);
+    CopyMatrix(old_model, gSP.matrix.modelView[gSP.matrix.modelViewi]);
 
     for (int i=0; i<2; i++) {
         const u32 bufferWidth = VI.width;
@@ -704,9 +708,11 @@ void GraphicsDrawer::drawTriangles()
             vtx.modify = vtx.orig_modify;
             vtx.HWLight = vtx.orig_HWLight;
 
+			CopyMatrix(gSP.matrix.combined, vtx.proj_mtx);
+			CopyMatrix(gSP.matrix.modelView[gSP.matrix.modelViewi], vtx.model_mtx);
+
             gSPCombineMatrices();
             gSPProcessVertex(j);
-            gSPClipVertex(j);
         }
 
         _prepareDrawTriangle();
@@ -736,7 +742,9 @@ void GraphicsDrawer::drawTriangles()
             }
         }
 
-        triangles.vertices = old_verts;
+        triangles.vertices = std::array<SPVertex, 256U>(old_verts);
+        CopyMatrix(gSP.matrix.combined, old_proj);
+        CopyMatrix(gSP.matrix.modelView[gSP.matrix.modelViewi], old_model);
     }
 
 	triangles.num = 0;
