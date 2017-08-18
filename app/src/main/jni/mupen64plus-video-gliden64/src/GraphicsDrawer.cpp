@@ -711,6 +711,7 @@ void GraphicsDrawer::drawTriangles()
 //			CopyMatrix(gSP.matrix.projection, vtx.proj_mtx);
 //			CopyMatrix(gSP.matrix.modelView[gSP.matrix.modelViewi], vtx.model_mtx);
 
+            vr_enabled = true;
             gSPCombineMatrices();
             gSPProcessVertex(j);
         }
@@ -745,6 +746,9 @@ void GraphicsDrawer::drawTriangles()
         triangles.vertices = old_verts;
         CopyMatrix(gSP.matrix.projection, old_proj);
         CopyMatrix(gSP.matrix.modelView[gSP.matrix.modelViewi], old_model);
+
+        vr_enabled = false;
+        gSPCombineMatrices();
     }
 
 	triangles.num = 0;

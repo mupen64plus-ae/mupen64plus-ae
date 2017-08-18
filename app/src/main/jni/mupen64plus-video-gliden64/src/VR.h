@@ -12,4 +12,5 @@ void UpdateVRTransform();
 int DestroySensor();
 extern float VR_TRANSFORM_MAT[4][4];
 extern bool left_eye;
+extern bool vr_enabled;
 #endif

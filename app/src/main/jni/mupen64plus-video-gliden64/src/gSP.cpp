@@ -50,6 +50,11 @@ void gSPFlushTriangles()
 
 void gSPCombineMatrices()
 {
+    if (!vr_enabled) {
+        float result[4][4] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,1,1},};
+        CopyMatrix(gSP.matrix.combined, result);
+        return;
+    }
     UpdateVRTransform();
 	MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
 
