@@ -264,11 +264,7 @@ void GraphicsDrawer::_updateScreenCoordsViewport() const
 		viewportScale = pCurrentBuffer->m_scale;
 	}
 	const u32 bufferHeight = VI_GetMaxBufferHeight(bufferWidth);
-
-    const s32 size = bufferWidth / 2;
-    const s32 start = (left_eye? 0 : size);
-
-	gfxContext.setViewport((s32)(start * viewportScale), 0, (s32)(size * viewportScale), (s32)(bufferHeight * viewportScale));
+	gfxContext.setViewport(0, 0, (s32)(bufferWidth * viewportScale), (s32)(bufferHeight * viewportScale));
 	gSP.changed |= CHANGED_VIEWPORT;
 }
 
@@ -665,15 +661,6 @@ bool GraphicsDrawer::_canDraw() const
 	return config.frameBufferEmulation.enable == 0 || frameBufferList().getCurrent() != nullptr;
 }
 
-void transformVecProperly(SPVertex &v, float mtx[4][4]) {
-    float x = v.x, y = v.y, z = v.z, w = v.w;
-
-    v.x = x * mtx[0][0] + y * mtx[1][0] + z * mtx[2][0] + w * mtx[3][0];
-    v.y = x * mtx[0][1] + y * mtx[1][1] + z * mtx[2][1] + w * mtx[3][1];
-    v.z = x * mtx[0][2] + y * mtx[1][2] + z * mtx[2][2] + w * mtx[3][2];
-    v.w = x * mtx[0][3] + y * mtx[1][3] + z * mtx[2][3] + w * mtx[3][3];
-}
-
 void GraphicsDrawer::drawTriangles()
 {
 	if (triangles.num == 0 || !_canDraw()) {
@@ -683,13 +670,19 @@ void GraphicsDrawer::drawTriangles()
 	}
 
     std::array<SPVertex, 256U> old_verts = triangles.vertices;
-    float old_proj[4][4];
-    float old_model[4][4];
-    CopyMatrix(old_proj, gSP.matrix.projection);
-    CopyMatrix(old_model, gSP.matrix.modelView[gSP.matrix.modelViewi]);
 
-    for (int i=1; i>=0; i--) {
-        left_eye = (i==0);
+    for (int i=0; i<2; i++) {
+		const u32 bufferWidth = VI.width;
+		const u32 bufferHeight = VI_GetMaxBufferHeight(bufferWidth);
+		const f32 viewportScale = DisplayWindow::get().getScaleX();
+
+		const s32 size = bufferWidth / 2;
+		left_eye = (i==0);
+		const s32 start = (left_eye? 0 : size);
+		gfxContext.setViewport((s32) (start * viewportScale), 0, (s32) (size * viewportScale), (s32) (bufferHeight * viewportScale));
+
+        vr_enabled = true;
+        gSPCombineMatrices();
 
         for (unsigned int j=0; j<triangles.vertices.size(); j++) {
             SPVertex &vtx = triangles.vertices.at(j);
@@ -705,14 +698,6 @@ void GraphicsDrawer::drawTriangles()
             vtx.modify = vtx.orig_modify;
             vtx.HWLight = vtx.orig_HWLight;
 
-            m_modifyVertices = MODIFY_ALL;
-            vtx.modify = MODIFY_ALL;
-
-//			CopyMatrix(gSP.matrix.projection, vtx.proj_mtx);
-//			CopyMatrix(gSP.matrix.modelView[gSP.matrix.modelViewi], vtx.model_mtx);
-
-            vr_enabled = true;
-            gSPCombineMatrices();
             gSPProcessVertex(j);
         }
 
@@ -744,12 +729,10 @@ void GraphicsDrawer::drawTriangles()
         }
 
         triangles.vertices = old_verts;
-        CopyMatrix(gSP.matrix.projection, old_proj);
-        CopyMatrix(gSP.matrix.modelView[gSP.matrix.modelViewi], old_model);
-
-        vr_enabled = false;
-        gSPCombineMatrices();
     }
+
+    vr_enabled = false;
+    gSPCombineMatrices();
 
 	triangles.num = 0;
 	triangles.maxElement = 0;

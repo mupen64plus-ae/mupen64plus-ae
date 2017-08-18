@@ -50,15 +50,17 @@ void gSPFlushTriangles()
 
 void gSPCombineMatrices()
 {
-    if (!vr_enabled) {
-        float result[4][4] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,1,1},};
-        CopyMatrix(gSP.matrix.combined, result);
-        return;
-    }
     UpdateVRTransform();
-	MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
+    gSP.changed &= ~CHANGED_MATRIX;
+    MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
 
-	gSP.changed &= ~CHANGED_MATRIX;
+    if (!vr_enabled) {
+        // Scale so that neither the left/right eye are clipped
+        float scale[4][4] = {{0.2,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+        float result[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+        MultMatrix(scale, gSP.matrix.combined, result);
+        CopyMatrix(gSP.matrix.combined, result);
+    }
 }
 
 void gSPTriangle(s32 v0, s32 v1, s32 v2)
@@ -334,8 +336,6 @@ void gSPProcessVertex4(u32 v)
 		vPos[i][2] = vtx.z;
 		vtx.modify = 0;
 
-        CopyMatrix(vtx.proj_mtx, gSP.matrix.projection);
-        CopyMatrix(vtx.model_mtx, gSP.matrix.modelView[gSP.matrix.modelViewi]);
         vtx.orig_x = vtx.x;
         vtx.orig_y = vtx.y;
         vtx.orig_z = vtx.z;
@@ -626,8 +626,6 @@ void gSPProcessVertex(u32 v)
 	SPVertex & vtx = drawer.getVertex(v);
 	float vPos[3] = {(float)vtx.x, (float)vtx.y, (float)vtx.z};
 
-    CopyMatrix(vtx.proj_mtx, gSP.matrix.projection);
-    CopyMatrix(vtx.model_mtx, gSP.matrix.modelView[gSP.matrix.modelViewi]);
     vtx.orig_x = vtx.x;
     vtx.orig_y = vtx.y;
     vtx.orig_z = vtx.z;

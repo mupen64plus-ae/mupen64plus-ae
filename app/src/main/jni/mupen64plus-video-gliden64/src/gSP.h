@@ -46,8 +46,6 @@ struct SPVertex
 	s16 flag;
 
     // For VR
-    float proj_mtx[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-    float model_mtx[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
     f32 orig_x, orig_y, orig_z, orig_w;
     f32 orig_nx, orig_ny, orig_nz;
     u32 orig_modify;
