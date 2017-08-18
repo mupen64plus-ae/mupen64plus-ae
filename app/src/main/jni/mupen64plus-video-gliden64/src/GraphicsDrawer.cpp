@@ -697,7 +697,13 @@ void GraphicsDrawer::drawTriangles()
             vtx.clip = vtx.orig_clip;
             vtx.modify = vtx.orig_modify;
             vtx.HWLight = vtx.orig_HWLight;
+        }
 
+        unsigned int j=0;
+        for (;j<triangles.vertices.size(); j+=4) {
+            gSPProcessVertex4(j);
+        }
+        for (;j<triangles.vertices.size(); j++) {
             gSPProcessVertex(j);
         }
 

@@ -211,7 +211,7 @@ void gSPSetVertexNormaleBase( u32 base );
 void gSPProcessVertex(u32 v);
 void gSPCoordMod(u32 _w0, u32 _w1);
 void gSPCombineMatrices();
-void gSPClipVertex(u32 v);
+void gSPProcessVertex4(u32 v);
 
 void gSPTriangleUnknown();
 
