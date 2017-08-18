@@ -12,6 +12,7 @@ float ORIENTATION_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
 float VR_TRANSFORM_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
 bool left_eye = true;
 bool vr_enabled = false;
+bool has_cleared = false;
 
 int SetupSensor() {
     if (VR_SENSOR_QUEUE != NULL) {

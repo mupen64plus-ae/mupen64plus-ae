@@ -669,6 +669,12 @@ void GraphicsDrawer::drawTriangles()
 		return;
 	}
 
+    if (!has_cleared) {
+        // Hack to work around lack of clearing in-game
+        gfxContext.clearColorBuffer(0.0f, 0.0f, 0.0f, 0.0f);
+        has_cleared = true;
+    }
+
     std::array<SPVertex, 256U> old_verts = triangles.vertices;
 
     for (int i=0; i<2; i++) {

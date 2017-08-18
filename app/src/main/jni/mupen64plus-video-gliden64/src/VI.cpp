@@ -15,6 +15,7 @@
 #include "DebugDump.h"
 #include "Keys.h"
 #include "DisplayWindow.h"
+#include "VR.h"
 #include <Graphics/Context.h>
 
 using namespace std;
@@ -103,6 +104,7 @@ void VI_UpdateSize()
 
 void VI_UpdateScreen()
 {
+    has_cleared = false;
 	if (VI.lastOrigin == -1) // Workaround for Mupen64Plus issue with initialization
 		gfxContext.isError();
 
