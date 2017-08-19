@@ -3,7 +3,7 @@ apply plugin: 'signing'
 
 android {
     compileSdkVersion = 26
-    buildToolsVersion = "26.0.0"
+    buildToolsVersion = "26.0.1"
 
     allprojects {
         tasks.withType(JavaCompile) {
@@ -50,6 +50,10 @@ android {
                 cppFlags "-fexceptions"
                 abiFilters "armeabi-v7a", "x86"
             }
+        }
+
+        ndk {
+            stl = "gnustl_shared" // Fix for Android Studio ndk code completion
         }
     }
 }
