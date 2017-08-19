@@ -2045,4 +2045,3 @@ bool SaveRGBABufferToPNGFile(char *filename, unsigned char *buf, int width, int 
         return false;
 }
 
-
