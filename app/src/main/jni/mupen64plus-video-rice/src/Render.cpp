@@ -186,7 +186,7 @@ void CRender::SetProjection(const Matrix & mat, bool bPush, bool bReplace)
             gRSP.projectionMtxs[gRSP.projectionMtxTop] = mat * gRSP.projectionMtxs[gRSP.projectionMtxTop];
         }
     }
-
+    
     gRSP.bMatrixIsUpdated = true;
 
     DumpMatrix(mat,"Set Projection Matrix");
@@ -2044,4 +2044,5 @@ bool SaveRGBABufferToPNGFile(char *filename, unsigned char *buf, int width, int 
     else
         return false;
 }
+
 

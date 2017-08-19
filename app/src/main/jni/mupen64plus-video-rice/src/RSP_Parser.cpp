@@ -901,7 +901,7 @@ void DLParser_Process(OSTask * pTask)
 
             Gfx *pgfx = (Gfx*)&g_pRDRAMu32[(gDlistStack[gDlistStackPointer].pc>>2)];
 #ifdef DEBUGGER
-            LOG_UCODE("0x%08x: %08x %08x %-10s",
+            LOG_UCODE("0x%08x: %08x %08x %-10s", 
                 gDlistStack[gDlistStackPointer].pc, pgfx->words.w0, pgfx->words.w1, (gRSP.ucode!=5&&gRSP.ucode!=10)?ucodeNames_GBI1[(pgfx->words.w0>>24)]:ucodeNames_GBI2[(pgfx->words.w0>>24)]);
 #endif
             gDlistStack[gDlistStackPointer].pc += 8;
@@ -1824,4 +1824,5 @@ void LoadMatrix(uint32 addr)
         matToLoad.m[3][0], matToLoad.m[3][1], matToLoad.m[3][2], matToLoad.m[3][3]);
 #endif // DEBUGGER
 }
+
 
