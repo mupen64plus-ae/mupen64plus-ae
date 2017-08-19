@@ -1,9 +1,0 @@
-backup/
-Debug*/
-Release*/
-build*/
-Roms/
-*.ncb
-*.suo
-*.sdf
-*.user
