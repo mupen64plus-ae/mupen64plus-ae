@@ -34,12 +34,12 @@ GraphicsDrawer::GraphicsDrawer()
 , m_bImageTexture(false)
 , m_bFlatColors(false)
 {
-	SetupSensor();
+    VRSetupSensor();
 }
 
 GraphicsDrawer::~GraphicsDrawer()
 {
-	DestroySensor();
+    VRDestroySensor();
 	while (!m_osdMessages.empty())
 		std::this_thread::sleep_for(Milliseconds(1));
 }
@@ -669,10 +669,11 @@ void GraphicsDrawer::drawTriangles()
 		return;
 	}
 
-    if (!has_cleared) {
-        // Hack to work around lack of clearing in-game
+    if (!VR_HAS_CLEARED_SCREEN) {
+        // Hack to work around lack of clearing in-game, exposed
+        //  by VR viewport
         gfxContext.clearColorBuffer(0.0f, 0.0f, 0.0f, 0.0f);
-        has_cleared = true;
+        VR_HAS_CLEARED_SCREEN = true;
     }
 
     std::array<SPVertex, 256U> old_verts = triangles.vertices;
@@ -683,11 +684,11 @@ void GraphicsDrawer::drawTriangles()
 		const f32 viewportScale = DisplayWindow::get().getScaleX();
 
 		const s32 size = bufferWidth / 2;
-		left_eye = (i==0);
-		const s32 start = (left_eye? 0 : size);
+		VR_LEFT_EYE = (i==0);
+		const s32 start = (VR_LEFT_EYE? 0 : size);
 		gfxContext.setViewport((s32) (start * viewportScale), 0, (s32) (size * viewportScale), (s32) (bufferHeight * viewportScale));
 
-        vr_enabled = true;
+        VR_CURRENTLY_RENDERING = true;
         gSPCombineMatrices();
 
         for (unsigned int j=0; j<triangles.vertices.size(); j++) {
@@ -696,13 +697,6 @@ void GraphicsDrawer::drawTriangles()
             vtx.y = vtx.orig_y;
             vtx.z = vtx.orig_z;
             vtx.w = vtx.orig_w;
-            vtx.nx = vtx.orig_nx;
-            vtx.ny = vtx.orig_ny;
-            vtx.nz = vtx.orig_nz;
-            vtx.flag = vtx.orig_flag;
-            vtx.clip = vtx.orig_clip;
-            vtx.modify = vtx.orig_modify;
-            vtx.HWLight = vtx.orig_HWLight;
         }
 
         unsigned int j=0;
@@ -743,7 +737,9 @@ void GraphicsDrawer::drawTriangles()
         triangles.vertices = old_verts;
     }
 
-    vr_enabled = false;
+    // Hack so that we can avoid clipping next frame
+    // See gSPCombineMatrices
+    VR_CURRENTLY_RENDERING = false;
     gSPCombineMatrices();
 
 	triangles.num = 0;

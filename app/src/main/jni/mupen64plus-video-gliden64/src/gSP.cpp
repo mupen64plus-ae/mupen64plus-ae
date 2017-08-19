@@ -50,12 +50,12 @@ void gSPFlushTriangles()
 
 void gSPCombineMatrices()
 {
-    UpdateVRTransform();
+    VRUpdateTransform();
     gSP.changed &= ~CHANGED_MATRIX;
     MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
 
-    if (!vr_enabled) {
-        // Scale so that neither the left/right eye are clipped
+    if (!VR_CURRENTLY_RENDERING) {
+        // Hack: scale so that neither the left/right eye are clipped
         float scale[4][4] = {{0.2,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
         float result[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
         MultMatrix(scale, gSP.matrix.combined, result);
@@ -340,13 +340,6 @@ void gSPProcessVertex4(u32 v)
         vtx.orig_y = vtx.y;
         vtx.orig_z = vtx.z;
         vtx.orig_w = vtx.w;
-        vtx.orig_nx = vtx.nx;
-        vtx.orig_ny = vtx.ny;
-        vtx.orig_nz = vtx.nz;
-        vtx.orig_flag = vtx.flag;
-        vtx.orig_clip = vtx.clip;
-        vtx.orig_modify = vtx.modify;
-        vtx.orig_HWLight = vtx.HWLight;
 	}
 	gSPTransformVertex4(v, gSP.matrix.combined );
 
@@ -630,13 +623,6 @@ void gSPProcessVertex(u32 v)
     vtx.orig_y = vtx.y;
     vtx.orig_z = vtx.z;
     vtx.orig_w = vtx.w;
-    vtx.orig_nx = vtx.nx;
-    vtx.orig_ny = vtx.ny;
-    vtx.orig_nz = vtx.nz;
-    vtx.orig_flag = vtx.flag;
-    vtx.orig_clip = vtx.clip;
-    vtx.orig_modify = vtx.modify;
-    vtx.orig_HWLight = vtx.HWLight;
 
     gSPTransformVertex( &vtx.x, gSP.matrix.combined );
 

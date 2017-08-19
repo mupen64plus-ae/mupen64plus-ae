@@ -47,11 +47,6 @@ struct SPVertex
 
     // For VR
     f32 orig_x, orig_y, orig_z, orig_w;
-    f32 orig_nx, orig_ny, orig_nz;
-    u32 orig_modify;
-    u8 orig_HWLight;
-    u8 orig_clip;
-    s16 orig_flag;
 };
 
 struct gSPInfo

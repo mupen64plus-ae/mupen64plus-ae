@@ -104,7 +104,7 @@ void VI_UpdateSize()
 
 void VI_UpdateScreen()
 {
-    has_cleared = false;
+    VR_HAS_CLEARED_SCREEN = false;
 	if (VI.lastOrigin == -1) // Workaround for Mupen64Plus issue with initialization
 		gfxContext.isError();
 

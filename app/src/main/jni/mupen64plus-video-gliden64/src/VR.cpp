@@ -10,11 +10,11 @@ static ASensorEventQueue* VR_SENSOR_QUEUE = NULL;
 static ASensorRef VR_SENSOR = NULL;
 float ORIENTATION_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
 float VR_TRANSFORM_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-bool left_eye = true;
-bool vr_enabled = false;
-bool has_cleared = false;
+bool VR_LEFT_EYE = true;
+bool VR_CURRENTLY_RENDERING = false;
+bool VR_HAS_CLEARED_SCREEN = false;
 
-int SetupSensor() {
+int VRSetupSensor() {
     if (VR_SENSOR_QUEUE != NULL) {
         LOGD("**************** VR_SENSOR_QUEUE Already Initialized!\n");
         return 1;
@@ -82,7 +82,7 @@ const int AXIS_MINUS_X = AXIS_X | 0x80;
 const int AXIS_MINUS_Y = AXIS_Y | 0x80;
 const int AXIS_MINUS_Z = AXIS_Z | 0x80;
 
-bool remapCoordinateSystem(float inR[4][4], const int X, const int Y, float outR[4][4])
+bool VRRemapCoordinateSystem(float inR[4][4], const int X, const int Y, float outR[4][4])
 {
     /*
      * X and Y define a rotation matrix 'r':
@@ -129,7 +129,7 @@ bool remapCoordinateSystem(float inR[4][4], const int X, const int Y, float outR
     return true;
 }
 
-int pollForSensorData() {
+int VRPollForSensorData() {
     if (!VR_SENSOR_QUEUE || !VR_SENSOR) {
         LOGD("**************** Sensors not initialized\n");
         return 1;
@@ -177,7 +177,7 @@ int pollForSensorData() {
     R[2][1] = q2_q3 + q1_q0;
     R[2][2] = 1 - sq_q1 - sq_q2;
 
-    remapCoordinateSystem(R, AXIS_Y, AXIS_MINUS_X, ORIENTATION_MAT);
+    VRRemapCoordinateSystem(R, AXIS_Y, AXIS_MINUS_X, ORIENTATION_MAT);
 
     float rot_mat[4][4] = {{1,0,0,0}, {0,0,1,0}, {0,-1,0,0}, {0,0,0,1}};
     float res_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
@@ -189,9 +189,9 @@ int pollForSensorData() {
     return 0;
 }
 
-void UpdateVRTransform() {
-    float trans = -200;
-    if (left_eye) trans *= -1;
+void VRUpdateTransform() {
+    float trans = -EYE_DISTANCE;
+    if (VR_LEFT_EYE) trans *= -1;
     float trans_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {trans,0,0,1}};
     float res_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
     MultMatrix(trans_mat, ORIENTATION_MAT, res_mat);
@@ -204,7 +204,7 @@ void UpdateVRTransform() {
     CopyMatrix(VR_TRANSFORM_MAT, res_mat);
 }
 
-int DestroySensor() {
+int VRDestroySensor() {
     ASensorManager* sensor_manager =
             ASensorManager_getInstance();
     if (!sensor_manager) {
