@@ -235,9 +235,8 @@ void OGLRender::ZBufferEnable(BOOL bZBuffer)
 void OGLRender::ClearBuffer(bool cbuffer, bool zbuffer)
 {
     uint32 flag=0;
-    // Fix for SM64 + VR
-    flag |= GL_COLOR_BUFFER_BIT;
-    flag |= GL_DEPTH_BUFFER_BIT;
+    if( cbuffer )   flag |= GL_COLOR_BUFFER_BIT;
+    if( zbuffer )   flag |= GL_DEPTH_BUFFER_BIT;
     float depth = ((gRDP.originalFillColor&0xFFFF)>>2)/(float)0x3FFF;
     glClearDepth(depth);
     OPENGL_CHECK_ERRORS;

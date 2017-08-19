@@ -39,7 +39,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m64p_plugin.h"
 #include "m64p_types.h"
 #include "osal_preproc.h"
-#include "VR.h"
 
 #undef min
 #undef max
@@ -114,7 +113,7 @@ CRender::CRender() :
     m_pColorCombiner->Initialize();
 
     m_pAlphaBlender = CDeviceBuilder::GetBuilder()->CreateAlphaBlender(this);
-    SetupSensor();
+
 }
 
 CRender::~CRender()
@@ -130,8 +129,6 @@ CRender::~CRender()
         CDeviceBuilder::GetBuilder()->DeleteAlphaBlender();
         m_pAlphaBlender = NULL;
     }
-
-    DestroySensor();
 }
 
 void CRender::ResetMatrices()
@@ -341,7 +338,6 @@ void CRender::SetCombinerAndBlender()
 
 void CRender::RenderReset()
 {
-    pollForSensorData();
     UpdateClipRectangle();
     ResetMatrices();
     SetZBias(0);

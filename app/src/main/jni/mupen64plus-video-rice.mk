@@ -51,7 +51,6 @@ LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/liblinux/BMGUtils.c       \
     $(SRCDIR)/liblinux/bmp.c            \
     $(SRCDIR)/liblinux/pngrw.c          \
-    $(SRCDIR)/VR.cpp          \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
@@ -71,7 +70,6 @@ LOCAL_LDFLAGS := $(COMMON_LDFLAGS) -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/v
 LOCAL_LDLIBS :=         \
     -lGLESv2            \
     -llog               \
-    -landroid           \
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:

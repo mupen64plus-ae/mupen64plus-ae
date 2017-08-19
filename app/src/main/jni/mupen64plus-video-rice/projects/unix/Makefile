@@ -339,8 +339,7 @@ SOURCE = \
 	$(SRCDIR)/TextureFilters_hq4x.cpp \
 	$(SRCDIR)/TextureManager.cpp \
 	$(SRCDIR)/VectorMath.cpp \
-	$(SRCDIR)/Video.cpp \
-	$(SRCDIR)/VR.cpp
+	$(SRCDIR)/Video.cpp
 
 ifeq ($(OS),MINGW)
 SOURCE += \
