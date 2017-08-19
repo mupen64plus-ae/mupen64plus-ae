@@ -269,6 +269,12 @@ bool _getTexRectParams(u32 & w2, u32 & w3)
 			RSP.PC[RSP.PCi] += 8;
 			return false;
 		}
+		if (GBI.getMicrocodeType() == F3DSWRS) {
+			w2 = *(u32*)&RDRAM[RSP.PC[RSP.PCi] +  8];
+			w3 = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 12];
+			RSP.PC[RSP.PCi] += 8;
+			return true;
+		}
 		w2 = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 0];
 		w3 = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 4];
 		RSP.PC[RSP.PCi] += 8;
@@ -514,7 +520,6 @@ void RDP_Half_1( u32 _c )
 			w1 = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 4];
 			RSP.cmd = _SHIFTR( w0, 24, 8 );
 
-			//DebugRSPState( RSP.PCi, RSP.PC[RSP.PCi], _SHIFTR( w0, 24, 8 ), w0, w1 );
 			DebugMsg(DEBUG_NORMAL, "0x%08lX: CMD=0x%02lX W0=0x%08lX W1=0x%08lX\n", RSP.PC[RSP.PCi], _SHIFTR(w0, 24, 8), w0, w1);
 
 			RSP.PC[RSP.PCi] += 8;

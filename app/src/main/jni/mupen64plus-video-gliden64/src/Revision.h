@@ -1,2 +1,2 @@
-#define PLUGIN_REVISION "dabbad0"
-#define PLUGIN_REVISION_W L"dabbad0"
+#define PLUGIN_REVISION "bbc7131"
+#define PLUGIN_REVISION_W L"bbc7131"

@@ -10,6 +10,8 @@
 
 using namespace glsl;
 
+u32 g_cycleType = G_CYC_1CYCLE;
+
 /*---------------_compileCombiner-------------*/
 
 static
@@ -273,14 +275,17 @@ public:
 			"      vNumLights = 0.0;										\n"
 			"  }															\n"
 			"  gl_Position.y = -gl_Position.y;								\n"
-			"  if (uFogUsage == 1) {										\n"
-			"    lowp vec4 shadeColor = aColor;								\n"
+			"  if (uFogUsage > 0) {											\n"
+			"    lowp float fp;												\n"
 			"    if (aPosition.z < -aPosition.w && aModify[1] == 0.0)		\n"
-			"      shadeColor.a = -uFogScale.s + uFogScale.t;							\n"
+			"      fp = -uFogScale.s + uFogScale.t;							\n"
 			"    else														\n"
-			"      shadeColor.a = aPosition.z/aPosition.w*uFogScale.s + uFogScale.t;	\n"
-			"    shadeColor.a = clamp(shadeColor.a, 0.0, 1.0);				\n"
-			"    vShadeColor = shadeColor; 									\n"
+			"      fp = aPosition.z/aPosition.w*uFogScale.s + uFogScale.t;	\n"
+			"    fp = clamp(fp, 0.0, 1.0);									\n"
+			"    if (uFogUsage == 1)										\n"
+			"      vShadeColor.a = fp;										\n"
+			"    else														\n"
+			"      vShadeColor.rgb = vec3(fp);								\n"
 			"  }															\n"
 			;
 		if (!_glinfo.isGLESX) {
@@ -328,15 +333,19 @@ public:
 			"      vNumLights = 0.0;										\n"
 			"  }															\n"
 			"  gl_Position.y = -gl_Position.y;								\n"
-			"  if (uFogUsage == 1) {										\n"
+			"  if (uFogUsage > 0) {											\n"
 			"    lowp float fp;												\n"
 			"    if (aPosition.z < -aPosition.w && aModify[1] == 0.0)		\n"
 			"      fp = -uFogScale.s + uFogScale.t;							\n"
 			"    else														\n"
 			"      fp = aPosition.z/aPosition.w*uFogScale.s + uFogScale.t;	\n"
-			"    vShadeColor.a = clamp(fp, 0.0, 1.0);						\n"
+			"    fp = clamp(fp, 0.0, 1.0);									\n"
+			"    if (uFogUsage == 1)										\n"
+			"      vShadeColor.a = fp;										\n"
+			"    else														\n"
+			"      vShadeColor.rgb = vec3(fp);								\n"
 			"  }															\n"
-		;
+			;
 		if (!_glinfo.isGLESX) {
 			m_part +=
 				"  gl_ClipDistance[0] = gl_Position.w - gl_Position.z;			\n"
@@ -461,6 +470,13 @@ public:
 			m_part =
 				"  if (uForceBlendCycle1 != 0) {	\n"
 				"    muxPM[0] = clampedColor;		\n"
+			;
+			if (g_cycleType == G_CYC_2CYCLE) {
+				m_part +=
+					"    muxPM[1] = clampedColor;	\n"
+					;
+			}
+			m_part +=
 				"    muxA[0] = clampedColor.a;		\n"
 				"    lowp float muxa;				\n"
 				"    if (uBlendMux1[1] == 0)		\n"
@@ -507,6 +523,13 @@ public:
 			m_part =
 				"  if (uForceBlendCycle1 != 0) {						\n"
 				"    muxPM[0] = clampedColor;							\n"
+			;
+			if (g_cycleType == G_CYC_2CYCLE) {
+				m_part +=
+					"    muxPM[1] = clampedColor;						\n"
+				;
+			}
+			m_part +=
 				"    muxA[0] = clampedColor.a;							\n"
 				"    muxB[0] = 1.0 - muxA[uBlendMux1[1]];				\n"
 				"    lowp vec4 blend1 = (muxPM[uBlendMux1[0]] * muxA[uBlendMux1[1]]) + (muxPM[uBlendMux1[2]] * muxB[uBlendMux1[3]]);	\n"
@@ -527,6 +550,7 @@ public:
 			m_part =
 				"  if (uForceBlendCycle2 != 0) {	\n"
 				"    muxPM[0] = clampedColor;		\n"
+				"    muxPM[1] = vec4(0.0);			\n"
 				"    muxA[0] = clampedColor.a;		\n"
 				"    lowp float muxa;				\n"
 				"    if (uBlendMux2[1] == 0)		\n"
@@ -574,6 +598,7 @@ public:
 			m_part =
 				"  if (uForceBlendCycle2 != 0) {						\n"
 				"    muxPM[0] = clampedColor;							\n"
+				"    muxPM[1] = vec4(0.0);								\n"
 				"    muxA[0] = clampedColor.a;							\n"
 				"    muxB[0] = 1.0 - muxA[uBlendMux2[1]];				\n"
 				"    lowp vec4 blend2 = muxPM[uBlendMux2[0]] * muxA[uBlendMux2[1]] + muxPM[uBlendMux2[2]] * muxB[uBlendMux2[3]];	\n"
@@ -1677,8 +1702,6 @@ public:
 };
 
 /*---------------ShaderPartsEnd-------------*/
-
-u32 g_cycleType = G_CYC_1CYCLE;
 
 static
 bool needClampColor() {

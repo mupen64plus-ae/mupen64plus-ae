@@ -22,11 +22,13 @@ set(GLideN64_SOURCES
   F3DBETA.cpp
   F3DDKR.cpp
   F3DEX.cpp
+  F3DAM.cpp
   F3DEX2.cpp
   F3DEX2ACCLAIM.cpp
   F3DEX2CBFD.cpp
   F3DEX2MM.cpp
   F3DGOLDEN.cpp
+  F3DSWRS.cpp
   F3DTEXA.cpp
   F3DPD.cpp
   F3DSETA.cpp
@@ -133,9 +135,9 @@ if(MUPENPLUSAPI)
   )
   set(GLideN64_DLL_NAME mupen64plus-video-GLideN64)
 else(MUPENPLUSAPI)
-  if(NOT UNIX)
-	message(ERROR "UNIX build requires MUPENPLUSAPI!")
-  endif(NOT UNIX)
+  if(UNIX)
+    message(FATAL_ERROR "UNIX build requires MUPENPLUSAPI!")
+  endif(UNIX)
   set(GLideN64_SOURCES_WIN
 	ZilmarPluginAPI.cpp
 	windows/Config_windows.cpp

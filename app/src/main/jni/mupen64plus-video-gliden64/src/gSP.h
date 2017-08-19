@@ -110,6 +110,7 @@ struct gSPInfo
 	struct
 	{
 		s16 multiplier, offset;
+		f32 multiplierf, offsetf;
 	} fog;
 
 	struct
@@ -136,6 +137,9 @@ struct gSPInfo
 	// CBFD
 	u32 vertexNormalBase;
 	f32 vertexCoordMod[16];
+
+	u32 textureCoordScaleOrg;
+	u32 textureCoordScale[2];
 };
 
 extern gSPInfo gSP;
@@ -155,9 +159,11 @@ void gSPCIVertex( u32 v, u32 n, u32 v0 );
 void gSPDMAVertex( u32 v, u32 n, u32 v0 );
 void gSPCBFDVertex( u32 v, u32 n, u32 v0 );
 void gSPT3DUXVertex(u32 v, u32 n, u32 ci);
+void gSPF3DAMVertex( u32 v, u32 n, u32 v0 );
+void gSPSWVertex(const SWVertex * vertex, u32 n, u32 v0);
 void gSPDisplayList(u32 dl);
 void gSPBranchList( u32 dl );
-void gSPBranchLessZ( u32 branchdl, u32 vtx, u32 zval );
+void gSPBranchLessZ(u32 branchdl, u32 vtx, u32 zval);
 void gSPBranchLessW( u32 branchdl, u32 vtx, u32 wval );
 void gSPDlistCount(u32 count, u32 v);
 void gSPSprite2DBase(u32 _base );
