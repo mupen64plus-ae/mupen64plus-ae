@@ -239,6 +239,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "17" );
 
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableVR", boolToTF( game.glideN64Prefs.enableVR ));
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );

@@ -177,6 +177,9 @@ public class GLideN64Prefs {
     /** Gamma correction value. */
     public final float gammaCorrectionLevel;
 
+    /** Enable VR for GlideN64 */
+    public final boolean enableVR;
+
     public GLideN64Prefs(Context context, final Profile emulationProfile)
     {
         cropMode = getSafeInt( emulationProfile, "CropMode", 1);
@@ -235,5 +238,6 @@ public class GLideN64Prefs {
         blurStrength = getSafeInt( emulationProfile, "blurStrength", 20);
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
+        enableVR = emulationProfile.get( "enableVR", "False" ).equals( "True" );
     }
 }
