@@ -1,3 +1,10 @@
+float ORIENTATION_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
+float VR_TRANSFORM_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
+bool VR_LEFT_EYE = true;
+bool VR_CURRENTLY_RENDERING = false;
+bool VR_HAS_CLEARED_SCREEN = false;
+
+#ifdef OS_ANDROID
 #define ASENSOR_TYPE_ROTATION_VECTOR 15
 #include <android/looper.h>
 #include <android/sensor.h>
@@ -5,16 +12,14 @@
 #include "VR.h"
 #include "3DMath.h"
 #include "gSP.h"
+#include "Config.h"
 
 static ASensorEventQueue* VR_SENSOR_QUEUE = NULL;
 static ASensorRef VR_SENSOR = NULL;
-float ORIENTATION_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-float VR_TRANSFORM_MAT[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-bool VR_LEFT_EYE = true;
-bool VR_CURRENTLY_RENDERING = false;
-bool VR_HAS_CLEARED_SCREEN = false;
 
 int VRSetupSensor() {
+    if (!config.vr.enable) return 1;
+
     if (VR_SENSOR_QUEUE != NULL) {
         LOGD("**************** VR_SENSOR_QUEUE Already Initialized!\n");
         return 1;
@@ -130,6 +135,8 @@ bool VRRemapCoordinateSystem(float inR[4][4], const int X, const int Y, float ou
 }
 
 int VRPollForSensorData() {
+    if (!config.vr.enable) return 1;
+
     if (!VR_SENSOR_QUEUE || !VR_SENSOR) {
         LOGD("**************** Sensors not initialized\n");
         return 1;
@@ -190,6 +197,8 @@ int VRPollForSensorData() {
 }
 
 void VRUpdateTransform() {
+    if (!config.vr.enable) return;
+
     float trans = -EYE_DISTANCE;
     if (VR_LEFT_EYE) trans *= -1;
     float trans_mat[4][4] = {{1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {trans,0,0,1}};
@@ -205,6 +214,8 @@ void VRUpdateTransform() {
 }
 
 int VRDestroySensor() {
+    if (!config.vr.enable) return 1;
+
     ASensorManager* sensor_manager =
             ASensorManager_getInstance();
     if (!sensor_manager) {
@@ -225,3 +236,4 @@ int VRDestroySensor() {
 
     return 0;
 }
+#endif

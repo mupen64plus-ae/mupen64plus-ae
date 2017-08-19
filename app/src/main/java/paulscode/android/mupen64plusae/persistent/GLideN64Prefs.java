@@ -75,6 +75,9 @@ public class GLideN64Prefs {
     /** Copy auxiliary buffers to RDRAM */
     public final boolean enableCopyAuxiliaryToRDRAM;
 
+    /** Enable VR for GlideN64 */
+    public final boolean enableVR;
+
     /** Enable depth buffer copy to RDRAM
      * 0=do not copy
      * 1=copy from video memory
@@ -235,5 +238,6 @@ public class GLideN64Prefs {
         blurStrength = getSafeInt( emulationProfile, "blurStrength", 20);
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
+        enableVR = emulationProfile.get( "enableVR", "False" ).equals( "True" );
     }
 }

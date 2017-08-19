@@ -43,6 +43,7 @@ void Config::resetToDefaults()
 #ifdef OS_ANDROID
 	generalEmulation.enableFragmentDepthWrite = 0;
 	generalEmulation.enableBlitScreenWorkaround = 0;
+	vr.enable = 0;
 	generalEmulation.forcePolygonOffset = 0;
 	generalEmulation.polygonOffsetFactor = 0.0f;
 	generalEmulation.polygonOffsetUnits = 0.0f;

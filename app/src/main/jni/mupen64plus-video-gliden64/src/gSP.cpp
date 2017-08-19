@@ -50,9 +50,16 @@ void gSPFlushTriangles()
 
 void gSPCombineMatrices()
 {
-    VRUpdateTransform();
     gSP.changed &= ~CHANGED_MATRIX;
-    MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
+
+	if (!config.vr.enable) {
+		MultMatrix(gSP.matrix.projection, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
+		return;
+	}
+
+	VRUpdateTransform();
+
+	MultMatrix(VR_TRANSFORM_MAT, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
 
     if (!VR_CURRENTLY_RENDERING) {
         // Hack: scale so that neither the left/right eye are clipped

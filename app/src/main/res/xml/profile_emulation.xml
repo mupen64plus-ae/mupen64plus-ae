@@ -488,6 +488,10 @@
             android:key="EnableFragmentDepthWrite"
             android:summary="@string/gliden64_enable_fragment_depth_write_summary"
             android:title="@string/gliden64_enable_fragment_depth_write_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="enableVR"
+            android:title="@string/gliden64_enable_vr_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
