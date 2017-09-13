@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -22,6 +22,8 @@ package paulscode.android.mupen64plusae.input;
 
 import android.annotation.SuppressLint;
 import android.graphics.Point;
+import android.os.Build;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.SparseIntArray;
 import android.view.MotionEvent;
@@ -46,7 +48,7 @@ public class TouchController extends AbstractController implements OnTouchListen
          * @param axisFractionX The x-axis fraction, between -1 and 1, inclusive.
          * @param axisFractionY The y-axis fraction, between -1 and 1, inclusive.
          */
-        public void onAnalogChanged( float axisFractionX, float axisFractionY );
+        void onAnalogChanged( float axisFractionX, float axisFractionY );
         
         /**
          * Called after auto-hold button state changed.
@@ -54,7 +56,7 @@ public class TouchController extends AbstractController implements OnTouchListen
          * @param pressed The auto-hold state.
          * @param index The index of the auto-hold mask.
          */
-        public void onAutoHold( boolean pressed, int index );
+        void onAutoHold( boolean pressed, int index );
 
         /**
          * Called after the sensor has been enabled or disabled
@@ -67,17 +69,17 @@ public class TouchController extends AbstractController implements OnTouchListen
         /**
          * Called when the touch controls should be shown
          */
-        public void onTouchControlsShow();
+        void onTouchControlsShow();
 
         /**
          * Called when the touch controls should be hidden
          */
-        public void onTouchControlsHide();
+        void onTouchControlsHide();
     }
-    
-    public static final int AUTOHOLD_METHOD_DISABLED = 0;
-    public static final int AUTOHOLD_METHOD_LONGPRESS = 1;
-    public static final int AUTOHOLD_METHOD_SLIDEOUT = 2;
+
+    private static final int AUTOHOLD_METHOD_DISABLED = 0;
+    private static final int AUTOHOLD_METHOD_LONGPRESS = 1;
+    private static final int AUTOHOLD_METHOD_SLIDEOUT = 2;
     
     /** The number of milliseconds to wait before auto-holding (long-press method). */
     private static final int AUTOHOLD_LONGPRESS_TIME = 1000;
@@ -136,9 +138,6 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     private int mAnalogPid = -1;
     
-    /** The touch event source to listen to, or 0 to listen to all sources. */
-    private int mSourceFilter = 0;
-    
     private Vibrator mVibrator = null;
 
     /** The user sensor input provider. */
@@ -176,16 +175,6 @@ public class TouchController extends AbstractController implements OnTouchListen
         mInvertYAxis = invertYAxis;
     }
     
-    /**
-     * Sets the touch event source filter.
-     * 
-     * @param source The source to listen to, or 0 to listen to all sources.
-     */
-    public void setSourceFilter( int source )
-    {
-        mSourceFilter = source;
-    }
-    
     /*
      * (non-Javadoc)
      * 
@@ -195,15 +184,10 @@ public class TouchController extends AbstractController implements OnTouchListen
     @Override
     public boolean onTouch( View view, MotionEvent event )
     {
-        // Filter by source, if applicable
-        int source = event.getSource();
-        if( mSourceFilter != 0 && mSourceFilter != source )
-            return false;
-        
         int action = event.getAction();
         int actionCode = action & MotionEvent.ACTION_MASK;
         
-        int pid = -1;
+        int pid;
         switch( actionCode )
         {
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -318,6 +302,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param pid       The identifier of the touch pointer.
      * @param actionCode The the action code
      */
+    @SuppressWarnings("deprecation")
     private void processButtonTouch( boolean touched, int xLocation, int yLocation,
             long timeElapsed, int pid, int actionCode )
     {
@@ -359,8 +344,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                     {
                         // Slid off a non-auto-hold button
                         setTouchState( prevIndex, false );
-                        if( mListener != null )
-                            mListener.onAutoHold( false, prevIndex );
+                        mListener.onAutoHold( false, prevIndex );
                     }
                     else
                     {
@@ -369,8 +353,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                         {
                             case AUTOHOLD_METHOD_LONGPRESS:
                                 // Using long-press method, release auto-hold button
-                                if( mListener != null )
-                                    mListener.onAutoHold( false, prevIndex );
+                                mListener.onAutoHold( false, prevIndex );
                                 setTouchState( prevIndex, false );
                                 break;
 
@@ -379,10 +362,14 @@ public class TouchController extends AbstractController implements OnTouchListen
                                 if( mVibrator != null )
                                 {
                                     mVibrator.cancel();
-                                    mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1 );
+
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        mVibrator.vibrate(VibrationEffect.createWaveform(AUTOHOLD_VIBRATE_PATTERN, -1));
+                                    } else {
+                                        mVibrator.vibrate(AUTOHOLD_VIBRATE_PATTERN, -1 );
+                                    }
                                 }
-                                if( mListener != null )
-                                    mListener.onAutoHold( true, prevIndex );
+                                mListener.onAutoHold( true, prevIndex );
                                 setTouchState( prevIndex, true );
                                 break;
                         }
@@ -402,14 +389,10 @@ public class TouchController extends AbstractController implements OnTouchListen
                 if (!sensorEnabled) {
                     mState.axisFractionX = 0;
                     mState.axisFractionY = 0;
-                    if (mListener != null) {
-                        mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
-                    }
+                    mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
                 }
                 mSensorController.setSensorEnabled(sensorEnabled);
-                if (mListener != null) {
-                    mListener.onSensorEnabled(sensorEnabled);
-                }
+                mListener.onSensorEnabled(sensorEnabled);
             }
 
             // Provide simple vibration feedback for any valid button when first touched
@@ -447,15 +430,19 @@ public class TouchController extends AbstractController implements OnTouchListen
                 if( firstTouched )
                 {
                     mVibrator.cancel();
-                    mVibrator.vibrate( FEEDBACK_VIBRATE_TIME );
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
+                    } else {
+                        mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
+                    }
                 }
             }
 
             // Set the controller state accordingly
             if( touched || !isAutoHoldable( index ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
-                if( mListener != null )
-                    mListener.onAutoHold( touched, index );
+                mListener.onAutoHold( touched, index );
 
                 // Finger just touched a button (any kind) OR
                 // Finger just lifted off non-auto-holdable button
@@ -469,8 +456,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 {
                     case AUTOHOLD_METHOD_SLIDEOUT:
                         // Release auto-hold button if using slide-off method
-                        if( mListener != null )
-                            mListener.onAutoHold( false, index );
+                        mListener.onAutoHold( false, index );
                         setTouchState( index, false );
                         break;
 
@@ -478,8 +464,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                         if( timeElapsed < AUTOHOLD_LONGPRESS_TIME )
                         {
                             // Release auto-hold if short-pressed
-                            if( mListener != null )
-                                mListener.onAutoHold( false, index );
+                            mListener.onAutoHold( false, index );
                             setTouchState( index, false );
                         }
                         else
@@ -488,10 +473,14 @@ public class TouchController extends AbstractController implements OnTouchListen
                             if( mVibrator != null )
                             {
                                 mVibrator.cancel();
-                                mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1 );
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    mVibrator.vibrate(VibrationEffect.createWaveform(AUTOHOLD_VIBRATE_PATTERN, -1));
+                                } else {
+                                    mVibrator.vibrate(AUTOHOLD_VIBRATE_PATTERN, -1 );
+                                }
                             }
-                            if( mListener != null )
-                                mListener.onAutoHold( true, index );
+                            mListener.onAutoHold( true, index );
                             setTouchState( index, true );
                         }
                         break;

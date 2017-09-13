@@ -20,10 +20,14 @@
  */
 package paulscode.android.mupen64plusae.task;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -60,6 +64,8 @@ public class ExtractTexturesService extends Service
     private ExtractTexturesListener mListener = null;
 
     final static int ONGOING_NOTIFICATION_ID = 1;
+
+    final static String NOTIFICATION_CHANNEL_ID = "ExtractTexturesServiceChannel";
     
     public interface ExtractTexturesListener
     {
@@ -86,7 +92,7 @@ public class ExtractTexturesService extends Service
 
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
+        ServiceHandler(Looper looper) {
             super(looper);
         }
         
@@ -178,6 +184,18 @@ public class ExtractTexturesService extends Service
         }
     }
 
+    public void initChannels(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                getString(R.string.pathHiResTexturesTask_title), NotificationManager.IMPORTANCE_DEFAULT);
+        notificationManager.createNotificationChannel(channel);
+    }
+
     @Override
     public void onCreate() {
       // Start up the thread running the service.  Note that we create a
@@ -193,9 +211,11 @@ public class ExtractTexturesService extends Service
       mServiceHandler = new ServiceHandler(mServiceLooper);
 
       //Show the notification
+      initChannels(getApplicationContext());
       Intent notificationIntent = new Intent(this, GalleryActivity.class);
       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-      NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.icon)
+      NotificationCompat.Builder builder =
+          new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.icon)
           .setContentTitle(getString(R.string.pathHiResTexturesTask_title))
           .setContentText(getString(R.string.toast_pleaseWait))
           .setContentIntent(pendingIntent);

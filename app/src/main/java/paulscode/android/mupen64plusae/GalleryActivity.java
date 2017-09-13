@@ -28,8 +28,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -46,6 +44,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.view.MenuItem.OnActionExpandListener;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -197,11 +196,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Lay out the content
         setContentView( R.layout.gallery_activity );
-        mGridView = (RecyclerView) findViewById( R.id.gridview );
+        mGridView = findViewById( R.id.gridview );
         refreshGrid();
 
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
-        final Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+        final Toolbar toolbar = findViewById( R.id.toolbar );
         toolbar.setTitle( R.string.app_name );
         final View firstGridChild = mGridView.getChildAt(0);
 
@@ -213,7 +212,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         setSupportActionBar( toolbar );
 
         // Configure the navigation drawer
-        mDrawerLayout = (DrawerLayout) findViewById( R.id.drawerLayout );
+        mDrawerLayout = findViewById( R.id.drawerLayout );
         mDrawerToggle = new ActionBarDrawerToggle( this, mDrawerLayout, toolbar, 0, 0 )
         {
             @Override
@@ -273,7 +272,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mDrawerLayout.addDrawerListener( mDrawerToggle );
 
         // Configure the list in the navigation drawer
-        mDrawerList = (MenuListView) findViewById( R.id.drawerNavigation );
+        mDrawerList = findViewById( R.id.drawerNavigation );
         mDrawerList.setMenuResource( R.menu.gallery_drawer );
 
         //Remove touch screen profile configuration if in TV mode
@@ -300,7 +299,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         } );
 
         // Configure the game information drawer
-        mGameSidebar = (GameSidebar) findViewById( R.id.gameSidebar );
+        mGameSidebar = findViewById( R.id.gameSidebar );
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
@@ -364,7 +363,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             launchGameOnCreation(givenRomPath);
         }
 
-        if(ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceName))
+        if(ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName))
         {
             Log.i("GalleryActivity", "CoreService is running");
 
@@ -434,7 +433,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         getMenuInflater().inflate( R.menu.gallery_activity, menu );
 
         final MenuItem searchItem = menu.findItem( R.id.menuItem_search );
-        MenuItemCompat.setOnActionExpandListener( searchItem, new OnActionExpandListener()
+        searchItem.setOnActionExpandListener( new OnActionExpandListener()
         {
             @Override
             public boolean onMenuItemActionCollapse( MenuItem item )
@@ -451,7 +450,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
         } );
 
-        mSearchView = (SearchView) MenuItemCompat.getActionView( searchItem );
+        mSearchView = (SearchView) searchItem.getActionView();
         mSearchView.setOnQueryTextListener( new OnQueryTextListener()
         {
             @Override
@@ -473,7 +472,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( !"".equals( mSearchQuery ) )
         {
             final String query = mSearchQuery;
-            MenuItemCompat.expandActionView( searchItem );
+            searchItem.expandActionView();
             mSearchView.setQuery( query, true );
         }
 
@@ -646,7 +645,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 break;
             case R.id.menuItem_settings:
             {
-                String romLegacySaveFileName = null;
+                String romLegacySaveFileName;
                 
                 if(item.zipFile != null)
                 {
@@ -851,8 +850,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             {
                 finish();
 
-                String nullString = null;
-                ActivityHelper.startGalleryActivity( GalleryActivity.this, nullString );
+                ActivityHelper.startGalleryActivity( GalleryActivity.this, (String)null );
             }
 
             if(mGameStartedExternally)
@@ -963,7 +961,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
                         items.add(item);
                         boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
-                        if (mGlobalPrefs.isRecentShown && isNotOld )
+                        if (recentItems != null && mGlobalPrefs.isRecentShown && isNotOld )
                         {
                             recentItems.add(item);
                         }
@@ -993,7 +991,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         List<GalleryItem> combinedItems = items;
         if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
         {
-            combinedItems = new ArrayList<GalleryItem>();
+            combinedItems = new ArrayList<>();
 
             combinedItems.add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
             combinedItems.addAll( recentItems );

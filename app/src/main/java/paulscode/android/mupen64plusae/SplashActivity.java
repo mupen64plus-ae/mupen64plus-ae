@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  *
  * Copyright (C) 2012 Paul Lamb
@@ -97,7 +97,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     // App data and user preferences
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
-    private SharedPreferences mPrefs = null;
 
     // These constants must match the keys used in res/xml/preferences*.xml
     private static final String DISPLAY_SCALING = "displayScaling";
@@ -131,24 +130,25 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         super.onCreate( savedInstanceState );
 
         final Resources res = getResources();
-        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
 
         //Check for invalid data path
         String defaultRelPath = res.getString(R.string.pathGameSaves_default);
 
-        String gameDataPathString = mPrefs.getString( GAME_DATA_PATH, null );
+        String gameDataPathString = prefs.getString( GAME_DATA_PATH, null );
         if(TextUtils.isEmpty(gameDataPathString) || gameDataPathString.contains(defaultRelPath))
         {
             String newDefValue = PathPreference.validate(defaultRelPath);
-            mPrefs.edit().putString( GAME_DATA_PATH, newDefValue ).apply();
-            gameDataPathString = mPrefs.getString( GAME_DATA_PATH, null );
+            prefs.edit().putString( GAME_DATA_PATH, newDefValue ).apply();
+            gameDataPathString = prefs.getString( GAME_DATA_PATH, null );
         }
 
 
-        String appDataPathString = mPrefs.getString( APP_DATA_PATH, null );
+        String appDataPathString = prefs.getString( APP_DATA_PATH, null );
         if(TextUtils.isEmpty(appDataPathString) || appDataPathString.contains(defaultRelPath))
         {
-            mPrefs.edit().putString( APP_DATA_PATH, gameDataPathString ).apply();
+            prefs.edit().putString( APP_DATA_PATH, gameDataPathString ).apply();
         }
 
         // Get app data and user preferences
@@ -167,11 +167,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // Ensure that selected plugin names and other list preferences are valid
         // @formatter:off
 
-        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING,          R.string.displayScaling_default,        R.array.displayScaling_values );
-        PrefUtil.validateListPreference( res, mPrefs, VIDEO_HARDWARE_TYPE,      R.string.videoHardwareType_default,     R.array.videoHardwareType_values );
-        PrefUtil.validateListPreference( res, mPrefs, AUDIO_PLUGIN,             R.string.audioPlugin_default,           R.array.audioPlugin_values );
-        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
-        PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
+        PrefUtil.validateListPreference( res, prefs, DISPLAY_SCALING,          R.string.displayScaling_default,        R.array.displayScaling_values );
+        PrefUtil.validateListPreference( res, prefs, VIDEO_HARDWARE_TYPE,      R.string.videoHardwareType_default,     R.array.videoHardwareType_values );
+        PrefUtil.validateListPreference( res, prefs, AUDIO_PLUGIN,             R.string.audioPlugin_default,           R.array.audioPlugin_values );
+        PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_AUTO_HOLD,    R.string.touchscreenAutoHold_default,   R.array.touchscreenAutoHold_values );
+        PrefUtil.validateListPreference( res, prefs, NAVIGATION_MODE,          R.string.navigationMode_default,        R.array.navigationMode_values );
         
         // @formatter:on
 
@@ -189,11 +189,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
         // Lay out the content
         setContentView( R.layout.splash_activity );
-        mTextView = (TextView) findViewById( R.id.mainText );
+        mTextView = findViewById( R.id.mainText );
 
         if( mGlobalPrefs.isBigScreenMode )
         {
-            final ImageView splash = (ImageView) findViewById( R.id.mainImage );
+            final ImageView splash = findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo);
         }
 
@@ -305,7 +305,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 //Permissions already granted, continue
                 checkExtractAssets();
             }
-            return;
         }
 
         // other 'case' lines to check for other
@@ -313,7 +312,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
     }
 
-    private final void checkExtractAssets()
+    private void checkExtractAssets()
     {
         if( mAppData.getAssetVersion() != ASSET_VERSION )
         {

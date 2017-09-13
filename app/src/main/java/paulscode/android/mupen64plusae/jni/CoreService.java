@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -78,6 +80,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     public static final String COMPLETE_EXTENSION = "complete";
     public static final String SERVICE_EVENT = "SERVICE_EVENT";
+    final static String NOTIFICATION_CHANNEL_ID = "CoreServiceChannel";
+
 
     // Slot info - used internally
     private static final int NUM_SLOTS = 10;
@@ -477,6 +481,18 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         registerReceiver(mMessageReceiver, new IntentFilter(SERVICE_EVENT));
     }
 
+    public void initChannels(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                mRomGoodName, NotificationManager.IMPORTANCE_DEFAULT);
+        notificationManager.createNotificationChannel(channel);
+    }
+
     private void updateNotification()
     {
         //Show the notification
@@ -503,7 +519,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 0, exitIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+        initChannels(getApplicationContext());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon)
                 .setContentTitle(mRomGoodName)
                 .setContentIntent(pendingIntent);

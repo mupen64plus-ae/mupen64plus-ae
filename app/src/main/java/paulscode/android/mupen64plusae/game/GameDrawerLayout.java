@@ -119,7 +119,7 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
         // If the touch ended along the left edge, ignore edge swipes for a little while
         if( upAction )
         {
-            int actionIndex = MotionEventCompat.getActionIndex( event );
+            int actionIndex = event.getActionIndex();
             int xLocation = (int) event.getX( actionIndex );
             if( xLocation < edgeXSidebarTrigger )
                 mLastEdgeTime = currentEventTime;
@@ -145,7 +145,7 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
                 (actionCode == MotionEvent.ACTION_DOWN || actionCode == MotionEvent.ACTION_POINTER_DOWN) &&
                         lastEdgeTime >= edgeIgnorePeriod )
         {
-            int actionIndex = MotionEventCompat.getActionIndex( event );
+            int actionIndex = event.getActionIndex();
             int xLocation = (int) event.getX( actionIndex );
 
             if( xLocation < edgeXSidebarTrigger || mForceDrawer)

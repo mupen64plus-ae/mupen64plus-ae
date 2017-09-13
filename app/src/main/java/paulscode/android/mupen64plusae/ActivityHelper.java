@@ -31,6 +31,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import paulscode.android.mupen64plusae.game.GameActivity;
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
@@ -114,7 +115,7 @@ public class ActivityHelper
     public static final int EXTRACT_TEXTURES_CODE = 2;
     public static final int GAME_ACTIVITY_CODE = 3;
 
-    public static final String coreServiceName = "paulscode.android.mupen64plusae.jni.CoreService";
+    public static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
 
     public static void launchUri( Context context, int resId )
     {
@@ -420,13 +421,16 @@ public class ActivityHelper
         context.stopService(intent);
     }
 
-    public static boolean isServiceRunning(Context context, String serviceName) {
+    public static boolean isServiceRunning(Context context, String processName) {
         ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
-            if(serviceName.equals(service.service.getClassName())) {
+
+        List<ActivityManager.RunningAppProcessInfo> processInfos = manager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo process : processInfos){
+            if(processName.equals(process.processName)) {
                 return true;
             }
         }
+
         return false;
     }
 
