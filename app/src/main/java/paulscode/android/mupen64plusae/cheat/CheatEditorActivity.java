@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -80,7 +80,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     {
         private static final int RESID = R.layout.list_item_two_text_icon;
         
-        public CheatListAdapter( Context context, List<Cheat> cheats )
+        CheatListAdapter( Context context, List<Cheat> cheats )
         {
             super( context, RESID, cheats );
         }
@@ -98,9 +98,9 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
             Cheat item = getItem( position );
             if( item != null )
             {
-                TextView text1 = (TextView) view.findViewById( R.id.text1 );
-                TextView text2 = (TextView) view.findViewById( R.id.text2 );
-                ImageView icon = (ImageView) view.findViewById( R.id.icon );
+                TextView text1 = view.findViewById( R.id.text1 );
+                TextView text2 = view.findViewById( R.id.text2 );
+                ImageView icon = view.findViewById( R.id.icon );
                 
                 text1.setText( item.name );
                 text2.setText( item.desc );
@@ -113,8 +113,8 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     private static final String STATE_MENU_DIALOG_FRAGMENT = "STATE_MENU_DIALOG_FRAGMENT";
     private static final String STATE_CHEAT_EDIT_DIALOG_FRAGMENT = "STATE_CHEAT_EDIT_DIALOG_FRAGMENT";
     
-    private final ArrayList<Cheat> userCheats = new ArrayList<Cheat>();
-    private final ArrayList<Cheat> systemCheats = new ArrayList<Cheat>();
+    private final ArrayList<Cheat> userCheats = new ArrayList<>();
+    private final ArrayList<Cheat> systemCheats = new ArrayList<>();
     private CheatListAdapter cheatListAdapter = null;
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
@@ -150,6 +150,10 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
         mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
         mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
+
+        Log.v( "CheatEditorActivity", "CRC = " + mRomCrc
+                + ", header name = " + mRomHeaderName
+                + ", country code = " + mRomCountryCode);
         
         setContentView( R.layout.cheat_editor );
         reload( mRomCrc, mRomCountryCode );
@@ -220,7 +224,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     private void save( String crc )
     {
         ArrayList<Cheat> combinedCheats;
-        combinedCheats = new ArrayList<Cheat>();
+        combinedCheats = new ArrayList<>();
         combinedCheats.addAll(systemCheats);
         combinedCheats.addAll(userCheats);
         Collections.sort(combinedCheats);
@@ -270,7 +274,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
                 promptDelete(mSelectedCheat);
                 break;
             default:
-                return;
+                break;
         }
     }
     
@@ -278,15 +282,15 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     {
         int stringId = R.string.cheatEditor_edit1;
         final Cheat cheat = userCheats.get( mSelectedCheat );
-        ArrayList<CheatAddressData> addressList = new ArrayList<CheatAddressData>();
-        ArrayList<CheatOptionData> optionsList = new ArrayList<CheatOptionData>();
+        ArrayList<CheatAddressData> addressList = new ArrayList<>();
+        ArrayList<CheatOptionData> optionsList = new ArrayList<>();
         String addresses = cheat.code;
         String options = cheat.option;
         
         //Convert address string to a list of addresses
         if( !TextUtils.isEmpty( addresses ) )
         {
-            String[] addressStrings = null;
+            String[] addressStrings;
             addressStrings = addresses.split("\n");
             
             for(String address : addressStrings)
@@ -315,7 +319,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
         //Convert options into a list of options
         if( !TextUtils.isEmpty( options ) )
         {
-            String[] optionStrings = null;
+            String[] optionStrings;
             optionStrings = options.split( "\n" );
             
             for(String option : optionStrings)
@@ -350,7 +354,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     
     private List<String> getCheatTitles()
     {
-        List<String> cheatTitles = new ArrayList<String>();
+        List<String> cheatTitles = new ArrayList<>();
         
         for(Cheat cheat: userCheats)
         {
@@ -389,7 +393,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
     {        
         if( selectedButton == DialogInterface.BUTTON_POSITIVE )
         {
-            Cheat cheat = null;
+            Cheat cheat;
             
             if (mSelectedCheat != -1 && mSelectedCheat < userCheats.size())
             {
@@ -409,7 +413,7 @@ public class CheatEditorActivity extends AppCompatListActivity implements Extrac
 
             cheat.desc = comment.replace( '\n', ' ' );
             
-            String optionAddressString = new String();
+            String optionAddressString = "";
             
             //Build the codes
             StringBuilder builder = new StringBuilder();
