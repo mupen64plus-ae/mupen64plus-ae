@@ -62,6 +62,7 @@ void init_device(struct device* dev,
     unsigned int emumode,
     unsigned int count_per_op,
     int no_compiled_jump,
+    int special_rom,
     /* ai */
     struct audio_out_backend* aout,
     /* pi */
@@ -77,11 +78,8 @@ void init_device(struct device* dev,
     struct gb_cart* gb_carts,
     uint16_t eeprom_id, struct storage_backend* eeprom_storage,
     struct clock_backend* clock,
-    unsigned int delay_si,
-    /* sp */
-    unsigned int audio_signal,
     /* vi */
-    unsigned int vi_clock, unsigned int expected_refresh_rate, unsigned int count_per_scanline, unsigned int alternate_timing);
+    unsigned int vi_clock, unsigned int expected_refresh_rate);
 
 /* Setup device such that it's state is
  * what it should be after power on.

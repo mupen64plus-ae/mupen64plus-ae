@@ -267,14 +267,11 @@ int main_set_core_defaults(void)
     ConfigSetDefaultBool(g_CoreConfig, "AutoStateSlotIncrement", 0, "Increment the save state slot after each save operation");
     ConfigSetDefaultBool(g_CoreConfig, "EnableDebugger", 0, "Activate the R4300 debugger when ROM execution begins, if core was built with Debugger support");
     ConfigSetDefaultInt(g_CoreConfig, "CurrentStateSlot", 0, "Save state slot (0-9) to use when saving/loading the emulator state");
-    ConfigSetDefaultString(g_CoreConfig, "ScreenshotPath", "", "Path to directory where screenshots are saved. If this is blank, the default value of ${UserConfigPath}/screenshot will be used");
-    ConfigSetDefaultString(g_CoreConfig, "SaveStatePath", "", "Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserConfigPath}/save will be used");
-    ConfigSetDefaultString(g_CoreConfig, "SaveSRAMPath", "", "Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used");
+    ConfigSetDefaultString(g_CoreConfig, "ScreenshotPath", "", "Path to directory where screenshots are saved. If this is blank, the default value of ${UserDataPath}/screenshot will be used");
+    ConfigSetDefaultString(g_CoreConfig, "SaveStatePath", "", "Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserDataPath}/save will be used");
+    ConfigSetDefaultString(g_CoreConfig, "SaveSRAMPath", "", "Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserDataPath}/save will be used");
     ConfigSetDefaultString(g_CoreConfig, "SharedDataPath", "", "Path to a directory to search when looking for shared data files");
-    ConfigSetDefaultBool(g_CoreConfig, "DelaySI", 1, "Delay interrupt after DMA SI read/write");
     ConfigSetDefaultInt(g_CoreConfig, "CountPerOp", 0, "Force number of cycles per emulated instruction");
-    ConfigSetDefaultInt(g_CoreConfig, "ViTiming", -1, "Use alternate VI timing (-1=Game default, 0=Don't use alternate timing, 1=Use alternate timing)");
-    ConfigSetDefaultInt(g_CoreConfig, "CountPerScanline", -1, "Modify the default count per scanline(-1 or 0=Game default)");
     ConfigSetDefaultBool(g_CoreConfig, "DisableSpecRecomp", 1, "Disable speculative precompilation in new dynarec");
 
     /* handle upgrades */
@@ -963,11 +960,9 @@ m64p_error main_run(void)
 {
     size_t i;
     size_t rdram_size;
-    unsigned int delay_si;
     unsigned int count_per_op;
     unsigned int emumode;
     unsigned int disable_extra_mem;
-    int alternate_vi_timing, count_per_scanline;
     int no_compiled_jump;
     struct file_storage eep;
     struct file_storage fla;
@@ -996,14 +991,8 @@ m64p_error main_run(void)
 #ifdef NEW_DYNAREC
     stop_after_jal = ConfigGetParamBool(g_CoreConfig, "DisableSpecRecomp");
 #endif
-    if (!ROM_PARAMS.delaysi)
-        delay_si = ROM_PARAMS.delaysi;
-    else
-        delay_si = ConfigGetParamBool(g_CoreConfig, "DelaySI");
 
     count_per_op = ConfigGetParamInt(g_CoreConfig, "CountPerOp");
-    alternate_vi_timing = ConfigGetParamInt(g_CoreConfig, "ViTiming");
-    count_per_scanline  = ConfigGetParamInt(g_CoreConfig, "CountPerScanline");
 
     if (ROM_PARAMS.disableextramem)
         disable_extra_mem = ROM_PARAMS.disableextramem;
@@ -1014,12 +1003,6 @@ m64p_error main_run(void)
 
     if (count_per_op <= 0)
         count_per_op = ROM_PARAMS.countperop;
-
-    if (alternate_vi_timing < 0)
-        alternate_vi_timing = ROM_PARAMS.vitiming;
-
-    if (count_per_scanline  <= 0)
-        count_per_scanline = ROM_PARAMS.countperscanline;
 
     cheat_add_hacks();
 
@@ -1087,6 +1070,7 @@ m64p_error main_run(void)
                 emumode,
                 count_per_op,
                 no_compiled_jump,
+                ROM_PARAMS.special_rom,
                 &aout,
                 g_rom, g_rom_size,
                 &fla_storage,
@@ -1098,9 +1082,7 @@ m64p_error main_run(void)
                 gb_carts,
                 (ROM_SETTINGS.savetype != EEPROM_16KB) ? 0x8000 : 0xc000, &eep_storage,
                 &clock,
-                delay_si,
-                ROM_PARAMS.audiosignal,
-                vi_clock_from_tv_standard(ROM_PARAMS.systemtype), vi_expected_refresh_rate_from_tv_standard(ROM_PARAMS.systemtype), count_per_scanline, alternate_vi_timing);
+                vi_clock_from_tv_standard(ROM_PARAMS.systemtype), vi_expected_refresh_rate_from_tv_standard(ROM_PARAMS.systemtype));
 
     // Attach rom to plugins
     if (!gfx.romOpen())

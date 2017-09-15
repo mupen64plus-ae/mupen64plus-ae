@@ -45,6 +45,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/main/zip/ioapi.c                                  \
     $(SRCDIR)/main/zip/unzip.c                                  \
     $(SRCDIR)/main/zip/zip.c                                    \
+    $(SRCDIR)/main/xxHash/xxhash.c                              \
     $(SRCDIR)/device/memory/memory.c                            \
     $(SRCDIR)/osal/dynamiclib_unix.c                            \
     $(SRCDIR)/osal/files_unix.c                                 \

@@ -29,9 +29,6 @@
 #include "main/main.h"
 #include "plugin/plugin.h"
 
-/* XXX: timing hacks */
-enum { NTSC_VERTICAL_RESOLUTION = 525 };
-
 unsigned int vi_clock_from_tv_standard(m64p_system_type tv_standard)
 {
     switch(tv_standard)
@@ -61,13 +58,10 @@ unsigned int vi_expected_refresh_rate_from_tv_standard(m64p_system_type tv_stand
 }
 
 void init_vi(struct vi_controller* vi, unsigned int clock, unsigned int expected_refresh_rate,
-             unsigned int count_per_scanline, unsigned int alternate_timing,
              struct r4300_core* r4300)
 {
     vi->clock = clock;
     vi->expected_refresh_rate = expected_refresh_rate;
-    vi->count_per_scanline = count_per_scanline;
-    vi->alternate_timing = alternate_timing;
     vi->r4300 = r4300;
 }
 
@@ -76,8 +70,8 @@ void poweron_vi(struct vi_controller* vi)
     memset(vi->regs, 0, VI_REGS_COUNT*sizeof(uint32_t));
     vi->field = 0;
     vi->delay = vi->next_vi = 5000;
+    vi->count_per_scanline = 1500;
 }
-
 
 int read_vi_regs(void* opaque, uint32_t address, uint32_t* value)
 {
@@ -89,10 +83,12 @@ int read_vi_regs(void* opaque, uint32_t address, uint32_t* value)
     {
         /* XXX: update current line number */
         cp0_update_count(vi->r4300);
-        if (vi->alternate_timing)
-            vi->regs[VI_CURRENT_REG] = (vi->delay - (vi->next_vi - cp0_regs[CP0_COUNT_REG])) % (NTSC_VERTICAL_RESOLUTION + 1);
-        else
-            vi->regs[VI_CURRENT_REG] = (vi->delay - (vi->next_vi - cp0_regs[CP0_COUNT_REG])) / vi->count_per_scanline;
+
+        vi->regs[VI_CURRENT_REG] = (vi->delay - (vi->next_vi - cp0_regs[CP0_COUNT_REG])) / vi->count_per_scanline;
+
+        /* wrap around VI_CURRENT_REG if needed */
+        if (vi->regs[VI_CURRENT_REG] >= vi->regs[VI_V_SYNC_REG])
+            vi->regs[VI_CURRENT_REG] -= vi->regs[VI_V_SYNC_REG];
 
         /* update current field */
         vi->regs[VI_CURRENT_REG] = (vi->regs[VI_CURRENT_REG] & (~1)) | vi->field;
@@ -146,6 +142,8 @@ void vi_vertical_interrupt_event(void* opaque)
 
     /* toggle vi field if in interlaced mode */
     vi->field ^= (vi->regs[VI_STATUS_REG] >> 6) & 0x1;
+
+    vi->count_per_scanline = ((vi->clock / vi->expected_refresh_rate) / (vi->regs[VI_V_SYNC_REG] + 1));
 
     /* schedule next vertical interrupt */
     vi->delay = (vi->regs[VI_V_SYNC_REG] == 0)
