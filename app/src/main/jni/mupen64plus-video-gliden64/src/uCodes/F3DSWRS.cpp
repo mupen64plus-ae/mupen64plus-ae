@@ -179,7 +179,7 @@ void F3DSWRS_Vtx(u32 _w0, u32 _w1)
 static
 void F3DSWRS_PrepareVertices(const u32* _vert,
 							 const u8* _colorbase,
-							 const u32* _color,
+							 const u32* _colorIdx,
 							 const u8* _texbase,
 							 bool _useTex,
 							 bool _persp,
@@ -194,7 +194,7 @@ void F3DSWRS_PrepareVertices(const u32* _vert,
 
 	for (u32 i = 0; i < _num; ++i) {
 		SPVertex & vtx = drawer.getVertex(_vert[i]);
-		const u8 *color = _colorbase + _color[i];
+		const u8 *color = _colorbase + _colorIdx[i];
 		vtx.r = color[3] * 0.0039215689f;
 		vtx.g = color[2] * 0.0039215689f;
 		vtx.b = color[1] * 0.0039215689f;
@@ -1044,6 +1044,38 @@ void F3DSWRS_EndDisplayList(u32, u32)
 //	_updateSWDL();
 }
 
+static
+void _addVertices(const u32 _vert[3], GraphicsDrawer & _drawer)
+{
+	if (_drawer.isClipped(_vert[0], _vert[1], _vert[2]))
+		return;
+
+	SPVertex & vtx0 = _drawer.getVertex(_vert[(((RSP.w1 >> 24) & 3) % 3)]);
+
+	for (u32 i = 0; i < 3; ++i) {
+		SPVertex & vtx = _drawer.getVertex(_vert[i]);
+
+		if ((gSP.geometryMode & G_SHADE) == 0) {
+			// Prim shading
+			vtx.flat_r = gDP.primColor.r;
+			vtx.flat_g = gDP.primColor.g;
+			vtx.flat_b = gDP.primColor.b;
+			vtx.flat_a = gDP.primColor.a;
+		} else if ((gSP.geometryMode & G_SHADING_SMOOTH) == 0) {
+			// Flat shading
+			vtx.r = vtx.flat_r = vtx0.r;
+			vtx.g = vtx.flat_g = vtx0.g;
+			vtx.b = vtx.flat_b = vtx0.b;
+			vtx.a = vtx.flat_a = vtx0.a;
+		}
+
+		if (gDP.otherMode.depthSource == G_ZS_PRIM)
+			vtx.z = gDP.primDepth.z * vtx.w;
+
+		_drawer.getCurrentDMAVertex() = vtx;
+	}
+}
+
 void F3DSWRS_Tri1(u32 _w0, u32 _w1)
 {
 	DebugMsg(DEBUG_NORMAL, "F3DSWRS_Tri1 (0x%08x, 0x%08x)\n", _w0, _w1);
@@ -1052,17 +1084,22 @@ void F3DSWRS_Tri1(u32 _w0, u32 _w1)
 	const u32 v3 = ((_w1 <<  3) & 0x7F8) / 40;
 	const u32 vert[3] = { v1, v2, v3 };
 
-	const u32 nextCMD = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 8];
-	const u32 color[3] = { _SHIFTR(nextCMD, 16, 8), _SHIFTR(nextCMD, 8, 8), _SHIFTR(nextCMD, 0, 8) };
+	const u32 colorParam = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 8];
+	const u32 colorIdx[3] = { _SHIFTR(colorParam, 16, 8), _SHIFTR(colorParam, 8, 8), _SHIFTR(colorParam, 0, 8) };
 
 	const bool useTex = (_w0 & 2) != 0;
     const u8 * texbase = RDRAM + RSP.PC[RSP.PCi] + 16;
-	F3DSWRS_PrepareVertices(vert, RDRAM + gSP.vertexColorBase, color, texbase, useTex, gDP.otherMode.texturePersp != 0, 3);
+	F3DSWRS_PrepareVertices(vert, RDRAM + gSP.vertexColorBase, colorIdx, texbase, useTex, gDP.otherMode.texturePersp != 0, 3);
 
 	if (useTex)
 		RSP.PC[RSP.PCi] += 16;
 
-	gSP1Triangle(v1, v2, v3);
+	RSP.nextCmd = _SHIFTR(*(u32*)&RDRAM[RSP.PC[RSP.PCi] + 16], 24, 8);
+	GraphicsDrawer & drawer = dwnd().getDrawer();
+	_addVertices(vert, drawer);
+	if (RSP.nextCmd != G_TRI1 && RSP.nextCmd != G_TRI2)
+		drawer.drawDMATriangles(drawer.getDMAVerticesCount());
+
 	RSP.PC[RSP.PCi] += 8;
 }
 
@@ -1075,18 +1112,26 @@ void F3DSWRS_Tri2(u32 _w0, u32 _w1)
 	const u32 v4 = (_SHIFTR( _w1,  21, 11 ) & 0x7F8) / 40;
 	const u32 vert[4] = { v1, v2, v3, v4 };
 
-	const u32 nextCMD = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 8];
-	const u32 color[4] = { _SHIFTR(nextCMD, 16, 8), _SHIFTR(nextCMD, 8, 8),
-							_SHIFTR(nextCMD, 0, 8), _SHIFTR(nextCMD, 24, 8) };
+	const u32 colorParam = *(u32*)&RDRAM[RSP.PC[RSP.PCi] + 8];
+	const u32 colorIdx[4] = { _SHIFTR(colorParam, 16, 8), _SHIFTR(colorParam, 8, 8),
+							_SHIFTR(colorParam, 0, 8), _SHIFTR(colorParam, 24, 8) };
 
 	const bool useTex = (_w0 & 2) != 0;
     const u8 * texbase = RDRAM + RSP.PC[RSP.PCi] + 16;
-	F3DSWRS_PrepareVertices(vert, RDRAM + gSP.vertexColorBase, color, texbase, useTex, gDP.otherMode.texturePersp != 0, 4);
+	F3DSWRS_PrepareVertices(vert, RDRAM + gSP.vertexColorBase, colorIdx, texbase, useTex, gDP.otherMode.texturePersp != 0, 4);
 
 	if (useTex)
 		RSP.PC[RSP.PCi] += 16;
 
-	gSP2Triangles(v1, v2, v3, 0, v1, v3, v4, 0);
+	RSP.nextCmd = _SHIFTR(*(u32*)&RDRAM[RSP.PC[RSP.PCi] + 16], 24, 8);
+	GraphicsDrawer & drawer = dwnd().getDrawer();
+	const u32 vert1[3] = { v1, v2, v3 };
+	_addVertices(vert1, drawer);
+	const u32 vert2[3] = { v1, v3, v4 };
+	_addVertices(vert2, drawer);
+	if (RSP.nextCmd != G_TRI1 && RSP.nextCmd != G_TRI2)
+		drawer.drawDMATriangles(drawer.getDMAVerticesCount());
+
 	RSP.PC[RSP.PCi] += 8;
 }
 

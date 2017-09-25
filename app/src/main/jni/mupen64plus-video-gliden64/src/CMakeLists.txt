@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 
+if ((${CMAKE_VERSION} VERSION_EQUAL 3.9) OR (${CMAKE_VERSION} VERSION_GREATER 3.9))
+  cmake_policy(SET CMP0069 NEW)
+endif()
+
 option(EGL "Set to ON if targeting an EGL device" ${EGL})
 option(PANDORA "Set to ON if targeting an OpenPandora" ${PANDORA})
 option(MUPENPLUSAPI "Set to ON for Mupen64Plus plugin" ${MUPENPLUSAPI})
@@ -18,20 +22,6 @@ set(GLideN64_SOURCES
   Debugger.cpp
   DepthBuffer.cpp
   DisplayWindow.cpp
-  F3D.cpp
-  F3DBETA.cpp
-  F3DDKR.cpp
-  F3DEX.cpp
-  F3DAM.cpp
-  F3DEX2.cpp
-  F3DEX2ACCLAIM.cpp
-  F3DEX2CBFD.cpp
-  F3DEX2MM.cpp
-  F3DGOLDEN.cpp
-  F3DSWRS.cpp
-  F3DTEXA.cpp
-  F3DPD.cpp
-  F3DSETA.cpp
   FrameBuffer.cpp
   FrameBufferInfo.cpp
   GBI.cpp
@@ -40,9 +30,6 @@ set(GLideN64_SOURCES
   GraphicsDrawer.cpp
   gSP.cpp
   Keys.cpp
-  L3D.cpp
-  L3DEX2.cpp
-  L3DEX.cpp
   Log.cpp
   N64.cpp
   NoiseTexture.cpp
@@ -52,18 +39,13 @@ set(GLideN64_SOURCES
   RDP.cpp
   RSP.cpp
   RSP_LoadMatrix.cpp
-  S2DEX2.cpp
-  S2DEX.cpp
   SoftwareRender.cpp
-  T3DUX.cpp
   TexrectDrawer.cpp
   TextDrawer.cpp
   TextureFilterHandler.cpp
   Textures.cpp
-  Turbo3D.cpp
   VI.cpp
   ZlutTexture.cpp
-  ZSort.cpp
   BufferCopy/ColorBufferToRDRAM.cpp
   BufferCopy/DepthBufferToRDRAM.cpp
   BufferCopy/RDRAMtoColorBuffer.cpp
@@ -95,6 +77,29 @@ set(GLideN64_SOURCES
   Graphics/OpenGLContext/GLSL/glsl_ShaderStorage.cpp
   Graphics/OpenGLContext/GLSL/glsl_SpecialShadersFactory.cpp
   Graphics/OpenGLContext/GLSL/glsl_Utils.cpp
+  uCodes/F3D.cpp
+  uCodes/F3DBETA.cpp
+  uCodes/F3DDKR.cpp
+  uCodes/F3DEX.cpp
+  uCodes/F3DAM.cpp
+  uCodes/F3DEX2.cpp
+  uCodes/F3DEX2ACCLAIM.cpp
+  uCodes/F3DEX2CBFD.cpp
+  uCodes/F3DZEX2.cpp
+  uCodes/F3DFLX2.cpp
+  uCodes/F3DGOLDEN.cpp
+  uCodes/F3DSWRS.cpp
+  uCodes/F3DTEXA.cpp
+  uCodes/F3DPD.cpp
+  uCodes/F3DSETA.cpp
+  uCodes/L3D.cpp
+  uCodes/L3DEX2.cpp
+  uCodes/L3DEX.cpp
+  uCodes/S2DEX2.cpp
+  uCodes/S2DEX.cpp
+  uCodes/T3DUX.cpp
+  uCodes/Turbo3D.cpp
+  uCodes/ZSort.cpp
 )
 
 #check if we're running on Raspberry Pi
@@ -305,11 +310,10 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
     message("Found compiler version " ${G++_VERSION})
     message(SEND_ERROR "You need at least Clang 3.3 to compile GLideN64!")
   endif()
-#  SET(GCC_CPP11_COMPILE_FLAGS "-std=c++0x -static-libgcc")
-  SET(GCC_CPP11_COMPILE_FLAGS "-std=c++0x")
+  SET(GCC_CPP11_COMPILE_FLAGS "-std=c++11")
   SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_CPP11_COMPILE_FLAGS}" )
   SET(GCC_STATIC_LINK_FLAGS "-static-libgcc")
-  SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_STATIC_LINK_FLAGS}" )
+  SET( CMAKE_SHARED_LINKER_FLAGS  "${CMAKE_SHARED_LINKER_FLAGS} ${GCC_STATIC_LINK_FLAGS}" )
 endif()
 
 add_library( ${GLideN64_DLL_NAME} SHARED ${GLideN64_SOURCES})
@@ -339,6 +343,15 @@ if( CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif( CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 if( CMAKE_BUILD_TYPE STREQUAL "Release")
+  if ((${CMAKE_VERSION} VERSION_EQUAL 3.9) OR (${CMAKE_VERSION} VERSION_GREATER 3.9))
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT result)
+    if(result)
+      message("Interprocedural optimizations enabled")
+      set_property(TARGET ${GLideN64_DLL_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    endif()
+  endif()
+
   SET_TARGET_PROPERTIES(
 	${GLideN64_DLL_NAME}
 	PROPERTIES

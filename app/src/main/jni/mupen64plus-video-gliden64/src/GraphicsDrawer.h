@@ -139,6 +139,9 @@ public:
 
 	SPVertex * getDMAVerticesData() { return m_dmaVertices.data(); }
 
+	SPVertex & getCurrentDMAVertex();
+	size_t getDMAVerticesCount() const { return m_dmaVerticesNum; }
+
 	void updateScissor(FrameBuffer * _pBuffer) const;
 
 	DrawingState getDrawingState() const { return m_drawingState; }
@@ -163,7 +166,6 @@ private:
 	void _setSpecialTexrect() const;
 
 	void _setBlendMode() const;
-	void _legacySetBlendMode() const;
 	void _updateCullFace() const;
 	void _updateViewport() const;
 	void _updateScreenCoordsViewport() const;
@@ -191,6 +193,7 @@ private:
 	} triangles;
 
 	std::vector<SPVertex> m_dmaVertices;
+	size_t m_dmaVerticesNum;
 
 	RectVertex m_rect[4];
 

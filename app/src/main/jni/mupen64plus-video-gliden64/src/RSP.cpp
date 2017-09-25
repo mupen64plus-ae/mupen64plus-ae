@@ -4,9 +4,9 @@
 #include "RSP.h"
 #include "RDP.h"
 #include "N64.h"
-#include "F3D.h"
-#include "Turbo3D.h"
-#include "T3DUX.h"
+#include "uCodes/F3D.h"
+#include "uCodes/Turbo3D.h"
+#include "uCodes/T3DUX.h"
 #include "VI.h"
 #include "Combiner.h"
 #include "FrameBuffer.h"
@@ -120,7 +120,7 @@ void RSP_ProcessDList()
 		gSP.matrix.stackSize = 32;
 	gSP.matrix.modelViewi = 0;
 	gSP.status[0] = gSP.status[1] = gSP.status[2] = gSP.status[3] = 0;
-	gSP.changed |= CHANGED_MATRIX;
+	gSP.changed |= CHANGED_MATRIX | CHANGED_LIGHT | CHANGED_LOOKAT;
 	gDP.changed &= ~CHANGED_CPU_FB_WRITE;
 	gDPSetTexturePersp(G_TP_PERSP);
 
@@ -271,8 +271,6 @@ void RSP_Init()
 		config.generalEmulation.hacks |= hack_scoreboardJ;
 	else if (strstr(RSP.romname, (const char *)"MarioTennis") != nullptr)
 		config.generalEmulation.hacks |= hack_scoreboard;
-	else if (strstr(RSP.romname, (const char *)"Pilot Wings64") != nullptr)
-		config.generalEmulation.hacks |= hack_pilotWings;
 	else if (strstr(RSP.romname, (const char *)"THE LEGEND OF ZELDA") != nullptr ||
 			 strstr(RSP.romname, (const char *)"ZELDA MASTER QUEST") != nullptr ||
 			 strstr(RSP.romname, (const char *)"DOUBUTSUNOMORI") != nullptr ||

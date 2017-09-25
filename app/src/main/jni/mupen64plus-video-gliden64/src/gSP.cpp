@@ -14,7 +14,7 @@
 #include "CRC.h"
 #include <string.h>
 #include "convert.h"
-#include "S2DEX.h"
+#include "uCodes/S2DEX.h"
 #include "VI.h"
 #include "FrameBuffer.h"
 #include "DepthBuffer.h"
@@ -47,10 +47,20 @@ void gSPFlushTriangles()
 	}
 }
 
-void gSPCombineMatrices()
+static
+void _gSPCombineMatrices()
 {
 	MultMatrix(gSP.matrix.projection, gSP.matrix.modelView[gSP.matrix.modelViewi], gSP.matrix.combined);
 	gSP.changed &= ~CHANGED_MATRIX;
+}
+
+void gSPCombineMatrices(u32 _mode)
+{
+	if (_mode == 1)
+		_gSPCombineMatrices();
+	else
+		DebugMsg(DEBUG_NORMAL | DEBUG_ERROR, "// Unknown gSPCombineMatrices mode: %u\n", _mode);
+	DebugMsg(DEBUG_NORMAL, "gSPCombineMatrices();\n");
 }
 
 void gSPTriangle(s32 v0, s32 v1, s32 v2)
@@ -314,7 +324,7 @@ void gSPClipVertex4(u32 v)
 void gSPProcessVertex4(u32 v)
 {
 	if (gSP.changed & CHANGED_MATRIX)
-		gSPCombineMatrices();
+		_gSPCombineMatrices();
 
 	DisplayWindow & wnd = dwnd();
 	GraphicsDrawer & drawer = wnd.getDrawer();
@@ -359,28 +369,37 @@ void gSPProcessVertex4(u32 v)
 		else
 			gSPLightVertex4(v);
 
-		if (GBI.isTextureGen() && (gSP.geometryMode & G_TEXTURE_GEN) != 0) {
-			for(int i = 0; i < 4; ++i) {
-				SPVertex & vtx = drawer.getVertex(v+i);
-				f32 fLightDir[3] = {vtx.nx, vtx.ny, vtx.nz};
-				f32 x, y;
-				if (gSP.lookatEnable) {
-					x = DotProduct(gSP.lookat.i_xyz[0], fLightDir);
-					y = DotProduct(gSP.lookat.i_xyz[1], fLightDir);
-				} else {
-					fLightDir[0] *= 128.0f;
-					fLightDir[1] *= 128.0f;
-					fLightDir[2] *= 128.0f;
-					TransformVectorNormalize(fLightDir, gSP.matrix.modelView[gSP.matrix.modelViewi]);
-					x = fLightDir[0];
-					y = fLightDir[1];
+		if ((gSP.geometryMode & G_TEXTURE_GEN) != 0) {
+			if (GBI.getMicrocodeType() != F3DFLX2) {
+				for(int i = 0; i < 4; ++i) {
+					SPVertex & vtx = drawer.getVertex(v+i);
+					f32 fLightDir[3] = {vtx.nx, vtx.ny, vtx.nz};
+					f32 x, y;
+					if (gSP.lookatEnable) {
+						x = DotProduct(gSP.lookat.i_xyz[0], fLightDir);
+						y = DotProduct(gSP.lookat.i_xyz[1], fLightDir);
+					} else {
+						fLightDir[0] *= 128.0f;
+						fLightDir[1] *= 128.0f;
+						fLightDir[2] *= 128.0f;
+						TransformVectorNormalize(fLightDir, gSP.matrix.modelView[gSP.matrix.modelViewi]);
+						x = fLightDir[0];
+						y = fLightDir[1];
+					}
+					if (gSP.geometryMode & G_TEXTURE_GEN_LINEAR) {
+						vtx.s = acosf(-x) * 325.94931f;
+						vtx.t = acosf(-y) * 325.94931f;
+					} else { // G_TEXTURE_GEN
+						vtx.s = (x + 1.0f) * 512.0f;
+						vtx.t = (y + 1.0f) * 512.0f;
+					}
 				}
-				if (gSP.geometryMode & G_TEXTURE_GEN_LINEAR) {
-					vtx.s = acosf(-x) * 325.94931f;
-					vtx.t = acosf(-y) * 325.94931f;
-				} else { // G_TEXTURE_GEN
-					vtx.s = (x + 1.0f) * 512.0f;
-					vtx.t = (y + 1.0f) * 512.0f;
+			} else {
+				for(int i = 0; i < 4; ++i) {
+					SPVertex & vtx = drawer.getVertex(v+i);
+					const f32 intensity = DotProduct(gSP.lookat.i_xyz[0], &vtx.nx) * 128.0f;
+					const s16 index = static_cast<s16>(intensity);
+					vtx.a = _FIXED2FLOAT(RDRAM[(gSP.DMAIO_address + 128 + index) ^ 3], 8);
 				}
 			}
 		}
@@ -597,13 +616,13 @@ void gSPClipVertex(u32 v)
 void gSPProcessVertex(u32 v)
 {
 	if (gSP.changed & CHANGED_MATRIX)
-		gSPCombineMatrices();
+		_gSPCombineMatrices();
 
 	DisplayWindow & wnd = dwnd();
 	GraphicsDrawer & drawer = wnd.getDrawer();
 	SPVertex & vtx = drawer.getVertex(v);
-	float vPos[3] = {(float)vtx.x, (float)vtx.y, (float)vtx.z};
-	gSPTransformVertex( &vtx.x, gSP.matrix.combined );
+	f32 vPos[3] = {vtx.x, vtx.y, vtx.z};
+	gSPTransformVertex(&vtx.x, gSP.matrix.combined);
 
 	if (wnd.isAdjustScreen() && (gDP.colorImage.width > VI.width * 98 / 100)) {
 		vtx.x *= wnd.getAdjustScale();
@@ -630,26 +649,32 @@ void gSPProcessVertex(u32 v)
 		else
 			gSPLightVertex(vtx);
 
-		if (GBI.isTextureGen() && (gSP.geometryMode & G_TEXTURE_GEN) != 0) {
-			f32 fLightDir[3] = {vtx.nx, vtx.ny, vtx.nz};
-			f32 x, y;
-			if (gSP.lookatEnable) {
-				x = DotProduct(gSP.lookat.i_xyz[0], fLightDir);
-				y = DotProduct(gSP.lookat.i_xyz[1], fLightDir);
+		if ((gSP.geometryMode & G_TEXTURE_GEN) != 0) {
+			if (GBI.getMicrocodeType() != F3DFLX2) {
+				f32 fLightDir[3] = {vtx.nx, vtx.ny, vtx.nz};
+				f32 x, y;
+				if (gSP.lookatEnable) {
+					x = DotProduct(gSP.lookat.i_xyz[0], fLightDir);
+					y = DotProduct(gSP.lookat.i_xyz[1], fLightDir);
+				} else {
+					fLightDir[0] *= 128.0f;
+					fLightDir[1] *= 128.0f;
+					fLightDir[2] *= 128.0f;
+					TransformVectorNormalize(fLightDir, gSP.matrix.modelView[gSP.matrix.modelViewi]);
+					x = fLightDir[0];
+					y = fLightDir[1];
+				}
+				if (gSP.geometryMode & G_TEXTURE_GEN_LINEAR) {
+					vtx.s = acosf(-x) * 325.94931f;
+					vtx.t = acosf(-y) * 325.94931f;
+				} else { // G_TEXTURE_GEN
+					vtx.s = (x + 1.0f) * 512.0f;
+					vtx.t = (y + 1.0f) * 512.0f;
+				}
 			} else {
-				fLightDir[0] *= 128.0f;
-				fLightDir[1] *= 128.0f;
-				fLightDir[2] *= 128.0f;
-				TransformVectorNormalize(fLightDir, gSP.matrix.modelView[gSP.matrix.modelViewi]);
-				x = fLightDir[0];
-				y = fLightDir[1];
-			}
-			if (gSP.geometryMode & G_TEXTURE_GEN_LINEAR) {
-				vtx.s = acosf(-x) * 325.94931f;
-				vtx.t = acosf(-y) * 325.94931f;
-			} else { // G_TEXTURE_GEN
-				vtx.s = (x + 1.0f) * 512.0f;
-				vtx.t = (y + 1.0f) * 512.0f;
+				const f32 intensity = DotProduct(gSP.lookat.i_xyz[0], &vtx.nx) * 128.0f;
+				const s16 index = static_cast<s16>(intensity);
+				vtx.a = _FIXED2FLOAT(RDRAM[(gSP.DMAIO_address + 128 + index) ^ 3], 8);
 			}
 		}
 	} else if (gSP.geometryMode & G_ACCLAIM_LIGHTING) {
@@ -663,7 +688,7 @@ void gSPProcessVertex(u32 v)
 void gSPLoadUcodeEx( u32 uc_start, u32 uc_dstart, u16 uc_dsize )
 {
 	gSP.matrix.modelViewi = 0;
-	gSP.changed |= CHANGED_MATRIX;
+	gSP.changed |= CHANGED_MATRIX | CHANGED_LIGHT | CHANGED_LOOKAT;
 	gSP.status[0] = gSP.status[1] = gSP.status[2] = gSP.status[3] = 0;
 
 	if ((((uc_start & 0x1FFFFFFF) + 4096) > RDRAMSize) || (((uc_dstart & 0x1FFFFFFF) + uc_dsize) > RDRAMSize)) {
@@ -764,7 +789,7 @@ void gSPDMAMatrix( u32 matrix, u8 index, u8 multiply )
 	CopyMatrix( gSP.matrix.projection, identityMatrix );
 
 
-	gSP.changed |= CHANGED_MATRIX;
+	gSP.changed |= CHANGED_MATRIX | CHANGED_LIGHT | CHANGED_LOOKAT;
 
 	DebugMsg(DEBUG_NORMAL, "gSPDMAMatrix( 0x%08X, %i, %s );\n",
 		matrix, index, multiply ? "TRUE" : "FALSE");
@@ -1711,7 +1736,7 @@ void gSPPopMatrixN(u32 param, u32 num)
 {
 	if (gSP.matrix.modelViewi > num - 1) {
 		gSP.matrix.modelViewi -= num;
-		gSP.changed |= CHANGED_MATRIX;
+		gSP.changed |= CHANGED_MATRIX | CHANGED_LIGHT | CHANGED_LOOKAT;
 	} else {
 		DebugMsg(DEBUG_NORMAL | DEBUG_ERROR, "// Attempting to pop matrix stack below 0\n");
 	}
@@ -1727,7 +1752,7 @@ void gSPPopMatrix( u32 param )
 		if (gSP.matrix.modelViewi > 0) {
 			gSP.matrix.modelViewi--;
 
-			gSP.changed |= CHANGED_MATRIX;
+			gSP.changed |= CHANGED_MATRIX | CHANGED_LIGHT | CHANGED_LOOKAT;
 		}
 	break;
 	case 1: // projection, can't
@@ -1757,9 +1782,6 @@ void gSPInsertMatrix( u32 where, u32 num )
 	DebugMsg(DEBUG_NORMAL, "gSPInsertMatrix(%u, %u);\n", where, num);
 
 	f32 fraction, integer;
-
-	if (gSP.changed & CHANGED_MATRIX)
-		gSPCombineMatrices();
 
 	if ((where & 0x3) || (where > 0x3C))
 		return;

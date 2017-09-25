@@ -160,6 +160,13 @@ void GraphicsDrawer::_updateDepthCompare() const
 	}
 }
 
+SPVertex & GraphicsDrawer::getCurrentDMAVertex()
+{
+	if (m_dmaVerticesNum >= m_dmaVertices.size())
+		m_dmaVertices.resize(std::max(static_cast<std::vector<SPVertex>::size_type>(64), m_dmaVertices.size() * 2));
+	return m_dmaVertices[m_dmaVerticesNum++];
+}
+
 inline
 bool _needAdjustCoordinate(DisplayWindow & _wnd)
 {
@@ -263,7 +270,8 @@ void GraphicsDrawer::_updateScreenCoordsViewport() const
 	gSP.changed |= CHANGED_VIEWPORT;
 }
 
-void GraphicsDrawer::_legacySetBlendMode() const
+static
+void _legacySetBlendMode()
 {
 	const u32 blendmode = gDP.otherMode.l >> 16;
 	// 0x7000 = CVG_X_ALPHA|ALPHA_CVG_SEL|FORCE_BL
@@ -326,8 +334,7 @@ void GraphicsDrawer::_legacySetBlendMode() const
 			if (gDP.otherMode.cycleType == G_CYC_1CYCLE) {
 				sfactor = blend::ONE;
 				dfactor = blend::ZERO;
-			}
-			else {
+			} else {
 				sfactor = blend::ZERO;
 				dfactor = blend::ONE;
 			}
@@ -403,9 +410,22 @@ void GraphicsDrawer::_legacySetBlendMode() const
 
 		gfxContext.enable(enable::BLEND, true);
 		gfxContext.setBlending(sfactor, dfactor);
-	} else if ((config.generalEmulation.hacks & hack_pilotWings) != 0 && (gDP.otherMode.l & 0x80) != 0) { //CLR_ON_CVG without FORCE_BL
-		gfxContext.enable(enable::BLEND, true);
-		gfxContext.setBlending(blend::ZERO, blend::ONE);
+	} else if (gDP.otherMode.colorOnCvg != 0) {
+		// CLR_ON_CVG - just use second mux of blender
+		bool useMemColor = false;
+		if (gDP.otherMode.cycleType == G_CYC_1CYCLE) {
+			if (gDP.otherMode.c1_m2a == 1)
+				useMemColor = true;
+		} else if (gDP.otherMode.cycleType == G_CYC_2CYCLE) {
+			if (gDP.otherMode.c2_m2a == 1)
+				useMemColor = true;
+		}
+		if (useMemColor) {
+			gfxContext.enable(enable::BLEND, true);
+			gfxContext.setBlending(blend::ZERO, blend::ONE);
+		} else {
+			gfxContext.enable(enable::BLEND, false);
+		}
 	} else if ((config.generalEmulation.hacks & hack_blastCorps) != 0 && gDP.otherMode.cycleType < G_CYC_COPY && gSP.texture.on == 0 && currentCombiner()->usesTexture()) { // Blast Corps
 		gfxContext.enable(enable::BLEND, true);
 		gfxContext.setBlending(blend::ZERO, blend::ONE);
@@ -517,23 +537,42 @@ void GraphicsDrawer::_setBlendMode() const
 		}
 		gfxContext.enable(enable::BLEND, true);
 		gfxContext.setBlending(srcFactor, dstFactor);
-	}
-	else if ((config.generalEmulation.hacks & hack_pilotWings) != 0 && gDP.otherMode.clearOnCvg != 0) { //CLR_ON_CVG without FORCE_BL
+	} else if ((config.generalEmulation.hacks & hack_blastCorps) != 0 && gDP.otherMode.cycleType < G_CYC_COPY && gSP.texture.on == 0 && currentCombiner()->usesTexture()) { // Blast Corps
 		gfxContext.enable(enable::BLEND, true);
 		gfxContext.setBlending(blend::ZERO, blend::ONE);
-	}
-	else if ((config.generalEmulation.hacks & hack_blastCorps) != 0 && gDP.otherMode.cycleType < G_CYC_COPY && gSP.texture.on == 0 && currentCombiner()->usesTexture()) { // Blast Corps
-		gfxContext.enable(enable::BLEND, true);
-		gfxContext.setBlending(blend::ZERO, blend::ONE);
-	} else if ((gDP.otherMode.forceBlender == 0 && gDP.otherMode.cycleType < G_CYC_COPY)) {
-		if (gDP.otherMode.c1_m1a == 1 && gDP.otherMode.c1_m2a == 1) {
+	} else if (gDP.otherMode.colorOnCvg != 0) {
+		// CLR_ON_CVG - just use second mux of blender
+		bool useMemColor = false;
+		if (gDP.otherMode.cycleType == G_CYC_1CYCLE) {
+			if (gDP.otherMode.c1_m2a == 1)
+				useMemColor = true;
+		} else if (gDP.otherMode.cycleType == G_CYC_2CYCLE) {
+			if (gDP.otherMode.c2_m2a == 1)
+				useMemColor = true;
+		}
+		if (useMemColor) {
 			gfxContext.enable(enable::BLEND, true);
 			gfxContext.setBlending(blend::ZERO, blend::ONE);
 		} else {
 			gfxContext.enable(enable::BLEND, false);
 		}
-	}
-	else {
+	} else if ((gDP.otherMode.forceBlender == 0 && gDP.otherMode.cycleType < G_CYC_COPY)) {
+		// Just use first mux of blender
+		bool useMemColor = false;
+		if (gDP.otherMode.cycleType == G_CYC_1CYCLE) {
+			if (gDP.otherMode.c1_m1a == 1)
+				useMemColor = true;
+		} else if (gDP.otherMode.cycleType == G_CYC_2CYCLE) {
+			if (gDP.otherMode.c1_m2a == 1)
+				useMemColor = true;
+		}
+		if (useMemColor) {
+			gfxContext.enable(enable::BLEND, true);
+			gfxContext.setBlending(blend::ZERO, blend::ONE);
+		} else {
+			gfxContext.enable(enable::BLEND, false);
+		}
+	} else {
 		gfxContext.enable(enable::BLEND, false);
 	}
 }
@@ -738,6 +777,7 @@ void GraphicsDrawer::drawDMATriangles(u32 _numVtx)
 	triParams.combiner = currentCombiner();
 	gfxContext.drawTriangles(triParams);
 	g_debugger.addTriangles(triParams);
+	m_dmaVerticesNum = 0;
 
 	if (config.frameBufferEmulation.enable != 0) {
 		const f32 maxY = renderTriangles(m_dmaVertices.data(), nullptr, _numVtx);
@@ -929,8 +969,9 @@ bool texturedRectShadowMap(const GraphicsDrawer::TexturedRectParams &)
 
 			pCurrentBuffer->m_pDepthBuffer->activateDepthBufferTexture(pCurrentBuffer);
 			CombinerInfo::get().setDepthFogCombiner();
+			// DepthFogCombiner does not support shader blending.
+			_legacySetBlendMode();
 			return false;
-
 		}
 	}
 	return false;
@@ -1601,6 +1642,7 @@ void GraphicsDrawer::_initData()
 	for (auto vtx : triangles.vertices)
 		vtx.w = 1.0f;
 	triangles.num = 0;
+	m_dmaVerticesNum = 0;
 }
 
 void GraphicsDrawer::_destroyData()

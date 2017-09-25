@@ -250,9 +250,6 @@ public:
 		}
 
 		int nFogUsage = ((gSP.geometryMode & G_FOG) != 0) ? 1 : 0;
-		if (!GBI.isTextureGen())
-			// F-Zero ucode seems to always use fog mode when fog is used in blender.
-			nFogUsage |= (gDP.otherMode.c1_m1a == 3 || gDP.otherMode.c1_m2a == 3) ? 1 : 0;
 		if (GBI.getMicrocodeType() == F3DAM) {
 			const s16 fogMode = ((gSP.geometryMode >> 13) & 9) + 0xFFF8;
 			if (fogMode == 0)
@@ -275,6 +272,7 @@ public:
 	UBlendMode1Cycle(GLuint _program) {
 		LocateUniform(uBlendMux1);
 		LocateUniform(uForceBlendCycle1);
+		LocateUniform(uColorOnCvg);
 	}
 
 	void update(bool _force) override
@@ -284,14 +282,18 @@ public:
 			gDP.otherMode.c1_m2a,
 			gDP.otherMode.c1_m2b,
 			_force);
-		int forceBlend1 = gDP.otherMode.forceBlender;
 
+		const int forceBlend1 = (int)gDP.otherMode.forceBlender;
 		uForceBlendCycle1.set(forceBlend1, _force);
+
+		const int colorOnCvg = (int)gDP.otherMode.colorOnCvg;
+		uColorOnCvg.set(colorOnCvg, _force);
 	}
 
 private:
 	i4Uniform uBlendMux1;
 	iUniform uForceBlendCycle1;
+	iUniform uColorOnCvg;
 };
 
 class UBlendMode2Cycle : public UniformGroup

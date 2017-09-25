@@ -134,11 +134,16 @@ void F3DEX2_GeometryMode( u32 w0, u32 w1 )
 
 void F3DEX2_DMAIO( u32 w0, u32 w1 )
 {
+	gSP.DMAIO_address = RSP_SegmentToPhysical(w1);
 }
 
 void F3DEX2_Special_1( u32 w0, u32 w1 )
 {
-	gSPDlistCount(_SHIFTR( w0, 0, 8 ), w1);
+	const u32 param = _SHIFTR(w0, 0, 8);
+	if (GBI.isCombineMatrices())
+		gSPCombineMatrices(param);
+	else
+		gSPDlistCount(param, w1);
 }
 
 void F3DEX2_Special_2( u32 w0, u32 w1 )
