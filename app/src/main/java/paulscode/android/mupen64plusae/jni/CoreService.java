@@ -92,6 +92,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private String mCheatOptions = null;
     private boolean mIsRestarting = false;
     private String mSaveToLoad = null;
+    private boolean mHasBeenResumed = false;
     private String mCoreLib = null;
     private boolean mUseHighPriorityThread = false;
     private ArrayList<Integer> mPakType = null;
@@ -508,16 +509,25 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, mLegacySaveName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
+        notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Intent for closing the game
-        Intent exitIntent = (Intent) notificationIntent.clone();
+        Intent exitIntent = new Intent(this, GameActivity.class);
+        exitIntent.putExtra( ActivityHelper.Keys.ROM_PATH, mRomPath );
+        exitIntent.putExtra( ActivityHelper.Keys.ROM_MD5, mRomMd5 );
+        exitIntent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
+        exitIntent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
+        exitIntent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
+        exitIntent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, mArtPath );
+        exitIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
+        exitIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, mLegacySaveName );
+        exitIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         exitIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, true );
         exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 0, exitIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 0, exitIntent, 0);
 
         initChannels(getApplicationContext());
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)

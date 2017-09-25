@@ -196,6 +196,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     protected void onNewIntent( Intent intent )
     {
+        Log.i("GameActivity", "onNewIntent");
         // If the activity is already running and is launched again (e.g. from a file manager app),
         // the existing instance will be reused rather than a new one created. This behavior is
         // specified in the manifest (launchMode = singleTask). In that situation, any activities
@@ -211,6 +212,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(extras != null)
         {
             mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
+
+            Log.i("GameActivity", "mShouldExit=" + mShouldExit);
 
             if(mShouldExit && mCoreFragment != null)
             {
@@ -251,6 +254,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
+
+        Log.i("GameActivity", "mShouldExit=" + mShouldExit);
 
         mRomPath = extras.getString( ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
