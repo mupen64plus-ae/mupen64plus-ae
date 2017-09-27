@@ -147,7 +147,7 @@ static void post_setup_channel(struct pif_channel* channel)
         channel->rx, channel->rx_buf);
 }
 
-static void disable_pif_channel(struct pif_channel* channel)
+void disable_pif_channel(struct pif_channel* channel)
 {
     channel->tx = NULL;
     channel->rx = NULL;
@@ -155,7 +155,7 @@ static void disable_pif_channel(struct pif_channel* channel)
     channel->rx_buf = NULL;
 }
 
-static size_t setup_pif_channel(struct pif_channel* channel, uint8_t* buf)
+size_t setup_pif_channel(struct pif_channel* channel, uint8_t* buf)
 {
     uint8_t tx = buf[0] & 0x3f;
     uint8_t rx = buf[1] & 0x3f;
@@ -166,8 +166,6 @@ static size_t setup_pif_channel(struct pif_channel* channel, uint8_t* buf)
     channel->rx = buf + 1;
     channel->tx_buf = buf + 2;
     channel->rx_buf = buf + 2 + tx;
-
-    post_setup_channel(channel);
 
     return 2 + tx + rx;
 }
@@ -204,7 +202,7 @@ void init_pif(struct pif* pif,
     init_cic_using_ipl3(&pif->cic, ipl3);
 }
 
-static void setup_channels_format(struct pif* pif)
+void setup_channels_format(struct pif* pif)
 {
     size_t i = 0;
     size_t k = 0;
@@ -237,6 +235,7 @@ static void setup_channels_format(struct pif* pif)
             dummy_reset_buffer[k][2] = 0xff;
 
             setup_pif_channel(&pif->channels[k], dummy_reset_buffer[k]);
+            post_setup_channel(&pif->channels[k]);
             ++k;
             ++i;
             }
@@ -252,7 +251,9 @@ static void setup_channels_format(struct pif* pif)
                 ++i;
             }
             else {
-                i += setup_pif_channel(&pif->channels[k++], &pif->ram[i]);
+                i += setup_pif_channel(&pif->channels[k], &pif->ram[i]);
+                post_setup_channel(&pif->channels[k]);
+                ++k;
             }
         }
     }
