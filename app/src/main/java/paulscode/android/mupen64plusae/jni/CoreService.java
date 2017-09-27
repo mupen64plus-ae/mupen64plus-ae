@@ -92,7 +92,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private String mCheatOptions = null;
     private boolean mIsRestarting = false;
     private String mSaveToLoad = null;
-    private boolean mHasBeenResumed = false;
     private String mCoreLib = null;
     private boolean mUseHighPriorityThread = false;
     private ArrayList<Integer> mPakType = null;
@@ -124,7 +123,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
      * is locked up since these won't happen if it is.
      */
     private int mLastFpsChangedTime;
-    private Handler mFpsCangedHandler;
+    private Handler mFpsCangedHandler = new Handler();
 
     final static int ONGOING_NOTIFICATION_ID = 1;
 
@@ -156,7 +155,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void shutdownEmulator()
     {
-        mFpsCangedHandler = new Handler();
         Calendar calendar = Calendar.getInstance();
         mLastFpsChangedTime = calendar.get(Calendar.SECOND);
         mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
@@ -226,7 +224,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
         if(shutdownOnFinish)
         {
-            mFpsCangedHandler = new Handler();
             Calendar calendar = Calendar.getInstance();
             mLastFpsChangedTime = calendar.get(Calendar.SECOND);
             mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
