@@ -272,7 +272,6 @@ public:
 	UBlendMode1Cycle(GLuint _program) {
 		LocateUniform(uBlendMux1);
 		LocateUniform(uForceBlendCycle1);
-		LocateUniform(uColorOnCvg);
 	}
 
 	void update(bool _force) override
@@ -285,15 +284,11 @@ public:
 
 		const int forceBlend1 = (int)gDP.otherMode.forceBlender;
 		uForceBlendCycle1.set(forceBlend1, _force);
-
-		const int colorOnCvg = (int)gDP.otherMode.colorOnCvg;
-		uColorOnCvg.set(colorOnCvg, _force);
 	}
 
 private:
 	i4Uniform uBlendMux1;
 	iUniform uForceBlendCycle1;
-	iUniform uColorOnCvg;
 };
 
 class UBlendMode2Cycle : public UniformGroup
@@ -308,25 +303,21 @@ public:
 
 	void update(bool _force) override
 	{
-		int forceBlend1 = 1;
-
 		uBlendMux1.set(gDP.otherMode.c1_m1a,
 			gDP.otherMode.c1_m1b,
 			gDP.otherMode.c1_m2a,
 			gDP.otherMode.c1_m2b,
 			_force);
 
-		int forceBlend2 = gDP.otherMode.forceBlender;
+		uBlendMux2.set(gDP.otherMode.c2_m1a,
+			gDP.otherMode.c2_m1b,
+			gDP.otherMode.c2_m2a,
+			gDP.otherMode.c2_m2b,
+			_force);
 
-		if (forceBlend2 != 0) {
-			uBlendMux2.set(gDP.otherMode.c2_m1a,
-				gDP.otherMode.c2_m1b,
-				gDP.otherMode.c2_m2a,
-				gDP.otherMode.c2_m2b,
-				_force);
-		}
-
+		const int forceBlend1 = 1;
 		uForceBlendCycle1.set(forceBlend1, _force);
+		const int forceBlend2 = gDP.otherMode.forceBlender;
 		uForceBlendCycle2.set(forceBlend2, _force);
 	}
 
@@ -719,24 +710,28 @@ public:
 			if (!m_useTile[t])
 				continue;
 
-			if (gSP.textureTile[t] != NULL) {
+			if (gSP.textureTile[t] != nullptr) {
 				if (gSP.textureTile[t]->textureMode == TEXTUREMODE_BGIMAGE || gSP.textureTile[t]->textureMode == TEXTUREMODE_FRAMEBUFFER_BG)
 					uTexOffset[t].set(0.0f, 0.0f, _force);
 				else {
 					float fuls = gSP.textureTile[t]->fuls;
 					float fult = gSP.textureTile[t]->fult;
-					FrameBuffer * pBuffer = gSP.textureTile[t]->frameBuffer;
-					if (pBuffer != NULL) {
-						if (gSP.textureTile[t]->masks > 0 && gSP.textureTile[t]->clamps == 0)
-							fuls = float(gSP.textureTile[t]->uls % (1 << gSP.textureTile[t]->masks));
-						if (gSP.textureTile[t]->maskt > 0 && gSP.textureTile[t]->clampt == 0)
-							fult = float(gSP.textureTile[t]->ult % (1 << gSP.textureTile[t]->maskt));
+					if (gSP.textureTile[t]->frameBufferAddress > 0) {
+						FrameBuffer * pBuffer = frameBufferList().getBuffer(gSP.textureTile[t]->frameBufferAddress);
+						if (pBuffer != nullptr) {
+							if (gSP.textureTile[t]->masks > 0 && gSP.textureTile[t]->clamps == 0)
+								fuls = float(gSP.textureTile[t]->uls % (1 << gSP.textureTile[t]->masks));
+							if (gSP.textureTile[t]->maskt > 0 && gSP.textureTile[t]->clampt == 0)
+								fult = float(gSP.textureTile[t]->ult % (1 << gSP.textureTile[t]->maskt));
+						} else {
+							gSP.textureTile[t]->frameBufferAddress = 0;
+						}
 					}
 					uTexOffset[t].set(fuls, fult, _force);
 				}
 			}
 
-			if (cache.current[t] != NULL) {
+			if (cache.current[t] != nullptr) {
 				f32 shiftScaleS = 1.0f;
 				f32 shiftScaleT = 1.0f;
 				getTextureShiftScale(t, cache, shiftScaleS, shiftScaleT);

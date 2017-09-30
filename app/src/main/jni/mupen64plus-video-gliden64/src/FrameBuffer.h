@@ -24,6 +24,7 @@ struct FrameBuffer
 	CachedTexture * getTextureBG(u32 _t);
 	void setBufferClearParams(u32 _fillcolor, s32 _ulx, s32 _uly, s32 _lrx, s32 _lry);
 	void copyRdram();
+	void setDirty();
 	bool isValid(bool _forceCheck) const;
 	bool _isMarioTennisScoreboard() const;
 	bool isAuxiliary() const;
@@ -88,6 +89,7 @@ public:
 	void attachDepthBuffer();
 	void clearDepthBuffer(DepthBuffer * _pDepthBuffer);
 	FrameBuffer * findBuffer(u32 _startAddress);
+	FrameBuffer * getBuffer(u32 _startAddress);
 	FrameBuffer * findTmpBuffer(u32 _address);
 	FrameBuffer * getCurrent() const {return m_pCurrent;}
 	void renderBuffer();
@@ -137,7 +139,7 @@ void FrameBuffer_CopyFromRDRAM(u32 address, bool bUseAlpha);
 void FrameBuffer_AddAddress(u32 address, u32 _size);
 bool FrameBuffer_CopyDepthBuffer(u32 address);
 bool FrameBuffer_CopyDepthBufferChunk(u32 address);
-void FrameBuffer_ActivateBufferTexture(u32 t, FrameBuffer *pBuffer);
-void FrameBuffer_ActivateBufferTextureBG(u32 t, FrameBuffer *pBuffer);
+void FrameBuffer_ActivateBufferTexture(u32 t, u32 _frameBufferAddress);
+void FrameBuffer_ActivateBufferTextureBG(u32 t, u32 _frameBufferAddress);
 
 #endif
