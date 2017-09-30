@@ -2677,27 +2677,25 @@ static void load_alloc(struct regstat *current,int i)
   if(rt1[i]&&!((current->u>>rt1[i])&1)) {
     alloc_reg(current,i,rt1[i]);
     assert(get_reg(current->regmap,rt1[i])>=0);
-    if(opcode[i]==0x27||opcode[i]==0x37) // LWU/LD
+    if(opcode[i]==0x27||opcode[i]==0x37||opcode[i]==0x1A||opcode[i]==0x1B) // LWU/LD/LDL/LDR
     {
       current->is32&=~(1LL<<rt1[i]);
+      if(opcode[i]==0x27) current->uu&=~(1LL<<rt1[i]); // LWU: always alloc upper part in order to zero extend the destination register
       alloc_reg64(current,i,rt1[i]);
-    }
-    else if(opcode[i]==0x1A||opcode[i]==0x1B) // LDL/LDR
-    {
-      current->is32&=~(1LL<<rt1[i]);
-      alloc_reg64(current,i,rt1[i]);
-      alloc_all(current,i);
-      alloc_reg64(current,i,FTEMP);
-      minimum_free_regs[i]=HOST_REGS;
     }
     else current->is32|=1LL<<rt1[i];
     dirty_reg(current,rt1[i]);
+
+    if(opcode[i]==0x22||opcode[i]==0x26) // LWL/LWR
+      alloc_reg(current,i,FTEMP);
+    else if(opcode[i]==0x1A||opcode[i]==0x1B) // LDL/LDR
+      alloc_reg64(current,i,FTEMP);
+
     // If using TLB, need a register for pointer to the mapping table
     if(using_tlb) alloc_reg(current,i,TLREG);
-    // LWL/LWR need a temporary register for the old value
-    if(opcode[i]==0x22||opcode[i]==0x26)
-    {
-      alloc_reg(current,i,FTEMP);
+
+    // LWU/LD/LDL/LDR need a temporary register
+    if(opcode[i]==0x22||opcode[i]==0x26||opcode[i]==0x1A||opcode[i]==0x1B) {
       alloc_reg_temp(current,i,-1);
       minimum_free_regs[i]=1;
     }
@@ -2707,19 +2705,15 @@ static void load_alloc(struct regstat *current,int i)
     // Load to r0 or unneeded register (dummy load)
     // but we still need a register to calculate the address
     if(opcode[i]==0x22||opcode[i]==0x26)
-    {
       alloc_reg(current,i,FTEMP); // LWL/LWR need another temporary
-    }
+    if(opcode[i]==0x1A||opcode[i]==0x1B) // LDL/LDR
+      alloc_reg64(current,i,FTEMP);
+
     // If using TLB, need a register for pointer to the mapping table
     if(using_tlb) alloc_reg(current,i,TLREG);
+
     alloc_reg_temp(current,i,-1);
     minimum_free_regs[i]=1;
-    if(opcode[i]==0x1A||opcode[i]==0x1B) // LDL/LDR
-    {
-      alloc_all(current,i);
-      alloc_reg64(current,i,FTEMP);
-      minimum_free_regs[i]=HOST_REGS;
-    }
   }
 }
 
@@ -3175,6 +3169,8 @@ static void alu_assemble(int i,struct regstat *i_regs)
           assert(s1l>=0);
           assert(s2l>=0);
           if(th>=0) {
+            assert(s1h>=0);
+            assert(s2h>=0);
             #ifdef INVERTED_CARRY
             if(opcode2[i]&2) emit_sub64_32(s1l,s1h,s2l,s2h,tl,th);
             #else
@@ -3323,23 +3319,27 @@ static void alu_assemble(int i,struct regstat *i_regs)
           s2l=get_reg(i_regs->regmap,rs2[i]);
           s2h=get_reg(i_regs->regmap,rs2[i]|64);
           if(rs1[i]&&rs2[i]) {
-            assert(s1l>=0);assert(s1h>=0);
-            assert(s2l>=0);assert(s2h>=0);
+            assert(s1l>=0);
+            assert(s2l>=0);
+
+            if(s1h<0) {emit_loadreg(rs1[i]|64,tl); s1h=tl;}
+            if(s2h<0) {emit_loadreg(rs2[i]|64,th); s2h=th;}
+
             if(opcode2[i]==0x24) { // AND
-              emit_and(s1l,s2l,tl);
               emit_and(s1h,s2h,th);
+              emit_and(s1l,s2l,tl);
             } else
             if(opcode2[i]==0x25) { // OR
-              emit_or(s1l,s2l,tl);
               emit_or(s1h,s2h,th);
+              emit_or(s1l,s2l,tl);
             } else
             if(opcode2[i]==0x26) { // XOR
-              emit_xor(s1l,s2l,tl);
               emit_xor(s1h,s2h,th);
+              emit_xor(s1l,s2l,tl);
             } else
             if(opcode2[i]==0x27) { // NOR
-              emit_or(s1l,s2l,tl);
               emit_or(s1h,s2h,th);
+              emit_or(s1l,s2l,tl);
               emit_not(tl,tl);
               emit_not(th,th);
             }

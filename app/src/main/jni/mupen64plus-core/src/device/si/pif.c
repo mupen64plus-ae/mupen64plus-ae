@@ -167,6 +167,8 @@ size_t setup_pif_channel(struct pif_channel* channel, uint8_t* buf)
     channel->tx_buf = buf + 2;
     channel->rx_buf = buf + 2 + tx;
 
+    post_setup_channel(channel);
+
     return 2 + tx + rx;
 }
 
@@ -235,7 +237,6 @@ void setup_channels_format(struct pif* pif)
             dummy_reset_buffer[k][2] = 0xff;
 
             setup_pif_channel(&pif->channels[k], dummy_reset_buffer[k]);
-            post_setup_channel(&pif->channels[k]);
             ++k;
             ++i;
             }
@@ -251,9 +252,7 @@ void setup_channels_format(struct pif* pif)
                 ++i;
             }
             else {
-                i += setup_pif_channel(&pif->channels[k], &pif->ram[i]);
-                post_setup_channel(&pif->channels[k]);
-                ++k;
+                i += setup_pif_channel(&pif->channels[k++], &pif->ram[i]);
             }
         }
     }

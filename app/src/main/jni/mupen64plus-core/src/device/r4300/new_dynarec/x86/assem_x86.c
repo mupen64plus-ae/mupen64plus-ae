@@ -3098,32 +3098,40 @@ static void shift_assemble_x86(int i,struct regstat *i_regs)
         }
         else
         {
-          // FIXME: What if shift==tl ?
-          assert(shift!=tl);
           int temp=get_reg(i_regs->regmap,-1);
+          int real_tl=tl;
           int real_th=th;
           if(th<0&&opcode2[i]!=0x14) {th=temp;} // DSLLV doesn't need a temporary register
           assert(sl>=0);
           assert(sh>=0);
           if(tl==ECX&&sl!=ECX) {
             if(shift!=ECX) emit_mov(shift,ECX);
-            if(sl!=shift) emit_mov(sl,shift);
+            if((sl!=shift)&&(shift!=tl)) emit_mov(sl,shift);
             if(th>=0 && sh!=th) emit_mov(sh,th);
+            if(shift==tl) {
+              emit_pushreg(sl);
+              tl=sl;
+            }
           }
           else if(th==ECX&&sh!=ECX) {
             if(shift!=ECX) emit_mov(shift,ECX);
             if(sh!=shift) emit_mov(sh,shift);
-            if(sl!=tl) emit_mov(sl,tl);
+            if((sl!=tl)&&(shift!=tl)) emit_mov(sl,tl);
+            if(shift==tl) {
+              emit_pushreg(sl);
+              tl=sl;
+            }
           }
           else
           {
-            if(sl!=tl) emit_mov(sl,tl);
+            if((sl!=tl)&&(shift!=tl)) emit_mov(sl,tl);
             if(th>=0 && sh!=th) emit_mov(sh,th);
             if(shift!=ECX) {
-              if(i_regs->regmap[ECX]<0)
-                emit_mov(shift,ECX);
-              else
-                emit_xchg(shift,ECX);
+              if(shift==tl) {
+                emit_pushreg(sl);
+                tl=sl;
+              }
+              emit_xchg(shift,ECX);
             }
           }
           if(opcode2[i]==0x14) // DSLLV
@@ -3157,7 +3165,13 @@ static void shift_assemble_x86(int i,struct regstat *i_regs)
             emit_cmovne_reg(th==ECX?shift:th,tl==ECX?shift:tl);
             if(real_th>=0) emit_cmovne_reg(temp==ECX?shift:temp,th==ECX?shift:th);
           }
-          if(shift!=ECX&&(i_regs->regmap[ECX]>=0||temp==ECX)) emit_xchg(shift,ECX);
+          if(shift!=ECX) {
+            emit_xchg(shift,ECX);
+            if(real_tl==shift) {
+              emit_mov(sl,real_tl);
+              emit_popreg(sl);
+            }
+          }
         }
       }
     }
@@ -3299,12 +3313,6 @@ static void loadlr_assemble_x86(int i,struct regstat *i_regs)
     }
   }
   if (opcode[i]==0x1A||opcode[i]==0x1B) { // LDL/LDR
-    if(s>=0) 
-      if((i_regs->wasdirty>>s)&1)
-        emit_storereg(rs1[i],s);
-    if(get_reg(i_regs->regmap,rs1[i]|64)>=0) 
-      if((i_regs->wasdirty>>get_reg(i_regs->regmap,rs1[i]|64))&1)
-        emit_storereg(rs1[i]|64,get_reg(i_regs->regmap,rs1[i]|64));
     int temp2h=get_reg(i_regs->regmap,FTEMP|64);
     if(!c||memtarget) {
       //if(th>=0) emit_readword_indexed((int)g_dev.ri.rdram.dram-0x80000000,temp2,temp2h);
@@ -3317,7 +3325,11 @@ static void loadlr_assemble_x86(int i,struct regstat *i_regs)
     if(rt1[i]) {
       assert(th>=0);
       assert(tl>=0);
+      assert(temp>=0);
+      assert(temp2>=0);
+      assert(temp2h>=0);
       emit_andimm(temp,56,temp);
+      emit_pusha();
       emit_pushreg(temp);
       emit_pushreg(temp2h);
       emit_pushreg(temp2);
@@ -3326,19 +3338,11 @@ static void loadlr_assemble_x86(int i,struct regstat *i_regs)
       if(opcode[i]==0x1A) emit_call((int)ldl_merge);
       if(opcode[i]==0x1B) emit_call((int)ldr_merge);
       emit_addimm(ESP,20,ESP);
-      if(tl!=EDX) {
-        if(tl!=EAX) emit_mov(EAX,tl);
-        if(th!=EDX) emit_mov(EDX,th);
-      } else
-      if(th!=EAX) {
-        if(th!=EDX) emit_mov(EDX,th);
-        if(tl!=EAX) emit_mov(EAX,tl);
-      } else {
-        emit_xchg(EAX,EDX);
-      }
-      if(s>=0) emit_loadreg(rs1[i],s);
-      if(get_reg(i_regs->regmap,rs1[i]|64)>=0)
-        emit_loadreg(rs1[i]|64,get_reg(i_regs->regmap,rs1[i]|64));
+      emit_storereg(rt1[i],EAX);
+      emit_storereg(rt1[i]|64,EDX);
+      emit_popa();
+      emit_loadreg(rt1[i],tl);
+      emit_loadreg(rt1[i]|64,th);
     }
   }
 }

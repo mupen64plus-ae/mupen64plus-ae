@@ -540,18 +540,13 @@ int savestates_load_m64p(char *filepath)
         g_dev.pi.cart_rom.last_write = GETDATA(curr, uint32_t);
         g_dev.pi.cart_rom.rom_written = GETDATA(curr, uint32_t);
 
-        /* extra fb state */
-        g_dev.dp.fb.once = GETDATA(curr, unsigned int);
-        COPYARRAY(g_dev.dp.fb.infos, curr, FrameBufferInfo, FB_INFOS_COUNT);
-        COPYARRAY(g_dev.dp.fb.dirty_page, curr, unsigned char, FB_DIRTY_PAGES_COUNT);
-
         /* extra sp state */
         g_dev.sp.rsp_task_locked = GETDATA(curr, uint32_t);
 
         /* extra af-rtc state */
         g_dev.si.pif.af_rtc.control = GETDATA(curr, uint16_t);
-        g_dev.si.pif.af_rtc.now = GETDATA(curr, time_t);
-        g_dev.si.pif.af_rtc.last_update_rtc = GETDATA(curr, time_t);
+        g_dev.si.pif.af_rtc.now = (time_t)GETDATA(curr, int64_t);
+        g_dev.si.pif.af_rtc.last_update_rtc = (time_t)GETDATA(curr, int64_t);
 
         /* extra controllers state */
         for (i = 0; i < GAME_CONTROLLERS_COUNT; ++i) {
@@ -589,7 +584,7 @@ int savestates_load_m64p(char *filepath)
                    (gb_fingerprint[0] == 0x00) ? "(none)" : gb_fingerprint);
 
                 if (gb_fingerprint[0] != 0x00) {
-                    curr += 5*sizeof(unsigned int)+MBC3_RTC_REGS_COUNT*2+sizeof(time_t);
+                    curr += 5*sizeof(unsigned int)+MBC3_RTC_REGS_COUNT*2+sizeof(uint64_t);
                 }
             }
             else {
@@ -601,7 +596,7 @@ int savestates_load_m64p(char *filepath)
                     COPYARRAY(g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.regs, curr, uint8_t, MBC3_RTC_REGS_COUNT);
                     g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.latch = GETDATA(curr, unsigned int);
                     COPYARRAY(g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.latched_regs, curr, uint8_t, MBC3_RTC_REGS_COUNT);
-                    g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.last_time = GETDATA(curr, time_t);
+                    g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.last_time = (time_t)GETDATA(curr, int64_t);
                 }
             }
         }
@@ -629,10 +624,6 @@ int savestates_load_m64p(char *filepath)
         g_dev.pi.cart_rom.last_write = 0;
         g_dev.pi.cart_rom.rom_written = 0;
 
-        /* extra fb state */
-        memset(&g_dev.dp.fb, 0, sizeof(g_dev.dp.fb));
-        g_dev.dp.fb.once = 1;
-
         /* extra sp state */
         g_dev.sp.rsp_task_locked = 0;
 
@@ -652,15 +643,22 @@ int savestates_load_m64p(char *filepath)
          * HACK: Assume PIF was in channel processing mode (and not in CIC challenge mode)
          * Try to parse pif ram to setup pif channels
          */
-        for(i = 0; i < PIF_CHANNELS_COUNT; ++i) {
-            setup_channels_format(&g_dev.si.pif);
-        }
+        setup_channels_format(&g_dev.si.pif);
 
         /* extra vi state */
         g_dev.vi.count_per_scanline = (g_dev.vi.regs[VI_V_SYNC_REG] == 0)
             ? 1500
             : ((g_dev.vi.clock / g_dev.vi.expected_refresh_rate) / (g_dev.vi.regs[VI_V_SYNC_REG] + 1));
     }
+
+    /* Zilmar-Spec plugin expect a call with control_id = -1 when RAM processing is done */
+    if (input.controllerCommand) {
+        input.controllerCommand(-1, NULL);
+    }
+
+    /* reset fb state */
+    memset(&g_dev.dp.fb, 0, sizeof(g_dev.dp.fb));
+    g_dev.dp.fb.once = 1;
 
     *r4300_cp0_last_addr(&g_dev.r4300.cp0) = *r4300_pc(&g_dev.r4300);
 
@@ -937,8 +935,11 @@ static int savestates_load_pj64(char *filepath, void *handle,
      * HACK: Assume PIF was in channel processing mode (and not in CIC challenge mode)
      * Try to parse pif ram to setup pif channels
      */
-    for(i = 0; i < PIF_CHANNELS_COUNT; ++i) {
-        setup_channels_format(&g_dev.si.pif);
+    setup_channels_format(&g_dev.si.pif);
+
+    /* Zilmar-Spec plugin expect a call with control_id = -1 when RAM processing is done */
+    if (input.controllerCommand) {
+        input.controllerCommand(-1, NULL);
     }
 
     // RDRAM
@@ -1454,15 +1455,11 @@ int savestates_save_m64p(char *filepath)
     PUTDATA(curr, uint32_t, g_dev.pi.cart_rom.last_write);
     PUTDATA(curr, uint32_t, g_dev.pi.cart_rom.rom_written);
 
-    PUTDATA(curr, unsigned int, g_dev.dp.fb.once);
-    PUTARRAY(g_dev.dp.fb.infos, curr, FrameBufferInfo, FB_INFOS_COUNT);
-    PUTARRAY(g_dev.dp.fb.dirty_page, curr, unsigned char, FB_DIRTY_PAGES_COUNT);
-
     PUTDATA(curr, uint32_t, g_dev.sp.rsp_task_locked);
 
     PUTDATA(curr, uint16_t, g_dev.si.pif.af_rtc.control);
-    PUTDATA(curr, time_t, g_dev.si.pif.af_rtc.now);
-    PUTDATA(curr, time_t, g_dev.si.pif.af_rtc.last_update_rtc);
+    PUTDATA(curr, int64_t, g_dev.si.pif.af_rtc.now);
+    PUTDATA(curr, int64_t, g_dev.si.pif.af_rtc.last_update_rtc);
 
     for (i = 0; i < GAME_CONTROLLERS_COUNT; ++i) {
         PUTDATA(curr, uint8_t, g_dev.si.pif.controllers[i].status);
@@ -1494,7 +1491,7 @@ int savestates_save_m64p(char *filepath)
             PUTARRAY(g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.regs, curr, uint8_t, MBC3_RTC_REGS_COUNT);
             PUTDATA(curr, unsigned int, g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.latch);
             PUTARRAY(g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.latched_regs, curr, uint8_t, MBC3_RTC_REGS_COUNT);
-            PUTDATA(curr, time_t, g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.last_time);
+            PUTDATA(curr, int64_t, g_dev.si.pif.controllers[i].transferpak.gb_cart->rtc.last_time);
         }
     }
 
