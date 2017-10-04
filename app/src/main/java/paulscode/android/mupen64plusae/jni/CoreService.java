@@ -447,7 +447,9 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 mListener = null;
             }
 
-            NativeExports.unloadLibrariesIfLoaded();
+            //This causes a core dump currently, so disable for now, killing the app does the same
+            //thing.
+            //NativeExports.unloadLibrariesIfLoaded();
 
             //Stop the service
             stopForeground(true);
@@ -508,25 +510,14 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Intent for closing the game
-        Intent exitIntent = new Intent(this, GameActivity.class);
-        exitIntent.putExtra( ActivityHelper.Keys.ROM_PATH, mRomPath );
-        exitIntent.putExtra( ActivityHelper.Keys.ROM_MD5, mRomMd5 );
-        exitIntent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
-        exitIntent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
-        exitIntent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
-        exitIntent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, mArtPath );
-        exitIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
-        exitIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, mLegacySaveName );
-        exitIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
+        Intent exitIntent = (Intent)notificationIntent.clone();
         exitIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, true );
-        exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 0, exitIntent, 0);
+        PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 1, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        initChannels(getApplicationContext());
+        initChannels(getBaseContext());
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon)
                 .setContentTitle(mRomGoodName)
