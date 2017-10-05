@@ -133,18 +133,27 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExceptionHandling>Async</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>../../src;../../src/inc;../../src/osal;../../../freetype/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src;../../src/inc;../../src/osal;../../src/inc/freetype/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>freetype253MT_D.lib;..\..\src\GLideNUI\debug\GLideNUI.lib;osal\Debug\osal.lib;GLideNHQ\Debug\libGLideNHQ.lib;opengl32.lib;glu32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>c:\Games\N64\Plugin\GLideN64.dll</OutputFile>
+      <AdditionalDependencies>freetype253MT_D.lib;debug\GLideNUI.lib;osal\Debug\osal.lib;GLideNHQ\Debug\libGLideNHQ.lib;opengl32.lib;glu32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)New glNintendo64().pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)New glNintendo64().lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>../../../freetype/lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib/dbg</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(N64PluginsDir)" mkdir "$(N64PluginsDir)"
+copy /Y "$(ProjectDir)$(OutDir)$(TargetName).*" "$(N64PluginsDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy result to plugins folder</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call ..\..\src\getRevision.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_mupenplus|Win32'">
     <ClCompile>
@@ -158,20 +167,29 @@
       <PrecompiledHeaderFile>glN64.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>../../src;../../src/inc;../../src/osal;../../../freetype/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src;../../src/inc;../../src/osal;../../src/inc/freetype/include</AdditionalIncludeDirectories>
       <ExceptionHandling>Async</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>freetype253MT_D.lib;osal\Debug\osal.lib;GLideNHQ\Debug\libGLideNHQ.lib;opengl32.lib;glu32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>c:\Games\N64\M64Py\mupen64plus-video-GLideN64.dll </OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)New glNintendo64().pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <ImportLibrary>$(OutDir)New glNintendo64().lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>../../../freetype/lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib/dbg</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(Mupen64PluginsDir)" mkdir "$(Mupen64PluginsDir)"
+copy /Y "$(ProjectDir)$(OutDir)$(TargetName).*" "$(Mupen64PluginsDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy result to plugins folder</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call ..\..\src\getRevision.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_mupenplus_uniformset|Win32'">
     <ClCompile>
@@ -191,7 +209,6 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>freetype253MT_D.lib;osal\Debug\osal.lib;GLideNHQ\Debug\libGLideNHQ.lib;opengl32.lib;glu32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>C:\Games\N64\M64Py\mupen64plus-video-GLideN64.dll </OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)New glNintendo64().pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -207,7 +224,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>NDEBUG;UNICODE;GL_USE_UNIFORMBLOCK;TXFILTER_LIB;WIN32_ASM;OS_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__VEC4_OPT;NDEBUG;UNICODE;GL_USE_UNIFORMBLOCK;TXFILTER_LIB;WIN32_ASM;OS_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -217,22 +234,31 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Async</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>../../src;../../src/inc;../../src/osal;../../../freetype/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src;../../src/inc;../../src/osal;../../src/inc/freetype/include</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>freetype253MT.lib;..\..\src\GLideNUI\release\GLideNUI.lib;osal\Release\osal.lib;GLideNHQ\Release\libGLideNHQ.lib;opengl32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>c:\Games\N64\Plugin\GLideN64.dll</OutputFile>
+      <AdditionalDependencies>freetype253MT.lib;release\GLideNUI.lib;osal\Release\osal.lib;GLideNHQ\Release\libGLideNHQ.lib;opengl32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)New glNintendo64().lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>../../../freetype/lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib/rel</AdditionalLibraryDirectories>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(N64PluginsDir)" mkdir "$(N64PluginsDir)"
+copy /Y "$(ProjectDir)$(OutDir)$(TargetName).*" "$(N64PluginsDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy result to plugins folder</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call ..\..\src\getRevision.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_mupenplus|Win32'">
     <ClCompile>
@@ -241,7 +267,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>NDEBUG;UNICODE;GL_USE_UNIFORMBLOCK;TXFILTER_LIB;MUPENPLUSAPI;WIN32;WIN32_ASM;OS_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__VEC4_OPT;NDEBUG;UNICODE;GL_USE_UNIFORMBLOCK;TXFILTER_LIB;MUPENPLUSAPI;WIN32;WIN32_ASM;OS_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -249,23 +275,32 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>../../src;../../src/inc;../../src/osal;../../../freetype/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src;../../src/inc;../../src/osal;../../src/inc/freetype/include</AdditionalIncludeDirectories>
       <ExceptionHandling>Async</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <AdditionalDependencies>freetype253MT.lib;osal\Release\osal.lib;GLideNHQ\Release\libGLideNHQ.lib;opengl32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>c:\Games\N64\M64Py\mupen64plus-video-GLideN64.dll</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ImportLibrary>$(OutDir)New glNintendo64().lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>../../../freetype/lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib/rel</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(Mupen64PluginsDir)" mkdir "$(Mupen64PluginsDir)"
+copy /Y "$(ProjectDir)$(OutDir)$(TargetName).*" "$(Mupen64PluginsDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy result to plugins folder</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call ..\..\src\getRevision.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\3DMath.cpp" />
