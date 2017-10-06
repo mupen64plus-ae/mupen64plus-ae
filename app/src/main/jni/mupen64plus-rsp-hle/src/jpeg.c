@@ -141,6 +141,7 @@ static const float IDCT_K[10] = {
 void jpeg_decode_PS0(struct hle_t* hle)
 {
     jpeg_decode_std(hle, "PS0", RescaleYSubBlock, RescaleUVSubBlock, EmitYUVTileLine);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 /***************************************************************************
@@ -150,6 +151,7 @@ void jpeg_decode_PS0(struct hle_t* hle)
 void jpeg_decode_PS(struct hle_t* hle)
 {
     jpeg_decode_std(hle, "PS", NULL, NULL, EmitRGBATileLine);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 /***************************************************************************
@@ -190,6 +192,7 @@ void jpeg_decode_OB(struct hle_t* hle)
 
         address += (2 * 6 * SUBBLOCK_SIZE);
     }
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 

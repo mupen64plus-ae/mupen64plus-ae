@@ -144,6 +144,8 @@ void jpeg_decode_OB(struct hle_t* hle);
 
 /* Resident evil 2 ucode */
 void resize_bilinear_task(struct hle_t* hle);
+void decode_video_frame_task(struct hle_t* hle);
+
 
 #endif
 

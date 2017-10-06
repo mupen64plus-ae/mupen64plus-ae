@@ -111,7 +111,7 @@ static void RESAMPLE(struct hle_t* hle, uint32_t w1, uint32_t w2)
 
     alist_resample(
             hle,
-            flags & 0x1,
+            flags & A_INIT,
             flags & 0x2,
             hle->alist_audio.out,
             hle->alist_audio.in,
@@ -152,8 +152,8 @@ static void ADPCM(struct hle_t* hle, uint32_t w1, uint32_t w2)
 
     alist_adpcm(
             hle,
-            flags & 0x1,
-            flags & 0x2,
+            flags & A_INIT,
+            flags & A_LOOP,
             false,          /* unsupported in this ucode */
             hle->alist_audio.out,
             hle->alist_audio.in,
@@ -278,6 +278,7 @@ void alist_process_audio(struct hle_t* hle)
 
     clear_segments(hle);
     alist_process(hle, ABI, 0x10);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_audio_ge(struct hle_t* hle)
@@ -291,6 +292,7 @@ void alist_process_audio_ge(struct hle_t* hle)
 
     clear_segments(hle);
     alist_process(hle, ABI, 0x10);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_audio_bc(struct hle_t* hle)
@@ -304,4 +306,5 @@ void alist_process_audio_bc(struct hle_t* hle)
 
     clear_segments(hle);
     alist_process(hle, ABI, 0x10);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }

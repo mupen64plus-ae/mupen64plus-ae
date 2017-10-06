@@ -256,6 +256,8 @@ void musyx_v1_task(struct hle_t* hle)
     dram_store_u16(hle, (uint16_t *)musyx.cc0, state_ptr + STATE_CC0, SUBFRAME_SIZE);
     dram_store_u16(hle, (uint16_t *)musyx.subframe_740_last4, state_ptr + STATE_740_LAST4_V1,
               4);
+
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 /**************************************************************************
@@ -333,6 +335,8 @@ void musyx_v2_task(struct hle_t* hle)
 
         sfd_ptr += SFD2_VOICES + MAX_VOICES * VOICE_SIZE;
     }
+
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 

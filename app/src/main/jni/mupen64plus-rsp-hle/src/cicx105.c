@@ -50,5 +50,7 @@ void cicx105_ucode(struct hle_t* hle)
         src += 0x8;
 
     }
+
+    rsp_break(hle, 0);
 }
 

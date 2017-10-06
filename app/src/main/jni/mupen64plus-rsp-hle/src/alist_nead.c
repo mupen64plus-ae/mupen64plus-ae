@@ -372,6 +372,7 @@ void alist_process_nead_mk(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x20);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_sf(struct hle_t* hle)
@@ -388,6 +389,7 @@ void alist_process_nead_sf(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x20);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_sfj(struct hle_t* hle)
@@ -404,6 +406,7 @@ void alist_process_nead_sfj(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x20);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_fz(struct hle_t* hle)
@@ -420,6 +423,7 @@ void alist_process_nead_fz(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x20);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_wrjb(struct hle_t* hle)
@@ -436,6 +440,7 @@ void alist_process_nead_wrjb(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x20);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_ys(struct hle_t* hle)
@@ -450,6 +455,7 @@ void alist_process_nead_ys(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x18);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_1080(struct hle_t* hle)
@@ -464,6 +470,7 @@ void alist_process_nead_1080(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x18);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_oot(struct hle_t* hle)
@@ -478,6 +485,7 @@ void alist_process_nead_oot(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x18);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_mm(struct hle_t* hle)
@@ -492,6 +500,7 @@ void alist_process_nead_mm(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x18);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_mmb(struct hle_t* hle)
@@ -506,6 +515,7 @@ void alist_process_nead_mmb(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x18);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 void alist_process_nead_ac(struct hle_t* hle)
@@ -520,4 +530,5 @@ void alist_process_nead_ac(struct hle_t* hle)
     };
 
     alist_process(hle, ABI, 0x18);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }

@@ -27,8 +27,10 @@
 #include "hle_internal.h"
 #include "memory.h"
 
+#define SATURATE8(x) ((unsigned int) x <= 255 ? x : (x < 0 ? 0: 255))
+
 /**************************************************************************
- * Resident evil 2 ucode
+ * Resident evil 2 ucodes
  **************************************************************************/
 void resize_bilinear_task(struct hle_t* hle)
 {
@@ -94,4 +96,85 @@ void resize_bilinear_task(struct hle_t* hle)
         }
         y += y_ratio;
     }
+
+    rsp_break(hle, SP_STATUS_TASKDONE);
+}
+
+static uint32_t YCbCr_to_RGBA(uint8_t Y, uint8_t Cb, uint8_t Cr)
+{
+    int r, g, b;
+
+    r = (int)(((double)Y * 0.582199097) + (0.701004028 * (double)(Cr - 128)));
+    g = (int)(((double)Y * 0.582199097) - (0.357070923 * (double)(Cr - 128)) - (0.172073364 * (double)(Cb - 128)));
+    b = (int)(((double)Y * 0.582199097) + (0.886001587 * (double)(Cb - 128)));
+    
+    r = SATURATE8(r);
+    g = SATURATE8(g);
+    b = SATURATE8(b);
+    
+    return (r << 24) | (g << 16) | (b << 8) | 0;
+}
+
+void decode_video_frame_task(struct hle_t* hle)
+{
+    int data_ptr = *dmem_u32(hle, TASK_UCODE_DATA);
+
+    int pLuminance = *dram_u32(hle, data_ptr);
+    int pCb = *dram_u32(hle, data_ptr + 4);
+    int pCr = *dram_u32(hle, data_ptr + 8);
+    int pDestination = *dram_u32(hle, data_ptr + 12);
+    int nMovieWidth = *dram_u32(hle, data_ptr + 16);
+    int nMovieHeight = *dram_u32(hle, data_ptr + 20);
+#if 0 /* unused, but keep it for documentation purpose */
+    int nRowsPerDMEM = *dram_u32(hle, data_ptr + 24);
+    int nDMEMPerFrame = *dram_u32(hle, data_ptr + 28);
+    int nLengthSkipCount = *dram_u32(hle, data_ptr + 32);
+#endif
+    int nScreenDMAIncrement = *dram_u32(hle, data_ptr + 36);
+
+    int i, j;
+    uint8_t Y, Cb, Cr;
+    uint32_t pixel;
+    int pY_1st_row, pY_2nd_row, pDest_1st_row, pDest_2nd_row;
+
+    for (i = 0; i < nMovieHeight; i += 2)
+    {
+        pY_1st_row = pLuminance;
+        pY_2nd_row = pLuminance + nMovieWidth;
+        pDest_1st_row = pDestination;
+        pDest_2nd_row = pDestination + (nScreenDMAIncrement >> 1);
+
+        for (j = 0; j < nMovieWidth; j += 2)
+        {
+            dram_load_u8(hle, (uint8_t*)&Cb, pCb++, 1);
+            dram_load_u8(hle, (uint8_t*)&Cr, pCr++, 1);
+
+            /*1st row*/
+            dram_load_u8(hle, (uint8_t*)&Y, pY_1st_row++, 1);
+            pixel = YCbCr_to_RGBA(Y, Cb, Cr);
+            dram_store_u32(hle, &pixel, pDest_1st_row, 1);
+            pDest_1st_row += 4;
+
+            dram_load_u8(hle, (uint8_t*)&Y, pY_1st_row++, 1);
+            pixel = YCbCr_to_RGBA(Y, Cb, Cr);
+            dram_store_u32(hle, &pixel, pDest_1st_row, 1);
+            pDest_1st_row += 4;
+
+            /*2nd row*/
+            dram_load_u8(hle, (uint8_t*)&Y, pY_2nd_row++, 1);
+            pixel = YCbCr_to_RGBA(Y, Cb, Cr);
+            dram_store_u32(hle, &pixel, pDest_2nd_row, 1);
+            pDest_2nd_row += 4;
+
+            dram_load_u8(hle, (uint8_t*)&Y, pY_2nd_row++, 1);
+            pixel = YCbCr_to_RGBA(Y, Cb, Cr);
+            dram_store_u32(hle, &pixel, pDest_2nd_row, 1);
+            pDest_2nd_row += 4;
+        }
+
+        pLuminance += (nMovieWidth << 1);
+        pDestination += nScreenDMAIncrement;
+    }
+
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }

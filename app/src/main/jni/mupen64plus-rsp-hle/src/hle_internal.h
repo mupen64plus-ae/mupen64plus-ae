@@ -74,5 +74,16 @@ struct hle_t
     uint8_t  mp3_buffer[0x1000];
 };
 
+/* some mips interface interrupt flags */
+#define MI_INTR_SP                  0x1
+
+/* some rsp status flags */
+#define SP_STATUS_HALT             0x1
+#define SP_STATUS_BROKE            0x2
+#define SP_STATUS_INTR_ON_BREAK    0x40
+#define SP_STATUS_TASKDONE         0x200
+
+void rsp_break(struct hle_t* hle, unsigned int setbits);
+
 #endif
 
