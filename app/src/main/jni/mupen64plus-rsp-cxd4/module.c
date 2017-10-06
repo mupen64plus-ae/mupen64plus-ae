@@ -30,6 +30,7 @@ RSP_INFO RSP_INFO_NAME;
 
 #if defined(M64P_PLUGIN_API)
 
+#include <m64p_frontend.h>
 #include <stdarg.h>
 
 #define RSP_PLUGIN_API_VERSION 0x020000
@@ -51,12 +52,27 @@ ptr_ConfigGetParameter     ConfigGetParameter = NULL;
 ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat;
 ptr_ConfigSetDefaultBool   ConfigSetDefaultBool = NULL;
 ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
+ptr_CoreDoCommand          CoreDoCommand = NULL;
 
 NOINLINE void update_conf(const char* source)
 {
     memset(conf, 0, sizeof(conf));
+    m64p_rom_header ROM_HEADER;
+    CoreDoCommand(M64CMD_ROM_GET_HEADER, sizeof(ROM_HEADER), &ROM_HEADER);
 
-    CFG_HLE_GFX = ConfigGetParamBool(l_ConfigRsp, "DisplayListToGraphicsPlugin");
+    if (strstr((char*)ROM_HEADER.Name, (const char*)"WORLD DRIVER CHAMP") != NULL)
+        CFG_HLE_GFX = 0;
+    else if (strstr((char*)ROM_HEADER.Name, (const char*)"Indiana Jones") != NULL)
+        CFG_HLE_GFX = 0;
+    else if (strstr((char*)ROM_HEADER.Name, (const char*)"Battle for Naboo") != NULL)
+        CFG_HLE_GFX = 0;
+    else if (strstr((char*)ROM_HEADER.Name, (const char*)"Stunt Racer 64") != NULL)
+        CFG_HLE_GFX = 0;
+    else if (strstr((char*)ROM_HEADER.Name, (const char*)"GAUNTLET LEGENDS") != NULL)
+        CFG_HLE_GFX = 0;
+    else
+        CFG_HLE_GFX = ConfigGetParamBool(l_ConfigRsp, "DisplayListToGraphicsPlugin");
+
     CFG_HLE_AUD = ConfigGetParamBool(l_ConfigRsp, "AudioListToAudioPlugin");
     CFG_WAIT_FOR_CPU_HOST = ConfigGetParamBool(l_ConfigRsp, "WaitForCPUHost");
     CFG_MEND_SEMAPHORE_LOCK = ConfigGetParamBool(l_ConfigRsp, "SupportCPUSemaphoreLock");
@@ -118,6 +134,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultFloat");
     ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultBool");
     ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
+    CoreDoCommand = (ptr_CoreDoCommand) osal_dynlib_getproc(CoreLibHandle, "CoreDoCommand");
 
     if (!ConfigOpenSection || !ConfigDeleteSection || !ConfigSetParameter || !ConfigGetParameter ||
         !ConfigSetDefaultBool || !ConfigGetParamBool || !ConfigSetDefaultFloat)
@@ -159,9 +176,14 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         bSaveConfig = 1;
     }
 
+#ifndef HLEVIDEO
+    int hlevideo = 0;
+#else
+    int hlevideo = 1;
+#endif
     /* set the default values for this plugin */
     ConfigSetDefaultFloat(l_ConfigRsp, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus cxd4 RSP Plugin config parameter version number");
-    ConfigSetDefaultBool(l_ConfigRsp, "DisplayListToGraphicsPlugin", 0, "Send display lists to the graphics plugin");
+    ConfigSetDefaultBool(l_ConfigRsp, "DisplayListToGraphicsPlugin", hlevideo, "Send display lists to the graphics plugin");
     ConfigSetDefaultBool(l_ConfigRsp, "AudioListToAudioPlugin", 0, "Send audio lists to the audio plugin");
     ConfigSetDefaultBool(l_ConfigRsp, "WaitForCPUHost", 0, "Force CPU-RSP signals synchronization");
     ConfigSetDefaultBool(l_ConfigRsp, "SupportCPUSemaphoreLock", 0, "Support CPU-RSP semaphore lock");
@@ -282,14 +304,14 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int cycles)
 
         if (*(pi32)(DMEM + 0xFF0) == 0x00000000)
             break; /* Resident Evil 2, null task pointers */
+        GET_RCP_REG(SP_STATUS_REG) |=
+            SP_STATUS_SIG2 | SP_STATUS_BROKE | SP_STATUS_HALT
+        ;
         if (GET_RSP_INFO(ProcessDlistList) == NULL)
             { /* branch */ }
         else
             GET_RSP_INFO(ProcessDlistList)();
 
-        GET_RCP_REG(SP_STATUS_REG) |=
-            SP_STATUS_SIG2 | SP_STATUS_BROKE | SP_STATUS_HALT
-        ;
         if (GET_RCP_REG(SP_STATUS_REG) & SP_STATUS_INTR_BREAK) {
             GET_RCP_REG(MI_INTR_REG) |= 0x00000001;
             GET_RSP_INFO(CheckInterrupts)();

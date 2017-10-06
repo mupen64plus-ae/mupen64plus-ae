@@ -61,10 +61,15 @@
 #define DISABLE_SHUFFLE 1
 #endif
 
-#if GCC
-#define FORCE_INLINE					inline __attribute__((always_inline))
+#if defined(__GNUC__) || defined(__clang__)
+#	pragma push_macro("FORCE_INLINE")
+#	pragma push_macro("ALIGN_STRUCT")
+#	define FORCE_INLINE       static inline __attribute__((always_inline))
+#	define ALIGN_STRUCT(x)    __attribute__((aligned(x)))
 #else
-#define FORCE_INLINE					inline
+#	error "Macro name collisions may happens with unknown compiler"
+#	define FORCE_INLINE       static inline
+#	define ALIGN_STRUCT(x)    __declspec(align(x))
 #endif
 
 #include "arm_neon.h"

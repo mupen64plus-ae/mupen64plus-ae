@@ -118,7 +118,7 @@ endif
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3 -flto
 WARNFLAGS ?= -Wall
-CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -fvisibility=hidden -I../../ -mstackrealign
+CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -fvisibility=hidden -I../../
 CPPFLAGS += -DM64P_PLUGIN_API
 LDFLAGS += $(SHARED)
 
@@ -129,11 +129,17 @@ ifeq ($(CPU), X86)
     CPPFLAGS += -DARCH_MIN_SSE2
     POSTFIX = -sse2
   endif
-  ifeq ($(SSE), SSSE3)
-    CFLAGS   += -mssse3
-    CPPFLAGS += -DARCH_MIN_SSSE3
-    POSTFIX = -ssse3
-  endif
+  CFLAGS += -mstackrealign
+endif
+
+ifeq ($(NEON), 1)
+    CFLAGS   += -mfpu=neon
+    CPPFLAGS += -DUSE_SSE2NEON
+endif
+
+HLEVIDEO ?= 0
+ifeq ($(HLEVIDEO), 1)
+  CFLAGS += -DHLEVIDEO
 endif
 
 # Since we are building a shared library, we must compile with -fPIC on some architectures
@@ -296,7 +302,8 @@ targets:
 	@echo "    HLEVIDEO=(1|0) == Move task of gfx emulation to a HLE video plugins"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "    SSE=version   == Optimize for SSE technology version"
-	@echo "                     (none [default on non-x86], SSE2 [default on x86], SSSE3)"
+	@echo "                     (none [default on non-x86], SSE2 [default on x86])"
+	@echo "    NEON=(1|0)    == Optimize for NEON technology version"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"

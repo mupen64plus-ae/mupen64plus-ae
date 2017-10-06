@@ -57,8 +57,6 @@ void SP_CP0_MF(unsigned int rt, unsigned int rd)
     if (rd == 0x7) {
         if (CFG_MEND_SEMAPHORE_LOCK == 0)
             return;
-        if (CFG_HLE_GFX | CFG_HLE_AUD)
-            return;
         GET_RCP_REG(SP_SEMAPHORE_REG) = 0x00000001;
         GET_RCP_REG(SP_STATUS_REG) |= SP_STATUS_HALT; /* temporary hack */
         return;
