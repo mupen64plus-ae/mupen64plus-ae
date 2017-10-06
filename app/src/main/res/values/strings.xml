@@ -195,7 +195,6 @@
     <string name="screenCheats_summaryDisabled">Disabled</string>
     <string name="screenAdvanced_title">Advanced</string>
     <string name="screenAdvanced_CountPerOpTitle">Count per operation</string>
-    <string name="screenAdvanced_CountPerScanline">Count per scanline</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Cheat options (long-press for notes)</string>

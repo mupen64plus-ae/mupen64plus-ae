@@ -162,7 +162,6 @@
     <string name="screenCheats_summaryDisabled">Deshabilitado</string>
     <string name="screenAdvanced_title">Avanzado</string>
     <string name="screenAdvanced_CountPerOpTitle">Cuenta por operación</string>
-    <string name="screenAdvanced_CountPerScanline">Cuenta por línea de exploración</string>
 
     <!--Preference Categories-->
     <string name="categoryCheats_title">Ajustes de trucos (mantén oprimido para mostrar notas)</string>

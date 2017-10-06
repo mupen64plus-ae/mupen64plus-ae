@@ -135,15 +135,6 @@
             mupen64:minimumValue="0"
             mupen64:stepSize="1"
             mupen64:units=""/>
-
-        <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="0"
-            android:key="screenAdvancedCountPerScanline"
-            android:title="@string/screenAdvanced_CountPerScanline"
-            mupen64:maximumValue="3000"
-            mupen64:minimumValue="0"
-            mupen64:stepSize="50"
-            mupen64:units=""/>
     </android.support.v7.preference.PreferenceScreen>
 
     <android.support.v7.preference.Preference

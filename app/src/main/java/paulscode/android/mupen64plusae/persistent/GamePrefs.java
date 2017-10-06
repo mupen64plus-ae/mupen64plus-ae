@@ -250,9 +250,6 @@ public class GamePrefs
     /** Core CountPerOp setting */
     public final int countPerOp;
 
-    /** Core CountPerScanline setting */
-    public final int countPerScanline;
-
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
@@ -564,7 +561,6 @@ public class GamePrefs
 
         //A value of zero means default for the game as specified in mupen64plus.ini
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
-        countPerScanline = mPreferences.getInt( "screenAdvancedCountPerScanline", 0 );
     }
 
     public String getCheatArgs()

@@ -100,7 +100,6 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + game.sramDataDir + '"' );                                        // Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used
         mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.coreSharedDataDir + '"' );                             // Path to a directory to search when looking for shared data files
         mupen64plus_cfg.put( "Core", "CountPerOp", String.valueOf( game.countPerOp ) );                                     // Count per op
-        mupen64plus_cfg.put( "Core", "CountPerScanline", String.valueOf( game.countPerScanline ) );                         // Count per scanline
 
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.000000" );                                                         // Mupen64Plus CoreEvents config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", EMPTY );

@@ -190,7 +190,6 @@
     <string name="screenCheats_summaryDisabled">Отключено</string>
     <string name="screenAdvanced_title">Продвинутые</string>
     <string name="screenAdvanced_CountPerOpTitle">Количество на операцию</string>
-    <string name="screenAdvanced_CountPerScanline">Количество на строку развертки</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Настройки читов (долгое нажатие для заметок)</string>
