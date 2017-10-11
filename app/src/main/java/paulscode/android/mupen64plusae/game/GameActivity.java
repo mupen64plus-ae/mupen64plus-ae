@@ -431,6 +431,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         super.onStart();
         Log.i("GameActivity", "onStart");
+
+        //This can happen if the screen is turn off while the emulator is running then turned back on
+        tryRunning();
     }
 
     @Override
