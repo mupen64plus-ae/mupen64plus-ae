@@ -41,6 +41,7 @@
 #include "device/r4300/recomp.h"
 #include "device/r4300/tlb.h"
 #include "device/r4300/fpu.h"
+#include "device/r4300/exception.h"
 
 #if !defined(WIN32)
 #include <sys/mman.h>
@@ -201,7 +202,7 @@ static void TLBWR_new(void);
 
 int new_recompile_block(int addr);
 void invalidate_block(u_int block);
-void *TLB_refill_exception_new(u_int inst_addr, u_int mem_addr, int w);
+void *get_addr_ht(u_int vaddr);
 
 static void wb_register(signed char r,signed char regmap[],uint64_t dirty,uint64_t is32);
 static void wb_dirtys(signed char i_regmap[],uint64_t i_is32,uint64_t i_dirty);
@@ -1918,7 +1919,14 @@ static void *dyna_linker(void * src, u_int vaddr)
       assert(addr!=NULL);
     }
     else
-      addr=TLB_refill_exception_new(vaddr,vaddr&~1,0);
+    {
+      struct r4300_core* r4300 = &g_dev.r4300;
+      assert(r4300->cp0.tlb.LUT_r[(vaddr&~1) >> 12] == 0);
+      assert((int)r4300->new_dynarec_hot_state.memory_map[(vaddr&~1) >> 12] < 0);
+      r4300->delay_slot = vaddr&1;
+      TLB_refill_exception(r4300, vaddr&~1, 2);
+      addr=get_addr_ht(r4300->new_dynarec_hot_state.pcaddr);
+    }
   }
   return addr;
 }
@@ -1934,7 +1942,14 @@ static void *dyna_linker_ds(void * src, u_int vaddr)
       assert(addr!=NULL);
     }
     else
-      addr=TLB_refill_exception_new(vaddr,vaddr&~1,0);
+    {
+      struct r4300_core* r4300 = &g_dev.r4300;
+      assert(r4300->cp0.tlb.LUT_r[(vaddr&~1) >> 12] == 0);
+      assert((int)r4300->new_dynarec_hot_state.memory_map[(vaddr&~1) >> 12] < 0);
+      r4300->delay_slot = vaddr&1;
+      TLB_refill_exception(r4300, vaddr&~1, 2);
+      addr=get_addr_ht(r4300->new_dynarec_hot_state.pcaddr);
+    }
   }
   return addr;
 }
@@ -1943,11 +1958,12 @@ static void *dyna_linker_ds(void * src, u_int vaddr)
 // This is called from the recompiled JR/JALR instructions
 void *get_addr(u_int vaddr)
 {
+  struct r4300_core* r4300 = &g_dev.r4300;
   u_int page=(vaddr^0x80000000)>>12;
   u_int vpage=page;
-  if(page>262143&&g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]) page=(g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]^0x80000000)>>12;
+  if(page>262143&&r4300->cp0.tlb.LUT_r[vaddr>>12]) page=(r4300->cp0.tlb.LUT_r[vaddr>>12]^0x80000000)>>12;
   if(page>2048) page=2048+(page&2047);
-  if(vpage>262143&&g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]) vpage&=2047; // jump_dirty uses a hash of the virtual address instead
+  if(vpage>262143&&r4300->cp0.tlb.LUT_r[vaddr>>12]) vpage&=2047; // jump_dirty uses a hash of the virtual address instead
   if(vpage>2048) vpage=2048+(vpage&2047);
   struct ll_entry *head;
   //DebugMessage(M64MSG_VERBOSE, "TRACE: count=%d next=%d (get_addr %x,page %d)",r4300_cp0_regs(&g_dev.r4300.cp0)[CP0_COUNT_REG],g_dev.r4300.cp0.next_interrupt,vaddr,page);
@@ -1972,16 +1988,16 @@ void *get_addr(u_int vaddr)
       if((((u_int)head->addr-(u_int)out)<<(32-TARGET_SIZE_2))>0x60000000+(MAX_OUTPUT_BLOCK_SIZE<<(32-TARGET_SIZE_2))) {
         if(verify_dirty(head->addr)) {
           //DebugMessage(M64MSG_VERBOSE, "restore candidate: %x (%d) d=%d",vaddr,page,g_dev.r4300.cached_interp.invalid_code[vaddr>>12]);
-          g_dev.r4300.cached_interp.invalid_code[vaddr>>12]=0;
-          g_dev.r4300.new_dynarec_hot_state.memory_map[vaddr>>12]|=0x40000000;
+          r4300->cached_interp.invalid_code[vaddr>>12]=0;
+          r4300->new_dynarec_hot_state.memory_map[vaddr>>12]|=0x40000000;
           if(vpage<2048) {
-            if(g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]) {
-              g_dev.r4300.cached_interp.invalid_code[g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]>>12]=0;
-              g_dev.r4300.new_dynarec_hot_state.memory_map[g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]>>12]|=0x40000000;
+            if(r4300->cp0.tlb.LUT_r[vaddr>>12]) {
+              r4300->cached_interp.invalid_code[r4300->cp0.tlb.LUT_r[vaddr>>12]>>12]=0;
+              r4300->new_dynarec_hot_state.memory_map[r4300->cp0.tlb.LUT_r[vaddr>>12]>>12]|=0x40000000;
             }
-            g_dev.r4300.new_dynarec_hot_state.restore_candidate[vpage>>3]|=1<<(vpage&7);
+            r4300->new_dynarec_hot_state.restore_candidate[vpage>>3]|=1<<(vpage&7);
           }
-          else g_dev.r4300.new_dynarec_hot_state.restore_candidate[page>>3]|=1<<(page&7);
+          else r4300->new_dynarec_hot_state.restore_candidate[page>>3]|=1<<(page&7);
           u_int *ht_bin=hash_table[((vaddr>>16)^vaddr)&0xFFFF];
           if(ht_bin[0]==vaddr) {
             ht_bin[1]=(int)head->addr; // Replace existing entry
@@ -2003,7 +2019,11 @@ void *get_addr(u_int vaddr)
   int r=new_recompile_block(vaddr);
   if(r==0) return get_addr(vaddr);
   // Execute in unmapped page, generate pagefault execption
-  return TLB_refill_exception_new(vaddr,vaddr&~1,0);
+  assert(r4300->cp0.tlb.LUT_r[(vaddr&~1) >> 12] == 0);
+  assert((int)r4300->new_dynarec_hot_state.memory_map[(vaddr&~1) >> 12] < 0);
+  r4300->delay_slot = vaddr&1;
+  TLB_refill_exception(r4300, vaddr&~1, 2);
+  return get_addr_ht(r4300->new_dynarec_hot_state.pcaddr);
 }
 // Look up address in hash table first
 void *get_addr_ht(u_int vaddr)
@@ -2018,14 +2038,15 @@ void *get_addr_ht(u_int vaddr)
 void *get_addr_32(u_int vaddr,u_int flags)
 {
   //DebugMessage(M64MSG_VERBOSE, "TRACE: count=%d next=%d (get_addr_32 %x,flags %x)",r4300_cp0_regs(&g_dev.r4300.cp0)[CP0_COUNT_REG],g_dev.r4300.cp0.next_interrupt,vaddr,flags);
+  struct r4300_core* r4300 = &g_dev.r4300;
   u_int *ht_bin=hash_table[((vaddr>>16)^vaddr)&0xFFFF];
   if(ht_bin[0]==vaddr) return (void *)ht_bin[1];
   if(ht_bin[2]==vaddr) return (void *)ht_bin[3];
   u_int page=(vaddr^0x80000000)>>12;
   u_int vpage=page;
-  if(page>262143&&g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]) page=(g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]^0x80000000)>>12;
+  if(page>262143&&r4300->cp0.tlb.LUT_r[vaddr>>12]) page=(r4300->cp0.tlb.LUT_r[vaddr>>12]^0x80000000)>>12;
   if(page>2048) page=2048+(page&2047);
-  if(vpage>262143&&g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]) vpage&=2047; // jump_dirty uses a hash of the virtual address instead
+  if(vpage>262143&&r4300->cp0.tlb.LUT_r[vaddr>>12]) vpage&=2047; // jump_dirty uses a hash of the virtual address instead
   if(vpage>2048) vpage=2048+(vpage&2047);
   struct ll_entry *head;
   head=jump_in[page];
@@ -2058,16 +2079,16 @@ void *get_addr_32(u_int vaddr,u_int flags)
       if((((u_int)head->addr-(u_int)out)<<(32-TARGET_SIZE_2))>0x60000000+(MAX_OUTPUT_BLOCK_SIZE<<(32-TARGET_SIZE_2))) {
         if(verify_dirty(head->addr)) {
           //DebugMessage(M64MSG_VERBOSE, "restore candidate: %x (%d) d=%d",vaddr,page,g_dev.r4300.cached_interp.invalid_code[vaddr>>12]);
-          g_dev.r4300.cached_interp.invalid_code[vaddr>>12]=0;
-          g_dev.r4300.new_dynarec_hot_state.memory_map[vaddr>>12]|=0x40000000;
+          r4300->cached_interp.invalid_code[vaddr>>12]=0;
+          r4300->new_dynarec_hot_state.memory_map[vaddr>>12]|=0x40000000;
           if(vpage<2048) {
-            if(g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]) {
-              g_dev.r4300.cached_interp.invalid_code[g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]>>12]=0;
-              g_dev.r4300.new_dynarec_hot_state.memory_map[g_dev.r4300.cp0.tlb.LUT_r[vaddr>>12]>>12]|=0x40000000;
+            if(r4300->cp0.tlb.LUT_r[vaddr>>12]) {
+              r4300->cached_interp.invalid_code[r4300->cp0.tlb.LUT_r[vaddr>>12]>>12]=0;
+              r4300->new_dynarec_hot_state.memory_map[r4300->cp0.tlb.LUT_r[vaddr>>12]>>12]|=0x40000000;
             }
-            g_dev.r4300.new_dynarec_hot_state.restore_candidate[vpage>>3]|=1<<(vpage&7);
+            r4300->new_dynarec_hot_state.restore_candidate[vpage>>3]|=1<<(vpage&7);
           }
-          else g_dev.r4300.new_dynarec_hot_state.restore_candidate[page>>3]|=1<<(page&7);
+          else r4300->new_dynarec_hot_state.restore_candidate[page>>3]|=1<<(page&7);
           if(head->reg32==0) {
             u_int *ht_bin=hash_table[((vaddr>>16)^vaddr)&0xFFFF];
             if(ht_bin[0]==-1) {
@@ -2092,37 +2113,11 @@ void *get_addr_32(u_int vaddr,u_int flags)
   int r=new_recompile_block(vaddr);
   if(r==0) return get_addr(vaddr);
   // Execute in unmapped page, generate pagefault execption
-  return TLB_refill_exception_new(vaddr,vaddr&~1,0);
-}
-
-void *TLB_refill_exception_new(u_int inst_addr,u_int mem_addr,int w)
-{
-  int i;
-  uint32_t* cp0_regs = r4300_cp0_regs(&g_dev.r4300.cp0);
-
-  if(w==1)
-    cp0_regs[CP0_CAUSE_REG]=(inst_addr<<31)|CP0_CAUSE_EXCCODE_TLBS;
-  else
-    cp0_regs[CP0_CAUSE_REG]=(inst_addr<<31)|CP0_CAUSE_EXCCODE_TLBL;
-
-  cp0_regs[CP0_BADVADDR_REG]=mem_addr;
-  cp0_regs[CP0_CONTEXT_REG]=(cp0_regs[CP0_CONTEXT_REG]&0xFF80000F)|((mem_addr>>9)&0x007FFFF0);
-  cp0_regs[CP0_ENTRYHI_REG]=mem_addr&0xFFFFE000;
-  assert((cp0_regs[CP0_STATUS_REG]&CP0_STATUS_EXL)==0);
-  cp0_regs[CP0_EPC_REG]=(inst_addr&~3)-(inst_addr&1)*4;
-  cp0_regs[CP0_STATUS_REG]|=CP0_STATUS_EXL;
-  
-  if((mem_addr>=0x80000000)&&(mem_addr<0xc0000000))
-    return get_addr_ht(0x80000180);
-
-  for(i=0;i<32;i++)
-  {
-    if((mem_addr>=g_dev.r4300.cp0.tlb.entries[i].start_even)&&(mem_addr<=g_dev.r4300.cp0.tlb.entries[i].end_even))
-      return get_addr_ht(0x80000180);
-    if((mem_addr>=g_dev.r4300.cp0.tlb.entries[i].start_odd)&&(mem_addr<=g_dev.r4300.cp0.tlb.entries[i].end_odd))
-      return get_addr_ht(0x80000180);
-  }
-  return get_addr_ht(0x80000000);
+  assert(r4300->cp0.tlb.LUT_r[(vaddr&~1) >> 12] == 0);
+  assert((int)r4300->new_dynarec_hot_state.memory_map[(vaddr&~1) >> 12] < 0);
+  r4300->delay_slot = vaddr&1;
+  TLB_refill_exception(r4300, vaddr&~1, 2);
+  return get_addr_ht(r4300->new_dynarec_hot_state.pcaddr);
 }
 
 // Check if an address is already compiled
@@ -7621,28 +7616,6 @@ void new_dynarec_init(void)
     g_dev.r4300.new_dynarec_hot_state.memory_map[n]=((u_int)g_dev.ri.rdram.dram-0x80000000)>>2;
   for(n=526336;n<1048576;n++) // 0x80800000 .. 0xFFFFFFFF
     g_dev.r4300.new_dynarec_hot_state.memory_map[n]=-1;
-  for(n=0;n<0x8000;n++) { // 0 .. 0x7FFFFFFF
-    g_dev.mem.writemem[n] = write_nomem_new;
-    g_dev.mem.writememd[n] = write_nomemd_new;
-    g_dev.mem.readmem[n] = read_nomem_new;
-    g_dev.mem.readmemd[n] = read_nomemd_new;
-  }
-  for(n=0x8000;n<0x8080;n++) { // 0x80000000 .. 0x807FFFFF
-    g_dev.mem.writemem[n] = write_rdram_new;
-    g_dev.mem.writememd[n] = write_rdramd_new;
-  }
-  for(n=0xC000;n<0x10000;n++) { // 0xC0000000 .. 0xFFFFFFFF
-    g_dev.mem.writemem[n] = write_nomem_new;
-    g_dev.mem.writememd[n] = write_nomemd_new;
-    g_dev.mem.readmem[n] = read_nomem_new;
-    g_dev.mem.readmemd[n] = read_nomemd_new;
-  }
-
-  g_dev.mem.writemem[0x8430] = write_mi_new;
-  g_dev.mem.writememd[0x8430] = write_mid_new;
-
-  g_dev.mem.writemem[0xa430] = write_mi_new;
-  g_dev.mem.writememd[0xa430] = write_mid_new;
 
   tlb_hacks();
   arch_init();
@@ -11137,3 +11110,121 @@ void new_dynarec_check_interrupt(void)
     check_interrupt(&g_dev.r4300);
 }
 
+static unsigned int bshift(uint32_t address)
+{
+    return ((address & 3) ^ 3) << 3;
+}
+
+static unsigned int hshift(uint32_t address)
+{
+    return ((address & 2) ^ 2) << 3;
+}
+
+void read_byte_new(int pcaddr, int count, int diff)
+{
+  struct r4300_core* r4300 = &g_dev.r4300;
+  r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] = r4300->new_dynarec_hot_state.last_count + count + diff;
+  r4300->new_dynarec_hot_state.pcaddr = pcaddr&~1;
+  r4300->delay_slot = pcaddr & 1;
+  r4300->new_dynarec_hot_state.pending_exception = 0;
+  unsigned int shift = bshift(*r4300_address(r4300));
+  read_word_in_memory();
+  *r4300->rdword >>= shift;
+  *r4300->rdword &= UINT32_C(0xff);
+  r4300->delay_slot = 0;
+}
+
+void read_hword_new(int pcaddr, int count, int diff)
+{
+  struct r4300_core* r4300 = &g_dev.r4300;
+  r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] = r4300->new_dynarec_hot_state.last_count + count + diff;
+  r4300->new_dynarec_hot_state.pcaddr = pcaddr&~1;
+  r4300->delay_slot = pcaddr & 1;
+  r4300->new_dynarec_hot_state.pending_exception = 0;
+  unsigned int shift = hshift(*r4300_address(r4300));
+  read_word_in_memory();
+  *r4300->rdword >>= shift;
+  *r4300->rdword &= UINT32_C(0xffff);
+  r4300->delay_slot = 0;
+}
+
+void read_word_new(int pcaddr, int count, int diff)
+{
+  struct r4300_core* r4300 = &g_dev.r4300;
+  r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] = r4300->new_dynarec_hot_state.last_count + count + diff;
+  r4300->new_dynarec_hot_state.pcaddr = pcaddr&~1;
+  r4300->delay_slot = pcaddr & 1;
+  r4300->new_dynarec_hot_state.pending_exception = 0;
+  read_word_in_memory();
+  r4300->delay_slot = 0;
+}
+
+void read_dword_new(int pcaddr, int count, int diff)
+{
+  struct r4300_core* r4300 = &g_dev.r4300;
+  r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] = r4300->new_dynarec_hot_state.last_count + count + diff;
+  r4300->new_dynarec_hot_state.pcaddr = pcaddr&~1;
+  r4300->delay_slot = pcaddr & 1;
+  r4300->new_dynarec_hot_state.pending_exception = 0;
+  read_dword_in_memory();
+  r4300->delay_slot = 0;
+}
+
+void write_byte_new(int pcaddr, int count, int diff)
+{
+  struct r4300_core* r4300 = &g_dev.r4300;
+  r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] = r4300->new_dynarec_hot_state.last_count + count + diff;
+  r4300->new_dynarec_hot_state.pcaddr = pcaddr&~1;
+  r4300->delay_slot = pcaddr & 1;
+  r4300->new_dynarec_hot_state.pending_exception = 0;
+  unsigned int shift = bshift(*r4300_address(r4300));
+  *r4300_wword(r4300) <<= shift;
+  *r4300_wmask(r4300) = UINT32_C(0xff) << shift;
+  write_word_in_memory();
+  r4300->delay_slot = 0;
+  r4300->new_dynarec_hot_state.last_count = *r4300_cp0_next_interrupt(&r4300->cp0);
+  r4300->new_dynarec_hot_state.cycle_count = r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] - r4300->new_dynarec_hot_state.last_count - diff;
+}
+
+void write_hword_new(int pcaddr, int count, int diff)
+{
+  struct r4300_core* r4300 = &g_dev.r4300;
+  r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] = r4300->new_dynarec_hot_state.last_count + count + diff;
+  r4300->new_dynarec_hot_state.pcaddr = pcaddr&~1;
+  r4300->delay_slot = pcaddr & 1;
+  r4300->new_dynarec_hot_state.pending_exception = 0;
+  unsigned int shift = hshift(*r4300_address(r4300));
+  *r4300_wword(r4300) <<= shift;
+  *r4300_wmask(r4300) = UINT32_C(0xffff) << shift;
+  write_word_in_memory();
+  r4300->delay_slot = 0;
+  r4300->new_dynarec_hot_state.last_count = *r4300_cp0_next_interrupt(&r4300->cp0);
+  r4300->new_dynarec_hot_state.cycle_count = r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] - r4300->new_dynarec_hot_state.last_count - diff;
+}
+
+void write_word_new(int pcaddr, int count, int diff)
+{
+  struct r4300_core* r4300 = &g_dev.r4300;
+  r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] = r4300->new_dynarec_hot_state.last_count + count + diff;
+  r4300->new_dynarec_hot_state.pcaddr = pcaddr&~1;
+  r4300->delay_slot = pcaddr & 1;
+  r4300->new_dynarec_hot_state.pending_exception = 0;
+  *r4300_wmask(r4300) = UINT32_C(0xffffffff);
+  write_word_in_memory();
+  r4300->delay_slot = 0;
+  r4300->new_dynarec_hot_state.last_count = *r4300_cp0_next_interrupt(&r4300->cp0);
+  r4300->new_dynarec_hot_state.cycle_count = r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] - r4300->new_dynarec_hot_state.last_count - diff;
+}
+
+void write_dword_new(int pcaddr, int count, int diff)
+{
+  struct r4300_core* r4300 = &g_dev.r4300;
+  r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] = r4300->new_dynarec_hot_state.last_count + count + diff;
+  r4300->new_dynarec_hot_state.pcaddr = pcaddr&~1;
+  r4300->delay_slot = pcaddr & 1;
+  r4300->new_dynarec_hot_state.pending_exception = 0;
+  write_dword_in_memory();
+  r4300->delay_slot = 0;
+  r4300->new_dynarec_hot_state.last_count = *r4300_cp0_next_interrupt(&r4300->cp0);
+  r4300->new_dynarec_hot_state.cycle_count = r4300_cp0_regs(&r4300->cp0)[CP0_COUNT_REG] - r4300->new_dynarec_hot_state.last_count - diff;
+}

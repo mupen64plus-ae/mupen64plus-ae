@@ -342,7 +342,8 @@ void generic_jump_to(struct r4300_core* r4300, uint32_t address)
 #ifdef NEW_DYNAREC
         if (r4300->emumode == EMUMODE_DYNAREC)
         {
-            r4300->cp0.last_addr = r4300->new_dynarec_hot_state.pcaddr;
+            r4300->new_dynarec_hot_state.pcaddr = address;
+            r4300->new_dynarec_hot_state.pending_exception = 1;
         }
         else
 #endif
@@ -356,17 +357,12 @@ void generic_jump_to(struct r4300_core* r4300, uint32_t address)
 /* XXX: not really a good interface but it gets the job done... */
 void savestates_load_set_pc(struct r4300_core* r4300, uint32_t pc)
 {
+    generic_jump_to(r4300, pc);
+
 #ifdef NEW_DYNAREC
     if (r4300->emumode == EMUMODE_DYNAREC)
-    {
-        r4300->new_dynarec_hot_state.pcaddr = pc;
-        r4300->new_dynarec_hot_state.pending_exception = 1;
         invalidate_all_pages();
-    }
     else
 #endif
-    {
-        generic_jump_to(r4300, pc);
         invalidate_r4300_cached_code(r4300, 0, 0);
-    }
 }

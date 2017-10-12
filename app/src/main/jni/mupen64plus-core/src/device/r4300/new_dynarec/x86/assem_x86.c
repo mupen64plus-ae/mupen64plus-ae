@@ -31,14 +31,14 @@ void invalidate_block_ebx(void);
 void invalidate_block_ebp(void);
 void invalidate_block_esi(void);
 void invalidate_block_edi(void);
-void read_byte_new(void);
-void read_hword_new(void);
-void read_word_new(void);
-void read_dword_new(void);
-void write_byte_new(void);
-void write_hword_new(void);
-void write_word_new(void);
-void write_dword_new(void);
+void read_byte_new(int pcaddr, int count, int diff);
+void read_hword_new(int pcaddr, int count, int diff);
+void read_word_new(int pcaddr, int count, int diff);
+void read_dword_new(int pcaddr, int count, int diff);
+void write_byte_new(int pcaddr, int count, int diff);
+void write_hword_new(int pcaddr, int count, int diff);
+void write_word_new(int pcaddr, int count, int diff);
+void write_dword_new(int pcaddr, int count, int diff);
 
 // We need these for cmovcc instructions on x86
 static const u_int const_zero=0;
@@ -2666,20 +2666,35 @@ static void do_readstub(int n)
 
   emit_writeword(rs,(int)r4300_address(&g_dev.r4300));
   emit_pusha();
-  int ds=i_regs!=&regs[i];
-  int real_rs=(itype[i]==LOADLR)?-1:get_reg(i_regmap,rs1[i]);
-  if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
-  wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty&(real_rs<0?-1:~(1<<real_rs)));
   
   int cc=get_reg(i_regmap,CCREG);
   if(cc<0) {
     cc=HOST_CCREG;
     emit_loadreg(CCREG,cc);
   }
-  emit_addimm(cc,CLOCK_DIVIDER*(stubs[n][6]+1),cc);
-  emit_writeword_imm_esp(start+i*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,32);
+
+  int ds=i_regs!=&regs[i];
+
+  emit_pushimm(CLOCK_DIVIDER*(stubs[n][6]+1));
+  emit_pushreg(cc);
+  emit_pushimm((start+(i+1)*4)+ds);
   emit_call(ftable);
+  emit_addimm(ESP,12,ESP);
   emit_popa();
+
+  emit_cmpmem_imm_byte((int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,0);
+  int jaddr=(int)out;
+  emit_jeq(0);
+
+  int real_rs=(itype[i]==LOADLR)?-1:get_reg(i_regmap,rs1[i]);
+  if((real_rs>=0)&&(((i_regs->wasdirty)>>real_rs)&1))
+    emit_addimm(rs,-imm[i],real_rs);
+  if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+  wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty);
+
+  emit_jmp((int)&do_interrupt);
+  set_jump_target(jaddr,(int)out);
+
   if(rt>=0) {
     if(type==LOADB_STUB)
       emit_movsbl((int)&g_dev.r4300.new_dynarec_hot_state.rdword,rt);
@@ -2717,30 +2732,43 @@ static void inline_readstub(int type, int i, u_int addr, signed char regmap[], i
 
   emit_writeword_imm(addr,(int)r4300_address(&g_dev.r4300));
   emit_pusha();
-  if((signed int)addr>=(signed int)0xC0000000) {
-    // Theoretically we can have a pagefault here, if the TLB has never
-    // been enabled and the address is outside the range 80000000..BFFFFFFF
-    // Write out the registers so the pagefault can be handled.  This is
-    // a very rare case and likely represents a bug.
-    int ds=regmap!=regs[i].regmap;
-    if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty,i);
-    if(!ds) wb_dirtys(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty);
-    else wb_dirtys(branch_regs[i-1].regmap_entry,branch_regs[i-1].was32,branch_regs[i-1].wasdirty);
-  }
 
   int cc=get_reg(regmap,CCREG);
   if(cc<0) {
     cc=HOST_CCREG;
     emit_loadreg(CCREG,cc);
   }
-  emit_addimm(cc,CLOCK_DIVIDER*(adj+1),cc);
-  if((signed int)addr>=(signed int)0xC0000000) {
-    // Pagefault address
-    int ds=regmap!=regs[i].regmap;
-    emit_writeword_imm_esp(start+i*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,32);
-  }
+
+  int ds=regmap!=regs[i].regmap;
+  struct regstat *i_regs;
+  if(!ds) i_regs=&regs[i];
+  else i_regs=&branch_regs[i-1];
+
+  emit_pushimm(CLOCK_DIVIDER*(adj+1));
+  emit_pushreg(cc);
+  emit_pushimm((start+(i+1)*4)+ds);
   emit_call(ftable);
+  emit_addimm(ESP,12,ESP);
   emit_popa();
+
+  if((signed int)addr>=(signed int)0xC0000000) {
+    // Theoretically we can have a pagefault here, if the TLB has never
+    // been enabled and the address is outside the range 80000000..BFFFFFFF
+    // Write out the registers so the pagefault can be handled.  This is
+    // a very rare case and likely represents a bug.
+    emit_cmpmem_imm_byte((int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,0);
+    int jaddr=(int)out;
+    emit_jeq(0);
+
+    int real_rs=(itype[i]==LOADLR)?-1:get_reg(regmap,rs1[i]);
+    if((real_rs>=0)&&(((i_regs->wasdirty)>>real_rs)&1))
+      emit_movimm(addr-imm[i],real_rs);
+    if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+    wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty);
+
+    emit_jmp((int)&do_interrupt);
+    set_jump_target(jaddr,(int)out);
+  }
 
   if(rt>=0) {
     if(type==LOADB_STUB)
@@ -2802,23 +2830,35 @@ static void do_writestub(int n)
   }
 
   emit_pusha();
-  int ds=i_regs!=&regs[i];
-  int real_rs=get_reg(i_regmap,rs1[i]);
-  if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
-  wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty&(real_rs<0?-1:~(1<<real_rs)));
-  
+
   int cc=get_reg(i_regmap,CCREG);
   if(cc<0) {
     cc=HOST_CCREG;
     emit_loadreg(CCREG,cc);
   }
 
-  emit_addimm(cc,CLOCK_DIVIDER*(stubs[n][6]+1),cc);
-  emit_writeword_imm_esp(start+i*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,32);
+  int ds=i_regs!=&regs[i];
+
+  emit_pushimm(CLOCK_DIVIDER*(stubs[n][6]+1));
+  emit_pushreg(cc);
+  emit_pushimm((start+(i+1)*4)+ds);
   emit_call(ftable);
-  emit_addimm(HOST_CCREG,-(int)CLOCK_DIVIDER*(stubs[n][6]+1),HOST_CCREG);
-  emit_storereg(CCREG,HOST_CCREG);
+  emit_addimm(ESP,12,ESP);
   emit_popa();
+
+  emit_cmpmem_imm_byte((int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,0);
+  int jaddr=(int)out;
+  emit_jeq(0);
+
+  int real_rs=get_reg(i_regmap,rs1[i]);
+  if((real_rs>=0)&&(((i_regs->wasdirty)>>real_rs)&1))
+    emit_addimm(rs,-imm[i],real_rs);
+  if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+  wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty);
+  
+  emit_jmp((int)&do_interrupt);
+  set_jump_target(jaddr,(int)out);
+
   if((cc=get_reg(i_regmap,CCREG))>=0) {
     emit_loadreg(CCREG,cc);
   }
@@ -2853,16 +2893,6 @@ static void inline_writestub(int type, int i, u_int addr, signed char regmap[], 
   }
 
   emit_pusha();
-  if(((signed int)addr>=(signed int)0xC0000000)||((addr>>16)==0xa430)||((addr>>16)==0x8430)) {
-    // Theoretically we can have a pagefault here, if the TLB has never
-    // been enabled and the address is outside the range 80000000..BFFFFFFF
-    // Write out the registers so the pagefault can be handled.  This is
-    // a very rare case and likely represents a bug.
-    int ds=regmap!=regs[i].regmap;
-    if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty,i);
-    if(!ds) wb_dirtys(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty);
-    else wb_dirtys(branch_regs[i-1].regmap_entry,branch_regs[i-1].was32,branch_regs[i-1].wasdirty);
-  }
 
   int cc=get_reg(regmap,CCREG);
   if(cc<0) {
@@ -2870,16 +2900,37 @@ static void inline_writestub(int type, int i, u_int addr, signed char regmap[], 
     emit_loadreg(CCREG,cc);
   }
 
-  emit_addimm(cc,CLOCK_DIVIDER*(adj+1),cc);
-  if(((signed int)addr>=(signed int)0xC0000000)||((addr>>16)==0xa430)||((addr>>16)==0x8430)) {
-    // Pagefault address
-    int ds=regmap!=regs[i].regmap;
-    emit_writeword_imm_esp(start+i*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,32);
-  }
+  int ds=regmap!=regs[i].regmap;
+  struct regstat *i_regs;
+  if(!ds) i_regs=&regs[i];
+  else i_regs=&branch_regs[i-1];
+
+  emit_pushimm(CLOCK_DIVIDER*(adj+1));
+  emit_pushreg(cc);
+  emit_pushimm((start+(i+1)*4)+ds);
   emit_call(ftable);
-  emit_addimm(HOST_CCREG,-(int)CLOCK_DIVIDER*(adj+1),HOST_CCREG);
-  emit_storereg(CCREG,HOST_CCREG);
+  emit_addimm(ESP,12,ESP);
   emit_popa();
+
+  if(((signed int)addr>=(signed int)0xC0000000)||((addr>>16)==0xa430)||((addr>>16)==0x8430)) {
+    // Theoretically we can have a pagefault here, if the TLB has never
+    // been enabled and the address is outside the range 80000000..BFFFFFFF
+    // Write out the registers so the pagefault can be handled.  This is
+    // a very rare case and likely represents a bug.
+    emit_cmpmem_imm_byte((int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,0);
+    int jaddr=(int)out;
+    emit_jeq(0);
+
+    int real_rs=get_reg(regmap,rs1[i]);
+    if((real_rs>=0)&&(((i_regs->wasdirty)>>real_rs)&1))
+      emit_movimm(addr-imm[i],real_rs);
+    if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+    wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty);
+   
+    emit_jmp((int)&do_interrupt);
+    set_jump_target(jaddr,(int)out);
+  }
+
   if((cc=get_reg(regmap,CCREG))>=0) {
     emit_loadreg(CCREG,cc);
   }
@@ -3413,7 +3464,15 @@ static void cop0_assemble(int i,struct regstat *i_regs)
       assert(!is_delayslot);
       //if(is_delayslot) output_byte(0xcc);
       emit_cmpmem_imm_byte((int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,0);
-      emit_jne((int)&do_interrupt);
+      int jaddr=(int)out;
+      emit_jeq(0);
+      if(copr==12){
+        emit_readword((int)&r4300_cp0_regs(&g_dev.r4300.cp0)[CP0_COUNT_REG],EAX);
+        emit_addimm(EAX,(int)CLOCK_DIVIDER,EAX);
+        emit_writeword(EAX,(int)&r4300_cp0_regs(&g_dev.r4300.cp0)[CP0_COUNT_REG]);
+      }
+      emit_jmp((int)&do_interrupt);
+      set_jump_target(jaddr,(int)out);
     }
     cop1_usable=0;
   }

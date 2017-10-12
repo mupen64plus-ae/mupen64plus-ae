@@ -56,14 +56,14 @@ void invalidate_addr_r8(void);
 void invalidate_addr_r9(void);
 void invalidate_addr_r10(void);
 void invalidate_addr_r12(void);
-void read_byte_new(void);
-void read_hword_new(void);
-void read_word_new(void);
-void read_dword_new(void);
-void write_byte_new(void);
-void write_hword_new(void);
-void write_word_new(void);
-void write_dword_new(void);
+void read_byte_new(int pcaddr, int count, int diff);
+void read_hword_new(int pcaddr, int count, int diff);
+void read_word_new(int pcaddr, int count, int diff);
+void read_dword_new(int pcaddr, int count, int diff);
+void write_byte_new(int pcaddr, int count, int diff);
+void write_hword_new(int pcaddr, int count, int diff);
+void write_word_new(int pcaddr, int count, int diff);
+void write_dword_new(int pcaddr, int count, int diff);
 
 static void *dyna_linker(void * src, u_int vaddr);
 static void *dyna_linker_ds(void * src, u_int vaddr);
@@ -2741,43 +2741,47 @@ static void do_readstub(int n)
   }
   assert(rs>=0);
   int ftable=0;
-  int mem=0;
-  if(type==LOADB_STUB||type==LOADBU_STUB){
+  if(type==LOADB_STUB||type==LOADBU_STUB)
     ftable=(int)read_byte_new;
-    mem=(int)g_dev.mem.readmem;
-  }
-  if(type==LOADH_STUB||type==LOADHU_STUB){
+  if(type==LOADH_STUB||type==LOADHU_STUB)
     ftable=(int)read_hword_new;
-    mem=(int)g_dev.mem.readmem;
-  }
-  if(type==LOADW_STUB){
+  if(type==LOADW_STUB)
     ftable=(int)read_word_new;
-    mem=(int)g_dev.mem.readmem;
-  }
-  if(type==LOADD_STUB){
+  if(type==LOADD_STUB)
     ftable=(int)read_dword_new;
-    mem=(int)g_dev.mem.readmemd;
-  }
-  emit_writeword(rs,(u_int)&g_dev.r4300.new_dynarec_hot_state.address);
 
+  emit_writeword(rs,(u_int)&g_dev.r4300.new_dynarec_hot_state.address);
   save_regs(reglist);
-  int ds=i_regs!=&regs[i];
-  int real_rs=(itype[i]==LOADLR)?-1:get_reg(i_regmap,rs1[i]);
-  u_int cmask=ds?-1:(0x100f|~i_regs->wasconst);
-  if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs))&0x100f,i);
-  wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty&cmask&(real_rs<0?-1:~(1<<real_rs)));
-  if(!ds) wb_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs))&~0x100f,i);
 
   int cc=get_reg(i_regmap,CCREG);
   if(cc<0) {
-    emit_loadreg(CCREG,2);
+    cc=1;
+    emit_loadreg(CCREG,cc);
   }
 
-  emit_movimm(mem,0);
-  emit_addimm(cc<0?2:cc,2*stubs[n][6]+2,2);
-  emit_movimm(start+stubs[n][3]*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,3);
+  int ds=i_regs!=&regs[i];
+
+  emit_movimm((start+(i+1)*4)+ds,0);
+  if(cc!=1) emit_mov(cc,1);
+  emit_movimm(CLOCK_DIVIDER*(stubs[n][6]+1),2);
   emit_call((int)ftable);
   restore_regs(reglist);
+
+  emit_readword((u_int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,HOST_TEMPREG);
+  emit_test(HOST_TEMPREG,HOST_TEMPREG);
+  int jaddr=(int)out;
+  emit_jeq(0);
+
+  int real_rs=(itype[i]==LOADLR)?-1:get_reg(i_regmap,rs1[i]);
+  if((real_rs>=0)&&(((i_regs->wasdirty)>>real_rs)&1))
+    emit_addimm(rs,-imm[i],real_rs);
+  u_int cmask=ds?-1:((~i_regs->wasconst)|(real_rs<0?0:(1<<real_rs)));
+  if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+  wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty&cmask);
+  if(!ds) wb_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+
+  emit_jmp((int)&do_interrupt);
+  set_jump_target(jaddr,(int)out);
 
   if(rt>=0) {
     if(type==LOADB_STUB)
@@ -2807,51 +2811,54 @@ static void inline_readstub(int type, int i, u_int addr, signed char regmap[], i
   assert(rs>=0);
 
   int ftable=0;
-  int mem=0;
-  if(type==LOADB_STUB||type==LOADBU_STUB){
+  if(type==LOADB_STUB||type==LOADBU_STUB)
     ftable=(int)read_byte_new;
-    mem=(int)g_dev.mem.readmem;
-  }
-  if(type==LOADH_STUB||type==LOADHU_STUB){
+  if(type==LOADH_STUB||type==LOADHU_STUB)
     ftable=(int)read_hword_new;
-    mem=(int)g_dev.mem.readmem;
-  }
-  if(type==LOADW_STUB){
+  if(type==LOADW_STUB)
     ftable=(int)read_word_new;
-    mem=(int)g_dev.mem.readmem;
-  }
-  if(type==LOADD_STUB){
+  if(type==LOADD_STUB)
     ftable=(int)read_dword_new;
-    mem=(int)g_dev.mem.readmemd;
-  }
-  emit_writeword(rs,(u_int)&g_dev.r4300.new_dynarec_hot_state.address);
 
+  emit_writeword(rs,(u_int)&g_dev.r4300.new_dynarec_hot_state.address);
   save_regs(reglist);
+
+  int cc=get_reg(regmap,CCREG);
+  if(cc<0) {
+    cc=1;
+    emit_loadreg(CCREG,cc);
+  }
+
+  int ds=regmap!=regs[i].regmap;
+  struct regstat *i_regs;
+  if(!ds) i_regs=&regs[i];
+  else i_regs=&branch_regs[i-1];
+
+  emit_movimm((start+(i+1)*4)+ds,0);
+  if(cc!=1) emit_mov(cc,1);
+  emit_movimm(CLOCK_DIVIDER*(adj+1),2);
+  emit_call((int)ftable);
+  restore_regs(reglist);
+
   if((signed int)addr>=(signed int)0xC0000000) {
     // Theoretically we can have a pagefault here, if the TLB has never
     // been enabled and the address is outside the range 80000000..BFFFFFFF
     // Write out the registers so the pagefault can be handled.  This is
     // a very rare case and likely represents a bug.
-    int ds=regmap!=regs[i].regmap;
-    if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty,i);
-    if(!ds) wb_dirtys(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty);
-    else wb_dirtys(branch_regs[i-1].regmap_entry,branch_regs[i-1].was32,branch_regs[i-1].wasdirty);
-  }
+    emit_readword((u_int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,HOST_TEMPREG);
+    emit_test(HOST_TEMPREG,HOST_TEMPREG);
+    int jaddr=(int)out;
+    emit_jeq(0);
 
-  int cc=get_reg(regmap,CCREG);
-  if(cc<0) {
-    emit_loadreg(CCREG,2);
-  }
+    int real_rs=(itype[i]==LOADLR)?-1:get_reg(regmap,rs1[i]);
+    if((real_rs>=0)&&(((i_regs->wasdirty)>>real_rs)&1))
+      emit_movimm(addr-imm[i],real_rs);
+    if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+    wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty);
 
-  emit_movimm(mem,0);
-  emit_addimm(cc<0?2:cc,CLOCK_DIVIDER*(adj+1),2);
-  if((signed int)addr>=(signed int)0xC0000000) {
-    // Pagefault address
-    int ds=regmap!=regs[i].regmap;
-    emit_movimm(start+i*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,3);
+    emit_jmp((int)&do_interrupt);
+    set_jump_target(jaddr,(int)out);
   }
-  emit_call((int)ftable);
-  restore_regs(reglist);
 
   if(rt>=0) {
     if(type==LOADB_STUB)
@@ -2894,53 +2901,60 @@ static void do_writestub(int n)
   assert(rs>=0);
   assert(rt>=0);
   int ftable=0;
-  int mem=0;
   emit_writeword(rs,(u_int)&g_dev.r4300.new_dynarec_hot_state.address);
   if(type==STOREB_STUB){
     ftable=(int)write_byte_new;
-    mem=(int)g_dev.mem.writemem;
     emit_writeword(rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wword);
   }
   if(type==STOREH_STUB){
     ftable=(int)write_hword_new;
-    mem=(int)g_dev.mem.writemem;
     emit_writeword(rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wword);
   }
   if(type==STOREW_STUB){
     ftable=(int)write_word_new;
-    mem=(int)g_dev.mem.writemem;
     emit_writeword(rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wword);
   }
   if(type==STORED_STUB){
     ftable=(int)write_dword_new;
-    mem=(int)g_dev.mem.writememd;
     emit_writeword(rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wdword);
     emit_writeword(r?rth:rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wdword+4);
   }
 
   save_regs(reglist);
-  int ds=i_regs!=&regs[i];
-  int real_rs=get_reg(i_regmap,rs1[i]);
-  u_int cmask=ds?-1:(0x100f|~i_regs->wasconst);
-  if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs))&0x100f,i);
-  wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty&cmask&(real_rs<0?-1:~(1<<real_rs)));
-  if(!ds) wb_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs))&~0x100f,i);
 
   int cc=get_reg(i_regmap,CCREG);
   if(cc<0) {
-    emit_loadreg(CCREG,2);
+    cc=1;
+    emit_loadreg(CCREG,cc);
   }
 
-  emit_movimm(mem,0);
-  emit_addimm(cc<0?2:cc,2*stubs[n][6]+2,2);
-  emit_movimm(start+stubs[n][3]*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,3);
+  int ds=i_regs!=&regs[i];
+
+  emit_movimm((start+(i+1)*4)+ds,0);
+  if(cc!=1) emit_mov(cc,1);
+  emit_movimm(CLOCK_DIVIDER*(stubs[n][6]+1),2);
   emit_call((int)ftable);
-  emit_addimm(2,-2*stubs[n][6]-2,cc<0?HOST_TEMPREG:cc);
-  if(cc<0) {
-    emit_storereg(CCREG,HOST_TEMPREG);
-  }
-
   restore_regs(reglist);
+
+  emit_readword((u_int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,HOST_TEMPREG);
+  emit_test(HOST_TEMPREG,HOST_TEMPREG);
+  int jaddr=(int)out;
+  emit_jeq(0);
+
+  int real_rs=get_reg(i_regmap,rs1[i]);
+  if((real_rs>=0)&&(((i_regs->wasdirty)>>real_rs)&1))
+    emit_addimm(rs,-imm[i],real_rs);
+  u_int cmask=ds?-1:((~i_regs->wasconst)|(real_rs<0?0:(1<<real_rs)));
+  if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+  wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty&cmask);
+  if(!ds) wb_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+
+  emit_jmp((int)&do_interrupt);
+  set_jump_target(jaddr,(int)out);
+
+  if((cc=get_reg(i_regmap,CCREG))>=0) {
+    emit_loadreg(CCREG,cc);
+  }
   emit_jmp(stubs[n][2]); // return address
 }
 
@@ -2953,61 +2967,67 @@ static void inline_writestub(int type, int i, u_int addr, signed char regmap[], 
   assert(rt>=0);
 
   int ftable=0;
-  int mem=0;
   emit_writeword(rs,(u_int)&g_dev.r4300.new_dynarec_hot_state.address);
   if(type==STOREB_STUB){
     ftable=(int)write_byte_new;
-    mem=(int)g_dev.mem.writemem;
     emit_writeword(rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wword);
   }
   if(type==STOREH_STUB){
     ftable=(int)write_hword_new;
-    mem=(int)g_dev.mem.writemem;
     emit_writeword(rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wword);
   }
   if(type==STOREW_STUB){
     ftable=(int)write_word_new;
-    mem=(int)g_dev.mem.writemem;
     emit_writeword(rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wword);
   }
   if(type==STORED_STUB){
     ftable=(int)write_dword_new;
-    mem=(int)g_dev.mem.writememd;
     emit_writeword(rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wdword);
     emit_writeword(target?rth:rt,(u_int)&g_dev.r4300.new_dynarec_hot_state.wdword+4);
   }
 
   save_regs(reglist);
+
+  int cc=get_reg(regmap,CCREG);
+  if(cc<0) {
+    cc=1;
+    emit_loadreg(CCREG,cc);
+  }
+
+  int ds=regmap!=regs[i].regmap;
+  struct regstat *i_regs;
+  if(!ds) i_regs=&regs[i];
+  else i_regs=&branch_regs[i-1];
+
+  emit_movimm((start+(i+1)*4)+ds,0);
+  if(cc!=1) emit_mov(cc,1);
+  emit_movimm(CLOCK_DIVIDER*(adj+1),2);
+  emit_call((int)ftable);
+  restore_regs(reglist);
+
   if(((signed int)addr>=(signed int)0xC0000000)||((addr>>16)==0xa430)||((addr>>16)==0x8430)) {
     // Theoretically we can have a pagefault here, if the TLB has never
     // been enabled and the address is outside the range 80000000..BFFFFFFF
     // Write out the registers so the pagefault can be handled.  This is
     // a very rare case and likely represents a bug.
-    int ds=regmap!=regs[i].regmap;
-    if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty,i);
-    if(!ds) wb_dirtys(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty);
-    else wb_dirtys(branch_regs[i-1].regmap_entry,branch_regs[i-1].was32,branch_regs[i-1].wasdirty);
+    emit_readword((u_int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,HOST_TEMPREG);
+    emit_test(HOST_TEMPREG,HOST_TEMPREG);
+    int jaddr=(int)out;
+    emit_jeq(0);
+
+    int real_rs=(itype[i]==LOADLR)?-1:get_reg(regmap,rs1[i]);
+    if((real_rs>=0)&&(((i_regs->wasdirty)>>real_rs)&1))
+      emit_movimm(addr-imm[i],real_rs);
+    if(!ds) load_all_consts(regs[i].regmap_entry,regs[i].was32,regs[i].wasdirty&(real_rs<0?-1:~(1<<real_rs)),i);
+    wb_dirtys(i_regs->regmap_entry,i_regs->was32,i_regs->wasdirty);
+
+    emit_jmp((int)&do_interrupt);
+    set_jump_target(jaddr,(int)out);
   }
 
-  int cc=get_reg(regmap,CCREG);
-  if(cc<0) {
-    emit_loadreg(CCREG,2);
+  if((cc=get_reg(regmap,CCREG))>=0) {
+    emit_loadreg(CCREG,cc);
   }
-  
-  emit_movimm(mem,0);
-  emit_addimm(cc<0?2:cc,CLOCK_DIVIDER*(adj+1),2);
-  if(((signed int)addr>=(signed int)0xC0000000)||((addr>>16)==0xa430)||((addr>>16)==0x8430)) {
-    // Pagefault address
-    int ds=regmap!=regs[i].regmap;
-    emit_movimm(start+i*4+(((regs[i].was32>>rs1[i])&1)<<1)+ds,3);
-  }
-
-  emit_call((int)ftable);
-  emit_addimm(2,-CLOCK_DIVIDER*(adj+1),cc<0?HOST_TEMPREG:cc);
-  if(cc<0) {
-    emit_storereg(CCREG,HOST_TEMPREG);
-  }
-  restore_regs(reglist);
 }
 
 static void do_unalignedwritestub(int n)
@@ -3508,15 +3528,21 @@ static void cop0_assemble(int i,struct regstat *i_regs)
     }
     if(copr==12||copr==9) {
       assert(!is_delayslot);
-      emit_readword((u_int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,14);
+      emit_readword((u_int)&g_dev.r4300.new_dynarec_hot_state.pending_exception,HOST_TEMPREG);
+      emit_test(HOST_TEMPREG,HOST_TEMPREG);
+      int jaddr=(int)out;
+      emit_jeq(0);
+      if(copr==12){
+        emit_readword((u_int)&g_dev.r4300.new_dynarec_hot_state.cp0_regs[CP0_COUNT_REG],HOST_TEMPREG);
+        emit_addimm(HOST_TEMPREG,(int)CLOCK_DIVIDER,HOST_TEMPREG);
+        emit_writeword(HOST_TEMPREG, (u_int)&g_dev.r4300.new_dynarec_hot_state.cp0_regs[CP0_COUNT_REG]);
+      }
+      emit_jmp((int)&do_interrupt);
+      set_jump_target(jaddr,(int)out);
     }
     emit_loadreg(rs1[i],s);
     if(get_reg(i_regs->regmap,rs1[i]|64)>=0)
       emit_loadreg(rs1[i]|64,get_reg(i_regs->regmap,rs1[i]|64));
-    if(copr==12||copr==9) {
-      emit_test(14,14);
-      emit_jne((int)&do_interrupt);
-    }
     cop1_usable=0;
   }
   else
