@@ -209,35 +209,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             PrefUtil.removePreference( this, SCREEN_ROOT, ACTION_WIKI );
         }
 
-        // Setup controller profiles settings based on ROM's number of players
-        if( mRomDetail.players == 1 )
-        {
-            // Simplify name of "controller 1" to just "controller" to eliminate confusion
-            final Preference player1Pref = findPreference( GamePrefs.CONTROLLER_PROFILE1 );
-
-            ///This can be null if we are at preference sub screen
-            if(player1Pref != null)
-            {
-                player1Pref.setTitle( R.string.controllerProfile_title );
-            }
-
-            // Remove unneeded preference items
-            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE2 );
-            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE3 );
-            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE4 );
-            PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.PLAYER_MAP );
-        }
-        else
-        {
-            // Remove unneeded preference items
-            if( mRomDetail.players < 4 )
-                PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE4 );
-            if( mRomDetail.players < 3 )
-                PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE3 );
-            if( mRomDetail.players < 2 )
-                PrefUtil.removePreference( this, SCREEN_ROOT, GamePrefs.CONTROLLER_PROFILE2 );
-        }
-
         //Remove touch screen profile if TV mode
         if(mGlobalPrefs.isBigScreenMode)
         {
@@ -369,9 +340,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         {
             // Check null in case preference has been removed
             final boolean enable1 = mGamePrefs.isControllerEnabled1;
-            final boolean enable2 = mGamePrefs.isControllerEnabled2 && mRomDetail.players > 1;
-            final boolean enable3 = mGamePrefs.isControllerEnabled3 && mRomDetail.players > 2;
-            final boolean enable4 = mGamePrefs.isControllerEnabled4 && mRomDetail.players > 3;
+            final boolean enable2 = mGamePrefs.isControllerEnabled2;
+            final boolean enable3 = mGamePrefs.isControllerEnabled3;
+            final boolean enable4 = mGamePrefs.isControllerEnabled4;
             playerPref.setControllersEnabled( enable1, enable2, enable3, enable4 );
 
             // Set the initial value

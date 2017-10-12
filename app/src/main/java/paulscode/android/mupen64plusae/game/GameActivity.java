@@ -1078,16 +1078,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         final RomDetail romDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
-        if( romDetail.players > 1 && mGamePrefs.playerMap.isEnabled()
-                && mGlobalPrefs.getPlayerMapReminder() )
+        if( mGamePrefs.playerMap.isEnabled() && mGlobalPrefs.getPlayerMapReminder() )
         {
             mGamePrefs.playerMap.removeUnavailableMappings();
             needs1 = mGamePrefs.isControllerEnabled1 && !mGamePrefs.playerMap.isMapped( 1 );
             needs2 = mGamePrefs.isControllerEnabled2 && !mGamePrefs.playerMap.isMapped( 2 );
-            needs3 = mGamePrefs.isControllerEnabled3 && !mGamePrefs.playerMap.isMapped( 3 )
-                    && romDetail.players > 2;
-            needs4 = mGamePrefs.isControllerEnabled4 && !mGamePrefs.playerMap.isMapped( 4 )
-                    && romDetail.players > 3;
+            needs3 = mGamePrefs.isControllerEnabled3 && !mGamePrefs.playerMap.isMapped( 3 );
+            needs4 = mGamePrefs.isControllerEnabled4 && !mGamePrefs.playerMap.isMapped( 4 );
 
             if( needs1 || needs2 || needs3 || needs4 )
             {

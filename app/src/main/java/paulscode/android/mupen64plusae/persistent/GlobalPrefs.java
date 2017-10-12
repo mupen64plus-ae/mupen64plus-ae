@@ -310,7 +310,7 @@ public class GlobalPrefs
     public static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     public static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
     public static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
-    public static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
+    public static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder2";
     public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     // ... add more as needed
 
@@ -319,7 +319,7 @@ public class GlobalPrefs
     public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "Analog";
     public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "Android Gamepad";
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
-    public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
+    public static final boolean DEFAULT_PLAYER_MAP_REMINDER = false;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
     // ... add more as needed
 
