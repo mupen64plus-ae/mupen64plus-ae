@@ -214,7 +214,7 @@ static void ReadCheats(char *RomSection)
     fPtr = fopen(romdbpath, "rb");
     if (fPtr == NULL)
     {   
-        DebugMessage(M64MSG_WARNING, "Couldn't open cheat code database file.");
+        DebugMessage(M64MSG_WARNING, "Couldn't open cheat code database file '%s'.", romdbpath);
         return;
     }
     fseek(fPtr, 0L, SEEK_END);

@@ -42,6 +42,8 @@ Parameters:
     --emumode (mode)      : set emu mode to: 0=Pure Interpreter 1=Interpreter 2=DynaRec
     --testshots (list)    : take screenshots at frames given in comma-separated (list), then quit
     --set (param-spec)    : set a configuration variable, format: ParamSection[ParamName]=Value
+    --gb-rom-{1,2,3,4}    : define GB cart rom to load inside transferpak {1,2,3,4}"
+    --gb-ram-{1,2,3,4}    : define GB cart ram to load inside transferpak {1,2,3,4}"
     --core-compare-send   : use the Core Comparison debugging feature, in data sending mode
     --core-compare-recv   : use the Core Comparison debugging feature, in data receiving mode
     --nosaveoptions       : do not save the given command-line options in configuration file

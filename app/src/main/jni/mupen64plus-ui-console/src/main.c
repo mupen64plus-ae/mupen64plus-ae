@@ -22,9 +22,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* This is the main application entry point for the console-only front-end
- * for Mupen64Plus v2.0. 
+ * for Mupen64Plus v2.0.
  */
- 
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,6 +37,7 @@
 #include "m64p_types.h"
 #include "main.h"
 #include "osal_preproc.h"
+#include "osal_files.h"
 #include "plugin.h"
 #include "version.h"
 
@@ -56,6 +57,7 @@ int    g_Verbose = 0;
 static m64p_handle l_ConfigCore = NULL;
 static m64p_handle l_ConfigVideo = NULL;
 static m64p_handle l_ConfigUI = NULL;
+static m64p_handle l_ConfigTransferPak = NULL;
 
 static const char *l_CoreLibPath = NULL;
 static const char *l_ConfigDirPath = NULL;
@@ -151,6 +153,69 @@ static void FrameCallback(unsigned int FrameIndex)
     }
 }
 
+
+static char *formatstr(const char *fmt, ...)
+{
+	int size = 128, ret;
+	char *str = (char *)malloc(size), *newstr;
+	va_list args;
+
+	/* There are two implementations of vsnprintf we have to deal with:
+	 * C99 version: Returns the number of characters which would have been written
+	 *              if the buffer had been large enough, and -1 on failure.
+	 * Windows version: Returns the number of characters actually written,
+	 *                  and -1 on failure or truncation.
+	 * NOTE: An implementation equivalent to the Windows one appears in glibc <2.1.
+	 */
+	while (str != NULL)
+	{
+		va_start(args, fmt);
+		ret = vsnprintf(str, size, fmt, args);
+		va_end(args);
+
+		// Successful result?
+		if (ret >= 0 && ret < size)
+			return str;
+
+		// Increment the capacity of the buffer
+		if (ret >= size)
+			size = ret + 1; // C99 version: We got the needed buffer size
+		else
+			size *= 2; // Windows version: Keep guessing
+
+		newstr = (char *)realloc(str, size);
+		if (newstr == NULL)
+			free(str);
+		str = newstr;
+	}
+
+	return NULL;
+}
+
+static int is_path_separator(char c)
+{
+    return strchr(OSAL_DIR_SEPARATORS, c) != NULL;
+}
+
+char* combinepath(const char* first, const char *second)
+{
+    size_t len_first, off_second = 0;
+
+    if (first == NULL || second == NULL)
+        return NULL;
+
+    len_first = strlen(first);
+
+    while (is_path_separator(first[len_first-1]))
+        len_first--;
+
+    while (is_path_separator(second[off_second]))
+        off_second++;
+
+    return formatstr("%.*s%c%s", (int) len_first, first, OSAL_DIR_SEPARATORS[0], second + off_second);
+}
+
+
 /*********************************************************************************************************
  *  Configuration handling
  */
@@ -160,6 +225,7 @@ static m64p_error OpenConfigurationHandles(void)
     float fConfigParamsVersion;
     int bSaveConfig = 0;
     m64p_error rval;
+    unsigned int i;
 
     /* Open Configuration sections for core library and console User Interface */
     rval = (*ConfigOpenSection)("Core", &l_ConfigCore);
@@ -173,6 +239,13 @@ static m64p_error OpenConfigurationHandles(void)
     if (rval != M64ERR_SUCCESS)
     {
         DebugMessage(M64MSG_ERROR, "failed to open 'Video-General' configuration section");
+        return rval;
+    }
+
+    rval = (*ConfigOpenSection)("Transferpak", &l_ConfigTransferPak);
+    if (rval != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_ERROR, "failed to open 'Transferpak' configuration section");
         return rval;
     }
 
@@ -214,8 +287,25 @@ static m64p_error OpenConfigurationHandles(void)
     (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "mupen64plus-input-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "mupen64plus-rsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
 
-    if (bSaveConfig && ConfigSaveSection != NULL) /* ConfigSaveSection was added in Config API v2.1.0 */
+    for(i = 1; i < 5; ++i) {
+        char key[64];
+        char desc[2048];
+#define SET_DEFAULT_STRING(key_fmt, default_value, desc_fmt) \
+        do { \
+            snprintf(key, sizeof(key), key_fmt, i); \
+            snprintf(desc, sizeof(desc), desc_fmt, i); \
+            (*ConfigSetDefaultString)(l_ConfigTransferPak, key, default_value, desc); \
+        } while(0)
+
+        SET_DEFAULT_STRING("GB-rom-%u", "", "Filename of the GB ROM to load into transferpak %u");
+        SET_DEFAULT_STRING("GB-ram-%u", "", "Filename of the GB RAM to load into transferpak %u");
+#undef SET_DEFAULT_STRING
+    }
+
+    if (bSaveConfig && ConfigSaveSection != NULL) { /* ConfigSaveSection was added in Config API v2.1.0 */
         (*ConfigSaveSection)("UI-Console");
+        (*ConfigSaveSection)("Transferpak");
+    }
 
     return M64ERR_SUCCESS;
 }
@@ -270,6 +360,8 @@ static void printUsage(const char *progname)
            "    --savestate (filepath) : savestate loaded at startup\n"
            "    --testshots (list)     : take screenshots at frames given in comma-separated (list), then quit\n"
            "    --set (param-spec)     : set a configuration variable, format: ParamSection[ParamName]=Value\n"
+           "    --gb-rom-{1,2,3,4}     : define GB cart rom to load inside transferpak {1,2,3,4}\n"
+           "    --gb-ram-{1,2,3,4}     : define GB cart ram to load inside transferpak {1,2,3,4}\n"
            "    --core-compare-send    : use the Core Comparison debugging feature, in data sending mode\n"
            "    --core-compare-recv    : use the Core Comparison debugging feature, in data receiving mode\n"
            "    --nosaveoptions        : do not save the given command-line options in configuration file\n"
@@ -584,6 +676,21 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         {
             l_SaveOptions = 0;
         }
+#define PARSE_GB_CART_PARAM(param, key) \
+        else if (strcmp(argv[i], param) == 0) \
+        { \
+            ConfigSetParameter(l_ConfigTransferPak, key, M64TYPE_STRING, argv[i+1]); \
+            i++; \
+        }
+        PARSE_GB_CART_PARAM("--gb-rom-1", "GB-rom-1")
+        PARSE_GB_CART_PARAM("--gb-ram-1", "GB-ram-1")
+        PARSE_GB_CART_PARAM("--gb-rom-2", "GB-rom-2")
+        PARSE_GB_CART_PARAM("--gb-ram-2", "GB-ram-2")
+        PARSE_GB_CART_PARAM("--gb-rom-3", "GB-rom-3")
+        PARSE_GB_CART_PARAM("--gb-ram-3", "GB-ram-3")
+        PARSE_GB_CART_PARAM("--gb-rom-4", "GB-rom-4")
+        PARSE_GB_CART_PARAM("--gb-ram-4", "GB-ram-4")
+#undef PARSE_GB_CART_PARAM
         else if (ArgsLeft == 0)
         {
             /* this is the last arg, it should be a ROM filename */
@@ -605,6 +712,79 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
     DebugMessage(M64MSG_ERROR, "no ROM filepath given");
     return M64ERR_INPUT_INVALID;
 }
+
+static char* media_loader_get_gb_cart_mem_file(void* cb_data, const char* mem, int control_id)
+{
+#define MUPEN64PLUS_CFG_NAME "mupen64plus.cfg"
+    m64p_handle core_config;
+    char key[64];
+    char value[4096];
+    const char* configdir = NULL;
+    char* cfgfilepath = NULL;
+
+    /* reset filename */
+    char* mem_filename = NULL;
+
+    snprintf(key, sizeof(key), "GB-%s-%u", mem, control_id + 1);
+
+    /* XXX: use external config API to force reload of file content */
+    configdir = ConfigGetUserConfigPath();
+    if (configdir == NULL) {
+        DebugMessage(M64MSG_ERROR, "Can't get user config path !");
+        return NULL;
+    }
+
+    cfgfilepath = combinepath(configdir, MUPEN64PLUS_CFG_NAME);
+    if (cfgfilepath == NULL) {
+        DebugMessage(M64MSG_ERROR, "Can't get config file path: %s + %s!", configdir, MUPEN64PLUS_CFG_NAME);
+        return NULL;
+    }
+
+    if (ConfigExternalOpen(cfgfilepath, &core_config) != M64ERR_SUCCESS) {
+        DebugMessage(M64MSG_ERROR, "Can't open config file %s!", cfgfilepath);
+        goto release_cfgfilepath;
+    }
+
+    if (ConfigExternalGetParameter(core_config, "Transferpak", key, value, sizeof(value)) != M64ERR_SUCCESS) {
+        DebugMessage(M64MSG_ERROR, "Can't get parameter %s", key);
+        goto close_config;
+    }
+
+    size_t len = strlen(value);
+    if (len < 2 || value[0] != '"' || value[len-1] != '"') {
+        DebugMessage(M64MSG_ERROR, "Invalid string format %s", value);
+        goto close_config;
+    }
+
+    value[len-1] = '\0';
+    mem_filename = strdup(value + 1);
+
+    ConfigSetParameter(l_ConfigTransferPak, key, M64TYPE_STRING, mem_filename);
+
+close_config:
+    ConfigExternalClose(core_config);
+release_cfgfilepath:
+    free(cfgfilepath);
+    return mem_filename;
+}
+
+static char* media_loader_get_gb_cart_rom(void* cb_data, int control_id)
+{
+    return media_loader_get_gb_cart_mem_file(cb_data, "rom", control_id);
+}
+
+static char* media_loader_get_gb_cart_ram(void* cb_data, int control_id)
+{
+    return media_loader_get_gb_cart_mem_file(cb_data, "ram", control_id);
+}
+
+static m64p_media_loader l_media_loader =
+{
+    NULL,
+    media_loader_get_gb_cart_rom,
+    media_loader_get_gb_cart_ram
+};
+
 
 /*********************************************************************************************************
 * main function
@@ -783,6 +963,12 @@ int main(int argc, char *argv[])
         {
             DebugMessage(M64MSG_WARNING, "couldn't set frame callback, --testshots will not work.");
         }
+    }
+
+    /* set gb cart loader */
+    if ((*CoreDoCommand)(M64CMD_SET_MEDIA_LOADER, sizeof(l_media_loader), &l_media_loader) != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_WARNING, "Couldn't set media loader, transferpak and GB carts will not work.");
     }
 
     /* load savestate at startup */

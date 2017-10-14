@@ -1,12 +1,16 @@
-sudo: required
+sudo: false
 dist: trusty
 language: cpp
 compiler:
   - gcc
   - clang
+addons:
+  apt:
+    packages:
+    - git
+    - libsdl1.2-dev
+    - libsdl2-dev
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y git libsdl1.2-dev libsdl2-dev
   - git clone --depth=1 --branch=master git://github.com/mupen64plus/mupen64plus-core.git deps/mupen64plus-core
 script:
  - make -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 clean && LDFLAGS="-Wl,--no-add-needed -Wl,--no-undefined" OPTFLAGS="-O2" make SDL_CONFIG=sdl-config CC="${CC}" CXX="${CXX}" -j$(nproc) -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 all

@@ -80,13 +80,6 @@ else
   LDLIBS += -pthread
 endif
 
-ifeq ($(PIE), 1)
-  CFLAGS += -fPIE
-  LDFLAGS += -pie
-else
-  CFLAGS += -fno-PIE
-endif
-
 # set special flags per-system
 ifeq ($(OS), LINUX)
   LDLIBS += -ldl
@@ -98,9 +91,9 @@ ifeq ($(OS), OSX)
 
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
+      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.6 -isysroot $(OSX_SDK_PATH)
     else
-      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot $(OSX_SDK_PATH)
+      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.6 -isysroot $(OSX_SDK_PATH)
     endif
   endif
 endif
@@ -177,6 +170,20 @@ INSTALL  ?= install
 MKDIR ?= mkdir -p
 COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 LINK.o = $(Q_LD)$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+
+ifeq ($(PIE), 1)
+  CFLAGS += -fPIE
+  LDFLAGS += -pie
+else
+  CFLAGS += -fno-PIE
+  ifeq ($(CC),$(CROSS_COMPILE)gcc)
+    # check if PIE is the default for the compiler
+    PIE_DEFAULT = $(shell $(CC) -v 2>&1 | grep enable-default-pie)
+    ifneq ($(PIE_DEFAULT),)
+      LDFLAGS += -no-pie
+    endif
+  endif
+endif
 
 # set special flags for given Makefile parameters
 # note: COREDIR _must_ end in a slash if you want it to work; not necessary for the others
