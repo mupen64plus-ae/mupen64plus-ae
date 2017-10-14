@@ -34,12 +34,39 @@
 #include "rsp/rsp_core.h"
 #include "si/si_controller.h"
 #include "vi/vi_controller.h"
+#include "controllers/game_controller.h"
+#include "controllers/paks/mempak.h"
+#include "controllers/paks/rumblepak.h"
+#include "controllers/paks/transferpak.h"
+#include "cart/cart.h"
+#include "gb/gb_cart.h"
 
-struct audio_out_backend;
-struct controller_input_backend;
-struct clock_backend;
-struct rumble_backend;
-struct storage_backend;
+struct audio_out_backend_interface;
+struct storage_backend_interface;
+struct joybus_device_interface;
+
+enum { GAME_CONTROLLERS_COUNT = 4 };
+
+/* memory map constants */
+#define MM_RDRAM_DRAM       UINT32_C(0x00000000)
+#define MM_RDRAM_REGS       UINT32_C(0x03f00000)
+#define MM_RSP_MEM          UINT32_C(0x04000000)
+#define MM_RSP_REGS         UINT32_C(0x04040000)
+#define MM_RSP_REGS2        UINT32_C(0x04080000)
+#define MM_DPC_REGS         UINT32_C(0x04100000)
+#define MM_DPS_REGS         UINT32_C(0x04200000)
+#define MM_MI_REGS          UINT32_C(0x04300000)
+#define MM_VI_REGS          UINT32_C(0x04400000)
+#define MM_AI_REGS          UINT32_C(0x04500000)
+#define MM_PI_REGS          UINT32_C(0x04600000)
+#define MM_RI_REGS          UINT32_C(0x04700000)
+#define MM_SI_REGS          UINT32_C(0x04800000)
+#define MM_DD_REGS          UINT32_C(0x05000000) /* dom2 addr1 */
+#define MM_DD_ROM           UINT32_C(0x06000000) /* dom1 addr1 */
+#define MM_FLASHRAM_STATUS  UINT32_C(0x08000000) /* dom2 addr2 */
+#define MM_FLASHRAM_COMMAND UINT32_C(0x08010000)
+#define MM_CART_ROM         UINT32_C(0x10000000) /* dom1 addr2 */
+#define MM_PIF_MEM          UINT32_C(0x1fc00000)
 
 /* Device structure is a container for the n64 submodules
  * It contains all state related to the emulated system. */
@@ -54,31 +81,36 @@ struct device
     struct si_controller si;
     struct vi_controller vi;
     struct memory mem;
+
+    struct game_controller controllers[GAME_CONTROLLERS_COUNT];
+    struct mempak mempaks[GAME_CONTROLLERS_COUNT];
+    struct rumblepak rumblepaks[GAME_CONTROLLERS_COUNT];
+    struct transferpak transferpaks[GAME_CONTROLLERS_COUNT];
+    struct gb_cart gb_carts[GAME_CONTROLLERS_COUNT];
+
+    struct cart cart;
 };
 
 /* Setup device "static" properties.  */
 void init_device(struct device* dev,
+    /* memory */
+    void* base,
     /* r4300 */
     unsigned int emumode,
     unsigned int count_per_op,
     int no_compiled_jump,
     int special_rom,
     /* ai */
-    struct audio_out_backend* aout,
+    void* aout, const struct audio_out_backend_interface* iaout,
     /* pi */
-    uint8_t* rom, size_t rom_size,
-    struct storage_backend* flashram_storage,
-    struct storage_backend* sram_storage,
+    size_t rom_size,
+    void* flashram_storage, const struct storage_backend_interface* iflashram_storage,
+    void* sram_storage, const struct storage_backend_interface* isram_storage,
     /* ri */
-    uint32_t* dram, size_t dram_size,
+    size_t dram_size,
     /* si */
-    const struct pif_channel_device* pif_channel_devices,
-    struct controller_input_backend* cins,
-    struct storage_backend* mpk_storages,
-    struct rumble_backend* rumbles,
-    struct gb_cart* gb_carts,
-    uint16_t eeprom_id, struct storage_backend* eeprom_storage,
-    struct clock_backend* clock,
+    void* jbds[PIF_CHANNELS_COUNT],
+    const struct joybus_device_interface* ijbds[PIF_CHANNELS_COUNT],
     /* vi */
     unsigned int vi_clock, unsigned int expected_refresh_rate);
 

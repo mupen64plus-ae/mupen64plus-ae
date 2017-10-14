@@ -131,8 +131,9 @@ static void dma_pi_write(struct pi_controller* pi)
     }
     else
     {
-        int32_t diff = pi->cart_rom.rom_size - rom_address;
-        if (diff < 0) diff = 0;
+        unsigned int diff = (pi->cart_rom.rom_size <= rom_address)
+            ? 0
+            : pi->cart_rom.rom_size - rom_address;
 
         for (i = 0; i < diff; ++i)
         {
@@ -166,15 +167,15 @@ static void dma_pi_write(struct pi_controller* pi)
 
 void init_pi(struct pi_controller* pi,
              uint8_t* rom, size_t rom_size,
-             struct storage_backend* flashram_storage,
-             struct storage_backend* sram_storage,
+             void* flashram_storage, const struct storage_backend_interface* iflashram_storage,
+             void* sram_storage, const struct storage_backend_interface* isram_storage,
              struct r4300_core* r4300,
              struct ri_controller* ri,
              const struct cic* cic)
 {
     init_cart_rom(&pi->cart_rom, rom, rom_size);
-    init_flashram(&pi->flashram, flashram_storage);
-    init_sram(&pi->sram, sram_storage);
+    init_flashram(&pi->flashram, flashram_storage, iflashram_storage);
+    init_sram(&pi->sram, sram_storage, isram_storage);
 
     pi->use_flashram = 0;
 
@@ -192,17 +193,15 @@ void poweron_pi(struct pi_controller* pi)
     poweron_flashram(&pi->flashram);
 }
 
-int read_pi_regs(void* opaque, uint32_t address, uint32_t* value)
+void read_pi_regs(void* opaque, uint32_t address, uint32_t* value)
 {
     struct pi_controller* pi = (struct pi_controller*)opaque;
     uint32_t reg = pi_reg(address);
 
     *value = pi->regs[reg];
-
-    return 0;
 }
 
-int write_pi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
+void write_pi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
 {
     struct pi_controller* pi = (struct pi_controller*)opaque;
     uint32_t reg = pi_reg(address);
@@ -212,17 +211,17 @@ int write_pi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
     case PI_RD_LEN_REG:
         masked_write(&pi->regs[PI_RD_LEN_REG], value, mask);
         dma_pi_read(pi);
-        return 0;
+        return;
 
     case PI_WR_LEN_REG:
         masked_write(&pi->regs[PI_WR_LEN_REG], value, mask);
         dma_pi_write(pi);
-        return 0;
+        return;
 
     case PI_STATUS_REG:
         if (value & mask & 2)
             clear_rcp_interrupt(pi->r4300, MI_INTR_PI);
-        return 0;
+        return;
 
     case PI_BSD_DOM1_LAT_REG:
     case PI_BSD_DOM1_PWD_REG:
@@ -233,12 +232,10 @@ int write_pi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
     case PI_BSD_DOM2_PGS_REG:
     case PI_BSD_DOM2_RLS_REG:
         masked_write(&pi->regs[reg], value & 0xff, mask);
-        return 0;
+        return;
     }
 
     masked_write(&pi->regs[reg], value, mask);
-
-    return 0;
 }
 
 void pi_end_of_dma_event(void* opaque)

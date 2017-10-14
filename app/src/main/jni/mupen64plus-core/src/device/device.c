@@ -31,29 +31,39 @@
 #include "si/si_controller.h"
 #include "vi/vi_controller.h"
 
+#define ARRAY_SIZE(x) (sizeof(x)/sizeof((x)[0]))
+
+
+static void read_open_bus(void* opaque, uint32_t address, uint32_t* value)
+{
+    *value = (address & 0xffff);
+    *value |= (*value << 16);
+}
+
+static void write_open_bus(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
+{
+}
+
 
 void init_device(struct device* dev,
+    /* memory */
+    void* base,
     /* r4300 */
     unsigned int emumode,
     unsigned int count_per_op,
     int no_compiled_jump,
     int special_rom,
     /* ai */
-    struct audio_out_backend* aout,
+    void* aout, const struct audio_out_backend_interface* iaout,
     /* pi */
-    uint8_t* rom, size_t rom_size,
-    struct storage_backend* flashram_storage,
-    struct storage_backend* sram_storage,
+    size_t rom_size,
+    void* flashram_storage, const struct storage_backend_interface* iflashram_storage,
+    void* sram_storage, const struct storage_backend_interface* isram_storage,
     /* ri */
-    uint32_t* dram, size_t dram_size,
+    size_t dram_size,
     /* si */
-    const struct pif_channel_device* pif_channel_devices,
-    struct controller_input_backend* cins,
-    struct storage_backend* mpk_storages,
-    struct rumble_backend* rumbles,
-    struct gb_cart* gb_carts,
-    uint16_t eeprom_id, struct storage_backend* eeprom_storage,
-    struct clock_backend* clock,
+    void* jbds[PIF_CHANNELS_COUNT],
+    const struct joybus_device_interface* ijbds[PIF_CHANNELS_COUNT],
     /* vi */
     unsigned int vi_clock, unsigned int expected_refresh_rate)
 {
@@ -72,22 +82,55 @@ void init_device(struct device* dev,
         { dev,             reset_hard_handler          }  /* reset_hard */
     };
 
+#define R(x) read_ ## x
+#define W(x) write_ ## x
+#define RW(x) R(x), W(x)
+#define A(x,m) (x), (x) | (m)
+    struct mem_mapping mappings[] = {
+        /* clear mappings */
+        { 0x00000000, 0xffffffff, M64P_MEM_NOTHING, { NULL, RW(open_bus) } },
+        /* memory map */
+        { A(MM_RDRAM_DRAM, dram_size-1), M64P_MEM_RDRAM, { &dev->ri, RW(rdram_dram) } },
+        { A(MM_RDRAM_REGS, 0xffff), M64P_MEM_RDRAMREG, { &dev->ri, RW(rdram_regs) } },
+        { A(MM_RSP_MEM, 0xffff), M64P_MEM_RSPMEM, { &dev->sp, RW(rsp_mem) } },
+        { A(MM_RSP_REGS, 0xffff), M64P_MEM_RSPREG, { &dev->sp, RW(rsp_regs) } },
+        { A(MM_RSP_REGS2, 0xffff), M64P_MEM_RSP, { &dev->sp, RW(rsp_regs2) } },
+        { A(MM_DPC_REGS, 0xffff), M64P_MEM_DP, { &dev->dp, RW(dpc_regs) } },
+        { A(MM_DPS_REGS, 0xffff), M64P_MEM_DPS, { &dev->dp, RW(dps_regs) } },
+        { A(MM_MI_REGS, 0xffff), M64P_MEM_MI, { &dev->r4300, RW(mi_regs) } },
+        { A(MM_VI_REGS, 0xffff), M64P_MEM_VI, { &dev->vi, RW(vi_regs) } },
+        { A(MM_AI_REGS, 0xffff), M64P_MEM_AI, { &dev->ai, RW(ai_regs) } },
+        { A(MM_PI_REGS, 0xffff), M64P_MEM_PI, { &dev->pi, RW(pi_regs) } },
+        { A(MM_RI_REGS, 0xffff), M64P_MEM_RI, { &dev->ri, RW(ri_regs) } },
+        { A(MM_SI_REGS, 0xffff), M64P_MEM_SI, { &dev->si, RW(si_regs) } },
+        { A(MM_FLASHRAM_STATUS, 0xffff), M64P_MEM_FLASHRAMSTAT, { &dev->pi, RW(flashram_status)  } },
+        { A(MM_FLASHRAM_COMMAND, 0xffff), M64P_MEM_NOTHING, { &dev->pi, RW(flashram_command) } },
+        { A(MM_CART_ROM, rom_size-1), M64P_MEM_ROM, { &dev->pi, RW(cart_rom) } },
+        { A(MM_PIF_MEM, 0xffff), M64P_MEM_PIF, { &dev->si, RW(pif_ram) } }
+    };
+
+    struct mem_handler dbg_handler = { &dev->r4300, RW(with_bp_checks) };
+#undef A
+#undef R
+#undef W
+#undef RW
+
+    init_memory(&dev->mem, mappings, ARRAY_SIZE(mappings), base, &dbg_handler);
     init_r4300(&dev->r4300, &dev->mem, &dev->ri, interrupt_handlers,
             emumode, count_per_op, no_compiled_jump, special_rom);
     init_rdp(&dev->dp, &dev->r4300, &dev->sp, &dev->ri);
-    init_rsp(&dev->sp, &dev->r4300, &dev->dp, &dev->ri);
-    init_ai(&dev->ai, &dev->r4300, &dev->ri, &dev->vi, aout);
-    init_pi(&dev->pi, rom, rom_size, flashram_storage, sram_storage, &dev->r4300, &dev->ri, &dev->si.pif.cic);
-    init_ri(&dev->ri, dram, dram_size);
+    init_rsp(&dev->sp, (uint32_t*)((uint8_t*)base + MM_RSP_MEM), &dev->r4300, &dev->dp, &dev->ri);
+    init_ai(&dev->ai, &dev->r4300, &dev->ri, &dev->vi, aout, iaout);
+    init_pi(&dev->pi,
+            (uint8_t*)base + MM_CART_ROM, rom_size,
+            flashram_storage, iflashram_storage,
+            sram_storage, isram_storage,
+            &dev->r4300, &dev->ri, &dev->si.pif.cic);
+    init_ri(&dev->ri, (uint32_t*)((uint8_t*)base + MM_RDRAM_DRAM), dram_size);
     init_si(&dev->si,
-        pif_channel_devices,
-        cins,
-        mpk_storages,
-        rumbles,
-        gb_carts,
-        eeprom_id, eeprom_storage,
-        clock,
-        rom + 0x40,
+        (uint8_t*)base + MM_PIF_MEM,
+        jbds, ijbds,
+        (uint8_t*)base + MM_CART_ROM + 0x40,
         &dev->r4300, &dev->ri);
     init_vi(&dev->vi, vi_clock, expected_refresh_rate, &dev->r4300);
 }
@@ -102,7 +145,6 @@ void poweron_device(struct device* dev)
     poweron_ri(&dev->ri);
     poweron_si(&dev->si);
     poweron_vi(&dev->vi);
-    poweron_memory(&dev->mem);
 
     /* XXX: somewhat cheating to put it here but not really other option.
      * Proper fix would probably trigerring the first vi

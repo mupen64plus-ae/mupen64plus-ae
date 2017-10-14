@@ -28,7 +28,7 @@
 struct r4300_core;
 struct ri_controller;
 struct vi_controller;
-struct audio_out_backend;
+struct audio_out_backend_interface;
 
 enum ai_registers
 {
@@ -61,7 +61,9 @@ struct ai_controller
     struct r4300_core* r4300;
     struct ri_controller* ri;
     struct vi_controller* vi;
-    struct audio_out_backend* aout;
+
+    void* aout;
+    const struct audio_out_backend_interface* iaout;
 };
 
 static uint32_t ai_reg(uint32_t address)
@@ -73,12 +75,13 @@ void init_ai(struct ai_controller* ai,
              struct r4300_core* r4300,
              struct ri_controller* ri,
              struct vi_controller* vi,
-             struct audio_out_backend* aout);
+             void* aout,
+             const struct audio_out_backend_interface* iaout);
 
 void poweron_ai(struct ai_controller* ai);
 
-int read_ai_regs(void* opaque, uint32_t address, uint32_t* value);
-int write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask);
+void read_ai_regs(void* opaque, uint32_t address, uint32_t* value);
+void write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask);
 
 void ai_end_of_dma_event(void* opaque);
 

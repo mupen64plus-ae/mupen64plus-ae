@@ -92,9 +92,9 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     if (!main_set_core_defaults())
         return M64ERR_INTERNAL;
 
-    /* allocate memory for rdram */
-    g_rdram = malloc(RDRAM_MAX_SIZE);
-    if (g_rdram == NULL) {
+    /* allocate base memory */
+    g_mem_base = malloc(0x20000000);
+    if (g_mem_base == NULL) {
         return M64ERR_NO_MEMORY;
     }
 
@@ -121,9 +121,9 @@ EXPORT m64p_error CALL CoreShutdown(void)
     /* tell SDL to shut down */
     SDL_Quit();
 
-    /* deallocate RDRAM */
-    free(g_rdram);
-    g_rdram = NULL;
+    /* deallocate base memory */
+    free(g_mem_base);
+    g_mem_base = NULL;
 
     l_CoreInit = 0;
     return M64ERR_SUCCESS;
@@ -300,6 +300,11 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
                 return M64ERR_INVALID_STATE;
             main_advance_one();
             return M64ERR_SUCCESS;
+        case M64CMD_SET_MEDIA_LOADER:
+            if (ParamInt != sizeof(m64p_media_loader) || ParamPtr == NULL)
+                return M64ERR_INPUT_INVALID;
+            g_media_loader = *(m64p_media_loader*)ParamPtr;
+            return M64ERR_SUCCESS;
         default:
             return M64ERR_INPUT_INVALID;
     }
@@ -369,6 +374,8 @@ EXPORT m64p_error CALL CoreGetRomSettings(m64p_rom_settings *RomSettings, int Ro
     RomSettings->status = entry->status;
     RomSettings->players = entry->players;
     RomSettings->rumble = entry->rumble;
+    RomSettings->transferpak = entry->transferpak;
+    RomSettings->mempak = entry->mempak;
 
     return M64ERR_SUCCESS;
 }

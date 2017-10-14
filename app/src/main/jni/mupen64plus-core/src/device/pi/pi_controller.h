@@ -77,16 +77,16 @@ static uint32_t pi_reg(uint32_t address)
 
 void init_pi(struct pi_controller* pi,
              uint8_t* rom, size_t rom_size,
-             struct storage_backend* flashram_storage,
-             struct storage_backend* sram_storage,
+             void* flashram_storage, const struct storage_backend_interface* iflashram_storage,
+             void* sram_storage, const struct storage_backend_interface* isram_storage,
              struct r4300_core* r4300,
              struct ri_controller* ri,
              const struct cic* cic);
 
 void poweron_pi(struct pi_controller* pi);
 
-int read_pi_regs(void* opaque, uint32_t address, uint32_t* value);
-int write_pi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask);
+void read_pi_regs(void* opaque, uint32_t address, uint32_t* value);
+void write_pi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask);
 
 void pi_end_of_dma_event(void* opaque);
 

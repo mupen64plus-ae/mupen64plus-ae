@@ -23,7 +23,7 @@
 
 #include <string.h>
 
-#include "backends/audio_out_backend.h"
+#include "backends/api/audio_out_backend.h"
 #include "device/memory/memory.h"
 #include "device/r4300/r4300_core.h"
 #include "device/ri/ri_controller.h"
@@ -83,7 +83,7 @@ static void do_dma(struct ai_controller* ai, struct ai_dma* dma)
             ? 16 /* default bit rate */
             : 1 + ai->regs[AI_BITRATE_REG];
 
-        audio_out_set_format(ai->aout, frequency, bits);
+        ai->iaout->set_format(ai->aout, frequency, bits);
 
         ai->samples_format_changed = 0;
     }
@@ -147,12 +147,14 @@ void init_ai(struct ai_controller* ai,
              struct r4300_core* r4300,
              struct ri_controller* ri,
              struct vi_controller* vi,
-             struct audio_out_backend* aout)
+             void* aout,
+             const struct audio_out_backend_interface* iaout)
 {
     ai->r4300 = r4300;
     ai->ri = ri;
     ai->vi = vi;
     ai->aout = aout;
+    ai->iaout = iaout;
 }
 
 void poweron_ai(struct ai_controller* ai)
@@ -164,7 +166,7 @@ void poweron_ai(struct ai_controller* ai)
     ai->delayed_carry = 0;
 }
 
-int read_ai_regs(void* opaque, uint32_t address, uint32_t* value)
+void read_ai_regs(void* opaque, uint32_t address, uint32_t* value)
 {
     struct ai_controller* ai = (struct ai_controller*)opaque;
     uint32_t reg = ai_reg(address);
@@ -176,7 +178,7 @@ int read_ai_regs(void* opaque, uint32_t address, uint32_t* value)
         {
             unsigned int diff = ai->fifo[0].length - ai->last_read;
             unsigned char *p = (unsigned char*)&ai->ri->rdram.dram[ai->fifo[0].address/4];
-            audio_out_push_samples(ai->aout, p + diff, ai->last_read - *value);
+            ai->iaout->push_samples(ai->aout, p + diff, ai->last_read - *value);
             ai->last_read = *value;
         }
     }
@@ -184,11 +186,9 @@ int read_ai_regs(void* opaque, uint32_t address, uint32_t* value)
     {
         *value = ai->regs[reg];
     }
-
-    return 0;
 }
 
-int write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
+void write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
 {
     struct ai_controller* ai = (struct ai_controller*)opaque;
     uint32_t reg = ai_reg(address);
@@ -197,12 +197,17 @@ int write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
     {
     case AI_LEN_REG:
         masked_write(&ai->regs[AI_LEN_REG], value, mask);
-        fifo_push(ai);
-        return 0;
+        if (ai->regs[AI_LEN_REG] != 0) {
+            fifo_push(ai);
+        }
+        else {
+            /* stop sound */
+        }
+        return;
 
     case AI_STATUS_REG:
         clear_rcp_interrupt(ai->r4300, MI_INTR_AI);
-        return 0;
+        return;
 
     case AI_BITRATE_REG:
     case AI_DACRATE_REG:
@@ -211,12 +216,10 @@ int write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
             ai->samples_format_changed = 1;
 
         masked_write(&ai->regs[reg], value, mask);
-        return 0;
+        return;
     }
 
     masked_write(&ai->regs[reg], value, mask);
-
-    return 0;
 }
 
 void ai_end_of_dma_event(void* opaque)
@@ -227,7 +230,7 @@ void ai_end_of_dma_event(void* opaque)
     {
         unsigned int diff = ai->fifo[0].length - ai->last_read;
         unsigned char *p = (unsigned char*)&ai->ri->rdram.dram[ai->fifo[0].address/4];
-        audio_out_push_samples(ai->aout, p + diff, ai->last_read);
+        ai->iaout->push_samples(ai->aout, p + diff, ai->last_read);
     }
 
     fifo_pop(ai);

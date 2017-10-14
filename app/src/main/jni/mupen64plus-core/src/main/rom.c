@@ -35,6 +35,7 @@
 #include "api/config.h"
 #include "api/m64p_config.h"
 #include "api/m64p_types.h"
+#include "device/device.h"
 #include "device/memory/memory.h"
 #include "main.h"
 #include "md5.h"
@@ -54,8 +55,6 @@ static romdatabase_entry* ini_search_by_md5(md5_byte_t* md5);
 
 static _romdatabase g_romdatabase;
 
-/* Global loaded rom memory space. */
-unsigned char* g_rom = NULL;
 /* Global loaded rom size. */
 int g_rom_size = 0;
 
@@ -139,11 +138,6 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
     int i;
 
     /* check input requirements */
-    if (g_rom != NULL)
-    {
-        DebugMessage(M64MSG_ERROR, "open_rom(): previous ROM image was not freed");
-        return M64ERR_INTERNAL;
-    }
     if (romimage == NULL || !is_valid_rom(romimage))
     {
         DebugMessage(M64MSG_ERROR, "open_rom(): not a valid ROM image");
@@ -154,16 +148,13 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
     g_MemHasBeenBSwapped = 0;
     /* allocate new buffer for ROM and copy into this buffer */
     g_rom_size = size;
-    g_rom = (unsigned char *) malloc(size);
-    if (g_rom == NULL)
-        return M64ERR_NO_MEMORY;
-    swap_copy_rom(g_rom, romimage, size, &imagetype);
+    swap_copy_rom((uint8_t*)g_mem_base + MM_CART_ROM, romimage, size, &imagetype);
 
-    memcpy(&ROM_HEADER, g_rom, sizeof(m64p_rom_header));
+    memcpy(&ROM_HEADER, (uint8_t*)g_mem_base + MM_CART_ROM, sizeof(m64p_rom_header));
 
     /* Calculate MD5 hash  */
     md5_init(&state);
-    md5_append(&state, (const md5_byte_t*)g_rom, g_rom_size);
+    md5_append(&state, (const md5_byte_t*)((uint8_t*)g_mem_base + MM_CART_ROM), g_rom_size);
     md5_finish(&state, digest);
     for ( i = 0; i < 16; ++i )
         sprintf(buffer+i*2, "%02X", digest[i]);
@@ -190,6 +181,8 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
         ROM_SETTINGS.status = entry->status;
         ROM_SETTINGS.players = entry->players;
         ROM_SETTINGS.rumble = entry->rumble;
+        ROM_SETTINGS.transferpak = entry->transferpak;
+        ROM_SETTINGS.mempak = entry->mempak;
         ROM_PARAMS.countperop = entry->countperop;
         ROM_PARAMS.disableextramem = entry->disableextramem;
         ROM_PARAMS.cheats = entry->cheats;
@@ -202,6 +195,8 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
         ROM_SETTINGS.status = 0;
         ROM_SETTINGS.players = 0;
         ROM_SETTINGS.rumble = 0;
+        ROM_SETTINGS.transferpak = 0;
+        ROM_SETTINGS.mempak = 0;
         ROM_PARAMS.countperop = DEFAULT_COUNT_PER_OP;
         ROM_PARAMS.disableextramem = DEFAULT_DISABLE_EXTRA_MEM;
         ROM_PARAMS.cheats = NULL;
@@ -237,12 +232,6 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
 
 m64p_error close_rom(void)
 {
-    if (g_rom == NULL)
-        return M64ERR_INVALID_STATE;
-
-    free(g_rom);
-    g_rom = NULL;
-
     /* Clear Byte-swapped flag, since ROM is now deleted. */
     g_MemHasBeenBSwapped = 0;
     DebugMessage(M64MSG_STATUS, "Rom closed.");
@@ -359,6 +348,18 @@ static size_t romdatabase_resolve_round(void)
             entry->entry.set_flags |= ROMDATABASE_ENTRY_EXTRAMEM;
         }
 
+        if (!isset_bitmask(entry->entry.set_flags, ROMDATABASE_ENTRY_TRANSFERPAK) &&
+            isset_bitmask(ref->set_flags, ROMDATABASE_ENTRY_TRANSFERPAK)) {
+            entry->entry.transferpak = ref->transferpak;
+            entry->entry.set_flags |= ROMDATABASE_ENTRY_TRANSFERPAK;
+        }
+
+        if (!isset_bitmask(entry->entry.set_flags, ROMDATABASE_ENTRY_MEMPAK) &&
+            isset_bitmask(ref->set_flags, ROMDATABASE_ENTRY_MEMPAK)) {
+            entry->entry.mempak = ref->mempak;
+            entry->entry.set_flags |= ROMDATABASE_ENTRY_MEMPAK;
+        }
+
         free(entry->entry.refmd5);
         entry->entry.refmd5 = NULL;
     }
@@ -451,6 +452,8 @@ void romdatabase_open(void)
             search->entry.countperop = DEFAULT_COUNT_PER_OP;
             search->entry.disableextramem = DEFAULT_DISABLE_EXTRA_MEM;
             search->entry.cheats = NULL;
+            search->entry.transferpak = 0;
+            search->entry.mempak = 0;
             search->entry.set_flags = ROMDATABASE_ENTRY_NONE;
 
             search->next_entry = NULL;
@@ -601,6 +604,30 @@ void romdatabase_open(void)
                 }
 
                 search->entry.set_flags |= ROMDATABASE_ENTRY_CHEATS;
+            }
+            else if(!strcmp(l.name, "Transferpak"))
+            {
+                if(!strcmp(l.value, "Yes")) {
+                    search->entry.transferpak = 1;
+                    search->entry.set_flags |= ROMDATABASE_ENTRY_TRANSFERPAK;
+                } else if(!strcmp(l.value, "No")) {
+                    search->entry.transferpak = 0;
+                    search->entry.set_flags |= ROMDATABASE_ENTRY_TRANSFERPAK;
+                } else {
+                    DebugMessage(M64MSG_WARNING, "ROM Database: Invalid transferpak string on line %i", lineno);
+                }
+            }
+            else if(!strcmp(l.name, "Mempak"))
+            {
+                if(!strcmp(l.value, "Yes")) {
+                    search->entry.mempak = 1;
+                    search->entry.set_flags |= ROMDATABASE_ENTRY_MEMPAK;
+                } else if(!strcmp(l.value, "No")) {
+                    search->entry.mempak = 0;
+                    search->entry.set_flags |= ROMDATABASE_ENTRY_MEMPAK;
+                } else {
+                    DebugMessage(M64MSG_WARNING, "ROM Database: Invalid mempak string on line %i", lineno);
+                }
             }
             else
             {

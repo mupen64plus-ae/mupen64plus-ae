@@ -28,9 +28,7 @@
 
 struct r4300_core;
 struct ri_controller;
-struct controller_input_backend;
-struct rumble_backend;
-struct storage_backend;
+struct joybus_device_interface;
 
 enum si_registers
 {
@@ -61,22 +59,17 @@ static uint32_t si_reg(uint32_t address)
 
 
 void init_si(struct si_controller* si,
-             const struct pif_channel_device* pif_channel_devices,
-             struct controller_input_backend* cins,
-             struct storage_backend* mpk_storages,
-             struct rumble_backend* rumbles,
-             struct gb_cart* gb_carts,
-             uint16_t eeprom_id,
-             struct storage_backend* eeprom_storage,
-             struct clock_backend* clock,
+             uint8_t* pif_base,
+             void* jbds[PIF_CHANNELS_COUNT],
+             const struct joybus_device_interface* ijbds[PIF_CHANNELS_COUNT],
              const uint8_t* ipl3,
              struct r4300_core* r4300,
              struct ri_controller* ri);
 
 void poweron_si(struct si_controller* si);
 
-int read_si_regs(void* opaque, uint32_t address, uint32_t* value);
-int write_si_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask);
+void read_si_regs(void* opaque, uint32_t address, uint32_t* value);
+void write_si_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask);
 
 void si_end_of_dma_event(void* opaque);
 

@@ -75,14 +75,9 @@ static void dma_si_read(struct si_controller* si)
 
 
 void init_si(struct si_controller* si,
-             const struct pif_channel_device* pif_channel_devices,
-             struct controller_input_backend* cins,
-             struct storage_backend* mpk_storages,
-             struct rumble_backend* rumbles,
-             struct gb_cart* gb_carts,
-             uint16_t eeprom_id,
-             struct storage_backend* eeprom_storage,
-             struct clock_backend* clock,
+             uint8_t* pif_base,
+             void* jbds[PIF_CHANNELS_COUNT],
+             const struct joybus_device_interface* ijbds[PIF_CHANNELS_COUNT],
              const uint8_t* ipl3,
              struct r4300_core* r4300,
              struct ri_controller* ri)
@@ -91,13 +86,8 @@ void init_si(struct si_controller* si,
     si->ri = ri;
 
     init_pif(&si->pif,
-        pif_channel_devices,
-        cins,
-        mpk_storages,
-        rumbles,
-        gb_carts,
-        eeprom_id, eeprom_storage,
-        clock,
+        pif_base,
+        jbds, ijbds,
         ipl3);
 }
 
@@ -109,17 +99,15 @@ void poweron_si(struct si_controller* si)
 }
 
 
-int read_si_regs(void* opaque, uint32_t address, uint32_t* value)
+void read_si_regs(void* opaque, uint32_t address, uint32_t* value)
 {
     struct si_controller* si = (struct si_controller*)opaque;
     uint32_t reg = si_reg(address);
 
     *value = si->regs[reg];
-
-    return 0;
 }
 
-int write_si_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
+void write_si_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
 {
     struct si_controller* si = (struct si_controller*)opaque;
     uint32_t reg = si_reg(address);
@@ -145,8 +133,6 @@ int write_si_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
         clear_rcp_interrupt(si->r4300, MI_INTR_SI);
         break;
     }
-
-    return 0;
 }
 
 void si_end_of_dma_event(void* opaque)
