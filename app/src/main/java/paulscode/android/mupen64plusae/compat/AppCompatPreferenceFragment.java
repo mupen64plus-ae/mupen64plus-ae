@@ -9,6 +9,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnChildAttachStateChangeListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,9 +37,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
          * Called when a preference dialog is being displayed. This must return
          * the appropriate DialogFragment for the preference.
          * 
-         * @param preference
-         *            The preference dialog
-         * @return The dialog fragment for the preference
+         * @param currentFragment Current fragment
          */
         public void onFragmentCreation(AppCompatPreferenceFragment currentFragment);
     }
@@ -172,7 +171,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
                 //Make sure all views are focusable
                 childView.setFocusable(true);
                 
-                int firstItem = layoutManager.findFirstCompletelyVisibleItemPosition() + 1;
+                int firstItem = layoutManager.findFirstCompletelyVisibleItemPosition();
                 
                 //Get focus on the first visible item the first time it's displayed
                 RecyclerView.ViewHolder holder = recyclerView.findViewHolderForItemId(adapter.getItemId(firstItem));
