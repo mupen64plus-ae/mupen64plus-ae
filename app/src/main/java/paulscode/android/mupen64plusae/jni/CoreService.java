@@ -403,6 +403,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             NativeInput.setConfig( 2, mIsPlugged.get(2), mPakType.get(2) );
             NativeInput.setConfig( 3, mIsPlugged.get(3), mPakType.get(3) );
 
+            Log.e("CoreService", "Pak type=" + mPakType.get(0).toString());
+
             ArrayList<String> arglist = new ArrayList<>();
             arglist.add( "mupen64plus" );
             arglist.add( "--corelib" );

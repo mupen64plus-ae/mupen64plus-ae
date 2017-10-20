@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 import android.text.TextUtils;
 import android.util.Log;
 
-/**
+/*
  * The CheatFile class is used to read and write in the unique syntax of mupencheat.txt.
  * <p>
  * The file must follow a specific syntax:
@@ -71,21 +71,10 @@ import android.util.Log;
  * 
  * @author Paul Lamb
  */
-public class CheatFile
+class CheatFile
 {
     /** The name we use for the untitled section (preamble) of the cheat file. */
-    public static final String NO_KEY = "[<sectionless!>]";
-    
-    /** The regular expression matcher for a cheat code. */
-    private static final Matcher CODE_MATCHER = Pattern.compile(
-            "^  ([0-9a-fA-F]{8}) ([0-9a-fA-F]{4}|[\\?]{4} )(.*)" ).matcher( "" );
-    
-    /**
-     * The regular expression matcher for a single cheat option. Inspired by
-     * http://stackoverflow.com/a/5696141/254218
-     */
-    private static final Matcher OPTION_MATCHER = Pattern.compile(
-            "([0-9a-fA-F]{4}):\"([^\\\\\"]*+(?:\\\\\"[^\\\\\"]*+)*+)\"" ).matcher( "" );
+    static final String NO_KEY = "[<sectionless!>]";
     
     /** Path of the cheat file. */
     private final String mFilename;
@@ -98,10 +87,10 @@ public class CheatFile
      * 
      * @param filename the path of the file to load
      */
-    public CheatFile( String filename, boolean loadAll )
+    CheatFile( String filename, boolean loadAll )
     {
         mFilename = filename;
-        mSections = new LinkedHashMap<String, CheatFile.CheatSection>();
+        mSections = new LinkedHashMap<>();
         
         if(loadAll)
         {
@@ -285,14 +274,14 @@ public class CheatFile
     /**
      * The CheatSection class encapsulates all cheat data for a given ROM CRC and country code.
      */
-    public static class CheatSection
+    static class CheatSection
     {
         /** The CRC and country code of the ROM this section pertains to. */
         public final String key;
         
         // TODO: Make this final
         /** The "good name" of the ROM this section pertains to. */
-        public String goodName = "";
+        String goodName = "";
         
         /** All cheat blocks in this section. */
         private final LinkedList<CheatBlock> blocks;
@@ -314,13 +303,13 @@ public class CheatFile
          * @param name the "good name" of the ROM this section pertains to
          * @param country the country code of the ROM this section pertains to
          */
-        public CheatSection( String crc, String name, String country )
+        CheatSection( String crc, String name, String country )
         {
             this.key = crc + "-C:" + country;
             this.goodName = name;
-            this.blocks = new LinkedList<CheatBlock>();
-            this.elements = new LinkedList<CheatElement>();
-            this.fullLines = new LinkedList<String>();
+            this.blocks = new LinkedList<>();
+            this.elements = new LinkedList<>();
+            this.fullLines = new LinkedList<>();
             
             // Generate the header lines for this section
             if( !TextUtils.isEmpty( crc ) && !crc.equals( NO_KEY ) )
@@ -337,12 +326,12 @@ public class CheatFile
          * @param reader the object providing disk read access
          * @throws IOException if a read error occurs
          */
-        public CheatSection( String key, BufferedReader reader ) throws IOException
+        CheatSection( String key, BufferedReader reader ) throws IOException
         {
             this.key = key;
-            this.blocks = new LinkedList<CheatBlock>();
-            this.elements = new LinkedList<CheatElement>();
-            this.fullLines = new LinkedList<String>();
+            this.blocks = new LinkedList<>();
+            this.elements = new LinkedList<>();
+            this.fullLines = new LinkedList<>();
             
             if( !key.equals( NO_KEY ) )
             {
@@ -600,16 +589,27 @@ public class CheatFile
     /**
      * The CheatBlock class encapsulates a cheat's name, description, and codes.
      */
-    public static class CheatBlock extends CheatElement
+    static class CheatBlock extends CheatElement
     {
+        /** The regular expression matcher for a cheat code. This should not be static
+         * due to threading issues*/
+        private final Matcher CODE_MATCHER = Pattern.compile(
+                "^  ([0-9a-fA-F]{8}) ([0-9a-fA-F]{4}|[\\?]{4} )(.*)" ).matcher( "" );
+
+        /**
+         * The regular expression matcher for a single cheat option. Inspired by
+         * http://stackoverflow.com/a/5696141/254218. This should not be static
+         * due to threading issues.
+         */
+        private final Matcher OPTION_MATCHER = Pattern.compile(
+                "([0-9a-fA-F]{4}):\"([^\\\\\"]*+(?:\\\\\"[^\\\\\"]*+)*+)\"" ).matcher( "" );
+
         /** The human-readable name of the cheat. */
         public final String name;
         
-        // TODO: Make this final
         /** The human-readable description of the cheat. */
         public String description = null;
         
-        // TODO: Make this final
         /** The name of the next cheat. */
         private String nextName = null;
         
@@ -617,20 +617,20 @@ public class CheatFile
         private final LinkedList<CheatCode> codes;
         
         /**
-         * Constructs an empty {@CheatBlock} object.
+         * Constructs an empty CheatBlock object.
          * 
          * @param name the name of the cheat (required)
          * @param description the description for the cheat (null for none).
          */
-        public CheatBlock( String name, String description )
+        CheatBlock( String name, String description )
         {
             this.name = name;
             this.description = description;
-            this.codes = new LinkedList<CheatCode>();
+            this.codes = new LinkedList<>();
         }
         
         /**
-         * Constructs a {@CheatBlock} object, populating its fields by reading from
+         * Constructs a CheatBlock object, populating its fields by reading from
          * disk.
          * 
          * @param name the name of the cheat (required)
@@ -642,7 +642,7 @@ public class CheatFile
                 LinkedList<CheatElement> elements )
         {
             this.name = name;
-            this.codes = new LinkedList<CheatCode>();
+            this.codes = new LinkedList<>();
             
             while( iterator.hasNext() )
             {
@@ -671,6 +671,8 @@ public class CheatFile
                 else if( CODE_MATCHER.reset( fullLine ).matches() )
                 {
                     // Cheat code
+                    Log.e( "CheatBlock", "CODE LINE: " + fullLine );
+
                     String address = CODE_MATCHER.group( 1 );
                     String value = CODE_MATCHER.group( 2 );
                     
@@ -679,7 +681,7 @@ public class CheatFile
                     if( value.startsWith( "????" ) )
                     {
                         // Cheat options
-                        options = new LinkedList<CheatOption>();
+                        options = new LinkedList<>();
                         OPTION_MATCHER.reset( CODE_MATCHER.group( 3 ) );
                         while( OPTION_MATCHER.find() )
                         {
@@ -828,7 +830,7 @@ public class CheatFile
     /**
      * The CheatCode class encapsulates a memory address and code or code options.
      */
-    public static class CheatCode
+    static class CheatCode
     {
         /** ROM address where cheat is applied. */
         public final String address;
@@ -847,7 +849,7 @@ public class CheatFile
          * @param code the code to apply (or "????" if there are options)
          * @param options the options associated with this cheat (or null if none)
          */
-        public CheatCode( String address, String code, LinkedList<CheatOption> options )
+        CheatCode( String address, String code, LinkedList<CheatOption> options )
         {
             this.address = address;
             this.code = code;
@@ -940,7 +942,7 @@ public class CheatFile
     /**
      * The CheatOption class encapsulates a code and a description.
      */
-    public static class CheatOption
+    static class CheatOption
     {
         /** The code to apply if this cheat option is selected. */
         public final String code;
@@ -954,7 +956,7 @@ public class CheatFile
          * @param code the code to apply if this cheat option is selected
          * @param name the human-readable name for the option
          */
-        public CheatOption( String code, String name )
+        CheatOption( String code, String name )
         {
             this.code = code;
             this.name = name;
