@@ -1700,17 +1700,17 @@ static void tlb_hacks()
         addr=0;
         break;
     }
-    u_int rom_addr=(u_int)g_dev.pi.cart_rom.rom;
+    u_int rom_addr=(u_int)g_dev.cart.cart_rom.rom;
     #ifdef ROM_COPY
     // Since memory_map is 32-bit, on 64-bit systems the rom needs to be
     // in the lower 4G of memory to use this hack.  Copy it if necessary.
-    if((void *)g_dev.pi.cart_rom.rom>(void *)0xffffffff) {
+    if((void *)g_dev.cart.cart_rom.rom>(void *)0xffffffff) {
       munmap(ROM_COPY, 67108864);
       if(mmap(ROM_COPY, 12582912,
               PROT_READ | PROT_WRITE,
               MAP_FIXED | MAP_PRIVATE | MAP_ANONYMOUS,
               -1, 0) <= 0) {DebugMessage(M64MSG_ERROR, "mmap() failed");}
-      memcpy(ROM_COPY,g_dev.pi.cart_rom.rom,12582912);
+      memcpy(ROM_COPY,g_dev.cart.cart_rom.rom,12582912);
       rom_addr=(u_int)ROM_COPY;
     }
     #endif
@@ -2252,30 +2252,9 @@ void invalidate_block(u_int block)
   #endif
 }
 
-void invalidate_cached_code_new_dynarec(struct r4300_core* r4300, uint32_t address, size_t size)
-{
-    size_t i;
-    size_t begin;
-    size_t end;
-
-    if (size == 0)
-    {
-        begin = 0;
-        end = 0xfffff;
-    }
-    else
-    {
-        begin = address >> 12;
-        end = (address+size-1) >> 12;
-    }
-
-    for(i = begin; i <= end; ++i)
-        invalidate_block(i);
-}
-
 // This is called when loading a save state.
 // Anything could have changed, so invalidate everything.
-void invalidate_all_pages(void)
+static void invalidate_all_pages(void)
 {
   u_int page;
   for(page=0;page<4096;page++)
@@ -2305,6 +2284,29 @@ void invalidate_all_pages(void)
     if(page==0x80000) page=0xC0000;
   }
   tlb_hacks();
+}
+
+void invalidate_cached_code_new_dynarec(struct r4300_core* r4300, uint32_t address, size_t size)
+{
+    size_t i;
+    size_t begin;
+    size_t end;
+
+    if (size == 0)
+    {
+        invalidate_all_pages();
+    }
+    else
+    {
+        begin = address >> 12;
+        end = (address+size-1) >> 12;
+
+        for(i = begin; i <= end; ++i) {
+            if(r4300->cached_interp.invalid_code[i] == 0) {
+                invalidate_block(i);
+            }
+        }
+    }
 }
 
 // If a code block was found to be unmodified (bit was set in

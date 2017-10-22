@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - cart_rom.c                                              *
+ *   Mupen64plus - cart_rom.h                                              *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
@@ -19,44 +19,45 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "cart_rom.h"
+#ifndef M64P_DEVICE_PI_CART_ROM_H
+#define M64P_DEVICE_PI_CART_ROM_H
 
-#include "pi_controller.h"
+#include <stddef.h>
+#include <stdint.h>
+
+struct r4300_core;
+struct cic;
+struct rdram;
+
+struct cart_rom
+{
+    uint8_t* rom;
+    size_t rom_size;
+
+    uint32_t last_write;
+    uint32_t rom_written;
+
+    struct r4300_core* r4300;
+    struct rdram* rdram;
+    const struct cic* cic;
+};
+
+static uint32_t rom_address(uint32_t address)
+{
+    return (address & 0x03fffffc);
+}
 
 void init_cart_rom(struct cart_rom* cart_rom,
-                      uint8_t* rom, size_t rom_size)
-{
-    cart_rom->rom = rom;
-    cart_rom->rom_size = rom_size;
-}
+                   uint8_t* rom, size_t rom_size,
+                   struct r4300_core* r4300,
+                   struct rdram* rdram, const struct cic* cic);
 
-void poweron_cart_rom(struct cart_rom* cart_rom)
-{
-    cart_rom->last_write = 0;
-    cart_rom->rom_written = 0;
-}
+void poweron_cart_rom(struct cart_rom* cart_rom);
 
+void read_cart_rom(void* opaque, uint32_t address, uint32_t* value);
+void write_cart_rom(void* opaque, uint32_t address, uint32_t value, uint32_t mask);
 
-void read_cart_rom(void* opaque, uint32_t address, uint32_t* value)
-{
-    struct pi_controller* pi = (struct pi_controller*)opaque;
-    uint32_t addr = rom_address(address);
+unsigned int cart_rom_dma_read(void* opaque, const uint8_t* dram, uint32_t dram_addr, uint32_t cart_addr, uint32_t length);
+unsigned int cart_rom_dma_write(void* opaque, uint8_t* dram, uint32_t dram_addr, uint32_t cart_addr, uint32_t length);
 
-    if (pi->cart_rom.rom_written)
-    {
-        *value = pi->cart_rom.last_write;
-        pi->cart_rom.rom_written = 0;
-    }
-    else
-    {
-        *value = *(uint32_t*)(pi->cart_rom.rom + addr);
-    }
-}
-
-void write_cart_rom(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
-{
-    struct pi_controller* pi = (struct pi_controller*)opaque;
-    pi->cart_rom.last_write = value & mask;
-    pi->cart_rom.rom_written = 1;
-}
-
+#endif
