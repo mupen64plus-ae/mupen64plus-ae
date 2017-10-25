@@ -57,10 +57,10 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/controllers/game_controller.c              \
     $(SRCDIR)/device/gb/gb_cart.c                               \
     $(SRCDIR)/device/gb/mbc3_rtc.c                              \
-    $(SRCDIR)/device/pi/cart_rom.c                              \
-    $(SRCDIR)/device/pi/flashram.c                              \
+    $(SRCDIR)/device/cart/cart_rom.c                            \
+    $(SRCDIR)/device/cart/flashram.c                            \
+    $(SRCDIR)/device/cart/sram.c                                \
     $(SRCDIR)/device/pi/pi_controller.c                         \
-    $(SRCDIR)/device/pi/sram.c                                  \
     $(SRCDIR)/device/pifbootrom/pifbootrom.c                    \
     $(SRCDIR)/plugin/dummy_audio.c                              \
     $(SRCDIR)/plugin/dummy_input.c                              \
