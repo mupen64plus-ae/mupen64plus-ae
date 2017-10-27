@@ -203,7 +203,10 @@ public:
 					nFbFixedAlpha0 = 1;
 			} else if (gSP.textureTile[0]->size == G_IM_SIZ_16b && gSP.textureTile[0]->format == G_IM_FMT_IA) {
 				nFbMonochromeMode0 = 2;
-			} else if (cache.current[0]->size == G_IM_SIZ_16b && gSP.textureTile[0]->size == G_IM_SIZ_8b && gSP.textureTile[0]->format == G_IM_FMT_CI) {
+			} else if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0 &&
+					   cache.current[0]->size == G_IM_SIZ_16b &&
+					   gSP.textureTile[0]->size == G_IM_SIZ_8b &&
+					   gSP.textureTile[0]->format == G_IM_FMT_CI) {
 				// Zelda monochrome effect
 				nFbMonochromeMode0 = 3;
 				nFbMonochromeMode1 = 3;
@@ -244,7 +247,7 @@ public:
 
 	void update(bool _force) override
 	{
-		if (RSP.bLLE) {
+		if (RSP.LLE) {
 			uFogUsage.set(0, _force);
 			return;
 		}
@@ -433,7 +436,7 @@ public:
 
 	void update(bool _force) override
 	{
-		const u32 texturePersp = (RSP.bLLE || GBI.isTexturePersp()) ? gDP.otherMode.texturePersp : 1U;
+		const u32 texturePersp = (RSP.LLE || GBI.isTexturePersp()) ? gDP.otherMode.texturePersp : 1U;
 		uTexturePersp.set(texturePersp, _force);
 	}
 
@@ -510,7 +513,7 @@ public:
 
 	void update(bool _force) override
 	{
-		if (RSP.bLLE)
+		if (RSP.LLE)
 			uDepthScale.set(0.5f, 0.5f, _force);
 		else
 			uDepthScale.set(gSP.viewport.vscale[2], gSP.viewport.vtrans[2], _force);

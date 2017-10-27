@@ -350,7 +350,7 @@ bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
 			bRes = false;
 		}
 
-		if ((config.generalEmulation.hacks & hack_noDepthFrameBuffers) != 0 && pBuffer->m_isDepthBuffer) {
+		if (pBuffer->m_isDepthBuffer && (pBuffer->isAuxiliary() || (config.generalEmulation.hacks & hack_noDepthFrameBuffers) != 0)) {
 			fbList.removeBuffer(pBuffer->m_startAddress);
 			bRes = false;
 		}
@@ -870,7 +870,7 @@ void gDPFullSync()
 	)
 		FrameBuffer_CopyToRDRAM(gDP.colorImage.address, sync);
 
-	if (RSP.bLLE) {
+	if (RSP.LLE) {
 		if (config.frameBufferEmulation.copyDepthToRDRAM != Config::cdDisable && !FBInfo::fbInfo.isSupported())
 			FrameBuffer_CopyDepthBuffer(gDP.colorImage.address);
 	}

@@ -4218,7 +4218,7 @@ extern "C" {
 #endif
 EXPORT void CALL ProcessRDPList(void)
 {
-  LOG ("ProcessRDPList ()\n");
+  //LOG ("ProcessRDPList ()\n");
   LRDP("ProcessRDPList ()\n");
 
   SoftLocker lock(mutexProcessDList);

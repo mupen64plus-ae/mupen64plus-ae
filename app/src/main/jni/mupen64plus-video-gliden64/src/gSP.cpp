@@ -30,6 +30,10 @@ using namespace graphics;
 
 #define INDEXMAP_SIZE 80U
 
+#define SP_STATUS_HALT 0x0001
+#define SP_STATUS_BROKE 0x0002
+#define SP_STATUS_TASKDONE 0x0200
+
 #ifdef __VEC4_OPT
 #define VEC_OPT 4U
 #else
@@ -503,12 +507,8 @@ void gSPLightVertexStandard(u32 v, SPVertex * spVtx)
 		}
 	}
 #else
-	void gSPLightVertex_NEON(SPVertex & _vtx);
-	void gSPLightVertex4_NEON(u32 v, SPVertex * spVtx);
-	if (VNUM == 1)
-		gSPLightVertex_NEON(spVtx[v]);
-	else
-		gSPLightVertex4_NEON(v, spVtx);
+	void gSPLightVertex_NEON(u32 vnum, u32 v, SPVertex * spVtx);
+	gSPLightVertex_NEON(VNUM, v, spVtx);
 #endif
 }
 
@@ -1327,6 +1327,14 @@ void gSPBranchList( u32 dl )
 
 	DebugMsg(DEBUG_NORMAL, "gSPBranchList( 0x%08X ) nopush\n", dl );
 
+	if (((config.generalEmulation.hacks & hack_Infloop) != 0) && (address == (RSP.PC[RSP.PCi] - 8))) {
+		RSP.infloop = true;
+		RSP.PC[RSP.PCi] -= 8;
+		*REG.SP_STATUS &= ~(SP_STATUS_TASKDONE | SP_STATUS_HALT | SP_STATUS_BROKE);
+		RSP.halt = true;
+		return;
+	}
+
 	RSP.PC[RSP.PCi] = address;
 	RSP.nextCmd = _SHIFTR( *(u32*)&RDRAM[address], 24, 8 );
 }
@@ -1507,7 +1515,7 @@ void gSPCullDisplayList( u32 v0, u32 vn )
 			RSP.PCi--;
 		else {
 			DebugMsg(DEBUG_NORMAL, "End of display list, halting execution\n");
-			RSP.halt = TRUE;
+			RSP.halt = true;
 		}
 		DebugMsg( DEBUG_DETAIL, "// Culling display list\n" );
 		DebugMsg(DEBUG_NORMAL, "gSPCullDisplayList( %i, %i );\n\n", v0, vn );
@@ -1749,7 +1757,7 @@ void gSPEndDisplayList()
 		--RSP.PCi;
 	else {
 		DebugMsg( DEBUG_NORMAL, "End of display list, halting execution\n" );
-		RSP.halt = TRUE;
+		RSP.halt = true;
 	}
 
 	DebugMsg(DEBUG_NORMAL, "gSPEndDisplayList();\n\n");
@@ -2621,11 +2629,13 @@ void gSPObjRendermode(u32 _mode)
 	DebugMsg(DEBUG_NORMAL, "gSPObjRendermode(0x%08x)\n", _mode);
 }
 
-void(*gSPInverseTransformVector)(float vtx[4], float mtx[4][4]) = gSPInverseTransformVector_default;
 #ifndef __NEON_OPT
+void(*gSPInverseTransformVector)(float vec[3], float mtx[4][4]) = gSPInverseTransformVector_default;
 void(*gSPTransformVector)(float vtx[4], float mtx[4][4]) = gSPTransformVector_default;
 #else
+void gSPInverseTransformVector_NEON(float vec[3], float mtx[4][4]);
 void gSPTransformVector_NEON(float vtx[4], float mtx[4][4]);
+void(*gSPInverseTransformVector)(float vec[3], float mtx[4][4]) = gSPInverseTransformVector_NEON;
 void(*gSPTransformVector)(float vtx[4], float mtx[4][4]) = gSPTransformVector_NEON;
 #endif //__NEON_OPT
 
