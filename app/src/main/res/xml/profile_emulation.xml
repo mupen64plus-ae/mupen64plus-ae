@@ -612,49 +612,6 @@
     </android.support.v7.preference.PreferenceCategory>
         
     <android.support.v7.preference.PreferenceCategory
-        android:key="categoryGliden64Bloom"
-        android:title="@string/gliden64_category_bloom_title" >
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="False"
-            android:key="EnableBloom"
-            android:title="@string/gliden64_enable_bloom_title" />
-        <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="4"
-            android:key="bloomThresholdLevel"
-            android:title="@string/gliden64_bloom_threshold_level_title"
-            mupen64:maximumValue="6"
-            mupen64:minimumValue="2"
-            mupen64:stepSize="1"
-            mupen64:saveType="string"
-            mupen64:units="" />
-        <paulscode.android.mupen64plusae.preference.CompatListPreference
-            android:defaultValue="@string/gliden64_bloom_blend_mode_default"
-            android:entries="@array/gliden64_bloom_blend_mode_entries"
-            android:entryValues="@array/gliden64_bloom_blend_mode_values"
-            android:key="bloomBlendMode"
-            android:summary="@string/selectedValue"
-            android:title="@string/gliden64_bloom_blend_mode_title" />
-        <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="10"
-            android:key="blurAmount"
-            android:title="@string/gliden64_bloom_blur_amount_title"
-            mupen64:maximumValue="10"
-            mupen64:minimumValue="2"
-            mupen64:stepSize="1"
-            mupen64:saveType="string"
-            mupen64:units="" />
-        <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="20"
-            android:key="blurStrength"
-            android:title="@string/gliden64_bloom_blur_strength_title"
-            mupen64:maximumValue="100"
-            mupen64:minimumValue="10"
-            mupen64:stepSize="1"
-            mupen64:saveType="string"
-            mupen64:units="" />
-    </android.support.v7.preference.PreferenceCategory>
-        
-    <android.support.v7.preference.PreferenceCategory
         android:key="categoryGliden64Gamma"
         android:title="@string/gliden64_category_gamma_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference

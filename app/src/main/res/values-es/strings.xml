@@ -412,15 +412,6 @@
     <string name="gliden64_tx_force_16bpp_title">Fuerza formato de textura de 16 bits para las texturas de alta definición</string>
     <string name="gliden64_tx_save_cache_title">Textura caché segura en el disco</string>
     <string name="gliden64_tx_save_cache_summary">Guarda caché de texturas en al disco a la salida, esto causa un retraso al salir de un juego.</string>
-    <string name="gliden64_category_bloom_title">Florecer</string>
-    <string name="gliden64_enable_bloom_title">Habilitar el filtro de la floración</string>
-    <string name="gliden64_bloom_threshold_level_title">Nivel de umbral de luminosidad para la floración</string>
-    <string name="gliden64_bloom_blend_mode_title">Modo de mezcla</string>
-    <string name="gliden64_bloom_blend_mode_entry_strong">Fuerte</string>
-    <string name="gliden64_bloom_blend_mode_entry_mild">Medio</string>
-    <string name="gliden64_bloom_blend_mode_entry_light">Ligero</string>
-    <string name="gliden64_bloom_blur_amount_title">Desenfoque de radio</string>
-    <string name="gliden64_bloom_blur_strength_title">Resistencia a la falta de definición</string>
     <string name="gliden64_category_gamma_title">Correccion Gama</string>
     <string name="gliden64_force_gamma_correction_title">Forzar correccion gama</string>
     <string name="gliden64_gamma_correction_level">Valor de correccion gama</string>

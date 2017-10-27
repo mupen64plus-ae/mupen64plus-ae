@@ -1004,19 +1004,6 @@
     </string-array>
     <string name="gliden64_texture_enhancement_default" translatable="false">0</string>
 
-    <!-- GLideN64 bloom blend mode list-->
-    <string-array name="gliden64_bloom_blend_mode_entries">
-        <item>@string/gliden64_bloom_blend_mode_entry_strong</item>
-        <item>@string/gliden64_bloom_blend_mode_entry_mild</item>
-        <item>@string/gliden64_bloom_blend_mode_entry_light</item>
-    </string-array>
-    <string-array name="gliden64_bloom_blend_mode_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-    <string name="gliden64_bloom_blend_mode_default" translatable="false">0</string>
-
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries" translatable="false">
         <item>@string/videoPlugin_entryNone</item>

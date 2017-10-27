@@ -50,7 +50,6 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_GLIDEN64_GENERAL = "categoryGliden64General";
     private static final String CATEGORY_GLIDEN64_FRAME_BUFFER = "categoryGliden64FrameBuffer";
     private static final String CATEGORY_GLIDEN64_TEXTURE_FILTERING = "categoryGliden64TextureFiltering";
-    private static final String CATEGORY_GLIDEN64_BLOOM = "categoryGliden64Bloom";
     private static final String CATEGORY_GLIDEN64_GAMMA = "categoryGliden64Gamma";
     private static final String CATEGORY_ANGRYLION = "categoryAngrylion";
 
@@ -74,7 +73,6 @@ public class EmulationProfileActivity extends ProfileActivity
     private PreferenceCategory mCategoryGliden64General = null;
     private PreferenceCategory mCategoryGliden64FrameBuffer = null;
     private PreferenceCategory mCategoryGliden64TextureFiltering = null;
-    private PreferenceCategory mCategoryGliden64Bloom = null;
     private PreferenceCategory mCategoryGliden64Gamma = null;
     private PreferenceCategory mCategoryAngrylion = null;
 
@@ -139,7 +137,6 @@ public class EmulationProfileActivity extends ProfileActivity
         mCategoryGliden64General = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GENERAL );
         mCategoryGliden64FrameBuffer = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_FRAME_BUFFER );
         mCategoryGliden64TextureFiltering = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE_FILTERING );
-        mCategoryGliden64Bloom = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_BLOOM );
         mCategoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
         mCategoryAngrylion = (PreferenceCategory) findPreference( CATEGORY_ANGRYLION );
 
@@ -231,7 +228,6 @@ public class EmulationProfileActivity extends ProfileActivity
             mCategoryGliden64General != null &&
             mCategoryGliden64FrameBuffer != null &&
             mCategoryGliden64TextureFiltering != null &&
-            mCategoryGliden64Bloom != null &&
             mCategoryGliden64Gamma != null)
         {
             if( LIBGLIDEN64_SO.equals( videoPlugin ) )
@@ -240,7 +236,6 @@ public class EmulationProfileActivity extends ProfileActivity
                 mScreenRoot.addPreference( mCategoryGliden64General );
                 mScreenRoot.addPreference( mCategoryGliden64FrameBuffer );
                 mScreenRoot.addPreference( mCategoryGliden64TextureFiltering );
-                mScreenRoot.addPreference( mCategoryGliden64Bloom );
                 mScreenRoot.addPreference( mCategoryGliden64Gamma );
             }
             else
@@ -249,7 +244,6 @@ public class EmulationProfileActivity extends ProfileActivity
                 mScreenRoot.removePreference( mCategoryGliden64General );
                 mScreenRoot.removePreference( mCategoryGliden64FrameBuffer );
                 mScreenRoot.removePreference( mCategoryGliden64TextureFiltering );
-                mScreenRoot.removePreference( mCategoryGliden64Bloom );
                 mScreenRoot.removePreference( mCategoryGliden64Gamma );
             }
         }

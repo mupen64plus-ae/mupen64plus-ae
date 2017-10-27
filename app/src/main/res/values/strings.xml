@@ -455,15 +455,6 @@
     <string name="gliden64_tx_force_16bpp_title">Force 16bit texture format for HD textures</string>
     <string name="gliden64_tx_save_cache_title">Save texture cache to disk</string>
     <string name="gliden64_tx_save_cache_summary">Saves texture cache to disk on exit, causing a delay when exiting a game.</string>
-    <string name="gliden64_category_bloom_title">Bloom</string>
-    <string name="gliden64_enable_bloom_title">Enable bloom filter</string>
-    <string name="gliden64_bloom_threshold_level_title">Brightness threshold level for bloom</string>
-    <string name="gliden64_bloom_blend_mode_title">Blend mode</string>
-    <string name="gliden64_bloom_blend_mode_entry_strong">Strong</string>
-    <string name="gliden64_bloom_blend_mode_entry_mild">Mild</string>
-    <string name="gliden64_bloom_blend_mode_entry_light">Light</string>
-    <string name="gliden64_bloom_blur_amount_title">Blur radius</string>
-    <string name="gliden64_bloom_blur_strength_title">Blur strength</string>
     <string name="gliden64_category_gamma_title">Gamma Correction</string>
     <string name="gliden64_force_gamma_correction_title">Force gamma correction</string>
     <string name="gliden64_gamma_correction_level">Gamma correction value</string>

@@ -292,11 +292,6 @@ public class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontName", "DroidSans.ttf" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontSize", "18" );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "fontColor", "B5E61D" );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableBloom", boolToTF( game.glideN64Prefs.enableBloom ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bloomThresholdLevel", String.valueOf( game.glideN64Prefs.bloomThresholdLevel ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bloomBlendMode", String.valueOf( game.glideN64Prefs.bloomBlendMode ) );                                                        // Bloom blend mode (0=Strong, 1=Mild, 2=Light)
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "blurAmount", String.valueOf( game.glideN64Prefs.blurAmount ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "blurStrength", String.valueOf( game.glideN64Prefs.blurStrength ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForceGammaCorrection", boolToTF( game.glideN64Prefs.forceGammaCorrection ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "GammaCorrectionLevel", String.valueOf( game.glideN64Prefs.gammaCorrectionLevel ) );
 

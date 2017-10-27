@@ -449,15 +449,6 @@
     <string name="gliden64_tx_force_16bpp_title">Принудительное 16-битное текстурное форматирование для HD текстур </string>
     <string name="gliden64_tx_save_cache_title">Сохранить кэш текстур на диск</string>
     <string name="gliden64_tx_save_cache_summary">Сохранение кэша текстур на диск, приводит к задержке при выходе.</string>
-    <string name="gliden64_category_bloom_title">Bloom</string>
-    <string name="gliden64_enable_bloom_title">Включить bloom Фильтр</string>
-    <string name="gliden64_bloom_threshold_level_title">Порог яркости для bloom</string>
-    <string name="gliden64_bloom_blend_mode_title">Режим смешения</string>
-    <string name="gliden64_bloom_blend_mode_entry_strong">Сильный</string>
-    <string name="gliden64_bloom_blend_mode_entry_mild">Средний</string>
-    <string name="gliden64_bloom_blend_mode_entry_light">Лёгкий</string>
-    <string name="gliden64_bloom_blur_amount_title">Радиус замутнения</string>
-    <string name="gliden64_bloom_blur_strength_title">Сила замутнения</string>
     <string name="gliden64_category_gamma_title">Коррекция гаммы</string>
     <string name="gliden64_force_gamma_correction_title">Принудительная коррекция гаммы</string>
     <string name="gliden64_gamma_correction_level">Значение коррекции гаммы</string>

@@ -153,24 +153,6 @@ public class GLideN64Prefs {
     /** Save texture cache to hard disk. */
     public final boolean txSaveCache;
 
-    /** Enable bloom filter */
-    public final boolean enableBloom;
-
-    /** Brightness threshold level for bloom. Values [2, 6] */
-    public final int bloomThresholdLevel;
-
-    /** Bloom blend mode (
-     * 0=Strong
-     * 1=Mild
-     * 2=Light) */
-    public final int bloomBlendMode;
-
-    /** Blur radius. Values [2, 10] */
-    public final int blurAmount;
-
-    /** Blur strength. Values [10, 100] */
-    public final int blurStrength;
-
     /** Force gamma correction. */
     public final boolean forceGammaCorrection;
 
@@ -228,11 +210,6 @@ public class GLideN64Prefs {
         txCacheCompression = emulationProfile.get( "txCacheCompression", "True" ).equals( "True" );
         txForce16bpp = emulationProfile.get( "txForce16bpp", "False" ).equals( "True" );
         txSaveCache = emulationProfile.get( "txSaveCache", "False" ).equals( "True" );
-        enableBloom = emulationProfile.get( "EnableBloom", "False" ).equals( "True" );
-        bloomThresholdLevel = getSafeInt( emulationProfile, "bloomThresholdLevel", 4);
-        bloomBlendMode = getSafeInt( emulationProfile, "bloomBlendMode", 0);
-        blurAmount = getSafeInt( emulationProfile, "blurAmount", 10);
-        blurStrength = getSafeInt( emulationProfile, "blurStrength", 20);
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
     }

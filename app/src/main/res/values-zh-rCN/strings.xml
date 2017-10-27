@@ -460,14 +460,6 @@
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-点</string>
     <string name="gliden64_bilinear_mode_entry_standard">标准</string>
     <string name="gliden64_bilinear_mode_title">双线性过滤模式</string>
-    <string name="gliden64_bloom_blend_mode_entry_light">明亮</string>
-    <string name="gliden64_bloom_blend_mode_entry_mild">柔和</string>
-    <string name="gliden64_bloom_blend_mode_entry_strong">强烈</string>
-    <string name="gliden64_bloom_blend_mode_title">混合模式</string>
-    <string name="gliden64_bloom_blur_amount_title">模糊半径</string>
-    <string name="gliden64_bloom_blur_strength_title">模糊强度</string>
-    <string name="gliden64_bloom_threshold_level_title">Bloom 亮度阈值水平</string>
-    <string name="gliden64_category_bloom_title">Bloom</string>
     <string name="gliden64_category_fb_title">帧缓冲区模拟</string>
     <string name="gliden64_category_gamma_title">伽玛校正</string>
     <string name="gliden64_category_general_title">普通</string>
@@ -485,7 +477,6 @@
     <string name="gliden64_cropmode_disabled">禁用</string>
     <string name="gliden64_cropmode_title">裁剪模式</string>
     <string name="gliden64_disable_fbinfo">禁用缓冲区读/写 FBInfo</string>
-    <string name="gliden64_enable_bloom_title">启用 bloom 过滤器</string>
     <string name="gliden64_enable_color_buffer_from_RDRAM_title">启用颜色缓冲区复制从 RDRAM</string>
     <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">启用复制辅助缓冲区到 RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">硬件渲染器</string>

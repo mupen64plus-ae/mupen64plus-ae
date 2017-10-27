@@ -390,7 +390,6 @@
     <string name="gliden64_tx_filter_ignore_BG_title">Hintergrundtexturen nicht filtern</string>
     <string name="gliden64_tx_hi_res_alt_crc_title">Alternative CRC-Berechnung aktivieren</string>
     <string name="gliden64_tx_force_16bpp_title">16-Bit-Texturformat für HD-Texturen erzwingen</string>
-    <string name="gliden64_bloom_blend_mode_entry_strong">Stark</string>
     <string name="gliden64_category_gamma_title">Gammakorrektur</string>
     <string name="gliden64_force_gamma_correction_title">Gammakorrektur erzwingen</string>
     <string name="gliden64_gamma_correction_level">Gammakorrekturwert</string>
