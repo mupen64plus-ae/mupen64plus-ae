@@ -172,6 +172,7 @@
     <ClCompile Include="..\..\src\memory.c" />
     <ClCompile Include="..\..\src\mp3.c" />
     <ClCompile Include="..\..\src\musyx.c" />
+    <ClCompile Include="..\..\src\osal_dynamiclib_win32.c" />
     <ClCompile Include="..\..\src\plugin.c" />
     <ClCompile Include="..\..\src\re2.c" />
   </ItemGroup>
@@ -184,6 +185,7 @@
     <ClInclude Include="..\..\src\hle_external.h" />
     <ClInclude Include="..\..\src\hle_internal.h" />
     <ClInclude Include="..\..\src\memory.h" />
+    <ClInclude Include="..\..\src\osal_dynamiclib.h" />
     <ClInclude Include="..\..\src\ucodes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

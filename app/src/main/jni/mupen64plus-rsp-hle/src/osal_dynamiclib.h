@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - hle_external.h                                  *
+ *   Mupen64plus-ui-console - osal_dynamiclib.h                            *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2014 Bobby Smiles                                       *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,22 +19,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef HLE_EXTERNAL_H
-#define HLE_EXTERNAL_H
+#if !defined(OSAL_DYNAMICLIB_H)
+#define OSAL_DYNAMICLIB_H
 
-/* users of the hle core are expected to define these functions */
+#include "m64p_types.h"
 
-void HleVerboseMessage(void* user_defined, const char *message, ...);
-void HleInfoMessage(void* user_defined, const char *message, ...);
-void HleErrorMessage(void* user_defined, const char *message, ...);
-void HleWarnMessage(void* user_defined, const char *message, ...);
+m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath);
 
-void HleCheckInterrupts(void* user_defined);
-void HleProcessDlistList(void* user_defined);
-void HleProcessAlistList(void* user_defined);
-void HleProcessRdpList(void* user_defined);
-void HleShowCFB(void* user_defined);
-int HleForwardTask(void* user_defined);
+void *     osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName);
 
-#endif
+m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle);
+
+#endif /* #define OSAL_DYNAMICLIB_H */
 

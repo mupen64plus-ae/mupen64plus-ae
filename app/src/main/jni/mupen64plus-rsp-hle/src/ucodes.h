@@ -126,7 +126,8 @@ void alist_process_nead_oot (struct hle_t* hle);
 void alist_process_nead_mm  (struct hle_t* hle);
 void alist_process_nead_mmb (struct hle_t* hle);
 void alist_process_nead_ac  (struct hle_t* hle);
-
+void alist_process_nead_mats(struct hle_t* hle);
+void alist_process_nead_efz (struct hle_t* hle);
 
 /* mp3 ucode */
 void mp3_task(struct hle_t* hle, unsigned int index, uint32_t address);

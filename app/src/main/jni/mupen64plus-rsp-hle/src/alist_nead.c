@@ -532,3 +532,25 @@ void alist_process_nead_ac(struct hle_t* hle)
     alist_process(hle, ABI, 0x18);
     rsp_break(hle, SP_STATUS_TASKDONE);
 }
+
+void alist_process_nead_mats(struct hle_t* hle)
+{
+    /* FIXME: implement proper ucode
+     * Forward the task if possible,
+     * otherwise better to have no sound than garbage sound
+     */
+    if (HleForwardTask(hle->user_defined) != 0) {
+        rsp_break(hle, SP_STATUS_TASKDONE);
+    }
+}
+
+void alist_process_nead_efz(struct hle_t* hle)
+{
+    /* FIXME: implement proper ucode
+     * Forward the task if possible,
+     * otherwise use FZero ucode which should be very similar
+     */
+    if (HleForwardTask(hle->user_defined) != 0) {
+        alist_process_nead_fz(hle);
+    }
+}

@@ -24,6 +24,7 @@ LOCAL_SRC_FILES :=           \
     $(SRCDIR)/musyx.c        \
     $(SRCDIR)/plugin.c       \
     $(SRCDIR)/re2.c          \
+    $(SRCDIR)/osal_dynamiclib_unix.c          \
 
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 

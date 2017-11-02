@@ -43,12 +43,12 @@
 /* helper functions prototypes */
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
 static bool is_task(struct hle_t* hle);
-static void forward_gfx_task(struct hle_t* hle);
+static void send_dlist_to_gfx_plugin(struct hle_t* hle);
 static bool try_fast_audio_dispatching(struct hle_t* hle);
 static bool try_fast_task_dispatching(struct hle_t* hle);
 static void normal_task_dispatching(struct hle_t* hle);
 static void non_task_dispatching(struct hle_t* hle);
-static void re2_task_dispatching(struct hle_t* hle);
+static bool try_re2_task_dispatching(struct hle_t* hle);
 
 #ifdef ENABLE_TASK_DUMP
 static void dump_binary(struct hle_t* hle, const char *const filename,
@@ -57,9 +57,6 @@ static void dump_task(struct hle_t* hle, const char *const filename);
 static void dump_unknown_task(struct hle_t* hle, unsigned int sum);
 static void dump_unknown_non_task(struct hle_t* hle, unsigned int sum);
 #endif
-
-/* local variables */
-static const bool FORWARD_AUDIO = false, FORWARD_GFX = true;
 
 /* Global functions */
 void hle_init(struct hle_t* hle,
@@ -157,10 +154,27 @@ void rsp_break(struct hle_t* hle, unsigned int setbits)
     }
 }
 
-static void forward_gfx_task(struct hle_t* hle)
+static void send_alist_to_audio_plugin(struct hle_t* hle)
 {
-    HleProcessDlistList(hle->user_defined);
+    HleProcessAlistList(hle->user_defined);
     rsp_break(hle, SP_STATUS_TASKDONE);
+}
+
+static void send_dlist_to_gfx_plugin(struct hle_t* hle)
+{
+    /* Since GFX_INFO version 2, these bits are set before calling the ProcessDlistList function.
+     * And the GFX plugin is responsible to unset them if needed.
+     * For GFX_INFO version < 2, the GFX plugin didn't have access to sp_status so
+     * it doesn't matter if we set these bits before calling ProcessDlistList function.
+     */
+    *hle->sp_status |= SP_STATUS_TASKDONE | SP_STATUS_BROKE | SP_STATUS_HALT;
+
+    HleProcessDlistList(hle->user_defined);
+
+    if ((*hle->sp_status & SP_STATUS_INTR_ON_BREAK)) {
+        *hle->mi_intr |= MI_INTR_SP;
+        HleCheckInterrupts(hle->user_defined);
+    }
 }
 
 static bool try_fast_audio_dispatching(struct hle_t* hle)
@@ -211,7 +225,10 @@ static bool try_fast_audio_dispatching(struct hle_t* hle)
                 alist_process_nead_ac(hle); return true;
             case 0x00010010: /* MusyX v2 (IndianaJones, BattleForNaboo) */
                 musyx_v2_task(hle); return true;
-
+            case 0x1f701238: /* Mario Artist Talent Studio */
+                alist_process_nead_mats(hle); return true;
+            case 0x1f4c1230: /* FZeroX Expansion */
+                alist_process_nead_efz(hle); return true;
             default:
                 HleWarnMessage(hle->user_defined, "ABI2 identification regression: v=%08x", v);
             }
@@ -251,20 +268,18 @@ static bool try_fast_task_dispatching(struct hle_t* hle)
     case 1:
         /* Resident evil 2 */
         if (*dmem_u32(hle, TASK_DATA_PTR) == 0) {
-            re2_task_dispatching(hle);
-            return true;
+            return try_re2_task_dispatching(hle);
         }
 
-        if (FORWARD_GFX) {
-            forward_gfx_task(hle);
+        if (hle->hle_gfx) {
+            send_dlist_to_gfx_plugin(hle);
             return true;
         }
         break;
 
     case 2:
-        if (FORWARD_AUDIO) {
-            HleProcessAlistList(hle->user_defined);
-            rsp_break(hle, SP_STATUS_TASKDONE);
+        if (hle->hle_aud) {
+            send_alist_to_audio_plugin(hle);
             return true;
         } else if (try_fast_audio_dispatching(hle))
             return true;
@@ -272,8 +287,7 @@ static bool try_fast_task_dispatching(struct hle_t* hle)
 
     case 7:
         HleShowCFB(hle->user_defined);
-        rsp_break(hle, SP_STATUS_TASKDONE);
-        return true;
+        break;
     }
 
     return false;
@@ -293,8 +307,8 @@ static void normal_task_dispatching(struct hle_t* hle)
 
     /* GFX: Twintris [misleading task->type == 0] */
     case 0x212ee:
-        if (FORWARD_GFX) {
-            forward_gfx_task(hle);
+        if (hle->hle_gfx) {
+            send_dlist_to_gfx_plugin(hle);
             return;
         }
         break;
@@ -316,13 +330,18 @@ static void normal_task_dispatching(struct hle_t* hle)
         return;
     }
 
-    /* Send task_done signal for unknown ucodes to allow further processings */
-    rsp_break(hle, SP_STATUS_TASKDONE);
+    /* Forward task to RSP Fallback.
+     * If task is not forwarded, use the regular "unknown task" path */
+    if (HleForwardTask(hle->user_defined) != 0) {
 
-    HleWarnMessage(hle->user_defined, "unknown OSTask: sum: %x PC:%x", sum, *hle->sp_pc);
+        /* Send task_done signal for unknown ucodes to allow further processings */
+        rsp_break(hle, SP_STATUS_TASKDONE);
+
+        HleWarnMessage(hle->user_defined, "unknown OSTask: sum: %x PC:%x", sum, *hle->sp_pc);
 #ifdef ENABLE_TASK_DUMP
-    dump_unknown_task(hle, sum);
+        dump_unknown_task(hle, sum);
 #endif
+    }
 }
 
 static void non_task_dispatching(struct hle_t* hle)
@@ -336,41 +355,45 @@ static void non_task_dispatching(struct hle_t* hle)
         return;
     }
 
-    HleWarnMessage(hle->user_defined, "unknown RSP code: sum: %x PC:%x", sum, *hle->sp_pc);
+    /* Forward task to RSP Fallback.
+     * If task is not forwarded, use the regular "unknown ucode" path */
+    if (HleForwardTask(hle->user_defined) != 0) {
+
+        HleWarnMessage(hle->user_defined, "unknown RSP code: sum: %x PC:%x", sum, *hle->sp_pc);
 #ifdef ENABLE_TASK_DUMP
-    dump_unknown_non_task(hle, sum);
+        dump_unknown_non_task(hle, sum);
 #endif
+    }
 }
 
 /* Resident evil 2 */
-static void re2_task_dispatching(struct hle_t* hle)
+static bool try_re2_task_dispatching(struct hle_t* hle)
 {
     const unsigned int sum =
         sum_bytes((void*)dram_u32(hle, *dmem_u32(hle, TASK_UCODE)), 256);
-    
+
     switch (sum) {
-    
+
     case 0x450f:
         resize_bilinear_task(hle);
-        return;
-    
+        return true;
+
     case 0x3b44:
         decode_video_frame_task(hle);
-        return;
+        return true;
 
     case 0x3d84:
-        /* TODO: Nothing to emulate? */
-        rsp_break(hle, SP_STATUS_TASKDONE);
-        return;
+        /* FIXME: implement proper ucode
+         * Forward the task if possible,
+         * otherwise just skip it as it seems to work OK like that
+         */
+        if (HleForwardTask(hle->user_defined) != 0) {
+            rsp_break(hle, SP_STATUS_TASKDONE);
+        }
+        return true;
     }
 
-    /* Send task_done signal for unknown ucodes to allow further processings */
-    rsp_break(hle, SP_STATUS_TASKDONE);
-
-    HleWarnMessage(hle->user_defined, "unknown OSTask: sum: %x PC:%x", sum, *hle->sp_pc);
-#ifdef ENABLE_TASK_DUMP
-    dump_unknown_task(hle, sum);
-#endif
+    return false;
 }
 
 #ifdef ENABLE_TASK_DUMP
