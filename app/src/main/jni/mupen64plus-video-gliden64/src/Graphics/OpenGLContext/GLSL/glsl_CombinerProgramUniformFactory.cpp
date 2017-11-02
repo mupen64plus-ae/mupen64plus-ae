@@ -444,20 +444,36 @@ private:
 	iUniform uTexturePersp;
 };
 
-class UTextureFilterMode : public UniformGroup
+class UTextureFetchMode : public UniformGroup
 {
 public:
-	UTextureFilterMode(GLuint _program) {
+	UTextureFetchMode(GLuint _program) {
 		LocateUniform(uTextureFilterMode);
+		LocateUniform(uTextureFormat);
+		LocateUniform(uBiLerp);
+		LocateUniform(uTextureConvert);
+		LocateUniform(uConvertParams);
 	}
 
 	void update(bool _force) override
 	{
-		uTextureFilterMode.set(gDP.otherMode.textureFilter | (gSP.objRendermode&G_OBJRM_BILERP), _force);
+		int textureFilter = gDP.otherMode.textureFilter;
+		if ((gSP.objRendermode&G_OBJRM_BILERP) != 0)
+			textureFilter |= 2;
+		uTextureFilterMode.set(textureFilter, _force);
+		uBiLerp.set(gDP.otherMode.bi_lerp0, gDP.otherMode.bi_lerp1, _force);
+		uTextureFormat.set(gSP.textureTile[0]->format, gSP.textureTile[1]->format, _force);
+		uTextureConvert.set(0, gDP.otherMode.convert_one, _force);
+		if (gDP.otherMode.bi_lerp0 == 0 || gDP.otherMode.bi_lerp1 == 0)
+			uConvertParams.set(gDP.convert.k0, gDP.convert.k1, gDP.convert.k2, gDP.convert.k3, _force);
 	}
 
 private:
 	iUniform uTextureFilterMode;
+	iv2Uniform uTextureFormat;
+	iv2Uniform uBiLerp;
+	iv2Uniform uTextureConvert;
+	i4Uniform uConvertParams;
 };
 
 class UAlphaTestInfo : public UniformGroup
@@ -815,6 +831,8 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 			_uniforms.emplace_back(new UMipmap1(_program));
 			if (config.generalEmulation.enableLOD != 0)
 				_uniforms.emplace_back(new UMipmap2(_program));
+		} else {
+			_uniforms.emplace_back(new UTextureFetchMode(_program));
 		}
 
 		_uniforms.emplace_back(new UTexturePersp(_program));
@@ -842,9 +860,6 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 	_uniforms.emplace_back(new UDitherMode(_program, _inputs.usesNoise()));
 
 	_uniforms.emplace_back(new UScreenScale(_program));
-
-	if (config.texture.bilinearMode == BILINEAR_3POINT)
-		_uniforms.emplace_back(new UTextureFilterMode(_program));
 
 	_uniforms.emplace_back(new UAlphaTestInfo(_program));
 

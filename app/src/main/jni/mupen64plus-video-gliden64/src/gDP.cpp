@@ -39,7 +39,7 @@ void gDPSetOtherMode( u32 mode0, u32 mode1 )
 		AlphaDitherText[gDP.otherMode.alphaDither],
 		ColorDitherText[gDP.otherMode.colorDither],
 		CombineKeyText[gDP.otherMode.combineKey],
-		TextureConvertText[gDP.otherMode.textureConvert],
+		TextureConvertText[gDP.otherMode.convert_one | (gDP.otherMode.bi_lerp1 << 1) | (gDP.otherMode.bi_lerp0 << 2)],
 		TextureFilterText[gDP.otherMode.textureFilter],
 		TextureLUTText[gDP.otherMode.textureLUT],
 		TextureLODText[gDP.otherMode.textureLOD],
@@ -636,15 +636,16 @@ void gDPLoadTLUT( u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt )
 		count = 16;
 
 	int i = 0;
+	u32 destIdx = 0;
 	while (i < count) {
 		for (u16 j = 0; (j < 16) && (i < count); ++j, ++i) {
-			*dest = swapword(*(u16*)(RDRAM + (address ^ 2)));
+			dest[destIdx&0x3FF] = swapword(*(u16*)(RDRAM + (address ^ 2)));
 			address += 2;
-			dest += 4;
+			destIdx += 4;
 		}
 
 		gDP.paletteCRC16[pal] = CRC_CalculatePalette(0xFFFFFFFF, &TMEM[256 + (pal << 4)], 16);
-		++pal;
+		pal = (pal + 1) & 0x0F;
 	}
 
 	gDP.paletteCRC256 = CRC_Calculate(0xFFFFFFFF, gDP.paletteCRC16, 64);
@@ -765,15 +766,14 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 void gDPSetConvert( s32 k0, s32 k1, s32 k2, s32 k3, s32 k4, s32 k5 )
 {
 // angrylion's macro
-#define SRA(exp, sa)    ((signed)(exp) >> (sa))
-#define SIGN(i, b)      SRA((i) << (32 - (b)), (32 - (b)))
+#define SIGN(x, numb)	(((x) & ((1 << numb) - 1)) | -((x) & (1 << (numb - 1))))
 
-	gDP.convert.k0 = SIGN(k0, 9);
-	gDP.convert.k1 = SIGN(k1, 9);
-	gDP.convert.k2 = SIGN(k2, 9);
-	gDP.convert.k3 = SIGN(k3, 9);
-	gDP.convert.k4 = SIGN(k4, 9);
-	gDP.convert.k5 = SIGN(k5, 9);
+	gDP.convert.k0 = (SIGN(k0, 9) << 1) + 1;
+	gDP.convert.k1 = (SIGN(k1, 9) << 1) + 1;
+	gDP.convert.k2 = (SIGN(k2, 9) << 1) + 1;
+	gDP.convert.k3 = (SIGN(k3, 9) << 1) + 1;
+	gDP.convert.k4 = k4;
+	gDP.convert.k5 = k5;
 
 	DebugMsg( DEBUG_NORMAL, "gDPSetConvert( %i, %i, %i, %i, %i, %i );\n", k0, k1, k2, k3, k4, k5);
 }
@@ -874,8 +874,6 @@ void gDPFullSync()
 		if (config.frameBufferEmulation.copyDepthToRDRAM != Config::cdDisable && !FBInfo::fbInfo.isSupported())
 			FrameBuffer_CopyDepthBuffer(gDP.colorImage.address);
 	}
-
-	perf.increaseFramesCount();
 
 	*REG.MI_INTR |= MI_INTR_DP;
 
