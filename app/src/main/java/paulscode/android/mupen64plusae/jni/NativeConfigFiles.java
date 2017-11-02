@@ -174,6 +174,11 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "rsp-cxd4", "AudioListToAudioPlugin", "0" );
         mupen64plus_cfg.put( "rsp-cxd4", "WaitForCPUHost", "0" );
         mupen64plus_cfg.put( "rsp-cxd4", "SupportCPUSemaphoreLock", "0" );
+            
+        mupen64plus_cfg.put( "Rsp-HLE", "Version", "1" );
+        mupen64plus_cfg.put( "Rsp-HLE", "RspFallback", appData.libsDir + "/libmupen64plus-rsp-cxd4.so" );
+        mupen64plus_cfg.put( "Rsp-HLE", "DisplayListToGraphicsPlugin", "1" );
+        mupen64plus_cfg.put( "Rsp-HLE", "AudioListToAudioPlugin", "0" );
 
         mupen64plus_cfg.put( "Video-General", "Fullscreen", "False" );                                                      // Use fullscreen mode if True, or windowed mode if False
         mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( game.videoRenderWidth ) );                     // Width of output window or fullscreen width
