@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -21,13 +21,12 @@
 package paulscode.android.mupen64plusae.jni;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Call-ins made from the native ae-imports library to Java. Any function names changed here should
  * also be changed in the corresponding C code, and vice versa.
- * 
- * @see jni/ae-bridge/ae_imports.cpp
+ *
+ * see jni/ae-bridge/ae_imports.cpp
  */
 public class NativeImports
 {
@@ -39,7 +38,7 @@ public class NativeImports
          * @param paramChanged The parameter ID.
          * @param newValue The new value of the parameter.
          */
-        public void onStateCallback( int paramChanged, int newValue );
+        void onStateCallback( int paramChanged, int newValue );
     }
 
     public interface OnFpsChangedListener
@@ -49,15 +48,15 @@ public class NativeImports
          *
          * @param newValue The new FPS value.
          */
-        public void onFpsChanged( int newValue );
+        void onFpsChanged( int newValue );
     }
 
     // Core state callbacks - used by NativeImports
-    private static final ArrayList<OnStateCallbackListener> sStateCallbackListeners = new ArrayList<OnStateCallbackListener>();
+    private static final ArrayList<OnStateCallbackListener> sStateCallbackListeners = new ArrayList<>();
     private static final Object sStateCallbackLock = new Object();
 
     //Frame rate info - used by ae-vidext
-    private static ArrayList<OnFpsChangedListener> sFpsListeners = new ArrayList<>();
+    private static final ArrayList<OnFpsChangedListener> sFpsListeners = new ArrayList<>();
 
     static void addOnStateCallbackListener( OnStateCallbackListener listener )
     {
@@ -82,7 +81,7 @@ public class NativeImports
      * 
      * @param paramChanged The changed parameter's ID.
      * @param newValue The new value of the changed parameter.
-     * @see jni/ae-bridge/ae_imports.cpp
+     * see mupen64plus-ae/app/src/main/jni/ae-bridge/ae_imports.cpp
      */
     static void stateCallback( int paramChanged, int newValue )
     {
@@ -108,7 +107,7 @@ public class NativeImports
     {
         synchronized (sFpsListeners)
         {
-            if(!sFpsListeners.contains(fpsListener))
+            if(fpsListener != null && !sFpsListeners.contains(fpsListener))
             {
                 sFpsListeners.add(fpsListener);
                 NativeExports.FPSEnabled(fpsRecalcPeriod);
