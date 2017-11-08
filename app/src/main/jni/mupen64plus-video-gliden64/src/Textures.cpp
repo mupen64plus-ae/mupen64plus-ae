@@ -475,7 +475,6 @@ void TextureCache::_initDummyTexture(CachedTexture * _pDummy)
 
 void TextureCache::init()
 {
-	m_maxBytes = config.texture.maxBytes;
 	m_curUnpackAlignment = 0;
 
 	u32 dummyTexture[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -542,27 +541,13 @@ void TextureCache::destroy()
 
 void TextureCache::_checkCacheSize()
 {
-	const size_t maxCacheSize = 8000;
-	if (m_textures.size() >= maxCacheSize) {
+	if (m_textures.size() >= m_maxCacheSize) {
 		CachedTexture& clsTex = m_textures.back();
 		m_cachedBytes -= clsTex.textureBytes;
 		gfxContext.deleteTexture(clsTex.name);
 		m_lruTextureLocations.erase(clsTex.crc);
 		m_textures.pop_back();
 	}
-
-	if (m_cachedBytes <= m_maxBytes)
-		return;
-
-	Textures::iterator iter = m_textures.end();
-	do {
-		--iter;
-		CachedTexture& tex = *iter;
-		m_cachedBytes -= tex.textureBytes;
-		gfxContext.deleteTexture(tex.name);
-		m_lruTextureLocations.erase(tex.crc);
-	} while (m_cachedBytes > m_maxBytes && iter != m_textures.cbegin());
-	m_textures.erase(iter, m_textures.end());
 }
 
 CachedTexture * TextureCache::_addTexture(u32 _crc32)
@@ -707,7 +692,7 @@ void _calcTileSizes(u32 _t, TileSizes & _sizes, gDPTile * _pLoadTile)
 }
 
 inline
-void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture, int _scale)
+void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture, f32 _scale)
 {
 	_pTexture->textureBytes = _info.width * _info.height;
 
@@ -723,8 +708,8 @@ void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture, in
 
 	_pTexture->realWidth = _info.width;
 	_pTexture->realHeight = _info.height;
-	_pTexture->scaleS = 1.0f / (f32)(_info.width / _scale);
-	_pTexture->scaleT = 1.0f / (f32)(_info.height / _scale);
+	_pTexture->scaleS = _scale / f32(_info.width);
+	_pTexture->scaleT = _scale / f32(_info.height);
 	_pTexture->bHDTexture = true;
 }
 
@@ -772,7 +757,7 @@ bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture)
 		gfxContext.init2DTexture(params);
 
 		assert(!gfxContext.isError());
-		_updateCachedTexture(ghqTexInfo, _pTexture, ghqTexInfo.width / tile_width);
+		_updateCachedTexture(ghqTexInfo, _pTexture, f32(ghqTexInfo.width) / f32(tile_width));
 		return true;
 	}
 	return false;
@@ -868,7 +853,7 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 			params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 			params.data = ghqTexInfo.data;
 			gfxContext.init2DTexture(params);
-			_updateCachedTexture(ghqTexInfo, pTexture, ghqTexInfo.width / pTexture->realWidth);
+			_updateCachedTexture(ghqTexInfo, pTexture, f32(ghqTexInfo.width) / f32(pTexture->realWidth));
 			bLoaded = true;
 		}
 	}
@@ -901,21 +886,36 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 	gDPLoadTileInfo & info = gDP.loadInfo[_pTexture->tMem];
 
 	int bpl;
+	int width, height;
 	u8 * addr = (u8*)(RDRAM + info.texAddress);
-	int tile_width = _pTexture->width;
-	int tile_height = _pTexture->height;
 	if (info.loadType == LOADTYPE_TILE) {
 		bpl = info.texWidth << info.size >> 1;
 		addr += (info.ult * bpl) + (((info.uls << info.size) + 1) >> 1);
 
-		tile_width = min(info.width, info.texWidth);
+		width = min(info.width, info.texWidth);
 		if (info.size > _pTexture->size)
-			tile_width <<= info.size - _pTexture->size;
+			width <<= info.size - _pTexture->size;
 
-		tile_height = info.height;
-		if ((config.generalEmulation.hacks & hack_MK64) != 0 && (tile_height % 2) != 0)
-			tile_height--;
+		height = info.height;
+		if ((config.generalEmulation.hacks & hack_MK64) != 0 && (height % 2) != 0)
+			height--;
 	} else {
+		int tile_width = gDP.tiles[_tile].lrs - gDP.tiles[_tile].uls + 1;
+		int tile_height = gDP.tiles[_tile].lrt - gDP.tiles[_tile].ult + 1;
+
+		int mask_width = (gDP.tiles[_tile].masks == 0) ? (tile_width) : (1 << gDP.tiles[_tile].masks);
+		int mask_height = (gDP.tiles[_tile].maskt == 0) ? (tile_height) : (1 << gDP.tiles[_tile].maskt);
+
+		if ((gDP.tiles[_tile].clamps && tile_width <= 256))
+			width = min(mask_width, tile_width);
+		else
+			width = mask_width;
+
+		if ((gDP.tiles[_tile].clampt && tile_height <= 256) || (mask_height > 256))
+			height = min(mask_height, tile_height);
+		else
+			height = mask_height;
+
 		if (gSP.textureTile[_tile]->size == G_IM_SIZ_32b)
 			bpl = gSP.textureTile[_tile]->line << 4;
 		else if (info.dxt == 0)
@@ -941,7 +941,7 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 		//			palette = (rdp.pal_8 + (gSP.textureTile[_t]->palette << 4));
 	}
 
-	_ricecrc = txfilter_checksum(addr, tile_width, tile_height, (unsigned short)(_pTexture->format << 8 | _pTexture->size), bpl, paladdr);
+	_ricecrc = txfilter_checksum(addr, width, height, (unsigned short)(_pTexture->format << 8 | _pTexture->size), bpl, paladdr);
 	GHQTexInfo ghqTexInfo;
 	// TODO: fix problem with zero texture dimensions on GLideNHQ side.
 	if (txfilter_hirestex(_pTexture->crc, _ricecrc, palette, &ghqTexInfo) &&
@@ -957,9 +957,10 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 		params.format = ColorFormatParam(ghqTexInfo.texture_format);
 		params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 		params.data = ghqTexInfo.data;
+		params.textureUnitIndex = textureIndices::Tex[_tile];
 		gfxContext.init2DTexture(params);
 		assert(!gfxContext.isError());
-		_updateCachedTexture(ghqTexInfo, _pTexture, ghqTexInfo.width / tile_width);
+		_updateCachedTexture(ghqTexInfo, _pTexture, f32(ghqTexInfo.width) / f32(width));
 		return true;
 	}
 
@@ -1192,7 +1193,7 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 				params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 				params.data = ghqTexInfo.data;
 				gfxContext.init2DTexture(params);
-				_updateCachedTexture(ghqTexInfo, _pTexture, ghqTexInfo.width / tmptex.realWidth);
+				_updateCachedTexture(ghqTexInfo, _pTexture, f32(ghqTexInfo.width) / f32(tmptex.realWidth));
 				bLoaded = true;
 			}
 		}
