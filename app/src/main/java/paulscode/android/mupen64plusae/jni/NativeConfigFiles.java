@@ -268,9 +268,6 @@ public class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorFromRDRAM", boolToTF( game.glideN64Prefs.enableCopyColorFromRDRAM ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableN64DepthCompare", boolToTF( game.glideN64Prefs.enableN64DepthCompare ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "UseNativeResolutionFactor", String.valueOf( game.glideN64Prefs.useNativeResolutionFactor ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "DisableFBInfo", boolToTF( game.glideN64Prefs.disableFBInfo ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "FBInfoReadColorChunk", boolToTF( game.glideN64Prefs.fbInfoReadColorChunk ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "FBInfoReadDepthChunk", boolToTF( game.glideN64Prefs.fbInfoReadDepthChunk ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txFilterMode", String.valueOf( game.glideN64Prefs.txFilterMode ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txEnhancementMode", String.valueOf( game.glideN64Prefs.txEnhancementMode ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txDeposterize", boolToTF( game.glideN64Prefs.txDeposterize ) );

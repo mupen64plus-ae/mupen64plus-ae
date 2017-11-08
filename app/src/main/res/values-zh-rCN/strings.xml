@@ -476,7 +476,6 @@
     <string name="gliden64_cropmode_auto">自动</string>
     <string name="gliden64_cropmode_disabled">禁用</string>
     <string name="gliden64_cropmode_title">裁剪模式</string>
-    <string name="gliden64_disable_fbinfo">禁用缓冲区读/写 FBInfo</string>
     <string name="gliden64_enable_color_buffer_from_RDRAM_title">启用颜色缓冲区复制从 RDRAM</string>
     <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">启用复制辅助缓冲区到 RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">硬件渲染器</string>
@@ -504,8 +503,6 @@
     <string name="gliden64_multisampling_entry_sixteen">16</string>
     <string name="gliden64_multisampling_entry_two">2</string>
     <string name="gliden64_multisampling_title">多重采样水平</string>
-    <string name="gliden64_read_color_buffer_by_4kb_chunks">在 4KB 块读取颜色缓冲区</string>
-    <string name="gliden64_read_depth_buffer_by_4kb_chunks">在 4KB 块读取深度缓冲区</string>
     <string name="gliden64_swap_frame_buffers_entry_on_buffer_update">在缓冲区更新</string>
     <string name="gliden64_swap_frame_buffers_entry_on_vi_origin_change">在 VI 原点更改</string>
     <string name="gliden64_swap_frame_buffers_entry_on_vi_update">在 VI 更新调用</string>

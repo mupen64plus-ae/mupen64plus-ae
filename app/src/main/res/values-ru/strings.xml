@@ -412,9 +412,6 @@
     <string name="gliden64_use_native_resolution_factor_2x">2x</string>
     <string name="gliden64_use_native_resolution_factor_3x">3x</string>
     <string name="gliden64_use_native_resolution_factor_4x">4x</string>
-    <string name="gliden64_disable_fbinfo">Отключить чтение/запись буфера FBInfo</string>
-    <string name="gliden64_read_color_buffer_by_4kb_chunks">Считывать цветовой буфер по 4KB </string>
-    <string name="gliden64_read_depth_buffer_by_4kb_chunks"> Считывать глубинный буфер по 4KB </string>
     <string name="gliden64_category_texture_filtering_title">Текстурная фильтрация</string>
     <string name="gliden64_tx_filter_mode_title">Режим текстурной фильтрации</string>
     <string name="gliden64_tx_filter_mode_entry_none">Нет</string>

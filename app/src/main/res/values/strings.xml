@@ -418,9 +418,6 @@
     <string name="gliden64_use_native_resolution_factor_2x">2x</string>
     <string name="gliden64_use_native_resolution_factor_3x">3x</string>
     <string name="gliden64_use_native_resolution_factor_4x">4x</string>
-    <string name="gliden64_disable_fbinfo">Disable buffers read/write with FBInfo</string>
-    <string name="gliden64_read_color_buffer_by_4kb_chunks">Read color buffer in 4KB chunks</string>
-    <string name="gliden64_read_depth_buffer_by_4kb_chunks">Read depth buffer in 4KB chunks</string>
     <string name="gliden64_category_texture_filtering_title">Texture Filtering</string>
     <string name="gliden64_tx_filter_mode_title">Texture filter mode</string>
     <string name="gliden64_tx_filter_mode_entry_none">None</string>

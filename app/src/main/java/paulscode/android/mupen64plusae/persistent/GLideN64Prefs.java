@@ -89,15 +89,6 @@ public class GLideN64Prefs {
     /** Frame buffer size is the factor of N64 native resolution. */
     public final int useNativeResolutionFactor;
 
-    /** Disable buffers read/write with FBInfo. Use for games, which do not work with FBInfo.. */
-    public final boolean disableFBInfo;
-
-    /** Read color buffer by 4kb chunks (strict follow to FBRead specification). */
-    public final boolean fbInfoReadColorChunk;
-
-    /** Read depth buffer by 4kb chunks (strict follow to FBRead specification). */
-    public final boolean fbInfoReadDepthChunk;
-
     /** Texture filter (
      * 0=none
      * 1=Smooth filtering 1
@@ -194,9 +185,6 @@ public class GLideN64Prefs {
                     0 : getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);
         }
 
-        disableFBInfo = emulationProfile.get( "DisableFBInfo", "True" ).equals( "True" );
-        fbInfoReadColorChunk = emulationProfile.get( "FBInfoReadColorChunk", "False" ).equals( "True" );
-        fbInfoReadDepthChunk = emulationProfile.get( "FBInfoReadDepthChunk", "True" ).equals( "True" );
         txFilterMode = getSafeInt( emulationProfile, "txFilterMode", 0);
         txEnhancementMode = enableNativeResTexrects ? 0 :getSafeInt( emulationProfile, "txEnhancementMode", 0);
         txDeposterize = emulationProfile.get( "txDeposterize", "False" ).equals( "True" );

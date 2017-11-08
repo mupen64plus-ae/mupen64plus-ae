@@ -528,18 +528,6 @@
             android:key="UseNativeResolutionFactor"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_use_native_resolution_factor_title" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="True"
-            android:key="DisableFBInfo"
-            android:title="@string/gliden64_disable_fbinfo" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="False"
-            android:key="FBInfoReadColorChunk"
-            android:title="@string/gliden64_read_color_buffer_by_4kb_chunks" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="True"
-            android:key="FBInfoReadDepthChunk"
-            android:title="@string/gliden64_read_depth_buffer_by_4kb_chunks" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryGliden64TextureFiltering"
