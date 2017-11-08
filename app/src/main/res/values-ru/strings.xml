@@ -373,7 +373,6 @@
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-point</string>
     <string name="gliden64_bilinear_mode_entry_standard">Стандартный</string>
     <string name="gliden64_max_anisotropic_filtering_title">Максимальный уровень анизотропической фильтрации</string>
-    <string name="gliden64_tx_cache_title">Размер текстурного кэша в мегабайтах</string>
     <string name="gliden64_category_general_title">Главные</string>
     <string name="gliden64_widescreen_hack_title">Хак широкого экрана</string>
     <string name="gliden64_enable_noise_title">Включить эмуляцию шума</string>

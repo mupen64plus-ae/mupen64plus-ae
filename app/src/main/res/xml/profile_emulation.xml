@@ -426,15 +426,6 @@
             mupen64:stepSize="1"
             mupen64:saveType="string"
             mupen64:units="x" />
-        <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="128"
-            android:key="CacheSize"
-            android:title="@string/gliden64_tx_cache_title"
-            mupen64:maximumValue="1024"
-            mupen64:minimumValue="50"
-            mupen64:stepSize="1"
-            mupen64:saveType="string"
-            mupen64:units="MB" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
         android:key="categoryGliden64General"

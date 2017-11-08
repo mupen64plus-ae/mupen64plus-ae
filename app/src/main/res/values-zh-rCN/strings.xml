@@ -512,7 +512,6 @@
     <string name="gliden64_swap_frame_buffers_title">交换帧缓冲区</string>
     <string name="gliden64_tx_cache_compression_title">Zip 纹理缓存</string>
     <string name="gliden64_tx_cache_size_title">过滤纹理缓存的大小（以 MB 为单位）</string>
-    <string name="gliden64_tx_cache_title">纹理缓存的大小（以 MB 为单位）</string>
     <string name="gliden64_tx_deposterize_title">Deposterize 纹理增强前</string>
     <string name="gliden64_tx_enhancement_entry_2xBRZ">2xBRZ</string>
     <string name="gliden64_tx_enhancement_entry_3xBRZ">3xBRZ</string>

@@ -8,6 +8,8 @@ import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
 
 public class GLideN64Prefs {
 
+    public static final int VERSION = 19;
+
     /** Crop resulted image (
      * 0=disable,
      * 1=auto crop,
@@ -26,9 +28,6 @@ public class GLideN64Prefs {
 
     /** Max level of Anisotropic Filtering, 0 for off */
     public final int maxAnisotropy;
-
-    /** Size of texture cache in megabytes. Good value is VRAM*3/4 */
-    public final int cacheSize;
 
     /** Enable color noise emulation. */
     public final boolean enableNoise;
@@ -159,7 +158,7 @@ public class GLideN64Prefs {
     /** Gamma correction value. */
     public final float gammaCorrectionLevel;
 
-    public GLideN64Prefs(Context context, final Profile emulationProfile)
+    GLideN64Prefs(Context context, final Profile emulationProfile)
     {
         cropMode = getSafeInt( emulationProfile, "CropMode", 1);
         String glesVersion = AppData.getOpenGlEsVersion(context);
@@ -167,7 +166,6 @@ public class GLideN64Prefs {
                 0 : getSafeInt( emulationProfile, "MultiSampling", 0);
         bilinearMode = getSafeInt( emulationProfile, "bilinearMode", 0);
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
-        cacheSize = getSafeInt( emulationProfile, "CacheSize", 128);
         enableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         enableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );

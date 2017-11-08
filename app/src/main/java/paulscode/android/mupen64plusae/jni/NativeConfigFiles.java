@@ -33,6 +33,7 @@ import java.util.zip.GZIPInputStream;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.GLideN64Prefs;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 
@@ -240,7 +241,7 @@ public class NativeConfigFiles
         // gln64 config file
         final ConfigFile glideN64_conf = new ConfigFile( appData.glideN64_conf );
 
-        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", "18" );
+        mupen64plus_cfg.put( "Video-GLideN64", "configVersion", String.valueOf(GLideN64Prefs.VERSION) );
 
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "AspectRatio", aspectRatio);
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForcePolygonOffset", boolToTF( global.isPolygonOffsetHackEnabled ) );
@@ -250,7 +251,6 @@ public class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MultiSampling", String.valueOf( game.glideN64Prefs.multiSampling ));
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bilinearMode", String.valueOf( game.glideN64Prefs.bilinearMode ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MaxAnisotropy", String.valueOf( game.glideN64Prefs.maxAnisotropy ) );
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "CacheSize", String.valueOf( game.glideN64Prefs.cacheSize ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableNoise", boolToTF( game.glideN64Prefs.enableNoise ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableLOD", boolToTF( game.glideN64Prefs.enableLOD ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableHWLighting", boolToTF( game.glideN64Prefs.enableHWLighting ) );

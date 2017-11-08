@@ -336,7 +336,6 @@
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-puntos</string>
     <string name="gliden64_bilinear_mode_entry_standard">Estandar</string>
     <string name="gliden64_max_anisotropic_filtering_title">Max level of anisotropic filtering</string>
-    <string name="gliden64_tx_cache_title">Tamaño de textura en megabytes</string>
     <string name="gliden64_category_general_title">General</string>
     <string name="gliden64_widescreen_hack_title">Hack de pantalla ancha</string>
     <string name="gliden64_enable_noise_title">Habilitar emulación de ruido</string>
