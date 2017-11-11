@@ -306,6 +306,12 @@ public:
 
 	void update(bool _force) override
 	{
+		if ((gDP.otherMode.l & 0xFFFF0000) == 0x01500000) {
+			uForceBlendCycle1.set(0, _force);
+			uForceBlendCycle2.set(0, _force);
+			return;
+		}
+
 		uBlendMux1.set(gDP.otherMode.c1_m1a,
 			gDP.otherMode.c1_m1b,
 			gDP.otherMode.c1_m2a,
@@ -548,6 +554,7 @@ public:
 		LocateUniform(uEnableDepthUpdate);
 		LocateUniform(uDepthMode);
 		LocateUniform(uDepthSource);
+		LocateUniform(uPrimDepth);
 		LocateUniform(uDeltaZ);
 	}
 
@@ -569,8 +576,10 @@ public:
 		}
 		uDepthMode.set(gDP.otherMode.depthMode, _force);
 		uDepthSource.set(gDP.otherMode.depthSource, _force);
-		if (gDP.otherMode.depthSource == G_ZS_PRIM)
+		if (gDP.otherMode.depthSource == G_ZS_PRIM) {
 			uDeltaZ.set(gDP.primDepth.deltaZ, _force);
+			uPrimDepth.set((gDP.primDepth.z + 1.0f) * 0.5f, _force);
+		}
 	}
 
 private:
@@ -579,7 +588,28 @@ private:
 	iUniform uEnableDepthUpdate;
 	iUniform uDepthMode;
 	iUniform uDepthSource;
+	fUniform uPrimDepth;
 	fUniform uDeltaZ;
+};
+
+class UDepthSource : public UniformGroup
+{
+public:
+	UDepthSource(GLuint _program) {
+		LocateUniform(uDepthSource);
+		LocateUniform(uPrimDepth);
+	}
+
+	void update(bool _force) override
+	{
+		uDepthSource.set(gDP.otherMode.depthSource, _force);
+		if (gDP.otherMode.depthSource == G_ZS_PRIM)
+			uPrimDepth.set((gDP.primDepth.z + 1.0f) * 0.5f, _force);
+	}
+
+private:
+	iUniform uDepthSource;
+	fUniform uPrimDepth;
 };
 
 class URenderTarget : public UniformGroup
@@ -793,7 +823,7 @@ public:
 	void update(bool _force) override
 	{
 		for (s32 i = 0; i <= gSP.numLights; ++i) {
-			uLightDirection[i].set(gSP.lights.i_xyz[i], _force);
+			uLightDirection[i].set(gSP.lights.xyz[i], _force);
 			uLightColor[i].set(gSP.lights.rgb[i], _force);
 		}
 	}
@@ -865,6 +895,8 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 
 	if (config.frameBufferEmulation.N64DepthCompare != 0)
 		_uniforms.emplace_back(new UDepthInfo(_program));
+	else
+		_uniforms.emplace_back(new UDepthSource(_program));
 
 	if (config.generalEmulation.enableFragmentDepthWrite != 0 ||
 		config.frameBufferEmulation.N64DepthCompare != 0)
