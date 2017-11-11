@@ -120,6 +120,9 @@ public class GlobalPrefs
     /** Directory where texture cache htc files are stored */
     public final String textureCacheDir;
 
+    /** Directory where shader cache files are stored */
+    public final String shaderCacheDir;
+
     /** The directory containing all custom touchscreen skin folders. */
     public final String touchscreenCustomSkinsDir;
 
@@ -420,6 +423,7 @@ public class GlobalPrefs
         coreUserCacheDir = coreConfigDir + "/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what rice assumes natively
         textureCacheDir = coreUserCacheDir + "/mupen64plus/cache";
+        shaderCacheDir = coreUserCacheDir + "/mupen64plus/shaders";
         romInfoCache_cfg = galleryCacheDir + "/romInfoCache.cfg";
         controllerProfiles_cfg = profilesDir + "/controller.cfg";
         touchscreenProfiles_cfg = profilesDir + "/touchscreen.cfg";

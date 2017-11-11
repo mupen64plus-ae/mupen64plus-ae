@@ -43,6 +43,7 @@ import android.widget.TextView;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.File;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.cheat.CheatUtils;
@@ -314,6 +315,14 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
     private void checkExtractAssets()
     {
+        if (mAppData.getAppVersion() != mAppData.appVersionCode)
+        {
+            mAppData.putAppVersion(mAppData.appVersionCode);
+
+            FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
+        }
+
+
         if( mAppData.getAssetVersion() != ASSET_VERSION )
         {
             // Extract the assets in a separate thread and launch the menu activity

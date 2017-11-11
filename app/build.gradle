@@ -22,7 +22,7 @@ android {
         applicationId = "org.mupen64plusae.v3.alpha"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode = 83
+        versionCode = 85
         versionName = "3.0.10 (beta)"
     }
 

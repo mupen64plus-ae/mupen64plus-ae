@@ -185,6 +185,7 @@ public class AppData
     
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
+    private static final String KEY_APP_VERSION = "appVersion";
     // ... add more as needed
     
     // Shared preferences default values
@@ -321,6 +322,26 @@ public class AppData
     public void putAssetVersion( int value )
     {
         putInt( KEY_ASSET_VERSION, value );
+    }
+
+    /**
+     * Gets the asset version.
+     *
+     * @return The asset version.
+     */
+    public int getAppVersion()
+    {
+        return getInt( KEY_APP_VERSION, 0 );
+    }
+
+    /**
+     * Persists the asset version.
+     *
+     * @param value The asset version.
+     */
+    public void putAppVersion( int value )
+    {
+        putInt( KEY_APP_VERSION, value );
     }
 
     private int getInt( String key, int defaultValue )

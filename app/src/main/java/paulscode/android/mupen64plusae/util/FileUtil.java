@@ -156,7 +156,23 @@ public final class FileUtil
 
         folder.delete();
     }
-    
+
+    /**
+     * Deletes all files with the provided extension in a folder
+     *
+     * @param folder The folder to look for the provided extension.
+     * @param extension The extension of files to be deleted
+     */
+    public static void deleteExtensionFolder(File folder, String extension) {
+        if (folder.exists() && folder.isDirectory() && folder.listFiles() != null) {
+            for (File child : folder.listFiles()) {
+                if (child.getName().endsWith(extension)) {
+                    child.delete();
+                }
+            }
+        }
+    }
+
     /**
      * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
      * {@link File}
