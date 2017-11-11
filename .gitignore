@@ -35,6 +35,8 @@ build/
 *.pydevproject
 local.properties
 gradle.properties
+app/.directory
+app/release
 
 # Intellij project files
 .idea/
