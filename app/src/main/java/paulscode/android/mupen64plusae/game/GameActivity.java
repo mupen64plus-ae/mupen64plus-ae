@@ -512,7 +512,16 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mCoreFragment.clearOnFpsChangedListener();
         }
 
-        mSurfaceView.getHolder().removeCallback( this );
+        // Some devices are crashing here at times as reported in google play store
+        // It's hard to tell what exactly is NULL when that happens.
+        if(mSurfaceView != null)
+        {
+            SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
+
+            if (surfaceHolder != null) {
+                surfaceHolder.removeCallback( this );
+            }
+        }
 
         mHandler.removeCallbacks(mLastTouchChecker);
     }
