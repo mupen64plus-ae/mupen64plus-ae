@@ -145,8 +145,9 @@ public class ActivityHelper
         // See http://android-developers.blogspot.com/2012/02/share-with-intents.html
         Intent intent = new Intent( android.content.Intent.ACTION_SEND );
         intent.setType( "text/plain" );
-        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_DOCUMENT );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 
         //Put a limit on this to avoid android.os.TransactionTooLargeException exception
         int limit = 1024*1024-1000;
