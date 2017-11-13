@@ -170,17 +170,20 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
                 
                 //Make sure all views are focusable
                 childView.setFocusable(true);
-                
-                int firstItem = layoutManager.findFirstCompletelyVisibleItemPosition();
-                
-                //Get focus on the first visible item the first time it's displayed
-                RecyclerView.ViewHolder holder = recyclerView.findViewHolderForItemId(adapter.getItemId(firstItem));
-                if(holder != null)
-                {                    
-                    if (!mHasFocusBeenSet)
+
+                if(adapter.getItemCount() > 0)
+                {
+                    int firstItem = layoutManager.findFirstCompletelyVisibleItemPosition();
+
+                    //Get focus on the first visible item the first time it's displayed
+                    RecyclerView.ViewHolder holder = recyclerView.findViewHolderForItemId(adapter.getItemId(firstItem));
+                    if(holder != null)
                     {
-                        mHasFocusBeenSet = true;
-                        holder.itemView.requestFocus();
+                        if (!mHasFocusBeenSet)
+                        {
+                            mHasFocusBeenSet = true;
+                            holder.itemView.requestFocus();
+                        }
                     }
                 }
             }
