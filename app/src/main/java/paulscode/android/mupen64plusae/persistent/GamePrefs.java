@@ -316,6 +316,10 @@ public class GamePrefs
                 globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
                 globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
 
+        if(emulationProfile == null) {
+            throw new RuntimeException("Emulation profile is NULL");
+        }
+        
         Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());
 
         // Touchscreen profile
