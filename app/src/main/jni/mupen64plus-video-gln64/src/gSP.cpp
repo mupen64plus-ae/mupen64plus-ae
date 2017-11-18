@@ -13,6 +13,8 @@
 #include "OpenGL.h"
 #include "CRC.h"
 #include <string.h>
+#include <algorithm>
+#include <cmath>
 #include "convert.h"
 #include "S2DEX.h"
 #include "VI.h"
@@ -180,7 +182,7 @@ void gSPTriangle(s32 v0, s32 v1, s32 v2)
 
     if (depthBuffer.current) depthBuffer.current->cleared = FALSE;
     gDP.colorImage.changed = TRUE;
-    gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
+    gDP.colorImage.height = (unsigned int)(std::fmax( gDP.colorImage.height, gDP.scissor.lry ));
 }
 
 void gSP1Triangle( const s32 v0, const s32 v1, const s32 v2)
@@ -1686,7 +1688,7 @@ void gSPObjSprite( u32 sp )
 
     if (depthBuffer.current) depthBuffer.current->cleared = FALSE;
     gDP.colorImage.changed = TRUE;
-    gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
+    gDP.colorImage.height = (unsigned int)(std::fmax( gDP.colorImage.height, gDP.scissor.lry ));
 }
 
 void gSPObjLoadTxSprite( u32 txsp )

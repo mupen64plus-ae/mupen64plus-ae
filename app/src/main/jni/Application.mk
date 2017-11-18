@@ -1,4 +1,4 @@
-APP_STL := gnustl_shared
+APP_STL := c++_shared
 APP_ABI := armeabi-v7a x86
 # TODO: mips
 

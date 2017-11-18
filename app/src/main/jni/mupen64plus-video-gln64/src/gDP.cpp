@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <algorithm>
+#include <cmath>
 
 #include "gles2N64.h"
 #include "N64.h"
@@ -818,7 +820,7 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 
     if (depthBuffer.current) depthBuffer.current->cleared = FALSE;
     gDP.colorImage.changed = TRUE;
-    gDP.colorImage.height = max( gDP.colorImage.height, (unsigned int)lry );
+    gDP.colorImage.height = std::max( gDP.colorImage.height, (unsigned int)lry );
 
 #ifdef DEBUG
     DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPFillRectangle( %i, %i, %i, %i );\n",
@@ -888,8 +890,8 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
     if (gDP.textureMode == TEXTUREMODE_NORMAL)
         gDP.textureMode = TEXTUREMODE_TEXRECT;
 
-    gDP.texRect.width = (unsigned int)(max( lrs, s ) + dsdx);
-    gDP.texRect.height = (unsigned int)(max( lrt, t ) + dtdy);
+    gDP.texRect.width = (unsigned int)(std::max( lrs, s ) + dsdx);
+    gDP.texRect.height = (unsigned int)(std::max( lrt, t ) + dtdy);
 
     float tmp;
     if (lrs < s)
@@ -910,7 +912,7 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
 
     if (depthBuffer.current) depthBuffer.current->cleared = FALSE;
     gDP.colorImage.changed = TRUE;
-    gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
+    gDP.colorImage.height = (unsigned int)(std::fmax( gDP.colorImage.height, gDP.scissor.lry ));
 
 #ifdef DEBUG
     DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangle( %f, %f, %f, %f, %i, %f, %f, %f, %f );\n",

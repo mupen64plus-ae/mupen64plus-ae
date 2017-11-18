@@ -6,13 +6,6 @@
 #include "gSP.h"
 #include "m64p_vidext.h"
 
-#ifndef min
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#endif
-#ifndef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#endif
-
 #define RS_NONE         0
 #define RS_TRIANGLE     1
 #define RS_RECT         2

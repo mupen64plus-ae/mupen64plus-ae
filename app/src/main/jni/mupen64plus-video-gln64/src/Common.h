@@ -11,14 +11,6 @@
 
 #define LOG_LEVEL LOG_WARNING
 
-# ifndef min
-#  define min(a,b) ((a) < (b) ? (a) : (b))
-# endif
-# ifndef max
-#  define max(a,b) ((a) > (b) ? (a) : (b))
-# endif
-
-
 #if LOG_LEVEL>0
 
 #include <android/log.h>
