@@ -718,6 +718,10 @@ EXPORT void CALL AiLenChanged(void)
     static double gameStartTime = 0;
     static int lastSpeedFactor = 100;
     static bool lastSpeedLimiterEnabledState = false;
+    static bool busyWait = false;
+    static int busyWaitEnableCount = 0;
+    static int busyWaitDisableCount = 0;
+    static const int busyWaitCheck = 30;
 
     if (critical_failure == 1)
         return;
@@ -779,20 +783,57 @@ EXPORT void CALL AiLenChanged(void)
             gameStartTime -= minSleepNeeded;
         }
 
+        //Enable busywait mode if we have X callbacks of negative sleep. Don't disable busywait
+        //until we have X positive callbacks
+        if(sleepNeeded <= 0.0) {
+            ++busyWaitEnableCount;
+        } else {
+            busyWaitEnableCount = 0;
+        }
+
+        if(busyWaitEnableCount == busyWaitCheck) {
+            busyWait = true;
+            busyWaitEnableCount = 0;
+            busyWaitDisableCount = 0;
+        }
+
+        if(busyWait) {
+            if(sleepNeeded > 0) {
+                ++busyWaitDisableCount;
+            }
+
+            if(busyWaitDisableCount == busyWaitCheck) {
+                busyWait = false;
+            }
+        }
+
        //Useful logging
        //DebugMessage(M64MSG_ERROR, "Real=%f, Game=%f, sleep=%f, start=%f, time=%f, speed=%d, sleep_before_factor=%f",
        //             totalRealTimeElapsed, totalElapsedGameTime, sleepNeeded, gameStartTime, timeDouble, speed_factor, sleepNeeded*speedFactor);
-
         if (sleepNeeded > 0.0 && sleepNeeded < (maxSleepNeeded / speedFactor)) {
-            //Assumes sleep time of less than 2 seconds
-            time_t sleepSec = static_cast<time_t>(sleepNeeded);
-            long sleepNanosec = (sleepNeeded - sleepSec) * 1e9;
+            if (busyWait) {
+                double endTime = timeDouble + sleepNeeded;
 
-            if (sleepSec > 0 || sleepNanosec != 0) {
-                timespec sleepTime;
-                sleepTime.tv_sec = sleepSec;
-                sleepTime.tv_nsec = sleepNanosec;
-                nanosleep(&sleepTime, NULL);
+                timespec time;
+                clock_gettime(CLOCK_MONOTONIC_RAW, &time);
+                double currTime = static_cast<double>(time.tv_sec) +
+                                  static_cast<double>(time.tv_nsec) / 1.0e9;
+                while (currTime < endTime) {
+                    clock_gettime(CLOCK_MONOTONIC_RAW, &time);
+                    currTime = static_cast<double>(time.tv_sec) +
+                               static_cast<double>(time.tv_nsec) / 1.0e9;
+                }
+            } else {
+                //Assumes sleep time of less than 2 seconds
+                time_t sleepSec = static_cast<time_t>(sleepNeeded);
+                long sleepNanosec = (sleepNeeded - sleepSec) * 1e9;
+
+                if (sleepSec > 0 || sleepNanosec != 0) {
+                    timespec sleepTime;
+                    sleepTime.tv_sec = sleepSec;
+                    sleepTime.tv_nsec = sleepNanosec;
+                    nanosleep(&sleepTime, NULL);
+                }
             }
         }
     }
