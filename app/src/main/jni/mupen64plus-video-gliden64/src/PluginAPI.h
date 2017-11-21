@@ -7,7 +7,7 @@
 #include "windows/GLideN64_windows.h"
 #include "ZilmarGFX_1_3.h"
 #include "FrameBufferInfoAPI.h"
-#define RSPTHREAD
+//#define RSPTHREAD
 #endif
 
 #ifdef RSPTHREAD
@@ -94,7 +94,7 @@ private:
 		: m_pRspThread(NULL), m_pCommand(nullptr)
 #endif
 	{}
-	PluginAPI(const PluginAPI &);
+	PluginAPI(const PluginAPI &) = delete;
 
 	void _initiateGFX(const GFX_INFO & _gfxInfo) const;
 

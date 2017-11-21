@@ -239,7 +239,7 @@ void gDPGetFillColor(f32 _fillColor[4])
 
 void gDPSetPrimColor( u32 m, u32 l, u32 r, u32 g, u32 b, u32 a )
 {
-	gDP.primColor.m = m * 0.0312500000;
+	gDP.primColor.m = m * 0.0312500000f;
 	gDP.primColor.l = l * 0.0039215689f;
 	gDP.primColor.r = r * 0.0039215689f;
 	gDP.primColor.g = g * 0.0039215689f;
@@ -350,7 +350,7 @@ bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
 			bRes = false;
 		}
 
-		if (pBuffer->m_isDepthBuffer && (pBuffer->isAuxiliary() || (config.generalEmulation.hacks & hack_noDepthFrameBuffers) != 0)) {
+		if ((config.generalEmulation.hacks & hack_noDepthFrameBuffers) != 0 && pBuffer->m_isDepthBuffer) {
 			fbList.removeBuffer(pBuffer->m_startAddress);
 			bRes = false;
 		}
@@ -458,7 +458,7 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 		bpl2 = (gDP.textureImage.width - gDP.loadTile->uls);
 	u32 height2 = height;
 	if (gDP.loadTile->lrt > gDP.scissor.lry)
-		height2 = gDP.scissor.lry - gDP.loadTile->ult;
+		height2 = (u32)gDP.scissor.lry - gDP.loadTile->ult;
 
 	if (CheckForFrameBufferTexture(address, bpl2*height2))
 		return;
@@ -678,8 +678,8 @@ void gDPSetScissor( u32 mode, f32 ulx, f32 uly, f32 lrx, f32 lry )
 		if (ulx > 0 && ulx < maxCropH &&
 			uly > 0 && uly < maxCropV &&
 			(VI.width - lrx) < maxCropH && (VI.height - lry) < maxCropV) {
-			config.video.cropWidth = ulx;
-			config.video.cropHeight = uly;
+			config.video.cropWidth = (u32)ulx;
+			config.video.cropHeight = (u32)uly;
 		}
 	}
 
@@ -758,9 +758,10 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 		}
 	}
 
-	frameBufferList().setBufferChanged(lry);
+	frameBufferList().setBufferChanged(f32(lry));
 
-	DebugMsg( DEBUG_NORMAL, "gDPFillRectangle( %i, %i, %i, %i );\n", ulx, uly, lrx, lry );
+	DebugMsg( DEBUG_NORMAL, "gDPFillRectangle #%i- #%i ( %i, %i, %i, %i );\n", gSP.tri_num, gSP.tri_num +1, ulx, uly, lrx, lry );
+	gSP.tri_num += 2;
 }
 
 void gDPSetConvert( s32 k0, s32 k1, s32 k2, s32 k3, s32 k4, s32 k5 )
@@ -798,7 +799,7 @@ void gDPSetKeyGB(u32 cG, u32 sG, u32 wG, u32 cB, u32 sB, u32 wB )
 			  cG, sG, wG, cB, sB, wB );
 }
 
-void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f32 t, f32 dsdx, f32 dtdy , bool flip)
+void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, s16 s, s16 t, f32 dsdx, f32 dtdy , bool flip)
 {
 	if (gDP.otherMode.cycleType == G_CYC_COPY) {
 		dsdx = 1.0f;
@@ -814,17 +815,8 @@ void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f3
 	gSP.textureTile[1] = &gDP.tiles[(tile + 1) & 7];
 
 	// HACK ALERT!
-	if ((int(s) == 512) && (gDP.colorImage.width + gSP.textureTile[0]->uls < 512))
+	if (s == 0x4000 && (gDP.colorImage.width + gSP.textureTile[0]->uls < 512))
 		s = 0.0f;
-
-	f32 lrs, lrt;
-	if (flip) {
-		lrs = s + (lry - uly - 1) * dsdx;
-		lrt = t + (lrx - ulx - 1) * dtdy;
-	} else {
-		lrs = s + (lrx - ulx - 1) * dsdx;
-		lrt = t + (lry - uly - 1) * dtdy;
-	}
 
 	gDP.rectColor = gDPInfo::Color();
 	if (gDP.otherMode.cycleType < G_CYC_COPY) {
@@ -834,7 +826,7 @@ void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f3
 	}
 
 	GraphicsDrawer & drawer = dwnd().getDrawer();
-	GraphicsDrawer::TexturedRectParams params(ulx, uly, lrx, lry, s, t, lrs, lrt, fabsf(dsdx), fabsf(dtdy),
+	GraphicsDrawer::TexturedRectParams params(ulx, uly, lrx, lry, dsdx, dtdy, s, t,
 		flip, false, true, frameBufferList().getCurrent());
 	if (config.generalEmulation.enableNativeResTexrects == 0 && config.generalEmulation.correctTexrectCoords != Config::tcDisable)
 		drawer.correctTexturedRectParams(params);
@@ -847,10 +839,11 @@ void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f3
 
 	if (flip)
 		DebugMsg( DEBUG_NORMAL, "gDPTextureRectangleFlip( %f, %f, %f, %f, %i, %f, %f, %f, %f);\n",
-				  ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
+				  ulx, uly, lrx, lry, tile, s/32.0f, t/32.0f, dsdx, dtdy );
 	else
 		DebugMsg( DEBUG_NORMAL, "gDPTextureRectangle( %f, %f, %f, %f, %i, %i, %f, %f, %f, %f );\n",
-				  ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
+				  ulx, uly, lrx, lry, tile, s/32.0f, t/32.0f, dsdx, dtdy);
+	gSP.tri_num += 2;
 }
 
 void gDPFullSync()
@@ -1040,8 +1033,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 	j = ym-yh;
 	if (j > 0) {
 		int dx = (xleft-xright)>>16;
-		if ((!flip && xleft < xright) ||
-				(flip/* && xleft > xright*/))
+		if ((!flip && xleft < xright) || (flip/* && xleft > xright*/))
 		{
 			if (_shade != 0) {
 				vtx->r = CSCALE(r+drdx*dx);
@@ -1059,8 +1051,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 			vtx->w = WSCALE(w+dwdx*dx);
 			++vtx;
 		}
-		if ((!flip/* && xleft < xright*/) ||
-				(flip && xleft > xright))
+		if ((!flip/* && xleft < xright*/) || (/*flip &&*/ xleft > xright))
 		{
 			if (_shade != 0) {
 				vtx->r = CSCALE(r);
@@ -1080,7 +1071,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 		}
 		xleft += xleft_inc*j;  xright += xright_inc*j;
 		s += dsde*j;  t += dtde*j;
-		if (w + dwde*j) w += dwde*j;
+		if (w + dwde*j != 0) w += dwde*j;
 		else w += dwde*(j-1);
 		r += drde*j;  g += dgde*j;  b += dbde*j;  a += dade*j;
 		z += dzde*j;
@@ -1113,7 +1104,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 			++vtx;
 		}
 		if ((!flip/* && xleft <= xright*/) ||
-				(flip && xleft >= xright))
+				(/*flip && */xleft >= xright))
 		{
 			if (_shade != 0) {
 				vtx->r = CSCALE(r);
@@ -1176,7 +1167,7 @@ void gDPLLETriangle(u32 _w1, u32 _w2, int _shade, int _texture, int _zbuffer, u3
 			++vtx;
 		}
 		if ((!flip/* && xleft <= xright*/) ||
-				(flip && xleft >= xright))
+				(/*flip &&*/ xleft >= xright))
 		{
 			if (_shade != 0) {
 				vtx->r = CSCALE(r);

@@ -126,6 +126,7 @@ void RSP_ProcessDList()
 		gSP.matrix.modelViewi = 0;
 		gSP.status[0] = gSP.status[1] = gSP.status[2] = gSP.status[3] = 0;
 		gSP.changed |= CHANGED_MATRIX | CHANGED_LIGHT | CHANGED_LOOKAT;
+		gSP.tri_num = 0;
 		gDP.changed &= ~CHANGED_CPU_FB_WRITE;
 		gDPSetTexturePersp(G_TP_PERSP);
 
@@ -275,6 +276,8 @@ void RSP_Init()
 	else if (strstr(RSP.romname, (const char *)"F1 POLE POSITION 64") != nullptr)
 		config.generalEmulation.hacks |= hack_noDepthFrameBuffers;
 	else if (strstr(RSP.romname, (const char *)"ROADSTERS TROPHY") != nullptr)
+		config.generalEmulation.hacks |= hack_noDepthFrameBuffers;
+	else if (strstr(RSP.romname, (const char *)"VIGILANTE 8") != nullptr)
 		config.generalEmulation.hacks |= hack_noDepthFrameBuffers;
 	else if (strstr(RSP.romname, (const char *)"CONKER BFD") != nullptr)
 		config.generalEmulation.hacks |= hack_blurPauseScreen | hack_rectDepthBufferCopyCBFD;

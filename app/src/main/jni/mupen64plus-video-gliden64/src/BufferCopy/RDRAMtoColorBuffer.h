@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <Graphics/ObjectHandle.h>
+#include <FrameBuffer.h>
 
 namespace graphics {
 	class PixelWriteBuffer;
@@ -25,20 +26,22 @@ public:
 
 private:
 	RDRAMtoColorBuffer();
-	RDRAMtoColorBuffer(const RDRAMtoColorBuffer &);
+	RDRAMtoColorBuffer(const RDRAMtoColorBuffer &) = delete;
 
 	void reset();
 
 	class Cleaner
 	{
 	public:
-		Cleaner(RDRAMtoColorBuffer * _p) : m_p(_p) {}
+		Cleaner(RDRAMtoColorBuffer * _p) : m_p(_p), m_pCureentBuffer(frameBufferList().getCurrent()) {}
 		~Cleaner()
 		{
 			m_p->reset();
+			frameBufferList().setCurrent(m_pCureentBuffer);
 		}
 	private:
 		RDRAMtoColorBuffer * m_p;
+		FrameBuffer * m_pCureentBuffer;
 	};
 
 	FrameBuffer * m_pCurBuffer;

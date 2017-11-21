@@ -20,13 +20,13 @@ public:
 	void destroy();
 
 	void copyToRDRAM(u32 _address, bool _sync);
-	void copyChunkToRDRAM(u32 _address);
+	void copyChunkToRDRAM(u32 _startAddress);
 
 	static ColorBufferToRDRAM & get();
 
 private:
 	ColorBufferToRDRAM();
-	ColorBufferToRDRAM(const ColorBufferToRDRAM &);
+	ColorBufferToRDRAM(const ColorBufferToRDRAM &) = delete;
 	virtual ~ColorBufferToRDRAM();
 
 	CachedTexture * m_pTexture;
@@ -42,7 +42,7 @@ private:
 
 	void _destroyFBTexure(void);
 
-	bool _prepareCopy(u32 _startAddress);
+	bool _prepareCopy(u32& _startAddress);
 
 	void _copy(u32 _startAddress, u32 _endAddress, bool _sync);
 

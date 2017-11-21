@@ -202,10 +202,10 @@ void Rasterize(vertexi * vtx, int vertices, int dzdx)
 	for (;;) {
 		int x1 = iceil(left_x);
 		if (x1 < (int)gDP.scissor.ulx)
-			x1 = gDP.scissor.ulx;
+			x1 = (int)gDP.scissor.ulx;
 		int width = iceil(right_x) - x1;
 		if (x1 + width >= (int)gDP.scissor.lrx)
-			width = gDP.scissor.lrx - x1 - 1;
+			width = (int)(gDP.scissor.lrx - x1 - 1);
 
 		if (width > 0 && y1 >= (int)gDP.scissor.uly) {
 
@@ -223,8 +223,6 @@ void Rasterize(vertexi * vtx, int vertices, int dzdx)
 				trueZ = z / 8192;
 				if (trueZ < 0)
 					trueZ = 0;
-				else if (trueZ > 0x3FFFF)
-					trueZ = 0x3FFFF;
 				encodedZ = zLUT[trueZ];
 				idx = (shift + x) ^ 1;
 				if (encodedZ < destptr[idx])

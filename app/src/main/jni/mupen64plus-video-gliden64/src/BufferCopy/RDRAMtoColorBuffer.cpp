@@ -177,8 +177,11 @@ void RDRAMtoColorBuffer::copyFromRDRAM(u32 _address, bool _bCFB)
 	if (m_pCurBuffer == nullptr) {
 		if (_bCFB || (config.frameBufferEmulation.copyFromRDRAM != 0 && !FBInfo::fbInfo.isSupported()))
 			m_pCurBuffer = frameBufferList().findBuffer(_address);
-	} else if (m_vecAddress.empty())
-		return;
+	} else {
+		if (m_vecAddress.empty())
+			return;
+		frameBufferList().setCurrent(m_pCurBuffer);
+	}
 
 	if (m_pCurBuffer == nullptr || m_pCurBuffer->m_size < G_IM_SIZ_16b)
 		return;
@@ -303,7 +306,7 @@ void RDRAMtoColorBuffer::copyFromRDRAM(u32 _address, bool _bCFB)
 	gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER, m_pCurBuffer->m_FBO);
 
 	GraphicsDrawer::TexturedRectParams texRectParams((float)x0, (float)y0, (float)width, (float)height,
-										 0.0f, 0.0f, width - 1.0f, height - 1.0f, 1.0f, 1.0f,
+										 1.0f, 1.0f, 0, 0,
 										 false, true, false, m_pCurBuffer);
 	dwnd().getDrawer().drawTexturedRect(texRectParams);
 

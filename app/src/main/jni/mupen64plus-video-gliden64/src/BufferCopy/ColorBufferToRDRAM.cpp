@@ -5,6 +5,7 @@
 #include "WriteToRDRAM.h"
 
 #include <FrameBuffer.h>
+#include <FrameBufferInfo.h>
 #include <Config.h>
 #include <N64.h>
 #include <VI.h>
@@ -127,7 +128,7 @@ void ColorBufferToRDRAM::_destroyFBTexure(void)
 	}
 }
 
-bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
+bool ColorBufferToRDRAM::_prepareCopy(u32& _startAddress)
 {
 	if (VI.width == 0 || frameBufferList().getCurrent() == nullptr)
 		return false;
@@ -138,6 +139,10 @@ bool ColorBufferToRDRAM::_prepareCopy(u32 _startAddress)
 
 	DisplayWindow & wnd = dwnd();
 	const u32 curFrame = wnd.getBuffersSwapCount();
+
+	_startAddress &= ~0xfff;
+	if (_startAddress < pBuffer->m_startAddress)
+		_startAddress = pBuffer->m_startAddress;
 
 	if (m_frameCount == curFrame && pBuffer == m_pCurFrameBuffer && m_startAddress != _startAddress)
 		return true;
@@ -253,8 +258,8 @@ void ColorBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress, bool _sync)
 
 	const u32 width = m_pCurFrameBuffer->m_width;
 	const s32 x0 = 0;
-	const s32 y0 = max_height - (_endAddress - m_pCurFrameBuffer->m_startAddress) / stride;
-	const u32 y1 = max_height - (_startAddress - m_pCurFrameBuffer->m_startAddress) / stride;
+	const s32 y0 = (_startAddress - m_pCurFrameBuffer->m_startAddress) / stride;
+	const u32 y1 = (_endAddress - m_pCurFrameBuffer->m_startAddress) / stride;
 	const u32 height = std::min(max_height, 1u + y1 - y0);
 
 	const u8* pPixels = m_bufferReader->readPixels(x0, y0, width, height, m_pCurFrameBuffer->m_size, _sync);
@@ -265,16 +270,29 @@ void ColorBufferToRDRAM::_copy(u32 _startAddress, u32 _endAddress, bool _sync)
 	if (m_pCurFrameBuffer->m_size == G_IM_SIZ_32b) {
 		u32 *ptr_src = (u32*)pPixels;
 		u32 *ptr_dst = (u32*)(RDRAM + _startAddress);
+
+		if (!FBInfo::fbInfo.isSupported() && config.frameBufferEmulation.copyFromRDRAM != 0) {
+			memset(ptr_dst, 0, numPixels * 4);
+		}
+
 		writeToRdram<u32, u32>(ptr_src, ptr_dst, &ColorBufferToRDRAM::_RGBAtoRGBA32, 0, 0, width, height, numPixels, _startAddress, m_pCurFrameBuffer->m_startAddress, m_pCurFrameBuffer->m_size);
-	}
-	else if (m_pCurFrameBuffer->m_size == G_IM_SIZ_16b) {
+	} else if (m_pCurFrameBuffer->m_size == G_IM_SIZ_16b) {
 		u32 *ptr_src = (u32*)pPixels;
 		u16 *ptr_dst = (u16*)(RDRAM + _startAddress);
+
+		if (!FBInfo::fbInfo.isSupported() && config.frameBufferEmulation.copyFromRDRAM != 0) {
+			memset(ptr_dst, 0, numPixels * 2);
+		}
+
 		writeToRdram<u32, u16>(ptr_src, ptr_dst, &ColorBufferToRDRAM::_RGBAtoRGBA16, 0, 1, width, height, numPixels, _startAddress, m_pCurFrameBuffer->m_startAddress, m_pCurFrameBuffer->m_size);
-	}
-	else if (m_pCurFrameBuffer->m_size == G_IM_SIZ_8b) {
+	} else if (m_pCurFrameBuffer->m_size == G_IM_SIZ_8b) {
 		u8 *ptr_src = (u8*)pPixels;
 		u8 *ptr_dst = RDRAM + _startAddress;
+
+		if (!FBInfo::fbInfo.isSupported() && config.frameBufferEmulation.copyFromRDRAM != 0) {
+			memset(ptr_dst, 0, numPixels);
+		}
+
 		writeToRdram<u8, u8>(ptr_src, ptr_dst, &ColorBufferToRDRAM::_RGBAtoR8, 0, 3, width, height, numPixels, _startAddress, m_pCurFrameBuffer->m_startAddress, m_pCurFrameBuffer->m_size);
 	}
 
@@ -306,11 +324,13 @@ void ColorBufferToRDRAM::copyToRDRAM(u32 _address, bool _sync)
 	_copy(m_pCurFrameBuffer->m_startAddress, m_pCurFrameBuffer->m_startAddress + numBytes, _sync);
 }
 
-void ColorBufferToRDRAM::copyChunkToRDRAM(u32 _address)
+void ColorBufferToRDRAM::copyChunkToRDRAM(u32 _startAddress)
 {
-	if (!_prepareCopy(_address))
+	const u32 endAddress = (_startAddress & ~0xfff) + 0x1000;
+
+	if (!_prepareCopy(_startAddress))
 		return;
-	_copy(_address, _address + 0x1000, true);
+	_copy(_startAddress, endAddress, true);
 }
 
 

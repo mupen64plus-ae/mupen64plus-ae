@@ -1,2 +1,2 @@
-#define PLUGIN_REVISION "e2c2cd3"
-#define PLUGIN_REVISION_W L"e2c2cd3"
+#define PLUGIN_REVISION "adabb40"
+#define PLUGIN_REVISION_W L"adabb40"
