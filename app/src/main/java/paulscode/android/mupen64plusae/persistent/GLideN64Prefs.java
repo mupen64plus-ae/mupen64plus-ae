@@ -38,9 +38,6 @@ public class GLideN64Prefs {
     /** Enable hardware per-pixel lighting. */
     public final boolean enableHWLighting;
 
-    /** Use persistent storage for compiled shaders. */
-    public final boolean enableShadersStorage;
-
     /** Make texrect coordinates continuous to avoid black lines between them
      * 0=Off
      * 1=Auto
@@ -160,7 +157,6 @@ public class GLideN64Prefs {
         enableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         enableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
-        enableShadersStorage = emulationProfile.get( "EnableShadersStorage", "True" ).equals( "True" );
         correctTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
 
         enableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );

@@ -453,10 +453,6 @@
             android:defaultValue="False"
             android:key="EnableHWLighting"
             android:title="@string/gliden64_enable_hw_lighting_title" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="True"
-            android:key="EnableShadersStorage"
-            android:title="@string/gliden64_enable_shader_storage_title" />
         <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/gliden64_texrect_coords_default"
             android:entries="@array/gliden64_texrect_coords_entries"
