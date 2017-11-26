@@ -23,10 +23,13 @@ package paulscode.android.mupen64plusae;
 import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.os.Handler;
 import android.support.v7.view.menu.MenuBuilder;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,7 +79,7 @@ public class MenuListView extends ExpandableListView
         
         // MenuListView uses its own group indicators
         setGroupIndicator( null );
-        
+
         // Update the expand/collapse group indicators as needed
         setOnGroupExpandListener( new OnGroupExpandListener()
         {
@@ -86,7 +89,7 @@ public class MenuListView extends ExpandableListView
                 reload();
             }
         } );
-        
+
         setOnGroupCollapseListener( new OnGroupCollapseListener()
         {
             @Override
@@ -102,6 +105,7 @@ public class MenuListView extends ExpandableListView
             public boolean onGroupClick( ExpandableListView parent, View view, int groupPosition,
                     long itemId )
             {
+
                 MenuItem menuItem = mListData.getItem( groupPosition );
                 SubMenu submenu = menuItem.getSubMenu();
                 if( submenu == null )
@@ -119,6 +123,7 @@ public class MenuListView extends ExpandableListView
             public boolean onChildClick( ExpandableListView parent, View view, int groupPosition,
                     int childPosition, long itemId )
             {
+
                 MenuItem menuItem = mListData.getItem( groupPosition ).getSubMenu()
                         .getItem( childPosition );
                 if( mListener != null )
@@ -141,6 +146,10 @@ public class MenuListView extends ExpandableListView
     public void reload()
     {
         mAdapter.notifyDataSetChanged();
+
+        // HACK: When a using a controller a reload doesn't work until an additional key is pressed.
+        // I'm not sure why that is. I tried invalidate and postInvalidate.
+        onKeyDown(KeyEvent.KEYCODE_0, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_0));
     }
     
     public void setOnClickListener( OnClickListener listener )
@@ -163,12 +172,14 @@ public class MenuListView extends ExpandableListView
         private MenuListView mListView;
         private Menu mListData;
         private SparseArray<View> mMenuViews;
+        private SparseArray<View> mMenuViewsExpanded;
         
-        public MenuListAdapter( MenuListView listView, Menu listData )
+        MenuListAdapter( MenuListView listView, Menu listData )
         {
             mListView = listView;
             mListData = listData;
-            mMenuViews = new SparseArray<View>();
+            mMenuViews = new SparseArray<>();
+            mMenuViewsExpanded = new SparseArray<>();
         }
         
         @Override
@@ -202,18 +213,24 @@ public class MenuListView extends ExpandableListView
         {
             LayoutInflater inflater = (LayoutInflater) mListView.getContext().getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE );
-            View view = convertView;
-            if( view == null )
-                view = inflater.inflate( R.layout.list_item_menu, mListView, false );
+
+            // Don't use convertView, it can't be trusted, it doesn't work when using controllers
+            View view = null;
             
             MenuItem item = getChild( groupPosition, childPosition );
 
             if( item != null )
             {
-                TextView text1 = (TextView) view.findViewById( R.id.text1 );
-                TextView text2 = (TextView) view.findViewById( R.id.text2 );
-                ImageView icon = (ImageView) view.findViewById( R.id.icon );
-                ImageView indicator = (ImageView) view.findViewById( R.id.indicator );
+                view = mMenuViews.get(item.getItemId());
+
+                if (view == null) {
+                    view = inflater.inflate( R.layout.list_item_menu, mListView, false );
+                }
+
+                TextView text1 = view.findViewById( R.id.text1 );
+                TextView text2 = view.findViewById( R.id.text2 );
+                ImageView icon = view.findViewById( R.id.icon );
+                ImageView indicator = view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
                 if(item.getTitleCondensed().equals(item.getTitle()))
@@ -243,10 +260,10 @@ public class MenuListView extends ExpandableListView
                     indicator.setImageResource( R.drawable.ic_check );
                 else
                     indicator.setImageResource( R.drawable.ic_box );
+
+                mMenuViews.put(item.getItemId(), view);
             }
-            
-            mMenuViews.put(item.getItemId(), view);
-            
+
             return view;
         }
         
@@ -274,17 +291,27 @@ public class MenuListView extends ExpandableListView
         {
             LayoutInflater inflater = (LayoutInflater) mListView.getContext().getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE );
-            View view = convertView;
-            if( view == null )
-                view = inflater.inflate( R.layout.list_item_menu, mListView, false );
+
+            // Don't use convertView, it can't be trusted, it doesn't work when using controllers
+            View view = null;
             
             MenuItem item = getGroup( groupPosition );
             if( item != null )
             {
-                TextView text1 = (TextView) view.findViewById( R.id.text1 );
-                TextView text2 = (TextView) view.findViewById( R.id.text2 );
-                ImageView icon = (ImageView) view.findViewById( R.id.icon );
-                ImageView indicator = (ImageView) view.findViewById( R.id.indicator );
+                if (isExpanded) {
+                    view = mMenuViewsExpanded.get(item.getItemId());
+                } else {
+                    view = mMenuViews.get(item.getItemId());
+                }
+
+                if (view == null) {
+                    view = inflater.inflate( R.layout.list_item_menu, mListView, false );
+                }
+
+                TextView text1 = view.findViewById( R.id.text1 );
+                TextView text2 = view.findViewById( R.id.text2 );
+                ImageView icon = view.findViewById( R.id.icon );
+                ImageView indicator = view.findViewById( R.id.indicator );
                 
                 text1.setText( item.getTitle() );
                 if(item.getTitleCondensed().equals(item.getTitle()))
@@ -304,13 +331,19 @@ public class MenuListView extends ExpandableListView
                 
                 if( item.getSubMenu() == null )
                     indicator.setImageResource( 0x0 );
-                else if( isExpanded )
+                else if( isExpanded ) {
                     indicator.setImageResource( R.drawable.ic_arrow_u );
-                else
-                    indicator.setImageResource( R.drawable.ic_arrow_d );
+                }
+                else {
+                    indicator.setImageResource(R.drawable.ic_arrow_d);
+                }
+
+                if (isExpanded) {
+                    mMenuViewsExpanded.put(item.getItemId(), view);
+                } else {
+                    mMenuViews.put(item.getItemId(), view);
+                }
             }
-            
-            mMenuViews.put(item.getItemId(), view);
             
             return view;
         }
@@ -321,59 +354,14 @@ public class MenuListView extends ExpandableListView
             return true;
         }
         
-        protected View getViewFromMenuId(int menuId)
+        View getViewFromMenuId(int menuId)
         {
             return mMenuViews.get(menuId);
         }
     }
 
-    class AdapterDataSetObserver extends DataSetObserver {
-        @Override
-        public void onChanged() {
-            super.onChanged();
-
-            refreshVisibleViews();
-        }
-
-        @Override
-        public void onInvalidated() {
-            super.onInvalidated();
-
-            refreshVisibleViews();
-        }
-    }
-
-    //The below code is to force updating of existing views
-    private DataSetObserver mDataSetObserver = new AdapterDataSetObserver();
-    private ExpandableListAdapter mListAdapter;
-
-    @Override
-    public void setAdapter(ExpandableListAdapter adapter) {
-        super.setAdapter(adapter);
-
-        if (mListAdapter != null) {
-            mListAdapter.unregisterDataSetObserver(mDataSetObserver);
-        }
-        mListAdapter = adapter;
-
-        mListAdapter.registerDataSetObserver(mDataSetObserver);
-    }
-
-    void refreshVisibleViews() {
-        if (mListAdapter != null) {
-            for (int i = getFirstVisiblePosition(); i <= getLastVisiblePosition(); i ++) {
-                final int dataPosition = i - getHeaderViewsCount();
-                final int childPosition = i - getFirstVisiblePosition();
-                if (dataPosition >= 0 && dataPosition < mListAdapter.getGroupCount()
-                        && getChildAt(childPosition) != null) {
-                    mListAdapter.getGroupView(dataPosition, false, getChildAt(childPosition), this);
-                }
-            }
-        }
-    }
-
     public interface OnClickListener
     {        
-        public void onClick( MenuItem menuItem );
+        void onClick( MenuItem menuItem );
     }
 }

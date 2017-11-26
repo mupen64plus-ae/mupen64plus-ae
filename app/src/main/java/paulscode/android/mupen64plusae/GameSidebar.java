@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -72,7 +71,7 @@ public class GameSidebar extends MenuListView
                 mActionHandler.onGameSidebarAction( menuItem );
             }
         } );
-        
+
         setOnKeyListener(actionHandler);
     }
     
@@ -91,6 +90,6 @@ public class GameSidebar extends MenuListView
     
     public interface GameSidebarActionHandler extends OnKeyListener
     {
-        abstract public void onGameSidebarAction(MenuItem menuItem);
+        void onGameSidebarAction(MenuItem menuItem);
     }
 }
