@@ -142,8 +142,7 @@ public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
             return false;
         }
         else if(mForceDrawer ||
-                (actionCode == MotionEvent.ACTION_DOWN || actionCode == MotionEvent.ACTION_POINTER_DOWN) &&
-                        lastEdgeTime >= edgeIgnorePeriod )
+                (actionCode == MotionEvent.ACTION_DOWN) && lastEdgeTime >= edgeIgnorePeriod )
         {
             int actionIndex = event.getActionIndex();
             int xLocation = (int) event.getX( actionIndex );

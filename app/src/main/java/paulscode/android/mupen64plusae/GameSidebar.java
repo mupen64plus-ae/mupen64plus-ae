@@ -35,7 +35,6 @@ import org.mupen64plusae.v3.alpha.R;
 public class GameSidebar extends MenuListView
 {
     private ImageView mInfoArt;
-    private LinearLayout mImageLayout;
     private TextView mGameTitle;
     private GameSidebarActionHandler mActionHandler;
     private View mHeader;
@@ -47,9 +46,8 @@ public class GameSidebar extends MenuListView
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         mHeader = inflater.inflate( R.layout.game_sidebar_header, this, false );
 
-        mInfoArt = (ImageView) mHeader.findViewById( R.id.imageArt );
-        mImageLayout = (LinearLayout) mHeader.findViewById( R.id.imageLayout );
-        mGameTitle = (TextView) mHeader.findViewById( R.id.gameTitle );
+        mInfoArt = mHeader.findViewById( R.id.imageArt );
+        mGameTitle = mHeader.findViewById( R.id.gameTitle );
         
         setClipToPadding(true);
         addHeaderView(mHeader, null, false);

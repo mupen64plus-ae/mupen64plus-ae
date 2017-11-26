@@ -308,11 +308,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Lay out content and get the views
         this.setContentView( R.layout.game_activity);
-        mSurfaceView = (SurfaceView) this.findViewById( R.id.gameSurface );
+        mSurfaceView = this.findViewById( R.id.gameSurface );
 
-        mOverlay = (GameOverlay) this.findViewById(R.id.gameOverlay);
-        mDrawerLayout = (GameDrawerLayout) this.findViewById(R.id.drawerLayout);
-        mGameSidebar = (GameSidebar) this.findViewById(R.id.gameSidebar);
+        mOverlay = findViewById(R.id.gameOverlay);
+        mDrawerLayout = findViewById(R.id.drawerLayout);
+        mGameSidebar = findViewById(R.id.gameSidebar);
 
         // Don't darken the game screen when the drawer is open
         mDrawerLayout.setScrimColor(0x0);
@@ -1086,7 +1086,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             romDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
         }
 
-        final RomDetail romDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
         if( mGamePrefs.playerMap.isEnabled() && mGlobalPrefs.getPlayerMapReminder() )
         {
             mGamePrefs.playerMap.removeUnavailableMappings();
