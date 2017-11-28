@@ -523,7 +523,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
         }
 
-        mHandler.removeCallbacks(mLastTouchChecker);
+        // This apparently can happen on rare occasion, not sure how, so protect against it
+        if(mHandler != null)
+        {
+            mHandler.removeCallbacks(mLastTouchChecker);
+        }
     }
 
     @Override
