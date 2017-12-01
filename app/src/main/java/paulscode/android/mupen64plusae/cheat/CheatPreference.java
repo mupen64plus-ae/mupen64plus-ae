@@ -48,9 +48,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     private final String[] mOptions;
     private final OptionDialog mOptionsDialog;
     private final int mCheatIndex;
-    private AlertDialog mNotesDialog;
-    private AlertDialog mOptionNoteDialog;
-    
+
     public CheatPreference( Context context, int cheatIndex, String title, String notes, String[] options )
     {
         super( context );
@@ -98,7 +96,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         return result;
     }
     
-    public boolean isCheatEnabled()
+    private boolean isCheatEnabled()
     {
         return mValue != 0;
     }
@@ -106,7 +104,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     @Override
     public CharSequence getSummary()
     {
-        if( mOptions == null || mValue == 0 )
+        if( mOptions == null || mValue == 0 || mValue >= mOptions.length)
             return null;
         else
             return mOptions[mValue];
@@ -188,9 +186,10 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     @Override
     public boolean onLongClick( View v )
     {
+        AlertDialog notesDialog;
         // Popup a dialog to display the cheat notes
-        mNotesDialog = new Builder( mContext ).setTitle( mTitle ).setMessage( mNotes ).create();
-        mNotesDialog.show();
+        notesDialog = new Builder( mContext ).setTitle( mTitle ).setMessage( mNotes ).create();
+        notesDialog.show();
         return true;
     }
     
@@ -201,10 +200,11 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         // If not, then long-pressing on cheat options for full text isn't needed.
         if( item != 0 )
         {
-            mOptionNoteDialog = new Builder( mContext ).setTitle(
+            AlertDialog optionNoteDialog;
+            optionNoteDialog = new Builder( mContext ).setTitle(
                 mContext.getString( R.string.cheatOption_title ) ).create();
-            mOptionNoteDialog.setMessage( mOptions[item] );
-            mOptionNoteDialog.show();
+            optionNoteDialog.setMessage( mOptions[item] );
+            optionNoteDialog.show();
         }
     }
     
