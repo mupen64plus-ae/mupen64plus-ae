@@ -58,7 +58,7 @@
 #include "device/controllers/paks/rumblepak.h"
 #include "device/controllers/paks/transferpak.h"
 #include "device/gb/gb_cart.h"
-#include "device/pifbootrom/pifbootrom.h"
+#include "device/pif/bootrom_hle.h"
 #include "eventloop.h"
 #include "main.h"
 #include "osal/files.h"
@@ -66,7 +66,9 @@
 #include "osd/osd.h"
 #include "osd/screenshot.h"
 #include "plugin/plugin.h"
+#if defined(PROFILE)
 #include "profile.h"
+#endif
 #include "rom.h"
 #include "savestates.h"
 #include "util.h"
@@ -770,7 +772,9 @@ static void apply_speed_limiter(void)
 
     lastSpeedFactor = l_SpeedFactor;
 
+#if defined(PROFILE)
     timed_section_start(TIMED_SECTION_IDLE);
+#endif
 
 #ifdef DBG
     if(g_DebuggerActive) DebuggerCallback(DEBUG_UI_VI, 0);
@@ -813,7 +817,9 @@ static void apply_speed_limiter(void)
     }
 
 
+#if defined(PROFILE)
     timed_section_end(TIMED_SECTION_IDLE);
+#endif
 }
 
 /* TODO: make a GameShark module and move that there */
@@ -849,7 +855,9 @@ static void pause_loop(void)
  * Allow the core to perform various things */
 void new_vi(void)
 {
+#if defined(PROFILE)
     timed_sections_refresh();
+#endif
 
     gs_apply_cheats();
 
@@ -1105,6 +1113,10 @@ m64p_error main_run(void)
     struct file_storage mpk_storages[GAME_CONTROLLERS_COUNT];
     struct file_storage mpk;
 
+    /* XXX: select type of flashram from db */
+    uint32_t flashram_type = MX29L1100_ID;
+
+
     /* take the r4300 emulator mode from the config file at this point and cache it in a global variable */
     emumode = ConfigGetParamInt(g_CoreConfig, "R4300Emulator");
 
@@ -1304,7 +1316,6 @@ m64p_error main_run(void)
                 emumode,
                 count_per_op,
                 no_compiled_jump,
-                ROM_PARAMS.special_rom,
                 randomize_interrupt,
                 &g_dev.ai, &g_iaudio_out_backend_plugin_compat,
                 rdram_size,
@@ -1314,6 +1325,7 @@ m64p_error main_run(void)
                 g_rom_size,
                 (ROM_SETTINGS.savetype != EEPROM_16KB) ? JDT_EEPROM_4K : JDT_EEPROM_16K,
                 &eep, &g_ifile_storage,
+                flashram_type,
                 &fla, &g_ifile_storage,
                 &sra, &g_ifile_storage);
 
@@ -1362,7 +1374,7 @@ m64p_error main_run(void)
     StateChanged(M64CORE_EMU_STATE, M64EMU_RUNNING);
 
     poweron_device(&g_dev);
-    pifbootrom_hle_execute(&g_dev.r4300);
+    pif_bootrom_hle_execute(&g_dev.r4300);
     run_device(&g_dev);
 
     /* now begin to shut down */

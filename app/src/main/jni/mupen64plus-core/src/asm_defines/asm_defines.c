@@ -30,10 +30,8 @@
  */
 
 #include "device/device.h"
-#include "device/memory/memory.h"
 #include "device/r4300/new_dynarec/new_dynarec.h"
 #include "device/r4300/r4300_core.h"
-#include "device/ri/ri_controller.h"
 
 #include <stddef.h>
 
@@ -52,7 +50,7 @@
         char before[sizeof(str)-1]; \
         char hexval[8]; \
         char after; \
-        char ensure_32bit[(val) > 0xffffffff ? -1 : 1]; \
+        char ensure_32bit[(val) > UINT64_C(0xffffffff) ? -1 : 1]; \
     } sym = { \
         str, \
         { \
@@ -67,7 +65,7 @@
         }, \
         '\n', \
         {0} \
-    };
+    }
 
 /* Export member m of structure s.
  * Suitable parsing of corresponding object file (with strings) can be used to
@@ -76,7 +74,7 @@
 #define DEFINE(s, m) \
     _DEFINE("\n@ASM_DEFINE offsetof_struct_" #s "_" #m " 0x", \
             __offsetof_struct_##s##_##m, \
-            offsetof(struct s, m));
+            offsetof(struct s, m))
 
 
 /* Structure members definitions */

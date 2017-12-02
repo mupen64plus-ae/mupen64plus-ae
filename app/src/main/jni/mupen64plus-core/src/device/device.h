@@ -25,21 +25,24 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "ai/ai_controller.h"
-#include "memory/memory.h"
-#include "pi/pi_controller.h"
-#include "r4300/r4300_core.h"
-#include "rdp/rdp_core.h"
-#include "ri/ri_controller.h"
-#include "rsp/rsp_core.h"
-#include "si/si_controller.h"
-#include "vi/vi_controller.h"
+#include "cart/cart.h"
 #include "controllers/game_controller.h"
 #include "controllers/paks/mempak.h"
 #include "controllers/paks/rumblepak.h"
 #include "controllers/paks/transferpak.h"
-#include "cart/cart.h"
 #include "gb/gb_cart.h"
+#include "memory/memory.h"
+#include "pif/pif.h"
+#include "r4300/r4300_core.h"
+#include "rcp/ai/ai_controller.h"
+#include "rcp/mi/mi_controller.h"
+#include "rcp/pi/pi_controller.h"
+#include "rcp/rdp/rdp_core.h"
+#include "rcp/ri/ri_controller.h"
+#include "rcp/rsp/rsp_core.h"
+#include "rcp/si/si_controller.h"
+#include "rcp/vi/vi_controller.h"
+#include "rdram/rdram.h"
 
 struct audio_out_backend_interface;
 struct storage_backend_interface;
@@ -50,6 +53,7 @@ enum { GAME_CONTROLLERS_COUNT = 4 };
 /* memory map constants */
 #define MM_RDRAM_DRAM       UINT32_C(0x00000000)
 #define MM_RDRAM_REGS       UINT32_C(0x03f00000)
+
 #define MM_RSP_MEM          UINT32_C(0x04000000)
 #define MM_RSP_REGS         UINT32_C(0x04040000)
 #define MM_RSP_REGS2        UINT32_C(0x04080000)
@@ -61,9 +65,12 @@ enum { GAME_CONTROLLERS_COUNT = 4 };
 #define MM_PI_REGS          UINT32_C(0x04600000)
 #define MM_RI_REGS          UINT32_C(0x04700000)
 #define MM_SI_REGS          UINT32_C(0x04800000)
-#define MM_DD_REGS          UINT32_C(0x05000000) /* dom2 addr1 */
-#define MM_DD_ROM           UINT32_C(0x06000000) /* dom1 addr1 */
-#define MM_CART_DOM2        UINT32_C(0x08000000) /* dom2 addr2 */
+
+#define MM_DOM2_ADDR1       UINT32_C(0x05000000)
+#define MM_DD_ROM           UINT32_C(0x06000000)
+
+#define MM_DOM2_ADDR2       UINT32_C(0x08000000)
+
 #define MM_CART_ROM         UINT32_C(0x10000000) /* dom1 addr2 */
 #define MM_PIF_MEM          UINT32_C(0x1fc00000)
 #define MM_CART_DOM3        UINT32_C(0x1fd00000) /* dom2 addr2 */
@@ -76,10 +83,13 @@ struct device
     struct rdp_core dp;
     struct rsp_core sp;
     struct ai_controller ai;
+    struct mi_controller mi;
     struct pi_controller pi;
     struct ri_controller ri;
     struct si_controller si;
     struct vi_controller vi;
+    struct pif pif;
+    struct rdram rdram;
     struct memory mem;
 
     struct game_controller controllers[GAME_CONTROLLERS_COUNT];
@@ -99,13 +109,12 @@ void init_device(struct device* dev,
     unsigned int emumode,
     unsigned int count_per_op,
     int no_compiled_jump,
-    int special_rom,
     int randomize_interrupt,
     /* ai */
     void* aout, const struct audio_out_backend_interface* iaout,
-    /* ri */
+    /* rdram */
     size_t dram_size,
-    /* si */
+    /* pif */
     void* jbds[PIF_CHANNELS_COUNT],
     const struct joybus_device_interface* ijbds[PIF_CHANNELS_COUNT],
     /* vi */
@@ -115,6 +124,7 @@ void init_device(struct device* dev,
     size_t rom_size,
     uint16_t eeprom_type,
     void* eeprom_storage, const struct storage_backend_interface* ieeprom_storage,
+    uint32_t flashram_type,
     void* flashram_storage, const struct storage_backend_interface* iflashram_storage,
     void* sram_storage, const struct storage_backend_interface* isram_storage);
 

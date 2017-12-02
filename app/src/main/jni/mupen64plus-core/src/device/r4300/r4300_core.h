@@ -31,7 +31,6 @@
 
 #include "cp0.h"
 #include "cp1.h"
-#include "mi_controller.h"
 
 #include "ops.h" /* for cpu_instruction_table */
 #include "recomp_types.h" /* for precomp_instr, regcache_state */
@@ -41,7 +40,8 @@
 #include "osal/preproc.h"
 
 struct memory;
-struct ri_controller;
+struct mi_controller;
+struct rdram;
 
 struct jump_table;
 struct cached_interp
@@ -89,16 +89,16 @@ struct r4300_core
 
     /* from assemble.c */
     struct jump_table* jumps_table;
-    int jumps_number;
-    int max_jumps_number;
+    size_t jumps_number;
+    size_t max_jumps_number;
 
     unsigned int jump_start8;
     unsigned int jump_start32;
 
 #if defined(__x86_64__)
     struct riprelative_table* riprel_table;
-    int riprel_number;
-    int max_riprel_number;
+    size_t riprel_number;
+    size_t max_riprel_number;
 #endif
 
     /* from rjump.c */
@@ -198,19 +198,17 @@ struct r4300_core
 
     struct cp1 cp1;
 
-    struct mi_controller mi;
-
     struct memory* mem;
-    struct ri_controller* ri;
+    struct mi_controller* mi;
+    struct rdram* rdram;
 
-    uint32_t special_rom;
     uint32_t randomize_interrupt;
 };
 
 #define R4300_KSEG0 UINT32_C(0x80000000)
 #define R4300_KSEG1 UINT32_C(0xa0000000)
 
-void init_r4300(struct r4300_core* r4300, struct memory* mem, struct ri_controller* ri, const struct interrupt_handler* interrupt_handlers, unsigned int emumode, unsigned int count_per_op, int no_compiled_jump, int special_rom, int randomize_interrupt);
+void init_r4300(struct r4300_core* r4300, struct memory* mem, struct mi_controller* mi, struct rdram* rdram, const struct interrupt_handler* interrupt_handlers, unsigned int emumode, unsigned int count_per_op, int no_compiled_jump, int randomize_interrupt);
 void poweron_r4300(struct r4300_core* r4300);
 
 void run_r4300(struct r4300_core* r4300);

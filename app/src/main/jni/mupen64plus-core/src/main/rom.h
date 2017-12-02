@@ -30,7 +30,7 @@
 
 #define BIT(bitnr) (1ULL << (bitnr))
 #ifdef __GNUC__
-#define isset_bitmask(x, bitmask) ({ typeof(bitmask) _bitmask = (bitmask); \
+#define isset_bitmask(x, bitmask) __extension__ ({ typeof(bitmask) _bitmask = (bitmask); \
                                      (_bitmask & (x)) == _bitmask; })
 #else
 #define isset_bitmask(x, bitmask) ((bitmask & (x)) == bitmask)
@@ -50,7 +50,6 @@ typedef struct _rom_params
    char headername[21];  /* ROM Name as in the header, removing trailing whitespace */
    unsigned char countperop;
    int disableextramem;
-   int special_rom;
 } rom_params;
 
 extern m64p_rom_header   ROM_HEADER;
@@ -97,13 +96,6 @@ enum
     NONE
 };
 
-/*ROM specific hacks */
-enum
-{
-    NORMAL_ROM,
-    GOLDEN_EYE
-};
-
 /* Rom INI database structures and functions */
 
 /* The romdatabase contains the items mupen64plus indexes for each rom. These
@@ -135,20 +127,18 @@ typedef struct
    uint32_t set_flags;
 } romdatabase_entry;
 
-enum romdatabase_entry_set_flags {
-    ROMDATABASE_ENTRY_NONE = 0,
-    ROMDATABASE_ENTRY_GOODNAME = BIT(0),
-    ROMDATABASE_ENTRY_CRC = BIT(1),
-    ROMDATABASE_ENTRY_STATUS = BIT(2),
-    ROMDATABASE_ENTRY_SAVETYPE = BIT(3),
-    ROMDATABASE_ENTRY_PLAYERS = BIT(4),
-    ROMDATABASE_ENTRY_RUMBLE = BIT(5),
-    ROMDATABASE_ENTRY_COUNTEROP = BIT(6),
-    ROMDATABASE_ENTRY_CHEATS = BIT(7),
-    ROMDATABASE_ENTRY_EXTRAMEM = BIT(8),
-    ROMDATABASE_ENTRY_TRANSFERPAK = BIT(9),
-    ROMDATABASE_ENTRY_MEMPAK = BIT(10)
-};
+#define ROMDATABASE_ENTRY_NONE          0ULL
+#define ROMDATABASE_ENTRY_GOODNAME      BIT(0)
+#define ROMDATABASE_ENTRY_CRC           BIT(1)
+#define ROMDATABASE_ENTRY_STATUS        BIT(2)
+#define ROMDATABASE_ENTRY_SAVETYPE      BIT(3)
+#define ROMDATABASE_ENTRY_PLAYERS       BIT(4)
+#define ROMDATABASE_ENTRY_RUMBLE        BIT(5)
+#define ROMDATABASE_ENTRY_COUNTEROP     BIT(6)
+#define ROMDATABASE_ENTRY_CHEATS        BIT(7)
+#define ROMDATABASE_ENTRY_EXTRAMEM      BIT(8)
+#define ROMDATABASE_ENTRY_TRANSFERPAK   BIT(9)
+#define ROMDATABASE_ENTRY_MEMPAK        BIT(10)
 
 typedef struct _romdatabase_search
 {

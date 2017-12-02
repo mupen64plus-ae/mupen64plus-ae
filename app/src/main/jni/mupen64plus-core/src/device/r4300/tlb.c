@@ -110,44 +110,16 @@ uint32_t virtual_to_physical_address(struct r4300_core* r4300, uint32_t address,
     {
         int map = r4300->new_dynarec_hot_state.memory_map[address >> 12];
         if((r4300->cp0.tlb.LUT_w[address >> 12]) && (w == 1))
-            assert(map == (((r4300->cp0.tlb.LUT_w[address >> 12] & 0xFFFFF000) - (address & 0xFFFFF000) + (unsigned int)g_dev.ri.rdram.dram - 0x80000000) >> 2));
+            assert(map == (((r4300->cp0.tlb.LUT_w[address >> 12] & 0xFFFFF000) - (address & 0xFFFFF000) + (unsigned int)g_dev.rdram.dram - 0x80000000) >> 2));
         else if((r4300->cp0.tlb.LUT_r[address >> 12]) && (w == 0)) {
-            assert((map&~0x40000000) == (((r4300->cp0.tlb.LUT_r[address >> 12] & 0xFFFFF000) - (address & 0xFFFFF000) + (unsigned int)g_dev.ri.rdram.dram - 0x80000000) >> 2));
+            assert((map&~0x40000000) == (((r4300->cp0.tlb.LUT_r[address >> 12] & 0xFFFFF000) - (address & 0xFFFFF000) + (unsigned int)g_dev.rdram.dram - 0x80000000) >> 2));
             if(map & 0x40000000) assert(r4300->cp0.tlb.LUT_w[address >> 12] == 0);
         }
         else
             assert(map < 0);
-
-        assert(!(address >= UINT32_C(0x7f000000) && address < UINT32_C(0x80000000) && r4300->special_rom == GOLDEN_EYE));
     }
 #endif
 
-    if (address >= UINT32_C(0x7f000000) && address < UINT32_C(0x80000000) && r4300->special_rom == GOLDEN_EYE)
-    {
-        /**************************************************
-         GoldenEye 007 hack allows for use of TLB.
-         Recoded by okaygo to support all US, J, and E ROMS.
-        **************************************************/
-        switch (ROM_HEADER.Country_code & UINT16_C(0xFF))
-        {
-        case 0x45:
-            // U
-            return UINT32_C(0xb0034b30) + (address & UINT32_C(0xFFFFFF));
-            break;
-        case 0x4A:
-            // J
-            return UINT32_C(0xb0034b70) + (address & UINT32_C(0xFFFFFF));
-            break;
-        case 0x50:
-            // E
-            return UINT32_C(0xb00329f0) + (address & UINT32_C(0xFFFFFF));
-            break;
-        default:
-            // UNKNOWN COUNTRY CODE FOR GOLDENEYE USING AMERICAN VERSION HACK
-            return UINT32_C(0xb0034b30) + (address & UINT32_C(0xFFFFFF));
-            break;
-        }
-    }
     if (w == 1)
     {
         if (r4300->cp0.tlb.LUT_w[address>>12])

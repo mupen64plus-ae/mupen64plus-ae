@@ -25,9 +25,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "osal/preproc.h"
+
 struct r4300_core;
-struct cic;
-struct rdram;
 
 struct cart_rom
 {
@@ -38,19 +38,16 @@ struct cart_rom
     uint32_t rom_written;
 
     struct r4300_core* r4300;
-    struct rdram* rdram;
-    const struct cic* cic;
 };
 
-static uint32_t rom_address(uint32_t address)
+static osal_inline uint32_t rom_address(uint32_t address)
 {
     return (address & 0x03fffffc);
 }
 
 void init_cart_rom(struct cart_rom* cart_rom,
                    uint8_t* rom, size_t rom_size,
-                   struct r4300_core* r4300,
-                   struct rdram* rdram, const struct cic* cic);
+                   struct r4300_core* r4300);
 
 void poweron_cart_rom(struct cart_rom* cart_rom);
 
