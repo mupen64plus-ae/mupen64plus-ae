@@ -74,7 +74,7 @@ void Config::resetToDefaults()
 	textureFilter.txCacheSize = 100 * gc_uMegabyte;
 
 	textureFilter.txHiresEnable = 0;
-	textureFilter.txHiresFullAlphaChannel = 0;
+	textureFilter.txHiresFullAlphaChannel = 1;
 	textureFilter.txHresAltCRC = 0;
 	textureFilter.txDump = 0;
 
@@ -84,6 +84,10 @@ void Config::resetToDefaults()
 
 	api().GetUserDataPath(textureFilter.txPath);
 	gln_wcscat(textureFilter.txPath, wst("/hires_texture"));
+	api().GetUserCachePath(textureFilter.txCachePath);
+	gln_wcscat(textureFilter.txCachePath, wst("/cache"));
+	api().GetUserCachePath(textureFilter.txDumpPath);
+	gln_wcscat(textureFilter.txDumpPath, wst("/texture_dump"));
 
 #ifdef OS_WINDOWS
 	font.name.assign("arial.ttf");

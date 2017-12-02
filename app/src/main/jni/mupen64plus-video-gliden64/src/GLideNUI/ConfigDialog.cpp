@@ -146,6 +146,10 @@ void ConfigDialog::_init()
 	ui->nativeRes2D_checkBox->toggle();
 	ui->nativeRes2D_checkBox->setChecked(config.generalEmulation.enableNativeResTexrects != 0);
 
+	ui->gammaCorrectionCheckBox->toggle();
+	ui->gammaCorrectionCheckBox->setChecked(config.gammaCorrection.force != 0);
+	ui->gammaLevelSpinBox->setValue(config.gammaCorrection.level);
+
 	ui->frameBufferSwapComboBox->setCurrentIndex(config.frameBufferEmulation.bufferSwapMode);
 
 	ui->fbInfoEnableCheckBox->toggle();
@@ -160,7 +164,7 @@ void ConfigDialog::_init()
 	ui->copyColorBufferComboBox->setCurrentIndex(config.frameBufferEmulation.copyToRDRAM);
 	ui->copyDepthBufferComboBox->setCurrentIndex(config.frameBufferEmulation.copyDepthToRDRAM);
 	ui->RenderFBCheckBox->setChecked(config.frameBufferEmulation.copyFromRDRAM != 0);
-	ui->n64DepthCompareCheckBox->toggle(); 
+	ui->n64DepthCompareCheckBox->toggle();
 	ui->n64DepthCompareCheckBox->setChecked(config.frameBufferEmulation.N64DepthCompare != 0);
 
 	switch (config.frameBufferEmulation.aspect) {
@@ -220,10 +224,8 @@ void ConfigDialog::_init()
 	ui->saveTextureCacheCheckBox->setChecked(config.textureFilter.txSaveCache != 0);
 
 	ui->txPathLabel->setText(QString::fromWCharArray(config.textureFilter.txPath));
-
-	// Post filter settings
-	ui->gammaCorrectionGroupBox->setChecked(config.gammaCorrection.force != 0);
-	ui->gammaLevelSpinBox->setValue(config.gammaCorrection.level);
+	ui->txCachePathLabel->setText(QString::fromWCharArray(config.textureFilter.txCachePath));
+	ui->txDumpPathLabel->setText(QString::fromWCharArray(config.textureFilter.txDumpPath));
 
 	// OSD settings
 	QString fontName(config.font.name.c_str());
@@ -390,6 +392,9 @@ void ConfigDialog::accept()
 	config.generalEmulation.enableShadersStorage = ui->enableShadersStorageCheckBox->isChecked() ? 1 : 0;
 	config.generalEmulation.enableCustomSettings = ui->customSettingsCheckBox->isChecked() ? 1 : 0;
 
+	config.gammaCorrection.force = ui->gammaCorrectionCheckBox->isChecked() ? 1 : 0;
+	config.gammaCorrection.level = ui->gammaLevelSpinBox->value();
+
 	if (ui->fixTexrectDisableRadioButton->isChecked())
 		config.generalEmulation.correctTexrectCoords = Config::tcDisable;
 	else if (ui->fixTexrectSmartRadioButton->isChecked())
@@ -449,10 +454,12 @@ void ConfigDialog::accept()
 	QString txPath = ui->txPathLabel->text();
 	if (!txPath.isEmpty())
 		config.textureFilter.txPath[txPath.toWCharArray(config.textureFilter.txPath)] = L'\0';
-
-	// Post filter settings
-	config.gammaCorrection.force = ui->gammaCorrectionGroupBox->isChecked() ? 1 : 0;
-	config.gammaCorrection.level = ui->gammaLevelSpinBox->value();
+	QString txCachePath = ui->txCachePathLabel->text();
+	if (!txPath.isEmpty())
+		config.textureFilter.txCachePath[txCachePath.toWCharArray(config.textureFilter.txCachePath)] = L'\0';
+	QString txDumpPath = ui->txDumpPathLabel->text();
+	if (!txDumpPath.isEmpty())
+		config.textureFilter.txDumpPath[txDumpPath.toWCharArray(config.textureFilter.txDumpPath)] = L'\0';
 
 	// OSD settings
 	config.font.size = ui->fontSizeSpinBox->value();
@@ -558,6 +565,29 @@ void ConfigDialog::on_texPackPathButton_clicked()
 		options);
 	if (!directory.isEmpty())
 		ui->txPathLabel->setText(directory);
+}
+
+
+void ConfigDialog::on_texCachePathButton_clicked()
+{
+	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseSheet | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
+	QString directory = QFileDialog::getExistingDirectory(this,
+		"",
+		ui->txCachePathLabel->text(),
+		options);
+	if (!directory.isEmpty())
+		ui->txCachePathLabel->setText(directory);
+}
+
+void ConfigDialog::on_texDumpPathButton_clicked()
+{
+	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseSheet | QFileDialog::ReadOnly | QFileDialog::HideNameFilterDetails;
+	QString directory = QFileDialog::getExistingDirectory(this,
+		"",
+		ui->txDumpPathLabel->text(),
+		options);
+	if (!directory.isEmpty())
+		ui->txDumpPathLabel->setText(directory);
 }
 
 void ConfigDialog::on_windowedResolutionComboBox_currentIndexChanged(int index)
