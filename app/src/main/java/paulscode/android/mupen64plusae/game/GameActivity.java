@@ -53,6 +53,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import com.bda.controller.Controller;
+import com.google.vr.sdk.base.AndroidCompat;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -461,6 +462,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mDrawerLayout.openDrawer(GravityCompat.START);
             ReloadAllMenus();
         }
+
+        AndroidCompat.setVrModeEnabled(this, true);
     }
 
     @Override
