@@ -20,9 +20,13 @@ public:
 
 	u32 getCycleType() const;
 
+	u32 getBilerp() const;
+
 	u64 getMux() const { return m_key.mux; }
 
 	void read(std::istream & _is);
+
+	static const CombinerKey & getEmpty();
 
 private:
 	gDPCombine m_key;
