@@ -55,6 +55,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/controllers/paks/transferpak.c             \
     $(SRCDIR)/device/controllers/game_controller.c              \
     $(SRCDIR)/device/gb/gb_cart.c                               \
+    $(SRCDIR)/device/gb/m64282fp.c                              \
     $(SRCDIR)/device/gb/mbc3_rtc.c                              \
     $(SRCDIR)/device/cart/cart_rom.c                            \
     $(SRCDIR)/device/cart/flashram.c                            \
@@ -81,7 +82,6 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/r4300/new_dynarec/new_dynarec.c            \
     $(SRCDIR)/device/rcp/rdp/rdp_core.c                         \
     $(SRCDIR)/device/rdram/rdram.c                              \
-    $(SRCDIR)/device/rdram/rdram_detection_hack.c               \
     $(SRCDIR)/device/rcp/ri/ri_controller.c                     \
     $(SRCDIR)/device/rcp/rsp/rsp_core.c                         \
     $(SRCDIR)/device/pif/cic.c                                  \

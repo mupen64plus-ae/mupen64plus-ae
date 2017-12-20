@@ -457,6 +457,7 @@ SOURCE = \
     $(SRCDIR)/device/device.c \
     $(SRCDIR)/device/gb/gb_cart.c \
     $(SRCDIR)/device/gb/mbc3_rtc.c \
+    $(SRCDIR)/device/gb/m64282fp.c \
     $(SRCDIR)/device/memory/memory.c \
     $(SRCDIR)/device/pif/bootrom_hle.c \
     $(SRCDIR)/device/pif/cic.c \
@@ -481,7 +482,6 @@ SOURCE = \
     $(SRCDIR)/device/rcp/si/si_controller.c \
     $(SRCDIR)/device/rcp/vi/vi_controller.c \
     $(SRCDIR)/device/rdram/rdram.c \
-    $(SRCDIR)/device/rdram/rdram_detection_hack.c \
     $(SRCDIR)/main/main.c \
     $(SRCDIR)/main/util.c \
     $(SRCDIR)/main/cheat.c \

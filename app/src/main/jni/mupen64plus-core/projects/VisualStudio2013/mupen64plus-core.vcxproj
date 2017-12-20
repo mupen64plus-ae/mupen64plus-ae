@@ -61,6 +61,7 @@
     <ClCompile Include="..\..\src\device\controllers\paks\rumblepak.c" />
     <ClCompile Include="..\..\src\device\controllers\paks\transferpak.c" />
     <ClCompile Include="..\..\src\device\gb\gb_cart.c" />
+    <ClCompile Include="..\..\src\device\gb\m64282fp.c" />
     <ClCompile Include="..\..\src\device\gb\mbc3_rtc.c" />
     <ClCompile Include="..\..\src\device\pif\bootrom_hle.c" />
     <ClCompile Include="..\..\src\main\cheat.c" />
@@ -235,7 +236,6 @@
     <ClCompile Include="..\..\src\device\rcp\si\si_controller.c" />
     <ClCompile Include="..\..\src\device\rcp\vi\vi_controller.c" />
     <ClCompile Include="..\..\src\device\rdram\rdram.c" />
-    <ClCompile Include="..\..\src\device\rdram\rdram_detection_hack.c" />
     <ClCompile Include="..\..\src\device\pif\cic.c" />
     <ClCompile Include="..\..\src\device\pif\n64_cic_nus_6105.c" />
     <ClCompile Include="..\..\src\device\pif\pif.c" />
@@ -280,6 +280,7 @@
     <ClInclude Include="..\..\src\device\controllers\paks\rumblepak.h" />
     <ClInclude Include="..\..\src\device\controllers\paks\transferpak.h" />
     <ClInclude Include="..\..\src\device\gb\gb_cart.h" />
+    <ClInclude Include="..\..\src\device\gb\m64282fp.h" />
     <ClInclude Include="..\..\src\device\gb\mbc3_rtc.h" />
     <ClInclude Include="..\..\src\device\pif\bootrom_hle.h" />
     <ClInclude Include="..\..\src\main\cheat.h" />
@@ -447,7 +448,6 @@
     <ClInclude Include="..\..\src\device\rcp\si\si_controller.h" />
     <ClInclude Include="..\..\src\device\rcp\vi\vi_controller.h" />
     <ClInclude Include="..\..\src\device\rdram\rdram.h" />
-    <ClInclude Include="..\..\src\device\rdram\rdram_detection_hack.h" />
     <ClInclude Include="..\..\src\device\pif\cic.h" />
     <ClInclude Include="..\..\src\device\pif\n64_cic_nus_6105.h" />
     <ClInclude Include="..\..\src\device\pif\pif.h" />

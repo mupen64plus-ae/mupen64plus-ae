@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - rdram_detection_hack.c                                  *
+ *   Mupen64plus - m64282fp.h                                              *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2014 Bobby Smiles                                       *
+ *   Copyright (C) 2017 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,24 +19,26 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "rdram_detection_hack.h"
-#include "rdram.h"
+#ifndef M64P_DEVICE_GB_M64282FP_H
+#define M64P_DEVICE_GB_M64282FP_H
 
 #include <stdint.h>
 
-#include "device/pif/cic.h"
-
-/* HACK: force detected RDRAM size
- * This hack is triggered just before initial ROM loading (see pi_controller.c)
- *
- * Proper emulation of RI/RDRAM subsystem is required to avoid this hack.
- */
-void force_detected_rdram_size_hack(struct rdram* rdram, const struct cic* cic)
+enum m64282fp_registers
 {
-    uint32_t address = (cic->version != CIC_X105)
-        ? 0x318
-        : 0x3f0;
+    /* TODO: use pretty names for registers */
+    M64282FP_REGS_COUNT = 0x36
+};
 
-    rdram->dram[address/4] = (uint32_t)rdram->dram_size;
-}
+struct m64282fp
+{
+    uint8_t regs[M64282FP_REGS_COUNT];
+};
 
+void init_m64282fp(struct m64282fp* cam);
+void poweron_m64282fp(struct m64282fp* cam);
+
+uint8_t read_m64282fp_regs(struct m64282fp* cam, unsigned int reg);
+void write_m64282fp_regs(struct m64282fp* cam, unsigned int reg, uint8_t value);
+
+#endif

@@ -306,6 +306,9 @@
     <ClCompile Include="..\..\src\device\gb\gb_cart.c">
       <Filter>device\gb</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\device\gb\m64282fp.c">
+      <Filter>device\gb</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\device\gb\mbc3_rtc.c">
       <Filter>device\gb</Filter>
     </ClCompile>
@@ -340,9 +343,6 @@
       <Filter>device\controllers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\device\rdram\rdram.c">
-      <Filter>device\rdram</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\device\rdram\rdram_detection_hack.c">
       <Filter>device\rdram</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\device\rcp\ai\ai_controller.c">
@@ -638,6 +638,9 @@
     <ClInclude Include="..\..\src\device\gb\gb_cart.h">
       <Filter>device\gb</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\device\gb\m64282fp.h">
+      <Filter>device\gb</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\device\gb\mbc3_rtc.h">
       <Filter>device\gb</Filter>
     </ClInclude>
@@ -672,9 +675,6 @@
       <Filter>device\controllers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\device\rdram\rdram.h">
-      <Filter>device\rdram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\device\rdram\rdram_detection_hack.h">
       <Filter>device\rdram</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\device\rcp\ai\ai_controller.h">
