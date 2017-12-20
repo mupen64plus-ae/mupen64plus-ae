@@ -171,7 +171,7 @@ static void send_dlist_to_gfx_plugin(struct hle_t* hle)
 
     HleProcessDlistList(hle->user_defined);
 
-    if ((*hle->sp_status & SP_STATUS_INTR_ON_BREAK)) {
+    if ((*hle->sp_status & SP_STATUS_INTR_ON_BREAK) && (*hle->sp_status & (SP_STATUS_TASKDONE | SP_STATUS_BROKE | SP_STATUS_HALT))) {
         *hle->mi_intr |= MI_INTR_SP;
         HleCheckInterrupts(hle->user_defined);
     }
@@ -383,13 +383,7 @@ static bool try_re2_task_dispatching(struct hle_t* hle)
         return true;
 
     case 0x3d84:
-        /* FIXME: implement proper ucode
-         * Forward the task if possible,
-         * otherwise just skip it as it seems to work OK like that
-         */
-        if (HleForwardTask(hle->user_defined) != 0) {
-            rsp_break(hle, SP_STATUS_TASKDONE);
-        }
+        fill_video_double_buffer_task(hle);
         return true;
     }
 

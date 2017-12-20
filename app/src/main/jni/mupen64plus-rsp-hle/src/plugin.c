@@ -477,19 +477,18 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, unsigned int* CycleCount)
     m64p_rom_header rom_header;
     CoreDoCommand(M64CMD_ROM_GET_HEADER, sizeof(rom_header), &rom_header);
 
+    g_hle.hle_gfx = ConfigGetParamBool(l_ConfigRspHle, RSP_HLE_CONFIG_HLE_GFX);
+    g_hle.hle_aud = ConfigGetParamBool(l_ConfigRspHle, RSP_HLE_CONFIG_HLE_AUD);
+
     /* Init hle_gfx and hle_aud variables - with game-specific tweaks */
     if ((strstr((char*)rom_header.Name, (const char*)"WORLD DRIVER CHAMP") != NULL)
      || (strstr((char*)rom_header.Name, (const char*)"Indiana Jones") != NULL)
      || (strstr((char*)rom_header.Name, (const char*)"Battle for Naboo") != NULL)
      || (strstr((char*)rom_header.Name, (const char*)"Stunt Racer 64") != NULL)) {
-        g_hle.hle_gfx = 0;
-    }
-    else {
-        g_hle.hle_gfx = ConfigGetParamBool(l_ConfigRspHle, RSP_HLE_CONFIG_HLE_GFX);
-    }
 
-    g_hle.hle_aud = ConfigGetParamBool(l_ConfigRspHle, RSP_HLE_CONFIG_HLE_AUD);
-
+        if(l_InitiateRSP)
+            g_hle.hle_gfx = 0;
+    }
 
     /* notify fallback plugin */
     if (l_InitiateRSP) {

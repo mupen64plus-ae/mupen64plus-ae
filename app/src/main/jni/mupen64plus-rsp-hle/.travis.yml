@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 dist: trusty
 language: cpp
 compiler:
@@ -15,3 +15,38 @@ env:
  - DUMP=1
 script:
  - make -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 clean && LDFLAGS="-Wl,--no-add-needed -Wl,--no-undefined" OPTFLAGS="-O2" make CC="${CC}" CXX="${CXX}" -j$(nproc) -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/" V=1 all
+
+# extra mxe build entries
+matrix:
+  include:
+    - env:
+      - MXE_CPU=i686
+      - PATH="/usr/lib/mxe/usr/bin/:$PATH"
+      addons:
+        apt:
+          sources:
+          - sourceline: 'deb http://pkg.mxe.cc/repos/apt/debian jessie main'
+            key_url: 'http://pkg.mxe.cc/repos/apt/conf/mxeapt.gpg'
+          packages:
+          - mxe-i686-w64-mingw32.shared-gcc
+      before_install:
+      - git clone --depth=1 --branch=master git://github.com/mupen64plus/mupen64plus-core.git deps/mupen64plus-core
+      script:
+      - make UNAME=MINGW CROSS_COMPILE="${MXE_CPU}-w64-mingw32.shared-" CC="${MXE_CPU}-w64-mingw32.shared-gcc" CXX="${MXE_CPU}-w64-mingw32.shared-g++" HOST_CPU="${MXE_CPU}" -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/"  V=1  clean && 
+        make UNAME=MINGW CROSS_COMPILE="${MXE_CPU}-w64-mingw32.shared-" CC="${MXE_CPU}-w64-mingw32.shared-gcc" CXX="${MXE_CPU}-w64-mingw32.shared-g++" HOST_CPU="${MXE_CPU}" -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/"  V=1 -j$(nproc) all
+
+    - env:
+      - MXE_CPU=x86_64
+      - PATH="/usr/lib/mxe/usr/bin/:$PATH"
+      addons:
+        apt:
+          sources:
+          - sourceline: 'deb http://pkg.mxe.cc/repos/apt/debian jessie main'
+            key_url: 'http://pkg.mxe.cc/repos/apt/conf/mxeapt.gpg'
+          packages:
+          - mxe-x86-64-w64-mingw32.shared-gcc
+      before_install:
+       - git clone --depth=1 --branch=master git://github.com/mupen64plus/mupen64plus-core.git deps/mupen64plus-core
+      script:
+      - make UNAME=MINGW CROSS_COMPILE="${MXE_CPU}-w64-mingw32.shared-" CC="${MXE_CPU}-w64-mingw32.shared-gcc" CXX="${MXE_CPU}-w64-mingw32.shared-g++" HOST_CPU="${MXE_CPU}" -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/"  V=1  clean && 
+        make UNAME=MINGW CROSS_COMPILE="${MXE_CPU}-w64-mingw32.shared-" CC="${MXE_CPU}-w64-mingw32.shared-gcc" CXX="${MXE_CPU}-w64-mingw32.shared-g++" HOST_CPU="${MXE_CPU}" -C projects/unix APIDIR="$(pwd)/deps/mupen64plus-core/src/api/"  V=1 -j$(nproc) all

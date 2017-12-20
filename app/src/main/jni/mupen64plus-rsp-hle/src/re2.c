@@ -178,3 +178,47 @@ void decode_video_frame_task(struct hle_t* hle)
 
     rsp_break(hle, SP_STATUS_TASKDONE);
 }
+
+void fill_video_double_buffer_task(struct hle_t* hle)
+{
+    int data_ptr = *dmem_u32(hle, TASK_UCODE_DATA);
+
+    int pSrc = *dram_u32(hle, data_ptr);
+    int pDest = *dram_u32(hle, data_ptr + 0x4);
+    int width = *dram_u32(hle, data_ptr + 0x8) >> 1;
+    int height = *dram_u32(hle, data_ptr + 0x10) << 1;
+    int stride = *dram_u32(hle, data_ptr + 0x1c) >> 1;
+
+    assert((*dram_u32(hle, data_ptr + 0x28) >> 16) == 0x8000);
+
+#if 0 /* unused, but keep it for documentation purpose */
+    int arg3 = *dram_u32(hle, data_ptr + 0xc);
+    int arg5 = *dram_u32(hle, data_ptr + 0x14);
+    int arg6 = *dram_u32(hle, data_ptr + 0x18);
+#endif
+
+    int i, j;
+    int r, g, b;
+    uint32_t pixel, pixel1, pixel2;
+
+    for(i = 0; i < height; i++)
+    {
+      for(j = 0; j < width; j=j+4)
+      {
+        pixel1 = *dram_u32(hle, pSrc+j);
+        pixel2 = *dram_u32(hle, pDest+j);
+      
+        r = (((pixel1 >> 24) & 0xff) + ((pixel2 >> 24) & 0xff)) >> 1;
+        g = (((pixel1 >> 16) & 0xff) + ((pixel2 >> 16) & 0xff)) >> 1;
+        b = (((pixel1 >> 8) & 0xff) + ((pixel2 >> 8) & 0xff)) >> 1;
+      
+        pixel = (r << 24) | (g << 16) | (b << 8) | 0;
+      
+        dram_store_u32(hle, &pixel, pDest+j, 1);
+      }
+      pSrc += stride;
+      pDest += stride;
+    }
+
+    rsp_break(hle, SP_STATUS_TASKDONE);
+}
