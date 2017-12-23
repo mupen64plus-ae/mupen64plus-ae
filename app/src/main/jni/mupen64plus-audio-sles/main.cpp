@@ -897,6 +897,7 @@ void *audioConsumerStretch(void *param) {
     const double maxSlowValue = 3.0;
     const float maxSpeedUpRate = 0.5;
     const float slowRate = 0.05;
+	const float defaultSampleLength = 0.01666;
     queueData *currQueueData = NULL;
     struct timespec prevTime;
 
@@ -915,8 +916,8 @@ void *audioConsumerStretch(void *param) {
     bool feedTimesSet = false;
     double feedTimes[maxWindowSize];
     double gameTimes[maxWindowSize];
-    float averageGameTime = 0.01666;
-    float averageFeedTime = 0.01666;
+    float averageGameTime = defaultSampleLength;
+    float averageFeedTime = defaultSampleLength;
 
     while (!shutdown) {
         int slesQueueLength = state.limit - state.value;
@@ -1007,7 +1008,7 @@ void *audioConsumerStretch(void *param) {
             }
 
 			//Normalize window size
-			feedTimeWindowSize = static_cast<int>(0.0166/averageGameTime*50);
+			feedTimeWindowSize = static_cast<int>(defaultSampleLength/averageGameTime*50);
 			if(feedTimeWindowSize > maxWindowSize) {
 				feedTimeWindowSize = maxWindowSize;
 			}
