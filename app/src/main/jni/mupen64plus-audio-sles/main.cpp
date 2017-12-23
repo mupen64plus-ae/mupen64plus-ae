@@ -877,7 +877,11 @@ void *audioConsumerStretch(void *param) {
     double bufferMultiplier = ((double) OutputFreq / DEFAULT_FREQUENCY) *
             ((double)DEFAULT_SECONDARY_BUFFER_SIZE/SecondaryBufferSize);
 
+	int bufferLimit = state.limit - 20;
     int maxQueueSize = (int) ((TargetSecondaryBuffers + 30.0) * bufferMultiplier);
+	if (maxQueueSize > bufferLimit) {
+		maxQueueSize = bufferLimit;
+	}
     int minQueueSize = (int) (TargetSecondaryBuffers * bufferMultiplier);
     bool drainQueue = false;
 
@@ -895,7 +899,6 @@ void *audioConsumerStretch(void *param) {
     const float slowRate = 0.05;
     queueData *currQueueData = NULL;
     struct timespec prevTime;
-    struct timespec currTime;
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &prevTime);
 
@@ -944,10 +947,11 @@ void *audioConsumerStretch(void *param) {
                                      (float) (slesQueueLength - minQueueSize) / (float) (state.limit - minQueueSize) *
                                      maxSpeedUpRate;
                 }
-                //Device can't keep up with the game or we have too much in the queue after slowing it down
+                //Device can't keep up with the game
                 else if (ranDry) {
                     drainQueue = false;
                     currAdjustment = temp - slowRate;
+				//Good case
                 } else if (!ranDry && slesQueueLength < maxQueueSize) {
                     currAdjustment = temp;
                 }
@@ -972,8 +976,8 @@ void *audioConsumerStretch(void *param) {
             //Useful logging
             //if(slesQueueLength == 0)
             //{
-            //DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, count=%d",
-            //             slesQueueLength, threadQueueLength, ranDry, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, state.totalBuffersProcessed);
+            // DebugMessage(M64MSG_ERROR, "sles_length=%d, thread_length=%d, dry=%d, drain=%d, slow_adj=%f, curr_adj=%f, temp=%f, feed_time=%f, game_time=%f, min_size=%d, max_size=%d count=%d",
+			//            slesQueueLength, threadQueueLength, ranDry, drainQueue, slowAdjustment, currAdjustment, temp, averageFeedTime, averageGameTime, minQueueSize, maxQueueSize, state.totalBuffersProcessed);
             //}
 
             //We don't want to calculate the average until we give everything a time to settle.
