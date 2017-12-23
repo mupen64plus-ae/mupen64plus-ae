@@ -3,7 +3,7 @@ apply plugin: 'signing'
 
 android {
     compileSdkVersion = 27
-    buildToolsVersion = '27.0.1'
+    buildToolsVersion = '27.0.2'
 
     allprojects {
         tasks.withType(JavaCompile) {
