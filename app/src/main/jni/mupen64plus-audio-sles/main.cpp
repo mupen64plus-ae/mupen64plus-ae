@@ -907,11 +907,14 @@ void *audioConsumerStretch(void *param) {
     waitTime.tv_sec = 1;
     waitTime.tv_nsec = 0;
 
-    int feedTimeWindowSize = 50;
+	int maxWindowSize = 500;
+
+	int feedTimeWindowSize = 50;
+
     int feedTimeIndex = 0;
     bool feedTimesSet = false;
-    double feedTimes[feedTimeWindowSize];
-    double gameTimes[feedTimeWindowSize];
+    double feedTimes[maxWindowSize];
+    double gameTimes[maxWindowSize];
     float averageGameTime = 0.01666;
     float averageFeedTime = 0.01666;
 
@@ -998,10 +1001,16 @@ void *audioConsumerStretch(void *param) {
             averageGameTime = GetAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
             ++feedTimeIndex;
-            if (feedTimeIndex == feedTimeWindowSize) {
+            if (feedTimeIndex >= feedTimeWindowSize) {
                 feedTimeIndex = 0;
                 feedTimesSet = true;
             }
+
+			//Normalize window size
+			feedTimeWindowSize = static_cast<int>(0.0166/averageGameTime*50);
+			if(feedTimeWindowSize > maxWindowSize) {
+				feedTimeWindowSize = maxWindowSize;
+			}
 
             free(currQueueData->data);
             free(currQueueData);
