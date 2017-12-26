@@ -24,12 +24,12 @@ COMMON_CPPFLAGS :=                  \
 
 COMMON_LDFLAGS :=
 
-ifneq ($(HOST_OS),windows)
-    COMMON_CFLAGS += -flto
-    COMMON_LDFLAGS +=                   \
-        $(COMMON_CFLAGS)                \
-        $(COMMON_CPPFLAGS)
-endif
+#ifneq ($(HOST_OS),windows)
+#    COMMON_CFLAGS += -flto
+#    COMMON_LDFLAGS +=                   \
+#        $(COMMON_CFLAGS)                \
+#        $(COMMON_CPPFLAGS)
+#endif
 
 include $(JNI_LOCAL_PATH)/GL/GL/Android.mk
 include $(JNI_LOCAL_PATH)/SDL2/Android.mk
