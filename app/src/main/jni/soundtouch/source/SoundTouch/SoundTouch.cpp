@@ -41,10 +41,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2016-01-10 10:31:35 +0000 (Sun, 10 Jan 2016) $
+// Last changed  : $Date: 2016-10-15 22:34:59 +0300 (la, 15 loka 2016) $
 // File revision : $Revision: 4 $
 //
-// $Id: SoundTouch.cpp 238 2016-01-10 10:31:35Z oparviai $
+// $Id: SoundTouch.cpp 243 2016-10-15 19:34:59Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -447,7 +447,7 @@ int SoundTouch::getSetting(int settingId) const
             return pRateTransposer->getAAFilter()->getLength();
 
         case SETTING_USE_QUICKSEEK :
-            return (uint)   pTDStretch->isQuickSeekEnabled();
+            return (uint)pTDStretch->isQuickSeekEnabled();
 
         case SETTING_SEQUENCE_MS:
             pTDStretch->getParameters(NULL, &temp, NULL, NULL);
@@ -462,15 +462,56 @@ int SoundTouch::getSetting(int settingId) const
             return temp;
 
         case SETTING_NOMINAL_INPUT_SEQUENCE :
-            return pTDStretch->getInputSampleReq();
+        {
+            int size = pTDStretch->getInputSampleReq();
+
+#ifndef SOUNDTOUCH_PREVENT_CLICK_AT_RATE_CROSSOVER
+            if (rate <= 1.0)
+            {
+                // transposing done before timestretch, which impacts latency
+                return (int)(size * rate + 0.5);
+            }
+#endif
+            return size;
+        }
 
         case SETTING_NOMINAL_OUTPUT_SEQUENCE :
-            return pTDStretch->getOutputBatchSize();
+        {
+            int size = pTDStretch->getOutputBatchSize();
+
+            if (rate > 1.0)
+            {
+                // transposing done after timestretch, which impacts latency
+                return (int)(size / rate + 0.5);
+            }
+            return size;
+        }
+
+        case SETTING_INITIAL_LATENCY:
+        {
+            double latency = pTDStretch->getLatency();
+            int latency_tr = pRateTransposer->getLatency();
+
+#ifndef SOUNDTOUCH_PREVENT_CLICK_AT_RATE_CROSSOVER
+            if (rate <= 1.0)
+            {
+                // transposing done before timestretch, which impacts latency
+                latency = (latency + latency_tr) * rate;
+            }
+            else
+#endif
+            {
+                latency += (double)latency_tr / rate;
+            }
+
+            return (int)(latency + 0.5);
+        }
 
         default :
             return 0;
     }
 }
+
 
 
 // Clears all the samples in the object's output and internal processing
@@ -525,4 +566,13 @@ uint SoundTouch::receiveSamples(uint maxSamples)
     uint ret = FIFOProcessor::receiveSamples(maxSamples);
     samplesOutput += (long)ret;
     return ret;
+}
+
+
+/// Get ratio between input and output audio durations, useful for calculating
+/// processed output duration: if you'll process a stream of N samples, then 
+/// you can expect to get out N * getInputOutputSampleRatio() samples.
+double SoundTouch::getInputOutputSampleRatio()
+{
+    return 1.0 / (tempo * rate);
 }

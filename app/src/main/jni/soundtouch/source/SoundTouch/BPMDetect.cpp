@@ -26,7 +26,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2016-01-05 20:59:57 +0000 (Tue, 05 Jan 2016) $
+// Last changed  : $Date: 2016-01-05 22:59:57 +0200 (ti, 05 tammi 2016) $
 // File revision : $Revision: 4 $
 //
 // $Id: BPMDetect.cpp 237 2016-01-05 20:59:57Z oparviai $
@@ -235,7 +235,7 @@ void BPMDetect::updateXCorr(int process_samples)
         }
         xcorr[offs] *= xcorr_decay;   // decay 'xcorr' here with suitable time constant.
 
-        xcorr[offs] += (float)fabs(static_cast<float>(sum));
+        xcorr[offs] += (float)fabs(sum);
     }
 }
 

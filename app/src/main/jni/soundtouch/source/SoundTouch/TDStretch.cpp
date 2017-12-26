@@ -19,10 +19,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2016-01-05 20:42:45 +0000 (Tue, 05 Jan 2016) $
+// Last changed  : $Date: 2017-04-07 22:01:22 +0300 (pe, 07 huhti 2017) $
 // File revision : $Revision: 1.12 $
 //
-// $Id: TDStretch.cpp 236 2016-01-05 20:42:45Z oparviai $
+// $Id: TDStretch.cpp 249 2017-04-07 19:01:22Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -225,6 +225,7 @@ void TDStretch::clearInput()
 {
     inputBuffer.clear();
     clearMidBuffer();
+    isBeginning = true;
 }
 
 
@@ -309,6 +310,7 @@ int TDStretch::seekBestOverlapPositionFull(const SAMPLETYPE *refPos)
     // Scans for the best correlation value by testing each possible position
     // over the permitted range.
     bestCorr = calcCrossCorr(refPos, pMidBuffer, norm);
+    bestCorr = (bestCorr + 0.1) * 0.75;
 
     #pragma omp parallel for
     for (i = 1; i < seekLength; i ++) 
@@ -522,13 +524,13 @@ void TDStretch::calcSeqParameters()
     #define AUTOSEQ_TEMPO_TOP   2.0     // auto setting top tempo range (+100%)
 
     // sequence-ms setting values at above low & top tempo
-    #define AUTOSEQ_AT_MIN      125.0
-    #define AUTOSEQ_AT_MAX      50.0
+    #define AUTOSEQ_AT_MIN      90.0
+    #define AUTOSEQ_AT_MAX      40.0
     #define AUTOSEQ_K           ((AUTOSEQ_AT_MAX - AUTOSEQ_AT_MIN) / (AUTOSEQ_TEMPO_TOP - AUTOSEQ_TEMPO_LOW))
     #define AUTOSEQ_C           (AUTOSEQ_AT_MIN - (AUTOSEQ_K) * (AUTOSEQ_TEMPO_LOW))
 
     // seek-window-ms setting values at above low & top tempoq
-    #define AUTOSEEK_AT_MIN     25.0
+    #define AUTOSEEK_AT_MIN     20.0
     #define AUTOSEEK_AT_MAX     15.0
     #define AUTOSEEK_K          ((AUTOSEEK_AT_MAX - AUTOSEEK_AT_MIN) / (AUTOSEQ_TEMPO_TOP - AUTOSEQ_TEMPO_LOW))
     #define AUTOSEEK_C          (AUTOSEEK_AT_MIN - (AUTOSEEK_K) * (AUTOSEQ_TEMPO_LOW))
@@ -639,7 +641,8 @@ void TDStretch::processNominalTempo()
 // the result into 'outputBuffer'
 void TDStretch::processSamples()
 {
-    int ovlSkip, offset;
+    int ovlSkip;
+    int offset = 0;
     int temp;
 
     /* Removed this small optimization - can introduce a click to sound when tempo setting
@@ -656,35 +659,61 @@ void TDStretch::processSamples()
     // to form a processing frame.
     while ((int)inputBuffer.numSamples() >= sampleReq) 
     {
-        // If tempo differs from the normal ('SCALE'), scan for the best overlapping
-        // position
-        offset = seekBestOverlapPosition(inputBuffer.ptrBegin());
+        if (isBeginning == false)
+        {
+            // apart from the very beginning of the track, 
+            // scan for the best overlapping position & do overlap-add
+            offset = seekBestOverlapPosition(inputBuffer.ptrBegin());
 
-        // Mix the samples in the 'inputBuffer' at position of 'offset' with the 
-        // samples in 'midBuffer' using sliding overlapping
-        // ... first partially overlap with the end of the previous sequence
-        // (that's in 'midBuffer')
-        overlap(outputBuffer.ptrEnd((uint)overlapLength), inputBuffer.ptrBegin(), (uint)offset);
-        outputBuffer.putSamples((uint)overlapLength);
+            // Mix the samples in the 'inputBuffer' at position of 'offset' with the 
+            // samples in 'midBuffer' using sliding overlapping
+            // ... first partially overlap with the end of the previous sequence
+            // (that's in 'midBuffer')
+            overlap(outputBuffer.ptrEnd((uint)overlapLength), inputBuffer.ptrBegin(), (uint)offset);
+            outputBuffer.putSamples((uint)overlapLength);
+            offset += overlapLength;
+        }
+        else
+        {
+            // Adjust processing offset at beginning of track by not perform initial overlapping
+            // and compensating that in the 'input buffer skip' calculation
+            isBeginning = false;
+            int skip = (int)(tempo * overlapLength + 0.5);
+
+            #ifdef SOUNDTOUCH_ALLOW_NONEXACT_SIMD_OPTIMIZATION
+                #ifdef SOUNDTOUCH_ALLOW_SSE
+                // if SSE mode, round the skip amount to value corresponding to aligned memory address
+                if (channels == 1)
+                {
+                    skip &= -4;
+                }
+                else if (channels == 2)
+                {
+                    skip &= -2;
+                }
+                #endif
+            #endif
+            skipFract -= skip;
+            assert(nominalSkip >= -skipFract);
+        }
 
         // ... then copy sequence samples from 'inputBuffer' to output:
 
-        // length of sequence
-        temp = (seekWindowLength - 2 * overlapLength);
-
         // crosscheck that we don't have buffer overflow...
-        if ((int)inputBuffer.numSamples() < (offset + temp + overlapLength * 2))
+        if ((int)inputBuffer.numSamples() < (offset + seekWindowLength - overlapLength))
         {
             continue;    // just in case, shouldn't really happen
         }
 
-        outputBuffer.putSamples(inputBuffer.ptrBegin() + channels * (offset + overlapLength), (uint)temp);
+        // length of sequence
+        temp = (seekWindowLength - 2 * overlapLength);
+        outputBuffer.putSamples(inputBuffer.ptrBegin() + channels * offset, (uint)temp);
 
         // Copies the end of the current sequence from 'inputBuffer' to 
         // 'midBuffer' for being mixed with the beginning of the next 
         // processing sequence and so on
-        assert((offset + temp + overlapLength * 2) <= (int)inputBuffer.numSamples());
-        memcpy(pMidBuffer, inputBuffer.ptrBegin() + channels * (offset + temp + overlapLength), 
+        assert((offset + temp + overlapLength) <= (int)inputBuffer.numSamples());
+        memcpy(pMidBuffer, inputBuffer.ptrBegin() + channels * (offset + temp), 
             channels * sizeof(SAMPLETYPE) * overlapLength);
 
         // Remove the processed samples from the input buffer. Update
@@ -881,7 +910,12 @@ double TDStretch::calcCrossCorr(const short *mixingPos, const short *compare, do
 
     if (lnorm > maxnorm)
     {
-        maxnorm = lnorm;
+        // modify 'maxnorm' inside critical section to avoid multi-access conflict if in OpenMP mode
+        #pragma omp critical
+        if (lnorm > maxnorm)
+        {
+            maxnorm = lnorm;
+        }
     }
     // Normalize result by dividing by sqrt(norm) - this step is easiest 
     // done using floating point operation

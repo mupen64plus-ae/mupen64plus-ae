@@ -8,10 +8,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2015-05-18 17:32:21 +0000 (Mon, 18 May 2015) $
+// Last changed  : $Date: 2017-07-30 12:35:00 +0300 (su, 30 heinä 2017) $
 // File revision : $Revision: 4 $
 //
-// $Id: main.cpp 219 2015-05-18 17:32:21Z oparviai $
+// $Id: main.cpp 253 2017-07-30 09:35:00Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -65,7 +65,7 @@ using namespace std;
 
 static const char _helloText[] = 
     "\n"
-    "   SoundStretch v%s -  Written by Olli Parviainen 2001 - 2015\n"
+    "   SoundStretch v%s -  Copyright (c) Olli Parviainen 2001 - 2017\n"
     "==================================================================\n"
     "author e-mail: <oparviai"
     "@"

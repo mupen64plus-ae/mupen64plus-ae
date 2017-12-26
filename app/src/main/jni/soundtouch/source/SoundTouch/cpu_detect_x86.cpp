@@ -11,7 +11,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2014-01-07 18:24:28 +0000 (Tue, 07 Jan 2014) $
+// Last changed  : $Date: 2014-01-07 20:24:28 +0200 (ti, 07 tammi 2014) $
 // File revision : $Revision: 4 $
 //
 // $Id: cpu_detect_x86.cpp 183 2014-01-07 18:24:28Z oparviai $
@@ -52,6 +52,10 @@
        // windows non-gcc
        #include <intrin.h>
    #endif
+
+   #define bit_MMX     (1 << 23)
+   #define bit_SSE     (1 << 25)
+   #define bit_SSE2    (1 << 26)
 #endif
 
 

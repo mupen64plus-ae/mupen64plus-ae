@@ -12,9 +12,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
+package net.surina;
+
 import java.io.File;
 
-import SoundTouch;
+import net.surina.soundtouch.SoundTouch;
 import net.surina.soundtouchexample.R;
 import android.app.Activity;
 import android.content.Intent;
