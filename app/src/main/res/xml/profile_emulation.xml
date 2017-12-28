@@ -183,13 +183,6 @@
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_fb_hires_title" />
         <paulscode.android.mupen64plusae.preference.CompatListPreference
-            android:defaultValue="@string/glide64mk2_fb_get_info_default"
-            android:entries="@array/glide64mk2_fb_get_info_entries"
-            android:entryValues="@array/glide64mk2_fb_get_info_values"
-            android:key="glide64mk2_fb_get_info"
-            android:summary="@string/selectedValue"
-            android:title="@string/glide64mk2_fb_get_info_title" />
-        <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/glide64mk2_fb_render_default"
             android:entries="@array/glide64mk2_fb_render_entries"
             android:entryValues="@array/glide64mk2_fb_render_values"

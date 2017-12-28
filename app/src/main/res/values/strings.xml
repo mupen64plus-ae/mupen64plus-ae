@@ -475,7 +475,6 @@
     <string name="glide64mk2_lodmode_precise">Precise</string>
     <string name="glide64mk2_fb_smart_title">Smart framebuffer</string>
     <string name="glide64mk2_fb_hires_title">Hardware frame buffer emulation</string>
-    <string name="glide64mk2_fb_get_info_title">Get frame buffer info</string>
     <string name="glide64mk2_fb_render_title">Enable software depth render</string>
     <string name="glide64mk2_fb_crc_mode_title">Set frambuffer CRC mode</string>
     <string name="glide64mk2_fb_crc_mode_disable">Disable CRC calculation</string>

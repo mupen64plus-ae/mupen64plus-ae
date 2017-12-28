@@ -384,19 +384,6 @@
     </string-array>
     <string name="glide64mk2_fb_hires_default" translatable="false">-1</string>
 
-    <!-- Glide64mk2 fb_get_info options-->
-    <string-array name="glide64mk2_fb_get_info_entries" translatable="false">
-        <item>@string/glide64mk2_game_default</item>
-        <item>@string/glide64mk2_disable</item>
-        <item>@string/glide64mk2_enable</item>
-    </string-array>
-    <string-array name="glide64mk2_fb_get_info_values" translatable="false">
-        <item>-1</item>
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-    <string name="glide64mk2_fb_get_info_default" translatable="false">-1</string>
-
     <!-- Glide64mk2 fb_render options-->
     <string-array name="glide64mk2_fb_render_entries" translatable="false">
         <item>@string/glide64mk2_game_default</item>

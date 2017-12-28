@@ -150,7 +150,7 @@ public class Glide64mk2Prefs {
         lodmode = getSafeInt( emulationProfile, "glide64mk2_lodmode", -1);
         fb_smart = getSafeInt( emulationProfile, "glide64mk2_fb_smart", -1);
         fb_hires = getSafeInt( emulationProfile, "glide64mk2_fb_hires", -1);
-        fb_get_info = getSafeInt( emulationProfile, "glide64mk2_fb_get_info", -1);
+        fb_get_info = 0;
         fb_render = getSafeInt( emulationProfile, "glide64mk2_fb_render", -1);
         fb_crc_mode = getSafeInt( emulationProfile, "glide64mk2_fb_crc_mode", -1);
         read_back_to_screen = getSafeInt( emulationProfile, "glide64mk2_read_back_to_screen", -1);
