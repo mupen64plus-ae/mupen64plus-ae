@@ -315,6 +315,14 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
                 LocalBinder binder = (LocalBinder) service;
                 mCoreService = binder.getService();
+
+                if(mCoreService.isInstallationError()) {
+                    Notifier.showToast(getActivity(), R.string.invalidInstall_message);
+                    getActivity().finish();
+
+                    return;
+                }
+
                 mCoreService.setSurface(mSurface);
                 mCoreService.addOnFpsChangedListener(mFpsChangeListener, mFpsRecalcPeriod);
                 mCoreService.setCoreServiceListener(CoreFragment.this);
