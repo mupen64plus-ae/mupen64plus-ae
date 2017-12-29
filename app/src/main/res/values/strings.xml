@@ -792,4 +792,8 @@
     <string name="diagnosticActivity_textKey_text">Press button or key…</string>
     <string name="diagnosticActivity_textMotion_text">Touch screen or joystick…</string>
 
+    <!-- Misc -->
+    <string name="coreFragment_sdcard_write_error">Unable to write configuration to SD card</string>
+
+
 </resources>

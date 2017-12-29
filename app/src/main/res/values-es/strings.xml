@@ -631,5 +631,8 @@
     <!--Controller Diagnostics-->
     <string name="diagnosticActivity_textKey_text">Presiona un botón o tecla…</string>
     <string name="diagnosticActivity_textMotion_text">Pantalla táctil o joystick…</string>
+
+    <!-- Misc -->
+    <string name="coreFragment_sdcard_write_error">No se puede escribir la configuración a la tarjeta SD</string>
 </resources>
 

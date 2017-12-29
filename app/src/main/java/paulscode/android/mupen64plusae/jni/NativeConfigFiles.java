@@ -22,6 +22,8 @@ package paulscode.android.mupen64plusae.jni;
 
 import android.util.Log;
 
+import org.mupen64plusae.v3.alpha.R;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,8 +38,9 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GLideN64Prefs;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
+import paulscode.android.mupen64plusae.util.Notifier;
 
-public class NativeConfigFiles
+class NativeConfigFiles
 {
     private final static String EMPTY = "\"\"";
 
@@ -56,11 +59,11 @@ public class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    public static void syncConfigFiles( GamePrefs game, GlobalPrefs global, AppData appData)
+    static boolean syncConfigFiles( GamePrefs game, GlobalPrefs global, AppData appData)
     {
         //@formatter:off
 
-        supportsFullGl = appData.doesSupportFullGL();
+        supportsFullGl = AppData.doesSupportFullGL();
 
         // gln64 config file
         final ConfigFile gln64_conf = new ConfigFile( appData.gln64_conf );
@@ -236,7 +239,7 @@ public class NativeConfigFiles
         if( game.emulationProfile.get( "WidescreenHack", "False" ).equals("True") )
             aspectRatio = "3";
 
-        readHiResSettings(game, global, appData);
+        readHiResSettings(game, global);
 
         // gln64 config file
         final ConfigFile glideN64_conf = new ConfigFile( appData.glideN64_conf );
@@ -316,7 +319,7 @@ public class NativeConfigFiles
 
         gln64_conf.save();
         glide64_conf.save();
-        mupen64plus_cfg.save();
+        return mupen64plus_cfg.save();
 
         //@formatter:on
     }
@@ -331,7 +334,7 @@ public class NativeConfigFiles
         return b ? "1" : "0";
     }
 
-    private static void readHiResSettings( GamePrefs game, GlobalPrefs global, AppData appData)
+    private static void readHiResSettings( GamePrefs game, GlobalPrefs global)
     {
         final String hiResHtc = global.textureCacheDir + "/" + game.gameHeaderName + "_HIRESTEXTURES.htc";
         final File htcFile = new File(hiResHtc);
@@ -340,7 +343,7 @@ public class NativeConfigFiles
 
         if(hiresTexHTCPresent)
         {
-            InputStream stream = null;
+            InputStream stream;
             InputStream gzipStream = null;
 
             try
@@ -372,6 +375,7 @@ public class NativeConfigFiles
                 }
                 catch (final IOException e)
                 {
+                    Log.e("NativeConfigFiles", "Unable to close gzip file");
                 }
             }
         }
