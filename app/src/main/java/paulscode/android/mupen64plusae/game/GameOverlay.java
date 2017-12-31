@@ -20,8 +20,10 @@
  */
 package paulscode.android.mupen64plusae.game;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -40,8 +42,10 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     private boolean mIsAnalogHiddenWhenSensor = false;
     private int mHatRefreshPeriod = 0;
     private int mHatRefreshCount = 0;
+    private double mCurrentAlpha = 1.0;
+    private boolean mHiding = false;
     
-    public GameOverlay( Context context, AttributeSet attribs )
+    public GameOverlay(Context context, AttributeSet attribs )
     {
         super( context, attribs );
         requestFocus();
@@ -143,18 +147,70 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         onAutoHold(sensorEnabled, TouchMap.TOGGLE_SENSOR);
     }
 
+    final Handler mHandler = new Handler();
+    Runnable mShowTouchscreen = new Runnable() {
+        @Override
+        public void run() {
+            if(mCurrentAlpha < 1.0) {
+                if (mTouchMap != null) {
+                    mTouchMap.setTouchControllerAlpha(mCurrentAlpha);
+                    postInvalidate();
+                    mCurrentAlpha += 0.032;
+                }
+                mHandler.postDelayed(mShowTouchscreen, 16);
+
+            } else {
+                // Show touch controls
+                if( mTouchMap != null && mTouchMap.showTouchController() )
+                    postInvalidate();
+            }
+        }
+    };
+
     @Override
-    public void onTouchControlsShow()
-    {
-        // Show touch controls
-        if( mTouchMap != null && mTouchMap.showTouchController() )
-            postInvalidate();
+    public void onTouchControlsShow() {
+
+        if(mHiding) {
+            mHandler.removeCallbacks(mHideTouchscreen);
+
+            mHiding = false;
+            mHandler.post(mShowTouchscreen);
+        }
     }
+
+    Runnable mHideTouchscreen = new Runnable() {
+        @Override
+        public void run() {
+            if(mCurrentAlpha > 0) {
+                if (mTouchMap != null) {
+                    mTouchMap.setTouchControllerAlpha(mCurrentAlpha);
+                    postInvalidate();
+                    mCurrentAlpha -= 0.016;
+                }
+                mHandler.postDelayed(mHideTouchscreen, 16);
+
+            } else {
+                // Hide touch controls
+                if( mTouchMap != null && mTouchMap.hideTouchController() )
+                    postInvalidate();
+            }
+        }
+    };
 
     @Override
     public void onTouchControlsHide() {
-        // Hide touch controls
-        if( mTouchMap != null && mTouchMap.hideTouchController() )
-            postInvalidate();
+
+        if(!mHiding) {
+            mHandler.removeCallbacks(mShowTouchscreen);
+
+            mHiding = true;
+            mHandler.post(mHideTouchscreen);
+        }
+    }
+
+    public void onDestroy()
+    {
+        mHandler.removeCallbacks(mHideTouchscreen);
+        mHandler.removeCallbacks(mShowTouchscreen);
     }
 }

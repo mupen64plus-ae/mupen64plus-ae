@@ -113,9 +113,6 @@ public class VisibleTouchMap extends TouchMap
     
     /** Y-coordinates of the AutoHold mask, in percent. */
     private final int[] autoHoldY;
-
-    /** True if touch controls are currently being shown */
-    private boolean controlsShown = true;
     
     /**
      * Instantiates a new visible touch map.
@@ -571,14 +568,13 @@ public class VisibleTouchMap extends TouchMap
         }
     }
 
+
+
     /**
      * Hides the touch controller
      */
     public boolean hideTouchController()
     {
-        if(!controlsShown)
-            return false;
-
         // Set the transparency of the images
         for( Image buttonImage : buttonImages )
         {
@@ -601,8 +597,40 @@ public class VisibleTouchMap extends TouchMap
             analogForeImage.setAlpha( 0 );
         }
 
-        controlsShown = false;
         return true;
+    }
+
+    /**
+     * Shows the touch controller
+     */
+    public void setTouchControllerAlpha(double alpha)
+    {
+        if (alpha < 0) {
+            alpha = 0;
+        } else if (alpha > 1.0) {
+            alpha = 1.0;
+        }
+        // Set the transparency of the images
+        for( Image buttonImage : buttonImages )
+        {
+            if(buttonImage != null)
+                buttonImage.setAlpha( (int)(mTouchscreenTransparency*alpha) );
+        }
+
+        for( int index = 0; index < autoHoldImages.length; ++index)
+        {
+
+            Image autoHoldImage = autoHoldImages[index];
+            if(autoHoldImage != null && autoHoldImagesPressed[index] )
+                autoHoldImage.setAlpha( (int)(mTouchscreenTransparency*alpha) );
+        }
+
+        if (analogBackImage != null) {
+            analogBackImage.setAlpha((int)(mTouchscreenTransparency*alpha));
+        }
+        if (analogForeImage != null) {
+            analogForeImage.setAlpha((int)(mTouchscreenTransparency*alpha));
+        }
     }
 
     /**
@@ -610,9 +638,6 @@ public class VisibleTouchMap extends TouchMap
      */
     public boolean showTouchController()
     {
-        if(controlsShown)
-            return false;
-
         // Set the transparency of the images
         for( Image buttonImage : buttonImages )
         {
@@ -628,12 +653,14 @@ public class VisibleTouchMap extends TouchMap
                 autoHoldImage.setAlpha( mTouchscreenTransparency );
         }
 
-        setAnalogEnabled(isAnalogEnabled);
-
-        controlsShown = true;
+        if (analogBackImage != null) {
+            analogBackImage.setAlpha(mTouchscreenTransparency);
+        }
+        if (analogForeImage != null) {
+            analogForeImage.setAlpha(mTouchscreenTransparency);
+        }
         return true;
     }
-
 
     /**
      * Loads FPS indicator assets and properties from the filesystem.

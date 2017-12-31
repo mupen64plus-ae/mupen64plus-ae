@@ -528,6 +528,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         {
             mHandler.removeCallbacks(mLastTouchChecker);
         }
+
+        mOverlay.onDestroy();
     }
 
     @Override
