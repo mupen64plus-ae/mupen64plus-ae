@@ -942,15 +942,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         if (crc == null || headerName == null || countryCodeString == null)
                         {
                             final File file = new File(romPath);
-                            final RomHeader header = new RomHeader(file);
 
-                            crc = header.crc;
-                            headerName = header.name;
-                            countryCode = header.countryCode;
+                            if (file.exists())
+                            {
+                                final RomHeader header = new RomHeader(file);
 
-                            config.put(md5, "crc", crc);
-                            config.put(md5, "headerName", headerName);
-                            config.put(md5, "countryCode", Byte.toString(countryCode.getValue()));
+                                crc = header.crc;
+                                headerName = header.name;
+                                countryCode = header.countryCode;
+
+                                config.put(md5, "crc", crc);
+                                config.put(md5, "headerName", headerName);
+                                config.put(md5, "countryCode", Byte.toString(countryCode.getValue()));
+                            }
                         }
 
                         int lastPlayed = 0;
