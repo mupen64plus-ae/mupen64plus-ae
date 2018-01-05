@@ -80,7 +80,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     }
 
     public static final String COMPLETE_EXTENSION = "complete";
-    public static final String SERVICE_EVENT = "SERVICE_EVENT";
+    public static final String SERVICE_EVENT = "M64P_SERVICE_EVENT";
+    public static final String SERVICE_RESUME = "M64P_SERVICE_RESUME";
     final static String NOTIFICATION_CHANNEL_ID = "CoreServiceChannel";
 
 
@@ -135,7 +136,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            boolean message = intent.getBooleanExtra("resume", false);
+            boolean message = intent.getBooleanExtra(SERVICE_RESUME, false);
 
             if(message && !mIsShuttingDown && mIsRunning)
             {
