@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - assemble_struct.h                                       *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -35,16 +35,16 @@ struct regcache_state {
 
 struct reg_cache
 {
-   int need_map;
-   void *needed_registers[8];
-   unsigned char jump_wrapper[62];
-   int need_cop1_check;
+    int need_map;
+    void *needed_registers[8];
+    unsigned char jump_wrapper[62];
+    int need_cop1_check;
 };
 
 struct jump_table
 {
-   unsigned int mi_addr;
-   unsigned int pc_addr;
+    unsigned int mi_addr;
+    unsigned int pc_addr;
 };
 
 #endif /* M64P_DEVICE_R4300_X86_ASSEMBLE_STRUCT_H */

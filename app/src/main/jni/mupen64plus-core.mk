@@ -71,7 +71,6 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/r4300/cp0.c                                \
     $(SRCDIR)/device/r4300/cp1.c                                \
     $(SRCDIR)/device/r4300/empty_dynarec.c                      \
-    $(SRCDIR)/device/r4300/exception.c                          \
     $(SRCDIR)/device/r4300/instr_counters.c                     \
     $(SRCDIR)/device/r4300/interrupt.c                          \
     $(SRCDIR)/device/rcp/mi/mi_controller.c                     \

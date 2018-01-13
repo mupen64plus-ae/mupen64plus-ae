@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - memory.h                                                *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -61,31 +61,6 @@ struct memory
     struct mem_handler dbg_handler;
 #endif
 };
-
-#ifndef M64P_BIG_ENDIAN
-#if defined(__GNUC__) && (__GNUC__ > 4  || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3))
-#define sl(x) __builtin_bswap32(x)
-#else
-#define sl(mot) \
-( \
-((mot & 0x000000FF) << 24) | \
-((mot & 0x0000FF00) <<  8) | \
-((mot & 0x00FF0000) >>  8) | \
-((mot & 0xFF000000) >> 24) \
-)
-#endif
-#define S8 3
-#define S16 2
-#define Sh16 1
-
-#else
-
-#define sl(mot) mot
-#define S8 0
-#define S16 0
-#define Sh16 0
-
-#endif
 
 static osal_inline void masked_write(uint32_t* dst, uint32_t value, uint32_t mask)
 {

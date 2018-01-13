@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - dbg_memory.c                                            *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2008 DarkJeztr                                          *
  *   Copyright (C) 2002 Blight                                             *
  *                                                                         *
@@ -29,6 +29,7 @@
 #include "dbg_types.h"
 #include "device/device.h"
 #include "main/main.h"
+#include "osal/preproc.h"
 
 #if !defined(NO_ASM) && (defined(__i386__) || (defined(__x86_64__) && defined(__GNUC__)))
 
@@ -341,7 +342,7 @@ uint32 read_memory_32(uint32 addr){
     case M64P_MEM_PIF:
       offset = pif_ram_address(addr);
       if (offset < PIF_RAM_SIZE)
-        return sl((*((uint32_t*)&g_dev.pif.ram[offset])));
+        return tohl((*((uint32_t*)&g_dev.pif.ram[offset])));
       break;
     case M64P_MEM_MI:
       offset = mi_reg(addr);

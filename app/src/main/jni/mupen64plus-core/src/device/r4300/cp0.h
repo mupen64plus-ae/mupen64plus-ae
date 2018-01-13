@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - cp0.h                                                   *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -210,6 +210,9 @@ unsigned int* r4300_cp0_next_interrupt(struct cp0* cp0);
 int check_cop1_unusable(struct r4300_core* r4300);
 
 void cp0_update_count(struct r4300_core* r4300);
+
+void TLB_refill_exception(struct r4300_core* r4300, uint32_t address, int w);
+void exception_general(struct r4300_core* r4300);
 
 #endif /* M64P_DEVICE_R4300_CP0_H */
 

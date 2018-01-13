@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - gb_cart.c                                               *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2015 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -28,6 +28,7 @@
 #include "api/m64p_types.h"
 #include "api/callbacks.h"
 #include "backends/api/rumble_backend.h"
+#include "backends/api/storage_backend.h"
 
 #include <assert.h>
 #include <string.h>

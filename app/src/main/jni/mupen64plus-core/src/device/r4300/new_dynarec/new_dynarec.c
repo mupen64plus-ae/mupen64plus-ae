@@ -30,17 +30,19 @@
 #endif
 
 #include "new_dynarec.h"
+#include "api/m64p_types.h"
+#include "api/callbacks.h"
 #include "main/main.h"
 #include "main/rom.h"
 #include "device/memory/memory.h"
 #include "device/r4300/cached_interp.h"
+#include "device/r4300/cp0.h"
 #include "device/r4300/cp1.h"
 #include "device/r4300/interrupt.h"
 #include "device/r4300/ops.h"
 #include "device/r4300/recomp.h"
 #include "device/r4300/tlb.h"
 #include "device/r4300/fpu.h"
-#include "device/r4300/exception.h"
 #include "device/rcp/mi/mi_controller.h"
 #include "device/rcp/rsp/rsp_core.h"
 
@@ -50,9 +52,11 @@
 
 #if NEW_DYNAREC == NEW_DYNAREC_X86
 #include "x86/assem_x86.h"
+#include "device/r4300/x86/assemble.h"
 #elif NEW_DYNAREC == NEW_DYNAREC_ARM
 #include "arm/arm_cpu_features.h"
 #include "arm/assem_arm.h"
+#define EAX 0 /* ??? required for syscall_assemble and do_ccstub even in ARM mode */
 #else
 #error Unsupported dynarec architecture
 #endif

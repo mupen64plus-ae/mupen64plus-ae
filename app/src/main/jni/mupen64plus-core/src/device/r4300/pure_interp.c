@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - pure_interp.c                                           *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2015 Nebuleon <nebuleon.fumika@gmail.com>               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,6 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include "pure_interp.h"
+
 #include <stdint.h>
 
 #define __STDC_FORMAT_MACROS
@@ -27,15 +29,7 @@
 #include "api/callbacks.h"
 #include "api/debugger.h"
 #include "api/m64p_types.h"
-#include "device/memory/memory.h"
-/* TLBWrite requires invalid_code and blocks from cached_interp.h, but only if
- * (at run time) the active core is not the Pure Interpreter. */
-#include "device/r4300/cached_interp.h"
-#include "device/r4300/cp1.h"
-#include "device/r4300/exception.h"
-#include "device/r4300/interrupt.h"
-#include "device/r4300/tlb.h"
-#include "osal/preproc.h"
+#include "device/r4300/r4300_core.h"
 
 #ifdef DBG
 #include "debugger/dbg_debugger.h"

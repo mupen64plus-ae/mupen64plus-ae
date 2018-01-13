@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - gb_cart.h                                               *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2015 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -27,9 +27,8 @@
 
 #include "m64282fp.h"
 #include "mbc3_rtc.h"
-#include "backends/api/storage_backend.h"
 
-struct clock_backend_interface;
+struct storage_backend_interface;
 struct rumble_backend_interface;
 
 struct gb_cart

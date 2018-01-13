@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - interrupt.c                                              *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -25,8 +25,8 @@
 
 #ifdef __MINGW32__
 #define _CRT_RAND_S
-#include <stdlib.h>
 #endif
+#include <stdlib.h>
 
 #include <assert.h>
 #include <stddef.h>
@@ -37,7 +37,7 @@
 #include "api/m64p_types.h"
 #include "device/pif/bootrom_hle.h"
 #include "device/r4300/cached_interp.h"
-#include "device/r4300/exception.h"
+#include "device/r4300/cp0.h"
 #include "device/r4300/new_dynarec/new_dynarec.h"
 #include "device/r4300/r4300_core.h"
 #include "device/r4300/recomp.h"

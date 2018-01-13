@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - savestates.c                                            *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2012 CasualJames                                        *
  *   Copyright (C) 2009 Olejl Tillin9                                      *
  *   Copyright (C) 2008 Richard42 Tillin9                                  *
@@ -37,6 +37,7 @@
 #include "api/config.h"
 #include "api/m64p_config.h"
 #include "api/m64p_types.h"
+#include "backends/api/storage_backend.h"
 #include "device/memory/memory.h"
 #include "device/r4300/new_dynarec/new_dynarec.h"
 #include "device/r4300/r4300_core.h"
@@ -688,8 +689,7 @@ int savestates_load_m64p(char *filepath)
     }
 
     /* reset fb state */
-    memset(&g_dev.dp.fb, 0, sizeof(g_dev.dp.fb));
-    g_dev.dp.fb.once = 1;
+    poweron_fb(&g_dev.dp.fb);
 
     *r4300_cp0_last_addr(&g_dev.r4300.cp0) = *r4300_pc(&g_dev.r4300);
 
@@ -996,8 +996,7 @@ static int savestates_load_pj64(char *filepath, void *handle,
     poweron_flashram(&g_dev.cart.flashram);
 
     /* extra fb state */
-    memset(&g_dev.dp.fb, 0, sizeof(g_dev.dp.fb));
-    g_dev.dp.fb.once = 1;
+    poweron_fb(&g_dev.dp.fb);
 
     /* extra af-rtc state */
     g_dev.cart.af_rtc.control = 0x200;
