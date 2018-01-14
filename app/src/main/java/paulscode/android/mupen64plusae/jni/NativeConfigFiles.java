@@ -22,8 +22,6 @@ package paulscode.android.mupen64plusae.jni;
 
 import android.util.Log;
 
-import org.mupen64plusae.v3.alpha.R;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,7 +36,6 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.GLideN64Prefs;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.util.Notifier;
 
 class NativeConfigFiles
 {
