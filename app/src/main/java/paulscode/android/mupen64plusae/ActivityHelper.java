@@ -111,13 +111,13 @@ public class ActivityHelper
         //@formatter:on
     }
     
-    public static final int SCAN_ROM_REQUEST_CODE = 1;
-    public static final int EXTRACT_TEXTURES_CODE = 2;
-    public static final int GAME_ACTIVITY_CODE = 3;
+    static final int SCAN_ROM_REQUEST_CODE = 1;
+    static final int EXTRACT_TEXTURES_CODE = 2;
+    static final int GAME_ACTIVITY_CODE = 3;
 
-    public static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
+    static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
 
-    public static void launchUri( Context context, int resId )
+    static void launchUri( Context context, int resId )
     {
         launchUri( context, context.getString( resId ) );
     }
@@ -127,7 +127,7 @@ public class ActivityHelper
         launchUri( context, Uri.parse( uriString ) );
     }
     
-    public static void launchUri( Context context, Uri uri )
+    static void launchUri( Context context, Uri uri )
     {
         try
         {
@@ -174,12 +174,12 @@ public class ActivityHelper
         context.startActivity( new Intent( context, SplashActivity.class ) );
     }
     
-    public static void startGalleryActivity( Context context, Uri romPath )
+    static void startGalleryActivity( Context context, Uri romPath )
     {
         startGalleryActivity( context, romPath == null ? null : romPath.getPath() );
     }
     
-    public static void startGalleryActivity( Context context, String romPath )
+    static void startGalleryActivity( Context context, String romPath )
     {
         Intent intent = new Intent( context, GalleryActivity.class );
         if( !TextUtils.isEmpty( romPath ) )
@@ -187,7 +187,7 @@ public class ActivityHelper
         context.startActivity( intent );
     }
 
-    public static void startGameActivity( Activity activity, String romPath, String romMd5, String romCrc,
+    static void startGameActivity( Activity activity, String romPath, String romMd5, String romCrc,
                                           String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romLegacySave,
                                           boolean doRestart)
     {
@@ -222,31 +222,31 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startAudioPrefsActivity( Context context )
+    static void startAudioPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, AudioPrefsActivity.class );
         context.startActivity( intent );    
     }
     
-    public static void startDataPrefsActivity( Context context )
+    static void startDataPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, DataPrefsActivity.class );
         context.startActivity( intent );    
     }
     
-    public static void startDisplayPrefsActivity( Context context )
+    static void startDisplayPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, DisplayPrefsActivity.class );
         context.startActivity( intent );    
     }
     
-    public static void startInputPrefsActivity( Context context )
+    static void startInputPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, InputPrefsActivity.class );
         context.startActivity( intent );    
     }
     
-    public static void startLibraryPrefsActivity( Context context )
+    static void startLibraryPrefsActivity( Context context )
     {
         Intent intent = new Intent( context, LibraryPrefsActivity.class );
         context.startActivity( intent );    
@@ -258,7 +258,7 @@ public class ActivityHelper
         context.startActivity( intent );    
     }
     
-    public static void startGamePrefsActivity( Context context, String romPath, String romMd5,
+    static void startGamePrefsActivity( Context context, String romPath, String romMd5,
         String romCrc, String romHeaderName, String romGoodName, byte romCountryCode, String romLegacySave )
     {
         Intent intent = new Intent( context, GamePrefsActivity.class );
@@ -272,17 +272,17 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startManageEmulationProfilesActivity( Context context )
+    static void startManageEmulationProfilesActivity( Context context )
     {
         context.startActivity( new Intent( context, ManageEmulationProfilesActivity.class ) );
     }
     
-    public static void startManageTouchscreenProfilesActivity( Context context )
+    static void startManageTouchscreenProfilesActivity( Context context )
     {
         context.startActivity( new Intent( context, ManageTouchscreenProfilesActivity.class ) );
     }
     
-    public static void startManageControllerProfilesActivity( Context context )
+    static void startManageControllerProfilesActivity( Context context )
     {
         context.startActivity( new Intent( context, ManageControllerProfilesActivity.class ) );
     }
@@ -315,17 +315,17 @@ public class ActivityHelper
         context.startActivity( intent );
     }
     
-    public static void startDiagnosticActivity( Context context )
+    static void startDiagnosticActivity( Context context )
     {
         context.startActivity( new Intent( context, DiagnosticActivity.class ) );
     }
 
-    public static void startLogcatActivity( Context context )
+    static void startLogcatActivity( Context context )
     {
         context.startActivity( new Intent( context, LogcatActivity.class) );
     }
     
-    public static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
+    static void startCacheRomInfoService(Context context, ServiceConnection serviceConnection,
         String searchPath, String databasePath, String configPath, String artDir, String unzipDir,
         boolean searchZips, boolean downloadArt, boolean clearGallery, boolean searchSubdirectories)
     {
@@ -344,7 +344,7 @@ public class ActivityHelper
         context.bindService(intent, serviceConnection, 0);
     }
 
-    public static void stopCacheRomInfoService(Context context, ServiceConnection serviceConnection)
+    static void stopCacheRomInfoService(Context context, ServiceConnection serviceConnection)
     {
         Intent intent = new Intent(context, CacheRomInfoService.class);
         
@@ -352,13 +352,13 @@ public class ActivityHelper
         context.stopService(intent);
     }
 
-    public static void startRomScanActivity(Activity activity)
+    static void startRomScanActivity(Activity activity)
     {
         Intent intent = new Intent(activity, ScanRomsActivity.class);
         activity.startActivityForResult( intent, SCAN_ROM_REQUEST_CODE );
     }
 
-    public static void startExtractTexturesService(Context context, ServiceConnection serviceConnection,
+    static void startExtractTexturesService(Context context, ServiceConnection serviceConnection,
         String searchPath)
     {
         Intent intent = new Intent(context, ExtractTexturesService.class);
@@ -368,7 +368,7 @@ public class ActivityHelper
         context.bindService(intent, serviceConnection, 0);
     }
 
-    public static void stopExtractTexturesService(Context context, ServiceConnection serviceConnection)
+    static void stopExtractTexturesService(Context context, ServiceConnection serviceConnection)
     {
         Intent intent = new Intent(context, ExtractTexturesService.class);
 
@@ -376,7 +376,7 @@ public class ActivityHelper
         context.stopService(intent);
     }
     
-    public static void starExtractTextureActivity(Activity activity)
+    static void starExtractTextureActivity(Activity activity)
     {
         Intent intent = new Intent(activity, ExtractTexturesActivity.class);
         activity.startActivityForResult( intent, EXTRACT_TEXTURES_CODE );
@@ -423,20 +423,26 @@ public class ActivityHelper
         context.stopService(intent);
     }
 
-    public static boolean isServiceRunning(Context context, String processName) {
+    static boolean isServiceRunning(Context context, String processName) {
         ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
 
-        List<ActivityManager.RunningAppProcessInfo> processInfos = manager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo process : processInfos){
-            if(processName.equals(process.processName)) {
-                return true;
+        List<ActivityManager.RunningAppProcessInfo> processInfos = null;
+        if (manager != null) {
+            processInfos = manager.getRunningAppProcesses();
+        }
+
+        if (processInfos != null) {
+            for (ActivityManager.RunningAppProcessInfo process : processInfos){
+                if(processName.equals(process.processName)) {
+                    return true;
+                }
             }
         }
 
         return false;
     }
 
-    public static void startExtractRomService(Context context, ServiceConnection serviceConnection,
+    static void startExtractRomService(Context context, ServiceConnection serviceConnection,
        String zipPath, String extractRomPath, String romPath, String romMd5)
     {
         Intent intent = new Intent(context, ExtractRomService.class);
@@ -449,7 +455,7 @@ public class ActivityHelper
         context.bindService(intent, serviceConnection, 0);
     }
 
-    public static void stopExtractRomService(Context context, ServiceConnection serviceConnection)
+    static void stopExtractRomService(Context context, ServiceConnection serviceConnection)
     {
         Intent intent = new Intent(context, ExtractRomService.class);
 

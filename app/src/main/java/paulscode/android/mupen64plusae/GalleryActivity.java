@@ -367,8 +367,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             Log.i("GalleryActivity", "CoreService is running");
         }
 
-
-
         Intent intent = new Intent(CoreService.SERVICE_EVENT);
         // You can also include some extra data.
         intent.putExtra(CoreService.SERVICE_RESUME, true);
