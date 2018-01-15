@@ -593,12 +593,12 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 // Load the native libraries, this must be done outside the thread to prevent race conditions
                 // that depend on the libraries being loaded after this call is made
                 NativeExports.loadLibrariesIfNotLoaded( libsDir, Build.VERSION.SDK_INT );
+                NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
+
             } catch (java.lang.UnsatisfiedLinkError e) {
                 Log.e("CoreService", "Missing libraries, installation error");
                 mInstallationError = true;
             }
-
-            NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
 
             updateNotification();
         }

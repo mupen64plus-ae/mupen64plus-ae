@@ -395,8 +395,8 @@ class NativeConfigFiles
         try {
             headerNameURL = java.net.URLEncoder.encode(headerNameURL, "UTF-8");
             headerNameURL = headerNameURL.replace("+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            //Do nothing
+        } catch (UnsupportedEncodingException|java.lang.NullPointerException e) {
+            Log.e("NativeConfigFile", "Error on loading gameHeaderNameUrl: e=" + e.toString());
         }
 
         String glideN64settingValue = glideN64ConfigFile.get(headerNameURL, setting);
