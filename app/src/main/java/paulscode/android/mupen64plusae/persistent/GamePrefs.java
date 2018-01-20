@@ -22,22 +22,28 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 public class GamePrefs
 {
     /** The name of the game-specific {@link SharedPreferences} object.*/
-    public final String sharedPrefsName;
+    private final String mSharedPrefsName;
+
+    /** App data */
+    private AppData mAppData;
+
+    /** Global prefs */
+    private GlobalPrefs mGlobalPrefs;
 
     /** The parent directory containing all game-specific data files. */
-    public final String gameDataDir;
+    private String gameDataDir;
 
     /** The subdirectory containing SRAM/EEPROM data (in-game saves). */
-    public final String sramDataDir;
+    private String sramDataDir;
 
     /** The subdirectory containing auto save files. */
-    public final String autoSaveDir;
+    private String autoSaveDir;
 
     /** The subdirectory containing slot save files. */
-    public final String slotSaveDir;
+    private String slotSaveDir;
 
     /** The subdirectory containing manual save files. */
-    public final String userSaveDir;
+    private String userSaveDir;
 
     /** Game header name */
     public final String gameHeaderName;
@@ -49,13 +55,13 @@ public class GamePrefs
     public final String legacySaveFileName;
     
     /** The subdirectory containing user screenshots. */
-    public final String screenshotDir;
+    private String screenshotDir;
 
     /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
-    public final String coreUserConfigDir;
+    private String coreUserConfigDir;
 
     /** The path of the Mupen64Plus base configuration file. */
-    public final String mupen64plus_cfg;
+    private String mupen64plus_cfg;
 
     /** The emulation profile. */
     public final Profile emulationProfile;
@@ -259,15 +265,15 @@ public class GamePrefs
     private final SharedPreferences mPreferences;
 
     /** Profile keys */
-    public static final String DISPLAY_RESOLUTION = "displayResolution";
-    public static final String EMULATION_PROFILE = "emulationProfile";
-    public static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
-    public static final String CONTROLLER_PROFILE1 = "controllerProfile1";
-    public static final String CONTROLLER_PROFILE2 = "controllerProfile2";
-    public static final String CONTROLLER_PROFILE3 = "controllerProfile3";
-    public static final String CONTROLLER_PROFILE4 = "controllerProfile4";
-    public static final String PLAYER_MAP = "playerMapV2";
-    public static final String PLAY_SHOW_CHEATS = "playShowCheats";
+    static final String DISPLAY_RESOLUTION = "displayResolution";
+    static final String EMULATION_PROFILE = "emulationProfile";
+    static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
+    static final String CONTROLLER_PROFILE1 = "controllerProfile1";
+    static final String CONTROLLER_PROFILE2 = "controllerProfile2";
+    static final String CONTROLLER_PROFILE3 = "controllerProfile3";
+    static final String CONTROLLER_PROFILE4 = "controllerProfile4";
+    static final String PLAYER_MAP = "playerMapV2";
+    static final String PLAY_SHOW_CHEATS = "playShowCheats";
 
     /**
      * Directories and file names
@@ -287,29 +293,13 @@ public class GamePrefs
         gameGoodName = goodName;
         legacySaveFileName = legacySave;
         gameCrc = crc;
-        
-        sharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
-        mPreferences = context.getSharedPreferences( sharedPrefsName, Context.MODE_PRIVATE );
+
+        mSharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
+        mPreferences = context.getSharedPreferences( mSharedPrefsName, Context.MODE_PRIVATE );
 
         // Game-specific data
         gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol, appData);
-        autoSaveDir = gameDataDir + "/" + AUTO_SAVES_DIR;
-        userSaveDir = gameDataDir + "/" + USER_SAVES_DIR;
-        coreUserConfigDir = gameDataDir + "/" + CORE_CONFIG_DIR;
-        mupen64plus_cfg = coreUserConfigDir + "/" + MUPEN_CONFIG_FILE;
-
-        if(globalPrefs.useFlatGameDataPath)
-        {
-            sramDataDir = appData.gameDataDir;
-            slotSaveDir = appData.gameDataDir;
-            screenshotDir = appData.gameDataDir;
-        }
-        else
-        {
-            sramDataDir = gameDataDir + "/" + SRAM_DATA_DIR;
-            slotSaveDir = gameDataDir + "/" + SLOT_SAVES_DIR;
-            screenshotDir = gameDataDir + "/" + SCREENSHOTS_DIR;
-        }
+        setGameDirs(appData, globalPrefs, gameDataDir);
 
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
@@ -565,6 +555,72 @@ public class GamePrefs
 
         //A value of zero means default for the game as specified in mupen64plus.ini
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+    }
+
+    public String getGameDataDir()
+    {
+        return gameDataDir;
+    }
+
+    public String getAutoSaveDir()
+    {
+        return autoSaveDir;
+    }
+
+    public String getUserSaveDir()
+    {
+        return userSaveDir;
+    }
+
+    public String getCoreUserConfigDir()
+    {
+        return coreUserConfigDir;
+    }
+
+    public String getMupen64plusCfg()
+    {
+        return mupen64plus_cfg;
+    }
+
+    public String getSramDataDir()
+    {
+        return sramDataDir;
+    }
+
+    public String getSlotSaveDir()
+    {
+        return slotSaveDir;
+    }
+
+    public String getScreenshotDir()
+    {
+        return screenshotDir;
+    }
+
+    private void setGameDirs(AppData appData, GlobalPrefs globalPrefs, String baseDir)
+    {
+        autoSaveDir = gameDataDir + "/" + AUTO_SAVES_DIR;
+        userSaveDir = gameDataDir + "/" + USER_SAVES_DIR;
+        coreUserConfigDir = gameDataDir + "/" + CORE_CONFIG_DIR;
+        mupen64plus_cfg = coreUserConfigDir + "/" + MUPEN_CONFIG_FILE;
+
+        if(globalPrefs.useFlatGameDataPath)
+        {
+            sramDataDir = appData.gameDataDir;
+            slotSaveDir = appData.gameDataDir;
+            screenshotDir = appData.gameDataDir;
+        }
+        else
+        {
+            sramDataDir = gameDataDir + "/" + SRAM_DATA_DIR;
+            slotSaveDir = gameDataDir + "/" + SLOT_SAVES_DIR;
+            screenshotDir = gameDataDir + "/" + SCREENSHOTS_DIR;
+        }
+    }
+
+    public String getSharedPrefsName()
+    {
+        return mSharedPrefsName;
     }
 
     public String getCheatArgs()

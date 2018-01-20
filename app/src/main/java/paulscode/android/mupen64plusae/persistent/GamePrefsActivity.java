@@ -155,7 +155,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
         mGamePrefs = new GamePrefs( this, mRomMd5, mRomCrc, mRomHeaderName, mRomGoodName,
             CountryCode.getCountryCode(mRomCountryCode).toString(), mAppData, mGlobalPrefs, mLegacySaveName );
-        mPrefs = getSharedPreferences( mGamePrefs.sharedPrefsName, MODE_PRIVATE );
+        mPrefs = getSharedPreferences( mGamePrefs.getSharedPrefsName(), MODE_PRIVATE );
 
         // Get the detailed info about the ROM
         mRomDatabase = RomDatabase.getInstance();
@@ -168,7 +168,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
 
         // Load user preference menu structure from XML and update view
-        addPreferencesFromResource( mGamePrefs.sharedPrefsName, R.xml.preferences_game );
+        addPreferencesFromResource( mGamePrefs.getSharedPrefsName(), R.xml.preferences_game );
     }
 
     @Override
@@ -480,7 +480,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
 
             // Also reset any manual overrides the user may have made in the config file
-            final File configFile = new File( mGamePrefs.mupen64plus_cfg );
+            final File configFile = new File( mGamePrefs.getMupen64plusCfg() );
             if( configFile.exists() && !configFile.isDirectory())
                 configFile.delete();
 

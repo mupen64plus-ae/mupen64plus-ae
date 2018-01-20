@@ -368,7 +368,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                 mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
                 mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
                 isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
-                mGlobalPrefs.coreUserCacheDir, mGamePrefs.coreUserConfigDir, mGamePrefs.userSaveDir, mAppData.libsDir);
+                mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(), mAppData.libsDir);
     }
 
     private void actuallyStopCore()
@@ -665,7 +665,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
         if(getActivity() != null)
         {
-            mCurrentSaveStateFile = new File( mGamePrefs.userSaveDir + "/" + filename );
+            mCurrentSaveStateFile = new File( mGamePrefs.getUserSaveDir() + "/" + filename );
 
             if( mCurrentSaveStateFile.exists() )
             {
@@ -700,7 +700,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         if(getActivity() != null)
         {
             CharSequence title = getActivity().getText( R.string.menuItem_fileLoad );
-            File startPath = new File( mGamePrefs.userSaveDir );
+            File startPath = new File( mGamePrefs.getUserSaveDir() );
             Prompt.promptFile( getActivity(), title, null, startPath, "", new Prompt.PromptFileListener()
             {
                 @Override
@@ -727,7 +727,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         if(getActivity() != null)
         {
             CharSequence title = getActivity().getText( R.string.menuItem_fileLoadAutoSave );
-            File startPath = new File( mGamePrefs.autoSaveDir );
+            File startPath = new File( mGamePrefs.getAutoSaveDir() );
             Prompt.promptFile( getActivity(), title, null, startPath, "sav", new Prompt.PromptFileListener()
             {
                 @Override

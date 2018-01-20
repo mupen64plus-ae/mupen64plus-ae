@@ -28,17 +28,17 @@ public class GameDataManager
     private static final String sMatcherString = "^\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d\\..*sav$";
     private static final String sDefaultString = "yyyy-mm-dd-hh-mm-ss.sav";
 
-    public GameDataManager(GlobalPrefs globalPrefs, GamePrefs gamePrefs, int maxAutoSaves)
+    GameDataManager(GlobalPrefs globalPrefs, GamePrefs gamePrefs, int maxAutoSaves)
     {
         mGlobalPrefs = globalPrefs;
         mGamePrefs = gamePrefs;
-        mAutoSavePath = mGamePrefs.autoSaveDir + "/";
+        mAutoSavePath = mGamePrefs.getAutoSaveDir() + "/";
         mMaxAutoSave = maxAutoSaves;
     }
 
-    public String getLatestAutoSave()
+    String getLatestAutoSave()
     {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         final File savePath = new File(mAutoSavePath);
 
         //Only find files that end with .sav
@@ -74,7 +74,7 @@ public class GameDataManager
         //Sort by file name
         Collections.sort(result);
 
-        String resultValue = "";
+        String resultValue;
         if(result.size() > 0)
         {
             resultValue = result.get(result.size()-1);
@@ -89,9 +89,9 @@ public class GameDataManager
         return resultValue;
     }
 
-    public void clearOldest()
+    void clearOldest()
     {
-        final List<File> result = new ArrayList<File>();
+        final List<File> result = new ArrayList<>();
         final File savePath = new File(mAutoSavePath);
 
         if(savePath.listFiles() != null && savePath.listFiles().length != 0)
@@ -110,10 +110,7 @@ public class GameDataManager
             };
 
             //Add all files found
-            for( final File file : savePath.listFiles(fileFilter) )
-            {
-                result.add( file );
-            }
+            Collections.addAll(result, savePath.listFiles(fileFilter) );
 
             //Sort by file name
             Collections.sort(result);
@@ -125,19 +122,23 @@ public class GameDataManager
 
                 if(!theResult.isDirectory())
                 {
-                    theResult.delete();
+                    boolean deleteResult = theResult.delete();
 
                     //Also remove the corresponding ".complete" file
                     String completeFile = theResult.getAbsolutePath();
                     completeFile = completeFile + "." + CoreService.COMPLETE_EXTENSION;
-                    new File(completeFile).delete();
+                    deleteResult = deleteResult && new File(completeFile).delete();
+
+                    if (!deleteResult) {
+                        Log.w("GameDataManager", "Unable to delete autosave file: " + result.get(0).getName());
+                    }
                 }
                 result.remove(0);
             }
         }
     }
 
-    public String getAutoSaveFileName()
+    String getAutoSaveFileName()
     {
         final DateFormat dateFormat = new SimpleDateFormat(sFormatString, java.util.Locale.getDefault());
         final String dateAndTime = dateFormat.format(new Date());
@@ -150,13 +151,12 @@ public class GameDataManager
     public void makeDirs()
     {
         // Make sure various directories exist so that we can write to them
-        FileUtil.makeDirs(mGamePrefs.sramDataDir);
-        FileUtil.makeDirs(mGamePrefs.sramDataDir);
-        FileUtil.makeDirs(mGamePrefs.autoSaveDir);
-        FileUtil.makeDirs(mGamePrefs.slotSaveDir);
-        FileUtil.makeDirs(mGamePrefs.userSaveDir);
-        FileUtil.makeDirs(mGamePrefs.screenshotDir);
-        FileUtil.makeDirs(mGamePrefs.coreUserConfigDir);
+        FileUtil.makeDirs(mGamePrefs.getSramDataDir());
+        FileUtil.makeDirs(mGamePrefs.getAutoSaveDir());
+        FileUtil.makeDirs(mGamePrefs.getSlotSaveDir());
+        FileUtil.makeDirs(mGamePrefs.getUserSaveDir());
+        FileUtil.makeDirs(mGamePrefs.getScreenshotDir());
+        FileUtil.makeDirs(mGamePrefs.getCoreUserConfigDir());
         FileUtil.makeDirs(mGlobalPrefs.coreUserDataDir);
         FileUtil.makeDirs(mGlobalPrefs.coreUserCacheDir);
     }
@@ -164,7 +164,7 @@ public class GameDataManager
     /**
      * Move any legacy files to new folder structure
      */
-    public void moveFromLegacy()
+    void moveFromLegacy()
     {
         final File legacySlotPath = new File(mGlobalPrefs.legacySlotSaves);
         final File legacyAutoSavePath = new File(mGlobalPrefs.legacyAutoSaves);
@@ -190,14 +190,16 @@ public class GameDataManager
             // Move all files found
             for (final File file : legacySlotPath.listFiles(fileSramFilter))
             {
-                String targetPath = mGamePrefs.sramDataDir + "/" + file.getName();
+                String targetPath = mGamePrefs.getSramDataDir() + "/" + file.getName();
                 File targetFile = new File(targetPath);
 
                 if (!targetFile.exists())
                 {
                     Log.i("GameDataManager", "Found legacy SRAM file: " + file + " Moving to " + targetFile.getPath());
 
-                    file.renameTo(targetFile);
+                    if( !file.renameTo(targetFile)) {
+                        Log.w("GameDataManager", "Error renaming legacy SRAM file: " + file + " target " + targetFile.getPath());
+                    }
                 }
                 else
                 {
@@ -220,14 +222,16 @@ public class GameDataManager
 
             for (final File file : legacySlotPath.listFiles(fileSlotFilter))
             {
-                String targetPath = mGamePrefs.slotSaveDir + "/" + file.getName();
+                String targetPath = mGamePrefs.getSlotSaveDir() + "/" + file.getName();
                 File targetFile = new File(targetPath);
 
                 if (!targetFile.exists())
                 {
                     Log.i("GameDataManager", "Found legacy ST file: " + file + " Moving to " + targetFile.getPath());
 
-                    file.renameTo(targetFile);
+                    if (!file.renameTo(targetFile)) {
+                        Log.w("GameDataManager", "Error renaming legacy ST file: " + file + " to " + targetFile.getPath());
+                    }
                 }
                 else
                 {
@@ -256,7 +260,7 @@ public class GameDataManager
                 final String dateAndTime = dateFormat.format(new Date());
                 final String fileName = dateAndTime + ".sav";
 
-                String targetPath = mGamePrefs.autoSaveDir + "/" + fileName;
+                String targetPath = mGamePrefs.getAutoSaveDir() + "/" + fileName;
                 File targetFile= new File(targetPath);
 
                 if(!targetFile.exists())
@@ -264,7 +268,10 @@ public class GameDataManager
                     Log.i("GameDataManager", "Found legacy SAV file: " + file +
                             " Moving to " + targetFile.getPath());
 
-                    file.renameTo(targetFile);
+                    if (!file.renameTo(targetFile)) {
+                        Log.w("GameDataManager", "Error renaming SAV file: " + file +
+                                " to " + targetFile.getPath());
+                    }
                 }
                 else
                 {
