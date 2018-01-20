@@ -150,6 +150,14 @@ public class GameDataManager
 
     public void makeDirs()
     {
+        // Attempt to make base game dir first, if we can't, switch to alternate
+        // FAT32 compatible name
+        FileUtil.makeDirs(mGamePrefs.getGameDataDir());
+
+        if( !new File(mGamePrefs.getGameDataDir()).exists()) {
+            mGamePrefs.useAlternateGameDataDir();
+        }
+
         // Make sure various directories exist so that we can write to them
         FileUtil.makeDirs(mGamePrefs.getSramDataDir());
         FileUtil.makeDirs(mGamePrefs.getAutoSaveDir());

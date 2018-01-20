@@ -21,6 +21,7 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 
 public class GamePrefs
 {
+
     /** The name of the game-specific {@link SharedPreferences} object.*/
     private final String mSharedPrefsName;
 
@@ -85,7 +86,7 @@ public class GamePrefs
     public final PlayerMap playerMap;
 
     /** True if the cheats category should be shown in the menu. */
-    public final boolean isCheatOptionsShown;
+    final boolean isCheatOptionsShown;
 
     /** The selected R4300 emulator. */
     public final String r4300Emulator;
@@ -102,12 +103,6 @@ public class GamePrefs
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
 
-    /** True if gln64 video plug-in is enabled. */
-    public final boolean isGln64Enabled;
-
-    /** True if rice video plug-in is enabled. */
-    public final boolean isRiceEnabled;
-
     /** True if glide64 video plug-in is enabled. */
     public final boolean isGlide64Enabled;
 
@@ -115,9 +110,6 @@ public class GamePrefs
 
     /** True if gliden64 video plug-in is enabled. */
     public final boolean isGliden64Enabled;
-
-    /** True if angrylion video plug-in is enabled. */
-    public final boolean isAngrylionEnabled;
 
     /** The maximum frameskip in the gln64 library. */
     public final int gln64MaxFrameskip;
@@ -229,9 +221,6 @@ public class GamePrefs
     /** True if any type of AbstractController is enabled for Player 4. */
     public final boolean isPlugged4;
 
-    /** True if a single peripheral device can control multiple players concurrently. */
-    public final boolean isControllerShared;
-
     /** True if the touchscreen joystick is hidden when sensor is enabled. */
     public final boolean isAnalogHiddenWhenSensor;
 
@@ -250,9 +239,6 @@ public class GamePrefs
     /** The height of the viewing surface, in pixels. */
     public final int videoSurfaceHeight;
 
-    /** If display mode is stretch*/
-    public final boolean mStretch;
-
     /** Core CountPerOp setting */
     public final int countPerOp;
 
@@ -260,7 +246,7 @@ public class GamePrefs
     public final int touchscreenAutoHold;
 
     /** Game CRC */
-    public final String gameCrc;
+    private final String gameCrc;
 
     private final SharedPreferences mPreferences;
 
@@ -278,22 +264,23 @@ public class GamePrefs
     /**
      * Directories and file names
      */
-    public static final String SRAM_DATA_DIR = "SramData";
+    private static final String SRAM_DATA_DIR = "SramData";
     public static final String AUTO_SAVES_DIR = "AutoSaves";
-    public static final String SLOT_SAVES_DIR = "SlotSaves";
-    public static final String USER_SAVES_DIR = "UserSaves";
-    public static final String SCREENSHOTS_DIR = "Screenshots";
-    public static final String CORE_CONFIG_DIR = "CoreConfig";
-    public static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
+    private static final String SLOT_SAVES_DIR = "SlotSaves";
+    private static final String USER_SAVES_DIR = "UserSaves";
+    private static final String SCREENSHOTS_DIR = "Screenshots";
+    private static final String CORE_CONFIG_DIR = "CoreConfig";
+    private static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
 
     public GamePrefs( Context context, String romMd5, String crc, String headerName, String goodName,
         String countrySymbol, AppData appData, GlobalPrefs globalPrefs, String legacySave)
     {
+        mAppData = appData;
+        mGlobalPrefs = globalPrefs;
         gameHeaderName = headerName;
         gameGoodName = goodName;
         legacySaveFileName = legacySave;
         gameCrc = crc;
-
         mSharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( mSharedPrefsName, Context.MODE_PRIVATE );
 
@@ -378,27 +365,24 @@ public class GamePrefs
         disableExpansionPak = emulationProfile.get( "DisableExtraMem", "False" ).equals( "True" );
         String rspSetting = emulationProfile.get( "rspSetting", "rsp-hle" );
 
-        if(rspSetting.equals("rsp-hle"))
-        {
-            rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-hle.so";
-            rspHleVideo = true;
-        }
-        else if(rspSetting.equals("rsp-cxd4-hle"))
-        {
-            rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-cxd4.so";
-            rspHleVideo = true;
-        }
-        else
-        {
-            rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-cxd4.so";
-            rspHleVideo = false;
+        switch (rspSetting) {
+            case "rsp-hle":
+                rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-hle.so";
+                rspHleVideo = true;
+                break;
+            case "rsp-cxd4-hle":
+                rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-cxd4.so";
+                rspHleVideo = true;
+                break;
+            default:
+                rspPluginPath = appData.libsDir + "/libmupen64plus-rsp-cxd4.so";
+                rspHleVideo = false;
         }
 
 
         videoPlugin = new Plugin( emulationProfile, appData.libsDir, "videoPlugin" );
 
         // Video prefs - gln64
-        isGln64Enabled = videoPlugin.name.equals( "libmupen64plus-video-gln64.so" );
         int maxFrameskip = getSafeInt( emulationProfile, "gln64Frameskip", 0 );
         isGln64AutoFrameskipEnabled = maxFrameskip < 0;
         gln64MaxFrameskip = Math.abs( maxFrameskip );
@@ -409,7 +393,6 @@ public class GamePrefs
         isGln64HackDepthEnabled = emulationProfile.get( "gln64HackDepth", "1" ).equals( "1" );
 
         // Video prefs - rice
-        isRiceEnabled = videoPlugin.name.equals( "libmupen64plus-video-rice.so" );
         isRiceAutoFrameskipEnabled = emulationProfile.get( "riceAutoFrameskip", "False" ).equals( "True" );
         isRiceFastTextureLoadingEnabled = emulationProfile.get( "riceFastTexture", "False" ).equals( "True" );
         isRiceForceTextureFilterEnabled = emulationProfile.get( "riceForceTextureFilter", "False" ).equals( "True" );
@@ -427,18 +410,18 @@ public class GamePrefs
         glideN64Prefs = new GLideN64Prefs(context, emulationProfile);
 
         //Video preferences for angrylion
-        isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion.so" );
+        boolean isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion.so" );
         angrylionVIOverlayEnabled = emulationProfile.get( "VIOverlay", "False" ).equals( "True" );
 
         final String scaling = mPreferences.getString( "displayScaling", "default" );
 
-        mStretch = scaling.equals("default") ? globalPrefs.stretchScreen : scaling.equals( "stretch" );
+        boolean stretch = scaling.equals("default") ? globalPrefs.stretchScreen : scaling.equals( "stretch" );
         boolean gliden64Widescreenhack = emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled;
 
         //Stretch screen if the GLideN64 wide screen hack is enabled and the current video plugin is GLideN64
         final int hResolution = getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
 
-        videoSurfaceWidth = globalPrefs.getResolutionWidth(mStretch, gliden64Widescreenhack, 0);
+        videoSurfaceWidth = globalPrefs.getResolutionWidth(stretch, gliden64Widescreenhack, 0);
         videoSurfaceHeight = globalPrefs.getResolutionHeight(false, gliden64Widescreenhack, 0);
 
         //Angrylion only supports 640x480
@@ -524,7 +507,7 @@ public class GamePrefs
         touchscreenAutoHold = tmpTouchscreenAutoHold;
 
         // Peripheral share mode
-        isControllerShared = mPreferences.getBoolean( "inputShareController", false );
+        boolean isControllerShared = mPreferences.getBoolean( "inputShareController", false );
 
         // Determine which peripheral controllers are enabled
         isControllerEnabled1 = controllerProfile1 != null;
@@ -597,11 +580,17 @@ public class GamePrefs
         return screenshotDir;
     }
 
+    public void useAlternateGameDataDir()
+    {
+        gameDataDir = gameDataDir.replace(":", "");
+        setGameDirs(mAppData, mGlobalPrefs, gameDataDir);
+    }
+
     private void setGameDirs(AppData appData, GlobalPrefs globalPrefs, String baseDir)
     {
-        autoSaveDir = gameDataDir + "/" + AUTO_SAVES_DIR;
-        userSaveDir = gameDataDir + "/" + USER_SAVES_DIR;
-        coreUserConfigDir = gameDataDir + "/" + CORE_CONFIG_DIR;
+        autoSaveDir = baseDir + "/" + AUTO_SAVES_DIR;
+        userSaveDir = baseDir + "/" + USER_SAVES_DIR;
+        coreUserConfigDir = baseDir + "/" + CORE_CONFIG_DIR;
         mupen64plus_cfg = coreUserConfigDir + "/" + MUPEN_CONFIG_FILE;
 
         if(globalPrefs.useFlatGameDataPath)
@@ -612,9 +601,9 @@ public class GamePrefs
         }
         else
         {
-            sramDataDir = gameDataDir + "/" + SRAM_DATA_DIR;
-            slotSaveDir = gameDataDir + "/" + SLOT_SAVES_DIR;
-            screenshotDir = gameDataDir + "/" + SCREENSHOTS_DIR;
+            sramDataDir = baseDir + "/" + SRAM_DATA_DIR;
+            slotSaveDir = baseDir + "/" + SLOT_SAVES_DIR;
+            screenshotDir = baseDir + "/" + SCREENSHOTS_DIR;
         }
     }
 
@@ -719,7 +708,7 @@ public class GamePrefs
             return null;
     }
 
-    public static int getSafeInt( Profile profile, String key, int defaultValue )
+    static int getSafeInt( Profile profile, String key, int defaultValue )
     {
         try
         {
@@ -731,7 +720,7 @@ public class GamePrefs
         }
     }
 
-    public static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )
+    static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )
     {
         try
         {
@@ -745,7 +734,7 @@ public class GamePrefs
 
     private static Set<Integer> getSafeIntSet( Profile profile, String key )
     {
-        final Set<Integer> mutableSet = new HashSet<Integer>();
+        final Set<Integer> mutableSet = new HashSet<>();
         final String elements = profile.get( key, "" );
         for( final String element : MultiSelectListPreference.deserialize( elements ) )
         {
