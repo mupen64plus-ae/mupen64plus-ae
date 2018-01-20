@@ -34,6 +34,16 @@ android {
         }
     }
 
+    task deleteAsmDefTask (type: Delete) {
+        delete 'src/main/jni/mupen64plus-core/src/asm_defines/armeabi-v7a', 'src/main/jni/mupen64plus-core/src/asm_defines/x86'
+    }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'externalNativeBuildRelease' || task.name == 'externalNativeBuildDebug') {
+            task.dependsOn deleteAsmDefTask
+        }
+    }
+
     externalNativeBuild{
         ndkBuild{
             path "src/main/jni/Android.mk"
