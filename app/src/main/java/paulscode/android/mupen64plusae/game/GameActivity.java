@@ -33,6 +33,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -58,7 +59,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.DrawerDrawable;
@@ -89,7 +89,6 @@ import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
-import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 
 import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOCALE_OVERRIDE;
@@ -147,7 +146,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private Controller mMogaController;
     TouchController mTouchscreenController;
     private SensorController mSensorController;
-    private int mLastTouchTime;
+    private long mLastTouchTime;
     private Handler mHandler;
 
     // args data
@@ -270,8 +269,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             finish();
 
         // Initialize MOGA controller API
-        // TODO: Remove hack after MOGA SDK is fixed
-        // mMogaController.init();
         MogaHack.init( mMogaController, this );
 
         // Get app data and user preferences
@@ -363,7 +360,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener(){
 
             @Override
-            public void onDrawerClosed(View arg0)
+            public void onDrawerClosed(@NonNull View arg0)
             {
                 if (mCoreFragment != null) {
                     mCoreFragment.resumeEmulator();
@@ -373,7 +370,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             @Override
-            public void onDrawerOpened(View arg0)
+            public void onDrawerOpened(@NonNull View arg0)
             {
                 if(mCoreFragment != null)
                 {
@@ -383,7 +380,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             @Override
-            public void onDrawerSlide(View arg0, float arg1)
+            public void onDrawerSlide(@NonNull View arg0, float arg1)
             {
 
             }
@@ -419,8 +416,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Check periodically for touch input to determine if we should
         // hide the controls
         mHandler = new Handler();
-        Calendar calendar = Calendar.getInstance();
-        mLastTouchTime = calendar.get(Calendar.SECOND);
+        mLastTouchTime = System.currentTimeMillis() / 1000L;
 
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
             mHandler.postDelayed(mLastTouchChecker, 500);
@@ -1059,7 +1055,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Create the touchscreen controls
         if( mGamePrefs.isTouchscreenEnabled )
         {
-            if (!mGamePrefs.sensorAxisX.isEmpty() || !mGamePrefs.sensorAxisY.isEmpty()) {
+            if (!TextUtils.isEmpty(mGamePrefs.sensorAxisX) || !TextUtils.isEmpty(mGamePrefs.sensorAxisY)) {
                 // Create the sensor controller
                 final SensorManager sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
                 mSensorController = new SensorController(mCoreFragment, sensorManager, mOverlay, mGamePrefs.sensorAxisX,
@@ -1120,30 +1116,42 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if( mGamePrefs.isControllerEnabled1 && !needs1)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile1;
-            new PeripheralController( mCoreFragment, 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, mSensorController, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameActivity", "Player 1 has been enabled");
+
+            if(p != null) {
+                new PeripheralController( mCoreFragment, 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                        p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, mSensorController, mKeyProvider, mAxisProvider, mogaProvider );
+                Log.i("GameActivity", "Player 1 has been enabled");
+            }
         }
         if( mGamePrefs.isControllerEnabled2 && !needs2)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile2;
-            new PeripheralController( mCoreFragment, 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameActivity", "Player 2 has been enabled");
+
+            if(p != null) {
+                new PeripheralController( mCoreFragment, 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                        p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
+                Log.i("GameActivity", "Player 2 has been enabled");
+            }
         }
         if( mGamePrefs.isControllerEnabled3 && !needs3)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile3;
-            new PeripheralController( mCoreFragment, 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameActivity", "Player 3 has been enabled");
+
+            if(p != null) {
+                new PeripheralController( mCoreFragment, 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                        p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
+                Log.i("GameActivity", "Player 3 has been enabled");
+            }
         }
         if( mGamePrefs.isControllerEnabled4 && !needs4)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile4;
-            new PeripheralController( mCoreFragment, 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameActivity", "Player 4 has been enabled");
+
+            if(p != null) {
+                new PeripheralController( mCoreFragment, 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                        p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
+                Log.i("GameActivity", "Player 4 has been enabled");
+            }
         }
     }
 
@@ -1202,8 +1210,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     Runnable mLastTouchChecker = new Runnable() {
         @Override
         public void run() {
-            Calendar calendar = Calendar.getInstance();
-            int seconds = calendar.get(Calendar.SECOND);
+            long seconds = System.currentTimeMillis() / 1000L;
 
             if(seconds - mLastTouchTime > mGlobalPrefs.touchscreenAutoHideSeconds)
             {
@@ -1214,11 +1221,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
     };
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
-        Calendar calendar = Calendar.getInstance();
-        mLastTouchTime = calendar.get(Calendar.SECOND);
+        mLastTouchTime = System.currentTimeMillis() / 1000L;
 
         return mTouchscreenController.onTouch(view, motionEvent);
     }

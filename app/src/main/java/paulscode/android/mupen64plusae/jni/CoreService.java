@@ -49,11 +49,9 @@ import org.mupen64plusae.v3.alpha.R;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.game.GameActivity;
-import paulscode.android.mupen64plusae.util.Notifier;
 
 import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
 import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
@@ -125,7 +123,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
      * Last time we received an FPS changed callback. This is used to determine if the core
      * is locked up since these won't happen if it is.
      */
-    private int mLastFpsChangedTime;
+    private long mLastFpsChangedTime;
     private Handler mFpsCangedHandler = new Handler();
 
     final static int ONGOING_NOTIFICATION_ID = 1;
@@ -158,8 +156,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void shutdownEmulator()
     {
-        Calendar calendar = Calendar.getInstance();
-        mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+        mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
         mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
 
         mIsShuttingDown = true;
@@ -201,7 +198,9 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                     if(newValue == 1)
                     {
                         try {
-                            new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile();
+                            if(!new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile()) {
+                                Log.e("CoreService", "Unable to save file due to file write failure: " + latestSave);
+                            }
                         } catch (IOException e) {
                             Log.e("CoreService", "Unable to save file due to file write failure: " + latestSave);
                         }
@@ -227,8 +226,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
         if(shutdownOnFinish)
         {
-            Calendar calendar = Calendar.getInstance();
-            mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+            mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
             mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
 
             mIsShuttingDown = true;
@@ -495,7 +493,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                 mRomGoodName, NotificationManager.IMPORTANCE_DEFAULT);
-        notificationManager.createNotificationChannel(channel);
+
+        if(notificationManager != null) {
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private void updateNotification()
@@ -557,6 +558,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         {
             Bundle extras = intent.getExtras();
 
+            if(extras == null) {
+                throw new IllegalArgumentException("Invalid parameters passed to CoreService");
+            }
+
             mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
             mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
             mCheatOptions = extras.getString( ActivityHelper.Keys.CHEAT_ARGS );
@@ -570,9 +575,13 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             boolean[] isPluggedArray = extras.getBooleanArray(ActivityHelper.Keys.IS_PLUGGED_ARRAY);
             mIsPlugged = new ArrayList<>();
 
-            for (Boolean isPlugged: isPluggedArray )
-            {
-                mIsPlugged.add(isPlugged);
+            if(isPluggedArray == null) {
+                mIsPlugged.add(true);
+            } else {
+                for (Boolean isPlugged: isPluggedArray )
+                {
+                    mIsPlugged.add(isPlugged);
+                }
             }
 
             mIsFrameLimiterEnabled = extras.getBoolean( ActivityHelper.Keys.IS_FPS_LIMIT_ENABLED, true );
@@ -652,12 +661,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     Runnable mLastFpsChangedChecker = new Runnable() {
         @Override
         public void run() {
-            Calendar calendar = Calendar.getInstance();
-            int seconds = calendar.get(Calendar.SECOND);
+            long seconds = System.currentTimeMillis() / 1000L;
 
             if(mIsPaused)
             {
-                mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+                mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
             }
 
             //Use a 5 second timeout to save before killing the core process
@@ -678,8 +686,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     @Override
     public void onFpsChanged(int newValue) {
-        Calendar calendar = Calendar.getInstance();
-        mLastFpsChangedTime = calendar.get(Calendar.SECOND);
+        mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
 
         //If we are paused and we are still somehow swapping buffers
         //then pause again. This can happen if the user pauses the emulator
