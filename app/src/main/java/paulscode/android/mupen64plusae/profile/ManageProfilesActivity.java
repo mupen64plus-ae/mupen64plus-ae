@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
@@ -132,13 +133,13 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     /** The user preferences wrapper, available as a convenience to subclasses. */
     protected GlobalPrefs mGlobalPrefs;
     
-    private final List<String> mProfileNames = new ArrayList<String>();
+    private final List<String> mProfileNames = new ArrayList<>();
     
     /** Profile list adapter */
     private ProfileListAdapter mProfileListAdapter = null;
     
     /** Profile list **/
-    List<Profile> mProfileList = new ArrayList<Profile>();
+    List<Profile> mProfileList = new ArrayList<>();
     
     /** Current listview position */
     private int mListViewPosition = 0;
@@ -166,7 +167,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         setContentView( R.layout.manage_profiles_activity );
         
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
-        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+        Toolbar toolbar = findViewById( R.id.toolbar );
         toolbar.setTitle( getWindowTitleResource() );
         setSupportActionBar( toolbar );
         
@@ -311,7 +312,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
             promptNameComment( R.string.listItem_rename, profile.name, profile.comment, true);
             break;
         case R.id.menuItem_deleteCustomProfile:
-            deleteProfile( profile, isDefault );
+            deleteProfile( profile );
             break;
         case R.id.menuItem_setUnsetDefaultBuiltinProfile:
             putDefaultProfile( isDefault
@@ -370,7 +371,7 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         refreshList();
     }
     
-    private void deleteProfile( Profile profile, final boolean isDefault )
+    private void deleteProfile( Profile profile)
     {
         if(BuildConfig.DEBUG && profile.isBuiltin)
             throw new RuntimeException();
@@ -496,27 +497,32 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
     {
         private static final int RESID = R.layout.list_item_two_text_icon;
         
-        public ProfileListAdapter( Context context, List<Profile> profiles )
+        ProfileListAdapter( Context context, List<Profile> profiles )
         {
             super( context, RESID, profiles );
         }
         
+        @NonNull
         @Override
-        public View getView( int position, View convertView, ViewGroup parent )
+        public View getView(int position, View convertView, @NonNull ViewGroup parent )
         {
             Context context = getContext();
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
             View view = convertView;
-            if( view == null )
+            if( view == null && inflater != null)
                 view = inflater.inflate( RESID, null );
+
+            //Be extra careful
+            if( view == null )
+                view = new View(ManageProfilesActivity.this);
             
             Profile item = getItem( position );
-            if( item != null )
+            if( item != null)
             {
-                TextView text1 = (TextView) view.findViewById( R.id.text1 );
-                TextView text2 = (TextView) view.findViewById( R.id.text2 );
-                ImageView icon = (ImageView) view.findViewById( R.id.icon );
+                TextView text1 = view.findViewById( R.id.text1 );
+                TextView text2 = view.findViewById( R.id.text2 );
+                ImageView icon = view.findViewById( R.id.icon );
                 
                 text1.setText( item.name );
                 text2.setText( item.comment );
