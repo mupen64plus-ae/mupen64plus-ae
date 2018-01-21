@@ -274,8 +274,9 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         if(mTouchscreenProfile != null)
         {
             mTouchscreenProfile.populateProfiles( mAppData.GetTouchscreenProfilesConfig(),
-                mGlobalPrefs.GetTouchscreenProfilesConfig(), true, mGlobalPrefs.getTouchscreenProfileDefault(), null,
-                    mGlobalPrefs.showBuiltInTouchscreenProfiles );
+                mGlobalPrefs.GetTouchscreenProfilesConfig(), true,
+                    mGamePrefs.isDpadGame ? mGlobalPrefs.getTouchscreenDpadProfileDefault() : mGlobalPrefs.getTouchscreenProfileDefault(),
+                    null, mGlobalPrefs.showBuiltInTouchscreenProfiles );
             mTouchscreenProfile.setSummary(mTouchscreenProfile.getCurrentValue(null));
         }
 

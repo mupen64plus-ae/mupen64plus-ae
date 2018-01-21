@@ -245,6 +245,9 @@ public class GamePrefs
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
 
+    /** This is true if this game uses the D-pad */
+    final boolean isDpadGame;
+
     /** Game CRC */
     private final String gameCrc;
 
@@ -288,6 +291,8 @@ public class GamePrefs
         gameDataDir = getGameDataPath( romMd5, headerName, countrySymbol, appData);
         setGameDirs(appData, globalPrefs, gameDataDir);
 
+        isDpadGame = isDpadGame(headerName, goodName);
+
         // Emulation profile
         emulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
                 globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
@@ -306,9 +311,15 @@ public class GamePrefs
         }
         else
         {
-            touchscreenProfile = loadProfile( mPreferences, TOUCHSCREEN_PROFILE,
-                globalPrefs.getTouchscreenProfileDefault(), GlobalPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT,
-                globalPrefs.GetTouchscreenProfilesConfig(), appData.GetTouchscreenProfilesConfig() );
+            if(isDpadGame) {
+                touchscreenProfile = loadProfile( mPreferences, TOUCHSCREEN_PROFILE,
+                        globalPrefs.getTouchscreenDpadProfileDefault(), GlobalPrefs.DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT,
+                        globalPrefs.GetTouchscreenProfilesConfig(), appData.GetTouchscreenProfilesConfig() );
+            } else {
+                touchscreenProfile = loadProfile( mPreferences, TOUCHSCREEN_PROFILE,
+                        globalPrefs.getTouchscreenProfileDefault(), GlobalPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT,
+                        globalPrefs.GetTouchscreenProfilesConfig(), appData.GetTouchscreenProfilesConfig() );
+            }
         }
 
         // Controller profiles
@@ -540,6 +551,34 @@ public class GamePrefs
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
     }
 
+    private boolean isDpadGame(String headerName, String gameGoodName) {
+
+        String headerNameLowerCase = headerName.toLowerCase();
+        String gameGoodNameLowerCase = gameGoodName.toLowerCase();
+
+        return headerNameLowerCase.equals("Body Harvest".toLowerCase()) ||
+                headerNameLowerCase.equals("DR.MARIO 64".toLowerCase()) ||
+                headerNameLowerCase.equals("DUKE NUKEM".toLowerCase()) ||
+                headerNameLowerCase.equals("DUKE".toLowerCase()) ||
+                headerNameLowerCase.contains("F1 POLE POSITION 64".toLowerCase()) ||
+                headerNameLowerCase.equals("Forsaken".toLowerCase()) ||
+                headerNameLowerCase.contains("I.S.S.".toLowerCase()) ||
+                headerNameLowerCase.contains("I S S".toLowerCase()) ||
+                headerNameLowerCase.equals("Kirby64".toLowerCase()) ||
+                headerNameLowerCase.equals("MISCHIEF MAKERS".toLowerCase()) ||
+                headerNameLowerCase.equals("MS. PAC-MAN MM".toLowerCase()) ||
+                headerNameLowerCase.contains("POKEMON STADIUM".toLowerCase()) ||
+                headerNameLowerCase.equals("PUZZLE LEAGUE N64".toLowerCase()) ||
+                headerNameLowerCase.contains("TONY HAWK".toLowerCase()) ||
+                headerNameLowerCase.contains("THPS".toLowerCase()) ||
+                headerNameLowerCase.contains("Turok".toLowerCase()) ||
+                headerNameLowerCase.equals("VIOLENCEKILLER".toLowerCase()) ||
+                headerNameLowerCase.equals("NBA HANGTIME".toLowerCase()) ||
+                headerNameLowerCase.contains("WWF".toLowerCase()) ||
+                gameGoodNameLowerCase.contains("WRESTL".toLowerCase()) ||
+                headerNameLowerCase.equals("wetrix".toLowerCase());
+    }
+
     public String getGameDataDir()
     {
         return gameDataDir;
@@ -565,7 +604,7 @@ public class GamePrefs
         return mupen64plus_cfg;
     }
 
-    public String getMupen64plusCfgAlt()
+    String getMupen64plusCfgAlt()
     {
         return mupen64plus_cfg.replace(":", "");
     }
@@ -612,7 +651,7 @@ public class GamePrefs
         }
     }
 
-    public String getSharedPrefsName()
+    String getSharedPrefsName()
     {
         return mSharedPrefsName;
     }
