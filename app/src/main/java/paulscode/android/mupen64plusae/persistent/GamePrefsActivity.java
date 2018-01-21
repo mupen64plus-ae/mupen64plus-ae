@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  *
  * Copyright (C) 2013 Paul Lamb
@@ -41,7 +41,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.cheat.CheatEditorActivity;
@@ -85,14 +84,12 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private SharedPreferences mPrefs = null;
 
     // ROM info
-    private String mRomPath = null;
     private String mRomMd5 = null;
     private String mRomCrc = null;
     private String mRomHeaderName = null;
     private String mRomGoodName = null;
     private String mLegacySaveName = null;
     private byte mRomCountryCode = 0;
-    private RomDatabase mRomDatabase = null;
     private RomDetail mRomDetail = null;
 
     // Preference menu items
@@ -107,8 +104,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
     private boolean mClearCheats = false;
     private boolean mInCheatsScreen = false;
-    
-    Semaphore refreshCheatsMutex = new Semaphore(1);
 
     // MOGA controller interface
     private final Controller mMogaController = Controller.getInstance( this );
@@ -134,7 +129,10 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         final Bundle extras = getIntent().getExtras();
         if( extras == null )
             throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
-        mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        String romPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+        if( romPath == null )
+            throw new Error( "ROM path and MD5 must be passed via the extras bundle" );
+
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
         mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
@@ -146,8 +144,6 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             throw new Error( "MD5 must be passed via the extras bundle" );
 
         // Initialize MOGA controller API
-        // TODO: Remove hack after MOGA SDK is fixed
-        // mMogaController.init();
         MogaHack.init( mMogaController, this );
 
         // Get app data and user preferences
@@ -158,14 +154,14 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mPrefs = getSharedPreferences( mGamePrefs.getSharedPrefsName(), MODE_PRIVATE );
 
         // Get the detailed info about the ROM
-        mRomDatabase = RomDatabase.getInstance();
+        RomDatabase romDatabase = RomDatabase.getInstance();
 
-        if(!mRomDatabase.hasDatabaseFile())
+        if(!romDatabase.hasDatabaseFile())
         {
-            mRomDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
+            romDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
         }
 
-        mRomDetail = mRomDatabase.lookupByMd5WithFallback( mRomMd5, new File( mRomPath ), mRomCrc );
+        mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, new File( romPath ), mRomCrc );
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( mGamePrefs.getSharedPrefsName(), R.xml.preferences_game );
@@ -437,22 +433,23 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     public boolean onPreferenceClick( Preference preference )
     {
         final String key = preference.getKey();
-        if( key.equals( ACTION_CHEAT_EDITOR ) )
-        {
-            final Intent intent = new Intent( this, CheatEditorActivity.class );
-            intent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
-            intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
-            intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
-            startActivityForResult( intent, 111 );
+
+        switch(key) {
+            case ACTION_CHEAT_EDITOR:
+                final Intent intent = new Intent( this, CheatEditorActivity.class );
+                intent.putExtra( ActivityHelper.Keys.ROM_CRC, mRomCrc );
+                intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, mRomHeaderName );
+                intent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
+                startActivityForResult( intent, 111 );
+                break;
+            case ACTION_WIKI:
+                ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
+                break;
+            case ACTION_RESET_GAME_PREFS:
+                actionResetGamePrefs();
+                break;
         }
-        else if( key.equals( ACTION_WIKI ) )
-        {
-            ActivityHelper.launchUri( this, mRomDetail.wikiUrl );
-        }
-        else if( key.equals( ACTION_RESET_GAME_PREFS ) )
-        {
-            actionResetGamePrefs();
-        }
+
         return false;
     }
 
@@ -481,8 +478,18 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
 
             // Also reset any manual overrides the user may have made in the config file
             final File configFile = new File( mGamePrefs.getMupen64plusCfg() );
-            if( configFile.exists() && !configFile.isDirectory())
-                configFile.delete();
+            if( configFile.exists() && !configFile.isDirectory()) {
+                if(!configFile.delete()) {
+                    //If we are unable to delete this file, try the alternate
+                    final File configFileAlternate = new File( mGamePrefs.getMupen64plusCfgAlt() );
+                    if( configFileAlternate.exists() && !configFileAlternate.isDirectory()) {
+                        if(configFileAlternate.delete()) {
+                            Log.w("GamePrefsActivity", "Unable to reset config");
+                        }
+                    }
+                }
+            }
+
 
             // Rebuild the menu system by restarting the activity
             ActivityHelper.restartActivity( GamePrefsActivity.this );

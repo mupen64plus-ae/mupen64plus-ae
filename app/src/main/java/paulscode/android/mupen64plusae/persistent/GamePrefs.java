@@ -565,6 +565,11 @@ public class GamePrefs
         return mupen64plus_cfg;
     }
 
+    public String getMupen64plusCfgAlt()
+    {
+        return mupen64plus_cfg.replace(":", "");
+    }
+
     public String getSramDataDir()
     {
         return sramDataDir;
