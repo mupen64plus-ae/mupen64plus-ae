@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -34,15 +34,45 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     {
         return isBuiltin ? mAppData.GetEmulationProfilesConfig() : mGlobalPrefs.GetEmulationProfilesConfig();
     }
+
+    @Override
+    protected boolean allowsSecondaryDefault()
+    {
+        return false;
+    }
+
+    @Override
+    protected int getSecondaryDefaultSetStringId()
+    {
+        return 0;
+    }
+
+    @Override
+    protected int getSecondaryDefaultUnsetStringId()
+    {
+        return 0;
+    }
     
     @Override
     protected String getNoDefaultProfile()
     {
         return mGlobalPrefs.getEmulationProfileDefaultDefault();
     }
+
+    @Override
+    protected String getNoSecondaryDefaultProfile()
+    {
+        return "";
+    }
     
     @Override
     protected String getDefaultProfile()
+    {
+        return mGlobalPrefs.getEmulationProfileDefault();
+    }
+
+    @Override
+    protected String getSecondaryDefaultProfile()
     {
         return mGlobalPrefs.getEmulationProfileDefault();
     }
@@ -52,7 +82,13 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     {
         mGlobalPrefs.putEmulationProfileDefault( name );
     }
-    
+
+    @Override
+    protected void putSecondaryDefaultProfile( String name )
+    {
+        mGlobalPrefs.putEmulationProfileDefault( name );
+    }
+
     @Override
     protected void onEditProfile( Profile profile )
     {

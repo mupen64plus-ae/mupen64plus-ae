@@ -35,11 +35,35 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     {
         return isBuiltin ? mAppData.GetTouchscreenProfilesConfig() : mGlobalPrefs.GetTouchscreenProfilesConfig();
     }
+
+    @Override
+    protected boolean allowsSecondaryDefault()
+    {
+        return true;
+    }
+
+    @Override
+    protected int getSecondaryDefaultSetStringId()
+    {
+        return R.string.listItem_setDpadDefault;
+    }
+
+    @Override
+    protected int getSecondaryDefaultUnsetStringId()
+    {
+        return R.string.listItem_unsetDpadDefault;
+    }
     
     @Override
     protected String getNoDefaultProfile()
     {
         return GlobalPrefs.DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT;
+    }
+
+    @Override
+    protected String getNoSecondaryDefaultProfile()
+    {
+        return GlobalPrefs.DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT;
     }
     
     @Override
@@ -47,11 +71,23 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     {
         return mGlobalPrefs.getTouchscreenProfileDefault();
     }
+
+    @Override
+    protected String getSecondaryDefaultProfile()
+    {
+        return mGlobalPrefs.getTouchscreenDpadProfileDefault();
+    }
     
     @Override
     protected void putDefaultProfile( String name )
     {
         mGlobalPrefs.putTouchscreenProfileDefault( name );
+    }
+
+    @Override
+    protected void putSecondaryDefaultProfile( String name )
+    {
+        mGlobalPrefs.putTouchscreenDpadProfileDefault( name );
     }
     
     @Override

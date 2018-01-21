@@ -72,6 +72,24 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
      * @return the absolute path of the requested config file
      */
     abstract protected ConfigFile getConfigFile( boolean isBuiltin );
+
+    /**
+     * Returns true if the profile allows a secondary default
+     * @return True if the profile allows a secondary default
+     */
+    abstract protected boolean allowsSecondaryDefault();
+
+    /**
+     * Returns the string ID for the secondary default "set default" text
+     * @return True if the profile allows a secondary default
+     */
+    abstract protected int getSecondaryDefaultSetStringId();
+
+    /**
+     * Returns the string ID for the secondary default "unset default" text
+     * @return True if the profile allows a secondary default
+     */
+    abstract protected int getSecondaryDefaultUnsetStringId();
     
     /**
      * Gets the name of the profile to use if the user unsets the default. If a profile can be
@@ -82,6 +100,16 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
      * @return the default name of the default profile
      */
     abstract protected String getNoDefaultProfile();
+
+    /**
+     * Gets the name of the profile to use if the user unsets the secondary default. If a profile can be
+     * "disabled", subclasses should return an empty string. Otherwise, subclasses should return the
+     * name of a builtin profile that is guaranteed to exist (typically the default profile at
+     * installation).
+     *
+     * @return the secondary default name of the default profile
+     */
+    abstract protected String getNoSecondaryDefaultProfile();
     
     /**
      * Gets the name of the default profile. Subclasses should implement this method to retrieve the
@@ -90,6 +118,14 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
      * @return the name of the default profile
      */
     abstract protected String getDefaultProfile();
+
+    /**
+     * Gets the name of the secondary default profile. Subclasses should implement this method to retrieve the
+     * persisted subclass-specific profile specified by the user.
+     *
+     * @return the name of the default profile
+     */
+    abstract protected String getSecondaryDefaultProfile();
     
     /**
      * Sets the name of the default profile. Subclasses should implement this method to persist the
@@ -98,6 +134,14 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
      * @param name the name of the new default profile
      */
     abstract protected void putDefaultProfile( String name );
+
+    /**
+     * Sets the name of the secondary default profile. Subclasses should implement this method to persist the
+     * subclass-specific profile specified by the user.
+     *
+     * @param name the name of the new default profile
+     */
+    abstract protected void putSecondaryDefaultProfile( String name );
     
     /**
      * Edits a profile using a subclass-specific UI. Subclasses should implement this method to
@@ -281,8 +325,23 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
             MenuItem defaultProfileItem = profile.isBuiltin ?
                 listView.getMenu().findItem(R.id.menuItem_setUnsetDefaultBuiltinProfile) :
                 listView.getMenu().findItem(R.id.menuItem_setUnsetDefaultCustomProfile);
-                defaultProfileItem.setTitle(getString( R.string.listItem_unsetDefault ));
+            defaultProfileItem.setTitle(getString( R.string.listItem_unsetDefault ));
         }
+
+        int secondaryProfileItemId = profile.isBuiltin ?
+                R.id.menuItem_setUnsetSecondaryDefaultBuiltinProfile :
+                R.id.menuItem_setUnsetSecondaryDefaultCustomProfile;
+
+        MenuItem secondaryDefaultProfileItem =  listView.getMenu().findItem(secondaryProfileItemId);
+
+        if(allowsSecondaryDefault())
+        {
+            secondaryDefaultProfileItem.setTitle(getString( profile.name.equals(getSecondaryDefaultProfile()) ?
+                    getSecondaryDefaultUnsetStringId() : getSecondaryDefaultSetStringId() ));
+        } else {
+            listView.getMenu().removeItem(secondaryProfileItemId);
+        }
+
     }
     
     @Override
@@ -291,38 +350,38 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
         //We can only get here if mListViewPosition is valid, so profile shouldn't be null
         final Profile profile = (Profile) getListView().getItemAtPosition( mListViewPosition );
         final boolean isDefault = profile.name.equals( getDefaultProfile() );
+        final boolean isSecondaryDefault = profile.name.equals( getSecondaryDefaultProfile() );
         
         mSelectedOperation = item.getItemId();
-        
-        switch (mSelectedOperation)
-        {
-        case R.id.menuItem_setUnsetDefaultCustomProfile:
-            putDefaultProfile( isDefault
-                ? getNoDefaultProfile()
-                : profile.name );
-            refreshList();
-            break;
-        case R.id.menuItem_editCustomProfile:
-            editProfile( profile );
-            break;
-        case R.id.menuItem_copyCustomProfile:
-            promptNameComment( R.string.listItem_copy, profile.name, profile.comment, false);
-            break;
-        case R.id.menuItem_renameCustomProfile:
-            promptNameComment( R.string.listItem_rename, profile.name, profile.comment, true);
-            break;
-        case R.id.menuItem_deleteCustomProfile:
-            deleteProfile( profile );
-            break;
-        case R.id.menuItem_setUnsetDefaultBuiltinProfile:
-            putDefaultProfile( isDefault
-                ? getNoDefaultProfile()
-                : profile.name );
-            refreshList();
-            break;
-        case R.id.menuItem_copyBUiltinProfile:
-            promptNameComment( R.string.listItem_copy, profile.name, profile.comment, false);
-            break;
+
+        switch (mSelectedOperation) {
+            case R.id.menuItem_setUnsetDefaultCustomProfile:
+            case R.id.menuItem_setUnsetDefaultBuiltinProfile:
+                putDefaultProfile(isDefault
+                        ? getNoDefaultProfile()
+                        : profile.name);
+                refreshList();
+                break;
+            case R.id.menuItem_setUnsetSecondaryDefaultCustomProfile:
+            case R.id.menuItem_setUnsetSecondaryDefaultBuiltinProfile:
+                putSecondaryDefaultProfile(isSecondaryDefault
+                        ? getNoSecondaryDefaultProfile()
+                        : profile.name);
+                refreshList();
+                break;
+            case R.id.menuItem_editCustomProfile:
+                editProfile(profile);
+                break;
+            case R.id.menuItem_copyCustomProfile:
+            case R.id.menuItem_copyBuiltinProfile:
+                promptNameComment(R.string.listItem_copy, profile.name, profile.comment, false);
+                break;
+            case R.id.menuItem_renameCustomProfile:
+                promptNameComment(R.string.listItem_rename, profile.name, profile.comment, true);
+                break;
+            case R.id.menuItem_deleteCustomProfile:
+                deleteProfile(profile);
+                break;
         }
     }
     
@@ -526,18 +585,14 @@ abstract public class ManageProfilesActivity extends AppCompatListActivity imple
                 
                 text1.setText( item.name );
                 text2.setText( item.comment );
-                if( item.name.equals( getDefaultProfile() ) )
+                if (item.name.equals(getDefaultProfile()))
+                    icon.setImageResource( R.drawable.ic_sliders3 );
+                else if( item.name.equals( getSecondaryDefaultProfile() ) )
                     icon.setImageResource( R.drawable.ic_sliders2 );
                 else
                     icon.setImageResource( R.drawable.ic_sliders );
             }
             return view;
         }
-    }
-    
-    protected void RemoveProfile(String profileName)
-    {
-        Profile profile = new Profile(true, profileName, null);
-        mProfileList.remove(profile);
     }
 }

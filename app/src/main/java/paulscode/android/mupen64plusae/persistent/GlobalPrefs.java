@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  *
  * Copyright (C) 2013 Paul Lamb
@@ -312,6 +312,7 @@ public class GlobalPrefs
     // Shared preferences keys and key templates
     public static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     public static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
+    public static final String KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "touchscreenProfileDpadDefault";
     public static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     public static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder2";
     public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
@@ -320,6 +321,7 @@ public class GlobalPrefs
     // Shared preferences default values
     public static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Fast";
     public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "Analog";
+    public static final String DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "Everything";
     public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "Android Gamepad";
     public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = false;
@@ -706,7 +708,12 @@ public class GlobalPrefs
         return getString( KEY_TOUCHSCREEN_PROFILE_DEFAULT, DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT );
     }
 
-    public String getControllerProfileDefault( int player )
+    public String getTouchscreenDpadProfileDefault()
+    {
+        return getString( KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT, DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT );
+    }
+
+    String getControllerProfileDefault( int player )
     {
         switch( player )
         {
@@ -739,9 +746,9 @@ public class GlobalPrefs
         putString( KEY_TOUCHSCREEN_PROFILE_DEFAULT, value );
     }
 
-    public void putControllerProfileDefault( String value )
+    public void putTouchscreenDpadProfileDefault( String value )
     {
-        putString( GamePrefs.CONTROLLER_PROFILE1, value );
+        putString( KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT, value );
     }
 
     public void putPakType( int player, PakType pakType )

@@ -104,7 +104,9 @@
 
     <!-- Lists -->
     <string name="listItem_setDefault">Set default</string>
+    <string name="listItem_setDpadDefault">Set D-Pad default</string>
     <string name="listItem_unsetDefault">Unset default</string>
+    <string name="listItem_unsetDpadDefault">Unset D-Pad default</string>
     <string name="listItem_edit">Edit</string>
     <string name="listItem_rename">Rename</string>
     <string name="listItem_copy">Copy</string>

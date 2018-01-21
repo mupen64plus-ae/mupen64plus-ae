@@ -79,7 +79,9 @@
     <string name="popup_version">Versión: %1$s\nCódigo de versión: %2$d</string>
     <!--Lists-->
     <string name="listItem_setDefault">Establecer predeterminados</string>
+    <string name="listItem_setDpadDefault">Establecer predeterminados para D-Pad</string>
     <string name="listItem_unsetDefault">No establecer predeterminados</string>
+    <string name="listItem_unsetDpadDefault">No establecer predeterminados para D-Pad</string>
     <string name="listItem_edit">Editar</string>
     <string name="listItem_rename">Renombrar</string>
     <string name="listItem_copy">Copiar</string>

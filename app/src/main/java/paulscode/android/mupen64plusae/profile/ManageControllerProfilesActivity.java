@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -34,9 +34,33 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     {
         return isBuiltin ? mAppData.GetControllerProfilesConfig() : mGlobalPrefs.GetControllerProfilesConfig();
     }
-    
+
+    @Override
+    protected boolean allowsSecondaryDefault()
+    {
+        return false;
+    }
+
+    @Override
+    protected int getSecondaryDefaultSetStringId()
+    {
+        return 0;
+    }
+
+    @Override
+    protected int getSecondaryDefaultUnsetStringId()
+    {
+        return 0;
+    }
+
     @Override
     protected String getNoDefaultProfile()
+    {
+        return "";
+    }
+
+    @Override
+    protected String getNoSecondaryDefaultProfile()
     {
         return "";
     }
@@ -46,9 +70,21 @@ public class ManageControllerProfilesActivity extends ManageProfilesActivity
     {
         return "";
     }
-    
+
+    @Override
+    protected String getSecondaryDefaultProfile()
+    {
+        return "";
+    }
+
     @Override
     protected void putDefaultProfile( String name )
+    {
+
+    }
+
+    @Override
+    protected void putSecondaryDefaultProfile( String name )
     {
 
     }
