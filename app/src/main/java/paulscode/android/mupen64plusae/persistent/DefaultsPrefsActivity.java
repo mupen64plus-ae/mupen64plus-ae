@@ -101,6 +101,10 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
     {
         super.onResume();
 
+        //Update activity on resume just in case user updated profile list when
+        //managing profiles when clicking on profile settings
+        refreshViews();
+
         mPrefs.registerOnSharedPreferenceChangeListener(this);
         mMogaController.onResume();
     }
