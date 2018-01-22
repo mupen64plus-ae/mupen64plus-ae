@@ -35,24 +35,6 @@ public class ManageTouchscreenProfilesActivity extends ManageProfilesActivity
     {
         return isBuiltin ? mAppData.GetTouchscreenProfilesConfig() : mGlobalPrefs.GetTouchscreenProfilesConfig();
     }
-
-    @Override
-    protected boolean allowsSecondaryDefault()
-    {
-        return true;
-    }
-
-    @Override
-    protected int getSecondaryDefaultSetStringId()
-    {
-        return R.string.listItem_setDpadDefault;
-    }
-
-    @Override
-    protected int getSecondaryDefaultUnsetStringId()
-    {
-        return R.string.listItem_unsetDpadDefault;
-    }
     
     @Override
     protected String getNoDefaultProfile()

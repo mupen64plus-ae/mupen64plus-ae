@@ -34,24 +34,6 @@ public class ManageEmulationProfilesActivity extends ManageProfilesActivity
     {
         return isBuiltin ? mAppData.GetEmulationProfilesConfig() : mGlobalPrefs.GetEmulationProfilesConfig();
     }
-
-    @Override
-    protected boolean allowsSecondaryDefault()
-    {
-        return false;
-    }
-
-    @Override
-    protected int getSecondaryDefaultSetStringId()
-    {
-        return 0;
-    }
-
-    @Override
-    protected int getSecondaryDefaultUnsetStringId()
-    {
-        return 0;
-    }
     
     @Override
     protected String getNoDefaultProfile()

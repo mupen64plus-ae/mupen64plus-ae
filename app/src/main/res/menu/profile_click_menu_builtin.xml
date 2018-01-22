@@ -3,12 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <item
-        android:id="@+id/menuItem_setUnsetDefaultBuiltinProfile"
-        android:title="@string/listItem_setDefault"/>
-    <item
-        android:id="@+id/menuItem_setUnsetSecondaryDefaultBuiltinProfile"
-        android:title=""/>
-    <item
         android:id="@+id/menuItem_copyBuiltinProfile"
         android:title="@string/listItem_copy"/>
 
