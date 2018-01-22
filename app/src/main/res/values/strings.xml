@@ -211,6 +211,7 @@
     <string name="categoryAudio_title">Audio</string>
     <string name="categoryTouchscreen_title">Touchscreen</string>
     <string name="categoryInput_title">Input</string>
+
     <string name="categoryData_title">Data</string>
     <string name="categoryGameSettings_title">Game-specific settings</string>
     <string name="categoryGameSettings_titleNamed">%1$s settings</string>
@@ -588,6 +589,7 @@
     <!-- Profile Preferences -->
     <string name="emulationProfile_title">Emulation profile</string>
     <string name="touchscreenProfile_title">Touchscreen profile</string>
+    <string name="touchscreenProfileDpad_title">Touchscreen (D-pad) profile</string>
     <string name="controllerProfile_title">Controller profile</string>
     <string name="controllerProfile1_title">Controller 1 profile</string>
     <string name="controllerProfile2_title">Controller 2 profile</string>

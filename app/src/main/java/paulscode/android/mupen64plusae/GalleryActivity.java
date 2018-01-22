@@ -548,6 +548,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mRefreshNeeded = true;
             ActivityHelper.startDataPrefsActivity( this );
             return true;
+         case R.id.menuItem_categoryDefaults:
+            ActivityHelper.startDefaultPrefsActivity( this );
+            return true;
         case R.id.menuItem_emulationProfiles:
             ActivityHelper.startManageEmulationProfilesActivity(this);
             return true;

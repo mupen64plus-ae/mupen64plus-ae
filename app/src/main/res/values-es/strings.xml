@@ -464,6 +464,7 @@
     <!--Profile Preferences-->
     <string name="emulationProfile_title">Perfil de emulación</string>
     <string name="touchscreenProfile_title">Perfil de pantalla táctil</string>
+    <string name="touchscreenProfileDpad_title">Perfil de pantalla táctil (D-pad)</string>
     <string name="controllerProfile_title">Perfil de mando</string>
     <string name="controllerProfile1_title">Perfil de mando 1</string>
     <string name="controllerProfile2_title">Perfil de mando 2</string>

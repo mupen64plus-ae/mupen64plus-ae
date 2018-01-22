@@ -29,6 +29,9 @@
             <item
                 android:id="@+id/menuItem_categoryData"
                 android:title="@string/categoryData_title"/>
+            <item
+                android:id="@+id/menuItem_categoryDefaults"
+                android:title="@string/default_profile_title"/>
         </menu>
     </item>
     <item

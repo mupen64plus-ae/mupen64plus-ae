@@ -717,9 +717,9 @@ public class GlobalPrefs
     {
         switch( player )
         {
-            case 2: return getString( GamePrefs.CONTROLLER_PROFILE2, "" );
-            case 3: return getString( GamePrefs.CONTROLLER_PROFILE3, "" );
-            case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, "" );
+            case 2: return getString( GamePrefs.CONTROLLER_PROFILE2, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+            case 3: return getString( GamePrefs.CONTROLLER_PROFILE3, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+            case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
             default: break;
         }
 

@@ -38,6 +38,7 @@ import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.jni.CoreService;
 import paulscode.android.mupen64plusae.persistent.AudioPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.DataPrefsActivity;
+import paulscode.android.mupen64plusae.persistent.DefaultsPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.DisplayPrefsActivity;
 import paulscode.android.mupen64plusae.persistent.GamePrefsActivity;
 import paulscode.android.mupen64plusae.persistent.InputPrefsActivity;
@@ -244,6 +245,12 @@ public class ActivityHelper
     {
         Intent intent = new Intent( context, InputPrefsActivity.class );
         context.startActivity( intent );    
+    }
+
+    static void startDefaultPrefsActivity( Context context )
+    {
+        Intent intent = new Intent( context, DefaultsPrefsActivity.class );
+        context.startActivity( intent );
     }
     
     static void startLibraryPrefsActivity( Context context )
