@@ -134,23 +134,32 @@ public class RomDatabase
     {
         return mConfigFile != null;
     }
-    
-    public RomDetail lookupByMd5WithFallback( String md5, File file, String crc )
+
+    public RomDetail lookupByMd5WithFallback( RomHeader romHeader, String md5, String filename, String crc )
     {
         RomDetail detail = lookupByMd5( md5 );
+
         if( detail == null )
         {
-            RomHeader romHeader = new RomHeader(file);
-            ArrayList<RomDetail> details = lookupByCrc( romHeader, file.getName() );
+            File tempFile = new File(filename);
+            ArrayList<RomDetail> details = lookupByCrc( romHeader, filename );
 
             // Catch if none was found or we could not narrow things to only 1 entry
             if (details.size() != 1) {
-                detail = new RomDetail(crc, generateGoodNameFromFileName(file.getName()));
+                detail = new RomDetail(crc, generateGoodNameFromFileName(tempFile.getName()));
             } else {
                 detail = details.get(0);
             }
         }
         return detail;
+    }
+    
+    public RomDetail lookupByMd5WithFallback( String md5, String filename, String crc )
+    {
+        File tempFile = new File(filename);
+        RomHeader romHeader = new RomHeader(tempFile);
+
+        return lookupByMd5WithFallback(romHeader, md5, filename, crc);
     }
 
     private ArrayList<RomDetail> lookupByCrc(RomHeader romHeader, String fileName) {
@@ -184,7 +193,8 @@ public class RomDatabase
             Log.w("RomDetail", "CRC: " + romHeader.crc);
             Log.i("RomDetail", "Constructing a best guess for the meta-info");
 
-            romDetails.add(new RomDetail(romHeader.crc, generateGoodNameFromFileName(fileName)));
+            File tempFile = new File(fileName);
+            romDetails.add(new RomDetail(romHeader.crc, generateGoodNameFromFileName(tempFile.getName())));
         }
 
         return romDetails;

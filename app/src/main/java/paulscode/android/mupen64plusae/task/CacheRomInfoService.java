@@ -44,12 +44,14 @@ import org.mupen64plusae.v3.alpha.R;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -185,27 +187,33 @@ public class CacheRomInfoService extends Service
 
                                 if( mbStopped ) break;
 
-                                InputStream zipStream = zipFile.getInputStream( zipEntry );
+                                InputStream zipStream = new BufferedInputStream(zipFile.getInputStream( zipEntry ));
                                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
-                                File extractedFile = FileUtil.extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
 
                                 if( mbStopped ) break;
-                                if( extractedFile != null)
-                                {
-                                    RomHeader extractedHeader = new RomHeader( extractedFile );
+
+                                //First get the rom header
+                                zipStream.mark(500);
+                                byte[] romHeader = FileUtil.extractRomHeader(zipEntry, zipStream);
+                                RomHeader extractedHeader;
+                                if(romHeader != null) {
+                                    extractedHeader = new RomHeader( romHeader );
+
                                     if(extractedHeader.isValid)
                                     {
-                                        cacheFile( extractedFile, database, config, file );
-                                    }
+                                        //Then extract the ROM file
+                                        zipStream.reset();
 
-                                    if(!extractedFile.delete()) {
-                                        Log.w( "CacheRomInfoService", "Unable to delete " + extractedFile );
+                                        String extractedFile = mUnzipDir + "/" + zipEntry;
+                                        String md5 = ComputeMd5Task.computeMd5( zipStream );
+
+                                        cacheFile( extractedFile, extractedHeader, md5, database, config, file );
                                     }
                                 }
 
                                 zipStream.close();
                             }
-                            catch( IOException|IllegalArgumentException e  )
+                            catch( IOException|NoSuchAlgorithmException |IllegalArgumentException e  )
                             {
                                 Log.w( "CacheRomInfoService", e );
                             }
@@ -343,22 +351,20 @@ public class CacheRomInfoService extends Service
         }
         return result;
     }
-    
-    private void cacheFile( File file, RomDatabase database, ConfigFile config, File zipFileLocation )
+
+    private void cacheFile( String filename, RomHeader header, String md5, RomDatabase database, ConfigFile config, File zipFileLocation )
     {
         if( mbStopped ) return;
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_computingMD5 );
-        String md5 = ComputeMd5Task.computeMd5( file );
-        RomHeader header = new RomHeader(file);
-        
+
         if( mbStopped ) return;
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingDB );
-        RomDetail detail = database.lookupByMd5WithFallback( md5, file, header.crc );
+        RomDetail detail = database.lookupByMd5WithFallback( header, md5, filename, header.crc );
         String artPath = mArtDir + "/" + detail.artName;
         config.put( md5, "goodName", detail.goodName );
         if (detail.baseName != null && detail.baseName.length() != 0)
             config.put( md5, "baseName", detail.baseName );
-        config.put( md5, "romPath", file.getAbsolutePath() );
+        config.put( md5, "romPath", filename );
         config.put( md5, "zipPath", zipFileLocation == null ? "":zipFileLocation.getAbsolutePath() );
         config.put( md5, "artPath", artPath );
         config.put( md5, "crc", header.crc );
@@ -368,6 +374,14 @@ public class CacheRomInfoService extends Service
         config.put( md5, "countryCode",  countryCodeString);
 
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_refreshingUI );
+    }
+    
+    private void cacheFile( File file, RomDatabase database, ConfigFile config, File zipFileLocation )
+    {
+        String md5 = ComputeMd5Task.computeMd5( file );
+        RomHeader header = new RomHeader(file);
+
+        cacheFile( file.getAbsolutePath(), header, md5, database, config, zipFileLocation );
     }
     
     private static void touchFile( String destPath )
@@ -593,7 +607,7 @@ public class CacheRomInfoService extends Service
 
                 if(!TextUtils.isEmpty(artPath) && !TextUtils.isEmpty(romFile) && !TextUtils.isEmpty(crc))
                 {
-                    RomDetail detail = database.lookupByMd5WithFallback( key, new File(romFile), crc );
+                    RomDetail detail = database.lookupByMd5WithFallback( key, new File(romFile).getAbsolutePath(), crc );
 
                     mListener.GetProgressDialog().setText( new File(romFile).getName() );
 

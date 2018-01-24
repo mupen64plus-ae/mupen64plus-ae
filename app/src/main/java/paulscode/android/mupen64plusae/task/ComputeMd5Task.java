@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
 import android.os.AsyncTask;
@@ -63,14 +64,38 @@ public class ComputeMd5Task extends AsyncTask<Void, Void, String>
     {
         mListener.onComputeMd5Finished( mFile, result );
     }
-    
+
     public static String computeMd5( File file )
     {
-        // From http://stackoverflow.com/a/16938703
         InputStream inputStream = null;
         try
         {
             inputStream = new BufferedInputStream( new FileInputStream( file ) );
+            return computeMd5(inputStream);
+        }
+        catch( Exception e )
+        {
+            return null;
+        }
+        finally
+        {
+            if( inputStream != null )
+            {
+                try
+                {
+                    inputStream.close();
+                }
+                catch( Exception e )
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static String computeMd5( InputStream inputStream  ) throws java.io.IOException, NoSuchAlgorithmException
+    {
+        // From http://stackoverflow.com/a/16938703
             inputStream.mark( 1 );
             int firstByte = inputStream.read();
             inputStream.reset();
@@ -110,25 +135,6 @@ public class ComputeMd5Task extends AsyncTask<Void, Void, String>
                 digester.update( bytes, 0, byteCount );
             }
             return convertHashToString( digester.digest() );
-        }
-        catch( Exception e )
-        {
-            return null;
-        }
-        finally
-        {
-            if( inputStream != null )
-            {
-                try
-                {
-                    inputStream.close();
-                }
-                catch( Exception e )
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
     
     private static String convertHashToString( byte[] md5Bytes )
