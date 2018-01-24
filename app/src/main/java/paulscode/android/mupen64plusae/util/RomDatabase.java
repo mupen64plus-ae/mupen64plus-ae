@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -98,10 +98,10 @@ public class RomDatabase
     private static final String WIKI_URL_TEMPLATE = "https://github.com/mupen64plus-ae/mupen64plus-ae-meta/wiki/%s";
     
     private ConfigFile mConfigFile = null;
-    private final HashMap<String, ArrayList<ConfigSection>> mCrcMap = new HashMap<String, ArrayList<ConfigSection>>();
+    private final HashMap<String, ArrayList<ConfigSection>> mCrcMap = new HashMap<>();
     
     private static RomDatabase instance = null;
-    protected RomDatabase() {
+    private RomDatabase() {
        // Do not allow creation
     }
     public static RomDatabase getInstance() {
@@ -140,46 +140,54 @@ public class RomDatabase
         RomDetail detail = lookupByMd5( md5 );
         if( detail == null )
         {
-            RomDetail[] romDetails = lookupByCrc( crc );
-            if(romDetails.length > 1)
-            {
-                RomHeader romHeader = new RomHeader(file);
-                int count = 0;
-                // CRC in the database more than once;
-                // Attempt to auto-select the correct match based on country code of rom
-                for(RomDetail romDetail : romDetails)
-                {
-                    if(romDetail.goodName.contains(romHeader.countryCode.toString())) {
-                        detail = romDetail;
-                        ++count;
-                    }
-                }
+            RomHeader romHeader = new RomHeader(file);
+            ArrayList<RomDetail> details = lookupByCrc( romHeader, file.getName() );
 
-                // Catch if none was found or we could not narrow things to only 1 entry
-                if(detail==null || count > 1)
-                {
-                    String goodName = file.getName();
-                    detail = new RomDetail( crc, generateGoodNameFromFileName(goodName) );
-                }
-            }
-            else if( romDetails.length == 0)
-            {
-                // CRC not in the database; create best guess
-                Log.w( "RomDetail", "No meta-info entry found for ROM " + file.getAbsolutePath() );
-                Log.w( "RomDetail", "MD5: " + md5 );
-                Log.w( "RomDetail", "CRC: " + crc );
-                Log.i( "RomDetail", "Constructing a best guess for the meta-info" );
-                String goodName = file.getName();
-
-                detail = new RomDetail( crc, generateGoodNameFromFileName(goodName) );
-            }
-            else
-            {
-                // CRC in the database exactly once; use it
-                detail = romDetails[0];
+            // Catch if none was found or we could not narrow things to only 1 entry
+            if (details.size() != 1) {
+                detail = new RomDetail(crc, generateGoodNameFromFileName(file.getName()));
+            } else {
+                detail = details.get(0);
             }
         }
         return detail;
+    }
+
+    private ArrayList<RomDetail> lookupByCrc(RomHeader romHeader, String fileName) {
+
+        ArrayList<RomDetail> romDetails = new ArrayList<>();
+
+        //First try to find a unique match
+        ArrayList<ConfigSection> sections = mCrcMap.get( romHeader.crc );
+        if( sections != null ) {
+            for( int i = 0; i < sections.size(); i++ )
+                romDetails.add(new RomDetail( sections.get( i ) ));
+        }
+
+        if (romDetails.size() > 1) {
+            ArrayList<RomDetail> romDetailsCountryFiltered = new ArrayList<>();
+
+            // CRC in the database more than once;
+            // Attempt to auto-select the correct match based on country code of rom
+            for (RomDetail romDetail : romDetails) {
+
+                if (romDetail.goodName.contains(romHeader.countryCode.toString())) {
+                    romDetailsCountryFiltered.add(romDetail);
+                }
+            }
+
+            romDetails = romDetailsCountryFiltered;
+
+        } else if (romDetails.size() == 0) {
+            // CRC not in the database; create best guess
+            Log.w("RomDetail", "No meta-info entry found for ROM " + fileName);
+            Log.w("RomDetail", "CRC: " + romHeader.crc);
+            Log.i("RomDetail", "Constructing a best guess for the meta-info");
+
+            romDetails.add(new RomDetail(romHeader.crc, generateGoodNameFromFileName(fileName)));
+        }
+
+        return romDetails;
     }
 
     private static String generateGoodNameFromFileName(String fileName)
@@ -195,33 +203,22 @@ public class RomDatabase
     }
 
     
-    public RomDetail lookupByMd5( String md5 )
+    private RomDetail lookupByMd5( String md5 )
     {
         ConfigSection section = mConfigFile.get( md5 );
         return section == null ? null : new RomDetail( section );
     }
     
-    public RomDetail[] lookupByCrc( String crc )
-    {
-        ArrayList<ConfigSection> sections = mCrcMap.get( crc );
-        if( sections == null )
-            return new RomDetail[0];
-        
-        RomDetail[] results = new RomDetail[sections.size()];
-        for( int i = 0; i < results.length; i++ )
-            results[i] = new RomDetail( sections.get( i ) );
-        return results;
-    }
-    
     public class RomDetail
     {
         public final String crc;
+        public final String md5;
         public final String goodName;
         public final String baseName;
         public final String artName;
         public final String artUrl;
         public final String wikiUrl;
-        public final String saveType;
+        final String saveType;
         public final int status;
         public final int players;
         public final boolean rumble;
@@ -233,6 +230,7 @@ public class RomDatabase
                 throw new NullArgumentException( "section" );
             
             crc = section.get( "CRC" );
+            md5 = section.name;
             
             // Use an empty goodname (not null) for certain homebrew ROMs
             if( "00000000 00000000".equals( crc ) )
@@ -250,7 +248,7 @@ public class RomDatabase
                 artUrl = String.format( ART_URL_TEMPLATE, artName );
                 
                 // Generate wiki page URL string
-                String _wikiUrl = null;
+                String _wikiUrl;
                 _wikiUrl = String.format( WIKI_URL_TEMPLATE, baseName.replaceAll( " ", "_" ) );
                 if( goodName.contains( "(Kiosk" ) )
                     _wikiUrl += "_(Kiosk_Demo)";
@@ -280,7 +278,7 @@ public class RomDatabase
                 String rumbleString = section.get( "Rumble" );
                 status = TextUtils.isEmpty( statusString ) ? 0 : Integer.parseInt( statusString );
                 players = TextUtils.isEmpty( playersString ) ? 4 : Integer.parseInt( playersString );
-                rumble = TextUtils.isEmpty( rumbleString ) ? true : "Yes".equals( rumbleString );
+                rumble = TextUtils.isEmpty( rumbleString ) || "Yes".equals( rumbleString );
             }
             else
             {
@@ -302,6 +300,7 @@ public class RomDatabase
                 throw new NullArgumentException( "assumedGoodName" );
             
             crc = assumedCrc;
+            md5 = "";
             goodName = assumedGoodName;
             baseName = goodName.split( " \\(" )[0].trim();
             // Generate the cover art URL string
@@ -309,7 +308,7 @@ public class RomDatabase
             artUrl = String.format( ART_URL_TEMPLATE, artName );
 
             // Generate wiki page URL string
-            String _wikiUrl = null;
+            String _wikiUrl;
             _wikiUrl = String.format( WIKI_URL_TEMPLATE, baseName.replaceAll( " ", "_" ) );
             if( goodName.contains( "(Kiosk" ) )
                 _wikiUrl += "_(Kiosk_Demo)";

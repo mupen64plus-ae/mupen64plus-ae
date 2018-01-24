@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -82,7 +82,6 @@ public class CacheRomInfoService extends Service
     private boolean mbStopped;
     
     private int mStartId;
-    private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     
     private final IBinder mBinder = new LocalBinder();
@@ -95,13 +94,13 @@ public class CacheRomInfoService extends Service
     public interface CacheRomInfoListener
     {
         //This is called once the ROM scan is finished
-        public void onCacheRomInfoFinished();
+        void onCacheRomInfoFinished();
         
         //This is called when the service is destroyed
-        public void onCacheRomInfoServiceDestroyed();
+        void onCacheRomInfoServiceDestroyed();
         
         //This is called to get a progress dialog object
-        public ProgressDialog GetProgressDialog();
+        ProgressDialog GetProgressDialog();
     }
 
     /**
@@ -125,7 +124,7 @@ public class CacheRomInfoService extends Service
         public void handleMessage(Message msg) {
 
             File searchPathFile = new File(mSearchPath);
-            
+
             if( mSearchPath == null )
                 throw new IllegalArgumentException( "Root path cannot be null" );
             if( TextUtils.isEmpty( mDatabasePath ) )
@@ -136,11 +135,11 @@ public class CacheRomInfoService extends Service
                 throw new IllegalArgumentException( "Art directory cannot be null or empty" );
             if( TextUtils.isEmpty( mUnzipDir ) )
                 throw new IllegalArgumentException( "Unzip directory cannot be null or empty" );
-            
+
             // Ensure destination directories exist
             FileUtil.makeDirs(mArtDir);
             FileUtil.makeDirs(mUnzipDir);
-            
+
             // Create .nomedia file to hide cover art from Android Photo Gallery
             // http://android2know.blogspot.com/2013/01/create-nomedia-file.html
             touchFile( mArtDir + "/.nomedia" );
@@ -189,7 +188,7 @@ public class CacheRomInfoService extends Service
                                 InputStream zipStream = zipFile.getInputStream( zipEntry );
                                 mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
                                 File extractedFile = FileUtil.extractRomFile( new File( mUnzipDir ), zipEntry, zipStream );
-                                
+
                                 if( mbStopped ) break;
                                 if( extractedFile != null)
                                 {
@@ -198,8 +197,10 @@ public class CacheRomInfoService extends Service
                                     {
                                         cacheFile( extractedFile, database, config, file );
                                     }
-                 
-                                    extractedFile.delete();
+
+                                    if(!extractedFile.delete()) {
+                                        Log.w( "CacheRomInfoService", "Unable to delete " + extractedFile );
+                                    }
                                 }
 
                                 zipStream.close();
@@ -244,7 +245,10 @@ public class CacheRomInfoService extends Service
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                 getString(R.string.scanning_title), NotificationManager.IMPORTANCE_DEFAULT);
-        notificationManager.createNotificationChannel(channel);
+
+        if(notificationManager != null) {
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override
@@ -258,8 +262,9 @@ public class CacheRomInfoService extends Service
       thread.start();
 
       // Get the HandlerThread's Looper and use it for our Handler
-      mServiceLooper = thread.getLooper();
-      mServiceHandler = new ServiceHandler(mServiceLooper);
+      Looper serviceLooper;
+      serviceLooper = thread.getLooper();
+      mServiceHandler = new ServiceHandler(serviceLooper);
 
       //Show the notification
       initChannels(getApplicationContext());
@@ -278,6 +283,11 @@ public class CacheRomInfoService extends Service
         if(intent != null)
         {
             Bundle extras = intent.getExtras();
+
+            if(extras == null)
+            {
+                throw new IllegalArgumentException("Invalid parameters passed to CacheRomInfoService");
+            }
             mSearchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
             mDatabasePath = extras.getString( ActivityHelper.Keys.DATABASE_PATH );
             mConfigPath = extras.getString( ActivityHelper.Keys.CONFIG_PATH );
@@ -360,7 +370,7 @@ public class CacheRomInfoService extends Service
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_refreshingUI );
     }
     
-    private static Throwable touchFile( String destPath )
+    private static void touchFile( String destPath )
     {
         try
         {
@@ -372,23 +382,18 @@ public class CacheRomInfoService extends Service
             catch( IOException e )
             {
                 Log.w( "CacheRomInfoService", e );
-                return e;
             }
         }
         catch( FileNotFoundException e )
         {
             Log.w( "CacheRomInfoService", e );
-            return e;
         }
-        return null;
     }
     
-    private Throwable downloadFile( String sourceUrl, String destPath )
+    private void downloadFile( String sourceUrl, String destPath )
     {
         File destFile = new File(destPath);
         boolean fileCreationSuccess = true;
-        
-        Throwable returnThrowable = null;
 
         // Be sure destination directory exists
         FileUtil.makeDirs(destFile.getParentFile().getPath());
@@ -419,8 +424,6 @@ public class CacheRomInfoService extends Service
         {
             Log.w( "CacheRomInfoService", e );
             fileCreationSuccess = false;
-            
-            returnThrowable = e;
         }
         finally
         {
@@ -449,10 +452,10 @@ public class CacheRomInfoService extends Service
         {
             // Delete any remnants if there was an exception. We don't want a
             // corrupted graphic
-            destFile.delete();
+            if (!destFile.delete()) {
+                Log.w("CacheRomInfoService", "Unable to delete " + destFile.getName());
+            }
         }
-        
-        return returnThrowable;
     }
     
     @Override
@@ -544,8 +547,10 @@ public class CacheRomInfoService extends Service
                         //Cleanup the ROM file since this is a zip file
                         if(!romFile.exists())
                         {
-                            Log.w( "CacheRomInfoService", "Removing md5=" + key );
-                            if(!romFile.isDirectory()) romFile.delete();
+                            Log.i( "CacheRomInfoService", "Removing md5=" + key );
+                            if(!romFile.isDirectory() && romFile.delete()) {
+                                Log.w( "CacheRomInfoService", "Unable to delete " + romFile.getName() );
+                            }
                         }
                     }
 
@@ -581,9 +586,7 @@ public class CacheRomInfoService extends Service
             mListener.GetProgressDialog().setMaxProgress( keys.size() );
             mListener.GetProgressDialog().setSubtext( getString(R.string.cacheRomInfo_downloadingArt) );
 
-            Iterator iter = keys.iterator();
-            while (iter.hasNext()) {
-                String key = (String) iter.next();
+            for (String key : keys) {
                 String artPath = theConfigFile.get(key, "artPath");
                 String romFile = theConfigFile.get(key, "romPath");
                 String crc = theConfigFile.get(key, "crc");

@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -92,10 +92,10 @@ public final class FileUtil
         }
     }
     
-    public static List<File> getContents( File startPath, FileFilter fileFilter )
+    private static List<File> getContents( File startPath, FileFilter fileFilter )
     {
         // Get a filtered, sorted list of files
-        List<File> results = new ArrayList<File>();
+        List<File> results = new ArrayList<>();
         File[] files = startPath.listFiles( fileFilter );
         
         if( files != null )
@@ -201,7 +201,7 @@ public final class FileUtil
      * 
      * @return True if the copy succeeded, false otherwise.
      */
-    public static boolean copyFile( File src, File dest, boolean makeBackups )
+    private static boolean copyFile( File src, File dest, boolean makeBackups )
     {
         if( src == null )
         {
@@ -286,7 +286,7 @@ public final class FileUtil
      * 
      * @param file The file to back up.
      */
-    public static void backupFile( File file )
+    private static void backupFile( File file )
     {
         if( file.isDirectory() )
             return;
@@ -505,6 +505,36 @@ public final class FileUtil
             Log.w( "FileUtil", e );
             return null;
         }
+    }
+
+    public static byte[] extractRomHeader( ZipEntry zipEntry, InputStream inStream )
+    {
+        // Read the first 4 bytes of the entry
+        int arraySize = 0x64;
+        int initialReadSize = 4;
+        byte[] buffer = new byte[arraySize];
+        try
+        {
+            if( inStream.read( buffer, 0, initialReadSize) != initialReadSize )
+                return null;
+        }
+        catch( IOException e )
+        {
+            Log.w( "FileUtil", e );
+            return null;
+        }
+
+        int readBytes = 0;
+        try {
+            readBytes = inStream.read( buffer, initialReadSize, arraySize - initialReadSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // This entry appears to be a valid ROM, extract it
+        Log.i( "FileUtil", "Found zip entry " + zipEntry.getName() + " bytes read = " + readBytes );
+
+        return buffer;
     }
 
     /*

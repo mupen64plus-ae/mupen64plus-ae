@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -33,7 +33,7 @@ public class ComputeMd5Task extends AsyncTask<Void, Void, String>
 {
     public interface ComputeMd5Listener
     {
-        public void onComputeMd5Finished( File file, String md5 );
+        void onComputeMd5Finished( File file, String md5 );
     }
     
     public ComputeMd5Task( File file, ComputeMd5Listener listener )
@@ -80,7 +80,6 @@ public class ComputeMd5Task extends AsyncTask<Void, Void, String>
             int byteCount;
             while( ( byteCount = inputStream.read( bytes ) ) > 0 )
             {
-                // TODO: Test multiple bytes
                 switch( firstByte )
                 {
                     case 0x37:
@@ -126,6 +125,7 @@ public class ComputeMd5Task extends AsyncTask<Void, Void, String>
                 }
                 catch( Exception e )
                 {
+                    e.printStackTrace();
                 }
             }
         }
@@ -133,12 +133,11 @@ public class ComputeMd5Task extends AsyncTask<Void, Void, String>
     
     private static String convertHashToString( byte[] md5Bytes )
     {
-        // From http://stackoverflow.com/a/16938703
-        String returnVal = "";
-        for( int i = 0; i < md5Bytes.length; i++ )
+        StringBuilder stringBuilder = new StringBuilder(100);
+        for( int aByte : md5Bytes )
         {
-            returnVal += Integer.toString( ( md5Bytes[i] & 0xff ) + 0x100, 16 ).substring( 1 );
+            stringBuilder.append(Integer.toString( ( aByte & 0xff ) + 0x100, 16 ).substring( 1 ));
         }
-        return returnVal.toUpperCase( Locale.US );
+        return stringBuilder.toString().toUpperCase( Locale.US );
     }
 }
