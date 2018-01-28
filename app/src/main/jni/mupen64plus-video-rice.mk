@@ -13,8 +13,6 @@ LOCAL_ARM_MODE := arm
 LOCAL_C_INCLUDES :=                     \
     $(LOCAL_PATH)/$(SRCDIR)             \
     $(M64P_API_INCLUDES)                \
-    $(PNG_INCLUDES)                     \
-    $(SDL_INCLUDES)                     \
 
 LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/Blender.cpp               \
@@ -70,6 +68,7 @@ LOCAL_LDFLAGS := $(COMMON_LDFLAGS) -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/v
 LOCAL_LDLIBS :=         \
     -lGLESv2            \
     -llog               \
+    -lz                 \
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:

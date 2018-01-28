@@ -6,14 +6,12 @@ LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./mupen64plus-video-gliden64/src
 
 MY_LOCAL_MODULE := mupen64plus-video-gliden64
-MY_LOCAL_SHARED_LIBRARIES := freetype glidenhq osal
+MY_LOCAL_SHARED_LIBRARIES := freetype glidenhq osal SDL2
 MY_LOCAL_ARM_MODE := arm
 
 MY_LOCAL_C_INCLUDES :=                          \
     $(LOCAL_PATH)/$(SRCDIR)                     \
     $(M64P_API_INCLUDES)                        \
-    $(SDL_INCLUDES)                             \
-    $(FREETYPE_INCLUDES)                        \
     $(LOCAL_PATH)/$(SRCDIR)/osal                \
     $(ANDROID_FRAMEWORK_INCLUDES)               \
 
@@ -132,7 +130,7 @@ MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -std=c++11 -g
 
 MY_LOCAL_LDFLAGS := $(COMMON_LDFLAGS) -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/mupenplus/video_api_export.ver
 
-MY_LOCAL_LDLIBS := -llog -latomic -lEGL
+MY_LOCAL_LDLIBS := -llog -latomic -lEGL -lz
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:

@@ -12,8 +12,6 @@ MY_LOCAL_ARM_MODE := arm
 MY_LOCAL_C_INCLUDES :=                          \
     $(LOCAL_PATH)/$(SRCDIR)/Glitch64/inc        \
     $(M64P_API_INCLUDES)                        \
-    $(PNG_INCLUDES)                             \
-    $(SDL_INCLUDES)                             \
 
 MY_LOCAL_SRC_FILES :=                           \
     $(SRCDIR)/Glide64/osal_dynamiclib_unix.c    \

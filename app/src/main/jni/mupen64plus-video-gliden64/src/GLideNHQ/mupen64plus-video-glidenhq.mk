@@ -13,7 +13,6 @@ LOCAL_C_INCLUDES :=                     \
     $(LOCAL_PATH)/$(SRCDIR)             \
     $(LOCAL_PATH)/$(SRCDIR)/..          \
     $(LOCAL_PATH)/$(SRCDIR)/../osal     \
-    $(PNG_INCLUDES)                     \
     $(LOCAL_PATH)/GL/                   \
 
 LOCAL_SRC_FILES :=                          \
@@ -44,6 +43,6 @@ LOCAL_CFLAGS :=         \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS) -std=c++11 -fexceptions
 LOCAL_LDFLAGS := $(COMMON_LDFLAGS)
-LOCAL_LDLIBS := -llog
+LOCAL_LDLIBS := -llog -lz
 
 include $(BUILD_SHARED_LIBRARY)

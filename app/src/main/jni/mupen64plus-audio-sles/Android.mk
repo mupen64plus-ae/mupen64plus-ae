@@ -20,9 +20,7 @@
 
 LOCAL_PATH := $(call my-dir)
 
-MY_LOCAL_C_INCLUDES :=         \
-    $(M64P_API_INCLUDES)    \
-    $(SOUNDTOUCH_INCLUDES)  \
+MY_LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
 MY_LOCAL_SRC_FILES :=            \
     main.cpp                    \

@@ -1,13 +1,50 @@
 JNI_LOCAL_PATH := $(call my-dir)
 
+BUILD_VARIANT := debug
+
+ifeq ($(NDK_DEBUG), 1)
+    BUILD_VARIANT := release
+endif
+
+#SDL2
+include $(CLEAR_VARS)
+LOCAL_MODULE := SDL2
+LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../../../libs/ndkLibs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libSDL2.so
+LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
+include $(PREBUILT_SHARED_LIBRARY)
+
+#PNG
+include $(CLEAR_VARS)
+LOCAL_MODULE := png
+LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../../../libs/ndkLibs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libpng.a
+LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/png/
+include $(PREBUILT_STATIC_LIBRARY)
+
+#Freetype
+include $(CLEAR_VARS)
+LOCAL_MODULE := freetype
+LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../../../libs/ndkLibs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libfreetype.so
+LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/freetype/include/
+include $(PREBUILT_SHARED_LIBRARY)
+
+#Soundtouch
+include $(CLEAR_VARS)
+LOCAL_MODULE := soundtouch
+LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../../../libs/ndkLibs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libsoundtouch.so
+LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/soundtouch/include/
+include $(PREBUILT_SHARED_LIBRARY)
+
+#Soundtouch floating point
+include $(CLEAR_VARS)
+LOCAL_MODULE := soundtouch_fp
+LOCAL_SRC_FILES := $(JNI_LOCAL_PATH)/../../../libs/ndkLibs/$(BUILD_VARIANT)/$(TARGET_ARCH_ABI)/libsoundtouch_fp.so
+LOCAL_EXPORT_C_INCLUDES := $(JNI_LOCAL_PATH)/soundtouch/include/
+include $(PREBUILT_SHARED_LIBRARY)
+
 AE_BRIDGE_INCLUDES := $(JNI_LOCAL_PATH)/ae-bridge/
 M64P_API_INCLUDES := $(JNI_LOCAL_PATH)/mupen64plus-core/src/api/
 LIBRETRO_INCLUDES := $(JNI_LOCAL_PATH)/libretro/
-SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
-PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 GL_INCLUDES := $(JNI_LOCAL_PATH)/GL/
-FREETYPE_INCLUDES := $(JNI_LOCAL_PATH)/freetype/include/
-SOUNDTOUCH_INCLUDES := $(JNI_LOCAL_PATH)/soundtouch/include/
 ANDROID_FRAMEWORK_INCLUDES := $(JNI_LOCAL_PATH)/android_framework/include/
 
 COMMON_CFLAGS :=                    \
@@ -32,10 +69,6 @@ COMMON_LDFLAGS :=
 #endif
 
 include $(JNI_LOCAL_PATH)/GL/GL/Android.mk
-include $(JNI_LOCAL_PATH)/SDL2/Android.mk
-include $(JNI_LOCAL_PATH)/soundtouch/source/Android-lib/jni/Android.mk
-include $(JNI_LOCAL_PATH)/png/Android.mk
-include $(JNI_LOCAL_PATH)/freetype.mk
 include $(JNI_LOCAL_PATH)/ae-bridge/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-audio-sles/Android.mk
 include $(JNI_LOCAL_PATH)/mupen64plus-core.mk

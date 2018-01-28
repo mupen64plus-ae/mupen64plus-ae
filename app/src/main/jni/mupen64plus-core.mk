@@ -14,8 +14,6 @@ LOCAL_DISABLE_FATAL_LINKER_WARNINGS := true
 
 LOCAL_C_INCLUDES :=                       \
     $(LOCAL_PATH)/$(SRCDIR)               \
-    $(PNG_INCLUDES)                       \
-    $(SDL_INCLUDES)                       \
     $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI) \
 
 LOCAL_SRC_FILES :=                                              \
@@ -103,6 +101,8 @@ LOCAL_CFLAGS :=         \
     -DNOUNCRYPT         \
     -DUSE_GLES=1        \
     -DUSE_SDL
+
+LOCAL_LDLIBS := -lz
 
 LOCAL_LDFLAGS :=                                                    \
     $(COMMON_LDFLAGS)                                               \
