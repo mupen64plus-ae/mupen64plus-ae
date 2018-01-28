@@ -64,7 +64,7 @@ if [ "$REV" = "" ]; then
 fi
 
 for i in $COMPONENTS; do
-    DEST_DIR="app/src/main/jni/mupen64plus-${i}"
+    DEST_DIR="mupen64plus-${i}/upstream"
     CLONE_DIR="tmp/mupen64plus-${i}"
     BASE_URL="https://github.com/${ORG}/mupen64plus-${i}"
     CLONE_URL="${BASE_URL}.git"

@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion = '27.0.2'
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        exclude 'lib/x86/libSDL2.so'
+        exclude 'lib/armeabi-v7a/libSDL2.so'
+    }
+
+    externalNativeBuild{
+        ndkBuild{
+            path "Android.mk"
+        }
+    }
+
+    defaultConfig {
+        externalNativeBuild {
+            ndkBuild {
+                arguments "NDK_APPLICATION_MK:=Application.mk"
+                arguments "-j11"
+                cppFlags "-fexceptions"
+                abiFilters "armeabi-v7a", "x86"
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}

@@ -1,8 +1,4 @@
 /build
-.externalNativeBuild
 src/main/libs
 src/main/obj
 
-
-/src/main/jni/mupen64plus-core/src/asm_defines/armeabi-v7a/
-/src/main/jni/mupen64plus-core/src/asm_defines/x86/

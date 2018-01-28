@@ -1,0 +1,4 @@
+/build
+.externalNativeBuild
+src/main/libs
+src/main/obj

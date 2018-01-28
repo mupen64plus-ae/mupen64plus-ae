@@ -57,7 +57,7 @@ if [ "$REV" = "" ]; then
     REV=$DEFAULT_REV
 fi
 
-DEST_DIR="app/src/main/jni/mupen64plus-video-gliden64"
+DEST_DIR="mupen64plus-video-gliden64/upstream"
 CLONE_DIR="tmp/mupen64plus-video-gliden64"
 BASE_URL="https://github.com/${ORG}/GLideN64"
 CLONE_URL="${BASE_URL}.git"
