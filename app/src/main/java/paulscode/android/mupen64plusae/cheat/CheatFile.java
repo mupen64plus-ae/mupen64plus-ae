@@ -671,8 +671,6 @@ class CheatFile
                 else if( CODE_MATCHER.reset( fullLine ).matches() )
                 {
                     // Cheat code
-                    Log.e( "CheatBlock", "CODE LINE: " + fullLine );
-
                     String address = CODE_MATCHER.group( 1 );
                     String value = CODE_MATCHER.group( 2 );
                     

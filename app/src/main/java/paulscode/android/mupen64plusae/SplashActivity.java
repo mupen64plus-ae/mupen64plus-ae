@@ -30,6 +30,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v4.content.ContextCompat;
@@ -76,9 +77,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
      * assets are updated on disk.
      */
     private static final int ASSET_VERSION = 136;
-
-    /** The total number of assets to be extracted (for computing progress %). */
-    private static final int TOTAL_ASSETS = 160;
 
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
@@ -265,7 +263,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
     {
         switch (requestCode)
         {
@@ -357,16 +355,16 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     {
         // Extract and merge the assets if they are out of date
         mAssetsExtracted = 0;
-        new ExtractAssetsTask( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
+        new ExtractAssetsTask( this, getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir, SplashActivity.this ).execute();
     }
 
     @Override
-    public void onExtractAssetsProgress( String nextFileToExtract )
+    public void onExtractAssetsProgress( String nextFileToExtract, int totalAssets )
     {
-        final float percent = ( 100f * mAssetsExtracted ) / TOTAL_ASSETS;
+        mAssetsExtracted++;
+        final float percent = ( 100f * mAssetsExtracted ) / totalAssets;
         final String text = getString( R.string.assetExtractor_progress, percent, nextFileToExtract );
         mTextView.setText( text );
-        mAssetsExtracted++;
     }
 
     @Override
@@ -395,13 +393,16 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             // Extraction failed, update the on-screen text and don't start next activity
             final String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
             final String message = getString( R.string.assetExtractor_failed, weblink );
-            String textHtml = message.replace( "\n", "<br/>" ) + "<p><small>";
+
+            StringBuilder builder = new StringBuilder();
+            builder.append(message.replace( "\n", "<br/>" )).append("<p><small>");
             for( final Failure failure : failures )
             {
-                textHtml += failure.toString() + "<br/>";
+                builder.append(failure.toString());
+                builder.append("<br/>");
             }
-            textHtml += "</small>";
-            mTextView.setText( AppData.fromHtml( textHtml ) );
+            builder.append("</small>");
+            mTextView.setText( AppData.fromHtml( builder.toString() ) );
         }
     }
 }
