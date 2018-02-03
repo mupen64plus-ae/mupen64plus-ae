@@ -1101,9 +1101,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         if(romFileName.exists())
         {
-            // Notify user that the game activity is starting
-            Notifier.showToast(this, R.string.toast_launchingEmulator);
-
             // Launch the game activity
             ActivityHelper.startGameActivity(this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
                     romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
