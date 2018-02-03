@@ -320,8 +320,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
         }
 
-
-        if( mAppData.getAssetVersion() != ASSET_VERSION )
+        if( mAppData.getAssetVersion() != ASSET_VERSION ||
+                !ExtractAssetsTask.areAllAssetsPresent(SOURCE_DIR, mAppData.coreSharedDataDir))
         {
             // Extract the assets in a separate thread and launch the menu activity
             // Handler.postDelayed ensures this runs only after activity has resumed

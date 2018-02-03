@@ -308,6 +308,19 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
             }
         }
     }
+
+    public static boolean areAllAssetsPresent(String srcPath, String dstPath) {
+
+        for (Map.Entry<String, Integer> entry : mAssetVersions.entrySet()) {
+            String destinationPath = dstPath + "/" + entry.getKey().replaceAll(srcPath + "/", "");
+
+            if(!(new File(destinationPath).exists())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
     
     private List<Failure> extractAssets( String srcPath, String dstPath )
     {
@@ -324,8 +337,9 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
         for (Map.Entry<String, Integer> entry : mAssetVersions.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
+            String destinationPath = dstPath + "/" + entry.getKey().replaceAll(srcPath + "/", "");
 
-            if(getInt(key) != value) {
+            if(getInt(key) != value || !(new File(destinationPath).exists())) {
                 assetsToExtract.add(entry);
                 ++mTotalAssets;
             }
