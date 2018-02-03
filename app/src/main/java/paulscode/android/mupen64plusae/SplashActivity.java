@@ -85,7 +85,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
      * The subdirectory within the assets directory to extract. A subdirectory is necessary to avoid
      * extracting all the default system assets in addition to ours.
      */
-    private static final String SOURCE_DIR = "mupen64plus_data";
+    public static final String SOURCE_DIR = "mupen64plus_data";
 
     /** The text view that displays extraction progress info. */
     private TextView mTextView;

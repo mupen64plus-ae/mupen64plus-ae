@@ -53,7 +53,6 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
     // App data and user preferences
     private AppData mAppData = null;
-    private GlobalPrefs mGlobalPrefs = null;
     private SharedPreferences mPrefs = null;
 
     @Override
@@ -75,15 +74,11 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
         // Get app data and user preferences
         mAppData = new AppData(this);
-        mGlobalPrefs = new GlobalPrefs(this, mAppData);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource(null, R.xml.preferences_data);
-
-        // Refresh the preference data wrapper
-        mGlobalPrefs = new GlobalPrefs(this, mAppData);
     }
 
     @Override

@@ -71,6 +71,7 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.task.ComputeMd5Task;
+import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
@@ -1098,6 +1099,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mRefreshNeeded = true;
 
         mSelectedItem = null;
+
+        if(!ExtractAssetsTask.areAllAssetsPresent(SplashActivity.SOURCE_DIR, mAppData.coreSharedDataDir)) {
+            //Force reload of assets
+            mAppData.putAssetVersion( 0 );
+            ActivityHelper.startSplashActivity(this);
+
+            finishAffinity();
+
+            return;
+        }
 
         if(romFileName.exists())
         {
