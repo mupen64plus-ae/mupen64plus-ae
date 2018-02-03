@@ -19,7 +19,7 @@ android {
     }
 
     task deleteAsmDefTask (type: Delete) {
-        delete 'src/upstream/src/asm_defines/armeabi-v7a', 'src/upstream/src/asm_defines/x86'
+        delete 'upstream/src/asm_defines/armeabi-v7a', 'upstream/src/asm_defines/x86'
     }
 
     tasks.whenTaskAdded { task ->
