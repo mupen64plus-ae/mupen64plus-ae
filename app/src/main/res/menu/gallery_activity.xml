@@ -7,14 +7,14 @@
         android:id="@+id/menuItem_search"
         android:icon="@drawable/ic_search"
         android:title="@string/menuItem_search"
-        mupen64:showAsAction="collapseActionView|withText"
+        mupen64:showAsAction="ifRoom|withText"
         mupen64:actionViewClass="android.support.v7.widget.SearchView"/>
     
     <item
         android:id="@+id/menuItem_refreshRoms"
         android:icon="@drawable/ic_refresh"
         android:title="@string/menuItem_refreshRoms"
-        mupen64:showAsAction="collapseActionView|withText"
+        mupen64:showAsAction="always|withText"
         tools:ignore="UnusedAttribute"/>
 
 </menu>
