@@ -665,7 +665,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
         if(getActivity() != null)
         {
-            mCurrentSaveStateFile = new File( mGamePrefs.getUserSaveDir() + "/" + filename );
+            mCurrentSaveStateFile = new File( mGamePrefs.getUserSaveDir() + "/" +
+                    filename + "." + mRomGoodName + ".sav");
 
             if( mCurrentSaveStateFile.exists() )
             {

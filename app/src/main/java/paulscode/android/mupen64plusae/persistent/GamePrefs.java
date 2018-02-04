@@ -633,7 +633,6 @@ public class GamePrefs
     private void setGameDirs(AppData appData, GlobalPrefs globalPrefs, String baseDir)
     {
         autoSaveDir = baseDir + "/" + AUTO_SAVES_DIR;
-        userSaveDir = baseDir + "/" + USER_SAVES_DIR;
         coreUserConfigDir = baseDir + "/" + CORE_CONFIG_DIR;
         mupen64plus_cfg = coreUserConfigDir + "/" + MUPEN_CONFIG_FILE;
 
@@ -642,12 +641,14 @@ public class GamePrefs
             sramDataDir = appData.gameDataDir;
             slotSaveDir = appData.gameDataDir;
             screenshotDir = appData.gameDataDir;
+            userSaveDir = appData.gameDataDir;
         }
         else
         {
             sramDataDir = baseDir + "/" + SRAM_DATA_DIR;
             slotSaveDir = baseDir + "/" + SLOT_SAVES_DIR;
             screenshotDir = baseDir + "/" + SCREENSHOTS_DIR;
+            userSaveDir = baseDir + "/" + USER_SAVES_DIR;
         }
     }
 
