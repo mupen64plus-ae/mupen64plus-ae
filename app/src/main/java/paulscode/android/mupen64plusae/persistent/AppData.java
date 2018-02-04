@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -91,20 +91,14 @@ public class AppData
     /** True if device is running Lollipop or later (21 - Android 5.0.x) */
     public static final boolean IS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     
-    /** True if device is running Lollipop MR1 or later (22 - Android 5.1.x) */
-    public static final boolean IS_LOLLIPOP_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
-    
     /** True if device is running marshmallow or later (23 - Android 6.0.x) */
-    public static final boolean IS_MARSHMELLOW = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    private static final boolean IS_MARSHMELLOW = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
 
     /** True if device is running marshmallow or later (24 - Android 7.0.x) */
-    public static final boolean IS_NOUGAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    private static final boolean IS_NOUGAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
     
     /** The hardware info, refreshed at the beginning of every session. */
-    public final HardwareInfo hardwareInfo;
-    
-    /** The package name. */
-    public final String packageName;
+    final HardwareInfo hardwareInfo;
     
     /** The app version string. */
     public final String appVersion;
@@ -123,9 +117,6 @@ public class AppData
     
     /** The directory containing all touchscreen skin folders. Contents deleted on uninstall. */
     public final String touchscreenSkinsDir;
-    
-    /** The directory contaiing all built-in profiles. Contents deleted on uninstall. */
-    public final String profilesDir;
     
     /** The path of the core library. Deleted on uninstall, not accessible without root. */
     public final String coreLib;
@@ -170,21 +161,21 @@ public class AppData
     private ConfigFile mEmulationProfilesConfig = null;
     
     /** True if this is android TV hardware */
-    public final boolean isAndroidTv;
+    final boolean isAndroidTv;
     
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
 
     /** The parent directory containing all user-writable data files. */
-    public final String userDataDir;
+    final String userDataDir;
 
     /** The parent directory containing all user-writable data files. */
-    public final String gameDataDir;
+    final String gameDataDir;
 
     private static String openGlVersion = null;
     
     // Shared preferences keys
-    private static final String KEY_ASSET_VERSION = "assetVersion";
+    private static final String KEY_FORCE_ASSET_CHECK = "assetCheck";
     private static final String KEY_APP_VERSION = "appVersion";
     // ... add more as needed
     
@@ -201,7 +192,7 @@ public class AppData
     public AppData( Context context )
     {
         hardwareInfo = new HardwareInfo();
-        packageName = context.getPackageName();
+        final String packageName = context.getPackageName();
 
         // Preference object for persisting app data
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
@@ -248,7 +239,7 @@ public class AppData
             _libsDir = context.getApplicationInfo().nativeLibraryDir;
         libsDir = _libsDir;
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
-        profilesDir = coreSharedDataDir + "/profiles";
+        String profilesDir = coreSharedDataDir + "/profiles";
 
         //Generate .nomedia files to prevent android from adding these to gallery apps
         File file = new File(touchscreenSkinsDir + "Outline/.nomedia");
@@ -303,25 +294,25 @@ public class AppData
     {
         return ( new File( coreSharedDataDir ) ).exists();
     }
-    
+
     /**
      * Gets the asset version.
-     * 
+     *
      * @return The asset version.
      */
-    public int getAssetVersion()
+    public boolean getAssetCheckNeeded()
     {
-        return getInt( KEY_ASSET_VERSION, DEFAULT_ASSET_VERSION );
+        return getBoolean(KEY_FORCE_ASSET_CHECK, true );
     }
-    
+
     /**
      * Persists the asset version.
-     * 
+     *
      * @param value The asset version.
      */
-    public void putAssetVersion( int value )
+    public void putAssetCheckNeeded( boolean value )
     {
-        putInt( KEY_ASSET_VERSION, value );
+        putBoolean(KEY_FORCE_ASSET_CHECK, value );
     }
 
     /**
@@ -353,6 +344,16 @@ public class AppData
     {
         mPreferences.edit().putInt( key, value ).apply();
     }
+
+    private boolean getBoolean( String key, boolean defaultValue )
+    {
+        return mPreferences.getBoolean( key, defaultValue );
+    }
+
+    private void putBoolean( String key, boolean value )
+    {
+        mPreferences.edit().putBoolean( key, value ).apply();
+    }
     
     /**
      * Small class that summarizes the info provided by /proc/cpuinfo.
@@ -363,32 +364,32 @@ public class AppData
     public static class HardwareInfo
     {
         /** Unknown hardware configuration. */
-        public static final int HARDWARE_TYPE_UNKNOWN = 0;
+        static final int HARDWARE_TYPE_UNKNOWN = 0;
         
         /** OMAP-based hardware. */
-        public static final int HARDWARE_TYPE_OMAP = 1;
+        static final int HARDWARE_TYPE_OMAP = 1;
         
         /** OMAP-based hardware, type #2. */
-        public static final int HARDWARE_TYPE_OMAP_2 = 2;
+        static final int HARDWARE_TYPE_OMAP_2 = 2;
         
         /** QualComm-based hardware. */
-        public static final int HARDWARE_TYPE_QUALCOMM = 3;
+        static final int HARDWARE_TYPE_QUALCOMM = 3;
         
         /** IMAP-based hardware. */
-        public static final int HARDWARE_TYPE_IMAP = 4;
+        static final int HARDWARE_TYPE_IMAP = 4;
         
         /** Tegra-based hardware. */
-        public static final int HARDWARE_TYPE_TEGRA = 5;
+        static final int HARDWARE_TYPE_TEGRA = 5;
         
         /** Default hardware type */
         private static final int DEFAULT_HARDWARE_TYPE = HARDWARE_TYPE_UNKNOWN;
         
         public final String hardware;
-        public final String processor;
-        public final String features;
-        public final int hardwareType;
+        final String processor;
+        final String features;
+        final int hardwareType;
         
-        public HardwareInfo()
+        HardwareInfo()
         {
             // Identify the hardware, features, and processor strings
             {
@@ -458,7 +459,7 @@ public class AppData
                     || hardware.contains( "smdk4x12" )
                     || hardware.contains( "sun6i" )
                     || hardware.contains( "mt799" )
-                    || ( features != null && features.contains( "vfpv3d16" ) ) )
+                    || ( !TextUtils.isEmpty(features) && features.contains( "vfpv3d16" ) ) )
                 hardwareType = HARDWARE_TYPE_TEGRA;
             
             else

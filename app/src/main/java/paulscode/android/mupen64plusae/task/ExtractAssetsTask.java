@@ -321,6 +321,21 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
 
         return true;
     }
+
+    static public boolean areAllAssetsValid(SharedPreferences preferences, String srcPath, String dstPath) {
+
+        for (Map.Entry<String, Integer> entry : mAssetVersions.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            String destinationPath = dstPath + "/" + entry.getKey().replaceAll(srcPath + "/", "");
+
+            if(preferences.getInt( key, 0 ) != value || !(new File(destinationPath).exists())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
     
     private List<Failure> extractAssets( String srcPath, String dstPath )
     {

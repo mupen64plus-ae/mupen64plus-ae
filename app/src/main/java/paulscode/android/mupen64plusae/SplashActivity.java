@@ -72,12 +72,6 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     //Total number of permissions requested
     static final int NUM_PERMISSIONS = 2;
 
-    /**
-     * Asset version number, used to determine stale assets. Increment this number every time the
-     * assets are updated on disk.
-     */
-    private static final int ASSET_VERSION = 136;
-
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
 
@@ -315,14 +309,15 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     {
         if (mAppData.getAppVersion() != mAppData.appVersionCode)
         {
-            mAppData.putAppVersion(mAppData.appVersionCode);
-
             FileUtil.deleteExtensionFolder(new File(mGlobalPrefs.shaderCacheDir), "shaders");
         }
 
-        if( mAppData.getAssetVersion() != ASSET_VERSION ||
-                !ExtractAssetsTask.areAllAssetsPresent(SOURCE_DIR, mAppData.coreSharedDataDir))
+        if( mAppData.getAssetCheckNeeded() || mAppData.getAppVersion() != mAppData.appVersionCode ||
+                !ExtractAssetsTask.areAllAssetsValid(PreferenceManager.getDefaultSharedPreferences(this),
+                        SOURCE_DIR, mAppData.coreSharedDataDir))
         {
+            mAppData.putAppVersion(mAppData.appVersionCode);
+
             // Extract the assets in a separate thread and launch the menu activity
             // Handler.postDelayed ensures this runs only after activity has resumed
             final Handler handler = new Handler();
@@ -374,7 +369,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         {
             // Extraction succeeded, record new asset version and merge cheats
             mTextView.setText( R.string.assetExtractor_finished );
-            mAppData.putAssetVersion( ASSET_VERSION );
+            mAppData.putAssetCheckNeeded( false );
             CheatUtils.mergeCheatFiles( mAppData.mupencheat_default, mGlobalPrefs.customCheats_txt, mAppData.mupencheat_txt );
 
             if(!RomDatabase.getInstance().hasDatabaseFile())

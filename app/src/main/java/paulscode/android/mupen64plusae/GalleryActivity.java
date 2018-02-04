@@ -1057,14 +1057,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         Log.i( "GalleryActivity", "launchGameActivity" );
 
         // Make sure that the storage is accessible
-        if( !mAppData.isSdCardAccessible() )
+        if( !ExtractAssetsTask.areAllAssetsPresent(SplashActivity.SOURCE_DIR, mAppData.coreSharedDataDir))
         {
             Log.e( "GalleryActivity", "SD Card not accessible" );
             Notifier.showToast( this, R.string.toast_sdInaccessible );
 
-            mAppData.putAssetVersion(0);
+            mAppData.putAssetCheckNeeded(true);
             ActivityHelper.startSplashActivity(this);
-            finish();
+            finishAffinity();
             return;
         }
 
@@ -1099,20 +1099,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mRefreshNeeded = true;
 
         mSelectedItem = null;
-
-        if(!ExtractAssetsTask.areAllAssetsPresent(SplashActivity.SOURCE_DIR, mAppData.coreSharedDataDir))
-        {
-            //Force reload of assets
-            mAppData.putAssetVersion( 0 );
-
-            Notifier.showToast(this, R.string.invalidInstall_message);
-
-            ActivityHelper.startSplashActivity(this);
-
-            finishAffinity();
-
-            return;
-        }
 
         if(romFileName.exists())
         {

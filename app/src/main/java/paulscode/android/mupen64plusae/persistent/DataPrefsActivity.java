@@ -129,7 +129,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
     private void actionReloadAssets()
     {
-        mAppData.putAssetVersion(0);
+        mAppData.putAssetCheckNeeded(true);
         ActivityHelper.startSplashActivity(this);
         finish();
     }
@@ -177,7 +177,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
         if(key.equals(PATH_APP_DATA))
         {
             //Force reload of assets
-            mAppData.putAssetVersion( 0 );
+            mAppData.putAssetCheckNeeded(true);
             ActivityHelper.startSplashActivity(this);
 
             finishAffinity();
