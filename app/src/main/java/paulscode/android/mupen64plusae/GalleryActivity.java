@@ -1100,9 +1100,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         mSelectedItem = null;
 
-        if(!ExtractAssetsTask.areAllAssetsPresent(SplashActivity.SOURCE_DIR, mAppData.coreSharedDataDir)) {
+        if(!ExtractAssetsTask.areAllAssetsPresent(SplashActivity.SOURCE_DIR, mAppData.coreSharedDataDir))
+        {
             //Force reload of assets
             mAppData.putAssetVersion( 0 );
+
+            Notifier.showToast(this, R.string.invalidInstall_message);
+
             ActivityHelper.startSplashActivity(this);
 
             finishAffinity();
