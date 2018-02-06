@@ -1,5 +1,5 @@
 #include "Context.h"
-#include "Graphics/OpenGLContext/opengl_ContextImpl.h"
+#include "OpenGLContext/opengl_ContextImpl.h"
 
 using namespace graphics;
 

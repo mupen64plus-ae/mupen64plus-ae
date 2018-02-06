@@ -1,7 +1,7 @@
 #include "GLideN64_mupenplus.h"
-#include "PluginAPI.h"
-#include "GLideN64.h"
-#include "Config.h"
+#include "../PluginAPI.h"
+#include "../GLideN64.h"
+#include "../Config.h"
 #include <DisplayWindow.h>
 
 #ifdef OS_WINDOWS

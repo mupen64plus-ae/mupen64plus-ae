@@ -1,23 +1,23 @@
 #ifdef OS_WINDOWS
 # include <windows.h>
 #else
-# include "../winlnxdefs.h"
+# include <winlnxdefs.h>
 #endif // OS_WINDOWS
 #include <assert.h>
 
-#include "../PluginAPI.h"
+#include <PluginAPI.h>
 
-#include "../N64.h"
-#include "../GLideN64.h"
-#include "../RSP.h"
-#include "../RDP.h"
-#include "../VI.h"
-#include "../Config.h"
-#include "../FrameBufferInfo.h"
-#include "../TextureFilterHandler.h"
-#include "../Log.h"
-#include "../Graphics/Context.h"
-#include "../DisplayWindow.h"
+#include <N64.h>
+#include <GLideN64.h>
+#include <RSP.h>
+#include <RDP.h>
+#include <VI.h>
+#include <Config.h>
+#include <FrameBufferInfo.h>
+#include <TextureFilterHandler.h>
+#include <Log.h>
+#include "Graphics/Context.h"
+#include <DisplayWindow.h>
 
 PluginAPI & PluginAPI::get()
 {

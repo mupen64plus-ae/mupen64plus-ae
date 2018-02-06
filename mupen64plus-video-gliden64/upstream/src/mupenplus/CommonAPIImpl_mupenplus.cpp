@@ -4,8 +4,8 @@
 #include <sstream>
 #include <iostream>
 #include <Platform.h>
-#include "PluginAPI.h"
-#include "RSP.h"
+#include "../PluginAPI.h"
+#include "../RSP.h"
 
 #if defined(OS_MAC_OS_X)
 #include <mach-o/dyld.h>

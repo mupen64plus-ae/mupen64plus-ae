@@ -2,7 +2,7 @@
 #define WriteToRDRAM_H
 
 
-#include "Types.h"
+#include "../Types.h"
 
 template <typename TSrc, typename TDst>
 void writeToRdram(TSrc* _src, TDst* _dst, TDst(*converter)(TSrc _c), TSrc _testValue, u32 _xor, u32 _width, u32 _height, u32 _numPixels, u32 _startAddress, u32 _bufferAddress, u32 _bufferSize)

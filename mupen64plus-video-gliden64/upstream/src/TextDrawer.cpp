@@ -11,7 +11,7 @@
 #include <assert.h>
 
 #include <ft2build.h>
-#include FT_FREETYPE_H"freetype.h"
+#include FT_FREETYPE_H
 
 #include "Platform.h"
 #include "DisplayWindow.h"

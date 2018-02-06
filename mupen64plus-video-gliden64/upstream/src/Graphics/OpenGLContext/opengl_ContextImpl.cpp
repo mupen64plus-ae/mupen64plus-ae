@@ -10,9 +10,9 @@
 #include "opengl_ColorBufferReaderWithEGLImage.h"
 #include "opengl_ColorBufferReaderWithReadPixels.h"
 #include "opengl_Utils.h"
-#include "Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.h"
-#include "Graphics/OpenGLContext/GLSL/glsl_SpecialShadersFactory.h"
-#include "Graphics/OpenGLContext/GLSL/glsl_ShaderStorage.h"
+#include "GLSL/glsl_CombinerProgramBuilder.h"
+#include "GLSL/glsl_SpecialShadersFactory.h"
+#include "GLSL/glsl_ShaderStorage.h"
 
 using namespace opengl;
 
