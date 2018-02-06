@@ -27,7 +27,7 @@
 #include <stdlib.h>
 
 #define M64P_CORE_PROTOTYPES 1
-#include "main/version.h"
+#include "../main/version.h"
 #include "m64p_common.h"
 #include "m64p_types.h"
 

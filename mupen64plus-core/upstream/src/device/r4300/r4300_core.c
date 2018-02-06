@@ -24,7 +24,7 @@
 #if defined(COUNT_INSTR)
 #include "instr_counters.h"
 #endif
-#include "device/r4300/new_dynarec/new_dynarec.h"
+#include "new_dynarec/new_dynarec.h"
 #include "pure_interp.h"
 #include "recomp.h"
 
@@ -33,7 +33,6 @@
 #include "api/m64p_types.h"
 #ifdef DBG
 #include "debugger/dbg_debugger.h"
-#include "debugger/dbg_types.h"
 #endif
 #include "main/main.h"
 

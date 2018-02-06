@@ -25,24 +25,24 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "device/cart/cart.h"
-#include "device/controllers/game_controller.h"
-#include "device/controllers/paks/mempak.h"
-#include "device/controllers/paks/rumblepak.h"
-#include "device/controllers/paks/transferpak.h"
-#include "device/gb/gb_cart.h"
-#include "device/memory/memory.h"
-#include "device/pif/pif.h"
-#include "device/r4300/r4300_core.h"
-#include "device/rcp/ai/ai_controller.h"
-#include "device/rcp/mi/mi_controller.h"
-#include "device/rcp/pi/pi_controller.h"
-#include "device/rcp/rdp/rdp_core.h"
-#include "device/rcp/ri/ri_controller.h"
-#include "device/rcp/rsp/rsp_core.h"
-#include "device/rcp/si/si_controller.h"
-#include "device/rcp/vi/vi_controller.h"
-#include "device/rdram/rdram.h"
+#include "cart/cart.h"
+#include "controllers/game_controller.h"
+#include "controllers/paks/mempak.h"
+#include "controllers/paks/rumblepak.h"
+#include "controllers/paks/transferpak.h"
+#include "gb/gb_cart.h"
+#include "memory/memory.h"
+#include "pif/pif.h"
+#include "r4300/r4300_core.h"
+#include "rcp/ai/ai_controller.h"
+#include "rcp/mi/mi_controller.h"
+#include "rcp/pi/pi_controller.h"
+#include "rcp/rdp/rdp_core.h"
+#include "rcp/ri/ri_controller.h"
+#include "rcp/rsp/rsp_core.h"
+#include "rcp/si/si_controller.h"
+#include "rcp/vi/vi_controller.h"
+#include "rdram/rdram.h"
 
 struct audio_out_backend_interface;
 struct clock_backend_interface;
@@ -113,6 +113,8 @@ void init_device(struct device* dev,
     int randomize_interrupt,
     /* ai */
     void* aout, const struct audio_out_backend_interface* iaout,
+    /* si */
+    unsigned int si_dma_duration,
     /* rdram */
     size_t dram_size,
     /* pif */

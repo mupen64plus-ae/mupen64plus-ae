@@ -24,7 +24,7 @@
 
 #include "cp0.h"
 #include "r4300_core.h"
-#include "device/r4300/new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
+#include "new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
 #include "recomp.h"
 
 #ifdef COMPARE_CORE
@@ -33,7 +33,6 @@
 
 #ifdef DBG
 #include "debugger/dbg_debugger.h"
-#include "debugger/dbg_types.h"
 #endif
 
 /* global functions */

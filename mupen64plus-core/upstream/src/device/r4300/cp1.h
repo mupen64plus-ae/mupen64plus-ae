@@ -23,7 +23,7 @@
 #define M64P_DEVICE_R4300_CP1_H
 
 #include <stdint.h>
-#include "device/r4300/new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
+#include "new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
 
 typedef union {
     int64_t  dword;

@@ -35,7 +35,7 @@
 #include "ops.h" /* for cpu_instruction_table */
 #include "recomp_types.h" /* for precomp_instr, regcache_state */
 
-#include "device/r4300/new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
+#include "new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
 
 #include "osal/preproc.h"
 

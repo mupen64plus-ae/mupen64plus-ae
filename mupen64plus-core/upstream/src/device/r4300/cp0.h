@@ -27,7 +27,7 @@
 #include "interrupt.h"
 #include "tlb.h"
 
-#include "device/r4300/new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
+#include "new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
 
 /* Status register definitions */
 #define CP0_STATUS_IE   UINT32_C(0x00000001)

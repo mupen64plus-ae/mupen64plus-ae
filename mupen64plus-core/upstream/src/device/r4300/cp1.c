@@ -25,7 +25,7 @@
 #include "cp0.h"
 #include "cp1.h"
 
-#include "device/r4300/new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
+#include "new_dynarec/new_dynarec.h" /* for NEW_DYNAREC_ARM */
 
 void init_cp1(struct cp1* cp1, struct new_dynarec_hot_state* new_dynarec_hot_state)
 {

@@ -28,7 +28,7 @@
 #include <string.h>
 
 #define M64P_CORE_PROTOTYPES 1
-#include "osd/osd.h"
+#include "../osd/osd.h"
 #include "callbacks.h"
 #include "m64p_types.h"
 #include "m64p_vidext.h"

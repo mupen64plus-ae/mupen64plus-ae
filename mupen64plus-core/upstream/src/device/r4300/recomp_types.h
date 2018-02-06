@@ -28,7 +28,7 @@
 #if defined(__x86_64__)
 #include "x86_64/assemble_struct.h"
 #else
-#include "device/r4300/x86/assemble_struct.h"
+#include "x86/assemble_struct.h"
 #endif
 
 struct precomp_instr

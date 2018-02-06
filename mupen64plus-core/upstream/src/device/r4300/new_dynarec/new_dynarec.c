@@ -54,8 +54,8 @@
 #include "x86/assem_x86.h"
 #include "device/r4300/x86/assemble.h"
 #elif NEW_DYNAREC == NEW_DYNAREC_ARM
-#include "device/r4300/new_dynarec/arm/arm_cpu_features.h"
-#include "device/r4300/new_dynarec/arm/assem_arm.h"
+#include "arm/arm_cpu_features.h"
+#include "arm/assem_arm.h"
 #define EAX 0 /* ??? required for syscall_assemble and do_ccstub even in ARM mode */
 #else
 #error Unsupported dynarec architecture
@@ -1677,7 +1677,7 @@ static void remove_hash(int vaddr)
 #if NEW_DYNAREC == NEW_DYNAREC_X86
 #include "x86/assem_x86.c"
 #elif NEW_DYNAREC == NEW_DYNAREC_ARM
-#include "device/r4300/new_dynarec/arm/assem_arm.c"
+#include "arm/assem_arm.c"
 #else
 #error Unsupported dynarec architecture
 #endif

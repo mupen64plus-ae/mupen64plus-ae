@@ -21,17 +21,17 @@
 
 #include "device.h"
 
-#include "device/memory/memory.h"
-#include "device/pif/pif.h"
-#include "device/r4300/r4300_core.h"
-#include "device/rcp/ai/ai_controller.h"
-#include "device/rcp/mi/mi_controller.h"
-#include "device/rcp/pi/pi_controller.h"
-#include "device/rcp/rdp/rdp_core.h"
-#include "device/rcp/ri/ri_controller.h"
-#include "device/rcp/rsp/rsp_core.h"
-#include "device/rcp/si/si_controller.h"
-#include "device/rcp/vi/vi_controller.h"
+#include "memory/memory.h"
+#include "pif/pif.h"
+#include "r4300/r4300_core.h"
+#include "rcp/ai/ai_controller.h"
+#include "rcp/mi/mi_controller.h"
+#include "rcp/pi/pi_controller.h"
+#include "rcp/rdp/rdp_core.h"
+#include "rcp/ri/ri_controller.h"
+#include "rcp/rsp/rsp_core.h"
+#include "rcp/si/si_controller.h"
+#include "rcp/vi/vi_controller.h"
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof((x)[0]))
 
@@ -98,6 +98,8 @@ void init_device(struct device* dev,
     int randomize_interrupt,
     /* ai */
     void* aout, const struct audio_out_backend_interface* iaout,
+    /* si */
+    unsigned int si_dma_duration,
     /* rdram */
     size_t dram_size,
     /* pif */
@@ -175,7 +177,7 @@ void init_device(struct device* dev,
             dev, get_pi_dma_handler,
             &dev->mi, &dev->ri, &dev->dp);
     init_ri(&dev->ri, &dev->rdram);
-    init_si(&dev->si, &dev->mi, &dev->pif, &dev->ri);
+    init_si(&dev->si, si_dma_duration, &dev->mi, &dev->pif, &dev->ri);
     init_vi(&dev->vi, vi_clock, expected_refresh_rate, &dev->mi, &dev->dp);
 
     init_pif(&dev->pif,
