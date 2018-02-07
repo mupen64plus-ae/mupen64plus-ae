@@ -324,16 +324,16 @@ public class GamePrefs
 
         // Controller profiles
         controllerProfile1 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
-                globalPrefs.getControllerProfileDefault(1), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.getControllerProfileDefault(1), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile2 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
-                globalPrefs.getControllerProfileDefault(2), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.getControllerProfileDefault(2), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile3 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
-                globalPrefs.getControllerProfileDefault(3), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.getControllerProfileDefault(3), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile4 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
-                globalPrefs.getControllerProfileDefault(4), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
+                globalPrefs.getControllerProfileDefault(4), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
         if(controllerProfile1 != null) {
