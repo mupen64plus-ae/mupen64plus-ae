@@ -308,7 +308,6 @@ public class GlobalPrefs
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
     static final String KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "touchscreenProfileDpadDefault";
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
-    private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder2";
     public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     // ... add more as needed
 
@@ -318,7 +317,6 @@ public class GlobalPrefs
     public static final String DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "Everything";
     static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "Android Gamepad";
     private static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
-    private static final boolean DEFAULT_PLAYER_MAP_REMINDER = false;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
     // ... add more as needed
 
@@ -729,11 +727,6 @@ public class GlobalPrefs
         return PakType.getPakTypeFromNativeValue(getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE ));
     }
 
-    public boolean getPlayerMapReminder()
-    {
-        return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
-    }
-
     public void putEmulationProfileDefault( String value )
     {
         putString( KEY_EMULATION_PROFILE_DEFAULT, value );
@@ -752,11 +745,6 @@ public class GlobalPrefs
     public void putPakType( int player, PakType pakType )
     {
         putInt( KEYTEMPLATE_PAK_TYPE, player, pakType.getNativeValue() );
-    }
-
-    public void putPlayerMapReminder( boolean value )
-    {
-        putBoolean( KEY_PLAYER_MAP_REMINDER, value );
     }
 
     public boolean getBoolean( String key, boolean defaultValue )

@@ -253,6 +253,9 @@ public class GamePrefs
 
     private final SharedPreferences mPreferences;
 
+    /** True of 1 controller can control multiple players */
+    public final boolean allowMultiplePlayers;
+
     /** Profile keys */
     static final String DISPLAY_RESOLUTION = "displayResolution";
     static final String EMULATION_PROFILE = "emulationProfile";
@@ -533,7 +536,7 @@ public class GamePrefs
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
 
-        boolean playerMappingEnabled = numControllers > 1 && playerMap.getNumberOfMappedPlayers() !=0 && !isControllerShared;
+        boolean playerMappingEnabled = numControllers > 1 && playerMap.getNumberOfMappedPlayers() != 0 && !isControllerShared;
 
         if(playerMappingEnabled)
         {
@@ -546,6 +549,10 @@ public class GamePrefs
         isPlugged2 = isControllerEnabled2;
         isPlugged3 = isControllerEnabled3;
         isPlugged4 = isControllerEnabled4;
+
+        allowMultiplePlayers = isControllerShared || playerMap.getNumberOfMappedPlayers() != 0;
+
+        Log.e("GamePrefs", "Allow multiple is " + allowMultiplePlayers);
 
         //A value of zero means default for the game as specified in mupen64plus.ini
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );

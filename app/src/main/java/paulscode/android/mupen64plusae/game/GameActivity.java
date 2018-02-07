@@ -1076,32 +1076,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mDrawerLayout.setTouchMap( mTouchscreenMap );
         }
 
-        //Check for controller configuration
-        boolean needs1 = false;
-        boolean needs2 = false;
-        boolean needs3 = false;
-        boolean needs4 = false;
-
         // Popup the multi-player dialog if necessary and abort if any players are unassigned
         final RomDatabase romDatabase = RomDatabase.getInstance();
 
         if(!romDatabase.hasDatabaseFile())
         {
             romDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
-        }
-
-        if( mGamePrefs.playerMap.isEnabled() && mGlobalPrefs.getPlayerMapReminder() )
-        {
-            mGamePrefs.playerMap.removeUnavailableMappings();
-            needs1 = mGamePrefs.isControllerEnabled1 && !mGamePrefs.playerMap.isMapped( 1 );
-            needs2 = mGamePrefs.isControllerEnabled2 && !mGamePrefs.playerMap.isMapped( 2 );
-            needs3 = mGamePrefs.isControllerEnabled3 && !mGamePrefs.playerMap.isMapped( 3 );
-            needs4 = mGamePrefs.isControllerEnabled4 && !mGamePrefs.playerMap.isMapped( 4 );
-
-            if( needs1 || needs2 || needs3 || needs4 )
-            {
-                Popups.showNeedsPlayerMap( this );
-            }
         }
 
         // Create the input providers shared among all peripheral controllers
@@ -1113,7 +1093,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Request focus for proper listening
         inputSource.requestFocus();
         // Create the peripheral controls to handle key/stick presses
-        if( mGamePrefs.isControllerEnabled1 && !needs1)
+        if( mGamePrefs.isControllerEnabled1)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile1;
 
@@ -1123,7 +1103,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 Log.i("GameActivity", "Player 1 has been enabled");
             }
         }
-        if( mGamePrefs.isControllerEnabled2 && !needs2)
+        if( mGamePrefs.isControllerEnabled2 && mGamePrefs.allowMultiplePlayers)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile2;
 
@@ -1133,7 +1113,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 Log.i("GameActivity", "Player 2 has been enabled");
             }
         }
-        if( mGamePrefs.isControllerEnabled3 && !needs3)
+        if( mGamePrefs.isControllerEnabled3 && mGamePrefs.allowMultiplePlayers)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile3;
 
@@ -1143,7 +1123,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 Log.i("GameActivity", "Player 3 has been enabled");
             }
         }
-        if( mGamePrefs.isControllerEnabled4 && !needs4)
+        if( mGamePrefs.isControllerEnabled4 && mGamePrefs.allowMultiplePlayers)
         {
             final ControllerProfile p = mGamePrefs.controllerProfile4;
 

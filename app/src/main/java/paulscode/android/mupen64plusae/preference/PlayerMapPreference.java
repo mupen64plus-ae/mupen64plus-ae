@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  *
  * Copyright (C) 2013 Paul Lamb
@@ -40,15 +40,11 @@ import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class PlayerMapPreference extends DialogPreference implements
-        View.OnClickListener, OnCheckedChangeListener, OnPreferenceDialogListener, View.OnLongClickListener
+        View.OnClickListener, OnPreferenceDialogListener, View.OnLongClickListener
 {
-    public static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
-    public static final String STATE_SELECTED_POPUP_INDEX = "STATE_SELECTED_POPUP_INDEX";
+    private static final String STATE_PROMPT_INPUT_CODE_DIALOG = "STATE_PROMPT_INPUT_CODE_DIALOG";
 
     private final PlayerMap mMap = new PlayerMap();
     private List<Integer> mUnmappableKeyCodes;
@@ -57,7 +53,6 @@ public class PlayerMapPreference extends DialogPreference implements
     private Button buttonPlayer2;
     private Button buttonPlayer3;
     private Button buttonPlayer4;
-    private CheckBox checkBoxReminder;
 
     private String mValue = "";
     private boolean isControllerEnabled1 = true;
@@ -74,6 +69,8 @@ public class PlayerMapPreference extends DialogPreference implements
         setDialogLayoutResource( R.layout.player_map_preference );
         setDialogMessage( getSummary() );
         setOnPreferenceChangeListener(null);
+        setPositiveButtonText(null);
+        setNegativeButtonText(null);
     }
 
     public void setValue( String value )
@@ -123,9 +120,6 @@ public class PlayerMapPreference extends DialogPreference implements
         buttonPlayer2 = setupButton( view, R.id.btnPlayer2, isControllerEnabled2 );
         buttonPlayer3 = setupButton( view, R.id.btnPlayer3, isControllerEnabled3 );
         buttonPlayer4 = setupButton( view, R.id.btnPlayer4, isControllerEnabled4 );
-        checkBoxReminder = (CheckBox) view.findViewById( R.id.checkBox );
-        checkBoxReminder.setChecked( prefs.getPlayerMapReminder() );
-        checkBoxReminder.setOnCheckedChangeListener( this );
         updateViews();
 
         buttonPlayer1.setOnLongClickListener( this );
@@ -208,13 +202,6 @@ public class PlayerMapPreference extends DialogPreference implements
         }
     }
 
-    @Override
-    public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
-    {
-        final AppData appData = new AppData( getContext() );
-        new GlobalPrefs( getContext(), appData ).putPlayerMapReminder( isChecked );
-    }
-
     private void promptPlayer( final int player )
     {
         mSelectedPlayer = player;
@@ -271,7 +258,7 @@ public class PlayerMapPreference extends DialogPreference implements
 
     private Button setupButton( View parentView, int resId, boolean isEnabled )
     {
-        final Button button = (Button) parentView.findViewById( resId );
+        final Button button = parentView.findViewById( resId );
         button.setVisibility( isEnabled ? View.VISIBLE : View.GONE );
         button.setOnClickListener( this );
         return button;
