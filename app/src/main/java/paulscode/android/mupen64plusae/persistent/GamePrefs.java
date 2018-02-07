@@ -327,13 +327,13 @@ public class GamePrefs
                 globalPrefs.getControllerProfileDefault(1), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile2 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
-                globalPrefs.getControllerProfileDefault(2), "",
+                globalPrefs.getControllerProfileDefault(2), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile3 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
-                globalPrefs.getControllerProfileDefault(3), "",
+                globalPrefs.getControllerProfileDefault(3), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile4 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
-                globalPrefs.getControllerProfileDefault(4), "",
+                globalPrefs.getControllerProfileDefault(4), GlobalPrefs.DEFAULT_CONTROLLER_PROFILE_DEFAULT,
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
         if(controllerProfile1 != null) {
@@ -533,7 +533,7 @@ public class GamePrefs
         numControllers += isControllerEnabled3 ? 1 : 0;
         numControllers += isControllerEnabled4 ? 1 : 0;
 
-        boolean playerMappingEnabled = (numControllers > 1 || playerMap.getNumberOfMappedPlayers() !=0) && !isControllerShared;
+        boolean playerMappingEnabled = numControllers > 1 && playerMap.getNumberOfMappedPlayers() !=0 && !isControllerShared;
 
         if(playerMappingEnabled)
         {
