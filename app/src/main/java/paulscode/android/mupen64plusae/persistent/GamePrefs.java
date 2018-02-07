@@ -560,8 +560,8 @@ public class GamePrefs
 
     private boolean isDpadGame(String headerName, String gameGoodName) {
 
-        String headerNameLowerCase = headerName.toLowerCase();
-        String gameGoodNameLowerCase = gameGoodName.toLowerCase();
+        String headerNameLowerCase = !TextUtils.isEmpty(headerName) ? headerName.toLowerCase() : "";
+        String gameGoodNameLowerCase = !TextUtils.isEmpty(gameGoodName) ? gameGoodName.toLowerCase() : "";
 
         return headerNameLowerCase.equals("Body Harvest".toLowerCase()) ||
                 headerNameLowerCase.equals("DR.MARIO 64".toLowerCase()) ||
