@@ -393,9 +393,6 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
         // Extract the file
         try
         {
-            Log.e( "ExtractAssetsTask", "Source=" + asset );
-            Log.e( "ExtractAssetsTask", "Destination=" + destination );
-
             out = new FileOutputStream( destination );
             in = mAssetManager.open( asset );
             byte[] buffer = new byte[1024];
