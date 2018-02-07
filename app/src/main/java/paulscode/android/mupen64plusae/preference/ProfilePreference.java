@@ -94,7 +94,12 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
                 public void onClick( DialogInterface dialog, int which )
                 {
                     Context context = ProfilePreference.this.getContext();
-                    context.startActivity( new Intent( mManagerAction ) );
+
+                    Intent activityIntent = new Intent();
+                    activityIntent.setAction(mManagerAction);
+                    activityIntent.setPackage(context.getPackageName());
+
+                    context.startActivity( activityIntent );
                 }
             } );
         }
