@@ -93,17 +93,11 @@ import static java.lang.Integer.parseInt;
  */
 public class GlobalPrefs
 {
-    /** The subdirectory containing gallery data cache. */
-    public final String galleryCacheDir;
-
     /** The subdirectory containing cover art files. */
     public final String coverArtDir;
 
     /** The subdirectory containing unzipped ROM files. */
     public final String unzippedRomsDir;
-
-    /** The subdirectory containing custom profiles. */
-    public final String profilesDir;
 
     /** The subdirectory containing crash logs. */
     public final String crashLogDir;
@@ -169,7 +163,7 @@ public class GlobalPrefs
     public final float touchscreenScale;
 
     /** The method used for auto holding buttons. */
-    public final int touchscreenAutoHold;
+    final int touchscreenAutoHold;
 
     /** Enable touchscreen auto-hide */
     public final boolean touchscreenAutoHideEnabled;
@@ -196,28 +190,28 @@ public class GlobalPrefs
     public final float coverArtScale;
 
     /** Default resolution */
-    public final int displayResolution;
+    private final int displayResolution;
 
     /** Default resolution */
-    public final boolean stretchScreen;
+    final boolean stretchScreen;
 
     /** The width of the viewing surface, in pixels with the correct aspect ratio. */
-    public int videoSurfaceWidthOriginal;
+    private int videoSurfaceWidthOriginal;
 
     /** The height of the viewing surface, in pixels with the correct aspect ratio. */
-    public int videoSurfaceHeightOriginal;
+    private int videoSurfaceHeightOriginal;
 
     /** The width of the viewing surface, in pixels with the stretched aspect ratio. */
-    public int videoSurfaceWidthStretch;
+    private int videoSurfaceWidthStretch;
 
     /** The height of the viewing surface, in pixels with the stretched aspect ratio. */
-    public int videoSurfaceHeightStretch;
+    private int videoSurfaceHeightStretch;
 
     /** The screen orientation for the game activity. */
     public final int displayOrientation;
 
     /** Current screen orientation */
-    public final int currentDisplayOrientation;
+    private final int currentDisplayOrientation;
 
     /** The action bar transparency value. */
     public final int displayActionBarTransparency;
@@ -241,7 +235,7 @@ public class GlobalPrefs
     public final boolean isPolygonOffsetHackEnabled;
 
     /** The manually-overridden hardware type, used for flicker reduction. */
-    public final int videoHardwareType;
+    final int videoHardwareType;
 
     /** The polygon offset to use. */
     public final float videoPolygonOffset;
@@ -277,54 +271,54 @@ public class GlobalPrefs
     public final int maxAutoSaves;
 
     /** True if specific game data should be saved in a flat file structure */
-    public final boolean useFlatGameDataPath;
+    final boolean useFlatGameDataPath;
 
     /** True of volume keys are mappable*/
     public final boolean volKeysMappable;
 
     /** The input profile for Player 1. */
-    public final ControllerProfile controllerProfile1;
+    final ControllerProfile controllerProfile1;
 
     /** The input profile for Player 2. */
-    public final ControllerProfile controllerProfile2;
+    final ControllerProfile controllerProfile2;
 
     /** The input profile for Player 3. */
-    public final ControllerProfile controllerProfile3;
+    final ControllerProfile controllerProfile3;
 
     /** The input profile for Player 4. */
-    public final ControllerProfile controllerProfile4;
+    final ControllerProfile controllerProfile4;
 
     /** The player map for multi-player gaming. */
-    public final PlayerMap playerMap;
+    final PlayerMap playerMap;
 
     /** True if we want to show built in emulation profiles */
-    public final boolean showBuiltInEmulationProfiles;
+    final boolean showBuiltInEmulationProfiles;
 
     /** True if we want to show built in touchscreen profiles */
-    public final boolean showBuiltInTouchscreenProfiles;
+    final boolean showBuiltInTouchscreenProfiles;
 
     /** True if we want to show built in touchscreen profiles */
-    public final boolean showBuiltInControllerProfiles;
+    final boolean showBuiltInControllerProfiles;
 
     /** True to use a high priority thread for the core */
     public final boolean useHighPriorityThread;
 
     // Shared preferences keys and key templates
-    public static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
-    public static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
-    public static final String KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "touchscreenProfileDpadDefault";
-    public static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
-    public static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder2";
+    static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
+    static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
+    static final String KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "touchscreenProfileDpadDefault";
+    private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
+    private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder2";
     public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     // ... add more as needed
 
     // Shared preferences default values
-    public static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Fast";
+    static final String DEFAULT_EMULATION_PROFILE_DEFAULT = "Glide64-Fast";
     public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "Analog";
     public static final String DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "Everything";
-    public static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "Android Gamepad";
-    public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
-    public static final boolean DEFAULT_PLAYER_MAP_REMINDER = false;
+    static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "Android Gamepad";
+    private static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
+    private static final boolean DEFAULT_PLAYER_MAP_REMINDER = false;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
     // ... add more as needed
 
@@ -415,10 +409,10 @@ public class GlobalPrefs
         mLocaleCodes = values;
 
         // Files
-        galleryCacheDir = appData.userDataDir + "/GalleryCache";
+        String galleryCacheDir = appData.userDataDir + "/GalleryCache";
         coverArtDir = galleryCacheDir + "/CoverArt";
         unzippedRomsDir = galleryCacheDir + "/UnzippedRoms";
-        profilesDir = appData.userDataDir + "/Profiles";
+        String profilesDir = appData.userDataDir + "/Profiles";
         crashLogDir = appData.userDataDir + "/CrashLogs";
         final String coreConfigDir = appData.userDataDir + "/CoreConfig";
         coreUserDataDir = coreConfigDir + "/UserData";
@@ -441,7 +435,7 @@ public class GlobalPrefs
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e("GlobalPrefs", "Unable to create " + file.getPath());
             }
         }
 
@@ -581,12 +575,16 @@ public class GlobalPrefs
 
         // User interface modes
         final String navMode = mPreferences.getString( "navigationMode", "auto" );
-        if( navMode.equals( "bigscreen" ) )
-            isBigScreenMode = true;
-        else if( navMode.equals( "standard" ) )
-            isBigScreenMode = false;
-        else
-            isBigScreenMode = appData.isAndroidTv;
+        switch(navMode) {
+            case "bigscreen":
+                isBigScreenMode = true;
+                break;
+            case "standard":
+                isBigScreenMode = false;
+                break;
+            default:
+                isBigScreenMode = appData.isAndroidTv;
+        }
 
         final String inGameMenuMode = mPreferences.getString( "inGameMenu", "back-key" );
 
@@ -601,7 +599,7 @@ public class GlobalPrefs
 
         inGameMenuIsSwipGesture = inGameMenuMode.equals("swipe") || menuKeyMappable || backKeyMappable;
 
-        final List<Integer> unmappables = new ArrayList<Integer>();
+        final List<Integer> unmappables = new ArrayList<>();
 
         if(!menuKeyMappable)
         {
@@ -882,7 +880,7 @@ public class GlobalPrefs
         // Determine the pixel dimensions of the rendering context and view surface
         // Screen size
         final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
-        final Display display = windowManager.getDefaultDisplay();
+        final Display display = windowManager != null ? windowManager.getDefaultDisplay() : null;
 
         final Point dimensions = new Point();
 
@@ -892,7 +890,6 @@ public class GlobalPrefs
         }
         else if(isImmersiveModeEnabled )
         {
-
             display.getRealSize(dimensions);
             videoSurfaceWidthStretch = dimensions.x;
             videoSurfaceHeightStretch = dimensions.y;
@@ -919,7 +916,7 @@ public class GlobalPrefs
         }
     }
 
-    public int getResolutionWidth(boolean stretch, boolean fixAspect, int hResolution)
+    int getResolutionWidth(boolean stretch, boolean fixAspect, int hResolution)
     {
         if( hResolution == -1)
         {
@@ -982,7 +979,7 @@ public class GlobalPrefs
         return tempVideoRenderWidth;
     }
 
-    public int getResolutionHeight(boolean stretch, boolean fixAspect, int hResolution)
+    int getResolutionHeight(boolean stretch, boolean fixAspect, int hResolution)
     {
         if( hResolution == -1)
         {
