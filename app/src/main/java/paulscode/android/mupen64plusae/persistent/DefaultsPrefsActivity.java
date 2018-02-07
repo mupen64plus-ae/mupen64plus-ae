@@ -140,7 +140,7 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
         if (emulationProfile != null)
         {
             emulationProfile.populateProfiles(mAppData.GetEmulationProfilesConfig(),
-                    mGlobalPrefs.GetEmulationProfilesConfig(), false, GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT, null,
+                    mGlobalPrefs.GetEmulationProfilesConfig(), false, mGlobalPrefs.getEmulationProfileDefaultDefault(), null,
                     mGlobalPrefs.showBuiltInEmulationProfiles);
             emulationProfile.setSummary(emulationProfile.getCurrentValue(null));
         }

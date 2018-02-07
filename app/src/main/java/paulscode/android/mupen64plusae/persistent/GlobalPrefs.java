@@ -690,7 +690,7 @@ public class GlobalPrefs
         {
             defaultEmulationProfile = "GlideN64-Very-Accurate";
         }
-        else if(supportedGlesVersion.equals("3.1"))
+        else if(supportedGlesVersion.equals("3.1") || supportedGlesVersion.equals("3.2"))
         {
             defaultEmulationProfile = "Glide64-Accurate";
         }
