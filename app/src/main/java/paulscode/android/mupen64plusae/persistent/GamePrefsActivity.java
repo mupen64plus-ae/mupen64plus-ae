@@ -161,7 +161,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             romDatabase.setDatabaseFile(mAppData.mupen64plus_ini);
         }
 
-        mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, romPath, mRomCrc );
+        mRomDetail = romDatabase.lookupByMd5WithFallback( mRomMd5, romPath, mRomCrc, CountryCode.getCountryCode(mRomCountryCode) );
 
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( mGamePrefs.getSharedPrefsName(), R.xml.preferences_game );

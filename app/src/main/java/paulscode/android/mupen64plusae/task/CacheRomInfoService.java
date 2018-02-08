@@ -65,6 +65,7 @@ import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
@@ -359,7 +360,7 @@ public class CacheRomInfoService extends Service
 
         if( mbStopped ) return;
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingDB );
-        RomDetail detail = database.lookupByMd5WithFallback( header, md5, filename, header.crc );
+        RomDetail detail = database.lookupByMd5WithFallback( md5, filename, header.crc, header.countryCode );
         String artPath = mArtDir + "/" + detail.artName;
         config.put( md5, "goodName", detail.goodName );
         if (detail.baseName != null && detail.baseName.length() != 0)
@@ -604,10 +605,16 @@ public class CacheRomInfoService extends Service
                 String artPath = theConfigFile.get(key, "artPath");
                 String romFile = theConfigFile.get(key, "romPath");
                 String crc = theConfigFile.get(key, "crc");
+                final String countryCodeString = theConfigFile.get( key, "countryCode" );
+                CountryCode countryCode = CountryCode.UNKNOWN;
+                if (countryCodeString != null)
+                {
+                    countryCode = CountryCode.getCountryCode(Byte.parseByte(countryCodeString));
+                }
 
                 if(!TextUtils.isEmpty(artPath) && !TextUtils.isEmpty(romFile) && !TextUtils.isEmpty(crc))
                 {
-                    RomDetail detail = database.lookupByMd5WithFallback( key, new File(romFile).getAbsolutePath(), crc );
+                    RomDetail detail = database.lookupByMd5WithFallback( key, new File(romFile).getAbsolutePath(), crc, countryCode );
 
                     mListener.GetProgressDialog().setText( new File(romFile).getName() );
 

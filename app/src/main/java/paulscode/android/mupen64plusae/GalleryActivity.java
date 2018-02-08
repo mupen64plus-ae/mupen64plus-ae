@@ -507,7 +507,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     database.setDatabaseFile(mAppData.mupen64plus_ini);
                 }
 
-                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, finalRomPath, header.crc );
+                final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, finalRomPath, header.crc, header.countryCode );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
 
                 launchGameActivity( finalRomPath, null, computedMd5, header.crc, header.name,

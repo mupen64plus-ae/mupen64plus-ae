@@ -135,14 +135,14 @@ public class RomDatabase
         return mConfigFile != null;
     }
 
-    public RomDetail lookupByMd5WithFallback( RomHeader romHeader, String md5, String filename, String crc )
+    public RomDetail lookupByMd5WithFallback( String md5, String filename, String crc, CountryCode countryCode )
     {
         RomDetail detail = lookupByMd5( md5 );
 
         if( detail == null )
         {
             File tempFile = new File(filename);
-            ArrayList<RomDetail> details = lookupByCrc( romHeader, filename );
+            ArrayList<RomDetail> details = lookupByCrc(filename, crc, countryCode );
 
             // Catch if none was found or we could not narrow things to only 1 entry
             if (details.size() != 1) {
@@ -153,21 +153,13 @@ public class RomDatabase
         }
         return detail;
     }
-    
-    public RomDetail lookupByMd5WithFallback( String md5, String filename, String crc )
-    {
-        File tempFile = new File(filename);
-        RomHeader romHeader = new RomHeader(tempFile);
 
-        return lookupByMd5WithFallback(romHeader, md5, filename, crc);
-    }
-
-    private ArrayList<RomDetail> lookupByCrc(RomHeader romHeader, String fileName) {
+    private ArrayList<RomDetail> lookupByCrc(String fileName, String crc, CountryCode countryCode) {
 
         ArrayList<RomDetail> romDetails = new ArrayList<>();
 
         //First try to find a unique match
-        ArrayList<ConfigSection> sections = mCrcMap.get( romHeader.crc );
+        ArrayList<ConfigSection> sections = mCrcMap.get( crc );
         if( sections != null ) {
             for( int i = 0; i < sections.size(); i++ )
                 romDetails.add(new RomDetail( sections.get( i ) ));
@@ -180,7 +172,7 @@ public class RomDatabase
             // Attempt to auto-select the correct match based on country code of rom
             for (RomDetail romDetail : romDetails) {
 
-                if (romDetail.goodName.contains(romHeader.countryCode.toString())) {
+                if (romDetail.goodName.contains(countryCode.toString())) {
                     romDetailsCountryFiltered.add(romDetail);
                 }
             }
@@ -190,11 +182,11 @@ public class RomDatabase
         } else if (romDetails.size() == 0) {
             // CRC not in the database; create best guess
             Log.w("RomDetail", "No meta-info entry found for ROM " + fileName);
-            Log.w("RomDetail", "CRC: " + romHeader.crc);
+            Log.w("RomDetail", "CRC: " + crc);
             Log.i("RomDetail", "Constructing a best guess for the meta-info");
 
             File tempFile = new File(fileName);
-            romDetails.add(new RomDetail(romHeader.crc, generateGoodNameFromFileName(tempFile.getName())));
+            romDetails.add(new RomDetail(crc, generateGoodNameFromFileName(tempFile.getName())));
         }
 
         return romDetails;
