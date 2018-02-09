@@ -49,7 +49,7 @@
     <string name="menuItem_emulationProfiles">Emulación</string>
     <string name="menuItem_touchscreenProfiles">Pantalla táctil</string>
     <string name="menuItem_controllerProfiles">Controlador</string>
-    <string name="menuItem_select_profiles">Select Profiles</string>
+    <string name="menuItem_select_profiles">Seleccionar Perfiles</string>
     <string name="menuItem_customCheats">Trucos personalizados</string>
     <string name="menuItem_help">Ayuda</string>
     <string name="menuItem_faq">Preguntas frecuentes</string>
