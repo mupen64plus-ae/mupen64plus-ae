@@ -49,6 +49,9 @@ public class GamePrefs
     /** Game header name */
     public final String gameHeaderName;
 
+    /** Game header name */
+    public final String gameCountrySymbol;
+
     /** Game good name */
     public final String gameGoodName;
     
@@ -251,6 +254,9 @@ public class GamePrefs
     /** Game CRC */
     private final String gameCrc;
 
+    /** ROM MD5 */
+    private final String romMd5;
+
     private final SharedPreferences mPreferences;
 
     /** True of 1 controller can control multiple players */
@@ -278,14 +284,16 @@ public class GamePrefs
     private static final String CORE_CONFIG_DIR = "CoreConfig";
     private static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
 
-    public GamePrefs( Context context, String romMd5, String crc, String headerName, String goodName,
+    public GamePrefs( Context context, String md5, String crc, String headerName, String goodName,
         String countrySymbol, AppData appData, GlobalPrefs globalPrefs, String legacySave)
     {
         mAppData = appData;
         mGlobalPrefs = globalPrefs;
         gameHeaderName = headerName;
         gameGoodName = goodName;
+        gameCountrySymbol = countrySymbol;
         legacySaveFileName = legacySave;
+        romMd5 = md5;
         gameCrc = crc;
         mSharedPrefsName = romMd5.replace(' ', '_' ) + "_preferences";
         mPreferences = context.getSharedPreferences( mSharedPrefsName, Context.MODE_PRIVATE );
@@ -633,7 +641,13 @@ public class GamePrefs
 
     public void useAlternateGameDataDir()
     {
-        gameDataDir = gameDataDir.replace(":", "");
+        gameDataDir = getAlternateGameDataPath( romMd5, gameHeaderName, gameCountrySymbol, mAppData);
+        setGameDirs(mAppData, mGlobalPrefs, gameDataDir);
+    }
+
+    public void useSecondAlternateGameDataDir()
+    {
+        gameDataDir = getSecondAlternateGameDataPath( romMd5, gameHeaderName, gameCountrySymbol, mAppData);
         setGameDirs(mAppData, mGlobalPrefs, gameDataDir);
     }
 
@@ -699,6 +713,18 @@ public class GamePrefs
         AppData appData)
     {
         return String.format( "%s/%s %s %s", appData.gameDataDir, headerName, countrySymbol, romMd5 );
+    }
+
+    public static String getAlternateGameDataPath( String romMd5, String headerName, String countrySymbol,
+                                          AppData appData)
+    {
+        return String.format( "%s/%s %s %s", appData.gameDataDir, headerName, countrySymbol, romMd5 ).replace(":", "");
+    }
+
+    public static String getSecondAlternateGameDataPath( String romMd5, String headerName, String countrySymbol,
+                                                   AppData appData)
+    {
+        return String.format( "%s/%s", appData.gameDataDir, romMd5 );
     }
 
     private static Profile loadProfile( SharedPreferences prefs, String key, String defaultName,

@@ -18,11 +18,11 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 
 public class GameDataManager
 {
-    public static final String V2 = "v2";
+    private static final String V2 = "v2";
 
     private GlobalPrefs mGlobalPrefs;
     private final GamePrefs mGamePrefs;
-    private final String mAutoSavePath;
+    private String mAutoSavePath;
     private final int mMaxAutoSave;
     private static final String sFormatString = "yyyy-MM-dd-HH-mm-ss";
     private static final String sMatcherString = "^\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d-\\d\\d\\..*sav$";
@@ -158,6 +158,13 @@ public class GameDataManager
             mGamePrefs.useAlternateGameDataDir();
         }
 
+        FileUtil.makeDirs(mGamePrefs.getGameDataDir());
+
+        //If the above didn't work, go with 2nd alternative name, which is just the md5
+        if( !new File(mGamePrefs.getGameDataDir()).exists()) {
+            mGamePrefs.useSecondAlternateGameDataDir();
+        }
+
         // Make sure various directories exist so that we can write to them
         FileUtil.makeDirs(mGamePrefs.getSramDataDir());
         FileUtil.makeDirs(mGamePrefs.getAutoSaveDir());
@@ -167,6 +174,7 @@ public class GameDataManager
         FileUtil.makeDirs(mGamePrefs.getCoreUserConfigDir());
         FileUtil.makeDirs(mGlobalPrefs.coreUserDataDir);
         FileUtil.makeDirs(mGlobalPrefs.coreUserCacheDir);
+        mAutoSavePath = mGamePrefs.getAutoSaveDir() + "/";
     }
 
     /**

@@ -728,15 +728,24 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // If there are no saves for this game, disable the resume
         // option
-        final String gameDataPath = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
-                mSelectedItem.countryCode.toString(), mAppData);
-        final String autoSavePath = gameDataPath + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
 
-        final File autoSavePathFile = new File(autoSavePath);
-        final File[] allFilesInSavePath = autoSavePathFile.listFiles();
+        final String autoSavePath = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
+                mSelectedItem.countryCode.toString(), mAppData) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+
+        //Alternate paths in case we have file system problems
+        final String gameAlternate = GamePrefs.getAlternateGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
+                mSelectedItem.countryCode.toString(), mAppData) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+        final String game2ndAlternate = GamePrefs.getSecondAlternateGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
+                mSelectedItem.countryCode.toString(), mAppData) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+
+        final File[] allFilesInSavePath = new File(autoSavePath).listFiles();
+        final File[] alternateAllFilesInSavePath = new File(gameAlternate).listFiles();
+        final File[] secondAlternateAllFilesInSavePath = new File(game2ndAlternate).listFiles();
 
         //No saves, go ahead and remove it
-        final boolean visible = allFilesInSavePath != null && allFilesInSavePath.length != 0 &&
+        final boolean visible = ((allFilesInSavePath != null && allFilesInSavePath.length != 0) ||
+                (alternateAllFilesInSavePath != null && alternateAllFilesInSavePath.length != 0) ||
+                (secondAlternateAllFilesInSavePath != null && secondAlternateAllFilesInSavePath.length != 0)) &&
                 mGlobalPrefs.maxAutoSaves > 0;
 
         if (visible)
