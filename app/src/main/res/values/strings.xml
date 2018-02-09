@@ -68,9 +68,10 @@
     <string name="menuItem_globalSettings">Global settings</string>
     <string name="menuItem_sensorConfiguration">Sensor configuration</string>
     <string name="menuItem_profiles">Profiles</string>
-    <string name="menuItem_emulationProfiles">Emulation profiles</string>
-    <string name="menuItem_touchscreenProfiles">Touchscreen profiles</string>
-    <string name="menuItem_controllerProfiles">Controller profiles</string>
+    <string name="menuItem_emulationProfiles">Emulation</string>
+    <string name="menuItem_touchscreenProfiles">Touchscreen</string>
+    <string name="menuItem_controllerProfiles">Controller</string>
+    <string name="menuItem_select_profiles">Select Profiles</string>
     <string name="menuItem_customCheats">Custom cheats</string>
     <string name="menuItem_help">Help</string>
     <string name="menuItem_faq">FAQ</string>

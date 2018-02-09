@@ -125,7 +125,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.persistent.DefaultsPrefsActivity"
             android:exported="false"
-            android:label="@string/default_profile_title"
+            android:label="@string/menuItem_select_profiles"
             android:theme="@style/Theme.Mupen64plusaeTheme" >
             <intent-filter>
                 <action android:name=".persistent.DefaultsPrefsActivity" />

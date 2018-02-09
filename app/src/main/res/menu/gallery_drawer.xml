@@ -37,6 +37,9 @@
         android:title="@string/menuItem_profiles">
         <menu>
             <item
+                android:id="@+id/menuItem_categoryDefaults"
+                android:title="@string/menuItem_select_profiles"/>
+            <item
                 android:id="@+id/menuItem_emulationProfiles"
                 android:title="@string/menuItem_emulationProfiles"/>
             <item
@@ -45,9 +48,6 @@
             <item
                 android:id="@+id/menuItem_controllerProfiles"
                 android:title="@string/menuItem_controllerProfiles"/>
-            <item
-                android:id="@+id/menuItem_categoryDefaults"
-                android:title="@string/default_profile_title"/>
         </menu>
     </item>
     <item

@@ -46,9 +46,10 @@
     <string name="menuItem_globalSettings">Configuración global</string>
     <string name="menuItem_sensorConfiguration">Configurar Sensor</string>
     <string name="menuItem_profiles">Perfiles</string>
-    <string name="menuItem_emulationProfiles">Perfiles de emulación</string>
-    <string name="menuItem_touchscreenProfiles">Perfiles de pantalla táctil</string>
-    <string name="menuItem_controllerProfiles">Perfiles del controlador</string>
+    <string name="menuItem_emulationProfiles">Emulación</string>
+    <string name="menuItem_touchscreenProfiles">Pantalla táctil</string>
+    <string name="menuItem_controllerProfiles">Controlador</string>
+    <string name="menuItem_select_profiles">Select Profiles</string>
     <string name="menuItem_customCheats">Trucos personalizados</string>
     <string name="menuItem_help">Ayuda</string>
     <string name="menuItem_faq">Preguntas frecuentes</string>
