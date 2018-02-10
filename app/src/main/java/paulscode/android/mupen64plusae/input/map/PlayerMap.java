@@ -76,7 +76,7 @@ public class PlayerMap extends SerializableMap
     
     public boolean testHardware( int hardwareId, int player )
     {
-        return mDisabled || mMap.get( hardwareId, 0 ) == player;
+        return mDisabled || getNumberOfMappedPlayers() == 0 || mMap.get( hardwareId, 0 ) == player;
     }
     
     public boolean isEnabled()
@@ -122,7 +122,7 @@ public class PlayerMap extends SerializableMap
     /**
      * Attempts to reconnect the specified device.
      */
-    public boolean reconnectDevice( int hardwareId )
+    public int reconnectDevice( int hardwareId )
     {
         // If the device is not mapped to any player...
         if( mMap.get( hardwareId ) == 0 && AbstractProvider.isHardwareAvailable( hardwareId ) )
@@ -147,22 +147,24 @@ public class PlayerMap extends SerializableMap
                             mMap.append( hardwareId, player );
                             ids.remove( oldId );
                             ids.add( hardwareId );
-                            return true;
+                            return player;
                         }
                     }
                 }
             }
         }
         
-        return false;
+        return -1;
     }
     
-    public boolean isMapped( int player )
+    public boolean isPlayerAvailable(int player )
     {
-        return mMap.indexOfValue( player ) >= 0;
+        int indexValue = mMap.indexOfValue( player );
+
+        return indexValue >= 0 && AbstractProvider.isHardwareAvailable(mMap.keyAt(indexValue));
     }
 
-    public int getNumberOfMappedPlayers()
+    private int getNumberOfMappedPlayers()
     {
         return mMap.size();
     }

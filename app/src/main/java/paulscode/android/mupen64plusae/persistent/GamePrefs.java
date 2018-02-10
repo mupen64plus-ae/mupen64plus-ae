@@ -21,7 +21,6 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 
 public class GamePrefs
 {
-
     /** The name of the game-specific {@link SharedPreferences} object.*/
     private final String mSharedPrefsName;
 
@@ -50,7 +49,7 @@ public class GamePrefs
     public final String gameHeaderName;
 
     /** Game header name */
-    public final String gameCountrySymbol;
+    private final String gameCountrySymbol;
 
     /** Game good name */
     public final String gameGoodName;
@@ -73,17 +72,10 @@ public class GamePrefs
     /** The touchscreen profile. */
     public final Profile touchscreenProfile;
 
-    /** The input profile for Player 1. */
-    public final ControllerProfile controllerProfile1;
+    private static final int NUM_CONTROLLERS = 4;
 
-    /** The input profile for Player 2. */
-    public final ControllerProfile controllerProfile2;
-
-    /** The input profile for Player 3. */
-    public final ControllerProfile controllerProfile3;
-
-    /** The input profile for Player 4. */
-    public final ControllerProfile controllerProfile4;
+    /** The input profiles for all player. */
+    public final ControllerProfile[] controllerProfile = new ControllerProfile[NUM_CONTROLLERS];
 
     /** The player map for multi-player gaming. */
     public final PlayerMap playerMap;
@@ -200,29 +192,14 @@ public class GamePrefs
     /** The sensor's Y axis sensitivity (%), may be negative to invert axes */
     public final int sensorSensitivityY;
 
-    /** True if Player 1's controller is enabled. */
-    public final boolean isControllerEnabled1;
+    /** True if we want use default player mapping*/
+    final boolean useDefaultPlayerMapping;
 
-    /** True if Player 2's controller is enabled. */
-    public final boolean isControllerEnabled2;
+    /** True if a specific controller is enabled. */
+    public final boolean[] isControllerEnabled = new boolean[NUM_CONTROLLERS];
 
-    /** True if Player 3's controller is enabled. */
-    public final boolean isControllerEnabled3;
-
-    /** True if Player 4's controller is enabled. */
-    public final boolean isControllerEnabled4;
-
-    /** True if any type of AbstractController is enabled for Player 1. */
-    public final boolean isPlugged1;
-
-    /** True if any type of AbstractController is enabled for Player 2. */
-    public final boolean isPlugged2;
-
-    /** True if any type of AbstractController is enabled for Player 3. */
-    public final boolean isPlugged3;
-
-    /** True if any type of AbstractController is enabled for Player 4. */
-    public final boolean isPlugged4;
+    /** True if any type of AbstractController is enabled for all players. */
+    public final boolean[] isPlugged = new boolean[NUM_CONTROLLERS];
 
     /** True if the touchscreen joystick is hidden when sensor is enabled. */
     public final boolean isAnalogHiddenWhenSensor;
@@ -258,9 +235,6 @@ public class GamePrefs
     private final String romMd5;
 
     private final SharedPreferences mPreferences;
-
-    /** True of 1 controller can control multiple players */
-    public final boolean allowMultiplePlayers;
 
     /** Profile keys */
     static final String DISPLAY_RESOLUTION = "displayResolution";
@@ -334,42 +308,30 @@ public class GamePrefs
         }
 
         // Controller profiles
-        controllerProfile1 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
+        controllerProfile[0] = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
                 globalPrefs.getControllerProfileDefault(1), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile2 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
+        controllerProfile[1] = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
                 globalPrefs.getControllerProfileDefault(2), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile3 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
+        controllerProfile[2] = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
                 globalPrefs.getControllerProfileDefault(3), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile4 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
+        controllerProfile[3] = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
                 globalPrefs.getControllerProfileDefault(4), "",
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
-        if(controllerProfile1 != null) {
-            Log.i("GamePrefs", "controler 1 profile found: " + controllerProfile1.getName());
-        }else  {
-            Log.i("GamePrefs", "controler 1 profile NOT found");
-        }
-        if(controllerProfile2 != null) {
-            Log.i("GamePrefs", "controler 2 profile found: " + controllerProfile2.getName());
-        }else  {
-            Log.i("GamePrefs", "controler 2 profile NOT found");
-        }
-        if(controllerProfile3 != null) {
-            Log.i("GamePrefs", "controler 3 profile found: " + controllerProfile3.getName());
-        }else  {
-            Log.i("GamePrefs", "controler 3 profile NOT found");
-        }
-        if(controllerProfile4 != null) {
-            Log.i("GamePrefs", "controler 4 profile found: " + controllerProfile4.getName());
-        }else  {
-            Log.i("GamePrefs", "controler 4 profile NOT found");
+        for(int index = 0; index < NUM_CONTROLLERS; ++index) {
+
+            if(controllerProfile[index] != null) {
+                Log.i("GamePrefs", "controler " + index + " profile found: " + controllerProfile[index].getName());
+            }else  {
+                Log.i("GamePrefs", "controler " + index + " profile NOT found");
+            }
         }
 
         // Player map
-        boolean useDefaultPlayerMapping = mPreferences.getBoolean( "useDefaultPlayerMapping", true );
+        useDefaultPlayerMapping = mPreferences.getBoolean( "useDefaultPlayerMapping", true );
         String playerMapString = mPreferences.getString( PLAYER_MAP, "" );
 
         if( playerMapString.isEmpty() || useDefaultPlayerMapping) {
@@ -532,35 +494,18 @@ public class GamePrefs
         boolean isControllerShared = mPreferences.getBoolean( "inputShareController", false );
 
         // Determine which peripheral controllers are enabled
-        isControllerEnabled1 = controllerProfile1 != null;
-        isControllerEnabled2 = controllerProfile2 != null;
-        isControllerEnabled3 = controllerProfile3 != null;
-        isControllerEnabled4 = controllerProfile4 != null;
+        for(int index = 0; index < NUM_CONTROLLERS; ++index) {
 
-        // Determine whether controller deconfliction is needed
-        int numControllers = 0;
-        numControllers += isControllerEnabled1 ? 1 : 0;
-        numControllers += isControllerEnabled2 ? 1 : 0;
-        numControllers += isControllerEnabled3 ? 1 : 0;
-        numControllers += isControllerEnabled4 ? 1 : 0;
-
-        boolean playerMappingEnabled = numControllers > 1 && playerMap.getNumberOfMappedPlayers() != 0 && !isControllerShared;
-
-        if(playerMappingEnabled)
-        {
-            Log.i("GamePrefs", "Player mapping is enabled!");
+            isControllerEnabled[index] = controllerProfile[index] != null;
         }
-        playerMap.setEnabled( playerMappingEnabled);
+
+        playerMap.setEnabled(!isControllerShared);
 
         // Determine which players are "plugged in"
-        isPlugged1 = isControllerEnabled1 || isTouchscreenEnabled;
-        isPlugged2 = isControllerEnabled2;
-        isPlugged3 = isControllerEnabled3;
-        isPlugged4 = isControllerEnabled4;
-
-        allowMultiplePlayers = isControllerShared || playerMap.getNumberOfMappedPlayers() != 0;
-
-        Log.e("GamePrefs", "Allow multiple is " + allowMultiplePlayers);
+        isPlugged[0] = isControllerEnabled[0] || isTouchscreenEnabled;
+        isPlugged[1] = isControllerEnabled[1] && (playerMap.isPlayerAvailable(2) || isControllerShared);
+        isPlugged[2] = isControllerEnabled[2] && (playerMap.isPlayerAvailable(3) || isControllerShared);
+        isPlugged[3] = isControllerEnabled[3] && (playerMap.isPlayerAvailable(4) || isControllerShared);
 
         //A value of zero means default for the game as specified in mupen64plus.ini
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );

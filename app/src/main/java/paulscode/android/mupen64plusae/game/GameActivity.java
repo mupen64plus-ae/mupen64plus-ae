@@ -65,7 +65,6 @@ import paulscode.android.mupen64plusae.DrawerDrawable;
 import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
-import paulscode.android.mupen64plusae.dialog.Popups;
 import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.hack.MogaHack;
@@ -172,6 +171,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
     private static final String STATE_CORE_FRAGMENT = "STATE_CORE_FRAGMENT";
     private CoreFragment mCoreFragment = null;
+
+    private boolean[] isControllerPlugged = new boolean[4];
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -419,7 +420,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mLastTouchTime = System.currentTimeMillis() / 1000L;
 
         if(mGlobalPrefs.touchscreenAutoHideEnabled)
-            mHandler.postDelayed(mLastTouchChecker, 500);
+            mHandler.postDelayed(mPeriodicChecker, 500);
     }
 
     @Override
@@ -522,7 +523,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // This apparently can happen on rare occasion, not sure how, so protect against it
         if(mHandler != null)
         {
-            mHandler.removeCallbacks(mLastTouchChecker);
+            mHandler.removeCallbacks(mPeriodicChecker);
         }
 
         if (mOverlay != null) {
@@ -573,10 +574,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         frameLimiterItem.setTitle(this.getString(resId));
 
         //Reload player pak settings
-        UpdateControllerMenu(R.id.menuItem_player_one, mGamePrefs.isPlugged1, 1);
-        UpdateControllerMenu(R.id.menuItem_player_two, mGamePrefs.isPlugged2, 2);
-        UpdateControllerMenu(R.id.menuItem_player_three, mGamePrefs.isPlugged3, 3);
-        UpdateControllerMenu(R.id.menuItem_player_four, mGamePrefs.isPlugged4, 4);
+        UpdateControllerMenu(R.id.menuItem_player_one, mGamePrefs.isPlugged[0], 1);
+        UpdateControllerMenu(R.id.menuItem_player_two, mGamePrefs.isPlugged[1], 2);
+        UpdateControllerMenu(R.id.menuItem_player_three, mGamePrefs.isPlugged[2], 3);
+        UpdateControllerMenu(R.id.menuItem_player_four, mGamePrefs.isPlugged[3], 4);
 
         mGameSidebar.reload();
     }
@@ -961,7 +962,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         boolean handled = false;
 
         // Attempt to reconnect any disconnected devices
-        mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( event ) );
+        checkForNewController(AbstractProvider.getHardwareId( event ) );
 
         if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
         {
@@ -1092,46 +1093,25 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
         // Request focus for proper listening
         inputSource.requestFocus();
+
         // Create the peripheral controls to handle key/stick presses
-        if( mGamePrefs.isControllerEnabled1)
-        {
-            final ControllerProfile p = mGamePrefs.controllerProfile1;
+        for(int index = 0; index < mGamePrefs.isControllerEnabled.length; ++index) {
+            isControllerPlugged[index] = mGamePrefs.isPlugged[index];
 
-            if(p != null) {
-                new PeripheralController( mCoreFragment, 1, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                        p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, mSensorController, mKeyProvider, mAxisProvider, mogaProvider );
-                Log.i("GameActivity", "Player 1 has been enabled");
+            if( mGamePrefs.isControllerEnabled[index])
+            {
+                final ControllerProfile p = mGamePrefs.controllerProfile[index];
+                initSingleController(index + 1, p, mogaProvider);
             }
         }
-        if( mGamePrefs.isControllerEnabled2 && mGamePrefs.allowMultiplePlayers && mGamePrefs.playerMap.isMapped(2))
-        {
-            final ControllerProfile p = mGamePrefs.controllerProfile2;
+    }
 
-            if(p != null) {
-                new PeripheralController( mCoreFragment, 2, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                        p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-                Log.i("GameActivity", "Player 2 has been enabled");
-            }
-        }
-        if( mGamePrefs.isControllerEnabled3 && mGamePrefs.allowMultiplePlayers && mGamePrefs.playerMap.isMapped(3))
-        {
-            final ControllerProfile p = mGamePrefs.controllerProfile3;
-
-            if(p != null) {
-                new PeripheralController( mCoreFragment, 3, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                        p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-                Log.i("GameActivity", "Player 3 has been enabled");
-            }
-        }
-        if( mGamePrefs.isControllerEnabled4 && mGamePrefs.allowMultiplePlayers && mGamePrefs.playerMap.isMapped(4))
-        {
-            final ControllerProfile p = mGamePrefs.controllerProfile4;
-
-            if(p != null) {
-                new PeripheralController( mCoreFragment, 4, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
-                        p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-                Log.i("GameActivity", "Player 4 has been enabled");
-            }
+    private void initSingleController(int player, ControllerProfile p, final MogaProvider mogaProvider)
+    {
+        if(p != null) {
+           new PeripheralController( mCoreFragment, player, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
+                    p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
+            Log.i("GameActivity", "Player " + player + " has been enabled");
         }
     }
 
@@ -1187,9 +1167,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         finishActivity();
     }
 
-    Runnable mLastTouchChecker = new Runnable() {
+    //Checks a few things every 500ms
+    Runnable mPeriodicChecker = new Runnable() {
         @Override
         public void run() {
+
+            //Check for touchscreen activity
             long seconds = System.currentTimeMillis() / 1000L;
 
             if(seconds - mLastTouchTime > mGlobalPrefs.touchscreenAutoHideSeconds)
@@ -1197,7 +1180,19 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mOverlay.onTouchControlsHide();
             }
 
-            mHandler.postDelayed(mLastTouchChecker, 500);
+            if (mCoreFragment != null) {
+                //Check if any controllers have changed state
+                for (int index = 0; index < mGamePrefs.controllerProfile.length; ++index) {
+                    if (!mGamePrefs.playerMap.isPlayerAvailable(index+1) && isControllerPlugged[index]) {
+                        mCoreFragment.updateControllerConfig(index, false, mGlobalPrefs.getPakType(index+1).getNativeValue());
+                        isControllerPlugged[index] = false;
+
+                        Log.i("GameActivity", "controller " + index + " was unplugged");
+                    }
+                }
+            }
+
+            mHandler.postDelayed(mPeriodicChecker, 500);
         }
     };
 
@@ -1216,9 +1211,20 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mOverlay.onTouchControlsHide();
 
         // Attempt to reconnect any disconnected devices
-        mGamePrefs.playerMap.reconnectDevice( AbstractProvider.getHardwareId( motionEvent ) );
+        checkForNewController(AbstractProvider.getHardwareId( motionEvent ) );
 
         return (mAxisProvider.onGenericMotion(null, motionEvent) && !mDrawerLayout.isDrawerOpen( GravityCompat.START )) ||
                 super.onGenericMotionEvent(motionEvent);
+    }
+
+    private void checkForNewController(int hardwareId)
+    {
+        // Attempt to reconnect any disconnected devices
+        int player = mGamePrefs.playerMap.reconnectDevice( hardwareId );
+
+        if (player > 0 && !isControllerPlugged[player-1]) {
+            mCoreFragment.updateControllerConfig(player - 1, true, mGlobalPrefs.getPakType(player).getNativeValue());
+            isControllerPlugged[player-1] = true;
+        }
     }
 }

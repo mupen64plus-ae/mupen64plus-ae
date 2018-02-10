@@ -64,10 +64,10 @@ public abstract class AbstractController
         public boolean[] buttons = new boolean[NUM_N64_BUTTONS];
         
         /** The fractional value of the analog-x axis, between -1 and 1, inclusive. */
-        public float axisFractionX = 0;
+        float axisFractionX = 0;
         
         /** The fractional value of the analog-y axis, between -1 and 1, inclusive. */
-        public float axisFractionY = 0;
+        float axisFractionY = 0;
     }
     
     // Constants must match EButton listing in plugin.h! (input-sdl plug-in)
@@ -127,10 +127,10 @@ public abstract class AbstractController
     private static final ArrayList<State> sStates = new ArrayList<State>();
     
     /** The state of this controller. */
-    protected State mState;
+    State mState;
     
     /** The player number, between 1 and 4, inclusive. */
-    protected int mPlayerNumber = 1;
+    int mPlayerNumber = 1;
 
     private CoreFragment mCoreFragment;
     
@@ -148,7 +148,7 @@ public abstract class AbstractController
     /**
      * Instantiates a new abstract controller.
      */
-    protected AbstractController(CoreFragment coreFragment)
+    AbstractController(CoreFragment coreFragment)
     {
         mCoreFragment = coreFragment;
         mState = sStates.get( 0 );
@@ -157,7 +157,7 @@ public abstract class AbstractController
     /**
      * Notifies the core that the N64 controller state has changed.
      */
-    protected void notifyChanged()
+    void notifyChanged()
     {
         int axisX = Math.round( AXIS_SCALE * mState.axisFractionX );
         int axisY = Math.round( AXIS_SCALE * mState.axisFractionY );
@@ -179,7 +179,7 @@ public abstract class AbstractController
      * 
      * @param player The new player number, between 1 and 4, inclusive.
      */
-    public void setPlayerNumber( int player )
+    void setPlayerNumber( int player )
     {
         mPlayerNumber = player;
         mState = sStates.get( mPlayerNumber - 1 );

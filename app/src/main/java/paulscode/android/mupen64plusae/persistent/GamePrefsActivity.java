@@ -329,17 +329,18 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         }
 
         // Enable/disable player map item as necessary
-        PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP, mGamePrefs.playerMap.isEnabled() );
+        PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP,
+                mGamePrefs.playerMap.isEnabled() && !mGamePrefs.useDefaultPlayerMapping );
 
         // Define which buttons to show in player map dialog
         final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
         if( playerPref != null )
         {
             // Check null in case preference has been removed
-            final boolean enable1 = mGamePrefs.isControllerEnabled1;
-            final boolean enable2 = mGamePrefs.isControllerEnabled2;
-            final boolean enable3 = mGamePrefs.isControllerEnabled3;
-            final boolean enable4 = mGamePrefs.isControllerEnabled4;
+            final boolean enable1 = mGamePrefs.isControllerEnabled[0];
+            final boolean enable2 = mGamePrefs.isControllerEnabled[1];
+            final boolean enable3 = mGamePrefs.isControllerEnabled[2];
+            final boolean enable4 = mGamePrefs.isControllerEnabled[3];
             playerPref.setControllersEnabled( enable1, enable2, enable3, enable4 );
 
             // Set the initial value

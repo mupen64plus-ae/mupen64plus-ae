@@ -357,17 +357,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         pakTypes.add(mGlobalPrefs.getPakType(3).getNativeValue());
         pakTypes.add(mGlobalPrefs.getPakType(4).getNativeValue());
 
-        boolean[] isPlugged = new boolean[4];
-        isPlugged[0] = mGamePrefs.isPlugged1;
-        isPlugged[1] = mGamePrefs.isPlugged2;
-        isPlugged[2] = mGamePrefs.isPlugged3;
-        isPlugged[3] = mGamePrefs.isPlugged4;
 
         // Start the core
         ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomPath,
                 mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
                 mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
-                isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
+                mGamePrefs.isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
                 mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(), mAppData.libsDir);
     }
 
