@@ -5,8 +5,8 @@ import android.util.SparseIntArray;
 public class SerializableMap
 {
     /** Storage for the map. */
-    protected final SparseIntArray mMap = new SparseIntArray();
-    
+    final SparseIntArray mMap = new SparseIntArray();
+
     /**
      * Instantiates a new map.
      */
@@ -19,7 +19,7 @@ public class SerializableMap
      * 
      * @param serializedMap The serialization of the map.
      */
-    public SerializableMap( String serializedMap )
+    SerializableMap( String serializedMap )
     {
         this();
         deserialize( serializedMap );

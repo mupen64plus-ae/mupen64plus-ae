@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -35,14 +35,14 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 public class PlayerMap extends SerializableMap
 {
     /** Flag indicating whether hardware filtering is enabled. */
-    boolean mDisabled = true;
+    private boolean mDisabled = true;
     
     /** A map where the device unique name maps to an id.
      *  When the device reconnects and it is given a new id,
      *  this map allows the old id to be looked up so it can be replaced with the new id. */
-    private HashMap<String, Collection<Integer>> deviceNameToId = new HashMap<String, Collection<Integer>>();
+    private HashMap<String, Collection<Integer>> deviceNameToId = new HashMap<>();
     
-    public static boolean isDeviceId( String deviceName )
+    private static boolean isDeviceId( String deviceName )
     {
         try
         {
@@ -99,7 +99,7 @@ public class PlayerMap extends SerializableMap
      */
     public String getDeviceSummary( Context context, int player )
     {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for( int i = 0; i < mMap.size(); i++ )
         {
             if( mMap.valueAt( i ) == player )
@@ -109,13 +109,14 @@ public class PlayerMap extends SerializableMap
                         AbstractProvider.getHardwareName( deviceId ) :
                         context.getString( R.string.playerMap_deviceNotConnected );
                 if( name == null )
-                    result += context.getString( R.string.playerMap_deviceWithoutName, deviceId );
+                    result.append(context.getString( R.string.playerMap_deviceWithoutName, deviceId ));
                 else
-                    result += context.getString( R.string.playerMap_deviceWithName, deviceId, name );
-                result += "\n";
+                    result.append(context.getString( R.string.playerMap_deviceWithName, deviceId, name ));
+
+                result.append("\n");
             }
         }
-        return result.trim();
+        return result.toString().trim();
     }
     
     /**
@@ -178,7 +179,7 @@ public class PlayerMap extends SerializableMap
             
             if( ids == null )
             {
-                ids = new HashSet<Integer>();
+                ids = new HashSet<>();
                 deviceNameToId.put( name, ids );
             }
             
@@ -188,7 +189,7 @@ public class PlayerMap extends SerializableMap
             Log.w( "InputMap", "Invalid player specified in map(.,.): " + player );
     }
     
-    public void unmap( int hardwareId )
+    private void unmap( int hardwareId )
     {
         mMap.delete( hardwareId );
         
@@ -243,7 +244,7 @@ public class PlayerMap extends SerializableMap
     public String serialize()
     {
         // Serialize the map data to a multi-delimited string
-        String result = "";
+        StringBuilder result = new StringBuilder();
         
         for( Entry<String, Collection<Integer>> entry : deviceNameToId.entrySet() )
         {
@@ -257,12 +258,12 @@ public class PlayerMap extends SerializableMap
                 
                 // Putting the value first makes the string a bit more human readable IMO
                 if( player > 0 && device != null )
-                    result += player + "$" + device + ",";
+                    result.append(player).append("$").append(device).append(",");
             }
         }
         
-        Log.v("PlayerMap", "Serializing: " + result);
-        return result;
+        Log.v("PlayerMap", "Serializing: " + result.toString());
+        return result.toString();
     }
     
     /**
@@ -335,7 +336,7 @@ public class PlayerMap extends SerializableMap
                         
                         if( ids == null )
                         {
-                            ids = new HashSet<Integer>();
+                            ids = new HashSet<>();
                             deviceNameToId.put( deviceName, ids );
                         }
                         

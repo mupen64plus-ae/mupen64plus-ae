@@ -1103,7 +1103,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 Log.i("GameActivity", "Player 1 has been enabled");
             }
         }
-        if( mGamePrefs.isControllerEnabled2 && mGamePrefs.allowMultiplePlayers)
+        if( mGamePrefs.isControllerEnabled2 && mGamePrefs.allowMultiplePlayers && mGamePrefs.playerMap.isMapped(2))
         {
             final ControllerProfile p = mGamePrefs.controllerProfile2;
 
@@ -1113,7 +1113,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 Log.i("GameActivity", "Player 2 has been enabled");
             }
         }
-        if( mGamePrefs.isControllerEnabled3 && mGamePrefs.allowMultiplePlayers)
+        if( mGamePrefs.isControllerEnabled3 && mGamePrefs.allowMultiplePlayers && mGamePrefs.playerMap.isMapped(3))
         {
             final ControllerProfile p = mGamePrefs.controllerProfile3;
 
@@ -1123,7 +1123,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 Log.i("GameActivity", "Player 3 has been enabled");
             }
         }
-        if( mGamePrefs.isControllerEnabled4 && mGamePrefs.allowMultiplePlayers)
+        if( mGamePrefs.isControllerEnabled4 && mGamePrefs.allowMultiplePlayers && mGamePrefs.playerMap.isMapped(4))
         {
             final ControllerProfile p = mGamePrefs.controllerProfile4;
 
