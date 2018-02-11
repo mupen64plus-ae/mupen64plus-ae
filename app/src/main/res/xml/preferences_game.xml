@@ -165,6 +165,62 @@
                 android:title="@string/menuItem_player_four" />
 
         </android.support.v7.preference.PreferenceCategory>
+
+        <android.support.v7.preference.PreferenceCategory
+            android:key="categoryTransferPaks"
+            android:title="@string/menuItem_paks_transfer" >
+
+            <paulscode.android.mupen64plusae.preference.PathPreference
+                android:defaultValue="!"
+                android:key="transferPak1Rom"
+                android:title="@string/menuItem_paks_transfer_player1_rom"
+                mupen64:selectionMode="1"
+                mupen64:allowSd="true"/>
+            <paulscode.android.mupen64plusae.preference.PathPreference
+                android:defaultValue="!"
+                android:key="transferPak1Ram"
+                android:title="@string/menuItem_paks_transfer_player1_ram"
+                mupen64:selectionMode="1"
+                mupen64:allowSd="true" />
+            <paulscode.android.mupen64plusae.preference.PathPreference
+                android:defaultValue="!"
+                android:key="transferPak2Rom"
+                android:title="@string/menuItem_paks_transfer_player2_rom"
+                mupen64:selectionMode="1"
+                mupen64:allowSd="true" />
+            <paulscode.android.mupen64plusae.preference.PathPreference
+                android:defaultValue="!"
+                android:key="transferPak2Ram"
+                android:title="@string/menuItem_paks_transfer_player2_ram"
+                mupen64:selectionMode="1"
+                mupen64:allowSd="true" />
+            <paulscode.android.mupen64plusae.preference.PathPreference
+                android:defaultValue="!"
+                android:key="transferPak3Rom"
+                android:title="@string/menuItem_paks_transfer_player3_rom"
+                mupen64:selectionMode="1"
+                mupen64:allowSd="true" />
+            <paulscode.android.mupen64plusae.preference.PathPreference
+                android:defaultValue="!"
+                android:key="transferPak3Ram"
+                android:title="@string/menuItem_paks_transfer_player3_ram"
+                mupen64:selectionMode="1"
+                mupen64:allowSd="true" />
+            <paulscode.android.mupen64plusae.preference.PathPreference
+                android:defaultValue="!"
+                android:key="transferPak4Rom"
+                android:title="@string/menuItem_paks_transfer_player4_rom"
+                mupen64:selectionMode="1"
+                mupen64:allowSd="true" />
+            <paulscode.android.mupen64plusae.preference.PathPreference
+                android:defaultValue="!"
+                android:key="transferPak4Ram"
+                android:title="@string/menuItem_paks_transfer_player4_ram"
+                mupen64:selectionMode="1"
+                mupen64:allowSd="true" />
+
+        </android.support.v7.preference.PreferenceCategory>
+
     </android.support.v7.preference.PreferenceScreen>
 
     <android.support.v7.preference.PreferenceScreen

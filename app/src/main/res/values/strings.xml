@@ -51,6 +51,15 @@
     <string name="menuItem_pak_rumble">Rumble Pak</string>
  <!-- capitalize since trademark -->
     <string name="menuItem_pak_transfer">Transfer Pak</string>
+    <string name="menuItem_paks_transfer">Transfer Paks</string>
+    <string name="menuItem_paks_transfer_player1_rom">Player 1 Gameboy ROM</string>
+    <string name="menuItem_paks_transfer_player1_ram">Player 1 Gameboy RAM</string>
+    <string name="menuItem_paks_transfer_player2_rom">Player 2 Gameboy ROM</string>
+    <string name="menuItem_paks_transfer_player2_ram">Player 2 Gameboy RAM</string>
+    <string name="menuItem_paks_transfer_player3_rom">Player 3 Gameboy ROM</string>
+    <string name="menuItem_paks_transfer_player3_ram">Player 3 Gameboy RAM</string>
+    <string name="menuItem_paks_transfer_player4_rom">Player 4 Gameboy ROM</string>
+    <string name="menuItem_paks_transfer_player4_ram">Player 4 Gameboy RAM</string>
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
 

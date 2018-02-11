@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -49,22 +49,23 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 public class PathPreference extends DialogPreference implements OnPreferenceDialogListener, DialogInterface.OnClickListener 
 {
     /** The user must select a directory. No files will be shown in the list. */
-    public static final int SELECTION_MODE_DIRECTORY = 0;
+    private static final int SELECTION_MODE_DIRECTORY = 0;
     
     /** The user must select a file. The dialog will only close when a file is selected. */
-    public static final int SELECTION_MODE_FILE = 1;
+    private static final int SELECTION_MODE_FILE = 1;
     
     /** The user may select a file or a directory. The Ok button must be used. */
-    public static final int SELECTION_MODE_ANY = 2;
+    private static final int SELECTION_MODE_ANY = 2;
     
     private static final String STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static final String DEFAULT_DIR = "mupen64plus";
 
     private final boolean mUseDefaultSummary;
     private int mSelectionMode = SELECTION_MODE_ANY;
+    private boolean mAllowSd = false;
     private boolean mDoReclick = false;
-    private final List<CharSequence> mNames = new ArrayList<CharSequence>();
-    private final List<String> mPaths = new ArrayList<String>();
+    private final List<CharSequence> mNames = new ArrayList<>();
+    private final List<String> mPaths = new ArrayList<>();
     private String mNewValue;
     private String mValue;
 
@@ -83,6 +84,7 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         // Get the selection mode from the XML file, if provided
         TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.PathPreference );
         mSelectionMode = a.getInteger( R.styleable.PathPreference_selectionMode, SELECTION_MODE_ANY );
+        mAllowSd = a.getBoolean( R.styleable.PathPreference_allowSd, false );
         a.recycle();
         
         setOnPreferenceChangeListener(null);
@@ -101,7 +103,7 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         
         // Summary always reflects the true/persisted value, does not track the temporary/new value
         if( mUseDefaultSummary )
-            setSummary( mSelectionMode == SELECTION_MODE_FILE ? new File( mValue ).getName() : mValue );
+            setSummary( mValue );
         
         // Reset the dialog info
         populate( mValue );
@@ -174,7 +176,7 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         {
             //Don't allow setting path outside default storage dir. We don't support external
             //SD cards or drives
-            if(mPaths.get( which ).contains(STORAGE_DIR))
+            if(mAllowSd || mPaths.get( which ).contains(STORAGE_DIR))
             {
                 mNewValue = mPaths.get( which );
                 File path = new File( mNewValue );
@@ -185,10 +187,10 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
                     populate( mNewValue );
                     mDoReclick = true;
                 }
-                else
+                else if( mSelectionMode == SELECTION_MODE_FILE )
                 {
-                    // ...or close dialog positively
-                    which = DialogInterface.BUTTON_POSITIVE;
+                    // Use the file
+                    setValue( mNewValue );
                 }
             }
             else

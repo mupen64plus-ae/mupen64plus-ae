@@ -3,6 +3,7 @@
 
     <declare-styleable name="PathPreference">
         <attr name="selectionMode" format="integer" />
+        <attr name="allowSd" format="boolean" />
     </declare-styleable>
     <declare-styleable name="SeekBarPreference">
         <attr name="minimumValue" format="integer" />
