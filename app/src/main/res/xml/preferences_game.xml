@@ -127,6 +127,44 @@
             android:key="playerMapV2"
             android:summary="@string/playerMap_summary"
             android:title="@string/playerMap_title" />
+
+        <android.support.v7.preference.PreferenceCategory
+            android:key="categoryControllerPaks"
+            android:title="@string/menuItem_paks" >
+
+            <paulscode.android.mupen64plusae.preference.CompatListPreference
+                android:defaultValue="@string/pakType_default"
+                android:entries="@array/pakType_entries"
+                android:entryValues="@array/pakType_values"
+                android:key="inputPakType1"
+                android:summary="@string/selectedValue"
+                android:title="@string/menuItem_player_one" />
+
+            <paulscode.android.mupen64plusae.preference.CompatListPreference
+                android:defaultValue="@string/pakType_default"
+                android:entries="@array/pakType_entries"
+                android:entryValues="@array/pakType_values"
+                android:key="inputPakType2"
+                android:summary="@string/selectedValue"
+                android:title="@string/menuItem_player_two" />
+
+            <paulscode.android.mupen64plusae.preference.CompatListPreference
+                android:defaultValue="@string/pakType_default"
+                android:entries="@array/pakType_entries"
+                android:entryValues="@array/pakType_values"
+                android:key="inputPakType3"
+                android:summary="@string/selectedValue"
+                android:title="@string/menuItem_player_three" />
+
+            <paulscode.android.mupen64plusae.preference.CompatListPreference
+                android:defaultValue="@string/pakType_default"
+                android:entries="@array/pakType_entries"
+                android:entryValues="@array/pakType_values"
+                android:key="inputPakType4"
+                android:summary="@string/selectedValue"
+                android:title="@string/menuItem_player_four" />
+
+        </android.support.v7.preference.PreferenceCategory>
     </android.support.v7.preference.PreferenceScreen>
 
     <android.support.v7.preference.PreferenceScreen

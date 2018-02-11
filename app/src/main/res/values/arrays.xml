@@ -227,6 +227,22 @@
 
     <string name="videoHardwareType_default" translatable="false">-1</string>
 
+    <!-- Screen Orientation List -->
+    <string-array name="pakType_entries" translatable="false">
+        <item>@string/menuItem_pak_empty</item>
+        <item>@string/menuItem_pak_mem</item>
+        <item>@string/menuItem_pak_rumble</item>
+        <item>@string/menuItem_pak_transfer</item>
+    </string-array>
+    <string-array name="pakType_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string name="pakType_default" translatable="false">2</string>
+
     <!-- Gln64 Frameskip List -->
     <string-array name="gln64Frameskip_entries" translatable="false">
         <item>@string/gln64Frameskip_entryNever</item>

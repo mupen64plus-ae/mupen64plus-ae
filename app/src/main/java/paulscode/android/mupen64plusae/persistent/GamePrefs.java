@@ -308,7 +308,7 @@ public class GamePrefs
     private static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
 
 
-    private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
+    private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType";
     private static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
 
     public GamePrefs( Context context, String md5, String crc, String headerName, String goodName,
@@ -827,23 +827,22 @@ public class GamePrefs
 
     public PakType getPakType(int player )
     {
-        return PakType.getPakTypeFromNativeValue(getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE ));
+        return PakType.getPakTypeFromNativeValue(
+                Integer.parseInt(getString( KEYTEMPLATE_PAK_TYPE + player, String.valueOf(DEFAULT_PAK_TYPE) )));
     }
 
     public void putPakType( int player, PakType pakType )
     {
-        putInt( KEYTEMPLATE_PAK_TYPE, player, pakType.getNativeValue() );
+        putString( KEYTEMPLATE_PAK_TYPE + player, String.valueOf(pakType.getNativeValue()) );
     }
 
-    public int getInt( String keyTemplate, int index, int defaultValue )
+    public String getString( String key, String defaultValue )
     {
-        final String key = String.format( Locale.US, keyTemplate, index );
-        return mPreferences.getInt( key, defaultValue );
+        return mPreferences.getString( key, defaultValue );
     }
 
-    private void putInt( String keyTemplate, int index, int value )
+    private void putString( String key, String value )
     {
-        final String key = String.format( Locale.US, keyTemplate, index );
-        mPreferences.edit().putInt( key, value ).apply();
+        mPreferences.edit().putString( key, value ).apply();
     }
 }
