@@ -886,7 +886,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(mCoreFragment == null) return;
 
         final Vibrator vibrator = (Vibrator) this.getSystemService( Context.VIBRATOR_SERVICE );
-        mCoreFragment.registerVibrator(1, vibrator);
+
+        if (vibrator != null) {
+            mCoreFragment.registerVibrator(1, vibrator);
+        }
 
         ReloadAllMenus();
 
