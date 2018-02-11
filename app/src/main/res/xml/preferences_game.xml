@@ -75,52 +75,59 @@
         android:title="@string/touchscreenProfile_title"
         mupen64:allowDisable="true"
         mupen64:managerAction=".profile.ManageTouchscreenProfilesActivity" />
-    <paulscode.android.mupen64plusae.preference.ProfilePreference
-        android:icon="@drawable/ic_gamepad"
-        android:key="controllerProfile1"
-        android:summary="@string/selectedValue"
-        android:title="@string/controllerProfile1_title"
-        mupen64:allowDisable="true"
-        mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-    <paulscode.android.mupen64plusae.preference.ProfilePreference
-        android:icon="@drawable/ic_gamepad"
-        android:key="controllerProfile2"
-        android:summary="@string/selectedValue"
-        android:title="@string/controllerProfile2_title"
-        mupen64:allowDisable="true"
-        mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-    <paulscode.android.mupen64plusae.preference.ProfilePreference
-        android:icon="@drawable/ic_gamepad"
-        android:key="controllerProfile3"
-        android:summary="@string/selectedValue"
-        android:title="@string/controllerProfile3_title"
-        mupen64:allowDisable="true"
-        mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-    <paulscode.android.mupen64plusae.preference.ProfilePreference
-        android:icon="@drawable/ic_gamepad"
-        android:key="controllerProfile4"
-        android:summary="@string/selectedValue"
-        android:title="@string/controllerProfile4_title"
-        mupen64:allowDisable="true"
-        mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-    <android.support.v7.preference.CheckBoxPreference
-        android:icon="@drawable/ic_gamepad"
-        android:defaultValue="false"
-        android:key="inputShareController"
-        android:summary="@string/inputShareController_summary"
-        android:title="@string/inputShareController_title" />
-    <android.support.v7.preference.CheckBoxPreference
-        android:icon="@drawable/ic_gamepad"
-        android:defaultValue="true"
-        android:key="useDefaultPlayerMapping"
-        android:summary="@string/playerMap_useDefaultPlayerMap_summary"
-        android:title="@string/playerMap_useDefaultPlayerMap_title" />
 
-    <paulscode.android.mupen64plusae.preference.PlayerMapPreference
-        android:icon="@drawable/ic_users"
-        android:key="playerMapV2"
-        android:summary="@string/playerMap_summary"
-        android:title="@string/playerMap_title" />
+    <android.support.v7.preference.PreferenceScreen
+        android:icon="@drawable/ic_gamepad"
+        android:key="screenController"
+        android:title="@string/menuItem_controllerProfiles" >
+
+        <paulscode.android.mupen64plusae.preference.ProfilePreference
+            android:icon="@drawable/ic_gamepad"
+            android:key="controllerProfile1"
+            android:summary="@string/selectedValue"
+            android:title="@string/controllerProfile1_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+        <paulscode.android.mupen64plusae.preference.ProfilePreference
+            android:icon="@drawable/ic_gamepad"
+            android:key="controllerProfile2"
+            android:summary="@string/selectedValue"
+            android:title="@string/controllerProfile2_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+        <paulscode.android.mupen64plusae.preference.ProfilePreference
+            android:icon="@drawable/ic_gamepad"
+            android:key="controllerProfile3"
+            android:summary="@string/selectedValue"
+            android:title="@string/controllerProfile3_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+        <paulscode.android.mupen64plusae.preference.ProfilePreference
+            android:icon="@drawable/ic_gamepad"
+            android:key="controllerProfile4"
+            android:summary="@string/selectedValue"
+            android:title="@string/controllerProfile4_title"
+            mupen64:allowDisable="true"
+            mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:icon="@drawable/ic_gamepad"
+            android:defaultValue="false"
+            android:key="inputShareController"
+            android:summary="@string/inputShareController_summary"
+            android:title="@string/inputShareController_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:icon="@drawable/ic_gamepad"
+            android:defaultValue="true"
+            android:key="useDefaultPlayerMapping"
+            android:summary="@string/playerMap_useDefaultPlayerMap_summary"
+            android:title="@string/playerMap_useDefaultPlayerMap_title" />
+
+        <paulscode.android.mupen64plusae.preference.PlayerMapPreference
+            android:icon="@drawable/ic_users"
+            android:key="playerMapV2"
+            android:summary="@string/playerMap_summary"
+            android:title="@string/playerMap_title" />
+    </android.support.v7.preference.PreferenceScreen>
 
     <android.support.v7.preference.PreferenceScreen
         android:icon="@drawable/ic_settings"
