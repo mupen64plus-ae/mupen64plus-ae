@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -832,12 +833,22 @@ public class GamePrefs
 
     public String getTransferPakRom(int player)
     {
-        return getString( "transferPak" + player + "Rom", "" );
+        String romPath = getString( "transferPak" + player + "Rom", "" );
+
+        if (!TextUtils.isEmpty(romPath) && new File(romPath).isDirectory()) {
+            romPath = "";
+        }
+        return romPath;
     }
 
     public String getTransferPakRam(int player)
     {
-        return getString( "transferPak" + player + "Ram", "" );
+        String ramPath = getString( "transferPak" + player + "Ram", "" );
+
+        if (!TextUtils.isEmpty(ramPath) && new File(ramPath).isDirectory()) {
+            ramPath = "";
+        }
+        return ramPath;
     }
 
     public void putPakType( int player, PakType pakType )
