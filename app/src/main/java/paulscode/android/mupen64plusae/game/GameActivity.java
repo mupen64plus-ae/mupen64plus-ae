@@ -1184,8 +1184,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             if (mCoreFragment != null) {
-                //Check if any controllers have changed state
-                for (int index = 0; index < mGamePrefs.controllerProfile.length; ++index) {
+                //Check if any controllers have changed state, except for controller 1
+                for (int index = 1; index < mGamePrefs.controllerProfile.length; ++index) {
                     if (!mGamePrefs.playerMap.isPlayerAvailable(index+1) && isControllerPlugged[index]) {
                         mCoreFragment.updateControllerConfig(index, false, mGamePrefs.getPakType(index+1).getNativeValue());
                         isControllerPlugged[index] = false;
