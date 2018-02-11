@@ -352,10 +352,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         };
 
         ArrayList<Integer> pakTypes = new ArrayList<>();
-        pakTypes.add(mGlobalPrefs.getPakType(1).getNativeValue());
-        pakTypes.add(mGlobalPrefs.getPakType(2).getNativeValue());
-        pakTypes.add(mGlobalPrefs.getPakType(3).getNativeValue());
-        pakTypes.add(mGlobalPrefs.getPakType(4).getNativeValue());
+        pakTypes.add(mGamePrefs.getPakType(1).getNativeValue());
+        pakTypes.add(mGamePrefs.getPakType(2).getNativeValue());
+        pakTypes.add(mGamePrefs.getPakType(3).getNativeValue());
+        pakTypes.add(mGamePrefs.getPakType(4).getNativeValue());
 
 
         // Start the core

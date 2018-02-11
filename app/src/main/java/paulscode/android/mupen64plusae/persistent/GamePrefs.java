@@ -5,14 +5,18 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.mupen64plusae.v3.alpha.R;
+
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.preference.MultiSelectListPreference;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
@@ -21,6 +25,51 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 
 public class GamePrefs
 {
+    //Pak Type
+    public enum PakType {
+        NONE(NativeConstants.PAK_TYPE_NONE, R.string.menuItem_pak_empty),
+        MEMORY(NativeConstants.PAK_TYPE_MEMORY, R.string.menuItem_pak_mem),
+        RAMBLE(NativeConstants.PAK_TYPE_RUMBLE, R.string.menuItem_pak_rumble),
+        TRANSFER(NativeConstants.PAK_TYPE_TRANSFER, R.string.menuItem_pak_transfer);
+
+        private final int mNativeValue;
+        private final int mResourceStringName;
+
+        PakType(int nativeValue, int resourceStringName)
+        {
+            mNativeValue = nativeValue;
+            mResourceStringName = resourceStringName;
+        }
+
+        public int getNativeValue()
+        {
+            return mNativeValue;
+        }
+
+        public static PakType getPakTypeFromNativeValue(int nativeValue)
+        {
+            switch (nativeValue)
+            {
+                case NativeConstants.PAK_TYPE_NONE:
+                    return NONE;
+                case NativeConstants.PAK_TYPE_MEMORY:
+                    return MEMORY;
+                case NativeConstants.PAK_TYPE_RUMBLE:
+                    return RAMBLE;
+                case NativeConstants.PAK_TYPE_TRANSFER:
+                    return RAMBLE;
+                default:
+                    return NONE;
+
+            }
+        }
+
+        public int getResourceString()
+        {
+            return mResourceStringName;
+        }
+    }
+
     /** The name of the game-specific {@link SharedPreferences} object.*/
     private final String mSharedPrefsName;
 
@@ -257,6 +306,10 @@ public class GamePrefs
     private static final String SCREENSHOTS_DIR = "Screenshots";
     private static final String CORE_CONFIG_DIR = "CoreConfig";
     private static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
+
+
+    private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
+    private static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
 
     public GamePrefs( Context context, String md5, String crc, String headerName, String goodName,
         String countrySymbol, AppData appData, GlobalPrefs globalPrefs, String legacySave)
@@ -770,5 +823,27 @@ public class GamePrefs
             }
         }
         return Collections.unmodifiableSet( mutableSet );
+    }
+
+    public PakType getPakType(int player )
+    {
+        return PakType.getPakTypeFromNativeValue(getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE ));
+    }
+
+    public void putPakType( int player, PakType pakType )
+    {
+        putInt( KEYTEMPLATE_PAK_TYPE, player, pakType.getNativeValue() );
+    }
+
+    public int getInt( String keyTemplate, int index, int defaultValue )
+    {
+        final String key = String.format( Locale.US, keyTemplate, index );
+        return mPreferences.getInt( key, defaultValue );
+    }
+
+    private void putInt( String keyTemplate, int index, int value )
+    {
+        final String key = String.format( Locale.US, keyTemplate, index );
+        mPreferences.edit().putInt( key, value ).apply();
     }
 }

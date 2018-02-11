@@ -50,6 +50,7 @@
  <!-- capitalize since trademark -->
     <string name="menuItem_pak_rumble">Rumble Pak</string>
  <!-- capitalize since trademark -->
+    <string name="menuItem_pak_transfer">Transfer Pak</string>
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
 

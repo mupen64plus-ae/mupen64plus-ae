@@ -42,6 +42,7 @@ public class NativeConstants
     
     public static final int PAK_TYPE_NONE               = 1;
     public static final int PAK_TYPE_MEMORY             = 2;
-    public static final int PAK_TYPE_RUMBLE             = 5;
+    public static final int PAK_TYPE_RUMBLE             = 3;
+    public static final int PAK_TYPE_TRANSFER           = 4;
     // @formatter:on
 }

@@ -307,7 +307,6 @@ public class GlobalPrefs
     static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
     static final String KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "touchscreenProfileDpadDefault";
-    private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     // ... add more as needed
 
@@ -316,7 +315,6 @@ public class GlobalPrefs
     public static final String DEFAULT_TOUCHSCREEN_PROFILE_DEFAULT = "Analog";
     public static final String DEFAULT_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "Everything";
     static final String DEFAULT_CONTROLLER_PROFILE_DEFAULT = "Android Gamepad";
-    private static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final String DEFAULT_LOCALE_OVERRIDE = "";
     // ... add more as needed
 
@@ -326,48 +324,6 @@ public class GlobalPrefs
     private final String[] mLocaleCodes;
 
     private final String supportedGlesVersion;
-
-    //Pak Type
-    public enum PakType {
-        NONE(NativeConstants.PAK_TYPE_NONE, R.string.menuItem_pak_empty),
-        MEMORY(NativeConstants.PAK_TYPE_MEMORY, R.string.menuItem_pak_mem),
-        RAMBLE(NativeConstants.PAK_TYPE_RUMBLE, R.string.menuItem_pak_rumble);
-
-        private final int mNativeValue;
-        private final int mResourceStringName;
-
-        PakType(int nativeValue, int resourceStringName)
-        {
-            mNativeValue = nativeValue;
-            mResourceStringName = resourceStringName;
-        }
-
-        public int getNativeValue()
-        {
-            return mNativeValue;
-        }
-
-        public static PakType getPakTypeFromNativeValue(int nativeValue)
-        {
-            switch (nativeValue)
-            {
-                case NativeConstants.PAK_TYPE_NONE:
-                    return NONE;
-                case NativeConstants.PAK_TYPE_MEMORY:
-                    return MEMORY;
-                case NativeConstants.PAK_TYPE_RUMBLE:
-                    return RAMBLE;
-                default:
-                    return NONE;
-
-            }
-        }
-
-        public int getResourceString()
-        {
-            return mResourceStringName;
-        }
-    }
 
     /**
      * Instantiates a new user preferences wrapper.
@@ -722,11 +678,6 @@ public class GlobalPrefs
         return getString( GamePrefs.CONTROLLER_PROFILE1, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
     }
 
-    public PakType getPakType( int player )
-    {
-        return PakType.getPakTypeFromNativeValue(getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE ));
-    }
-
     public void putEmulationProfileDefault( String value )
     {
         putString( KEY_EMULATION_PROFILE_DEFAULT, value );
@@ -742,20 +693,9 @@ public class GlobalPrefs
         putString( KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT, value );
     }
 
-    public void putPakType( int player, PakType pakType )
-    {
-        putInt( KEYTEMPLATE_PAK_TYPE, player, pakType.getNativeValue() );
-    }
-
     public boolean getBoolean( String key, boolean defaultValue )
     {
         return mPreferences.getBoolean( key, defaultValue );
-    }
-
-    public int getInt( String keyTemplate, int index, int defaultValue )
-    {
-        final String key = String.format( Locale.US, keyTemplate, index );
-        return mPreferences.getInt( key, defaultValue );
     }
 
     public String getString( String key, String defaultValue )
@@ -766,12 +706,6 @@ public class GlobalPrefs
     private void putBoolean( String key, boolean value )
     {
         mPreferences.edit().putBoolean( key, value ).apply();
-    }
-
-    private void putInt( String keyTemplate, int index, int value )
-    {
-        final String key = String.format( Locale.US, keyTemplate, index );
-        mPreferences.edit().putInt( key, value ).apply();
     }
 
     private void putString( String key, String value )

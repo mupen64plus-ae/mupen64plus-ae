@@ -82,7 +82,7 @@ import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-import paulscode.android.mupen64plusae.persistent.GlobalPrefs.PakType;
+import paulscode.android.mupen64plusae.persistent.GamePrefs.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
@@ -595,7 +595,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             else
             {
                 final MenuItem playerItem = mGameSidebar.getMenu().findItem(menuItemId);
-                playerItem.setTitleCondensed(this.getString(mGlobalPrefs.getPakType(playerNumber).getResourceString()));
+                playerItem.setTitleCondensed(this.getString(mGamePrefs.getPakType(playerNumber).getResourceString()));
             }
         }
     }
@@ -781,7 +781,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                     {
                         if( which == DialogInterface.BUTTON_POSITIVE )
                         {
-                            mGlobalPrefs.putPakType(player, PakType.values()[value]);
+                            mGamePrefs.putPakType(player, PakType.values()[value]);
 
                             // Set the pak in the core
                             if(mCoreFragment != null)
@@ -790,7 +790,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                             }
 
                             //Update the menu
-                            playerMenuItem.setTitleCondensed(GameActivity.this.getString(mGlobalPrefs.getPakType(player).getResourceString()));
+                            playerMenuItem.setTitleCondensed(GameActivity.this.getString(mGamePrefs.getPakType(player).getResourceString()));
                             mGameSidebar.reload();
                         }
                     }
@@ -1187,7 +1187,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 //Check if any controllers have changed state
                 for (int index = 0; index < mGamePrefs.controllerProfile.length; ++index) {
                     if (!mGamePrefs.playerMap.isPlayerAvailable(index+1) && isControllerPlugged[index]) {
-                        mCoreFragment.updateControllerConfig(index, false, mGlobalPrefs.getPakType(index+1).getNativeValue());
+                        mCoreFragment.updateControllerConfig(index, false, mGamePrefs.getPakType(index+1).getNativeValue());
                         isControllerPlugged[index] = false;
 
                         Log.i("GameActivity", "controller " + index + " was unplugged");
@@ -1226,7 +1226,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         int player = mGamePrefs.playerMap.reconnectDevice( hardwareId );
 
         if (player > 0 && !isControllerPlugged[player-1]) {
-            mCoreFragment.updateControllerConfig(player - 1, true, mGlobalPrefs.getPakType(player).getNativeValue());
+            mCoreFragment.updateControllerConfig(player - 1, true, mGamePrefs.getPakType(player).getNativeValue());
             isControllerPlugged[player-1] = true;
         }
     }
