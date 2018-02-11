@@ -135,6 +135,14 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "UI-Console", "Version", "1.000000" );                                                         // Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );                                      // Directory in which to search for plugins
 
+        mupen64plus_cfg.put( "Transferpak", "GB-rom-1", game.getTransferPakRom(1) );
+        mupen64plus_cfg.put( "Transferpak", "GB-ram-1", game.getTransferPakRam(1) );
+        mupen64plus_cfg.put( "Transferpak", "GB-rom-2", game.getTransferPakRom(2) );
+        mupen64plus_cfg.put( "Transferpak", "GB-ram-2", game.getTransferPakRam(2) );
+        mupen64plus_cfg.put( "Transferpak", "GB-rom-3", game.getTransferPakRom(3) );
+        mupen64plus_cfg.put( "Transferpak", "GB-ram-3", game.getTransferPakRam(3) );
+        mupen64plus_cfg.put( "Transferpak", "GB-rom-4", game.getTransferPakRom(4) );
+        mupen64plus_cfg.put( "Transferpak", "GB-ram-4", game.getTransferPakRam(4) );
 
         //Add safety checks to prevent users from manually inputting unsupported plugins for their device
         String videoPluginString = game.videoPlugin.path;

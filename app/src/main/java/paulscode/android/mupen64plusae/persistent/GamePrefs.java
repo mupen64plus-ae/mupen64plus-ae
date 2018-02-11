@@ -9,7 +9,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -829,6 +828,16 @@ public class GamePrefs
     {
         return PakType.getPakTypeFromNativeValue(
                 Integer.parseInt(getString( KEYTEMPLATE_PAK_TYPE + player, String.valueOf(DEFAULT_PAK_TYPE) )));
+    }
+
+    public String getTransferPakRom(int player)
+    {
+        return getString( "transferPak" + player + "Rom", "" );
+    }
+
+    public String getTransferPakRam(int player)
+    {
+        return getString( "transferPak" + player + "Ram", "" );
     }
 
     public void putPakType( int player, PakType pakType )
