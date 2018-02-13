@@ -582,6 +582,7 @@ public class GamePrefs
                 headerNameLowerCase.equals("MS. PAC-MAN MM".toLowerCase()) ||
                 headerNameLowerCase.contains("POKEMON STADIUM".toLowerCase()) ||
                 headerNameLowerCase.equals("PUZZLE LEAGUE N64".toLowerCase()) ||
+                headerNameLowerCase.contains("TETRIS".toLowerCase()) ||
                 headerNameLowerCase.contains("TONY HAWK".toLowerCase()) ||
                 headerNameLowerCase.contains("THPS".toLowerCase()) ||
                 headerNameLowerCase.contains("Turok".toLowerCase()) ||
