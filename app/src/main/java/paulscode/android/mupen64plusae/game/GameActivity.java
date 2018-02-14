@@ -1114,7 +1114,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(p != null) {
            new PeripheralController( mCoreFragment, player, mGamePrefs.playerMap, p.getMap(), p.getDeadzone(),
                     p.getSensitivityX(), p.getSensitivityY(), mOverlay, this, null, mKeyProvider, mAxisProvider, mogaProvider );
-            Log.i("GameActivity", "Player " + player + " has been enabled");
+            Log.i("GameActivity", "Player " + player + " controller has been enabled");
         }
     }
 
@@ -1184,8 +1184,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             if (mCoreFragment != null) {
+
+                int startIndex = mGamePrefs.isTouchscreenEnabled ? 1 : 0;
                 //Check if any controllers have changed state, except for controller 1
-                for (int index = 1; index < mGamePrefs.controllerProfile.length; ++index) {
+                for (int index = startIndex; index < mGamePrefs.controllerProfile.length; ++index) {
                     if (!mGamePrefs.playerMap.isPlayerAvailable(index+1) && isControllerPlugged[index]) {
                         mCoreFragment.updateControllerConfig(index, false, mGamePrefs.getPakType(index+1).getNativeValue());
                         isControllerPlugged[index] = false;

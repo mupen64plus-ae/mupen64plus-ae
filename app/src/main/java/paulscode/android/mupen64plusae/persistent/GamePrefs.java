@@ -345,7 +345,7 @@ public class GamePrefs
         // Touchscreen profile
         if(globalPrefs.isBigScreenMode)
         {
-            touchscreenProfile =  new Profile( true, appData.GetTouchscreenProfilesConfig().get( "None" ) );
+            touchscreenProfile =  null;
         }
         else
         {
@@ -555,7 +555,7 @@ public class GamePrefs
         playerMap.setEnabled(!isControllerShared);
 
         // Determine which players are "plugged in"
-        isPlugged[0] = isControllerEnabled[0] || isTouchscreenEnabled;
+        isPlugged[0] = isControllerEnabled[0] && (playerMap.isPlayerAvailable(1) || isControllerShared || isTouchscreenEnabled);
         isPlugged[1] = isControllerEnabled[1] && (playerMap.isPlayerAvailable(2) || isControllerShared);
         isPlugged[2] = isControllerEnabled[2] && (playerMap.isPlayerAvailable(3) || isControllerShared);
         isPlugged[3] = isControllerEnabled[3] && (playerMap.isPlayerAvailable(4) || isControllerShared);
