@@ -250,6 +250,9 @@ public class GamePrefs
     /** True if any type of AbstractController is enabled for all players. */
     public final boolean[] isPlugged = new boolean[NUM_CONTROLLERS];
 
+    /** True if one controller can control multiple players */
+    public final boolean isControllerShared;
+
     /** True if the touchscreen joystick is hidden when sensor is enabled. */
     public final boolean isAnalogHiddenWhenSensor;
 
@@ -544,7 +547,7 @@ public class GamePrefs
         touchscreenAutoHold = tmpTouchscreenAutoHold;
 
         // Peripheral share mode
-        boolean isControllerShared = mPreferences.getBoolean( "inputShareController", false );
+        isControllerShared = mPreferences.getBoolean( "inputShareController", false );
 
         // Determine which peripheral controllers are enabled
         for(int index = 0; index < NUM_CONTROLLERS; ++index) {

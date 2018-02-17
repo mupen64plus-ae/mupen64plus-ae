@@ -1183,7 +1183,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 mOverlay.onTouchControlsHide();
             }
 
-            if (mCoreFragment != null) {
+            if (mCoreFragment != null && !mGamePrefs.isControllerShared) {
 
                 int startIndex = mGamePrefs.isTouchscreenEnabled ? 1 : 0;
                 //Check if any controllers have changed state, except for controller 1
