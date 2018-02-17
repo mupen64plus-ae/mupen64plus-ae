@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.input.map;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.mupen64plusae.v3.alpha.R;
@@ -36,6 +37,8 @@ public class PlayerMap extends SerializableMap
 {
     /** Flag indicating whether hardware filtering is enabled. */
     private boolean mDisabled = true;
+
+    private boolean mAutoMapping = false;
     
     /** A map where the device unique name maps to an id.
      *  When the device reconnects and it is given a new id,
@@ -151,7 +154,17 @@ public class PlayerMap extends SerializableMap
                         }
                     }
                 }
-            }
+            //If not previously mapped and auto mapping is enabled
+            } else if (mAutoMapping) {
+
+                int nextMappablePlayer = getNextAvailablePlayer();
+
+                if (nextMappablePlayer != -1) {
+                    map( hardwareId, nextMappablePlayer );
+                }
+
+                return nextMappablePlayer;
+             }
         }
         
         return -1;
@@ -164,9 +177,20 @@ public class PlayerMap extends SerializableMap
         return indexValue >= 0 && AbstractProvider.isHardwareAvailable(mMap.keyAt(indexValue));
     }
 
-    private int getNumberOfMappedPlayers()
+    public int getNumberOfMappedPlayers()
     {
         return mMap.size();
+    }
+
+    private int getNextAvailablePlayer() {
+
+        for(int index = 1; index <= 4; ++index) {
+            if (!isPlayerAvailable(index)) {
+                return index;
+            }
+        }
+
+        return -1;
     }
     
     public void map( int hardwareId, int player )
@@ -278,9 +302,11 @@ public class PlayerMap extends SerializableMap
     {
         // Reset the map
         unmapAll();
-        
+
+        mAutoMapping = TextUtils.isEmpty(s);
+
         // Parse the new map data from the multi-delimited string
-        if( s != null )
+        if(!mAutoMapping )
         {
             int psuedoId = -100;
             

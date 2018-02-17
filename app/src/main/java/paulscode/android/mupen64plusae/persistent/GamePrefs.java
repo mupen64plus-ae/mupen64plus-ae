@@ -345,10 +345,12 @@ public class GamePrefs
         
         Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());
 
+        final String fpsOnlyTouchscreenProfile = "None";
+
         // Touchscreen profile
         if(globalPrefs.isBigScreenMode)
         {
-            touchscreenProfile =  null;
+            touchscreenProfile =  new Profile( true, appData.GetTouchscreenProfilesConfig().get( fpsOnlyTouchscreenProfile ) );
         }
         else
         {
@@ -390,8 +392,8 @@ public class GamePrefs
         useDefaultPlayerMapping = mPreferences.getBoolean( "useDefaultPlayerMapping", true );
         String playerMapString = mPreferences.getString( PLAYER_MAP, "" );
 
-        if( playerMapString.isEmpty() || useDefaultPlayerMapping) {
-            playerMapString = globalPrefs.getString(PLAYER_MAP, "");
+        if( useDefaultPlayerMapping) {
+            playerMapString = globalPrefs.autoPlayerMapping ? "" : globalPrefs.getString(PLAYER_MAP, "");
             Log.i("GamePrefs", "Using default player mapping");
         }
 
@@ -473,7 +475,14 @@ public class GamePrefs
         videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
 
         // Touchscreen prefs
-        isTouchscreenEnabled = touchscreenProfile != null;
+        isTouchscreenEnabled = touchscreenProfile != null && !touchscreenProfile.getName().equals(fpsOnlyTouchscreenProfile);
+
+        // Determine the touchscreen layout
+        final String layout = touchscreenProfile.get( "touchscreenSkin", "Outline" );
+        if( layout.equals( "Custom" ) )
+            touchscreenSkin =  touchscreenProfile.get( "touchscreenCustomSkinPath", "" );
+        else
+            touchscreenSkin = appData.touchscreenSkinsDir + layout;
 
         if ( isTouchscreenEnabled )
         {
@@ -483,13 +492,6 @@ public class GamePrefs
             //Axis inversion
             invertTouchXAxis = touchscreenProfile.get( "invertTouchXAxis", "False" ).equals( "True" );
             invertTouchYAxis = touchscreenProfile.get( "invertTouchYAxis", "False" ).equals( "True" );
-
-            // Determine the touchscreen layout
-            final String layout = touchscreenProfile.get( "touchscreenSkin", "Outline" );
-            if( layout.equals( "Custom" ) )
-                touchscreenSkin =  touchscreenProfile.get( "touchscreenCustomSkinPath", "" );
-            else
-                touchscreenSkin = appData.touchscreenSkinsDir + layout;
 
             // Sensor prefs
             isAnalogHiddenWhenSensor = touchscreenProfile.get("touchscreenHideAnalogWhenSensor", "False").equals( "True" );
@@ -523,7 +525,6 @@ public class GamePrefs
             touchscreenNotAutoHoldables = null;
             invertTouchXAxis = false;
             invertTouchYAxis = false;
-            touchscreenSkin = "";
 
             isAnalogHiddenWhenSensor = false;
             sensorActivateOnStart = false;
@@ -557,8 +558,9 @@ public class GamePrefs
 
         playerMap.setEnabled(!isControllerShared);
 
-        // Determine which players are "plugged in"
-        isPlugged[0] = isControllerEnabled[0] && (playerMap.isPlayerAvailable(1) || isControllerShared || isTouchscreenEnabled);
+        // Determine which players are "plugged in", player 1 will be enabled by default, although, it can
+        // become unplugged later after it's mapped for the first time
+        isPlugged[0] = isControllerEnabled[0];
         isPlugged[1] = isControllerEnabled[1] && (playerMap.isPlayerAvailable(2) || isControllerShared);
         isPlugged[2] = isControllerEnabled[2] && (playerMap.isPlayerAvailable(3) || isControllerShared);
         isPlugged[3] = isControllerEnabled[3] && (playerMap.isPlayerAvailable(4) || isControllerShared);

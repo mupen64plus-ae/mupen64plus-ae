@@ -288,8 +288,8 @@ public class GlobalPrefs
     /** The input profile for Player 4. */
     final ControllerProfile controllerProfile4;
 
-    /** The player map for multi-player gaming. */
-    final PlayerMap playerMap;
+    /** True if auto player mapping is enabled */
+    public final boolean autoPlayerMapping;
 
     /** True if we want to show built in emulation profiles */
     final boolean showBuiltInEmulationProfiles;
@@ -586,17 +586,7 @@ public class GlobalPrefs
                 getControllerProfileDefault(4),
                 GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
-        // Player map
-        playerMap = new PlayerMap( mPreferences.getString( GamePrefs.PLAYER_MAP, "" ) );
-
-        // Determine whether controller deconfliction is needed
-        int numControllers = 0;
-        numControllers += controllerProfile1 != null ? 1 : 0;
-        numControllers += controllerProfile2 != null ? 1 : 0;
-        numControllers += controllerProfile3 != null ? 1 : 0;
-        numControllers += controllerProfile4 != null ? 1 : 0;
-
-        playerMap.setEnabled( numControllers > 1 );
+        autoPlayerMapping = mPreferences.getBoolean( "autoPlayerMapping", false );
 
         showBuiltInEmulationProfiles = mPreferences.getBoolean(ManageEmulationProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
         showBuiltInTouchscreenProfiles = mPreferences.getBoolean(ManageTouchscreenProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);

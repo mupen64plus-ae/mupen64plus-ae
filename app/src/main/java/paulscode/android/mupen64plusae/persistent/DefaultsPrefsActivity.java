@@ -194,7 +194,7 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
         }
 
         // Enable/disable player map item as necessary
-        PrefUtil.enablePreference(this, GamePrefs.PLAYER_MAP, mGlobalPrefs.playerMap.isEnabled());
+        PrefUtil.enablePreference(this, GamePrefs.PLAYER_MAP, !mGlobalPrefs.autoPlayerMapping);
 
         // Define which buttons to show in player map dialog
         final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GamePrefs.PLAYER_MAP);

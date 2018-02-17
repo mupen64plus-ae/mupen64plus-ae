@@ -1185,14 +1185,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             if (mCoreFragment != null && !mGamePrefs.isControllerShared) {
 
-                int startIndex = mGamePrefs.isTouchscreenEnabled ? 1 : 0;
+                int startIndex = mGamePrefs.isTouchscreenEnabled || mGamePrefs.playerMap.getNumberOfMappedPlayers() == 0 ? 1 : 0;
                 //Check if any controllers have changed state, except for controller 1
                 for (int index = startIndex; index < mGamePrefs.controllerProfile.length; ++index) {
                     if (!mGamePrefs.playerMap.isPlayerAvailable(index+1) && isControllerPlugged[index]) {
                         mCoreFragment.updateControllerConfig(index, false, mGamePrefs.getPakType(index+1).getNativeValue());
                         isControllerPlugged[index] = false;
 
-                        Log.i("GameActivity", "controller " + index + " was unplugged");
+                        Log.e("GameActivity", "controller " + index + " was unplugged");
                     }
                 }
             }

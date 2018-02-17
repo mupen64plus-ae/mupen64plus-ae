@@ -243,6 +243,8 @@
     <string name="inputMenuMappable_summary">Allow menu key to be mapped to controls, this will force the swipe gesture to be used for the in-game menu</string>
     <string name="displayImmersiveMode_title">Immersive mode</string>
     <string name="displayImmersiveMode_summary">Completely hide navigation and status bars</string>
+    <string name="defaultsAutoPlayerMapping_title">Automatic player mapping</string>
+    <string name="defaultsAutoPlayerMapping_summary">Map a controller to the next available N64 player while in-game by pushing a button</string>
     <string name="gln64Fog_title">Fog</string>
     <string name="gln64Fog_summary">(needs work)</string>
     <string name="gln64Sai_title">2xSaI texture filter</string>
