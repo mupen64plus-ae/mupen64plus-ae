@@ -1004,6 +1004,23 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 new GalleryItem.NameComparator() : new GalleryItem.RomFileComparator() );
         if ( recentItems != null ) {
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
+
+            //Limit list to 8 items
+            final int recentLimit = 8;
+            if (recentItems.size() > recentLimit) {
+                List<GalleryItem> removeItems = recentItems.subList(recentLimit, recentItems.size());
+
+                for (GalleryItem item : removeItems) {
+                    if (item.zipFile != null)
+                    {
+                        if(!item.romFile.isDirectory() && item.romFile.exists())
+                        {
+                            item.romFile.delete();
+                        }
+                    }
+                }
+                recentItems.removeAll(removeItems);
+            }
         }
 
         if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
