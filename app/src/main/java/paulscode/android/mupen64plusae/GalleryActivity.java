@@ -919,7 +919,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
-        if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
+        if( mGlobalPrefs.isRecentShown && TextUtils.isEmpty(mSearchQuery) && recentItems.size() > 0 )
         {
             List<GalleryItem> combinedItems = new ArrayList<>();
 
@@ -1019,6 +1019,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             //Close drawer without animation
             mDrawerLayout.closeDrawer(GravityCompat.START, false);
         }
+
+        mSearchView.onActionViewCollapsed();
+
         mRefreshNeeded = true;
 
         mSelectedItem = null;
