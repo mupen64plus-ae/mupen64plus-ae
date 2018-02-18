@@ -22,8 +22,6 @@ package paulscode.android.mupen64plusae.util;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.apache.commons.lang.NullArgumentException;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -227,10 +225,6 @@ public class RomDatabase
         
         private RomDetail( ConfigSection section )
         {
-            // Never pass a null section
-            if( section == null )
-                throw new NullArgumentException( "section" );
-            
             crc = section.get( "CRC" );
             md5 = section.name;
             
@@ -295,12 +289,6 @@ public class RomDatabase
         
         private RomDetail( String assumedCrc, String assumedGoodName )
         {
-            // Never pass null arguments
-            if( assumedCrc == null )
-                throw new NullArgumentException( "assumedCrc" );
-            if( assumedGoodName == null )
-                throw new NullArgumentException( "assumedGoodName" );
-            
             crc = assumedCrc;
             md5 = "";
             goodName = assumedGoodName;
