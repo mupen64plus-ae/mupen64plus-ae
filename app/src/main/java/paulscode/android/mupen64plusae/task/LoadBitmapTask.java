@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2015 Paul Lamb
@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.task;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -34,26 +35,28 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
 {
     
     private final String mBitmapPath;
-    private final ImageView mArtView;
+    private final WeakReference<ImageView> mArtView;
     private BitmapDrawable mArtBitmap;
-    private final Context mContext;
+    private final WeakReference<Context> mContext;
     private boolean mIsCancelled;
     
     public LoadBitmapTask( Context context, String bitmapPath, ImageView artView)
     {
         mBitmapPath = bitmapPath;
-        mArtView = artView;
+        mArtView = new WeakReference<>(artView);
         mArtBitmap = null;
-        mContext = context;
+        mContext = new WeakReference<>(context);
         mIsCancelled = false;
     }
 
     @Override
     protected String doInBackground(String... params)
     {
-        if( !TextUtils.isEmpty( mBitmapPath ) && new File( mBitmapPath ).exists() )
+        Context tempContext = mContext.get();
+
+        if( !TextUtils.isEmpty( mBitmapPath ) && new File( mBitmapPath ).exists() && tempContext != null )
         {
-            mArtBitmap = new BitmapDrawable( mContext.getResources(), mBitmapPath );
+            mArtBitmap = new BitmapDrawable( tempContext.getResources(), mBitmapPath );
         }
         return null;
     }
@@ -61,12 +64,14 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
     @Override
     protected void onPostExecute( String result )
     {
-        if(!mIsCancelled)
+        ImageView tempArtView = mArtView.get();
+
+        if(!mIsCancelled && tempArtView != null)
         {
             if( mArtBitmap != null )
-                mArtView.setImageDrawable( mArtBitmap );
+                tempArtView.setImageDrawable( mArtBitmap );
             else
-                mArtView.setImageResource( R.drawable.default_coverart );
+                tempArtView.setImageResource( R.drawable.default_coverart );
         }
     }
     

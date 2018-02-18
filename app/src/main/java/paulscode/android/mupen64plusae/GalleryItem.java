@@ -37,6 +37,7 @@ import android.widget.TextView;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Comparator;
 import java.util.List;
 
@@ -51,23 +52,23 @@ public class GalleryItem
     final CountryCode countryCode;
     final String goodName;
     final String artPath;
-    final int lastPlayed;
-    final File romFile;
+    public final int lastPlayed;
+    public final File romFile;
     final File zipFile;
-    public final Context context;
+    public final WeakReference<Context>  context;
     final boolean isHeading;
     BitmapDrawable artBitmap;
     public final float scale;
     
-    GalleryItem( Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName, String romPath,
-            String zipPath, String artPath, int lastPlayed, float scale )
+    public GalleryItem(Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName, String romPath,
+                       String zipPath, String artPath, int lastPlayed, float scale )
     {
         this.md5 = md5;
         this.crc = crc;
         this.headerName = headerName;
         this.countryCode = countryCode;
         this.goodName = goodName;
-        this.context = context;
+        this.context = new WeakReference<>(context);;
         this.artPath = artPath;
         this.artBitmap = null;
         this.lastPlayed = lastPlayed;
@@ -81,7 +82,7 @@ public class GalleryItem
     GalleryItem( Context context, String headingName)
     {
         this.goodName = headingName;
-        this.context = context;
+        this.context = new WeakReference<>(context);
         this.isHeading = true;
         this.md5 = null;
         this.crc = null;
@@ -99,9 +100,10 @@ public class GalleryItem
     {
         if( artBitmap != null )
             return;
-        
-        if( !TextUtils.isEmpty( artPath ) && new File( artPath ).exists() )
-            artBitmap = new BitmapDrawable( context.getResources(), artPath );
+
+        Context tempContext = context.get();
+        if( !TextUtils.isEmpty( artPath ) && new File( artPath ).exists() && tempContext != null)
+            artBitmap = new BitmapDrawable( tempContext.getResources(), artPath );
     }
     
     void clearBitmap()
@@ -154,10 +156,10 @@ public class GalleryItem
             OnLongClickListener
     {
         public GalleryItem item;
-        private Context mContext;
+        private WeakReference<Context> mContext;
         LoadBitmapTask mLoadBitmapTask = null;
         
-        ViewHolder( Context context, View view )
+        ViewHolder( WeakReference<Context> context, View view )
         {
             super( view );
             mContext = context;
@@ -174,9 +176,10 @@ public class GalleryItem
         @Override
         public void onClick( View view )
         {
-            if( mContext instanceof GalleryActivity )
+            Context tempContext = mContext.get();
+            if ( tempContext != null && tempContext instanceof GalleryActivity )
             {
-                GalleryActivity activity = (GalleryActivity) mContext;
+                GalleryActivity activity = (GalleryActivity) tempContext;
                 activity.onGalleryItemClick( item );
             }
         }
@@ -184,9 +187,11 @@ public class GalleryItem
         @Override
         public boolean onLongClick( View view )
         {
-            if( mContext instanceof GalleryActivity )
+            Context tempContext = mContext.get();
+
+            if ( tempContext != null && tempContext instanceof GalleryActivity )
             {
-                GalleryActivity activity = (GalleryActivity) mContext;
+                GalleryActivity activity = (GalleryActivity) tempContext;
                 return activity.onGalleryItemLongClick( item );
             }
             return false;
@@ -195,12 +200,12 @@ public class GalleryItem
     
     public static class Adapter extends RecyclerView.Adapter<ViewHolder>
     {
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
         private final List<GalleryItem> mObjects;
         
         public Adapter( Context context, List<GalleryItem> objects )
         {
-            mContext = context;
+            mContext = new WeakReference<>(context);
             mObjects = objects;
         }
         
@@ -246,54 +251,64 @@ public class GalleryItem
                 
                 TextView tv1 = view.findViewById( R.id.text1 );
                 tv1.setText( item.toString() );
-                
-                LinearLayout linearLayout = view.findViewById( R.id.galleryItem );
-                GalleryActivity activity = (GalleryActivity) item.context;
-                
-                if( item.isHeading )
-                {
-                    view.setClickable( false );
-                    view.setLongClickable( false );
-                    linearLayout.setPadding( 0, 0, 0, 0 );
-                    tv1.setPadding( 5, 10, 0, 0 );
-                    tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 18.0f );
-                    artView.setVisibility( View.GONE );
-                }
-                else
-                {
-                    view.setClickable( true );
-                    view.setLongClickable( true );
-                    linearLayout.setPadding( activity.galleryHalfSpacing,
-                            activity.galleryHalfSpacing, activity.galleryHalfSpacing,
-                            activity.galleryHalfSpacing );
-                    tv1.setPadding( 0, 0, 0, 0 );
-                    tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 13.0f*item.scale );
-                    artView.setVisibility( View.VISIBLE );
-                    
-                    artView.setImageResource( R.drawable.default_coverart );
 
-                    //Load the real cover art in a background task
-                    holder.mLoadBitmapTask = new LoadBitmapTask(item.context, item.artPath, artView); 
-                    holder.mLoadBitmapTask.execute((String) null);
-                    
-                    artView.getLayoutParams().width = activity.galleryWidth;
-                    artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
-                    
-                    LinearLayout layout = view.findViewById( R.id.info );
-                    layout.getLayoutParams().width = activity.galleryWidth;
-                    layout.getLayoutParams().height = (int)(activity.getResources().getDimension( R.dimen.galleryTextHeight )*item.scale);
+                Context tempContext = item.context.get();
+
+                if (tempContext != null) {
+                    LinearLayout linearLayout = view.findViewById( R.id.galleryItem );
+                    GalleryActivity activity = (GalleryActivity) tempContext;
+
+                    if( item.isHeading )
+                    {
+                        view.setClickable( false );
+                        view.setLongClickable( false );
+                        linearLayout.setPadding( 0, 0, 0, 0 );
+                        tv1.setPadding( 5, 10, 0, 0 );
+                        tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 18.0f );
+                        artView.setVisibility( View.GONE );
+                    }
+                    else
+                    {
+                        view.setClickable( true );
+                        view.setLongClickable( true );
+                        linearLayout.setPadding( activity.galleryHalfSpacing,
+                                activity.galleryHalfSpacing, activity.galleryHalfSpacing,
+                                activity.galleryHalfSpacing );
+                        tv1.setPadding( 0, 0, 0, 0 );
+                        tv1.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 13.0f*item.scale );
+                        artView.setVisibility( View.VISIBLE );
+
+                        artView.setImageResource( R.drawable.default_coverart );
+
+                        //Load the real cover art in a background task
+                        holder.mLoadBitmapTask = new LoadBitmapTask(tempContext, item.artPath, artView);
+                        holder.mLoadBitmapTask.execute((String) null);
+
+                        artView.getLayoutParams().width = activity.galleryWidth;
+                        artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
+
+                        LinearLayout layout = view.findViewById( R.id.info );
+                        layout.getLayoutParams().width = activity.galleryWidth;
+                        layout.getLayoutParams().height = (int)(activity.getResources().getDimension( R.dimen.galleryTextHeight )*item.scale);
+                    }
                 }
             }
         }
         
         public ViewHolder onCreateViewHolder( ViewGroup parent, int viewType )
         {
-            LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+            Context tempContext = mContext.get();
 
-            if (inflater != null ) {
-                View view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
-                return new ViewHolder( mContext, view );
+            if (tempContext != null) {
+                LayoutInflater inflater = (LayoutInflater) tempContext
+                        .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+
+                if (inflater != null ) {
+                    View view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
+                    return new ViewHolder( mContext, view );
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }
