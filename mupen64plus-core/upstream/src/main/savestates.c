@@ -509,7 +509,7 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
         dev->cart.cart_rom.rom_written = GETDATA(curr, uint32_t);
 
         /* extra sp state */
-        dev->sp.rsp_task_locked = GETDATA(curr, uint32_t);
+        curr += 4; /* here there used to be rsp_task_locked */
 
         /* extra af-rtc state */
         dev->cart.af_rtc.control = GETDATA(curr, uint16_t);
@@ -525,8 +525,8 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
         for (i = 0; i < GAME_CONTROLLERS_COUNT; ++i) {
             uint8_t rpk_state = GETDATA(curr, uint8_t);
 
-            /* skip non present or controllers handled by the input plugin */
-            if (!Controls[i].Present || Controls[i].RawData)
+            /* skip controllers handled by the input plugin */
+            if (Controls[i].RawData)
                 continue;
 
             if (ROM_SETTINGS.rumble) {
@@ -622,9 +622,6 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
         dev->cart.cart_rom.last_write = 0;
         dev->cart.cart_rom.rom_written = 0;
 
-        /* extra sp state */
-        dev->sp.rsp_task_locked = 0;
-
         /* extra af-rtc state */
         dev->cart.af_rtc.control = 0x200;
         dev->cart.af_rtc.now = 0;
@@ -632,8 +629,8 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
 
         /* extra controllers state */
         for(i = 0; i < GAME_CONTROLLERS_COUNT; ++i) {
-            /* skip non present or controllers handled by the input plugin */
-            if (!Controls[i].Present || Controls[i].RawData)
+            /* skip controllers handled by the input plugin */
+            if (Controls[i].RawData)
                 continue;
 
             dev->controllers[i].flavor->reset(&dev->controllers[i]);
@@ -680,6 +677,9 @@ static int savestates_load_m64p(struct device* dev, char *filepath)
 
     /* reset fb state */
     poweron_fb(&dev->dp.fb);
+
+    dev->sp.rsp_task_locked = 0;
+    dev->r4300.cp0.interrupt_unsafe_state = 0;
 
     *r4300_cp0_last_addr(&dev->r4300.cp0) = *r4300_pc(&dev->r4300);
 
@@ -813,9 +813,6 @@ static int savestates_load_pj64(struct device* dev,
     dev->sp.regs[SP_SEMAPHORE_REG] = GETDATA(curr, uint32_t);
     dev->sp.regs2[SP_PC_REG]    = GETDATA(curr, uint32_t);
     dev->sp.regs2[SP_IBIST_REG] = GETDATA(curr, uint32_t);
-
-    /* extra sp state */
-    dev->sp.rsp_task_locked = 0;
 
     // dpc_register
     dev->dp.dpc_regs[DPC_START_REG]    = GETDATA(curr, uint32_t);
@@ -986,6 +983,9 @@ static int savestates_load_pj64(struct device* dev,
     // No flashram info in pj64 savestate.
     poweron_flashram(&dev->cart.flashram);
 
+    dev->sp.rsp_task_locked = 0;
+    dev->r4300.cp0.interrupt_unsafe_state = 0;
+
     /* extra fb state */
     poweron_fb(&dev->dp.fb);
 
@@ -996,8 +996,8 @@ static int savestates_load_pj64(struct device* dev,
 
     /* extra controllers state */
     for(i = 0; i < GAME_CONTROLLERS_COUNT; ++i) {
-        /* skip non present or controllers handled by the input plugin */
-        if (!Controls[i].Present || Controls[i].RawData)
+        /* skip controllers handled by the input plugin */
+        if (Controls[i].RawData)
             continue;
 
         dev->controllers[i].flavor->reset(&dev->controllers[i]);
@@ -1503,7 +1503,7 @@ static int savestates_save_m64p(const struct device* dev, char *filepath)
     PUTDATA(curr, uint32_t, dev->cart.cart_rom.last_write);
     PUTDATA(curr, uint32_t, dev->cart.cart_rom.rom_written);
 
-    PUTDATA(curr, uint32_t, dev->sp.rsp_task_locked);
+    PUTDATA(curr, uint32_t, 0); /* here there used to be rsp_task_locked */
 
     PUTDATA(curr, uint16_t, dev->cart.af_rtc.control);
     PUTDATA(curr, int64_t, dev->cart.af_rtc.now);

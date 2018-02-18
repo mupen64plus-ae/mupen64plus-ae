@@ -120,66 +120,42 @@ static void update_sp_status(struct rsp_core* sp, uint32_t w)
     if (w & 0x100) sp->regs[SP_STATUS_REG] |= SP_STATUS_INTR_BREAK;
 
     /* clear / set signal 0 */
-    if (w & 0x200) sp->regs[SP_STATUS_REG] &= ~(SP_STATUS_SIG0 | WAITING_SIG0_CLEARED);
-    if (w & 0x400) {
-        sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG0;
-        sp->regs[SP_STATUS_REG] &= ~WAITING_SIG0_SET;
-    }
+    if (w & 0x200) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG0;
+    if (w & 0x400) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG0;
 
     /* clear / set signal 1 */
-    if (w & 0x800) sp->regs[SP_STATUS_REG] &= ~(SP_STATUS_SIG1 | WAITING_SIG1_CLEARED);
-    if (w & 0x1000) {
-        sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG1;
-        sp->regs[SP_STATUS_REG] &= ~WAITING_SIG1_SET;
-    }
+    if (w & 0x800) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG1;
+    if (w & 0x1000) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG1;
 
     /* clear / set signal 2 */
-    if (w & 0x2000) sp->regs[SP_STATUS_REG] &= ~(SP_STATUS_SIG2 | WAITING_SIG2_CLEARED);
-    if (w & 0x4000) {
-        sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG2;
-        sp->regs[SP_STATUS_REG] &= ~WAITING_SIG2_SET;
-    }
+    if (w & 0x2000) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG2;
+    if (w & 0x4000) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG2;
 
     /* clear / set signal 3 */
-    if (w & 0x8000) sp->regs[SP_STATUS_REG] &= ~(SP_STATUS_SIG3 | WAITING_SIG3_CLEARED);
-    if (w & 0x10000) {
-        sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG3;
-        sp->regs[SP_STATUS_REG] &= ~WAITING_SIG3_SET;
-    }
+    if (w & 0x8000) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG3;
+    if (w & 0x10000) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG3;
 
     /* clear / set signal 4 */
-    if (w & 0x20000) sp->regs[SP_STATUS_REG] &= ~(SP_STATUS_SIG4 | WAITING_SIG4_CLEARED);
-    if (w & 0x40000) {
-        sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG4;
-        sp->regs[SP_STATUS_REG] &= ~WAITING_SIG4_SET;
-    }
+    if (w & 0x20000) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG4;
+    if (w & 0x40000) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG4;
 
     /* clear / set signal 5 */
-    if (w & 0x80000) sp->regs[SP_STATUS_REG] &= ~(SP_STATUS_SIG5 | WAITING_SIG5_CLEARED);
-    if (w & 0x100000) {
-        sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG5;
-        sp->regs[SP_STATUS_REG] &= ~WAITING_SIG5_SET;
-    }
+    if (w & 0x80000) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG5;
+    if (w & 0x100000) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG5;
 
     /* clear / set signal 6 */
-    if (w & 0x200000) sp->regs[SP_STATUS_REG] &= ~(SP_STATUS_SIG6 | WAITING_SIG6_CLEARED);
-    if (w & 0x400000) {
-        sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG6;
-        sp->regs[SP_STATUS_REG] &= ~WAITING_SIG6_SET;
-    }
+    if (w & 0x200000) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG6;
+    if (w & 0x400000) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG6;
 
     /* clear / set signal 7 */
-    if (w & 0x800000) sp->regs[SP_STATUS_REG] &= ~(SP_STATUS_SIG7 | WAITING_SIG7_CLEARED);
-    if (w & 0x1000000) {
-        sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG7;
-        sp->regs[SP_STATUS_REG] &= ~WAITING_SIG7_SET;
-    }
+    if (w & 0x800000) sp->regs[SP_STATUS_REG] &= ~SP_STATUS_SIG7;
+    if (w & 0x1000000) sp->regs[SP_STATUS_REG] |= SP_STATUS_SIG7;
 
     if (sp->rsp_task_locked && (get_event(&sp->mi->r4300->cp0.q, SP_INT))) return;
     if (!(w & 0x1) && !(w & 0x4) && !sp->rsp_task_locked)
         return;
 
-    if (!(sp->regs[SP_STATUS_REG] & (SP_STATUS_HALT | SP_STATUS_BROKE)) && ((sp->regs[SP_STATUS_REG] >> 16) == 0))
+    if (!(sp->regs[SP_STATUS_REG] & (SP_STATUS_HALT | SP_STATUS_BROKE)))
         do_SP_Task(sp);
 }
 
@@ -202,6 +178,7 @@ void poweron_rsp(struct rsp_core* sp)
     memset(sp->regs2, 0, SP_REGS2_COUNT*sizeof(uint32_t));
 
     sp->rsp_task_locked = 0;
+    sp->mi->r4300->cp0.interrupt_unsafe_state &= ~INTR_UNSAFE_RSP;
     sp->regs[SP_STATUS_REG] = 1;
 }
 
@@ -287,6 +264,8 @@ void do_SP_Task(struct rsp_core* sp)
 {
     uint32_t save_pc = sp->regs2[SP_PC_REG] & ~0xfff;
 
+    uint32_t sp_delay_time;
+
     if (sp->mem[0xfc0/4] == 1)
     {
         unprotect_framebuffers(&sp->dp->fb);
@@ -301,34 +280,19 @@ void do_SP_Task(struct rsp_core* sp)
         timed_section_end(TIMED_SECTION_GFX);
 #endif
         sp->regs2[SP_PC_REG] |= save_pc;
-
-        cp0_update_count(sp->mi->r4300);
-
-        sp->rsp_task_locked = 0;
-        if ((sp->regs[SP_STATUS_REG] & (SP_STATUS_HALT | SP_STATUS_BROKE)) == 0)
-        {
-            sp->rsp_task_locked = 1;
-            
-            // Fallback for undefined rsp<->cpu sync event
-            if ((sp->regs[SP_STATUS_REG] >> 16) == 0)
-                sp->mi->regs[MI_INTR_REG] |= MI_INTR_SP;
-        }
-        else
-            new_frame();
-
-        if (sp->mi->regs[MI_INTR_REG] & MI_INTR_SP) {
-            add_interrupt_event(&sp->mi->r4300->cp0, SP_INT, 1000);
-        }
+        new_frame();
 
         if (sp->mi->regs[MI_INTR_REG] & MI_INTR_DP)
         {
+            sp->mi->regs[MI_INTR_REG] &= ~MI_INTR_DP;
             if (sp->dp->dpc_regs[DPC_STATUS_REG] & DPC_STATUS_FREEZE) {
                 sp->dp->do_on_unfreeze |= DELAY_DP_INT;
             } else {
+                cp0_update_count(sp->mi->r4300);
                 add_interrupt_event(&sp->mi->r4300->cp0, DP_INT, 4000);
             }
         }
-        sp->mi->regs[MI_INTR_REG] &= ~(MI_INTR_SP | MI_INTR_DP);
+        sp_delay_time = 1000;
 
         protect_framebuffers(&sp->dp->fb);
     }
@@ -345,11 +309,7 @@ void do_SP_Task(struct rsp_core* sp)
 #endif
         sp->regs2[SP_PC_REG] |= save_pc;
 
-        cp0_update_count(sp->mi->r4300);
-        if (sp->mi->regs[MI_INTR_REG] & MI_INTR_SP) {
-            add_interrupt_event(&sp->mi->r4300->cp0, SP_INT, 4000/*500*/);
-        }
-        sp->mi->regs[MI_INTR_REG] &= ~MI_INTR_SP;
+        sp_delay_time = 4000;
     }
     else
     {
@@ -357,10 +317,21 @@ void do_SP_Task(struct rsp_core* sp)
         rsp.doRspCycles(0xffffffff);
         sp->regs2[SP_PC_REG] |= save_pc;
 
+        sp_delay_time = 0;
+    }
+
+    sp->rsp_task_locked = 0;
+    sp->mi->r4300->cp0.interrupt_unsafe_state &= ~INTR_UNSAFE_RSP;
+    if ((sp->regs[SP_STATUS_REG] & (SP_STATUS_HALT | SP_STATUS_BROKE)) == 0)
+    {
+        sp->rsp_task_locked = 1;
+        sp->mi->r4300->cp0.interrupt_unsafe_state |= INTR_UNSAFE_RSP;
+        sp->mi->regs[MI_INTR_REG] |= MI_INTR_SP;
+    }
+    if (sp->mi->regs[MI_INTR_REG] & MI_INTR_SP)
+    {
         cp0_update_count(sp->mi->r4300);
-        if (sp->mi->regs[MI_INTR_REG] & MI_INTR_SP) {
-            add_interrupt_event(&sp->mi->r4300->cp0, SP_INT, 0/*100*/);
-        }
+        add_interrupt_event(&sp->mi->r4300->cp0, SP_INT, sp_delay_time);
         sp->mi->regs[MI_INTR_REG] &= ~MI_INTR_SP;
     }
 

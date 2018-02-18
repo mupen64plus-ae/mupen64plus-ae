@@ -353,6 +353,7 @@ CC        = $(CROSS_COMPILE)gcc
 CXX       = $(CROSS_COMPILE)g++
 STRINGS   = $(CROSS_COMPILE)strings
 AS        = nasm
+TR       ?= tr
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR    ?= mkdir -p
@@ -601,11 +602,12 @@ ifeq ($(DEBUGGER), 1)
     $(SRCDIR)/debugger/dbg_breakpoints.c
   LDLIBS += -lopcodes -lbfd
 
-  # UGLY libopcodes version check (we check for >= 2.29)
-  LIBOPCODES_VERSION := $(shell $(STRINGS) --version | head -n1 | cut -d ' ' -f5)
-  LIBOPCODES_VERSION_MAJOR := $(shell echo $(LIBOPCODES_VERSION) | cut -f1 -d.)
-  LIBOPCODES_VERSION_MINOR := $(shell echo $(LIBOPCODES_VERSION) | cut -f2 -d.)
-  LIBOPCODES_GE_2_29 := $(shell [ $(LIBOPCODES_VERSION_MAJOR) -gt 2 -o \( $(LIBOPCODES_VERSION_MAJOR) -eq 2 -a $(LIBOPCODES_VERSION_MINOR) -ge 29 \) ] && echo true)
+  # UGLY libopcodes version check (we check for > 2.28)
+  LIBOPCODES_VERSION := $(shell $(STRINGS) --version | head -n1 | rev | cut -d ' ' -f1 | rev)
+  LIBOPCODES_MAJOR := $(shell echo $(LIBOPCODES_VERSION) | cut -f1 -d.)
+  LIBOPCODES_MINOR := $(shell echo $(LIBOPCODES_VERSION) | cut -f2 -d.)
+  LIBOPCODES_POINT := $(shell echo $(LIBOPCODES_VERSION) | cut -f3 -d.)
+  LIBOPCODES_GE_2_29 := $(shell [ $(LIBOPCODES_MAJOR) -gt 2 -o \( $(LIBOPCODES_MAJOR) -eq 2 -a $(LIBOPCODES_MINOR) -ge 29 \) -o \( $(LIBOPCODES_MAJOR) -eq 2 -a $(LIBOPCODES_MINOR) -eq 28 -a $(LIBOPCODES_POINT) -ge 1 \) ] && echo true)
   ifeq ($(LIBOPCODES_GE_2_29),true)
     CFLAGS += -DUSE_LIBOPCODES_GE_2_29
   endif
@@ -700,7 +702,7 @@ $(ASM_DEFINES_OBJ): $(SRCDIR)/asm_defines/asm_defines.c
 # Script hackery for generating ASM include files for the new dynarec assembly code
 $(SRCDIR)/asm_defines/asm_defines_gas.h: $(SRCDIR)/asm_defines/asm_defines_nasm.h
 $(SRCDIR)/asm_defines/asm_defines_nasm.h: $(ASM_DEFINES_OBJ) ../../tools/gen_asm_defines.awk
-	$(STRINGS) "$<" | $(AWK) -v dest_dir="$(SRCDIR)/asm_defines" -f ../../tools/gen_asm_defines.awk
+	$(STRINGS) "$<" | $(TR) -d '\r' | $(AWK) -v dest_dir="$(SRCDIR)/asm_defines" -f ../../tools/gen_asm_defines.awk
 
 # standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.asm $(SRCDIR)/asm_defines/asm_defines_nasm.h
