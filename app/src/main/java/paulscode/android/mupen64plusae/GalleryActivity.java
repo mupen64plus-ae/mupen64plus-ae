@@ -893,6 +893,116 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     /**
+     * Returns true if the given file is present in the provided list of items
+     * @param items Item list to search
+     * @param romFile ROM File to search for
+     * @return True if it's present
+     */
+    private boolean isRomPathInItemList(List<GalleryItem> items, File romFile)
+    {
+        for (GalleryItem item : items) {
+            if (item.romFile != null && item.romFile.getName().equals(romFile.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Removes old items that shouldn't be in the recents list any more and limits the recent list to 8 items
+     * @param recentItems List of recent items to update
+     */
+    private void deleteOldItems(List<GalleryItem> recentItems) {
+
+        if ( recentItems.size() != 0 ) {
+            Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
+
+            //Limit list to 8 items
+            final int recentLimit = 8;
+            if (recentItems.size() > recentLimit) {
+                List<GalleryItem> removeItems = recentItems.subList(recentLimit, recentItems.size());
+                recentItems.removeAll(removeItems);
+            }
+        }
+
+        // Delete extracted zip files not on this list
+        List<File> extractedFiles = new ArrayList<>();
+        File unzipRomsDir = new File(mGlobalPrefs.unzippedRomsDir);
+        Collections.addAll(extractedFiles, unzipRomsDir.listFiles() );
+
+        for(File extractedFile : extractedFiles) {
+            if (!isRomPathInItemList(recentItems, extractedFile)) {
+                if(!extractedFile.delete()) {
+                    Log.w("GalleryActivity", "Unable to delete " + extractedFile.getPath());
+                }
+            }
+        }
+    }
+
+    /**
+     * Create a GallaryItem using a config file, md5, and good name
+     * @param config Config file
+     * @param md5 MD5 in config
+     * @param goodName ROM goodname to use
+     * @return A gallery item if one was created successfully.
+     */
+    private GalleryItem createGalleryItem(final ConfigFile config, String md5, String goodName)
+    {
+        GalleryItem item = null;
+        final String romPath = config.get( md5, "romPath" );
+        String zipPath = config.get( md5, "zipPath" );
+        final String artFullPath = config.get( md5, "artPath" );
+
+        //We get the file name to support the old gallery format
+        String artPath = !TextUtils.isEmpty(artFullPath) ? new File(artFullPath).getName() : null;
+
+        if(artPath != null)
+            artPath = mGlobalPrefs.coverArtDir + "/" + artPath;
+
+        String crc = config.get( md5, "crc" );
+        String headerName = config.get( md5, "headerName" );
+        final String countryCodeString = config.get( md5, "countryCode" );
+        CountryCode countryCode = CountryCode.UNKNOWN;
+
+        //We can't really do much if the rompath is null
+        if (romPath != null)
+        {
+            if (countryCodeString != null)
+            {
+                countryCode = CountryCode.getCountryCode(Byte.parseByte(countryCodeString));
+            }
+            final String lastPlayedStr = config.get(md5, "lastPlayed");
+
+            if (crc == null || headerName == null || countryCodeString == null)
+            {
+                final File file = new File(romPath);
+
+                if (file.exists())
+                {
+                    final RomHeader header = new RomHeader(file);
+
+                    crc = header.crc;
+                    headerName = header.name;
+                    countryCode = header.countryCode;
+
+                    config.put(md5, "crc", crc);
+                    config.put(md5, "headerName", headerName);
+                    config.put(md5, "countryCode", Byte.toString(countryCode.getValue()));
+                }
+            }
+
+            int lastPlayed = 0;
+            if (lastPlayedStr != null)
+                lastPlayed = Integer.parseInt(lastPlayedStr);
+
+            item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
+                    zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
+        }
+
+        return item;
+    }
+
+    /**
      * This will populate a list of Gallery items and recent items
      * @param items Items will be populated here
      * @param recentItems Recent items will be populated here.
@@ -940,73 +1050,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                 if( matchesSearch && goodName != null)
                 {
-                    final String romPath = config.get( md5, "romPath" );
-                    String zipPath = config.get( md5, "zipPath" );
-                    final String artFullPath = config.get( md5, "artPath" );
+                    GalleryItem item = createGalleryItem(config, md5, goodName);
 
-                    //We get the file name to support the old gallery format
-                    String artPath = !TextUtils.isEmpty(artFullPath) ? new File(artFullPath).getName() : null;
-
-                    if(artPath != null)
-                        artPath = mGlobalPrefs.coverArtDir + "/" + artPath;
-
-                    String crc = config.get( md5, "crc" );
-                    String headerName = config.get( md5, "headerName" );
-                    final String countryCodeString = config.get( md5, "countryCode" );
-                    CountryCode countryCode = CountryCode.UNKNOWN;
-
-                    //We can't really do much if the rompath is null
-                    if (romPath != null)
-                    {
-                        if (countryCodeString != null)
-                        {
-                            countryCode = CountryCode.getCountryCode(Byte.parseByte(countryCodeString));
-                        }
-                        final String lastPlayedStr = config.get(md5, "lastPlayed");
-
-                        if (crc == null || headerName == null || countryCodeString == null)
-                        {
-                            final File file = new File(romPath);
-
-                            if (file.exists())
-                            {
-                                final RomHeader header = new RomHeader(file);
-
-                                crc = header.crc;
-                                headerName = header.name;
-                                countryCode = header.countryCode;
-
-                                config.put(md5, "crc", crc);
-                                config.put(md5, "headerName", headerName);
-                                config.put(md5, "countryCode", Byte.toString(countryCode.getValue()));
-                            }
-                        }
-
-                        int lastPlayed = 0;
-                        if (lastPlayedStr != null)
-                            lastPlayed = Integer.parseInt(lastPlayedStr);
-
-                        final GalleryItem item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
-                                zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
+                    if (item != null) {
                         items.add(item);
                         boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
                         if (recentItems != null && mGlobalPrefs.isRecentShown && isNotOld )
                         {
                             recentItems.add(item);
-                        }
-
-                        // Delete any old files that already exist inside a zip
-                        // file
-                        if (!isNotOld && !TextUtils.isEmpty(zipPath))
-                        {
-                            final File deleteFile = new File(romPath);
-
-                            if(!deleteFile.isDirectory() && deleteFile.exists())
-                            {
-                                if(!deleteFile.delete()) {
-                                    Log.w("GalleryActivity", "Unable to delete " + deleteFile.getPath());
-                                }
-                            }
                         }
                     }
                 }
@@ -1014,6 +1065,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         config.save();
+
+        Collections.sort( items, mGlobalPrefs.sortByRomName ?
+                new GalleryItem.NameComparator() : new GalleryItem.RomFileComparator() );
+
+        deleteOldItems(recentItems);
     }
 
     void refreshGrid( ){
@@ -1026,31 +1082,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         List<GalleryItem> recentItems = new ArrayList<>();
 
         generateGridItemsAndSaveConfig(items, recentItems);
-
-        Collections.sort( items, mGlobalPrefs.sortByRomName ?
-                new GalleryItem.NameComparator() : new GalleryItem.RomFileComparator() );
-        if ( recentItems.size() != 0 ) {
-            Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
-
-            //Limit list to 8 items
-            final int recentLimit = 8;
-            if (recentItems.size() > recentLimit) {
-                List<GalleryItem> removeItems = recentItems.subList(recentLimit, recentItems.size());
-
-                for (GalleryItem item : removeItems) {
-                    if (item.zipFile != null)
-                    {
-                        if(!item.romFile.isDirectory() && item.romFile.exists())
-                        {
-                            if(!item.romFile.delete()) {
-                                Log.w("GalleryActivity", "Unable to delete " + item.romFile.getPath());
-                            }
-                        }
-                    }
-                }
-                recentItems.removeAll(removeItems);
-            }
-        }
 
         if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
         {
