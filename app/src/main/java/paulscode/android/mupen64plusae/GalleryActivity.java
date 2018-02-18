@@ -741,8 +741,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         //Alternate paths in case we have file system problems
         final String gameAlternate = GamePrefs.getAlternateGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
                 mSelectedItem.countryCode.toString(), mAppData) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
-        final String game2ndAlternate = GamePrefs.getSecondAlternateGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
-                mSelectedItem.countryCode.toString(), mAppData) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
+        final String game2ndAlternate = GamePrefs.getSecondAlternateGameDataPath(mSelectedItem.md5, mAppData) +
+                "/" + GamePrefs.AUTO_SAVES_DIR + "/";
 
         final File[] allFilesInSavePath = new File(autoSavePath).listFiles();
         final File[] alternateAllFilesInSavePath = new File(gameAlternate).listFiles();

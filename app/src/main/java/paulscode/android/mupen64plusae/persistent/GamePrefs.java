@@ -367,16 +367,16 @@ public class GamePrefs
 
         // Controller profiles
         controllerProfile[0] = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
-                globalPrefs.getControllerProfileDefault(1), "",
+                globalPrefs.getControllerProfileDefault(1),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile[1] = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
-                globalPrefs.getControllerProfileDefault(2), "",
+                globalPrefs.getControllerProfileDefault(2),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile[2] = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
-                globalPrefs.getControllerProfileDefault(3), "",
+                globalPrefs.getControllerProfileDefault(3),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
         controllerProfile[3] = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
-                globalPrefs.getControllerProfileDefault(4), "",
+                globalPrefs.getControllerProfileDefault(4),
                 globalPrefs.GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
         for(int index = 0; index < NUM_CONTROLLERS; ++index) {
@@ -653,7 +653,7 @@ public class GamePrefs
 
     public void useSecondAlternateGameDataDir()
     {
-        gameDataDir = getSecondAlternateGameDataPath( romMd5, gameHeaderName, gameCountrySymbol, mAppData);
+        gameDataDir = getSecondAlternateGameDataPath( romMd5, mAppData);
         setGameDirs(mAppData, mGlobalPrefs, gameDataDir);
     }
 
@@ -727,8 +727,7 @@ public class GamePrefs
         return String.format( "%s/%s %s %s", appData.gameDataDir, headerName, countrySymbol, romMd5 ).replace(":", "");
     }
 
-    public static String getSecondAlternateGameDataPath( String romMd5, String headerName, String countrySymbol,
-                                                   AppData appData)
+    public static String getSecondAlternateGameDataPath( String romMd5, AppData appData)
     {
         return String.format( "%s/%s", appData.gameDataDir, romMd5 );
     }
@@ -762,14 +761,13 @@ public class GamePrefs
     }
 
     private static ControllerProfile loadControllerProfile( SharedPreferences prefs, String key, String defaultName,
-                                        String appDefault, ConfigFile custom, ConfigFile builtin )
+                                                            ConfigFile custom, ConfigFile builtin )
     {
         final String name = prefs.getString( key, defaultName );
 
         Log.i("GamePrefs", "Profile: " +
                 " key=" + key +
                 " defaultName=" + defaultName +
-                " appDefault=" + appDefault +
                 " name=" + (name==null?"null":name)
         );
 
@@ -784,10 +782,6 @@ public class GamePrefs
             return new ControllerProfile( false, custom.get( defaultName ) );
         else if( builtin.keySet().contains( defaultName ) )
             return new ControllerProfile( true, builtin.get( defaultName ) );
-        else if( custom.keySet().contains( appDefault ) )
-            return new ControllerProfile( false, custom.get( appDefault ) );
-        else if( builtin.keySet().contains( appDefault ) )
-            return new ControllerProfile( true, builtin.get( appDefault ) );
         else
             return null;
     }
@@ -816,6 +810,7 @@ public class GamePrefs
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static Set<Integer> getSafeIntSet( Profile profile, String key )
     {
         final Set<Integer> mutableSet = new HashSet<>();

@@ -46,8 +46,6 @@ import java.util.List;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
-import paulscode.android.mupen64plusae.input.map.PlayerMap;
-import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.persistent.AppData.HardwareInfo;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
@@ -292,7 +290,7 @@ public class GlobalPrefs
     final ControllerProfile controllerProfile4;
 
     /** True if auto player mapping is enabled */
-    public final boolean autoPlayerMapping;
+    final boolean autoPlayerMapping;
 
     /** True if we want to show built in emulation profiles */
     final boolean showBuiltInEmulationProfiles;
@@ -357,8 +355,8 @@ public class GlobalPrefs
             else
             {
                 // Remove the item from the list
-                entries = (String[]) ArrayUtils.remove( entries, i );
-                values = (String[]) ArrayUtils.remove( values, i );
+                entries = ArrayUtils.remove( entries, i );
+                values = ArrayUtils.remove( values, i );
             }
         }
         entries[0] = context.getString( R.string.localeOverride_entrySystemDefault );
@@ -390,7 +388,9 @@ public class GlobalPrefs
         File file = new File(coreConfigDir + "/.nomedia");
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                if ( file.createNewFile()) {
+                    Log.e("GlobalPrefs", "Unable to create " + file.getPath());
+                }
             } catch (IOException e) {
                 Log.e("GlobalPrefs", "Unable to create " + file.getPath());
             }
@@ -697,11 +697,6 @@ public class GlobalPrefs
         return mPreferences.getString( key, defaultValue );
     }
 
-    private void putBoolean( String key, boolean value )
-    {
-        mPreferences.edit().putBoolean( key, value ).apply();
-    }
-
     private void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).apply();
@@ -895,6 +890,7 @@ public class GlobalPrefs
         return tempVideoRenderWidth;
     }
 
+    @SuppressWarnings("SameParameterValue")
     int getResolutionHeight(boolean stretch, boolean fixAspect, int hResolution)
     {
         if( hResolution == -1)
@@ -903,7 +899,7 @@ public class GlobalPrefs
         }
 
         // Display prefs, default value is the global default
-        int tempVideoRenderHeight = 0;
+        int tempVideoRenderHeight;
 
         switch( hResolution )
         {
@@ -935,7 +931,7 @@ public class GlobalPrefs
 
         if(fixAspect && isPortrait)
         {
-            int width = getResolutionWidth(false, fixAspect, hResolution);
+            int width = getResolutionWidth(false, true, hResolution);
             float aspect = videoSurfaceHeightStretch*1.0f/videoSurfaceWidthStretch;
             tempVideoRenderHeight = Math.round(width/aspect);
         }
