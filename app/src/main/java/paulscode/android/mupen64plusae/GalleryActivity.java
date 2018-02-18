@@ -410,7 +410,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             return;
 
         final InputMethodManager imm = (InputMethodManager) getSystemService( Context.INPUT_METHOD_SERVICE );
-        imm.hideSoftInputFromWindow( mSearchView.getWindowToken(), 0 );
+
+        if (imm != null) {
+            imm.hideSoftInputFromWindow( mSearchView.getWindowToken(), 0 );
+        }
     }
 
     @Override
@@ -612,7 +615,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public void onGameSidebarAction(MenuItem menuItem)
     {
         final GalleryItem item = mSelectedItem;
-        if( item == null )
+        if( item == null || item.romFile == null)
             return;
 
         switch( menuItem.getItemId() )
@@ -688,11 +691,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             if(id == RESTART_CONFIRM_DIALOG_ID && mSelectedItem != null)
             {
-                launchGameActivity( mSelectedItem.romFile.getAbsolutePath(),
-                    mSelectedItem.zipFile == null ? null : mSelectedItem.zipFile.getAbsolutePath(),
-                    mSelectedItem.md5, mSelectedItem.crc,
-                    mSelectedItem.headerName, mSelectedItem.countryCode.getValue(), mSelectedItem.artPath,
-                    mSelectedItem.goodName, true );
+                if (mSelectedItem.romFile != null) {
+                    launchGameActivity( mSelectedItem.romFile.getAbsolutePath(),
+                            mSelectedItem.zipFile == null ? null : mSelectedItem.zipFile.getAbsolutePath(),
+                            mSelectedItem.md5, mSelectedItem.crc,
+                            mSelectedItem.headerName, mSelectedItem.countryCode.getValue(), mSelectedItem.artPath,
+                            mSelectedItem.goodName, true );
+                }
             }
             else if(id == CLEAR_CONFIRM_DIALOG_ID)
             {
@@ -776,6 +781,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     public boolean onGalleryItemLongClick( GalleryItem item )
     {
+        if (item.romFile == null) {
+            return false;
+        }
+
         launchGameActivity( item.romFile.getAbsolutePath(),
             item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
             item.md5, item.crc, item.headerName, item.countryCode.getValue(),
@@ -824,15 +833,18 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             if (resultCode == RESULT_OK && data != null)
             {
                 final Bundle extras = data.getExtras();
-                final String searchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
-                final boolean searchZips = extras.getBoolean( ActivityHelper.Keys.SEARCH_ZIPS );
-                final boolean downloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
-                final boolean clearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
-                final boolean searchSubdirectories = extras.getBoolean( ActivityHelper.Keys.SEARCH_SUBDIR );
 
-                if (searchPath != null)
-                {
-                    refreshRoms(new File(searchPath), searchZips, downloadArt, clearGallery, searchSubdirectories);
+                if (extras != null) {
+                    final String searchPath = extras.getString( ActivityHelper.Keys.SEARCH_PATH );
+                    final boolean searchZips = extras.getBoolean( ActivityHelper.Keys.SEARCH_ZIPS );
+                    final boolean downloadArt = extras.getBoolean( ActivityHelper.Keys.DOWNLOAD_ART );
+                    final boolean clearGallery = extras.getBoolean( ActivityHelper.Keys.CLEAR_GALLERY );
+                    final boolean searchSubdirectories = extras.getBoolean( ActivityHelper.Keys.SEARCH_SUBDIR );
+
+                    if (searchPath != null)
+                    {
+                        refreshRoms(new File(searchPath), searchZips, downloadArt, clearGallery, searchSubdirectories);
+                    }
                 }
             }
         }
@@ -842,11 +854,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             if (resultCode == RESULT_OK && data != null)
             {
                 final Bundle extras = data.getExtras();
-                final String searchPath = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
 
-                if (searchPath != null)
-                {
-                    mExtractTexturesFragment.extractTextures(new File(searchPath));
+                if (extras != null) {
+                    final String searchPath = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
+
+                    if (searchPath != null)
+                    {
+                        mExtractTexturesFragment.extractTextures(new File(searchPath));
+                    }
                 }
             }
         }
@@ -877,25 +892,23 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mCacheRomInfoFragment.refreshRoms(startDir, searchZips, downloadArt, clearGallery, searchSubdirectories, mAppData, mGlobalPrefs);
     }
 
-    void refreshGrid( ){
-
-        //Reload global prefs
-        mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this, mAppData );
-
+    /**
+     * This will populate a list of Gallery items and recent items
+     * @param items Items will be populated here
+     * @param recentItems Recent items will be populated here.
+     */
+    private void generateGridItemsAndSaveConfig(List<GalleryItem> items, List<GalleryItem> recentItems)
+    {
         final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-
         final String query = mSearchQuery.toLowerCase( Locale.US );
         String[] searches = null;
         if( query.length() > 0 )
             searches = query.split( " " );
 
-        List<GalleryItem> items = new ArrayList<>();
-        List<GalleryItem> recentItems = null;
         int currentTime = 0;
+
         if( mGlobalPrefs.isRecentShown )
         {
-            recentItems = new ArrayList<>();
             currentTime = (int) ( new Date().getTime() / 1000 );
         }
 
@@ -936,7 +949,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                     if(artPath != null)
                         artPath = mGlobalPrefs.coverArtDir + "/" + artPath;
-                    
+
                     String crc = config.get( md5, "crc" );
                     String headerName = config.get( md5, "headerName" );
                     final String countryCodeString = config.get( md5, "countryCode" );
@@ -974,7 +987,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             lastPlayed = Integer.parseInt(lastPlayedStr);
 
                         final GalleryItem item = new GalleryItem(this, md5, crc, headerName, countryCode, goodName, romPath,
-                            zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
+                                zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
                         items.add(item);
                         boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
                         if (recentItems != null && mGlobalPrefs.isRecentShown && isNotOld )
@@ -990,7 +1003,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                             if(!deleteFile.isDirectory() && deleteFile.exists())
                             {
-                                deleteFile.delete();
+                                if(!deleteFile.delete()) {
+                                    Log.w("GalleryActivity", "Unable to delete " + deleteFile.getPath());
+                                }
                             }
                         }
                     }
@@ -999,10 +1014,22 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         config.save();
+    }
+
+    void refreshGrid( ){
+
+        //Reload global prefs
+        mAppData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+
+        List<GalleryItem> items = new ArrayList<>();
+        List<GalleryItem> recentItems = new ArrayList<>();
+
+        generateGridItemsAndSaveConfig(items, recentItems);
 
         Collections.sort( items, mGlobalPrefs.sortByRomName ?
                 new GalleryItem.NameComparator() : new GalleryItem.RomFileComparator() );
-        if ( recentItems != null ) {
+        if ( recentItems.size() != 0 ) {
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
 
             //Limit list to 8 items
@@ -1015,7 +1042,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     {
                         if(!item.romFile.isDirectory() && item.romFile.exists())
                         {
-                            item.romFile.delete();
+                            if(!item.romFile.delete()) {
+                                Log.w("GalleryActivity", "Unable to delete " + item.romFile.getPath());
+                            }
                         }
                     }
                 }

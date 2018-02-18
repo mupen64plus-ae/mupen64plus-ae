@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -47,19 +47,19 @@ public class GalleryItem
 {
     public final String md5;
     public final String crc;
-    public final String headerName;
-    public final CountryCode countryCode;
-    public final String goodName;
-    public final String artPath;
-    public final int lastPlayed;
-    public final File romFile;
-    public final File zipFile;
+    final String headerName;
+    final CountryCode countryCode;
+    final String goodName;
+    final String artPath;
+    final int lastPlayed;
+    final File romFile;
+    final File zipFile;
     public final Context context;
-    public final boolean isHeading;
-    public BitmapDrawable artBitmap;
+    final boolean isHeading;
+    BitmapDrawable artBitmap;
     public final float scale;
     
-    public GalleryItem( Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName, String romPath,
+    GalleryItem( Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName, String romPath,
             String zipPath, String artPath, int lastPlayed, float scale )
     {
         this.md5 = md5;
@@ -78,7 +78,7 @@ public class GalleryItem
         this.zipFile = TextUtils.isEmpty( zipPath ) ? null : new File( zipPath );
     }
     
-    public GalleryItem( Context context, String headingName)
+    GalleryItem( Context context, String headingName)
     {
         this.goodName = headingName;
         this.context = context;
@@ -95,7 +95,7 @@ public class GalleryItem
         this.scale = 1.0f;
     }
     
-    public void loadBitmap()
+    void loadBitmap()
     {
         if( artBitmap != null )
             return;
@@ -104,7 +104,7 @@ public class GalleryItem
             artBitmap = new BitmapDrawable( context.getResources(), artPath );
     }
     
-    public void clearBitmap()
+    void clearBitmap()
     {
         artBitmap = null;
     }
@@ -157,7 +157,7 @@ public class GalleryItem
         private Context mContext;
         LoadBitmapTask mLoadBitmapTask = null;
         
-        public ViewHolder( Context context, View view )
+        ViewHolder( Context context, View view )
         {
             super( view );
             mContext = context;
@@ -242,12 +242,12 @@ public class GalleryItem
             
             if( item != null )
             {
-                ImageView artView = (ImageView) view.findViewById( R.id.imageArt );
+                ImageView artView = view.findViewById( R.id.imageArt );
                 
-                TextView tv1 = (TextView) view.findViewById( R.id.text1 );
+                TextView tv1 = view.findViewById( R.id.text1 );
                 tv1.setText( item.toString() );
                 
-                LinearLayout linearLayout = (LinearLayout) view.findViewById( R.id.galleryItem );
+                LinearLayout linearLayout = view.findViewById( R.id.galleryItem );
                 GalleryActivity activity = (GalleryActivity) item.context;
                 
                 if( item.isHeading )
@@ -279,7 +279,7 @@ public class GalleryItem
                     artView.getLayoutParams().width = activity.galleryWidth;
                     artView.getLayoutParams().height = (int) ( activity.galleryWidth / activity.galleryAspectRatio );
                     
-                    LinearLayout layout = (LinearLayout) view.findViewById( R.id.info );
+                    LinearLayout layout = view.findViewById( R.id.info );
                     layout.getLayoutParams().width = activity.galleryWidth;
                     layout.getLayoutParams().height = (int)(activity.getResources().getDimension( R.dimen.galleryTextHeight )*item.scale);
                 }
@@ -290,8 +290,13 @@ public class GalleryItem
         {
             LayoutInflater inflater = (LayoutInflater) mContext
                     .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            View view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
-            return new ViewHolder( mContext, view );
+
+            if (inflater != null ) {
+                View view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
+                return new ViewHolder( mContext, view );
+            } else {
+                return null;
+            }
         }
     }
 }
