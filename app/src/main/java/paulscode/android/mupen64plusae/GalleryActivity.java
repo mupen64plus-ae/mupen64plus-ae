@@ -476,6 +476,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             final String query = mSearchQuery;
             searchItem.expandActionView();
+            mSearchView.setIconified(false);
             mSearchView.setQuery( query, true );
         }
 
@@ -809,6 +810,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
             return true;
         }
+
         return super.onKeyDown( keyCode, event );
     }
 
@@ -818,6 +820,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
         {
             mDrawerLayout.closeDrawer( GravityCompat.START );
+        }
+        else if(!mSearchView.isIconified()) {
+            mSearchView.onActionViewCollapsed();
+            mSearchQuery = "";
         }
         else
         {
@@ -1021,6 +1027,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         mSearchView.onActionViewCollapsed();
+        mSearchQuery = "";
 
         mRefreshNeeded = true;
 
@@ -1083,10 +1090,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     @Override
-    public boolean onKey(View v, int keyCode, KeyEvent event)
-    {
-        //Nothing to do
+    public boolean onKey(View view, int i, KeyEvent keyEvent) {
         return false;
     }
 }
-
