@@ -442,7 +442,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             public boolean onMenuItemActionCollapse( MenuItem item )
             {
                 mSearchQuery = "";
-                refreshGrid();
+                refreshGridAsync();
                 return true;
             }
 
@@ -467,7 +467,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             public boolean onQueryTextChange( String query )
             {
                 mSearchQuery = query;
-                refreshGrid();
+                refreshGridAsync();
                 return false;
             }
         } );
@@ -710,7 +710,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 config.remove(mSelectedItem.md5);
                 config.save();
                 mDrawerLayout.closeDrawer( GravityCompat.START, false );
-                refreshGrid();
+                refreshGridAsync();
             }
         }
     }
@@ -892,10 +892,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mCacheRomInfoFragment.refreshRoms(startDir, searchZips, downloadArt, clearGallery, searchSubdirectories, mAppData, mGlobalPrefs);
     }
 
-    void refreshGrid()
+    void refreshGridAsync()
     {
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery);
         galleryRefreshTask.execute();
+    }
+
+    void refreshGrid()
+    {
+        List<GalleryItem> items = new ArrayList<>();
+        List<GalleryItem> recentItems = new ArrayList<>();
+
+        GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery);
+        galleryRefreshTask.generateGridItemsAndSaveConfig(items, recentItems);
+        refreshGrid(items, recentItems);
     }
 
     @Override
