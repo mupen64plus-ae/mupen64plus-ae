@@ -1000,14 +1000,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         config.save();
 
-        Collections.sort( items, new GalleryItem.NameComparator() );
-        if( recentItems != null )
+        Collections.sort( items, mGlobalPrefs.sortByRomName ?
+                new GalleryItem.NameComparator() : new GalleryItem.RomFileComparator() );
+        if ( recentItems != null ) {
             Collections.sort( recentItems, new GalleryItem.RecentlyPlayedComparator() );
+        }
 
-        List<GalleryItem> combinedItems = items;
         if( mGlobalPrefs.isRecentShown && recentItems.size() > 0 )
         {
-            combinedItems = new ArrayList<>();
+            List<GalleryItem> combinedItems = new ArrayList<>();
 
             combinedItems.add( new GalleryItem( this, getString( R.string.galleryRecentlyPlayed ) ) );
             combinedItems.addAll( recentItems );

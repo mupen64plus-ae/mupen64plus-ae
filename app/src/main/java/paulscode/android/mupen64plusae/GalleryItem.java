@@ -128,6 +128,18 @@ public class GalleryItem
             return item1.toString().compareToIgnoreCase( item2.toString() );
         }
     }
+
+    public static class RomFileComparator implements Comparator<GalleryItem>
+    {
+        @Override
+        public int compare( GalleryItem item1, GalleryItem item2 )
+        {
+            String romFileName1 = item1.romFile != null ? item1.romFile.getName() : "";
+            String romFileName2 = item2.romFile != null ? item2.romFile.getName() : "";
+
+            return romFileName1.compareToIgnoreCase( romFileName2);
+        }
+    }
     
     public static class RecentlyPlayedComparator implements Comparator<GalleryItem>
     {

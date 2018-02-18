@@ -179,11 +179,6 @@ public class AppData
     private static final String KEY_APP_VERSION = "appVersion";
     // ... add more as needed
     
-    // Shared preferences default values
-    private static final int DEFAULT_ASSET_VERSION = 0;
-    
-    // ... add more as needed
-    
     /**
      * Instantiates a new object to retrieve and persist app data.
      * 

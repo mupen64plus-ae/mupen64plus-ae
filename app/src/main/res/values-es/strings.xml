@@ -235,6 +235,9 @@
     <string name="galleryRecentlyPlayed">Jugado Reciente</string>
     <string name="galleryLibrary">Biblioteca de Juegos</string>
     <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+    <string name="gallerySortingMethod_title">Orden</string>
+    <string name="gallerySortingMethod_entryRomName">Nombre de ROM</string>
+    <string name="gallerySortingMethod_entryFileName">Nombre de archivo</string>
     <string name="touchscreenAutoHold_title">Mantener botones automaticamente</string>
     <string name="touchscreenAutoHold_entryDisabled">Deshabilitado</string>
     <string name="touchscreenAutoHold_entryLongPress">Al mantener apretado</string>

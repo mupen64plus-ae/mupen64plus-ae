@@ -180,6 +180,9 @@ public class GlobalPrefs
     /** True if the recently played section of the gallery should be shown. */
     public final boolean isRecentShown;
 
+    /** True if we are sorting by ROM name */
+    public final boolean sortByRomName;
+
     /** True if we should cache recently played games for faster load times */
     public final boolean cacheRecentlyPlayed;
 
@@ -398,6 +401,7 @@ public class GlobalPrefs
 
         // Library prefs
         isRecentShown = mPreferences.getBoolean( "showRecentlyPlayed", true );
+        sortByRomName = mPreferences.getString( "sortingMethod", "romName" ).equals("romName");
         cacheRecentlyPlayed = mPreferences.getBoolean( "cacheRecentlyPlayed", true );
         isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
         coverArtScale = ( mPreferences.getInt( "libraryArtScale", 100 ) ) / 100.0f;

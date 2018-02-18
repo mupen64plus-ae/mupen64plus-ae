@@ -57,6 +57,13 @@
         android:key="cacheRecentlyPlayed"
         android:summary="@string/cacheRecentlyPlayed_summary"
         android:title="@string/cacheRecentlyPlayed_title" />
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/gallerySortingMethod_default"
+        android:entries="@array/gallerySortingMethod_entries"
+        android:entryValues="@array/gallerySortingMethod_values"
+        android:key="sortingMethod"
+        android:summary="@string/selectedValue"
+        android:title="@string/gallerySortingMethod_title" />
     <android.support.v7.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="showFullNames"
