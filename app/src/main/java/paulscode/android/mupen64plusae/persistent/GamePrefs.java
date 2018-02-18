@@ -575,6 +575,7 @@ public class GamePrefs
         String gameGoodNameLowerCase = !TextUtils.isEmpty(gameGoodName) ? gameGoodName.toLowerCase() : "";
 
         return headerNameLowerCase.equals("Body Harvest".toLowerCase()) ||
+                headerNameLowerCase.equals("BOMBERMAN64".toLowerCase()) ||
                 headerNameLowerCase.equals("DR.MARIO 64".toLowerCase()) ||
                 headerNameLowerCase.equals("DUKE NUKEM".toLowerCase()) ||
                 headerNameLowerCase.equals("DUKE".toLowerCase()) ||
@@ -583,6 +584,7 @@ public class GamePrefs
                 headerNameLowerCase.contains("I.S.S.".toLowerCase()) ||
                 headerNameLowerCase.contains("I S S".toLowerCase()) ||
                 headerNameLowerCase.equals("Kirby64".toLowerCase()) ||
+                headerNameLowerCase.equals("MGAH VOL1".toLowerCase()) ||
                 headerNameLowerCase.equals("MISCHIEF MAKERS".toLowerCase()) ||
                 headerNameLowerCase.equals("MS. PAC-MAN MM".toLowerCase()) ||
                 headerNameLowerCase.contains("POKEMON STADIUM".toLowerCase()) ||
