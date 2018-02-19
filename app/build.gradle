@@ -45,7 +45,8 @@ dependencies {
     implementation 'com.android.support:support-v13:27.0.2'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'org.apache.commons:commons-text:1.2'
-    implementation 'org.apache.commons:commons-compress:1.16.1'
+    //noinspection GradleDependency Any higher requires API level 26 for commons-compress
+    implementation 'org.apache.commons:commons-compress:1.12'
     testImplementation 'junit:junit:4.12'
     implementation project(':mupen64plus-audio-sles')
     implementation project(':mupen64plus-core')
