@@ -990,6 +990,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
         }
 
+        //Only player 1 can control menus
+        handled = handled && !mGamePrefs.playerMap.testHardware(AbstractProvider.getHardwareId( event ), 1);
+
         if(!handled)
         {
             if( keyDown && keyCode == KeyEvent.KEYCODE_MENU )
@@ -1130,20 +1133,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
             }
-        }
-    }
-
-    private void showSystemBars()
-    {
-        final Window window = this.getWindow();
-
-        window.clearFlags(LayoutParams.FLAG_FULLSCREEN
-                | LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                | LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        if( mDrawerLayout != null )
-        {
-            mDrawerLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         }
     }
 
