@@ -55,6 +55,7 @@ public final class RomHeader
     public final String countrySymbol;
     public final boolean isValid;
     public final boolean isZip;
+    public final boolean is7Zip;
     
     /**
      * Constructor.
@@ -147,6 +148,11 @@ public final class RomHeader
                 && init_PI_BSB_DOM1_PGS_REG == (byte) 0x4b
                 && init_PI_BSB_DOM1_PWD_REG == (byte) 0x03
                 && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x04;
+
+        is7Zip = init_PI_BSB_DOM1_LAT_REG == (byte) 0x7a
+                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
+                && init_PI_BSB_DOM1_PWD_REG == (byte) 0xaf
+                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0xbc;
     }
 
     private static byte[] readFile( File file )

@@ -47,6 +47,7 @@ dependencies {
     implementation 'org.apache.commons:commons-text:1.2'
     //noinspection GradleDependency Any higher requires API level 26 for commons-compress
     implementation 'org.apache.commons:commons-compress:1.12'
+    implementation 'org.tukaani:xz:1.8'
     testImplementation 'junit:junit:4.12'
     implementation project(':mupen64plus-audio-sles')
     implementation project(':mupen64plus-core')

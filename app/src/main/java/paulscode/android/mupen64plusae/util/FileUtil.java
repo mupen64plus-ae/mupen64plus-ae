@@ -507,7 +507,7 @@ public final class FileUtil
         }
     }
 
-    public static byte[] extractRomHeader( ZipEntry zipEntry, InputStream inStream )
+    public static byte[] extractRomHeader( InputStream inStream )
     {
         // Read the first 4 bytes of the entry
         int arraySize = 0x64;
@@ -530,9 +530,6 @@ public final class FileUtil
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // This entry appears to be a valid ROM, extract it
-        Log.i( "FileUtil", "Found zip entry " + zipEntry.getName() + " bytes read = " + readBytes );
 
         return buffer;
     }

@@ -39,6 +39,8 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.BufferedInputStream;
@@ -69,6 +71,7 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomDatabase.RomDetail;
 import paulscode.android.mupen64plusae.util.RomHeader;
+import paulscode.android.mupen64plusae.util.SevenZInputStream;
 
 public class CacheRomInfoService extends Service
 {
@@ -172,58 +175,10 @@ public class CacheRomInfoService extends Service
                 }
                 else if( header.isZip && mSearchZips && !ConfigHasZip(config, file.getPath()))
                 {
-                    Log.i( "CacheRomInfoService", "Found zip file " + file.getName() );
-                    try
-                    {
-                        ZipFile zipFile = new ZipFile( file );
-                        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                        while( entries.hasMoreElements() )
-                        {
-                            try
-                            {
-                                ZipEntry zipEntry = entries.nextElement();
-                                mListener.GetProgressDialog().setSubtext( new File(zipEntry.getName()).getName() );
-                                mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
-
-                                if( mbStopped ) break;
-
-                                InputStream zipStream = new BufferedInputStream(zipFile.getInputStream( zipEntry ));
-                                mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
-
-                                if( mbStopped ) break;
-
-                                //First get the rom header
-                                zipStream.mark(500);
-                                byte[] romHeader = FileUtil.extractRomHeader(zipEntry, zipStream);
-                                RomHeader extractedHeader;
-                                if(romHeader != null) {
-                                    extractedHeader = new RomHeader( romHeader );
-
-                                    if(extractedHeader.isValid)
-                                    {
-                                        //Then extract the ROM file
-                                        zipStream.reset();
-
-                                        String extractedFile = mUnzipDir + "/" + zipEntry;
-                                        String md5 = ComputeMd5Task.computeMd5( zipStream );
-
-                                        cacheFile( extractedFile, extractedHeader, md5, database, config, file );
-                                    }
-                                }
-
-                                zipStream.close();
-                            }
-                            catch( IOException|NoSuchAlgorithmException |IllegalArgumentException e  )
-                            {
-                                Log.w( "CacheRomInfoService", e );
-                            }
-                        }
-                        zipFile.close();
-                    }
-                    catch( IOException|ArrayIndexOutOfBoundsException e )
-                    {
-                        Log.w( "CacheRomInfoService", e );
-                    }
+                    cacheZip(database, file, config);
+                }
+                else if( header.is7Zip) {
+                    cache7Zip(database, file, config);
                 }
                 mListener.GetProgressDialog().incrementProgress( 1 );
             }
@@ -350,6 +305,123 @@ public class CacheRomInfoService extends Service
             result.add( searchPath );
         }
         return result;
+    }
+
+    private void cacheZip(RomDatabase database, File file, ConfigFile config)
+    {
+        Log.i( "CacheRomInfoService", "Found zip file " + file.getName() );
+        try
+        {
+            ZipFile zipFile = new ZipFile( file );
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while( entries.hasMoreElements() )
+            {
+                try
+                {
+                    ZipEntry zipEntry = entries.nextElement();
+                    mListener.GetProgressDialog().setSubtext( new File(zipEntry.getName()).getName() );
+                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
+
+                    if( mbStopped ) break;
+
+                    InputStream zipStream = new BufferedInputStream(zipFile.getInputStream( zipEntry ));
+                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
+
+                    if( mbStopped ) break;
+
+                    //First get the rom header
+                    zipStream.mark(500);
+                    byte[] romHeader = FileUtil.extractRomHeader(zipStream);
+                    RomHeader extractedHeader;
+                    if(romHeader != null) {
+                        extractedHeader = new RomHeader( romHeader );
+
+                        if(extractedHeader.isValid)
+                        {
+                            // This entry appears to be a valid ROM, extract it
+                            Log.i( "FileUtil", "Found ROM entry " + zipEntry.getName() );
+
+                            //Then extract the ROM file
+                            zipStream.reset();
+
+                            String extractedFile = mUnzipDir + "/" + zipEntry;
+                            String md5 = ComputeMd5Task.computeMd5( zipStream );
+
+                            cacheFile( extractedFile, extractedHeader, md5, database, config, file );
+                        }
+                    }
+
+                    zipStream.close();
+                }
+                catch( IOException|NoSuchAlgorithmException |IllegalArgumentException e  )
+                {
+                    Log.w( "CacheRomInfoService", e );
+                }
+            }
+            zipFile.close();
+        }
+        catch( IOException|ArrayIndexOutOfBoundsException e )
+        {
+            Log.w( "CacheRomInfoService", e );
+        }
+    }
+
+    private void cache7Zip(RomDatabase database, File file, ConfigFile config)
+    {
+        Log.i( "CacheRomInfoService", "Found 7zip file " + file.getName() );
+
+        try
+        {
+            SevenZFile zipFile = new SevenZFile( file );
+            SevenZArchiveEntry zipEntry;
+            while( (zipEntry = zipFile.getNextEntry()) != null)
+            {
+                try
+                {
+                    mListener.GetProgressDialog().setSubtext( new File(zipEntry.getName()).getName() );
+                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
+
+                    if( mbStopped ) break;
+                    //zipFile.read(content, offset, content.length - offset);
+                    InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
+                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
+
+                    if( mbStopped ) break;
+
+                    //First get the rom header
+                    zipStream.mark(500);
+                    byte[] romHeader = FileUtil.extractRomHeader(zipStream);
+                    RomHeader extractedHeader;
+                    if(romHeader != null) {
+                        extractedHeader = new RomHeader( romHeader );
+
+                        if(extractedHeader.isValid)
+                        {
+                            Log.i( "FileUtil", "Found ROM entry " + zipEntry.getName() );
+
+                            //Then extract the ROM file
+                            zipStream.reset();
+
+                            String extractedFile = mUnzipDir + "/" + zipEntry;
+                            String md5 = ComputeMd5Task.computeMd5( zipStream );
+
+                            cacheFile( extractedFile, extractedHeader, md5, database, config, file );
+                        }
+                    }
+
+                    zipStream.close();
+                }
+                catch( IOException|NoSuchAlgorithmException |IllegalArgumentException e  )
+                {
+                    Log.w( "CacheRomInfoService", e );
+                }
+            }
+            zipFile.close();
+        }
+        catch( IOException|ArrayIndexOutOfBoundsException e )
+        {
+            Log.w( "CacheRomInfoService", e );
+        }
     }
 
     private void cacheFile( String filename, RomHeader header, String md5, RomDatabase database, ConfigFile config, File zipFileLocation )
