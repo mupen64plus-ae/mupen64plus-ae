@@ -50,6 +50,7 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.RomHeader;
 import paulscode.android.mupen64plusae.util.TextureInfo;
 
 public class ExtractTexturesService extends Service
@@ -127,18 +128,16 @@ public class ExtractTexturesService extends Service
             AppData appData = new AppData( ExtractTexturesService.this );
             GlobalPrefs globalPrefs = new GlobalPrefs( ExtractTexturesService.this, appData );
 
-            if(mZipPath.toLowerCase().endsWith("zip"))
+            RomHeader header = new RomHeader(mZipPath);
+            if(mZipPath.toLowerCase().endsWith("htc"))
             {
-                String headerName = TextureInfo.getTexturePackName( mZipPath );
-                if( !TextUtils.isEmpty( headerName ) )
+                if(mZipPath.toLowerCase().endsWith("_hirestextures.htc"))
                 {
-                    String outputFolder = globalPrefs.hiResTextureDir + headerName;
-                    FileUtil.deleteFolder( new File( outputFolder ) );
-                    FileUtil.unzipAll( new File( mZipPath ), outputFolder );
+                    FileUtil.copyFile(new File(mZipPath), new File(globalPrefs.textureCacheDir + "/" + new File(mZipPath).getName()));
                 }
                 else
                 {
-                    final String text = getString(R.string.pathHiResTexturesTask_errorMessage);
+                    final String text = getString(R.string.pathHiResTexturesTask_errorMessageInvalidHTC);
 
                     Handler handler = new Handler(Looper.getMainLooper());
 
@@ -150,16 +149,22 @@ public class ExtractTexturesService extends Service
                         }
                     });
                 }
-            }
-            else if(mZipPath.toLowerCase().endsWith("htc"))
-            {
-                if(mZipPath.toLowerCase().endsWith("_hirestextures.htc"))
+            } else if (header.isZip || header.is7Zip) {
+                String headerName = TextureInfo.getTexturePackName( mZipPath );
+                if( !TextUtils.isEmpty( headerName ) )
                 {
-                    FileUtil.copyFile(new File(mZipPath), new File(globalPrefs.textureCacheDir + "/" + new File(mZipPath).getName()));
+                    String outputFolder = globalPrefs.hiResTextureDir + headerName;
+                    FileUtil.deleteFolder( new File( outputFolder ) );
+
+                    if(header.isZip) {
+                        FileUtil.unzipAll( new File( mZipPath ), outputFolder );
+                    } else {
+                        FileUtil.unSevenZAll( new File( mZipPath ), outputFolder );
+                    }
                 }
                 else
                 {
-                    final String text = getString(R.string.pathHiResTexturesTask_errorMessageInvalidHTC);
+                    final String text = getString(R.string.pathHiResTexturesTask_errorMessage);
 
                     Handler handler = new Handler(Looper.getMainLooper());
 

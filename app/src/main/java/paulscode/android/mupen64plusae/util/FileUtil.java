@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
@@ -45,7 +46,6 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -53,6 +53,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 /**
  * Utility class that provides methods which simplify file I/O tasks.
  */
+@SuppressWarnings({"SameParameterValue", "UnusedReturnValue", "unused"})
 public final class FileUtil
 {
     public static void populate( File startPath, boolean includeParent, boolean includeDirectories,
@@ -157,7 +158,9 @@ public final class FileUtil
             for (File child : folder.listFiles())
                 deleteFolder(child);
 
-        folder.delete();
+        if (!folder.delete()) {
+            Log.w("deleteFolder", "Couldn't delete " + folder.getPath());
+        }
     }
 
     /**
@@ -170,7 +173,9 @@ public final class FileUtil
         if (folder.exists() && folder.isDirectory() && folder.listFiles() != null) {
             for (File child : folder.listFiles()) {
                 if (child.getName().endsWith(extension)) {
-                    child.delete();
+                    if (!child.delete()) {
+                        Log.w("deleteExtensionFolder", "Couldn't delete " + child.getPath());
+                    }
                 }
             }
         }
@@ -208,13 +213,13 @@ public final class FileUtil
     {
         if( src == null )
         {
-            Log.e( "FileUtil", "src null in method 'copyFile'" );
+            Log.e( "copyFile", "src null" );
             return false;
         }
         
         if( dest == null )
         {
-            Log.e( "FileUtil", "dest null in method 'copyFile'" );
+            Log.e( "copyFile", "dest null" );
             return false;
         }
         
@@ -237,7 +242,7 @@ public final class FileUtil
             File f = dest.getParentFile();
             if( f == null )
             {
-                Log.e( "FileUtil", "dest parent folder null in method 'copyFile'" );
+                Log.e( "copyFile", "dest parent folder null" );
                 return false;
             }
 
@@ -263,12 +268,12 @@ public final class FileUtil
             }
             catch( FileNotFoundException fnfe )
             {
-                Log.e("FileUtil", "FileNotFoundException in method 'copyFile': " + fnfe.getMessage());
+                Log.e("copyFile", "FileNotFoundException: " + fnfe.getMessage());
                 return false;
             }
             catch( IOException ioe )
             {
-                Log.e( "FileUtil", "IOException in method 'copyFile': " + ioe.getMessage() );
+                Log.e( "copyFile", "IOException: " + ioe.getMessage() );
                 return false;
             }
             
@@ -330,16 +335,10 @@ public final class FileUtil
     public static String readStringFromFile( File file ) throws IOException
     {
         // From http://stackoverflow.com/a/326440/254218
-        FileInputStream stream = new FileInputStream( file );
-        try
-        {
+        try (FileInputStream stream = new FileInputStream(file)) {
             FileChannel chan = stream.getChannel();
-            MappedByteBuffer buf = chan.map( FileChannel.MapMode.READ_ONLY, 0, chan.size() );
-            return Charset.forName( "UTF-8" ).decode( buf ).toString();
-        }
-        finally
-        {
-            stream.close();
+            MappedByteBuffer buf = chan.map(FileChannel.MapMode.READ_ONLY, 0, chan.size());
+            return Charset.forName("UTF-8").decode(buf).toString();
         }
     }
     
@@ -350,14 +349,9 @@ public final class FileUtil
      * @param archive   The archive to extract.
      * @param outputDir Directory to place all of the extracted files.
      */
-    public static void unzipAll( File archive, String outputDir )
+    public static void unzipAll( @NonNull File archive, String outputDir )
     {
-        if( archive == null )
-        {
-            Log.e( "unzipAll", "Zip file is null" );
-            return;
-        }
-        else if( !archive.exists() )
+        if( !archive.exists() )
         {
             Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
             return;
@@ -376,9 +370,9 @@ public final class FileUtil
             while( e.hasMoreElements() )
             {
                 ZipEntry entry = e.nextElement();
-                if( entry != null && !entry.isDirectory() )
+                if (!entry.isDirectory())
                 {
-                    File f = new File( outputDir + "/" + entry.toString() );
+                    File f = new File( outputDir + "/" + new File(entry.getName()).getName());
                     f = f.getParentFile();
                     if( f != null )
                     {
@@ -388,17 +382,9 @@ public final class FileUtil
                 }
             }
         }
-        catch( ZipException ze )
+        catch( Exception ze )
         {
-            Log.e( "unzipAll", "ZipException: ", ze );
-        }
-        catch( IOException ioe )
-        {
-            Log.e( "unzipAll", "IOException: ", ioe );
-        }
-        catch( Exception e )
-        {
-            Log.e( "unzipAll", "Exception: ", e );
+            Log.e( "unzipAll", "Exception: ", ze );
         }
         finally
         {
@@ -427,7 +413,6 @@ public final class FileUtil
         }
         
         File outputFile = new File( outputDir, entry.getName() );
-        String newFile = outputFile.getAbsolutePath();
         
         BufferedInputStream inputStream = new BufferedInputStream( zipfile.getInputStream( entry ) );
         BufferedOutputStream outputStream = new BufferedOutputStream( new FileOutputStream(
@@ -444,6 +429,88 @@ public final class FileUtil
         inputStream.close();
     }
 
+    /**
+     * Unzips a ZIP file in its entirety.
+     *
+     * @param archive   The archive to extract.
+     * @param outputDir Directory to place all of the extracted files.
+     */
+    public static void unSevenZAll(@NonNull File archive, String outputDir )
+    {
+        if( !archive.exists() )
+        {
+            Log.e( "unSevenZAll", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
+            return;
+        }
+        else if( !archive.isFile() )
+        {
+            Log.e( "unSevenZAll", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
+            return;
+        }
+
+        SevenZFile zipfile = null;
+        try
+        {
+            zipfile = new SevenZFile(archive);
+            SevenZArchiveEntry zipEntry;
+
+            while( (zipEntry = zipfile.getNextEntry()) != null)
+            {
+                File f = new File( outputDir + "/" + new File(zipEntry.getName()).getName());
+                f = f.getParentFile();
+                if( f != null )
+                {
+                    FileUtil.makeDirs(f.getPath());
+                    unSevenZEntry( zipfile, zipEntry, outputDir );
+                }
+            }
+        }
+        catch( Exception ze )
+        {
+            Log.e( "unzipAll", "Exception: ", ze );
+        }
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+    }
+
+    // Unzips a specific entry from a ZIP file into the given output directory.
+    //
+    // Returns the absolute path to the outputted entry.
+    // Returns null if the entry passed in happens to be a directory.
+    private static void unSevenZEntry( SevenZFile zipFile, SevenZArchiveEntry entry, String outputDir )
+            throws IOException
+    {
+        if( entry.isDirectory() )
+        {
+            Log.e( "unzipEntry", "Zip entry '" + entry.getName() + "' is not a file" );
+            return;
+        }
+
+        File outputFile = new File( outputDir, entry.getName() );
+        final InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
+        BufferedOutputStream outputStream = new BufferedOutputStream( new FileOutputStream(
+                outputFile ) );
+        byte[] b = new byte[1024];
+        int n;
+
+        while( ( n = zipStream.read( b, 0, 1024 ) ) >= 0 )
+        {
+            outputStream.write( b, 0, n );
+        }
+
+        outputStream.close();
+        zipStream.close();
+    }
+
     public static File extractRomFile( File destDir, String zipEntryName, InputStream inStream )
     {        
         // Read the first 4 bytes of the entry
@@ -455,12 +522,12 @@ public final class FileUtil
         }
         catch( IOException e )
         {
-            Log.w( "FileUtil", e );
+            Log.w( "extractRomFile", e );
             return null;
         }
         
         // This entry appears to be a valid ROM, extract it
-        Log.i( "FileUtil", "Found zip entry " + zipEntryName );
+        Log.i( "extractRomFile", "Found zip entry " + zipEntryName );
         makeDirs(destDir.getPath());
         String entryName = new File( zipEntryName ).getName();
         File extractedFile = new File( destDir, entryName );
@@ -486,7 +553,7 @@ public final class FileUtil
             }
             catch( IOException e )
             {
-                Log.w( "FileUtil", e );
+                Log.w( "extractRomFile", e );
                 return null;
             }
             finally
@@ -497,7 +564,7 @@ public final class FileUtil
         }
         catch( IOException e )
         {
-            Log.w( "FileUtil", e );
+            Log.w( "extractRomFile", e );
             return null;
         }
     }
@@ -524,14 +591,14 @@ public final class FileUtil
                 }
                 catch( IOException e )
                 {
-                    Log.w( "FileUtil", e );
+                    Log.w( "ExtractFirstROMFrom", e );
                 }
             }
             zipFile.close();
         }
         catch( IOException|ArrayIndexOutOfBoundsException e )
         {
-            Log.w( "FileUtil", e );
+            Log.w( "ExtractFirstROMFrom", e );
         }
 
         return null;
@@ -559,13 +626,13 @@ public final class FileUtil
                 }
                 catch( IOException e )
                 {
-                    Log.w( "FileUtil", e );
+                    Log.w( "ExtractFirstROM", e );
                 }
             }
         }
         catch( IOException|ArrayIndexOutOfBoundsException e )
         {
-            Log.w( "FileUtil", e );
+            Log.w( "ExtractFirstROM", e );
         }
 
         return null;
@@ -584,13 +651,14 @@ public final class FileUtil
         }
         catch( IOException e )
         {
-            Log.w( "FileUtil", e );
+            Log.w( "extractRomHeader", e );
             return null;
         }
 
-        int readBytes = 0;
         try {
-            readBytes = inStream.read( buffer, initialReadSize, arraySize - initialReadSize);
+            if (inStream.read( buffer, initialReadSize, arraySize - initialReadSize) != arraySize - initialReadSize) {
+                Log.w("extractRomHeader", "Unable to read ROM header");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -609,7 +677,9 @@ public final class FileUtil
 
         if(!destFile.exists())
         {
-            destFile.mkdirs();
+            if(!destFile.mkdirs()) {
+                Log.w("makeDirs", "Unable to make dir " + destFile.getPath());
+            }
         }
     }
 }
