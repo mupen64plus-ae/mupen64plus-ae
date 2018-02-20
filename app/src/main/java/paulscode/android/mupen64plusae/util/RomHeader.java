@@ -56,6 +56,7 @@ public final class RomHeader
     public final boolean isValid;
     public final boolean isZip;
     public final boolean is7Zip;
+    public final boolean isRar;
     
     /**
      * Constructor.
@@ -153,6 +154,11 @@ public final class RomHeader
                 && init_PI_BSB_DOM1_PGS_REG == (byte) 0x37
                 && init_PI_BSB_DOM1_PWD_REG == (byte) 0xaf
                 && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0xbc;
+
+        isRar = init_PI_BSB_DOM1_LAT_REG == (byte) 0x61
+                && init_PI_BSB_DOM1_PGS_REG == (byte) 0x52
+                && init_PI_BSB_DOM1_PWD_REG == (byte) 0x21
+                && init_PI_BSB_DOM1_PGS_REG2 == (byte) 0x72;
     }
 
     private static byte[] readFile( File file )
