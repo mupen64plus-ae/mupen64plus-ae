@@ -49,14 +49,9 @@ import android.view.MenuItem.OnActionExpandListener;
 import org.mupen64plusae.v3.alpha.R;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
@@ -485,14 +480,21 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private void launchGameOnCreation(String givenRomPath)
     {
+        if (givenRomPath == null) {
+            return;
+        }
+
         mGameStartedExternally = true;
         String finalRomPath = givenRomPath;
 
-        boolean isZip = givenRomPath != null && givenRomPath.toLowerCase().endsWith("zip");
+        RomHeader header = new RomHeader(finalRomPath);
 
-        if(isZip)
+        if(header.isZip)
         {
-            finalRomPath = ExtractFirstROMFromZip(givenRomPath);
+            finalRomPath = FileUtil.ExtractFirstROMFromZip(givenRomPath, mGlobalPrefs.unzippedRomsDir);
+        }
+        else if (header.is7Zip) {
+            finalRomPath = FileUtil.ExtractFirstROMFromSevenZ(givenRomPath, mGlobalPrefs.unzippedRomsDir);
         }
 
         if(finalRomPath != null)
@@ -502,7 +504,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             if(computedMd5 != null)
             {
-                final RomHeader header = new RomHeader(finalRomPath);
+                header = new RomHeader(finalRomPath);
 
                 final RomDatabase database = RomDatabase.getInstance();
 
@@ -1051,42 +1053,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 }
             }
         }
-    }
-
-    private String ExtractFirstROMFromZip(String zipPath)
-    {
-        try
-        {
-            ZipFile zipFile = new ZipFile( zipPath );
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while( entries.hasMoreElements() )
-            {
-                ZipEntry zipEntry = entries.nextElement();
-
-                try
-                {
-                    InputStream zipStream = zipFile.getInputStream( zipEntry );
-                    File extractedFile = FileUtil.extractRomFile( new File( mGlobalPrefs.unzippedRomsDir ), zipEntry, zipStream );
-
-                    if( extractedFile != null)
-                    {
-                        zipStream.close();
-                        return extractedFile.getPath();
-                    }
-                }
-                catch( IOException e )
-                {
-                    Log.w( "CacheRomInfoService", e );
-                }
-            }
-            zipFile.close();
-        }
-        catch( IOException|ArrayIndexOutOfBoundsException e )
-        {
-            Log.w( "GalleryActivity", e );
-        }
-
-        return null;
     }
 
     @Override

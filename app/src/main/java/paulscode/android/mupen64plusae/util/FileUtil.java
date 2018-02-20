@@ -22,6 +22,9 @@ package paulscode.android.mupen64plusae.util;
 
 import android.util.Log;
 
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -346,25 +349,23 @@ public final class FileUtil
      *
      * @param archive   The archive to extract.
      * @param outputDir Directory to place all of the extracted files.
-     *
-     * @return True if extraction was successful, false otherwise.
      */
-    public static boolean unzipAll( File archive, String outputDir )
+    public static void unzipAll( File archive, String outputDir )
     {
         if( archive == null )
         {
             Log.e( "unzipAll", "Zip file is null" );
-            return false;
+            return;
         }
         else if( !archive.exists() )
         {
             Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
-            return false;
+            return;
         }
         else if( !archive.isFile() )
         {
             Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
-            return false;
+            return;
         }
         
         ZipFile zipfile = null;
@@ -390,17 +391,14 @@ public final class FileUtil
         catch( ZipException ze )
         {
             Log.e( "unzipAll", "ZipException: ", ze );
-            return false;
         }
         catch( IOException ioe )
         {
             Log.e( "unzipAll", "IOException: ", ioe );
-            return false;
         }
         catch( Exception e )
         {
             Log.e( "unzipAll", "Exception: ", e );
-            return false;
         }
         finally
         {
@@ -413,20 +411,19 @@ public final class FileUtil
                 {
                 }
         }
-        return true;
     }
 
     // Unzips a specific entry from a ZIP file into the given output directory.
     //
     // Returns the absolute path to the outputted entry.
     // Returns null if the entry passed in happens to be a directory.
-    private static String unzipEntry( ZipFile zipfile, ZipEntry entry, String outputDir )
+    private static void unzipEntry( ZipFile zipfile, ZipEntry entry, String outputDir )
             throws IOException
     {
         if( entry.isDirectory() )
         {
             Log.e( "unzipEntry", "Zip entry '" + entry.getName() + "' is not a file" );
-            return null;
+            return;
         }
         
         File outputFile = new File( outputDir, entry.getName() );
@@ -445,11 +442,9 @@ public final class FileUtil
         
         outputStream.close();
         inputStream.close();
-        
-        return newFile;
     }
 
-    public static File extractRomFile( File destDir, ZipEntry zipEntry, InputStream inStream )
+    public static File extractRomFile( File destDir, String zipEntryName, InputStream inStream )
     {        
         // Read the first 4 bytes of the entry
         byte[] buffer = new byte[1024];
@@ -465,9 +460,9 @@ public final class FileUtil
         }
         
         // This entry appears to be a valid ROM, extract it
-        Log.i( "FileUtil", "Found zip entry " + zipEntry.getName() );
+        Log.i( "FileUtil", "Found zip entry " + zipEntryName );
         makeDirs(destDir.getPath());
-        String entryName = new File( zipEntry.getName() ).getName();
+        String entryName = new File( zipEntryName ).getName();
         File extractedFile = new File( destDir, entryName );
         try
         {
@@ -505,6 +500,75 @@ public final class FileUtil
             Log.w( "FileUtil", e );
             return null;
         }
+    }
+
+    public static String ExtractFirstROMFromZip(String zipPath, String unzippedRomDir)
+    {
+        try
+        {
+            ZipFile zipFile = new ZipFile( zipPath );
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while ( entries.hasMoreElements() ) {
+                ZipEntry zipEntry = entries.nextElement();
+
+                try
+                {
+                    InputStream zipStream = zipFile.getInputStream( zipEntry );
+                    File extractedFile = FileUtil.extractRomFile( new File( unzippedRomDir ), zipEntry.getName(), zipStream );
+
+                    if( extractedFile != null)
+                    {
+                        zipStream.close();
+                        return extractedFile.getPath();
+                    }
+                }
+                catch( IOException e )
+                {
+                    Log.w( "FileUtil", e );
+                }
+            }
+            zipFile.close();
+        }
+        catch( IOException|ArrayIndexOutOfBoundsException e )
+        {
+            Log.w( "FileUtil", e );
+        }
+
+        return null;
+    }
+
+    public static String ExtractFirstROMFromSevenZ(String zipPath, String unzippedRomDir)
+    {
+        try
+        {
+            SevenZFile zipFile = new SevenZFile(new File(zipPath));
+            SevenZArchiveEntry zipEntry;
+
+            while ( (zipEntry = zipFile.getNextEntry()) != null ) {
+
+                try
+                {
+                    final InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
+                    File extractedFile = FileUtil.extractRomFile( new File( unzippedRomDir ), zipEntry.getName(), zipStream );
+
+                    if( extractedFile != null)
+                    {
+                        zipFile.close();
+                        return extractedFile.getPath();
+                    }
+                }
+                catch( IOException e )
+                {
+                    Log.w( "FileUtil", e );
+                }
+            }
+        }
+        catch( IOException|ArrayIndexOutOfBoundsException e )
+        {
+            Log.w( "FileUtil", e );
+        }
+
+        return null;
     }
 
     public static byte[] extractRomHeader( InputStream inStream )

@@ -382,7 +382,7 @@ public class CacheRomInfoService extends Service
                     mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
 
                     if( mbStopped ) break;
-                    //zipFile.read(content, offset, content.length - offset);
+
                     InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
                     mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
 
@@ -418,7 +418,7 @@ public class CacheRomInfoService extends Service
             }
             zipFile.close();
         }
-        catch( IOException|ArrayIndexOutOfBoundsException e )
+        catch( IOException e)
         {
             Log.w( "CacheRomInfoService", e );
         }

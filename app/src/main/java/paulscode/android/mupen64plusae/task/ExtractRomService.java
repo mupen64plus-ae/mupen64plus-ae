@@ -38,8 +38,11 @@ import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +56,7 @@ import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog.OnCancelListener;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.RomHeader;
+import paulscode.android.mupen64plusae.util.SevenZInputStream;
 
 public class ExtractRomService extends Service {
     private String mZipPath;
@@ -122,7 +126,13 @@ public class ExtractRomService extends Service {
                 return;
             }
 
-            ExtractFileIfNeeded(mMd5, mRomPath, mZipPath);
+            final RomHeader romHeader = new RomHeader(mZipPath);
+
+            if (romHeader.isZip) {
+                ExtractZipFileIfNeeded(mMd5, mRomPath, mZipPath);
+            } else if (romHeader.is7Zip) {
+                ExtractSevenZFileIfNeeded(mMd5, mRomPath, mZipPath);
+            }
 
             if (mListener != null) {
                 mListener.onExtractRomFinished();
@@ -134,15 +144,12 @@ public class ExtractRomService extends Service {
         }
     }
 
-    private String ExtractFileIfNeeded(String md5, String romPath, String zipPath) {
+    private void ExtractZipFileIfNeeded(String md5, String romPath, String zipPath) {
         final File romFile = new File(romPath);
         String romFileName = romFile.getName();
         final File extractedRomFile = new File(mExtractZipPath + "/" + romFileName);
-        final RomHeader romHeader = new RomHeader(zipPath);
 
-        final boolean isZip = romHeader.isZip;
-
-        if (isZip && (!extractedRomFile.exists())) {
+        if (!extractedRomFile.exists()) {
             boolean lbFound = false;
 
             try {
@@ -156,34 +163,66 @@ public class ExtractRomService extends Service {
 
                         final File destDir = new File(mExtractZipPath);
                         final String entryName = new File(zipEntry.getName()).getName();
-                        File tempRomPath = new File(destDir, entryName);
-                        final boolean fileExisted = tempRomPath.exists();
 
-                        if (!fileExisted) {
-                            tempRomPath = FileUtil.extractRomFile(destDir, zipEntry, zipStream);
-                        }
+                        lbFound = entryName.equals(romFileName);
 
-                        final String computedMd5 = ComputeMd5Task.computeMd5(tempRomPath);
-                        lbFound = computedMd5 != null && computedMd5.equals(md5);
-
-                        //only delete the file if we extracted our selves
-                        if (!lbFound && !fileExisted && tempRomPath != null && !tempRomPath.isDirectory()) {
-                            tempRomPath.delete();
+                        if(entryName.equals(romFileName)) {
+                            File tempRomPath = FileUtil.extractRomFile(destDir, zipEntry.getName(), zipStream);
+                            Log.i("ExtractRomService", "Extracted zip entry: " + tempRomPath);
                         }
 
                         zipStream.close();
                     } catch (final IOException e) {
-                        Log.w("CacheRomInfoTask", e);
+                        Log.w("ExtractRomService", e);
                     }
                 }
                 zipFile.close();
             } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
-                Log.w("GalleryActivity", e);
+                Log.w("ExtractRomService", e);
             }
         }
-
-        return extractedRomFile.getPath();
     }
+
+    private void ExtractSevenZFileIfNeeded(String md5, String romPath, String zipPath) {
+        final File romFile = new File(romPath);
+        String romFileName = romFile.getName();
+        final File extractedRomFile = new File(mExtractZipPath + "/" + romFileName);
+
+        if (!extractedRomFile.exists()) {
+            boolean lbFound = false;
+
+            try {
+                SevenZFile zipFile = new SevenZFile(new File(zipPath));
+                SevenZArchiveEntry zipEntry;
+
+                while( (zipEntry = zipFile.getNextEntry()) != null && !lbFound)
+                {
+                    try {
+                        final InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
+
+                        final File destDir = new File(mExtractZipPath);
+                        final String entryName = new File(zipEntry.getName()).getName();
+
+                        lbFound = entryName.equals(romFileName);
+
+                        if (entryName.equals(romFileName)) {
+                            File tempRomPath = FileUtil.extractRomFile(destDir, zipEntry.getName(), zipStream);
+                            Log.i("ExtractRomService", "Extracted zip entry: " + tempRomPath);
+                        }
+
+                        zipStream.close();
+                    } catch (final IOException e) {
+                        Log.w("ExtractRomService", e);
+                    }
+                }
+
+                zipFile.close();
+            } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+                Log.w("ExtractRomService", e);
+            }
+        }
+    }
+
 
     public void initChannels(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
