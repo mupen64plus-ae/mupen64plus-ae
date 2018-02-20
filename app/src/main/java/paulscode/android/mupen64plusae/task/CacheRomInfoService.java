@@ -344,7 +344,7 @@ public class CacheRomInfoService extends Service
                             //Then extract the ROM file
                             zipStream.reset();
 
-                            String extractedFile = mUnzipDir + "/" + zipEntry;
+                            String extractedFile = mUnzipDir + "/" + new File(zipEntry.getName()).getName();
                             String md5 = ComputeMd5Task.computeMd5( zipStream );
 
                             cacheFile( extractedFile, extractedHeader, md5, database, config, file );
@@ -402,7 +402,7 @@ public class CacheRomInfoService extends Service
                             //Then extract the ROM file
                             zipStream.reset();
 
-                            String extractedFile = mUnzipDir + "/" + zipEntry;
+                            String extractedFile = mUnzipDir + "/" + new File(zipEntry.getName()).getName();
                             String md5 = ComputeMd5Task.computeMd5( zipStream );
 
                             cacheFile( extractedFile, extractedHeader, md5, database, config, file );
