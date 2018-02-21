@@ -60,5 +60,6 @@ dependencies {
     implementation project(':mupen64plus-rsp-hle')
     implementation project(':mupen64plus-input-android')
     implementation project(':mupen64plus-video-rice')
+    implementation project(':junrar-release')
 }
 
