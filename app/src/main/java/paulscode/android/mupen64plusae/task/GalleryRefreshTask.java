@@ -112,12 +112,17 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         // Delete extracted zip files not on this list
         List<File> extractedFiles = new ArrayList<>();
         File unzipRomsDir = new File(mGlobalPrefs.unzippedRomsDir);
-        Collections.addAll(extractedFiles, unzipRomsDir.listFiles() );
 
-        for(File extractedFile : extractedFiles) {
-            if (!isRomPathInItemList(recentItems, extractedFile)) {
-                if(!extractedFile.delete()) {
-                    Log.w("GalleryActivity", "Unable to delete " + extractedFile.getPath());
+        File[] files = unzipRomsDir.listFiles();
+
+        if (files != null) {
+            Collections.addAll(extractedFiles, files);
+
+            for(File extractedFile : extractedFiles) {
+                if (!isRomPathInItemList(recentItems, extractedFile)) {
+                    if(!extractedFile.delete()) {
+                        Log.w("GalleryActivity", "Unable to delete " + extractedFile.getPath());
+                    }
                 }
             }
         }
