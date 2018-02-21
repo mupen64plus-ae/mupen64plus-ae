@@ -175,16 +175,16 @@ public class CacheRomInfoService extends Service
                 
                 if( mbStopped ) break;
                 RomHeader header = new RomHeader( file );
-                if( header.isValid )
-                {
+                if( header.isValid ) {
                     cacheFile( file, database, config);
-                } else if (header.isZip && mSearchZips && !ConfigHasZip(config, file.getPath()))
-                {
-                    cacheZip(database, file, config);
-                } else if (header.is7Zip) {
-                    cache7Zip(database, file, config);
-                } else if (header.isRar) {
-                    cacheRar(database, file, config);
+                } else if (mSearchZips && !ConfigHasZip(config, file.getPath())) {
+                    if (header.isZip) {
+                        cacheZip(database, file, config);
+                    } else if (header.is7Zip) {
+                        cache7Zip(database, file, config);
+                    } else if (header.isRar) {
+                        cacheRar(database, file, config);
+                    }
                 }
 
                 mListener.GetProgressDialog().incrementProgress( 1 );
