@@ -336,27 +336,8 @@ public class CacheRomInfoService extends Service
 
                     if( mbStopped ) break;
 
-                    //First get the rom header
-                    zipStream.mark(500);
-                    byte[] romHeader = FileUtil.extractRomHeader(zipStream);
-                    RomHeader extractedHeader;
-                    if(romHeader != null) {
-                        extractedHeader = new RomHeader( romHeader );
-
-                        if(extractedHeader.isValid)
-                        {
-                            // This entry appears to be a valid ROM, extract it
-                            Log.i( "FileUtil", "Found ROM entry " + zipEntry.getName() );
-
-                            //Then extract the ROM file
-                            zipStream.reset();
-
-                            String extractedFile = mUnzipDir + "/" + new File(zipEntry.getName()).getName();
-                            String md5 = ComputeMd5Task.computeMd5( zipStream );
-
-                            cacheFile( extractedFile, extractedHeader, md5, database, config, file );
-                        }
-                    }
+                    cacheFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(),
+                            zipStream);
 
                     zipStream.close();
                 }
@@ -395,26 +376,8 @@ public class CacheRomInfoService extends Service
 
                     if( mbStopped ) break;
 
-                    //First get the rom header
-                    zipStream.mark(500);
-                    byte[] romHeader = FileUtil.extractRomHeader(zipStream);
-                    RomHeader extractedHeader;
-                    if(romHeader != null) {
-                        extractedHeader = new RomHeader( romHeader );
-
-                        if(extractedHeader.isValid)
-                        {
-                            Log.i( "FileUtil", "Found ROM entry " + zipEntry.getName() );
-
-                            //Then extract the ROM file
-                            zipStream.reset();
-
-                            String extractedFile = mUnzipDir + "/" + new File(zipEntry.getName()).getName();
-                            String md5 = ComputeMd5Task.computeMd5( zipStream );
-
-                            cacheFile( extractedFile, extractedHeader, md5, database, config, file );
-                        }
-                    }
+                    cacheFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(),
+                            zipStream);
 
                     zipStream.close();
                 }
@@ -456,31 +419,12 @@ public class CacheRomInfoService extends Service
                             new ByteArrayInputStream(outputStream.toByteArray()));
                     if( mbStopped ) break;
 
-                    //First get the rom header
-                    rarStream.mark(500);
-                    byte[] romHeader = FileUtil.extractRomHeader(rarStream);
-                    RomHeader extractedHeader;
-                    if(romHeader != null) {
-                        extractedHeader = new RomHeader( romHeader );
-
-                        if(extractedHeader.isValid)
-                        {
-                            Log.i( "FileUtil", "Found ROM entry " +
-                                    new File(rarEntry.getFileNameString()).getName() );
-
-                            //Then extract the ROM file
-                            rarStream.reset();
-
-                            String extractedFile = mUnzipDir + "/" + new File(rarEntry.getFileNameString()).getName();
-                            String md5 = ComputeMd5Task.computeMd5( rarStream );
-
-                            cacheFile( extractedFile, extractedHeader, md5, database, config, file );
-                        }
-                    }
+                    cacheFileFromInputStream(database, file, config, new File(rarEntry.getFileNameString()).getName(),
+                            rarStream);
 
                     outputStream.close();
 
-                } catch (IOException|RarException|NoSuchAlgorithmException |IllegalArgumentException e) {
+                } catch (IOException|RarException|NoSuchAlgorithmException|IllegalArgumentException e) {
                     Log.w( "CacheRomInfoService", e );
                 }
             }
@@ -488,6 +432,30 @@ public class CacheRomInfoService extends Service
         catch( IOException|RarException e)
         {
             Log.w( "CacheRomInfoService", e );
+        }
+    }
+
+    private void cacheFileFromInputStream(RomDatabase database, File file, ConfigFile config, String name,
+                                          InputStream inputStream) throws IOException, NoSuchAlgorithmException {
+        //First get the rom header
+        inputStream.mark(500);
+        byte[] romHeader = FileUtil.extractRomHeader(inputStream);
+        RomHeader extractedHeader;
+        if(romHeader != null) {
+            extractedHeader = new RomHeader( romHeader );
+
+            if(extractedHeader.isValid)
+            {
+                Log.i( "FileUtil", "Found ROM entry " + name);
+
+                //Then extract the ROM file
+                inputStream.reset();
+
+                String extractedFile = mUnzipDir + "/" + name;
+                String md5 = ComputeMd5Task.computeMd5( inputStream );
+
+                cacheFile( extractedFile, extractedHeader, md5, database, config, file );
+            }
         }
     }
 
