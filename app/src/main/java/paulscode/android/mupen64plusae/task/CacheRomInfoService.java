@@ -396,12 +396,11 @@ public class CacheRomInfoService extends Service
 
     private void cacheRar(RomDatabase database, File file, ConfigFile config)
     {
-        Log.i( "CacheRomInfoService", "Found rar file " + file.getName() );
+        Log.i( "CacheRomInfoService", "Found rar file " + file.getPath() );
         try
         {
             Archive rarFile = new Archive(new FileVolumeManager(file));
 
-            rarFile.getMainHeader().print();
             FileHeader rarEntry;
             while ((rarEntry = rarFile.nextFileHeader()) != null) {
                 try {
