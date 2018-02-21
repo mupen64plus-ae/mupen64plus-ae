@@ -45,6 +45,8 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -61,6 +63,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import junrar.Archive;
+import junrar.exception.RarException;
+import junrar.impl.FileVolumeManager;
+import junrar.rarfile.FileHeader;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
@@ -171,15 +177,16 @@ public class CacheRomInfoService extends Service
                 RomHeader header = new RomHeader( file );
                 if( header.isValid )
                 {
-                    cacheFile( file, database, config, null );
-                }
-                else if( header.isZip && mSearchZips && !ConfigHasZip(config, file.getPath()))
+                    cacheFile( file, database, config);
+                } else if (header.isZip && mSearchZips && !ConfigHasZip(config, file.getPath()))
                 {
                     cacheZip(database, file, config);
-                }
-                else if( header.is7Zip) {
+                } else if (header.is7Zip) {
                     cache7Zip(database, file, config);
+                } else if (header.isRar) {
+                    cacheRar(database, file, config);
                 }
+
                 mListener.GetProgressDialog().incrementProgress( 1 );
             }
 
@@ -424,6 +431,66 @@ public class CacheRomInfoService extends Service
         }
     }
 
+    private void cacheRar(RomDatabase database, File file, ConfigFile config)
+    {
+        Log.i( "CacheRomInfoService", "Found rar file " + file.getName() );
+        try
+        {
+            Archive rarFile = new Archive(new FileVolumeManager(file));
+
+            rarFile.getMainHeader().print();
+            FileHeader rarEntry;
+            while ((rarEntry = rarFile.nextFileHeader()) != null) {
+                try {
+
+                    mListener.GetProgressDialog().setSubtext( new File(rarEntry.getFileNameString()).getName() );
+                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
+                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
+
+                    if( mbStopped ) break;
+
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    rarFile.extractFile(rarEntry, outputStream);
+
+                    InputStream rarStream = new BufferedInputStream(
+                            new ByteArrayInputStream(outputStream.toByteArray()));
+                    if( mbStopped ) break;
+
+                    //First get the rom header
+                    rarStream.mark(500);
+                    byte[] romHeader = FileUtil.extractRomHeader(rarStream);
+                    RomHeader extractedHeader;
+                    if(romHeader != null) {
+                        extractedHeader = new RomHeader( romHeader );
+
+                        if(extractedHeader.isValid)
+                        {
+                            Log.i( "FileUtil", "Found ROM entry " +
+                                    new File(rarEntry.getFileNameString()).getName() );
+
+                            //Then extract the ROM file
+                            rarStream.reset();
+
+                            String extractedFile = mUnzipDir + "/" + new File(rarEntry.getFileNameString()).getName();
+                            String md5 = ComputeMd5Task.computeMd5( rarStream );
+
+                            cacheFile( extractedFile, extractedHeader, md5, database, config, file );
+                        }
+                    }
+
+                    outputStream.close();
+
+                } catch (IOException|RarException|NoSuchAlgorithmException |IllegalArgumentException e) {
+                    Log.w( "CacheRomInfoService", e );
+                }
+            }
+        }
+        catch( IOException|RarException e)
+        {
+            Log.w( "CacheRomInfoService", e );
+        }
+    }
+
     private void cacheFile( String filename, RomHeader header, String md5, RomDatabase database, ConfigFile config, File zipFileLocation )
     {
         if( mbStopped ) return;
@@ -448,12 +515,12 @@ public class CacheRomInfoService extends Service
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_refreshingUI );
     }
     
-    private void cacheFile( File file, RomDatabase database, ConfigFile config, File zipFileLocation )
+    private void cacheFile( File file, RomDatabase database, ConfigFile config )
     {
         String md5 = ComputeMd5Task.computeMd5( file );
         RomHeader header = new RomHeader(file);
 
-        cacheFile( file.getAbsolutePath(), header, md5, database, config, zipFileLocation );
+        cacheFile( file.getAbsolutePath(), header, md5, database, config, null );
     }
     
     private static void touchFile( String destPath )
