@@ -45,8 +45,6 @@ import org.mupen64plusae.v3.alpha.R;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -63,10 +61,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import junrar.Archive;
-import junrar.exception.RarException;
-import junrar.impl.FileVolumeManager;
-import junrar.rarfile.FileHeader;
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.GalleryActivity;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
@@ -182,8 +176,6 @@ public class CacheRomInfoService extends Service
                         cacheZip(database, file, config);
                     } else if (header.is7Zip) {
                         cache7Zip(database, file, config);
-                    } else if (header.isRar) {
-                        cacheRar(database, file, config);
                     }
                 }
 
@@ -389,46 +381,6 @@ public class CacheRomInfoService extends Service
             zipFile.close();
         }
         catch( IOException e)
-        {
-            Log.w( "CacheRomInfoService", e );
-        }
-    }
-
-    private void cacheRar(RomDatabase database, File file, ConfigFile config)
-    {
-        Log.i( "CacheRomInfoService", "Found rar file " + file.getPath() );
-        try
-        {
-            Archive rarFile = new Archive(new FileVolumeManager(file));
-
-            FileHeader rarEntry;
-            while ((rarEntry = rarFile.nextFileHeader()) != null) {
-                try {
-
-                    mListener.GetProgressDialog().setSubtext( new File(rarEntry.getFileNameString()).getName() );
-                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
-                    mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
-
-                    if( mbStopped ) break;
-
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                    rarFile.extractFile(rarEntry, outputStream);
-
-                    InputStream rarStream = new BufferedInputStream(
-                            new ByteArrayInputStream(outputStream.toByteArray()));
-                    if( mbStopped ) break;
-
-                    cacheFileFromInputStream(database, file, config, new File(rarEntry.getFileNameString()).getName(),
-                            rarStream);
-
-                    outputStream.close();
-
-                } catch (IOException|RarException|NoSuchAlgorithmException|IllegalArgumentException e) {
-                    Log.w( "CacheRomInfoService", e );
-                }
-            }
-        }
-        catch( IOException|RarException e)
         {
             Log.w( "CacheRomInfoService", e );
         }
