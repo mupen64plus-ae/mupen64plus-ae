@@ -1,7 +1,9 @@
 package paulscode.android.mupen64plusae.compat;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.appcompat.R;
 import android.support.v7.preference.Preference;
@@ -9,7 +11,6 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnChildAttachStateChangeListener;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
          *            The preference dialog
          * @return The dialog fragment for the preference
          */
-        public DialogFragment getPreferenceDialogFragment(Preference preference);
+        DialogFragment getPreferenceDialogFragment(Preference preference);
     }
     
     public interface OnFragmentCreationListener
@@ -39,7 +40,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
          * 
          * @param currentFragment Current fragment
          */
-        public void onFragmentCreation(AppCompatPreferenceFragment currentFragment);
+        void onFragmentCreation(AppCompatPreferenceFragment currentFragment);
     }
 
     private static final String STATE_SHATED_PREFS_NAME = "STATE_SHATED_PREFS_NAME";
@@ -63,9 +64,15 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey)
     {
         setRetainInstance(true);
+
+        Bundle arguments = getArguments();
+
+        if (arguments == null) {
+            return;
+        }
         
-        final String sharedPrefsName = getArguments().getString(STATE_SHATED_PREFS_NAME);
-        final int resourceId = getArguments().getInt(STATE_RESOURCE_ID);
+        final String sharedPrefsName = arguments.getString(STATE_SHATED_PREFS_NAME);
+        final int resourceId = arguments.getInt(STATE_RESOURCE_ID);
 
         // Load the preferences from an XML resource
 
@@ -109,7 +116,11 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
             if (fragment != null)
             {
                 fragment.setTargetFragment(this, 0);
-                fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+
+                FragmentManager fragmentManager = getFragmentManager();
+                if (fragmentManager != null) {
+                    fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+                }
             }
         }
 
@@ -120,7 +131,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
 
@@ -176,13 +187,15 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
                     int firstItem = layoutManager.findFirstCompletelyVisibleItemPosition();
 
                     //Get focus on the first visible item the first time it's displayed
-                    RecyclerView.ViewHolder holder = recyclerView.findViewHolderForItemId(adapter.getItemId(firstItem));
-                    if(holder != null)
-                    {
-                        if (!mHasFocusBeenSet)
+                    if (firstItem != -1) {
+                        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForItemId(adapter.getItemId(firstItem));
+                        if(holder != null)
                         {
-                            mHasFocusBeenSet = true;
-                            holder.itemView.requestFocus();
+                            if (!mHasFocusBeenSet)
+                            {
+                                mHasFocusBeenSet = true;
+                                holder.itemView.requestFocus();
+                            }
                         }
                     }
                 }
