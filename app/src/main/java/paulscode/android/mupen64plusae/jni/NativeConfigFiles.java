@@ -402,7 +402,7 @@ class NativeConfigFiles
 
         try {
             headerNameURL = java.net.URLEncoder.encode(headerNameURL, "UTF-8");
-            headerNameURL = headerNameURL.replace("+", "%20");
+            headerNameURL = headerNameURL.replace("+", "%20").toUpperCase();
         } catch (UnsupportedEncodingException|java.lang.NullPointerException e) {
             Log.e("NativeConfigFile", "Error on loading gameHeaderNameUrl: e=" + e.toString());
         }
