@@ -287,7 +287,7 @@
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
   <string name="pathHiResTextures_title">Import texture pack</string>
-  <string name="pathHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
+  <string name="pathHiResTextures_summary">Apply custom textures (ZIP/7zip format) to a game</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Game save folder</string>
   <!--Player Map Preferences-->

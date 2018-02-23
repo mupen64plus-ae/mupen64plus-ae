@@ -454,7 +454,7 @@
     <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
     <string name="pathPreference_dialogTitle">Carpeta seleccionada: %1$s</string>
     <string name="pathHiResTextures_title">Importar paquete de texturas</string>
-    <string name="pathHiResTextures_summary">Aplicar texturas personalizadas (en formato ZIP) a un juego</string>
+    <string name="pathHiResTextures_summary">Aplicar texturas personalizadas (en formato ZIP/7zip) a un juego</string>
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Directorio de partidas de juego</string>
     <string name="pathAppData_title">Directorio de datos de la applicación</string>
@@ -535,7 +535,7 @@
     <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Error: archivo HTC debe coincidir con este formato [GAME_HEADER]__HIRESTEXTURES.htc</string>
 
     <!--Scan Roms Dialog-->
-    <string name="scanRomsDialog_selectRom">Seleccionar un ROM o Carpeta para Escanear (se soporta archivos n64/z64/zip)</string>
+    <string name="scanRomsDialog_selectRom">Seleccionar un ROM o Carpeta para Escanear (se soporta archivos n64/z64/zip/7zip)</string>
     <string name="scanRomsDialog_searchZips">Buscar archivos ZIP</string>
     <string name="scanRomsDialog_downloadArt">Descargar Portada</string>
     <string name="scanRomsDialog_clearGallery">Vaciar galería antes de agregar</string>
