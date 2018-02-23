@@ -82,6 +82,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_SIDEBAR = "sidebar";
     private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "STATE_CACHE_ROM_INFO_FRAGMENT";
     private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
+    private static final String STATE_DELETE_FILES_FRAGMENT= "STATE_DELETE_FILES_FRAGMENT";
     private static final String STATE_EXTRACT_ROM_FRAGMENT= "STATE_EXTRACT_ROM_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
@@ -122,6 +123,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private ScanRomsFragment mCacheRomInfoFragment = null;
     private ExtractTexturesFragment mExtractTexturesFragment = null;
+    private DeleteFilesFragment mDeleteFilesFragment = null;
     private ExtractRomFragment mExtractRomFragment = null;
     
     //True if the restart promp is enabled
@@ -329,6 +331,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
         mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
+        mDeleteFilesFragment = (DeleteFilesFragment) fm.findFragmentByTag(STATE_DELETE_FILES_FRAGMENT);
         mExtractRomFragment = (ExtractRomFragment) fm.findFragmentByTag(STATE_EXTRACT_ROM_FRAGMENT);
 
         if(mCacheRomInfoFragment == null)
@@ -341,6 +344,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             mExtractTexturesFragment = new ExtractTexturesFragment();
             fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
+        }
+
+        if(mDeleteFilesFragment == null)
+        {
+            mDeleteFilesFragment = new DeleteFilesFragment();
+            fm.beginTransaction().add(mDeleteFilesFragment, STATE_DELETE_FILES_FRAGMENT).commit();
         }
 
         if(mExtractRomFragment == null)
@@ -704,8 +713,15 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
             else if(id == CLEAR_CONFIRM_DIALOG_ID)
             {
-                FileUtil.deleteFolder(new File(mGlobalPrefs.coreUserDataDir));
-                FileUtil.deleteFolder(new File(mGlobalPrefs.coreUserCacheDir));
+                ArrayList<String> foldersToDelete = new ArrayList<>();
+                foldersToDelete.add(mGlobalPrefs.coreUserDataDir);
+                foldersToDelete.add(mGlobalPrefs.coreUserCacheDir);
+
+                ArrayList<String> filters = new ArrayList<>();
+                filters.add("");
+                filters.add("");
+
+                mDeleteFilesFragment.deleteFiles(foldersToDelete, filters);
             }
             else if(id == REMOVE_FROM_LIBRARY_DIALOG_ID && mSelectedItem != null)
             {

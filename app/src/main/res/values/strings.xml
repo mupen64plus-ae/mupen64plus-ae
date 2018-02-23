@@ -708,6 +708,10 @@
     <!-- ROM Scanning -->
     <string name="scanning_title">Scanning…</string>
 
+    <!-- Deleting Files -->
+    <string name="pathDeletingFilesTask_title">Deleting files…</string>
+    <string name="pathDeletingFilesTask_message">Please be patient.  This process may take some time.</string>
+
     <!-- ROM information calculation -->
     <string name="cacheRomInfo_searching">Searching…</string>
     <string name="cacheRomInfo_searchingZip">Searching zip file…</string>

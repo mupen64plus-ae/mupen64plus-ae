@@ -550,6 +550,11 @@
 
     <!--ROM Scanning-->
     <string name="scanning_title">Escaneando…</string>
+
+    <!-- Deleting Files -->
+    <string name="pathDeletingFilesTask_title">Borrando archivos…</string>
+    <string name="pathDeletingFilesTask_message">Sea paciente. Este proceso puede llevar tiempo.</string>
+
     <!--ROM information calculation-->
     <string name="cacheRomInfo_searching">Buscando…</string>
     <string name="cacheRomInfo_searchingZip">Buscando Archivos ZIP…</string>

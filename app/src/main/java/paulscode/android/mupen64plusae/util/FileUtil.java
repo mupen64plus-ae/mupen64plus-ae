@@ -164,6 +164,21 @@ public final class FileUtil
     }
 
     /**
+     * Deletes a given folder directory in the form of a {@link File}
+     *
+     * @param folder The folder to delete.
+     */
+    public static void deleteFolderFilter(File folder, String filter) {
+        if (folder.exists() && folder.isDirectory() && folder.listFiles() != null)
+            for (File child : folder.listFiles())
+                deleteFolderFilter(child,filter);
+
+        if (folder.getName().contains(filter) && !folder.delete()) {
+            Log.w("deleteFolderFilter", "Couldn't delete " + folder.getPath());
+        }
+    }
+
+    /**
      * Deletes all files with the provided extension in a folder
      *
      * @param folder The folder to look for the provided extension.

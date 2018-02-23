@@ -263,6 +263,8 @@
                  android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractTexturesService"
                  android:exported="false" />
+        <service android:name="paulscode.android.mupen64plusae.task.DeleteFilesService"
+                 android:exported="false" />
         <service android:name="paulscode.android.mupen64plusae.task.ExtractRomService"
                  android:exported="false" />
         <service

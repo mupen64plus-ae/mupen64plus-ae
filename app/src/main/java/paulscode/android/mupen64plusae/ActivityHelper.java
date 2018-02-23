@@ -52,6 +52,7 @@ import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
 import paulscode.android.mupen64plusae.profile.TouchscreenProfileActivity;
 import paulscode.android.mupen64plusae.task.CacheRomInfoService;
+import paulscode.android.mupen64plusae.task.DeleteFilesService;
 import paulscode.android.mupen64plusae.task.ExtractRomService;
 import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.util.LogcatActivity;
@@ -95,6 +96,8 @@ public class ActivityHelper
         public static final String DOWNLOAD_ART         = NAMESPACE + "GALLERY_DOWNLOAD_ART";
         public static final String CLEAR_GALLERY        = NAMESPACE + "GALLERY_CLEAR_GALLERY";
         public static final String SEARCH_SUBDIR        = NAMESPACE + "GALLERY_SEARCH_SUBDIR";
+        public static final String DELETE_PATH          = NAMESPACE + "DELETE_PATH";
+        public static final String DELETE_FILTER        = NAMESPACE + "DELETE_FILTER";
         public static final String CHEAT_ARGS           = NAMESPACE + "CHEAT_ARGS";
         public static final String SAVE_TO_LOAD         = NAMESPACE + "SAVE_TO_LOAD";
         public static final String CORE_LIB             = NAMESPACE + "CORE_LIB";
@@ -378,6 +381,25 @@ public class ActivityHelper
     static void stopExtractTexturesService(Context context, ServiceConnection serviceConnection)
     {
         Intent intent = new Intent(context, ExtractTexturesService.class);
+
+        context.unbindService(serviceConnection);
+        context.stopService(intent);
+    }
+
+    static void startDeleteFilesService(Context context, ServiceConnection serviceConnection,
+                                            ArrayList<String> deletePath, ArrayList<String> deleteFilter)
+    {
+        Intent intent = new Intent(context, DeleteFilesService.class);
+        intent.putStringArrayListExtra(Keys.DELETE_PATH, deletePath);
+        intent.putStringArrayListExtra(Keys.DELETE_FILTER, deleteFilter);
+
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, 0);
+    }
+
+    static void stopDeleteFilesService(Context context, ServiceConnection serviceConnection)
+    {
+        Intent intent = new Intent(context, DeleteFilesService.class);
 
         context.unbindService(serviceConnection);
         context.stopService(intent);
