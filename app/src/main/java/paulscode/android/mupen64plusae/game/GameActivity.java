@@ -991,7 +991,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         //Only player 1 can control menus
-        handled = handled && !mGamePrefs.playerMap.testHardware(AbstractProvider.getHardwareId( event ), 1);
+        handled = handled || !mGamePrefs.playerMap.testHardware(AbstractProvider.getHardwareId( event ), 1);
 
         if(!handled)
         {
