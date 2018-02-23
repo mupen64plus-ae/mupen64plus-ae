@@ -714,8 +714,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             else if(id == CLEAR_CONFIRM_DIALOG_ID)
             {
                 ArrayList<String> foldersToDelete = new ArrayList<>();
-                foldersToDelete.add(mGlobalPrefs.coreUserDataDir);
-                foldersToDelete.add(mGlobalPrefs.coreUserCacheDir);
+                foldersToDelete.add(mGlobalPrefs.hiResTextureDir);
+                foldersToDelete.add(mGlobalPrefs.textureCacheDir);
 
                 ArrayList<String> filters = new ArrayList<>();
                 filters.add("");

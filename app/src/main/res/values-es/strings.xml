@@ -63,7 +63,7 @@
     <string name="menuItem_hardwareInfo">Informacion de hardware</string>
     <string name="menuItem_Tools">Herramientas</string>
     <string name="menuItem_Extract">Agregar paquete de texturas</string>
-    <string name="menuItem_Clear">Limpiar paquete de texturas y cache</string>
+    <string name="menuItem_Clear">Borrar paquetes de texturas</string>
     <string name="menuItem_localeOverride">Idioma</string>
     <!--ManageProfilesActivity-->
     <string name="menuItem_new">Nuevo</string>
