@@ -387,7 +387,7 @@ public final class FileUtil
                 ZipEntry entry = e.nextElement();
                 if (!entry.isDirectory())
                 {
-                    File f = new File( outputDir + "/" + new File(entry.getName()).getName());
+                    File f = new File( outputDir + "/" + entry.toString() );
                     f = f.getParentFile();
                     if( f != null )
                     {
@@ -471,7 +471,8 @@ public final class FileUtil
 
             while( (zipEntry = zipfile.getNextEntry()) != null)
             {
-                File f = new File( outputDir + "/" + new File(zipEntry.getName()).getName());
+                File f = new File( outputDir + "/" + zipEntry.toString() );
+
                 f = f.getParentFile();
                 if( f != null )
                 {
