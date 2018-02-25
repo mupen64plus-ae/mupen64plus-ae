@@ -128,9 +128,6 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
 
     private void launchGame()
     {
-        // Notify user that the game activity is starting
-        Notifier.showToast(getActivity(), R.string.toast_launchingEmulator);
-
         // Launch the game activity
         ActivityHelper.startGameActivity(getActivity(), mRomPath, mMd5, mRomCrc, mRomHeaderName, mRomCountryCode,
                 mRomArtPath, mRomGoodName, mRomLegacySaveFileName, mIsRestarting);
