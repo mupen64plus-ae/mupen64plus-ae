@@ -258,7 +258,10 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         Collections.sort( items, mGlobalPrefs.sortByRomName ?
                 new GalleryItem.NameComparator() : new GalleryItem.RomFileComparator() );
 
-        deleteOldItems(recentItems);
+        //Don't delete any items when srarching
+        if (searches == null) {
+            deleteOldItems(recentItems);
+        }
     }
 
 }
