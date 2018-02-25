@@ -82,7 +82,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_SIDEBAR = "STATE_SIDEBAR";
     private static final String STATE_FILE_TO_DELETE = "STATE_FILE_TO_DELETE";
     private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "STATE_CACHE_ROM_INFO_FRAGMENT";
-    private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
     private static final String STATE_EXTRACT_ROM_FRAGMENT= "STATE_EXTRACT_ROM_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
@@ -120,7 +119,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private boolean mDragging = false;
 
     private ScanRomsFragment mCacheRomInfoFragment = null;
-    private ExtractTexturesFragment mExtractTexturesFragment = null;
     private ExtractRomFragment mExtractRomFragment = null;
     
     //True if the restart promp is enabled
@@ -330,19 +328,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // find the retained fragment on activity restarts
         final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
-        mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
         mExtractRomFragment = (ExtractRomFragment) fm.findFragmentByTag(STATE_EXTRACT_ROM_FRAGMENT);
 
         if(mCacheRomInfoFragment == null)
         {
             mCacheRomInfoFragment = new ScanRomsFragment();
             fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
-        }
-        
-        if(mExtractTexturesFragment == null)
-        {
-            mExtractTexturesFragment = new ExtractTexturesFragment();
-            fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
         }
 
         if(mExtractRomFragment == null)
@@ -841,23 +832,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     if (searchPath != null)
                     {
                         refreshRoms(new File(searchPath), searchZips, downloadArt, clearGallery, searchSubdirectories);
-                    }
-                }
-            }
-        }
-        else if(requestCode == ActivityHelper.EXTRACT_TEXTURES_CODE)
-        {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK && data != null)
-            {
-                final Bundle extras = data.getExtras();
-
-                if (extras != null) {
-                    final String searchPath = extras.getString(ActivityHelper.Keys.SEARCH_PATH);
-
-                    if (searchPath != null)
-                    {
-                        mExtractTexturesFragment.extractTextures(new File(searchPath));
                     }
                 }
             }

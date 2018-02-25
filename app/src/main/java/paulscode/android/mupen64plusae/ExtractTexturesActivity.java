@@ -11,6 +11,7 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +26,10 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
     private List<String> mPaths;
     private Button mCancelButton;
     private Button mOkButton;
+
+    private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
+
+    private ExtractTexturesFragment mExtractTexturesFragment = null;
     
     private File mCurrentPath = null;
  
@@ -49,7 +54,16 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
             // Pick the root of the storage directory by default
             mCurrentPath = new File( Environment.getExternalStorageDirectory().getAbsolutePath() );
         }
-         
+
+        final FragmentManager fm = getSupportFragmentManager();
+        mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
+
+        if(mExtractTexturesFragment == null)
+        {
+            mExtractTexturesFragment = new ExtractTexturesFragment();
+            fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
+        }
+
         setContentView(R.layout.extract_textures_activity);
         
         mCancelButton = findViewById( R.id.buttonCancel );
@@ -63,10 +77,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
         mOkButton = findViewById( R.id.buttonOk );
         mOkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent data = new Intent();
-                data.putExtra(ActivityHelper.Keys.SEARCH_PATH, mCurrentPath.getPath());
-                ExtractTexturesActivity.this.setResult(RESULT_OK, data);
-                ExtractTexturesActivity.this.finish();
+                mExtractTexturesFragment.extractTextures(mCurrentPath);
             }
         });
 

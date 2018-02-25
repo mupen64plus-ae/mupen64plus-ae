@@ -116,7 +116,6 @@ public class ActivityHelper
     }
     
     static final int SCAN_ROM_REQUEST_CODE = 1;
-    static final int EXTRACT_TEXTURES_CODE = 2;
     static final int GAME_ACTIVITY_CODE = 3;
 
     static final String coreServiceProcessName = "paulscode.android.mupen64plusae.GameActivity";
@@ -131,7 +130,7 @@ public class ActivityHelper
         launchUri( context, Uri.parse( uriString ) );
     }
     
-    static void launchUri( Context context, Uri uri )
+    static private void launchUri( Context context, Uri uri )
     {
         try
         {
@@ -408,7 +407,7 @@ public class ActivityHelper
     static void starExtractTextureActivity(Activity activity)
     {
         Intent intent = new Intent(activity, ExtractTexturesActivity.class);
-        activity.startActivityForResult( intent, EXTRACT_TEXTURES_CODE );
+        activity.startActivity( intent );
     }
 
     static void startDeleteTextureActivity(Activity activity)
