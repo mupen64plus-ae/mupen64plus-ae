@@ -276,6 +276,8 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
         
         // Populate the key-value pairs for the list entries
         boolean isFilesIncluded = mSelectionMode != SELECTION_MODE_DIRECTORY;
+        mNames.clear();
+        mPaths.clear();
         FileUtil.populate( startPath, true, true, isFilesIncluded, mNames, mPaths );
     }
 

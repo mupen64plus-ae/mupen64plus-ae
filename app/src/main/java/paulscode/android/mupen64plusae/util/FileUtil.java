@@ -68,9 +68,6 @@ public final class FileUtil
         if( startPath.getParentFile() == null )
             includeParent = false;
         
-        outNames.clear();
-        outPaths.clear();
-        
         if( includeParent )
         {
             outNames.add( AppData.fromHtml( "<b>..</b>" ) );

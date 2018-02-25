@@ -78,21 +78,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         GalleryRefreshFinishedListener
 {
     // Saved instance states
-    private static final String STATE_QUERY = "query";
-    private static final String STATE_SIDEBAR = "sidebar";
+    private static final String STATE_QUERY = "STATE_QUERY";
+    private static final String STATE_SIDEBAR = "STATE_SIDEBAR";
+    private static final String STATE_FILE_TO_DELETE = "STATE_FILE_TO_DELETE";
     private static final String STATE_CACHE_ROM_INFO_FRAGMENT= "STATE_CACHE_ROM_INFO_FRAGMENT";
     private static final String STATE_EXTRACT_TEXTURES_FRAGMENT= "STATE_EXTRACT_TEXTURES_FRAGMENT";
-    private static final String STATE_DELETE_FILES_FRAGMENT= "STATE_DELETE_FILES_FRAGMENT";
     private static final String STATE_EXTRACT_ROM_FRAGMENT= "STATE_EXTRACT_ROM_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
-    private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
 
     public static final int RESTART_CONFIRM_DIALOG_ID = 0;
-    public static final int CLEAR_CONFIRM_DIALOG_ID = 1;
-    public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 2;
+    public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 1;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -123,7 +121,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private ScanRomsFragment mCacheRomInfoFragment = null;
     private ExtractTexturesFragment mExtractTexturesFragment = null;
-    private DeleteFilesFragment mDeleteFilesFragment = null;
     private ExtractRomFragment mExtractRomFragment = null;
     
     //True if the restart promp is enabled
@@ -133,6 +130,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     boolean mRefreshNeeded = false;
 
     boolean mGameStartedExternally = false;
+
+    String mPathToDelete = null;
 
     @Override
     protected void onNewIntent( Intent intent )
@@ -323,6 +322,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             if( query != null )
                 mSearchQuery = query;
 
+            mPathToDelete = savedInstanceState.getString( STATE_FILE_TO_DELETE );
             mRefreshNeeded = savedInstanceState.getBoolean(STATE_GALLERY_REFRESH_NEEDED);
             mGameStartedExternally = savedInstanceState.getBoolean(STATE_GAME_STARTED_EXTERNALLY);
         }
@@ -331,7 +331,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final FragmentManager fm = getSupportFragmentManager();
         mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
         mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
-        mDeleteFilesFragment = (DeleteFilesFragment) fm.findFragmentByTag(STATE_DELETE_FILES_FRAGMENT);
         mExtractRomFragment = (ExtractRomFragment) fm.findFragmentByTag(STATE_EXTRACT_ROM_FRAGMENT);
 
         if(mCacheRomInfoFragment == null)
@@ -344,12 +343,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             mExtractTexturesFragment = new ExtractTexturesFragment();
             fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
-        }
-
-        if(mDeleteFilesFragment == null)
-        {
-            mDeleteFilesFragment = new DeleteFilesFragment();
-            fm.beginTransaction().add(mDeleteFilesFragment, STATE_DELETE_FILES_FRAGMENT).commit();
         }
 
         if(mExtractRomFragment == null)
@@ -403,6 +396,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             savedInstanceState.putString( STATE_SIDEBAR, mSelectedItem.md5 );
         savedInstanceState.putBoolean(STATE_GALLERY_REFRESH_NEEDED, mRefreshNeeded);
         savedInstanceState.putBoolean(STATE_GAME_STARTED_EXTERNALLY, mGameStartedExternally);
+        savedInstanceState.putString( STATE_FILE_TO_DELETE, mPathToDelete);
 
         super.onSaveInstanceState( savedInstanceState );
     }
@@ -607,16 +601,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             ActivityHelper.starExtractTextureActivity(this);
             return true;
         case R.id.menuItem_clear:
-        {
-            String title = getString( R.string.confirm_title );
-            String message = getString( R.string.confirmClearData_message );
-
-            ConfirmationDialog confirmationDialog =
-                    ConfirmationDialog.newInstance(CLEAR_CONFIRM_DIALOG_ID, title, message);
-
-            FragmentManager fm = getSupportFragmentManager();
-            confirmationDialog.show(fm, STATE_CLEAR_CONFIRM_DIALOG);
-        }
+            ActivityHelper.startDeleteTextureActivity(this);
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -710,18 +695,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                             mSelectedItem.headerName, mSelectedItem.countryCode.getValue(), mSelectedItem.artPath,
                             mSelectedItem.goodName, true );
                 }
-            }
-            else if(id == CLEAR_CONFIRM_DIALOG_ID)
-            {
-                ArrayList<String> foldersToDelete = new ArrayList<>();
-                foldersToDelete.add(mGlobalPrefs.hiResTextureDir);
-                foldersToDelete.add(mGlobalPrefs.textureCacheDir);
-
-                ArrayList<String> filters = new ArrayList<>();
-                filters.add("");
-                filters.add("");
-
-                mDeleteFilesFragment.deleteFiles(foldersToDelete, filters);
             }
             else if(id == REMOVE_FROM_LIBRARY_DIALOG_ID && mSelectedItem != null)
             {

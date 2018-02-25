@@ -493,8 +493,10 @@
     <string name="confirmExitGame_message">¿Seguro que quieres dejar de jugar?</string>
     <string name="confirmOverwriteFile_message">¿Sobrescribir %1$s?</string>
     <string name="confirmUnmapAll_message">¿Desasignar todas las entradas para %1$s?</string>
+    <string name="clearTexturePack_title">Borrar paquete de texturas</string>
+    <string name="clearTexturePack_message">Seleccione el paquete de texturas que borrar</string>
     <string name="confirmDeleteProfile_message">¿Eliminar perfil \"%1$s\"?</string>
-    <string name="confirmClearData_message">¿Seguro que desea borrar todos los paquetes de texturas de alta resolución instaladas y cachés?</string>
+    <string name="confirmClearData_message">¿Seguro que desea borrar el paquetes de texturas seleccionado?</string>
     <string name="confirmRemoveFromLibrary_message">¿Seguro que desea eliminar ese juego de la librería?</string>
 
     <!--Change Log-->

@@ -63,7 +63,7 @@ public class DeleteFilesService extends Service {
     final static String NOTIFICATION_CHANNEL_ID = "DeleteFilesServiceChannel";
 
     public interface DeleteFilesListener {
-        //This is called once the ROM scan is finished
+        //This is called once deleting files is finished
         void onDeleteFilesFinished();
 
         //This is called when the service is destroyed
@@ -104,10 +104,10 @@ public class DeleteFilesService extends Service {
             }
 
             for (int index = 0 ; index < mDeletePath.size(); ++index) {
-                FileUtil.deleteFolderFilter(new File(mDeletePath.get(index)), mDeleteFilter.get(index));
+                if (mDeletePath.get(index) != null) {
+                    FileUtil.deleteFolderFilter(new File(mDeletePath.get(index)), mDeleteFilter.get(index));
+                }
             }
-            //TODO
-
 
             if (mListener != null) {
                 mListener.onDeleteFilesFinished();

@@ -52,7 +52,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
          
         setContentView(R.layout.extract_textures_activity);
         
-        mCancelButton = (Button) findViewById( R.id.buttonCancel );
+        mCancelButton = findViewById( R.id.buttonCancel );
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ExtractTexturesActivity.this.setResult(RESULT_CANCELED, null);
@@ -60,7 +60,7 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
             }
         });
         
-        mOkButton = (Button) findViewById( R.id.buttonOk );
+        mOkButton = findViewById( R.id.buttonOk );
         mOkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent data = new Intent();
@@ -87,13 +87,13 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
         setTitle( mCurrentPath.getPath() );
         // Populate the file list
         // Get the filenames and absolute paths
-        mNames = new ArrayList<CharSequence>();
-        mPaths = new ArrayList<String>();
+        mNames = new ArrayList<>();
+        mPaths = new ArrayList<>();
         FileUtil.populate( mCurrentPath, true, true, true, mNames, mPaths );
 
         if(mCurrentPath.isDirectory())
         {
-            ListView listView1 = (ListView) findViewById( R.id.listView1 );
+            ListView listView1 = findViewById( R.id.listView1 );
             ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( this, mPaths, mNames );
             listView1.setAdapter( adapter );
             listView1.setOnItemClickListener( this );

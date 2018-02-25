@@ -40,6 +40,12 @@ import paulscode.android.mupen64plusae.task.DeleteFilesService.DeleteFilesListen
 import paulscode.android.mupen64plusae.task.DeleteFilesService.LocalBinder;
 
 public class DeleteFilesFragment extends Fragment implements DeleteFilesListener {
+
+    public interface DeleteFilesFinishedListener {
+        //This is called once the ROM scan is finished
+        void onDeleteFilesFinished();
+    }
+
     //Progress dialog for delete files
     private ProgressDialog mProgress = null;
 
@@ -100,7 +106,9 @@ public class DeleteFilesFragment extends Fragment implements DeleteFilesListener
 
     @Override
     public void onDeleteFilesFinished() {
-
+        if (getActivity() != null && getActivity() instanceof DeleteFilesFinishedListener) {
+            ((DeleteFilesFinishedListener)getActivity()).onDeleteFilesFinished();
+        }
     }
 
     @Override

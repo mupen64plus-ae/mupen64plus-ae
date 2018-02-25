@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -24,6 +24,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -45,6 +46,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.FileUtil;
 
@@ -142,20 +144,23 @@ public final class Prompt
      * 
      * @return An adapter that can be used to create list dialogs.
      */
-    public static <T> ArrayAdapter<T> createAdapter( Context context, List<T> items,
-            final int layoutResId, final int textResId, final ListItemPopulator<T> populator )
+    static <T> ArrayAdapter<T> createAdapter(final Context context, List<T> items,
+                                             final int layoutResId, final int textResId, final ListItemPopulator<T> populator )
     {
         return new ArrayAdapter<T>( context, layoutResId, textResId, items )
         {
+            @NonNull
             @Override
-            public View getView( int position, View convertView, ViewGroup parent )
+            public View getView(int position, View convertView, @NonNull ViewGroup parent )
             {
-                View row;
+                View row = new View(context);
                 if( convertView == null )
                 {
                     LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
                             Context.LAYOUT_INFLATER_SERVICE );
-                    row = inflater.inflate( layoutResId, null );
+                    if (inflater != null) {
+                        row = inflater.inflate( layoutResId, null );
+                    }
                 }
                 else
                 {
@@ -187,9 +192,9 @@ public final class Prompt
                     @Override
                     public void onPopulateListItem( T item, int position, View view )
                     {
-                        TextView text1 = (TextView) view.findViewById( R.id.text1 );
-                        TextView text2 = (TextView) view.findViewById( R.id.text2 );
-                        ImageView icon = (ImageView) view.findViewById( R.id.icon );
+                        TextView text1 = view.findViewById( R.id.text1 );
+                        TextView text2 = view.findViewById( R.id.text2 );
+                        ImageView icon = view.findViewById( R.id.icon );
                         populator.onPopulateListItem( item, position, text1, text2, icon );
                     }
                 } );
@@ -249,7 +254,7 @@ public final class Prompt
      * @param extension Only list files with a specific extension
      * @param listener  The listener to process the file, when selected.
      */
-    public static void promptFile( Context context, CharSequence title, CharSequence message,
+    static void promptFile( Context context, CharSequence title, CharSequence message,
             final File startPath, boolean includeParent, boolean includeDirs, boolean includeFiles,
             boolean dirsSelectable, final String extension, final PromptFileListener listener )
     {
@@ -258,8 +263,8 @@ public final class Prompt
             return;
         
         // Get the filenames and absolute paths
-        final List<CharSequence> names = new ArrayList<CharSequence>();
-        final List<String> paths = new ArrayList<String>();
+        final List<CharSequence> names = new ArrayList<>();
+        final List<String> paths = new ArrayList<>();
         FileUtil.populate( startPath, includeParent, includeDirs, includeFiles, names, paths );
 
         //Remove files that don't match the extension
@@ -322,8 +327,9 @@ public final class Prompt
      * @param extension True to only list files with a specific extension
      * @param listener  The listener to process the file, when selected.
      */
-    public static void promptFile( Context context, CharSequence title, CharSequence message,
-            File startPath, final String extension, final PromptFileListener listener )
+    @SuppressWarnings("SameParameterValue")
+    public static void promptFile(Context context, CharSequence title, CharSequence message,
+                                  File startPath, final String extension, final PromptFileListener listener )
     {
         promptFile( context, title, message, startPath, false, false, true, false, extension, listener );
     }
@@ -337,8 +343,9 @@ public final class Prompt
      * @param startPath The directory holding the directory to select from.
      * @param listener  The listener to process the directory, when selected.
      */
-    public static void promptDirectory( Context context, CharSequence title, CharSequence message,
-            File startPath, final PromptFileListener listener )
+    @SuppressWarnings("SameParameterValue")
+    public static void promptDirectory(Context context, CharSequence title, CharSequence message,
+                                       File startPath, final PromptFileListener listener )
     {
         promptFile( context, title, message, startPath, false, true, false, false, "", listener );
     }
@@ -396,8 +403,8 @@ public final class Prompt
             final int initial, final int min, final int max, final PromptIntegerListener listener )
     {
         final View layout = View.inflate( context, R.layout.seek_bar_preference, null );
-        final SeekBar seek = (SeekBar) layout.findViewById( R.id.seekbar );
-        final TextView text = (TextView) layout.findViewById( R.id.textFeedback );        
+        final SeekBar seek = layout.findViewById( R.id.seekbar );
+        final TextView text = layout.findViewById( R.id.textFeedback );
         final String finalFormat = TextUtils.isEmpty( format ) ? "%1$d" : format;
         
         text.setText( String.format( finalFormat, initial ) );
@@ -439,15 +446,16 @@ public final class Prompt
      * @param row      The maximum value permitted.
      * @param listener The listener to process the integer, when provided.
      */
-    public static void promptRadioInteger( Context context, CharSequence title,
-            final int initial, final int min, final int row, final int columns,
-            final PromptIntegerListener listener )
+    @SuppressWarnings("SameParameterValue")
+    public static void promptRadioInteger(Context context, CharSequence title,
+                                          final int initial, final int min, final int row, final int columns,
+                                          final PromptIntegerListener listener )
     {
         final View layout = View.inflate( context, R.layout.radio_preference, null );
-        final LinearLayout mainLayout = (LinearLayout) layout.findViewById( R.id.main_layout );
+        final LinearLayout mainLayout = layout.findViewById( R.id.main_layout );
         mainLayout.setGravity(Gravity.CENTER);
         
-        final ArrayList<AppCompatRadioButton> radioButtons = new ArrayList<AppCompatRadioButton>(row*columns);
+        final ArrayList<AppCompatRadioButton> radioButtons = new ArrayList<>(row*columns);
         Integer radioNumber = min;
         
         //create row of buttons
@@ -463,10 +471,10 @@ public final class Prompt
             for(int columnIndex = 0; columnIndex < columns; ++columnIndex)
             {
                 View radioLayout = View.inflate( context, R.layout.radio_selection, null );
-                TextView text = (TextView)radioLayout.findViewById(R.id.radio_number);
+                TextView text = radioLayout.findViewById(R.id.radio_number);
                 linearLayout.addView(radioLayout);
-                text.setText(radioNumber.toString());
-                AppCompatRadioButton radioSelection = (AppCompatRadioButton) radioLayout.findViewById(R.id.radio_selection);
+                text.setText(String.format( Locale.US, "%d" ,radioNumber));
+                AppCompatRadioButton radioSelection = radioLayout.findViewById(R.id.radio_selection);
                 
                 if(radioNumber == initial)
                 {
@@ -583,7 +591,7 @@ public final class Prompt
      * 
      * @return The builder for the dialog.
      */
-    public static Builder prefillBuilder( Context context, CharSequence title,
+    private static Builder prefillBuilder( Context context, CharSequence title,
             CharSequence message, OnClickListener listener )
     {
         return new Builder( context ).setTitle( title ).setMessage( message ).setCancelable( false )

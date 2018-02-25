@@ -632,7 +632,9 @@
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmDeleteProfile_message">Delete profile \"%1$s\"?</string>
-    <string name="confirmClearData_message">Are you sure you want to clear all installed high resolution texture packs and caches?</string>
+    <string name="clearTexturePack_title">Delete texture pack</string>
+    <string name="clearTexturePack_message">Select a texture pack to delete</string>
+    <string name="confirmClearData_message">Are you sure you want to clear the selected high resolution texture pack?</string>
     <string name="confirmRemoveFromLibrary_message">Are you sure you want to remove this game from the library?</string>
 
     <!-- Corrupt Installation Warning -->

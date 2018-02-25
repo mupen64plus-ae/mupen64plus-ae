@@ -411,6 +411,12 @@ public class ActivityHelper
         activity.startActivityForResult( intent, EXTRACT_TEXTURES_CODE );
     }
 
+    static void startDeleteTextureActivity(Activity activity)
+    {
+        Intent intent = new Intent(activity, DeleteTexturesActivity.class);
+        activity.startActivity( intent );
+    }
+
     public static void startCoreService(Context context, ServiceConnection serviceConnection, String romGoodName,
         String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
         String romLegacySave, String cheatOptions, boolean isRestarting, String saveToLoad, String coreLib,
