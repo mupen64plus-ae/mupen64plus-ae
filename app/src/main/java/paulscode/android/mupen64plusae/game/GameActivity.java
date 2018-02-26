@@ -225,7 +225,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if(mShouldExit && mCoreFragment != null)
             {
                 mCoreFragment.shutdownEmulator();
-                finishAffinity();
+                finish();
             }
         }
     }
@@ -911,7 +911,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(mShouldExit)
         {
             mCoreFragment.shutdownEmulator();
-            finishAffinity();
+            finish();
         }
 
         if(mCoreFragment.isShuttingDown())
