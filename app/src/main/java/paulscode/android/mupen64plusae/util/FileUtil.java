@@ -418,12 +418,6 @@ public final class FileUtil
     private static void unzipEntry( ZipFile zipfile, ZipEntry entry, String outputDir )
             throws IOException
     {
-        if( entry.isDirectory() )
-        {
-            Log.e( "unzipEntry", "Zip entry '" + entry.getName() + "' is not a file" );
-            return;
-        }
-        
         File outputFile = new File( outputDir, entry.getName() );
         
         BufferedInputStream inputStream = new BufferedInputStream( zipfile.getInputStream( entry ) );
@@ -449,17 +443,6 @@ public final class FileUtil
      */
     public static void unSevenZAll(@NonNull File archive, String outputDir )
     {
-        if( !archive.exists() )
-        {
-            Log.e( "unSevenZAll", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
-            return;
-        }
-        else if( !archive.isFile() )
-        {
-            Log.e( "unSevenZAll", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
-            return;
-        }
-
         SevenZFile zipfile = null;
         try
         {
@@ -468,7 +451,7 @@ public final class FileUtil
 
             while( (zipEntry = zipfile.getNextEntry()) != null)
             {
-                File f = new File( outputDir + "/" + zipEntry.toString() );
+                File f = new File( outputDir + "/" + zipEntry.getName() );
 
                 f = f.getParentFile();
                 if( f != null )

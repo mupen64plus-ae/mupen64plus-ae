@@ -150,7 +150,9 @@ public class ExtractTexturesService extends Service
                     });
                 }
             } else if (header.isZip || header.is7Zip) {
-                String headerName = TextureInfo.getTexturePackName( mZipPath );
+                String headerName = header.isZip ? TextureInfo.getTexturePackNameFromZip( mZipPath ) :
+                        TextureInfo.getTexturePackNameFromSevenZ( mZipPath );
+
                 if( !TextUtils.isEmpty( headerName ) )
                 {
                     String outputFolder = globalPrefs.hiResTextureDir + headerName;

@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -23,64 +23,63 @@ package paulscode.android.mupen64plusae.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+
 /**
  * Utility class that encapsulates meta-info about a hi-res texture file.
- * 
- * @see mupen64plus-video-rice/src/TextureFilters.cpp
- * @see FindAllTexturesFromFolder(...)
+ *
  */
+@SuppressWarnings("unused")
 public class TextureInfo
 {
-    public static final int PIXEL_FORMAT_INVALID = -1;
-    public static final int PIXEL_FORMAT_8BIT = 0;
-    public static final int PIXEL_FORMAT_16BIT = 1;
-    public static final int PIXEL_FORMAT_24BIT = 2;
-    public static final int PIXEL_FORMAT_32BIT = 3;
+    private static final int PIXEL_FORMAT_INVALID = -1;
+    private static final int PIXEL_FORMAT_8BIT = 0;
+    private static final int PIXEL_FORMAT_16BIT = 1;
+    private static final int PIXEL_FORMAT_24BIT = 2;
+    private static final int PIXEL_FORMAT_32BIT = 3;
     
-    public static final int TEXTURE_FORMAT_INVALID = -1;
-    public static final int TEXTURE_FORMAT_RGBA = 0;
-    public static final int TEXTURE_FORMAT_YUV = 1;
-    public static final int TEXTURE_FORMAT_CI = 2;
-    public static final int TEXTURE_FORMAT_IA = 3;
-    public static final int TEXTURE_FORMAT_I = 4;
+    private static final int TEXTURE_FORMAT_INVALID = -1;
+    private static final int TEXTURE_FORMAT_RGBA = 0;
+    private static final int TEXTURE_FORMAT_YUV = 1;
+    private static final int TEXTURE_FORMAT_CI = 2;
+    private static final int TEXTURE_FORMAT_IA = 3;
+    private static final int TEXTURE_FORMAT_I = 4;
     
-    public static final int IMAGE_FORMAT_INVALID = -1;
-    public static final int IMAGE_FORMAT_COLOR_INDEXED_BMP = 0;
-    public static final int IMAGE_FORMAT_RGBA_PNG_FOR_CI = 1;
-    public static final int IMAGE_FORMAT_RGBA_PNG_FOR_ALL_CI = 2;
-    public static final int IMAGE_FORMAT_RGB_PNG = 3;
-    public static final int IMAGE_FORMAT_RGB_WITH_ALPHA_TOGETHER_PNG = 4;
+    private static final int IMAGE_FORMAT_INVALID = -1;
+    private static final int IMAGE_FORMAT_COLOR_INDEXED_BMP = 0;
+    private static final int IMAGE_FORMAT_RGBA_PNG_FOR_CI = 1;
+    private static final int IMAGE_FORMAT_RGBA_PNG_FOR_ALL_CI = 2;
+    private static final int IMAGE_FORMAT_RGB_PNG = 3;
+    private static final int IMAGE_FORMAT_RGB_WITH_ALPHA_TOGETHER_PNG = 4;
     
-    public final String romName;
-    public final String romCrc;
-    public final String paletteCrc;
-    public final int pixelFormat;
-    public final int textureFormat;
-    public final int imageFormat;
+    private final String romName;
+    private final int imageFormat;
     
     private static final Pattern sPattern = Pattern
-            .compile( "([^\\/]+)#([0-9a-fA-F]+)#([0-3])#([0-4])#?([^_]*)_"
+            .compile( "([^/]+)#([0-9a-fA-F]+)#([0-3])#([0-4])#?([^_]*)_"
                     + "(ci\\.bmp|ciByRGBA\\.png|allciByRGBA\\.png|rgb\\.png|all\\.png)" );
-    
-    public TextureInfo( String pathToImageFile )
+
+    private TextureInfo( String pathToImageFile )
     {
         Matcher m = sPattern.matcher( pathToImageFile );
         if( m.find() )
         {
             romName = m.group( 1 );
-            romCrc = m.group( 2 );
-            paletteCrc = TextUtils.isEmpty( m.group( 5 ) ) ? "FFFFFFFF" : m.group( 5 );
-            pixelFormat = SafeMethods.toInt( m.group( 3 ), PIXEL_FORMAT_INVALID );
-            textureFormat = SafeMethods.toInt( m.group( 4 ), TEXTURE_FORMAT_INVALID );
+            String romCrc = m.group( 2 );
+            String paletteCrc = TextUtils.isEmpty( m.group( 5 ) ) ? "FFFFFFFF" : m.group( 5 );
+            int pixelFormat = SafeMethods.toInt( m.group( 3 ), PIXEL_FORMAT_INVALID );
+            int textureFormat = SafeMethods.toInt( m.group( 4 ), TEXTURE_FORMAT_INVALID );
             String suffix = m.group( 6 );
             
             if( "ci.bmp".equals( suffix ) )
@@ -104,10 +103,6 @@ public class TextureInfo
         else
         {
             romName = "";
-            romCrc = "";
-            paletteCrc = "";
-            pixelFormat = PIXEL_FORMAT_INVALID;
-            textureFormat = TEXTURE_FORMAT_INVALID;
             imageFormat = IMAGE_FORMAT_INVALID;
         }
     }
@@ -118,21 +113,13 @@ public class TextureInfo
      * @param filename The path to the zipped texture pack.
      * @return The name, or null if there were any errors.
      */
-    public static String getTexturePackName( String filename )
+    public static String getTexturePackNameFromZip(String filename )
     {
-        File archive = new File( filename );       
-        if( !archive.exists() )
-        {
-            Log.e( "getTexturePackName", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
-            return null;
-        }
-        else if( !archive.isFile() )
-        {
-            Log.e( "getTexturePackName", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
-            return null;
-        }
+        File archive = new File( filename );
         
         ZipFile zipfile = null;
+        Map<String, Integer> romHeaderCount = new HashMap<>();
+
         try
         {
             zipfile = new ZipFile( archive );
@@ -143,24 +130,27 @@ public class TextureInfo
                 if( entry != null && !entry.isDirectory() )
                 {
                     TextureInfo info = new TextureInfo( entry.getName() );
-                    if( info.imageFormat != IMAGE_FORMAT_INVALID )
-                        return info.romName;
+
+                    if( info.imageFormat != IMAGE_FORMAT_INVALID ) {
+                        if (romHeaderCount.containsKey(info.romName)) {
+                            romHeaderCount.put(info.romName, romHeaderCount.get(info.romName)+1);
+                        } else {
+                            romHeaderCount.put(info.romName, 1);
+                        }
+
+                        //Find the first ROM header that shows 10 times
+                        for (Map.Entry<String, Integer> mapEntry : romHeaderCount.entrySet()) {
+                            if (mapEntry.getValue() == 10) {
+                                return mapEntry.getKey();
+                            }
+                        }
+                    }
                 }
             }
         }
-        catch( ZipException ze )
+        catch( Exception ze )
         {
-            Log.e( "getTexturePackName", "ZipException: ", ze );
-            return null;
-        }
-        catch( IOException ioe )
-        {
-            Log.e( "getTexturePackName", "IOException: ", ioe );
-            return null;
-        }
-        catch( Exception e )
-        {
-            Log.e( "getTexturePackName", "Exception: ", e );
+            Log.e( "TextureInfo", "ZipException: ", ze );
             return null;
         }
         finally
@@ -174,7 +164,65 @@ public class TextureInfo
                 {
                 }
         }
-        Log.e( "getTexturePackName", "No compatible textures found in .zip archive" );
+        Log.e( "TextureInfo", "No compatible textures found in .zip archive" );
+        return null;
+    }
+
+    /**
+     * Returns the name embedded in a 7zipped texture pack.
+     *
+     * @param filename The path to the zipped texture pack.
+     * @return The name, or null if there were any errors.
+     */
+    public static String getTexturePackNameFromSevenZ(String filename )
+    {
+        SevenZFile zipfile = null;
+        Map<String, Integer> romHeaderCount = new HashMap<>();
+        try
+        {
+            zipfile = new SevenZFile(new File(filename));
+            SevenZArchiveEntry zipEntry;
+
+            while( (zipEntry = zipfile.getNextEntry()) != null)
+            {
+                if( !zipEntry.isDirectory() )
+                {
+                    TextureInfo info = new TextureInfo( zipEntry.getName() );
+                    if( info.imageFormat != IMAGE_FORMAT_INVALID ) {
+                        if (romHeaderCount.containsKey(info.romName)) {
+                            romHeaderCount.put(info.romName, romHeaderCount.get(info.romName)+1);
+                        } else {
+                            romHeaderCount.put(info.romName, 1);
+                        }
+
+                        //Find the first ROM header that shows 10 times
+                        for (Map.Entry<String, Integer> entry : romHeaderCount.entrySet()) {
+                            if (entry.getValue() == 10) {
+                                return entry.getKey();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch( Exception ze )
+        {
+            Log.e( "TextureInfo", "Exception: ", ze );
+        }
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+
+
+        Log.e( "TextureInfo", "No compatible textures found in .zip archive" );
         return null;
     }
 }
