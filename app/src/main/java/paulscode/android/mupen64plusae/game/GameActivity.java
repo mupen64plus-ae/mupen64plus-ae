@@ -42,6 +42,7 @@ import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -1003,9 +1004,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
         }
 
-        //Only player 1 can control menus
-        handled = handled || !mGamePrefs.playerMap.testHardware(AbstractProvider.getHardwareId( event ), 1);
-
+        //Only player 1 or keyboards can control menus
+        handled = handled || (!mGamePrefs.playerMap.testHardware(AbstractProvider.getHardwareId( event ), 1) &&
+                AbstractProvider.getHardwareId( event ) != KeyCharacterMap.VIRTUAL_KEYBOARD);
         if(!handled)
         {
             if( keyDown && keyCode == KeyEvent.KEYCODE_MENU )
