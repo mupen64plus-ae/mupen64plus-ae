@@ -215,6 +215,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             Log.i("GameActivity", "mShouldExit=" + mShouldExit);
 
+            boolean forceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
+            Log.i("GameActivity", "forceExit=" + forceExit);
+
+            if (forceExit) {
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+
             if(mShouldExit && mCoreFragment != null)
             {
                 mCoreFragment.shutdownEmulator();
@@ -254,8 +261,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
-
         Log.i("GameActivity", "mShouldExit=" + mShouldExit);
+
+        boolean forceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
+        Log.i("GameActivity", "forceExit=" + forceExit);
+
+        if (forceExit) {
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
 
         mRomPath = extras.getString( ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );

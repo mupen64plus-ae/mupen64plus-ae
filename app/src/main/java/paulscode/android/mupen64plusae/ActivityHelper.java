@@ -111,6 +111,7 @@ public class ActivityHelper
         public static final String USER_SAVE_DIR        = NAMESPACE + "USER_SAVE_DIR";
         public static final String LIBS_DIR             = NAMESPACE + "LIBS_DIR";
         public static final String EXIT_GAME            = NAMESPACE + "EXIT_GAME";
+        public static final String FORCE_EXIT_GAME      = NAMESPACE + "FORCE_EXIT_GAME";
 
         //@formatter:on
     }

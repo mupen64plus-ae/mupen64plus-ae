@@ -515,6 +515,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, mLegacySaveName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
+        notificationIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, false );
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -522,6 +523,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         Intent exitIntent = (Intent)notificationIntent.clone();
         exitIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, true );
         PendingIntent pendingExitIntent = PendingIntent.getActivity(this, 1, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Intent for force closing the game
+        Intent forceExitIntent = (Intent)notificationIntent.clone();
+        forceExitIntent.putExtra( ActivityHelper.Keys.FORCE_EXIT_GAME, true );
+        PendingIntent pendingForceExitIntent = PendingIntent.getActivity(this, 2, forceExitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         initChannels(getBaseContext());
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
@@ -548,6 +554,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         }
 
         builder.addAction(R.drawable.ic_box, getString(R.string.inputMapActivity_stop), pendingExitIntent);
+        builder.addAction(R.drawable.ic_undo, getString(R.string.menuItem_exit), pendingForceExitIntent);
 
         startForeground(ONGOING_NOTIFICATION_ID, builder.build());
     }
