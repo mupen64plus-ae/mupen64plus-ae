@@ -129,8 +129,7 @@ public final class FileUtil
         @Override
         public boolean accept( File pathname )
         {
-            return ( pathname != null ) && ( pathname.isFile() ) && ( !pathname.isHidden() )
-                    && ( !pathname.getName().startsWith( "." ) );
+            return pathname != null && pathname.isFile();
         }
     }
     
@@ -140,8 +139,7 @@ public final class FileUtil
         @Override
         public boolean accept( File pathname )
         {
-            return ( pathname != null ) && ( pathname.isDirectory() ) && ( !pathname.isHidden() )
-                    && ( !pathname.getName().startsWith( "." ) );
+            return pathname != null && pathname.isDirectory();
         }
     }
     
