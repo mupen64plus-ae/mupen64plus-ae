@@ -803,7 +803,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             mDrawerLayout.closeDrawer( GravityCompat.START );
         }
-        else if(!mSearchView.isIconified()) {
+        else if(mSearchView != null && !mSearchView.isIconified()) {
             mSearchView.onActionViewCollapsed();
             mSearchQuery = "";
         }
@@ -991,7 +991,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mDrawerLayout.closeDrawer(GravityCompat.START, false);
         }
 
-        mSearchView.onActionViewCollapsed();
+        if (mSearchView != null) {
+            mSearchView.onActionViewCollapsed();
+        }
         mSearchQuery = "";
 
         mRefreshNeeded = true;
