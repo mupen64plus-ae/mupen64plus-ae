@@ -104,8 +104,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
             //Limit list to 8 items
             final int recentLimit = 8;
             if (recentItems.size() > recentLimit) {
-                List<GalleryItem> removeItems = recentItems.subList(recentLimit, recentItems.size());
-                recentItems.removeAll(removeItems);
+                recentItems.subList(recentLimit, recentItems.size()).clear();
             }
         }
 
