@@ -249,104 +249,101 @@ public class PeripheralController extends AbstractController implements
                 mState.axisFractionX = 0;
                 mState.axisFractionY = 0;
             }
-        }
-        else if( keyDown )
-        {
-            switch( n64Index )
-            {
-                case InputMap.FUNC_INCREMENT_SLOT:
-                    Log.v( "PeripheralController", "FUNC_INCREMENT_SLOT" );
-                    mCoreFragment.incrementSlot();
-                    break;
-                case InputMap.FUNC_SAVE_SLOT:
-                    Log.v( "PeripheralController", "FUNC_SAVE_SLOT" );
-                    mCoreFragment.saveSlot();
-                    break;
-                case InputMap.FUNC_LOAD_SLOT:
-                    Log.v( "PeripheralController", "FUNC_LOAD_SLOT" );
-                    mCoreFragment.loadSlot();
-                    break;
-                case InputMap.FUNC_RESET:
-                    Log.v( "PeripheralController", "FUNC_RESET" );
-                    mCoreFragment.restartEmulator();
-                    break;
-                case InputMap.FUNC_STOP:
-                    Log.v( "PeripheralController", "FUNC_STOP" );
-                    mCoreFragment.shutdownEmulator();
-                    break;
-                case InputMap.FUNC_PAUSE:
-                    Log.v( "PeripheralController", "FUNC_PAUSE" );
-                    mCoreFragment.togglePause();
-                    break;
-                case InputMap.FUNC_FAST_FORWARD:
-                    Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    mCoreFragment.fastForward(true);
-                    break;
-                case InputMap.FUNC_FRAME_ADVANCE:
-                    Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
-                    mCoreFragment.advanceFrame();
-                    break;
-                case InputMap.FUNC_SPEED_UP:
-                    Log.v( "PeripheralController", "FUNC_SPEED_UP" );
-                    mCoreFragment.incrementCustomSpeed();
-                    break;
-                case InputMap.FUNC_SPEED_DOWN:
-                    Log.v( "PeripheralController", "FUNC_SPEED_DOWN" );
-                    mCoreFragment.decrementCustomSpeed();
-                    break;
-                case InputMap.FUNC_GAMESHARK:
-                    Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    mCoreFragment.emuGameShark(true);
-                    break;
-                case InputMap.FUNC_SIMULATE_BACK: {
-                    KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
-                    mKeyListener.onKey(null, KeyEvent.KEYCODE_BACK, event);
-                    break;
-                }
-                case InputMap.FUNC_SIMULATE_MENU: {
-                    KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
-                    mKeyListener.onKey(null, KeyEvent.KEYCODE_MENU, event);
-                    break;
-                }
-                case InputMap.FUNC_SCREENSHOT:
-                    Log.v( "PeripheralController", "FUNC_SCREENSHOT" );
-                    mCoreFragment.screenshot();
-                    break;
-                case InputMap.FUNC_SENSOR_TOGGLE:
-                    Log.v("PeripheralController", "FUNC_SENSOR_TOGGLE");
-                    if (mSensorController != null) {
-                        boolean sensorEnabled = !mSensorController.isSensorEnabled();
-                        if (!sensorEnabled) {
-                            mState.axisFractionX = 0;
-                            mState.axisFractionY = 0;
+        } else if(mPlayerNumber == 1) {
+            if (keyDown) {
+                switch (n64Index) {
+                    case InputMap.FUNC_INCREMENT_SLOT:
+                        Log.v("PeripheralController", "FUNC_INCREMENT_SLOT");
+                        mCoreFragment.incrementSlot();
+                        break;
+                    case InputMap.FUNC_SAVE_SLOT:
+                        Log.v("PeripheralController", "FUNC_SAVE_SLOT");
+                        mCoreFragment.saveSlot();
+                        break;
+                    case InputMap.FUNC_LOAD_SLOT:
+                        Log.v("PeripheralController", "FUNC_LOAD_SLOT");
+                        mCoreFragment.loadSlot();
+                        break;
+                    case InputMap.FUNC_RESET:
+                        Log.v("PeripheralController", "FUNC_RESET");
+                        mCoreFragment.restartEmulator();
+                        break;
+                    case InputMap.FUNC_STOP:
+                        Log.v("PeripheralController", "FUNC_STOP");
+                        mCoreFragment.shutdownEmulator();
+                        break;
+                    case InputMap.FUNC_PAUSE:
+                        Log.v("PeripheralController", "FUNC_PAUSE");
+                        mCoreFragment.togglePause();
+                        break;
+                    case InputMap.FUNC_FAST_FORWARD:
+                        Log.v("PeripheralController", "FUNC_FAST_FORWARD");
+                        mCoreFragment.fastForward(true);
+                        break;
+                    case InputMap.FUNC_FRAME_ADVANCE:
+                        Log.v("PeripheralController", "FUNC_FRAME_ADVANCE");
+                        mCoreFragment.advanceFrame();
+                        break;
+                    case InputMap.FUNC_SPEED_UP:
+                        Log.v("PeripheralController", "FUNC_SPEED_UP");
+                        mCoreFragment.incrementCustomSpeed();
+                        break;
+                    case InputMap.FUNC_SPEED_DOWN:
+                        Log.v("PeripheralController", "FUNC_SPEED_DOWN");
+                        mCoreFragment.decrementCustomSpeed();
+                        break;
+                    case InputMap.FUNC_GAMESHARK:
+                        Log.v("PeripheralController", "FUNC_GAMESHARK");
+                        mCoreFragment.emuGameShark(true);
+                        break;
+                    case InputMap.FUNC_SIMULATE_BACK: {
+                        KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
+                        mKeyListener.onKey(null, KeyEvent.KEYCODE_BACK, event);
+                        break;
+                    }
+                    case InputMap.FUNC_SIMULATE_MENU: {
+                        KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, 0);
+                        mKeyListener.onKey(null, KeyEvent.KEYCODE_MENU, event);
+                        break;
+                    }
+                    case InputMap.FUNC_SCREENSHOT:
+                        Log.v("PeripheralController", "FUNC_SCREENSHOT");
+                        mCoreFragment.screenshot();
+                        break;
+                    case InputMap.FUNC_SENSOR_TOGGLE:
+                        Log.v("PeripheralController", "FUNC_SENSOR_TOGGLE");
+                        if (mSensorController != null) {
+                            boolean sensorEnabled = !mSensorController.isSensorEnabled();
+                            if (!sensorEnabled) {
+                                mState.axisFractionX = 0;
+                                mState.axisFractionY = 0;
+                                if (mListener != null) {
+                                    mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
+                                }
+                            }
+                            mSensorController.setSensorEnabled(sensorEnabled);
                             if (mListener != null) {
-                                mListener.onAnalogChanged(mState.axisFractionX, mState.axisFractionY);
+                                mListener.onSensorEnabled(sensorEnabled);
                             }
                         }
-                        mSensorController.setSensorEnabled(sensorEnabled);
-                        if (mListener != null) {
-                            mListener.onSensorEnabled(sensorEnabled);
-                        }
-                    }
-                    break;
-                default:
-                    return false;
-            }
-        }
-        else // keyUp
-        {
-            switch( n64Index )
+                        break;
+                    default:
+                        return false;
+                }
+            } else // keyUp
             {
-                case InputMap.FUNC_FAST_FORWARD:
-                    Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    mCoreFragment.fastForward( false );
-                    break;
-                case InputMap.FUNC_GAMESHARK:
-                    Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    mCoreFragment.emuGameShark(false);
-                    break;
-                default:
-                    return false;
+                switch (n64Index) {
+                    case InputMap.FUNC_FAST_FORWARD:
+                        Log.v("PeripheralController", "FUNC_FAST_FORWARD");
+                        mCoreFragment.fastForward(false);
+                        break;
+                    case InputMap.FUNC_GAMESHARK:
+                        Log.v("PeripheralController", "FUNC_GAMESHARK");
+                        mCoreFragment.emuGameShark(false);
+                        break;
+                    default:
+                        return false;
+                }
             }
         }
         return true;

@@ -42,6 +42,7 @@ import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -974,12 +975,18 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public boolean onKey( View view, int keyCode, KeyEvent event )
     {
+        boolean isKeyboard = (event.getSource() & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD;
         final boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
 
         boolean handled = false;
 
-        // Attempt to reconnect any disconnected devices
-        checkForNewController(AbstractProvider.getHardwareId( event ) );
+        // Attempt to reconnect any disconnected devices if this is not a keyboard, we don't want to automatically
+        // map keyboards
+        if (!isKeyboard) {
+            checkForNewController(AbstractProvider.getHardwareId( event ) );
+        }
+
+        boolean isPlayer1 = mGamePrefs.playerMap.testHardware(AbstractProvider.getHardwareId( event ), 1);
 
         if( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
         {
@@ -1005,8 +1012,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         //Only player 1 or keyboards can control menus
-        handled = handled || (!mGamePrefs.playerMap.testHardware(AbstractProvider.getHardwareId( event ), 1) &&
-                AbstractProvider.getHardwareId( event ) != KeyCharacterMap.VIRTUAL_KEYBOARD);
+        handled = handled || (!isPlayer1 && !isKeyboard);
+
         if(!handled)
         {
             if( keyDown && keyCode == KeyEvent.KEYCODE_MENU )
@@ -1221,7 +1228,9 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Attempt to reconnect any disconnected devices
         checkForNewController(AbstractProvider.getHardwareId( motionEvent ) );
 
-        return (mAxisProvider.onGenericMotion(null, motionEvent) && !mDrawerLayout.isDrawerOpen( GravityCompat.START )) ||
+        boolean isPlayer1 = mGamePrefs.playerMap.testHardware(AbstractProvider.getHardwareId( motionEvent ), 1);
+
+        return (mAxisProvider.onGenericMotion(null, motionEvent) && !mDrawerLayout.isDrawerOpen( GravityCompat.START )) || !isPlayer1 ||
                 super.onGenericMotionEvent(motionEvent);
     }
 
