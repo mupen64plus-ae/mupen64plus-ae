@@ -57,7 +57,7 @@ public class GamePrefs
                 case NativeConstants.PAK_TYPE_RUMBLE:
                     return RAMBLE;
                 case NativeConstants.PAK_TYPE_TRANSFER:
-                    return RAMBLE;
+                    return TRANSFER;
                 default:
                     return NONE;
 
