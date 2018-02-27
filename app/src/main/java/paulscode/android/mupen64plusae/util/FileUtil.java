@@ -463,6 +463,10 @@ public final class FileUtil
         {
             Log.e( "unzipAll", "Exception: ", ze );
         }
+        catch (java.lang.OutOfMemoryError e)
+        {
+            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + archive );
+        }
         finally
         {
             if( zipfile != null )
@@ -627,6 +631,10 @@ public final class FileUtil
         catch( IOException|ArrayIndexOutOfBoundsException e )
         {
             Log.w( "ExtractFirstROM", e );
+        }
+        catch (java.lang.OutOfMemoryError e)
+        {
+            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + zipPath );
         }
 
         return null;

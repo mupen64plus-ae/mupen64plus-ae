@@ -380,9 +380,13 @@ public class CacheRomInfoService extends Service
             }
             zipFile.close();
         }
-        catch( IOException e)
+        catch(IOException e)
         {
-            Log.w( "CacheRomInfoService", e );
+            Log.w( "CacheRomInfoService", "IOException: " + e );
+        }
+        catch (java.lang.OutOfMemoryError e)
+        {
+            Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + file.getPath() );
         }
     }
 

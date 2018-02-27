@@ -220,6 +220,10 @@ public class ExtractRomService extends Service {
             } catch (final IOException | ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
                 Log.w("ExtractRomService", e);
             }
+            catch (java.lang.OutOfMemoryError e)
+            {
+                Log.w( "CacheRomInfoService", "Out of memory while extracting 7zip entry: " + romFile.getPath() );
+            }
         }
     }
 
