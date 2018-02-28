@@ -11,7 +11,12 @@
         android:key="displayResolution"
         android:summary="@string/selectedValue"
         android:title="@string/displayResolution_title" />
-
+    <android.support.v7.preference.CheckBoxPreference
+        android:icon="@drawable/ic_display"
+        android:defaultValue="true"
+        android:key="useDefaultZoom"
+        android:summary="@string/displayZoomDefault_summary"
+        android:title="@string/displayZoomDefault_title" />
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="100"
         android:icon="@drawable/ic_display"

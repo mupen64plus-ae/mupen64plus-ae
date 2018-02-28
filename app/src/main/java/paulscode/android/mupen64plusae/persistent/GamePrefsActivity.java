@@ -332,6 +332,8 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         PrefUtil.enablePreference( this, GamePrefs.PLAYER_MAP,
                 mGamePrefs.playerMap.isEnabled() && !mGamePrefs.useDefaultPlayerMapping );
 
+        PrefUtil.enablePreference( this, GamePrefs.DISPLAY_ZOOM, !mGamePrefs.useDefaultZoom );
+
         // Define which buttons to show in player map dialog
         final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference( GamePrefs.PLAYER_MAP );
         if( playerPref != null )

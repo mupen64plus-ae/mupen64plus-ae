@@ -262,6 +262,9 @@ public class GamePrefs
     /** The height of the OpenGL rendering context, in pixels. */
     public final int videoRenderHeight;
 
+    /** True if we want use default zoom */
+    final boolean useDefaultZoom;
+
     /** The zoom value applied to the viewing surface, in percent. */
     public final int videoSurfaceZoom;
 
@@ -297,6 +300,7 @@ public class GamePrefs
     static final String CONTROLLER_PROFILE3 = "controllerProfile3";
     static final String CONTROLLER_PROFILE4 = "controllerProfile4";
     static final String PLAYER_MAP = "playerMapV2";
+    static final String DISPLAY_ZOOM = "displayZoomSeek";
     static final String PLAY_SHOW_CHEATS = "playShowCheats";
 
     /**
@@ -472,7 +476,9 @@ public class GamePrefs
 
         Log.i("GamePrefs", "render_width=" + videoRenderWidth + " render_height=" + videoRenderHeight);
 
-        videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
+        useDefaultZoom = mPreferences.getBoolean( "useDefaultZoom", true );
+        videoSurfaceZoom = useDefaultZoom ? mGlobalPrefs.videoSurfaceZoom :
+                mPreferences.getInt( "displayZoomSeek", 100 );
 
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null && !touchscreenProfile.getName().equals(fpsOnlyTouchscreenProfile);

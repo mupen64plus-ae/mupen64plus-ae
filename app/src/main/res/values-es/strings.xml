@@ -433,6 +433,11 @@
     <string name="r4300Emulator_entryCachedInterpreter">Intérprete en caché</string>
     <string name="r4300Emulator_entryDynarec">Recompilador dinámico (dynarec)</string>
     <string name="disableExtraMem_title">Desactivar el expansion pak</string>
+
+    <string name="displayZoom_title">Zoom</string>
+    <string name="displayZoomDefault_title">Ocupar zoom predeterminado</string>
+    <string name="displayZoomDefault_summary">Desactive esta opción para especificar un zoom personalizado para este juego</string>
+
     <string name="audioPlugin_title">Plugin de audio</string>
     <string name="audioPlugin_entryNone">Ninguno (audio deshabilitado)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">Ninguna depuración(audio desactivado, sin límite de velocidad)</string>

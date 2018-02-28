@@ -193,6 +193,9 @@ public class GlobalPrefs
     /** Default resolution */
     private final int displayResolution;
 
+    /** The zoom value applied to the viewing surface, in percent. */
+    public final int videoSurfaceZoom;
+
     /** Default resolution */
     final boolean stretchScreen;
 
@@ -420,6 +423,7 @@ public class GlobalPrefs
 
         // Video prefs
         displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 480 );
+        videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
         stretchScreen = mPreferences.getString( "displayScaling", "original" ).equals("stretch");
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode_v2", true );
         DetermineResolutionData(context);

@@ -561,8 +561,10 @@
     <string name="rsp_hle">HLE</string>
     <string name="rsp_cxd4_hle">CXD4 HLE Video</string>
     <string name="rsp_cxd4_lle">CXD4 LLE Video</string>
-    
+
     <string name="displayZoom_title">Zoom</string>
+    <string name="displayZoomDefault_title">Use default zoom</string>
+    <string name="displayZoomDefault_summary">Uncheck this to specify a custom zoom value for this game</string>
     
     <string name="audioPlugin_title">Audio plugin</string>
     <string name="audioPlugin_entryNone">None (audio disabled)</string>
