@@ -9,6 +9,7 @@ enum class Renderer {
 	Adreno,
 	VideoCore,
 	Intel,
+	PowerVR,
 	Other
 };
 
@@ -22,6 +23,7 @@ struct GLInfo {
 	bool texStorage    = false;
 	bool shaderStorage = false;
 	bool msaa = false;
+	bool depthTexture = false;
 	Renderer renderer = Renderer::Other;
 
 	void init();

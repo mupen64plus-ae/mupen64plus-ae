@@ -38,6 +38,8 @@ void GLInfo::init() {
 		renderer = Renderer::VideoCore;
 	else if (strstr((const char*)strRenderer, "Intel") != nullptr)
 		renderer = Renderer::Intel;
+	else if (strstr((const char*)strRenderer, "PowerVR") != nullptr)
+		renderer = Renderer::PowerVR;
 	LOG(LOG_VERBOSE, "OpenGL renderer: %s\n", strRenderer);
 
 	int numericVersion = majorVersion * 10 + minorVersion;
@@ -79,7 +81,7 @@ void GLInfo::init() {
 		}
 	}
 #ifndef OS_ANDROID
-	if (isGLES2 && config.frameBufferEmulation.copyToRDRAM == Config::ctAsync) {
+	if (isGLES2 && config.frameBufferEmulation.copyToRDRAM > Config::ctSync) {
 		config.frameBufferEmulation.copyToRDRAM = Config::ctDisable;
 		LOG(LOG_WARNING, "Async color buffer copies are not supported on GLES2\n");
 	}
@@ -90,4 +92,6 @@ void GLInfo::init() {
 			LOG(LOG_WARNING, "LOD emulation not possible on this device\n");
 		}
 	}
+
+	depthTexture = !isGLES2 || Utils::isExtensionSupported(*this, "GL_OES_depth_texture");
 }

@@ -142,10 +142,10 @@ void ContextImpl::clearDepthBuffer()
 	CachedDepthMask * depthMask = m_cachedFunctions->getCachedDepthMask();
 	enableScissor->enable(false);
 
-#ifdef OS_ANDROID
-	depthMask->setDepthMask(false);
-	glClear(GL_DEPTH_BUFFER_BIT);
-#endif
+	if (m_glInfo.renderer == Renderer::PowerVR) {
+		depthMask->setDepthMask(false);
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
 
 	depthMask->setDepthMask(true);
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -305,7 +305,7 @@ graphics::ColorBufferReader * ContextImpl::createColorBufferReader(CachedTexture
 		return new ColorBufferReaderWithPixelBuffer(_pTexture, m_cachedFunctions->getCachedBindBuffer());
 
 #if defined(EGL) && defined(OS_ANDROID)
-	if(config.frameBufferEmulation.copyToRDRAM == Config::ctAsync)
+	if(config.frameBufferEmulation.copyToRDRAM > Config::ctSync)
 		return new ColorBufferReaderWithEGLImage(_pTexture, m_cachedFunctions->getCachedBindTexture());
 #endif
 
@@ -431,10 +431,7 @@ bool ContextImpl::isSupported(graphics::SpecialFeatures _feature) const
 	case graphics::SpecialFeatures::ShaderProgramBinary:
 		return m_glInfo.shaderStorage;
 	case graphics::SpecialFeatures::DepthFramebufferTextures:
-		if (!m_glInfo.isGLES2 || Utils::isExtensionSupported(m_glInfo, "GL_OES_depth_texture"))
-			return true;
-		else
-			return false;
+		return m_glInfo.depthTexture;
 	}
 	return false;
 }
