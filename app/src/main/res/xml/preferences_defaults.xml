@@ -97,10 +97,17 @@
         mupen64:allowDisable="true"
         mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
     <android.support.v7.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
         android:defaultValue="false"
         android:key="autoPlayerMapping"
         android:summary="@string/defaultsAutoPlayerMapping_summary"
         android:title="@string/defaultsAutoPlayerMapping_title" />
+    <android.support.v7.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
+        android:defaultValue="false"
+        android:key="inputShareController"
+        android:summary="@string/inputShareController_summary"
+        android:title="@string/inputShareController_title" />
     <paulscode.android.mupen64plusae.preference.PlayerMapPreference
         android:icon="@drawable/ic_users"
         android:key="playerMapV2"

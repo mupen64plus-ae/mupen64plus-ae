@@ -109,11 +109,13 @@
             android:title="@string/controllerProfile4_title"
             mupen64:allowDisable="true"
             mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-        <android.support.v7.preference.CheckBoxPreference
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/shareController_default"
+            android:entries="@array/shareController_entries"
+            android:entryValues="@array/shareController_values"
             android:icon="@drawable/ic_gamepad"
-            android:defaultValue="false"
-            android:key="inputShareController"
-            android:summary="@string/inputShareController_summary"
+            android:key="inputShareController2"
+            android:summary="@string/selectedValue"
             android:title="@string/inputShareController_title" />
         <android.support.v7.preference.CheckBoxPreference
             android:icon="@drawable/ic_gamepad"

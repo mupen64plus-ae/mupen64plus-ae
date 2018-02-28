@@ -292,6 +292,9 @@ public class GlobalPrefs
     /** True if auto player mapping is enabled */
     final boolean autoPlayerMapping;
 
+    /** True if one controller can control multiple players */
+    final boolean isControllerShared;
+
     /** True if we want to show built in emulation profiles */
     final boolean showBuiltInEmulationProfiles;
 
@@ -591,6 +594,9 @@ public class GlobalPrefs
                 GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
         autoPlayerMapping = mPreferences.getBoolean( "autoPlayerMapping", false );
+
+        // Peripheral share mode
+        isControllerShared = mPreferences.getBoolean( "inputShareController", false );
 
         showBuiltInEmulationProfiles = mPreferences.getBoolean(ManageEmulationProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
         showBuiltInTouchscreenProfiles = mPreferences.getBoolean(ManageTouchscreenProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);

@@ -269,6 +269,7 @@
     <string name="displayResolution_entry320x240">320 X 240</string>
     <string name="displayResolution_entry160x120">160 x 120 (mayor FPS)</string>
     <string name="displayScaling_title">Tamaño de la pantalla</string>
+    <string name="displayScaling_entryOriginal">Original\n<small>LLenar la pantalla, sin distortion (agrega barras negras)</small></string>
     <string name="displayScaling_entryNone">Nada\n<small>Usar exactamente la resolución seleccionada arriba</small></string>
     <string name="displayScaling_entryZoom">Acercamiento\n<small>Rellena la pantalla, sin distorsión (agrega barras negras)</small></string>
     <string name="displayScaling_entryCrop">Cortar\n<small>Rellena la pantalla, sin distorsión (corta las gráficas)</small></string>
@@ -464,6 +465,8 @@
     <string name="playerMap_needed">Por favor, definir asignaciones de control en la configuración del juego de multijugador</string>
     <string name="inputShareController_title">Compartir mando</string>
     <string name="inputShareController_summary">Permite que un único dispositivo de entrada controle a varios jugadores al mismo tiempo</string>
+    <string name="inputShareController_entryYes">Si</string>
+    <string name="inputShareController_entryNo">No</string>
     <string name="playerMap_useDefaultPlayerMap_title">Ocupar mandos de cada jugador predeterminados</string>
     <string name="playerMap_useDefaultPlayerMap_summary">Desactive esta opción para especificar el mando de cada jugador personalizado para este juego</string>
 

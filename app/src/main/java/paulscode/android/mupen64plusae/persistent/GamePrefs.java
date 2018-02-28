@@ -548,7 +548,8 @@ public class GamePrefs
         touchscreenAutoHold = tmpTouchscreenAutoHold;
 
         // Peripheral share mode
-        isControllerShared = mPreferences.getBoolean( "inputShareController", false );
+        final String tmpControllerShared = mPreferences.getString( "inputShareController2", "default" );
+        isControllerShared = tmpControllerShared.equals("default") ? globalPrefs.isControllerShared : tmpControllerShared.equals( "Yes" );
 
         // Determine which peripheral controllers are enabled
         for(int index = 0; index < NUM_CONTROLLERS; ++index) {
