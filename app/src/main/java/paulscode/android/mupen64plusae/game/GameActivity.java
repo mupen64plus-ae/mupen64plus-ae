@@ -161,6 +161,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private String mRomArtPath = null;
     private String mRomLegacySave = null;
     private boolean mDoRestart = false;
+    private boolean mForceExit = false;
 
     // App data and user preferences
     private AppData mAppData = null;
@@ -217,12 +218,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             Log.i("GameActivity", "mShouldExit=" + mShouldExit);
 
-            boolean forceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
-            Log.i("GameActivity", "forceExit=" + forceExit);
-
-            if (forceExit) {
-                android.os.Process.killProcess(android.os.Process.myPid());
-            }
+            mForceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
+            Log.i("GameActivity", "forceExit=" + mForceExit);
 
             if(mShouldExit && mCoreFragment != null)
             {
@@ -265,12 +262,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mShouldExit = extras.getBoolean(ActivityHelper.Keys.EXIT_GAME);
         Log.i("GameActivity", "mShouldExit=" + mShouldExit);
 
-        boolean forceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
-        Log.i("GameActivity", "forceExit=" + forceExit);
-
-        if (forceExit) {
-            android.os.Process.killProcess(android.os.Process.myPid());
-        }
+        mForceExit = extras.getBoolean(ActivityHelper.Keys.FORCE_EXIT_GAME);
+        Log.i("GameActivity", "forceExit=" + mForceExit);
 
         mRomPath = extras.getString( ROM_PATH );
         mRomMd5 = extras.getString( ActivityHelper.Keys.ROM_MD5 );
@@ -1208,6 +1201,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             }
 
             mHandler.postDelayed(mPeriodicChecker, 500);
+
+            if (mForceExit) {
+                Log.w("GameActivity", "Exit forced");
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
         }
     };
 
