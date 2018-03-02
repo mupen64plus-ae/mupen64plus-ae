@@ -56,6 +56,7 @@ import paulscode.android.mupen64plusae.game.GameActivity;
 import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimiter;
 import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
 
+@SuppressWarnings("unused")
 public class CoreService extends Service implements NativeImports.OnFpsChangedListener
 {
     interface CoreServiceListener
@@ -109,7 +110,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
     private String mLegacySaveName = null;
-    private Boolean mInstallationError = false;
 
     //Service attributes
     private int mStartId;
@@ -605,16 +605,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
             String libsDir = extras.getString( ActivityHelper.Keys.LIBS_DIR );
 
-            try {
-                // Load the native libraries, this must be done outside the thread to prevent race conditions
-                // that depend on the libraries being loaded after this call is made
-                NativeExports.loadLibrariesIfNotLoaded( libsDir, Build.VERSION.SDK_INT );
-                NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
-
-            } catch (java.lang.UnsatisfiedLinkError e) {
-                Log.e("CoreService", "Missing libraries, installation error");
-                mInstallationError = true;
-            }
+            // Load the native libraries, this must be done outside the thread to prevent race conditions
+            // that depend on the libraries being loaded after this call is made
+            NativeExports.loadLibrariesIfNotLoaded( libsDir, Build.VERSION.SDK_INT );
+            NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
 
             updateNotification();
         }
@@ -659,10 +653,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             msg.arg1 = mStartId;
             mServiceHandler.sendMessage(msg);
         }
-    }
-
-    Boolean isInstallationError() {
-        return mInstallationError;
     }
 
     Runnable mLastFpsChangedChecker = new Runnable() {

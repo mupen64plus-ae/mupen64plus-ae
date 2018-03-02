@@ -86,6 +86,7 @@ import paulscode.android.mupen64plusae.util.PixelBuffer;
  * }
  * </pre>
  */
+@SuppressWarnings("SameParameterValue")
 public class AppData
 {
     /** True if device is running Lollipop or later (21 - Android 5.0.x) */
@@ -240,7 +241,9 @@ public class AppData
         File file = new File(touchscreenSkinsDir + "Outline/.nomedia");
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                if (file.createNewFile()) {
+                   Log.w("AppData", "Unable to create file:" + file.getPath());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -249,7 +252,9 @@ public class AppData
         file = new File(touchscreenSkinsDir + "Shaded/.nomedia");
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                if (file.createNewFile()) {
+                    Log.w("AppData", "Unable to create file:" + file.getPath());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -258,7 +263,9 @@ public class AppData
         file = new File(touchscreenSkinsDir + "JoshaGibs/.nomedia");
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                if (file.createNewFile()) {
+                    Log.w("AppData", "Unable to create file:" + file.getPath());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -277,17 +284,8 @@ public class AppData
         emulationProfiles_cfg = profilesDir + "/emulation.cfg";
         
         UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
-        isAndroidTv = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
-    }
-    
-    /**
-     * Checks if the storage directory is accessible.
-     * 
-     * @return True, if the storage directory is accessible.
-     */
-    public boolean isSdCardAccessible()
-    {
-        return ( new File( coreSharedDataDir ) ).exists();
+
+        isAndroidTv = uiModeManager != null && uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
     }
 
     /**
@@ -522,11 +520,15 @@ public class AppData
             {
                 final ActivityManager activityManager =
                         (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
-                final ConfigurationInfo configurationInfo =
-                        activityManager.getDeviceConfigurationInfo();
+                final ConfigurationInfo configurationInfo = activityManager != null ?
+                        activityManager.getDeviceConfigurationInfo() : null;
 
-                openGlVersion =  "" + getMajorVersion(configurationInfo.reqGlEsVersion) +
-                        "." + getMinorVersion(configurationInfo.reqGlEsVersion);
+                if (configurationInfo != null) {
+                    openGlVersion =  "" + getMajorVersion(configurationInfo.reqGlEsVersion) +
+                            "." + getMinorVersion(configurationInfo.reqGlEsVersion);
+                } else {
+                    openGlVersion = "2.0";
+                }
             }
             else
             {
@@ -554,6 +556,45 @@ public class AppData
         //Return back to the original after we determine that full GL is supported
         EGL14.eglBindAPI(EGL14.EGL_OPENGL_ES_API);
         return supportsFullGl;
+    }
+
+    private boolean libraryExists( String undecoratedName )
+    {
+        File library = new File( libsDir + undecoratedName + ".so" );
+
+        boolean libraryExists = library.exists();
+        if (!libraryExists) {
+            Log.e("AppData", "Missing library: " + library.getPath());
+        }
+
+        return libraryExists;
+    }
+
+    public boolean isValidInstallation() {
+        // Installation validity
+        return libraryExists("libae-exports") &&
+                libraryExists("libae-imports") &&
+                libraryExists("libae-vidext") &&
+                libraryExists("libc++_shared") &&
+                libraryExists("libfreetype") &&
+                libraryExists("libglidenhq") &&
+                libraryExists("libmupen64plus-audio-sles-fp") &&
+                libraryExists("libmupen64plus-audio-sles") &&
+                libraryExists("libmupen64plus-core") &&
+                libraryExists("libmupen64plus-input-android") &&
+                libraryExists("libmupen64plus-rsp-cxd4") &&
+                libraryExists("libmupen64plus-rsp-hle") &&
+                libraryExists("libmupen64plus-ui-console") &&
+                libraryExists("libmupen64plus-video-angrylion") &&
+                libraryExists("libmupen64plus-video-glide64mk2-egl") &&
+                libraryExists("libmupen64plus-video-glide64mk2") &&
+                libraryExists("libmupen64plus-video-gliden64") &&
+                libraryExists("libmupen64plus-video-gln64") &&
+                libraryExists("libmupen64plus-video-rice") &&
+                libraryExists("libosal") &&
+                libraryExists("libSDL2") &&
+                libraryExists("libsoundtouch_fp") &&
+                libraryExists("libsoundtouch");
     }
 
     @SuppressWarnings("deprecation")
