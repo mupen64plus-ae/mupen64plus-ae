@@ -332,6 +332,12 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 				return M64ERR_INVALID_STATE;
 			}
 
+			// This first eglMakeCurrent is needed for badly behaving GPU drivers
+			if (!eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
+				LOGE("eglMakeCurrent() returned error %d", eglGetError());
+				return M64ERR_INVALID_STATE;
+			}
+
 			if (!eglMakeCurrent(display, surface, surface, context)) {
 				LOGE("eglMakeCurrent() returned error %d", eglGetError());
 				return M64ERR_INVALID_STATE;
