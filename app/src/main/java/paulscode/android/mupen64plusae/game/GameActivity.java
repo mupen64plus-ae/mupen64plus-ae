@@ -43,10 +43,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
-import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -81,6 +81,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.CoreFragment.CoreEventListener;
+import paulscode.android.mupen64plusae.jni.NativeImports.OnFpsChangedListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
@@ -132,7 +133,7 @@ import static paulscode.android.mupen64plusae.persistent.GlobalPrefs.DEFAULT_LOC
 //@formatter:on
 
 public class GameActivity extends AppCompatActivity implements PromptConfirmListener, SurfaceHolder.Callback,
-        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener
+        GameSidebarActionHandler, CoreEventListener, View.OnTouchListener, OnFpsChangedListener
 {
     // Activity and views
     private GameOverlay mOverlay;
@@ -176,6 +177,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private CoreFragment mCoreFragment = null;
 
     private boolean[] isControllerPlugged = new boolean[4];
+
+    private boolean mScreenOrientationSet = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -307,9 +310,21 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
 
         // Set the screen orientation
-        if(mGlobalPrefs.displayOrientation != -1)
-        {
-            this.setRequestedOrientation( mGlobalPrefs.displayOrientation );
+        if (mGlobalPrefs.displayOrientation != -1) {
+            setRequestedOrientation( mGlobalPrefs.displayOrientation );
+            mScreenOrientationSet = true;
+        } else {
+            // If auto rotation is on, lock orientation until graphics have initialized. We don't
+            // want the surface to be destroyed in the middle of initialization
+            if (getWindowManager().getDefaultDisplay().getRotation()== Surface.ROTATION_0)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            if (getWindowManager().getDefaultDisplay().getRotation()== Surface.ROTATION_90)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            if (getWindowManager().getDefaultDisplay().getRotation()== Surface.ROTATION_270)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
+            mScreenOrientationSet = false;
+            Log.e("GameActivity", "Screen orientation locked");
         }
 
         // Lay out content and get the views
@@ -432,12 +447,29 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     }
 
     @Override
+    public void onFpsChanged(int newValue)
+    {
+        // Set the screen orientation
+        if (mGlobalPrefs.displayOrientation == -1 && !mScreenOrientationSet) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            mScreenOrientationSet = true;
+
+            Log.e("GameActivity", "Screen orientation now set");
+        }
+
+        if(mGlobalPrefs.isFpsEnabled && mOverlay != null)
+        {
+            mOverlay.onFpsChanged(newValue);
+        }
+    }
+
+    @Override
     public void onStart()
     {
         super.onStart();
         Log.i("GameActivity", "onStart");
 
-        //This can happen if the screen is turn off while the emulator is running then turned back on
+        //This can happen if the screen is turned off while the emulator is running then turned back on
         tryRunning();
     }
 
@@ -515,10 +547,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if(mCoreFragment != null)
         {
             mCoreFragment.clearOnFpsChangedListener();
-        }
-
-        if(mCoreFragment != null)
-        {
             mCoreFragment.unsetSurface();
         }
 
@@ -833,6 +861,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 }
                 mCoreFragment.pauseEmulator();
             }
+
+            mCoreFragment.setOnFpsChangedListener(this, 15);
         }
     }
 
@@ -948,7 +978,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     {
         // Set the screen orientation
         if (mGlobalPrefs.displayOrientation != -1) {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
 
         if(mCoreFragment != null)

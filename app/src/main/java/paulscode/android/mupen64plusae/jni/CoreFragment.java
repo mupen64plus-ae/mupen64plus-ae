@@ -49,6 +49,7 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.jni.NativeImports.OnFpsChangedListener;
 
 import static paulscode.android.mupen64plusae.jni.NativeConstants.EMULATOR_STATE_UNKNOWN;
 
@@ -116,7 +117,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private boolean mIsRunning = false;
     private CoreService mCoreService = null;
     private Surface mSurface = null;
-    private NativeImports.OnFpsChangedListener mFpsChangeListener = null;
+    private OnFpsChangedListener mFpsChangeListener = null;
     private int mFpsRecalcPeriod = 1;
     private File mCurrentSaveStateFile = null;
 
@@ -423,7 +424,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
-    public void setOnFpsChangedListener(NativeImports.OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
+    public void setOnFpsChangedListener(OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
         Log.i("CoreFragment", "addOnFpsChangedListener");
 
