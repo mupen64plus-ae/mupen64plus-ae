@@ -956,6 +956,15 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
+    public void unsetSurface()
+    {
+        Log.i( "CoreFragment", "unsetSurface" );
+        if(mCoreService != null)
+        {
+            mCoreService.unsetSurface();
+        }
+    }
+
     public void destroySurface()
     {
         Log.i("CoreFragment", "destroySurface");

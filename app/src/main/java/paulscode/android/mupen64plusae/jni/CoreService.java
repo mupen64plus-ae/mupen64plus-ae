@@ -365,6 +365,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         NativeExports.setNativeWindow(surface);
     }
 
+    void unsetSurface()
+    {
+        NativeExports.unsetNativeWindow();
+    }
+
     void destroySurface()
     {
         NativeExports.emuDestroySurface();

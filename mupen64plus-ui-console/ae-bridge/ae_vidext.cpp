@@ -10,6 +10,7 @@
 #include <math.h>
 #include <mutex>
 #include <thread>
+#include <unistd.h>
 
 EGLDisplay display = EGL_NO_DISPLAY;
 EGLConfig config;
@@ -330,10 +331,14 @@ extern DECLSPEC m64p_error VidExtFuncGLSwapBuf()
 				LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
 				return M64ERR_INVALID_STATE;
 			}
+
 			if (!eglMakeCurrent(display, surface, surface, context)) {
 				LOGE("eglMakeCurrent() returned error %d", eglGetError());
 				return M64ERR_INVALID_STATE;
 			}
+
+			eglSwapInterval(display, vsync);
+
 			new_surface = false;
 		}
 
@@ -372,14 +377,24 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 
 	LOGI("setNativeWindow: New surface has been set");
 
+	native_window = ANativeWindow_fromSurface(env, native_surface);
+	new_surface = true;
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_unsetNativeWindow(JNIEnv* env, jclass cls, jobject native_surface)
+{
+	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
+	LOGI("unsetNativeWindow: Native window has been unset");
+
 	if(native_window != nullptr)
 	{
 		ANativeWindow_release(native_window);
 		native_window = nullptr;
-	}
 
-	native_window = ANativeWindow_fromSurface(env, native_surface);
-	new_surface = true;
+		//sleep for 50 ms to allow all queued swap buffer calls to finish
+		usleep(50000);
+	}
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuDestroySurface(JNIEnv* env, jclass cls)
@@ -387,9 +402,21 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 	LOGI("emuDestroySurface: Deleting surface");
 
 	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+
+	if(native_window != nullptr)
+	{
+		ANativeWindow_release(native_window);
+		native_window = nullptr;
+
+		//sleep for 50 ms to allow all queued swap buffer calls to finish
+		usleep(50000);
+	}
+
     if (display != EGL_NO_DISPLAY && surface != EGL_NO_SURFACE)
         eglDestroySurface(display, surface);
     surface = EGL_NO_SURFACE;
+
+	native_window = nullptr;
 }
 
 extern DECLSPEC m64p_error VidExtFuncQuit()
