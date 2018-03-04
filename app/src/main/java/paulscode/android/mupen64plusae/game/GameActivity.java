@@ -1239,6 +1239,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             if (mForceExit) {
                 Log.w("GameActivity", "Exit forced");
+
+                if (mCoreFragment != null) {
+                    mCoreFragment.forceExit();
+                }
+
+                // The above call already kills, but kill here anyways
+                // just incase the core fragment was null
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         }

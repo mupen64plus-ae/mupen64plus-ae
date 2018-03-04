@@ -975,6 +975,16 @@ public class CoreFragment extends Fragment implements CoreServiceListener
             mCoreService.destroySurface();
         }
     }
+
+    public void forceExit()
+    {
+        Log.i("CoreFragment", "forceExit");
+
+        if(mCoreService != null)
+        {
+            mCoreService.forceExit();
+        }
+    }
     
     public boolean IsInProgress()
     {

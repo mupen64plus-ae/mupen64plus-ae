@@ -698,4 +698,11 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             NativeExports.emuPause();
         }
     }
+
+    public void forceExit()
+    {
+        //Stop the service
+        stopForeground(true);
+        stopSelf();
+    }
 }
