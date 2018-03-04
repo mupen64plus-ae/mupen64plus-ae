@@ -478,7 +478,13 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
             // Reset the user preferences
             mPrefs.unregisterOnSharedPreferenceChangeListener( GamePrefsActivity.this );
             mPrefs.edit().clear().apply();
-            PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
+
+
+            try {
+                PreferenceManager.setDefaultValues( GamePrefsActivity.this, R.xml.preferences_game, true );
+            } catch (java.lang.ClassCastException e) {
+                Log.w("GamePrefsActivity", "Unable to reset game preferences");
+            }
 
             // Also reset any manual overrides the user may have made in the config file
             final File configFile = new File( mGamePrefs.getMupen64plusCfg() );
