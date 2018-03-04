@@ -99,59 +99,68 @@ extern DECLSPEC m64p_error VidExtFuncListModes(m64p_2d_size *SizeArray, int *Num
 
 extern DECLSPEC m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerPixel, int ScreenMode, int Flags)
 {
-	std::unique_lock<std::mutex> guard(nativeWindowAccess);
+	{
+		std::unique_lock<std::mutex> guard(nativeWindowAccess);
 
-    EGLint num_config;
-    if (!eglChooseConfig(display, attribList, &config, 1, &num_config)) {
-        LOGE("eglChooseConfig() returned error %d", eglGetError());
-        return M64ERR_INVALID_STATE;
-    }
-    if (num_config == 0) {
-        //Try to fallback to GLES context
-        eglBindAPI(EGL_OPENGL_ES_API);
-        attribList[FindIndex(attribList, sizeof(attribList), EGL_RENDERABLE_TYPE) + 1] = EGL_OPENGL_ES2_BIT;
-        if (!eglChooseConfig(display, attribList, &config, 1, &num_config)) {
-            LOGE("eglChooseConfig() returned error %d", eglGetError());
-            return M64ERR_INVALID_STATE;
-        }
-    }
-	
-	if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs))) {
-		//If creating the context failed, just try to create a GLES2/3 context
-		//This is useful because GLideN64 requests an OpenGL 3.3 core context.
-		if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, defaultGlEsContextAttribs))) {
-			LOGE("eglCreateContext() returned error %d", eglGetError());
+		EGLint num_config;
+		if (!eglChooseConfig(display, attribList, &config, 1, &num_config)) {
+			LOGE("eglChooseConfig() returned error %d", eglGetError());
 			return M64ERR_INVALID_STATE;
+		}
+		if (num_config == 0) {
+			//Try to fallback to GLES context
+			eglBindAPI(EGL_OPENGL_ES_API);
+			attribList[FindIndex(attribList, sizeof(attribList), EGL_RENDERABLE_TYPE) + 1] = EGL_OPENGL_ES2_BIT;
+			if (!eglChooseConfig(display, attribList, &config, 1, &num_config)) {
+				LOGE("eglChooseConfig() returned error %d", eglGetError());
+				return M64ERR_INVALID_STATE;
+			}
+		}
+
+		if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs))) {
+			//If creating the context failed, just try to create a GLES2/3 context
+			//This is useful because GLideN64 requests an OpenGL 3.3 core context.
+			if (!(context = eglCreateContext(display, config, EGL_NO_CONTEXT, defaultGlEsContextAttribs))) {
+				LOGE("eglCreateContext() returned error %d", eglGetError());
+				return M64ERR_INVALID_STATE;
+			}
 		}
 	}
 
-    if(new_surface && native_window != nullptr)
-    {
-		LOGI("VidExtFuncSetMode: Initializing surface");
+	// Wait for the native window to be set before continuing
+	while (native_window == nullptr) {
+		usleep(1000);
+	}
 
-        if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList)))
-		{
-            LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
-            return M64ERR_INVALID_STATE;
-        }
-
-        if (!eglMakeCurrent(display, surface, surface, context))
-		{
-            LOGE("eglMakeCurrent() returned error %d", eglGetError());
-            return M64ERR_INVALID_STATE;
-        }
-
-		new_surface = false;
-    } else
 	{
-        LOGE("VidExtFuncSetMode called before surface has been set");
-		return M64ERR_INVALID_STATE;
-    }
+		std::unique_lock<std::mutex> guard(nativeWindowAccess);
+		if(new_surface && native_window != nullptr)
+		{
+			LOGI("VidExtFuncSetMode: Initializing surface");
 
-	EGLLoader::loadEGLFunctions();
+			if (!(surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)native_window, windowAttribList)))
+			{
+				LOGE("eglCreateWindowSurface() returned error %d", eglGetError());
+				return M64ERR_INVALID_STATE;
+			}
 
-	const char * strVersion = reinterpret_cast<const char*>(g_glGetString(GL_VERSION));
-	isGLES2 = strstr(strVersion, "OpenGL ES 2") != nullptr;
+			if (!eglMakeCurrent(display, surface, surface, context))
+			{
+				LOGE("eglMakeCurrent() returned error %d", eglGetError());
+				return M64ERR_INVALID_STATE;
+			}
+
+			new_surface = false;
+		} else {
+			LOGE("VidExtFuncSetMode called before surface has been set");
+			return M64ERR_INVALID_STATE;
+		}
+
+		EGLLoader::loadEGLFunctions();
+
+		const char * strVersion = reinterpret_cast<const char*>(g_glGetString(GL_VERSION));
+		isGLES2 = strstr(strVersion, "OpenGL ES 2") != nullptr;
+	}
 
     return M64ERR_SUCCESS;
 }
