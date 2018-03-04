@@ -22,12 +22,13 @@ COMMON_CPPFLAGS :=                  \
 
 COMMON_LDFLAGS :=
 
-#ifneq ($(HOST_OS),windows)
-#    COMMON_CFLAGS += -flto
-#    COMMON_LDFLAGS +=                   \
-#        $(COMMON_CFLAGS)                \
-#        $(COMMON_CPPFLAGS)
-#endif
+ifneq ($(HOST_OS),windows)
+    COMMON_CFLAGS += -flto
+    COMMON_CPPFLAGS += -flto
+    COMMON_LDFLAGS +=                   \
+        $(COMMON_CFLAGS)                \
+        $(COMMON_CPPFLAGS)
+endif
 
 include $(JNI_LOCAL_PATH)/src/Android.mk
 
