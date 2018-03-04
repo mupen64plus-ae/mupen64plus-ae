@@ -583,6 +583,7 @@ public class GamePrefs
 
         return headerNameLowerCase.equals("Body Harvest".toLowerCase()) ||
                 headerNameLowerCase.equals("BOMBERMAN64".toLowerCase()) ||
+                headerNameLowerCase.equals("DARK RIFT".toLowerCase()) ||
                 headerNameLowerCase.equals("DR.MARIO 64".toLowerCase()) ||
                 headerNameLowerCase.equals("DUKE NUKEM".toLowerCase()) ||
                 headerNameLowerCase.equals("DUKE".toLowerCase()) ||
