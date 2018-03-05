@@ -160,6 +160,8 @@ class NativeConfigFiles
             videoPluginString = videoPluginString.replace("libmupen64plus-video-glide64mk2.so", "libmupen64plus-video-glide64mk2-egl.so");
         }
 
+        videoPluginString = videoPluginString.replaceAll("libmupen64plus-video-angrylion.so", "libmupen64plus-video-angrylion-rdp-plus.so");
+
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + videoPluginString + '"' );                              // Filename of video plugin
 
         //Use the FP version of the SLES audio plugin if the API level is high enough
@@ -321,6 +323,13 @@ class NativeConfigFiles
         mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( game.isRiceFogEnabled ) );                               // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
 
         mupen64plus_cfg.put( "Video-Angrylion", "VIOverlay", boolToTF( game.angrylionVIOverlayEnabled ) );
+
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "Parallel", boolToTF( false ) );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "NumWorkers", "4" );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViMode", "1" );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViInterpolation", "0" );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViWidescreen", boolToTF( false ) );
+        mupen64plus_cfg.put( "Video-Angrylion-Plus", "ViHideOverscan", boolToTF( false ) );
 
         gln64_conf.save();
         glide64_conf.save();

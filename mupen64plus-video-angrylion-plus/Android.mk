@@ -31,5 +31,5 @@ ifneq ($(HOST_OS),windows)
         $(COMMON_CPPFLAGS)
 endif
 
-include $(JNI_LOCAL_PATH)/mupen64plus-video-angrylion-rdp-plus.mk
+include $(JNI_LOCAL_PATH)/mupen64plus-video-angrylion-plus.mk
 

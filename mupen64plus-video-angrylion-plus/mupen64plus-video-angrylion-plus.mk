@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./upstream
 
-MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -Wno-bitwise-op-parentheses -DM64P_PLUGIN_API
+MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -Wno-bitwise-op-parentheses -DM64P_PLUGIN_API -DGLES
 #MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -Wno-bitwise-op-parentheses -DM64P_PLUGIN_API -DM64P_CORE_PROTOTYPES
 
 LOCAL_MODULE := mupen64plus-video-angrylion-rdp-plus
@@ -13,7 +13,7 @@ LOCAL_ARM_MODE := arm
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES) \
     $(LOCAL_PATH)/$(SRCDIR) \
     $(LOCAL_PATH)/$(SRCDIR)/core \
-    $(LOCAL_PATH)/GLES3/include/
+    $(LOCAL_PATH)/$(SRCDIR)/plugin-common
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
@@ -30,7 +30,7 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/core/plugin.c \
     $(SRCDIR)/core/rdp.c \
     $(SRCDIR)/core/screen.c \
-    $(SRCDIR)/plugin-common/gl_screen.c \
+    gles_screen.c \
     $(SRCDIR)/plugin-mupen64plus/gfx_m64p.c \
     $(SRCDIR)/plugin-mupen64plus/msg.c \
     $(SRCDIR)/plugin-mupen64plus/plugin.c \

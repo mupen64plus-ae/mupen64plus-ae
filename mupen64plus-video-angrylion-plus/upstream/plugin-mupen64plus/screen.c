@@ -2,7 +2,10 @@
 #include "gfx_m64p.h"
 
 #include "plugin-common/gl_screen.h"
+
+#ifndef GLES
 #include "plugin-common/gl_core_3_3.h"
+#endif
 
 #include "core/msg.h"
 
@@ -61,8 +64,11 @@ void screen_swap(bool blank)
         toggle_fs = false;
     }
 
+#ifndef GLES
     // clear current buffer, indicating the start of a new frame
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#endif
+
 
     if (!blank) {
         gl_screen_render(window_width, window_height, 0, 0);
