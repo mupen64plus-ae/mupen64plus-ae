@@ -61,7 +61,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String LIBGLIDEN64_SO = "libmupen64plus-video-gliden64.so";
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
-    private static final String LIBANGRYLION_SO = "libmupen64plus-video-angrylion.so";
+    private static final String LIBANGRYLION_SO = "libmupen64plus-video-angrylion-rdp-plus.so";
 
     // Preference menu items
     private PreferenceGroup mScreenRoot = null;

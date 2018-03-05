@@ -55,7 +55,6 @@ dependencies {
     implementation project(':mupen64plus-video-glide64mk2')
     implementation project(':mupen64plus-ui-console')
     implementation project(':mupen64plus-video-gln64')
-    implementation project(':mupen64plus-video-angrylion')
     implementation project(':mupen64plus-rsp-cxd4')
     implementation project(':mupen64plus-rsp-hle')
     implementation project(':mupen64plus-input-android')

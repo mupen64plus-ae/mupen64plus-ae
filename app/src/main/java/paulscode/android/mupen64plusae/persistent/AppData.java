@@ -585,7 +585,7 @@ public class AppData
                 libraryExists("libmupen64plus-rsp-cxd4") &&
                 libraryExists("libmupen64plus-rsp-hle") &&
                 libraryExists("libmupen64plus-ui-console") &&
-                libraryExists("libmupen64plus-video-angrylion") &&
+                libraryExists("libmupen64plus-video-angrylion-rdp-plus") &&
                 libraryExists("libmupen64plus-video-glide64mk2-egl") &&
                 libraryExists("libmupen64plus-video-glide64mk2") &&
                 libraryExists("libmupen64plus-video-gliden64") &&

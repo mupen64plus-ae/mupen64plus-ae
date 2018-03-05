@@ -197,10 +197,9 @@ public class GamePrefs
     /** True if fog is enabled in the rice library. */
     public final boolean isRiceFogEnabled;
 
-    /** True if VI Overlay is enabled in Angrylion */
-    public final boolean angrylionVIOverlayEnabled;
-
     public final GLideN64Prefs glideN64Prefs;
+
+    public final AngrylionPlusPrefs angrylionPlusPrefs;
 
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
@@ -455,9 +454,10 @@ public class GamePrefs
         isGliden64Enabled = videoPlugin.name.contains( "libmupen64plus-video-gliden64" );
         glideN64Prefs = new GLideN64Prefs(context, emulationProfile);
 
+
         //Video preferences for angrylion
-        boolean isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion.so" );
-        angrylionVIOverlayEnabled = emulationProfile.get( "VIOverlay", "False" ).equals( "True" );
+        boolean isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion-rdp-plus.so" );
+        angrylionPlusPrefs = new AngrylionPlusPrefs(context, emulationProfile);
 
         final String scaling = mPreferences.getString( "displayScaling", "default" );
 

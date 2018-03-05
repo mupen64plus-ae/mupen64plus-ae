@@ -1032,6 +1032,32 @@
     </string-array>
     <string name="gliden64_texture_enhancement_default" translatable="false">0</string>
 
+    <!-- Angrylion RDP Plus VI mide list-->
+    <string-array name="angrylion_vi_mode_entries">
+        <item>@string/angrylion_vi_mode_entry_filtered</item>
+        <item>@string/angrylion_vi_mode_entry_unfiltered</item>
+        <item>@string/angrylion_vi_mode_entry_depth</item>
+        <item>@string/angrylion_vi_mode_entry_coverage</item>
+    </string-array>
+    <string-array name="angrylion_vi_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string name="angrylion_vi_mode_default" translatable="false">0</string>
+
+    <!-- Angrylion RDP Plus VI interpolation list-->
+    <string-array name="angrylion_vi_interpolation_entries">
+        <item>@string/angrylion_vi_interpolation_entry_nearest_neighbor</item>
+        <item>@string/angrylion_vi_interpolation_entry_linear</item>
+    </string-array>
+    <string-array name="angrylion_vi_interpolation_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="angrylion_vi_interpolation_default" translatable="false">0</string>
+
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries" translatable="false">
         <item>@string/videoPlugin_entryNone</item>
@@ -1047,7 +1073,7 @@
         <item>libmupen64plus-video-gliden64.so</item>
         <item>libmupen64plus-video-gln64.so</item>
         <item>libmupen64plus-video-rice.so</item>
-        <item>libmupen64plus-video-angrylion.so</item>
+        <item>libmupen64plus-video-angrylion-rdp-plus.so</item>
     </string-array>
 
     <string name="videoPlugin_default" translatable="false">libmupen64plus-video-glide64mk2.so</string>

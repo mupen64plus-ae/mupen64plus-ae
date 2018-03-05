@@ -600,9 +600,36 @@
         android:key="categoryAngrylion"
         android:title="@string/categoryAngrylion_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="True"
+            android:key="ParallelMode"
+            android:title="@string/angrylion_parallel_mode_title" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="1"
+            android:key="WorkerThreads"
+            android:title="@string/angrylion_num_workers_title"
+            mupen64:maximumValue="8"
+            mupen64:minimumValue="0"
+            mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/angrylion_vi_mode_default"
+            android:entries="@array/angrylion_vi_mode_entries"
+            android:entryValues="@array/angrylion_vi_mode_values"
+            android:key="viMode"
+            android:summary="@string/selectedValue"
+            android:title="@string/angrylion_vi_mode_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/angrylion_vi_interpolation_default"
+            android:entries="@array/angrylion_vi_interpolation_entries"
+            android:entryValues="@array/angrylion_vi_interpolation_values"
+            android:key="viInterpolation"
+            android:summary="@string/selectedValue"
+            android:title="@string/angrylion_vi_interpolation_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="False"
-            android:key="VIOverlay"
-            android:title="@string/angrylion_vi_overlay_title" />
+            android:key="viHideOverscan"
+            android:title="@string/angrylion_hide_overscan_title" />
     </android.support.v7.preference.PreferenceCategory>
        
 </android.support.v7.preference.PreferenceScreen>

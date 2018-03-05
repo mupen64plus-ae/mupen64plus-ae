@@ -216,7 +216,7 @@
     <string name="categoryGlide64_title">Glide64 settings</string>
     <string name="categoryGlide64Advanced_title">Glide64 advanced settings</string>
     <string name="categoryGliden64_title">GlideN64 settings</string>
-    <string name="categoryAngrylion_title">Angrylion settings</string>
+    <string name="categoryAngrylion_title">Angrylion RDP Plus settings</string>
     <string name="categoryLibrary_title">Library</string>
     <string name="categoryDisplay_title">Display</string>
     <string name="categoryAudio_title">Audio</string>
@@ -338,7 +338,7 @@
     <string name="videoPlugin_entryNone">None (video disabled)</string>
     <string name="videoPlugin_entryGln64">gln64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryRice">rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
-    <string name="videoPlugin_entryAngrylion">angrylion\n<small>(angrylion software renderer)</small></string>
+    <string name="videoPlugin_entryAngrylion">angrylion-rdp-plus\n<small>(angrylion-rdp-plus software renderer)</small></string>
     <string name="videoPlugin_entryGlide64">glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
     <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 beta)</small></string>
     <string name="videoHardwareType_title">Flicker reduction</string>
@@ -474,7 +474,17 @@
     <string name="gliden64_force_gamma_correction_title">Force gamma correction</string>
     <string name="gliden64_gamma_correction_level">Gamma correction value</string>
 
-    <string name="angrylion_vi_overlay_title">Enable VI overlay filter</string>
+    <string name="angrylion_parallel_mode_title">Enable threaded mode</string>
+    <string name="angrylion_num_workers_title">Number of worker threads</string>
+    <string name="angrylion_vi_mode_title">VI Mode</string>
+    <string name="angrylion_vi_mode_entry_filtered">Filtered</string>
+    <string name="angrylion_vi_mode_entry_unfiltered">Unfiltered</string>
+    <string name="angrylion_vi_mode_entry_depth">Depth</string>
+    <string name="angrylion_vi_mode_entry_coverage">Coverage</string>
+    <string name="angrylion_vi_interpolation_title">VI Interpolation</string>
+    <string name="angrylion_vi_interpolation_entry_nearest_neighbor">Nearest Neighbor</string>
+    <string name="angrylion_vi_interpolation_entry_linear">Linear</string>
+    <string name="angrylion_hide_overscan_title">Hide overscan</string>
 
     <string name="glide64mk2_game_default">Game default</string>
     <string name="glide64mk2_disable">Disable</string>
