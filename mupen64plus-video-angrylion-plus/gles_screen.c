@@ -218,9 +218,6 @@ void gl_screen_render(int32_t win_width, int32_t win_height, int32_t win_x, int3
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glViewport(0,0,win_width, win_height);
 
-    // Clear the screen
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // Use our shader
     glUseProgram(gProgramId);
 
