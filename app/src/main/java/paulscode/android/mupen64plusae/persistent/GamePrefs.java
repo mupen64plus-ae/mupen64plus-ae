@@ -605,6 +605,7 @@ public class GamePrefs
                 headerNameLowerCase.equals("NBA HANGTIME".toLowerCase()) ||
                 headerNameLowerCase.contains("WWF".toLowerCase()) ||
                 gameGoodNameLowerCase.contains("WRESTL".toLowerCase()) ||
+                gameGoodNameLowerCase.contains("WCW".toLowerCase()) ||
                 headerNameLowerCase.equals("wetrix".toLowerCase());
     }
 
