@@ -160,7 +160,7 @@ public class EmulationProfileActivity extends ProfileActivity
                 if(angryLionIndex != -1)
                 {
                     videoEntriesArray.remove(angryLionIndex);
-                    videoValuesArray.remove(videoValuesArray.indexOf("libmupen64plus-video-angrylion.so"));
+                    videoValuesArray.remove(videoValuesArray.indexOf("libmupen64plus-video-angrylion-rdp-plus.so"));
                 }
 
                 mPreferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[videoEntriesArray.size()]));
