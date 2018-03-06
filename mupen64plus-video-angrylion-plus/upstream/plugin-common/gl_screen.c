@@ -121,7 +121,7 @@ void gl_screen_init(struct rdp_config* config)
         "layout(location = 0) out vec4 color;\n"
         "uniform sampler2D tex0;\n"
         "void main(void) {\n"
-        "    color = texture(tex0, uv);\n"
+        "    color = texture(tex0, uv).bgra;\n"
         "}\n";
 
     // compile and link OpenGL program
@@ -239,6 +239,11 @@ void gl_screen_render(int32_t win_width, int32_t win_height, int32_t win_x, int3
 
     // check if there was an error when using any of the commands above
     gl_check_errors();
+}
+
+void gl_screen_clear(void)
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void gl_screen_close(void)

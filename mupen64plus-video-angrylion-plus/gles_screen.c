@@ -1,6 +1,7 @@
 #include "gl_screen.h"
 #include <GLES3/gl3.h>
 #include <memory.h>
+#include <malloc.h>
 
 #include "core/msg.h"
 
@@ -62,6 +63,8 @@ struct CachedTexture
     GLuint	glName;
     int32_t width;
 	int32_t height;
+	int32_t render_width;
+	int32_t render_height;
 } gTexture;
 
 
@@ -123,6 +126,8 @@ void gl_screen_init(struct rdp_config* config)
     glGenTextures(1, &gTexture.glName);
     gTexture.width = 640;
     gTexture.height = 480;
+	gTexture.render_width = 640;
+	gTexture.render_height = 480;
     glBindTexture( GL_TEXTURE_2D, gTexture.glName );
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gTexture.width, gTexture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
@@ -207,11 +212,34 @@ bool gl_screen_write(struct rdp_frame_buffer* fb, int32_t output_height)
 
 void gl_screen_read(struct rdp_frame_buffer* fb)
 {
+	fb->width = (uint32_t)gTexture.render_width;
+	fb->height = (uint32_t)gTexture.render_height;
+	fb->pitch = (uint32_t)gTexture.render_width;
 
+	if (!fb->pixels) {
+		return;
+	}
+	
+	size_t dataSize = fb->width * fb->height * sizeof(int32_t);
+	uint8_t* pixels = malloc(dataSize);
+	glReadPixels(0, 0, gTexture.render_width, gTexture.render_height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+    //Flip image since callers expect the image to be flipped
+	uint8_t* pdst = (uint8_t*)fb->pixels;
+	for (int32_t y = fb->height - 1; y >= 0; y--) {
+		uint8_t* psrc = pixels + y * fb->width*sizeof(int32_t);
+		memcpy(pdst, psrc, fb->width*sizeof(int32_t));
+		pdst += fb->width*sizeof(int32_t);
+	}
+
+	free(pixels);
 }
 
 void gl_screen_render(int32_t win_width, int32_t win_height, int32_t win_x, int32_t win_y)
 {
+	gTexture.render_width = win_width;
+	gTexture.render_height = win_height;
+
     // Render to the screen
     // Render on the whole framebuffer, complete from the lower left corner to the upper right
     // Draw on screen
@@ -242,6 +270,11 @@ void gl_screen_render(int32_t win_width, int32_t win_height, int32_t win_x, int3
     // Draw the triangles !
     glDrawArrays(GL_TRIANGLES, 0, 6); // 2*3 indices starting at 0 -> 2 triangles
     glDisableVertexAttribArray(0);
+}
+
+void gl_screen_clear(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void gl_screen_close(void)
