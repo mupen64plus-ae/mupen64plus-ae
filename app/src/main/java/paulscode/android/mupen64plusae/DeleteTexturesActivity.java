@@ -143,8 +143,10 @@ public class DeleteTexturesActivity extends AppCompatActivity implements OnItemC
     @Override
     public void onItemClick( AdapterView<?> parent, View view, int position, long id )
     {
-        mCurrentPath = mPaths.get( position );
-        setTitle( new File(mCurrentPath).getName() );
+        if (position < mPaths.size()) {
+            mCurrentPath = mPaths.get( position );
+            setTitle( new File(mCurrentPath).getName() );
+        }
     }
 
     @Override
