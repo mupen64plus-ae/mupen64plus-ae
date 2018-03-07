@@ -114,7 +114,9 @@ public class ExtractTexturesActivity extends AppCompatActivity implements OnItem
     @Override
     public void onItemClick( AdapterView<?> parent, View view, int position, long id )
     {
-        mCurrentPath = new File(mPaths.get( position ));
-        PopulateFileList();
+        if (position < mPaths.size()) {
+            mCurrentPath = new File(mPaths.get( position ));
+            PopulateFileList();
+        }
     }
 }
