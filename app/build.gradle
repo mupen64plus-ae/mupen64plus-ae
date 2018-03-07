@@ -24,6 +24,10 @@ android {
         targetSdkVersion 27
         versionCode = 86
         versionName = "3.0.10 (beta)"
+
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
     }
 
     buildTypes {
