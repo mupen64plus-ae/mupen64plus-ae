@@ -31,5 +31,7 @@ ifneq ($(HOST_OS),windows)
         $(COMMON_CPPFLAGS)
 endif
 
-include $(JNI_LOCAL_PATH)/mupen64plus-video-angrylion-plus.mk
+BASE_DIR := upstream
+
+include $(JNI_LOCAL_PATH)/upstream/mupen64plus-video-angrylion-plus.mk
 

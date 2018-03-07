@@ -3,7 +3,7 @@
 ######################
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
-SRCDIR := ./upstream
+SRCDIR := ./$(BASE_DIR)/
 
 MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -Wno-bitwise-op-parentheses -DM64P_PLUGIN_API -DGLES
 #MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -Wno-bitwise-op-parentheses -DM64P_PLUGIN_API -DM64P_CORE_PROTOTYPES
@@ -30,7 +30,7 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/core/plugin.c \
     $(SRCDIR)/core/rdp.c \
     $(SRCDIR)/core/screen.c \
-    gles_screen.c \
+    $(SRCDIR)/plugin-common/gles_screen.c \
     $(SRCDIR)/plugin-mupen64plus/gfx_m64p.c \
     $(SRCDIR)/plugin-mupen64plus/msg.c \
     $(SRCDIR)/plugin-mupen64plus/plugin.c \

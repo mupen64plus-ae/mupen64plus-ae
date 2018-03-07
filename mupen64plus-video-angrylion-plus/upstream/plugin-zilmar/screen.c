@@ -126,9 +126,9 @@ void screen_write(struct rdp_frame_buffer* buffer, int32_t output_height)
     gl_screen_write(buffer, output_height);
 }
 
-void screen_read(struct rdp_frame_buffer* buffer)
+void screen_read(struct rdp_frame_buffer* buffer, bool rgb)
 {
-    gl_screen_read(buffer);
+    gl_screen_read(buffer, rgb);
 }
 
 void screen_swap(bool blank)

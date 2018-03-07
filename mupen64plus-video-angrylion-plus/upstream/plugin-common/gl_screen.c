@@ -121,7 +121,7 @@ void gl_screen_init(struct rdp_config* config)
         "layout(location = 0) out vec4 color;\n"
         "uniform sampler2D tex0;\n"
         "void main(void) {\n"
-        "    color = texture(tex0, uv).bgra;\n"
+        "    color = texture(tex0, uv);\n"
         "}\n";
 
     // compile and link OpenGL program
@@ -184,33 +184,19 @@ bool gl_screen_write(struct rdp_frame_buffer* fb, int32_t output_height)
     return buffer_size_changed;
 }
 
-void gl_screen_read(struct rdp_frame_buffer* fb)
+void gl_screen_read(struct rdp_frame_buffer* fb, bool rgb)
 {
-    fb->width = tex_width;
-    fb->height = tex_display_height;
-    fb->pitch = tex_width;
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
 
-    if (!fb->pixels) {
-        return;
-    }
+    fb->width = vp[2];
+    fb->height = vp[3];
+    fb->pitch = fb->width;
 
-    // check if resampling is required
-    if (tex_display_height == tex_height) {
-        // size matches, direct copy
-        glGetTexImage(GL_TEXTURE_2D, 0, TEX_FORMAT, TEX_TYPE, (void*)fb->pixels);
-    } else {
-        // do nearest-neighbor resampling
-        int32_t* tex_buffer = malloc(tex_width * tex_display_height * sizeof(int32_t));
-        glGetTexImage(GL_TEXTURE_2D, 0, TEX_FORMAT, TEX_TYPE, tex_buffer);
-
-        for (int32_t y = 0; y < tex_display_height; y++) {
-            int32_t iy = y * tex_height / tex_display_height;
-            uint32_t os = tex_width * iy;
-            uint32_t od = tex_width * y;
-            memcpy(fb->pixels + od, tex_buffer + os, tex_width * sizeof(int32_t));
-        }
-
-        free(tex_buffer);
+    if (fb->pixels) {
+        GLenum format = rgb ? GL_RGB : TEX_FORMAT;
+        GLenum type = rgb ? GL_UNSIGNED_BYTE : TEX_TYPE;
+        glReadPixels(vp[0], vp[1], vp[2], vp[3], format, type, fb->pixels);
     }
 }
 

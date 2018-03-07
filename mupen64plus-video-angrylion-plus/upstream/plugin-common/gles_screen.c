@@ -7,15 +7,15 @@
 
 bool isGLError(const char* test)
 {
-	GLenum errCode;
+    GLenum errCode;
 
-	if ((errCode = glGetError()) != GL_NO_ERROR) {
-		msg_error("GL ERROR data=%s, code=%#08x", test,errCode);
-		return true;
-	} else {
-		msg_warning("NO ERROR data=%s", test);
-	}
-	return false;
+    if ((errCode = glGetError()) != GL_NO_ERROR) {
+        msg_error("GL ERROR data=%s, code=%#08x", test,errCode);
+        return true;
+    } else {
+        msg_warning("NO ERROR data=%s", test);
+    }
+    return false;
 }
 
 static const char* vertex_shader =
@@ -25,8 +25,8 @@ static const char* vertex_shader =
         "out lowp vec2 UV;                                                 \n"
         "                                                                  \n"
         "void main(){                                                      \n"
-        "	gl_Position = vec4(vertexPosition_modelspace,1);               \n"
-        "	UV = (vertexPosition_modelspace.xy+vec2(1,1))/2.0;             \n"
+        "    gl_Position = vec4(vertexPosition_modelspace,1);               \n"
+        "    UV = (vertexPosition_modelspace.xy+vec2(1,1))/2.0;             \n"
         "}                                                                 \n"
 ;
 
@@ -60,11 +60,11 @@ GLuint gQuad_vertexbuffer;
 
 struct CachedTexture
 {
-    GLuint	glName;
+    GLuint    glName;
     int32_t width;
-	int32_t height;
-	int32_t render_width;
-	int32_t render_height;
+    int32_t height;
+    int32_t render_width;
+    int32_t render_height;
 } gTexture;
 
 
@@ -126,8 +126,8 @@ void gl_screen_init(struct rdp_config* config)
     glGenTextures(1, &gTexture.glName);
     gTexture.width = 640;
     gTexture.height = 480;
-	gTexture.render_width = 640;
-	gTexture.render_height = 480;
+    gTexture.render_width = 640;
+    gTexture.render_height = 480;
     glBindTexture( GL_TEXTURE_2D, gTexture.glName );
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gTexture.width, gTexture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
@@ -171,74 +171,79 @@ bool gl_screen_write(struct rdp_frame_buffer* fb, int32_t output_height)
         gTexture.width = fb->width;
         gTexture.height = fb->height;
 
-		glBindTexture(GL_TEXTURE_2D, gTexture.glName);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gTexture.width, gTexture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glBindTexture(GL_TEXTURE_2D, gTexture.glName);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gTexture.width, gTexture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
         msg_warning("screen: resized framebuffer texture: %d, %d", fb->width, fb->height);
     }
 
-	// copy local buffer to GPU texture buffer
-	const int32_t dataSize = fb->width*fb->height * 4;
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, gPBO);
-	glBufferData(GL_PIXEL_UNPACK_BUFFER, dataSize, NULL, GL_DYNAMIC_DRAW);
+    // copy local buffer to GPU texture buffer
+    const int32_t dataSize = fb->width*fb->height * 4;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, gPBO);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, dataSize, NULL, GL_DYNAMIC_DRAW);
 
-	GLubyte* ptr = (GLubyte*)glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, dataSize, GL_MAP_WRITE_BIT);
+    GLubyte* ptr = (GLubyte*)glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, dataSize, GL_MAP_WRITE_BIT);
 
-	if (ptr == NULL) {
-		msg_warning("Failed call to glMapBufferRange");
-		return false;
-	}
+    if (ptr == NULL) {
+        msg_warning("Failed call to glMapBufferRange");
+        return false;
+    }
 
-	uint32_t* dst = (uint32_t*)ptr;
-	memcpy(dst, fb->pixels, dataSize);
+    uint32_t* dst = (uint32_t*)ptr;
+    memcpy(dst, fb->pixels, dataSize);
 
-	glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER); // release the mapped buffer
+    glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER); // release the mapped buffer
 
-	glBindTexture(GL_TEXTURE_2D, gTexture.glName);
+    glBindTexture(GL_TEXTURE_2D, gTexture.glName);
 
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, gTexture.width, gTexture.height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, gTexture.width, gTexture.height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 
-	// Set clamping modes
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    // Set clamping modes
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     return buffer_size_changed;
 
 }
 
-void gl_screen_read(struct rdp_frame_buffer* fb)
+void gl_screen_read(struct rdp_frame_buffer* fb, bool rgb)
 {
-	fb->width = (uint32_t)gTexture.render_width;
-	fb->height = (uint32_t)gTexture.render_height;
-	fb->pitch = (uint32_t)gTexture.render_width;
+    fb->width = (uint32_t)gTexture.render_width;
+    fb->height = (uint32_t)gTexture.render_height;
+    fb->pitch = (uint32_t)gTexture.render_width;
 
-	if (!fb->pixels) {
-		return;
-	}
-	
-	size_t dataSize = fb->width * fb->height * sizeof(int32_t);
-	uint8_t* pixels = malloc(dataSize);
-	glReadPixels(0, 0, gTexture.render_width, gTexture.render_height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    if (!fb->pixels) {
+        return;
+    }
 
-    //Flip image since callers expect the image to be flipped
-	uint8_t* pdst = (uint8_t*)fb->pixels;
-	for (int32_t y = fb->height - 1; y >= 0; y--) {
-		uint8_t* psrc = pixels + y * fb->width*sizeof(int32_t);
-		memcpy(pdst, psrc, fb->width*sizeof(int32_t));
-		pdst += fb->width*sizeof(int32_t);
-	}
+    char *pBufferData = (char*)malloc(fb->width*fb->height*4);
+    char *pDest = (char*)fb->pixels;
 
-	free(pixels);
+    glReadPixels(0, 0, gTexture.render_width, gTexture.render_height, GL_RGBA, GL_UNSIGNED_BYTE, pBufferData);
+
+    //Convert RGBA to RGB
+    for (int32_t y = 0; y < fb->height; ++y) {
+        char *ptr = pBufferData + (fb->width * 4 * y);
+        for (int32_t x = 0; x < fb->width; ++x) {
+            pDest[x * 3] = ptr[0]; // red
+            pDest[x * 3 + 1] = ptr[1]; // green
+            pDest[x * 3 + 2] = ptr[2]; // blue
+            ptr += 4;
+        }
+        pDest += fb->width * 3;
+    }
+
+    free(pBufferData);
 }
 
 void gl_screen_render(int32_t win_width, int32_t win_height, int32_t win_x, int32_t win_y)
 {
-	gTexture.render_width = win_width;
-	gTexture.render_height = win_height;
+    gTexture.render_width = win_width;
+    gTexture.render_height = win_height;
 
     // Render to the screen
     // Render on the whole framebuffer, complete from the lower left corner to the upper right
@@ -274,7 +279,7 @@ void gl_screen_render(int32_t win_width, int32_t win_height, int32_t win_x, int3
 
 void gl_screen_clear(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void gl_screen_close(void)
