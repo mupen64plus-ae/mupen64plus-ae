@@ -370,7 +370,8 @@
     <string name="gliden64_color_buffer_copy_to_RDRAM_title">Copiar bufer de color a RDRAM</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_off">No copiar</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode">Copiar en modo sincronizado</string>
-    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode">Copiar en modo asicrono</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode">Copiar en modo asicrono (2 buffers)</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode_3buffers">Copiar en modo asicrono (3 buffers)</string>
     <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Habilitar copia de bufer auxiliar en RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_title">Copiar buffer de profundidad de RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">No copiar</string>

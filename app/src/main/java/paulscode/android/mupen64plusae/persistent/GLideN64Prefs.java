@@ -65,7 +65,8 @@ public class GLideN64Prefs {
     /** Enable color buffer copy to RDRAM
      * 0=do not copy
      * 1=copy in sync mode
-     * 2=copy in async mode */
+     * 2=copy in async mode (2 buffers)
+     * 3=copy in async mode (3 buffers)*/
     public final int enableCopyColorToRDRAM;
 
     /** Copy auxiliary buffers to RDRAM */
