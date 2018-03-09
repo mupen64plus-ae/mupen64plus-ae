@@ -24,7 +24,7 @@ namespace graphics {
 		virtual void clearDepthBuffer() = 0;
 		virtual void setPolygonOffset(f32 _factor, f32 _units) = 0;
 		virtual ObjectHandle createTexture(Parameter _target) = 0;
-		virtual void deleteTexture(ObjectHandle _name) = 0;
+		virtual void deleteTexture(ObjectHandle _name, bool _isFBTexture) = 0;
 		virtual void init2DTexture(const Context::InitTextureParams & _params) = 0;
 		virtual void update2DTexture(const Context::UpdateTextureDataParams & _params) = 0;
 		virtual void setTextureParameters(const Context::TexParameters & _parameters) = 0;
@@ -42,7 +42,6 @@ namespace graphics {
 		virtual ObjectHandle createRenderbuffer() = 0;
 		virtual void initRenderbuffer(const Context::InitRenderbufferParams & _params) = 0;
 		virtual bool blitFramebuffers(const Context::BlitFramebuffersParams & _params) = 0;
-		virtual PixelWriteBuffer * createPixelWriteBuffer(size_t _sizeInBytes) = 0;
 		virtual PixelReadBuffer * createPixelReadBuffer(size_t _sizeInBytes) = 0;
 		virtual ColorBufferReader * createColorBufferReader(CachedTexture * _pTexture) = 0;
 		virtual bool isCombinerProgramBuilderObsolete() = 0;

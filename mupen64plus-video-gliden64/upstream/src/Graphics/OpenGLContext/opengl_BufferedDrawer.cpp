@@ -37,6 +37,7 @@ BufferedDrawer::BufferedDrawer(const GLInfo & _glinfo, CachedVertexAttribArray *
 	glGenVertexArrays(1, &m_trisBuffers.vao);
 	glBindVertexArray(m_trisBuffers.vao);
 	_initBuffer(m_trisBuffers.vbo, m_bufMaxSize);
+	_initBuffer(m_trisBuffers.ebo, m_bufMaxSize);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::position, true);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::color, true);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::texcoord, true);
@@ -64,8 +65,9 @@ void BufferedDrawer::_initBuffer(Buffer & _buffer, GLuint _bufSize)
 BufferedDrawer::~BufferedDrawer()
 {
 	m_bindBuffer->bind(Parameter(GL_ARRAY_BUFFER), ObjectHandle::null);
-	GLuint buffers[2] = { m_rectsBuffers.vbo.handle, m_trisBuffers.vbo.handle };
-	glDeleteBuffers(2, buffers);
+	m_bindBuffer->bind(Parameter(GL_ELEMENT_ARRAY_BUFFER), ObjectHandle::null);
+	GLuint buffers[3] = { m_rectsBuffers.vbo.handle, m_trisBuffers.vbo.handle, m_trisBuffers.ebo.handle };
+	glDeleteBuffers(3, buffers);
 	glBindVertexArray(0);
 	GLuint arrays[2] = { m_rectsBuffers.vao, m_trisBuffers.vao };
 	glDeleteVertexArrays(2, arrays);
@@ -180,6 +182,13 @@ void BufferedDrawer::_updateTrianglesBuffers(const graphics::Context::DrawTriang
 	const GLsizeiptr vboDataSize = _params.verticesCount * sizeof(Vertex);
 	Buffer & vboBuffer = m_trisBuffers.vbo;
 	_updateBuffer(vboBuffer, _params.verticesCount, vboDataSize, m_vertices.data());
+
+	if (_params.elements == nullptr)
+		return;
+
+	const GLsizeiptr eboDataSize = sizeof(GLushort) * _params.elementsCount;
+	Buffer & eboBuffer = m_trisBuffers.ebo;
+	_updateBuffer(eboBuffer, _params.elementsCount, eboDataSize, _params.elements);
 }
 
 void BufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParameters & _params)
@@ -195,17 +204,18 @@ void BufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParamete
 	}
 
 	if (config.frameBufferEmulation.N64DepthCompare == 0) {
-		glDrawElementsBaseVertex(GLenum(_params.mode), _params.elementsCount, GL_UNSIGNED_SHORT,
-			_params.elements, m_trisBuffers.vbo.pos - _params.verticesCount);
+		glDrawRangeElementsBaseVertex(GLenum(_params.mode), 0, _params.verticesCount - 1, _params.elementsCount, GL_UNSIGNED_SHORT,
+			(u16*)nullptr + m_trisBuffers.ebo.pos - _params.elementsCount, m_trisBuffers.vbo.pos - _params.verticesCount);
 		return;
 	}
 
 	// Draw polygons one by one
+	const GLint eboStartPos = m_trisBuffers.ebo.pos - _params.elementsCount;
 	const GLint vboStartPos = m_trisBuffers.vbo.pos - _params.verticesCount;
 	for (GLuint i = 0; i < _params.elementsCount; i += 3) {
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-		glDrawElementsBaseVertex(GLenum(_params.mode), 3, GL_UNSIGNED_SHORT,
-			(u16*)_params.elements + i, vboStartPos);
+		glDrawRangeElementsBaseVertex(GLenum(_params.mode), 0, _params.verticesCount - 1, 3, GL_UNSIGNED_SHORT,
+			(u16*)nullptr + eboStartPos + i, vboStartPos);
 	}
 }
 

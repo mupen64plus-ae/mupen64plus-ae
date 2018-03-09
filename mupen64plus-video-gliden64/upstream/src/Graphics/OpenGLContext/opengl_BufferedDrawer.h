@@ -49,6 +49,7 @@ namespace opengl {
 		struct TrisBuffers {
 			GLuint vao = 0;
 			Buffer vbo = Buffer(GL_ARRAY_BUFFER);
+			Buffer ebo = Buffer(GL_ELEMENT_ARRAY_BUFFER);
 		};
 
 		struct Vertex
