@@ -57,6 +57,7 @@ GLuint gFBO = 0;
 GLuint gProgramId = 0;
 GLint gTexID = 0;
 GLuint gQuad_vertexbuffer;
+uint32_t gHideOverscanBuffer[640*480];
 
 struct CachedTexture
 {
@@ -182,15 +183,24 @@ bool gl_screen_write(struct rdp_frame_buffer* fb, int32_t output_height)
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, gPBO);
     glBufferData(GL_PIXEL_UNPACK_BUFFER, dataSize, NULL, GL_DYNAMIC_DRAW);
 
-    GLubyte* ptr = (GLubyte*)glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, dataSize, GL_MAP_WRITE_BIT);
+	uint32_t* tmpBuffer = NULL;
+	if (fb->width != fb->pitch) {
+		tmpBuffer = gHideOverscanBuffer;
+		for (int heightIndex = 0; heightIndex < fb->height; ++heightIndex) {
+			memcpy(tmpBuffer + fb->width*heightIndex,
+				   fb->pixels + fb->pitch*heightIndex, fb->width*4);
+		}
+	} else {
+		tmpBuffer = fb->pixels;
+	}
 
-    if (ptr == NULL) {
-        msg_warning("Failed call to glMapBufferRange");
-        return false;
-    }
+	GLubyte* gpu_ptr = (GLubyte*)glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, dataSize, GL_MAP_WRITE_BIT);
 
-    uint32_t* dst = (uint32_t*)ptr;
-    memcpy(dst, fb->pixels, dataSize);
+	if (gpu_ptr == NULL) {
+		msg_warning("Failed call to glMapBufferRange");
+		return false;
+	}
+    memcpy( gpu_ptr, tmpBuffer, (size_t )dataSize);
 
     glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER); // release the mapped buffer
 
@@ -207,7 +217,6 @@ bool gl_screen_write(struct rdp_frame_buffer* fb, int32_t output_height)
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     return buffer_size_changed;
-
 }
 
 void gl_screen_read(struct rdp_frame_buffer* fb, bool rgb)
