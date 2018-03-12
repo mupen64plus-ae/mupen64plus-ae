@@ -333,14 +333,14 @@ public class CacheRomInfoService extends Service
 
                     zipStream.close();
                 }
-                catch( IOException|NoSuchAlgorithmException |IllegalArgumentException e  )
+                catch( IOException|NoSuchAlgorithmException|IllegalArgumentException e  )
                 {
                     Log.w( "CacheRomInfoService", e );
                 }
             }
             zipFile.close();
         }
-        catch( IOException|ArrayIndexOutOfBoundsException e )
+        catch( IOException|ArrayIndexOutOfBoundsException|java.lang.NullPointerException e )
         {
             Log.w( "CacheRomInfoService", e );
         }
