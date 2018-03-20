@@ -34,7 +34,6 @@ import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
-import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 
 public class ControllerProfileActivity extends ControllerProfileActivityBase implements OnClickListener
 {    
@@ -44,8 +43,6 @@ public class ControllerProfileActivity extends ControllerProfileActivityBase imp
         mExitMenuItemVisible = true;
         mKeyProvider = new KeyProvider(ImeFormula.DEFAULT, mUnmappableInputCodes);
         mKeyProvider.registerListener(this);
-        mMogaProvider = new MogaProvider(mMogaController);
-        mMogaProvider.registerListener(this);
         mAxisProvider = new AxisProvider();
         mAxisProvider.registerListener(this);
 

@@ -30,24 +30,17 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.bda.controller.Controller;
-import com.bda.controller.ControllerListener;
-import com.bda.controller.StateEvent;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import java.util.Locale;
 
-import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
-public class DiagnosticActivity extends AppCompatActivity implements ControllerListener
+public class DiagnosticActivity extends AppCompatActivity
 {
-    private Controller mMogaController = Controller.getInstance( this );
-
     @Override
     protected void attachBaseContext(Context newBase) {
         if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
@@ -65,37 +58,24 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
     {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.diagnostic_activity );
-        
-        // TODO: Remove hack after MOGA SDK is fixed
-        // mMogaController.init();
-        MogaHack.init( mMogaController, this );
-        mMogaController.setListener( this, new Handler() );
     }
     
     @Override
     public void onResume()
     {
         super.onResume();
-        mMogaController.onResume();
     }
     
     @Override
     public void onPause()
     {
         super.onPause();
-        mMogaController.onPause();
     }
     
     @Override
     public void onDestroy()
     {
         super.onDestroy();
-        mMogaController.exit();
-    }
-    
-    @Override
-    public void onStateEvent( StateEvent event )
-    {
     }
     
     @Override
@@ -120,21 +100,6 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         String message = "KeyEvent:";
         message += "\nDevice: " + getHardwareSummary( AbstractProvider.getHardwareId( event ) );
         message += "\nAction: " + DeviceUtil.getActionName( event.getAction(), false );
-        message += "\nKeyCode: " + keyCode;
-        message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
-        
-        TextView view = findViewById( R.id.textKey );
-        view.setText( message );
-    }
-    
-    @Override
-    public void onKeyEvent( com.bda.controller.KeyEvent event )
-    {
-        int keyCode = event.getKeyCode();
-        
-        String message = "KeyEvent:";
-        message += "\nDevice: " + getHardwareSummary( AbstractProvider.getHardwareId( event ) );
-        message += "\nAction: MOGA_" + DeviceUtil.getActionName( event.getAction(), false );
         message += "\nKeyCode: " + keyCode;
         message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
         
@@ -178,26 +143,7 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         TextView view = findViewById(R.id.textMotion);
         view.setText(message);
     }
-    
-    @Override
-    public void onMotionEvent( com.bda.controller.MotionEvent event )
-    {
-        String message = "MotionEvent:";
-        message += "\nDevice: " + getHardwareSummary( AbstractProvider.getHardwareId( event ) );
-        message += "\nAction: MOGA_MOTION";
-        message += "\n";
-        // @formatter:off
-        message += String.format(Locale.US, "\nAXIS_X (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_X ) );
-        message += String.format(Locale.US, "\nAXIS_Y (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_Y ) );
-        message += String.format(Locale.US, "\nAXIS_Z (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_Z ) );
-        message += String.format(Locale.US, "\nAXIS_RZ (moga): %+.2f",       event.getAxisValue( com.bda.controller.MotionEvent.AXIS_RZ ) );
-        message += String.format(Locale.US, "\nAXIS_LTRIGGER (moga): %+.2f", event.getAxisValue( com.bda.controller.MotionEvent.AXIS_LTRIGGER ) );
-        message += String.format(Locale.US, "\nAXIS_RTRIGGER (moga): %+.2f", event.getAxisValue( com.bda.controller.MotionEvent.AXIS_RTRIGGER ) );
-        // @formatter:on
-        TextView view = findViewById( R.id.textMotion );
-        view.setText( message );
-    }
-    
+
     private static String getHardwareSummary( int hardwareId )
     {
         String name = AbstractProvider.getHardwareName( hardwareId );

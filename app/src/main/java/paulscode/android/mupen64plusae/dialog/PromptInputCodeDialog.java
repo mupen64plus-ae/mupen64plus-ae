@@ -14,8 +14,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bda.controller.Controller;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import java.util.ArrayList;
@@ -26,7 +24,6 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputLi
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
-import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 
 public class PromptInputCodeDialog extends DialogFragment
 {
@@ -57,12 +54,6 @@ public class PromptInputCodeDialog extends DialogFragment
          *            The DialogInterface button pressed by the user.
          */
         public void onDialogClosed(int inputCode, int hardwareId, int which);
-        
-        /**
-         * Returns an instance of the Moga controller
-         * @return instance of the Moga controller
-         */
-        public Controller getMogaController();
     }
 
     public static PromptInputCodeDialog newInstance(String title, String message,
@@ -123,16 +114,6 @@ public class PromptInputCodeDialog extends DialogFragment
 
         // Create the input event providers
         providers.add(new KeyProvider(view, ImeFormula.DEFAULT, ignoredKeyCodes));
-        
-        if (getActivity() instanceof PromptInputCodeListener)
-        {
-            providers.add(new MogaProvider(((PromptInputCodeListener) getActivity()).getMogaController()));
-        }
-        else
-        {
-            Log.e("PromptInputCodeDialog", "Activity doesn't implement PromptInputCodeListener");
-        }
-        
         providers.add(new AxisProvider(view));
 
         // Notify the client when the user clicks the dialog's positive button
