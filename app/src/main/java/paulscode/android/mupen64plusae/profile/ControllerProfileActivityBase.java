@@ -33,8 +33,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.bda.controller.Controller;
-
 import org.mupen64plusae.v3.alpha.R;
 
 import java.util.List;
@@ -46,7 +44,6 @@ import paulscode.android.mupen64plusae.dialog.Prompt;
 import paulscode.android.mupen64plusae.dialog.Prompt.PromptIntegerListener;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog;
 import paulscode.android.mupen64plusae.dialog.PromptInputCodeDialog.PromptInputCodeListener;
-import paulscode.android.mupen64plusae.hack.MogaHack;
 import paulscode.android.mupen64plusae.input.InputEntry;
 import paulscode.android.mupen64plusae.input.InputStrengthCalculator;
 import paulscode.android.mupen64plusae.input.map.InputMap;
@@ -54,7 +51,6 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
-import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -95,10 +91,8 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     
     // Input listening
     protected KeyProvider mKeyProvider;
-    protected MogaProvider mMogaProvider;
     protected AxisProvider mAxisProvider;
     protected List<Integer> mUnmappableInputCodes;
-    protected Controller mMogaController = Controller.getInstance( this );
     
     // Widgets
     protected final Button[] mN64Buttons = new Button[InputMap.NUM_MAPPABLES];
@@ -123,11 +117,6 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        
-        // Initialize MOGA controller API
-        // TODO: Remove hack after MOGA SDK is fixed
-        // mMogaController.init();
-        MogaHack.init( mMogaController, this );
         
         // Get the user preferences wrapper
         AppData appData = new AppData( this );
@@ -193,14 +182,12 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     public void onResume()
     {
         super.onResume();
-        mMogaController.onResume();
     }
     
     @Override
     public void onPause()
     {
         super.onPause();
-        mMogaController.onPause();
         
         // Lazily persist the profile data; only need to do it on pause
         mProfile.writeTo( mConfigFile );
@@ -211,7 +198,6 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
     public void onDestroy()
     {
         super.onDestroy();
-        mMogaController.exit();
     }
     
     abstract void initLayout();
@@ -354,16 +340,6 @@ public abstract class ControllerProfileActivityBase extends AppCompatActivity im
             mProfile.putMap( map );
             refreshAllButtons(true);
         }
-        
-        // Refresh our MOGA provider since the prompt disconnected it
-        mMogaProvider = new MogaProvider( mMogaController );
-        mMogaProvider.registerListener( ControllerProfileActivityBase.this );
-    }
-    
-    @Override
-    public Controller getMogaController()
-    {
-        return mMogaController;
     }
     
     @Override
