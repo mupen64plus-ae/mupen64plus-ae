@@ -1,4 +1,4 @@
-apply from: '../native_common.gradle'
+apply from: '../build_common/native_common.gradle'
 
 android {
 

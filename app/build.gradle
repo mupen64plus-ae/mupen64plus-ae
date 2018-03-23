@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'signing'
-apply from: '../version_common.gradle'
+apply from: '../build_common/version_common.gradle'
 
 android {
 
