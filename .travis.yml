@@ -13,3 +13,5 @@ before_install:
   - unzip -qq android-ndk-r16b-linux-x86_64.zip
   - export ANDROID_NDK_HOME=$HOME/android-ndk-r16b
   - cd $TRAVIS_BUILD_DIR
+script:
+  - ./gradlew assemble

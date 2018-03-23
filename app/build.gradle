@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'signing'
+apply from: '../version_common.gradle'
 
 android {
-    compileSdkVersion = 27
-    buildToolsVersion = '27.0.3'
 
     allprojects {
         tasks.withType(JavaCompile) {
@@ -23,10 +22,6 @@ android {
 
     defaultConfig {
         applicationId = "org.mupen64plusae.v3.alpha"
-        minSdkVersion 19
-        targetSdkVersion 27
-        versionCode = 86
-        versionName = "3.0.10 (beta)"
 
         ndk {
             abiFilters "armeabi-v7a", "x86"
