@@ -25,6 +25,11 @@
 
 #include "TextDrawer.h"
 
+#ifdef MUPENPLUSAPI
+#include "mupenplus/GLideN64_mupenplus.h"
+#include <osal_files.h>
+#endif
+
 using namespace graphics;
 
 // Maximum texture width
@@ -201,11 +206,16 @@ bool getFontFileName(char * _strName)
 #elif defined (OS_ANDROID)
 	sprintf(_strName, "/system/fonts/%s", config.font.name.c_str());
 #elif defined (PANDORA)
-	sprintf(_strName, "/usr/share/fonts/%s", config.font.name.c_str());
-#elif defined (OS_LINUX)
-	sprintf(_strName, "/usr/share/fonts/%s", config.font.name.c_str());
+	sprintf(_strName, "/usr/share/fonts/truetype/%s", config.font.name.c_str());
 #else
-	sprintf(_strName, "/usr/share/fonts/%s", config.font.name.c_str());
+	sprintf(_strName, "/usr/share/fonts/truetype/freefont/%s", config.font.name.c_str());
+#endif
+#ifdef MUPENPLUSAPI
+	if (!osal_path_existsA(_strName)) {
+		const char * fontPath = ConfigGetSharedDataFilepath("font.ttf");
+		if (osal_path_existsA(fontPath))
+			strncpy(_strName, fontPath, PLUGIN_PATH_SIZE);
+	}
 #endif
 	return true;
 }

@@ -104,6 +104,14 @@ void TexrectDrawer::_setViewport() const
 	gfxContext.setViewport(0, 0, bufferWidth, VI_GetMaxBufferHeight(bufferWidth));
 }
 
+void TexrectDrawer::_setDrawBuffer()
+{
+	if (m_pBuffer != nullptr)
+		gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER, m_pBuffer->m_FBO);
+	else
+		frameBufferList().setCurrentDrawBuffer();
+}
+
 void TexrectDrawer::add()
 {
 	DisplayWindow & wnd = dwnd();
@@ -138,6 +146,7 @@ void TexrectDrawer::add()
 	}
 
 	if (m_numRects == 0) {
+		m_numRects = 1;
 		m_pBuffer = frameBufferList().getCurrent();
 		m_otherMode = gDP.otherMode._u64;
 		m_mux = gDP.combine.mux;
@@ -149,7 +158,9 @@ void TexrectDrawer::add()
 		m_lrx = m_max_lrx = pRect[3].x;
 		m_lry = m_max_lry = pRect[3].y;
 
-		CombinerInfo::get().update();
+		CombinerInfo & cmbInfo = CombinerInfo::get();
+		cmbInfo.update();
+		cmbInfo.updateParameters();
 		gfxContext.enableDepthWrite(false);
 		gfxContext.enable(enable::DEPTH_TEST, false);
 		gfxContext.enable(enable::BLEND, false);
@@ -159,6 +170,8 @@ void TexrectDrawer::add()
 		gfxContext.setScissor((s32)gDP.scissor.ulx, (s32)gDP.scissor.uly, (s32)(gDP.scissor.lrx - gDP.scissor.ulx), (s32)(gDP.scissor.lry - gDP.scissor.uly));
 
 		gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER, m_FBO);
+	} else {
+		++m_numRects;
 	}
 
 	if (bDownUp) {
@@ -179,7 +192,6 @@ void TexrectDrawer::add()
 	coords.x = pRect[3].x;
 	coords.y = pRect[3].y;
 	m_vecRectCoords.push_back(coords);
-	++m_numRects;
 
 	Context::DrawRectParameters rectParams;
 	rectParams.mode = drawmode::TRIANGLE_STRIP;
@@ -237,7 +249,7 @@ bool TexrectDrawer::draw()
 	const float t0 = (m_lry + 1.0f) / scaleY / (float)m_pTexture->realHeight;
 	const float W = 1.0f;
 
-	drawer._updateScreenCoordsViewport();
+	drawer._updateScreenCoordsViewport(m_pBuffer);
 
 	textureCache().activateTexture(0, m_pTexture);
 	// Disable filtering to avoid black outlines
@@ -278,7 +290,7 @@ bool TexrectDrawer::draw()
 	rect[3].t0 = t1;
 
 	drawer.updateScissor(m_pBuffer);
-	gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER, m_pBuffer != nullptr ? m_pBuffer->m_FBO : ObjectHandle::null);
+	_setDrawBuffer();
 
 	Context::DrawRectParameters rectParams;
 	rectParams.mode = drawmode::TRIANGLE_STRIP;
@@ -313,18 +325,27 @@ bool TexrectDrawer::draw()
 	gfxContext.enable(enable::SCISSOR_TEST, true);
 
 	m_pBuffer = frameBufferList().getCurrent();
-	gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER, m_pBuffer != nullptr ? m_pBuffer->m_FBO : ObjectHandle::null);
+	_setDrawBuffer();
 
 	m_numRects = 0;
 	m_vecRectCoords.clear();
 	gDP.otherMode._u64 = otherMode;
 	gDP.scissor = scissor;
 	gDP.changed |= CHANGED_COMBINE | CHANGED_SCISSOR | CHANGED_RENDERMODE;
-	gSP.changed |= CHANGED_VIEWPORT | CHANGED_TEXTURE;
+	gSP.changed |= CHANGED_VIEWPORT | CHANGED_TEXTURE | CHANGED_GEOMETRYMODE;
 
 	return true;
 }
 
-bool TexrectDrawer::isEmpty() {
+bool TexrectDrawer::isEmpty() const
+{
 	return m_numRects == 0;
+}
+
+bool TexrectDrawer::canContinue() const
+{
+	return (m_numRects != 0 &&
+			m_otherMode == gDP.otherMode._u64 &&
+			m_mux == gDP.combine.mux &&
+			m_pBuffer == frameBufferList().getCurrent());
 }

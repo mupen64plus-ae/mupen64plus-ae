@@ -153,6 +153,8 @@ public:
 
 	void flush() { m_texrectDrawer.draw(); }
 
+	bool isTexrectDrawerMode() const { return !m_texrectDrawer.isEmpty(); }
+
 private:
 	friend class DisplayWindow;
 	friend TexrectDrawer;
@@ -172,7 +174,7 @@ private:
 	bool _setUnsupportedBlendMode() const;
 	void _updateCullFace() const;
 	void _updateViewport() const;
-	void _updateScreenCoordsViewport() const;
+	void _updateScreenCoordsViewport(const FrameBuffer * _pBuffer = nullptr) const;
 	void _updateDepthUpdate() const;
 	void _updateDepthCompare() const;
 	void _updateTextures() const;
