@@ -16,7 +16,10 @@ android {
         }
     }
 
-    lintOptions.checkReleaseBuilds = false
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds = false
+    }
 
     defaultConfig {
         applicationId = "org.mupen64plusae.v3.alpha"
