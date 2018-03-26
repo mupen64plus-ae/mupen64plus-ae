@@ -53,15 +53,12 @@ GL_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/GL
 
 COMMON_CFLAGS :=                    \
     -O3                             \
-    -ffast-math                     \
-    -fno-strict-aliasing            \
     -fomit-frame-pointer            \
     -fvisibility=hidden
 
 COMMON_CPPFLAGS :=                  \
     -fvisibility-inlines-hidden     \
-    -O3                             \
-    -ffast-math                     \
+    -O3
 
 COMMON_LDFLAGS :=
 
