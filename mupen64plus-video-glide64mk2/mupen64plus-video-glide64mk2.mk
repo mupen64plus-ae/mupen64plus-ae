@@ -66,23 +66,7 @@ MY_LOCAL_LDFLAGS := $(COMMON_LDFLAGS) -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR
 
 MY_LOCAL_LDLIBS :=         \
     -ldl                \
-    -llog               \
-
-ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-    # Use for ARM7a:
-    MY_LOCAL_CFLAGS += -mfpu=vfp
-    MY_LOCAL_CFLAGS += -mfloat-abi=softfp
-    
-else ifeq ($(TARGET_ARCH_ABI), armeabi)
-    # Use for pre-ARM7a:
-    
-else ifeq ($(TARGET_ARCH_ABI), x86)
-    # TODO: set the proper flags here
-    
-else
-    # Any other architectures that Android could be running on?
-    
-endif
+    -llog
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := mupen64plus-video-glide64mk2

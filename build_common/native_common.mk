@@ -60,7 +60,22 @@ COMMON_CPPFLAGS :=                  \
     -fvisibility-inlines-hidden     \
     -O3
 
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+COMMON_CFLAGS +=                    \
+    -march=armv7-a                  \
+    -mfloat-abi=softfp              \
+    -mfpu=neon -ftree-vectorize
+COMMON_CPPFLAGS +=                  \
+    -march=armv7-a                  \
+    -mfloat-abi=softfp              \
+    -mfpu=neon -ftree-vectorize
+endif
+
 COMMON_LDFLAGS :=
+
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+COMMON_LDFLAGS += -Wl,--fix-cortex-a8
+endif
 
 ifneq ($(NDK_DEBUG), 1)
 ifneq ($(HOST_OS),windows)
