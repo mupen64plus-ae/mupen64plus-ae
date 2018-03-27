@@ -207,6 +207,7 @@ public class CacheRomInfoService extends Service
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                 getString(R.string.scanning_title), NotificationManager.IMPORTANCE_DEFAULT);
+        channel.enableVibration(false);
 
         if(notificationManager != null) {
             notificationManager.createNotificationChannel(channel);

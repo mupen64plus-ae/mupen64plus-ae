@@ -237,6 +237,7 @@ public class ExtractRomService extends Service {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                 getString(R.string.extractRomTask_title), NotificationManager.IMPORTANCE_DEFAULT);
+        channel.enableVibration(false);
         notificationManager.createNotificationChannel(channel);
     }
 

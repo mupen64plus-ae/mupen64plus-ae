@@ -130,6 +130,7 @@ public class DeleteFilesService extends Service {
         if (notificationManager != null) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                     getString(R.string.pathDeletingFilesTask_title), NotificationManager.IMPORTANCE_DEFAULT);
+            channel.enableVibration(false);
             notificationManager.createNotificationChannel(channel);
         }
     }

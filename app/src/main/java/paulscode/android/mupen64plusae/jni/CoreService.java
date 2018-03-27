@@ -498,6 +498,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                 mRomGoodName, NotificationManager.IMPORTANCE_DEFAULT);
+        channel.enableVibration(false);
 
         if(notificationManager != null) {
             notificationManager.createNotificationChannel(channel);
