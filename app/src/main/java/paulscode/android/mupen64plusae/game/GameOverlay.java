@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae.game;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Handler;
@@ -30,7 +29,6 @@ import android.view.View;
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
-import paulscode.android.mupen64plusae.jni.CoreFragment;
 import paulscode.android.mupen64plusae.jni.NativeImports.OnFpsChangedListener;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 
@@ -51,7 +49,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         requestFocus();
     }
     
-    public void initialize(CoreFragment coreFragment, VisibleTouchMap touchMap, boolean drawingEnabled, boolean fpsEnabled,
+    public void initialize(VisibleTouchMap touchMap, boolean drawingEnabled, boolean fpsEnabled,
                            boolean isAnalogHiddenWhenSensor, boolean joystickAnimated )
     {
         mTouchMap = touchMap;

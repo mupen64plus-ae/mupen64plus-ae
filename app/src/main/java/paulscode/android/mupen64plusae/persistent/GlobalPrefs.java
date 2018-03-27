@@ -172,6 +172,12 @@ public class GlobalPrefs
     /** True if the touchscreen joystick is animated. */
     public final boolean isTouchscreenAnimated;
 
+    /** Current touchscreen skin selection. */
+    public final String touchscreenSkin;
+
+    /** The directory of the selected touchscreen skin. */
+    public final String touchscreenSkinPath;
+
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
 
@@ -315,6 +321,7 @@ public class GlobalPrefs
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
     static final String KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "touchscreenProfileDpadDefault";
     public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
+    public static final String KEY_TOUCHSCREEN_SKIN_CUSTOM_PATH = "touchscreenCustomSkin";
     // ... add more as needed
 
     // Shared preferences default values
@@ -420,6 +427,12 @@ public class GlobalPrefs
         touchscreenAutoHideEnabled = mPreferences.getBoolean( "touchscreenAutoHideEnabled", true );
         touchscreenAutoHideSeconds = mPreferences.getInt( "touchscreenAutoHideSeconds", 5 );
         isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimated_v2", true );
+        // Determine the touchscreen layout
+        touchscreenSkin = mPreferences.getString( "touchscreenSkin", "JoshaGibs" );
+        if( touchscreenSkin.equals( "Custom" ) )
+            touchscreenSkinPath =  mPreferences.getString( "touchscreenCustomSkin", "" );
+        else
+            touchscreenSkinPath = appData.touchscreenSkinsDir + touchscreenSkin;
 
         // Video prefs
         displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 480 );

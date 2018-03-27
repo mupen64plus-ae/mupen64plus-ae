@@ -52,26 +52,6 @@
         </menu>
     </item>
     <item
-        android:id="@+id/menuItem_skins"
-        android:title="@string/touchscreenStyle_title">
-        <menu>
-            <group android:checkableBehavior="none" >
-                <item
-                    android:id="@+id/menuItem_outline"
-                    android:title="@string/touchscreenStyle_entryOutline"/>
-                <item
-                    android:id="@+id/menuItem_shaded"
-                    android:title="@string/touchscreenStyle_entryShaded"/>
-                <item
-                    android:id="@+id/menuItem_joshagibs"
-                    android:title="@string/touchscreenStyle_entryJoshaGibs"/>
-                <item
-                    android:id="@+id/menuItem_custom"
-                    android:title="@string/touchscreenStyle_entryCustom"/>
-            </group>
-        </menu>
-    </item>
-    <item
         android:id="@+id/menuItem_exit"
         android:title="@string/menuItem_exit"/>
 

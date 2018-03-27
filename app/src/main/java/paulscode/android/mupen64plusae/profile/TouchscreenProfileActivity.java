@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -49,14 +49,10 @@ import android.widget.ImageView;
 import org.apache.commons.lang3.ArrayUtils;
 import org.mupen64plusae.v3.alpha.R;
 
-import java.io.File;
-
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.MenuListView;
 import paulscode.android.mupen64plusae.dialog.MenuDialogFragment;
 import paulscode.android.mupen64plusae.dialog.MenuDialogFragment.OnDialogMenuItemSelectedListener;
-import paulscode.android.mupen64plusae.dialog.Prompt;
-import paulscode.android.mupen64plusae.dialog.Prompt.PromptFileListener;
 import paulscode.android.mupen64plusae.dialog.SeekBarGroup;
 import paulscode.android.mupen64plusae.game.GameOverlay;
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -92,7 +88,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private static final String TAG_Y = "-y";
     private static final String SCALE = "-scale";
     
-    public static final SparseArray<String> READABLE_NAMES = new SparseArray<String>();
+    public static final SparseArray<String> READABLE_NAMES = new SparseArray<>();
     
     // The inital or disabled x/y position of an asset
     private static final int INITIAL_ASSET_POS = 50;
@@ -120,9 +116,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private int dragX;
     private int dragY;
     private Rect dragFrame;
-    
-    // The directory of the selected touchscreen skin.
-    private String touchscreenSkin;
     
     // This is to prevent more than one popup appearing at once
     private boolean mPopupBeingShown;
@@ -193,14 +186,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         
         // Lay out content and get the views
         setContentView( R.layout.touchscreen_profile_activity );
-        mSurface = (ImageView) findViewById( R.id.gameSurface );
-        mOverlay = (GameOverlay) findViewById( R.id.gameOverlay );
-        
-        String layout = mProfile.get( "touchscreenSkin", "Outline" );
-        if( layout.equals( "Custom" ) )
-            touchscreenSkin =  mProfile.get( "touchscreenCustomSkinPath", "" );
-        else
-            touchscreenSkin = mAppData.touchscreenSkinsDir + layout;
+        mSurface = findViewById( R.id.gameSurface );
+        mOverlay = findViewById( R.id.gameOverlay );
         
         // Initialize the touchmap and overlay
         mTouchscreenMap = new VisibleTouchMap( getResources() );
@@ -215,8 +202,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     private void refresh()
     {
         // Reposition the assets and refresh the overlay and options menu
-        mOverlay.initialize( null, mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, false, mGlobalPrefs.isTouchscreenAnimated);
-        mTouchscreenMap.load( touchscreenSkin, mProfile,
+        mOverlay.initialize( mTouchscreenMap, true, mGlobalPrefs.isFpsEnabled, false, mGlobalPrefs.isTouchscreenAnimated);
+        mTouchscreenMap.load( mGlobalPrefs.touchscreenSkinPath, mProfile,
                 mGlobalPrefs.isTouchscreenAnimated, true, mGlobalPrefs.fpsXPosition,
                 mGlobalPrefs.fpsYPosition, mGlobalPrefs.touchscreenScale,
                 mGlobalPrefs.touchscreenTransparency );
@@ -243,11 +230,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
     }
     
     @Override
-    public void onWindowFocusChanged( boolean hasFocus )
-    {
-        super.onWindowFocusChanged( hasFocus );
-        if( hasFocus )
-        {
+    public void onWindowFocusChanged( boolean hasFocus ) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
             hideSystemBars();
         }
     }
@@ -307,66 +292,46 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         {
             case R.id.menuItem_globalSettings:
                 ActivityHelper.startTouchscreenPrefsActivity( this );
-                return;
+                break;
             case R.id.menuItem_sensorConfiguration:
                 new SensorConfigurationDialog(this, mProfile).show();
-                return;
+                break;
             case R.id.menuItem_exit:
                 finish();
-                return;
+                break;
             case R.id.menuItem_analog:
                 toggleAsset( ANALOG );
-                return;
+                break;
             case R.id.menuItem_dpad:
                 toggleAsset( DPAD );
-                return;
+                break;
             case R.id.menuItem_groupAB:
                 toggleAsset( GROUP_AB );
-                return;
+                break;
             case R.id.menuItem_buttonA:
                 toggleAsset( BUTTON_A );
-                return;
+                break;
             case R.id.menuItem_buttonB:
                 toggleAsset( BUTTON_B );
-                return;
+                break;
             case R.id.menuItem_groupC:
                 toggleAsset( GROUP_C );
-                return;
+                break;
             case R.id.menuItem_buttonL:
                 toggleAsset( BUTTON_L );
-                return;
+                break;
             case R.id.menuItem_buttonR:
                 toggleAsset( BUTTON_R );
-                return;
+                break;
             case R.id.menuItem_buttonZ:
                 toggleAsset( BUTTON_Z );
-                return;
+                break;
             case R.id.menuItem_buttonS:
                 toggleAsset( BUTTON_S );
-                return;
+                break;
             case R.id.menuItem_buttonSensor:
                 toggleAsset( BUTTON_SENSOR );
-                return;
-            case R.id.menuItem_outline:
-                touchscreenSkin = mAppData.touchscreenSkinsDir + "Outline";
-                mProfile.put( "touchscreenSkin", "Outline" );
-                refresh();
-                return;
-            case R.id.menuItem_shaded:
-                touchscreenSkin = mAppData.touchscreenSkinsDir + "Shaded";
-                mProfile.put( "touchscreenSkin", "Shaded" );
-                refresh();
-                return;
-            case R.id.menuItem_joshagibs:
-                touchscreenSkin = mAppData.touchscreenSkinsDir + "JoshaGibs";
-                mProfile.put( "touchscreenSkin", "JoshaGibs" );
-                refresh();
-                return;
-            case R.id.menuItem_custom:
-                loadCustomSkinFromPrompt();
-                return;
-            default:
-                return;
+                break;
         }
     }
     
@@ -401,26 +366,6 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         mProfile.putInt( assetName + TAG_Y, 0 );
         refresh();
     }
-
-    private void loadCustomSkinFromPrompt()
-    {
-        CharSequence title = this.getText( R.string.touchscreenStyle_entryCustom );
-        File startPath = new File( mGlobalPrefs.touchscreenCustomSkinsDir );
-        Prompt.promptDirectory( this, title, null, startPath, new PromptFileListener()
-        {
-            @Override
-            public void onDialogClosed( File file, int which )
-            {
-                if( which >= 0 )
-                {
-                    touchscreenSkin = file.getAbsolutePath();
-                    mProfile.put( "touchscreenSkin", "Custom" );
-                    mProfile.put( "touchscreenCustomSkinPath", touchscreenSkin );
-                    refresh();
-                }
-            }
-        } );
-    }
     
     private void setNotHoldable( int n64Index, boolean holdable )
     {
@@ -433,11 +378,11 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         // Modify the list as necessary
         if( holdable )
         {
-            notHoldables = (String[]) ArrayUtils.removeElement( notHoldables, index );
+            notHoldables = ArrayUtils.removeElement( notHoldables, index );
         }
         else if( !ArrayUtils.contains( notHoldables, index ) )
         {
-            notHoldables = (String[]) ArrayUtils.add( notHoldables, index );
+            notHoldables = ArrayUtils.add( notHoldables, index );
         }
         
         // Put the serialized list back into the profile
@@ -667,9 +612,9 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
                 } );
         
         // Setup the visual feedback checkbox
-        CheckBox hide = (CheckBox) view.findViewById( R.id.checkBox_hideJoystick );
-        CheckBox invertTouchXAxis = (CheckBox) view.findViewById( R.id.checkBox_invertTouchXAxis );
-        CheckBox invertTouchYAxis = (CheckBox) view.findViewById( R.id.checkBox_invertTouchYAxis );
+        CheckBox hide = view.findViewById( R.id.checkBox_hideJoystick );
+        CheckBox invertTouchXAxis = view.findViewById( R.id.checkBox_invertTouchXAxis );
+        CheckBox invertTouchYAxis = view.findViewById( R.id.checkBox_invertTouchYAxis );
 
 
         if( assetName.equals("analog") )
@@ -705,7 +650,7 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
         }
         
         // Setup the auto-holdability checkbox
-        CheckBox holdable = (CheckBox) view.findViewById( R.id.checkBox_holdable );
+        CheckBox holdable = view.findViewById( R.id.checkBox_holdable );
         if( holdableIndex < 0 )
         {
             // This is not a holdable button

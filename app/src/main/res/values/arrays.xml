@@ -77,7 +77,22 @@
         <item>2</item>
     </string-array>
     <string name="touchscreenAutoHoldGame_default" translatable="false">-1</string>
-    
+
+    <!-- Button styles -->
+    <string-array name="touchscreenButtonStyle_entries" translatable="false">
+        <item>@string/touchscreenStyle_entryOutline</item>
+        <item>@string/touchscreenStyle_entryShaded</item>
+        <item>@string/touchscreenStyle_entryJoshaGibs</item>
+        <item>@string/touchscreenStyle_entryCustom</item>
+    </string-array>
+    <string-array name="touchscreenButtonStyle_values" translatable="false">
+        <item>Outline</item>
+        <item>Shaded</item>
+        <item>JoshaGibs</item>
+        <item>Custom</item>
+    </string-array>
+    <string name="touchscreenButtonStyle_default" translatable="false">JoshaGibs</string>
+
     <!-- Sensor configuration axis List -->
     <string-array name="sensorConfig_axis_entries" translatable="false">
         <item>@string/sensorConfig_sensorX</item>

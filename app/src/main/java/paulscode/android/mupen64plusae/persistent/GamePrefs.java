@@ -216,9 +216,6 @@ public class GamePrefs
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
 
-    /** The directory of the selected touchscreen skin. */
-    public final String touchscreenSkin;
-
     /** True to activate sensor on game start */
     public final boolean sensorActivateOnStart;
 
@@ -482,13 +479,6 @@ public class GamePrefs
 
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null && !touchscreenProfile.getName().equals(fpsOnlyTouchscreenProfile);
-
-        // Determine the touchscreen layout
-        final String layout = touchscreenProfile.get( "touchscreenSkin", "Outline" );
-        if( layout.equals( "Custom" ) )
-            touchscreenSkin =  touchscreenProfile.get( "touchscreenCustomSkinPath", "" );
-        else
-            touchscreenSkin = appData.touchscreenSkinsDir + layout;
 
         if ( isTouchscreenEnabled )
         {
