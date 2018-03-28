@@ -671,7 +671,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
             }
             else
             {
-                NativeExports.emuSaveFile( mCurrentSaveStateFile.getAbsolutePath() );
+                mCoreService.saveState(mCurrentSaveStateFile.getName());
 
                 Notifier.showToast( getActivity(), R.string.toast_savingFile, mCurrentSaveStateFile.getName() );
 
@@ -923,7 +923,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
         if (id == SAVE_STATE_FILE_CONFIRM_DIALOG_ID)
         {
-            mCoreService.saveState(mCurrentSaveStateFile.getAbsolutePath());
+            mCoreService.saveState(mCurrentSaveStateFile.getName());
 
             if(getActivity() != null)
             {
