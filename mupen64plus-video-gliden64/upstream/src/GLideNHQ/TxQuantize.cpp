@@ -29,6 +29,7 @@
 
 #include <functional>
 #include <thread>
+#include <assert.h>
 
 #include "TxQuantize.h"
 
@@ -831,29 +832,26 @@ TxQuantize::P8_16BPP(uint32* src, uint32* dest, int width, int height, uint32* p
 }
 
 boolean
-TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcformat, uint16 destformat, boolean fastQuantizer)
+TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, ColorFormat srcformat, ColorFormat destformat, boolean fastQuantizer)
 {
 	typedef void (TxQuantize::*quantizerFunc)(uint32* src, uint32* dest, int width, int height);
+	assert(srcformat != graphics::colorFormat::RGBA);
+	assert(destformat != graphics::colorFormat::RGBA);
 	quantizerFunc quantizer;
 	int bpp_shift = 0;
 
-	if (destformat == GL_RGBA8 || destformat == GL_RGBA) {
-		switch (srcformat) {
-		case GL_RGB5_A1:
+	if (destformat == graphics::internalcolorFormat::RGBA8) {
+		if (srcformat == graphics::internalcolorFormat::RGB5_A1) {
 			quantizer = &TxQuantize::ARGB1555_ARGB8888;
 			bpp_shift = 1;
-		break;
-		case GL_RGBA4:
+		} else if (srcformat == graphics::internalcolorFormat::RGBA4) {
 			quantizer = &TxQuantize::ARGB4444_ARGB8888;
 			bpp_shift = 1;
-		break;
-		case GL_RGB:
+		} else if (srcformat == graphics::internalcolorFormat::RGB8) {
 			quantizer = &TxQuantize::RGB565_ARGB8888;
 			bpp_shift = 1;
-		break;
-		default:
-		return 0;
-		}
+		} else
+			return 0;
 
 		unsigned int numcore = _numcore;
 		unsigned int blkrow = 0;
@@ -891,23 +889,18 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
 			(*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
 		}
 
-	} else if (srcformat == GL_RGBA8 || srcformat == GL_RGBA) {
-		switch (destformat) {
-		case GL_RGB5_A1:
+	} else if (srcformat == graphics::internalcolorFormat::RGBA8) {
+		if (destformat == graphics::internalcolorFormat::RGB5_A1) {
 			quantizer = fastQuantizer ? &TxQuantize::ARGB8888_ARGB1555 : &TxQuantize::ARGB8888_ARGB1555_ErrD;
 			bpp_shift = 1;
-		break;
-		case GL_RGBA4:
+		} else if (destformat == graphics::internalcolorFormat::RGBA4) {
 			quantizer = fastQuantizer ? &TxQuantize::ARGB8888_ARGB4444 : &TxQuantize::ARGB8888_ARGB4444_ErrD;
 			bpp_shift = 1;
-		break;
-		case GL_RGB:
+		} else if (destformat == graphics::internalcolorFormat::RGB8) {
 			quantizer = fastQuantizer ? &TxQuantize::ARGB8888_RGB565 : &TxQuantize::ARGB8888_RGB565_ErrD;
 			bpp_shift = 1;
-		break;
-		default:
-		return 0;
-		}
+		} else
+			return 0;
 
 		unsigned int numcore = _numcore;
 		unsigned int blkrow = 0;
