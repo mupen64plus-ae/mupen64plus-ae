@@ -577,7 +577,6 @@ public class AppData
                 libraryExists("libae-vidext") &&
                 libraryExists("libc++_shared") &&
                 libraryExists("libfreetype") &&
-                libraryExists("libglidenhq") &&
                 libraryExists("libmupen64plus-audio-sles-fp") &&
                 libraryExists("libmupen64plus-audio-sles") &&
                 libraryExists("libmupen64plus-core") &&
