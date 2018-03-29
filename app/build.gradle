@@ -14,12 +14,10 @@ android {
             google()
         }
     }
-
     lintOptions {
         abortOnError false
         checkReleaseBuilds = false
     }
-
     defaultConfig {
         applicationId = "org.mupen64plusae.v3.alpha"
 
@@ -27,12 +25,13 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
     }
-
     buildTypes {
-
         release {
             minifyEnabled = false
             proguardFiles.add(file("proguard-rules.pro"))
+        }
+        debug {
+            jniDebuggable true
         }
     }
 }
