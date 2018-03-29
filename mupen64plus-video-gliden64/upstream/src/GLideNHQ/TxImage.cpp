@@ -226,7 +226,7 @@ TxImage::readPNG(FILE* fp, int* width, int* height, ColorFormat *format)
 			}
 			*width = 0;
 			*height = 0;
-			*format = raphics::internalcolorFormat::NOCOLOR;
+			*format = graphics::internalcolorFormat::NOCOLOR;
 		}
 
 		delete txReSample;
