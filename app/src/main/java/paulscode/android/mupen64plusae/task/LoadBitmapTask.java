@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference;
 import org.mupen64plusae.v3.alpha.R;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -72,6 +73,9 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
                 tempArtView.setImageDrawable( mArtBitmap );
             else
                 tempArtView.setImageResource( R.drawable.default_coverart );
+
+            tempArtView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            tempArtView.setBackgroundColor(Color.BLACK);
         }
     }
     
