@@ -1,2 +1,0 @@
-#define PLUGIN_REVISION "b6b4083"
-#define PLUGIN_REVISION_W L"b6b4083"
