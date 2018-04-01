@@ -85,7 +85,8 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     LOCAL_SRC_FILES += $(SRCDIR)/gSPNeon.cpp.neon
     LOCAL_SRC_FILES += $(SRCDIR)/3DMathNeon.cpp.neon 
     LOCAL_CFLAGS += -DARM_ASM
-    LOCAL_CFLAGS += -D__NEON_OPT
+    # Help: config.stereo does not work with neon?
+    #LOCAL_CFLAGS += -D__NEON_OPT
 
 else ifeq ($(TARGET_ARCH_ABI), armeabi)
     # Use for pre-ARM7a:

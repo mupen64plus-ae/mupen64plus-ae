@@ -150,6 +150,9 @@ public class GLideN64Prefs {
     /** Enable split-screen stereoscopic rendering */
     public final boolean enableStereo;
 
+    /** Eye distance for stereoscopic rendering */
+    public final float eyeDistance;
+
     GLideN64Prefs(Context context, final Profile emulationProfile)
     {
         cropMode = getSafeInt( emulationProfile, "CropMode", 1);
@@ -199,5 +202,6 @@ public class GLideN64Prefs {
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
         enableStereo = emulationProfile.get( "enableStereo", "False" ).equals( "True" );
+        eyeDistance = getSafeInt( emulationProfile, "eyeDistance", 0)/1000.0f;
     }
 }
