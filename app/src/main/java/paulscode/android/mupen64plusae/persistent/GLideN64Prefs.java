@@ -202,6 +202,6 @@ public class GLideN64Prefs {
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
         enableStereo = emulationProfile.get( "enableStereo", "False" ).equals( "True" );
-        eyeDistance = getSafeInt( emulationProfile, "eyeDistance", 0)/1000.0f;
+        eyeDistance = getSafeInt( emulationProfile, "eyeDistance", 0)/10.0f;
     }
 }
