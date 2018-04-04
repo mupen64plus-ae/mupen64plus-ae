@@ -95,6 +95,7 @@ public class CacheRomInfoService extends Service
     final static int ONGOING_NOTIFICATION_ID = 1;
 
     final static String NOTIFICATION_CHANNEL_ID = "CacheRomInfoServiceChannel";
+    final static String NOTIFICATION_CHANNEL_ID_V2 = "CacheRomInfoServiceChannelV2";
     
     public interface CacheRomInfoListener
     {
@@ -205,11 +206,13 @@ public class CacheRomInfoService extends Service
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                getString(R.string.scanning_title), NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_V2,
+                getString(R.string.scanning_title), NotificationManager.IMPORTANCE_LOW);
         channel.enableVibration(false);
+        channel.setSound(null,null);
 
         if(notificationManager != null) {
+            notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID);
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -234,7 +237,7 @@ public class CacheRomInfoService extends Service
       Intent notificationIntent = new Intent(this, GalleryActivity.class);
       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
       NotificationCompat.Builder builder =
-          new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.icon)
+          new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_V2).setSmallIcon(R.drawable.icon)
           .setContentTitle(getString(R.string.scanning_title))
           .setContentText(getString(R.string.toast_pleaseWait))
           .setContentIntent(pendingIntent);

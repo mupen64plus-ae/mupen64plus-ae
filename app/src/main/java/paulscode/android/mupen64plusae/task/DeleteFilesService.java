@@ -61,6 +61,7 @@ public class DeleteFilesService extends Service {
     final static int ONGOING_NOTIFICATION_ID = 1;
 
     final static String NOTIFICATION_CHANNEL_ID = "DeleteFilesServiceChannel";
+    final static String NOTIFICATION_CHANNEL_ID_V2 = "DeleteFilesServiceChannelV2";
 
     public interface DeleteFilesListener {
         //This is called once deleting files is finished
@@ -128,9 +129,11 @@ public class DeleteFilesService extends Service {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (notificationManager != null) {
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.pathDeletingFilesTask_title), NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_V2,
+                    getString(R.string.pathDeletingFilesTask_title), NotificationManager.IMPORTANCE_LOW);
             channel.enableVibration(false);
+            channel.setSound(null,null);
+            notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID);
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -154,7 +157,7 @@ public class DeleteFilesService extends Service {
         Intent notificationIntent = new Intent(this, GalleryActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.icon)
+                new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_V2).setSmallIcon(R.drawable.icon)
                         .setContentTitle(getString(R.string.pathDeletingFilesTask_title))
                         .setContentText(getString(R.string.toast_pleaseWait))
                         .setContentIntent(pendingIntent);

@@ -82,6 +82,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     public static final String SERVICE_EVENT = "M64P_SERVICE_EVENT";
     public static final String SERVICE_RESUME = "M64P_SERVICE_RESUME";
     final static String NOTIFICATION_CHANNEL_ID = "CoreServiceChannel";
+    final static String NOTIFICATION_CHANNEL_ID_V2 = "CoreServiceChannelV2";
 
 
     // Slot info - used internally
@@ -496,11 +497,13 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                mRomGoodName, NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_V2,
+                mRomGoodName, NotificationManager.IMPORTANCE_LOW);
         channel.enableVibration(false);
+        channel.setSound(null,null);
 
         if(notificationManager != null) {
+            notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID);
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -536,7 +539,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         PendingIntent pendingForceExitIntent = PendingIntent.getActivity(this, 2, forceExitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         initChannels(getBaseContext());
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_V2)
                 .setSmallIcon(R.drawable.icon)
                 .setContentTitle(mRomGoodName)
                 .setContentIntent(pendingIntent);
