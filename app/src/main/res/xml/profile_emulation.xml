@@ -432,12 +432,21 @@
             android:key="enableStereo"
             android:title="@string/gliden64_enable_stereo_title" />
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
-            android:defaultValue="500"
-            android:key="eyeDistance"
-            android:title="@string/gliden64_stereo_eyedistance_title"
-            mupen64:maximumValue="2000"
+            android:defaultValue="50"
+            android:key="separation"
+            android:title="@string/gliden64_stereo_separation_title"
+            mupen64:maximumValue="1000"
             mupen64:minimumValue="0"
             mupen64:stepSize="1"
+            mupen64:saveType="string"
+            mupen64:units="" />
+        <paulscode.android.mupen64plusae.preference.SeekBarPreference
+            android:defaultValue="1000"
+            android:key="convergence"
+            android:title="@string/gliden64_stereo_convergence_title"
+            mupen64:maximumValue="10000"
+            mupen64:minimumValue="-10000"
+            mupen64:stepSize="10"
             mupen64:saveType="string"
             mupen64:units="" />
         <paulscode.android.mupen64plusae.preference.CompatListPreference
