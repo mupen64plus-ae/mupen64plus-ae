@@ -286,8 +286,7 @@ class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txHiresEnable", boolToTF( game.glideN64Prefs.txHiresEnable ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txPath", global.hiResTextureDir);
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableStereo", boolToTF( game.glideN64Prefs.enableStereo ));
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "Convergence", String.valueOf( game.glideN64Prefs.convergence ));
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "Separation", String.valueOf( game.glideN64Prefs.separation ));
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EyeDistance", String.valueOf( game.glideN64Prefs.eyeDistance ));
 
         if(hiresTexHTCPresent && game.glideN64Prefs.txHiresEnable)
         {

@@ -401,8 +401,7 @@
     <string name="gliden64_category_general_title">General</string>
     <string name="gliden64_widescreen_hack_title">Widescreen hack</string>
     <string name="gliden64_enable_stereo_title">Split-Screen Stereo (enable widescreen first)</string>
-    <string name="gliden64_stereo_convergence_title">Distance to stereo convergence plane</string>
-    <string name="gliden64_stereo_separation_title">Eye distance when stereo enabled</string>
+    <string name="gliden64_stereo_eyedistance_title">Eye distance when stereo enabled</string>
     <string name="gliden64_enable_noise_title">Enable noise emulation</string>
     <string name="gliden64_enable_lod_title">Enable LOD emulation</string>
     <string name="gliden64_enable_hw_lighting_title">Enable hardware per-pixel lighting</string>

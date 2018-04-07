@@ -151,10 +151,7 @@ public class GLideN64Prefs {
     public final boolean enableStereo;
 
     /** Eye distance for stereoscopic rendering */
-    public final float separation;
-
-    /** Convergence for stereoscopic rendering */
-    public final float convergence;
+    public final float eyeDistance;
 
     GLideN64Prefs(Context context, final Profile emulationProfile)
     {
@@ -205,7 +202,6 @@ public class GLideN64Prefs {
         forceGammaCorrection = emulationProfile.get( "ForceGammaCorrection", "False" ).equals( "True" );
         gammaCorrectionLevel = getSafeInt( emulationProfile, "GammaCorrectionLevel", 10)/10.0f;
         enableStereo = emulationProfile.get( "enableStereo", "False" ).equals( "True" );
-        convergence = getSafeInt( emulationProfile, "convergence", 0)/10.0f;
-        separation = getSafeInt( emulationProfile, "separation", 0)/100.0f;
+        eyeDistance = getSafeInt( emulationProfile, "eyeDistance", 0)/10.0f;
     }
 }
