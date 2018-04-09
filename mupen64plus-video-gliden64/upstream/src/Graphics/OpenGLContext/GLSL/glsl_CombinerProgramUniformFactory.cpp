@@ -141,6 +141,22 @@ private:
 	iUniform uDepthTex;
 };
 
+class UZLutTexture : public UniformGroup
+{
+public:
+	UZLutTexture(GLuint _program) {
+		LocateUniform(uZlutImage);
+	}
+
+	void update(bool _force) override
+	{
+		uZlutImage.set(int(graphics::textureIndices::ZLUTTex), _force);
+	}
+
+private:
+	iUniform uZlutImage;
+};
+
 class UTextures : public UniformGroup
 {
 public:
@@ -962,6 +978,9 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 
 	_uniforms.emplace_back(new UAlphaTestInfo(_program));
 
+	if ((config.generalEmulation.hacks & hack_RE2) != 0 && config.generalEmulation.enableFragmentDepthWrite != 0)
+		_uniforms.emplace_back(new UZLutTexture(_program));
+
 	if (config.frameBufferEmulation.N64DepthCompare != 0)
 		_uniforms.emplace_back(new UDepthInfo(_program));
 	else
@@ -971,7 +990,7 @@ void CombinerProgramUniformFactory::buildUniforms(GLuint _program,
 		config.frameBufferEmulation.N64DepthCompare != 0)
 		_uniforms.emplace_back(new URenderTarget(_program));
 
-	if (m_glInfo.isGLESX) {
+	if (m_glInfo.isGLESX && m_glInfo.noPerspective) {
 		_uniforms.emplace_back(new UClampMode(_program));
 		_uniforms.emplace_back(new UPolygonOffset(_program));
 	}

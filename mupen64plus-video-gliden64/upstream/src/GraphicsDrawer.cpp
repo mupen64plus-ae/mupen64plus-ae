@@ -31,7 +31,6 @@ GraphicsDrawer::GraphicsDrawer()
 , m_dmaVerticesNum(0)
 , m_modifyVertices(0)
 , m_maxLineWidth(1.0f)
-, m_bImageTexture(false)
 , m_bFlatColors(false)
 {
 	memset(m_rect, 0, sizeof(m_rect));
@@ -88,7 +87,7 @@ void GraphicsDrawer::addTriangle(int _v0, int _v1, int _v2)
 		}
 	}
 
-	if (!gfxContext.isSupported(SpecialFeatures::FragmentDepthWrite)) {
+	if (!Context::ClipControl) {
 		if (GBI.isNoN() && gDP.otherMode.depthCompare == 0 && gDP.otherMode.depthUpdate == 0) {
 			for (u32 i = firstIndex; i < triangles.num; ++i) {
 				SPVertex & vtx = triangles.vertices[triangles.elements[i]];
@@ -654,7 +653,7 @@ void GraphicsDrawer::_updateStates(DrawingState _drawingState) const
 
 	cmbInfo.updateParameters();
 
-	if (!gfxContext.isSupported(SpecialFeatures::FragmentDepthWrite))
+	if (!config.generalEmulation.enableFragmentDepthWrite)
 		return;
 
 	if (gDP.colorImage.address == gDP.depthImageAddress &&
@@ -991,7 +990,7 @@ bool texturedRectShadowMap(const GraphicsDrawer::TexturedRectParams &)
 		if (gDP.textureImage.size == 2 && gDP.textureImage.address >= gDP.depthImageAddress &&
 			gDP.textureImage.address < (gDP.depthImageAddress + gDP.colorImage.width*gDP.colorImage.width * 6 / 4)) {
 
-			if (!Context::imageTextures)
+			if (!Context::IntegerTextures)
 				return true;
 
 			pCurrentBuffer->m_pDepthBuffer->activateDepthBufferTexture(pCurrentBuffer);
@@ -1666,7 +1665,7 @@ void GraphicsDrawer::_initStates()
 	}
 	else {
 		gfxContext.enable(enable::DEPTH_TEST, true);
-#ifdef OS_ANDROID
+#if defined(OS_ANDROID) || defined(OS_IOS)
 		if (config.generalEmulation.forcePolygonOffset != 0)
 			gfxContext.setPolygonOffset(config.generalEmulation.polygonOffsetFactor, config.generalEmulation.polygonOffsetUnits);
 		else
@@ -1721,7 +1720,6 @@ void GraphicsDrawer::_initData()
 	FBInfo::fbInfo.reset();
 	m_texrectDrawer.init();
 	m_drawingState = DrawingState::Non;
-	m_bImageTexture = gfxContext.isSupported(SpecialFeatures::ImageTextures);
 	m_maxLineWidth = gfxContext.getMaxLineWidth();
 
 	gSP.changed = gDP.changed = 0xFFFFFFFF;

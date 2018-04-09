@@ -56,18 +56,13 @@ void GLInfo::init() {
 	}
 	if (!imageTextures && config.frameBufferEmulation.N64DepthCompare != 0) {
 		config.frameBufferEmulation.N64DepthCompare = 0;
-		LOG(LOG_WARNING, "N64 depth compare and depth based fog will not work without Image Textures support provided in OpenGL >= 4.3 or GLES >= 3.1\n");
+		LOG(LOG_WARNING, "N64 depth compare will not work without Image Textures support provided in OpenGL >= 4.3 or GLES >= 3.1\n");
 	}
 	if (isGLES2)
 		config.generalEmulation.enableFragmentDepthWrite = 0;
 
 	bufferStorage = (!isGLESX && (numericVersion >= 44)) || Utils::isExtensionSupported(*this, "GL_ARB_buffer_storage") ||
 			Utils::isExtensionSupported(*this, "GL_EXT_buffer_storage");
-
-#ifdef EGL
-	if (isGLESX && bufferStorage)
-		g_glBufferStorage = (PFNGLBUFFERSTORAGEPROC) eglGetProcAddress("glBufferStorageEXT");
-#endif
 
 	texStorage = (isGLESX && (numericVersion >= 30)) || (!isGLESX && numericVersion >= 42) ||
 			Utils::isExtensionSupported(*this, "GL_ARB_texture_storage");
@@ -77,12 +72,21 @@ void GLInfo::init() {
 		const char * strGetProgramBinary = isGLESX
 			? "GL_OES_get_program_binary"
 			: "GL_ARB_get_program_binary";
-		if (Utils::isExtensionSupported(*this, strGetProgramBinary)) {
+		if ((isGLESX && numericVersion >= 30) || (!isGLESX && numericVersion >= 41) || Utils::isExtensionSupported(*this, strGetProgramBinary)) {
 			GLint numBinaryFormats = 0;
 			glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &numBinaryFormats);
 			shaderStorage = numBinaryFormats > 0;
 		}
 	}
+
+#ifdef EGL
+	if (isGLESX && bufferStorage)
+		g_glBufferStorage = (PFNGLBUFFERSTORAGEPROC) eglGetProcAddress("glBufferStorageEXT");
+	if (isGLES2 && shaderStorage) {
+		g_glProgramBinary = (PFNGLPROGRAMBINARYPROC) eglGetProcAddress("glProgramBinaryOES");
+		g_glGetProgramBinary = (PFNGLGETPROGRAMBINARYPROC) eglGetProcAddress("glGetProgramBinaryOES");
+	}
+#endif
 #ifndef OS_ANDROID
 	if (isGLES2 && config.frameBufferEmulation.copyToRDRAM > Config::ctSync) {
 		config.frameBufferEmulation.copyToRDRAM = Config::ctDisable;
@@ -97,4 +101,5 @@ void GLInfo::init() {
 	}
 
 	depthTexture = !isGLES2 || Utils::isExtensionSupported(*this, "GL_OES_depth_texture");
+	noPerspective = Utils::isExtensionSupported(*this, "GL_NV_shader_noperspective_interpolation");
 }

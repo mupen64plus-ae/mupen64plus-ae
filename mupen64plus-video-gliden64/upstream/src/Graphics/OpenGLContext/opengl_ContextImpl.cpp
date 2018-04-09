@@ -459,8 +459,6 @@ bool ContextImpl::isSupported(graphics::SpecialFeatures _feature) const
 		return !m_glInfo.isGLES2;
 	case graphics::SpecialFeatures::WeakBlitFramebuffer:
 		return m_glInfo.isGLESX;
-	case graphics::SpecialFeatures::FragmentDepthWrite:
-		return config.generalEmulation.enableFragmentDepthWrite;
 	case graphics::SpecialFeatures::Multisampling:
 		return m_glInfo.msaa;
 	case graphics::SpecialFeatures::ImageTextures:
@@ -469,6 +467,10 @@ bool ContextImpl::isSupported(graphics::SpecialFeatures _feature) const
 		return m_glInfo.shaderStorage;
 	case graphics::SpecialFeatures::DepthFramebufferTextures:
 		return m_glInfo.depthTexture;
+	case graphics::SpecialFeatures::IntegerTextures:
+		return !m_glInfo.isGLES2;
+	case graphics::SpecialFeatures::ClipControl:
+		return !m_glInfo.isGLESX;
 	}
 	return false;
 }

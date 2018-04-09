@@ -500,7 +500,7 @@ void TextureCache::init()
 
 
 	m_pMSDummy = nullptr;
-	if (config.video.multisampling != 0 && gfxContext.isSupported(SpecialFeatures::Multisampling)) {
+	if (config.video.multisampling != 0 && Context::Multisampling) {
 		m_pMSDummy = addFrameBufferTexture(true); // we don't want to remove dummy texture
 		_initDummyTexture(m_pMSDummy);
 
@@ -968,7 +968,7 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 
 void TextureCache::_loadDepthTexture(CachedTexture * _pTexture, u16* _pDest)
 {
-	if (!gfxContext.isSupported(SpecialFeatures::FragmentDepthWrite))
+	if (!config.generalEmulation.enableFragmentDepthWrite)
 		return;
 
 	Context::InitTextureParams params;
