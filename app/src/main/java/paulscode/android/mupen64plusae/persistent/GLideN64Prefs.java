@@ -151,8 +151,6 @@ public class GLideN64Prefs {
     {
         cropMode = getSafeInt( emulationProfile, "CropMode", 1);
         String glesVersion = AppData.getOpenGlEsVersion(context);
-        multiSampling = (glesVersion.equals("2.0") || glesVersion.equals("3.0")) ?
-                0 : getSafeInt( emulationProfile, "MultiSampling", 0);
         bilinearMode = getSafeInt( emulationProfile, "bilinearMode", 0);
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
         enableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
@@ -170,7 +168,10 @@ public class GLideN64Prefs {
         enableCopyColorFromRDRAM = emulationProfile.get( "EnableCopyColorFromRDRAM", "False" ).equals( "True" );
         enableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
 
-        if(enableCopyColorFromRDRAM)
+        multiSampling = (glesVersion.equals("2.0") || glesVersion.equals("3.0") || enableN64DepthCompare) ?
+                0 : getSafeInt( emulationProfile, "MultiSampling", 0);
+
+        if(enableCopyColorFromRDRAM && enableCopyColorToRDRAM != 0)
         {
             enableNativeResTexrects = false;
             useNativeResolutionFactor = 1;
