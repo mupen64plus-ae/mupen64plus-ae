@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -195,7 +196,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
      * @param items Items will be populated here
      * @param recentItems Recent items will be populated here.
      */
-    public void generateGridItemsAndSaveConfig(List<GalleryItem> items, List<GalleryItem> recentItems)
+    public void generateGridItemsAndSaveConfig(List<GalleryItem> items, @NonNull List<GalleryItem> recentItems)
     {
         final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
         final String query = mSearchQuery.toLowerCase( Locale.US );
@@ -203,17 +204,10 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         if( query.length() > 0 )
             searches = query.split( " " );
 
-        int currentTime = 0;
+        int currentTime = (int) ( new Date().getTime() / 1000 );
 
-        if( mGlobalPrefs.isRecentShown )
-        {
-            currentTime = (int) ( new Date().getTime() / 1000 );
-        }
-
-        for( final String md5 : config.keySet() )
-        {
-            if( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) )
-            {
+        for ( final String md5 : config.keySet() ) {
+            if ( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) ) {
                 final ConfigFile.ConfigSection section = config.get( md5 );
                 String goodName;
                 if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
@@ -222,29 +216,24 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                     goodName = section.get( "baseName" );
 
                 boolean matchesSearch = true;
-                if( searches != null && searches.length > 0 && goodName != null)
-                {
+                if ( searches != null && searches.length > 0 && goodName != null) {
                     // Make sure the ROM name contains every token in the query
                     final String lowerName = goodName.toLowerCase( Locale.US );
-                    for( final String search : searches )
-                    {
-                        if( search.length() > 0 && !lowerName.contains( search ) )
-                        {
+                    for ( final String search : searches ) {
+                        if ( search.length() > 0 && !lowerName.contains( search ) ) {
                             matchesSearch = false;
                             break;
                         }
                     }
                 }
 
-                if( matchesSearch && goodName != null)
-                {
+                if ( matchesSearch && goodName != null) {
                     GalleryItem item = createGalleryItem(config, md5, goodName);
 
                     if (item != null) {
                         items.add(item);
                         boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
-                        if (recentItems != null && mGlobalPrefs.isRecentShown && isNotOld )
-                        {
+                        if (isNotOld) {
                             recentItems.add(item);
                         }
                     }
