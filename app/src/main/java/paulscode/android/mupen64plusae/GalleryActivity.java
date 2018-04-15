@@ -871,6 +871,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     void refreshGrid()
     {
+        //Reload global prefs
+        mAppData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+
         List<GalleryItem> items = new ArrayList<>();
         List<GalleryItem> recentItems = new ArrayList<>();
 
@@ -885,10 +889,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     synchronized void refreshGrid(List<GalleryItem> items, List<GalleryItem> recentItems){
-
-        //Reload global prefs
-        mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this, mAppData );
 
         if( mGlobalPrefs.isRecentShown && TextUtils.isEmpty(mSearchQuery) && recentItems.size() > 0 )
         {
