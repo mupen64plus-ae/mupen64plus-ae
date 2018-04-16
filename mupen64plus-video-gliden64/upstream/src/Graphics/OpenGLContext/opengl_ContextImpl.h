@@ -76,6 +76,8 @@ namespace opengl {
 
 		u32 convertInternalTextureFormat(u32 _format) const override;
 
+		void textureBarrier() override;
+
 		/*---------------Framebuffer-------------*/
 
 		graphics::FramebufferTextureFormats * getFramebufferTextureFormats() override;
@@ -93,6 +95,8 @@ namespace opengl {
 		void addFrameBufferRenderTarget(const graphics::Context::FrameBufferRenderTarget & _params) override;
 
 		bool blitFramebuffers(const graphics::Context::BlitFramebuffersParams & _params) override;
+
+		void setDrawBuffers(u32 _num) override;
 
 		/*---------------Pixelbuffer-------------*/
 

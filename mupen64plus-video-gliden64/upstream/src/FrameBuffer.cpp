@@ -807,7 +807,7 @@ void FrameBufferList::attachDepthBuffer()
 			pCurrent->m_pDepthBuffer = pDepthBuffer;
 			pDepthBuffer->setDepthAttachment(pCurrent->m_FBO, bufferTarget::DRAW_FRAMEBUFFER);
 			if (config.frameBufferEmulation.N64DepthCompare != 0)
-				pDepthBuffer->bindDepthImageTexture();
+				pDepthBuffer->bindDepthImageTexture(pCurrent->m_FBO);
 		} else
 			pCurrent->m_pDepthBuffer = nullptr;
 	} else
@@ -1278,6 +1278,7 @@ void FrameBuffer_ActivateBufferTexture(u32 t, u32 _frameBufferAddress)
 
 //	frameBufferList().renderBuffer(pBuffer->m_startAddress);
 	textureCache().activateTexture(t, pTexture);
+	gfxContext.textureBarrier();
 	gDP.changed |= CHANGED_FB_TEXTURE;
 }
 
@@ -1293,6 +1294,7 @@ void FrameBuffer_ActivateBufferTextureBG(u32 t, u32 _frameBufferAddress)
 
 //	frameBufferList().renderBuffer(pBuffer->m_startAddress);
 	textureCache().activateTexture(t, pTexture);
+	gfxContext.textureBarrier();
 	gDP.changed |= CHANGED_FB_TEXTURE;
 }
 
