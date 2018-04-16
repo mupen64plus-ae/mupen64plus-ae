@@ -421,9 +421,8 @@ class NativeConfigFiles
         // default values from GLideN64.custom.ini when running with GLES 2.0 for EnableCopyColorToRDRAM
         // because it could be set that way there.
         // For GLES-3.0/3.1, some devices don't support fast async reads
-        // Also GLES doesn't work well with N64 depth compare
         if (glideN64settingValue != null &&
-                !(!supportsFullGl && (setting.equals("EnableCopyColorToRDRAM") || setting.equals("EnableN64DepthCompare"))))
+                !(!supportsFullGl && setting.equals("EnableCopyColorToRDRAM")))
         {
             mupenConfigFile.put( "Video-GLideN64", setting, glideN64settingValue);
 
