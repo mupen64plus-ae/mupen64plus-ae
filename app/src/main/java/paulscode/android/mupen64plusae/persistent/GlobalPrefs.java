@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,6 +52,7 @@ import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.ManageControllerProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageEmulationProfilesActivity;
 import paulscode.android.mupen64plusae.profile.ManageTouchscreenProfilesActivity;
+import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -195,6 +197,9 @@ public class GlobalPrefs
 
     /** Factor applied to the cover art scale */
     public final float coverArtScale;
+
+    /** Which country codes we are allow to show */
+    private final LinkedHashSet<CountryCode> allowedCountryCodes = new LinkedHashSet<>();
 
     /** Default resolution */
     private final int displayResolution;
@@ -418,6 +423,7 @@ public class GlobalPrefs
         cacheRecentlyPlayed = mPreferences.getBoolean( "cacheRecentlyPlayed", true );
         isFullNameShown = mPreferences.getBoolean( "showFullNames", true );
         coverArtScale = ( mPreferences.getInt( "libraryArtScale", 100 ) ) / 100.0f;
+        fillAllowedCountryCodes();
 
         // Touchscreen prefs
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
@@ -649,6 +655,87 @@ public class GlobalPrefs
             }
         } );
         builder.create().show();
+    }
+
+    private void fillAllowedCountryCodes()
+    {
+        boolean showUnknownCountryCode = mPreferences.getBoolean( "libraryCountryFilterUnknown", true );
+        boolean showUsaCountryCode = mPreferences.getBoolean( "libraryCountryFilterUsa", true );
+        boolean showJapanCountryCode = mPreferences.getBoolean( "libraryCountryFilterJapan", true );
+        boolean showEuropeCountryCode = mPreferences.getBoolean( "libraryCountryFilterEurope", true );
+        boolean showAustraliaCountryCode = mPreferences.getBoolean( "libraryCountryFilterAustralia", true );
+        boolean showKoreaCountryCode = mPreferences.getBoolean( "libraryCountryFilterKorea", true );
+        boolean showGermanyCountryCode = mPreferences.getBoolean( "libraryCountryFilterGermany", true );
+        boolean showFranceCountryCode = mPreferences.getBoolean( "libraryCountryFilterFrance", true );
+        boolean showItalyCountryCode = mPreferences.getBoolean( "libraryCountryFilterItaly", true );
+        boolean showSpainCountryCode = mPreferences.getBoolean( "libraryCountryFilterSpain", true );
+
+        if(showUnknownCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.UNKNOWN);
+            allowedCountryCodes.add(CountryCode.DEMO);
+            allowedCountryCodes.add(CountryCode.BETA);
+        }
+
+        if(showUsaCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.JAPAN_USA);
+            allowedCountryCodes.add(CountryCode.USA);
+        }
+
+        if(showJapanCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.JAPAN);
+            allowedCountryCodes.add(CountryCode.JAPAN_USA);
+            allowedCountryCodes.add(CountryCode.JAPAN_KOREA);
+        }
+
+        if(showEuropeCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.EUROPE_1);
+            allowedCountryCodes.add(CountryCode.EUROPE_2);
+            allowedCountryCodes.add(CountryCode.EUROPE_3);
+            allowedCountryCodes.add(CountryCode.EUROPE_4);
+            allowedCountryCodes.add(CountryCode.EUROPE_5);
+            allowedCountryCodes.add(CountryCode.EUROPE_6);
+        }
+
+        if(showAustraliaCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.AUSTRALIA);
+            allowedCountryCodes.add(CountryCode.AUSTRALIA_ALT);
+        }
+
+        if(showKoreaCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.KOREA);
+            allowedCountryCodes.add(CountryCode.JAPAN_KOREA);
+        }
+
+        if(showGermanyCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.GERMANY);
+        }
+
+        if(showFranceCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.FRANCE);
+        }
+
+        if(showItalyCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.ITALY);
+        }
+
+        if(showSpainCountryCode)
+        {
+            allowedCountryCodes.add(CountryCode.SPAIN);
+        }
+    }
+
+    public LinkedHashSet<CountryCode> getAllowedCountryCodes()
+    {
+        return allowedCountryCodes;
     }
 
     public String getEmulationProfileDefaultDefault()

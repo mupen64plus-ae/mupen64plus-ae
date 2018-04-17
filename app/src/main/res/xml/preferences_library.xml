@@ -77,4 +77,49 @@
         mupen64:minimumValue="50"
         mupen64:stepSize="1"
         mupen64:units="%" />
+    <android.support.v7.preference.PreferenceScreen
+        android:key="libraryCountry"
+        android:title="@string/libraryCountryFilter_title" >
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterUnknown"
+            android:title="@string/libraryCountryFilterUnknown_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterUsa"
+            android:title="@string/libraryCountryFilterUsa_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterJapan"
+            android:title="@string/libraryCountryFilterJapan_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterEurope"
+            android:title="@string/libraryCountryFilterEurope_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterAustralia"
+            android:title="@string/libraryCountryFilterAustralia_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterKorea"
+            android:title="@string/libraryCountryFilterKorea_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterGermany"
+            android:title="@string/libraryCountryFilterGermany_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterFrance"
+            android:title="@string/libraryCountryFilterFrance_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterItaly"
+            android:title="@string/libraryCountryFilterItaly_title" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="True"
+            android:key="libraryCountryFilterSpain"
+            android:title="@string/libraryCountryFilterSpain_title" />
+
+    </android.support.v7.preference.PreferenceScreen>
 </android.support.v7.preference.PreferenceScreen>

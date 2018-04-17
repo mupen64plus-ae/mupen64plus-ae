@@ -594,6 +594,17 @@
     <string name="touchscreenScale_title">Button scale</string>
     <string name="touchscreenAutoHide_title">Number of seconds before hiding touchscreen buttons</string>
     <string name="libraryScale_title">Cover art scale</string>
+    <string name="libraryCountryFilter_title">Game country filter</string>
+    <string name="libraryCountryFilterUnknown_title">Unknown</string>
+    <string name="libraryCountryFilterUsa_title">USA</string>
+    <string name="libraryCountryFilterJapan_title">Japan</string>
+    <string name="libraryCountryFilterEurope_title">Europe</string>
+    <string name="libraryCountryFilterAustralia_title">Australia</string>
+    <string name="libraryCountryFilterKorea_title">Korea</string>
+    <string name="libraryCountryFilterGermany_title">Germany</string>
+    <string name="libraryCountryFilterFrance_title">France</string>
+    <string name="libraryCountryFilterItaly_title">Italy</string>
+    <string name="libraryCountryFilterSpain_title">Spain</string>
     <string name="displayActionBarTransparency_title">Action bar opacity</string>
 
     <!-- Path Preferences (selected path will become the summary) -->

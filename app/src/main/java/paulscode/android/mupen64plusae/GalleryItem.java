@@ -49,7 +49,7 @@ public class GalleryItem
     public final String md5;
     public final String crc;
     final String headerName;
-    final CountryCode countryCode;
+    public final CountryCode countryCode;
     final String goodName;
     final String artPath;
     public final int lastPlayed;

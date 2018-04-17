@@ -121,7 +121,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
             for(File extractedFile : extractedFiles) {
                 if (!isRomPathInItemList(recentItems, extractedFile)) {
                     if(!extractedFile.delete()) {
-                        Log.w("GalleryActivity", "Unable to delete " + extractedFile.getPath());
+                        Log.w("GalleryRefreshTask", "Unable to delete " + extractedFile.getPath());
                     }
                 }
             }
@@ -230,7 +230,8 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                 if ( matchesSearch && goodName != null) {
                     GalleryItem item = createGalleryItem(config, md5, goodName);
 
-                    if (item != null) {
+                    if (item != null && (mGlobalPrefs.getAllowedCountryCodes().contains(item.countryCode) ||
+                            searches != null)) {
                         items.add(item);
                         boolean isNotOld = currentTime - item.lastPlayed <= 60 * 60 * 24 * 7; // 7 days
                         if (isNotOld) {
