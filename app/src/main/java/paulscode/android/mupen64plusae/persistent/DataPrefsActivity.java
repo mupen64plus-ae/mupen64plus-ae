@@ -29,14 +29,19 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.mupen64plusae.v3.alpha.R;
 
+import java.io.File;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
+import paulscode.android.mupen64plusae.SplashActivity;
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.preference.PrefUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 
 public class DataPrefsActivity extends AppCompatPreferenceActivity implements OnPreferenceClickListener,
@@ -129,6 +134,7 @@ public class DataPrefsActivity extends AppCompatPreferenceActivity implements On
 
     private void actionReloadAssets()
     {
+        FileUtil.deleteFolder(new File(mAppData.coreSharedDataDir));
         mAppData.putAssetCheckNeeded(true);
         ActivityHelper.startSplashActivity(this);
         finish();
