@@ -126,9 +126,9 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     private static final String TAG = "CoreService";
 
     public static final String COMPLETE_EXTENSION = "complete";
-    public static final String SERVICE_EVENT = "M64P_SERVICE_EVENT";
-    public static final String SERVICE_RESUME = "M64P_SERVICE_RESUME";
-    public static final String SERVICE_QUIT = "M64P_SERVICE_QUIT";
+    public static final String SERVICE_EVENT = "M64P_SERVICE_EVENT_FZ";
+    public static final String SERVICE_RESUME = "M64P_SERVICE_RESUME_FZ";
+    public static final String SERVICE_QUIT = "M64P_SERVICE_QUIT_FZ";
     final static String NOTIFICATION_CHANNEL_ID = "CoreServiceChannel";
     final static String NOTIFICATION_CHANNEL_ID_V2 = "CoreServiceChannelV2";
 

@@ -578,6 +578,10 @@
     <string name="confirmDeleteProfile_message">¿Eliminar perfil \"%1$s\"?</string>
     <string name="confirmClearData_message">¿Seguro que desea borrar el paquetes de texturas seleccionado?</string>
     <string name="confirmRemoveFromLibrary_message">¿Seguro que desea eliminar ese juego de la librería?</string>
+    <string name="confirmRate">Califica Mupen64Plus FZ</string>
+    <string name="confirmPleaseRate">Si le gusta usar Mupen64plus FZ, por favor tómese un momento para calificarlo. ¡Gracias por su apoyo!</string>
+    <string name="confirmRemindMeLater">Recuérdame más tarde</string>
+    <string name="confirmNoThanks">No, gracias</string>
 
     <!--Change Log-->
     <!--Corrupt Installation Warning-->

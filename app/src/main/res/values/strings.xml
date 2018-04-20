@@ -775,6 +775,11 @@
     <string name="clearTexturePack_message">Select a texture pack to delete</string>
     <string name="confirmClearData_message">Are you sure you want to clear the selected high resolution texture pack?</string>
     <string name="confirmRemoveFromLibrary_message">Are you sure you want to remove this game from the library?</string>
+    <string name="confirmRate">Rate Mupen64Plus FZ</string>
+    <string name="confirmPleaseRate">If you enjoy using Mupen64Plus FZ, please take a moment to rate it. Thanks for your support!</string>
+    <string name="confirmRemindMeLater">Remind me later</string>
+    <string name="confirmNoThanks">No, thanks</string>
+
 
     <!-- Corrupt Installation Warning -->
     <string name="invalidInstall_message">Mupen64 Plus AE is not installed properly. Please try reinstalling the app.</string>
