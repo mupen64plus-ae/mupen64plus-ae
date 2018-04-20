@@ -84,11 +84,11 @@ public class GalleryItem
         this.goodName = headingName;
         this.context = new WeakReference<>(context);
         this.isHeading = true;
-        this.md5 = null;
-        this.crc = null;
-        this.headerName = null;
+        this.md5 = "";
+        this.crc = "";
+        this.headerName = "";
         this.countryCode = CountryCode.UNKNOWN;
-        this.artPath = null;
+        this.artPath = "";
         this.artBitmap = null;
         this.lastPlayed = 0;
         this.romFile = null;
