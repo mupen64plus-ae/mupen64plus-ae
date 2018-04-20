@@ -580,8 +580,9 @@ public final class FileUtil
                 {
                     InputStream zipStream = zipFile.getInputStream( zipEntry );
                     File extractedFile = FileUtil.extractRomFile( new File( unzippedRomDir ), zipEntry.getName(), zipStream );
+                    RomHeader header = new RomHeader(extractedFile);
 
-                    if( extractedFile != null)
+                    if( extractedFile != null && header.isValid)
                     {
                         zipStream.close();
                         return extractedFile.getPath();
@@ -615,8 +616,9 @@ public final class FileUtil
                 {
                     final InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
                     File extractedFile = FileUtil.extractRomFile( new File( unzippedRomDir ), zipEntry.getName(), zipStream );
+                    RomHeader header = new RomHeader(extractedFile);
 
-                    if( extractedFile != null)
+                    if( extractedFile != null && header.isValid)
                     {
                         zipFile.close();
                         return extractedFile.getPath();
