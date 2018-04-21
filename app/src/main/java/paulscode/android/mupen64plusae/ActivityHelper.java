@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -137,9 +138,9 @@ public class ActivityHelper
         {
             context.startActivity( new Intent( Intent.ACTION_VIEW, uri ) );
         }
-        catch(java.lang.SecurityException e)
+        catch(java.lang.SecurityException|ActivityNotFoundException e)
         {
-            Log.e("ActivityHelper", "Failed to launch link to due security exception: " + e.toString());
+            Log.e("ActivityHelper", "Failed to launch link to due exception: " + e.toString());
         }
     }
     
