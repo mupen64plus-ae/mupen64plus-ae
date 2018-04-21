@@ -734,6 +734,7 @@ public class GamePrefs
     public static String getGameDataPath( String romMd5, String headerName, String countrySymbol,
         AppData appData)
     {
+        headerName = TextUtils.isEmpty(headerName) ? "" : headerName;
         return String.format( "%s/%s %s %s", appData.gameDataDir, headerName.replace("/", ""), countrySymbol, romMd5 );
     }
 
