@@ -15,11 +15,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.preference.MultiSelectListPreference;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
 import paulscode.android.mupen64plusae.profile.Profile;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Plugin;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 
@@ -335,13 +337,21 @@ public class GamePrefs
         isDpadGame = isDpadGame(headerName, goodName);
 
         // Emulation profile
-        emulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
+        Profile tempEmulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
                 globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
                 globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
 
-        if(emulationProfile == null) {
-            throw new RuntimeException("Emulation profile is NULL");
+        if (tempEmulationProfile == null) {
+            //This is a bad situation, app data must be corrupt
+            actionReloadAssets(context);
+
+            //Try again
+            tempEmulationProfile = loadProfile( mPreferences, EMULATION_PROFILE,
+                    globalPrefs.getEmulationProfileDefault(), GlobalPrefs.DEFAULT_EMULATION_PROFILE_DEFAULT,
+                    globalPrefs.GetEmulationProfilesConfig(), appData.GetEmulationProfilesConfig() );
         }
+
+        emulationProfile = tempEmulationProfile;
         
         Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());
 
@@ -564,6 +574,13 @@ public class GamePrefs
 
         //A value of zero means default for the game as specified in mupen64plus.ini
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );
+    }
+
+    private void actionReloadAssets(Context context)
+    {
+        FileUtil.deleteFolder(new File(mAppData.coreSharedDataDir));
+        mAppData.putAssetCheckNeeded(true);
+        ActivityHelper.startSplashActivity(context);
     }
 
     private boolean isDpadGame(String headerName, String gameGoodName) {
