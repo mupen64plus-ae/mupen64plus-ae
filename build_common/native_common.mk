@@ -64,11 +64,11 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 COMMON_CFLAGS +=                    \
     -march=armv7-a                  \
     -mfloat-abi=softfp              \
-    -mfpu=neon -ftree-vectorize -mcpu=cortex-a57
+    -mfpu=neon
 COMMON_CPPFLAGS +=                  \
     -march=armv7-a                  \
     -mfloat-abi=softfp              \
-    -mfpu=neon -ftree-vectorize -mcpu=cortex-a57
+    -mfpu=neon
 endif
 
 COMMON_LDFLAGS :=
