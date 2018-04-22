@@ -1807,34 +1807,27 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
         info->strideInBytes = width*4;
         info->writeMode = GR_LFBWRITEMODE_888;
         info->origin = origin;
-
-        if(width > 0 && height > 0) {
-          glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer);
-        }
-
+        glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer);
       } else {
+        buf = (unsigned char*)malloc(width*height*4);
 
         info->lfbPtr = frameBuffer;
         info->strideInBytes = width*2;
         info->writeMode = GR_LFBWRITEMODE_565;
         info->origin = origin;
+        glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 
-        if(width > 0 && height > 0) {
-          buf = (unsigned char*)malloc(width*height*4);
-          glReadPixels(0, viewport_offset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
-
-          for (j=0; j<height; j++)
+        for (j=0; j<height; j++)
+        {
+          for (i=0; i<width; i++)
           {
-            for (i=0; i<width; i++)
-            {
-              frameBuffer[(height-j-1)*width+i] =
-                      ((buf[j*width*4+i*4+0] >> 3) << 11) |
-                      ((buf[j*width*4+i*4+1] >> 2) <<  5) |
-                      (buf[j*width*4+i*4+2] >> 3);
-            }
+            frameBuffer[(height-j-1)*width+i] =
+              ((buf[j*width*4+i*4+0] >> 3) << 11) |
+              ((buf[j*width*4+i*4+1] >> 2) <<  5) |
+              (buf[j*width*4+i*4+2] >> 3);
           }
-          free(buf);
         }
+        free(buf);
       }
     }
     else
@@ -1843,10 +1836,7 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
       info->strideInBytes = width*2;
       info->writeMode = GR_LFBWRITEMODE_ZA16;
       info->origin = origin;
-
-      if(width > 0 && height > 0) {
-        glReadPixels(0, viewport_offset, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, depthBuffer);
-      }
+      glReadPixels(0, viewport_offset, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, depthBuffer);
     }
   }
 

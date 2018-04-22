@@ -271,8 +271,8 @@ TxUtil::Adler32(const uint8* data, int Len, uint32 dwAdler32)
   /* zlib adler32 */
   return adler32(dwAdler32, data, Len);
 #else
-  register uint32 s1 = dwAdler32 & 0xFFFF;
-  register uint32 s2 = (dwAdler32 >> 16) & 0xFFFF;
+  uint32 s1 = dwAdler32 & 0xFFFF;
+  uint32 s2 = (dwAdler32 >> 16) & 0xFFFF;
   int k;
 
   while (Len > 0) {

@@ -1,6 +1,6 @@
 #/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 # *   Mupen64plus-video-glide64mk2 - Makefile                               *
-# *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+# *   Mupen64Plus homepage: https://mupen64plus.org/                        *
 # *   Copyright (C) 2010 Jon Ring                                           *
 # *   Copyright (C) 2007-2009 Richard Goedeken                              *
 # *   Copyright (C) 2007-2008 DarkJeztr Tillin9                             *
@@ -70,7 +70,7 @@ ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   CPPFLAGS += -DNO_FILTER_THREAD
 endif
 ifeq ("$(OS)","NONE")
-  $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
+  $(error OS type "$(UNAME)" not supported.  Please file bug report at 'https://github.com/mupen64plus/mupen64plus-core/issues')
 endif
 
 # detect system architecture
@@ -97,6 +97,7 @@ ifneq ("$(filter ppc macppc socppc powerpc,$(HOST_CPU))","")
   BIG_ENDIAN := 1
   PIC ?= 1
   NO_ASM := 1
+  NO_SSE := 1
   $(warning Architecture "$(HOST_CPU)" not officially supported.')
 endif
 ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
@@ -118,7 +119,7 @@ ifneq ("$(filter arm%,$(HOST_CPU))","")
   endif
 endif
 ifeq ("$(CPU)","NONE")
-  $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
+  $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'https://github.com/mupen64plus/mupen64plus-core/issues')
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
@@ -154,6 +155,13 @@ ifeq ($(ARCH_DETECTED), 64BITS_32)
   LDFLAGS += -Wl,-m,elf_i386
 endif
 
+ifeq ($(origin PKG_CONFIG), undefined)
+  PKG_CONFIG = $(CROSS_COMPILE)pkg-config
+  ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
+    $(error $(PKG_CONFIG) not found)
+  endif
+endif
+
 # set special flags per-system
 ifeq ($(OS), LINUX)
   # only export api symbols
@@ -161,10 +169,7 @@ ifeq ($(OS), LINUX)
   LDLIBS += -ldl
 endif
 ifeq ($(OS), OSX)
-  #xcode-select has been around since XCode 3.0, i.e. OS X 10.5
-  OSX_SDK_ROOT = $(shell xcode-select -print-path)/Platforms/MacOSX.platform/Developer/SDKs
-  OSX_SDK_PATH = $(OSX_SDK_ROOT)/$(shell ls $(OSX_SDK_ROOT) | tail -1)
-
+  OSX_SDK_PATH = $(shell xcrun --sdk macosx --show-sdk-path)
   ifeq ($(CPU), X86)
     LDFLAGS += -bundle -L/opt/local/lib
     CXXFLAGS += -stdlib=libc++
@@ -175,20 +180,22 @@ ifeq ($(OS), OSX)
       CFLAGS += -pipe -I /opt/local/include -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.7 -isysroot $(OSX_SDK_PATH)
     endif
   endif
+  # use system zlib on OSX
+  ZLIB_LDLIBS += -lz
 endif
 ifeq ($(OS), FREEBSD)
   LDLIBS += -lc
 endif
-
-ifeq ($(origin PKG_CONFIG), undefined)
-  PKG_CONFIG = $(CROSS_COMPILE)pkg-config
-  ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
-    $(error $(PKG_CONFIG) not found)
+ifeq ($(OS), MINGW)
+  ifeq ($(origin GLEW_CFLAGS) $(origin GLEW_LDLIBS), undefined undefined)
+    ifeq ($(shell $(PKG_CONFIG) --modversion glew 2>/dev/null),)
+      $(error No GLEW development libraries found!)
+    endif
+    GLEW_CFLAGS += $(shell $(PKG_CONFIG) --cflags glew)
+    GLEW_LDLIBS +=  $(shell $(PKG_CONFIG) --libs glew)
   endif
-endif
-
-ifeq ($(OS), OSX) # use system zlib on OSX
-  ZLIB_LDLIBS += -lz
+  CFLAGS += $(GLEW_CFLAGS)
+  LDLIBS += $(GLEW_LDLIBS)
 endif
 
 ifeq ($(origin ZLIB_CFLAGS) $(origin ZLIB_LDLIBS), undefined undefined)

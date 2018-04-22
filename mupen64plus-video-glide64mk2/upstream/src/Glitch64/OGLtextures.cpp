@@ -68,7 +68,7 @@ typedef struct _texlist
 static int nbTex = 0;
 static texlist *list = NULL;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 extern PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffersEXT;
 extern PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT;
 extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB;
@@ -434,7 +434,7 @@ grTexDownloadMipMap( GrChipID_t tmu,
 
     // VP fixed the texture conversions to be more accurate, also swapped
     // the for i/j loops so that is is less likely to break the memory cache
-    register int n = 0, m = 0;
+    int n = 0, m = 0;
     switch(info->format)
     {
     case GR_TEXFMT_ALPHA_8:

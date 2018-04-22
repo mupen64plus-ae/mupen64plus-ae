@@ -81,7 +81,7 @@ Ini::Ini()
 {
 	if (!INI_Open())
 	{
-		printf("Could not find INI file!");
+		ERRLOG("Could not find INI file!");
 		exit(1);
 	}
 }
@@ -97,7 +97,7 @@ void Ini::SetPath(const char *path)
 {
 	if (!INI_FindSection(path, false))
 	{
-		printf("Could not find [%s] section in INI file!", path);
+		WARNLOG("Could not find [%s] section in INI file!", path);
 	}
 }
 
@@ -236,7 +236,7 @@ void INI_Close ()
 
 void INI_InsertSpace(int space)
 {
-  printf("Inserting space, space to insert is %d\n", space);
+  VLOG("Inserting space, space to insert is %d\n", space);
     // Since there is no good way to normally insert to or delete from a certain location in
     //  a file, this function was added.  It will insert (or delete) space bytes at the
     //  current location.
@@ -304,7 +304,7 @@ BOOL INI_FindSection (const char *sectionname, BOOL create)
 {
     if (ini == NULL)
         return FALSE;
-    printf("INI_FindSection trying to find name for %s\n", sectionname);
+    VLOG("INI_FindSection trying to find name for %s\n", sectionname);
 
     char line[256], section[64];
     char *p;

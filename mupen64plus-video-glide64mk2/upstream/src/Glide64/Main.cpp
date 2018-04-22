@@ -1184,7 +1184,7 @@ int InitGfx ()
     char strSstWinOpenExt[] ="grSstWinOpenExt";
     GRWINOPENEXT grSstWinOpenExt = (GRWINOPENEXT)grGetProcAddress(strSstWinOpenExt);
     if (grSstWinOpenExt)
-      gfx_context = grSstWinOpenExt ((FxU32)NULL,
+      gfx_context = grSstWinOpenExt ((uintptr_t)NULL,
       res_data,
       GR_REFRESH_60Hz,
       GR_COLORFORMAT_RGBA,
@@ -1194,7 +1194,7 @@ int InitGfx ()
       1);   // 1 auxillary buffer
   }
   if (!gfx_context)
-    gfx_context = grSstWinOpen ((FxU32)NULL,
+    gfx_context = grSstWinOpen ((uintptr_t)NULL,
     res_data,
     GR_REFRESH_60Hz,
     GR_COLORFORMAT_RGBA,

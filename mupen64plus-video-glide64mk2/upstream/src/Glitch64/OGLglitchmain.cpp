@@ -84,7 +84,7 @@ static inline void opt_glCopyTexImage2D( GLenum target,
 #define glCopyTexImage2D opt_glCopyTexImage2D
 
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
 PFNGLBLENDFUNCSEPARATEEXTPROC glBlendFuncSeparateEXT;
 PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
@@ -393,7 +393,7 @@ int isExtensionSupported(const char *extension)
   return 0;
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 int isWglExtensionSupported(const char *extension)
 {
   const GLubyte *extensions = NULL;
@@ -500,10 +500,6 @@ grSstWinOpen(
   viewport_offset = 0; //-10 //-20;
 
   CoreVideo_Init();
-
-  CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_PROFILE_MASK, M64P_GL_CONTEXT_PROFILE_CORE);
-  CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MAJOR_VERSION, 2);
-  CoreVideo_GL_SetAttribute(M64P_GL_CONTEXT_MINOR_VERSION, 1);
   CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
   CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, vsync);
   CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 16);
@@ -550,7 +546,17 @@ grSstWinOpen(
     display_warning("Your video card doesn't support GL_ARB_texture_mirrored_repeat extension");
   show_warning = 0;
 
-#ifdef _WIN32
+#if defined(_WIN32) && (defined(__MINGW32__) || defined(__MINGW64__))
+  /* dirty hack to work around SDL2's SDL_opengl.h GL_GLEXT_PROTOTYPES bug
+   * see also the other
+   * "defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)" regions
+   */
+  GLenum glewerr = glewInit();
+  if (GLEW_OK != glewerr)
+    return false;
+#endif // _WIN32
+
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
   glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
   glMultiTexCoord2fARB = (PFNGLMULTITEXCOORD2FARBPROC)wglGetProcAddress("glMultiTexCoord2fARB");
 #endif // _WIN32
@@ -587,7 +593,7 @@ grSstWinOpen(
     npot_support = 1;
   }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
   glBlendFuncSeparateEXT = (PFNGLBLENDFUNCSEPARATEEXTPROC)wglGetProcAddress("glBlendFuncSeparateEXT");
 #endif // _WIN32
 
@@ -596,15 +602,15 @@ grSstWinOpen(
   else
     fog_coord_support = 1;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
   glFogCoordfEXT = (PFNGLFOGCOORDFPROC)wglGetProcAddress("glFogCoordfEXT");
 #endif // _WIN32
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
   wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC)wglGetProcAddress("wglGetExtensionsStringARB");
 #endif // _WIN32
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
   glBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC)wglGetProcAddress("glBindFramebufferEXT");
   glFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)wglGetProcAddress("glFramebufferTexture2DEXT");
   glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC)wglGetProcAddress("glGenFramebuffersEXT");
@@ -629,8 +635,8 @@ grSstWinOpen(
     isExtensionSupported("GL_ARB_vertex_shader"))
   {
 
-#ifdef _WIN32
-    glCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC)wglGetProcAddress("glCreateShaderObjectARB");
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
+	glCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC)wglGetProcAddress("glCreateShaderObjectARB");
     glShaderSourceARB = (PFNGLSHADERSOURCEARBPROC)wglGetProcAddress("glShaderSourceARB");
     glCompileShaderARB = (PFNGLCOMPILESHADERARBPROC)wglGetProcAddress("glCompileShaderARB");
     glCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC)wglGetProcAddress("glCreateProgramObjectARB");
@@ -656,7 +662,7 @@ grSstWinOpen(
   if (isExtensionSupported("GL_3DFX_texture_compression_FXT1") == 0  && show_warning)
     display_warning("Your video card doesn't support GL_3DFX_texture_compression_FXT1 extension");
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
   glCompressedTexImage2DARB = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)wglGetProcAddress("glCompressedTexImage2DARB");
 #endif
 

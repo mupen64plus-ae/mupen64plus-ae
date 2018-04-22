@@ -70,7 +70,7 @@ void set_bw_shader();
 extern float invtex[2];
 extern int buffer_cleared; // mark that the buffer has been cleared, used to check if we need to reload the texture buffer content
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 #include <windows.h>
 extern "C" {
     #include <SDL_opengl.h>
@@ -120,6 +120,9 @@ extern "C" {
 #ifndef SDL_VIDEO_OPENGL
 #error SDL is not build with OpenGL support. Try USE_GLES=1
 #endif
+#if defined(__MINGW32__) || defined(__MINGW64__)
+#include <GL/glew.h>
+#endif
 #include <SDL_opengl.h>
 #endif
 #endif // _WIN32
@@ -136,7 +139,7 @@ void updateCombinera(int i);
 void remove_tex(unsigned int idmin, unsigned int idmax);
 void add_tex(unsigned int id);
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
 extern PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
 extern PFNGLBLENDFUNCSEPARATEEXTPROC glBlendFuncSeparateEXT;

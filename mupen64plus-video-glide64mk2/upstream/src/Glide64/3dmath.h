@@ -48,7 +48,7 @@ extern MULMATRIX MulMatrices;
 typedef void (*TRANSFORMVECTOR)(float *src,float *dst,float mat[4][4]); 
 extern TRANSFORMVECTOR TransformVector;
 extern TRANSFORMVECTOR InverseTransformVector;
-typedef float (*DOTPRODUCT)(register float *v1, register float *v2);
+typedef float (*DOTPRODUCT)(float *v1, float *v2);
 extern DOTPRODUCT DotProduct;
 typedef void (*NORMALIZEVECTOR)(float *v);
 extern NORMALIZEVECTOR NormalizeVector;
