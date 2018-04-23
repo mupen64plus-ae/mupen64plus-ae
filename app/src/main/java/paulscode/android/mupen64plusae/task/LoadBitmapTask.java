@@ -75,7 +75,6 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
                 tempArtView.setImageResource( R.drawable.default_coverart );
 
             tempArtView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            tempArtView.setBackgroundColor(Color.BLACK);
         }
     }
     
