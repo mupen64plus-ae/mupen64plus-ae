@@ -42,6 +42,7 @@ extern void *VidExtFuncGLGetProc(const char *Proc);
 extern m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value);
 extern m64p_error VidExtFuncGLGetAttr(m64p_GLattr Attr, int *pValue);
 extern m64p_error VidExtFuncGLSwapBuf(void);
+extern uint32_t VidExtFuncGLGetDefaultFramebuffer(void);
 extern void vsyncEnabled(int enabled);
 extern void pauseEmulator();
 extern void resumeEmulator();
@@ -57,7 +58,8 @@ m64p_video_extension_functions vidExtFunctions = {11,
                                                   VidExtFuncGLSwapBuf,
                                                   VidExtFuncSetCaption,
                                                   VidExtFuncToggleFS,
-                                                  VidExtFuncResizeWindow};
+                                                  VidExtFuncResizeWindow,
+                                                  VidExtFuncGLGetDefaultFramebuffer};
 #ifdef __cplusplus
 }
 #endif

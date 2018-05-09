@@ -465,6 +465,11 @@ extern DECLSPEC m64p_error VidExtFuncQuit()
 	return M64ERR_SUCCESS;
 }
 
+extern DECLSPEC uint32_t VidExtFuncGLGetDefaultFramebuffer(void)
+{
+    return 0;
+}
+
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_FPSEnabled(JNIEnv* env, jclass cls, int recalc)
 {
     FPSRecalcPeriod = recalc;
@@ -483,5 +488,4 @@ extern DECLSPEC void pauseEmulator()
 extern DECLSPEC void resumeEmulator()
 {
     isPaused = false;
-
 }
