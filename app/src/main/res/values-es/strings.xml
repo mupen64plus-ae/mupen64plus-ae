@@ -379,6 +379,7 @@
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Renderizador de Software</string>
     <string name="gliden64_enable_color_buffer_from_RDRAM_title">Habilitar bufer de copia a color a RDRAM</string>
     <string name="gliden64_enable_n64_depth_compare_title">Habilitar profundidad N64 comparar (Experimental)</string>
+    <string name="gliden64_enable_force_depth_buffer_clear">Forza borrar buffer de profundidad</string>
     <string name="gliden64_use_native_resolution_factor_title">Usar factor de resolución nativo</string>
     <string name="gliden64_use_native_resolution_factor_off">Apagado</string>
     <string name="gliden64_use_native_resolution_factor_1x">1x</string>

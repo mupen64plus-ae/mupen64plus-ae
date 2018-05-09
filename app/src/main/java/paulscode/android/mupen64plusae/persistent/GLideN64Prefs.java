@@ -84,6 +84,9 @@ public class GLideN64Prefs {
     /** Enable N64 depth compare instead of OpenGL standard one. Experimental. */
     public final boolean enableN64DepthCompare;
 
+    /** Force depth buffer clear. Hack. Needed for Eikou no Saint Andrews. */
+    public final boolean forceDepthBufferClear;
+
     /** Frame buffer size is the factor of N64 native resolution. */
     public final int useNativeResolutionFactor;
 
@@ -167,6 +170,7 @@ public class GLideN64Prefs {
         enableCopyDepthToRDRAM = getSafeInt( emulationProfile, "EnableCopyDepthToRDRAM", 2 );
         enableCopyColorFromRDRAM = emulationProfile.get( "EnableCopyColorFromRDRAM", "False" ).equals( "True" );
         enableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
+        forceDepthBufferClear = emulationProfile.get( "ForceDepthBufferClear", "False" ).equals( "True" );
 
         multiSampling = (glesVersion.equals("2.0") || glesVersion.equals("3.0") || enableN64DepthCompare) ?
                 0 : getSafeInt( emulationProfile, "MultiSampling", 0);

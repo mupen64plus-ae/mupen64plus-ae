@@ -277,6 +277,7 @@ class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyDepthToRDRAM", String.valueOf( game.glideN64Prefs.enableCopyDepthToRDRAM ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorFromRDRAM", boolToTF( game.glideN64Prefs.enableCopyColorFromRDRAM ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableN64DepthCompare", boolToTF( game.glideN64Prefs.enableN64DepthCompare ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "ForceDepthBufferClear", boolToTF( game.glideN64Prefs.forceDepthBufferClear ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "UseNativeResolutionFactor", String.valueOf( game.glideN64Prefs.useNativeResolutionFactor ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txFilterMode", String.valueOf( game.glideN64Prefs.txFilterMode ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "txEnhancementMode", String.valueOf( game.glideN64Prefs.txEnhancementMode ) );

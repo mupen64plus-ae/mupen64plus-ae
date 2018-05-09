@@ -510,6 +510,10 @@
             android:defaultValue="False"
             android:key="EnableN64DepthCompare"
             android:title="@string/gliden64_enable_n64_depth_compare_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="ForceDepthBufferClear"
+            android:title="@string/gliden64_enable_force_depth_buffer_clear" />
         <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/gliden64_use_native_resolution_factor_default"
             android:entries="@array/gliden64_use_native_resolution_factor_entries"
