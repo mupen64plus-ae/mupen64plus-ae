@@ -1,2 +1,2 @@
-#define PLUGIN_REVISION "9bda056"
-#define PLUGIN_REVISION_W L"9bda056"
+#define PLUGIN_REVISION "6ddaba8"
+#define PLUGIN_REVISION_W L"6ddaba8"

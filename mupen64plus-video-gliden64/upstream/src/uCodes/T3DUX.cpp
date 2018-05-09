@@ -155,7 +155,7 @@ void T3DUX_LoadObject(u32 pstate, u32 pvtx, u32 ptri, u32 pcol)
 			const u32 w1 = t32uxSetTileW1 | (tri->pal << 20);
 			const u32 newPal = _SHIFTR(w1, 20, 4);
 			if (pal != newPal) {
-				drawer.drawDMATriangles(pVtx - drawer.getDMAVerticesData());
+				drawer.drawDMATriangles(static_cast<u32>(pVtx - drawer.getDMAVerticesData()));
 				pVtx = drawer.getDMAVerticesData();
 				pal = newPal;
 				RDP_SetTile(t32uxSetTileW0, w1);
@@ -207,16 +207,15 @@ void T3DUX_LoadObject(u32 pstate, u32 pvtx, u32 ptri, u32 pcol)
 		}
 	}
 
-	drawer.drawDMATriangles(pVtx - drawer.getDMAVerticesData());
+	drawer.drawDMATriangles(static_cast<u32>(pVtx - drawer.getDMAVerticesData()));
 }
 
 void RunT3DUX()
 {
-	u32 pstate;
-	do {
+	while (true) {
 		u32 addr = RSP.PC[RSP.PCi] >> 2;
 		const u32 pgstate = ((u32*)RDRAM)[addr++];
-		pstate = ((u32*)RDRAM)[addr++];
+		const u32 pstate = ((u32*)RDRAM)[addr++];
 		const u32 pvtx = ((u32*)RDRAM)[addr++];
 		const u32 ptri = ((u32*)RDRAM)[addr++];
 		const u32 pcol = ((u32*)RDRAM)[addr++];
@@ -230,5 +229,5 @@ void RunT3DUX()
 		T3DUX_LoadObject(pstate, pvtx, ptri, pcol);
 		// Go to the next instruction
 		RSP.PC[RSP.PCi] += 24;
-	} while (pstate != 0);
+	};
 }
