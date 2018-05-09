@@ -47,7 +47,7 @@ extern void vsyncEnabled(int enabled);
 extern void pauseEmulator();
 extern void resumeEmulator();
 
-m64p_video_extension_functions vidExtFunctions = {11,
+m64p_video_extension_functions vidExtFunctions = {12,
                                                   VidExtFuncInit,
                                                   VidExtFuncQuit,
                                                   VidExtFuncListModes,
