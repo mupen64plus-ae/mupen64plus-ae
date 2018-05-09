@@ -51,21 +51,10 @@ AE_BRIDGE_INCLUDES := $(JNI_LOCAL_PATH)/ae-bridge/
 M64P_API_INCLUDES := $(JNI_LOCAL_PATH)/../mupen64plus-core/upstream/src/api/
 GL_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/GL
 
-COMMON_CFLAGS :=                    \
-    -O3                             \
-    -fomit-frame-pointer            \
-    -fvisibility=hidden
-
-COMMON_CPPFLAGS :=                  \
-    -fvisibility-inlines-hidden     \
-    -O3
+COMMON_FLAGS := -O3
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-COMMON_CFLAGS +=                    \
-    -march=armv7-a                  \
-    -mfloat-abi=softfp              \
-    -mfpu=neon
-COMMON_CPPFLAGS +=                  \
+COMMON_FLAGS +=                    \
     -march=armv7-a                  \
     -mfloat-abi=softfp              \
     -mfpu=neon
@@ -79,12 +68,15 @@ endif
 
 ifneq ($(NDK_DEBUG), 1)
 ifneq ($(HOST_OS),windows)
-    COMMON_CFLAGS += -flto
-    COMMON_CPPFLAGS += -flto
-    COMMON_LDFLAGS +=                   \
-        $(COMMON_CFLAGS)                \
-        $(COMMON_CPPFLAGS)
+    COMMON_FLAGS += -flto
+    COMMON_LDFLAGS += $(COMMON_FLAGS)
 endif
 endif
 
+COMMON_CFLAGS := $(COMMON_FLAGS)    \
+    -fomit-frame-pointer            \
+    -fvisibility=hidden
+
+COMMON_CPPFLAGS := $(COMMON_FLAGS)    \
+    -fvisibility-inlines-hidden
 
