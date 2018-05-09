@@ -192,6 +192,9 @@
     <ClCompile Include="..\..\src\backends\clock_ctime_plus_delta.c">
       <Filter>backends</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\device\dd\dd_controller.c">
+      <Filter>device\dd</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\plugin\dummy_audio.c">
       <Filter>plugin</Filter>
     </ClCompile>
@@ -225,7 +228,7 @@
     <ClCompile Include="..\..\src\device\r4300\cp1.c">
       <Filter>device\r4300</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\device\r4300\empty_dynarec.c">
+    <ClCompile Include="..\..\src\device\r4300\idec.c">
       <Filter>device\r4300</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\device\r4300\interrupt.c">
@@ -482,6 +485,9 @@
     <ClInclude Include="..\..\src\backends\clock_ctime_plus_delta.h">
       <Filter>backends</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\device\dd\dd_controller.h">
+      <Filter>device\dd</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\plugin\dummy_audio.h">
       <Filter>plugin</Filter>
     </ClInclude>
@@ -518,13 +524,10 @@
     <ClInclude Include="..\..\src\device\r4300\fpu.h">
       <Filter>device\r4300</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\device\r4300\idec.h">
+      <Filter>device\r4300</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\device\r4300\interrupt.h">
-      <Filter>device\r4300</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\device\r4300\macros.h">
-      <Filter>device\r4300</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\device\r4300\ops.h">
       <Filter>device\r4300</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\device\r4300\pure_interp.h">
@@ -534,9 +537,6 @@
       <Filter>device\r4300</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\device\r4300\recomp.h">
-      <Filter>device\r4300</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\device\r4300\recomph.h">
       <Filter>device\r4300</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\device\r4300\tlb.h">
@@ -698,6 +698,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\device\r4300\mips_instructions.def">
+      <Filter>device\r4300</Filter>
+    </None>
+    <None Include="..\..\src\device\r4300\opcodes.md">
       <Filter>device\r4300</Filter>
     </None>
     <None Include="..\..\src\device\r4300\new_dynarec\arm\linkage_arm.S">

@@ -27,6 +27,7 @@
 #include "dbg_breakpoints.h"
 #include "dbg_memory.h"
 #include "device/device.h"
+#include "device/r4300/cached_interp.h"
 #include "osal/preproc.h"
 
 #if !defined(NO_ASM) && (defined(__i386__) || (defined(__x86_64__) && defined(__GNUC__)))
@@ -122,7 +123,7 @@ static void decode_recompiled(struct r4300_core* r4300, uint32_t addr)
     if (r4300->cached_interp.blocks[addr>>12] == NULL)
         return;
 
-    if (r4300->cached_interp.blocks[addr>>12]->block[(addr&0xFFF)/4].ops == r4300->current_instruction_table.NOTCOMPILED)
+    if (r4300->cached_interp.blocks[addr>>12]->block[(addr&0xFFF)/4].ops == r4300->cached_interp.not_compiled)
     {
         strcpy(opcode_recompiled[0],"INVLD");
         strcpy(args_recompiled[0],"NOTCOMPILED");
@@ -332,12 +333,13 @@ uint8_t read_memory_8(struct device* dev, uint32_t addr)
 
 void write_memory_8(struct device* dev, uint32_t addr, uint8_t value)
 {
+    uint32_t word;
     uint32_t mask;
 
     mask = 0xFF << ((3 - (addr & 3)) * 8);
-    value <<= ((3 - (addr & 3)) * 8);
+    word = value << ((3 - (addr & 3)) * 8);
     
-    r4300_write_aligned_word(&dev->r4300, addr, value, mask);
+    r4300_write_aligned_word(&dev->r4300, addr, word, mask);
 }
 
 uint32_t get_memory_flags(struct device* dev, uint32_t addr)

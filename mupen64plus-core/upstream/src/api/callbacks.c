@@ -54,14 +54,14 @@ m64p_error SetStateCallback(ptr_StateCallback pFunc, void *Context)
 
 void DebugMessage(int level, const char *message, ...)
 {
-  char msgbuf[256];
+  char msgbuf[512];
   va_list args;
 
   if (pDebugFunc == NULL)
       return;
 
   va_start(args, message);
-  vsprintf(msgbuf, message, args);
+  vsnprintf(msgbuf, 512, message, args);
 
   (*pDebugFunc)(DebugContext, level, msgbuf);
 
