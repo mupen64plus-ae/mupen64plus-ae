@@ -68,15 +68,14 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/r4300/cached_interp.c                      \
     $(SRCDIR)/device/r4300/cp0.c                                \
     $(SRCDIR)/device/r4300/cp1.c                                \
-    $(SRCDIR)/device/r4300/empty_dynarec.c                      \
     $(SRCDIR)/device/r4300/instr_counters.c                     \
     $(SRCDIR)/device/r4300/interrupt.c                          \
     $(SRCDIR)/device/rcp/mi/mi_controller.c                     \
     $(SRCDIR)/device/r4300/pure_interp.c                        \
     $(SRCDIR)/device/r4300/r4300_core.c                         \
-    $(SRCDIR)/device/r4300/recomp.c                             \
     $(SRCDIR)/device/r4300/tlb.c                                \
     $(SRCDIR)/device/r4300/new_dynarec/new_dynarec.c            \
+    $(SRCDIR)/device/r4300/idec.c                               \
     $(SRCDIR)/device/rcp/rdp/rdp_core.c                         \
     $(SRCDIR)/device/rdram/rdram.c                              \
     $(SRCDIR)/device/rcp/ri/ri_controller.c                     \
@@ -87,6 +86,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/rcp/si/si_controller.c                     \
     $(SRCDIR)/device/rcp/vi/vi_controller.c                     \
     $(SRCDIR)/device/rcp/rdp/fb.c                               \
+    $(SRCDIR)/device/dd/dd_controller.c                         \
     $(SRCDIR)/osd/screenshot.c                                  \
     #$(SRCDIR)/debugger/dbg_breakpoints.c                       \
     #$(SRCDIR)/debugger/dbg_debugger.c                          \
