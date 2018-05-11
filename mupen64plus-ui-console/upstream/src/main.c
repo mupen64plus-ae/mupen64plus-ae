@@ -62,6 +62,7 @@ static m64p_handle l_ConfigCore = NULL;
 static m64p_handle l_ConfigVideo = NULL;
 static m64p_handle l_ConfigUI = NULL;
 static m64p_handle l_ConfigTransferPak = NULL;
+static m64p_handle l_Config64DD = NULL;
 
 static const char *l_CoreLibPath = NULL;
 static const char *l_ConfigDirPath = NULL;
@@ -254,6 +255,13 @@ static m64p_error OpenConfigurationHandles(void)
         return rval;
     }
 
+    rval = (*ConfigOpenSection)("64DD", &l_Config64DD);
+    if (rval != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_ERROR, "failed to open '64DD' configuration section");
+        return rval;
+    }
+
     rval = (*ConfigOpenSection)("UI-Console", &l_ConfigUI);
     if (rval != M64ERR_SUCCESS)
     {
@@ -306,6 +314,9 @@ static m64p_error OpenConfigurationHandles(void)
         SET_DEFAULT_STRING("GB-ram-%u", "", "Filename of the GB RAM to load into transferpak %u");
 #undef SET_DEFAULT_STRING
     }
+
+    (*ConfigSetDefaultString)(l_Config64DD, "IPL-ROM", "", "Filename of the 64DD IPL ROM");
+    (*ConfigSetDefaultString)(l_Config64DD, "Disk", "", "Filename of the disk to load into Disk Drive");
 
     if (bSaveConfig && ConfigSaveSection != NULL) { /* ConfigSaveSection was added in Config API v2.1.0 */
         (*ConfigSaveSection)("UI-Console");
@@ -368,6 +379,8 @@ static void printUsage(const char *progname)
            "    --set (param-spec)     : set a configuration variable, format: ParamSection[ParamName]=Value\n"
            "    --gb-rom-{1,2,3,4}     : define GB cart rom to load inside transferpak {1,2,3,4}\n"
            "    --gb-ram-{1,2,3,4}     : define GB cart ram to load inside transferpak {1,2,3,4}\n"
+           "    --dd-ipl-rom           : define 64DD IPL rom\n"
+           "    --dd-disk              : define disk to load into the disk drive\n"
            "    --core-compare-send    : use the Core Comparison debugging feature, in data sending mode\n"
            "    --core-compare-recv    : use the Core Comparison debugging feature, in data receiving mode\n"
            "    --nosaveoptions        : do not save the given command-line options in configuration file\n"
@@ -701,6 +714,16 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         PARSE_GB_CART_PARAM("--gb-rom-4", "GB-rom-4")
         PARSE_GB_CART_PARAM("--gb-ram-4", "GB-ram-4")
 #undef PARSE_GB_CART_PARAM
+        else if (strcmp(argv[i], "--dd-ipl-rom") == 0)
+        {
+            ConfigSetParameter(l_Config64DD, "IPL-ROM", M64TYPE_STRING, argv[i+1]);
+            i++;
+        }
+        else if (strcmp(argv[i], "--dd-disk") == 0)
+        {
+            ConfigSetParameter(l_Config64DD, "Disk", M64TYPE_STRING, argv[i+1]);
+            i++;
+        }
         else if (ArgsLeft == 0)
         {
             /* this is the last arg, it should be a ROM filename */
@@ -723,19 +746,16 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
     return M64ERR_INPUT_INVALID;
 }
 
-static char* media_loader_get_gb_cart_mem_file(void* cb_data, const char* mem, int control_id)
+static char* media_loader_get_filename(void* cb_data, m64p_handle section_handle, const char* section, const char* key)
 {
 #define MUPEN64PLUS_CFG_NAME "mupen64plus.cfg"
     m64p_handle core_config;
-    char key[64];
     char value[4096];
     const char* configdir = NULL;
     char* cfgfilepath = NULL;
 
     /* reset filename */
     char* mem_filename = NULL;
-
-    snprintf(key, sizeof(key), "GB-%s-%u", mem, control_id + 1);
 
     /* XXX: use external config API to force reload of file content */
     configdir = ConfigGetUserConfigPath();
@@ -755,7 +775,7 @@ static char* media_loader_get_gb_cart_mem_file(void* cb_data, const char* mem, i
         goto release_cfgfilepath;
     }
 
-    if (ConfigExternalGetParameter(core_config, "Transferpak", key, value, sizeof(value)) != M64ERR_SUCCESS) {
+    if (ConfigExternalGetParameter(core_config, section, key, value, sizeof(value)) != M64ERR_SUCCESS) {
         DebugMessage(M64MSG_ERROR, "Can't get parameter %s", key);
         goto close_config;
     }
@@ -769,13 +789,22 @@ static char* media_loader_get_gb_cart_mem_file(void* cb_data, const char* mem, i
     value[len-1] = '\0';
     mem_filename = strdup(value + 1);
 
-    ConfigSetParameter(l_ConfigTransferPak, key, M64TYPE_STRING, mem_filename);
+    ConfigSetParameter(section_handle, key, M64TYPE_STRING, mem_filename);
 
 close_config:
     ConfigExternalClose(core_config);
 release_cfgfilepath:
     free(cfgfilepath);
     return mem_filename;
+}
+
+
+static char* media_loader_get_gb_cart_mem_file(void* cb_data, const char* mem, int control_id)
+{
+    char key[64];
+
+    snprintf(key, sizeof(key), "GB-%s-%u", mem, control_id + 1);
+    return media_loader_get_filename(cb_data, l_ConfigTransferPak, "Transferpak", key);
 }
 
 static char* media_loader_get_gb_cart_rom(void* cb_data, int control_id)
@@ -788,11 +817,23 @@ static char* media_loader_get_gb_cart_ram(void* cb_data, int control_id)
     return media_loader_get_gb_cart_mem_file(cb_data, "ram", control_id);
 }
 
+static char* media_loader_get_dd_rom(void* cb_data)
+{
+    return media_loader_get_filename(cb_data, l_Config64DD, "64DD", "IPL-ROM");
+}
+
+static char* media_loader_get_dd_disk(void* cb_data)
+{
+    return media_loader_get_filename(cb_data, l_Config64DD, "64DD", "Disk");
+}
+
 static m64p_media_loader l_media_loader =
 {
     NULL,
     media_loader_get_gb_cart_rom,
-    media_loader_get_gb_cart_ram
+    media_loader_get_gb_cart_ram,
+    media_loader_get_dd_rom,
+    media_loader_get_dd_disk
 };
 
 
