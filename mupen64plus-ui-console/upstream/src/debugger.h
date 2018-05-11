@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - main.h                                                  *
+ *   Mupen64plus-ui-console - debugger.h                                   *
  *   Mupen64Plus homepage: https://mupen64plus.org/                        *
- *   Copyright (C) 2009 Richard42                                          *
+ *   Copyright (C) 2014 Will Nayes                                         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,13 +19,18 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __DEBUGGER_H__
+#define __DEBUGGER_H__
 
-extern void DebugMessage(int level, const char *message, ...);
-extern void DebugCallback(void *Context, int level, const char *message);
+extern int debugger_loop_wait;
 
-extern int  g_Verbose;
+typedef struct {
+  unsigned int addr;
+  unsigned char enabled;
+} breakpoint_t;
 
-#endif /* __MAIN_H__ */
+int debugger_setup_callbacks();
+int debugger_step();
+int debugger_loop(void *arg);
 
+#endif /* __DEBUGGER_H__ */

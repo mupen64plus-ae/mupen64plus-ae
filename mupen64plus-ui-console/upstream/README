@@ -1,3 +1,4 @@
+
 ===============================================================================
 -------------------------------------------------------------------------------
 Mupen64plus-ui-console README                                              v2.5
@@ -6,7 +7,7 @@ Mupen64plus-ui-console README                                              v2.5
 
 The latest documentation for this plugin can be found at:
 
-https://code.google.com/p/mupen64plus/wiki/UIConsoleUsage
+https://mupen64plus.org/wiki/index.php/UIConsoleUsage
 
 -------------------------------------------------------------------------------
 Console Options
@@ -33,6 +34,7 @@ Parameters:
     --corelib (filepath)  : use core library (filepath) (can be only filename or full path)
     --configdir (dir)     : force configation directory to (dir); should contain mupen64plus.cfg
     --datadir (dir)       : search for shared data files (.ini files, languages, etc) in (dir)
+    --debug               : launch console-based debugger (requires core lib built for debugging)
     --plugindir (dir)     : search for plugins in (dir)
     --sshotdir (dir)      : set screenshot directory to (dir)
     --gfx (plugin-spec)   : use gfx plugin given by (plugin-spec)
@@ -80,4 +82,82 @@ All you have to do to use this cheats is:
 
 mupen64plus --cheats 0,1,2 "/path/to/my/rom.v64"
 
+-------------------------------------------------------------------------------
+Debugger
+-------------------------------------------------------------------------------
+
+Setup
+=====
+
+You must use a mupen64plus core library which was built with the DEBUGGER flag set.
+
+Running
+=======
+
+Use the --debug command-line option to enable the console debugger.
+
+The emulator mode should be set to "interpreter", as the dynarec seems to cause
+issues when interacting with the debugging API. This can be done with the R4300Emulator
+config setting or with the --emumode flag.
+
+Usage
+=====
+
+Once the emulator boots, it will be paused by default. You will be presented
+with a prompt as follows:
+
+(dbg) 
+
+The following commands can be entered:
+
+run
+  Unpauses the game.
+
+pause
+  Pauses the game.
+
+step <num-steps>
+  When paused, instructs the emulator to make a single step, or a series of
+  steps if num-steps is provided.
+
+regs
+  Prints out general purpose register values.
+
+pc
+  Print current value of Program Counter register
+
+pc-1
+  Print previous value of Program Counter register
+
+asm
+  Print assembly language instruction at current PC location
+
+mem
+  Print memory values. Several forms are supported:
+  
+  mem <addr>        Print one 32-bit word at <addr>
+  
+  mem /N <addr>     Print <N> 32-bit words at <addr>
+  mem /Nb <addr>    Print <N> 8-bit bytes at <addr>
+  mem /Nh <addr>    Print <N> 16-bit half-words at <addr>
+  mem /Nw <addr>    Print <N> 32-bit words at <addr>
+  mem /Nd <addr>    Print <N> 64-bit double-words at <addr>
+
+  mem /NxM <addr>   Print <N> rows of <M> 32-bit words at <addr>
+  mem /NxMb <addr>  Print <N> rows of <M> 8-bit bytes at <addr>
+  mem /NxMh <addr>  Print <N> rows of <M> 16-bit half-words at <addr>
+  mem /NxMw <addr>  Print <N> rows of <M> 32-bit words at <addr>
+  mem /NxMd <addr>  Print <N> rows of <M> 64-bit double-words at <addr>
+
+bp add <addr>
+  Adds a breakpoint at a given address.
+
+bp rm <addr|index>
+  Removes a breakpoint by address or number.
+
+bp list
+  Lists all breakpoints.
+
+exit|quit
+  Stop emulator and quit debugger
 

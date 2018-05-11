@@ -1,6 +1,6 @@
 #/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 # *   Mupen64plus - Makefile                                                *
-# *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+# *   Mupen64Plus homepage: https://mupen64plus.org/                        *
 # *   Copyright (C) 2009 Richard42                                          *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
@@ -48,7 +48,7 @@ ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   OS = MINGW
 endif
 ifeq ("$(OS)","NONE")
-  $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
+  $(error OS type "$(UNAME)" not supported.  Please file bug report at 'https://github.com/mupen64plus/mupen64plus-core/issues')
 endif
 
 # detect system architecture, only if it matters for build flags
@@ -76,8 +76,10 @@ ifeq ($(OS), MINGW)
   CFLAGS += -lpthread
   LDLIBS += -lpthread
 else
-  CFLAGS += -pthread
-  LDLIBS += -pthread
+  ifneq ($(OS), OSX)
+    CFLAGS += -pthread
+    LDLIBS += -pthread
+  endif
 endif
 
 # set special flags per-system
@@ -85,9 +87,8 @@ ifeq ($(OS), LINUX)
   LDLIBS += -ldl
 endif
 ifeq ($(OS), OSX)
-  #xcode-select has been around since XCode 3.0, i.e. OS X 10.5
-  OSX_SDK_ROOT = $(shell xcode-select -print-path)/Platforms/MacOSX.platform/Developer/SDKs
-  OSX_SDK_PATH = $(OSX_SDK_ROOT)/$(shell ls $(OSX_SDK_ROOT) | tail -1)
+  OSX_SDK_PATH = $(shell xcrun --sdk macosx --show-sdk-path)
+  LDLIBS += -framework CoreFoundation
 
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
@@ -234,6 +235,7 @@ SOURCE = \
 	$(SRCDIR)/cheat.c \
 	$(SRCDIR)/compare_core.c \
 	$(SRCDIR)/core_interface.c \
+	$(SRCDIR)/debugger.c \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/plugin.c
 

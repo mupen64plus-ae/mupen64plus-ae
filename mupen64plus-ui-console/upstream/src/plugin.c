@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-ui-console - plugin.c                                     *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2009 Richard42                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -22,6 +22,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#if defined(__APPLE__)
+    #include <CoreFoundation/CoreFoundation.h>
+#endif
 
 #include "core_interface.h"
 #include "m64p_common.h"
@@ -123,6 +127,29 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
         const char *plugindir = (*ConfigGetParamString)(ConfigUI, "PluginDir");
         lib_filelist = osal_library_search(plugindir);
     }
+
+    /* for MacOS, look for plugins in the Frameworks folder of the app bundle */
+#if defined(__APPLE__)
+    if (lib_filelist == NULL)
+    {
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        if (mainBundle != NULL)
+        {
+            CFURLRef frameworksURL = CFBundleCopyPrivateFrameworksURL(mainBundle);
+            if (frameworksURL != NULL)
+            {
+                char libPath[1024];
+                if (CFURLGetFileSystemRepresentation(frameworksURL, TRUE, (uint8_t *) libPath, 1024))
+                {
+                    strcat(libPath, "/");
+                    DebugMessage(M64MSG_INFO, "Searching for plugins at: %s", libPath);
+                    lib_filelist = osal_library_search(libPath);
+                }
+                CFRelease(frameworksURL);
+            }
+        }
+    }
+#endif
 
     /* if still no plugins found, search some common system folders */
     if (lib_filelist == NULL)

@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-ui-console - core_interface.c                             *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -22,6 +22,10 @@
 /* This file contains the routines for attaching to the Mupen64Plus core
  * library and pointers to the core functions
  */
+
+#if defined(__APPLE__)
+    #include <CoreFoundation/CoreFoundation.h>
+#endif
 
 #include <stdio.h>
 
@@ -129,6 +133,24 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
     {
         rval = osal_dynlib_open(&CoreHandle, COREDIR OSAL_DEFAULT_DYNLIB_FILENAME);
+    }
+#endif
+    /* for MacOS, look for the library in the Frameworks folder of the app bundle */
+#if defined(__APPLE__)
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    if (mainBundle != NULL)
+    {
+        CFURLRef frameworksURL = CFBundleCopyPrivateFrameworksURL(mainBundle);
+        if (frameworksURL != NULL)
+        {
+            char libPath[1024 + 32];
+            if (CFURLGetFileSystemRepresentation(frameworksURL, TRUE, (uint8_t *) libPath, 1024))
+            {
+                strcat(libPath, "/" OSAL_DEFAULT_DYNLIB_FILENAME);
+                rval = osal_dynlib_open(&CoreHandle, libPath);
+            }
+            CFRelease(frameworksURL);
+        }
     }
 #endif
     /* then try just the filename of the shared library, to let dlopen() look through the system lib dirs */
