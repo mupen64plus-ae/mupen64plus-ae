@@ -22,6 +22,7 @@ LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/osal_dynamiclib_unix.c    \
     $(SRCDIR)/osal_files_unix.c         \
     $(SRCDIR)/plugin.c                  \
+    $(SRCDIR)/debugger.c                 \
 
 LOCAL_CFLAGS :=                                 \
     $(COMMON_CFLAGS)                            \
