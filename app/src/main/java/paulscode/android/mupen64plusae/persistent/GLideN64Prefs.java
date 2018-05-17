@@ -8,7 +8,7 @@ import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
 
 public class GLideN64Prefs {
 
-    public static final int VERSION = 20;
+    public static final int VERSION = 21;
 
     /** Crop resulted image (
      * 0=disable,
