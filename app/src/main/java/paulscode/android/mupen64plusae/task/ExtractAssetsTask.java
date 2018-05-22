@@ -58,7 +58,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
     static {
         synchronized (ExtractAssetsTask.class) {
             mAssetVersions.put("mupen64plus_data/GLideN64.custom.ini", 1);
-            mAssetVersions.put("mupen64plus_data/Glide64mk2.ini", 1);
+            mAssetVersions.put("mupen64plus_data/Glide64mk2.ini", 2);
             mAssetVersions.put("mupen64plus_data/RiceVideoLinux.ini", 1);
             mAssetVersions.put("mupen64plus_data/doc/CREDITS", 1);
             mAssetVersions.put("mupen64plus_data/doc/INSTALL", 1);
