@@ -45,8 +45,7 @@
     <string name="menuItem_paks">Controller Paks</string>
  <!-- capitalize since trademark -->
     <string name="menuItem_pak_empty">Leer</string>
- <!-- capitalize since trademark -->
-    <string name="menuItem_setIme">IME wechseln</string>
+ <string name="menuItem_setIme">IME wechseln</string>
     <string name="menuItem_exit">Verlassen</string>
 
     <!-- Input Mapping Activity -->
@@ -64,10 +63,6 @@
     <string name="menuItem_globalSettings">Allgemeine Einstellungen</string>
     <string name="menuItem_sensorConfiguration">Sensorkonfiguration</string>
     <string name="menuItem_profiles">Profile</string>
-    <string name="menuItem_emulationProfiles">Emulations-Profile</string>
-    <string name="menuItem_touchscreenProfiles">Touchscreen-Profile</string>
-    <string name="menuItem_controllerProfiles">Controller-Profile</string>
-    <string name="menuItem_customCheats">Benutzerdefinierte Cheats</string>
     <string name="menuItem_help">Hilfe</string>
     <string name="menuItem_faq">FAQ</string>
     <string name="menuItem_helpForum">Hilfeforum</string>
@@ -125,10 +120,12 @@
     <string name="toast_loadingFile">%1$s wird geladen…</string>
     <string name="toast_savingFile">%1$s wird gespeichert…</string>
     <string name="toast_overwritingFile">%1$s wird überschrieben…</string>
-    <string name="toast_loadingGameInfo">Spielinformationen laden...</string>
+    <string name="toast_loadingGameInfo">Spielinformationen werden geladen...</string>
     <string name="toast_savingScreenshot">Screenshot wird gespeichert...</string>
     <string name="toast_canceling">Breche ab...</string>
     <string name="toast_pleaseWait">Bitte warten...</string>
+    <string name="toast_paused">Pausiert…</string>
+    <string name="toast_running">Läuft…</string>
     <!-- Something happened (use '.') -->
     <string name="toast_nativeMainFailure01">Der Anfangsbefehlszeilenparameter konnte nicht geparsert werden.</string>
     <string name="toast_nativeMainFailure02">Kernbibliothek konnte nicht anhängt werden.</string>
@@ -177,13 +174,14 @@
     <string name="actionShare_title">Teilen</string>
 
     <!-- Preference Screens -->
-    <string name="screenGlobalSettings_title">Allgemeine Einstellungen</string>
+    <string name="screenGlobalSettings_title">Globale Einstellungen</string>
     <string name="screenGlobalSettings_summary">Anzeige, Audio, Speicher und Debug Einstellungen</string>
     <string name="screenCheats_title">Cheats</string>
     <string name="screenCheats_summaryEnabled">Aktiviert</string>
     <string name="screenCheats_summaryDisabled">Deaktiviert</string>
     <string name="screenAdvanced_title">Erweitert</string>
     <string name="screenAdvanced_CountPerOpTitle">Anzahl pro Arbeitsvorgang</string>
+
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Cheatoptionen (lange drücken für Anmerkungen)</string>
     <string name="categoryGln64_title">Gln64-Einstellungen</string>
@@ -191,12 +189,12 @@
     <string name="categoryGlide64_title">Glide64-Einstellungen</string>
     <string name="categoryGlide64Advanced_title">Erweiterte Glide64-Einstellungen</string>
     <string name="categoryGliden64_title">GlideN64-Einstellungen</string>
-    <string name="categoryAngrylion_title">Angrylion-Einstellungen</string>
     <string name="categoryLibrary_title">Bibliothek</string>
     <string name="categoryDisplay_title">Anzeige</string>
     <string name="categoryAudio_title">Audio</string>
     <string name="categoryTouchscreen_title">Touchscreen</string>
     <string name="categoryInput_title">Eingabe</string>
+
     <string name="categoryData_title">Daten</string>
     <string name="categoryGameSettings_title">Spiel-spezifische Einstellungen</string>
     <string name="categoryGameSettings_titleNamed">%1$s Einstellungen</string>
@@ -207,6 +205,7 @@
     <string name="touchscreenFeedback_summary">Bei Tastendruck vibrieren</string>
     <string name="inputVolumeMappable_title">Belegbare Lautstärketasten</string>
     <string name="inputVolumeMappable_summary">Ermöglicht, die Lautstärketasten mit Steuerelementen zu belegen</string>
+    <string name="inputMenuMappable_title">Belegbare Menütasten</string>
     <string name="displayImmersiveMode_title">Immersive-Modus</string>
     <string name="displayImmersiveMode_summary">Die Navigation und Statusleisten vollständig verstecken</string>
     <string name="gln64Fog_title">Nebel</string>
@@ -217,7 +216,7 @@
     <string name="gln64ScreenClear_summary">Deaktivieren für mehr Geschwindigkeit (könnte Video-Glitches verursachen)</string>
     <string name="gln64AlphaTest_title">Alphatest</string>
     <string name="gln64AlphaTest_summary">Deaktivieren für mehr Geschwindigkeit (verursacht schwarze Texturen)</string>
-    <string name="gln64HackDepth_title">Hacke Tiefenkoordinaten</string>
+    <string name="gln64HackDepth_title">Tiefenkoordinaten hacken</string>
     <string name="gln64HackDepth_summary">Kann blinkende Texturen in einigen Spielen beheben</string>
     <string name="riceAutoFrameskip_title">Auto-Frameskip</string>
     <string name="riceAutoFrameskip_summary">Verbessert die Spielgeschwindigkeit auf Kosten der Framerate</string>
@@ -241,18 +240,18 @@
     <string name="galleryRecentlyPlayed">Zuletzt gespielt</string>
     <string name="galleryLibrary">Bibliothek</string>
 
-    <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
     <string name="touchscreenAutoHold_title">Knopf autom. halten</string>
     <string name="touchscreenAutoHold_entryDisabled">Deaktiviert</string>
     <string name="touchscreenAutoHold_entryLongPress">Bei langem Drücken</string>
     <string name="touchscreenAutoHold_entrySlideOut">Beim Wegsliden</string>
-    <string name="touchscreenAnimation_title">Visuelles Feedback</string>
+    <string name="touchscreenAnimation_title">Visuelle Rückmeldung</string>
     <string name="touchscreenAnimation_summary">Joystick animieren</string>
     <string name="touchscreenInvertTouchXAxis_summary">X-Achse umkehren</string>
     <string name="touchscreenInvertTouchYAxis_summary">Y-Achse umkehren</string>
     <string name="touchscreenStyle_title">Knopf-Aussehen</string>
     <string name="touchscreenStyle_entryOutline">Umrandung</string>
     <string name="touchscreenStyle_entryShaded">Schattiert</string>
+    <string name="touchscreenStyle_entryJoshaGibs">JoshaGibs-Stil</string>
     <string name="touchscreenStyle_entryCustom">Benutzerdefiniert</string>
 
     <string name="displayOrientation_title">Bildschirmausrichtung</string>
@@ -260,10 +259,11 @@
     <string name="displayOrientation_entryReverseLandscape">Querformat, umgekehrt</string>
     <string name="displayOrientation_entryPortrait">Hochformat</string>
     <string name="displayOrientation_entryReversePortrait">Hochformat, umgekehrt</string>
+    <string name="displayOrientation_entryAuto">Automatisch</string>
     <string name="displayPosition_title">Vertikale Bildschirmposition</string>
-    <string name="displayPosition_entryBottom">Unterseite</string>
+    <string name="displayPosition_entryBottom">Unten</string>
     <string name="displayPosition_entryMiddle">Mitte</string>
-    <string name="displayPosition_entryTop">Oberseite</string>
+    <string name="displayPosition_entryTop">Oben</string>
     <string name="displayResolution_title">Gerenderte Auflösung</string>
     <string name="displayResolution_entryNative">Nativ (höchste Qualität)</string>
     <string name="displayResolution_entry960x720">960 x 720</string>
@@ -303,7 +303,6 @@
     <string name="videoHardwareType_entryCustom">Benutzerdefiniertes Profil</string>
     <string name="videoPolygonOffset_title">Polygonversatz</string>
     <string name="videoPolygonOffset_summary">Benutzerdefinierte Verzerrung der Flimmerreduktion</string>
-    <string name="gln64Frameskip_title">Frameskip</string>
     <string name="gln64Frameskip_entryNever">Frames nie überspringen</string>
     <string name="gln64Frameskip_entryUpTo1">Nicht mehr als 1 Frame</string>
     <string name="gln64Frameskip_entryUpTo2">Nicht mehr als 2 Frames</string>
@@ -338,6 +337,7 @@
     <string name="gliden64_cropmode_title">Zuschneidemodus</string>
     <string name="gliden64_cropmode_disabled">Deaktiviert</string>
     <string name="gliden64_cropmode_auto">Automatisch</string>
+    <string name="gliden64_multisampling_title">Multisampling-Stufe</string>
     <string name="gliden64_multisampling_entry_none">Aus</string>
     <string name="gliden64_multisampling_entry_two">2</string>
     <string name="gliden64_multisampling_entry_four">4</string>
@@ -347,11 +347,14 @@
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-Punkt</string>
     <string name="gliden64_bilinear_mode_entry_standard">Standard</string>
     <string name="gliden64_category_general_title">Allgemein</string>
+    <string name="gliden64_widescreen_hack_title">Breitbildschirmhack</string>
+    <string name="gliden64_enable_lod_title">LOD-Emulation aktivieren</string>
     <string name="gliden64_correct_texrect_coords_off">Aus</string>
     <string name="gliden64_correct_texrect_coords_auto">Automatisch</string>
     <string name="gliden64_correct_texrect_coords_force">Erzwingen</string>
     <string name="gliden64_category_fb_title">Bildspeicheremulation</string>
     <string name="gliden64_swap_frame_buffers_title">Bildspeicher auslagern</string>
+    <string name="gliden64_swap_frame_buffers_entry_on_buffer_update">Bei Pufferaktualisierung</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_title">Farbpuffer in RDRAM kopieren</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_off">Nicht kopieren</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_title">Tiefenpuffer in RDRAM kopieren</string>
@@ -443,13 +446,13 @@
     <string name="r4300Emulator_entryCachedInterpreter">Gecachter Interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamischer Recompiler (dynarec)</string>
     <string name="displayZoom_title">Zoom</string>
-    
     <string name="audioPlugin_title">Audioplugin</string>
     <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">Kein Debug (Audio ist deaktiviert, keine Geschwindigkeitsbegrenzung)</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
     <string name="audioSLESBufferNbr_title">Audio-Puffernummer</string>
     <string name="audioSLESRate_title">Abtastrate</string>
+    <string name="audioSLESRate_entry_orig">Nach Spiel festlegen</string>
     <string name="localeOverride_entrySystemDefault">Systemstandard</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
@@ -461,10 +464,10 @@
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
     <string name="pathPreference_dialogTitle">Ausgewählter Ordner: %1$s</string>
-    <string name="pathHiResTextures_title">Texturenpaket importieren</string>
-    <string name="pathHiResTextures_summary">Benutzerdefinierte Texturen (ZIP-Format) auf ein Spiel anwenden</string>
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Speicherstand-Ordner</string>
+    <string name="pathAppData_title">Appdatenordner</string>
+
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multiplayer</string>
     <string name="playerMap_summary">Controller jedes Spielers festlegen</string>
@@ -520,7 +523,7 @@
     <string name="cheatEditor_edit">Cheats bearbeiten</string>
     <string name="cheatEditor_help">Hilfe</string>
     <string name="cheatEditor_confirm">Sind Sie sicher?</string>
-    <string name="cheatEditor_info">Cheat Informationen</string>
+    <string name="cheatEditor_info">Cheat-Informationen</string>
     <string name="cheatEditor_saveConfirm">Cheat-Datei speichern?</string>
     <string name="cheatEditor_edit1">Cheat bearbeiten</string>
     <string name="cheatEditor_edit2">Erweiterten Cheat bearbeiten</string>
@@ -540,16 +543,17 @@
     <string name="cheatEditor_add_cheats">Cheat hinzufügen</string>
     <string name="cheatEditor_remove_option">Option entfernen</string>
 
-    <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>
+    <string name="pathHiResTexturesTask_title">Texturen werden entpackt…</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>
-    <!-- Scan Roms Dialog -->
-    <string name="scanRomsDialog_selectRom">Eine ROM-Datei oder einen ganzen Ordner zum Scannen auswählen</string>
     <string name="scanRomsDialog_searchZips">Suche nach zip-Dateien</string>
     <string name="scanRomsDialog_downloadArt">Lade das Cover herunter</string>
     <string name="scanRomsDialog_clearGallery">Lösche die Galerie vor dem Hinzufügen</string>
     <string name="scanRomsDialog_scanSubdirectories">Unterverzeichnisse absuchen</string>
     <string name="scanRomsDialog_reset">Zurücksetzen</string>
 
+    <!-- ROM unzipping -->
+    <string name="extractRomTask_title">ROM wird extrahiert…</string>
+    <string name="extractRomTask_message">ROM-Abbild wird extrahiert</string>
     <!-- ROM Scanning -->
     <string name="scanning_title">Überprüfung...</string>
 
@@ -588,6 +592,9 @@
     <string name="touchscreenProfileActivity_autoHoldable">Auto-haltbar</string>
 
     <string name="sensorConfig_activateOnStart">Beim Spielstart aktivieren</string>
+    <string name="sensorConfig_joystickXEmulation">Joystick X-Achsen-Emulation</string>
+    <string name="sensorConfig_joystickYEmulation">Joystick Y-Achsen-Emulation</string>
+    <string name="sensorConfig_angle">IDLE-Winkel (°)</string>
     <string name="sensorConfig_invertAxis">Achse umkehren</string>
     <string name="sensorConfig_axisCustom">Benutzerdefiniert</string>
     <string name="sensorConfig_axisDisabled">Deaktiviert</string>
@@ -650,4 +657,4 @@
     <string name="diagnosticActivity_textKey_text">Knopf oder Taste drücken…</string>
     <string name="diagnosticActivity_textMotion_text">Bildschirm oder Joystick berühren…</string>
 
-</resources>
+    </resources>

@@ -49,8 +49,7 @@
     <string name="menuItem_pak_mem">Memory Pak (карта памяти)</string>
  <!-- capitalize since trademark -->
     <string name="menuItem_pak_rumble">Rumble Pak (вибро)</string>
- <!-- capitalize since trademark -->
-    <string name="menuItem_setIme">Сменить IME</string>
+ <string name="menuItem_setIme">Сменить IME</string>
     <string name="menuItem_exit">Выход</string>
 
     <!-- Input Mapping Activity -->
@@ -68,10 +67,6 @@
     <string name="menuItem_globalSettings">Глобальные настройки</string>
     <string name="menuItem_sensorConfiguration">Конфигурации сенсора</string>
     <string name="menuItem_profiles">Профили</string>
-    <string name="menuItem_emulationProfiles">Профили эмуляции</string>
-    <string name="menuItem_touchscreenProfiles">Профили тачскрина</string>
-    <string name="menuItem_controllerProfiles">Профили контроллера</string>
-    <string name="menuItem_customCheats">Пользовательские читы</string>
     <string name="menuItem_help">Помощь</string>
     <string name="menuItem_faq">Вопросы-ответы</string>
     <string name="menuItem_helpForum">Форум помощи</string>
@@ -84,7 +79,6 @@
     <string name="menuItem_hardwareInfo">Системная информация</string>
     <string name="menuItem_Tools">Инструменты</string>
     <string name="menuItem_Extract">Добавить текстурный пак</string>
-    <string name="menuItem_Clear">Очистить текстурные паки/Кэш</string>
     <string name="menuItem_localeOverride">Язык</string>
 
     <!-- ManageProfilesActivity -->
@@ -115,23 +109,12 @@
     <string name="hint_profileName">Имя профиля</string>
     <string name="hint_profileComment">Описание (не обязательно)</string>
 
-    <!-- ************************************************************************** -->
-    <!-- Toast Messages -->
-    <!-- Developers: Follow punctuation and grammar as shown below -->
-    <!-- ************************************************************************** -->
-
-
-    <!-- Something happening (typically use '-ing' and '…') -->
-    <string name="toast_rebuildingCheats">Перестройка базы данных читов…</string>
     <string name="toast_launchingEmulator">Запуск эмулятора…</string>
-    <string name="toast_loadingSession">Автовозобновление игры…</string>
-    <string name="toast_savingSession">Автосохранение игры…</string>
     <string name="toast_loadingSlot">Слот загрузки %1$d…</string>
     <string name="toast_savingSlot">Слот сохранения %1$d…</string>
     <string name="toast_loadingFile">Загрузка %1$s…</string>
     <string name="toast_savingFile">Сохранение %1$s…</string>
     <string name="toast_overwritingFile">Перезапись %1$s…</string>
-    <string name="toast_loadingGameInfo">Загрузка информации игры…</string>
     <string name="toast_savingScreenshot">Сохранение скриншота…</string>
     <string name="toast_canceling">Отмена…</string>
     <string name="toast_pleaseWait">Пожалуйста подождите…</string>
@@ -150,7 +133,6 @@
     <string name="toast_nativeMainFailure12">Ошибка загрузки плагинов.</string>
     <string name="toast_nativeMainFailure13">Ядро не смогло подключить плагины.</string>
     <string name="toast_nativeMainFailureUnknown">Неизвестная ошибка запуска.</string>
-    <string name="toast_usingSlot">Теперь используется слот %1$d.</string>
     <string name="toast_sdInaccessible">Данные приложения отсутствуют, попытка перезагрузки.</string>
 
     <!-- ************************************************************************** -->
@@ -182,9 +164,6 @@
     <string name="actionCheatEditor_summary">Добавить, изменить или удалить пользовательские читы</string>
     <string name="actionShare_title">Поделиться</string>
 
-    <!-- Preference Screens -->
-    <string name="screenGlobalSettings_title">Глобальные настройки</string>
-    <string name="screenGlobalSettings_summary">Настройки отображения, аудио, хранилища и отладки</string>
     <string name="screenCheats_title">Читы</string>
     <string name="screenCheats_summaryEnabled">Включено</string>
     <string name="screenCheats_summaryDisabled">Отключено</string>
@@ -193,21 +172,17 @@
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Настройки читов (долгое нажатие для заметок)</string>
-    <string name="categoryGln64_title">Настройки Gln64</string>
     <string name="categoryRice_title">Настройки Rice</string>
     <string name="categoryGlide64_title">Настройки Glide64 </string>
     <string name="categoryGlide64Advanced_title">Расширенные настройки Glide64</string>
-    <string name="categoryGliden64_title">Настройки GlideN64 </string>
-    <string name="categoryAngrylion_title">Настройки Angrylion </string>
     <string name="categoryLibrary_title">Библиотека</string>
     <string name="categoryDisplay_title">Отображение</string>
     <string name="categoryAudio_title">Аудио</string>
     <string name="categoryTouchscreen_title">Тачскрин</string>
     <string name="categoryInput_title">Ввод</string>
-    <string name="categoryData_title">Данные</string>
-    <string name="categoryGameSettings_title">Игровые настройки</string>
-    <string name="categoryGameSettings_titleNamed">%1$s настройки</string>
 
+    <string name="categoryData_title">Данные</string>
+    <string name="categoryGameSettings_title">Настройки для этой игры</string>
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Включить читы</string>
     <string name="touchscreenFeedback_title">Тактильная обратная связь</string>
@@ -226,14 +201,7 @@
     <string name="displayImmersiveMode_summary">Полностью спрятать панель навигации и статус бар</string>
     <string name="gln64Fog_title">Туман</string>
     <string name="gln64Fog_summary">(Требует доработки)</string>
-    <string name="gln64Sai_title">2xSaI текстурный фильтр</string>
-    <string name="gln64Sai_summary">Уменьшить текстурную пикселизацию</string>
     <string name="gln64ScreenClear_title">Принудительно очистить экран</string>
-    <string name="gln64ScreenClear_summary">Отключить для ускорения (может привести к графическим ошибкам)</string>
-    <string name="gln64AlphaTest_title">Альфа тест</string>
-    <string name="gln64AlphaTest_summary"> Отключить для ускорения (приводит к чёрным текстурам)</string>
-    <string name="gln64HackDepth_title">Взлом координат глубины</string>
-    <string name="gln64HackDepth_summary">Может исправить дрожащие текстуры в некоторых играх</string>
     <string name="riceAutoFrameskip_title">Авто пропуск кадров</string>
     <string name="riceAutoFrameskip_summary">Повышает скорость игры за счёт частоты кадров</string>
     <string name="riceFastTexture_title">Быстрая загрузка текстур</string>
@@ -261,12 +229,10 @@
     <string name="galleryRecentlyPlayed"> Недавние игры </string>
     <string name="galleryLibrary">Библиотека</string>
 
-    <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
     <string name="touchscreenAutoHold_title">Авто удерживание кнопки</string>
     <string name="touchscreenAutoHold_entryDisabled">Отключено</string>
     <string name="touchscreenAutoHold_entryLongPress">При долгом нажатии</string>
     <string name="touchscreenAutoHold_entrySlideOut">При проведении</string>
-    <string name="touchscreenAnimation_title">Визуальная обратная связь</string>
     <string name="touchscreenAnimation_summary">Анимировать джойстик</string>
     <string name="touchscreenInvertTouchXAxis_summary">Инвертировать ось Х</string>
     <string name="touchscreenInvertTouchYAxis_summary">Инвертировать ось Y</string>
@@ -281,10 +247,6 @@
     <string name="displayOrientation_entryReverseLandscape">Перевёрнутая Горизонтальная</string>
     <string name="displayOrientation_entryPortrait">Вертикальная</string>
     <string name="displayOrientation_entryReversePortrait">Перевёрнутая Вертикальная</string>
-    <string name="displayPosition_title">Вертикальная позиция экрана</string>
-    <string name="displayPosition_entryBottom">Низ</string>
-    <string name="displayPosition_entryMiddle">Середина</string>
-    <string name="displayPosition_entryTop">Верх</string>
     <string name="displayResolution_title">Разрешение рэндера</string>
     <string name="displayResolution_entryNative">Родное (Высшее качество)</string>
     <string name="displayResolution_entry960x720">960 x 720</string>
@@ -295,9 +257,6 @@
     <string name="displayResolution_entry160x120">160 x 120 (Лучшая частота кадров)</string>
     <string name="displayScaling_title">Маштабирование экрана</string>
     <string name="displayScaling_entryOriginal">Оригинальное\n<small>Заполнение экрана, не искажает изображение (чёрные полосы по краям)</small></string>
-    <string name="displayScaling_entryNone">Ничего\n<small>Использовать исходное разрешение, как выбрано выше</small></string>
-    <string name="displayScaling_entryZoom">Масштабирование\n<small>Заполнение экрана, не искажает изображение (чёрные  полосы по краям)</small></string>
-    <string name="displayScaling_entryCrop">Обрезка\n<small>Заполнение экрана, не искажает изображение (обрезка по краям)</small></string>
     <string name="displayScaling_entryStretch">Растягивание\n<small> Заполнение экрана, нарушение пропорций изображения (нет чёрных полос) </small></string>
     <string name="displayFps_title">Частота кадров</string>
     <string name="displayFps_entryOff">Выключить</string>
@@ -311,9 +270,7 @@
     <string name="fix_GLideN64_summary">Исправляет проблемы с перевёрнутым экраном, которые возникают на некоторых устройствах при использовании GLideN64</string>
     <string name="videoPlugin_title">Видео плагин</string>
     <string name="videoPlugin_entryNone">Нет (Видео отключено)</string>
-    <string name="videoPlugin_entryGln64">gln64\n<small>(адаптация GLN64 v0.4.1)</small></string>
     <string name="videoPlugin_entryRice">rice\n<small>(адаптация Rice Video v6.1.0(b))</small></string>
-    <string name="videoPlugin_entryAngrylion">angrylion\n<small>(angrylion программный визуализатолр)</small></string>
     <string name="videoPlugin_entryGlide64">glide64\n<small>(адаптация Glide64 Final (10th Anniversary))</small></string>
     <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 beta)</small></string>
     <string name="videoHardwareType_title">Уменьшение мерцания</string>
@@ -329,17 +286,7 @@
     <string name="videoPolygonOffset_title">Смещение полигонов</string>
     <string name="videoPolygonOffset_summary">Кастомное уменьшение мерцания смещения</string>
     <string name="gln64Frameskip_title">Пропуск кадров</string>
-    <string name="gln64Frameskip_entryNever">Никогда не пропускать</string>
-    <string name="gln64Frameskip_entryUpTo1">Не больше 1 кадра</string>
-    <string name="gln64Frameskip_entryUpTo2">Не больше 2 кадров</string>
-    <string name="gln64Frameskip_entryUpTo3">Не больше 3 кадров</string>
-    <string name="gln64Frameskip_entryUpTo4"> Не больше 4 кадров</string>
-    <string name="gln64Frameskip_entryUpTo5">Не больше 5 кадров</string>
-    <string name="gln64Frameskip_entryExactly1">Точно 1 кадр</string>
-    <string name="gln64Frameskip_entryExactly2">Точно 2 кадра</string>
-    <string name="gln64Frameskip_entryExactly3">Точно 3 кадра </string>
-    <string name="gln64Frameskip_entryExactly4">точно 4 кадра </string>
-    <string name="gln64Frameskip_entryExactly5">Точно 5 кадров </string>
+    <string name="gln64Frameskip_entryNever">Никогда не пропускать кадры</string>
     <string name="riceScreenUpdate_title">Метод обновления экрана</string>
     <string name="riceScreenUpdate_entryRomDefault">Ром стандарт</string>
     <string name="riceScreenUpdate_entryVIOriginUpdate">VI обновление источника</string>
@@ -367,8 +314,6 @@
     <string name="gliden64_multisampling_entry_none">Выключено</string>
     <string name="gliden64_multisampling_entry_two">2</string>
     <string name="gliden64_multisampling_entry_four">4</string>
-    <string name="gliden64_multisampling_entry_eight">8</string>
-    <string name="gliden64_multisampling_entry_sixteen">16</string>
     <string name="gliden64_bilinear_mode_title">Режим билинейной фильтрации</string>
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-point</string>
     <string name="gliden64_bilinear_mode_entry_standard">Стандартный</string>
@@ -398,11 +343,9 @@
     <string name="gliden64_color_buffer_copy_to_RDRAM_title">Копировать цветовой буфер в RDRAM</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_off">Не копировать</string>
     <string name="gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode">Копировать в режиме синхронности </string>
-    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode"> Скопировать в режиме асинхронности </string>
     <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Включить копирование вспомогательных буферов в RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_title">Копировать глубинный буфер в RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">Не копировать</string>
-    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">Аппаратный рендер</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Программный рендер</string>
     <string name="gliden64_enable_color_buffer_from_RDRAM_title">Включить копию цветового буфера из  RDRAM</string>
     <string name="gliden64_enable_n64_depth_compare_title">Включить N64 сравнение глубины (експерементальное)</string>
@@ -449,8 +392,6 @@
     <string name="gliden64_force_gamma_correction_title">Принудительная коррекция гаммы</string>
     <string name="gliden64_gamma_correction_level">Значение коррекции гаммы</string>
 
-    <string name="angrylion_vi_overlay_title">Включить фильтр наложения VI</string>
-
     <string name="glide64mk2_game_default">По-умолчанию</string>
     <string name="glide64mk2_disable">Отключить</string>
     <string name="glide64mk2_enable">Включить</string>
@@ -495,16 +436,13 @@
     <string name="rsp_hle">HLE</string>
     <string name="rsp_cxd4_hle">CXD4 HLE Video</string>
     <string name="rsp_cxd4_lle">CXD4 LLE Video</string>
-    
+
     <string name="displayZoom_title">Увеличение</string>
-    
     <string name="audioPlugin_title">Аудио плагин</string>
     <string name="audioPlugin_entryNone">Нет (Аудио отключено)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">Без дебага (аудио отключено, нет ограничения скорсти)</string>
     <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
     <string name="audioSLESBufferNbr_title">Номер аудио буффера</string>
-    <string name="audioSLESRate_title">Значение сэмплинга</string>
-    <string name="audioSLESRate_entry_orig">Установить по игре</string>
     <string name="audioSLESFloatingPoint_title">Значения с плавающей точкой</string>
     <string name="audioSLESFloatingPoint_summary">более высокое качество FP аудио. Не поддерживается на некоторых устройствах.</string>
     <string name="localeOverride_entrySystemDefault">Системные умолчанья</string>
@@ -520,9 +458,6 @@
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
     <string name="pathPreference_dialogTitle">Выбрать папку: %1$s</string>
-    <string name="pathHiResTextures_title">Импортировать текстурный пак</string>
-    <string name="pathHiResTextures_summary">Применить кастомные текстуры(ZIP формат) к  игре</string>
-    <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Папка сохранений</string>
     <string name="pathAppData_title">Папка данных приложения</string>
 
@@ -538,7 +473,6 @@
     <!-- Profile Preferences -->
     <string name="emulationProfile_title">Профиль эмуляции</string>
     <string name="touchscreenProfile_title">Профиль тачскрина</string>
-    <string name="controllerProfile_title">Профиль контроллера</string>
     <string name="controllerProfile1_title">Профиль 1-го контроллера</string>
     <string name="controllerProfile2_title">Профиль 2-го контроллера</string>
     <string name="controllerProfile3_title">Профиль 3-го контроллера</string>
@@ -564,12 +498,7 @@
     <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
     <string name="confirmUnmapAll_message">Сбросить все вводы для %1$s?</string>
     <string name="confirmDeleteProfile_message">Удалить профиль \"%1$s\"?</string>
-    <string name="confirmClearData_message">Вы уверены, что хотите удалить все текстурные паки и кэши высокого разрешения?</string>
     <string name="confirmRemoveFromLibrary_message">Вы уверены, что хотите убрать эту игру из библиотеки?</string>
-
-    <!-- Corrupt Installation Warning -->
-    <string name="invalidInstall_title">Предупреждение!</string>
-    <string name="invalidInstall_message">Mupen64 Plus AE не установлен должным образом. Пожалуйста попробуйте переустановить приложение если вы испытываете проблемы .</string>
 
     <!-- Text Editor Hints (start lower-case) -->
     <string name="hintFileSave">Имя файла</string>
@@ -594,18 +523,13 @@
     
     <!-- Cheat Editor -->
     <string name="menuItem_cheatEditor">Редактор читов</string>
-    <string name="cheatEditor_edit">Редактировать читы</string>
-    <string name="cheatEditor_help">Помощь</string>
     <string name="cheatEditor_confirm">Вы уверенны?</string>
-    <string name="cheatEditor_info">Информация чита</string>
-    <string name="cheatEditor_saveConfirm">Сохранить файл чита?</string>
     <string name="cheatEditor_edit1">Редактировать чит</string>
     <string name="cheatEditor_edit2">Расширенная редактировка чита</string>
     <string name="cheatEditor_invalid_value">N/A</string>
     <string name="cheatEditor_delete">Удалить чит</string>
     <string name="cheatEditor_add">Дабавить чит</string>
     <string name="cheatEditor_add_advanced">Добавить расширенный чит</string>
-    <string name="cheatEditor_save">Сохранить чит</string>
     <string name="cheatEditor_hint_cheatTitle">Название чита</string>
     <string name="cheatEditor_hint_cheatNotes">Заметки чита (не обязательно)</string>
     <string name="cheatEditor_hint_cheatAddress">Адрес</string>
@@ -617,14 +541,9 @@
     <string name="cheatEditor_add_cheats">Добавить чит</string>
     <string name="cheatEditor_remove_option">Убрать опцию</string>
 
-    <!-- Hi-Res Texture Unpacking -->
-    <string name="pathHiResTexturesTask_select_zip">Выберите ZIP или HTC файл содержащий текстурные паки высокого разрешения</string>
-    <string name="pathHiResTexturesTask_message">Пожалуйста потерпите.этот процесс займёт некоторое время.</string>
     <string name="pathHiResTexturesTask_errorMessage">Возникла проблема во время распаковки текстур!</string>
     <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Ошибка: HTC должен быть следующего формата [Название_Игры]__HIRESTEXTURES.htc</string>
 
-    <!-- Scan Roms Dialog -->
-    <string name="scanRomsDialog_selectRom">Выберите ROM файл или всю папку для сканирования (поддерживаются файлы zip/n64/z64)</string>
     <string name="scanRomsDialog_searchZips">Искать zip файлы</string>
     <string name="scanRomsDialog_downloadArt">Загрузить обложку</string>
     <string name="scanRomsDialog_clearGallery">Очистить галерею перед добавлением</string>
@@ -696,8 +615,6 @@
     <string name="controller_buttonZ">Кнопка Z</string>
     <string name="controller_buttonS">Кнопка Start </string>
     <string name="controller_buttonSensor">Кнопка переключения на сенсор</string>
-    <string name="controller_fps">Счётчик FPS</string>
-
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Нажмите кнопку, клавишу, или клавишу для считывания…\n\nТекущий маппинг:\n%1$s</string>
     <string name="inputMapActivity_popupUnmap">Сбросить маппинг</string>
@@ -738,4 +655,4 @@
     <string name="diagnosticActivity_textKey_text">Нажмине кнопку или клавишу…</string>
     <string name="diagnosticActivity_textMotion_text">Коснитесь к экрану или джойстику…</string>
 
-</resources>
+    </resources>
