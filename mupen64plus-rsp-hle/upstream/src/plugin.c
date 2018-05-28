@@ -480,14 +480,6 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, unsigned int* CycleCount)
     g_hle.hle_gfx = ConfigGetParamBool(l_ConfigRspHle, RSP_HLE_CONFIG_HLE_GFX);
     g_hle.hle_aud = ConfigGetParamBool(l_ConfigRspHle, RSP_HLE_CONFIG_HLE_AUD);
 
-    /* Init hle_gfx and hle_aud variables - with game-specific tweaks */
-    if ((strstr((char*)rom_header.Name, (const char*)"Indiana Jones") != NULL)
-     || (strstr((char*)rom_header.Name, (const char*)"Battle for Naboo") != NULL)) {
-
-        if(l_InitiateRSP)
-            g_hle.hle_gfx = 0;
-    }
-
     /* notify fallback plugin */
     if (l_InitiateRSP) {
         l_InitiateRSP(Rsp_Info, CycleCount);
