@@ -24,8 +24,8 @@ You can also build without, but then you have to copy `version.h.in` to `version
 
 The glLoadGen files (`gl_core_3_3` and `wgl_ext`) were generated using the following parameters:
 
-    lua\lua5.1.exe LoadGen.lua core_3_3 -style=noload_c -spec=gl -version=3.3 -profile=core -stdext=gl_ubiquitous.txt -stdext=gl_core_post_3_3.txt
-    lua\lua5.1.exe LoadGen.lua ext -style=noload_c -spec=wgl -ext WGL_EXT_swap_control
+    lua LoadGen.lua core_3_3 -style=pointer_c -spec=gl -version=3.3 -profile=core
+    lua LoadGen.lua ext -style=pointer_c -spec=wgl -ext WGL_EXT_swap_control -ext ARB_create_context -ext ARB_create_context_profile
 
 Building with CMake is also possible:
 

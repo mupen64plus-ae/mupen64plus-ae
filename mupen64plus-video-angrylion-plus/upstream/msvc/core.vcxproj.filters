@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{5467dd49-ff5e-4be4-93ad-8291721fc00d}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Source Files\rdp">
+      <UniqueIdentifier>{708e14fa-0950-4210-9679-64e4b25cd6ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{142a5325-573c-4fde-9d8f-af10cb6e28e5}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Source Files\rdp\vi">
+      <UniqueIdentifier>{4391fe2f-d358-4664-8618-36742b05b445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\rdp\tex">
+      <UniqueIdentifier>{ed171682-9258-4601-8318-f621e6bbf26d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\core\rdp\tex\tcoord.c">
+      <Filter>Source Files\rdp\tex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\tex\tmem.c">
+      <Filter>Source Files\rdp\tex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\vi\divot.c">
+      <Filter>Source Files\rdp\vi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\vi\fetch.c">
+      <Filter>Source Files\rdp\vi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\vi\gamma.c">
+      <Filter>Source Files\rdp\vi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\vi\lerp.c">
+      <Filter>Source Files\rdp\vi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\vi\restore.c">
+      <Filter>Source Files\rdp\vi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\vi\video.c">
+      <Filter>Source Files\rdp\vi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\blender.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\cmd.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\combiner.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\coverage.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\dither.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\fbuffer.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\rasterizer.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\rdram.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\tex.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\vi.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp\zbuffer.c">
+      <Filter>Source Files\rdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\parallel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\plugin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\rdp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\screen.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\core\common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core\msg.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core\parallel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core\plugin.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core\rdp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core\screen.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\core\version.h.in">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
