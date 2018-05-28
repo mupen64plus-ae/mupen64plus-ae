@@ -21,6 +21,10 @@
 #include <windows.h>
 #endif
 
+#ifdef __APPLE__
+#import <CoreFoundation/CoreFoundation.h>
+#endif
+
 #include "module.h"
 #include "su.h"
 
@@ -60,13 +64,7 @@ NOINLINE void update_conf(const char* source)
     m64p_rom_header ROM_HEADER;
     CoreDoCommand(M64CMD_ROM_GET_HEADER, sizeof(ROM_HEADER), &ROM_HEADER);
 
-    if (strstr((char*)ROM_HEADER.Name, (const char*)"Indiana Jones") != NULL)
-        CFG_HLE_GFX = 0;
-    else if (strstr((char*)ROM_HEADER.Name, (const char*)"Battle for Naboo") != NULL)
-        CFG_HLE_GFX = 0;
-    else
-        CFG_HLE_GFX = ConfigGetParamBool(l_ConfigRsp, "DisplayListToGraphicsPlugin");
-
+    CFG_HLE_GFX = ConfigGetParamBool(l_ConfigRsp, "DisplayListToGraphicsPlugin");
     CFG_HLE_AUD = ConfigGetParamBool(l_ConfigRsp, "AudioListToAudioPlugin");
     CFG_WAIT_FOR_CPU_HOST = ConfigGetParamBool(l_ConfigRsp, "WaitForCPUHost");
     CFG_MEND_SEMAPHORE_LOCK = ConfigGetParamBool(l_ConfigRsp, "SupportCPUSemaphoreLock");
@@ -713,6 +711,9 @@ NOINLINE int my_system(char* command)
     WaitForSingleObject(info_process.hProcess, INFINITE);
     CloseHandle(info_process.hProcess);
     CloseHandle(info_process.hThread);
+#elif TARGET_OS_IPHONE || TARGET_OS_TV
+	// system not available in iOS
+	ret_slot = 0;
 #else
     ret_slot = system(command);
 #endif
