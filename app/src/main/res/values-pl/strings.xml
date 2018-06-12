@@ -385,7 +385,7 @@
     <!-- Cheat Editor -->
     <string name="menuItem_cheatEditor">Edytor cheat\'ów</string>
     <string name="cheatEditor_confirm">Czy na pewno?</string>
-    <string name="cheatEditor_edit1">Edytuj cheat\\'a</string>
+    <string name="cheatEditor_edit1">Edytuj cheat\'a</string>
     <string name="cheatEditor_edit2">Zaawansowana edycja cheat\'a</string>
     <string name="cheatEditor_delete">Usuń cheat\'a</string>
     <string name="cheatEditor_add">Dodaj cheat\'a</string>
