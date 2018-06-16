@@ -749,13 +749,10 @@ public:
 			"uniform lowp int uDepthSource;			\n"
 			"uniform highp float uPrimDepth;		\n"
 			"uniform mediump vec2 uScreenScale;		\n"
+			"uniform lowp int uFogUsage;			\n"
 			;
 
-		if (config.generalEmulation.enableLegacyBlending != 0) {
-			m_part +=
-				"uniform lowp int uFogUsage;		\n"
-			;
-		} else {
+		if (config.generalEmulation.enableLegacyBlending == 0) {
 			m_part +=
 				"uniform lowp ivec4 uBlendMux1;		\n"
 				"uniform lowp int uForceBlendCycle1;\n"
@@ -1683,8 +1680,10 @@ public:
 					"  if (magnify && ((uTextureDetail & 1) != 0))			\n"
 					"      lod_frac = 1.0 - lod_frac;						\n"
 					"  if (uMaxTile == 0) {									\n"
-					"    if (uEnableLod != 0 && (uTextureDetail & 2) == 0)	\n"
-					"      readtex1 = readtex0;								\n"
+					"    if (uEnableLod != 0) {								\n"
+					"      if ((uTextureDetail & 2) == 0) readtex1 = readtex0;	\n"
+					"      else if (!magnify) readtex0 = readtex1;			\n"
+					"    }													\n"
 					"    return lod_frac;									\n"
 					"  }													\n"
 					"  if (uEnableLod == 0) return lod_frac;				\n"

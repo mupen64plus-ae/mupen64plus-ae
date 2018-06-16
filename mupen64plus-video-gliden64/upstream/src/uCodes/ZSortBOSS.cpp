@@ -128,14 +128,11 @@ void StoreMatrix( f32 mtx[4][4], u32 address )
 		u16 fraction[4][4];
 	} *n64Mat = (struct _N64Matrix *)&RDRAM[address];
 	
-	int i, j;
-	float intpart, fractpart;
-	
-	for(i = 0; i < 4; i++) {
-		for(j = 0; j < 4; j++) {
-			fractpart = modff(mtx[i][j], &intpart);
-			n64Mat->fraction[i][j^1] = (u16)(fractpart * 65536.f);
-			n64Mat->integer[i][j^1] = ((mtx[i][j] < 0.0) && (n64Mat->fraction[i][j^1] != 0)) ? (s16)(intpart-1) : (s16)intpart;
+	for (u32 i = 0; i < 4; i++) {
+		for (u32 j = 0; j < 4; j++) {
+			const auto element = GetIntMatrixElement(mtx[i][j]);
+			n64Mat->fraction[i][j^1] = element.second;
+			n64Mat->integer[i][j^1] = element.first;
 		}
 	}
 }
@@ -383,10 +380,10 @@ void ZSortBOSS_DrawObject(u8 * _addr, u32 _type)
 		vtx.x = _FIXED2FLOAT(((s16*)_addr)[0 ^ 1], 2);
 		vtx.y = _FIXED2FLOAT(((s16*)_addr)[1 ^ 1], 2);
 		vtx.z = 0.0f;
-		vtx.r = _addr[4^3] * 0.0039215689f;
-		vtx.g = _addr[5^3] * 0.0039215689f;
-		vtx.b = _addr[6^3] * 0.0039215689f;
-		vtx.a = _addr[7^3] * 0.0039215689f;
+		vtx.r = _FIXED2FLOATCOLOR(_addr[4^3], 8 );
+		vtx.g = _FIXED2FLOATCOLOR(_addr[5^3], 8 );
+		vtx.b = _FIXED2FLOATCOLOR(_addr[6^3], 8 );
+		vtx.a = _FIXED2FLOATCOLOR(_addr[7^3], 8 );
 		vtx.flag = 0;
 		vtx.HWLight = 0;
 		vtx.clip = 0;
@@ -519,9 +516,9 @@ void ZSortBOSS_Lighting( u32 _w0, u32 _w1 )
 	for(u32 i = 0; i < num; i++) {
 		SPVertex & vtx = pVtx[i];
 
-		vtx.nx = ((s8*)DMEM)[(nsrs++)^3] * 0.00390625f;
-		vtx.ny = ((s8*)DMEM)[(nsrs++)^3] * 0.00390625f;
-		vtx.nz = ((s8*)DMEM)[(nsrs++)^3] * 0.00390625f;
+		vtx.nx = _FIXED2FLOAT(((s8*)DMEM)[(nsrs++)^3],8);
+		vtx.ny = _FIXED2FLOAT(((s8*)DMEM)[(nsrs++)^3],8);
+		vtx.nz = _FIXED2FLOAT(((s8*)DMEM)[(nsrs++)^3],8);
 
 		// TODO: implement light vertex if ever needed
 		//gSPLightVertex(vtx);
@@ -601,21 +598,21 @@ void ZSortBOSS_TransformLights( u32 _w0, u32 _w1 )
 	{
 		assert(0);
 
-		gSP.lights.rgb[i][R] = (f32)(((u8*)DMEM)[(addr+8+0)^3]) * 0.0039215689f;
-		gSP.lights.rgb[i][G] = (f32)(((u8*)DMEM)[(addr+8+1)^3]) * 0.0039215689f;
-		gSP.lights.rgb[i][B] = (f32)(((u8*)DMEM)[(addr+8+2)^3]) * 0.0039215689f;
+		gSP.lights.rgb[i][R] = _FIXED2FLOATCOLOR(((u8*)DMEM)[(addr+8+0)^3], 8 );
+		gSP.lights.rgb[i][G] = _FIXED2FLOATCOLOR(((u8*)DMEM)[(addr+8+1)^3], 8 );
+		gSP.lights.rgb[i][B] = _FIXED2FLOATCOLOR(((u8*)DMEM)[(addr+8+2)^3], 8 );
 
-		gSP.lights.xyz[i][X] = (f32)(((s8*)DMEM)[(addr+16+0)^3]) * 0.00390625f;
-		gSP.lights.xyz[i][Y] = (f32)(((s8*)DMEM)[(addr+16+1)^3]) * 0.00390625f;
-		gSP.lights.xyz[i][Z] = (f32)(((s8*)DMEM)[(addr+16+2)^3]) * 0.00390625f;
+		gSP.lights.xyz[i][X] = _FIXED2FLOAT((((s8*)DMEM)[(addr+16+0)^3]),8);
+		gSP.lights.xyz[i][Y] = _FIXED2FLOAT((((s8*)DMEM)[(addr+16+1)^3]),8);
+		gSP.lights.xyz[i][Z] = _FIXED2FLOAT((((s8*)DMEM)[(addr+16+2)^3]),8);
 		ZSortBOSS_TransformVectorNormalize( gSP.lights.xyz[i], gSP.matrix.modelView[gSP.matrix.modelViewi] );
 		addr += 24;
 	}
 	for(int i = 0; i < 2; i++)
 	{
-		gSP.lookat.xyz[i][X] = (f32)(((s8*)DMEM)[(addr+16+0)^3]) * 0.00390625f;
-		gSP.lookat.xyz[i][Y] = (f32)(((s8*)DMEM)[(addr+16+1)^3]) * 0.00390625f;
-		gSP.lookat.xyz[i][Z] = (f32)(((s8*)DMEM)[(addr+16+2)^3]) * 0.00390625f;
+		gSP.lookat.xyz[i][X] = _FIXED2FLOAT((((s8*)DMEM)[(addr+16+0)^3]),8);
+		gSP.lookat.xyz[i][Y] = _FIXED2FLOAT((((s8*)DMEM)[(addr+16+1)^3]),8);
+		gSP.lookat.xyz[i][Z] = _FIXED2FLOAT((((s8*)DMEM)[(addr+16+2)^3]),8);
 		ZSortBOSS_TransformVectorNormalize( gSP.lookat.xyz[i], gSP.matrix.modelView[gSP.matrix.modelViewi] );
 		addr += 24;
 	}
@@ -654,7 +651,7 @@ void ZSortBOSS_Audio2( u32 _w0, u32 _w1 )
 			f32 intpart, fractpart;
 			f32 val = i*f1 + j*f1 + f2;
 
-			fractpart = modff(val, &intpart);
+			fractpart = fabsf(modff(val, &intpart));
 			int index = ((int)intpart) << 1;
 
 			s16 v9 = ((s16*)DMEM)[((0x30+index)>>1)^1];

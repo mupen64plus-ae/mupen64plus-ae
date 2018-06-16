@@ -314,9 +314,9 @@ void gSPLight( u32 l, s32 n )
 	Light *light = (Light*)&RDRAM[addrByte];
 
 	if (n < 8) {
-		gSP.lights.rgb[n][R] = light->r * 0.0039215689f;
-		gSP.lights.rgb[n][G] = light->g * 0.0039215689f;
-		gSP.lights.rgb[n][B] = light->b * 0.0039215689f;
+		gSP.lights.rgb[n][R] = _FIXED2FLOATCOLOR(light->r,8);
+		gSP.lights.rgb[n][G] = _FIXED2FLOATCOLOR(light->g,8);
+		gSP.lights.rgb[n][B] = _FIXED2FLOATCOLOR(light->b,8);
 
 		gSP.lights.xyz[n][X] = light->x;
 		gSP.lights.xyz[n][Y] = light->y;
@@ -518,13 +518,14 @@ void gSPLightVertexCBFD(u32 v, SPVertex * spVtx)
 		f32 r = gSP.lights.rgb[gSP.numLights][R];
 		f32 g = gSP.lights.rgb[gSP.numLights][G];
 		f32 b = gSP.lights.rgb[gSP.numLights][B];
+		f32 recip = FIXED2FLOATRECIP16;
 
 		for (u32 l = 0; l < gSP.numLights; ++l) {
 			const f32 vx = (vtx.x + gSP.vertexCoordMod[8])*gSP.vertexCoordMod[12] - gSP.lights.pos_xyzw[l][X];
 			const f32 vy = (vtx.y + gSP.vertexCoordMod[9])*gSP.vertexCoordMod[13] - gSP.lights.pos_xyzw[l][Y];
 			const f32 vz = (vtx.z + gSP.vertexCoordMod[10])*gSP.vertexCoordMod[14] - gSP.lights.pos_xyzw[l][Z];
 			const f32 vw = (vtx.w + gSP.vertexCoordMod[11])*gSP.vertexCoordMod[15] - gSP.lights.pos_xyzw[l][W];
-			const f32 len = (vx*vx + vy*vy + vz*vz + vw*vw) / 65536.0f;
+			const f32 len = (vx*vx + vy*vy + vz*vz + vw*vw) * recip;
 			f32 intensity = gSP.lights.ca[l] / len;
 			if (intensity > 1.0f) intensity = 1.0f;
 			r += gSP.lights.rgb[l][R] * intensity;
@@ -571,6 +572,7 @@ void gSPPointLightVertexZeldaMM(u32 v, float _vecPos[VNUM][4], SPVertex * spVtx)
 
 		for (u32 l = 0; l < gSP.numLights; ++l) {
 			if (gSP.lights.ca[l] != 0.0f) {
+				f32 recip = FIXED2FLOATRECIP16;
 				// Point lighting
 				f32 lvec[3] = { gSP.lights.pos_xyzw[l][X], gSP.lights.pos_xyzw[l][Y], gSP.lights.pos_xyzw[l][Z] };
 				lvec[0] -= _vecPos[j][0];
@@ -597,7 +599,7 @@ void gSPPointLightVertexZeldaMM(u32 v, float _vecPos[VNUM][4], SPVertex * spVtx)
 					V = 1.0f;
 
 				const f32 KSF = floorf(KS);
-				const f32 D = (KSF * gSP.lights.la[l] * 2.0f + KSF * KSF * gSP.lights.qa[l] / 8.0f) / 65536.0f + 1.0f;
+				const f32 D = (KSF * gSP.lights.la[l] * 2.0f + KSF * KSF * gSP.lights.qa[l] / 8.0f) * recip + 1.0f;
 				intensity = V / D;
 			} else {
 				// Standard lighting
@@ -634,7 +636,7 @@ void gSPPointLightVertexCBFD(u32 v, SPVertex * spVtx)
 				const f32 vy = (vtx.y + gSP.vertexCoordMod[9])*gSP.vertexCoordMod[13] - gSP.lights.pos_xyzw[l][Y];
 				const f32 vz = (vtx.z + gSP.vertexCoordMod[10])*gSP.vertexCoordMod[14] - gSP.lights.pos_xyzw[l][Z];
 				const f32 vw = (vtx.w + gSP.vertexCoordMod[11])*gSP.vertexCoordMod[15] - gSP.lights.pos_xyzw[l][W];
-				const f32 len = (vx*vx + vy*vy + vz*vz + vw*vw) / 65536.0f;
+				const f32 len = _FIXED2FLOAT((vx*vx + vy*vy + vz*vz + vw*vw),16);
 				float p_i = gSP.lights.ca[l] / len;
 				if (p_i > 1.0f) p_i = 1.0f;
 				intensity *= p_i;
@@ -1144,12 +1146,12 @@ u32 gSPLoadF3DAMVertexData(const Vertex *orgVtx, SPVertex * spVtx, u32 v0, u32 v
 				vtx.nx = _FIXED2FLOATCOLOR( orgVtx->normal.x, 7 );
 				vtx.ny = _FIXED2FLOATCOLOR( orgVtx->normal.y, 7 );
 				vtx.nz = _FIXED2FLOATCOLOR( orgVtx->normal.z, 7 );
-				vtx.a = orgVtx->color.a * 0.0039215689f;
+				vtx.a = _FIXED2FLOATCOLOR(orgVtx->color.a,8);
 			} else {
-				vtx.r = orgVtx->color.r * 0.0039215689f;
-				vtx.g = orgVtx->color.g * 0.0039215689f;
-				vtx.b = orgVtx->color.b * 0.0039215689f;
-				vtx.a = orgVtx->color.a * 0.0039215689f;
+				vtx.r = _FIXED2FLOATCOLOR(orgVtx->color.r,8);
+				vtx.g = _FIXED2FLOATCOLOR(orgVtx->color.g,8);
+				vtx.b = _FIXED2FLOATCOLOR(orgVtx->color.b,8);
+				vtx.a = _FIXED2FLOATCOLOR(orgVtx->color.a,8);
 			}
 			++orgVtx;
 		}
@@ -1192,9 +1194,9 @@ void gSPF3DAMVertex(u32 a, u32 n, u32 v0)
 }
 
 template <u32 VNUM>
-u32 gSPLoadSWVertexData(const SWVertex *orgVtx, SPVertex * spVtx, u32 v0, u32 vi, u32 n)
+u32 gSPLoadSWVertexData(const SWVertex *orgVtx, SPVertex * spVtx, u32 vi, u32 n)
 {
-	const u32 end = n - (n%VNUM) + v0;
+	const u32 end = n - (n%VNUM);
 	for (; vi < end; vi += VNUM) {
 		for(u32 j = 0; j < VNUM; ++j) {
 			SPVertex & vtx = spVtx[vi+j];
@@ -1212,20 +1214,32 @@ u32 gSPLoadSWVertexData(const SWVertex *orgVtx, SPVertex * spVtx, u32 v0, u32 vi
 	return vi;
 }
 
-void gSPSWVertex(const SWVertex * vertex, u32 n, u32 v0)
+void gSPSWVertex(const SWVertex * vertex, u32 n, const bool * const verticesToProcess)
 {
-	DebugMsg(DEBUG_NORMAL, "gSPSWVertex n = %i, v0 = %i\n", n, v0);
-
-	if ((n + v0) > INDEXMAP_SIZE) {
-		LOG(LOG_ERROR, "Using Vertex outside buffer v0=%i, n=%i\n", v0, n);
-		DebugMsg(DEBUG_NORMAL | DEBUG_ERROR, "//Using Vertex outside buffer v0 = %i, n = %i\n", v0, n);
-		return;
-	}
+	DebugMsg(DEBUG_NORMAL, "gSPSWVertex n = %i\n", n);
 
 	SPVertex * spVtx = dwnd().getDrawer().getVertexPtr(0);
-	u32 i = gSPLoadSWVertexData<VEC_OPT>(vertex, spVtx, v0, v0, n);
-	if (i < n + v0)
-		gSPLoadSWVertexData<1>(vertex + (i - v0), spVtx, v0, i, n);
+	if (verticesToProcess == nullptr) {
+		u32 i = gSPLoadSWVertexData<VEC_OPT>(vertex, spVtx, 0, n);
+		if (i < n)
+			gSPLoadSWVertexData<1>(vertex + i, spVtx, i, n);
+	} else {
+		for (u32 i = 0; i < n; ++i) {
+			if (verticesToProcess[i])
+				gSPLoadSWVertexData<1>(vertex + i, spVtx, i, i + 1);
+		}
+	}
+}
+
+void gSPSWVertex(const SWVertex * vertex, u32 v0, u32 n)
+{
+	DebugMsg(DEBUG_NORMAL, "gSPSWVertex v0 = %i, n = %i\n", v0, n);
+
+	SPVertex * spVtx = dwnd().getDrawer().getVertexPtr(0);
+	const u32 endIdx = v0 + n;
+	u32 i = gSPLoadSWVertexData<VEC_OPT>(vertex, spVtx, v0, endIdx);
+	if (i < endIdx)
+		gSPLoadSWVertexData<1>(vertex + i - v0, spVtx, i, endIdx);
 }
 
 void gSPT3DUXVertex(u32 a, u32 n, u32 ci)
@@ -1570,37 +1584,23 @@ void gSPInsertMatrix( u32 where, u32 num )
 {
 	DebugMsg(DEBUG_NORMAL, "gSPInsertMatrix(%u, %u);\n", where, num);
 
-	f32 fraction, integer;
-
 	if ((where & 0x3) || (where > 0x3C))
 		return;
 
-	if (where < 0x20) {
-		fraction = modff( gSP.matrix.combined[0][where >> 1], &integer );
-		gSP.matrix.combined[0][where >> 1] = (f32)((s16)_SHIFTR( num, 16, 16 ) + abs( (int)fraction ));
-
-		fraction = modff( gSP.matrix.combined[0][(where >> 1) + 1], &integer );
-		gSP.matrix.combined[0][(where >> 1) + 1] = (f32)((s16)_SHIFTR( num, 0, 16 ) + abs( (int)fraction ));
-	} else {
-		f32 newValue;
-
-		fraction = modff( gSP.matrix.combined[0][(where - 0x20) >> 1], &integer );
-		newValue = integer + _FIXED2FLOAT( _SHIFTR( num, 16, 16 ), 16);
-
-		// Make sure the sign isn't lost
-		if ((integer == 0.0f) && (fraction != 0.0f))
-			newValue = newValue * (fraction / abs( (int)fraction ));
-
-		gSP.matrix.combined[0][(where - 0x20) >> 1] = newValue;
-
-		fraction = modff( gSP.matrix.combined[0][((where - 0x20) >> 1) + 1], &integer );
-		newValue = integer + _FIXED2FLOAT( _SHIFTR( num, 0, 16 ), 16 );
-
-		// Make sure the sign isn't lost
-		if ((integer == 0.0f) && (fraction != 0.0f))
-			newValue = newValue * (fraction / abs( (int)fraction ));
-
-		gSP.matrix.combined[0][((where - 0x20) >> 1) + 1] = newValue;
+	const u16 * pData = reinterpret_cast<u16*>(&num);
+	const u32 index = (where < 0x20) ? (where >> 1) : ((where - 0x20) >> 1);
+	for (u32 i = 0; i < 2; i++) {
+		if (where < 0x20) {
+			// integer elements of the matrix to be changed
+			const s16 integer = static_cast<s16>(pData[i ^ 1]);
+			const s32 fract = static_cast<s32>(gSP.matrix.combined[0][index + i] * 65536.0f);
+			gSP.matrix.combined[0][index + i] = GetFloatMatrixElement(integer, static_cast<u16>(fract&0xFFFF));
+		} else {
+			// fractional elements of the matrix to be changed
+			const s32 integer = static_cast<s32>(gSP.matrix.combined[0][index + i]);
+			const u16 fract = pData[i ^ 1];
+			gSP.matrix.combined[0][index + i] = GetFloatMatrixElement(static_cast<s16>(integer), fract);
+		}
 	}
 }
 
@@ -1611,10 +1611,10 @@ void gSPModifyVertex( u32 _vtx, u32 _where, u32 _val )
 	SPVertex & vtx0 = drawer.getVertex(_vtx);
 	switch (_where) {
 		case G_MWO_POINT_RGBA:
-			vtx0.r = _SHIFTR( _val, 24, 8 ) * 0.0039215689f;
-			vtx0.g = _SHIFTR( _val, 16, 8 ) * 0.0039215689f;
-			vtx0.b = _SHIFTR( _val, 8, 8 ) * 0.0039215689f;
-			vtx0.a = _SHIFTR( _val, 0, 8 ) * 0.0039215689f;
+			vtx0.r = _FIXED2FLOATCOLOR(_SHIFTR( _val, 24, 8 ),8);
+			vtx0.g = _FIXED2FLOATCOLOR(_SHIFTR( _val, 16, 8 ),8);
+			vtx0.b = _FIXED2FLOATCOLOR(_SHIFTR( _val, 8, 8 ),8);
+			vtx0.a = _FIXED2FLOATCOLOR(_SHIFTR( _val, 0, 8 ),8);
 			vtx0.modify |= MODIFY_RGBA;
 			DebugMsg(DEBUG_NORMAL, "gSPModifyVertex: RGBA(%02f, %02f, %02f, %02f);\n", vtx0.r, vtx0.g, vtx0.b, vtx0.a);
 			break;
@@ -1684,9 +1684,9 @@ void gSPLightColor( u32 lightNum, u32 packedColor )
 
 	if (lightNum < 8)
 	{
-		gSP.lights.rgb[lightNum][R] = _SHIFTR( packedColor, 24, 8 ) * 0.0039215689f;
-		gSP.lights.rgb[lightNum][G] = _SHIFTR( packedColor, 16, 8 ) * 0.0039215689f;
-		gSP.lights.rgb[lightNum][B] = _SHIFTR( packedColor, 8, 8 ) * 0.0039215689f;
+		gSP.lights.rgb[lightNum][R] = _FIXED2FLOATCOLOR(_SHIFTR( packedColor, 24, 8 ),8);
+		gSP.lights.rgb[lightNum][G] = _FIXED2FLOATCOLOR(_SHIFTR( packedColor, 16, 8 ),8);
+		gSP.lights.rgb[lightNum][B] = _FIXED2FLOATCOLOR(_SHIFTR( packedColor, 8, 8 ),8);
 		gSP.changed |= CHANGED_HW_LIGHT;
 	}
 	DebugMsg(DEBUG_NORMAL, "gSPLightColor( %i, 0x%08X );\n", lightNum, packedColor );
@@ -1720,8 +1720,8 @@ void gSPCoordMod(u32 _w0, u32 _w1)
 		gSP.vertexCoordMod[1+idx] = (f32)(s16)_SHIFTR(_w1, 0, 16);
 	} else if (pos == 0x10) {
 		assert(idx < 3);
-		gSP.vertexCoordMod[4+idx] = _SHIFTR(_w1, 16, 16)/65536.0f;
-		gSP.vertexCoordMod[5+idx] = _SHIFTR(_w1, 0, 16)/65536.0f;
+		gSP.vertexCoordMod[4+idx] = _FIXED2FLOAT(_SHIFTR(_w1, 16, 16),16);
+		gSP.vertexCoordMod[5+idx] = _FIXED2FLOAT(_SHIFTR(_w1, 0, 16),16);
 		gSP.vertexCoordMod[12+idx] = gSP.vertexCoordMod[0+idx] + gSP.vertexCoordMod[4+idx];
 		gSP.vertexCoordMod[13+idx] = gSP.vertexCoordMod[1+idx] + gSP.vertexCoordMod[5+idx];
 	} else if (pos == 0x20) {
@@ -2271,7 +2271,7 @@ void _copyDepthBuffer()
 	// Restore objects
 	if (pTmpBuffer->m_pDepthBuffer != nullptr)
 		pTmpBuffer->m_pDepthBuffer->setDepthAttachment(fbList.getCurrent()->m_FBO, bufferTarget::READ_FRAMEBUFFER);
-	gfxContext.bindFramebuffer(bufferTarget::READ_FRAMEBUFFER, ObjectHandle::null);
+	gfxContext.bindFramebuffer(bufferTarget::READ_FRAMEBUFFER, ObjectHandle::defaultFramebuffer);
 
 	// Set back current depth buffer
 	dbList.saveBuffer(gDP.depthImageAddress);
