@@ -28,6 +28,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/backends/plugins_compat/input_plugin_compat.c     \
     $(SRCDIR)/backends/clock_ctime_plus_delta.c                 \
     $(SRCDIR)/backends/file_storage.c                           \
+    $(SRCDIR)/backends/dummy_video_backend.c                    \
     $(SRCDIR)/main/cheat.c                                      \
     $(SRCDIR)/device/device.c                                   \
     $(SRCDIR)/main/eventloop.c                                  \
@@ -51,6 +52,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/controllers/paks/mempak.c                  \
     $(SRCDIR)/device/controllers/paks/rumblepak.c               \
     $(SRCDIR)/device/controllers/paks/transferpak.c             \
+    $(SRCDIR)/device/controllers/paks/biopak.c                  \
     $(SRCDIR)/device/controllers/game_controller.c              \
     $(SRCDIR)/device/gb/gb_cart.c                               \
     $(SRCDIR)/device/gb/m64282fp.c                              \
