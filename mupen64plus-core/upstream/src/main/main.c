@@ -49,11 +49,15 @@
 #include "backends/api/joybus.h"
 #include "backends/api/rumble_backend.h"
 #include "backends/api/storage_backend.h"
+#include "backends/api/video_backend.h"
 #include "backends/plugins_compat/plugins_compat.h"
 #include "backends/clock_ctime_plus_delta.h"
 #include "backends/file_storage.h"
+#include "backends/opencv_video_backend.h"
+#include "backends/dummy_video_backend.h"
 #include "cheat.h"
 #include "device/device.h"
+#include "device/controllers/paks/biopak.h"
 #include "device/controllers/paks/mempak.h"
 #include "device/controllers/paks/rumblepak.h"
 #include "device/controllers/paks/transferpak.h"
@@ -90,7 +94,7 @@ m64p_handle g_CoreConfig = NULL;
 
 m64p_frame_callback g_FrameCallback = NULL;
 
-int         g_MemHasBeenBSwapped = 0;   // store byte-swapped flag so we don't swap twice when re-playing game
+int         g_RomWordsLittleEndian = 0; // after loading, ROM words are in native N64 byte order (big endian). We will swap them on x86
 int         g_EmulatorRunning = 0;      // need separate boolean to tell if emulator is running, since --nogui doesn't use a thread
 
 
@@ -122,7 +126,7 @@ static osd_message_t *l_msgFF = NULL;
 static osd_message_t *l_msgPause = NULL;
 
 /* compatible paks */
-enum { PAK_MAX_SIZE = 4 };
+enum { PAK_MAX_SIZE = 5 };
 static size_t l_paks_idx[GAME_CONTROLLERS_COUNT];
 static void* l_paks[GAME_CONTROLLERS_COUNT][PAK_MAX_SIZE];
 static const struct pak_interface* l_ipaks[PAK_MAX_SIZE];
@@ -269,6 +273,7 @@ int main_set_core_defaults(void)
     ConfigSetDefaultBool(g_CoreConfig, "DisableSpecRecomp", 1, "Disable speculative precompilation in new dynarec");
     ConfigSetDefaultBool(g_CoreConfig, "RandomizeInterrupt", 1, "Randomize PI/SI Interrupt Timing");
     ConfigSetDefaultInt(g_CoreConfig, "SiDmaDuration", -1, "Duration of SI DMA (-1: use per game settings)");
+    ConfigSetDefaultString(g_CoreConfig, "GbCameraVideoDevice", "0", "Gameboy Camera Video device - backend specific");
 
     /* handle upgrades */
     if (bUpgrade)
@@ -1098,6 +1103,8 @@ struct gb_cart_data
     int control_id;
     struct file_storage rom_fstorage;
     struct file_storage ram_fstorage;
+    void* gbcam_backend;
+    const struct video_input_backend_interface* igbcam_backend;
 };
 
 static struct gb_cart_data l_gb_carts_data[GAME_CONTROLLERS_COUNT];
@@ -1192,8 +1199,6 @@ static void release_gb_ram(void* opaque)
     memset(&data->ram_fstorage, 0, sizeof(data->ram_fstorage));
 }
 
-
-
 void main_change_gb_cart(int control_id)
 {
     struct transferpak* tpk = &g_dev.transferpaks[control_id];
@@ -1208,7 +1213,8 @@ void main_change_gb_cart(int control_id)
             data, init_gb_rom, release_gb_rom,
             data, init_gb_ram, release_gb_ram,
             NULL, &g_iclock_ctime_plus_delta,
-            &data->control_id, &g_irumble_backend_plugin_compat);
+            &data->control_id, &g_irumble_backend_plugin_compat,
+            data->gbcam_backend, data->igbcam_backend);
 
     if (gb_cart->read_gb_cart == NULL) {
         gb_cart = NULL;
@@ -1253,6 +1259,9 @@ m64p_error main_run(void)
     struct file_storage mpk_storages[GAME_CONTROLLERS_COUNT];
     struct file_storage mpk;
 
+    void* gbcam_backend = NULL;
+    const struct video_input_backend_interface* igbcam_backend = NULL;
+
     /* XXX: select type of flashram from db */
     uint32_t flashram_type = MX29L1100_ID;
 
@@ -1288,15 +1297,20 @@ m64p_error main_run(void)
 
     cheat_add_hacks(&g_cheat_ctx, ROM_PARAMS.cheats);
 
-    /* do byte-swapping if it's not been done yet */
-    if (g_MemHasBeenBSwapped == 0)
+    /* do byte-swapping if it hasn't been done yet */
+#if !defined(M64P_BIG_ENDIAN)
+    if (g_RomWordsLittleEndian == 0)
     {
         swap_buffer((uint8_t*)mem_base_u32(g_mem_base, MM_CART_ROM), 4, g_rom_size/4);
-        g_MemHasBeenBSwapped = 1;
+        g_RomWordsLittleEndian = 1;
     }
+#endif
 
     /* Fill-in l_pak_type_idx and l_ipaks according to game compatibility */
     k = 0;
+    if (ROM_SETTINGS.biopak) {
+        l_ipaks[k++] = &g_ibiopak;
+    }
     if (ROM_SETTINGS.mempak) {
         l_pak_type_idx[PLUGIN_MEMPAK] = k;
         l_ipaks[k] = &g_imempak;
@@ -1326,6 +1340,23 @@ m64p_error main_run(void)
     if (!ROM_SETTINGS.transferpak) {
         l_pak_type_idx[PLUGIN_TRANSFER_PAK] = k;
     }
+
+    /* open GB cam video device */
+#if defined(M64P_OPENCV)
+    {
+        struct opencv_video_backend* cv_backend = malloc(sizeof(*cv_backend));
+        memset(cv_backend, 0, sizeof(*cv_backend));
+        cv_backend->device = strdup(ConfigGetParamString(g_CoreConfig, "GbCameraVideoDevice"));
+
+        gbcam_backend = cv_backend;
+        igbcam_backend = &g_iopencv_video_input_backend;
+    }
+#else
+    gbcam_backend = NULL;
+    igbcam_backend = &g_idummy_video_input_backend;
+#endif
+
+    igbcam_backend->open(gbcam_backend, M64282FP_SENSOR_W, M64282FP_SENSOR_H);
 
     /* open storage files, provide default content if not present */
     open_mpk_file(&mpk);
@@ -1380,6 +1411,9 @@ m64p_error main_run(void)
 
             l_gb_carts_data[i].control_id = (int)i;
 
+            l_gb_carts_data[i].gbcam_backend = gbcam_backend;
+            l_gb_carts_data[i].igbcam_backend = igbcam_backend;
+
             l_paks_idx[i] = 0;
 
             //Don't use the selected pak if it's not available for the game, instead use NONE
@@ -1389,8 +1423,17 @@ m64p_error main_run(void)
 
             /* init all compatibles paks */
             for(k = 0; k < PAK_MAX_SIZE; ++k) {
+                /* Bio Pak */
+                if (l_ipaks[k] == &g_ibiopak) {
+                    init_biopak(&g_dev.biopaks[i], 64);
+                    l_paks[i][k] = &g_dev.biopaks[i];
+
+                    if (Controls[i].Plugin == PLUGIN_BIO_PAK) {
+                        l_paks_idx[i] = k;
+                    }
+                }
                 /* Memory Pak */
-                if (l_ipaks[k] == &g_imempak) {
+                else if (l_ipaks[k] == &g_imempak) {
                     mpk_storages[i] = (struct file_storage){ mpk.data + i * MEMPAK_SIZE, MEMPAK_SIZE, (void*)&mpk} ;
                     init_mempak(&g_dev.mempaks[i], &mpk_storages[i], &g_isubfile_storage);
                     l_paks[i][k] = &g_dev.mempaks[i];
@@ -1417,7 +1460,8 @@ m64p_error main_run(void)
                             &l_gb_carts_data[i], init_gb_rom, release_gb_rom,
                             &l_gb_carts_data[i], init_gb_ram, release_gb_ram,
                             NULL, &g_iclock_ctime_plus_delta,
-                            &l_gb_carts_data[i].control_id, &g_irumble_backend_plugin_compat);
+                            &l_gb_carts_data[i].control_id, &g_irumble_backend_plugin_compat,
+                            l_gb_carts_data[i].gbcam_backend, l_gb_carts_data[i].igbcam_backend);
 
                     init_transferpak(&g_dev.transferpaks[i], (g_dev.gb_carts[i].read_gb_cart == NULL) ? NULL : &g_dev.gb_carts[i]);
                     l_paks[i][k] = &g_dev.transferpaks[i];
@@ -1550,6 +1594,9 @@ m64p_error main_run(void)
         }
     }
 
+    igbcam_backend->close(gbcam_backend);
+    free(gbcam_backend);
+
     close_file_storage(&sra);
     close_file_storage(&fla);
     close_file_storage(&eep);
@@ -1584,6 +1631,9 @@ on_gfx_open_failure:
             release_gb_ram(&l_gb_carts_data[i]);
         }
     }
+
+    igbcam_backend->close(gbcam_backend);
+    free(gbcam_backend);
 
     /* release storage files */
     close_file_storage(&sra);

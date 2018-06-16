@@ -146,10 +146,11 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
     }
 
     /* Clear Byte-swapped flag, since ROM is now deleted. */
-    g_MemHasBeenBSwapped = 0;
+    g_RomWordsLittleEndian = 0;
     /* allocate new buffer for ROM and copy into this buffer */
     g_rom_size = size;
     swap_copy_rom((uint8_t*)mem_base_u32(g_mem_base, MM_CART_ROM), romimage, size, &imagetype);
+    /* ROM is now in N64 native (big endian) byte order */
 
     memcpy(&ROM_HEADER, (uint8_t*)mem_base_u32(g_mem_base, MM_CART_ROM), sizeof(m64p_rom_header));
 
@@ -185,6 +186,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
         ROM_SETTINGS.rumble = entry->rumble;
         ROM_SETTINGS.transferpak = entry->transferpak;
         ROM_SETTINGS.mempak = entry->mempak;
+        ROM_SETTINGS.biopak = entry->biopak;
         ROM_PARAMS.countperop = entry->countperop;
         ROM_PARAMS.disableextramem = entry->disableextramem;
         ROM_PARAMS.sidmaduration = entry->sidmaduration;
@@ -200,6 +202,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
         ROM_SETTINGS.rumble = 1;
         ROM_SETTINGS.transferpak = 0;
         ROM_SETTINGS.mempak = 1;
+        ROM_SETTINGS.biopak = 0;
         ROM_PARAMS.countperop = DEFAULT_COUNT_PER_OP;
         ROM_PARAMS.disableextramem = DEFAULT_DISABLE_EXTRA_MEM;
         ROM_PARAMS.sidmaduration = DEFAULT_SI_DMA_DURATION;
@@ -232,7 +235,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
 m64p_error close_rom(void)
 {
     /* Clear Byte-swapped flag, since ROM is now deleted. */
-    g_MemHasBeenBSwapped = 0;
+    g_RomWordsLittleEndian = 0;
     DebugMessage(M64MSG_STATUS, "Rom closed.");
 
     return M64ERR_SUCCESS;
@@ -359,12 +362,17 @@ static size_t romdatabase_resolve_round(void)
             entry->entry.set_flags |= ROMDATABASE_ENTRY_MEMPAK;
         }
 
+        if (!isset_bitmask(entry->entry.set_flags, ROMDATABASE_ENTRY_BIOPAK) &&
+            isset_bitmask(ref->set_flags, ROMDATABASE_ENTRY_BIOPAK)) {
+            entry->entry.biopak = ref->biopak;
+            entry->entry.set_flags |= ROMDATABASE_ENTRY_BIOPAK;
+        }
+
         if (!isset_bitmask(entry->entry.set_flags, ROMDATABASE_ENTRY_SIDMADURATION) &&
             isset_bitmask(ref->set_flags, ROMDATABASE_ENTRY_SIDMADURATION)) {
             entry->entry.sidmaduration = ref->sidmaduration;
             entry->entry.set_flags |= ROMDATABASE_ENTRY_SIDMADURATION;
         }
-
 
         free(entry->entry.refmd5);
         entry->entry.refmd5 = NULL;
@@ -460,6 +468,7 @@ void romdatabase_open(void)
             search->entry.cheats = NULL;
             search->entry.transferpak = 0;
             search->entry.mempak = 1;
+            search->entry.biopak = 0;
             search->entry.sidmaduration = DEFAULT_SI_DMA_DURATION;
             search->entry.set_flags = ROMDATABASE_ENTRY_NONE;
 
@@ -634,6 +643,18 @@ void romdatabase_open(void)
                     search->entry.set_flags |= ROMDATABASE_ENTRY_MEMPAK;
                 } else {
                     DebugMessage(M64MSG_WARNING, "ROM Database: Invalid mempak string on line %i", lineno);
+                }
+            }
+            else if(!strcmp(l.name, "Biopak"))
+            {
+                if(!strcmp(l.value, "Yes")) {
+                    search->entry.biopak = 1;
+                    search->entry.set_flags |= ROMDATABASE_ENTRY_BIOPAK;
+                } else if(!strcmp(l.value, "No")) {
+                    search->entry.biopak = 0;
+                    search->entry.set_flags |= ROMDATABASE_ENTRY_BIOPAK;
+                } else {
+                    DebugMessage(M64MSG_WARNING, "ROM Database: Invalid biopak string on line %i", lineno);
                 }
             }
             else if(!strcmp(l.name, "SiDmaDuration"))

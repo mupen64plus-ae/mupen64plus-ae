@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - m64282fp.h                                              *
+ *   Mupen64plus - biopak.h                                                *
  *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2017 Bobby Smiles                                       *
  *                                                                         *
@@ -19,32 +19,19 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef M64P_DEVICE_GB_M64282FP_H
-#define M64P_DEVICE_GB_M64282FP_H
+#ifndef M64P_DEVICE_CONTROLLERS_PAKS_BIOPAK_H
+#define M64P_DEVICE_CONTROLLERS_PAKS_BIOPAK_H
 
-#include <stdint.h>
+#include "device/controllers/game_controller.h"
 
-enum
+struct biopak
 {
-    M64282FP_SENSOR_W = 128,
-    M64282FP_SENSOR_H = 128,
+    unsigned int bpm;
 };
 
-enum m64282fp_registers
-{
-    M64282FP_Z_O,
-    M64282FP_N_VH_G,
-    M64282FP_C_LO,
-    M64282FP_C_HI,
-    M64282FP_P,
-    M64282FP_M,
-    M64282FP_X,
-    M64282FP_E_I_V,
-    M64282FP_REGS_COUNT
-};
+void init_biopak(struct biopak* bpk,
+    unsigned int bpm);
 
-void process_m64282fp_image(
-    uint8_t img[M64282FP_SENSOR_H][M64282FP_SENSOR_W],
-    const uint8_t regs[M64282FP_REGS_COUNT]);
+extern const struct pak_interface g_ibiopak;
 
 #endif

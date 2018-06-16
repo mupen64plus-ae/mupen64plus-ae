@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - m64282fp.h                                              *
+ *   Mupen64plus - biopak.c                                             *
  *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2017 Bobby Smiles                                       *
  *                                                                         *
@@ -19,32 +19,59 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef M64P_DEVICE_GB_M64282FP_H
-#define M64P_DEVICE_GB_M64282FP_H
+/* Implementation based on notes from raphnet
+ * See http://www.raphnet.net/divers/n64_bio_sensor/index_en.php
+ */
 
-#include <stdint.h>
+#include "biopak.h"
 
-enum
+#include "api/m64p_types.h"
+#include "api/callbacks.h"
+
+#include <SDL_timer.h>
+
+void init_biopak(struct biopak* bpk,
+    unsigned int bpm)
 {
-    M64282FP_SENSOR_W = 128,
-    M64282FP_SENSOR_H = 128,
-};
+    bpk->bpm = bpm;
+}
 
-enum m64282fp_registers
+static void plug_biopak(void* pak)
 {
-    M64282FP_Z_O,
-    M64282FP_N_VH_G,
-    M64282FP_C_LO,
-    M64282FP_C_HI,
-    M64282FP_P,
-    M64282FP_M,
-    M64282FP_X,
-    M64282FP_E_I_V,
-    M64282FP_REGS_COUNT
+}
+
+static void unplug_biopak(void* pak)
+{
+}
+
+static void read_biopak(void* pak, uint16_t address, uint8_t* data, size_t size)
+{
+    struct biopak* bpk = (struct biopak*)pak;
+
+    if (address == 0xc000) {
+        uint32_t now = SDL_GetTicks();
+        uint32_t period = UINT32_C(60*1000) / bpk->bpm;
+        uint32_t k = now % period;
+
+        memset(data, (2*k < period) ? 0x00 : 0x03, size);
+    }
+    else {
+        DebugMessage(M64MSG_WARNING, "Unexpected bio sensor read address %04x", address);
+    }
+}
+
+static void write_biopak(void* pak, uint16_t address, const uint8_t* data, size_t size)
+{
+    DebugMessage(M64MSG_WARNING, "Unexpected bio sensor write address %04x", address);
+}
+
+
+/* bio pak definition */
+const struct pak_interface g_ibiopak =
+{
+    "Bio pak",
+    plug_biopak,
+    unplug_biopak,
+    read_biopak,
+    write_biopak
 };
-
-void process_m64282fp_image(
-    uint8_t img[M64282FP_SENSOR_H][M64282FP_SENSOR_W],
-    const uint8_t regs[M64282FP_REGS_COUNT]);
-
-#endif
