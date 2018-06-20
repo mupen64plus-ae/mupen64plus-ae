@@ -317,7 +317,7 @@ public class CacheRomInfoService extends Service
         {
             ZipFile zipFile = new ZipFile( file );
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while( entries.hasMoreElements() )
+            while( entries.hasMoreElements() && !mbStopped)
             {
                 try
                 {
@@ -325,12 +325,8 @@ public class CacheRomInfoService extends Service
                     mListener.GetProgressDialog().setSubtext( new File(zipEntry.getName()).getName() );
                     mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
 
-                    if( mbStopped ) break;
-
                     InputStream zipStream = new BufferedInputStream(zipFile.getInputStream( zipEntry ));
                     mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
-
-                    if( mbStopped ) break;
 
                     cacheFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(),
                             zipStream);
@@ -358,19 +354,15 @@ public class CacheRomInfoService extends Service
         {
             SevenZFile zipFile = new SevenZFile( file );
             SevenZArchiveEntry zipEntry;
-            while( (zipEntry = zipFile.getNextEntry()) != null)
+            while( (zipEntry = zipFile.getNextEntry()) != null && !mbStopped)
             {
                 try
                 {
                     mListener.GetProgressDialog().setSubtext( new File(zipEntry.getName()).getName() );
                     mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingZip );
 
-                    if( mbStopped ) break;
-
                     InputStream zipStream = new BufferedInputStream(new SevenZInputStream(zipFile));
                     mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_extractingZip );
-
-                    if( mbStopped ) break;
 
                     cacheFileFromInputStream(database, file, config, new File(zipEntry.getName()).getName(),
                             zipStream);
@@ -420,10 +412,8 @@ public class CacheRomInfoService extends Service
 
     private void cacheFile( String filename, RomHeader header, String md5, RomDatabase database, ConfigFile config, File zipFileLocation )
     {
-        if( mbStopped ) return;
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_computingMD5 );
 
-        if( mbStopped ) return;
         mListener.GetProgressDialog().setMessage( R.string.cacheRomInfo_searchingDB );
         RomDetail detail = database.lookupByMd5WithFallback( md5, filename, header.crc, header.countryCode );
         String artPath = mArtDir + "/" + detail.artName;
@@ -495,7 +485,7 @@ public class CacheRomInfoService extends Service
             // Read/write the streams (throws exceptions)
             byte[] buffer = new byte[1024];
             int n;
-            while( ( n = inStream.read( buffer ) ) >= 0 && !mbStopped)
+            while( ( n = inStream.read( buffer ) ) >= 0)
             {
                 outStream.write( buffer, 0, n );
             }
@@ -695,7 +685,7 @@ public class CacheRomInfoService extends Service
 
                 mListener.GetProgressDialog().incrementProgress(1);
 
-                if( mbStopped ) return;
+                if( mbStopped ) break;
             }
         }
     }
