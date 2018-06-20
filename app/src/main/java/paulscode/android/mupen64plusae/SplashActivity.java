@@ -91,6 +91,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private AppData mAppData = null;
     private GlobalPrefs mGlobalPrefs = null;
 
+    private AlertDialog mPermissionsNeeded = null;
+    private boolean mRequestingPermissions = false;
+
     // These constants must match the keys used in res/xml/preferences*.xml
     private static final String DISPLAY_SCALING = "displayScaling";
     private static final String VIDEO_HARDWARE_TYPE = "videoHardwareType";
@@ -99,6 +102,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     private static final String NAVIGATION_MODE = "navigationMode";
     private static final String GAME_DATA_PATH = "pathGameSaves";
     private static final String APP_DATA_PATH = "pathAppData";
+    private static final String STATE_REQUESTING_PERMISSIONS = "STATE_REQUESTING_PERMISSIONS";
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -184,13 +188,38 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         setContentView( R.layout.splash_activity );
         mTextView = findViewById( R.id.mainText );
 
-        if( mGlobalPrefs.isBigScreenMode )
+        if ( mGlobalPrefs.isBigScreenMode )
         {
             final ImageView splash = findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo);
         }
 
-        requestPermissions();
+        if ( savedInstanceState != null )
+        {
+            mRequestingPermissions = savedInstanceState.getBoolean(STATE_REQUESTING_PERMISSIONS);
+        }
+
+        if (!mRequestingPermissions) {
+            requestPermissions();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState( Bundle savedInstanceState )
+    {
+        savedInstanceState.putBoolean(STATE_REQUESTING_PERMISSIONS, mRequestingPermissions);
+
+        super.onSaveInstanceState( savedInstanceState );
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        if (mPermissionsNeeded != null) {
+            mPermissionsNeeded.dismiss();
+        }
     }
 
     public void requestPermissions()
@@ -205,7 +234,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                 ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
             {
                 //Show dialog asking for permissions
-                new AlertDialog.Builder(this)
+                mPermissionsNeeded = new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.assetExtractor_permissions_title))
                     .setMessage(getString(R.string.assetExtractor_permissions_rationale))
                     .setPositiveButton(getString(android.R.string.ok), new OnClickListener()
@@ -222,7 +251,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
-                            new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
+                            mPermissionsNeeded = new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
                                 .setMessage(getString(R.string.assetExtractor_failed_permissions))
                                 .setPositiveButton(getString( android.R.string.ok ), new OnClickListener()
                                 {
@@ -251,6 +280,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @SuppressLint("InlinedApi")
     public void actuallyRequestPermissions()
     {
+        mRequestingPermissions = true;
         ActivityCompat.requestPermissions(this, new String[] {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSION_REQUEST);
@@ -281,7 +311,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             if (!good)
             {
                 // permission denied, boo! Disable the app.
-                new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
+                mPermissionsNeeded = new AlertDialog.Builder(SplashActivity.this).setTitle(getString(R.string.assetExtractor_error))
                     .setMessage(getString(R.string.assetExtractor_failed_permissions))
                     .setPositiveButton(getString( android.R.string.ok ), new OnClickListener()
                     {
