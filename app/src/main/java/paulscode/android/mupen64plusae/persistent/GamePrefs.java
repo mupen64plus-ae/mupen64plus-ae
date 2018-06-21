@@ -568,9 +568,9 @@ public class GamePrefs
         // Determine which players are "plugged in", player 1 will be enabled by default, although, it can
         // become unplugged later after it's mapped for the first time
         isPlugged[0] = isControllerEnabled[0] || isTouchscreenEnabled;
-        isPlugged[1] = isControllerEnabled[1] && (playerMap.isPlayerAvailable(2) || isControllerShared);
-        isPlugged[2] = isControllerEnabled[2] && (playerMap.isPlayerAvailable(3) || isControllerShared);
-        isPlugged[3] = isControllerEnabled[3] && (playerMap.isPlayerAvailable(4) || isControllerShared);
+        isPlugged[1] = isControllerEnabled[1] && (playerMap.isPlayerAvailable(2) || isControllerShared || globalPrefs.allEmulatedControllersPlugged);
+        isPlugged[2] = isControllerEnabled[2] && (playerMap.isPlayerAvailable(3) || isControllerShared || globalPrefs.allEmulatedControllersPlugged);
+        isPlugged[3] = isControllerEnabled[3] && (playerMap.isPlayerAvailable(4) || isControllerShared || globalPrefs.allEmulatedControllersPlugged);
 
         //A value of zero means default for the game as specified in mupen64plus.ini
         countPerOp = mPreferences.getInt( "screenAdvancedCountPerOp", 0 );

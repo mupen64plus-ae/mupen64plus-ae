@@ -1227,7 +1227,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 //Check if any controllers have changed state, except for controller 1
                 for (int index = startIndex; index < mGamePrefs.controllerProfile.length; ++index) {
                     if (!mGamePrefs.playerMap.isPlayerAvailable(index+1) && isControllerPlugged[index]) {
-                        mCoreFragment.updateControllerConfig(index, false, mGamePrefs.getPakType(index+1).getNativeValue());
+
+                        if (!mGlobalPrefs.allEmulatedControllersPlugged) {
+                            mCoreFragment.updateControllerConfig(index, false, mGamePrefs.getPakType(index+1).getNativeValue());
+                        }
                         isControllerPlugged[index] = false;
 
                         Log.e("GameActivity", "controller " + index + " was unplugged");
@@ -1279,8 +1282,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         // Attempt to reconnect any disconnected devices
         int player = mGamePrefs.playerMap.reconnectDevice( hardwareId );
 
-        if (player > 0 && !isControllerPlugged[player-1]) {
-            mCoreFragment.updateControllerConfig(player - 1, true, mGamePrefs.getPakType(player).getNativeValue());
+        if (player > 0 && !isControllerPlugged[player-1] ) {
+            if (!mGlobalPrefs.allEmulatedControllersPlugged) {
+                mCoreFragment.updateControllerConfig(player - 1, true, mGamePrefs.getPakType(player).getNativeValue());
+            }
             isControllerPlugged[player-1] = true;
         }
     }

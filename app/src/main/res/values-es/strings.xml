@@ -198,6 +198,8 @@
     <string name="displayImmersiveMode_summary">Ocultar completamente barras de navegación y de estado</string>
     <string name="defaultsAutoPlayerMapping_title">Asignar jugadores automaticamente</string>
     <string name="defaultsAutoPlayerMapping_summary">Asignar un controlador al siguiente jugador de N64 que esta disponable con presionando un boton mientras dentro del juego.</string>
+    <string name="defaultsAllEmulatedControllersAlwaysAttached_title">Todos los controladores de N64 emulados están siempre conectados</string>
+    <string name="defaultsAllEmulatedControllersAlwaysAttached_summary">Si esto está habilitado, todos los controladores emulados se conectarán al N64 emulado independientemente de si hay suficientes controladores reales conectados.</string>
     <string name="gln64Fog_title">Niebla</string>
     <string name="gln64Fog_summary">(todavía en desarrollo)</string>
     <string name="gln64Sai_title">Filtro de texturas 2xSaI</string>

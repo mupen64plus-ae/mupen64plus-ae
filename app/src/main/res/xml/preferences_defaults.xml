@@ -105,6 +105,12 @@
     <android.support.v7.preference.CheckBoxPreference
         android:icon="@drawable/ic_gamepad"
         android:defaultValue="false"
+        android:key="allEmulatedControllersPlugged"
+        android:summary="@string/defaultsAllEmulatedControllersAlwaysAttached_summary"
+        android:title="@string/defaultsAllEmulatedControllersAlwaysAttached_title" />
+    <android.support.v7.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
+        android:defaultValue="false"
         android:key="inputShareController"
         android:summary="@string/inputShareController_summary"
         android:title="@string/inputShareController_title" />

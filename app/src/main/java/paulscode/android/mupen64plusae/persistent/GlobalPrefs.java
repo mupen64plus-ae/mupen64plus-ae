@@ -306,6 +306,11 @@ public class GlobalPrefs
     /** True if auto player mapping is enabled */
     final boolean autoPlayerMapping;
 
+    /** True if we want to tell the cores 4 N64 controllers are always plugged in
+     * regardless if 4 controllers are actually attached.
+     */
+    public final boolean allEmulatedControllersPlugged;
+
     /** True if one controller can control multiple players */
     final boolean isControllerShared;
 
@@ -617,6 +622,8 @@ public class GlobalPrefs
                 GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
         autoPlayerMapping = mPreferences.getBoolean( "autoPlayerMapping", false );
+
+        allEmulatedControllersPlugged = mPreferences.getBoolean( "allEmulatedControllersPlugged", false );
 
         // Peripheral share mode
         isControllerShared = mPreferences.getBoolean( "inputShareController", false );

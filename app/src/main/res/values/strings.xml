@@ -245,6 +245,8 @@
     <string name="displayImmersiveMode_summary">Completely hide navigation and status bars</string>
     <string name="defaultsAutoPlayerMapping_title">Automatic player mapping</string>
     <string name="defaultsAutoPlayerMapping_summary">Map a controller to the next available N64 player while in-game by pushing a button</string>
+    <string name="defaultsAllEmulatedControllersAlwaysAttached_title">All emulated controllers are always attached</string>
+    <string name="defaultsAllEmulatedControllersAlwaysAttached_summary">If enabled, all emulated controllers will be attached to the emulated N64 regardless if enough real controllers are attached.</string>
     <string name="gln64Fog_title">Fog</string>
     <string name="gln64Fog_summary">(needs work)</string>
     <string name="gln64Sai_title">2xSaI texture filter</string>
