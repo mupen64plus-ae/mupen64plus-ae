@@ -974,11 +974,21 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             File zipFile = new File(zipPath);
             romLegacySaveFileName = zipFile.getName();
+
+            if (!zipFile.exists()) {
+                Notifier.showToast(this, R.string.toast_nativeMainFailure07);
+                return;
+            }
         }
         else
         {
             File romFile = new File(romPath);
             romLegacySaveFileName = romFile.getName();
+
+            if (!romFile.exists()) {
+                Notifier.showToast(this, R.string.toast_nativeMainFailure07);
+                return;
+            }
         }
 
 
