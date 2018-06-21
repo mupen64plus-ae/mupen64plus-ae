@@ -322,7 +322,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void advanceFrame()
     {
-        NativeExports.emuPause();
         NativeExports.emuAdvanceFrame();
     }
 

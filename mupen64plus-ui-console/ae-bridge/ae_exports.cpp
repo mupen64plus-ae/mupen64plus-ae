@@ -244,6 +244,7 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_jni_NativeExports_emuAdvanceFrame(JNIEnv* env, jclass cls)
 {
+    resumeEmulator();
     if (coreDoCommand) coreDoCommand(M64CMD_ADVANCE_FRAME, 0, NULL);
 }
 
