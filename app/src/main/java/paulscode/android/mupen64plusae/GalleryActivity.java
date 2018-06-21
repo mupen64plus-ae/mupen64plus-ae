@@ -72,6 +72,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
+import static android.view.View.FOCUS_RIGHT;
 import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
@@ -468,6 +469,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             mSearchView.setIconified(false);
             mSearchView.setQuery( query, true );
         }
+
+        //On Android 8.0+ this is necessary to be able to type text using a controller
+        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                mSearchView.setIconified(false);
+            }
+        });
 
         return super.onCreateOptionsMenu( menu );
     }
