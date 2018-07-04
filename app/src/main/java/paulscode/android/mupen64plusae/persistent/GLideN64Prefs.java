@@ -8,13 +8,7 @@ import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
 
 public class GLideN64Prefs {
 
-    public static final int VERSION = 21;
-
-    /** Crop resulted image (
-     * 0=disable,
-     * 1=auto crop,
-     * 2=user defined crop) */
-    public final int cropMode;
+    public static final int VERSION = 23;
 
     /** Enable/Disable MultiSampling (
      * 0=off,
@@ -152,7 +146,6 @@ public class GLideN64Prefs {
 
     GLideN64Prefs(Context context, final Profile emulationProfile)
     {
-        cropMode = getSafeInt( emulationProfile, "CropMode", 1);
         String glesVersion = AppData.getOpenGlEsVersion(context);
         bilinearMode = getSafeInt( emulationProfile, "bilinearMode", 0);
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);

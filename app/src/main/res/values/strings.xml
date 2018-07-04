@@ -387,9 +387,6 @@
     <string name="riceTextureEnhancement_entrySharpen_more">Sharpen more</string>
 
     <string name="gliden64_category_texture_title">Texture</string>
-    <string name="gliden64_cropmode_title">Crop mode</string>
-    <string name="gliden64_cropmode_disabled">Disabled</string>
-    <string name="gliden64_cropmode_auto">Auto</string>
     <string name="gliden64_multisampling_title">Multisampling level</string>
     <string name="gliden64_multisampling_entry_none">Off</string>
     <string name="gliden64_multisampling_entry_two">2</string>

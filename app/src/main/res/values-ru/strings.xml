@@ -307,9 +307,6 @@
     <string name="riceTextureEnhancement_entrySharpen_more">Более отточенное</string>
 
     <string name="gliden64_category_texture_title">Текстура</string>
-    <string name="gliden64_cropmode_title">Режим обрезки</string>
-    <string name="gliden64_cropmode_disabled">Отключено</string>
-    <string name="gliden64_cropmode_auto">Авто</string>
     <string name="gliden64_multisampling_title">Уровень мультисэимплинга</string>
     <string name="gliden64_multisampling_entry_none">Выключено</string>
     <string name="gliden64_multisampling_entry_two">2</string>

@@ -334,9 +334,6 @@
     <string name="riceTextureEnhancement_entrySharpen_more">Mehr Schärfen</string>
 
     <string name="gliden64_category_texture_title">Textur</string>
-    <string name="gliden64_cropmode_title">Zuschneidemodus</string>
-    <string name="gliden64_cropmode_disabled">Deaktiviert</string>
-    <string name="gliden64_cropmode_auto">Automatisch</string>
     <string name="gliden64_multisampling_title">Multisampling-Stufe</string>
     <string name="gliden64_multisampling_entry_none">Aus</string>
     <string name="gliden64_multisampling_entry_two">2</string>

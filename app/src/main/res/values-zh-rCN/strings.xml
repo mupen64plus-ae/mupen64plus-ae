@@ -473,9 +473,6 @@
     <string name="gliden64_correct_texrect_coords_force">强制</string>
     <string name="gliden64_correct_texrect_coords_off">关闭</string>
     <string name="gliden64_correct_texrect_coords_title">使 texrect 坐标连续</string>
-    <string name="gliden64_cropmode_auto">自动</string>
-    <string name="gliden64_cropmode_disabled">禁用</string>
-    <string name="gliden64_cropmode_title">裁剪模式</string>
     <string name="gliden64_enable_color_buffer_from_RDRAM_title">启用颜色缓冲区复制从 RDRAM</string>
     <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">启用复制辅助缓冲区到 RDRAM</string>
     <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">硬件渲染器</string>
