@@ -672,17 +672,6 @@ void gDPSetScissor( u32 mode, f32 ulx, f32 uly, f32 lrx, f32 lry )
 
 	gDP.changed |= CHANGED_SCISSOR;
 
-	if (config.video.cropMode == Config::cmAuto && gDP.depthImageAddress != gDP.colorImage.address) {
-		const u32 maxCropH = VI.width / 16;
-		const u32 maxCropV = VI.height / 10;
-		if (ulx > 0 && ulx < maxCropH &&
-			uly > 0 && uly < maxCropV &&
-			(VI.width - lrx) < maxCropH && (VI.height - lry) < maxCropV) {
-			config.video.cropWidth = (u32)ulx;
-			config.video.cropHeight = (u32)uly;
-		}
-	}
-
 #ifdef DEBUG_DUMP
 	DebugMsg( DEBUG_NORMAL, "gDPSetScissor( %s, %.2f, %.2f, %.2f, %.2f );\n",
 		ScissorModeText[gDP.scissor.mode],
@@ -802,7 +791,7 @@ void gDPSetKeyGB(u32 cG, u32 sG, u32 wG, u32 cB, u32 sB, u32 wB )
 void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, s16 s, s16 t, f32 dsdx, f32 dtdy , bool flip)
 {
 	if (gDP.otherMode.cycleType == G_CYC_COPY) {
-		dsdx = 1.0f;
+		dsdx /= 4.0f;
 		lrx += 1.0f;
 		lry += 1.0f;
 	}

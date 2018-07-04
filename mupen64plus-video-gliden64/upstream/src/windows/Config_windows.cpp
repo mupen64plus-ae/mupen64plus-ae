@@ -15,9 +15,10 @@ void Config_DoConfig(/*HWND hParent*/)
 	api().FindPluginPath(strIniFolderPath);
 
 	ConfigOpen = true;
-	const bool bRestart = RunConfig(strIniFolderPath);
+	const bool bRestart = RunConfig(strIniFolderPath, api().isRomOpen() ? RSP.romname : nullptr);
 	if (config.generalEmulation.enableCustomSettings != 0)
 		LoadCustomRomSettings(strIniFolderPath, RSP.romname);
+	config.validate();
 	if (bRestart)
 		dwnd().restart();
 	ConfigOpen = false;
@@ -30,4 +31,5 @@ void Config_LoadConfig()
 	LoadConfig(strIniFolderPath);
 	if (config.generalEmulation.enableCustomSettings != 0)
 		LoadCustomRomSettings(strIniFolderPath, RSP.romname);
+	config.validate();
 }

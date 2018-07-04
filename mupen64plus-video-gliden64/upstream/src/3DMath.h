@@ -52,5 +52,4 @@ inline std::pair<s16, u16> GetIntMatrixElement(f32 _elem)
 	return std::pair<s16, u16>(static_cast<s16>(value >> 16), static_cast<u16>(value & 0xFFFF));
 }
 
-
 #endif

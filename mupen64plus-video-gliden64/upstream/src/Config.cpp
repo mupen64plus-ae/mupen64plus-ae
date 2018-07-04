@@ -24,8 +24,6 @@ void Config::resetToDefaults()
 	video.fullscreenRefresh = 60;
 	video.multisampling = 0;
 	video.verticalSync = 0;
-	video.cropMode = cmDisable;
-	video.cropWidth = video.cropHeight = 0;
 
 	texture.maxAnisotropy = 0;
 	texture.bilinearMode = BILINEAR_STANDARD;
@@ -67,6 +65,9 @@ void Config::resetToDefaults()
 #else
 	frameBufferEmulation.fbInfoDisabled = 1;
 #endif
+	frameBufferEmulation.enableOverscan = 0;
+	frameBufferEmulation.overscanPAL.init();
+	frameBufferEmulation.overscanNTSC.init();
 
 	textureFilter.txFilterMode = 0;
 	textureFilter.txEnhancementMode = 0;
@@ -123,4 +124,17 @@ bool isHWLightingAllowed()
 	if (config.generalEmulation.enableHWLighting == 0)
 		return false;
 	return GBI.isHWLSupported();
+}
+
+void Config::validate()
+{
+	if (frameBufferEmulation.enable != 0 && frameBufferEmulation.N64DepthCompare != 0)
+		video.multisampling = 0;
+	if (frameBufferEmulation.nativeResFactor == 1) {
+		generalEmulation.enableNativeResTexrects = 0;
+		generalEmulation.correctTexrectCoords = tcDisable;
+	} else {
+		if (generalEmulation.enableNativeResTexrects != 0)
+			generalEmulation.correctTexrectCoords = tcDisable;
+	}
 }
