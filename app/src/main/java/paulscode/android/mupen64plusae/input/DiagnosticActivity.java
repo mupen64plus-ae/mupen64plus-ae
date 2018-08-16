@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -64,7 +64,6 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        AppData appData = new AppData( this );
         setContentView( R.layout.diagnostic_activity );
         
         // TODO: Remove hack after MOGA SDK is fixed
@@ -103,18 +102,15 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
     public boolean onKeyDown( int keyCode, KeyEvent event )
     {
         onKey( event );
-        if( keyCode == KeyEvent.KEYCODE_BACK )
-            return super.onKeyDown( keyCode, event );
-        return true;
+        return keyCode != KeyEvent.KEYCODE_BACK || super.onKeyDown( keyCode, event );
     }
     
     @Override
     public boolean onKeyUp( int keyCode, KeyEvent event )
     {
         onKey( event );
-        if( keyCode == KeyEvent.KEYCODE_BACK )
-            return super.onKeyUp( keyCode, event );
-        return true;
+
+        return keyCode != KeyEvent.KEYCODE_BACK || super.onKeyUp( keyCode, event );
     }
     
     private void onKey( KeyEvent event )
@@ -127,7 +123,7 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         message += "\nKeyCode: " + keyCode;
         message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
         
-        TextView view = (TextView) findViewById( R.id.textKey );
+        TextView view = findViewById( R.id.textKey );
         view.setText( message );
     }
     
@@ -142,7 +138,7 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         message += "\nKeyCode: " + keyCode;
         message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
         
-        TextView view = (TextView) findViewById( R.id.textKey );
+        TextView view = findViewById( R.id.textKey );
         view.setText( message );
     }
     
@@ -162,21 +158,24 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
     
     private void onMotion(MotionEvent event)
     {
-        String message = "MotionEvent:";
-        message += "\nDevice: " + getHardwareSummary(AbstractProvider.getHardwareId(event));
-        message += "\nAction: " + DeviceUtil.getActionName(event.getAction(), true);
-        message += "\n";
-        
-        for (MotionRange range : event.getDevice().getMotionRanges())
-        {
-            int axis = range.getAxis();
-            String name = MotionEvent.axisToString(axis);
-            String source = DeviceUtil.getSourceName(range.getSource()).toLowerCase(Locale.US);
-            float value = event.getAxisValue(axis);
-            message += String.format("\n%s (%s): %+.2f", name, source, value);
+        StringBuilder message = new StringBuilder();
+
+        message.append("MotionEvent:");
+        message.append("\nDevice: ").append(getHardwareSummary(AbstractProvider.getHardwareId(event)));
+        message.append("\nAction: ").append(DeviceUtil.getActionName(event.getAction(), true));
+        message.append("\n");
+
+        if (event.getDevice() != null) {
+            for (MotionRange range : event.getDevice().getMotionRanges()) {
+                int axis = range.getAxis();
+                String name = MotionEvent.axisToString(axis);
+                String source = DeviceUtil.getSourceName(range.getSource()).toLowerCase(Locale.US);
+                float value = event.getAxisValue(axis);
+                message.append(String.format(Locale.US,"\n%s (%s): %+.2f", name, source, value));
+            }
         }
 
-        TextView view = (TextView) findViewById(R.id.textMotion);
+        TextView view = findViewById(R.id.textMotion);
         view.setText(message);
     }
     
@@ -188,14 +187,14 @@ public class DiagnosticActivity extends AppCompatActivity implements ControllerL
         message += "\nAction: MOGA_MOTION";
         message += "\n";
         // @formatter:off
-        message += String.format( "\nAXIS_X (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_X ) );
-        message += String.format( "\nAXIS_Y (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_Y ) );
-        message += String.format( "\nAXIS_Z (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_Z ) );
-        message += String.format( "\nAXIS_RZ (moga): %+.2f",       event.getAxisValue( com.bda.controller.MotionEvent.AXIS_RZ ) );
-        message += String.format( "\nAXIS_LTRIGGER (moga): %+.2f", event.getAxisValue( com.bda.controller.MotionEvent.AXIS_LTRIGGER ) );
-        message += String.format( "\nAXIS_RTRIGGER (moga): %+.2f", event.getAxisValue( com.bda.controller.MotionEvent.AXIS_RTRIGGER ) );
+        message += String.format(Locale.US, "\nAXIS_X (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_X ) );
+        message += String.format(Locale.US, "\nAXIS_Y (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_Y ) );
+        message += String.format(Locale.US, "\nAXIS_Z (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_Z ) );
+        message += String.format(Locale.US, "\nAXIS_RZ (moga): %+.2f",       event.getAxisValue( com.bda.controller.MotionEvent.AXIS_RZ ) );
+        message += String.format(Locale.US, "\nAXIS_LTRIGGER (moga): %+.2f", event.getAxisValue( com.bda.controller.MotionEvent.AXIS_LTRIGGER ) );
+        message += String.format(Locale.US, "\nAXIS_RTRIGGER (moga): %+.2f", event.getAxisValue( com.bda.controller.MotionEvent.AXIS_RTRIGGER ) );
         // @formatter:on
-        TextView view = (TextView) findViewById( R.id.textMotion );
+        TextView view = findViewById( R.id.textMotion );
         view.setText( message );
     }
     
