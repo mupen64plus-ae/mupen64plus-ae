@@ -1136,7 +1136,9 @@ s32 FrameBufferList::OverscanBuffer::getVOffset() const
 
 f32 FrameBufferList::OverscanBuffer::getScaleX() const
 {
-	return m_scale;
+	if (m_enabled)
+		return m_scale;
+	return dwnd().getScaleX();
 }
 
 f32 FrameBufferList::OverscanBuffer::getScaleY(u32 _fullHeight) const
@@ -1313,7 +1315,7 @@ void FrameBufferList::renderBuffer()
 	srcHeight = rdpRes.vi_width * ((rdpRes.vi_vres*rdpRes.vi_y_add + rdpRes.vi_y_start) >> 10) / pBuffer->m_width;
 
 	const u32 stride = pBuffer->m_width << pBuffer->m_size >> 1;
-	FrameBuffer *pNextBuffer = findBuffer(rdpRes.vi_origin + stride * (srcHeight - 1));
+	FrameBuffer *pNextBuffer = findBuffer(rdpRes.vi_origin + stride * min(u32(srcHeight) - 1, pBuffer->m_height - 1) - 1);
 	if (pNextBuffer == pBuffer)
 		pNextBuffer = nullptr;
 
@@ -1340,8 +1342,8 @@ void FrameBufferList::renderBuffer()
 	const s32 hEnd = _SHIFTR(*REG.VI_H_START, 0, 10);
 	const s32 hx1 = max(0, h0 + 640 - hEnd);
 	//const s32 hx1 = hx0 + rdpRes.vi_hres;
-	dstX0 = (s32)((hx0 + XoffsetRight) * dstScaleX);
-	dstX1 = m_overscan.getDrawingWidth() - (s32)((hx1 + Xdivot) * dstScaleX);
+	dstX0 = (s32)((hx0 * viScaleX + XoffsetRight) * dstScaleX);
+	dstX1 = m_overscan.getDrawingWidth() - (s32)((hx1 * viScaleX + Xdivot) * dstScaleX);
 
 	const f32 srcScaleY = pFilteredBuffer->m_scale;
 	CachedTexture * pBufferTexture = pFilteredBuffer->m_pTexture;

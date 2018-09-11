@@ -1593,13 +1593,13 @@ void gSPInsertMatrix( u32 where, u32 num )
 		if (where < 0x20) {
 			// integer elements of the matrix to be changed
 			const s16 integer = static_cast<s16>(pData[i ^ 1]);
-			const s32 fract = static_cast<s32>(gSP.matrix.combined[0][index + i] * 65536.0f);
-			gSP.matrix.combined[0][index + i] = GetFloatMatrixElement(integer, static_cast<u16>(fract&0xFFFF));
+			const u16 fract = GetIntMatrixElement(gSP.matrix.combined[0][index + i]).second;
+			gSP.matrix.combined[0][index + i] = GetFloatMatrixElement(integer, fract);
 		} else {
 			// fractional elements of the matrix to be changed
-			const s32 integer = static_cast<s32>(gSP.matrix.combined[0][index + i]);
+			const s16 integer = GetIntMatrixElement(gSP.matrix.combined[0][index + i]).first;
 			const u16 fract = pData[i ^ 1];
-			gSP.matrix.combined[0][index + i] = GetFloatMatrixElement(static_cast<s16>(integer), fract);
+			gSP.matrix.combined[0][index + i] = GetFloatMatrixElement(integer, fract);
 		}
 	}
 }
@@ -2002,7 +2002,7 @@ struct ObjData
 		imageH = _pObjSprite->imageH >> 5;
 		X0 = _FIXED2FLOAT(_pObjSprite->objX, 2);
 		X1 = X0 + imageW / scaleW;
-		Y0 = _FIXED2FLOAT(_pObjSprite->objY, 2);
+		Y0 = _FIXED2FLOAT(_pObjSprite->objY, 2) - 0.5f;
 		Y1 = Y0 + imageH / scaleH;
 		flipS = (_pObjSprite->imageFlags & 0x01) != 0;
 		flipT = (_pObjSprite->imageFlags & 0x10) != 0;
@@ -2051,12 +2051,18 @@ struct ObjCoordinates
 		const f32 frameY = _FIXED2FLOAT(_pObjScaleBg->frameY, 2);
 		const f32 imageX = gSP.bgImage.imageX;
 		const f32 imageY = gSP.bgImage.imageY;
-		const f32 scaleW = gSP.bgImage.scaleW;
-		const f32 scaleH = gSP.bgImage.scaleH;
+		f32 scaleW = gSP.bgImage.scaleW;
+		f32 scaleH = gSP.bgImage.scaleH;
+		
+		// gSPBgRectCopy() does not support scaleW and scaleH
+		if (gDP.otherMode.cycleType == G_CYC_COPY) {
+			scaleW = 1.0f;
+			scaleH = 1.0f;
+		}
 
 		f32 frameW = _FIXED2FLOAT(_pObjScaleBg->frameW, 2);
 		f32 frameH = _FIXED2FLOAT(_pObjScaleBg->frameH, 2);
-		f32 imageW = (f32)(_pObjScaleBg->imageW>>2);
+		f32 imageW = (f32)(_pObjScaleBg->imageW >> 2);
 		f32 imageH = (f32)(_pObjScaleBg->imageH >> 2);
 //		const f32 imageW = (f32)gSP.bgImage.width;
 //		const f32 imageH = (f32)gSP.bgImage.height;
@@ -2068,30 +2074,59 @@ struct ObjCoordinates
 			frameW = width;
 			imageH *= scale;
 			frameH *= scale;
+			scaleW = 1.0f;
+			scaleH = 1.0f;
 		}
-
-		ulx = frameX;
-		uly = frameY;
-		lrx = frameX + min(imageW/scaleW, frameW);
-		lry = frameY + min(imageH/scaleH, frameH);
 
 		uls = imageX;
 		ult = imageY;
-		lrs = uls + (lrx - ulx) * scaleW;
-		lrt = ult + (lry - uly) * scaleH;
+		lrs = uls + min(imageW, frameW * scaleW) - 1;
+		lrt = ult + min(imageH, frameH * scaleH) - 1;
+
+		// G_CYC_COPY (gSPBgRectCopy()) does not allow texture filtering
 		if (gDP.otherMode.cycleType != G_CYC_COPY) {
+			// Correct texture coordinates -0.5f and +0.5 if G_OBJRM_BILERP 
+			// bilinear interpolation is set
+			if ((gSP.objRendermode&G_OBJRM_BILERP) != 0 && 
+				((gDP.otherMode.textureFilter == G_TF_BILERP) ||											// Kirby Crystal Shards
+				 (gDP.otherMode.textureFilter == G_TF_POINT && (gSP.objRendermode&G_OBJRM_NOTXCLAMP) != 0)) // Worms Armageddon
+				) {
+				uls -= 0.5f;
+				ult -= 0.5f;
+				lrs += 0.5f;
+				lrt += 0.5f;
+			}
+			// SHRINKSIZE_1 adds a 0.5f perimeter around the image
+			// upper left texture coords += 0.5f; lower left texture coords -= 0.5f
 			if ((gSP.objRendermode&G_OBJRM_SHRINKSIZE_1) != 0) {
-				lrs -= 1.0f / scaleW;
-				lrt -= 1.0f / scaleH;
+				uls += 0.5f;
+				ult += 0.5f;
+				lrs -= 0.5f;
+				lrt -= 0.5f;
+			// SHRINKSIZE_2 adds a 1.0f perimeter 
+			// upper left texture coords += 1.0f; lower left texture coords -= 1.0f
 			} else if ((gSP.objRendermode&G_OBJRM_SHRINKSIZE_2) != 0) {
+				uls += 1.0f;
+				ult += 1.0f;
 				lrs -= 1.0f;
 				lrt -= 1.0f;
 			}
 		}
 
+		// Calculate lrx and lry width new ST values
+		ulx = frameX;
+		uly = frameY;
+		lrx = ulx + ( lrs - uls ) / scaleW;
+		lry = uly + ( lrt - ult ) / scaleH;
+		if ((gSP.objRendermode&G_OBJRM_BILERP) == 0) {
+			lrx += 1.0f / scaleW;
+			lry += 1.0f / scaleH;
+		}
+
+		// gSPBgRect1Cyc() and gSPBgRectCopy() do only support 
+		// imageFlip in horizontal direction
 		if ((_pObjScaleBg->imageFlip & 0x01) != 0) {
-			ulx = lrx;
-			lrx = frameX;
+			std::swap( ulx, lrx);
 		}
 
 		z = (gDP.otherMode.depthSource == G_ZS_PRIM) ? gDP.primDepth.z : gSP.viewport.nearz;
@@ -2365,6 +2400,8 @@ void gSPBgRectCopy( u32 _bg )
 	)
 		_copyDepthBuffer();
 
+	gDP.otherMode.cycleType = G_CYC_COPY;
+	gDP.changed |= CHANGED_CYCLETYPE;
 	gSPTexture( 1.0f, 1.0f, 0, 0, TRUE );
 
 	ObjCoordinates objCoords(objBg);

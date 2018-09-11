@@ -448,6 +448,9 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 	info.size = gDP.textureImage.size;
 	info.loadType = LOADTYPE_TILE;
 	info.bytes = bpl * height;
+	if (gDP.loadTile->size == G_IM_SIZ_32b)
+		// 32 bit texture loaded into lower and upper half of TMEM, thus actual bytes doubled.
+		info.bytes *= 2;
 
 	if (gDP.loadTile->line == 0)
 		return;
@@ -463,20 +466,22 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 	if (CheckForFrameBufferTexture(address, bpl2*height2))
 		return;
 
-	if ((address + height * gDP.textureImage.bpl) > RDRAMSize)
-		return;
-
 	if (gDP.loadTile->size == G_IM_SIZ_32b)
 		gDPLoadTile32b(gDP.loadTile->uls, gDP.loadTile->ult, gDP.loadTile->lrs, gDP.loadTile->lrt);
 	else {
 		u32 tmemAddr = gDP.loadTile->tmem;
 		const u32 line = gDP.loadTile->line;
 		for (u32 y = 0; y < height; ++y) {
-			UnswapCopyWrap(RDRAM, address, (u8*)TMEM, tmemAddr << 3, 0xFFF, bpl);
+			if (address + bpl > RDRAMSize)
+				UnswapCopyWrap(RDRAM, address, (u8*)TMEM, tmemAddr << 3, 0xFFF, RDRAMSize - address);
+			else
+				UnswapCopyWrap(RDRAM, address, (u8*)TMEM, tmemAddr << 3, 0xFFF, bpl);
 			if (y & 1)
 				DWordInterleaveWrap((u32*)TMEM, tmemAddr << 1, 0x3FF, line);
 
 			address += gDP.textureImage.bpl;
+			if (address >= RDRAMSize)
+				break;
 			tmemAddr += line;
 		}
 	}
@@ -629,17 +634,13 @@ void gDPLoadTLUT( u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt )
 	u16 count = (u16)((gDP.tiles[tile].lrs - gDP.tiles[tile].uls + 1) * (gDP.tiles[tile].lrt - gDP.tiles[tile].ult + 1));
 	u32 address = gDP.textureImage.address + gDP.tiles[tile].ult * gDP.textureImage.bpl + (gDP.tiles[tile].uls << gDP.textureImage.size >> 1);
 	u16 pal = (u16)((gDP.tiles[tile].tmem - 256) >> 4);
-	u16 *dest = (u16*)&TMEM[gDP.tiles[tile].tmem];
-	
-	// Workaround for possible game/emulator bug (see bug #1250)
-	if (pal != 0)
-		count = 16;
+	u16 * dest = reinterpret_cast<u16*>(TMEM);
+	u32 destIdx = gDP.tiles[tile].tmem << 2;
 
 	int i = 0;
-	u32 destIdx = 0;
 	while (i < count) {
 		for (u16 j = 0; (j < 16) && (i < count); ++j, ++i) {
-			dest[destIdx&0x3FF] = swapword(*(u16*)(RDRAM + (address ^ 2)));
+			dest[(destIdx | 0x0400) & 0x07FF] = swapword(*(u16*)(RDRAM + (address ^ 2)));
 			address += 2;
 			destIdx += 4;
 		}
@@ -844,11 +845,15 @@ void gDPFullSync()
 
 	dwnd().getDrawer().flush();
 
+	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
+	if (pCurrentBuffer != nullptr)
+		pCurrentBuffer->updateEndAddress();
+
 	const bool sync = config.frameBufferEmulation.copyToRDRAM == Config::ctSync;
 	if ((config.frameBufferEmulation.copyToRDRAM != Config::ctDisable || (config.generalEmulation.hacks & hack_subscreen) != 0) &&
 		!FBInfo::fbInfo.isSupported() &&
-		frameBufferList().getCurrent() != nullptr &&
-		!frameBufferList().getCurrent()->isAuxiliary()
+		pCurrentBuffer != nullptr &&
+		!pCurrentBuffer->isAuxiliary()
 	)
 		FrameBuffer_CopyToRDRAM(gDP.colorImage.address, sync);
 

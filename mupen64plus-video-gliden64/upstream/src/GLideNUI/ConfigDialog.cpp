@@ -351,6 +351,7 @@ void ConfigDialog::setRomName(const char * _romName)
 	ui->profilesComboBox->setEnabled(bRomNameIsEmpty);
 	ui->removeProfilePushButton->setEnabled(bRomNameIsEmpty && ui->profilesComboBox->count() > 1);
 	ui->addProfilePushButton->setEnabled(bRomNameIsEmpty);
+	ui->customSettingsWarningFrame->setVisible(!bRomNameIsEmpty && config.generalEmulation.enableCustomSettings != 0);
 }
 
 ConfigDialog::ConfigDialog(QWidget *parent, Qt::WindowFlags f) :
@@ -585,6 +586,7 @@ void ConfigDialog::on_buttonBox_clicked(QAbstractButton *button)
 			config.generalEmulation.enableCustomSettings = enableCustomSettings;
 			_init();
 			setTitle();
+			setRomName(m_romName);
 		}
 	}
 }
@@ -718,22 +720,6 @@ void ConfigDialog::on_tabWidget_currentChanged(int tab)
 		ui->tabWidget->setCursor(QCursor(Qt::ArrowCursor));
 		m_fontsInited = true;
 	}
-}
-
-void ConfigDialog::on_customSettingsCheckBox_clicked()
-{
-	if (m_romName == nullptr)
-		return;
-
-	if (ui->customSettingsCheckBox->isChecked()) {
-		loadCustomRomSettings(m_strIniPath, m_romName);
-		config.generalEmulation.enableCustomSettings = 1;
-	} else {
-		loadSettings(m_strIniPath);
-		config.generalEmulation.enableCustomSettings = 0;
-	}
-	_init();
-	setTitle();
 }
 
 void ConfigDialog::setTitle()
