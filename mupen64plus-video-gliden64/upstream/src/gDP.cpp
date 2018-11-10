@@ -27,6 +27,12 @@ using namespace std;
 
 gDPInfo gDP;
 
+bool isCurrentColorImageDepthImage()
+{
+	return (gDP.colorImage.address == gDP.depthImageAddress) ||
+		(gDP.fillColor.color == DepthClearColor && gDP.otherMode.cycleType == G_CYC_FILL);
+}
+
 void gDPSetOtherMode( u32 mode0, u32 mode1 )
 {
 	gDP.otherMode.h = mode0;
@@ -63,12 +69,8 @@ void gDPSetOtherMode( u32 mode0, u32 mode1 )
 
 void gDPSetPrimDepth( u16 z, u16 dz )
 {
-	if (gSP.viewport.vscale[2] == 0)
-		gDP.primDepth.z = _FIXED2FLOAT(_SHIFTR(z, 0, 15), 15);
-	else
-		gDP.primDepth.z = min(1.0f, max(-1.0f, (_FIXED2FLOAT(_SHIFTR(z, 0, 15), 15) - gSP.viewport.vtrans[2]) / gSP.viewport.vscale[2]));
+	gDP.primDepth.z = _FIXED2FLOAT(_SHIFTR(z, 0, 15), 15);
 	gDP.primDepth.deltaZ = _FIXED2FLOAT(_SHIFTR(dz, 0, 15), 15);
-
 	DebugMsg( DEBUG_NORMAL, "gDPSetPrimDepth( %f, %f );\n", gDP.primDepth.z, gDP.primDepth.deltaZ);
 }
 
@@ -125,13 +127,13 @@ void gDPSetColorImage( u32 format, u32 size, u32 width, u32 address )
 {
 	address = RSP_SegmentToPhysical( address );
 
-	frameBufferList().saveBuffer(address, (u16)format, (u16)size, (u16)width, false);
-
 	gDP.colorImage.format = format;
 	gDP.colorImage.size = size;
 	gDP.colorImage.width = width;
 	gDP.colorImage.height = 0;
 	gDP.colorImage.address = address;
+
+	frameBufferList().saveBuffer(address, (u16)format, (u16)size, (u16)width, false);
 
 #ifdef DEBUG_DUMP
 	DebugMsg( DEBUG_NORMAL, "gDPSetColorImage( %s, %s, %i, 0x%08X );\n",
@@ -323,7 +325,7 @@ void gDPSetTileSize( u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt )
 }
 
 static
-bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
+bool CheckForFrameBufferTexture(u32 _address, u32 _width, u32 _bytes)
 {
 	gDP.loadTile->textureMode = TEXTUREMODE_NORMAL;
 	gDP.loadTile->frameBufferAddress = 0U;
@@ -356,7 +358,9 @@ bool CheckForFrameBufferTexture(u32 _address, u32 _bytes)
 		}
 
 		const u32 texEndAddress = _address + _bytes - 1;
-		if (_address > pBuffer->m_startAddress && texEndAddress > (pBuffer->m_endAddress + (pBuffer->m_width << pBuffer->m_size >> 1))) {
+		if (_address > pBuffer->m_startAddress &&
+			pBuffer->m_width != _width &&
+			texEndAddress > (pBuffer->m_endAddress + (pBuffer->m_width << pBuffer->m_size >> 1))) {
 			//fbList.removeBuffer(pBuffer->m_startAddress);
 			bRes = false;
 		}
@@ -463,7 +467,7 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 	if (gDP.loadTile->lrt > gDP.scissor.lry)
 		height2 = (u32)gDP.scissor.lry - gDP.loadTile->ult;
 
-	if (CheckForFrameBufferTexture(address, bpl2*height2))
+	if (CheckForFrameBufferTexture(address, info.width, bpl2*height2))
 		return;
 
 	if (gDP.loadTile->size == G_IM_SIZ_32b)
@@ -584,7 +588,7 @@ void gDPLoadBlock(u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt)
 	}
 
 	gDP.loadTile->frameBufferAddress = 0;
-	CheckForFrameBufferTexture(address, bytes); // Load data to TMEM even if FB texture is found. See comment to texturedRectDepthBufferCopy
+	CheckForFrameBufferTexture(address, info.width, bytes); // Load data to TMEM even if FB texture is found. See comment to texturedRectDepthBufferCopy
 
 	if (gDP.loadTile->size == G_IM_SIZ_32b)
 		gDPLoadBlock32(gDP.loadTile->uls, gDP.loadTile->lrs, dxt);
@@ -701,52 +705,40 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 		// Game may use depth texture as auxilary color texture. Example: Mario Tennis
 		// If color is not depth clear color, that is most likely the case
 		if (gDP.fillColor.color == DepthClearColor) {
-			frameBufferList().fillRDRAM(ulx, uly, lrx, lry);
 			depthBuffer = dbFound;
-			if (config.frameBufferEmulation.N64DepthCompare == 0 &&
-				(config.generalEmulation.enableFragmentDepthWrite == 0 ||
-				(ulx == 0 && uly == 0 && lrx == gDP.scissor.lrx && lry == gDP.scissor.lry))) {
-				drawer.clearDepthBuffer(ulx, uly, lrx, lry);
+			if (config.generalEmulation.enableFragmentDepthWrite == 0) {
+				drawer.clearDepthBuffer();
 				depthBuffer = dbCleared;
 			} else
-				depthBufferList().clearBuffer(ulx, uly, lrx, lry);
+				depthBufferList().setCleared(true);
 		}
 	} else if (gDP.fillColor.color == DepthClearColor && gDP.otherMode.cycleType == G_CYC_FILL) {
 		depthBuffer = dbFound;
 		depthBufferList().saveBuffer(gDP.colorImage.address);
-		frameBufferList().fillRDRAM(ulx, uly, lrx, lry);
-		if (config.frameBufferEmulation.N64DepthCompare == 0 &&
-			(config.generalEmulation.enableFragmentDepthWrite == 0 ||
-			(ulx == 0 && uly == 0 && lrx == gDP.scissor.lrx && lry == gDP.scissor.lry))) {
-			drawer.clearDepthBuffer(ulx, uly, lrx, lry);
+		if (config.generalEmulation.enableFragmentDepthWrite == 0 ||
+			(config.generalEmulation.hacks & hack_Snap) != 0) {
+			drawer.clearDepthBuffer();
 			depthBuffer = dbCleared;
 		} else
-			depthBufferList().clearBuffer(ulx, uly, lrx, lry);
+			depthBufferList().setCleared(true);
 	}
 
 	if (depthBuffer != dbCleared) {
 		if (gDP.otherMode.cycleType == G_CYC_FILL) {
 			f32 fillColor[4];
 			gDPGetFillColor(fillColor);
-			if ((depthBuffer == dbNone) &&
-				(ulx == 0) &&
-				(uly == 0) &&
-				(lrx == gDP.scissor.lrx) &&
-				(lry == gDP.scissor.lry)) {
-				frameBufferList().fillRDRAM(ulx, uly, lrx, lry);
-				drawer.clearColorBuffer(fillColor);
-			} else {
-				gDP.rectColor.r = fillColor[0];
-				gDP.rectColor.g = fillColor[1];
-				gDP.rectColor.b = fillColor[2];
-				gDP.rectColor.a = fillColor[3];
-				drawer.drawRect(ulx, uly, lrx, lry);
-			}
+			gDP.rectColor.r = fillColor[0];
+			gDP.rectColor.g = fillColor[1];
+			gDP.rectColor.b = fillColor[2];
+			gDP.rectColor.a = fillColor[3];
 		} else {
 			gDP.rectColor = gDPInfo::Color();
-			drawer.drawRect(ulx, uly, lrx, lry);
 		}
+		drawer.drawRect(ulx, uly, lrx, lry);
 	}
+
+	if (gDP.otherMode.cycleType == G_CYC_FILL)
+		frameBufferList().fillRDRAM(ulx, uly, lrx, lry);
 
 	frameBufferList().setBufferChanged(f32(lry));
 

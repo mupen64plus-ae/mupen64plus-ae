@@ -515,8 +515,6 @@ public:
 	void update(bool _force) override
 	{
 		int textureFilter = gDP.otherMode.textureFilter;
-		if ((gSP.objRendermode&G_OBJRM_BILERP) != 0)
-			textureFilter |= 2;
 		uTextureFilterMode.set(textureFilter, _force);
 		uTextureFormat.set(gSP.textureTile[0]->format, gSP.textureTile[1]->format, _force);
 		uTextureConvert.set(gDP.otherMode.convert_one, _force);
@@ -671,8 +669,7 @@ public:
 	void update(bool _force) override
 	{
 		int renderTarget = 0;
-		if ((gDP.colorImage.address == gDP.depthImageAddress ) ||
-			(gDP.fillColor.color == DepthClearColor && gDP.otherMode.cycleType == G_CYC_FILL)) {
+		if (isCurrentColorImageDepthImage()) {
 			renderTarget = gDP.otherMode.depthCompare + 1;
 		}
 		uRenderTarget.set(renderTarget, _force);

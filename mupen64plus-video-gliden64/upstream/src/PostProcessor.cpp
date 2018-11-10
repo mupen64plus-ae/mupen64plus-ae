@@ -63,38 +63,32 @@ void PostProcessor::_createResultBuffer(const FrameBuffer * _pMainBuffer)
 	assert(!gfxContext.isFramebufferError());
 }
 
-void PostProcessor::_initGammaCorrection()
-{
-	m_gammaCorrectionProgram.reset(gfxContext.createGammaCorrectionShader());
-}
-
-void PostProcessor::_initOrientationCorrection()
-{
-	m_orientationCorrectionProgram.reset(gfxContext.createOrientationCorrectionShader());
-}
-
 void PostProcessor::init()
 {
-	_initGammaCorrection();
-	if (config.generalEmulation.enableBlitScreenWorkaround != 0)
-		_initOrientationCorrection();
-}
-
-void PostProcessor::_destroyGammaCorrection()
-{
-	m_gammaCorrectionProgram.reset();
-}
-
-void PostProcessor::_destroyOrientationCorrection()
-{
-	m_orientationCorrectionProgram.reset();
+	m_gammaCorrectionProgram.reset(gfxContext.createGammaCorrectionShader());
+	m_postprocessingList.emplace_front(std::mem_fn(&PostProcessor::_doGammaCorrection)); // std::mem_fn to fix compilation with VS 2013
+	if (config.video.fxaa != 0) {
+		m_FXAAProgram.reset(gfxContext.createFXAAShader());
+		m_postprocessingList.emplace_front(std::mem_fn(&PostProcessor::_doFXAA));
+	}
+	if (config.generalEmulation.enableBlitScreenWorkaround != 0) {
+		m_orientationCorrectionProgram.reset(gfxContext.createOrientationCorrectionShader());
+		m_postprocessingList.emplace_front(std::mem_fn(&PostProcessor::_doOrientationCorrection));
+	}
 }
 
 void PostProcessor::destroy()
 {
-	_destroyGammaCorrection();
-	_destroyOrientationCorrection();
+	m_postprocessingList.clear();
+	m_gammaCorrectionProgram.reset();
+	m_FXAAProgram.reset();
+	m_orientationCorrectionProgram.reset();
 	m_pResultBuffer.reset();
+}
+
+const PostProcessor::PostprocessingList & PostProcessor::getPostprocessingList() const
+{
+	return m_postprocessingList;
 }
 
 PostProcessor & PostProcessor::get()
@@ -126,14 +120,8 @@ void PostProcessor::_postDraw()
 	gfxContext.resetShaderProgram();
 }
 
-FrameBuffer * PostProcessor::doGammaCorrection(FrameBuffer * _pBuffer)
+FrameBuffer * PostProcessor::_doPostProcessing(FrameBuffer * _pBuffer, graphics::ShaderProgram * _pShader)
 {
-	if (_pBuffer == nullptr)
-		return nullptr;
-
-	if (((*REG.VI_STATUS & 8) | config.gammaCorrection.force) == 0)
-		return _pBuffer;
-
 	_preDraw(_pBuffer);
 
 	gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER,
@@ -155,7 +143,7 @@ FrameBuffer * PostProcessor::doGammaCorrection(FrameBuffer * _pBuffer)
 	copyParams.dstHeight = pDstTex->realHeight;
 	copyParams.tex[0] = m_pTextureOriginal;
 	copyParams.filter = textureParameters::FILTER_NEAREST;
-	copyParams.combiner = m_gammaCorrectionProgram.get();
+	copyParams.combiner = _pShader;
 
 	dwnd().getDrawer().copyTexturedRect(copyParams);
 
@@ -163,7 +151,18 @@ FrameBuffer * PostProcessor::doGammaCorrection(FrameBuffer * _pBuffer)
 	return m_pResultBuffer.get();
 }
 
-FrameBuffer * PostProcessor::doOrientationCorrection(FrameBuffer * _pBuffer)
+FrameBuffer * PostProcessor::_doGammaCorrection(FrameBuffer * _pBuffer)
+{
+	if (_pBuffer == nullptr)
+		return nullptr;
+
+	if (((*REG.VI_STATUS & 8) | config.gammaCorrection.force) == 0)
+		return _pBuffer;
+
+	return _doPostProcessing(_pBuffer, m_gammaCorrectionProgram.get());
+}
+
+FrameBuffer * PostProcessor::_doOrientationCorrection(FrameBuffer * _pBuffer)
 {
 	if (_pBuffer == nullptr)
 		return nullptr;
@@ -171,32 +170,16 @@ FrameBuffer * PostProcessor::doOrientationCorrection(FrameBuffer * _pBuffer)
 	if (config.generalEmulation.enableBlitScreenWorkaround == 0)
 		return _pBuffer;
 
-	_preDraw(_pBuffer);
+	return _doPostProcessing(_pBuffer, m_orientationCorrectionProgram.get());
+}
 
+FrameBuffer * PostProcessor::_doFXAA(FrameBuffer * _pBuffer)
+{
+	if (_pBuffer == nullptr)
+		return nullptr;
 
-	gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER,
-		ObjectHandle(m_pResultBuffer->m_FBO));
+	if (config.video.fxaa == 0)
+		return _pBuffer;
 
-	CachedTexture * pDstTex = m_pResultBuffer->m_pTexture;
-	GraphicsDrawer::CopyRectParams copyParams;
-	copyParams.srcX0 = 0;
-	copyParams.srcY0 = 0;
-	copyParams.srcX1 = m_pTextureOriginal->realWidth;
-	copyParams.srcY1 = m_pTextureOriginal->realHeight;
-	copyParams.srcWidth = m_pTextureOriginal->realWidth;
-	copyParams.srcHeight = m_pTextureOriginal->realHeight;
-	copyParams.dstX0 = 0;
-	copyParams.dstY0 = 0;
-	copyParams.dstX1 = pDstTex->realWidth;
-	copyParams.dstY1 = pDstTex->realHeight;
-	copyParams.dstWidth = pDstTex->realWidth;
-	copyParams.dstHeight = pDstTex->realHeight;
-	copyParams.tex[0] = m_pTextureOriginal;
-	copyParams.filter = textureParameters::FILTER_NEAREST;
-	copyParams.combiner = m_orientationCorrectionProgram.get();
-
-	dwnd().getDrawer().copyTexturedRect(copyParams);
-
-	_postDraw();
-	return m_pResultBuffer.get();
+	return _doPostProcessing(_pBuffer, m_FXAAProgram.get());
 }
