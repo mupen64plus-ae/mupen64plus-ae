@@ -25,9 +25,9 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog.Builder;
-import android.support.v7.preference.DialogPreference;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AlertDialog.Builder;
+import androidx.preference.DialogPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -149,9 +149,9 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
     }
     
     @Override
-    protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
+    protected void onSetInitialValue( Object defaultValue )
     {
-        setValue( restorePersistedValue ? getPersistedString( mValue ) : (String) defaultValue );
+        setValue( getPersistedString( mValue ) );
     }
     
     @Override

@@ -9,7 +9,7 @@
         http://developer.android.com/design/patterns/settings.html
     
     Please follow our naming convention (casing and underscores) for all Preferences:
-        <android.support.v7.preference.CheckBoxPreference
+        <androidx.preference.CheckBoxPreference
             android:key="myKey"
             android:title="@string/myKey_title"
             android:summary="@string/myKey_summary"
@@ -43,7 +43,7 @@
     resources in "@drawable/...".       
     ***********************************************************************************
 -->
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
@@ -63,13 +63,13 @@
         mupen64:stepSize="10"
         mupen64:units="%" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="false"
         android:key="touchscreenFeedback"
         android:summary="@string/touchscreenFeedback_summary"
         android:title="@string/touchscreenFeedback_title" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="touchscreenAnimated_v2"
         android:title="@string/touchscreenAnimation_summary" />
@@ -92,7 +92,7 @@
         android:key="touchscreenAutoHoldV2"
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenAutoHold_title" />
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="touchscreenAutoHideEnabled"
         android:summary="@string/touchscreenAutoHideEnabled_summary"
@@ -105,4 +105,4 @@
         mupen64:stepSize="1"
         mupen64:units="sec" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

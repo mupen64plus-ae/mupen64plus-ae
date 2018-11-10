@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -24,7 +24,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.preference.CheckBoxPreference;
+import androidx.preference.CheckBoxPreference;
 import android.util.AttributeSet;
 
 /**

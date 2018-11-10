@@ -14,7 +14,7 @@
         android:textColor="@android:color/white"
         android:textIsSelectable="false" />
 
-    <android.support.v7.widget.AppCompatRadioButton
+    <androidx.appcompat.widget.AppCompatRadioButton
         android:id="@+id/radio_selection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

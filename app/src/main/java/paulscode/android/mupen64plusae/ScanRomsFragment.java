@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2015 Paul Lamb
@@ -26,7 +26,7 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import org.mupen64plusae.v3.alpha.R;
 

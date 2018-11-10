@@ -8,7 +8,7 @@
         android:icon="@drawable/ic_search"
         android:title="@string/menuItem_search"
         mupen64:showAsAction="ifRoom|withText"
-        mupen64:actionViewClass="android.support.v7.widget.SearchView"/>
+        mupen64:actionViewClass="androidx.appcompat.widget.SearchView"/>
     
     <item
         android:id="@+id/menuItem_refreshRoms"

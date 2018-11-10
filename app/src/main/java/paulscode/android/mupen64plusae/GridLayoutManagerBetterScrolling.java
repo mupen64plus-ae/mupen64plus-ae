@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -21,7 +21,7 @@
 package paulscode.android.mupen64plusae;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -37,7 +37,7 @@ import android.view.View;
  * @see https://code.google.com/p/android/issues/detail?id=81855
  * @see https://code.google.com/p/android/issues/detail?id=81854
  */
-public class GridLayoutManagerBetterScrolling extends android.support.v7.widget.GridLayoutManager
+public class GridLayoutManagerBetterScrolling extends androidx.recyclerview.widget.GridLayoutManager
 {
 
     public GridLayoutManagerBetterScrolling(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes)

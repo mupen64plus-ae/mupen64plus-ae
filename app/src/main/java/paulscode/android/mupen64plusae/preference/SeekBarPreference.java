@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  *
  * Copyright (C) 2013 Paul Lamb
@@ -26,9 +26,9 @@ import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPref
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog.Builder;
-import android.support.v7.preference.DialogPreference;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AlertDialog.Builder;
+import androidx.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
@@ -240,31 +240,24 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     }
 
     @Override
-    protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
+    protected void onSetInitialValue( Object defaultValue )
     {
         int value = mValue;
 
-        if(restorePersistedValue)
+        if(mSaveType.equals("int"))
         {
-            if(mSaveType.equals("int"))
-            {
-                value = getPersistedInt( mValue );
-            }
-            else if(mSaveType.equals("string"))
-            {
-                try
-                {
-                    value = Integer.parseInt(getPersistedString( Integer.toString(mValue) ));
-                }
-                catch(final NumberFormatException e)
-                {
-                    value = mValue;
-                }
-            }
+            value = getPersistedInt( mValue );
         }
-        else
+        else if(mSaveType.equals("string"))
         {
-            value = (Integer) defaultValue;
+            try
+            {
+                value = Integer.parseInt(getPersistedString( Integer.toString(mValue) ));
+            }
+            catch(final NumberFormatException e)
+            {
+                value = mValue;
+            }
         }
 
         setValue( value  );

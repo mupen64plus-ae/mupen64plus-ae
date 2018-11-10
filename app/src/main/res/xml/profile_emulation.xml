@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
@@ -29,7 +29,7 @@
         android:summary="@string/selectedValue"
         android:title="@string/videoPlugin_title" />
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="categoryGln64"
         android:title="@string/categoryGln64_title" >
         <paulscode.android.mupen64plusae.preference.CompatListPreference
@@ -73,8 +73,8 @@
             android:title="@string/gln64HackDepth_title"
             mupen64:falseString="0"
             mupen64:trueString="1" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:key="categoryRice"
         android:title="@string/categoryRice_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
@@ -118,8 +118,8 @@
             android:key="riceHiResTextures"
             android:summary="@string/riceHiResTextures_summary"
             android:title="@string/riceHiResTextures_title" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:key="categoryGlide64"
         android:title="@string/categoryGlide64_title" >
         <paulscode.android.mupen64plusae.preference.CompatListPreference
@@ -129,8 +129,8 @@
             android:key="glide64Frameskip"
             android:summary="@string/selectedValue"
             android:title="@string/glide64Frameskip_title" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:key="categoryGlide64Advanced"
         android:title="@string/categoryGlide64Advanced_title" >
         <paulscode.android.mupen64plusae.preference.CompatListPreference
@@ -392,8 +392,8 @@
             android:key="glide64mk2_wrpAnisotropic"
             android:summary="@string/selectedValue"
             android:title="@string/glide64mk2_wrpAnisotropic_title" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:key="categoryGliden64Texture"
         android:title="@string/gliden64_category_texture_title" >
         <paulscode.android.mupen64plusae.preference.CompatListPreference
@@ -419,8 +419,8 @@
             mupen64:stepSize="1"
             mupen64:saveType="string"
             mupen64:units="x" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:key="categoryGliden64General"
         android:title="@string/gliden64_category_general_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
@@ -461,9 +461,9 @@
             android:key="EnableFragmentDepthWrite"
             android:summary="@string/gliden64_enable_fragment_depth_write_summary"
             android:title="@string/gliden64_enable_fragment_depth_write_title" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="categoryGliden64FrameBuffer"
         android:title="@string/gliden64_category_fb_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
@@ -514,8 +514,8 @@
             android:key="UseNativeResolutionFactor"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_use_native_resolution_factor_title" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:key="categoryGliden64TextureFiltering"
         android:title="@string/gliden64_category_texture_filtering_title" >
         <paulscode.android.mupen64plusae.preference.CompatListPreference
@@ -574,9 +574,9 @@
             android:key="txSaveCache"
             android:summary="@string/gliden64_tx_save_cache_summary"
             android:title="@string/gliden64_tx_save_cache_title" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
         
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="categoryGliden64Gamma"
         android:title="@string/gliden64_category_gamma_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
@@ -592,8 +592,8 @@
             mupen64:stepSize="1"
             mupen64:saveType="string"
             mupen64:units="" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:key="categoryAngrylion"
         android:title="@string/categoryAngrylion_title" >
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
@@ -627,6 +627,6 @@
             android:defaultValue="False"
             android:key="viHideOverscan"
             android:title="@string/angrylion_hide_overscan_title" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
        
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

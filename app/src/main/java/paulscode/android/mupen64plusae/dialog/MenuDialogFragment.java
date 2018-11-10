@@ -4,7 +4,7 @@ import paulscode.android.mupen64plusae.MenuListView;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 import android.view.MenuItem;
 

@@ -20,7 +20,7 @@
  */
 package paulscode.android.mupen64plusae.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;

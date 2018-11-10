@@ -1,16 +1,16 @@
 package paulscode.android.mupen64plusae.compat;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.appcompat.R;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.OnChildAttachStateChangeListener;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.R;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -119,7 +119,7 @@ public class AppCompatPreferenceFragment extends PreferenceFragmentCompat
 
                 FragmentManager fragmentManager = getFragmentManager();
                 if (fragmentManager != null) {
-                    fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+                    fragment.show(getFragmentManager(), "androidx.preference.PreferenceFragment.DIALOG");
                 }
             }
         }

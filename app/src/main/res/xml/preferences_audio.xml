@@ -9,7 +9,7 @@
         http://developer.android.com/design/patterns/settings.html
     
     Please follow our naming convention (casing and underscores) for all Preferences:
-        <android.support.v7.preference.CheckBoxPreference
+        <androidx.preference.CheckBoxPreference
             android:key="myKey"
             android:title="@string/myKey_title"
             android:summary="@string/myKey_summary"
@@ -43,7 +43,7 @@
     resources in "@drawable/...".       
     ***********************************************************************************
 -->
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
@@ -54,7 +54,7 @@
         android:key="audioPlugin"
         android:summary="@string/selectedValue"
         android:title="@string/audioPlugin_title" />
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="audioSLESTimeStretch"
         android:summary="@string/audioSLESTimeStretch_summary"
@@ -78,21 +78,21 @@
         android:summary="@string/selectedValue"
         android:title="@string/audioSLESRate_title" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="false"
         android:key="audioSLESFloatingPoint"
         android:summary="@string/audioSLESFloatingPoint_summary"
         android:title="@string/audioSLESFloatingPoint_title" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="audioSynchronize"
         android:summary="@string/audioSynchronize_summary"
         android:title="@string/audioSynchronize_title" />
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="false"
         android:key="audioSwapChannels"
         android:summary="@string/audioSwapChannels_summary"
         android:title="@string/audioSwapChannels_title" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

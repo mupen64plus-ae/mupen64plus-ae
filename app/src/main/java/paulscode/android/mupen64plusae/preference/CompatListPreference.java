@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2012 Paul Lamb
@@ -25,9 +25,9 @@ import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity.OnPref
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog.Builder;
-import android.support.v7.preference.ListPreference;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AlertDialog.Builder;
+import androidx.preference.ListPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ArrayAdapter;

@@ -9,7 +9,7 @@
         http://developer.android.com/design/patterns/settings.html
     
     Please follow our naming convention (casing and underscores) for all Preferences:
-        <android.support.v7.preference.CheckBoxPreference
+        <androidx.preference.CheckBoxPreference
             android:key="myKey"
             android:title="@string/myKey_title"
             android:summary="@string/myKey_summary"
@@ -43,7 +43,7 @@
     resources in "@drawable/...".       
     ***********************************************************************************
 -->
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
@@ -68,20 +68,20 @@
         mupen64:stepSize="1"
         mupen64:units="" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:defaultValue="false"
         android:key="useFlatGameDataPath"
         android:summary="@string/useFlatGameDataPath_summary"
         android:title="@string/useFlatGameDataPath_title" />
 
-    <android.support.v7.preference.Preference
+    <androidx.preference.Preference
         android:key="actionReloadAssets"
         android:summary="@string/actionReloadAssets_summary"
         android:title="@string/actionReloadAssets_title" />
-    <android.support.v7.preference.Preference
+    <androidx.preference.Preference
         android:icon="@drawable/ic_undo"
         android:key="actionResetUserPrefs"
         android:summary="@string/actionResetUserPrefs_summary"
         android:title="@string/actionResetUserPrefs_title" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

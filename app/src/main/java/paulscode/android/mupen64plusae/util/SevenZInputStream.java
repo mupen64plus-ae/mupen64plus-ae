@@ -21,9 +21,8 @@
 
 package paulscode.android.mupen64plusae.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 
 import java.io.IOException;

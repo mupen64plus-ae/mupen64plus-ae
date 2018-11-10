@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -24,8 +24,8 @@ package paulscode.android.mupen64plusae.preference;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.Preference.BaseSavedState;
+import androidx.preference.Preference;
+import androidx.preference.Preference.BaseSavedState;
 
 public class SavedStringState extends BaseSavedState
 {

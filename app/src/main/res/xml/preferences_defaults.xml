@@ -9,7 +9,7 @@
         http://developer.android.com/design/patterns/settings.html
     
     Please follow our naming convention (casing and underscores) for all Preferences:
-        <android.support.v7.preference.CheckBoxPreference
+        <androidx.preference.CheckBoxPreference
             android:key="myKey"
             android:title="@string/myKey_title"
             android:summary="@string/myKey_summary"
@@ -43,7 +43,7 @@
     resources in "@drawable/...".       
     ***********************************************************************************
 -->
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/org.mupen64plusae.v3.alpha"
     android:key="screenRoot" >
 
@@ -96,19 +96,19 @@
         android:title="@string/controllerProfile4_title"
         mupen64:allowDisable="true"
         mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:icon="@drawable/ic_gamepad"
         android:defaultValue="false"
         android:key="autoPlayerMapping"
         android:summary="@string/defaultsAutoPlayerMapping_summary"
         android:title="@string/defaultsAutoPlayerMapping_title" />
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:icon="@drawable/ic_gamepad"
         android:defaultValue="false"
         android:key="allEmulatedControllersPlugged"
         android:summary="@string/defaultsAllEmulatedControllersAlwaysAttached_summary"
         android:title="@string/defaultsAllEmulatedControllersAlwaysAttached_title" />
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:icon="@drawable/ic_gamepad"
         android:defaultValue="false"
         android:key="inputShareController"
@@ -120,4 +120,4 @@
         android:summary="@string/playerMap_summary"
         android:title="@string/playerMap_title" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

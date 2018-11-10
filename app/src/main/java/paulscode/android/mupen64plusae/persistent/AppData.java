@@ -30,7 +30,9 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.opengl.EGL14;
 import android.os.Build;
-import android.support.v7.preference.PreferenceManager;
+
+import androidx.core.content.pm.PackageInfoCompat;
+import androidx.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -195,19 +197,19 @@ public class AppData
         
         PackageInfo info;
         String version = "";
-        int versionCode = -1;
+        long versionCode = -1;
         try
         {
             info = context.getPackageManager().getPackageInfo( packageName, 0 );
             version = info.versionName;
-            versionCode = info.versionCode;
+            versionCode = PackageInfoCompat.getLongVersionCode(info);
         }
         catch( NameNotFoundException e )
         {
             Log.e( "AppData", e.getMessage() );
         }
         appVersion = version;
-        appVersionCode = versionCode;
+        appVersionCode = (int)(versionCode & 0xffff);
         
         // Directories
 

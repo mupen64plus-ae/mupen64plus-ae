@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -27,8 +27,8 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceViewHolder;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -117,11 +117,11 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     }
     
     @Override
-    protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
+    protected void onSetInitialValue( Object defaultValue )
     {
         try
         {
-            setValue( restorePersistedValue ? getPersistedInt( mValue ) : (Integer) defaultValue );
+            setValue( getPersistedInt( mValue )  );
         }
         catch( ClassCastException e )
         {

@@ -23,9 +23,8 @@ package paulscode.android.mupen64plusae.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.widget.DrawerLayout;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,7 +41,7 @@ import paulscode.android.mupen64plusae.input.map.TouchMap;
 // to press and hold on buttons that could be on the left edge of the screen,
 // override DrawerLayout to ignore touches on the virtual gamepad!
 
-public class GameDrawerLayout extends android.support.v4.widget.DrawerLayout
+public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
 {
     private TouchMap mTouchMap;
     private List<MotionEvent> ignore = new ArrayList<MotionEvent>();
