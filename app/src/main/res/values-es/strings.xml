@@ -334,12 +334,8 @@
     <string name="riceTextureEnhancement_entrySharpen">Agudo</string>
     <string name="riceTextureEnhancement_entrySharpen_more">Mas agudo</string>
     <string name="gliden64_category_texture_title">Textura</string>
-    <string name="gliden64_multisampling_title">Nivel multisampling</string>
-    <string name="gliden64_multisampling_entry_none">Apagado</string>
-    <string name="gliden64_multisampling_entry_two">2</string>
-    <string name="gliden64_multisampling_entry_four">4</string>
-    <string name="gliden64_multisampling_entry_eight">8</string>
-    <string name="gliden64_multisampling_entry_sixteen">16</string>
+    <string name="gliden64_fxaa_title">FXAA</string>
+    <string name="gliden64_fxaa_summary">Habilitar rápido aproximado anti-aliasing de FXAA</string>
     <string name="gliden64_bilinear_mode_title">Modo de filtro bilinear</string>
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-puntos</string>
     <string name="gliden64_bilinear_mode_entry_standard">Estandar</string>

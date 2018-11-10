@@ -892,19 +892,6 @@
 
     <string name="riceTextureEnhancement_default" translatable="false">0</string>
 
-    <!-- GLideN64 multisampling list-->
-    <string-array name="gliden64_multisampling_entries">
-        <item>@string/gliden64_multisampling_entry_none</item>
-        <item>@string/gliden64_multisampling_entry_two</item>
-        <item>@string/gliden64_multisampling_entry_four</item>
-    </string-array>
-    <string-array name="gliden64_multisampling_values" translatable="false">
-        <item>0</item>
-        <item>2</item>
-        <item>4</item>
-    </string-array>
-    <string name="gliden64_multisampling_default" translatable="false">0</string>
-
     <!-- GLideN64 bilinear filtering list-->
     <string-array name="gliden64_bilinear_entries">
         <item>@string/gliden64_bilinear_mode_entry_n64_3point</item>

@@ -396,13 +396,11 @@
     <androidx.preference.PreferenceCategory
         android:key="categoryGliden64Texture"
         android:title="@string/gliden64_category_texture_title" >
-        <paulscode.android.mupen64plusae.preference.CompatListPreference
-            android:defaultValue="@string/gliden64_multisampling_default"
-            android:entries="@array/gliden64_multisampling_entries"
-            android:entryValues="@array/gliden64_multisampling_values"
-            android:key="MultiSampling"
-            android:summary="@string/selectedValue"
-            android:title="@string/gliden64_multisampling_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="FXAA"
+            android:title="@string/gliden64_fxaa_title"
+            android:summary="@string/gliden64_fxaa_summary" />
         <paulscode.android.mupen64plusae.preference.CompatListPreference
             android:defaultValue="@string/gliden64_bilinear_default"
             android:entries="@array/gliden64_bilinear_entries"

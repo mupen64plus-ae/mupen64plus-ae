@@ -387,12 +387,8 @@
     <string name="riceTextureEnhancement_entrySharpen_more">Sharpen more</string>
 
     <string name="gliden64_category_texture_title">Texture</string>
-    <string name="gliden64_multisampling_title">Multisampling level</string>
-    <string name="gliden64_multisampling_entry_none">Off</string>
-    <string name="gliden64_multisampling_entry_two">2</string>
-    <string name="gliden64_multisampling_entry_four">4</string>
-    <string name="gliden64_multisampling_entry_eight">8</string>
-    <string name="gliden64_multisampling_entry_sixteen">16</string>
+    <string name="gliden64_fxaa_title">FXAA</string>
+    <string name="gliden64_fxaa_summary">Enable Fast Approximate Anti-Aliasing FXAA</string>
     <string name="gliden64_bilinear_mode_title">Bilinear filtering mode</string>
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-point</string>
     <string name="gliden64_bilinear_mode_entry_standard">Standard</string>

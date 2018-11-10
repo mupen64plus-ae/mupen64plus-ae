@@ -8,12 +8,10 @@ import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
 
 public class GLideN64Prefs {
 
-    public static final int VERSION = 23;
+    public static final int VERSION = 24;
 
-    /** Enable/Disable MultiSampling (
-     * 0=off,
-     * 2,4,8,16=quality) */
-    public final int multiSampling;
+    /** Enable/Disable Fast Approximate Anti-Aliasing FXAA */
+    public final boolean fxaa;
 
     /** Bilinear filtering mode (
      * 0=N64 3point
@@ -165,8 +163,7 @@ public class GLideN64Prefs {
         enableN64DepthCompare = emulationProfile.get( "EnableN64DepthCompare", "False" ).equals( "True" );
         forceDepthBufferClear = emulationProfile.get( "ForceDepthBufferClear", "False" ).equals( "True" );
 
-        multiSampling = (glesVersion.equals("2.0") || glesVersion.equals("3.0") || enableN64DepthCompare) ?
-                0 : getSafeInt( emulationProfile, "MultiSampling", 0);
+        fxaa = emulationProfile.get( "FXAA", "False" ).equals( "True" );
 
         if(enableCopyColorFromRDRAM && enableCopyColorToRDRAM != 0)
         {

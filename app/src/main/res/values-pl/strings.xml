@@ -270,8 +270,6 @@
     <string name="riceTextureEnhancement_entrySharpen_more">Mocne wyostrzanie</string>
 
     <string name="gliden64_category_texture_title">Tekstura</string>
-    <string name="gliden64_multisampling_entry_two">2</string>
-    <string name="gliden64_multisampling_entry_four">4</string>
     <string name="gliden64_correct_texrect_coords_force">Wymuś</string>
     <string name="gliden64_enable_native_res_texrects_summary">Bardziej poprawna grafika 2D, ale znacznie wolniej i wyłącza ulepszenia tekstur.</string>
     <string name="gliden64_use_native_resolution_factor_1x">1x</string>
