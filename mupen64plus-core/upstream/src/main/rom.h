@@ -23,14 +23,14 @@
 #ifndef __ROM_H__
 #define __ROM_H__
 
+#include <md5.h>
 #include <stdint.h>
 
 #include "api/m64p_types.h"
-#include "md5.h"
 
 #define BIT(bitnr) (1ULL << (bitnr))
 #ifdef __GNUC__
-#define isset_bitmask(x, bitmask) __extension__ ({ typeof(bitmask) _bitmask = (bitmask); \
+#define isset_bitmask(x, bitmask) __extension__ ({ __typeof__(bitmask) _bitmask = (bitmask); \
                                      (_bitmask & (x)) == _bitmask; })
 #else
 #define isset_bitmask(x, bitmask) ((bitmask & (x)) == bitmask)

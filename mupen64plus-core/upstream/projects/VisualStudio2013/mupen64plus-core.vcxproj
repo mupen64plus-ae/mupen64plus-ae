@@ -41,11 +41,13 @@
     <ClCompile Include="..\..\src\api\debugger.c" />
     <ClCompile Include="..\..\src\api\frontend.c" />
     <ClCompile Include="..\..\src\api\vidext.c" />
+    <ClCompile Include="..\..\src\backends\api\video_capture_backend.c" />
     <ClCompile Include="..\..\src\backends\plugins_compat\input_plugin_compat.c" />
     <ClCompile Include="..\..\src\backends\plugins_compat\audio_plugin_compat.c" />
     <ClCompile Include="..\..\src\backends\clock_ctime_plus_delta.c" />
+    <ClCompile Include="..\..\src\backends\dummy_video_capture.c" />
     <ClCompile Include="..\..\src\backends\file_storage.c" />
-    <ClCompile Include="..\..\src\backends\opencv_video_backend.cpp">
+    <ClCompile Include="..\..\src\backends\opencv_video_capture.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|Win32'">true</ExcludedFromBuild>
@@ -55,7 +57,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\src\backends\dummy_video_backend.c" />
     <ClCompile Include="..\..\src\debugger\dbg_breakpoints.c" />
     <ClCompile Include="..\..\src\debugger\dbg_debugger.c" />
     <ClCompile Include="..\..\src\debugger\dbg_decoder.c" />
@@ -82,16 +83,12 @@
     <ClCompile Include="..\..\src\main\eventloop.c" />
     <ClCompile Include="..\..\src\main\lirc.c" />
     <ClCompile Include="..\..\src\main\main.c" />
-    <ClCompile Include="..\..\src\main\xxHash\xxhash.c" />
-    <ClCompile Include="..\..\src\main\md5.c" />
     <ClCompile Include="..\..\src\main\rom.c" />
     <ClCompile Include="..\..\src\main\savestates.c" />
+    <ClCompile Include="..\..\src\main\screenshot.c" />
     <ClCompile Include="..\..\src\main\sdl_key_converter.c" />
     <ClCompile Include="..\..\src\main\util.c" />
     <ClCompile Include="..\..\src\main\workqueue.c" />
-    <ClCompile Include="..\..\src\main\zip\ioapi.c" />
-    <ClCompile Include="..\..\src\main\zip\unzip.c" />
-    <ClCompile Include="..\..\src\main\zip\zip.c" />
     <ClCompile Include="..\..\src\device\memory\memory.c" />
     <ClCompile Include="..\..\src\osal\dynamiclib_unix.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -115,9 +112,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\src\osal\files_win32.c" />
-    <ClCompile Include="..\..\src\osd\OGLFT.cpp" />
-    <ClCompile Include="..\..\src\osd\osd.cpp" />
-    <ClCompile Include="..\..\src\osd\screenshot.c" />
+    <ClCompile Include="..\..\src\osd\oglft_c.cpp" />
+    <ClCompile Include="..\..\src\osd\osd.c" />
     <ClCompile Include="..\..\src\device\rcp\pi\pi_controller.c" />
     <ClCompile Include="..\..\src\plugin\dummy_audio.c" />
     <ClCompile Include="..\..\src\plugin\dummy_input.c" />
@@ -247,6 +243,12 @@
     <ClCompile Include="..\..\src\device\pif\cic.c" />
     <ClCompile Include="..\..\src\device\pif\n64_cic_nus_6105.c" />
     <ClCompile Include="..\..\src\device\pif\pif.c" />
+    <ClCompile Include="..\..\subprojects\md5\md5.c" />
+    <ClCompile Include="..\..\subprojects\minizip\ioapi.c" />
+    <ClCompile Include="..\..\subprojects\minizip\unzip.c" />
+    <ClCompile Include="..\..\subprojects\minizip\zip.c" />
+    <ClCompile Include="..\..\subprojects\oglft\OGLFT.cpp" />
+    <ClCompile Include="..\..\subprojects\xxhash\xxhash.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\api\callbacks.h" />
@@ -266,20 +268,9 @@
     <ClInclude Include="..\..\src\backends\api\joybus.h" />
     <ClInclude Include="..\..\src\backends\api\rumble_backend.h" />
     <ClInclude Include="..\..\src\backends\api\storage_backend.h" />
-    <ClInclude Include="..\..\src\backends\api\video_backend.h" />
+    <ClInclude Include="..\..\src\backends\api\video_capture_backend.h" />
     <ClInclude Include="..\..\src\backends\clock_ctime_plus_delta.h" />
     <ClInclude Include="..\..\src\backends\file_storage.h" />
-    <ClInclude Include="..\..\src\backends\opencv_video_backend.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\src\backends\dummy_video_backend.h" />
     <ClInclude Include="..\..\src\backends\plugins_compat\plugins_compat.h" />
     <ClInclude Include="..\..\src\api\vidext_sdl2_compat.h" />
     <ClInclude Include="..\..\src\debugger\dbg_breakpoints.h" />
@@ -310,25 +301,19 @@
     <ClInclude Include="..\..\src\main\lirc.h" />
     <ClInclude Include="..\..\src\main\list.h" />
     <ClInclude Include="..\..\src\main\main.h" />
-    <ClInclude Include="..\..\src\main\md5.h" />
     <ClInclude Include="..\..\src\main\rom.h" />
     <ClInclude Include="..\..\src\main\savestates.h" />
+    <ClInclude Include="..\..\src\main\screenshot.h" />
     <ClInclude Include="..\..\src\main\sdl_key_converter.h" />
     <ClInclude Include="..\..\src\main\util.h" />
     <ClInclude Include="..\..\src\main\version.h" />
     <ClInclude Include="..\..\src\main\workqueue.h" />
-    <ClInclude Include="..\..\src\main\xxHash\xxhash.h" />
-    <ClInclude Include="..\..\src\main\zip\crypt.h" />
-    <ClInclude Include="..\..\src\main\zip\ioapi.h" />
-    <ClInclude Include="..\..\src\main\zip\unzip.h" />
-    <ClInclude Include="..\..\src\main\zip\zip.h" />
     <ClInclude Include="..\..\src\device\memory\memory.h" />
     <ClInclude Include="..\..\src\osal\dynamiclib.h" />
     <ClInclude Include="..\..\src\osal\files.h" />
     <ClInclude Include="..\..\src\osal\preproc.h" />
-    <ClInclude Include="..\..\src\osd\OGLFT.h" />
+    <ClInclude Include="..\..\src\osd\oglft_c.h" />
     <ClInclude Include="..\..\src\osd\osd.h" />
-    <ClInclude Include="..\..\src\osd\screenshot.h" />
     <ClInclude Include="..\..\src\device\rcp\pi\pi_controller.h" />
     <ClInclude Include="..\..\src\plugin\dummy_audio.h" />
     <ClInclude Include="..\..\src\plugin\dummy_input.h" />
@@ -469,6 +454,13 @@
     <ClInclude Include="..\..\src\device\pif\cic.h" />
     <ClInclude Include="..\..\src\device\pif\n64_cic_nus_6105.h" />
     <ClInclude Include="..\..\src\device\pif\pif.h" />
+    <ClInclude Include="..\..\subprojects\md5\md5.h" />
+    <ClInclude Include="..\..\subprojects\minizip\crypt.h" />
+    <ClInclude Include="..\..\subprojects\minizip\ioapi.h" />
+    <ClInclude Include="..\..\subprojects\minizip\unzip.h" />
+    <ClInclude Include="..\..\subprojects\minizip\zip.h" />
+    <ClInclude Include="..\..\subprojects\oglft\OGLFT.h" />
+    <ClInclude Include="..\..\subprojects\xxhash\xxhash.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\device\r4300\mips_instructions.def" />
@@ -493,12 +485,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|x64'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|Win32'">"..\..\..\mupen64plus-win32-deps\nasm-2.11.06\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)linkage_x86.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|x64'">"..\..\..\mupen64plus-win32-deps\nasm-2.11.06\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)linkage_x86.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|Win32'">"..\..\..\mupen64plus-win32-deps\nasm-2.13.03\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)linkage_x86.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|x64'">"..\..\..\mupen64plus-win32-deps\nasm-2.13.03\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)linkage_x86.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|Win32'">$(IntDir)linkage_x86.obj</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|x64'">$(IntDir)linkage_x86.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">"..\..\..\mupen64plus-win32-deps\nasm-2.11.06\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)linkage_x86.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|x64'">"..\..\..\mupen64plus-win32-deps\nasm-2.11.06\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)linkage_x86.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">"..\..\..\mupen64plus-win32-deps\nasm-2.13.03\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)linkage_x86.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|x64'">"..\..\..\mupen64plus-win32-deps\nasm-2.13.03\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)linkage_x86.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">$(IntDir)linkage_x86.obj</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|x64'">$(IntDir)linkage_x86.obj</Outputs>
     </CustomBuild>
@@ -512,9 +504,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"..\..\..\mupen64plus-win32-deps\nasm-2.11.06\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)dyna_start.obj -f win64 -d WIN64 %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"..\..\..\mupen64plus-win32-deps\nasm-2.13.03\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)dyna_start.obj -f win64 -d WIN64 %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)dyna_start.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"..\..\..\mupen64plus-win32-deps\nasm-2.11.06\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)dyna_start.obj -f win64 -d WIN64 %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"..\..\..\mupen64plus-win32-deps\nasm-2.13.03\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)dyna_start.obj -f win64 -d WIN64 %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)dyna_start.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\..\src\device\r4300\x86\dyna_start.asm">
@@ -527,9 +519,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"..\..\..\mupen64plus-win32-deps\nasm-2.11.06\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)dyna_start.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"..\..\..\mupen64plus-win32-deps\nasm-2.13.03\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)dyna_start.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)dyna_start.obj</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"..\..\..\mupen64plus-win32-deps\nasm-2.11.06\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)dyna_start.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"..\..\..\mupen64plus-win32-deps\nasm-2.13.03\nasm.exe" -i ..\..\src\ -i ..\..\src\asm_defines\ -o $(IntDir)dyna_start.obj -f win32 -d LEADING_UNDERSCORE %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)dyna_start.obj</Outputs>
     </CustomBuild>
   </ItemGroup>
@@ -681,7 +673,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\subprojects\md5;..\..\subprojects\minizip;..\..\subprojects\oglft;..\..\subprojects\xxhash;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;DYNAREC;M64P_OSD;M64P_PARALLEL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -707,7 +699,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\subprojects\md5;..\..\subprojects\minizip;..\..\subprojects\oglft;..\..\subprojects\xxhash;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;DYNAREC;M64P_PARALLEL;M64P_OSD;__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -732,7 +724,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\subprojects\md5;..\..\subprojects\minizip;..\..\subprojects\oglft;..\..\subprojects\xxhash;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;DYNAREC;M64P_OSD;M64P_PARALLEL;NEW_DYNAREC=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -763,7 +755,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\subprojects\md5;..\..\subprojects\minizip;..\..\subprojects\oglft;..\..\subprojects\xxhash;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;DYNAREC;M64P_PARALLEL;M64P_OSD;NEW_DYNAREC=1;__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -789,7 +781,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\subprojects\md5;..\..\subprojects\minizip;..\..\subprojects\oglft;..\..\subprojects\xxhash;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;DYNAREC;M64P_OSD;M64P_PARALLEL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -813,7 +805,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\subprojects\md5;..\..\subprojects\minizip;..\..\subprojects\oglft;..\..\subprojects\xxhash;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;DYNAREC;M64P_PARALLEL;M64P_OSD;__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -836,7 +828,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\subprojects\md5;..\..\subprojects\minizip;..\..\subprojects\oglft;..\..\subprojects\xxhash;..\..\..\mupen64plus-win32-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;DYNAREC;M64P_OSD;M64P_PARALLEL;NEW_DYNAREC=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -860,7 +852,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='New_Dynarec_Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\mupen64plus-win32-deps-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\subprojects\md5;..\..\subprojects\minizip;..\..\subprojects\oglft;..\..\subprojects\xxhash;..\..\..\mupen64plus-win32-deps-deps\SDL-1.2.15\include;..\..\..\mupen64plus-win32-deps\zlib-1.2.8\include;..\..\..\mupen64plus-win32-deps\libpng-1.6.18\include;..\..\..\mupen64plus-win32-deps\freetype-2.6\include;..\..\..\mupen64plus-win32-deps\opencv-3.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;DYNAREC;M64P_PARALLEL;M64P_OSD;NEW_DYNAREC=1;__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>

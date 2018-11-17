@@ -29,6 +29,7 @@
  */
 
 #include <SDL.h>
+#include <assert.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -49,12 +50,10 @@
 #include "backends/api/joybus.h"
 #include "backends/api/rumble_backend.h"
 #include "backends/api/storage_backend.h"
-#include "backends/api/video_backend.h"
+#include "backends/api/video_capture_backend.h"
 #include "backends/plugins_compat/plugins_compat.h"
 #include "backends/clock_ctime_plus_delta.h"
 #include "backends/file_storage.h"
-#include "backends/opencv_video_backend.h"
-#include "backends/dummy_video_backend.h"
 #include "cheat.h"
 #include "device/device.h"
 #include "device/controllers/paks/biopak.h"
@@ -69,13 +68,13 @@
 #include "osal/files.h"
 #include "osal/preproc.h"
 #include "osd/osd.h"
-#include "osd/screenshot.h"
 #include "plugin/plugin.h"
 #if defined(PROFILE)
 #include "profile.h"
 #endif
 #include "rom.h"
 #include "savestates.h"
+#include "screenshot.h"
 #include "util.h"
 
 #ifdef DBG
@@ -179,6 +178,46 @@ static char *get_gb_ram_path(const char* gbrom, unsigned int control_id)
     return formatstr("%s%s.%u.sav", get_savesrampath(), gbrom, control_id);
 }
 
+static m64p_error init_video_capture_backend(const struct video_capture_backend_interface** ivcap, void** vcap, m64p_handle config, const char* key)
+{
+    m64p_error err;
+
+    const char* name = ConfigGetParamString(config, key);
+    if (name == NULL) {
+        DebugMessage(M64MSG_WARNING, "Couldn't get %s value. Using NULL value instead.", key);
+    }
+
+    /* try to find desired backend (by name) */
+    *ivcap = get_video_capture_backend(name);
+
+    /* handle not found case */
+    if (*ivcap == NULL) {
+        /* default to dummy backend */
+        *ivcap = get_video_capture_backend(NULL);
+
+        DebugMessage(M64MSG_WARNING, "Could not find %s video_capture_backend_interface. Using %s instead.",
+            name, (*ivcap)->name);
+    }
+
+    /* build section name */
+    char* section = formatstr("%s:%s", key, (*ivcap)->name);
+
+    /* init backend */
+    err = (*ivcap)->init(vcap, section);
+
+    if (err == M64ERR_SUCCESS) {
+        DebugMessage(M64MSG_INFO, "Using video capture backend: %s", (*ivcap)->name);
+    }
+    else {
+        DebugMessage(M64MSG_ERROR, "Failed to initialize video capture backend %s: %s", (*ivcap)->name, CoreErrorMessage(err));
+        *ivcap = NULL;
+    }
+
+    free(section);
+
+    return err;
+}
+
 /*********************************************************************************************************
 * helper functions
 */
@@ -227,21 +266,19 @@ static void main_check_inputs(void)
 int main_set_core_defaults(void)
 {
     float fConfigParamsVersion;
-    int bSaveConfig = 0, bUpgrade = 0;
+    int bUpgrade = 0;
 
     if (ConfigGetParameter(g_CoreConfig, "Version", M64TYPE_FLOAT, &fConfigParamsVersion, sizeof(float)) != M64ERR_SUCCESS)
     {
         DebugMessage(M64MSG_WARNING, "No version number in 'Core' config section. Setting defaults.");
         ConfigDeleteSection("Core");
         ConfigOpenSection("Core", &g_CoreConfig);
-        bSaveConfig = 1;
     }
     else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
     {
         DebugMessage(M64MSG_WARNING, "Incompatible version %.2f in 'Core' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
         ConfigDeleteSection("Core");
         ConfigOpenSection("Core", &g_CoreConfig);
-        bSaveConfig = 1;
     }
     else if ((CONFIG_PARAM_VERSION - fConfigParamsVersion) >= 0.0001f)
     {
@@ -249,7 +286,6 @@ int main_set_core_defaults(void)
         ConfigSetParameter(g_CoreConfig, "Version", M64TYPE_FLOAT, &fVersion);
         DebugMessage(M64MSG_INFO, "Updating parameter set version in 'Core' config section to %.2f", fVersion);
         bUpgrade = 1;
-        bSaveConfig = 1;
     }
 
     /* parameters controlling the operation of the core */
@@ -273,7 +309,7 @@ int main_set_core_defaults(void)
     ConfigSetDefaultBool(g_CoreConfig, "DisableSpecRecomp", 1, "Disable speculative precompilation in new dynarec");
     ConfigSetDefaultBool(g_CoreConfig, "RandomizeInterrupt", 1, "Randomize PI/SI Interrupt Timing");
     ConfigSetDefaultInt(g_CoreConfig, "SiDmaDuration", -1, "Duration of SI DMA (-1: use per game settings)");
-    ConfigSetDefaultString(g_CoreConfig, "GbCameraVideoDevice", "0", "Gameboy Camera Video device - backend specific");
+    ConfigSetDefaultString(g_CoreConfig, "GbCameraVideoCaptureBackend1", DEFAULT_VIDEO_CAPTURE_BACKEND, "Gameboy Camera Video Capture backend");
 
     /* handle upgrades */
     if (bUpgrade)
@@ -285,9 +321,6 @@ int main_set_core_defaults(void)
                 ConfigSetParameter(g_CoreConfig, "SaveSRAMPath", M64TYPE_STRING, pccSaveStatePath);
         }
     }
-
-    if (bSaveConfig)
-        ConfigSaveSection("Core");
 
     /* set config parameters for keyboard and joystick commands */
     return event_set_core_defaults();
@@ -1104,7 +1137,7 @@ struct gb_cart_data
     struct file_storage rom_fstorage;
     struct file_storage ram_fstorage;
     void* gbcam_backend;
-    const struct video_input_backend_interface* igbcam_backend;
+    const struct video_capture_backend_interface* igbcam_backend;
 };
 
 static struct gb_cart_data l_gb_carts_data[GAME_CONTROLLERS_COUNT];
@@ -1259,8 +1292,8 @@ m64p_error main_run(void)
     struct file_storage mpk_storages[GAME_CONTROLLERS_COUNT];
     struct file_storage mpk;
 
-    void* gbcam_backend = NULL;
-    const struct video_input_backend_interface* igbcam_backend = NULL;
+    void* gbcam_backend;
+    const struct video_capture_backend_interface* igbcam_backend;
 
     /* XXX: select type of flashram from db */
     uint32_t flashram_type = MX29L1100_ID;
@@ -1341,21 +1374,11 @@ m64p_error main_run(void)
         l_pak_type_idx[PLUGIN_TRANSFER_PAK] = k;
     }
 
+    /* init GbCamera backend specified in the configuration file */
+    init_video_capture_backend(&igbcam_backend, &gbcam_backend,
+        g_CoreConfig, "GbCameraVideoCaptureBackend1");
+
     /* open GB cam video device */
-#if defined(M64P_OPENCV)
-    {
-        struct opencv_video_backend* cv_backend = malloc(sizeof(*cv_backend));
-        memset(cv_backend, 0, sizeof(*cv_backend));
-        cv_backend->device = strdup(ConfigGetParamString(g_CoreConfig, "GbCameraVideoDevice"));
-
-        gbcam_backend = cv_backend;
-        igbcam_backend = &g_iopencv_video_input_backend;
-    }
-#else
-    gbcam_backend = NULL;
-    igbcam_backend = &g_idummy_video_input_backend;
-#endif
-
     igbcam_backend->open(gbcam_backend, M64282FP_SENSOR_W, M64282FP_SENSOR_H);
 
     /* open storage files, provide default content if not present */
@@ -1434,7 +1457,10 @@ m64p_error main_run(void)
                 }
                 /* Memory Pak */
                 else if (l_ipaks[k] == &g_imempak) {
-                    mpk_storages[i] = (struct file_storage){ mpk.data + i * MEMPAK_SIZE, MEMPAK_SIZE, (void*)&mpk} ;
+                    mpk_storages[i].data = mpk.data + i * MEMPAK_SIZE;
+                    mpk_storages[i].size = MEMPAK_SIZE;
+                    mpk_storages[i].filename = (void*)&mpk; /* OK for isubfile_storage */
+
                     init_mempak(&g_dev.mempaks[i], &mpk_storages[i], &g_isubfile_storage);
                     l_paks[i][k] = &g_dev.mempaks[i];
 
@@ -1595,7 +1621,7 @@ m64p_error main_run(void)
     }
 
     igbcam_backend->close(gbcam_backend);
-    free(gbcam_backend);
+    igbcam_backend->release(gbcam_backend);
 
     close_file_storage(&sra);
     close_file_storage(&fla);
@@ -1633,7 +1659,7 @@ on_gfx_open_failure:
     }
 
     igbcam_backend->close(gbcam_backend);
-    free(gbcam_backend);
+    igbcam_backend->release(gbcam_backend);
 
     /* release storage files */
     close_file_storage(&sra);

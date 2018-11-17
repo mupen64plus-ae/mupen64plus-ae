@@ -1,3 +1,4 @@
+
 #/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 # *   Mupen64plus - Makefile                                                *
 # *   Mupen64Plus homepage: https://mupen64plus.org/                        *
@@ -78,7 +79,7 @@ ifneq ("$(filter ppc macppc socppc powerpc,$(HOST_CPU))","")
   BIG_ENDIAN := 1
   PIC ?= 1
   NO_ASM := 1
-  $(warning Architecture "$(HOST_CPU)" not officially supported.')
+  $(warning Architecture "$(HOST_CPU)" not officially supported.)
 endif
 ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
   CPU := PPC
@@ -86,7 +87,7 @@ ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
   BIG_ENDIAN := 1
   PIC ?= 1
   NO_ASM := 1
-  $(warning Architecture "$(HOST_CPU)" not officially supported.')
+  $(warning Architecture "$(HOST_CPU)" not officially supported.)
 endif
 ifneq ("$(filter arm%,$(HOST_CPU))","")
   ifeq ("$(filter arm%b,$(HOST_CPU))","")
@@ -112,7 +113,7 @@ ifneq ("$(filter arm%,$(HOST_CPU))","")
         CFLAGS += -mfpu=vfp -mfloat-abi=softfp
       endif
     endif
-    $(warning Architecture "$(HOST_CPU)" not officially supported.')
+    $(warning Architecture "$(HOST_CPU)" not officially supported.)
   endif
 endif
 ifneq ("$(filter mips,$(HOST_CPU))","")
@@ -120,7 +121,15 @@ ifneq ("$(filter mips,$(HOST_CPU))","")
   ARCH_DETECTED := 32BITS
   PIC ?= 1
   NO_ASM := 1
-  $(warning Architecture "$(HOST_CPU)" not officially supported.')
+  $(warning Architecture "$(HOST_CPU)" not officially supported.)
+endif
+ifneq ("$(filter aarch64,$(HOST_CPU))","")
+    CPU := AARCH
+    ARCH_DETECTED := 64BITS
+    PIC ?= 1
+    NEW_DYNAREC := 1
+    NO_ASM := 1
+    LDFLAGS += -fPIC
 endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'https://github.com/mupen64plus/mupen64plus-core/issues')
@@ -446,6 +455,7 @@ endif
 
 SRCDIR = ../../src
 OBJDIR = _obj$(POSTFIX)
+SUBDIR = ../../subprojects
 
 # list of required source files for compilation
 SOURCE = \
@@ -455,11 +465,12 @@ SOURCE = \
     $(SRCDIR)/api/debugger.c \
     $(SRCDIR)/api/frontend.c \
     $(SRCDIR)/api/vidext.c \
+    $(SRCDIR)/backends/api/video_capture_backend.c \
     $(SRCDIR)/backends/plugins_compat/audio_plugin_compat.c \
     $(SRCDIR)/backends/plugins_compat/input_plugin_compat.c \
     $(SRCDIR)/backends/clock_ctime_plus_delta.c \
+    $(SRCDIR)/backends/dummy_video_capture.c \
     $(SRCDIR)/backends/file_storage.c \
-    $(SRCDIR)/backends/dummy_video_backend.c \
     $(SRCDIR)/device/cart/cart.c \
     $(SRCDIR)/device/cart/af_rtc.c \
     $(SRCDIR)/device/cart/cart_rom.c \
@@ -503,18 +514,28 @@ SOURCE = \
     $(SRCDIR)/main/util.c \
     $(SRCDIR)/main/cheat.c \
     $(SRCDIR)/main/eventloop.c \
-    $(SRCDIR)/main/md5.c \
     $(SRCDIR)/main/rom.c \
     $(SRCDIR)/main/savestates.c \
+    $(SRCDIR)/main/screenshot.c \
     $(SRCDIR)/main/sdl_key_converter.c \
     $(SRCDIR)/main/workqueue.c \
-    $(SRCDIR)/main/xxHash/xxhash.c \
     $(SRCDIR)/plugin/plugin.c \
     $(SRCDIR)/plugin/dummy_video.c \
     $(SRCDIR)/plugin/dummy_audio.c \
     $(SRCDIR)/plugin/dummy_input.c \
-    $(SRCDIR)/plugin/dummy_rsp.c \
-    $(SRCDIR)/osd/screenshot.c
+    $(SRCDIR)/plugin/dummy_rsp.c
+
+# MD5 lib
+SOURCE += \
+    $(SUBDIR)/md5/md5.c
+CFLAGS += -I$(SUBDIR)/md5
+
+
+# xxhash
+SOURCE += \
+    $(SUBDIR)/xxhash/xxhash.c
+CFLAGS += -I$(SUBDIR)/xxhash
+
 
 ifeq ("$(OS)","MINGW")
 SOURCE += \
@@ -532,8 +553,12 @@ endif
 
 ifeq ($(OSD), 1)
 SOURCE += \
-    $(SRCDIR)/osd/OGLFT.cpp \
-    $(SRCDIR)/osd/osd.cpp
+    $(SRCDIR)/osd/osd.c \
+    $(SRCDIR)/osd/oglft_c.cpp
+
+# oglft
+SOURCE += $(SUBDIR)/oglft/OGLFT.cpp
+CXXFLAGS += -I$(SUBDIR)/oglft
 endif
 
 # source files for optional features
@@ -598,13 +623,13 @@ endif
 
 ifeq ($(shell $(PKG_CONFIG) --modversion minizip 2>/dev/null),)
   SOURCE += \
-    $(SRCDIR)/main/zip/ioapi.c \
-    $(SRCDIR)/main/zip/zip.c \
-    $(SRCDIR)/main/zip/unzip.c
+    $(SUBDIR)/minizip/ioapi.c \
+    $(SUBDIR)/minizip/zip.c \
+    $(SUBDIR)/minizip/unzip.c
 
-  CFLAGS += -DNOCRYPT -DNOUNCRYPT
+  CFLAGS += -DNOCRYPT -DNOUNCRYPT -I$(SUBDIR)/minizip
 else
-  CFLAGS += $(shell $(PKG_CONFIG) --cflags minizip) -DLIBMINIZIP
+  CFLAGS += $(shell $(PKG_CONFIG) --cflags minizip)
   LDLIBS +=  $(shell $(PKG_CONFIG) --libs minizip)
 endif
 
@@ -629,15 +654,17 @@ ifeq ($(DEBUGGER), 1)
 endif
 
 ifeq ($(OPENCV), 1)
-  SOURCE += $(SRCDIR)/backends/opencv_video_backend.cpp
+  SOURCE += $(SRCDIR)/backends/opencv_video_capture.cpp
   CFLAGS += -DM64P_OPENCV
 endif
 
 
 # generate a list of object files to build, make a temporary directory for them
-OBJECTS := $(patsubst $(SRCDIR)/%.c,   $(OBJDIR)/%.o, $(filter %.c,   $(SOURCE)))
+OBJECTS := $(patsubst $(SRCDIR)/%.c,   $(OBJDIR)/%.o, $(filter $(SRCDIR)/%.c,   $(SOURCE)))
+OBJECTS += $(patsubst $(SUBDIR)/%.c,   $(OBJDIR)/subprojects/%.o, $(filter $(SUBDIR)/%.c,   $(SOURCE)))
 OBJECTS += $(patsubst $(SRCDIR)/%.c,   $(OBJDIR)/%.o, $(SRCDIR)/asm_defines/asm_defines.c)
-OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE)))
+OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter $(SRCDIR)/%.cpp, $(SOURCE)))
+OBJECTS += $(patsubst $(SUBDIR)/%.cpp, $(OBJDIR)/subprojects/%.o, $(filter $(SUBDIR)/%.cpp, $(SOURCE)))
 OBJECTS += $(patsubst $(SRCDIR)/%.S, $(OBJDIR)/%.o, $(filter %.S, $(SOURCE)))
 OBJECTS += $(patsubst $(SRCDIR)/%.asm, $(OBJDIR)/%.o, $(filter %.asm, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
@@ -648,7 +675,7 @@ ASM_DEFINES_OBJ = $(OBJDIR)/asm_defines/asm_defines.o
 
 # build targets
 targets:
-	@echo "Mupen64Plus-core makefile. "
+	@echo "Mupen64Plus-core makefile."
 	@echo "  Targets:"
 	@echo "    all            == Build Mupen64Plus core library"
 	@echo "    clean          == remove object files"
@@ -738,6 +765,13 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(COMPILE.cc) -o $@ $<
+
+$(OBJDIR)/subprojects/%.o: $(SUBDIR)/%.c
+	$(COMPILE.c) -o $@ $<
+
+$(OBJDIR)/subprojects/%.o: $(SUBDIR)/%.cpp
+	$(COMPILE.cc) -o $@ $<
+
 
 $(TARGET): $(OBJECTS)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
