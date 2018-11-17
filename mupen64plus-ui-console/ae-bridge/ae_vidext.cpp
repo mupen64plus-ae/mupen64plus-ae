@@ -180,9 +180,9 @@ extern DECLSPEC m64p_error VidExtFuncResizeWindow(int Width, int Height)
     return M64ERR_SUCCESS;
 }
 
-extern DECLSPEC void * VidExtFuncGLGetProc(const char* Proc)
+extern DECLSPEC m64p_function VidExtFuncGLGetProc(const char* Proc)
 {
-    return reinterpret_cast<void*>(eglGetProcAddress(Proc));
+    return reinterpret_cast<m64p_function>(eglGetProcAddress(Proc));
 }
 
 extern DECLSPEC m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value)

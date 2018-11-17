@@ -38,7 +38,7 @@ extern m64p_error VidExtFuncSetMode(int Width, int Height, int BitsPerPixel, int
 extern m64p_error VidExtFuncSetCaption(const char *Title);
 extern m64p_error VidExtFuncToggleFS(void);
 extern m64p_error VidExtFuncResizeWindow(int Width, int Height);
-extern void *VidExtFuncGLGetProc(const char *Proc);
+extern m64p_function VidExtFuncGLGetProc(const char *Proc);
 extern m64p_error VidExtFuncGLSetAttr(m64p_GLattr Attr, int Value);
 extern m64p_error VidExtFuncGLGetAttr(m64p_GLattr Attr, int *pValue);
 extern m64p_error VidExtFuncGLSwapBuf(void);

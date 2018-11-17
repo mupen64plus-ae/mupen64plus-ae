@@ -4,6 +4,7 @@
 include $(CLEAR_VARS)
 LOCAL_PATH := $(JNI_LOCAL_PATH)
 SRCDIR := ./upstream/src
+SUBLIBS := ./upstream/subprojects
 ASM_DEFINE_PATH := $(LOCAL_PATH)/upstream/src/asm_defines
 
 LOCAL_MODULE := mupen64plus-core
@@ -13,10 +14,18 @@ LOCAL_ARM_MODE := arm
 LOCAL_DISABLE_FATAL_LINKER_WARNINGS := true
 
 LOCAL_C_INCLUDES :=                       \
+    $(LOCAL_PATH)/$(SUBLIBS)/md5          \
+    $(LOCAL_PATH)/$(SUBLIBS)/minizip      \
+    $(LOCAL_PATH)/$(SUBLIBS)/xxhash       \
     $(LOCAL_PATH)/$(SRCDIR)               \
     $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI) \
 
 LOCAL_SRC_FILES :=                                              \
+    $(SUBLIBS)/md5/md5.c                                        \
+    $(SUBLIBS)/minizip/ioapi.c                                  \
+    $(SUBLIBS)/minizip/unzip.c                                  \
+    $(SUBLIBS)/minizip/zip.c                                    \
+    $(SUBLIBS)/xxhash/xxhash.c                                  \
     $(SRCDIR)/device/rcp/ai/ai_controller.c                     \
     $(SRCDIR)/api/callbacks.c                                   \
     $(SRCDIR)/api/common.c                                      \
@@ -28,21 +37,17 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/backends/plugins_compat/input_plugin_compat.c     \
     $(SRCDIR)/backends/clock_ctime_plus_delta.c                 \
     $(SRCDIR)/backends/file_storage.c                           \
-    $(SRCDIR)/backends/dummy_video_backend.c                    \
+    $(SRCDIR)/backends/dummy_video_capture.c                    \
+    $(SRCDIR)/backends/api/video_capture_backend.c              \
     $(SRCDIR)/main/cheat.c                                      \
     $(SRCDIR)/device/device.c                                   \
     $(SRCDIR)/main/eventloop.c                                  \
     $(SRCDIR)/main/main.c                                       \
-    $(SRCDIR)/main/md5.c                                        \
     $(SRCDIR)/main/profile.c                                    \
     $(SRCDIR)/main/rom.c                                        \
     $(SRCDIR)/main/savestates.c                                 \
     $(SRCDIR)/main/sdl_key_converter.c                          \
     $(SRCDIR)/main/util.c                                       \
-    $(SRCDIR)/main/zip/ioapi.c                                  \
-    $(SRCDIR)/main/zip/unzip.c                                  \
-    $(SRCDIR)/main/zip/zip.c                                    \
-    $(SRCDIR)/main/xxHash/xxhash.c                              \
     $(SRCDIR)/device/memory/memory.c                            \
     $(SRCDIR)/osal/dynamiclib_unix.c                            \
     $(SRCDIR)/osal/files_unix.c                                 \
@@ -89,7 +94,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/rcp/vi/vi_controller.c                     \
     $(SRCDIR)/device/rcp/rdp/fb.c                               \
     $(SRCDIR)/device/dd/dd_controller.c                         \
-    $(SRCDIR)/osd/screenshot.c                                  \
+    $(SRCDIR)/main/screenshot.c                                  \
     #$(SRCDIR)/debugger/dbg_breakpoints.c                       \
     #$(SRCDIR)/debugger/dbg_debugger.c                          \
     #$(SRCDIR)/debugger/dbg_decoder.c                           \
