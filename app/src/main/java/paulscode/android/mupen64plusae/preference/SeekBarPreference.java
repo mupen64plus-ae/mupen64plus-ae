@@ -244,23 +244,30 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     {
         int value = mValue;
 
-        if(mSaveType.equals("int"))
+        if (getSharedPreferences().contains(getKey()))
         {
-            value = getPersistedInt( mValue );
+            if(mSaveType.equals("int"))
+            {
+                value = getPersistedInt( mValue );
+            }
+            else if(mSaveType.equals("string"))
+            {
+                try
+                {
+                    value = Integer.parseInt(getPersistedString( Integer.toString(mValue) ));
+                }
+                catch(final NumberFormatException e)
+                {
+                    value = mValue;
+                }
+            }
         }
-        else if(mSaveType.equals("string"))
+        else
         {
-            try
-            {
-                value = Integer.parseInt(getPersistedString( Integer.toString(mValue) ));
-            }
-            catch(final NumberFormatException e)
-            {
-                value = mValue;
-            }
+            value = (Integer) defaultValue;
         }
 
-        setValue( value  );
+        setValue(value);
     }
 
     @Override

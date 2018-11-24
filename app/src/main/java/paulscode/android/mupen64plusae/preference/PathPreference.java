@@ -151,7 +151,7 @@ public class PathPreference extends DialogPreference implements OnPreferenceDial
     @Override
     protected void onSetInitialValue( Object defaultValue )
     {
-        setValue( getPersistedString( mValue ) );
+        setValue( getSharedPreferences().contains(getKey()) ? getPersistedString( mValue ) : (String) defaultValue );
     }
     
     @Override

@@ -121,7 +121,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     {
         try
         {
-            setValue( getPersistedInt( mValue )  );
+            setValue( getSharedPreferences().contains(getKey()) ? getPersistedInt( mValue ) : (Integer) defaultValue );
         }
         catch( ClassCastException e )
         {

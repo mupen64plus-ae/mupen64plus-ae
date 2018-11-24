@@ -102,7 +102,7 @@ public class PlayerMapPreference extends DialogPreference implements
     @Override
     protected void onSetInitialValue( Object defaultValue )
     {
-        setValue( getPersistedString( mValue ) );
+        setValue( getSharedPreferences().contains(getKey()) ? getPersistedString( mValue ) : (String) defaultValue );
     }
 
     @Override
