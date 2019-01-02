@@ -88,7 +88,7 @@ import paulscode.android.mupen64plusae.util.PixelBuffer;
  * }
  * </pre>
  */
-@SuppressWarnings("SameParameterValue")
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 public class AppData
 {
     /** True if device is running Lollipop or later (21 - Android 5.0.x) */
@@ -164,7 +164,7 @@ public class AppData
     private ConfigFile mEmulationProfilesConfig = null;
     
     /** True if this is android TV hardware */
-    final boolean isAndroidTv;
+    public final boolean isAndroidTv;
     
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
@@ -180,6 +180,7 @@ public class AppData
     // Shared preferences keys
     private static final String KEY_FORCE_ASSET_CHECK = "assetCheck";
     private static final String KEY_APP_VERSION = "appVersion";
+    private static final String CHANNEL_ID = "CHANNEL_ID";
     // ... add more as needed
     
     /**
@@ -330,6 +331,26 @@ public class AppData
         putInt( KEY_APP_VERSION, value );
     }
 
+
+    /**
+     * Persists the channel ID.
+     *
+     * @param value The asset version.
+     */
+    public void putChannelId( long value )
+    {
+        putLong( CHANNEL_ID, value );
+    }
+    /**
+     * Gets the asset version.
+     *
+     * @return The channel Id.
+     */
+    public long getChannelId()
+    {
+        return getLong( CHANNEL_ID, -1 );
+    }
+
     private int getInt( String key, int defaultValue )
     {
         return mPreferences.getInt( key, defaultValue );
@@ -348,6 +369,16 @@ public class AppData
     private void putBoolean( String key, boolean value )
     {
         mPreferences.edit().putBoolean( key, value ).apply();
+    }
+
+    private long getLong( String key, long defaultValue )
+    {
+        return mPreferences.getLong( key, defaultValue );
+    }
+
+    private void putLong( String key, long value )
+    {
+        mPreferences.edit().putLong( key, value ).apply();
     }
     
     /**

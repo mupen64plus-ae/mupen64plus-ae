@@ -21,6 +21,12 @@
 package paulscode.android.mupen64plusae.util;
 
 import androidx.annotation.NonNull;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
@@ -48,7 +54,10 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import androidx.core.content.FileProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
+
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 
 /**
  * Utility class that provides methods which simplify file I/O tasks.
@@ -685,5 +694,46 @@ public final class FileUtil
                 Log.w("makeDirs", "Unable to make dir " + destFile.getPath());
             }
         }
+    }
+
+    /**
+     * Needed since debug builds append '.debug' to the end of the package
+     */
+    private static String getFileProvider(Context context)
+    {
+        return context.getPackageName() + ".filesprovider";
+    }
+
+    private static final String LEANBACK_PACKAGE = "com.google.android.tvlauncher";
+
+    /**
+     * Leanback lanucher requires a uri for poster art so we create a contentUri and
+     * pass that to LEANBACK_PACKAGE
+     */
+    public static Uri buildBanner(String coverArtPath, Context context)
+    {
+        Uri contentUri = null;
+
+        try
+        {
+            File cover = new File(coverArtPath);
+            if (cover.exists())
+            {
+                contentUri = FileProvider.getUriForFile(context, getFileProvider(context), cover);
+            }
+            else if ((cover = new File(coverArtPath)).exists())
+            {
+                contentUri = FileProvider.getUriForFile(context, getFileProvider(context), cover);
+            }
+
+            context.grantUriPermission(LEANBACK_PACKAGE, contentUri, FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        catch (Exception e)
+        {
+            Log.e("FileUtil", "Failed to create banner");
+            Log.e("FileUtil", e.getMessage());
+        }
+
+        return contentUri;
     }
 }

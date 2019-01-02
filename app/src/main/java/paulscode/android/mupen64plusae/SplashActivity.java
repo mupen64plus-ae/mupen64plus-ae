@@ -22,12 +22,17 @@ package paulscode.android.mupen64plusae;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
@@ -41,6 +46,9 @@ import android.text.TextUtils;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.tvprovider.media.tv.Channel;
+import androidx.tvprovider.media.tv.TvContractCompat;
+import androidx.tvprovider.media.tv.ChannelLogoUtils;
 
 import org.mupen64plusae.v3.alpha.R;
 
@@ -192,6 +200,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         {
             final ImageView splash = findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo);
+        }
+
+        if (mAppData.isAndroidTv && mAppData.getChannelId() == -1)
+        {
+            createChannel();
         }
 
         if ( savedInstanceState != null )
@@ -429,5 +442,24 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             builder.append("</small>");
             mTextView.setText( AppData.fromHtml( builder.toString() ) );
         }
+    }
+
+    private void createChannel()
+    {
+        Channel.Builder builder = new Channel.Builder();
+
+        builder.setType(TvContractCompat.Channels.TYPE_PREVIEW)
+                .setDisplayName(getString(R.string.showRecentlyPlayed_title))
+                .setAppLinkIntent(new Intent( getApplicationContext(), SplashActivity.class ));
+
+        Context context = getApplicationContext();
+        Uri channelUri = context.getContentResolver().insert(
+                TvContractCompat.Channels.CONTENT_URI, builder.build().toContentValues());
+
+        long channelId = ContentUris.parseId(channelUri);
+        mAppData.putChannelId(channelId);
+        Bitmap bitmapIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+        ChannelLogoUtils.storeChannelLogo(context, channelId, bitmapIcon);
+        TvContractCompat.requestChannelBrowsable(context, channelId);
     }
 }

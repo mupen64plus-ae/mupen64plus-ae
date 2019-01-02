@@ -15,6 +15,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
+    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
+    <uses-sdk tools:overrideLibrary="androidx.tvprovider" />
     
     <application
         android:name="paulscode.android.mupen64plusae.AppMupen64Plus"
@@ -279,6 +282,15 @@
             android:name="paulscode.android.mupen64plusae.jni.CoreService"
             android:exported="false"
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="org.mupen64plusae.v3.alpha.filesprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/nnf_provider_paths"/>
+        </provider>
         <meta-data
             android:name="game_display_name"
             android:resource="@string/app_name" />

@@ -20,10 +20,12 @@
  */
 package paulscode.android.mupen64plusae;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
@@ -53,6 +55,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import androidx.tvprovider.media.tv.PreviewProgram;
+import androidx.tvprovider.media.tv.TvContractCompat;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
@@ -72,7 +76,6 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
-import static android.view.View.FOCUS_RIGHT;
 import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
@@ -882,6 +885,31 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery);
         galleryRefreshTask.generateGridItemsAndSaveConfig(items, recentItems);
         refreshGrid(items, recentItems);
+
+        if (mAppData.isAndroidTv) {
+            // Clear out the programs first
+            getApplicationContext().getContentResolver().delete(
+                    TvContractCompat.buildPreviewProgramsUriForChannel(mAppData.getChannelId()),
+                    null, null);
+
+            // Add recently played games to channel
+            for (GalleryItem item : recentItems) {
+                Uri coverArtUri = FileUtil.buildBanner(item.artPath, getApplicationContext());
+
+                long channelId = mAppData.getChannelId();
+                PreviewProgram.Builder builder = new PreviewProgram.Builder();
+                builder.setChannelId(channelId)
+                        .setType(TvContractCompat.PreviewPrograms.TYPE_GAME)
+                        .setTitle(item.goodName)
+                        .setPosterArtUri(coverArtUri)
+                        .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_4_3)
+                        //.setIntentUri(uri)
+                        .setInternalProviderId("TESTID");
+
+                getApplicationContext().getContentResolver().insert(TvContractCompat.PreviewPrograms.CONTENT_URI,
+                        builder.build().toContentValues());
+            }
+        }
     }
 
     @Override
