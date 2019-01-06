@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
@@ -54,8 +53,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import androidx.tvprovider.media.tv.PreviewProgram;
-import androidx.tvprovider.media.tv.TvContractCompat;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
@@ -134,36 +131,19 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     String mPathToDelete = null;
 
-    @Override
-    protected void onNewIntent( Intent intent )
-    {
-        // If the activity is already running and is launched again (e.g. from a file manager app),
-        // the existing instance will be reused rather than a new one created. This behavior is
-        // specified in the manifest (launchMode = singleTask). In that situation, any activities
-        // above this on the stack (e.g. GameActivity, GamePrefsActivity) will be destroyed
-        // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
-        // called again on this instance.
-        super.onNewIntent( intent );
+    private void loadGameFromExtras( Bundle extras) {
 
-        // Only remember the last intent used
-        setIntent( intent );
-
-        // Get the ROM path if it was passed from another activity/app
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null)
-        {
-            if (extras.getBoolean(KEY_IS_LEANBACK))
-            {
+        if (extras != null) {
+            if (!extras.getBoolean(KEY_IS_LEANBACK)) {
+                Log.i("GalleryActivity", "Loading ROM from other app");
                 final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
 
-                if( !TextUtils.isEmpty( givenRomPath ) )
-                {
+                if( !TextUtils.isEmpty( givenRomPath ) ) {
                     getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
                     launchGameOnCreation(givenRomPath);
                 }
-            }
-            else
-            {
+            } else {
+                Log.i("GalleryActivity", "Loading ROM from leanback");
                 String romPath = extras.getString(ActivityHelper.Keys.ROM_PATH );
                 String zipPath = extras.getString(ActivityHelper.Keys.ZIP_PATH );
                 String md5 = extras.getString(ActivityHelper.Keys.ROM_MD5);
@@ -188,6 +168,29 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     @Override
+    protected void onNewIntent( Intent intent )
+    {
+        Log.i("GalleryActivity", "onNewIntent");
+
+        // If the activity is already running and is launched again (e.g. from a file manager app),
+        // the existing instance will be reused rather than a new one created. This behavior is
+        // specified in the manifest (launchMode = singleTask). In that situation, any activities
+        // above this on the stack (e.g. GameActivity, GamePrefsActivity) will be destroyed
+        // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
+        // called again on this instance.
+        super.onNewIntent( intent );
+
+        // Only remember the last intent used
+        setIntent( intent );
+
+        // Get the ROM path if it was passed from another activity/app
+        final Bundle extras = getIntent().getExtras();
+
+        loadGameFromExtras(extras);
+
+    }
+
+    @Override
     protected void attachBaseContext(Context newBase) {
         if(TextUtils.isEmpty(LocaleContextWrapper.getLocalCode()))
         {
@@ -202,19 +205,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
+        Log.i("GalleryActivity", "onCreate");
+
         super.onCreate( savedInstanceState );
 
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-
-        // Get the ROM path if it was passed from another activity/app
-        final Bundle extras = getIntent().getExtras();
-        String givenRomPath = null;
-        if( extras != null)
-        {
-            givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
-        }
 
         // Lay out the content
         setContentView( R.layout.gallery_activity );
@@ -336,13 +333,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if( savedInstanceState != null )
         {
             mSelectedItem = null;
-            final String md5 = savedInstanceState.getString( STATE_SIDEBAR );
-            if( md5 != null )
+            final String sideBarMd5 = savedInstanceState.getString( STATE_SIDEBAR );
+            if( sideBarMd5 != null )
             {
                 // Repopulate the game sidebar
                 for( final GalleryItem item : mGalleryItems )
                 {
-                    if( md5.equals( item.md5 ) )
+                    if( sideBarMd5.equals( item.md5 ) )
                     {
                         onGalleryItemClick( item );
                         break;
@@ -380,11 +377,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mDrawerList.setBackground( new DrawerDrawable( mGlobalPrefs.displayActionBarTransparency ) );
         mGameSidebar.setBackground( new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency ) );
 
-        if( !TextUtils.isEmpty( givenRomPath ) )
-        {
-            getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
-            launchGameOnCreation(givenRomPath);
-        }
+        // Get the ROM path if it was passed from another activity/app
+        final Bundle extras = getIntent().getExtras();
+        loadGameFromExtras(extras);
 
         if(ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName)) {
             Log.i("GalleryActivity", "CoreService is running");
@@ -1030,6 +1025,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         config.put(romMd5, "lastPlayed", lastPlayed);
+        config.save();
 
         ///Drawer layout can be null if this method is called from onCreate
         if (mDrawerLayout != null) {
@@ -1063,8 +1059,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     romHeaderName, romCountryCode, romArtPath, romGoodName, romLegacySaveFileName,
                     isRestarting);
         }
-
-        config.save();
     }
 
     @Override

@@ -31,6 +31,7 @@ import java.io.IOException;
  * Utility class for retrieving information
  * about the header of a given ROM file.
  */
+@SuppressWarnings("WeakerAccess")
 public final class RomHeader
 {
     // @formatter:off
