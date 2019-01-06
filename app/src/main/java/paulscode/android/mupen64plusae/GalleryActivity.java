@@ -69,6 +69,7 @@ import paulscode.android.mupen64plusae.task.ComputeMd5Task;
 import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
+import paulscode.android.mupen64plusae.task.UpdateLeanbackProgramsTask;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -88,7 +89,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
-    private static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
+    public static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
 
     public static final int RESTART_CONFIRM_DIALOG_ID = 0;
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 1;
@@ -219,7 +220,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         setContentView( R.layout.gallery_activity );
         mGridView = findViewById( R.id.gridview );
 
-        refreshGrid();
+        // Do empty initialization of the GridView
+        List<GalleryItem> items = new ArrayList<>();
+        mGridView.setAdapter( new GalleryItem.Adapter(this, items));
+        final GridLayoutManager layoutManager = new GridLayoutManagerBetterScrolling( this, galleryColumns );
+        mGridView.setLayoutManager( layoutManager );
+
+        refreshGridAsync();
 
         // Add the toolbar to the activity (which supports the fancy menu/arrow animation)
         final Toolbar toolbar = findViewById( R.id.toolbar );
@@ -398,7 +405,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if(mRefreshNeeded)
         {
             mRefreshNeeded = false;
-            refreshGrid();
+            refreshGridAsync();
 
             mGameSidebar.setVisibility( View.GONE );
             mDrawerList.setVisibility( View.VISIBLE );
@@ -908,48 +915,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery);
         galleryRefreshTask.generateGridItemsAndSaveConfig(items, recentItems);
         refreshGrid(items, recentItems);
-
-        if (mAppData.isAndroidTv) {
-            // Clear out the programs first
-            getApplicationContext().getContentResolver().delete(
-                    TvContractCompat.buildPreviewProgramsUriForChannel(mAppData.getChannelId()),
-                    null, null);
-
-            // Add recently played games to channel
-            for (GalleryItem item : recentItems) {
-                Uri coverArtUri;
-
-                if (!TextUtils.isEmpty(item.artPath) && new File(item.artPath).exists()) {
-                    coverArtUri = FileUtil.buildBanner(getApplicationContext(), item.artPath);
-                } else {
-                    coverArtUri = FileUtil.resourceToUri(getApplicationContext(), R.drawable.default_coverart);
-                }
-
-                Intent gameIntent = new Intent( getApplicationContext(), SplashActivity.class );
-
-                gameIntent.putExtra(KEY_IS_LEANBACK, true);
-                gameIntent.putExtra( ActivityHelper.Keys.ROM_PATH, item.romFile != null ? item.romFile.getAbsolutePath() : null);
-                gameIntent.putExtra( ActivityHelper.Keys.ZIP_PATH, item.zipFile != null ? item.zipFile.getAbsolutePath() : null);
-                gameIntent.putExtra( ActivityHelper.Keys.ROM_MD5, item.md5);
-                gameIntent.putExtra( ActivityHelper.Keys.ROM_CRC, item.crc);
-                gameIntent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, item.headerName);
-                gameIntent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, item.countryCode.getValue());
-                gameIntent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, item.artPath);
-                gameIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, item.goodName);
-
-                long channelId = mAppData.getChannelId();
-                PreviewProgram.Builder builder = new PreviewProgram.Builder();
-                builder.setChannelId(channelId)
-                        .setType(TvContractCompat.PreviewPrograms.TYPE_GAME)
-                        .setTitle(item.goodName)
-                        .setPosterArtUri(coverArtUri)
-                        .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_4_3)
-                        .setIntent(gameIntent);
-
-                getApplicationContext().getContentResolver().insert(TvContractCompat.PreviewPrograms.CONTENT_URI,
-                        builder.build().toContentValues());
-            }
-        }
     }
 
     @Override
@@ -1012,6 +977,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGridView.getAdapter().notifyDataSetChanged();
         mGridView.setFocusable(false);
         mGridView.setFocusableInTouchMode(false);
+
+        if (mAppData.isAndroidTv) {
+            UpdateLeanbackProgramsTask updateLeanbackPrograms = new UpdateLeanbackProgramsTask(getApplicationContext(), recentItems,
+                    mAppData.getChannelId());
+            updateLeanbackPrograms.execute();
+        }
     }
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
@@ -1059,7 +1030,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         config.put(romMd5, "lastPlayed", lastPlayed);
-        config.save();
 
         ///Drawer layout can be null if this method is called from onCreate
         if (mDrawerLayout != null) {
@@ -1093,6 +1063,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     romHeaderName, romCountryCode, romArtPath, romGoodName, romLegacySaveFileName,
                     isRestarting);
         }
+
+        config.save();
     }
 
     @Override

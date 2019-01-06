@@ -48,16 +48,16 @@ public class GalleryItem
 {
     public final String md5;
     public final String crc;
-    final String headerName;
+    public final String headerName;
     public final CountryCode countryCode;
-    final String goodName;
-    final String artPath;
+    public final String goodName;
+    public final String artPath;
     public final int lastPlayed;
     public final File romFile;
-    final File zipFile;
+    public final File zipFile;
     public final WeakReference<Context>  context;
-    final boolean isHeading;
-    BitmapDrawable artBitmap;
+    public final boolean isHeading;
+    public BitmapDrawable artBitmap;
     public final float scale;
     
     public GalleryItem(Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName, String romPath,
