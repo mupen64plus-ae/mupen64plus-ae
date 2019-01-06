@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -59,7 +60,6 @@ import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.util.LogcatActivity;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
 
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
@@ -179,16 +179,28 @@ public class ActivityHelper
         context.startActivity( new Intent( context, SplashActivity.class ) );
     }
     
-    static void startGalleryActivity( Context context, Uri romPath )
+    static void startGalleryActivity( Context context, Intent data )
     {
-        startGalleryActivity( context, romPath == null ? null : romPath.getPath() );
+        if (data.getData() != null)
+        {
+            Intent intent = new Intent( context, GalleryActivity.class );
+            if( !TextUtils.isEmpty( data.getData().getPath() ) )
+                intent.putExtra( ActivityHelper.Keys.ROM_PATH, data.getData().getPath() );
+            context.startActivity( intent );
+        }
+        else
+        {
+            Intent intent = new Intent( context, GalleryActivity.class );
+            intent.putExtras(data);
+            context.startActivity( intent );
+        }
     }
     
-    static void startGalleryActivity( Context context, String romPath )
+    private static void startGalleryActivity(Context context, String romPath)
     {
         Intent intent = new Intent( context, GalleryActivity.class );
         if( !TextUtils.isEmpty( romPath ) )
-            intent.putExtra( ROM_PATH, romPath );
+            intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         context.startActivity( intent );
     }
 
@@ -197,7 +209,7 @@ public class ActivityHelper
                                           boolean doRestart)
     {
         Intent intent = new Intent( activity, GameActivity.class );
-        intent.putExtra( ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
@@ -214,7 +226,7 @@ public class ActivityHelper
                                           boolean doRestart)
     {
         Intent intent = new Intent( context, GameActivity.class );
-        intent.putExtra( ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         intent.putExtra( ActivityHelper.Keys.ROM_MD5, romMd5 );
         intent.putExtra( ActivityHelper.Keys.ROM_CRC, romCrc );
         intent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, romHeaderName );
@@ -273,7 +285,7 @@ public class ActivityHelper
         String romCrc, String romHeaderName, String romGoodName, byte romCountryCode, String romLegacySave )
     {
         Intent intent = new Intent( context, GamePrefsActivity.class );
-        intent.putExtra( ROM_PATH, romPath );
+        intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
         intent.putExtra( Keys.ROM_MD5, romMd5 );
         intent.putExtra( Keys.ROM_CRC, romCrc );
         intent.putExtra( Keys.ROM_HEADER_NAME, romHeaderName );
@@ -426,7 +438,7 @@ public class ActivityHelper
     {
         Intent intent = new Intent(context, CoreService.class);
         intent.putExtra(Keys.ROM_GOOD_NAME, romGoodName);
-        intent.putExtra(ROM_PATH, romPath);
+        intent.putExtra(Keys.ROM_PATH, romPath);
         intent.putExtra(Keys.CHEAT_ARGS, cheatOptions);
         intent.putExtra(Keys.DO_RESTART, isRestarting);
         intent.putExtra(Keys.SAVE_TO_LOAD, saveToLoad);

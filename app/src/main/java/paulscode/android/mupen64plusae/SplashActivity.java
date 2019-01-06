@@ -369,7 +369,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         else
         {
             // Assets already extracted, just launch gallery activity, passing ROM path if it was provided externally
-            ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent().getData() );
+            ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent() );
 
             // We never want to come back to this activity, so finish it
             finish();
@@ -405,6 +405,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         mTextView.setText( text );
     }
 
+
     @Override
     public void onExtractAssetsFinished( List<Failure> failures )
     {
@@ -421,7 +422,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             }
 
             // Launch gallery activity, passing ROM path if it was provided externally
-            ActivityHelper.startGalleryActivity( this, getIntent().getData() );
+            ActivityHelper.startGalleryActivity( this, getIntent() );
 
             // We never want to come back to this activity, so finish it
             finish();

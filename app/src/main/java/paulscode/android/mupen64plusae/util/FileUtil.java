@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.util;
 
 import androidx.annotation.NonNull;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -710,7 +711,7 @@ public final class FileUtil
      * Leanback lanucher requires a uri for poster art so we create a contentUri and
      * pass that to LEANBACK_PACKAGE
      */
-    public static Uri buildBanner(String coverArtPath, Context context)
+    public static Uri buildBanner(Context context, String coverArtPath)
     {
         Uri contentUri = null;
 
@@ -735,5 +736,12 @@ public final class FileUtil
         }
 
         return contentUri;
+    }
+
+    public static Uri resourceToUri(Context context, int resID) {
+        return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
+                context.getResources().getResourcePackageName(resID) + '/' +
+                context.getResources().getResourceTypeName(resID) + '/' +
+                context.getResources().getResourceEntryName(resID) );
     }
 }

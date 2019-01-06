@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -76,8 +75,6 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.RomDatabase;
 import paulscode.android.mupen64plusae.util.RomHeader;
 
-import static paulscode.android.mupen64plusae.ActivityHelper.Keys.ROM_PATH;
-
 public class GalleryActivity extends AppCompatActivity implements GameSidebarActionHandler, PromptConfirmListener,
         GalleryRefreshFinishedListener
 {
@@ -91,6 +88,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
     private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
+    private static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
 
     public static final int RESTART_CONFIRM_DIALOG_ID = 0;
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 1;
@@ -151,14 +149,39 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Get the ROM path if it was passed from another activity/app
         final Bundle extras = getIntent().getExtras();
-        if( extras != null)
+        if (extras != null)
         {
-            final String givenRomPath = extras.getString( ROM_PATH );
-
-            if( !TextUtils.isEmpty( givenRomPath ) )
+            if (extras.getBoolean(KEY_IS_LEANBACK))
             {
-                getIntent().removeExtra(ROM_PATH);
-                launchGameOnCreation(givenRomPath);
+                final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
+
+                if( !TextUtils.isEmpty( givenRomPath ) )
+                {
+                    getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
+                    launchGameOnCreation(givenRomPath);
+                }
+            }
+            else
+            {
+                String romPath = extras.getString(ActivityHelper.Keys.ROM_PATH );
+                String zipPath = extras.getString(ActivityHelper.Keys.ZIP_PATH );
+                String md5 = extras.getString(ActivityHelper.Keys.ROM_MD5);
+                String crc = extras.getString(ActivityHelper.Keys.ROM_CRC);
+                String headerName = extras.getString(ActivityHelper.Keys.ROM_HEADER_NAME);
+                Byte countryCode = extras.getByte(ActivityHelper.Keys.ROM_COUNTRY_CODE);
+                String artPath = extras.getString(ActivityHelper.Keys.ROM_ART_PATH);
+                String goodName = extras.getString(ActivityHelper.Keys.ROM_GOOD_NAME);
+
+                launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, false );
+
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
+                getIntent().removeExtra(ActivityHelper.Keys.ZIP_PATH );
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_MD5);
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_CRC);
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_HEADER_NAME);
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_COUNTRY_CODE);
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_ART_PATH);
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_GOOD_NAME);
             }
         }
     }
@@ -189,7 +212,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         String givenRomPath = null;
         if( extras != null)
         {
-            givenRomPath = extras.getString( ROM_PATH );
+            givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
         }
 
         // Lay out the content
@@ -352,7 +375,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         if( !TextUtils.isEmpty( givenRomPath ) )
         {
-            getIntent().removeExtra(ROM_PATH);
+            getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
             launchGameOnCreation(givenRomPath);
         }
 
@@ -894,7 +917,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
             // Add recently played games to channel
             for (GalleryItem item : recentItems) {
-                Uri coverArtUri = FileUtil.buildBanner(item.artPath, getApplicationContext());
+                Uri coverArtUri;
+
+                if (!TextUtils.isEmpty(item.artPath) && new File(item.artPath).exists()) {
+                    coverArtUri = FileUtil.buildBanner(getApplicationContext(), item.artPath);
+                } else {
+                    coverArtUri = FileUtil.resourceToUri(getApplicationContext(), R.drawable.default_coverart);
+                }
+
+                Intent gameIntent = new Intent( getApplicationContext(), SplashActivity.class );
+
+                gameIntent.putExtra(KEY_IS_LEANBACK, true);
+                gameIntent.putExtra( ActivityHelper.Keys.ROM_PATH, item.romFile != null ? item.romFile.getAbsolutePath() : null);
+                gameIntent.putExtra( ActivityHelper.Keys.ZIP_PATH, item.zipFile != null ? item.zipFile.getAbsolutePath() : null);
+                gameIntent.putExtra( ActivityHelper.Keys.ROM_MD5, item.md5);
+                gameIntent.putExtra( ActivityHelper.Keys.ROM_CRC, item.crc);
+                gameIntent.putExtra( ActivityHelper.Keys.ROM_HEADER_NAME, item.headerName);
+                gameIntent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, item.countryCode.getValue());
+                gameIntent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, item.artPath);
+                gameIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, item.goodName);
 
                 long channelId = mAppData.getChannelId();
                 PreviewProgram.Builder builder = new PreviewProgram.Builder();
@@ -903,8 +944,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         .setTitle(item.goodName)
                         .setPosterArtUri(coverArtUri)
                         .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_4_3)
-                        //.setIntentUri(uri)
-                        .setInternalProviderId("TESTID");
+                        .setIntent(gameIntent);
 
                 getApplicationContext().getContentResolver().insert(TvContractCompat.PreviewPrograms.CONTENT_URI,
                         builder.build().toContentValues());
@@ -1011,23 +1051,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             File zipFile = new File(zipPath);
             romLegacySaveFileName = zipFile.getName();
-
-            if (!zipFile.exists()) {
-                Notifier.showToast(this, R.string.toast_nativeMainFailure07);
-                return;
-            }
         }
         else
         {
             File romFile = new File(romPath);
             romLegacySaveFileName = romFile.getName();
-
-            if (!romFile.exists()) {
-                Notifier.showToast(this, R.string.toast_nativeMainFailure07);
-                return;
-            }
         }
-
 
         config.put(romMd5, "lastPlayed", lastPlayed);
         config.save();
@@ -1047,7 +1076,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         mSelectedItem = null;
 
-        if(romFileName.exists())
+        if (romFileName.exists())
         {
             // Launch the game activity
             ActivityHelper.startGameActivity(this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
@@ -1055,15 +1084,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
         else
         {
-            if( config.get(romMd5) != null)
-            {
-                if(!TextUtils.isEmpty(zipPath))
-                {
-                    mExtractRomFragment.ExtractRom(zipPath, mGlobalPrefs.unzippedRomsDir, romPath, romMd5, romCrc,
-                            romHeaderName, romCountryCode, romArtPath, romGoodName, romLegacySaveFileName,
-                            isRestarting);
-                }
+            if ((!TextUtils.isEmpty(zipPath) && !new File(zipPath).exists()) || TextUtils.isEmpty(zipPath)) {
+                Notifier.showToast(this, R.string.toast_nativeMainFailure07);
+                return;
             }
+
+            mExtractRomFragment.ExtractRom(zipPath, mGlobalPrefs.unzippedRomsDir, romPath, romMd5, romCrc,
+                    romHeaderName, romCountryCode, romArtPath, romGoodName, romLegacySaveFileName,
+                    isRestarting);
         }
     }
 
