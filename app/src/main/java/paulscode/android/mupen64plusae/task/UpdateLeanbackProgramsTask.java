@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.task;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -65,9 +66,24 @@ public class UpdateLeanbackProgramsTask extends AsyncTask<Void, Void, String>
         // Add recently played games to channel
         for (GalleryItem item : mItems) {
             Uri coverArtUri;
+            int aspectRatio = TvContractCompat.PreviewPrograms.ASPECT_RATIO_3_2;
 
+            // Create cover art link
             if (!TextUtils.isEmpty(item.artPath) && new File(item.artPath).exists()) {
                 coverArtUri = FileUtil.buildBanner(mContext.get(), item.artPath);
+
+                // Determine aspect ratio
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(item.artPath, options);
+                int width = options.outWidth;
+                int height = options.outHeight;
+
+                if (height > width)
+                {
+                    aspectRatio = TvContractCompat.PreviewPrograms.ASPECT_RATIO_2_3;
+                }
+
             } else {
                 coverArtUri = FileUtil.resourceToUri(mContext.get(), R.drawable.default_coverart);
             }
@@ -89,7 +105,7 @@ public class UpdateLeanbackProgramsTask extends AsyncTask<Void, Void, String>
                     .setType(TvContractCompat.PreviewPrograms.TYPE_GAME)
                     .setTitle(item.goodName)
                     .setPosterArtUri(coverArtUri)
-                    .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_3_2)
+                    .setPosterArtAspectRatio(aspectRatio)
                     .setIntent(gameIntent);
 
             mContext.get().getContentResolver().insert(TvContractCompat.PreviewPrograms.CONTENT_URI,
