@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    All strings visible to the user should be defined in this resource file.  Avoid
+    explicitly defining locale-dependent string values in the java code.
+    
+    Please follow the official Android guidelines for writing style:
+        http://developer.android.com/design/style/writing.html
+        http://developer.android.com/design/patterns/settings.html#writing
+    
+    Please follow the official Android guidelines for localization:
+        http://developer.android.com/guide/topics/resources/localization.html
+    Note that localization is easiest when the number of strings is minimized and the
+    strings themselves are concise.  Avoid strings wherever universally-recognized
+    icons will suffice.  Use Android's built-in string resources (@android:string/…)
+    wherever possible to eliminate translation requirements.
+    ***********************************************************************************
+-->
+<resources>
+
+    <!-- ************************************************************************** -->
+    <!-- Menu Strings -->
+    <!-- ************************************************************************** -->
+
+
+    <!-- In-Game Menu -->
+    <string name="menuItem_toggleSpeed">Tizh %1$d%%</string>
+    <string name="menuItem_slotSave">Enrollañ ar faout</string>
+    <string name="menuItem_slotLoad">Kargañ ar faout</string>
+    <string name="menuItem_setSlot">Faout %1$d</string>
+    <string name="menuItem_selectSlot">Diuziñ ar faout</string>
+    <string name="menuItem_fileSave">Enrollañ d\'ar restr…</string>
+    <string name="menuItem_fileLoad">Kargañ diouzh ar restr…</string>
+    <string name="menuItem_fileLoadAutoSave">Kargañ adalek an emenrollañ…</string>
+    <string name="menuItem_screenshot">Tapadenn-skramm</string>
+    <string name="menuItem_setSpeed">Tizh ar c\'hoari</string>
+    <string name="menuItem_enableFramelimiter">Sinkro an aodio</string>
+    <string name="menuItem_disableFramelimiter">Disinkro an aodio</string>
+    <string name="menuItem_player_one">C\'hoarier 1</string>
+    <string name="menuItem_player_two">C\'hoarier 2</string>
+    <string name="menuItem_player_three">C\'hoarier 3</string>
+    <string name="menuItem_player_four">C\'hoarier 4</string>
+    <string name="menuItem_paks">Pakoù koñtroller</string>
+ <!-- capitalize since trademark -->
+    <string name="menuItem_pak_empty">Goullo</string>
+ <!-- capitalize since trademark -->
+    <string name="menuItem_pak_mem">Pak memor</string>
+ <!-- capitalize since trademark -->
+    <string name="menuItem_pak_rumble">Pak krozadur</string>
+ <!-- capitalize since trademark -->
+    <string name="menuItem_pak_transfer">Pak treuzkas</string>
+    <string name="menuItem_paks_transfer">Pakoù treuzkas</string>
+    <string name="menuItem_paks_transfer_player1_rom">C\'hoarier 1 Gameboy ROM</string>
+    <string name="menuItem_paks_transfer_player1_ram">C\'hoarier 1 Gameboy RAM</string>
+    <string name="menuItem_paks_transfer_player2_rom">C\'hoarier 2 Gameboy ROM</string>
+    <string name="menuItem_paks_transfer_player2_ram">C\'hoarier 2 Gameboy RAM</string>
+    <string name="menuItem_paks_transfer_player3_rom">C\'hoarier 3 Gameboy ROM</string>
+    <string name="menuItem_paks_transfer_player3_ram">C\'hoarier 3 Gameboy RAM</string>
+    <string name="menuItem_paks_transfer_player4_rom">C\'hoarier 4 Gameboy ROM</string>
+    <string name="menuItem_paks_transfer_player4_ram">C\'hoarier 4 Gameboy RAM</string>
+    <string name="menuItem_setIme">Cheñch IME</string>
+    <string name="menuItem_exit">Kuitaat</string>
+
+    <!-- Input Mapping Activity -->
+    <string name="menuItem_deadzone">Zonenn-varv</string>
+    <string name="menuItem_sensitivity">Kizidigezh</string>
+    <string name="menuItem_sensitivity_x">Ahel-X Kizidigezh</string>
+    <string name="menuItem_sensitivity_y">Ahel-Y Kizidigezh</string>
+    <string name="menuItem_unmapAll">Nullañ pep-tra</string>
+
+    <!-- Menu Activity -->
+    <string name="menuItem_search">Klask</string>
+    <string name="menuItem_play">Lenn</string>
+    <string name="menuItem_refreshRoms">Freskaat ar ROMoù</string>
+    <string name="menuItem_settings">Arventennoù</string>
+    <string name="menuItem_globalSettings">Arvenntennoù hollek</string>
+    <string name="menuItem_sensorConfiguration">Kefluniadur ar c\'haptor</string>
+    <string name="menuItem_profiles">Profiloù</string>
+    <string name="menuItem_emulationProfiles">Emuladur</string>
+    <string name="menuItem_touchscreenProfiles">Touchskramm</string>
+    <string name="menuItem_controllerProfiles">Koñtroller</string>
+    <string name="menuItem_select_profiles">Diuziñ ar profiloù</string>
+    <string name="menuItem_customCheats">Truchadurioù personelaet</string>
+    <string name="menuItem_help">Skoazell</string>
+    <string name="menuItem_faq">FAG</string>
+    <string name="menuItem_helpForum">Forom skoazell</string>
+    <string name="menuItem_controllerDiagnostics">Diagnostikoù kontroller</string>
+    <string name="menuItem_reportBug">Danevelliñ ar veugenn</string>
+    <string name="menuItem_about">Diwar-benn</string>
+    <string name="menuItem_credits">Kreditoù</string>
+    <string name="menuItem_appVersion">Stumm an arload</string>
+    <string name="menuItem_logcat">Logcat</string>
+    <string name="menuItem_hardwareInfo">Titouroù periant</string>
+    <string name="menuItem_Tools">Ostilhoù</string>
+    <string name="menuItem_Extract">Ouzhpennañ ar pak gwiadezh</string>
+    <string name="menuItem_Clear">Skarzhañ ar pakoù gwiadezh</string>
+    <string name="menuItem_localeOverride">Yezh</string>
+
+    <!-- ManageProfilesActivity -->
+    <string name="menuItem_new">Nevez</string>
+    <string name="menuItem_hideBuiltins">Kuzhat an ensoc\'hadennoù</string>
+    <string name="menuItem_showBuiltins">Diskouez an ensoc\'hadennoù</string>
+    <string name="popup_titleBuiltin">%1$s (enkorfet)</string>
+    <string name="popup_titleCustom">%1$s</string>
+    <string name="profile_name_cannot_be_empty">N\'hall ket bezañ goullo an anv</string>
+    <string name="profile_name_cannot_contain_brackets">An anv n\'hall ket enderc\'hel ar skor</string>
+    <string name="profile_name_must_be_unique">An anv a rank bezañ unel</string>
+    <string name="profile_manage_profiles">Merañ ar profiloù</string>
+
+    <!-- Popup Dialogs -->
+    <string name="popup_faq">Mupen64Plus a zo diorroet ha derc\'helaet gant tud a-youl vat.<small>\n\nEvit stabilaat ar c\'hlitchoù grafikel, klaskit cheñch al <i>lugant video</i>.\n\nEvit stabilaat al lag, klaskit cheñch ar <i>video frameskip</i> arventennoù pe al <i>lugant video</i>.\n\nEvit ar ROMoù dic\'hoarius, klask dizipañ ar ROM da gentañ pe ur stumm disheñvel eus ar ROM.\n\nEvit an touchskramm kontroll kudennoù, klaskit cheñch ar <i>skeul bouton</i> pe <i>bouton fichañ</i>.\n\nEvit kudennoù all, pe ma \'z oc\'h stanket c\'hoazh, klikit c\'hoazh ar <i>FAG</i> bouton dindan. Evit ar beugoù nan-c\'hoari-spis, klikit an <i>Daneveller beugoù</i> bouton dindan. Respont a reomp d\'ar postoù brasañ e-barzh 24 eurvezh. Onest.\n\n</small>Trugarez vras da sikour ac\'hanomp da wellaat an arload!</string>
+    <string name="popup_version">Stumm: %1$s\nStumm kod: %2$d</string>
+
+    <!-- Lists -->
+    <string name="listItem_setDefault">Spisaat dre ziouer</string>
+    <string name="listItem_setDpadDefault">Spisaat D-Pad dre ziouer</string>
+    <string name="listItem_unsetDefault">Dispisaet dre ziouer</string>
+    <string name="listItem_unsetDpadDefault">Dispisaet D-Pad dre ziouer</string>
+    <string name="listItem_edit">Aozañ</string>
+    <string name="listItem_rename">Adenvel</string>
+    <string name="listItem_copy">Eilañ</string>
+    <string name="listItem_delete">Dilemel</string>
+    <string name="listItem_disabled">(Lazhet)</string>
+
+    <!-- ManageProfilesActivity Name/Comment Dialog -->
+    <string name="hint_profileName">Anv ar profil</string>
+    <string name="hint_profileComment">Deskrivadur (diret)</string>
+
+    <!-- ************************************************************************** -->
+    <!-- Toast Messages -->
+    <!-- Developers: Follow punctuation and grammar as shown below -->
+    <!-- ************************************************************************** -->
+
+
+    <!-- Something happening (typically use '-ing' and '…') -->
+    <string name="toast_rebuildingCheats">Oc\'h adsevel diazroadennoù an truchadurioù…</string>
+    <string name="toast_launchingEmulator">O loc\'hañ an emulator…</string>
+    <string name="toast_loadingSession">Oc\'h em-verraat ar c\'hoari…</string>
+    <string name="toast_savingSession">Em-enrollañ c\'hoari…</string>
+    <string name="toast_loadingSlot">Kargañ ar faout %1$d…</string>
+    <string name="toast_savingSlot">Enrollañ ar faout %1$d…</string>
+    <string name="toast_loadingFile">Kargañ %1$s…</string>
+    <string name="toast_savingFile">Oc\'h enrollañ %1$s…</string>
+    <string name="toast_overwritingFile">O dreistskrivañ %1$s…</string>
+    <string name="toast_loadingGameInfo">Kargañ titouroù ar c\'hoari…</string>
+    <string name="toast_savingScreenshot">Enrollañ an tapadenn-skramm…</string>
+    <string name="toast_canceling">O nullañ…</string>
+    <string name="toast_pleaseWait">Gortozit mar plij…</string>
+    <string name="toast_paused">Paouezet…</string>
+    <string name="toast_running">O vont en-dro…</string>
+    <string name="toast_shutting_down">Enrollañ krubuilh gwiadezh…</string>
+    <string name="toast_not_done_shutting_down">Gortozit mar plij, enrollit krubuilh ar wiadezh</string>
+
+    <!-- Something happened (use '.') -->
+    <string name="toast_nativeMainFailure01">Fazi gant an analizadur arventennoù linenn urzhiad deraouek.</string>
+    <string name="toast_nativeMainFailure02">Dibosupl eo stagañ al levraoueg-bennañ.</string>
+    <string name="toast_nativeMainFailure03">Dibosupl eo stagañ gant al levraoueg-bennañ.</string>
+    <string name="toast_nativeMainFailure04">Dibosupl eo digeriñ an dornelloù kefluniañ.</string>
+    <string name="toast_nativeMainFailure05">C\'hwitet ez eus bet war analizadur arventennoù al linenn urzhiad fin.</string>
+    <string name="toast_nativeMainFailure06">N\'hallit ket implijout an arc\'hweladur --core-compare gant al levraoueg Mupen64Plus.</string>
+    <string name="toast_nativeMainFailure07">Dibosupl digeriñ ar restr ROM evit al lenn.</string>
+    <string name="toast_nativeMainFailure08">Fazi da skorennin ar siell evit ar restr skeudenn ROM.</string>
+    <string name="toast_nativeMainFailure09">Dibosupl lenn oktedoù ar restr skeudenn ROM.</string>
+    <string name="toast_nativeMainFailure10">Core n\'eus ket gallet digeriñ ar restr skeudenn ROM.</string>
+    <string name="toast_nativeMainFailure11">Truchadurioù listennet evel goulennet.</string>
+    <string name="toast_nativeMainFailure12">Dibosupl kargañ al lugantoù.</string>
+    <string name="toast_nativeMainFailure13">Core n\'eus ket gellet stagañ al lugant.</string>
+    <string name="toast_nativeMainFailureUnknown">Fazi loc\'hañ dizanv.</string>
+    <string name="toast_usingSlot">Oc\'h implijout ar faout %1$d bremañ.</string>
+    <string name="toast_sdInaccessible">Roadennoù arloañ a vank, klaskadenn freskadur.</string>
+
+    <!-- ************************************************************************** -->
+    <!-- Preference Menu Strings -->
+    <!-- Developers: Please follow naming conventions described in preferences.xml -->
+    <!-- Developers: In general, capitalize first word only and avoid punctuation -->
+    <!-- ************************************************************************** -->
+
+
+    <!-- Actions (simply launch an action, aren't related to persistent data) -->
+    <string name="actionResume_title">Paouez</string>
+    <string name="actionResume_summary">Dic\'hortoz ma vez implijet truchadurioù</string>
+    <string name="actionStart_title">Stagañ ganti</string>
+    <string name="actionRestart_title">Adloc\'hañ</string>
+    <string name="actionRestart_summary">Aliet ma vez implijet an truchadurioù</string>
+    <string name="actionRemove_title">Dilemel</string>
+    <string name="actionRemove_summary">Dilemel diwar al levraoueg</string>
+    <string name="actionWiki_title">Wiki</string>
+    <string name="actionWiki_summary">Sikour ar gumuniezh evit ar c\'hoari-mañ</string>
+    <string name="actionReloadAssets_title">Kargañ mammennoù an arload</string>
+    <string name="actionReloadAssets_summary">Ne verk KET an arventennoù implijer, ar ROMoù, an enrolladennoù c\'hoari pe ar roadennoù personelaet.</string>
+    <string name="actionResetUserPrefs_title">Dre ziouerioù</string>
+    <string name="actionResetUserPrefs_summary">Adlakaat an arventennoù hollek dre ziouer</string>
+    <string name="actionResetUserPrefs_popupMessage">Adlakaat an holl arventennoù hollek d\'o zalvoudegezhioù dre ziouer?</string>
+    <string name="actionResetGamePrefs_title">Dre ziouerioù</string>
+    <string name="actionResetGamePrefs_summary">Adlakaat arventennoù ar c\'hoari d\'o zalvoudegezhioù c\'hoari dre ziouer</string>
+    <string name="actionResetGamePrefs_popupMessage">Adlakaat holl arventennoù d\'o zalvoudegezhioù dre ziouer?<small>\n\nKement cheñchamant gant an dorn ho peus graet er restr kefluniañ a vo dreistskrivet.</small></string>
+    <string name="actionCheatEditor_title">Merañ kodoù an truchadurioù</string>
+    <string name="actionCheatEditor_summary">Ouzhpennañ, kemmañ, ha dilemel an truchadurioù personelaet</string>
+    <string name="actionShare_title">Rannañ</string>
+
+    <!-- Preference Screens -->
+    <string name="screenGlobalSettings_title">Arventennoù hollek</string>
+    <string name="screenGlobalSettings_summary">Arventennoù diskouez, aodio, stokadur ha diveugiñ</string>
+    <string name="screenCheats_title">Truchadurioù</string>
+    <string name="screenCheats_summaryEnabled">Enaouet</string>
+    <string name="screenCheats_summaryDisabled">Lazhet</string>
+    <string name="screenAdvanced_title">Araokaet</string>
+    <string name="screenAdvanced_CountPerOpTitle">Kont dre oberiadenn</string>
+
+    <!-- Preference Categories -->
+    <string name="categoryCheats_title">Dibarzhioù an truchadurioù (hirbouezit evit an notennoù)</string>
+    <string name="categoryGln64_title">Gln64 arventennoù</string>
+    <string name="categoryRice_title">Riz arventennoù</string>
+    <string name="categoryGlide64_title">Glide64 arventennoù</string>
+    <string name="categoryGlide64Advanced_title">Glide64 arventennoù araokaet</string>
+    <string name="categoryGliden64_title">GlideN64 arventennoù</string>
+    <string name="categoryAngrylion_title">Arventennoù Angrylion RDP Plus</string>
+    <string name="categoryLibrary_title">Levraoueg</string>
+    <string name="categoryDisplay_title">Diskouez</string>
+    <string name="categoryAudio_title">Aodio</string>
+    <string name="categoryTouchscreen_title">Touchskramm</string>
+    <string name="categoryInput_title">Enmont</string>
+
+    <string name="categoryData_title">Roadenn</string>
+    <string name="categoryGameSettings_title">Arventennoù ispisial ar c\'hoari</string>
+    <string name="categoryGameSettings_titleNamed">%1$s arventennoù</string>
+
+    <!-- Checkbox Preferences -->
+    <string name="playShowCheats_title">Enaouiñ an truchadurioù</string>
+    <string name="touchscreenFeedback_title">Evezhiadenn diwar-benn ar skiant-prennet</string>
+    <string name="touchscreenFeedback_summary">Froumal war ar bouton</string>
+    <string name="touchscreenAutoHideEnabled_title">Kuzhat ar boutonioù pa ne vez ket implijet</string>
+    <string name="touchscreenAutoHideEnabled_summary">Kuzhat ar boutonioù pa ne vezont ket implijet dindan an niver a eilennoù spisaet.</string>
+    <string name="useHighPriorityThread_title">Implijit un neudenn gant ur priorelezh uhel</string>
+    <string name="useHighPriorityThread_summary">Core a \'z aio en-dro un neudenn a briorelezh uhel, gellout a ra degas gagerezhioù war trobarzhelloù \'zo</string>
+    <string name="inputVolumeMappable_title">Touchenn live-son mapañ</string>
+    <string name="inputVolumeMappable_summary">Aotren an touchennoù live-son a zo bet mapet d\'ar c\'hontroloù</string>
+    <string name="inputBackMappable_title">Touchenn drek mapus</string>
+    <string name="inputBackMappable_summary">Reiñ a ra an tu da vapiñ an douchenn distro d\'ar c\'hontroloù, an dra-se a redio implij ar jestr rinklañ e lañser ar c\'hoari</string>
+    <string name="inputMenuMappable_title">Touchenn al lañser mapus</string>
+    <string name="inputMenuMappable_summary">Reiñ a ra an tu da vapiñ an douchenn lañser d\'ar c\'hontroloù, an dra-se a redio implij ar jestr rinklañ e lañser ar c\'hoari</string>
+    <string name="displayImmersiveMode_title">Mod soubiñ</string>
+    <string name="displayImmersiveMode_summary">Kuzhat penn-da-benn ar barrennoù merdeiñ ha statudoù</string>
+    <string name="defaultsAutoPlayerMapping_title">Em-vapadur ar c\'hoarierien</string>
+    <string name="defaultsAutoPlayerMapping_summary">Mapit ur c\'hontroler war al lenner N64 da-heul hag a vo hegerz e-kerzh ur c\'hoariadenn en ur bouezañ war ur bouton</string>
+    <string name="defaultsAllEmulatedControllersAlwaysAttached_title">An holl gontrolloù emulet a zo staget bepred</string>
+    <string name="defaultsAllEmulatedControllersAlwaysAttached_summary">Ma\' z eo enaouet, an holl gontrolloù emulet a vo kevreet ouzh an N64 emulet, ha pa vefe trawalc\'h a gontrolloù gwirion staget outañ.</string>
+    <string name="gln64Fog_title">Latar</string>
+    <string name="gln64Fog_summary">(labour \'zo c\'hoazh)</string>
+    <string name="gln64Sai_title">Sil gwiadezh 2xSaI</string>
+    <string name="gln64Sai_summary">Izelaat a ra pikseladur ar wiadezh</string>
+    <string name="gln64ScreenClear_title">Rediañ ar skramm sklaer</string>
+    <string name="gln64ScreenClear_summary">Lazhañ evit an tizh (gellout a ra degas glitchoù gant ar video)</string>
+    <string name="gln64AlphaTest_title">Test Alfa</string>
+    <string name="gln64AlphaTest_summary">Lazhañ evit an tizh (degas a ra gwiadezhioù du)</string>
+    <string name="gln64HackDepth_title">Daveennoù donded preizher</string>
+    <string name="gln64HackDepth_summary">Gellout a ra kempenn gwiadezhioù a vlink e-barzh c\'hoarioù \'zo</string>
+    <string name="riceAutoFrameskip_title">Em-lammstern</string>
+    <string name="riceAutoFrameskip_summary">Gwellaat a ra an tizh c\'hoari d\'ar c\'houst feurstern</string>
+    <string name="riceFastTexture_title">Kargadur fonnus ar wiadezh</string>
+    <string name="riceFastTexture_summary">Reizhañ an treuzkemm ar c\'helc\'h</string>
+    <string name="riceForceTextureFilter_title">Silerezh gwiadezh</string>
+    <string name="riceForceTextureFilter_summary">Reizhañ ar wiadezh sked-diskenn hag an displann war an objedoù pell</string>
+    <string name="riceHiResTextures_title">Gwiadezhoù spisder uhel</string>
+    <string name="riceHiResTextures_summary">Implijout pakoù gwiadezh emporzhiet</string>
+    <string name="riceFog_title">Latar</string>
+    <string name="riceFog_summary">Diskouez efedoù al latar</string>
+    <string name="audioSynchronize_title">Sinkronelaat an aodio hag ar video</string>
+    <string name="audioSynchronize_summary">Bihanaat ar c\'hortozadenn, met a c\'hall degas strakadennoù e-barzh c\'hoarioù/trobarzhelloù \'zo</string>
+    <string name="audioSwapChannels_title">Eskemm plas ar chadennoù aodio</string>
+    <string name="audioSwapChannels_summary">Eskemm plas d\'ar chadennoù aodio kleiz ha dehou</string>
+    <string name="audioSLESTimeStretch_title">Aodio amzeret</string>
+    <string name="audioSLESTimeStretch_summary">Enaouiñ an aodio amzerel evit bihanaat ar strakadennoù, met e sanker ul linkad aodio</string>
+    <string name="showRecentlyPlayed_title">C\'hoariet nevez \'zo</string>
+    <string name="showRecentlyPlayed_summary">Diskouez ar c\'hoarioù c\'hoariet outo ar sizhun dremenet</string>
+    <string name="showFullNames_title">Anvioù klok</string>
+    <string name="showFullNames_summary">Diskouez ar rannvro hag an titouroù goullonderiñ evit pep c\'hoari</string>
+    <string name="cacheRecentlyPlayed_title">Krubuilh ar c\'hoarioù fresk</string>
+    <string name="cacheRecentlyPlayed_summary">Kuzhat restroù ROM eztennet ar c\'hoarioù c\'hoariet nevez \'zo outo evit kaout amzerioù kargañ fonnusoc\'h</string>
+
+    <!-- Gallery sections -->
+    <string name="galleryRecentlyPlayed">C\'hoariet nevez \'zo</string>
+    <string name="galleryLibrary">Levraoueg</string>
+
+    <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
+    <string name="gallerySortingMethod_title">Rummañ</string>
+    <string name="gallerySortingMethod_entryRomName">Anv ROM</string>
+    <string name="gallerySortingMethod_entryFileName">Restr anv</string>
+    <string name="touchscreenAutoHold_title">Bouton em-baouez</string>
+    <string name="touchscreenAutoHold_entryDisabled">Lazhet</string>
+    <string name="touchscreenAutoHold_entryLongPress">War hir-bouez</string>
+    <string name="touchscreenAutoHold_entrySlideOut">War rinklañ</string>
+    <string name="touchscreenAnimation_title">Evezhiadenn diwar-benn ar Gwel</string>
+    <string name="touchscreenAnimation_summary">Bazh-c\'hoari bevaet</string>
+    <string name="touchscreenInvertTouchXAxis_summary">Eilpennañ ahel X</string>
+    <string name="touchscreenInvertTouchYAxis_summary">Eilpennañ ahel Y</string>
+    <string name="touchscreenStyle_title">Stil ar bounton</string>
+    <string name="touchscreenStyle_entryOutline">Ezlinennoù</string>
+    <string name="touchscreenStyle_entryShaded">Skeuded</string>
+    <string name="touchscreenStyle_entryJoshaGibs"> Stil JoshaGibs</string>
+    <string name="touchscreenStyle_entryCustom">Personelaet</string>
+
+    <string name="displayOrientation_title">Tuadur skramm</string>
+    <string name="displayOrientation_entryLandscape">Gweledva</string>
+    <string name="displayOrientation_entryReverseLandscape">Gweledva eilpennet</string>
+    <string name="displayOrientation_entryPortrait">Poltred</string>
+    <string name="displayOrientation_entryReversePortrait">Poltred eilpennet</string>
+    <string name="displayOrientation_entryAuto">Emgefreek</string>
+    <string name="displayPosition_title">Lec\'hiadur skramm a-serzh</string>
+    <string name="displayPosition_entryBottom">Izel</string>
+    <string name="displayPosition_entryMiddle">Traoñ</string>
+    <string name="displayPosition_entryTop">Uhel</string>
+    <string name="displayResolution_title">Spisder rentet</string>
+    <string name="displayResolution_entryNative">Genidik (spisder uhelañ)</string>
+    <string name="displayResolution_entry960x720">960 x 720</string>
+    <string name="displayResolution_entry800x600">800 x 600</string>
+    <string name="displayResolution_entry640x480">640 x 480</string>
+    <string name="displayResolution_entry480x360">480 x 360</string>
+    <string name="displayResolution_entry320x240">320 x 240</string>
+    <string name="displayResolution_entry160x120">160 x 120 (feurstern uhelañ)</string>
+    <string name="displayScaling_title">Skaliadur skramm</string>
+    <string name="displayScaling_entryOriginal">Orin\n<small>Leuniañ ar skramm, distreserez ebet (ouzhpennañ a raio barennoù du)</small></string>
+    <string name="displayScaling_entryNone">Netra\n<small>Ober gant ar spister rik diuzet a-us</small></string>
+    <string name="displayScaling_entryZoom">Zoum\n<small>Leuniañ ar skramm, distreserez ebet (ouzhpennañ a raio barennoù du)</small></string>
+    <string name="displayScaling_entryCrop">Diflukañ\n<small>Leuniañ ar skramm, distreserez ebet (troc\'hañ a ra grafikoù)</small></string>
+    <string name="displayScaling_entryStretch">Astennet\n<small>Leuniañ ar skramm, barrenn du ebet (ouzhpennañ a ra distreserez)</small></string>
+    <string name="displayFps_title">Feurstern</string>
+    <string name="displayFps_entryOff">Off</string>
+    <string name="displayFps_entryTopLeft">Laez kleiz</string>
+    <string name="displayFps_entryTopCenter">Laez kreiz</string>
+    <string name="displayFps_entryTopRight">Laez dehoù</string>
+    <string name="displayFps_entryBottomLeft">Traoñ kleiz</string>
+    <string name="displayFps_entryBottomCenter">Traoñ kreiz</string>
+    <string name="displayFps_entryBottomRight">Traoñ dehou</string>
+    <string name="fix_GLideN64_title">Keidañ ar skramm gin</string>
+    <string name="fix_GLideN64_summary">Renkañ a ra kudennoù gant trevnadoù \'zo a ziskouez ur skramm gin gant GLideN64</string>
+    <string name="videoPlugin_title">Lugant video</string>
+    <string name="videoPlugin_entryNone">Hini ebet (video lazhet)</string>
+    <string name="videoPlugin_entryGln64">gln64\n<small>(azasadur GLN64 v0.4.1)</small></string>
+    <string name="videoPlugin_entryRice">rice\n<small>(azasadur Video Rice v6.1.0(b))</small></string>
+    <string name="videoPlugin_entryAngrylion">angrylion-rdp-plus\n<small>(angrylion-rdp-plus meziant rentiñ)</small></string>
+    <string name="videoPlugin_entryGlide64">glide64\n<small>(azasadur Glide64 Fin (10vet bloavezh))</small></string>
+    <string name="videoPlugin_entryGliden64">gliden64\n<small>(GLideN64 beta)</small></string>
+    <string name="videoHardwareType_title">Izelaat ar sked</string>
+    <string name="videoHardwareType_entryDisableHack">Lazhañ izeladur ar sked</string>
+    <string name="videoHardwareType_entryAuto">Em-ziguzhiñ diwar batrom ar poellgomz / an dabletenn</string>
+    <string name="videoHardwareType_entryStandard">Profil standard</string>
+    <string name="videoHardwareType_entryI">I profil</string>
+    <string name="videoHardwareType_entryO1">O-1 profil</string>
+    <string name="videoHardwareType_entryO2">O-2 profil</string>
+    <string name="videoHardwareType_entryQ">Q profil</string>
+    <string name="videoHardwareType_entryT">T profil</string>
+    <string name="videoHardwareType_entryCustom">Profil personelaet</string>
+    <string name="videoPolygonOffset_title">Dilec\'h lieskornek</string>
+    <string name="videoPolygonOffset_summary">Biziez izeladur ar sked personelaet</string>
+    <string name="gln64Frameskip_title">Lammstern</string>
+    <string name="gln64Frameskip_entryNever">Na lamm stern ebet morse</string>
+    <string name="gln64Frameskip_entryUpTo1">Ket muioc\'h evit 1 framm</string>
+    <string name="gln64Frameskip_entryUpTo2">Ket muioc\'h evit 2 framm</string>
+    <string name="gln64Frameskip_entryUpTo3">Ket muioc\'h evit 3 framm</string>
+    <string name="gln64Frameskip_entryUpTo4">Ket muioc\'h evit 4 framm</string>
+    <string name="gln64Frameskip_entryUpTo5">Ket muioc\'h evit 5 framm</string>
+    <string name="gln64Frameskip_entryExactly1">1 framm da vat</string>
+    <string name="gln64Frameskip_entryExactly2">2 framm da vat</string>
+    <string name="gln64Frameskip_entryExactly3">3 framm da vat</string>
+    <string name="gln64Frameskip_entryExactly4">4 framm da vat</string>
+    <string name="gln64Frameskip_entryExactly5">5 framm da vat</string>
+    <string name="riceScreenUpdate_title">Hentenn hizivadur ar skramm</string>
+    <string name="riceScreenUpdate_entryRomDefault">ROM dre ziouer</string>
+    <string name="riceScreenUpdate_entryVIOriginUpdate">Orin an hizivadur VI</string>
+    <string name="riceScreenUpdate_entryVIOriginChange">Cheñchamantoù orin VI</string>
+    <string name="riceScreenUpdate_entryCIChange">Cheñchamantoù CI</string>
+    <string name="riceScreenUpdate_entryFirstCIChange">Cheñchamant CI kentañ</string>
+    <string name="riceScreenUpdate_entryFirstPrimDraw">Brastes kentañ deraouek</string>
+    <string name="riceScreenUpdate_entryBeforeScreenClear">A-raok ar skramm sklaer</string>
+    <string name="riceScreenUpdate_entryAfterScreenDrawn">Goude skramm treset</string>
+    <string name="riceTextureEnhancement_title">Hizivadur/gwelladur ar wiadezh</string>
+    <string name="riceTextureEnhancement_entryNone">Hini</string>
+    <string name="riceTextureEnhancement_entryScale2x">Skeul 2x</string>
+    <string name="riceTextureEnhancement_entry2xsai">2x Sal</string>
+    <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+    <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+    <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+    <string name="riceTextureEnhancement_entrySharpen">Lemmañ</string>
+    <string name="riceTextureEnhancement_entrySharpen_more">Lemmañ muioc\'h</string>
+
+    <string name="gliden64_category_texture_title">Gwiadezh</string>
+    <string name="gliden64_bilinear_mode_title">Mod silañ eilinennel</string>
+    <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-point</string>
+    <string name="gliden64_bilinear_mode_entry_standard">Standard</string>
+    <string name="gliden64_max_anisotropic_filtering_title">Live maksimom silañ anisotropiezh</string>
+    <string name="gliden64_category_general_title">Hollek</string>
+    <string name="gliden64_widescreen_hack_title">Skramm ledan morlaeret</string>
+    <string name="gliden64_enable_noise_title">Enaouiñ emaladur an trouz</string>
+    <string name="gliden64_enable_lod_title">Enaouiñ an emuladur LOD</string>
+    <string name="gliden64_enable_hw_lighting_title">Enaouiñ ar sklaerijennañ periantel dre biksel</string>
+    <string name="gliden64_enable_shader_storage_title">Implijit ar c\'hrubuilh shader</string>
+    <string name="gliden64_correct_texrect_coords_title">Ober diouzh an daveennoù texrect dalc\'hus</string>
+    <string name="gliden64_correct_texrect_coords_off">Off</string>
+    <string name="gliden64_correct_texrect_coords_auto">Emgefreek</string>
+    <string name="gliden64_correct_texrect_coords_force">Forsiñ</string>
+    <string name="gliden64_enable_native_res_texrects_title">Reizhañ am-linennadur ar skeudenn</string>
+    <string name="gliden64_enable_native_res_texrects_summary">Grafikoù 2D reizhoc\'h met kalz gorrekoc\'h hag a lazh ar gwellaennoù gwiadezh.</string>
+    <string name="gliden64_enable_legacy_blending_title">Enaouiñ ar meskaj heritet</string>
+    <string name="gliden64_enable_legacy_blending_summary">Lazhañ an dra-mañ a zegas d\'ur sklaerijennadur hag ul latar reishoc\'h, gorrekoc\'h e vez, avat, war trobarzhelloù \'zo.</string>
+    <string name="gliden64_enable_fragment_depth_write_title">Enaouiñ an donded diazezet war ur pezh</string>
+    <string name="gliden64_enable_fragment_depth_write_summary">Enaouiñ skrivadur donder ar pezh. Trobarzhelloù na vezont ket kenglotus.</string>
+    <string name="gliden64_category_fb_title">Emuladur ar skurzer framm</string>
+    <string name="gliden64_enable_fb_emulation_title">Enaouiñ ar framm hag/pe emuladur ar skurzer donder</string>
+    <string name="gliden64_swap_frame_buffers_title">Eskemm ar framm skurzerioù</string>
+    <string name="gliden64_swap_frame_buffers_entry_on_vi_update">Diwar-benn hizivadur VI ar galvadennoù</string>
+    <string name="gliden64_swap_frame_buffers_entry_on_vi_origin_change">Diwar-benn orin ar cheñchamantoù VI</string>
+    <string name="gliden64_swap_frame_buffers_entry_on_buffer_update">Diwar-benn hizivadur ar skurzer</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_title">Eilañ ar skurzer liv en RDRAM</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_off">Na eilañ ket</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_sync_mode">Eilañ e mod sinkro</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode">Eilañ e mod amsinkr (2 skurzer)</string>
+    <string name="gliden64_color_buffer_copy_to_RDRAM_entry_async_mode_3buffers">Eilañ e mod amskinkr (3 skurzer)</string>
+    <string name="gliden64_enable_copy_auxiliary_to_RDRAM_title">Enaouiñ ar skurzerioù skoaz-eilañ e RDRAM</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_title">Eilañ ar skurzer donded er RDRAM</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_off">Na eilañ ket</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_hardware">Keflusker renter periant</string>
+    <string name="gliden64_enable_copy_depth_to_RDRAM_entry_software">Meziant rentañ</string>
+    <string name="gliden64_enable_color_buffer_from_RDRAM_title">Enaouiñ an eilañ skurzer liv adalek RDRAM</string>
+    <string name="gliden64_enable_n64_depth_compare_title">Enaouiñ ar c\'heñveriañ donded N64 (Taol-esae)</string>
+    <string name="gliden64_enable_force_depth_buffer_clear">Rediañ ar skurzer donded sklaer</string>
+    <string name="gliden64_use_native_resolution_factor_title">Implijout ur faktor spister genidik</string>
+    <string name="gliden64_use_native_resolution_factor_off">Off</string>
+    <string name="gliden64_use_native_resolution_factor_1x">1x</string>
+    <string name="gliden64_use_native_resolution_factor_2x">2x</string>
+    <string name="gliden64_use_native_resolution_factor_3x">3x</string>
+    <string name="gliden64_use_native_resolution_factor_4x">4x</string>
+    <string name="gliden64_category_texture_filtering_title">Silerezh gwiadezh</string>
+    <string name="gliden64_tx_filter_mode_title">Silerezh gwiadezh</string>
+    <string name="gliden64_tx_filter_mode_entry_none">Hini ebet</string>
+    <string name="gliden64_tx_filter_mode_entry_smooth1">Flour 1</string>
+    <string name="gliden64_tx_filter_mode_entry_smooth2">Flour 2</string>
+    <string name="gliden64_tx_filter_mode_entry_smooth3">Flour 3</string>
+    <string name="gliden64_tx_filter_mode_entry_sharp1">Pikus 1</string>
+    <string name="gliden64_tx_filter_mode_entry_sharp2">Pikus 2</string>
+    <string name="gliden64_tx_enhancement_title">Gwelladur ar wiadezh</string>
+    <string name="gliden64_tx_enhancement_entry_none">Hini ebet</string>
+    <string name="gliden64_tx_enhancement_entry_store_as_is">Stokañ evel ma</string>
+    <string name="gliden64_tx_enhancement_entry_X2">X2</string>
+    <string name="gliden64_tx_enhancement_entry_X2SAI">X2SAI</string>
+    <string name="gliden64_tx_enhancement_entry_HQ2X">HQ2X</string>
+    <string name="gliden64_tx_enhancement_entry_HQ2XS">HQ2XS</string>
+    <string name="gliden64_tx_enhancement_entry_LQ2X">LQ2X</string>
+    <string name="gliden64_tx_enhancement_entry_LQ2XS">LQ2XS</string>
+    <string name="gliden64_tx_enhancement_entry_HQ4X">HQ4X</string>
+    <string name="gliden64_tx_enhancement_entry_2xBRZ">2xBRZ</string>
+    <string name="gliden64_tx_enhancement_entry_3xBRZ">3xBRZ</string>
+    <string name="gliden64_tx_enhancement_entry_4xBRZ">4xBRZ</string>
+    <string name="gliden64_tx_enhancement_entry_5xBRZ">5xBRZ</string>
+    <string name="gliden64_tx_enhancement_entry_6xBRZ">6xBRZ</string>
+    <string name="gliden64_tx_deposterize_title">Bihanadur ar wiadezh a-raok ar gwelladur</string>
+    <string name="gliden64_tx_filter_ignore_BG_title">Na silañ ket ar gwiadezhioù drekleur</string>
+    <string name="gliden64_tx_cache_size_title">Ment ar c\'hrubuilh gwiadezhioù silet e megaokted</string>
+    <string name="gliden64_tx_hi_res_enable_title">Implijout pakadoù gwiadezhoù spisder uhel ma vezont hegerz</string>
+    <string name="gliden64_tx_hi_res_full_alpha_channel_title">Aotren implij ar c\'hanal alfa gwiadezh spister uhel</string>
+    <string name="gliden64_tx_hi_res_alt_crc_title">Implijout ar jedadenn CRC mod-all</string>
+    <string name="gliden64_tx_cache_compression_title">Krubuilh gwiadezh Zip</string>
+    <string name="gliden64_tx_force_16bpp_title">Rediañ ar furmad gwiadezh 16bit evit ar gwiadezhioù HD</string>
+    <string name="gliden64_tx_save_cache_title">Enrollañ krubuilh ar wiadezh war ar bladenn</string>
+    <string name="gliden64_tx_save_cache_summary">Enrollañ krubuilh ar wiadezh war ar bladenn en ur guitaat, o vezañ kaoz eus un dale pa \'z eus ur c\'hoari.</string>
+    <string name="gliden64_category_gamma_title">Reizhadur Gamma</string>
+    <string name="gliden64_force_gamma_correction_title">Rediañ ar reizhadur Gamma</string>
+    <string name="gliden64_gamma_correction_level">Talvoudegezh ar reizhadur Gamma</string>
+
+    <string name="angrylion_parallel_mode_title">Enaouiñ ar mod sazilet</string>
+    <string name="angrylion_num_workers_title">Niver a durgnoù salizañ labour</string>
+    <string name="angrylion_vi_mode_title">Mod VI</string>
+    <string name="angrylion_vi_mode_entry_filtered">Silet</string>
+    <string name="angrylion_vi_mode_entry_unfiltered">Disilet</string>
+    <string name="angrylion_vi_mode_entry_depth">Donded</string>
+    <string name="angrylion_vi_mode_entry_coverage">Gollo</string>
+    <string name="angrylion_vi_interpolation_title">Etrebolasion VI</string>
+    <string name="angrylion_vi_interpolation_entry_nearest_neighbor">Amezeg tostañ</string>
+    <string name="angrylion_vi_interpolation_entry_linear">Linennel</string>
+    <string name="angrylion_hide_overscan_title">Kuzhat an dreist-skan</string>
+
+    <string name="glide64mk2_game_default">C\'hoari dre-ziouer</string>
+    <string name="glide64mk2_disable">Lazhañ</string>
+    <string name="glide64mk2_enable">Enaouiñ</string>
+    <string name="glide64mk2_filtering_title">Mod silañ</string>
+    <string name="glide64mk2_filtering_automatic">Emgefreek</string>
+    <string name="glide64mk2_filtering_force_bilinear">Rediañ an eilinenner</string>
+    <string name="glide64mk2_filtering_force_point_samples">Poent nerzh standilhonet</string>
+    <string name="glide64mk2_fog_title">Latar</string>
+    <string name="glide64mk2_buff_clear_title">Skurzer sklaer war bep skeudenn</string>
+    <string name="glide64mk2_swapmode_title">Hentenn eskemm skurzer</string>
+    <string name="glide64mk2_swapmode_vi_ocurred">Eilpennañ ar skurzerioù pa c\'hoarvez arsav a-serzh</string>
+    <string name="glide64mk2_swapmode_conditional">Eilpennañ ar skurzerioù pa vez hollad plijet ar rakdivizoù. Mirout a ra ouzh ar strinkellikat e-barzh c\'hoarioù \'zo.</string>
+    <string name="glide64mk2_swapmode_mix">Meskaj etre div hentenn</string>
+    <string name="glide64mk2_lodmode_title">Jedadenn LOD</string>
+    <string name="glide64mk2_lodmode_fast">Fonnus</string>
+    <string name="glide64mk2_lodmode_precise">Resis</string>
+    <string name="glide64mk2_fb_smart_title">Framm-skurzer speredek</string>
+    <string name="glide64mk2_fb_hires_title">Emuladur skurzer-framm periant</string>
+    <string name="glide64mk2_fb_render_title">Enaouiñ ar meziant renter donded</string>
+    <string name="glide64mk2_fb_crc_mode_title">Reizhañ ar mod CRC ar skurzer-framm</string>
+    <string name="glide64mk2_fb_crc_mode_disable">Lazhañ ar jedadenn CRC</string>
+    <string name="glide64mk2_fb_crc_mode_fast">Jedadenn CRC fonnus</string>
+    <string name="glide64mk2_fb_crc_mode_safe">Jedadenn CRC sur</string>
+    <string name="glide64mk2_read_back_to_screen_title">Renter N64 skurzer framm evel gwiadezh</string>
+    <string name="glide64mk2_read_back_to_screen_mode1">Mod 1</string>
+    <string name="glide64mk2_read_back_to_screen_mode2">Mod 2</string>
+    <string name="glide64mk2_detect_cpu_write_title">Diskouez skeudennoù skrivet war-eeun gant CPU</string>
+    <string name="glide64mk2_alt_tex_size_title">Hentenn bennerezh gwiadezh mod-all</string>
+    <string name="glide64mk2_use_sts1_only_title">Implijit da gentañ holl SETTILESIZE hepken</string>
+    <string name="glide64mk2_fast_crc_title">Implijout an algoritm CRC herr</string>
+    <string name="glide64mk2_force_microcheck_title">Gwiriañ ar mikrokodoù evit pep framm</string>
+    <string name="glide64mk2_force_quad3d_title">An urzhiad Rediañ 0xb5 da vezañ quad, ha neket al linenn 3D</string>
+    <string name="glide64mk2_optimize_texrect_title">Rentañ texrect fonnus gant hwfbe</string>
+    <string name="glide64mk2_hires_buf_clear_title">Skarzhañ ar skoazell-skurzerioù frammad gwiadezh</string>
+    <string name="glide64mk2_fb_read_alpha_title">Lenn alfa ar framm-skurzer</string>
+    <string name="glide64mk2_force_calc_sphere_title">Implijit ar gartenngrafiezh sferennek hepken</string>
+    <string name="glide64mk2_texture_correction_title">Enaouiñ emuladur reizhadur ar wiadezh e perspektiverezh</string>
+    <string name="glide64mk2_increase_texrect_edge_title">Rediañ ar ment texrect gant an dalvoudegezh anterin</string>
+    <string name="glide64mk2_decrease_fillrect_edge_title">Bihanaat ment Fillrect gant 1</string>
+    <string name="glide64mk2_stipple_mode_title">Mod emuladur alfa 3DFX Dithered</string>
+    <string name="glide64mk2_stipple_mode_disable">Lazhañ</string>
+    <string name="glide64mk2_stipple_mode_pattern">Patrom</string>
+    <string name="glide64mk2_stipple_mode_rotate">Treiñ</string>
+    <string name="glide64mk2_stipple_pattern_title">3DFX Dithered alfa patrom</string>
+    <string name="glide64mk2_clip_zmax_title">Enaouiñ an didroc\'hañ e-barzh ar plan a-bell</string>
+    <string name="glide64mk2_clip_zmin_title">Enaouiñ ar digribenn tost eus z</string>
+    <string name="glide64mk2_adjust_aspect_title">Keidañ neuz ar skramm evit ar mod skramm ledan</string>
+    <string name="glide64mk2_correct_viewport_title">Rediañ ar gwel-porzh pozitivel</string>
+    <string name="glide64mk2_aspect_title">Feur an neuz</string>
+    <string name="glide64mk2_aspect_force_4_3">Forsiñ 4:3</string>
+    <string name="glide64mk2_aspect_force_16_9">Forsiñ 16:9</string>
+    <string name="glide64mk2_aspect_stretch">Astenn</string>
+    <string name="glide64mk2_aspect_original">Orin</string>
+    <string name="glide64mk2_zmode_compare_less_title">Rediañ kontrol strizh e-barzh test ar skurzer donded</string>
+    <string name="glide64mk2_old_style_adither_title">Arloañ an \"diter\" alfa hep teurel ebet ouzh an alpha_dither_mode</string>
+    <string name="glide64mk2_n64_z_scale_title">Lakaat verteks an talvoud z a-raok skrivañ e-barzh ar skurzer donded</string>
+    <string name="glide64mk2_pal230_title">Termeniñ ur skeul ispisial evit ar c\'hoarioù PAL</string>
+    <string name="glide64mk2_ignore_aux_copy_title">Na eilit ket ar skoazell-skuzerioù frammad</string>
+    <string name="glide64mk2_useless_is_useless_title">Pognad chomet fb dicheñchet</string>
+    <string name="glide64mk2_fb_read_always_title">Lenn ar skuzer-frammad evit pep frammad (gellout a ra kaout un implij gorrek hepken evit an efedoù o deus ezhomm anezhañ, d. sk.: Banjo Kazooie, tremenioù DK64</string>
+    <string name="glide64mk2_wrpAnisotropic_title">Arventennoù silañ anisotropiezh</string>
+    <string name="glide64mk2_wrpAnisotropic_1x">1x</string>
+    <string name="glide64mk2_wrpAnisotropic_2x">2x</string>
+    <string name="glide64mk2_wrpAnisotropic_4x">4x</string>
+    <string name="glide64mk2_wrpAnisotropic_8x">8x</string>
+    <string name="glide64mk2_wrpAnisotropic_16x">16x</string>
+
+    <string name="navigationMode_title">Tizhusted</string>
+    <string name="navigationMode_summary">Mod merdeiñ el lañser: %1$s</string>
+    <string name="navigationMode_entryAuto">Em-ziuziñ adalek kefluniadur an trevnad</string>
+    <string name="navigationMode_entryStandard">Mod standard</string>
+    <string name="navigationMode_entryBigScreen">Mod skramm bras (skramm-touch ebet; enmont an dornell c\'hoari/klavier hepken)</string>
+    <string name="inGameMenuSetting_title">Diskouez lañser ar c\'hoari</string>
+    <string name="inGameMenuSetting_entryBackKey">Pa vez pouezet war ar bouton souzañ</string>
+    <string name="inGameMenuSetting_entrySwipe">Pa vez implijet ar jestr rinklañ</string>
+
+    <string name="r4300Emulator_title">R4300 emulator</string>
+    <string name="r4300Emulator_entryPureInterpreter">Kaser pur</string>
+    <string name="r4300Emulator_entryCachedInterpreter">Kaser kuzhet</string>
+    <string name="r4300Emulator_entryDynarec">Lusk adkempunañ (lusk-arek)</string>
+    <string name="disableExtraMem_title">Lazhañ modulenn an astenn</string>
+    <string name="rsp_title">RSP</string>
+    <string name="rsp_hle">HLE</string>
+    <string name="rsp_cxd4_hle">CXD4 HLE Video</string>
+    <string name="rsp_cxd4_lle">CXD4 LLE Video</string>
+
+    <string name="displayZoom_title">Zoum</string>
+    <string name="displayZoomDefault_title">Implijit ar zoum dre ziouer</string>
+    <string name="displayZoomDefault_summary">Digochit ar c\'hombod-mañ evit spisaat un dalvoudegezh zoum personelaet evit ar c\'hoari-mañ</string>
+    
+    <string name="audioPlugin_title">Lugant aodio</string>
+    <string name="audioPlugin_entryNone">Hini ebet (aodio lazhet)</string>
+    <string name="audioPlugin_entryNoneNoSpeedLimit">Nann-diveugiñ (aodio lazhet, bevenn tizh ebet)</string>
+    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
+    <string name="audioSLESBufferNbr_title">Niverenn aodio ar skurzer</string>
+    <string name="audioSLESRate_title">Feur standilhoniñ</string>
+    <string name="audioSLESRate_entry_orig">Termenet gant ar c\'hoari</string>
+    <string name="audioSLESRate_best_for_hw">Peurvat evit ar periant</string>
+    <string name="audioSLESFloatingPoint_title">Standilhonoù gant ur poent nijus</string>
+    <string name="audioSLESFloatingPoint_summary">Kalite aodio FP uheloc\'h. Trevnadoù \'zo n\'hallont ket bezañ kenglotus.</string>
+    <string name="localeOverride_entrySystemDefault">Sistem dre ziouer</string>
+
+    <!-- Seek Bar Preferences (selected value and units will become the summary -->
+    <string name="touchscreenTransparency_title">Dallijenn ar bouton</string>
+    <string name="touchscreenScale_title">Skeulenn ar bouton</string>
+    <string name="touchscreenAutoHide_title">Niver a segondennoù a-raok kuzhat ar boutonoù diwar ar skramm-touch</string>
+    <string name="libraryScale_title">Skeulenn gollo arzhel</string>
+    <string name="libraryCountryFilter_title">Sil bro c\'hoari</string>
+    <string name="libraryCountryFilterUnknown_title">Dizanv</string>
+    <string name="libraryCountryFilterUsa_title">Stadoù-unanet</string>
+    <string name="libraryCountryFilterJapan_title">Bro-Japan</string>
+    <string name="libraryCountryFilterEurope_title">Europa</string>
+    <string name="libraryCountryFilterAustralia_title">Aostralia</string>
+    <string name="libraryCountryFilterKorea_title">Korea</string>
+    <string name="libraryCountryFilterGermany_title">Bro-Alamagn</string>
+    <string name="libraryCountryFilterFrance_title">Bro-Frañs</string>
+    <string name="libraryCountryFilterItaly_title">Bro-Italia</string>
+    <string name="libraryCountryFilterSpain_title">Bro-Spagn</string>
+    <string name="displayActionBarTransparency_title">Dallijenn barrenn an oberoù</string>
+
+    <!-- Path Preferences (selected path will become the summary) -->
+    <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
+    <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
+    <string name="pathPreference_dialogTitle">Teul diuzet: %1$s</string>
+    <string name="pathHiResTextures_title">Emporzhiañ pakad ar wiadezh</string>
+    <string name="pathHiResTextures_summary">Arloañ gwiadezh personelaet (stumm ZIP/7ZIP) d\'ur c\'hoari</string>
+    <string name="pathHiResTextures_default">~</string>
+    <string name="pathGameSaves_title">Teuliad enrollañ ar c\'hoari</string>
+    <string name="pathAppData_title">Teuliad roadennoù an arload</string>
+
+    <!-- Player Map Preferences -->
+    <string name="playerMap_title">Lies-c\'hoarier</string>
+    <string name="playerMap_summary">Termeniñ kontroller(ioù) pep c\'hoarier</string>
+    <string name="playerMap_needed">Termenit kartennadurioù ar c\'hoarierien lies-c\'hoarier en arventennoù c\'hoari.</string>
+    <string name="inputShareController_title">Kontroller rannañ</string>
+    <string name="inputShareController_summary">Aotren un drobarzhell enmont da gontrolliñ meur a lenner war ar memes tro</string>
+    <string name="inputShareController_entryYes">Ya</string>
+    <string name="inputShareController_entryNo">Ket</string>
+    <string name="playerMap_useDefaultPlayerMap_title">Implijout ar kartennadur al lenner dre-ziouer</string>
+    <string name="playerMap_useDefaultPlayerMap_summary">Digochit ar c\'hombod-mañ evit spisaat kartennadur personelaet ar c\'hoari-mañ.</string>
+
+    <!-- Profile Preferences -->
+    <string name="emulationProfile_title">Profil emuladur</string>
+    <string name="touchscreenProfile_title">Profil skramm-touch</string>
+    <string name="touchscreenProfileDpad_title">Profil skramm-touch (D-pad)</string>
+    <string name="controllerProfile_title">Profil kontroller</string>
+    <string name="controllerProfile1_title">Kontroller ar profil 1</string>
+    <string name="controllerProfile2_title">Kontroller ar profil 2</string>
+    <string name="controllerProfile3_title">Kontroller ar profil 3</string>
+    <string name="controllerProfile4_title">Kontroller ar profil 4</string>
+    <string name="default_profile_title">Talvoudegezh dre-ziouer hollek</string>
+    
+    <!-- Other Preferences -->
+    <string name="GameAutoSavesMax_title">Em-enrolladurioù maks. dre c\'hoari</string>
+    <string name="useFlatGameDataPath_title">Implijit raklun an teuliadoù roadennoù c\'hoarioù plad</string>
+    <string name="useFlatGameDataPath_summary">Mirit an holl enrolladennoù faout, tapadennoù-skramm, hag an enrolladennoù diabarzh-c\'hoari er memes teuliad</string>
+
+    <!-- ************************************************************************** -->
+    <!-- Dialogs and Other Feedback -->
+    <!-- Developers: Use formatting arguments rather than string concatenation: -->
+    <!-- http://developer.android.com/guide/topics/resources/string-resource.html -->
+    <!-- ************************************************************************** -->
+
+
+    <!-- Confirmation Dialogs -->
+    <string name="confirm_title">Kadarnadur</string>
+    <string name="confirmResetGame_message">Adderaouekaat ar c\'hoari? An holl arakadurioù bet graet abaoe hoc\'h enrolladenn diwezhañ a vo kollet.</string>
+    <string name="confirmExitGame_message">Ha sur ho peus c\'hoant paouez da c\'hoari?</string>
+    <string name="confirmOverwriteFile_message">Dreistskrivañ %1$s?</string>
+    <string name="confirmUnmapAll_message">Digartenniñ an holl enmontoù evit %1$s?</string>
+    <string name="confirmDeleteProfile_message">Dilemel ar profil \"%1$s\"?</string>
+    <string name="clearTexturePack_title">Dilemel pakad ar wiadezh</string>
+    <string name="clearTexturePack_message">Diuzit ur pakad gwiadezh da zilemel</string>
+    <string name="confirmClearData_message">Ha sur oc\'h ho peus c\'hoant da zilemel ar pakad gwiadezh uhel diuzet anezhañ?</string>
+    <string name="confirmRemoveFromLibrary_message">Ha sur ho peus c\'hoant da zilemel ar c\'hoari-mañ diwar al levraoueg?</string>
+
+    <!-- Corrupt Installation Warning -->
+    <string name="invalidInstall_title">Diwallit</string>
+    <string name="invalidInstall_message">Mupen64 Plus AE a c\'hallfe bezañ bet staliet fall anezhañ. Klaskit staliañ an arload en-dro mar plij ma c\'hoarvez deoc\'h kaout sac\'hadennoù.</string>
+
+    <!-- Text Editor Hints (start lower-case) -->
+    <string name="hintFileSave">anv-restr</string>
+
+    <!-- Asset Extractor -->
+    <string name="assetExtractor_initializing">O teraouekaat</string>
+    <string name="assetExtractor_progress">%1$.0f%% graet: %2$s</string>
+    <string name="assetExtractor_finished">Echuet</string>
+    <string name="assetExtractor_failed">Fazi da vare eztennadur roadennoù an arload.\nDilugit ar fun USB, mar plij, adloc\'hit an drobarzhell, hag adloc\'hit an arload.\NEvit kaout sikour, sellit ouzh ar bajenn %1$s.</string>
+    <string name="assetExtractor_error">Fazi</string>
+    <string name="assetExtractor_failed_permissions">An arload-mañ n\'hall ket kenderc\'hel hep an aotreadurioù-se</string>
+    <string name="assetExtractor_permissions_title">Aotreadurioù</string>
+    <string name="assetExtractor_permissions_rationale">Mupen64Plus AE a rank bezañ gouest da: \nLenn ar stokadur evit lenn ar restroù ROM, enrollit ar stadoù, hag ar c\'hefluniadurioù.\nSkrivit ho stokadur evit skrivañ ar c\'hefluniadur hag enrollañ ar roadennoù.</string>
+
+    <!-- Cheats Configuration -->
+    <string name="cheats_defaultName">Truchadur %1$d</string>
+    <string name="cheats_longPress">(hirbouezit evit an destenn glok)</string>
+    <string name="cheat_disabled">(lazhet)</string>
+    <string name="cheatOption_title">Testenn glok</string>
+    <string name="cheatNotes_title">Notennoù</string>
+    <string name="cheatNotes_none">(notenn ebet hegarz evit an truchadurioù-mañ)</string>
+    
+    <!-- Cheat Editor -->
+    <string name="menuItem_cheatEditor">Aozer truchadurioù</string>
+    <string name="cheatEditor_edit">Aozañ an truchadurioù</string>
+    <string name="cheatEditor_help">Skoazell</string>
+    <string name="cheatEditor_confirm">Ha sur oc\'h?</string>
+    <string name="cheatEditor_info">Titouroù diwar-benn an truchadurioù</string>
+    <string name="cheatEditor_saveConfirm">Enrollañ ar restroù truchañ?</string>
+    <string name="cheatEditor_edit1">Aozañ an truchadur</string>
+    <string name="cheatEditor_edit2">Aozañ truchadur araokaet</string>
+    <string name="cheatEditor_invalid_value">N/A</string>
+    <string name="cheatEditor_delete">Dilemel an truchadur</string>
+    <string name="cheatEditor_add">Ouzhpennañ an truchadur</string>
+    <string name="cheatEditor_add_advanced">Ouzhpennañ truchadurioù araokaet</string>
+    <string name="cheatEditor_save">Enrollañ an truchadur</string>
+    <string name="cheatEditor_hint_cheatTitle">Titl an truchadur</string>
+    <string name="cheatEditor_hint_cheatNotes">Notennoù an truchadur (diret)</string>
+    <string name="cheatEditor_hint_cheatAddress">Chomlec\'hioù</string>
+    <string name="cheatEditor_hint_cheatData">Ebarzhiñ roadennoù an truchadur</string>
+    <string name="cheatEditor_hint_optionData">Ebarzhit ar roadennoù dibarzhioù</string>
+    <string name="cheatEditor_hint_value">Talvoudegezh</string>
+    <string name="cheatEditor_hint_value_description">Deskrivadur</string>
+    <string name="cheatEditor_add_option">Ouzhpennañ un dibarzh</string>
+    <string name="cheatEditor_add_cheats">Ouzhpennañ un truchadur</string>
+    <string name="cheatEditor_remove_option">Dilemel an dibarzhioù</string>
+
+    <!-- Hi-Res Texture Unpacking -->
+    <string name="pathHiResTexturesTask_select_zip">Diuzit ar restr ZIP, 7Zip pe HTC a endalc\'h ar pakad gwiadezh uhel</string>
+    <string name="pathHiResTexturesTask_title">O tispakañ ar gwiadezhioù…</string>
+    <string name="pathHiResTexturesTask_message">Bezit pasiant eta, mar plij.  An argerzh-mañ a c\'hallfe kemer un nebeud amzer.</string>
+    <string name="pathHiResTexturesTask_errorMessage">Fazi en ur zispakañ ar gwiadezhioù!</string>
+    <string name="pathHiResTexturesTask_errorMessageInvalidHTC">Fazi: ar restr HTC a rank kenglotañ gant ar furmad [GAME_HEADER] __ HIRESTEXTURES.htc</string>
+
+    <!-- Scan Roms Dialog -->
+    <string name="scanRomsDialog_selectRom">Diuzit ur restr ROM pe un teuliad anterin da analizañ (restroù zip / 7zip / n64 / z64 a vez kemeret e kont)</string>
+    <string name="scanRomsDialog_searchZips">O klask ar restroù zip</string>
+    <string name="scanRomsDialog_downloadArt">Pellgargañ ar gollo</string>
+    <string name="scanRomsDialog_clearGallery">Skarzhañ ar gallerie a-raok ouzhpennañ</string>
+    <string name="scanRomsDialog_scanSubdirectories">Analizañ an is-teuliadoù</string>
+    <string name="scanRomsDialog_reset">Adderaouekaat</string>
+
+    <!-- ROM unzipping -->
+    <string name="extractRomTask_title">Eztennañ ar ROM…</string>
+    <string name="extractRomTask_message">Eztennañ skeudenn ar ROM</string>
+    <string name="extractRomTask_errorMessage">Kudenn en ur eztennañ ar skeudenn ROM</string>
+
+    <!-- ROM Scanning -->
+    <string name="scanning_title">O skanniñ…</string>
+
+    <!-- Deleting Files -->
+    <string name="pathDeletingFilesTask_title">O tilemel ar restroù…</string>
+    <string name="pathDeletingFilesTask_message">Bezit pasiant eta, mar plij.  An argerzh-mañ a c\'hallfe kemer un nebeud amzer.</string>
+
+    <!-- ROM information calculation -->
+    <string name="cacheRomInfo_searching">O klask…</string>
+    <string name="cacheRomInfo_searchingZip">O klask ar restr zip…</string>
+    <string name="cacheRomInfo_computingMD5">O kompudiñ MD5…</string>
+    <string name="cacheRomInfo_searchingDB">O klask e-barzh an diaz-roadennoù ROM…</string>
+    <string name="cacheRomInfo_downloadingArt">O pellgargañ ar gollo…</string>
+    <string name="cacheRomInfo_refreshingUI">O freskaat an UI…</string>
+    <string name="cacheRomInfo_extractingZip">Oc\'h eztennañ un enmont zip…</string>
+
+    <!-- Seek Bar Preference -->
+    <string name="seekBarPreference_summary">%1$d %2$s</string>
+
+    <!-- Path Preference -->
+    <string name="pathPreference_parentFolder">Teuliad kar</string>
+
+    <!-- Player Mapping -->
+    <string name="playerMap_deviceWithName">Trevnad %1$d (%2$s)</string>
+    <string name="playerMap_deviceWithoutName">Trevnad %1$d</string>
+    <string name="playerMap_deviceNotConnected">Nann gevreet</string>
+    <string name="playerMapPreference_popupTitle">C\'hoarier %1$d</string>
+    <string name="playerMapPreference_popupMessage">C\'hoarier %1$d, pouezit war ar bouton pe ur stick war ho c\'hontroller… \n\nTrevnadoù red:\n%2$s</string>
+    <string name="playerMapPreference_popupUnmap">Digartenniñ</string>
+    <string name="playerMapPreference_button">C\'hoarier %1$d\n%2$s</string>
+    <string name="playerMapPreference_reminder">Adkas din da soñj seul wech ma ne vez ket kartennet ar c\'hoarierien</string>
+
+    <!-- Touchscreen Profile Activity -->
+    <string name="touchscreenProfileActivity_menuTitle">Dibab an dibarzh</string>
+    <string name="touchscreenProfileActivity_buttons">Boutonioù</string>
+    <string name="touchscreenProfileActivity_remove">Dilemel</string>
+    <string name="touchscreenProfileActivity_horizontalSlider">A-serzh: %1$d %%</string>
+    <string name="touchscreenProfileActivity_verticalSlider">A-blom: %1$d %%</string>
+    <string name="touchscreenProfileActivity_ScaleSlider">O skeulenniñ: %1$d%%</string>
+    <string name="touchscreenProfileActivity_autoHoldable">Em-derc\'hel</string>
+
+    <!-- Sensor configuration -->
+    <string name="sensorConfig_hideJoystick">Kuzhat pa vez oberiant ar c\'hapteur</string>
+    <string name="sensorConfig_activateOnStart">Enaouiñ e deroù ar c\'hoari</string>
+    <string name="sensorConfig_joystickXEmulation">Bazh-c\'hoari emuliñ ahel X</string>
+    <string name="sensorConfig_joystickYEmulation">Bazh-c\'hoari emuliñ ahel Y</string>
+    <string name="sensorConfig_sensorX">Implijout ahel X ar fonnuserometr</string>
+    <string name="sensorConfig_sensorY">Implijout ahel Y ar fonnuserometr</string>
+    <string name="sensorConfig_angle">Korn IDLE (°)</string>
+    <string name="sensorConfig_invertAxis">Eilpennañ an ahel</string>
+    <string name="sensorConfig_axisCustom">Personelaet</string>
+    <string name="sensorConfig_axisDisabled">Lazhet</string>
+
+    <!-- Controller button names -->
+    <string name="controller_analog">Stick analogel</string>
+    <string name="controller_dpad">D-pad</string>
+    <string name="controller_groupAB">A/B boutonioù</string>
+    <string name="controller_buttonA">Bouton A</string>
+    <string name="controller_buttonB">Bouton B</string>
+    <string name="controller_groupC">Bouton C</string>
+    <string name="controller_buttonCr">C-pad →</string>
+    <string name="controller_buttonCl">C-pad ←</string>
+    <string name="controller_buttonCd">C-pad ↓</string>
+    <string name="controller_buttonCu">C-pad ↑</string>
+    <string name="controller_buttonL">Bouton L</string>
+    <string name="controller_buttonR">Bouton R</string>
+    <string name="controller_buttonZ">Bouton Z</string>
+    <string name="controller_buttonS">Boutton start</string>
+    <string name="controller_buttonSensor">Bouton ar bouton kaptor gwinterel</string>
+    <string name="controller_fps">Meneger FPS</string>
+
+    <!-- Input Mapping -->
+    <string name="inputMapActivity_popupMessage">Pouezit war ur bouton, un douchennn, ur vazh-c\'hoari evit kartenniñ…\n\nKartennadurioù war ober:\n%1$s</string>
+    <string name="inputMapActivity_popupUnmap">Digartenniñ</string>
+    <string name="inputMapActivity_btnA">A</string>
+    <string name="inputMapActivity_btnB">B</string>
+    <string name="inputMapActivity_btnC">C</string>
+    <string name="inputMapActivity_btnL">L</string>
+    <string name="inputMapActivity_btnR">R</string>
+    <string name="inputMapActivity_btnZ">Z</string>
+    <string name="inputMapActivity_btnS">S</string>
+    <string name="inputMapActivity_btnCR">C-pad →</string>
+    <string name="inputMapActivity_btnCL">C-pad ←</string>
+    <string name="inputMapActivity_btnCD">C-pad ↓</string>
+    <string name="inputMapActivity_btnCU">C-pad ↑</string>
+    <string name="inputMapActivity_btnDR">D-pad →</string>
+    <string name="inputMapActivity_btnDL">D-pad ←</string>
+    <string name="inputMapActivity_btnDD">D-pad ↓</string>
+    <string name="inputMapActivity_btnDU">D-pad ↑</string>
+    <string name="inputMapActivity_btnAR">Analog →</string>
+    <string name="inputMapActivity_btnAL">Analog ←</string>
+    <string name="inputMapActivity_btnAD">Analog ↓</string>
+    <string name="inputMapActivity_btnAU">Analog ↑</string>
+    <string name="inputMapActivity_incrementSlot"> Inkremantiñ ar faout</string>
+    <string name="inputMapActivity_reset">Adderaouekaat</string>
+    <string name="inputMapActivity_pause">Paouez</string>
+    <string name="inputMapActivity_stop">Tardañ</string>
+    <string name="inputMapActivity_frameAdvance">Araokadur ar framm</string>
+    <string name="inputMapActivity_fastForward">War-raok prim</string>
+    <string name="inputMapActivity_speedDown">Difonnaat</string>
+    <string name="inputMapActivity_speedUp">Fonnusaat</string>
+    <string name="inputMapActivity_gameshark">Gameshark</string>
+    <string name="inputMapActivity_simulateBack">Stokell kilañ</string>
+    <string name="inputMapActivity_simulateMenu">Stokell lañser</string>
+    <string name="inputMapActivity_screenshot">Tapadenn-skramm</string>
+    <string name="inputMapActivity_toggle_sensor">Kaptor gwinterell</string>
+
+    <!-- Controller Diagnostics -->
+    <string name="diagnosticActivity_textKey_text">Pouezit ur bouton pe ur stokell…</string>
+    <string name="diagnosticActivity_textMotion_text">Touchit ur skramm pe ur joystick…</string>
+
+    <!-- Misc -->
+    <string name="coreFragment_sdcard_write_error">Dibosupl eo skrivañ ar c\'hefluniadur war ar gartenn SD</string>
+
+
+</resources>
