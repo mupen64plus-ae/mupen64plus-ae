@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
@@ -141,6 +142,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 if( !TextUtils.isEmpty( givenRomPath ) ) {
                     getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
                     launchGameOnCreation(givenRomPath);
+
+                    finish();
                 }
             } else {
                 Log.i("GalleryActivity", "Loading ROM from leanback");
@@ -163,6 +166,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_COUNTRY_CODE);
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_ART_PATH);
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_GOOD_NAME);
+
+                finish();
             }
         }
     }
@@ -187,7 +192,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         final Bundle extras = getIntent().getExtras();
 
         loadGameFromExtras(extras);
-
     }
 
     @Override
@@ -394,6 +398,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public void onResume()
     {
+        Log.i("GalleryActivity", "onResume");
+
         super.onResume();
 
         //mRefreshNeeded will be set to true whenever a game is launched
@@ -410,6 +416,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     @Override
     public void onSaveInstanceState( Bundle savedInstanceState )
     {
+        Log.i("GalleryActivity", "onSaveInstanceState");
+
         if( mSearchView != null )
             savedInstanceState.putString( STATE_QUERY, mSearchView.getQuery().toString() );
         if( mSelectedItem != null )
@@ -744,9 +752,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGameSidebar.setVisibility(View.VISIBLE);
         mGameSidebar.scrollTo(0, 0);
 
-        // Set the cover art in the sidebar
-        item.loadBitmap();
-        mGameSidebar.setImage(item.artBitmap);
+        // Check if valid image
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(item.artPath, options);
+
+        if (options.outHeight != -1 && options.outWidth != -1) {
+            // Set the cover art in the sidebar
+            item.loadBitmap();
+            mGameSidebar.setImage(item.artBitmap);
+        }
 
         // Set the game title
         mGameSidebar.setTitle(item.goodName);
@@ -894,6 +909,10 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     void refreshGridAsync()
     {
+        //Reload global prefs
+        mAppData = new AppData( this );
+        mGlobalPrefs = new GlobalPrefs( this, mAppData );
+
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery);
         galleryRefreshTask.execute();
     }

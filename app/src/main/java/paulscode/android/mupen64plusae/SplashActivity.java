@@ -43,6 +43,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -124,6 +125,29 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         }
     }
 
+    @Override
+    protected void onNewIntent( Intent intent )
+    {
+        Log.i("SplashActivity", "onNewIntent");
+
+        // If the activity is already running and is launched again (e.g. from a file manager app),
+        // the existing instance will be reused rather than a new one created. This behavior is
+        // specified in the manifest (launchMode = singleTask). In that situation, any activities
+        // above this on the stack (e.g. GameActivity, GamePrefsActivity) will be destroyed
+        // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
+        // called again on this instance.
+        super.onNewIntent( intent );
+
+        // Only remember the last intent used
+        setIntent( intent );
+
+        // Assets already extracted, just launch gallery activity, passing ROM path if it was provided externally
+        ActivityHelper.startGalleryActivity( SplashActivity.this, getIntent() );
+
+        // We never want to come back to this activity, so finish it
+        finish();
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -132,6 +156,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
+        Log.i("SplashActivity", "onCreate");
+
         super.onCreate( savedInstanceState );
 
         final Resources res = getResources();
@@ -220,6 +246,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @Override
     public void onSaveInstanceState( Bundle savedInstanceState )
     {
+        Log.i("SplashActivity", "onSaveInstanceState");
+
         savedInstanceState.putBoolean(STATE_REQUESTING_PERMISSIONS, mRequestingPermissions);
 
         super.onSaveInstanceState( savedInstanceState );
@@ -228,6 +256,8 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     @Override
     public void onDestroy()
     {
+        Log.i("SplashActivity", "onDestroy");
+
         super.onDestroy();
 
         if (mPermissionsNeeded != null) {

@@ -193,6 +193,15 @@ public class ActivityHelper
             Intent intent = new Intent( context, GalleryActivity.class );
             intent.putExtras(data);
             context.startActivity( intent );
+
+            data.removeExtra(ActivityHelper.Keys.ROM_PATH);
+            data.removeExtra(ActivityHelper.Keys.ZIP_PATH );
+            data.removeExtra(ActivityHelper.Keys.ROM_MD5);
+            data.removeExtra(ActivityHelper.Keys.ROM_CRC);
+            data.removeExtra(ActivityHelper.Keys.ROM_HEADER_NAME);
+            data.removeExtra(ActivityHelper.Keys.ROM_COUNTRY_CODE);
+            data.removeExtra(ActivityHelper.Keys.ROM_ART_PATH);
+            data.removeExtra(ActivityHelper.Keys.ROM_GOOD_NAME);
         }
     }
     

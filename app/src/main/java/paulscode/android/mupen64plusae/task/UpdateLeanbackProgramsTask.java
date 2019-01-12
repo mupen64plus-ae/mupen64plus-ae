@@ -84,6 +84,10 @@ public class UpdateLeanbackProgramsTask extends AsyncTask<Void, Void, String>
                     aspectRatio = TvContractCompat.PreviewPrograms.ASPECT_RATIO_2_3;
                 }
 
+                if (height == -1 || width == -1) {
+                    coverArtUri = FileUtil.resourceToUri(mContext.get(), R.drawable.default_coverart);
+                }
+
             } else {
                 coverArtUri = FileUtil.resourceToUri(mContext.get(), R.drawable.default_coverart);
             }
@@ -99,6 +103,7 @@ public class UpdateLeanbackProgramsTask extends AsyncTask<Void, Void, String>
             gameIntent.putExtra(ActivityHelper.Keys.ROM_COUNTRY_CODE, item.countryCode.getValue());
             gameIntent.putExtra(ActivityHelper.Keys.ROM_ART_PATH, item.artPath);
             gameIntent.putExtra(ActivityHelper.Keys.ROM_GOOD_NAME, item.goodName);
+            gameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 
             PreviewProgram.Builder builder = new PreviewProgram.Builder();
             builder.setChannelId(mChannelId)

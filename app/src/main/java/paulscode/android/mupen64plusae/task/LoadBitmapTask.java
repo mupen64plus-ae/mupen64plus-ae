@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference;
 import org.mupen64plusae.v3.alpha.R;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -57,7 +58,14 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
 
         if( !TextUtils.isEmpty( mBitmapPath ) && new File( mBitmapPath ).exists() && tempContext != null )
         {
-            mArtBitmap = new BitmapDrawable( tempContext.getResources(), mBitmapPath );
+            // Check if valid image
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(mBitmapPath, options);
+
+            if (options.outHeight != -1 && options.outWidth != -1) {
+                mArtBitmap = new BitmapDrawable( tempContext.getResources(), mBitmapPath );
+            }
         }
         return null;
     }

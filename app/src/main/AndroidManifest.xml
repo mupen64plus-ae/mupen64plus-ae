@@ -56,6 +56,12 @@
                 <data android:pathPattern=".*\\.V64" />
                 <data android:pathPattern=".*\\.z64" />
                 <data android:pathPattern=".*\\.Z64" />
+                <data android:pathPattern=".*\\.zip" />
+                <data android:pathPattern=".*\\.7zip" />
+                <data android:pathPattern=".*\\.7z" />
+                <data android:pathPattern=".*\\.ZIP" />
+                <data android:pathPattern=".*\\.7ZIP" />
+                <data android:pathPattern=".*\\.7Z" />
             </intent-filter>
         </activity>
         <activity
