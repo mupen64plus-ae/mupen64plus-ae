@@ -672,6 +672,8 @@ public class CacheRomInfoService extends Service
             Set<String> keys = theConfigFile.keySet();
 
             mListener.GetProgressDialog().setMaxProgress( keys.size() );
+
+            mListener.GetProgressDialog().setMessage( "" );
             mListener.GetProgressDialog().setSubtext( getString(R.string.cacheRomInfo_downloadingArt) );
 
             for (String key : keys) {
