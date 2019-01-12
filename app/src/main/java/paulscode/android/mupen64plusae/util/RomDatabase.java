@@ -92,7 +92,7 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
  */
 public class RomDatabase
 {
-    private static final String ART_URL_TEMPLATE = "http://paulscode.com/downloads/Mupen64Plus-AE/CoverArt/%s";
+    private static final String ART_URL_TEMPLATE = "http://www.zurita.me/CoverArt/%s";
     private static final String WIKI_URL_TEMPLATE = "https://github.com/mupen64plus-ae/mupen64plus-ae-meta/wiki/%s";
     
     private ConfigFile mConfigFile = null;
