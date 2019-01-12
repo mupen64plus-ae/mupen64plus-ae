@@ -235,7 +235,7 @@ public class AppData
         coreSharedDataDir = context.getFilesDir().getAbsolutePath();
         String _libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
         if( !( new File( _libsDir ) ).exists() )
-            _libsDir = context.getApplicationInfo().nativeLibraryDir;
+            _libsDir = context.getApplicationInfo().nativeLibraryDir + "/";
         libsDir = _libsDir;
         touchscreenSkinsDir = coreSharedDataDir + "/skins/touchscreen/";
         String profilesDir = coreSharedDataDir + "/profiles";
