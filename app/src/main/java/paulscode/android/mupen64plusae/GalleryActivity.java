@@ -753,11 +753,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGameSidebar.scrollTo(0, 0);
 
         // Check if valid image
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(item.artPath, options);
-
-        if (options.outHeight != -1 && options.outWidth != -1) {
+        if (FileUtil.isFileImage(new File(item.artPath))) {
             // Set the cover art in the sidebar
             item.loadBitmap();
             mGameSidebar.setImage(item.artBitmap);

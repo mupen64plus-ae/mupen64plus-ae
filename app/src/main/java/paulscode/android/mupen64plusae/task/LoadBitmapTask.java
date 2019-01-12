@@ -33,6 +33,8 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
+import paulscode.android.mupen64plusae.util.FileUtil;
+
 public class LoadBitmapTask extends AsyncTask<String, String, String>
 {
     
@@ -59,11 +61,7 @@ public class LoadBitmapTask extends AsyncTask<String, String, String>
         if( !TextUtils.isEmpty( mBitmapPath ) && new File( mBitmapPath ).exists() && tempContext != null )
         {
             // Check if valid image
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(mBitmapPath, options);
-
-            if (options.outHeight != -1 && options.outWidth != -1) {
+            if (FileUtil.isFileImage(new File(mBitmapPath))) {
                 mArtBitmap = new BitmapDrawable( tempContext.getResources(), mBitmapPath );
             }
         }

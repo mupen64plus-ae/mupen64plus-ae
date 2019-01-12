@@ -26,7 +26,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -460,20 +459,6 @@ public class CacheRomInfoService extends Service
             Log.w( "CacheRomInfoService", e );
         }
     }
-
-    private boolean isFileNotImage(File file)
-    {
-        boolean isImage = false;
-        if (file.exists())
-        {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-            isImage = options.outWidth != -1 && options.outHeight != -1;
-        }
-
-        return !isImage;
-    }
     
     private void downloadFile( String sourceUrl, String destPath )
     {
@@ -515,7 +500,7 @@ public class CacheRomInfoService extends Service
             }
 
             // Check if downloaded file is valud
-            if (isFileNotImage(destFile))
+            if (!FileUtil.isFileImage(destFile))
             {
                 if (destFile.delete())
                 {
@@ -708,7 +693,7 @@ public class CacheRomInfoService extends Service
 
                     //Only download art if it's not already present or current art is not a valid image
                     File artPathFile = new File (artPath);
-                    if(!artPathFile.exists() || isFileNotImage(artPathFile))
+                    if(!artPathFile.exists() || !FileUtil.isFileImage(artPathFile))
                     {
                         Log.i( "CacheRomInfoService", "Start art download: " +  artPath);
                         downloadFile( detail.artUrl, artPath );

@@ -26,6 +26,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -743,5 +744,19 @@ public final class FileUtil
                 context.getResources().getResourcePackageName(resID) + '/' +
                 context.getResources().getResourceTypeName(resID) + '/' +
                 context.getResources().getResourceEntryName(resID) );
+    }
+
+    public static boolean isFileImage(File file)
+    {
+        boolean isImage = false;
+        if (file.exists())
+        {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+            isImage = options.outWidth != -1 && options.outHeight != -1;
+        }
+
+        return isImage;
     }
 }
