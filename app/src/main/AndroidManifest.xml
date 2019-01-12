@@ -290,7 +290,7 @@
             android:process="paulscode.android.mupen64plusae.GameActivity"/>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="org.mupen64plusae.v3.alpha.filesprovider"
+            android:authorities="${applicationId}.filesprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
