@@ -94,7 +94,7 @@ LOCAL_SRC_FILES :=                                              \
     $(SRCDIR)/device/rcp/vi/vi_controller.c                     \
     $(SRCDIR)/device/rcp/rdp/fb.c                               \
     $(SRCDIR)/device/dd/dd_controller.c                         \
-    $(SRCDIR)/main/screenshot.c                                  \
+    $(SRCDIR)/main/screenshot.c                                 \
     #$(SRCDIR)/debugger/dbg_breakpoints.c                       \
     #$(SRCDIR)/debugger/dbg_debugger.c                          \
     #$(SRCDIR)/debugger/dbg_decoder.c                           \
@@ -118,6 +118,7 @@ LOCAL_LDFLAGS :=                                                    \
 
 ASM_DEFINES_INCLUDE += -I$(SYSROOT_INC)/usr/include
 TARGET := ""
+MINIMUM_API_LEVEL := 19
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
@@ -127,15 +128,14 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     LOCAL_CFLAGS += -DNEW_DYNAREC=3
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/arm-linux-androideabi
     TARGET := -target armv7-none-linux-androideabi19
-
-else ifeq ($(TARGET_ARCH_ABI), armeabi)
-    # Use for pre-ARM7a:
-    LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/arm/linkage_arm.S
-    LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/arm/arm_cpu_features.c
-    LOCAL_CFLAGS += -DARMv5_ONLY
+else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+    # Use for ARM8a:
+    LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/arm64/linkage_arm64.S
     LOCAL_CFLAGS += -DDYNAREC
-    LOCAL_CFLAGS += -DNEW_DYNAREC=3
-
+    LOCAL_CFLAGS += -DNEW_DYNAREC=4
+    ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/aarch64-linux-android
+    TARGET := -target aarch64-none-linux-android21
+    MINIMUM_API_LEVEL := 21
 else ifeq ($(TARGET_ARCH_ABI), x86)
     # Use for x86:
     LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/x86/linkage_x86.asm
@@ -144,14 +144,16 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     LOCAL_ASMFLAGS = -d PIC
     ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/i686-linux-android
     TARGET := -target i686-none-linux-android
-
-else ifeq ($(TARGET_ARCH_ABI), mips)
-    # Use for MIPS:
-    #TODO: Possible to port dynarec from Daedalus?
-
-else
-    # Any other architectures that Android could be running on?
-
+else ifeq ($(TARGET_ARCH_ABI), x86_64)
+    # Use for x86_64:
+    LOCAL_SRC_FILES += $(SRCDIR)/device/r4300/new_dynarec/x64/linkage_x64.asm
+    LOCAL_CFLAGS += -DDYNAREC
+    LOCAL_CFLAGS += -DNEW_DYNAREC=2
+    LOCAL_CFLAGS += -fPIC
+    LOCAL_ASMFLAGS = -d PIC
+    ASM_DEFINES_INCLUDE += -isystem $(SYSROOT_INC)/usr/include/x86_64-linux-android
+    TARGET := -target x86_64-none-linux-android21
+    MINIMUM_API_LEVEL := 21
 endif
 
 # Use gawk in linux
@@ -174,7 +176,7 @@ endif
 
 # Compile asm_defines if it doesn't exist
 ifeq ("$(wildcard $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)","")
-    $(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c $(LOCAL_CFLAGS) -fno-lto -I$(LOCAL_PATH)/upstream/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=19 -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
+    $(shell $(LLVM_TOOLCHAIN_PREFIX)/clang $(TARGET) -c $(ASM_DEFINE_PATH)/asm_defines.c $(LOCAL_CFLAGS) -fno-lto -I$(LOCAL_PATH)/upstream/src $(ASM_DEFINES_INCLUDE) -D__ANDROID_API__=$(MINIMUM_API_LEVEL) -Wno-attributes -o $(ASM_DEFINE_PATH)/$(TARGET_ARCH_ABI)/asm_defines.o)
 endif
 
 # Create asm_defines_gas.h if it doesn't exist

@@ -784,22 +784,15 @@ ShaderProgram *ShaderCombiner_Compile(DecodedMux *dmux, int flags)
     buffer += sprintf(buffer, "} \n\n");
     *buffer = 0;
 
-#ifdef PRINT_SHADER
-    LOG(LOG_VERBOSE, "=============================================================\n");
-    LOG(LOG_VERBOSE, "Combine=0x%llx flags=0x%x dmux flags=0x%x\n", prog->combine.mux, flags, dmux->flags);
-    LOG(LOG_VERBOSE, "Num=%i \t usesT0=%i usesT1=%i usesCol=%i usesNoise=%i\n", scProgramCount, prog->usesT0, prog->usesT1, prog->usesCol, prog->usesNoise);
-    LOG(LOG_VERBOSE, "=============================================================\n");
-    LOG(LOG_VERBOSE, "%s", frag);
-    LOG(LOG_VERBOSE, "==================================)===========================\n");
-#endif
-
     prog->program = glCreateProgram();
 
     //Compile:
     char *src[1];
     src[0] = frag;
     GLint len[1];
-    len[0] = std::min(4096u, strlen(frag));
+    static const unsigned long maxShaderSize = 4096;
+    unsigned long shaderSize = strlen(frag);
+    len[0] = std::min(maxShaderSize, shaderSize);
     prog->fragment = glCreateShader(GL_FRAGMENT_SHADER);
 
     glShaderSource(prog->fragment, 1, (const char**) src, len);
