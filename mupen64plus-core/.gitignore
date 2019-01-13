@@ -4,4 +4,6 @@ src/main/libs
 src/main/obj
 
 /upstream/src/asm_defines/armeabi-v7a/
+/upstream/src/asm_defines/arm64-v8a/
 /upstream/src/asm_defines/x86/
+/upstream/src/asm_defines/x86_64/

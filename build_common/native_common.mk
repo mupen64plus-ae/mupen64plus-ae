@@ -62,9 +62,7 @@ endif
 
 ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
 COMMON_FLAGS +=                     \
-    -march=armv8-a+simd+fp          \
-    -mfloat-abi=softfp              \
-    -mfpu=fp-armv8
+    -march=armv8-a+simd+fp
 endif
 
 COMMON_LDFLAGS :=
@@ -73,7 +71,7 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 COMMON_LDFLAGS += -Wl,--fix-cortex-a8
 endif
 
-ifneq ($(NDK_DEBUG), 1)
+ifneq ($(BUILD_VARIANT), debug)
 ifneq ($(HOST_OS),windows)
     COMMON_FLAGS += -flto
     COMMON_LDFLAGS += $(COMMON_FLAGS)
