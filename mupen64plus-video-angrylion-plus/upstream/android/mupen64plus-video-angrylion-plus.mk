@@ -14,7 +14,9 @@ LOCAL_C_INCLUDES := $(M64P_API_INCLUDES) $(LOCAL_PATH)/$(SRCDIR)
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
     MY_LOCAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp -ftree-vectorize -funsafe-math-optimizations
-
+else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+    # Use for ARM7a:
+    MY_LOCAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp -ftree-vectorize -funsafe-math-optimizations
 else ifeq ($(TARGET_ARCH_ABI), x86)
     MY_LOCAL_CFLAGS += -DUSE_SSE_SUPPORT
 endif

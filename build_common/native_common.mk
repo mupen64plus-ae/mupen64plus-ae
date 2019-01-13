@@ -54,10 +54,17 @@ GL_INCLUDES := $(JNI_LOCAL_PATH)/../ndkLibs/GL
 COMMON_FLAGS := -O3
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-COMMON_FLAGS +=                    \
+COMMON_FLAGS +=                     \
     -march=armv7-a                  \
     -mfloat-abi=softfp              \
     -mfpu=neon
+endif
+
+ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+COMMON_FLAGS +=                     \
+    -march=armv8-a+simd+fp          \
+    -mfloat-abi=softfp              \
+    -mfpu=fp-armv8
 endif
 
 COMMON_LDFLAGS :=

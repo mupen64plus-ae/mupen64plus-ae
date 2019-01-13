@@ -13,6 +13,8 @@ LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     MY_LOCAL_CFLAGS += -DUSE_SSE2NEON -D__ARM_NEON__ -mfpu=neon
+else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+    MY_LOCAL_CFLAGS += -DUSE_SSE2NEON -D__ARM_NEON__ -mfpu=neon
 else ifeq ($(TARGET_ARCH_ABI), x86)
     MY_LOCAL_CFLAGS += -ARCH_MIN_SSE2
 endif
