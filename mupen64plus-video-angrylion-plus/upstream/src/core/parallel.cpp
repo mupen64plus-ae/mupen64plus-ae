@@ -107,16 +107,40 @@ private:
 
                 // notify main thread
                 m_signal_done.notify_one();
-
-                // take a break and wait for more work
-                m_signal_work.wait(ul, [worker_mask, this] {
-                    return (m_tasks_done & worker_mask) == 0;
-                });
             }
+
+#ifdef ANDROID
+            //Busy loop wait for a bit to keep cores awake
+            bool workAvailable = false;
+            int count = 0;
+            while (!workAvailable && count++ < 10000) {
+                std::unique_lock<std::mutex> ul(m_signal_mutex);
+                workAvailable = (m_tasks_done & worker_mask) == 0;
+                std::this_thread::yield();
+            }
+#endif
+
+            std::unique_lock<std::mutex> ul(m_signal_mutex);
+
+            // take a break and wait for more work
+            m_signal_work.wait(ul, [worker_mask, this] {
+                return (m_tasks_done & worker_mask) == 0;
+            });
         }
     }
 
     void wait() {
+
+#ifdef ANDROID
+        //Busy loop wait for a bit to keep cores awake
+        bool waitingForWorkDone = true;
+        int count = 0;
+        while (waitingForWorkDone && count++ < 10000) {
+            waitingForWorkDone = m_tasks_done != m_all_tasks_done;
+            std::this_thread::yield();
+        }
+#endif
+
         // wait for all workers to set their task bits
         std::unique_lock<std::mutex> ul(m_signal_mutex);
         m_signal_done.wait(ul, [this] {
