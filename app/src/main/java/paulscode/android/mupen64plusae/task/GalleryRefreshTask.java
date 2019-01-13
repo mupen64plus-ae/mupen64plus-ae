@@ -53,14 +53,16 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
     private final String mSearchQuery;
     private List<GalleryItem> mItems = new ArrayList<>();
     private List<GalleryItem> mRecentItems = new ArrayList<>();
+    private ConfigFile mConfig;
 
     public GalleryRefreshTask(GalleryRefreshFinishedListener listener, Context context, GlobalPrefs globalPrefs,
-                              String searchQuery)
+                              String searchQuery, ConfigFile config)
     {
         mListener = listener;
         mContext = new WeakReference<>(context);
         mGlobalPrefs = globalPrefs;
         mSearchQuery = searchQuery;
+        mConfig = config;
     }
     
     @Override
@@ -198,7 +200,6 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
      */
     public void generateGridItemsAndSaveConfig(List<GalleryItem> items, @NonNull List<GalleryItem> recentItems)
     {
-        final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
         final String query = mSearchQuery.toLowerCase( Locale.US );
         String[] searches = null;
         if( query.length() > 0 )
@@ -206,9 +207,9 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
 
         int currentTime = (int) ( new Date().getTime() / 1000 );
 
-        for ( final String md5 : config.keySet() ) {
+        for ( final String md5 : mConfig.keySet() ) {
             if ( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) ) {
-                final ConfigFile.ConfigSection section = config.get( md5 );
+                final ConfigFile.ConfigSection section = mConfig.get( md5 );
                 String goodName;
                 if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
                     goodName = section.get( "goodName" );
@@ -228,7 +229,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                 }
 
                 if ( matchesSearch && goodName != null) {
-                    GalleryItem item = createGalleryItem(config, md5, goodName);
+                    GalleryItem item = createGalleryItem(mConfig, md5, goodName);
 
                     if (item != null && (mGlobalPrefs.getAllowedCountryCodes().contains(item.countryCode) ||
                             searches != null)) {
@@ -242,7 +243,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
             }
         }
 
-        config.save();
+        mConfig.save();
 
         Collections.sort( items, mGlobalPrefs.sortByRomName ?
                 new GalleryItem.NameComparator() : new GalleryItem.RomFileComparator() );

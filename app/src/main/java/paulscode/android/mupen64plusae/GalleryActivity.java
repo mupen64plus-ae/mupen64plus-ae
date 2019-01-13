@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
@@ -132,6 +131,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     String mPathToDelete = null;
 
+    private ConfigFile mConfig;
+
     private void loadGameFromExtras( Bundle extras) {
 
         if (extras != null) {
@@ -216,6 +217,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Get app data and user preferences
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mConfig = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
 
         // Lay out the content
         setContentView( R.layout.gallery_activity );
@@ -734,9 +736,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
             else if(id == REMOVE_FROM_LIBRARY_DIALOG_ID && mSelectedItem != null)
             {
-                final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
-                config.remove(mSelectedItem.md5);
-                config.save();
+                mConfig.remove(mSelectedItem.md5);
+                mConfig.save();
                 mDrawerLayout.closeDrawer( GravityCompat.START, false );
                 refreshGridAsync();
             }
@@ -908,8 +909,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         //Reload global prefs
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mConfig = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
 
-        GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery);
+        GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
         galleryRefreshTask.execute();
     }
 
@@ -918,11 +920,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         //Reload global prefs
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
+        mConfig = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
 
         List<GalleryItem> items = new ArrayList<>();
         List<GalleryItem> recentItems = new ArrayList<>();
 
-        GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery);
+        GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
         galleryRefreshTask.generateGridItemsAndSaveConfig(items, recentItems);
         refreshGrid(items, recentItems);
     }
@@ -1022,7 +1025,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         // Update the ConfigSection with the new value for lastPlayed
         final String lastPlayed = Integer.toString( (int) ( new Date().getTime() / 1000 ) );
-        final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
         File romFileName = new File(romPath);
 
         String romLegacySaveFileName;
@@ -1039,8 +1041,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             romLegacySaveFileName = romFile.getName();
         }
 
-        config.put(romMd5, "lastPlayed", lastPlayed);
-        config.save();
+        mConfig.put(romMd5, "lastPlayed", lastPlayed);
+        mConfig.save();
 
         ///Drawer layout can be null if this method is called from onCreate
         if (mDrawerLayout != null) {

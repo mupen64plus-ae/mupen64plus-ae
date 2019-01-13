@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -77,7 +77,7 @@ public class ConfigFile
     public ConfigFile( String filename )
     {
         mFilename = filename;
-        mConfigMap = new LinkedHashMap<String, ConfigSection>();
+        mConfigMap = new LinkedHashMap<>();
         reload();
     }
     
@@ -88,7 +88,7 @@ public class ConfigFile
      * 
      * @return A ConfigSection containing parameters, or null if not found.
      */
-    public ConfigSection get( String sectionTitle )
+    public synchronized ConfigSection get( String sectionTitle )
     {
         return mConfigMap.get( sectionTitle );
     }
@@ -99,7 +99,7 @@ public class ConfigFile
      * 
      * @param sectionTitle Title of the section containing the parameter.
      */
-    public void remove( String sectionTitle )
+    public synchronized void remove( String sectionTitle )
     {
         mConfigMap.remove( sectionTitle );
     }
@@ -112,7 +112,7 @@ public class ConfigFile
      * 
      * @return The value of the specified parameter, or null if not found.
      */
-    public String get( String sectionTitle, String parameter )
+    public synchronized String get( String sectionTitle, String parameter )
     {
         ConfigSection section = mConfigMap.get( sectionTitle );
         
@@ -137,7 +137,7 @@ public class ConfigFile
      * @param parameter The name of the parameter.
      * @param value The value to give the parameter.
      */
-    public void put( String sectionTitle, String parameter, String value )
+    public synchronized void put( String sectionTitle, String parameter, String value )
     {
         ConfigSection section = mConfigMap.get( sectionTitle );
         if( section == null )
@@ -152,7 +152,7 @@ public class ConfigFile
     /**
      * Erases any previously loaded data.
      */
-    public void clear()
+    public synchronized void clear()
     {
         mConfigMap.clear();
     }
@@ -164,7 +164,7 @@ public class ConfigFile
      * @return True if successful.
      * @see #save()
      */
-    public boolean reload()
+    public synchronized boolean reload()
     {
         // Make sure a file was actually specified
         if( TextUtils.isEmpty( mFilename ) )
@@ -224,7 +224,7 @@ public class ConfigFile
      * @return True if successful. False otherwise.
      * @see #reload()
      */
-    public boolean save()
+    public synchronized boolean save()
     {
         // No filename was specified.
         if( TextUtils.isEmpty( mFilename ) )
@@ -237,11 +237,8 @@ public class ConfigFile
         FileUtil.makeDirs(new File( mFilename ).getParentFile().getPath());
         
         // Write data to file
-        FileWriter fw = null;
-        try
+        try(FileWriter fw = new FileWriter( mFilename ))
         {
-            fw = new FileWriter( mFilename );
-            
             // Loop through the sections
             for( ConfigSection section : mConfigMap.values() )
             {
@@ -255,19 +252,6 @@ public class ConfigFile
                     + ioe.getMessage() );
             return false; // Some problem creating the file.. quit
         }
-        finally
-        {
-            if( fw != null )
-            {
-                try
-                {
-                    fw.close();
-                }
-                catch( IOException ignored )
-                {
-                }
-            }
-        }
         
         // Success
         return true;
@@ -278,7 +262,7 @@ public class ConfigFile
      * 
      * @return keyset containing all the config section titles.
      */
-    public Set<String> keySet()
+    public synchronized Set<String> keySet()
     {
         return mConfigMap.keySet();
     }
@@ -305,8 +289,8 @@ public class ConfigFile
          */
         public ConfigSection( String sectionName )
         {
-            parameters = new HashMap<String, ConfigParameter>();
-            lines = new LinkedList<ConfigLine>();
+            parameters = new HashMap<>();
+            lines = new LinkedList<>();
             
             if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( SECTIONLESS_NAME ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
@@ -314,7 +298,6 @@ public class ConfigFile
             name = sectionName;
         }
         
-        // TODO: Clean this method up a bit?
         /**
          * Constructor: Reads the next section of the config file, and saves it in 'parameters'.
          * 
@@ -327,8 +310,8 @@ public class ConfigFile
             ConfigParameter confParam;
             int x, y;
             
-            parameters = new HashMap<String, ConfigParameter>();
-            lines = new LinkedList<ConfigLine>();
+            parameters = new HashMap<>();
+            lines = new LinkedList<>();
             
             if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( SECTIONLESS_NAME ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
@@ -398,7 +381,7 @@ public class ConfigFile
                         x = strLine.indexOf( '[' );
                         y = strLine.indexOf( ']' );
                         
-                        if( ( y <= x + 1 ) || ( x == -1 ) || ( y == -1 ) )
+                        if( ( x == -1 ) || ( y == -1 ) || ( y <= x + 1 )  )
                             return; // This shouldn't happen (bad syntax). Quit.
                             
                         p = strLine.substring( x + 1, y ).trim();
@@ -420,9 +403,6 @@ public class ConfigFile
             {
                 // (Don't care)
             }
-            
-            // Reached end of file or error.. either way, just quit
-            return;
         }
         
         /**
@@ -430,7 +410,7 @@ public class ConfigFile
          * 
          * @return keyset containing all the parameters.
          */
-        public Set<String> keySet()
+        public synchronized Set<String> keySet()
         {
             return parameters.keySet();
         }
@@ -442,7 +422,7 @@ public class ConfigFile
          * 
          * @return Parameter's value, or null if not found.
          */
-        public String get( String parameter )
+        public synchronized String get( String parameter )
         {
             // Error: no parameters, or parameter was null
             if( parameters == null || TextUtils.isEmpty( parameter ) )
@@ -460,12 +440,12 @@ public class ConfigFile
 
         /**
          * Remove instances of this parameter.
-         * @param parameter
+         * @param parameter The parameter
          */
-        private void removePreviousInstance(String parameter)
+        private synchronized void removePreviousInstance(String parameter)
         {
             //Create a copy first
-            ArrayList<String> keys = new ArrayList<String>(parameters.keySet());
+            ArrayList<String> keys = new ArrayList<>(parameters.keySet());
 
             //Remove from parameters
             for(String key : keys)
@@ -498,7 +478,7 @@ public class ConfigFile
          * @param parameter The name of the parameter.
          * @param value The parameter's value, or null to remove.
          */
-        public void put( String parameter, String value )
+        public synchronized  void put( String parameter, String value )
         {
             removePreviousInstance(parameter);
 
@@ -518,7 +498,7 @@ public class ConfigFile
          * 
          * @throws IOException if a writing error occurs.
          */
-        public void save( FileWriter fw ) throws IOException
+        public synchronized void save( FileWriter fw ) throws IOException
         {
             for( ConfigLine line : lines )
             {
@@ -534,13 +514,13 @@ public class ConfigFile
      */
     private static class ConfigLine
     {
-        public static final int LINE_GARBAGE = 0; // Comment, whitespace, or blank line
-        public static final int LINE_SECTION = 1; // Section title
-        public static final int LINE_PARAM = 2; // Parameter=value pair
+        static final int LINE_GARBAGE = 0; // Comment, whitespace, or blank line
+        static final int LINE_SECTION = 1; // Section title
+        static final int LINE_PARAM = 2; // Parameter=value pair
         
-        public int lineType = 0; // LINE_GARBAGE, LINE_SECTION, or LINE_PARAM.
-        public String strLine = ""; // Actual line from the config file.
-        public ConfigParameter confParam = null; // Null unless this line has a parameter.
+        int lineType; // LINE_GARBAGE, LINE_SECTION, or LINE_PARAM.
+        String strLine; // Actual line from the config file.
+        ConfigParameter confParam;
         
         /**
          * Constructor: Saves the relevant information about the line.
@@ -549,7 +529,7 @@ public class ConfigFile
          * @param line The line itself.
          * @param param Config parameters pertaining to the line.
          */
-        public ConfigLine( int type, String line, ConfigParameter param )
+        ConfigLine( int type, String line, ConfigParameter param )
         {
             lineType = type;
             strLine = line;
@@ -563,7 +543,7 @@ public class ConfigFile
          * 
          * @throws IOException If a writing error occurs.
          */
-        public void save( FileWriter fw ) throws IOException
+        public synchronized void save( FileWriter fw ) throws IOException
         {
             int x;
             if( lineType == LINE_PARAM )
@@ -601,7 +581,7 @@ public class ConfigFile
          * @param parameter The name of the parameter.
          * @param value The value of the parameter.
          */
-        public ConfigParameter( String parameter, String value )
+        ConfigParameter( String parameter, String value )
         {
             this.parameter = parameter;
             this.value = value;
