@@ -67,6 +67,7 @@ import paulscode.android.mupen64plusae.task.ExtractAssetsTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask;
 import paulscode.android.mupen64plusae.task.GalleryRefreshTask.GalleryRefreshFinishedListener;
 import paulscode.android.mupen64plusae.task.UpdateLeanbackProgramsTask;
+import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -909,7 +910,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         //Reload global prefs
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mConfig = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
 
         GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
         galleryRefreshTask.execute();
@@ -920,7 +920,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         //Reload global prefs
         mAppData = new AppData( this );
         mGlobalPrefs = new GlobalPrefs( this, mAppData );
-        mConfig = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
 
         List<GalleryItem> items = new ArrayList<>();
         List<GalleryItem> recentItems = new ArrayList<>();

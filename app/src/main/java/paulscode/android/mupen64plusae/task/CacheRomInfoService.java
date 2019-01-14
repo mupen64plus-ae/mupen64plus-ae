@@ -598,11 +598,22 @@ public class CacheRomInfoService extends Service
         boolean found = false;
 
         Iterator iter = keys.iterator();
+        String key = null;
         while (iter.hasNext() && !found) {
-            String key = (String) iter.next();
+            key = (String) iter.next();
             String foundZipPath = theConfigFile.get(key, "zipPath");
             found = foundZipPath != null && foundZipPath.equals(zipFile);
         }
+
+        // If found,make sure it also has  valid data
+        if (found && key != null) {
+            String crc = theConfigFile.get( key, "crc" );
+            String headerName = theConfigFile.get( key, "headerName" );
+            final String countryCodeString = theConfigFile.get( key, "countryCode" );
+
+            found = crc != null && headerName != null && countryCodeString != null;
+        }
+
         return found;
     }
 
