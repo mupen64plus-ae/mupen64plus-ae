@@ -915,6 +915,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         galleryRefreshTask.execute();
     }
 
+    void reloadCacheAndRefreshGrid()
+    {
+        mConfig = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
+
+        refreshGridAsync();
+    }
+
     void refreshGrid()
     {
         //Reload global prefs

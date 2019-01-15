@@ -87,7 +87,7 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
         
         if (mCachedResult && mInProgress)
         {
-            ((GalleryActivity)getActivity()).refreshGrid();
+            ((GalleryActivity)getActivity()).reloadCacheAndRefreshGrid();
             mCachedResult = false;
         }
         
@@ -131,14 +131,19 @@ public class ScanRomsFragment extends Fragment implements CacheRomInfoListener
     public void onCacheRomInfoServiceDestroyed()
     {
         mInProgress = false;
-        
-        if(getActivity() != null)
-        {
-            ((GalleryActivity)getActivity()).refreshGrid();
+
+        final Activity activity = getActivity();
+
+        if (activity != null) {
+            activity.runOnUiThread( new Runnable() {
+                @Override
+                public void run() {
+                    ((GalleryActivity)activity).reloadCacheAndRefreshGrid();
+                }
+            } );
+
             mProgress.dismiss();
-        }
-        else
-        {
+        } else {
             mCachedResult = true;
         }
     }
