@@ -74,6 +74,10 @@ void gSPTriangle(s32 v0, s32 v1, s32 v2)
 			DebugMsg(DEBUG_NORMAL, "Triangle clipped (%i, %i, %i)\n", v0, v1, v2);
 			return;
 		}
+		if (drawer.isRejected(v0, v1, v2)) {
+			DebugMsg(DEBUG_NORMAL, "Triangle rejected (%i, %i, %i)\n", v0, v1, v2);
+			return;
+		}
 		drawer.addTriangle(v0, v1, v2);
 		DebugMsg(DEBUG_NORMAL, "Triangle #%i added (%i, %i, %i)\n", gSP.tri_num++, v0, v1, v2);
 	}
@@ -507,26 +511,34 @@ void gSPLightVertexStandard(u32 v, SPVertex * spVtx)
 }
 
 template <u32 VNUM>
-void gSPLightVertexCBFD(u32 v, SPVertex * spVtx)
+void gSPLightVertexCBFD_basic(u32 v, SPVertex * spVtx)
 {
 	for (int j = 0; j < VNUM; ++j) {
 		SPVertex & vtx = spVtx[v + j];
+		vtx.HWLight = 0;
+		if (vtx.flag < 0)
+			continue;
+
 		f32 r = gSP.lights.rgb[gSP.numLights][R];
 		f32 g = gSP.lights.rgb[gSP.numLights][G];
 		f32 b = gSP.lights.rgb[gSP.numLights][B];
-		f32 recip = FIXED2FLOATRECIP16;
+		const f32 vPos[3] = {
+			(vtx.x + gSP.cbfd.vertexCoordMod[ 8])*gSP.cbfd.vertexCoordMod[12],
+			(vtx.y + gSP.cbfd.vertexCoordMod[ 9])*gSP.cbfd.vertexCoordMod[13],
+			(vtx.z + gSP.cbfd.vertexCoordMod[10])*gSP.cbfd.vertexCoordMod[14]
+		};
 
-		for (u32 l = 0; l < gSP.numLights; ++l) {
-			const f32 vx = (vtx.x + gSP.vertexCoordMod[8])*gSP.vertexCoordMod[12] - gSP.lights.pos_xyzw[l][X];
-			const f32 vy = (vtx.y + gSP.vertexCoordMod[9])*gSP.vertexCoordMod[13] - gSP.lights.pos_xyzw[l][Y];
-			const f32 vz = (vtx.z + gSP.vertexCoordMod[10])*gSP.vertexCoordMod[14] - gSP.lights.pos_xyzw[l][Z];
-			const f32 vw = (vtx.w + gSP.vertexCoordMod[11])*gSP.vertexCoordMod[15] - gSP.lights.pos_xyzw[l][W];
-			const f32 len = (vx*vx + vy*vy + vz*vz + vw*vw) * recip;
-			f32 intensity = gSP.lights.ca[l] / len;
-			if (intensity > 1.0f) intensity = 1.0f;
-			r += gSP.lights.rgb[l][R] * intensity;
-			g += gSP.lights.rgb[l][G] * intensity;
-			b += gSP.lights.rgb[l][B] * intensity;
+		for (int l = gSP.numLights - 2; l >= 0; --l) {
+			const f32 vx = vPos[X] - gSP.lights.pos_xyzw[l][X];
+			const f32 vy = vPos[Y] - gSP.lights.pos_xyzw[l][Y];
+			const f32 vz = vPos[Z] - gSP.lights.pos_xyzw[l][Z];
+			const f32 len = 2.0f * (vx*vx + vy*vy + vz*vz) * FIXED2FLOATRECIP16;
+			f32 intensity = std::min(1.0f, gSP.lights.ca[l] / len);
+			if (intensity > 0.0f) {
+				r += gSP.lights.rgb[l][R] * intensity;
+				g += gSP.lights.rgb[l][G] * intensity;
+				b += gSP.lights.rgb[l][B] * intensity;
+			}
 		}
 
 		r = min(1.0f, r);
@@ -536,16 +548,69 @@ void gSPLightVertexCBFD(u32 v, SPVertex * spVtx)
 		vtx.r *= r;
 		vtx.g *= g;
 		vtx.b *= b;
+	}
+}
+
+template <u32 VNUM>
+void gSPLightVertexCBFD_advanced(u32 v, SPVertex * spVtx)
+{
+	for (int j = 0; j < VNUM; ++j) {
+		SPVertex & vtx = spVtx[v + j];
 		vtx.HWLight = 0;
+		if (vtx.flag < 0)
+			continue;
+
+		const f32 vPos[3] = {
+			(vtx.x + gSP.cbfd.vertexCoordMod[ 8])*gSP.cbfd.vertexCoordMod[12],
+			(vtx.y + gSP.cbfd.vertexCoordMod[ 9])*gSP.cbfd.vertexCoordMod[13],
+			(vtx.z + gSP.cbfd.vertexCoordMod[10])*gSP.cbfd.vertexCoordMod[14]
+		};
+		int l = gSP.numLights;
+		f32 r = gSP.lights.rgb[l][R];
+		f32 g = gSP.lights.rgb[l][G];
+		f32 b = gSP.lights.rgb[l][B];
+		--l;
+		f32 intensity = std::min(1.0f, DotProduct(&vtx.nx, gSP.lights.i_xyz[l]));
+		if (intensity > 0.0f) {
+			r += gSP.lights.rgb[l][R] * intensity;
+			g += gSP.lights.rgb[l][G] * intensity;
+			b += gSP.lights.rgb[l][B] * intensity;
+		}
+
+		while (--l >= 0) {
+			const f32 vx = vPos[X] - gSP.lights.pos_xyzw[l][X];
+			const f32 vy = vPos[Y] - gSP.lights.pos_xyzw[l][Y];
+			const f32 vz = vPos[Z] - gSP.lights.pos_xyzw[l][Z];
+			const f32 len = 2.0f * (vx*vx + vy*vy + vz*vz) * FIXED2FLOATRECIP16;
+			intensity = std::min(1.0f, gSP.lights.ca[l] / len);
+			if ((gSP.geometryMode & G_POINT_LIGHTING) != 0)
+				intensity *= std::min(1.0f, DotProduct(&vtx.nx, gSP.lights.i_xyz[l]));;
+			if (intensity > 0.0f) {
+				r += gSP.lights.rgb[l][R] * intensity;
+				g += gSP.lights.rgb[l][G] * intensity;
+				b += gSP.lights.rgb[l][B] * intensity;
+			}
+		}
+
+		r = min(1.0f, r);
+		g = min(1.0f, g);
+		b = min(1.0f, b);
+
+		vtx.r *= r;
+		vtx.g *= g;
+		vtx.b *= b;
 	}
 }
 
 template <u32 VNUM>
 void gSPLightVertex(u32 _v, SPVertex * _spVtx)
 {
-	if (g_ConkerUcode)
-		gSPLightVertexCBFD<VNUM>(_v, _spVtx);
-	else
+	if (g_ConkerUcode) {
+		if (gSP.cbfd.advancedLighting)
+			gSPLightVertexCBFD_advanced<VNUM>(_v, _spVtx);
+		else
+			gSPLightVertexCBFD_basic<VNUM>(_v, _spVtx);
+	} else
 		gSPLightVertexStandard<VNUM>(_v, _spVtx);
 }
 
@@ -614,58 +679,14 @@ void gSPPointLightVertexZeldaMM(u32 v, float _vecPos[VNUM][4], SPVertex * spVtx)
 }
 
 template <u32 VNUM>
-void gSPPointLightVertexCBFD(u32 v, SPVertex * spVtx)
-{
-	f32 intensity = 0.0f;
-	for (int j = 0; j < VNUM; ++j) {
-		SPVertex & vtx = spVtx[v + j];
-		f32 r = gSP.lights.rgb[gSP.numLights][R];
-		f32 g = gSP.lights.rgb[gSP.numLights][G];
-		f32 b = gSP.lights.rgb[gSP.numLights][B];
-
-		for (u32 l = 0; l < gSP.numLights - 1; ++l) {
-			intensity = DotProduct(&vtx.nx, gSP.lights.xyz[l]);
-			if ((gSP.lights.rgb[l][R] == 0.0f && gSP.lights.rgb[l][G] == 0.0f && gSP.lights.rgb[l][B] == 0.0f) || intensity < 0.0f)
-				continue;
-			if (gSP.lights.ca[l] > 0.0f) {
-				const f32 vx = (vtx.x + gSP.vertexCoordMod[8])*gSP.vertexCoordMod[12] - gSP.lights.pos_xyzw[l][X];
-				const f32 vy = (vtx.y + gSP.vertexCoordMod[9])*gSP.vertexCoordMod[13] - gSP.lights.pos_xyzw[l][Y];
-				const f32 vz = (vtx.z + gSP.vertexCoordMod[10])*gSP.vertexCoordMod[14] - gSP.lights.pos_xyzw[l][Z];
-				const f32 vw = (vtx.w + gSP.vertexCoordMod[11])*gSP.vertexCoordMod[15] - gSP.lights.pos_xyzw[l][W];
-				const f32 len = _FIXED2FLOAT((vx*vx + vy*vy + vz*vz + vw*vw),16);
-				float p_i = gSP.lights.ca[l] / len;
-				if (p_i > 1.0f) p_i = 1.0f;
-				intensity *= p_i;
-			}
-			r += gSP.lights.rgb[l][R] * intensity;
-			g += gSP.lights.rgb[l][G] * intensity;
-			b += gSP.lights.rgb[l][B] * intensity;
-		}
-
-		intensity = DotProduct(&vtx.nx, gSP.lights.i_xyz[gSP.numLights - 1]);
-		if ((gSP.lights.i_xyz[gSP.numLights - 1][R] != 0.0 || gSP.lights.i_xyz[gSP.numLights - 1][G] != 0.0 || gSP.lights.i_xyz[gSP.numLights - 1][B] != 0.0) && intensity > 0) {
-			r += gSP.lights.rgb[gSP.numLights - 1][R] * intensity;
-			g += gSP.lights.rgb[gSP.numLights - 1][G] * intensity;
-			b += gSP.lights.rgb[gSP.numLights - 1][B] * intensity;
-		}
-
-		r = min(1.0f, r);
-		g = min(1.0f, g);
-		b = min(1.0f, b);
-
-		vtx.r *= r;
-		vtx.g *= g;
-		vtx.b *= b;
-		vtx.HWLight = 0;
-	}
-}
-
-template <u32 VNUM>
 void gSPPointLightVertex(u32 _v, float _vecPos[VNUM][4], SPVertex * _spVtx)
 {
-	if (g_ConkerUcode)
-		gSPPointLightVertexCBFD<VNUM>(_v, _spVtx);
-	else
+	if (g_ConkerUcode) {
+		if (gSP.cbfd.advancedLighting)
+			gSPLightVertexCBFD_advanced<VNUM>(_v, _spVtx);
+		else
+			gSPLightVertexCBFD_basic<VNUM>(_v, _spVtx);
+	} else
 		gSPPointLightVertexZeldaMM<VNUM>(_v, _vecPos, _spVtx);
 }
 
@@ -1066,10 +1087,11 @@ u32 gSPLoadCBFDVertexData(const Vertex *orgVtx, SPVertex * spVtx, u32 v0, u32 vi
 			vtx.z = orgVtx->z;
 			vtx.s = _FIXED2FLOAT( orgVtx->s, 5 );
 			vtx.t = _FIXED2FLOAT( orgVtx->t, 5 );
+			vtx.flag = orgVtx->flag;
 			if (gSP.geometryMode & G_LIGHTING) {
 				const u32 normaleAddrOffset = ((vi+j)<<1);
-				vtx.nx = _FIXED2FLOATCOLOR(((s8*)RDRAM)[(gSP.vertexNormalBase + normaleAddrOffset + 0) ^ 3], 7);
-				vtx.ny = _FIXED2FLOATCOLOR(((s8*)RDRAM)[(gSP.vertexNormalBase + normaleAddrOffset + 1) ^ 3], 7);
+				vtx.nx = _FIXED2FLOATCOLOR(((s8*)RDRAM)[(gSP.cbfd.vertexNormalBase + normaleAddrOffset + 0) ^ 3], 7);
+				vtx.ny = _FIXED2FLOATCOLOR(((s8*)RDRAM)[(gSP.cbfd.vertexNormalBase + normaleAddrOffset + 1) ^ 3], 7);
 				vtx.nz = _FIXED2FLOATCOLOR((s8)(orgVtx->flag & 0xFF), 7);
 			}
 			vtx.r = _FIXED2FLOATCOLOR(orgVtx->color.r, 8);
@@ -1429,13 +1451,6 @@ void gSPSetVertexColorBase( u32 base )
 	DebugMsg(DEBUG_NORMAL, "gSPSetVertexColorBase( 0x%08X );\n", base );
 }
 
-void gSPSetVertexNormaleBase( u32 base )
-{
-	gSP.vertexNormalBase = RSP_SegmentToPhysical( base );
-
-	DebugMsg(DEBUG_NORMAL, "gSPSetVertexNormaleBase( 0x%08X );\n", base );
-}
-
 void gSPDMATriangles( u32 tris, u32 n ){
 	const u32 address = RSP_SegmentToPhysical( tris );
 
@@ -1575,9 +1590,10 @@ void gSPSegment( s32 seg, s32 base )
 	DebugMsg(DEBUG_NORMAL, "gSPSegment( %s, 0x%08X );\n", SegmentText[seg], base );
 }
 
-void gSPClipRatio( u32 r )
+void gSPClipRatio(u32 ratio)
 {
-	DebugMsg(DEBUG_NORMAL|DEBUG_IGNORED, "gSPClipRatio(%u);\n", r);
+	gSP.clipRatio = std::abs(static_cast<s16>(ratio & 0xFFFF));
+	DebugMsg(DEBUG_NORMAL, "gSPClipRatio(%u);\n", gSP.clipRatio);
 }
 
 void gSPInsertMatrix( u32 where, u32 num )
@@ -1706,28 +1722,6 @@ void gSPFogFactor( s16 fm, s16 fo )
 void gSPPerspNormalize( u16 scale )
 {
 	DebugMsg(DEBUG_NORMAL| DEBUG_IGNORED, "gSPPerspNormalize( %i );\n", scale);
-}
-
-void gSPCoordMod(u32 _w0, u32 _w1)
-{
-	DebugMsg(DEBUG_NORMAL, "gSPCoordMod( %u, %u );\n", _w0, _w1);
-	if ((_w0 & 8) != 0)
-		return;
-	u32 idx = _SHIFTR(_w0, 1, 2);
-	u32 pos = _w0&0x30;
-	if (pos == 0) {
-		gSP.vertexCoordMod[0+idx] = (f32)(s16)_SHIFTR(_w1, 16, 16);
-		gSP.vertexCoordMod[1+idx] = (f32)(s16)_SHIFTR(_w1, 0, 16);
-	} else if (pos == 0x10) {
-		assert(idx < 3);
-		gSP.vertexCoordMod[4+idx] = _FIXED2FLOAT(_SHIFTR(_w1, 16, 16),16);
-		gSP.vertexCoordMod[5+idx] = _FIXED2FLOAT(_SHIFTR(_w1, 0, 16),16);
-		gSP.vertexCoordMod[12+idx] = gSP.vertexCoordMod[0+idx] + gSP.vertexCoordMod[4+idx];
-		gSP.vertexCoordMod[13+idx] = gSP.vertexCoordMod[1+idx] + gSP.vertexCoordMod[5+idx];
-	} else if (pos == 0x20) {
-		gSP.vertexCoordMod[8+idx] = (f32)(s16)_SHIFTR(_w1, 16, 16);
-		gSP.vertexCoordMod[9+idx] = (f32)(s16)_SHIFTR(_w1, 0, 16);
-	}
 }
 
 void gSPTexture( f32 sc, f32 tc, u32 level, u32 tile, u32 on )
@@ -1973,6 +1967,10 @@ void _loadSpriteImage(const uSprite *_pSprite)
 	{
 		FrameBuffer *pBuffer = frameBufferList().findBuffer(gSP.bgImage.address);
 		if (pBuffer != nullptr) {
+			if (pBuffer->m_cfb) {
+				frameBufferList().removeBuffer(pBuffer->m_startAddress);
+				return;
+			}
 			gDP.tiles[0].frameBufferAddress = pBuffer->m_startAddress;
 			gDP.tiles[0].textureMode = TEXTUREMODE_FRAMEBUFFER_BG;
 			gDP.tiles[0].loadType = LOADTYPE_TILE;
@@ -2051,15 +2049,15 @@ void gSPSprite2DBase(u32 _base)
 		f32 lrs = uls + pSprite->imageW - 1;
 		f32 lrt = ult + pSprite->imageH - 1;
 
-		/* Hack for WCW Nitro. TODO : activate it later.
-		if (WCW_NITRO) {
-			gSP.bgImage.height /= scaleY;
-			gSP.bgImage.imageY /= scaleY;
+		// Hack for WCW Nitro.
+		if ((config.generalEmulation.hacks & hack_WCWNitro) != 0) {
+			const u32 scale = u32(scaleY);
+			gSP.bgImage.height /= scale;
+			gSP.bgImage.imageY /= scale;
 			ult /= scaleY;
 			lrt /= scaleY;
-			gSP.bgImage.width *= scaleY;
+			gSP.bgImage.width *= scale;
 		}
-		*/
 
 		GraphicsDrawer & drawer = dwnd().getDrawer();
 		drawer.setDMAVerticesSize(4);

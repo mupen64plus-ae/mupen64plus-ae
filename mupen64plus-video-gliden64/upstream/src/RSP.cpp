@@ -138,6 +138,7 @@ void RSP_ProcessDList()
 		gSP.status[0] = gSP.status[1] = gSP.status[2] = gSP.status[3] = 0;
 		gSP.changed |= CHANGED_MATRIX | CHANGED_LIGHT | CHANGED_LOOKAT;
 		gSP.tri_num = 0;
+		gSP.cbfd.advancedLighting = false;
 		gDP.changed &= ~CHANGED_CPU_FB_WRITE;
 		gDPSetTexturePersp(G_TP_PERSP);
 
@@ -220,6 +221,8 @@ void RSP_SetDefaultState()
 	gSP.matrix.modelView[0][1][1] = 1.0f;
 	gSP.matrix.modelView[0][2][2] = 1.0f;
 	gSP.matrix.modelView[0][3][3] = 1.0f;
+
+	gSP.clipRatio = 1U;
 
 	gDP.otherMode._u64 = 0U;
 	gDP.otherMode.bi_lerp0 = gDP.otherMode.bi_lerp1 = 1;
@@ -308,8 +311,8 @@ void RSP_Init()
 	else if (strstr(RSP.romname, (const char *)"DOUBUTSUNOMORI") != nullptr ||
 			 strstr(RSP.romname, (const char *)"ANIMAL FOREST") != nullptr)
 		config.generalEmulation.hacks |= hack_subscreen;
-	else if (strstr(RSP.romname, (const char *)"LEGORacers") != nullptr)
-		config.generalEmulation.hacks |= hack_legoRacers;
+	else if (strstr(RSP.romname, (const char *)"Lode Runner 3D") != nullptr)
+		config.generalEmulation.hacks |= hack_LodeRunner;
 	else if (strstr(RSP.romname, (const char *)"Blast") != nullptr)
 		config.generalEmulation.hacks |= hack_blastCorps;
 	else if (strstr(RSP.romname, (const char *)"MASK") != nullptr) // Zelda MM
@@ -318,6 +321,8 @@ void RSP_Init()
 			 strstr(RSP.romname, (const char *)"PERFECT DARK") != nullptr)
 		config.generalEmulation.hacks |= hack_rectDepthBufferCopyPD;
 	else if (strstr(RSP.romname, (const char *)"Jeremy McGrath Super") != nullptr)
+		config.generalEmulation.hacks |= hack_ModifyVertexXyInShader;
+	else if (strstr(RSP.romname, (const char *)"RAT ATTACK") != nullptr)
 		config.generalEmulation.hacks |= hack_ModifyVertexXyInShader;
 	else if (strstr(RSP.romname, (const char *)"Quake") != nullptr)
 		config.generalEmulation.hacks |= hack_doNotResetOtherModeH|hack_doNotResetOtherModeL;
@@ -338,6 +343,8 @@ void RSP_Init()
 		config.generalEmulation.hacks |= hack_RE2 | hack_ModifyVertexXyInShader | hack_LoadDepthTextures;
 	else if (strstr(RSP.romname, (const char *)"THPS") != nullptr)
 		config.generalEmulation.hacks |= hack_TonyHawk;
+	else if (strstr(RSP.romname, (const char *)"NITRO64") != nullptr)
+		config.generalEmulation.hacks |= hack_WCWNitro;
 
 	api().FindPluginPath(RSP.pluginpath);
 

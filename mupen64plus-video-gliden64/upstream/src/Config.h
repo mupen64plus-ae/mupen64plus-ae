@@ -110,13 +110,10 @@ struct Config
 		// Overscan
 		u32 enableOverscan;
 		struct {
-			s32 left;
-			s32 right;
-			s32 top;
-			s32 bottom;
-			void init() {
-				left = right = top = bottom = 0;
-			}
+			s32 left = 0;
+			s32 right = 0;
+			s32 top = 0;
+			s32 bottom = 0;
 		} overscanPAL, overscanNTSC;
 	} frameBufferEmulation;
 
@@ -196,7 +193,7 @@ struct Config
 #define hack_WinBack				(1<<10) //Hack for WinBack to remove gray rectangle in HLE mode
 #define hack_ZeldaMM				(1<<11) //Special hacks for Zelda MM
 #define hack_ModifyVertexXyInShader	(1<<12) //Pass screen coordinates provided in gSPModifyVertex to vertes shader.
-#define hack_legoRacers				(1<<13) //LEGO racers course map
+#define hack_LodeRunner				(1<<13) //Hack for Lode runner VI issues.
 #define hack_doNotResetOtherModeH	(1<<14) //Don't reset othermode.h after dlist end. Quake and Quake 2
 #define hack_doNotResetOtherModeL	(1<<15) //Don't reset othermode.l after dlist end. Quake
 #define hack_LoadDepthTextures		(1<<16) //Load textures for depth buffer
@@ -205,6 +202,7 @@ struct Config
 #define hack_RE2					(1<<19) //RE2 hacks.
 #define hack_ZeldaMonochrome		(1<<20) //Hack for Zeldas monochrome effects.
 #define hack_TonyHawk				(1<<21) //Hack for Tony Hawk blend mode.
+#define hack_WCWNitro				(1<<22) //Hack for WCW Nitro backgrounds.
 
 extern Config config;
 

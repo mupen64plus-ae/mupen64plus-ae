@@ -132,9 +132,14 @@ struct gSPInfo
 
 	u32 tri_num;
 
-	// CBFD
-	u32 vertexNormalBase;
-	f32 vertexCoordMod[16];
+	u32 clipRatio;
+
+	struct
+	{
+		u32 vertexNormalBase;
+		f32 vertexCoordMod[16];
+		bool advancedLighting;
+	} cbfd;
 
 	u32 textureCoordScaleOrg;
 	u32 textureCoordScale[2];
@@ -172,7 +177,7 @@ void gSPCullDisplayList( u32 v0, u32 vn );
 void gSPPopMatrix( u32 param );
 void gSPPopMatrixN( u32 param, u32 num );
 void gSPSegment( s32 seg, s32 base );
-void gSPClipRatio( u32 r );
+void gSPClipRatio( u32 ratio );
 void gSPInsertMatrix( u32 where, u32 num );
 void gSPModifyVertex(u32 _vtx, u32 _where, u32 _val );
 void gSPNumLights( s32 n );
@@ -192,8 +197,6 @@ void gSPSetStatus(u32 sid, u32 val);
 void gSPSetDMAOffsets( u32 mtxoffset, u32 vtxoffset );
 void gSPSetDMATexOffset(u32 _addr);
 void gSPSetVertexColorBase( u32 base );
-void gSPSetVertexNormaleBase( u32 base );
-void gSPCoordMod(u32 _w0, u32 _w1);
 void gSPCombineMatrices(u32 _mode);
 
 void gSPTriangle(s32 v0, s32 v1, s32 v2);

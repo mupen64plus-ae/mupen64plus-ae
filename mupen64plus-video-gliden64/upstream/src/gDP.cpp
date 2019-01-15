@@ -675,7 +675,7 @@ void gDPSetScissor( u32 mode, f32 ulx, f32 uly, f32 lrx, f32 lry )
 	gDP.scissor.lrx = lrx;
 	gDP.scissor.lry = lry;
 
-	gDP.changed |= CHANGED_SCISSOR;
+	gDP.changed |= CHANGED_SCISSOR | CHANGED_REJECT_BOX;
 
 #ifdef DEBUG_DUMP
 	DebugMsg( DEBUG_NORMAL, "gDPSetScissor( %s, %.2f, %.2f, %.2f, %.2f );\n",
@@ -837,17 +837,15 @@ void gDPFullSync()
 
 	dwnd().getDrawer().flush();
 
-	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
-	if (pCurrentBuffer != nullptr)
-		pCurrentBuffer->updateEndAddress();
+	frameBufferList().updateCurrentBufferEndAddress();
 
-	const bool sync = config.frameBufferEmulation.copyToRDRAM == Config::ctSync;
+	FrameBuffer * pCurrentBuffer = frameBufferList().getCurrent();
 	if ((config.frameBufferEmulation.copyToRDRAM != Config::ctDisable || (config.generalEmulation.hacks & hack_subscreen) != 0) &&
 		!FBInfo::fbInfo.isSupported() &&
 		pCurrentBuffer != nullptr &&
 		!pCurrentBuffer->isAuxiliary()
 	)
-		FrameBuffer_CopyToRDRAM(gDP.colorImage.address, sync);
+		FrameBuffer_CopyToRDRAM(gDP.colorImage.address, config.frameBufferEmulation.copyToRDRAM == Config::ctSync);
 
 	if (RSP.LLE) {
 		if (config.frameBufferEmulation.copyDepthToRDRAM != Config::cdDisable && !FBInfo::fbInfo.isSupported())
