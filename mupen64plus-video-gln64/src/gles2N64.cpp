@@ -1,7 +1,6 @@
 
 #include <dlfcn.h>
 #include <string.h>
-#include <cpu-features.h>
 
 #include "m64p_types.h"
 #include "m64p_plugin.h"
@@ -63,12 +62,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) dlsym(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
 #ifdef __NEON_OPT
-    if (android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM &&
-            (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON) != 0)
-    {
-        MathInitNeon();
-        gSPInitNeon();
-    }
+    MathInitNeon();
+    gSPInitNeon();
 #endif
     return M64ERR_SUCCESS;
 }

@@ -24,7 +24,6 @@ include $(CLEAR_VARS)
 SRCDIR := .
 
 LOCAL_MODULE := mupen64plus-video-gln64
-LOCAL_STATIC_LIBRARIES := cpufeatures
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=         \
@@ -98,6 +97,4 @@ else
 
 endif
 
-include $(BUILD_SHARED_LIBRARY)
-
-$(call import-module, android/cpufeatures)
+include $(BUILD_SHARED_LIBRARY)\
