@@ -343,15 +343,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             final String sideBarMd5 = savedInstanceState.getString( STATE_SIDEBAR );
             if( sideBarMd5 != null )
             {
-                // Repopulate the game sidebar
-                for( final GalleryItem item : mGalleryItems )
-                {
-                    if( sideBarMd5.equals( item.md5 ) )
-                    {
-                        onGalleryItemClick( item );
-                        break;
-                    }
-                }
+                mSelectedItem = new GalleryItem(getApplicationContext(), sideBarMd5, null, null,
+                        CountryCode.DEMO, null, null, null, null, 0, 0.0f);
             }
 
             final String query = savedInstanceState.getString( STATE_QUERY );
@@ -997,10 +990,20 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         mGridView.setFocusable(false);
         mGridView.setFocusableInTouchMode(false);
 
-        if (mAppData.isAndroidTv) {
+        if (mAppData.isAndroidTv && AppData.IS_OREO) {
             UpdateLeanbackProgramsTask updateLeanbackPrograms = new UpdateLeanbackProgramsTask(getApplicationContext(), recentItems,
                     mAppData.getChannelId());
             updateLeanbackPrograms.execute();
+        }
+
+        if (mSelectedItem != null) {
+            // Repopulate the game sidebar
+            for (final GalleryItem item : mGalleryItems) {
+                if (mSelectedItem.md5.equals( item.md5 )) {
+                    onGalleryItemClick( item );
+                    break;
+                }
+            }
         }
     }
 
