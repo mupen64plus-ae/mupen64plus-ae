@@ -99,6 +99,9 @@ public class AppData
 
     /** True if device is running marshmallow or later (24 - Android 7.0.x) */
     private static final boolean IS_NOUGAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+
+    /** True if device is running marshmallow or later (24 - Android 8.0.x) */
+    public static final boolean IS_OREO = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     
     /** The hardware info, refreshed at the beginning of every session. */
     final HardwareInfo hardwareInfo;

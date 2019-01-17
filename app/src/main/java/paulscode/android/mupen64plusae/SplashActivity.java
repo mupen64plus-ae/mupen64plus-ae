@@ -228,7 +228,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             splash.setImageResource( R.drawable.publisherlogo);
         }
 
-        if (mAppData.isAndroidTv && mAppData.getChannelId() == -1)
+        if (mAppData.isAndroidTv && AppData.IS_OREO && mAppData.getChannelId() == -1)
         {
             createChannel();
         }
