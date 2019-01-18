@@ -238,8 +238,12 @@ public class MenuListView extends ExpandableListView
                     text2.setText( item.getTitleCondensed() );
                 }
 
-                icon.setImageDrawable( item.getIcon() );
-                
+                try {
+                    icon.setImageDrawable( item.getIcon() );
+                } catch (android.content.res.Resources.NotFoundException e) {
+
+                }
+
                 view.setBackgroundColor( 0x0 );
                 
                 // Indent child views by 15 points
@@ -318,7 +322,11 @@ public class MenuListView extends ExpandableListView
                 {
                     text2.setText( item.getTitleCondensed() );
                 }
-                icon.setImageDrawable( item.getIcon() );
+                try {
+                    icon.setImageDrawable( item.getIcon() );
+                } catch (android.content.res.Resources.NotFoundException e) {
+
+                }
                 
                 if( item.isChecked() )
                     view.setBackgroundColor( 0x44FFFFFF );
