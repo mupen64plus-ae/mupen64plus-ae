@@ -60,11 +60,6 @@ COMMON_FLAGS +=                     \
     -mfpu=neon
 endif
 
-ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
-COMMON_FLAGS +=                     \
-    -march=armv8-a+simd+fp
-endif
-
 COMMON_LDFLAGS :=
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
