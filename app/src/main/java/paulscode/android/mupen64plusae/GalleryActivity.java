@@ -144,10 +144,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 if( !TextUtils.isEmpty( givenRomPath ) ) {
                     getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
                     launchGameOnCreation(givenRomPath);
-
-                    finish();
                 }
             } else {
+
+                mGameStartedExternally = true;
+                
                 Log.i("GalleryActivity", "Loading ROM from leanback");
                 String romPath = extras.getString(ActivityHelper.Keys.ROM_PATH );
                 String zipPath = extras.getString(ActivityHelper.Keys.ZIP_PATH );
@@ -168,8 +169,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_COUNTRY_CODE);
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_ART_PATH);
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_GOOD_NAME);
-
-                finish();
             }
         }
     }
