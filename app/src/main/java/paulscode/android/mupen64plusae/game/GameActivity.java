@@ -324,7 +324,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
 
             mScreenOrientationSet = false;
-            Log.e("GameActivity", "Screen orientation locked");
         }
 
         // Lay out content and get the views
