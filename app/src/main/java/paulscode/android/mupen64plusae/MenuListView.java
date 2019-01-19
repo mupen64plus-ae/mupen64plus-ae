@@ -25,6 +25,7 @@ import android.content.Context;
 import androidx.appcompat.view.menu.MenuBuilder;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ import org.mupen64plusae.v3.alpha.R;
 
 /* ExpandableListView which stores its data set as a Menu hierarchy */
 
+@SuppressWarnings("unused")
 public class MenuListView extends ExpandableListView
 {
     private MenuListAdapter mAdapter;
@@ -215,7 +217,7 @@ public class MenuListView extends ExpandableListView
             
             MenuItem item = getChild( groupPosition, childPosition );
 
-            if( item != null )
+            if( item != null && inflater != null)
             {
                 view = mMenuViews.get(item.getItemId());
 
@@ -241,7 +243,7 @@ public class MenuListView extends ExpandableListView
                 try {
                     icon.setImageDrawable( item.getIcon() );
                 } catch (android.content.res.Resources.NotFoundException e) {
-
+                    Log.i("MenuListView", "Item does not have an icon");
                 }
 
                 view.setBackgroundColor( 0x0 );
@@ -304,8 +306,12 @@ public class MenuListView extends ExpandableListView
                     view = mMenuViews.get(item.getItemId());
                 }
 
-                if (view == null) {
+                if (view == null && inflater != null) {
                     view = inflater.inflate( R.layout.list_item_menu, mListView, false );
+                }
+
+                if (view == null) {
+                    return null;
                 }
 
                 TextView text1 = view.findViewById( R.id.text1 );
