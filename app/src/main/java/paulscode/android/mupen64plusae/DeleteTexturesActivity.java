@@ -1,5 +1,6 @@
 package paulscode.android.mupen64plusae;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -108,13 +109,15 @@ public class DeleteTexturesActivity extends AppCompatActivity implements OnItemC
     {
         if(id == CLEAR_CONFIRM_DIALOG_ID)
         {
-            ArrayList<String> foldersToDelete = new ArrayList<>();
-            foldersToDelete.add(mCurrentPath);
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                ArrayList<String> foldersToDelete = new ArrayList<>();
+                foldersToDelete.add(mCurrentPath);
 
-            ArrayList<String> filters = new ArrayList<>();
-            filters.add("");
+                ArrayList<String> filters = new ArrayList<>();
+                filters.add("");
 
-            mDeleteFilesFragment.deleteFiles(foldersToDelete, filters);
+                mDeleteFilesFragment.deleteFiles(foldersToDelete, filters);
+            }
         }
     }
     
