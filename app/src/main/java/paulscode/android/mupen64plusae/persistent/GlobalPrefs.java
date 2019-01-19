@@ -174,6 +174,9 @@ public class GlobalPrefs
     /** True if the touchscreen joystick is animated. */
     public final boolean isTouchscreenAnimated;
 
+    /** True if the touchscreen joystick is relative. */
+    public final boolean isTouchscreenAnalogRelative;
+
     /** Current touchscreen skin selection. */
     public final String touchscreenSkin;
 
@@ -438,6 +441,7 @@ public class GlobalPrefs
         touchscreenAutoHideEnabled = mPreferences.getBoolean( "touchscreenAutoHideEnabled", true );
         touchscreenAutoHideSeconds = mPreferences.getInt( "touchscreenAutoHideSeconds", 5 );
         isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimated_v2", true );
+        isTouchscreenAnalogRelative = mPreferences.getBoolean( "touchscreenAnalogRelative", true );
         // Determine the touchscreen layout
         touchscreenSkin = mPreferences.getString( "touchscreenSkin", "JoshaGibs" );
         if( touchscreenSkin.equals( "Custom" ) )

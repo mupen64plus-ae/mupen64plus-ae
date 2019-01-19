@@ -621,6 +621,8 @@
     <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
     <string name="inputShareController_entryYes">Yes</string>
     <string name="inputShareController_entryNo">No</string>
+    <string name="relativeAnalog_title">Relative touchscreen joystick</string>
+    <string name="relativeAnalog_summary">Every time the touchscreen analog joystick is touched, the joystick is recentered</string>
     <string name="playerMap_useDefaultPlayerMap_title">Use default player mapping</string>
     <string name="playerMap_useDefaultPlayerMap_summary">Uncheck this to specify custom player mapping for this game</string>
 

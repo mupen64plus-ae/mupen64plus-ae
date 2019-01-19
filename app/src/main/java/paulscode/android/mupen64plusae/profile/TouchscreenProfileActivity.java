@@ -453,11 +453,8 @@ public class TouchscreenProfileActivity extends AppCompatActivity implements OnT
             else
             {
                 // See if analog was pressed
-                Point point = mTouchscreenMap.getAnalogDisplacement( x, y );
-                int dX = point.x;
-                int dY = point.y;
-                float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
-                if( mTouchscreenMap.isInCaptureRange( displacement ) )
+                Point point = mTouchscreenMap.getAnalogDisplacementOriginal( x, y );
+                if( mTouchscreenMap.isInCaptureRange( point ) )
                 {
                     dragAsset = ANALOG;
                     dragFrame = mTouchscreenMap.getAnalogFrame();

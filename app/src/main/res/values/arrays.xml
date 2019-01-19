@@ -241,6 +241,19 @@
     </string-array>
     <string name="shareController_default" translatable="false">default</string>
 
+    <!-- Share controller List -->
+    <string-array name="relativeAnalog_entries" translatable="false">
+        <item>@string/default_profile_title</item>
+        <item>@string/inputShareController_entryYes</item>
+        <item>@string/inputShareController_entryNo</item>
+    </string-array>
+    <string-array name="relativeAnalog_values" translatable="false">
+        <item>default</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string name="relativeAnalog_default" translatable="false">default</string>
+
     <!-- Hardware Profile List -->
     <string-array name="videoHardwareType_entries" translatable="false">
         <item>@string/videoHardwareType_entryDisableHack</item>

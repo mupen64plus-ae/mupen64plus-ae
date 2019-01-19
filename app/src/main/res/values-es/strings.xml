@@ -480,6 +480,8 @@
     <string name="inputShareController_summary">Permite que un único dispositivo de entrada controle a varios jugadores al mismo tiempo</string>
     <string name="inputShareController_entryYes">Si</string>
     <string name="inputShareController_entryNo">No</string>
+    <string name="relativeAnalog_title">Joystick de pantalla táctil relativo</string>
+    <string name="relativeAnalog_summary">Cada vez que se toca el joystick análogo de la pantalla táctil, el centro del joystick se mueva adonde fue tocado por primera vez.</string>
     <string name="playerMap_useDefaultPlayerMap_title">Ocupar mandos de cada jugador predeterminados</string>
     <string name="playerMap_useDefaultPlayerMap_summary">Desactive esta opción para especificar el mando de cada jugador personalizado para este juego</string>
 

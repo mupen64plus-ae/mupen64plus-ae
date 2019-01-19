@@ -215,6 +215,9 @@ public class GamePrefs
     /** Invert the touch controller Y axis */
     public final boolean invertTouchYAxis;
 
+    /** True if the touchscreen joystick is relative. */
+    public final boolean isTouchscreenAnalogRelative;
+
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
 
@@ -552,6 +555,10 @@ public class GamePrefs
         }
 
         touchscreenAutoHold = tmpTouchscreenAutoHold;
+
+        // Relative touchscreen joystick
+        final String tmpTouchscreenAnalogRelative = mPreferences.getString( "touchscreenAnalogRelative", "default" );
+        isTouchscreenAnalogRelative = tmpTouchscreenAnalogRelative.equals("default") ? globalPrefs.isTouchscreenAnalogRelative : tmpTouchscreenAnalogRelative.equals( "Yes" );
 
         // Peripheral share mode
         final String tmpControllerShared = mPreferences.getString( "inputShareController2", "default" );

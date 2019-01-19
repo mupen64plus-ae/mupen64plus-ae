@@ -45,6 +45,15 @@
         android:icon="@drawable/ic_phone"
         android:title="@string/touchscreenAutoHold_title" />
 
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/relativeAnalog_default"
+        android:entries="@array/relativeAnalog_entries"
+        android:entryValues="@array/relativeAnalog_values"
+        android:icon="@drawable/ic_phone"
+        android:key="touchscreenAnalogRelative"
+        android:summary="@string/selectedValue"
+        android:title="@string/relativeAnalog_title" />
+
 
     <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_key"

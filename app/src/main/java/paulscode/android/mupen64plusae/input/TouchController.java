@@ -25,6 +25,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
@@ -131,6 +132,10 @@ public class TouchController extends AbstractController implements OnTouchListen
 
     /** Invert the analog y axis */
     private final boolean mInvertYAxis;
+
+
+    /** True if relative joystick is enabled */
+    private boolean mRelativeJoystick;
     
     /**
      * The identifier of the pointer associated with the analog stick. -1 indicates the stick has
@@ -138,7 +143,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     private int mAnalogPid = -1;
     
-    private Vibrator mVibrator = null;
+    private Vibrator mVibrator;
 
     /** The user sensor input provider. */
     private SensorController mSensorController;
@@ -160,7 +165,7 @@ public class TouchController extends AbstractController implements OnTouchListen
     public TouchController(CoreFragment coreFragment, TouchMap touchMap, OnStateChangedListener listener,
                            Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
                            Set<Integer> notAutoHoldableButtons, SensorController sensorController,
-                           boolean invertXAxis, boolean invertYAxis )
+                           boolean invertXAxis, boolean invertYAxis, boolean relativeJoystick )
     {
         super(coreFragment);
 
@@ -173,6 +178,7 @@ public class TouchController extends AbstractController implements OnTouchListen
         mSensorController = sensorController;
         mInvertXAxis = invertXAxis;
         mInvertYAxis = invertYAxis;
+        mRelativeJoystick = relativeJoystick;
     }
     
     /*
@@ -340,7 +346,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 if( prevIndex != TouchMap.UNMAPPED )
                 {
                     // Slid off a valid button
-                    if( !isAutoHoldable( prevIndex ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
+                    if( isNotAutoHoldable( prevIndex ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
                     {
                         // Slid off a non-auto-hold button
                         setTouchState( prevIndex, false );
@@ -440,7 +446,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             }
 
             // Set the controller state accordingly
-            if( touched || !isAutoHoldable( index ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
+            if( touched || isNotAutoHoldable( index ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
                 mListener.onAutoHold( touched, index );
 
@@ -490,15 +496,15 @@ public class TouchController extends AbstractController implements OnTouchListen
     }
 
     /**
-     * Checks if the button mapped to an N64 command is auto-holdable.
+     * Checks if the button mapped to an N64 command is not auto-holdable.
      * 
      * @param commandIndex The index to the N64 command.
      * 
      * @return True if the button mapped to the command is auto-holdable.
      */
-    private boolean isAutoHoldable( int commandIndex )
+    private boolean isNotAutoHoldable(int commandIndex )
     {
-        return mNotAutoHoldables == null || !mNotAutoHoldables.contains( commandIndex );
+        return mNotAutoHoldables != null && mNotAutoHoldables.contains( commandIndex );
     }
     
     /**
@@ -554,34 +560,44 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     private boolean processAnalogTouch( int pointerId, int xLocation, int yLocation )
     {
-        // Get the cartesian displacement of the analog stick
-        Point point = mTouchMap.getAnalogDisplacement( xLocation, yLocation );
-        
-        // Compute the pythagorean displacement of the stick
-        int dX = point.x;
-        int dY = point.y;
-        float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
-        
+        Point displacementPoint = mTouchMap.getAnalogDisplacementOriginal( xLocation, yLocation);
+
         // "Capture" the analog control
-        if( mTouchMap.isInCaptureRange( displacement ) )
+        if( mTouchMap.isInCaptureRange( displacementPoint ) && mAnalogPid != pointerId) {
             mAnalogPid = pointerId;
-        
+
+            if (mRelativeJoystick) {
+                mTouchMap.updateAnalogPosition(xLocation, yLocation);
+            }
+        }
+
+        // User is controlling the analog stick
         if( pointerId == mAnalogPid )
         {
-            // User is controlling the analog stick
-            
+            // Get the cartesian displacement of the analog stick
+            Point point = mTouchMap.getAnalogDisplacement( xLocation, yLocation );
+
+            // Compute the pythagorean displacement of the stick
+            int dX = point.x;
+            int dY = point.y;
+
             // Limit range of motion to an octagon (like the real N64 controller)
             point = mTouchMap.getConstrainedDisplacement( dX, dY );
             dX = point.x;
             dY = point.y;
-            displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
+            float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
             
             // Fraction of full-throttle, between 0 and 1, inclusive
             float p = mTouchMap.getAnalogStrength( displacement );
-            
-            // Store the axis values in the super fields (screen y is inverted)
-            mState.axisFractionX = p * dX / displacement * (mInvertXAxis ? -1.0f:1.0f);
-            mState.axisFractionY = -p * dY / displacement * (mInvertYAxis ? -1.0f:1.0f);
+
+            if (displacement == 0.0) {
+                mState.axisFractionX = 0.0f;
+                mState.axisFractionY = 0.0f;
+            } else {
+                // Store the axis values in the super fields (screen y is inverted)
+                mState.axisFractionX = p * dX / displacement * (mInvertXAxis ? -1.0f:1.0f);
+                mState.axisFractionY = -p * dY / displacement * (mInvertYAxis ? -1.0f:1.0f);
+            }
             
             // Analog state changed
             return true;

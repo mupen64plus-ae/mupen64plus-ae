@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -81,12 +81,6 @@ public class VisibleTouchMap extends TouchMap
     /** Touchscreen opacity. */
     private int mTouchscreenTransparency;
     
-    /** Reference screen width in pixels (if provided in skin.ini). */
-    private int mReferenceWidth = 0;
-    
-    /** Reference screen height in pixels (if provided in skin.ini). */
-    private int mReferenceHeight = 0;
-    
     /** The last width passed to {@link #resize(int, int, DisplayMetrics)}. */
     private int cacheWidth = 0;
     
@@ -103,10 +97,10 @@ public class VisibleTouchMap extends TouchMap
     private final Image[] mNumerals;
     
     /** Auto-hold overlay images. */
-    public final Image[] autoHoldImages;
+    private final Image[] autoHoldImages;
 
     /** Auto-hold overlay images pressed status */
-    public final boolean[] autoHoldImagesPressed;
+    private final boolean[] autoHoldImagesPressed;
     
     /** X-coordinates of the AutoHold mask, in percent. */
     private final int[] autoHoldX;
@@ -122,7 +116,7 @@ public class VisibleTouchMap extends TouchMap
     public VisibleTouchMap( Resources resources )
     {
         super( resources );
-        mFpsDigits = new CopyOnWriteArrayList<Image>();
+        mFpsDigits = new CopyOnWriteArrayList<>();
         mNumerals = new Image[10];
         autoHoldImages = new Image[NUM_N64_PSEUDOBUTTONS];
         autoHoldImagesPressed = new boolean[NUM_N64_PSEUDOBUTTONS];
@@ -240,10 +234,10 @@ public class VisibleTouchMap extends TouchMap
             mFpsFrame.setScale( fpsScale );
             mFpsFrame.fitPercent( mFpsFrameX, mFpsFrameY, w, h );
         }
-        for( int i = 0; i < mNumerals.length; i++ )
+        for( Image image : mNumerals)
         {
-            if( mNumerals[i] != null )
-                mNumerals[i].setScale( fpsScale );
+            if( image != null )
+                image.setScale( fpsScale );
         }
         
         // Compute the FPS digit locations
@@ -342,12 +336,17 @@ public class VisibleTouchMap extends TouchMap
                 hX = (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) );
             if( hY < 0 )
                 hY = (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) );
-            
+
+
+
+            int width = (int) ( analogBackImage.width * ( analogBackScaling * scale ) );
+            int height = (int) ( analogBackImage.height * ( analogBackScaling * scale ) );
+
+            // Update position of the surrounding graphic
+            analogBackImage.fitCenter(currentAnalogX + hX, currentAnalogY + hY, currentAnalogX, currentAnalogY, width, height);
+
             // Update the position of the stick
-            int cX = analogBackImage.x + hX;
-            int cY = analogBackImage.y + hY;
-            analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
-                    (int) ( analogBackImage.width * ( analogBackScaling * scale ) ), (int) ( analogBackImage.height * ( analogBackScaling * scale ) ) );
+            analogForeImage.fitCenter(currentAnalogX + hX, currentAnalogY + hY, currentAnalogX, currentAnalogY, width, height );
             return true;
         }
         return false;
@@ -476,8 +475,6 @@ public class VisibleTouchMap extends TouchMap
         
         super.load( skinDir, profile, animated );
         ConfigFile skin_ini = new ConfigFile( skinFolder + "/skin.ini" );
-        mReferenceWidth = SafeMethods.toInt( skin_ini.get( "INFO", "referenceScreenWidth" ), 1280 );
-        mReferenceHeight = SafeMethods.toInt( skin_ini.get( "INFO", "referenceScreenHeight" ), 720 );
         mFpsTextX = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numx" ), 27 );
         mFpsTextY = SafeMethods.toInt( skin_ini.get( "INFO", "fps-numy" ), 50 );
         mFpsMinPixels = SafeMethods.toInt( skin_ini.get( "INFO", "fps-minPixels" ), 75 );

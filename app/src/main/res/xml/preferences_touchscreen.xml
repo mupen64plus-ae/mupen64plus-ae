@@ -94,6 +94,11 @@
         android:title="@string/touchscreenAutoHold_title" />
     <androidx.preference.CheckBoxPreference
         android:defaultValue="true"
+        android:key="touchscreenAnalogRelative"
+        android:summary="@string/relativeAnalog_summary"
+        android:title="@string/relativeAnalog_title" />
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
         android:key="touchscreenAutoHideEnabled"
         android:summary="@string/touchscreenAutoHideEnabled_summary"
         android:title="@string/touchscreenAutoHideEnabled_title" />

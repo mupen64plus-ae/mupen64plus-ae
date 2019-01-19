@@ -184,17 +184,13 @@ public class GameDrawerLayout extends androidx.drawerlayout.widget.DrawerLayout
                 }
                 
                 // See if it touches the analog stick
-                Point point = mTouchMap.getAnalogDisplacement( xLocation, yLocation );
-                
-                int dX = point.x;
-                int dY = point.y;
-                float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
-                
+                Point displacementPoint = mTouchMap.getAnalogDisplacementOriginal( xLocation, yLocation);
                 // Add a slightly larger hit area around the analog stick,
                 // by artificially shrinking the size of the displacement
-                displacement = displacement * 0.9f;
-                
-                if( mTouchMap.isInCaptureRange( displacement ) )
+                displacementPoint.x *= 0.9;
+                displacementPoint.y *= 0.9;
+
+                if( mTouchMap.isInCaptureRange( displacementPoint ) )
                 {
                     ignore.add( event );
                     return false;

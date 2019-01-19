@@ -452,8 +452,6 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if (mGlobalPrefs.displayOrientation == -1 && !mScreenOrientationSet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             mScreenOrientationSet = true;
-
-            Log.e("GameActivity", "Screen orientation now set");
         }
 
         if(mGlobalPrefs.isFpsEnabled && mOverlay != null)
@@ -1126,7 +1124,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mTouchscreenController = new TouchController(mCoreFragment, mTouchscreenMap,
                     mOverlay, vibrator, mGamePrefs.touchscreenAutoHold,
                     mGlobalPrefs.isTouchscreenFeedbackEnabled, mGamePrefs.touchscreenNotAutoHoldables,
-                    mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis );
+                    mSensorController, mGamePrefs.invertTouchXAxis, mGamePrefs.invertTouchYAxis,
+                    mGamePrefs.isTouchscreenAnalogRelative );
             inputSource.setOnTouchListener(this);
             mDrawerLayout.setTouchMap( mTouchscreenMap );
         }

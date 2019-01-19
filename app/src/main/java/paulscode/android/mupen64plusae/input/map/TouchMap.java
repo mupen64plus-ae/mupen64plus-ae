@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -52,7 +52,7 @@ public class TouchMap
     public static final int UNMAPPED = -1;
     
     /** Map offset: N64 pseudo-buttons. */
-    public static final int OFFSET_EXTRAS = AbstractController.NUM_N64_BUTTONS;
+    private static final int OFFSET_EXTRAS = AbstractController.NUM_N64_BUTTONS;
     
     /** N64 pseudo-button: dpad-right-up. */
     public static final int DPD_RU = OFFSET_EXTRAS;
@@ -70,19 +70,19 @@ public class TouchMap
     public static final int TOGGLE_SENSOR = OFFSET_EXTRAS + 4;
     
     /** Total number of N64 (pseudo-)buttons. */
-    public static final int NUM_N64_PSEUDOBUTTONS = OFFSET_EXTRAS + 5;
+    static final int NUM_N64_PSEUDOBUTTONS = OFFSET_EXTRAS + 5;
     
     /** Folder containing the images. */
-    protected String skinFolder;
+    String skinFolder;
     
     /** Scaling factor to apply to images. */
     protected float scale = 1.0f;
     
     /** Button scaling factor. */
-    protected ArrayList<Float> buttonScaling;
+    ArrayList<Float> buttonScaling;
     
     /** Button images. */
-    protected ArrayList<Image> buttonImages;
+    ArrayList<Image> buttonImages;
     
     /** Button masks. */
     private final ArrayList<Image> buttonMasks;
@@ -94,52 +94,64 @@ public class TouchMap
     private final ArrayList<Integer> buttonY;
     
     /** names of the buttons. */
-    protected final ArrayList<String> buttonNames;
+    final ArrayList<String> buttonNames;
     
     /** true if analog is enabled */
-    protected boolean isAnalogEnabled = true;
+    private boolean isAnalogEnabled = true;
     
     /** Analog background scaling. */
-    protected float analogBackScaling;
+    float analogBackScaling;
     
     /** Analog background image (fixed). */
-    protected Image analogBackImage;
+    Image analogBackImage;
     
     /** Analog foreground image (movable). */
-    protected Image analogForeImage;
+    Image analogForeImage;
     
     /** X-coordinate of the analog background, in percent. */
     private int analogBackX;
     
     /** Y-coordinate of the analog background, in percent. */
     private int analogBackY;
+
+    /** Where is the X current origin of the analog image in pixels */
+    int currentAnalogX;
+
+    /** Where is the Y current origin of the analog image in pixels */
+    int currentAnalogY;
+
+    /** Where is the X original origin of the analog image in pixels */
+    private int originalAnalogX;
+
+    /** Where is the Y original origin of the analog image in pixels */
+    private int originalAnalogY;
     
     /** Deadzone of the analog stick, in pixels. */
     private int analogDeadzone;
     
     /** Maximum displacement of the analog stick, in pixels. */
-    protected int analogMaximum;
+    int analogMaximum;
     
     /** Extra region beyond maximum in which the analog stick can be captured, in pixels. */
     private int analogPadding;
     
     /** The resources of the associated activity. */
-    protected final Resources mResources;
+    final Resources mResources;
     
     /** Map from N64 (pseudo-)button to mask color. */
     private final int[] mN64ToColor;
     
     /** The map from strings in the skin.ini file to N64 button indices. */
-    public static final HashMap<String, Integer> MASK_KEYS = new HashMap<String, Integer>();
-    
+    static final HashMap<String, Integer> MASK_KEYS = new HashMap<>();
+
     /** The map from N64 button indices to asset name prefixes in the skin folder. */
-    public static SparseArray<String> ASSET_NAMES = new SparseArray<String>();
+    public static SparseArray<String> ASSET_NAMES = new SparseArray<>();
     
     /** The error in RGB (256x256x256) space that we tolerate when matching mask colors. */
     private static final int MATCH_TOLERANCE = 10;
     
     /** True if A/B buttons are split */
-    protected boolean mSplitAB;
+    boolean mSplitAB;
     
     static
     {
@@ -193,16 +205,16 @@ public class TouchMap
      * 
      * @param resources The resources of the activity associated with this touch map.
      */
-    public TouchMap( Resources resources )
+    TouchMap( Resources resources )
     {
         mResources = resources;
         mN64ToColor = new int[NUM_N64_PSEUDOBUTTONS];
-        buttonImages = new ArrayList<Image>();
-        buttonMasks = new ArrayList<Image>();
-        buttonX = new ArrayList<Integer>();
-        buttonY = new ArrayList<Integer>();
-        buttonNames = new ArrayList<String>();
-        buttonScaling = new ArrayList<Float>();
+        buttonImages = new ArrayList<>();
+        buttonMasks = new ArrayList<>();
+        buttonX = new ArrayList<>();
+        buttonY = new ArrayList<>();
+        buttonNames = new ArrayList<>();
+        buttonScaling = new ArrayList<>();
     }
     
     /**
@@ -220,6 +232,10 @@ public class TouchMap
         analogBackImage = null;
         analogForeImage = null;
         analogBackX = analogBackY = 0;
+        currentAnalogX = 0;
+        currentAnalogY = 0;
+        originalAnalogX = 0;
+        originalAnalogY = 0;
         analogPadding = 32;
         analogDeadzone = 2;
         analogMaximum = 360;
@@ -254,8 +270,7 @@ public class TouchMap
     {
         if(mResources.getConfiguration().orientation  == ORIENTATION_PORTRAIT)
         {
-            int adjustedY = 50 + (int)((y/100.0) * 50.0f);
-            return adjustedY;
+            return 50 + (int)((y/100.0) * 50.0f);
         }
         else
         {
@@ -285,6 +300,11 @@ public class TouchMap
         {
             analogBackImage.setScale( ( analogBackScaling * scale ) );
             analogBackImage.fitPercent( analogBackX, getAdjustedYPos(analogBackY), w, h );
+
+            currentAnalogX = analogBackImage.x;
+            currentAnalogY = analogBackImage.y;
+            originalAnalogX = analogBackImage.x;
+            originalAnalogY = analogBackImage.y;
         }
     }
     
@@ -386,7 +406,21 @@ public class TouchMap
         }
         return closestMatch;
     }
-    
+
+    /**
+     * Updates the position of the analog stick
+     *
+     * @param xLocation The x-coordinate of the touch, in pixels.
+     * @param yLocation The y-coordinate of the touch, in pixels.
+     *
+     */
+    public void updateAnalogPosition( int xLocation, int yLocation )
+    {
+        Point displacement = getAnalogDisplacementOriginal(xLocation, yLocation);
+        currentAnalogX = originalAnalogX + displacement.x;
+        currentAnalogY = originalAnalogY + displacement.y;
+    }
+
     /**
      * Gets the N64 analog stick displacement.
      * 
@@ -401,11 +435,33 @@ public class TouchMap
             return new Point( 0, 0 );
         
         // Distance from center along x-axis
-        int dX = xLocation - ( analogBackImage.x + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) ) );
+        int dX = xLocation - ( currentAnalogX + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) ) );
         
         // Distance from center along y-axis
-        int dY = yLocation - ( analogBackImage.y + (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) ) );
+        int dY = yLocation - ( currentAnalogY + (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) ) );
         
+        return new Point( dX, dY );
+    }
+
+    /**
+     * Gets the displacement of the given position from the starting analog location
+     *
+     * @param xLocation The x-coordinate of the touch, in pixels.
+     * @param yLocation The y-coordinate of the touch, in pixels.
+     *
+     * @return The analog displacement, in pixels.
+     */
+    public Point getAnalogDisplacementOriginal( int xLocation, int yLocation )
+    {
+        if( analogBackImage == null || !isAnalogEnabled )
+            return new Point( 0, 0 );
+
+        // Distance from center along x-axis
+        int dX = xLocation - ( originalAnalogX + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) ) );
+
+        // Distance from center along y-axis
+        int dY = yLocation - ( originalAnalogY + (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) ) );
+
         return new Point( dX, dY );
     }
     
@@ -465,12 +521,17 @@ public class TouchMap
     /**
      * Checks if a touch is within capture range of the analog stick.
      * 
-     * @param displacement The displacement of the touch with respect to analog center, in pixels.
+     * @param point Point location
      * 
      * @return True, if the touch is in capture range of the stick.
      */
-    public boolean isInCaptureRange( float displacement )
+    public boolean isInCaptureRange( Point point )
     {
+        // Compute the pythagorean displacement of the stick
+        int dX = point.x;
+        int dY = point.y;
+        float displacement = (float) Math.sqrt( ( dX * dX ) + ( dY * dY ) );
+
         displacement /= ( analogBackScaling * scale );
         return ( displacement >= analogDeadzone ) && ( displacement < analogMaximum + analogPadding );
     }
@@ -518,7 +579,7 @@ public class TouchMap
      * @param profile  The name of the layout profile.
      * @param name     The name of the button.
      */
-    public void updateButton( Profile profile, String name, int w, int h )
+    void updateButton( Profile profile, String name, int w, int h )
     {
         int x = profile.getInt( name + "-x", 0 );
         int y = profile.getInt( name + "-y", 95 );
@@ -530,12 +591,18 @@ public class TouchMap
                 analogBackX = x;
                 analogBackY = y;
                 analogBackImage.fitPercent( analogBackX, getAdjustedYPos(analogBackY), w, h );
+
+                currentAnalogX = analogBackImage.x;
+                currentAnalogY = analogBackImage.y;
+
+                originalAnalogX = analogBackImage.x;
+                originalAnalogY = analogBackImage.y;
                 
                 if( analogForeImage != null )
                 {
-                    int cX = analogBackImage.x + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) );
-                    int cY = analogBackImage.y + (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) );
-                    analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
+                    int cX = currentAnalogX + (int) ( analogBackImage.hWidth * ( analogBackScaling * scale ) );
+                    int cY = currentAnalogY + (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) );
+                    analogForeImage.fitCenter( cX, cY, currentAnalogX, currentAnalogY,
                             (int) ( analogBackImage.width * ( analogBackScaling * scale ) ), (int) ( analogBackImage.height * ( analogBackScaling * scale ) ) );
                 }
             }
@@ -624,7 +691,7 @@ public class TouchMap
      * @param profile  The touchscreen profile containing the analog properties.
      * @param animated True to load the assets in two parts for animation.
      */
-    protected void loadAnalog( Profile profile, boolean animated )
+    private void loadAnalog( Profile profile, boolean animated )
     {
         int x = profile.getInt( "analog-x", -1 );
         int y = profile.getInt( "analog-y", -1 );
@@ -661,7 +728,7 @@ public class TouchMap
      * @param profile The touchscreen profile containing the button properties.
      * @param name    The name of the button/group to load.
      */
-    protected void loadButton( Profile profile, String name )
+    private void loadButton( Profile profile, String name )
     {
         int x = profile.getInt( name + "-x", -1 );
         int y = profile.getInt( name + "-y", -1 );
@@ -697,9 +764,10 @@ public class TouchMap
      * 
      * @return True if the two line segments intersect.
      */
-    private static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
-            float seg1pt2_y, float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
-            Point crossPt )
+    @SuppressWarnings({"SameParameterValue", "UnusedReturnValue"})
+    private static boolean segsCross(float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
+                                     float seg1pt2_y, float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
+                                     Point crossPt )
     {
         float vec1_x = seg1pt2_x - seg1pt1_x;
         float vec1_y = seg1pt2_y - seg1pt1_y;
