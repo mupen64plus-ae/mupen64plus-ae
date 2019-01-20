@@ -163,12 +163,6 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         mIsShuttingDown = true;
         updateNotification();
 
-        // TODO: Remove hack once core fixes crasing on stop[
-        stopForeground(true);
-        stopSelf();
-        android.os.Process.killProcess(android.os.Process.myPid());
-        // END TODO
-
         // Tell the core to quit
         NativeExports.emuStop();
     }
