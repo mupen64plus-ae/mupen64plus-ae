@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keep, includedescriptorclasses class paulscode.android.mupen64plusae.jni.NativeImports { *; }
+-keep class androidx.** { *; }
+-keep class androidx.appcompat.app.AppCompatDelegate
+-keep interface androidx.** { *; }

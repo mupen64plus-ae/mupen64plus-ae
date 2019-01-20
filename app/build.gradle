@@ -27,11 +27,15 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled = false
-            proguardFiles.add(file("proguard-rules.pro"))
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            minifyEnabled true
+            useProguard true
             jniDebuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 

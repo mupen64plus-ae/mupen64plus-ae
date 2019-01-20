@@ -1,26 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="abc_action_bar_home_description">转到主屏幕</string>
-    <string name="abc_action_bar_home_description_format">%1$s：%2$s</string>
-    <string name="abc_action_bar_home_subtitle_description_format">%1$s - %2$s：%3$s</string>
-    <string name="abc_action_bar_up_description">转到上一层级</string>
-    <string name="abc_action_menu_overflow_description">更多选项</string>
-    <string name="abc_action_mode_done">完成</string>
-    <string name="abc_activity_chooser_view_see_all">查看全部</string>
-    <string name="abc_activitychooserview_choose_application">选择应用</string>
-    <string name="abc_capital_off">关闭</string>
-    <string name="abc_capital_on">开启</string>
-    <string name="abc_search_hint">搜索…</string>
-    <string name="abc_searchview_description_clear">清除查询</string>
-    <string name="abc_searchview_description_query">搜索查询</string>
-    <string name="abc_searchview_description_search">搜索</string>
-    <string name="abc_searchview_description_submit">提交查询</string>
-    <string name="abc_searchview_description_voice">语音搜索</string>
-    <string name="abc_shareactionprovider_share_with">分享方式</string>
-    <string name="abc_shareactionprovider_share_with_application">通过%s分享</string>
-    <string name="abc_toolbar_collapse_description">收起</string>
-    <string name="search_menu_title">搜索</string>
-    <string name="status_bar_notification_info_overflow">999+</string>
     <string name="actionCheatEditor_summary">添加、修改和删除自定义的作弊</string>
     <string name="actionCheatEditor_title">管理作弊码</string>
     <string name="actionReloadAssets_summary">不影响用户设置、Rom、游戏保存或其他自定义的数据</string>
@@ -591,7 +570,6 @@
     <string name="controller_buttonSensor">切换传感器按钮</string>
     <string name="inputMapActivity_toggle_sensor">切换传感器</string>getView().findViewById
     <string name="touchscreenStyle_entryCustom">自定义</string>
-    <string name="angrylion_vi_overlay_title">启用 VI 覆盖过滤器</string>
     <string name="categoryAngrylion_title">Angrylion 设置</string>
     <string name="cheatEditor_add">添加作弊</string>
     <string name="cheatEditor_add_advanced">添加高级作弊</string>
