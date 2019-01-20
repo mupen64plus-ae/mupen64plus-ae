@@ -276,6 +276,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 mAnalogPid = -1;
                 mState.axisFractionX = 0;
                 mState.axisFractionY = 0;
+                mTouchMap.resetAnalogPosition();
             }
             
             // Process button inputs

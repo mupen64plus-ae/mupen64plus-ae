@@ -337,8 +337,6 @@ public class VisibleTouchMap extends TouchMap
             if( hY < 0 )
                 hY = (int) ( analogBackImage.hHeight * ( analogBackScaling * scale ) );
 
-
-
             int width = (int) ( analogBackImage.width * ( analogBackScaling * scale ) );
             int height = (int) ( analogBackImage.height * ( analogBackScaling * scale ) );
 

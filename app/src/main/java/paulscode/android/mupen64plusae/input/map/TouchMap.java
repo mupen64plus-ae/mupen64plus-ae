@@ -422,6 +422,15 @@ public class TouchMap
     }
 
     /**
+     * Resets position of analog stick
+     */
+    public void resetAnalogPosition()
+    {
+        currentAnalogX = originalAnalogX;
+        currentAnalogY = originalAnalogY;
+    }
+
+    /**
      * Gets the N64 analog stick displacement.
      * 
      * @param xLocation The x-coordinate of the touch, in pixels.
