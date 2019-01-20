@@ -338,7 +338,6 @@ static intptr_t get_pointer(void *stub)
 static void * parse_dirty_stub(void* addr, uintptr_t *source, uintptr_t *copy, u_int *len, uintptr_t *verifier)
 {
   u_int *ptr=(u_int *)addr;
-  u_int *ptr_rx=(u_int *)(((intptr_t)addr-(intptr_t)base_addr)+(intptr_t)base_addr_rx);
 
   //source
   if(((ptr[0]&0xFFE00000)==0x52A00000)&&((ptr[1]&0xFFE00000)==0x72800000)) //movz/movk
@@ -348,6 +347,7 @@ static void * parse_dirty_stub(void* addr, uintptr_t *source, uintptr_t *copy, u
   }
   else if(((ptr[0]&0x9F000000)==0x90000000)&&((ptr[1]&0xFF000000)==0x91000000)) //adrp/add
   {
+    u_int *ptr_rx=(u_int *)(((intptr_t)ptr-(intptr_t)base_addr)+(intptr_t)base_addr_rx);
     int offset=(((signed int)(ptr[0]<<8)>>13)<<2)|((ptr[0]>>29)&0x3);
     *source=((intptr_t)ptr_rx&~0xfffLL)+((intptr_t)offset<<12);
     *source|=(ptr[1]>>10)&0xfff;
@@ -370,6 +370,7 @@ static void * parse_dirty_stub(void* addr, uintptr_t *source, uintptr_t *copy, u
   }
   else if(((ptr[0]&0x9F000000)==0x90000000)&&((ptr[1]&0xFF000000)==0x91000000)) //adrp/add
   {
+    u_int *ptr_rx=(u_int *)(((intptr_t)ptr-(intptr_t)base_addr)+(intptr_t)base_addr_rx);
     int offset=(((signed int)(ptr[0]<<8)>>13)<<2)|((ptr[0]>>29)&0x3);
     *copy=((intptr_t)ptr_rx&~0xfffLL)+((intptr_t)offset<<12);
     *copy|=(ptr[1]>>10)&0xfff;
