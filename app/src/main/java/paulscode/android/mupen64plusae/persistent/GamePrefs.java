@@ -557,7 +557,7 @@ public class GamePrefs
         touchscreenAutoHold = tmpTouchscreenAutoHold;
 
         // Relative touchscreen joystick
-        final String tmpTouchscreenAnalogRelative = mPreferences.getString( "touchscreenAnalogRelative", "default" );
+        final String tmpTouchscreenAnalogRelative = mPreferences.getString( "touchscreenAnalogRelative_game", "default" );
         isTouchscreenAnalogRelative = tmpTouchscreenAnalogRelative.equals("default") ? globalPrefs.isTouchscreenAnalogRelative : tmpTouchscreenAnalogRelative.equals( "Yes" );
 
         // Peripheral share mode

@@ -50,7 +50,7 @@
         android:entries="@array/relativeAnalog_entries"
         android:entryValues="@array/relativeAnalog_values"
         android:icon="@drawable/ic_phone"
-        android:key="touchscreenAnalogRelative"
+        android:key="touchscreenAnalogRelative_game"
         android:summary="@string/selectedValue"
         android:title="@string/relativeAnalog_title" />
 
