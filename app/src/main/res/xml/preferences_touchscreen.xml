@@ -93,7 +93,7 @@
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenAutoHold_title" />
     <androidx.preference.CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="touchscreenAnalogRelative_global"
         android:summary="@string/relativeAnalog_summary"
         android:title="@string/relativeAnalog_title" />

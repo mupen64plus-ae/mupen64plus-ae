@@ -441,7 +441,7 @@ public class GlobalPrefs
         touchscreenAutoHideEnabled = mPreferences.getBoolean( "touchscreenAutoHideEnabled", true );
         touchscreenAutoHideSeconds = mPreferences.getInt( "touchscreenAutoHideSeconds", 5 );
         isTouchscreenAnimated = mPreferences.getBoolean( "touchscreenAnimated_v2", true );
-        isTouchscreenAnalogRelative = mPreferences.getBoolean( "touchscreenAnalogRelative_global", true );
+        isTouchscreenAnalogRelative = mPreferences.getBoolean( "touchscreenAnalogRelative_global", false );
         // Determine the touchscreen layout
         touchscreenSkin = mPreferences.getString( "touchscreenSkin", "JoshaGibs" );
         if( touchscreenSkin.equals( "Custom" ) )
