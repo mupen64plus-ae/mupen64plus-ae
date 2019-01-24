@@ -663,6 +663,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
         {
             mDrawerLayout.closeDrawer( GravityCompat.START );
+            mOverlay.requestFocus();
         }
     }
 
@@ -703,6 +704,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             if( mDrawerLayout.isDrawerOpen( GravityCompat.START ) )
             {
                 mDrawerLayout.closeDrawer( GravityCompat.START );
+                mOverlay.requestFocus();
             }
             break;
         case R.id.menuItem_file_load:
@@ -934,6 +936,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         ReloadAllMenus();
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
+        mOverlay.requestFocus();
 
         if(mShouldExit)
         {
