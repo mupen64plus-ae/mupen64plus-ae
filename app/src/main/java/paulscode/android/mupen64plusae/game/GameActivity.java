@@ -448,7 +448,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     @Override
     public void onFpsChanged(int newValue)
     {
-        // Set the screen orientation
+        // Set the screen orientation the first time there is a screen update
         if (mGlobalPrefs.displayOrientation == -1 && !mScreenOrientationSet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             mScreenOrientationSet = true;
@@ -1234,7 +1234,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                         }
                         isControllerPlugged[index] = false;
 
-                        Log.e("GameActivity", "controller " + index + " was unplugged");
+                        Log.i("GameActivity", "controller " + index + " was unplugged");
                     }
                 }
             }

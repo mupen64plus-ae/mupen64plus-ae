@@ -219,6 +219,12 @@ public class GlobalPrefs
     /** The height of the viewing surface, in pixels with the correct aspect ratio. */
     private int videoSurfaceHeightOriginal;
 
+    /** The rendering width in pixels with the correct aspect ratio. */
+    private int videoRenderWidthOriginal;
+
+    /** The rendering heigh in pixels with the correct aspect ratio. */
+    private int videoRenderHeightOriginal;
+
     /** The width of the viewing surface, in pixels with the stretched aspect ratio. */
     private int videoSurfaceWidthStretch;
 
@@ -935,20 +941,29 @@ public class GlobalPrefs
 
         final float aspect = 0.75f; // TODO: Handle PAL
 
+        // Assume we are are in portrait mode if height is greater than the width
         boolean portrait = videoSurfaceHeightStretch > videoSurfaceWidthStretch;
+
         if(portrait)
         {
             videoSurfaceWidthOriginal = videoSurfaceWidthStretch;
             videoSurfaceHeightOriginal = Math.round( videoSurfaceWidthOriginal*aspect);
+            videoRenderWidthOriginal = Math.round( videoSurfaceWidthStretch / aspect );
+            videoRenderHeightOriginal = videoSurfaceWidthStretch;
         }
         else
         {
             videoSurfaceWidthOriginal = Math.round( videoSurfaceHeightStretch / aspect );
             videoSurfaceHeightOriginal = videoSurfaceHeightStretch;
+            videoRenderWidthOriginal = videoSurfaceWidthOriginal;
+            videoRenderHeightOriginal = videoSurfaceHeightOriginal;
         }
+
+        Log.i("GlobalPrefs", "render_width=" + videoRenderWidthOriginal + " render_height=" + videoRenderHeightOriginal);
+
     }
 
-    int getResolutionWidth(boolean stretch, boolean fixAspect, int hResolution)
+    int getResolutionWidth(boolean stretch, int hResolution)
     {
         if( hResolution == -1)
         {
@@ -979,56 +994,9 @@ public class GlobalPrefs
                 tempVideoRenderWidth = 160;
                 break;
             case 0:
-                hResolution = videoSurfaceHeightOriginal;
-                tempVideoRenderWidth = videoSurfaceWidthOriginal;
+                tempVideoRenderWidth = videoRenderWidthOriginal;
                 break;
             default:
-                break;
-        }
-
-        boolean isPortrait = (displayOrientation != -1 &&
-                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
-                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) ||
-                (displayOrientation == -1 && currentDisplayOrientation == ORIENTATION_PORTRAIT);
-
-        if(stretch || fixAspect)
-        {
-            //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
-            //ratio to make it full screen
-            if(!isPortrait)
-            {
-                float widthRatio = (float)videoSurfaceWidthStretch/(float)videoSurfaceWidthOriginal;
-                final float newWidth = tempVideoRenderWidth * widthRatio;
-                tempVideoRenderWidth = Math.round(newWidth);
-            }
-            else if(fixAspect)
-            {
-                float screenAspect = videoSurfaceHeightStretch*1.0f/videoSurfaceWidthStretch;
-                tempVideoRenderWidth = Math.round(hResolution*screenAspect);
-            }
-        }
-
-        return tempVideoRenderWidth;
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    int getResolutionHeight(boolean stretch, boolean fixAspect, int hResolution)
-    {
-        if( hResolution == -1)
-        {
-            hResolution = displayResolution;
-        }
-
-        // Display prefs, default value is the global default
-        int tempVideoRenderHeight;
-
-        switch( hResolution )
-        {
-            case 0:
-                tempVideoRenderHeight = videoSurfaceHeightOriginal;
-                break;
-            default:
-                tempVideoRenderHeight = hResolution;
                 break;
         }
 
@@ -1039,24 +1007,72 @@ public class GlobalPrefs
 
         if(stretch)
         {
-            float heightRatio = (float)videoSurfaceHeightStretch/(float)videoSurfaceHeightOriginal;
-
-            //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
-            //ratio to make it full screen
-            if(isPortrait)
-            {
-                final float newWidth = tempVideoRenderHeight * heightRatio;
-                tempVideoRenderHeight = Math.round(newWidth);
+            float widthRatio;
+            if (!isPortrait) {
+                widthRatio = ((float)videoSurfaceWidthStretch)/videoRenderWidthOriginal;
+            } else {
+                widthRatio = ((float)videoSurfaceHeightStretch)/videoRenderWidthOriginal;
             }
+
+            final float newWidth = tempVideoRenderWidth * widthRatio;
+            tempVideoRenderWidth = Math.round(newWidth);
         }
 
-        if(fixAspect && isPortrait)
-        {
-            int width = getResolutionWidth(false, true, hResolution);
-            float aspect = videoSurfaceHeightStretch*1.0f/videoSurfaceWidthStretch;
-            tempVideoRenderHeight = Math.round(width/aspect);
+        return tempVideoRenderWidth;
+    }
+
+    int getResolutionHeight(boolean stretch, int hResolution)
+    {
+        if (hResolution == -1) {
+            hResolution = displayResolution;
+        }
+
+        return hResolution == 0 ? videoRenderHeightOriginal : hResolution;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    int getSurfaceResolutionHeight(boolean stretch, boolean keepAspect)
+    {
+        // Display prefs, default value is the global default
+        int tempVideoRenderHeight = videoSurfaceHeightOriginal;
+
+        boolean isPortrait = (displayOrientation != -1 &&
+                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) ||
+                (displayOrientation == -1 && currentDisplayOrientation == ORIENTATION_PORTRAIT);
+
+        //If we are in stretch mode we have to increase the approppriate dimension by the corresponding
+        //ratio to make it full screen
+        if (stretch && isPortrait) {
+            float heightRatio = (float)videoSurfaceHeightStretch/(float)videoSurfaceHeightOriginal;
+            final float newHeight = tempVideoRenderHeight * heightRatio;
+            tempVideoRenderHeight = Math.round(newHeight);
+        }
+
+        if (!stretch && isPortrait && keepAspect) {
+            float ratio = (float)videoSurfaceHeightOriginal/(float)videoSurfaceWidthStretch;
+            final float newHeight = tempVideoRenderHeight * ratio;
+            tempVideoRenderHeight = Math.round(newHeight);
         }
 
         return tempVideoRenderHeight;
+    }
+
+    int getSurfaceResolutionWidth(boolean stretch)
+    {
+        int tempVideoRenderWidth = videoSurfaceWidthOriginal;
+
+        boolean isPortrait = (displayOrientation != -1 &&
+                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) ||
+                (displayOrientation == -1 && currentDisplayOrientation == ORIENTATION_PORTRAIT);
+
+        if(stretch && !isPortrait) {
+            float widthRatio = (float) videoSurfaceWidthStretch / (float) videoSurfaceWidthOriginal;
+            final float newWidth = tempVideoRenderWidth * widthRatio;
+            tempVideoRenderWidth = Math.round(newWidth);
+        }
+
+        return tempVideoRenderWidth;
     }
 }
