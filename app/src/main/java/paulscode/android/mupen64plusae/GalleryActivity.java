@@ -115,7 +115,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     public float galleryAspectRatio;
 
     // Misc.
-    private List<GalleryItem> mGalleryItems = null;
     private GalleryItem mSelectedItem = null;
     private boolean mDragging = false;
 
@@ -137,6 +136,25 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private void loadGameFromExtras( Bundle extras) {
 
         if (extras != null) {
+
+            Intent intent = new Intent(CoreService.SERVICE_EVENT);
+            // You can also include some extra data.
+            intent.putExtra(CoreService.SERVICE_QUIT, true);
+            sendBroadcast(intent);
+
+            int currentAttempt = 0;
+            while (ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName) &&
+                    currentAttempt++ < 100) {
+                Log.i("GalleryActivity", "Waiting on pevious instance to exit");
+
+                // Sleep for 10 ms to prevent a tight loop
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             if (!extras.getBoolean(KEY_IS_LEANBACK)) {
                 Log.i("GalleryActivity", "Loading ROM from other app");
                 final String givenRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
@@ -155,7 +173,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 String md5 = extras.getString(ActivityHelper.Keys.ROM_MD5);
                 String crc = extras.getString(ActivityHelper.Keys.ROM_CRC);
                 String headerName = extras.getString(ActivityHelper.Keys.ROM_HEADER_NAME);
-                Byte countryCode = extras.getByte(ActivityHelper.Keys.ROM_COUNTRY_CODE);
+                byte countryCode = extras.getByte(ActivityHelper.Keys.ROM_COUNTRY_CODE);
                 String artPath = extras.getString(ActivityHelper.Keys.ROM_ART_PATH);
                 String goodName = extras.getString(ActivityHelper.Keys.ROM_GOOD_NAME);
 
@@ -170,6 +188,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_ART_PATH);
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_GOOD_NAME);
             }
+        } else {
+            Intent intent = new Intent(CoreService.SERVICE_EVENT);
+            // You can also include some extra data.
+            intent.putExtra(CoreService.SERVICE_RESUME, true);
+            sendBroadcast(intent);
         }
     }
 
@@ -281,7 +304,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 mGameSidebar.setVisibility( View.GONE );
                 mGridView.requestFocus();
 
-                if(mGridView.getAdapter().getItemCount() != 0)
+                if(mGridView.getAdapter() != null && mGridView.getAdapter().getItemCount() != 0)
                 {
                     mGridView.getAdapter().notifyItemChanged(0);
                 }
@@ -383,11 +406,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         if(ActivityHelper.isServiceRunning(this, ActivityHelper.coreServiceProcessName)) {
             Log.i("GalleryActivity", "CoreService is running");
         }
-
-        Intent intent = new Intent(CoreService.SERVICE_EVENT);
-        // You can also include some extra data.
-        intent.putExtra(CoreService.SERVICE_RESUME, true);
-        sendBroadcast(intent);
     }
 
     @Override
@@ -914,20 +932,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         refreshGridAsync();
     }
 
-    void refreshGrid()
-    {
-        //Reload global prefs
-        mAppData = new AppData( this );
-        mGlobalPrefs = new GlobalPrefs( this, mAppData );
-
-        List<GalleryItem> items = new ArrayList<>();
-        List<GalleryItem> recentItems = new ArrayList<>();
-
-        GalleryRefreshTask galleryRefreshTask = new GalleryRefreshTask(this, this, mGlobalPrefs, mSearchQuery, mConfig);
-        galleryRefreshTask.generateGridItemsAndSaveConfig(items, recentItems);
-        refreshGrid(items, recentItems);
-    }
-
     @Override
     public void onGalleryRefreshFinished(List<GalleryItem> items, List<GalleryItem> recentItems) {
         refreshGrid(items, recentItems);
@@ -948,7 +952,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             items = combinedItems;
         }
 
-        mGalleryItems = items;
+        List<GalleryItem> galleryItems = items;
         mGridView.setAdapter( new GalleryItem.Adapter( this, items ) );
 
         // Allow the headings to take up the entire width of the layout
@@ -985,7 +989,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         galleryWidth = width / galleryColumns - galleryHalfSpacing * 2;
 
         layoutManager.setSpanCount( galleryColumns );
-        mGridView.getAdapter().notifyDataSetChanged();
+        if (mGridView.getAdapter() != null) {
+            mGridView.getAdapter().notifyDataSetChanged();
+        }
         mGridView.setFocusable(false);
         mGridView.setFocusableInTouchMode(false);
 
@@ -997,7 +1003,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         if (mSelectedItem != null) {
             // Repopulate the game sidebar
-            for (final GalleryItem item : mGalleryItems) {
+            for (final GalleryItem item : galleryItems) {
                 if (mSelectedItem.md5.equals( item.md5 )) {
                     onGalleryItemClick( item );
                     break;

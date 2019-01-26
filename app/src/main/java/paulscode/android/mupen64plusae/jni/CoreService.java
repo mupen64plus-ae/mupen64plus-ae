@@ -81,6 +81,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     public static final String COMPLETE_EXTENSION = "complete";
     public static final String SERVICE_EVENT = "M64P_SERVICE_EVENT";
     public static final String SERVICE_RESUME = "M64P_SERVICE_RESUME";
+    public static final String SERVICE_QUIT = "M64P_SERVICE_QUIT";
     final static String NOTIFICATION_CHANNEL_ID = "CoreServiceChannel";
     final static String NOTIFICATION_CHANNEL_ID_V2 = "CoreServiceChannelV2";
 
@@ -135,12 +136,23 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            boolean message = intent.getBooleanExtra(SERVICE_RESUME, false);
+            boolean resumeMessage = intent.getBooleanExtra(SERVICE_RESUME, false);
+            boolean quitMessage = intent.getBooleanExtra(SERVICE_QUIT, false);
 
-            if(message && !mIsShuttingDown && mIsRunning)
-            {
-                ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mRomMd5, mRomCrc,
-                        mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mLegacySaveName, mIsRestarting);
+            if (!mIsShuttingDown && mIsRunning) {
+                if (resumeMessage) {
+                    ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mRomMd5, mRomCrc,
+                            mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mLegacySaveName, mIsRestarting);
+                }
+
+                if (quitMessage) {
+
+                    //Stop the service immediately
+                    stopForeground(true);
+                    stopSelf();
+
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                }
             }
         }
     };
