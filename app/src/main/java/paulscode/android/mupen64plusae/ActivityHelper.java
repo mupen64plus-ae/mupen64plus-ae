@@ -60,6 +60,7 @@ import paulscode.android.mupen64plusae.task.ExtractTexturesService;
 import paulscode.android.mupen64plusae.util.LogcatActivity;
 
 import static android.content.Context.ACTIVITY_SERVICE;
+import static paulscode.android.mupen64plusae.GalleryActivity.KEY_IS_LEANBACK;
 
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
@@ -194,6 +195,7 @@ public class ActivityHelper
             intent.putExtras(data);
             context.startActivity( intent );
 
+            data.removeExtra(KEY_IS_LEANBACK);
             data.removeExtra(ActivityHelper.Keys.ROM_PATH);
             data.removeExtra(ActivityHelper.Keys.ZIP_PATH );
             data.removeExtra(ActivityHelper.Keys.ROM_MD5);
@@ -203,14 +205,6 @@ public class ActivityHelper
             data.removeExtra(ActivityHelper.Keys.ROM_ART_PATH);
             data.removeExtra(ActivityHelper.Keys.ROM_GOOD_NAME);
         }
-    }
-    
-    private static void startGalleryActivity(Context context, String romPath)
-    {
-        Intent intent = new Intent( context, GalleryActivity.class );
-        if( !TextUtils.isEmpty( romPath ) )
-            intent.putExtra( ActivityHelper.Keys.ROM_PATH, romPath );
-        context.startActivity( intent );
     }
 
     static void startGameActivity( Activity activity, String romPath, String romMd5, String romCrc,
