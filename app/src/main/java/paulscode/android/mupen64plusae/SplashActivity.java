@@ -479,9 +479,12 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
     {
         Channel.Builder builder = new Channel.Builder();
 
+        Intent appIntent = new Intent(getApplicationContext(), SplashActivity.class);
+        appIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+
         builder.setType(TvContractCompat.Channels.TYPE_PREVIEW)
                 .setDisplayName(getString(R.string.showRecentlyPlayed_title))
-                .setAppLinkIntent(new Intent( getApplicationContext(), SplashActivity.class ));
+                .setAppLinkIntent(appIntent);
 
         Context context = getApplicationContext();
         Uri channelUri = context.getContentResolver().insert(
