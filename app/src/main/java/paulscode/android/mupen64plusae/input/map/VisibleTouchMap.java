@@ -232,7 +232,7 @@ public class VisibleTouchMap extends TouchMap
         if( mFpsFrame != null )
         {
             mFpsFrame.setScale( fpsScale );
-            mFpsFrame.fitPercent( mFpsFrameX, mFpsFrameY, w, h );
+            mFpsFrame.fitPercent( mFpsFrameX, getAdjustedFpsYPos(mFpsFrameY), w, h );
         }
         for( Image image : mNumerals)
         {

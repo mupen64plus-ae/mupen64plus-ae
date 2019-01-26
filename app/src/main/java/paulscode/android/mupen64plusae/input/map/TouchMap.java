@@ -268,9 +268,26 @@ public class TouchMap
      */
     int getAdjustedYPos(int y)
     {
-        if(mResources.getConfiguration().orientation  == ORIENTATION_PORTRAIT)
+        if(mResources.getConfiguration().orientation == ORIENTATION_PORTRAIT)
         {
             return 50 + (int)((y/100.0) * 50.0f);
+        }
+        else
+        {
+            return y;
+        }
+    }
+
+    /**
+     * Adjusts Y so that in portrait mode, the FPS shows up in the top half of the screen
+     * @param y Percentage before adjustment
+     * @return New percentage at the bottom of the screen
+     */
+    int getAdjustedFpsYPos(int y)
+    {
+        if(mResources.getConfiguration().orientation == ORIENTATION_PORTRAIT)
+        {
+            return (int)((y/100.0) * 45.0f);
         }
         else
         {
