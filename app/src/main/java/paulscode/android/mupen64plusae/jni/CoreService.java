@@ -170,6 +170,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     void shutdownEmulator()
     {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
+        mFpsCangedHandler.removeCallbacks(mLastFpsChangedChecker);
         mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
 
         mIsShuttingDown = true;
@@ -198,52 +199,44 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         resumeEmulator();
         Log.i("CoreService", "Saving file: " + latestSave);
 
-        NativeImports.addOnStateCallbackListener(new NativeImports.OnStateCallbackListener()
+        if (shutdownOnFinish)
         {
+            mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
+            mFpsCangedHandler.removeCallbacks(mLastFpsChangedChecker);
+            mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
+
+            mIsShuttingDown = true;
+        }
+
+        NativeImports.addOnStateCallbackListener(new NativeImports.OnStateCallbackListener() {
             @Override
-            public void onStateCallback( int paramChanged, int newValue )
-            {
-                if( paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE )
-                {
+            public void onStateCallback( int paramChanged, int newValue ) {
+                if (paramChanged == NativeConstants.M64CORE_STATE_SAVECOMPLETE) {
                     removeOnStateCallbackListener( this );
 
                     //newValue == 1, then it was successful
-                    if(newValue == 1)
-                    {
+                    if (newValue == 1) {
                         try {
-                            if(!new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile()) {
+                            if (!new File(latestSave + "." + COMPLETE_EXTENSION).createNewFile()) {
                                 Log.e("CoreService", "Unable to save file due to file write failure: " + latestSave);
                             }
                         } catch (IOException e) {
                             Log.e("CoreService", "Unable to save file due to file write failure: " + latestSave);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         Log.e("CoreService", "Unable to save file due to bad return: " + latestSave);
                     }
 
-                    if(shutdownOnFinish)
-                    {
+                    if (shutdownOnFinish) {
                         shutdownEmulator();
                     }
-                }
-                else
-                {
+                } else {
                     Log.i("CoreService", "Param changed = " + paramChanged + " value = " + newValue);
                 }
             }
         } );
 
         NativeExports.emuSaveFile( latestSave );
-
-        if(shutdownOnFinish)
-        {
-            mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
-            mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
-
-            mIsShuttingDown = true;
-        }
     }
 
     void saveState(String filename)
@@ -697,6 +690,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
 
+            // Call shutdown if it has not been done already
+            shutdownEmulator();
+
+            mFpsCangedHandler.removeCallbacks(mLastFpsChangedChecker);
             mFpsCangedHandler.postDelayed(mLastFpsChangedChecker, 500);
         }
     };

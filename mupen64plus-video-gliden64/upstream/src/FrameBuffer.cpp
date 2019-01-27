@@ -1478,6 +1478,11 @@ void FrameBufferList::renderBuffer()
 
 	drawer.copyTexturedRect(blitParams);
 
+
+    //std::stringstream lcOutput2;
+   // lcOutput2 << "dstX1=" << dstX1 << " drawing_width=" << m_overscan.getDrawingWidth() << " hx1=" << hx1 << " scaleX=" << viScaleX << " dstScaleX=" << dstScaleX;
+    //LOG(LOG_ERROR, lcOutput2.str().c_str());
+
 	if (pNextBuffer != nullptr) {
 		pNextBuffer->m_isMainBuffer = true;
 		pFilteredBuffer = pNextBuffer;
