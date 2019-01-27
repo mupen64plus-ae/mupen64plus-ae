@@ -599,7 +599,7 @@ public final class FileUtil
                         return extractedFile.getPath();
                     }
                 }
-                catch( IOException e )
+                catch( IOException|java.lang.IllegalArgumentException e )
                 {
                     Log.w( "ExtractFirstROMFrom", e );
                 }

@@ -541,6 +541,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         RomHeader header = new RomHeader(finalRomPath);
 
+        boolean successful = false;
         if(header.isZip)
         {
             finalRomPath = FileUtil.ExtractFirstROMFromZip(givenRomPath, mGlobalPrefs.unzippedRomsDir);
@@ -565,12 +566,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     database.setDatabaseFile(mAppData.mupen64plus_ini);
                 }
 
+                successful = true;
                 final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, finalRomPath, header.crc, header.countryCode );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
-
                 launchGameActivity( finalRomPath, null, computedMd5, header.crc, header.name,
                         header.countryCode.getValue(), artPath, detail.goodName, false );
             }
+        }
+
+        if (!successful) {
+            Notifier.showToast(this, R.string.toast_nativeMainFailure07);
         }
     }
 
