@@ -499,8 +499,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             @Override
             public boolean onQueryTextChange( String query )
             {
-                mSearchQuery = query;
-                refreshGridAsync();
+                if (!mSearchView.isIconified()) {
+                    mSearchQuery = query;
+                    refreshGridAsync();
+                }
+
                 return false;
             }
         } );
