@@ -1155,17 +1155,14 @@ EXPORT m64p_error CALL ConfigGetParameter(m64p_handle ConfigSectionHandle, const
     {
         case M64TYPE_INT:
             if (MaxSize < (int)sizeof(int)) return M64ERR_INPUT_INVALID;
-            if (var->type != M64TYPE_INT && var->type != M64TYPE_FLOAT) return M64ERR_WRONG_TYPE;
             *((int *) ParamValue) = ConfigGetParamInt(ConfigSectionHandle, ParamName);
             break;
         case M64TYPE_FLOAT:
             if (MaxSize < (int)sizeof(float)) return M64ERR_INPUT_INVALID;
-            if (var->type != M64TYPE_INT && var->type != M64TYPE_FLOAT) return M64ERR_WRONG_TYPE;
             *((float *) ParamValue) = ConfigGetParamFloat(ConfigSectionHandle, ParamName);
             break;
         case M64TYPE_BOOL:
             if (MaxSize < (int)sizeof(int)) return M64ERR_INPUT_INVALID;
-            if (var->type != M64TYPE_BOOL && var->type != M64TYPE_INT) return M64ERR_WRONG_TYPE;
             *((int *) ParamValue) = ConfigGetParamBool(ConfigSectionHandle, ParamName);
             break;
         case M64TYPE_STRING:
@@ -1436,7 +1433,7 @@ EXPORT float CALL ConfigGetParamFloat(m64p_handle ConfigSectionHandle, const cha
         return 0.0;
     }
 
-    /* translate the actual variable type to an int */
+    /* translate the actual variable type to a float */
     switch(var->type)
     {
         case M64TYPE_INT:
@@ -1480,7 +1477,7 @@ EXPORT int CALL ConfigGetParamBool(m64p_handle ConfigSectionHandle, const char *
         return 0;
     }
 
-    /* translate the actual variable type to an int */
+    /* translate the actual variable type to an int (0 or 1) */
     switch(var->type)
     {
         case M64TYPE_INT:
@@ -1525,7 +1522,7 @@ EXPORT const char * CALL ConfigGetParamString(m64p_handle ConfigSectionHandle, c
         return "";
     }
 
-    /* translate the actual variable type to an int */
+    /* translate the actual variable type to a string */
     switch(var->type)
     {
         case M64TYPE_INT:

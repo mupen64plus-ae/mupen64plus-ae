@@ -2261,7 +2261,9 @@ static void emit_writeword_dualindexedx4(int rt, int rs1, int rs2)
 
 static void emit_writeword_indexed_tlb(int rt, int addr, int rs, int map)
 {
+  assert(map>=0);
   if(map<0) emit_writeword_indexed(rt, addr, rs);
+  else if(rs<0) emit_writeword_indexed(rt, addr, map);
   else {
     if(addr==0) {
       emit_writeword_dualindexedx4(rt, rs, map);
@@ -2292,7 +2294,9 @@ static void emit_writehword_indexed(int rt, int offset, int rs)
 
 static void emit_writehword_indexed_tlb(int rt, int addr, int rs, int map)
 {
+  assert(map>=0);
   if(map<0) emit_writehword_indexed(rt, addr, rs);
+  else if(rs<0) emit_writehword_indexed(rt, addr, map);
   else {
     if(addr==0) {
       emit_shlimm64(map,2,HOST_TEMPREG);
@@ -2315,7 +2319,9 @@ static void emit_writebyte_indexed(int rt, int offset, int rs)
 
 static void emit_writebyte_indexed_tlb(int rt, int addr, int rs, int map)
 {
+  assert(map>=0);
   if(map<0) emit_writebyte_indexed(rt, addr, rs);
+  else if(rs<0) emit_writebyte_indexed(rt, addr, map);
   else {
     if(addr==0) {
       emit_shlimm64(map,2,HOST_TEMPREG);
@@ -2496,6 +2502,12 @@ static void emit_addsr12(int rs1,int rs2,int rt)
 {
   assem_debug("add %s,%s,%s lsr #12",regname[rt],regname[rs1],regname[rs2]);
   output_w32(0x0b400000|rs2<<16|12<<10|rs1<<5|rt);
+}
+
+static void emit_addsl2(int rs1,int rs2,int rt)
+{
+  assem_debug("add %s,%s,%s lsl #2",regname64[rt],regname64[rs1],regname64[rs2]);
+  output_w32(0x8b000000|rs2<<16|2<<10|rs1<<5|rt);
 }
 
 #ifdef HAVE_CONDITIONAL_CALL
@@ -3582,21 +3594,6 @@ static void do_tlb_w_branch_debug(int map, int c, u_int addr, intptr_t *jaddr)
     emit_testimm64(map,WRITE_PROTECT);
     *jaddr=(intptr_t)out;
     emit_jne(0);
-  }
-}
-
-static void gen_addr(int ar, int map) {
-  if(map>=0) {
-    assem_debug("add %s,%s,%s lsl #2",regname64[ar],regname64[ar],regname64[map]);
-    output_w32(0x8b000000|map<<16|2<<10|ar<<5|ar);
-  }
-}
-
-// This reverses the above operation
-static void gen_orig_addr(int ar, int map) {
-  if(map>=0) {
-    assem_debug("sub %s,%s,%s lsl #2",regname64[ar],regname64[ar],regname64[map]);
-    output_w32(0xcb000000|map<<16|2<<10|ar<<5|ar);
   }
 }
 

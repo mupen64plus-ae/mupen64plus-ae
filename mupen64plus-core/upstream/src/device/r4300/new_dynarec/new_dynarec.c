@@ -4222,7 +4222,7 @@ static void store_assemble(int i,struct regstat *i_regs)
 static void storelr_assemble(int i,struct regstat *i_regs)
 {
   int s,th,tl;
-  int temp;
+  int temp,real_temp;
   int temp2;
   int map=-1;
   int offset;
@@ -4279,9 +4279,12 @@ static void storelr_assemble(int i,struct regstat *i_regs)
       emit_jmp(0);
     }
   }
+  real_temp=temp;
 #if NEW_DYNAREC >= NEW_DYNAREC_ARM
-  gen_addr(temp,map);
-  map=-1;
+  if(map>=0){
+    temp=-1;
+    emit_addsl2(real_temp,map,map);
+  }
 #endif
 
   if (opcode[i]==0x2C||opcode[i]==0x2D) { // SDL/SDR
@@ -4289,10 +4292,10 @@ static void storelr_assemble(int i,struct regstat *i_regs)
     if(!rs2[i]) temp2=th=tl;
   }
 
-  emit_testimm(temp,2);
+  emit_testimm(real_temp,2);
   case2=(intptr_t)out;
   emit_jne(0);
-  emit_testimm(temp,1);
+  emit_testimm(real_temp,1);
   case1=(intptr_t)out;
   emit_jne(0);
   // 0
@@ -4344,7 +4347,7 @@ static void storelr_assemble(int i,struct regstat *i_regs)
   emit_jmp(0);
   // 2
   set_jump_target(case2,(intptr_t)out);
-  emit_testimm(temp,1);
+  emit_testimm(real_temp,1);
   case3=(intptr_t)out;
   emit_jne(0);
   if (opcode[i]==0x2A) { // SWL
@@ -4405,18 +4408,18 @@ static void storelr_assemble(int i,struct regstat *i_regs)
   set_jump_target(done1,(intptr_t)out);
   set_jump_target(done2,(intptr_t)out);
   if (opcode[i]==0x2C) { // SDL
-    emit_testimm(temp,4);
+    emit_testimm(real_temp,4);
     done0=(intptr_t)out;
     emit_jne(0);
-    emit_andimm(temp,~3,temp);
+    emit_andimm(real_temp,~3,real_temp);
     emit_writeword_indexed_tlb(temp2,4,temp,map);
     set_jump_target(done0,(intptr_t)out);
   }
   if (opcode[i]==0x2D) { // SDR
-    emit_testimm(temp,4);
+    emit_testimm(real_temp,4);
     done0=(intptr_t)out;
     emit_jeq(0);
-    emit_andimm(temp,~3,temp);
+    emit_andimm(real_temp,~3,real_temp);
     emit_writeword_indexed_tlb(temp2,-4,temp,map);
     set_jump_target(done0,(intptr_t)out);
   }
@@ -4424,23 +4427,22 @@ static void storelr_assemble(int i,struct regstat *i_regs)
     add_stub(STORELR_STUB,jaddr,(intptr_t)out,0,(intptr_t)i_regs,rs2[i],ccadj[i],reglist);
   if(!using_tlb) {
     #if NEW_DYNAREC >= NEW_DYNAREC_ARM
-    map=get_reg(i_regs->regmap,ROREG);
-    if(map<0) map=HOST_TEMPREG;
-    gen_orig_addr(temp,map);
+    if((map>=0)&&(map!=HOST_TEMPREG))
+      emit_loadreg(ROREG,map);
     #endif
     #if defined(HOST_IMM8) || defined(NEED_INVC_PTR)
     int ir=get_reg(i_regs->regmap,INVCP);
     assert(ir>=0);
-    emit_cmpmem_indexedsr12_reg(ir,temp,1);
+    emit_cmpmem_indexedsr12_reg(ir,real_temp,1);
     #else
-    emit_cmpmem_indexedsr12_imm((intptr_t)g_dev.r4300.cached_interp.invalid_code,temp,1);
+    emit_cmpmem_indexedsr12_imm((intptr_t)g_dev.r4300.cached_interp.invalid_code,real_temp,1);
     #endif
     #if defined(HAVE_CONDITIONAL_CALL) && !defined(DESTRUCTIVE_SHIFT)
-    emit_callne(invalidate_addr_reg[temp]);
+    emit_callne(invalidate_addr_reg[real_temp]);
     #else
     intptr_t jaddr2=(intptr_t)out;
     emit_jne(0);
-    add_stub(INVCODE_STUB,jaddr2,(intptr_t)out,reglist|(1<<HOST_CCREG),temp,0,0,0);
+    add_stub(INVCODE_STUB,jaddr2,(intptr_t)out,reglist|(1<<HOST_CCREG),real_temp,0,0,0);
     #endif
   }
 }

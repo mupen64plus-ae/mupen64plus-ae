@@ -1939,6 +1939,10 @@ static void emit_writeword_dualindexedx4(int rt, int rs1, int rs2)
 static void emit_writeword_indexed_tlb(int rt, int addr, int rs, int map)
 {
   if(map<0) emit_writeword_indexed(rt, addr, rs);
+  else if(rs<0) {
+    assert(map>=0);
+    emit_writeword_indexed(rt, addr, map);
+  }
   else {
     if(addr==0) {
       emit_writeword_dualindexedx4(rt, rs, map);
@@ -1970,6 +1974,10 @@ static void emit_writehword_indexed(int rt, int offset, int rs)
 static void emit_writehword_indexed_tlb(int rt, int addr, int rs, int map)
 {
   if(map<0) emit_writehword_indexed(rt, addr, rs);
+  else if(rs<0) {
+    assert(map>=0);
+    emit_writehword_indexed(rt, addr, map);
+  }
   else {
     assem_debug("add %s,%s,%s,lsl #2",regname[HOST_TEMPREG],regname[rs],regname[map]);
     output_w32(0xe0800000|rd_rn_rm(HOST_TEMPREG,rs,map)|(2<<7));
@@ -1994,6 +2002,10 @@ static void emit_writebyte_dualindexedx4(int rt, int rs1, int rs2)
 static void emit_writebyte_indexed_tlb(int rt, int addr, int rs, int map)
 {
   if(map<0) emit_writebyte_indexed(rt, addr, rs);
+  else if(rs<0) {
+    assert(map>=0);
+    emit_writebyte_indexed(rt, addr, map);
+  }
   else {
     if(addr==0) {
       emit_writebyte_dualindexedx4(rt, rs, map);
@@ -2243,6 +2255,12 @@ static void emit_addsr12(int rs1,int rs2,int rt)
 {
   assem_debug("add %s,%s,%s lsr #12",regname[rt],regname[rs1],regname[rs2]);
   output_w32(0xe0800620|rd_rn_rm(rt,rs1,rs2));
+}
+
+static void emit_addsl2(int rs1,int rs2,int rt)
+{
+  assem_debug("add %s,%s,%s lsl #2",regname[rt],regname[rs1],regname[rs2]);
+  output_w32(0xe0800100|rd_rn_rm(rt,rs1,rs2));
 }
 
 static void emit_callne(int a)
@@ -3063,21 +3081,6 @@ static void do_tlb_w_branch_debug(int map, int c, u_int addr, int *jaddr)
     emit_testimm(map,0x40000000);
     *jaddr=(int)out;
     emit_jne(0);
-  }
-}
-
-static void gen_addr(int ar, int map) {
-  if(map>=0) {
-    assem_debug("add %s,%s,%s lsl #2",regname[ar],regname[ar],regname[map]);
-    output_w32(0xe0800100|rd_rn_rm(ar,ar,map));
-  }
-}
-
-// This reverses the above operation
-static void gen_orig_addr(int ar, int map) {
-  if(map>=0) {
-    assem_debug("sub %s,%s,%s lsl #2",regname[ar],regname[ar],regname[map]);
-    output_w32(0xe0400100|rd_rn_rm(ar,ar,map));
   }
 }
 
