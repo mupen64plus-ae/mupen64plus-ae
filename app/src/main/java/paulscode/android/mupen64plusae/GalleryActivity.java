@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentManager;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -85,11 +84,9 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     private static final String STATE_EXTRACT_ROM_FRAGMENT= "STATE_EXTRACT_ROM_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED= "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
-    private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
     public static final String KEY_IS_LEANBACK = "KEY_IS_LEANBACK";
 
-    public static final int RESTART_CONFIRM_DIALOG_ID = 0;
     public static final int REMOVE_FROM_LIBRARY_DIALOG_ID = 1;
 
     // App data and user preferences
@@ -120,9 +117,6 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
     private ScanRomsFragment mCacheRomInfoFragment = null;
     private ExtractRomFragment mExtractRomFragment = null;
-    
-    //True if the restart promp is enabled
-    boolean mRestartPromptEnabled = true;
 
     //If this is set to true, the gallery will be refreshed next time this activity is resumed
     boolean mRefreshNeeded = false;
@@ -677,28 +671,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                         item.md5, item.crc, item.headerName,
                         item.countryCode.getValue(), item.artPath, item.goodName, false );
                 break;
-            case R.id.menuItem_restart:
-                //Don't show the prompt if this is the first time we start a game
-                if(mRestartPromptEnabled)
-                {
-                    final CharSequence title = getText( R.string.confirm_title );
-                    final CharSequence message = getText( R.string.confirmResetGame_message );
-
-                    final ConfirmationDialog confirmationDialog =
-                        ConfirmationDialog.newInstance(RESTART_CONFIRM_DIALOG_ID, title.toString(), message.toString());
-
-                    final FragmentManager fm = getSupportFragmentManager();
-                    confirmationDialog.show(fm, STATE_RESTART_CONFIRM_DIALOG);
-                }
-                else
-                {
-                    launchGameActivity( item.romFile.getAbsolutePath(),
-                            item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
-                            item.md5, item.crc,
-                            item.headerName, item.countryCode.getValue(), item.artPath,
-                            item.goodName, true );
-                }
-
+            case R.id.menuItem_start:
+                launchGameActivity( item.romFile.getAbsolutePath(),
+                        item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
+                        item.md5, item.crc,
+                        item.headerName, item.countryCode.getValue(), item.artPath,
+                        item.goodName, true );
                 break;
             case R.id.menuItem_settings:
             {
@@ -740,17 +718,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
         if( which == DialogInterface.BUTTON_POSITIVE )
         {
-            if(id == RESTART_CONFIRM_DIALOG_ID && mSelectedItem != null)
-            {
-                if (mSelectedItem.romFile != null) {
-                    launchGameActivity( mSelectedItem.romFile.getAbsolutePath(),
-                            mSelectedItem.zipFile == null ? null : mSelectedItem.zipFile.getAbsolutePath(),
-                            mSelectedItem.md5, mSelectedItem.crc,
-                            mSelectedItem.headerName, mSelectedItem.countryCode.getValue(), mSelectedItem.artPath,
-                            mSelectedItem.goodName, true );
-                }
-            }
-            else if(id == REMOVE_FROM_LIBRARY_DIALOG_ID && mSelectedItem != null)
+            if(id == REMOVE_FROM_LIBRARY_DIALOG_ID && mSelectedItem != null)
             {
                 mConfig.remove(mSelectedItem.md5);
                 mConfig.save();
@@ -805,19 +773,12 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             // Restore the menu
             mGameSidebar.setActionHandler(GalleryActivity.this, R.menu.gallery_game_drawer);
-            mRestartPromptEnabled = true;
         }
         else
         {
             // Disable the action handler
             mGameSidebar.getMenu().removeItem(R.id.menuItem_resume);
-
-            final MenuItem restartItem = mGameSidebar.getMenu().findItem(R.id.menuItem_restart);
-            restartItem.setTitle(getString(R.string.actionStart_title));
-            restartItem.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_play));
-
             mGameSidebar.reload();
-            mRestartPromptEnabled = false;
         }
 
         // Open the navigation drawer

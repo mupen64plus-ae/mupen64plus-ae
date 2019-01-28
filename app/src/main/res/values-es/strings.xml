@@ -138,8 +138,9 @@
     <!--**************************************************************************-->
     <!--Actions (simply launch an action, aren't related to persistent data)-->
     <string name="actionResume_title">Reanudar</string>
-    <string name="actionResume_summary">Impredecible si se aplican cheats</string>
+    <string name="actionResume_summary">Reanundar desde la ultima guarda automatica</string>
     <string name="actionStart_title">Iniciar</string>
+    <string name="actionStart_summary">Iniciar el juego desde el comienzo</string>
     <string name="actionRestart_title">Reiniciar</string>
     <string name="actionRestart_summary">Recomendado si se aplican cheats</string>
     <string name="actionRemove_title">Eliminar</string>

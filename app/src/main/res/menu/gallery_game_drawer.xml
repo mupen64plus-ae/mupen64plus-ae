@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:mupen64="http://schemas.android.com/apk/res-auto" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@+id/menuItem_resume"
@@ -8,10 +7,10 @@
         android:title="@string/actionResume_title"
         android:titleCondensed="@string/actionResume_summary"/>
     <item
-        android:id="@+id/menuItem_restart"
+        android:id="@+id/menuItem_start"
         android:icon="@drawable/ic_undo"
-        android:title="@string/actionRestart_title"
-        android:titleCondensed="@string/actionRestart_summary"/>
+        android:title="@string/actionStart_title"
+        android:titleCondensed="@string/actionStart_summary"/>
     <item
         android:id="@+id/menuItem_settings"
         android:icon="@drawable/ic_settings"
