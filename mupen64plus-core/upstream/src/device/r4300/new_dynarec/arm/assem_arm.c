@@ -1939,10 +1939,6 @@ static void emit_writeword_dualindexedx4(int rt, int rs1, int rs2)
 static void emit_writeword_indexed_tlb(int rt, int addr, int rs, int map)
 {
   if(map<0) emit_writeword_indexed(rt, addr, rs);
-  else if(rs<0) {
-    assert(map>=0);
-    emit_writeword_indexed(rt, addr, map);
-  }
   else {
     if(addr==0) {
       emit_writeword_dualindexedx4(rt, rs, map);
@@ -1974,10 +1970,6 @@ static void emit_writehword_indexed(int rt, int offset, int rs)
 static void emit_writehword_indexed_tlb(int rt, int addr, int rs, int map)
 {
   if(map<0) emit_writehword_indexed(rt, addr, rs);
-  else if(rs<0) {
-    assert(map>=0);
-    emit_writehword_indexed(rt, addr, map);
-  }
   else {
     assem_debug("add %s,%s,%s,lsl #2",regname[HOST_TEMPREG],regname[rs],regname[map]);
     output_w32(0xe0800000|rd_rn_rm(HOST_TEMPREG,rs,map)|(2<<7));
@@ -2002,10 +1994,6 @@ static void emit_writebyte_dualindexedx4(int rt, int rs1, int rs2)
 static void emit_writebyte_indexed_tlb(int rt, int addr, int rs, int map)
 {
   if(map<0) emit_writebyte_indexed(rt, addr, rs);
-  else if(rs<0) {
-    assert(map>=0);
-    emit_writebyte_indexed(rt, addr, map);
-  }
   else {
     if(addr==0) {
       emit_writebyte_dualindexedx4(rt, rs, map);

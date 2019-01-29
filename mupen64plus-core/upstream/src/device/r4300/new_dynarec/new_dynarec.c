@@ -1900,7 +1900,7 @@ static void add_link(u_int vaddr,void *src)
   //inv_debug("add_link: Pointer is to %x\n",(intptr_t)ptr);
 }
 
-struct ll_entry *get_clean(struct r4300_core* r4300,u_int vaddr,u_int flags)
+static struct ll_entry *get_clean(struct r4300_core* r4300,u_int vaddr,u_int flags)
 {
   u_int page=(vaddr^0x80000000)>>12;
   if(page>262143&&r4300->cp0.tlb.LUT_r[vaddr>>12]) page=(r4300->cp0.tlb.LUT_r[vaddr>>12]^0x80000000)>>12;
@@ -1916,7 +1916,7 @@ struct ll_entry *get_clean(struct r4300_core* r4300,u_int vaddr,u_int flags)
   return NULL;
 }
 
-struct ll_entry *get_dirty(struct r4300_core* r4300,u_int vaddr,u_int flags)
+static struct ll_entry *get_dirty(struct r4300_core* r4300,u_int vaddr,u_int flags)
 {
   u_int page=(vaddr^0x80000000)>>12;
   u_int vpage=page;
@@ -4282,8 +4282,8 @@ static void storelr_assemble(int i,struct regstat *i_regs)
   real_temp=temp;
 #if NEW_DYNAREC >= NEW_DYNAREC_ARM
   if(map>=0){
-    temp=-1;
     emit_addsl2(real_temp,map,map);
+    temp=map; map=-1;
   }
 #endif
 
@@ -4302,14 +4302,14 @@ static void storelr_assemble(int i,struct regstat *i_regs)
   if (opcode[i]==0x2A) { // SWL
     emit_writeword_indexed_tlb(tl,0,temp,map);
   }
-  if (opcode[i]==0x2E) { // SWR
+  else if (opcode[i]==0x2E) { // SWR
     emit_writebyte_indexed_tlb(tl,3,temp,map);
   }
-  if (opcode[i]==0x2C) { // SDL
+  else if (opcode[i]==0x2C) { // SDL
     emit_writeword_indexed_tlb(th,0,temp,map);
     if(rs2[i]) emit_mov(tl,temp2);
   }
-  if (opcode[i]==0x2D) { // SDR
+  else if (opcode[i]==0x2D) { // SDR
     emit_writebyte_indexed_tlb(tl,3,temp,map);
     if(rs2[i]) emit_shldimm(th,tl,24,temp2);
   }
@@ -4325,11 +4325,11 @@ static void storelr_assemble(int i,struct regstat *i_regs)
     emit_writebyte_indexed_tlb(tl,1,temp,map);
     if(rs2[i]) emit_rorimm(tl,8,tl);
   }
-  if (opcode[i]==0x2E) { // SWR
+  else if (opcode[i]==0x2E) { // SWR
     // Write two lsb into two most significant bytes
     emit_writehword_indexed_tlb(tl,1,temp,map);
   }
-  if (opcode[i]==0x2C) { // SDL
+  else if (opcode[i]==0x2C) { // SDL
     if(rs2[i]) emit_shrdimm(tl,th,8,temp2);
     // Write 3 msb into three least significant bytes
     if(rs2[i]) emit_rorimm(th,8,th);
@@ -4338,7 +4338,7 @@ static void storelr_assemble(int i,struct regstat *i_regs)
     emit_writebyte_indexed_tlb(th,1,temp,map);
     if(rs2[i]) emit_rorimm(th,8,th);
   }
-  if (opcode[i]==0x2D) { // SDR
+  else if (opcode[i]==0x2D) { // SDR
     if(rs2[i]) emit_shldimm(th,tl,16,temp2);
     // Write two lsb into two most significant bytes
     emit_writehword_indexed_tlb(tl,1,temp,map);
@@ -4356,21 +4356,21 @@ static void storelr_assemble(int i,struct regstat *i_regs)
     emit_writehword_indexed_tlb(tl,-2,temp,map);
     if(rs2[i]) emit_rorimm(tl,16,tl);
   }
-  if (opcode[i]==0x2E) { // SWR
+  else if (opcode[i]==0x2E) { // SWR
     // Write 3 lsb into three most significant bytes
     emit_writebyte_indexed_tlb(tl,-1,temp,map);
     if(rs2[i]) emit_rorimm(tl,8,tl);
     emit_writehword_indexed_tlb(tl,0,temp,map);
     if(rs2[i]) emit_rorimm(tl,24,tl);
   }
-  if (opcode[i]==0x2C) { // SDL
+  else if (opcode[i]==0x2C) { // SDL
     if(rs2[i]) emit_shrdimm(tl,th,16,temp2);
     // Write two msb into two least significant bytes
     if(rs2[i]) emit_rorimm(th,16,th);
     emit_writehword_indexed_tlb(th,-2,temp,map);
     if(rs2[i]) emit_rorimm(th,16,th);
   }
-  if (opcode[i]==0x2D) { // SDR
+  else if (opcode[i]==0x2D) { // SDR
     if(rs2[i]) emit_shldimm(th,tl,8,temp2);
     // Write 3 lsb into three most significant bytes
     emit_writebyte_indexed_tlb(tl,-1,temp,map);
@@ -4388,18 +4388,18 @@ static void storelr_assemble(int i,struct regstat *i_regs)
     emit_writebyte_indexed_tlb(tl,-3,temp,map);
     if(rs2[i]) emit_rorimm(tl,8,tl);
   }
-  if (opcode[i]==0x2E) { // SWR
+  else if (opcode[i]==0x2E) { // SWR
     // Write entire word
     emit_writeword_indexed_tlb(tl,-3,temp,map);
   }
-  if (opcode[i]==0x2C) { // SDL
+  else if (opcode[i]==0x2C) { // SDL
     if(rs2[i]) emit_shrdimm(tl,th,24,temp2);
     // Write msb into least significant byte
     if(rs2[i]) emit_rorimm(th,24,th);
     emit_writebyte_indexed_tlb(th,-3,temp,map);
     if(rs2[i]) emit_rorimm(th,8,th);
   }
-  if (opcode[i]==0x2D) { // SDR
+  else if (opcode[i]==0x2D) { // SDR
     if(rs2[i]) emit_mov(th,temp2);
     // Write entire word
     emit_writeword_indexed_tlb(tl,-3,temp,map);
@@ -4411,24 +4411,30 @@ static void storelr_assemble(int i,struct regstat *i_regs)
     emit_testimm(real_temp,4);
     done0=(intptr_t)out;
     emit_jne(0);
-    emit_andimm(real_temp,~3,real_temp);
+#if NEW_DYNAREC == NEW_DYNAREC_ARM64
+    emit_andimm64(temp,~3,temp);
+#else
+    emit_andimm(temp,~3,temp);
+#endif
     emit_writeword_indexed_tlb(temp2,4,temp,map);
     set_jump_target(done0,(intptr_t)out);
   }
-  if (opcode[i]==0x2D) { // SDR
+  else if (opcode[i]==0x2D) { // SDR
     emit_testimm(real_temp,4);
     done0=(intptr_t)out;
     emit_jeq(0);
-    emit_andimm(real_temp,~3,real_temp);
+#if NEW_DYNAREC == NEW_DYNAREC_ARM64
+    emit_andimm64(temp,~3,temp);
+#else
+    emit_andimm(temp,~3,temp);
+#endif
     emit_writeword_indexed_tlb(temp2,-4,temp,map);
     set_jump_target(done0,(intptr_t)out);
   }
-  if(!c||!memtarget)
-    add_stub(STORELR_STUB,jaddr,(intptr_t)out,0,(intptr_t)i_regs,rs2[i],ccadj[i],reglist);
   if(!using_tlb) {
     #if NEW_DYNAREC >= NEW_DYNAREC_ARM
-    if((map>=0)&&(map!=HOST_TEMPREG))
-      emit_loadreg(ROREG,map);
+    map=get_reg(i_regs->regmap,ROREG);
+    if(map>=0) emit_loadreg(ROREG,map);
     #endif
     #if defined(HOST_IMM8) || defined(NEED_INVC_PTR)
     int ir=get_reg(i_regs->regmap,INVCP);
@@ -4445,6 +4451,8 @@ static void storelr_assemble(int i,struct regstat *i_regs)
     add_stub(INVCODE_STUB,jaddr2,(intptr_t)out,reglist|(1<<HOST_CCREG),real_temp,0,0,0);
     #endif
   }
+  if(!c||!memtarget)
+    add_stub(STORELR_STUB,jaddr,(intptr_t)out,0,(intptr_t)i_regs,rs2[i],ccadj[i],reglist);
 }
 #endif
 
@@ -8209,6 +8217,9 @@ int new_recompile_block(int addr)
           if(ba[j]==start+i*4+4) done=j=0;
           if(ba[j]==start+i*4+8) done=j=0;
         }
+        // Tonic trouble is weird!
+        if(type==CJUMP)
+          done=0;
       }
       else {
         if(stop_after_jal) done=1;

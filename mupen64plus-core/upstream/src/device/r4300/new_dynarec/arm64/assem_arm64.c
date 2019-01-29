@@ -1517,7 +1517,8 @@ static void emit_andimm(int rs,int imm,int rt)
 static void emit_andimm64(int rs,int64_t imm,int rt)
 {
   u_int armval;
-  assert(genimm((uint64_t)imm,64,&armval));
+  int encoded = genimm((uint64_t)imm,64,&armval);
+  assert(encoded);
   assem_debug("and %s,%s,#%d",regname64[rt],regname64[rs],imm);
   output_w32(0x92000000|armval<<10|rs<<5|rt);
 }
@@ -2261,9 +2262,7 @@ static void emit_writeword_dualindexedx4(int rt, int rs1, int rs2)
 
 static void emit_writeword_indexed_tlb(int rt, int addr, int rs, int map)
 {
-  assert(map>=0);
   if(map<0) emit_writeword_indexed(rt, addr, rs);
-  else if(rs<0) emit_writeword_indexed(rt, addr, map);
   else {
     if(addr==0) {
       emit_writeword_dualindexedx4(rt, rs, map);
@@ -2294,9 +2293,7 @@ static void emit_writehword_indexed(int rt, int offset, int rs)
 
 static void emit_writehword_indexed_tlb(int rt, int addr, int rs, int map)
 {
-  assert(map>=0);
   if(map<0) emit_writehword_indexed(rt, addr, rs);
-  else if(rs<0) emit_writehword_indexed(rt, addr, map);
   else {
     if(addr==0) {
       emit_shlimm64(map,2,HOST_TEMPREG);
@@ -2319,9 +2316,7 @@ static void emit_writebyte_indexed(int rt, int offset, int rs)
 
 static void emit_writebyte_indexed_tlb(int rt, int addr, int rs, int map)
 {
-  assert(map>=0);
   if(map<0) emit_writebyte_indexed(rt, addr, rs);
-  else if(rs<0) emit_writebyte_indexed(rt, addr, map);
   else {
     if(addr==0) {
       emit_shlimm64(map,2,HOST_TEMPREG);
