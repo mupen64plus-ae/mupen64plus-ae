@@ -745,6 +745,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             // Set the cover art in the sidebar
             item.loadBitmap();
             mGameSidebar.setImage(item.artBitmap);
+        } else {
+            mGameSidebar.setImage(null);
         }
 
         // Set the game title
