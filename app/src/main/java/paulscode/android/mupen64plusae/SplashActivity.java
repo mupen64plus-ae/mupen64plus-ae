@@ -32,6 +32,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -221,6 +222,16 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // Lay out the content
         setContentView( R.layout.splash_activity );
         mTextView = findViewById( R.id.mainText );
+
+        // Sanity check to make sure resources are present
+        try {
+            Drawable randomDrawable = getResources().getDrawable(R.drawable.ic_arrow_u);
+            Log.i("SplashActivity", "Resource found: " + randomDrawable.toString());
+        } catch (android.content.res.Resources.NotFoundException e) {
+            Log.e("SplashActivity", "Resource NOT found");
+            Notifier.showToast(this, R.string.invalidInstall_message);
+            return;
+        }
 
         if ( mGlobalPrefs.isBigScreenMode )
         {

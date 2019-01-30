@@ -664,7 +664,7 @@
 
     <!-- Corrupt Installation Warning -->
     <string name="invalidInstall_title">Warning</string>
-    <string name="invalidInstall_message">Mupen64 Plus AE might not have installed properly. Please try reinstalling the app if you experience any crashes.</string>
+    <string name="invalidInstall_message">Mupen64 Plus AE is not installed properly. Please try reinstalling the app.</string>
 
     <!-- Text Editor Hints (start lower-case) -->
     <string name="hintFileSave">filename</string>

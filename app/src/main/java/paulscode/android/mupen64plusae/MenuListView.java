@@ -328,12 +328,9 @@ public class MenuListView extends ExpandableListView
                 {
                     text2.setText( item.getTitleCondensed() );
                 }
-                try {
-                    icon.setImageDrawable( item.getIcon() );
-                } catch (android.content.res.Resources.NotFoundException e) {
 
-                }
-                
+                icon.setImageDrawable( item.getIcon() );
+
                 if( item.isChecked() )
                     view.setBackgroundColor( 0x44FFFFFF );
                 else
