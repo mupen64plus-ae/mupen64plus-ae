@@ -89,7 +89,7 @@ public class ExtractAssetsTask extends AsyncTask<Void, String, List<ExtractAsset
             mAssetVersions.put("mupen64plus_data/gln64rom.conf", 1);
             mAssetVersions.put("mupen64plus_data/mupen64plus.ini", 4);
             mAssetVersions.put("mupen64plus_data/mupencheat.default", 1);
-            mAssetVersions.put("mupen64plus_data/profiles/controller.cfg", 1);
+            mAssetVersions.put("mupen64plus_data/profiles/controller.cfg", 2);
             mAssetVersions.put("mupen64plus_data/profiles/emulation.cfg", 3);
             mAssetVersions.put("mupen64plus_data/profiles/touchscreen.cfg", 2);
             mAssetVersions.put("mupen64plus_data/skins/touchscreen/JoshaGibs/analog-back.png", 1);
