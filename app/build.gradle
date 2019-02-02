@@ -48,6 +48,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:preference-v7:28.0.0'
     implementation 'com.android.support:support-tv-provider:28.0.0'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'org.apache.commons:commons-text:1.2'
     //noinspection GradleDependency Any higher requires API level 26 for commons-compress

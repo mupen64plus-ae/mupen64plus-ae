@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2013 Paul Lamb
@@ -21,8 +21,9 @@
 package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.util.CrashHandler;
+import androidx.multidex.MultiDexApplication;
 
-public class AppMupen64Plus extends android.app.Application
+public class AppMupen64Plus extends MultiDexApplication
 {
     @Override
     public void onCreate()
