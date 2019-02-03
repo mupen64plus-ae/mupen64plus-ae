@@ -31,6 +31,7 @@ GraphicsDrawer::GraphicsDrawer()
 , m_modifyVertices(0)
 , m_maxLineWidth(1.0f)
 , m_bFlatColors(false)
+, m_bBGMode(false)
 {
 	memset(m_rect, 0, sizeof(m_rect));
 }
@@ -1070,7 +1071,7 @@ bool texturedRectCopyToItself(const GraphicsDrawer::TexturedRectParams & _params
 static
 bool texturedRectBGCopy(const GraphicsDrawer::TexturedRectParams & _params)
 {
-	if (GBI.getMicrocodeType() != S2DEX)
+	if (gDP.colorImage.size > G_IM_SIZ_8b)
 		return false;
 
 	float flry = _params.lry;
@@ -1174,14 +1175,14 @@ void GraphicsDrawer::drawTexturedRect(const TexturedRectParams & _params)
 	DisplayWindow & wnd = dwnd();
 	TextureCache & cache = textureCache();
 	const bool bUseBilinear = gDP.otherMode.textureFilter != 0;
-	const bool bUseTexrectDrawer = config.generalEmulation.enableNativeResTexrects != 0
+	const bool bUseTexrectDrawer = m_bBGMode || ((config.graphics2D.enableNativeResTexrects != 0)
 		&& bUseBilinear
 		&& pCurrentCombiner->usesTexture()
 		&& (pCurrentBuffer == nullptr || !pCurrentBuffer->m_cfb)
 		&& (cache.current[0] != nullptr)
 		//		&& (cache.current[0] == nullptr || cache.current[0]->format == G_IM_FMT_RGBA || cache.current[0]->format == G_IM_FMT_CI)
 		&& ((cache.current[0]->frameBufferTexture == CachedTexture::fbNone && !cache.current[0]->bHDTexture))
-		&& (cache.current[1] == nullptr || (cache.current[1]->frameBufferTexture == CachedTexture::fbNone && !cache.current[1]->bHDTexture));
+		&& (cache.current[1] == nullptr || (cache.current[1]->frameBufferTexture == CachedTexture::fbNone && !cache.current[1]->bHDTexture)));
 
 	f32 scaleX, scaleY;
 	calcCoordsScales(pCurrentBuffer, scaleX, scaleY);
@@ -1356,8 +1357,14 @@ void GraphicsDrawer::drawTexturedRect(const TexturedRectParams & _params)
 			m_rect[i].x *= scale;
 	}
 
-	if (bUseTexrectDrawer && m_texrectDrawer.add())
-		return;
+	if (bUseTexrectDrawer) {
+		if (m_bBGMode) {
+			m_texrectDrawer.addBackgroundRect();
+			return;
+		}
+		if (m_texrectDrawer.addRect())
+			return;
+	}
 
 	_updateScreenCoordsViewport(_params.pBuffer);
 	Context::DrawRectParameters rectParams;
@@ -1383,7 +1390,7 @@ void GraphicsDrawer::drawTexturedRect(const TexturedRectParams & _params)
 
 void GraphicsDrawer::correctTexturedRectParams(TexturedRectParams & _params)
 {
-	if (config.generalEmulation.correctTexrectCoords == Config::tcSmart) {
+	if (config.graphics2D.correctTexrectCoords == Config::tcSmart) {
 		if (_params.ulx == m_texrectParams.ulx && _params.lrx == m_texrectParams.lrx) {
 			if (fabsf(_params.uly - m_texrectParams.lry) < 0.51f)
 				_params.uly = m_texrectParams.lry;
@@ -1397,7 +1404,7 @@ void GraphicsDrawer::correctTexturedRectParams(TexturedRectParams & _params)
 				_params.lrx = m_texrectParams.ulx;
 		}
 	}
-	else if (config.generalEmulation.correctTexrectCoords == Config::tcForce) {
+	else if (config.graphics2D.correctTexrectCoords == Config::tcForce) {
 		_params.lrx += 0.25f;
 		_params.lry += 0.25f;
 	}

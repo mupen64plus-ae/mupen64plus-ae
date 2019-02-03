@@ -187,7 +187,7 @@ bool TexrectDrawer::_lookAhead(bool _checkCoordinates) const
 	return false;
 }
 
-bool TexrectDrawer::add()
+bool TexrectDrawer::addRect()
 {
 	DisplayWindow & wnd = dwnd();
 	GraphicsDrawer &  drawer = wnd.getDrawer();
@@ -292,15 +292,61 @@ bool TexrectDrawer::add()
 	return true;
 }
 
+void TexrectDrawer::addBackgroundRect()
+{
+	DisplayWindow & wnd = dwnd();
+	GraphicsDrawer &  drawer = wnd.getDrawer();
+	RectVertex * pRect = drawer.m_rect;
+
+	if (m_numRects == 0) {
+		m_numRects = 1;
+		m_pBuffer = frameBufferList().getCurrent();
+		m_otherMode = gDP.otherMode._u64;
+		m_mux = gDP.combine.mux;
+		m_Z = (gDP.otherMode.depthSource == G_ZS_PRIM) ? gDP.primDepth.z : gSP.viewport.nearz;
+		m_scissor = gDP.scissor;
+
+		m_ulx = pRect[0].x;
+		m_uly = pRect[0].y;
+		m_lrx = m_max_lrx = pRect[3].x;
+		m_lry = m_max_lry = pRect[3].y;
+
+		CombinerInfo & cmbInfo = CombinerInfo::get();
+		cmbInfo.update();
+		cmbInfo.updateParameters();
+		gfxContext.enableDepthWrite(false);
+		gfxContext.enable(enable::DEPTH_TEST, false);
+		gfxContext.enable(enable::BLEND, false);
+
+		_setViewport();
+
+		gfxContext.setScissor((s32)gDP.scissor.ulx, (s32)gDP.scissor.uly, (s32)(gDP.scissor.lrx - gDP.scissor.ulx), (s32)(gDP.scissor.lry - gDP.scissor.uly));
+
+		gfxContext.bindFramebuffer(bufferTarget::DRAW_FRAMEBUFFER, m_FBO);
+	} else {
+		++m_numRects;
+	}
+
+	m_lrx = pRect[3].x;
+	m_lry = pRect[3].y;
+	m_max_lrx = std::max(m_max_lrx, m_lrx);
+	m_max_lry = std::max(m_max_lry, m_lry);
+
+	Context::DrawRectParameters rectParams;
+	rectParams.mode = drawmode::TRIANGLE_STRIP;
+	rectParams.verticesCount = 4;
+	rectParams.vertices = pRect;
+	rectParams.combiner = currentCombiner();
+	gfxContext.drawRects(rectParams);
+}
+
 bool TexrectDrawer::draw()
 {
 	if (m_numRects == 0)
 		return false;
 
-	const u64 otherMode = gDP.otherMode._u64;
-	const gDPScissor scissor = gDP.scissor;
-	gDP.scissor = m_scissor;
-	gDP.otherMode._u64 = m_otherMode;
+	ValueKeeper<u64> otherMode(gDP.otherMode._u64, m_otherMode);
+	ValueKeeper<gDPScissor> scissor(gDP.scissor, m_scissor);
 	DisplayWindow & wnd = dwnd();
 	GraphicsDrawer &  drawer = wnd.getDrawer();
 	drawer._setBlendMode();
@@ -334,10 +380,10 @@ bool TexrectDrawer::draw()
 	scaleX *= 2.0f;
 	scaleY *= 2.0f;
 
-	const float s0 = (m_ulx + 1.0f) / scaleX / (float)m_pTexture->realWidth;
-	const float t1 = (m_uly + 1.0f) / scaleY / (float)m_pTexture->realHeight;
+	const float s0 = (m_ulx + 1.0f) / scaleX / (float)m_pTexture->realWidth + 0.5f / (float)m_pTexture->realWidth;
+	const float t0 = (m_lry + 1.0f) / scaleY / (float)m_pTexture->realHeight;// +0.5f / (float)m_pTexture->realHeight;
 	const float s1 = (m_lrx + 1.0f) / scaleX / (float)m_pTexture->realWidth;
-	const float t0 = (m_lry + 1.0f) / scaleY / (float)m_pTexture->realHeight;
+	const float t1 = (m_uly + 1.0f) / scaleY / (float)m_pTexture->realHeight;
 	const float W = 1.0f;
 
 	drawer._updateScreenCoordsViewport(m_pBuffer);
@@ -420,8 +466,6 @@ bool TexrectDrawer::draw()
 
 	m_numRects = 0;
 	m_vecRectCoords.clear();
-	gDP.otherMode._u64 = otherMode;
-	gDP.scissor = scissor;
 	gDP.changed |= CHANGED_COMBINE | CHANGED_SCISSOR | CHANGED_RENDERMODE;
 	gSP.changed |= CHANGED_VIEWPORT | CHANGED_TEXTURE | CHANGED_GEOMETRYMODE;
 

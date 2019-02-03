@@ -7,6 +7,7 @@
 #include "Textures.h"
 #include "GBI.h"
 #include "RSP.h"
+#include "RDP.h"
 #include "gDP.h"
 #include "gSP.h"
 #include "N64.h"
@@ -587,12 +588,24 @@ static
 void _calcTileSizes(u32 _t, TileSizes & _sizes, gDPTile * _pLoadTile)
 {
 	gDPTile * pTile = _t < 2 ? gSP.textureTile[_t] : &gDP.tiles[_t];
+	pTile->masks = pTile->originalMaskS;
+	pTile->maskt = pTile->originalMaskT;
 
 	const TextureLoadParameters & loadParams =
 			ImageFormat::get().tlp[gDP.otherMode.textureLUT][pTile->size][pTile->format];
 	const u32 maxTexels = loadParams.maxTexels;
-	const u32 tileWidth = ((pTile->lrs - pTile->uls) & 0x03FF) + 1;
-	const u32 tileHeight = ((pTile->lrt - pTile->ult) & 0x03FF) + 1;
+	u32 tileWidth = ((pTile->lrs - pTile->uls) & 0x03FF) + 1;
+	u32 tileHeight = ((pTile->lrt - pTile->ult) & 0x03FF) + 1;
+	if (tileWidth == 1 && tileHeight == 1 &&
+		gDP.otherMode.cycleType == G_CYC_COPY &&
+		_pLoadTile->loadType == LOADTYPE_BLOCK) {
+		const u32 ulx = _SHIFTR(RDP.w1, 14, 10);
+		const u32 uly = _SHIFTR(RDP.w1, 2, 10);
+		const u32 lrx = _SHIFTR(RDP.w0, 14, 10);
+		const u32 lry = _SHIFTR(RDP.w0, 2, 10);
+		tileWidth = lrx - ulx + 1;
+		tileHeight = lry - uly + 1;
+	}
 
 	const bool bUseLoadSizes = _pLoadTile != nullptr && _pLoadTile->loadType == LOADTYPE_TILE &&
 		(pTile->tmem == _pLoadTile->tmem);
@@ -612,6 +625,15 @@ void _calcTileSizes(u32 _t, TileSizes & _sizes, gDPTile * _pLoadTile)
 
 	const u32 tMemMask = gDP.otherMode.textureLUT == G_TT_NONE ? 0x1FF : 0xFF;
 	gDPLoadTileInfo &info = gDP.loadInfo[pTile->tmem & tMemMask];
+	if (pTile->tmem == gDP.loadTile->tmem) {
+		if (gDP.loadTile->loadWidth != 0 && gDP.loadTile->masks == 0)
+			info.width = gDP.loadTile->loadWidth;
+		if (gDP.loadTile->loadHeight != 0 && gDP.loadTile->maskt == 0) {
+			info.height = gDP.loadTile->loadHeight;
+			info.bytes = info.height * (gDP.loadTile->line << 3);
+		}
+		gDP.loadTile->loadWidth = gDP.loadTile->loadHeight = 0;
+	}
 	_sizes.bytes = info.bytes;
 	if (info.loadType == LOADTYPE_TILE) {
 		if (pTile->masks && ((maskWidth * maskHeight) <= maxTexels))

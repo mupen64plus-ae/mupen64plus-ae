@@ -39,9 +39,83 @@ using namespace graphics;
 #define	S2DEX_OBJ_LDTX_RECT_R	0xC4
 #define	S2DEX_RDPHALF_0			0xE4
 
+// BG flags
+#define	G_BGLT_LOADBLOCK	0x0033
+#define	G_BGLT_LOADTILE		0xFFF4
+
+#define	G_BG_FLAG_FLIPS		0x01
+#define	G_BG_FLAG_FLIPT		0x10
+
+// Sprite object render modes
+#define	G_OBJRM_NOTXCLAMP		0x01
+#define	G_OBJRM_XLU				0x02	/* Ignored */
+#define	G_OBJRM_ANTIALIAS		0x04	/* Ignored */
+#define	G_OBJRM_BILERP			0x08
+#define	G_OBJRM_SHRINKSIZE_1	0x10
+#define	G_OBJRM_SHRINKSIZE_2	0x20
+#define	G_OBJRM_WIDEN			0x40
+
+// Sprite texture loading types
+#define	G_OBJLT_TXTRBLOCK	0x00001033
+#define	G_OBJLT_TXTRTILE	0x00fc1034
+#define	G_OBJLT_TLUT		0x00000030
+
 // Tile indices
 #define G_TX_LOADTILE			0x07
 #define G_TX_RENDERTILE			0x00
+
+struct uObjBg {
+	u16 imageW;     /* Texture width (8-byte alignment, u10.2) */
+	u16 imageX;     /* x-coordinate of upper-left
+					position of texture (u10.5) */
+	u16 frameW;     /* Transfer destination frame width (u10.2) */
+	s16 frameX;     /* x-coordinate of upper-left
+					position of transfer destination frame (s10.2) */
+	u16 imageH;     /* Texture height (u10.2) */
+	u16 imageY;     /* y-coordinate of upper-left position of
+					texture (u10.5) */
+	u16 frameH;     /* Transfer destination frame height (u10.2) */
+	s16 frameY;     /* y-coordinate of upper-left position of transfer
+					destination  frame (s10.2) */
+	u32 imagePtr;  /* Address of texture source in DRAM*/
+	u8  imageSiz;   /* Texel size
+					G_IM_SIZ_4b (4 bits/texel)
+					G_IM_SIZ_8b (8 bits/texel)
+					G_IM_SIZ_16b (16 bits/texel)
+					G_IM_SIZ_32b (32 bits/texel) */
+	u8  imageFmt;   /*Texel format
+					G_IM_FMT_RGBA (RGBA format)
+					G_IM_FMT_YUV (YUV format)
+					G_IM_FMT_CI (CI format)
+					G_IM_FMT_IA (IA format)
+					G_IM_FMT_I (I format)  */
+	u16 imageLoad;  /* Method for loading the BG image texture
+					G_BGLT_LOADBLOCK (use LoadBlock)
+					G_BGLT_LOADTILE (use LoadTile) */
+	u16 imageFlip;  /* Image inversion on/off (horizontal
+					direction only)
+					0 (normal display (no inversion))
+					G_BG_FLAG_FLIPS (horizontal inversion of texture image) */
+	u16 imagePal;   /* Position of palette for 4-bit color
+					index texture (4-bit precision, 0~15) */
+	u16 tmemH;      /* Quadruple TMEM height(s13.2) which can be loaded at once
+					 When normal texture 512/tmemW*4
+					 When CI Texture 	256/tmemW*4 */
+	u16 tmemW;      /* TMEM width Word size for frame 1 line
+					 When LoadBlock GS_PIX2TMEM(imageW/4,imageSiz)
+					 When LoadTile 	GS_PIX2TMEM(frameW/4,imageSiz)+1 */
+	u16 tmemLoadTH; /* TH value or Stride value
+					 When LoadBlock 	GS_CALC_DXT(tmemW)
+					 When LoadTile  	tmemH-1 */
+	u16 tmemLoadSH; /* SH value
+					 When LoadBlock  	tmemSize/2-1
+					 When LoadTile 	tmemW*16-1 */
+	u16 tmemSize;   /* imagePtr skip value for one load iteration
+					 = tmemSizeW*tmemH */
+	u16 tmemSizeW;  /* imagePtr skip value for one line of image 1
+					 When LoadBlock 	tmemW*2
+					 When LoadTile  	GS_PIX2TMEM(imageW/4,imageSiz)*2 */
+};   /* 40 bytes */
 
 struct uObjScaleBg
 {
@@ -197,8 +271,15 @@ void resetObjMtx()
 	objMtx.BaseScaleY = 1 << 10;
 }
 
+enum S2DEXVersion
+{
+	eVer1_3,
+	eVer1_5,
+	eVer1_7
+};
+
 static
-bool gs_bVer1_3 = true;
+S2DEXVersion gs_s2dexversion = S2DEXVersion::eVer1_7;
 
 struct S2DEXCoordCorrector
 {
@@ -233,7 +314,7 @@ struct S2DEXCoordCorrector
 
 		const s16 * CorrectorsB03_16 = nullptr;
 		u32 O3 = 0;
-		if (gs_bVer1_3) {
+		if (gs_s2dexversion == eVer1_3) {
 			static const u32 CorrectorsB03_v1_3[] = {
 				0xFFFC0000,
 				0x00000000,
@@ -270,6 +351,11 @@ struct S2DEXCoordCorrector
 			};
 			CorrectorsB03_16 = reinterpret_cast<const s16*>(CorrectorsB03_v1_3);
 			O3 = (_SHIFTL(gSP.objRendermode, 3, 16) & (G_OBJRM_SHRINKSIZE_1 | G_OBJRM_SHRINKSIZE_2 | G_OBJRM_WIDEN)) >> 1;
+			B0 = CorrectorsB03_16[(0 + O3) ^ 1];
+			B2 = CorrectorsB03_16[(2 + O3) ^ 1];
+			B3 = CorrectorsB03_16[(3 + O3) ^ 1];
+			B5 = CorrectorsB03_16[(5 + O3) ^ 1];
+			B7 = CorrectorsB03_16[(7 + O3) ^ 1];
 		} else {
 			static const u32 CorrectorsB03[] = {
 				0xFFFC0000,
@@ -279,13 +365,15 @@ struct S2DEXCoordCorrector
 			};
 			CorrectorsB03_16 = reinterpret_cast<const s16*>(CorrectorsB03);
 			O3 = (gSP.objRendermode & G_OBJRM_BILERP) >> 1;
+			B0 = CorrectorsB03_16[(0 + O3) ^ 1];
+			B2 = CorrectorsB03_16[(2 + O3) ^ 1];
+			B3 = CorrectorsB03_16[(3 + O3) ^ 1];
+			B5 = 0;
+			B7 = 0;
 		}
-		B0 = CorrectorsB03_16[(0 + O3) ^ 1];
-		B2 = CorrectorsB03_16[(2 + O3) ^ 1];
-		B3 = CorrectorsB03_16[(3 + O3) ^ 1];
 	}
 
-	s16 A0, A1, A2, A3, B0, B2, B3;
+	s16 A0, A1, A2, A3, B0, B2, B3, B5, B7;
 };
 
 struct ObjCoordinates
@@ -309,7 +397,7 @@ struct ObjCoordinates
 		if (_useMatrix) {
 			const u32 scaleW = (u32(objMtx.BaseScaleX) * 0x40 * _pObjSprite->scaleW) >> 16;
 			const u32 scaleH = (u32(objMtx.BaseScaleY) * 0x40 * _pObjSprite->scaleH) >> 16;
-			if (gs_bVer1_3) {
+			if (gs_s2dexversion == eVer1_3) {
 				// XH = AND ((((objX << 0x10) * 0x0800 * (0x80007FFF/BaseScaleX)) >> 0x30) + X + A2) by B0
 				// XL = XH + AND (((((imageW - A1) * 0x100) *  (0x80007FFF/scaleW)) >> 0x20) + B2) by B0
 				// YH = AND ((((objY << 0x10) * 0x0800 * (0x80007FFF/BaseScaleY)) >> 0x30) + Y + A2) by B0
@@ -583,26 +671,29 @@ void gSPObjLoadTxtr(u32 tx)
 	if ((gSP.status[objTxtr->block.sid >> 2] & objTxtr->block.mask) != objTxtr->block.flag) {
 		switch (objTxtr->block.type) {
 			case G_OBJLT_TXTRBLOCK:
-				gDPSetTextureImage( G_IM_FMT_RGBA, G_IM_SIZ_8b, 0, objTxtr->block.image );
-				gDPSetTile( G_IM_FMT_RGBA, G_IM_SIZ_8b, 0, objTxtr->block.tmem, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0 );
-				gDPLoadBlock( G_TX_LOADTILE, 0, 0, ((objTxtr->block.tsize + 1) << 3) - 1, objTxtr->block.tline );
+				gDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, objTxtr->block.tsize + 1, objTxtr->block.image);
+				gDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, objTxtr->block.tmem,
+						   G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0);
+				gDPLoadBlock( G_TX_LOADTILE, 0, 0, objTxtr->block.tsize << 2, objTxtr->block.tline );
 				DebugMsg(DEBUG_NORMAL, "gSPObjLoadTxtr: load block\n");
 				break;
 			case G_OBJLT_TXTRTILE:
-				gDPSetTextureImage( G_IM_FMT_RGBA, G_IM_SIZ_8b, (objTxtr->tile.twidth + 1) << 1, objTxtr->tile.image );
-				gDPSetTile( G_IM_FMT_RGBA, G_IM_SIZ_8b, (objTxtr->tile.twidth + 1) >> 2, objTxtr->tile.tmem, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0 );
-				gDPSetTile( G_IM_FMT_RGBA, G_IM_SIZ_8b, (objTxtr->tile.twidth + 1) >> 2, objTxtr->tile.tmem, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0 );
-				gDPLoadTile( G_TX_LOADTILE, 0, 0, (((objTxtr->tile.twidth + 1) << 1) - 1) << 2, (((objTxtr->tile.theight + 1) >> 2) - 1) << 2 );
+				gDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, objTxtr->tile.twidth + 1, objTxtr->tile.image);
+				gDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, (objTxtr->tile.twidth + 1) >> 2, objTxtr->tile.tmem,
+						   G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0);
+				gDPLoadTile( G_TX_LOADTILE, 0, 0, objTxtr->tile.twidth << 2, objTxtr->tile.theight );
 				DebugMsg(DEBUG_NORMAL, "gSPObjLoadTxtr: load tile\n");
 				break;
 			case G_OBJLT_TLUT:
-				gDPSetTextureImage( G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, objTxtr->tlut.image );
-				gDPSetTile( G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, objTxtr->tlut.phead, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0 );
+				gDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, objTxtr->tlut.image);
+				gDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, objTxtr->tlut.phead,
+						   G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0);
 				gDPLoadTLUT( G_TX_LOADTILE, 0, 0, objTxtr->tlut.pnum << 2, 0 );
 				DebugMsg(DEBUG_NORMAL, "gSPObjLoadTxtr: load tlut\n");
 				break;
 		}
-		gSP.status[objTxtr->block.sid >> 2] = (gSP.status[objTxtr->block.sid >> 2] & ~objTxtr->block.mask) | (objTxtr->block.flag & objTxtr->block.mask);
+		gSP.status[objTxtr->block.sid >> 2] =
+			(gSP.status[objTxtr->block.sid >> 2] & ~objTxtr->block.mask) | (objTxtr->block.flag & objTxtr->block.mask);
 	}
 }
 
@@ -646,8 +737,12 @@ void gSPObjSprite(u32 _sp)
 	//	X2 = AND (X + B3) by B0 + (((((imageW - A1) * 0x0100)* (0x80007FFF/scaleW)) >> 32+ objX + A3) * A) >> 16  + (((((imageH - A1) * 0x0100)* (0x80007FFF/scaleH)) >> 32 + objY + A3) * B) >> 16
 	//	Y2 = AND (Y + B3) by B0 + (((((imageW - A1) * 0x0100)* (0x80007FFF/scaleW)) >> 32 + objX + A3) * C) >> 16 + (((((imageH - A1) * 0x0100)* (0x80007FFF/scaleH)) >> 32 + objY + A3) * D) >> 16
 	S2DEXCoordCorrector CC;
-	const s16 x0 = (objMtx.X + CC.B3) & CC.B0;
-	const s16 y0 = (objMtx.Y + CC.B3) & CC.B0;
+	const s16 x0 = (gs_s2dexversion == eVer1_3) ?
+					((objMtx.X + CC.B5) & CC.B0) + CC.B7 :
+					((objMtx.X + CC.B3) & CC.B0);
+	const s16 y0 = (gs_s2dexversion == eVer1_3) ?
+					((objMtx.Y + CC.B5) & CC.B0) + CC.B7 :
+					((objMtx.Y + CC.B3) & CC.B0);
 	const s16 ulx = objSprite->objX + CC.A3;
 	const s16 uly = objSprite->objY + CC.A3;
 	const s16 lrx = ((((u64(objSprite->imageW) - CC.A1) << 8) * (0x80007FFFU / u32(objSprite->scaleW))) >> 32) + ulx;
@@ -786,12 +881,12 @@ void _copyDepthBuffer()
 }
 
 static
-void _loadBGImage(const uObjScaleBg * _bgInfo, bool _loadScale)
+void _loadBGImage(const uObjScaleBg * _pBgInfo, bool _loadScale)
 {
-	gSP.bgImage.address = RSP_SegmentToPhysical(_bgInfo->imagePtr);
+	gSP.bgImage.address = RSP_SegmentToPhysical(_pBgInfo->imagePtr);
 
-	const u32 imageW = _bgInfo->imageW >> 2;
-	const u32 imageH = _bgInfo->imageH >> 2;
+	const u32 imageW = _pBgInfo->imageW >> 2;
+	const u32 imageH = _pBgInfo->imageH >> 2;
 	if (imageW == 512 && (config.generalEmulation.hacks & hack_RE2) != 0) {
 		gSP.bgImage.width = *REG.VI_WIDTH;
 		gSP.bgImage.height = (imageH * imageW) / gSP.bgImage.width;
@@ -800,51 +895,74 @@ void _loadBGImage(const uObjScaleBg * _bgInfo, bool _loadScale)
 		gSP.bgImage.width = imageW - imageW % 2;
 		gSP.bgImage.height = imageH - imageH % 2;
 	}
-	gSP.bgImage.format = _bgInfo->imageFmt;
-	gSP.bgImage.size = _bgInfo->imageSiz;
-	gSP.bgImage.palette = _bgInfo->imagePal;
-	gDP.tiles[0].textureMode = TEXTUREMODE_BGIMAGE;
-	gSP.bgImage.imageX = _FIXED2FLOAT(_bgInfo->imageX, 5);
-	gSP.bgImage.imageY = _FIXED2FLOAT(_bgInfo->imageY, 5);
+	gSP.bgImage.format = _pBgInfo->imageFmt;
+	gSP.bgImage.size = _pBgInfo->imageSiz;
+	gSP.bgImage.palette = _pBgInfo->imagePal;
+	gSP.bgImage.imageX = _FIXED2FLOAT(_pBgInfo->imageX, 5);
+	gSP.bgImage.imageY = _FIXED2FLOAT(_pBgInfo->imageY, 5);
 	if (_loadScale) {
-		gSP.bgImage.scaleW = _FIXED2FLOAT(_bgInfo->scaleW, 10);
-		gSP.bgImage.scaleH = _FIXED2FLOAT(_bgInfo->scaleH, 10);
+		gSP.bgImage.scaleW = _FIXED2FLOAT(_pBgInfo->scaleW, 10);
+		gSP.bgImage.scaleH = _FIXED2FLOAT(_pBgInfo->scaleH, 10);
 	}
 	else
 		gSP.bgImage.scaleW = gSP.bgImage.scaleH = 1.0f;
 
-	if (config.frameBufferEmulation.enable) {
-		FrameBuffer *pBuffer = frameBufferList().findBuffer(gSP.bgImage.address);
-		if ((pBuffer != nullptr) && pBuffer->m_size == gSP.bgImage.size && (!pBuffer->m_isDepthBuffer || pBuffer->m_changed)) {
-			if (gSP.bgImage.format == G_IM_FMT_CI && gSP.bgImage.size == G_IM_SIZ_8b) {
-				// Can't use 8bit CI buffer as texture
-				return;
-			}
+	gDP.tiles[0].textureMode = TEXTUREMODE_BGIMAGE;
 
-			if (pBuffer->m_cfb || !pBuffer->isValid(false)) {
-				frameBufferList().removeBuffer(pBuffer->m_startAddress);
-				return;
-			}
+	FrameBuffer *pBuffer = frameBufferList().findBuffer(RSP_SegmentToPhysical(_pBgInfo->imagePtr));
+	if (pBuffer != nullptr) {
 
-			gDP.tiles[0].frameBufferAddress = pBuffer->m_startAddress;
-			gDP.tiles[0].textureMode = TEXTUREMODE_FRAMEBUFFER_BG;
-			gDP.tiles[0].loadType = LOADTYPE_TILE;
-			gDP.changed |= CHANGED_TMEM;
+		gDP.tiles[0].frameBufferAddress = pBuffer->m_startAddress;
+		gDP.tiles[0].textureMode = TEXTUREMODE_FRAMEBUFFER_BG;
+		gDP.tiles[0].loadType = LOADTYPE_TILE;
+		gDP.changed |= CHANGED_TMEM;
 
-			if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0) {
-				if (gDP.colorImage.address == gDP.depthImageAddress)
-					frameBufferList().setCopyBuffer(frameBufferList().getCurrent());
-			}
+		if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0) {
+			if (gDP.colorImage.address == gDP.depthImageAddress)
+				frameBufferList().setCopyBuffer(frameBufferList().getCurrent());
 		}
 	}
+
+}
+
+static
+bool _useOldBgCode(u32 address)
+{
+	if (config.graphics2D.bgMode == Config::BGMode::bgOnePiece)
+		return true;
+
+	if ((config.generalEmulation.hacks & hack_RE2) != 0)
+		return true;
+
+	if (config.frameBufferEmulation.enable == 0)
+		return false;
+
+	uObjScaleBg *pObjScaleBg = (uObjScaleBg*)&RDRAM[address];
+	FrameBuffer *pBuffer = frameBufferList().findBuffer(RSP_SegmentToPhysical(pObjScaleBg->imagePtr));
+	if (pBuffer != nullptr &&
+		pBuffer->m_size == pObjScaleBg->imageSiz &&
+		(!pBuffer->m_isDepthBuffer || pBuffer->m_changed)) {
+		if (gSP.bgImage.format == G_IM_FMT_CI && gSP.bgImage.size == G_IM_SIZ_8b) {
+			// Can't use 8bit CI buffer as texture
+			return false;
+		}
+
+		if (pBuffer->m_cfb || !pBuffer->isValid(false)) {
+			frameBufferList().removeBuffer(pBuffer->m_startAddress);
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 static
 void gSPBgRect1Cyc(u32 _bg)
 {
-	const u32 address = RSP_SegmentToPhysical(_bg);
-	uObjScaleBg *objScaleBg = (uObjScaleBg*)&RDRAM[address];
-	_loadBGImage(objScaleBg, true);
+	uObjScaleBg *pObjScaleBg = (uObjScaleBg*)&RDRAM[_bg];
+	_loadBGImage(pObjScaleBg, true);
 
 	// Zelda MM uses depth buffer copy in LoT and in pause screen.
 	// In later case depth buffer is used as temporal color buffer, and usual rendering must be used.
@@ -858,7 +976,7 @@ void gSPBgRect1Cyc(u32 _bg)
 	gDP.changed |= CHANGED_CYCLETYPE;
 	gSPTexture(1.0f, 1.0f, 0, 0, TRUE);
 
-	ObjCoordinates objCoords(objScaleBg);
+	ObjCoordinates objCoords(pObjScaleBg);
 	gSPDrawObjRect(objCoords);
 
 	DebugMsg(DEBUG_NORMAL, "gSPBgRect1Cyc\n");
@@ -867,9 +985,8 @@ void gSPBgRect1Cyc(u32 _bg)
 static
 void gSPBgRectCopy(u32 _bg)
 {
-	const u32 address = RSP_SegmentToPhysical(_bg);
-	uObjScaleBg *objBg = (uObjScaleBg*)&RDRAM[address];
-	_loadBGImage(objBg, false);
+	uObjScaleBg *pObjBg = (uObjScaleBg*)&RDRAM[_bg];
+	_loadBGImage(pObjBg, false);
 
 	// See comment to gSPBgRect1Cyc
 	if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0 &&
@@ -881,20 +998,567 @@ void gSPBgRectCopy(u32 _bg)
 	gDP.changed |= CHANGED_CYCLETYPE;
 	gSPTexture(1.0f, 1.0f, 0, 0, TRUE);
 
-	ObjCoordinates objCoords(objBg);
+	ObjCoordinates objCoords(pObjBg);
 	gSPDrawObjRect(objCoords);
 
 	DebugMsg(DEBUG_NORMAL, "gSPBgRectCopy\n");
 }
 
+//#define runCommand(w0, w1) GBI.cmd[_SHIFTR(w0, 24, 8)](w0, w1)
+inline
+void runCommand(u32 w0, u32 w1)
+{
+	GBI.cmd[_SHIFTR(w0, 24, 8)](w0, w1);
+};
+
+static
+void BG1CycNew(u32 _bgAddr)
+{
+	uObjScaleBg objBg = *reinterpret_cast<const uObjScaleBg*>(RDRAM + _bgAddr);
+	const u32 imagePtr = RSP_SegmentToPhysical(objBg.imagePtr);
+	gDP.otherMode.cycleType = G_CYC_1CYCLE;
+	gDP.changed |= CHANGED_CYCLETYPE;
+	ValueKeeper<bool> otherMode(RSP.LLE, true);
+
+	s32 E2_1;
+	u16 F1_1;
+	u16 P;
+	s16 H2;
+
+	// Part 1
+	{
+		// Step 1 & 2
+		s16 Aw = objBg.frameW - ((((objBg.imageW << 10) / objBg.scaleW) - 1) & 0xFFFC);
+		if (Aw < 0)
+			Aw = 0;
+		if ((objBg.imageFlip & G_BG_FLAG_FLIPS) != 0)
+			objBg.frameX += Aw;
+		s16 Bw = std::max(0, gDP.scissor.xh - objBg.frameX);
+		s16 Cw = std::max(0, objBg.frameX + objBg.frameW - gDP.scissor.xl - Aw);
+		if ((s16)objBg.frameW - Aw - Bw - Cw <= 0)
+			return;
+		s16 Dw = objBg.frameX + Bw;
+		s16 Ew = objBg.frameX + objBg.frameW - Aw - Cw;
+
+		s16 Ah = objBg.frameH - ((((objBg.imageH << 10) / objBg.scaleH) - 1) & 0xFFFC);
+		if (Ah < 0)
+			Ah = 0;
+		s16 Bh = std::max(0, gDP.scissor.yh - objBg.frameY);
+		s16 Ch = std::max(0, objBg.frameY + objBg.frameH - gDP.scissor.yl - Ah);
+		if ((s16)objBg.frameH - Ah - Bh - Ch <= 0)
+			return;
+		s16 Dh = ((objBg.frameY + Bh) * 0x4000) >> 16;
+		s16 Eh = ((objBg.frameH - Ah - Bh - Ch) * 0x4000) >> 16;
+
+		*reinterpret_cast<u32*>(DMEM + 0x548) = (Dw << 16) | Ew;
+		*reinterpret_cast<u32*>(DMEM + 0x54C) = (Dh << 16) | Eh;
+
+		// Step 3
+		u16 Fw = objBg.imageW << 3;
+		if ((objBg.imageFlip & G_BG_FLAG_FLIPS) != 0)
+			Bw = Cw;
+		s16 Gw = ((objBg.scaleW * Bw * 0x0200) >> 16) + objBg.imageX;
+		s32 Hw = Gw - Fw;
+		u16 Fh = objBg.imageH << 3;
+		s16 Gh = ((objBg.scaleH * Bh * 0x0200) >> 16) + objBg.imageY;
+		while (Hw >= 0) {
+			Gw -= Fw;
+			Gh += 0x20;
+			objBg.imageYorig += 0x20;
+			Hw = Gw - Fw;
+		}
+		s32 Hh = Gh - Fh;
+		while (Hh >= 0) {
+			Gh -= Fh;
+			objBg.imageYorig -= Fh;
+			Hh = Gh - Fh;
+		}
+
+		s32 I = (s32(Gh) - objBg.imageYorig) << 5;
+		s16 J = (objBg.scaleW * (objBg.frameW - Aw - Bw - Cw)) >> 7;
+		u8 J_2 = 1;
+		if (J + Gw + 0x0B < Fw)
+			J_2 = 0;
+		u8 K = (gSP.objRendermode & 0x08) >> 3;
+
+		// Step 4
+		static const u32 aSize[] = {
+			0x01FF0080,
+			0x00FF0100,
+			0x007F0200,
+			0x003F0400
+		};
+		static const u32 aFormat[] = {
+			0x04000400,
+			0x02000400,
+			0x04000000
+		};
+		const u16 *  aFormat16 = reinterpret_cast<const u16*>(aFormat);
+		u16 L = aFormat16[objBg.imageFmt ^ 1];
+		u32 M = aSize[objBg.imageSiz];
+		u16 N = ((objBg.frameW * objBg.scaleW) >> 7) + (K << 5);
+		u16 O = N;
+		if (N >= Fw)
+			O = Fw;
+		P = (((O + (M >> 16)) * (M & 0xFFFF)) >> 16) + 1;
+
+		*reinterpret_cast<u32*>(DMEM + 0x550) = (K << 24) | (J_2 << 16) | P;
+		*reinterpret_cast<s32*>(DMEM + 0x554) = I;
+
+		// Step 5
+		u16 Q = L / (P * 2) + K * 0xFFFF;
+		s32 R = (0x100000 * Q) / objBg.scaleH;
+
+		*reinterpret_cast<u32*>(DMEM + 0x558) = R;
+
+		// Step 6
+		s32 S = ((s64(I) * 0x4000000 / objBg.scaleH) >> 16) & 0xFFFFFC00;
+		//s16 T = (S / R);
+		s16 T = static_cast<s16>(((0xFFFFFFFF / R) * s64(S)) >> 0x20);
+		s32 U = R * (T + 1);
+		s16 V = T;
+		if (U <= S)
+			V += 1;
+		s32 W = R * V;
+		s32 Z = R - S + W;
+
+		*reinterpret_cast<u32*>(DMEM + 0x55C) = Z;
+		*reinterpret_cast<s32*>(DMEM + 0x560) = objBg.imageYorig;
+
+		// Step 7
+		u32 A1 = S - (W & 0xFFFFFC00);
+		u32 B1 = (A1 * 0x0040) >> 16;
+		u32 C1 = B1 * objBg.scaleH;
+		u16 D1 = static_cast<u16>(((C1 * 0x0040) >> 16) & 0x0000FFFF);
+		u16 E1 = Q - D1;
+		u16 F1 = C1 & 0xFFFF;
+		F1_1 = ((F1 <<11) >> 16) & 0x001F;
+
+		// Step 8
+		s16 A2 = static_cast<s16>((u32(Q) * u32(V) + u32(D1) + ((objBg.imageYorig << 11) >> 16)) & 0xFFFF);
+		u16 B2 = (objBg.imageH << 14) >> 16;
+		s16 A2_1 = (A2 >= 0) ? A2 : A2 + B2;
+		if (A2 - B2 >= 0)
+			A2_1 -= B2;
+		s16 C2 = static_cast<s16>(((s32(Gw) * (M & 0xFFFF)) >> 16) << 3);
+		s16 D2 = static_cast<s16>(((s32(Fw) * (M & 0xFFFF)) >> 16) << 3);
+		s32 E2 = A2_1 * D2 + C2;
+		E2_1 = E2 + imagePtr;
+		s32 F2 = E1 * D2;
+		s32 G2 = Q * D2;
+		H2 = Gw & (M >> 16);
+		if ((objBg.imageFlip & G_BG_FLAG_FLIPS) != 0)
+			H2 = (H2 + J) * 0xFFFF;
+		u32 I2 = 0xFD100000 | ((D2 >> 1) - 1);
+		u32 J2 = 0xF5100000 | (P << 9);
+		u32 J2_1 = (J2 & 0xFF00FFFF) | (((objBg.imageFmt << 5) | (objBg.imageSiz << 3)) << 16);
+		u32 K2 = (objBg.imagePal << 20) | 0x0007C1F0;
+		u16 L2 = objBg.imageH >> 2;
+
+		*reinterpret_cast<u32*>(DMEM + 0x564) = (C2 << 16) | D2;
+		*reinterpret_cast<u32*>(DMEM + 0x568) = I2;
+		*reinterpret_cast<u32*>(DMEM + 0x56C) = J2;
+		//*reinterpret_cast<u32*>(DMEM + 0x570) = (Q << 16) | E1;
+		*reinterpret_cast<u32*>(DMEM + 0x570) = (E1 << 16) | Q;
+		*reinterpret_cast<u32*>(DMEM + 0x574) = F2;
+		*reinterpret_cast<u32*>(DMEM + 0x578) = G2;
+		*reinterpret_cast<u32*>(DMEM + 0x57C) = (L2 << 16) | A2_1;
+
+		runCommand(J2, 0x27000000);
+		runCommand(J2_1, K2);
+		runCommand((G_SETTILESIZE<<24), 0);
+	}
+
+	if (config.graphics2D.enableNativeResTexrects != 0)
+		dwnd().getDrawer().setBackgroundDrawingMode(true);
+
+	//Part two
+	{
+
+	u32 VV = *reinterpret_cast<u32*>(DMEM + 0x57C);
+	s16 AA = _SHIFTR(VV, 16, 16) - _SHIFTR(VV, 0, 16);
+	VV = *reinterpret_cast<u32*>(DMEM + 0x570);
+	s32 CC = VV >> 16;
+	u32 DD = *reinterpret_cast<u32*>(DMEM + 0x55C);
+	u32 EE = *reinterpret_cast<u32*>(DMEM + 0x558);
+	VV = *reinterpret_cast<u32*>(DMEM + 0x54C);
+	s32 FF = _SHIFTR(VV,  0, 16);
+	u16 JJ = _SHIFTR(VV, 16, 16);
+	u32 GG = *reinterpret_cast<u32*>(DMEM + 0x574);
+	VV = *reinterpret_cast<u32*>(DMEM + 0x548);
+	u32 HH = _SHIFTR(VV, 16, 16) << 0x0C;
+	u32 II = _SHIFTR(VV,  0, 16) << 0x0C;
+
+	u32 step = 2;
+	s32 KK;
+	s16 LL, MM, NN, RR, AAA;
+	u32 SS;
+
+	auto setTexture = [&]() {
+//		0x28000000, 0x00000000
+		runCommand((*reinterpret_cast<u32*>(DMEM + 0x56C) | AAA), 0x27000000);
+		runCommand((*reinterpret_cast<u32*>(DMEM + 0x568)), SS);
+//		0x26000000, 0x00000000
+		runCommand(0xF4000000, (((P + 0x6FF)<<16) | ((RR << 2) - 1)));
+	};
+
+	bool stop = false;
+	while (!stop) {
+		switch (step) {
+		case 2:
+			KK = DD >> 10;
+			if (KK > 0)
+				step = 5;
+			else
+				step = 3;
+			break;
+		case 3:
+			AA -= CC;
+			if (AA > 0)
+				E2_1 += GG;
+			else {
+				VV = *reinterpret_cast<u32*>(DMEM + 0x564);
+				E2_1 = imagePtr + _SHIFTR(VV, 16, 16) + _SHIFTR(VV, 0, 16) * (-AA);
+				VV = *reinterpret_cast<u32*>(DMEM + 0x57C);
+				AA += _SHIFTR(VV, 16, 16);
+			}
+			step = 4;
+			break;
+		case 4:
+			DD += EE;
+			VV = *reinterpret_cast<u32*>(DMEM + 0x570);
+			CC = s32(_SHIFTR(VV, 0, 16));
+			GG = *reinterpret_cast<u32*>(DMEM + 0x578);
+			F1_1 = 0;
+			step = 2;
+			break;
+		case 5:
+			FF -= KK;
+			DD &= 0x03FF;
+			if (FF < 0) {
+				CC += ((objBg.scaleH * FF) >> 10) + 1;
+				KK += FF;
+				VV = *reinterpret_cast<u32*>(DMEM + 0x570);
+				if (CC - s32(_SHIFTR(VV, 0, 16)) > 0)
+					CC = s32(_SHIFTR(VV, 0, 16));
+			}
+			step = 6;
+			break;
+		case 6:
+			LL = JJ + KK;
+			VV = *reinterpret_cast<u32*>(DMEM + 0x550);
+			P = _SHIFTR(VV, 0, 16);
+			MM = CC + _SHIFTR(VV, 24, 8);
+			NN = AA - _SHIFTR(VV, 16, 8);
+			if (NN - MM < 0)
+				step = 7;
+			else
+				step = 77;
+			break;
+		case 7:
+			RR = MM - AA;
+			AAA = AA;
+			if (RR > 0) {
+				VV = *reinterpret_cast<u32*>(DMEM + 0x564);
+				SS = imagePtr + _SHIFTR(VV, 16, 16);
+				if ((AAA & 1) != 0) {
+					AAA--;
+					RR++;
+					SS -= _SHIFTR(VV, 0, 16);
+				}
+				AAA *= P;
+				setTexture();
+			}
+			step = 8;
+			break;
+		case 77:
+			RR = MM;
+			SS = E2_1;
+			runCommand(*reinterpret_cast<u32*>(DMEM + 0x568), SS);
+			//0x26000000, 0x00000000
+			runCommand(0xF4000000, (((P + 0x6FF) << 16) | ((RR << 2) - 1)));
+			AA -= CC;
+			E2_1 += GG;
+			step = 11;
+			break;
+		case 8:
+			VV = *reinterpret_cast<u32*>(DMEM + 0x550);
+			if (_SHIFTR(VV, 16, 8) != 0) {
+				SS = imagePtr;
+				s16 BBB = NN;
+				RR = NN & 1;
+				VV = *reinterpret_cast<u32*>(DMEM + 0x564);
+				if (RR != 0) {
+					BBB--;
+					SS -= _SHIFTR(VV, 0, 16);
+				}
+				u32 CCC = E2_1 + BBB * _SHIFTR(VV, 0, 16);
+				RR++;
+				u16 DDD = ((_SHIFTR(VV, 0, 16) - _SHIFTR(VV, 16, 16)) * 0x2000) >> 16;
+				u32 ZZZ = BBB * P;
+				P -= DDD;
+				AAA = ZZZ + DDD;
+				setTexture();
+				SS = CCC;
+				AAA = ZZZ;
+				P = DDD;
+				setTexture();
+			}
+			step = 9;
+			break;
+		case 9:
+			AA -= CC;
+			if (NN <= 0) {
+				runCommand(*reinterpret_cast<u32*>(DMEM + 0x56C), 0x27000000);
+			} else {
+				VV = *reinterpret_cast<u32*>(DMEM + 0x550);
+				P = _SHIFTR(VV, 0, 16);
+				SS = E2_1;
+				RR = NN;
+				AAA = 0;
+				setTexture();
+			}
+			step = 10;
+			break;
+		case 10:
+			if (AA > 0) {
+				E2_1 += GG;
+			} else {
+				VV = *reinterpret_cast<u32*>(DMEM + 0x564);
+				E2_1 = imagePtr + _SHIFTR(VV, 16, 16) + _SHIFTR(VV, 0, 16) * (-AA);
+				VV = *reinterpret_cast<u32*>(DMEM + 0x57C);
+				AA += _SHIFTR(VV, 16, 16);
+			}
+			step = 11;
+			break;
+		case 11:
+			//0x27000000, 0x00000000
+			const u32 w0 = (G_TEXRECT << 24) | (LL << 2) | II;
+			const u32 w1 = (JJ << 2) | HH;
+			RDP.w2 = (H2 << 16) | F1_1;
+			RDP.w3 = (objBg.scaleW << 16) | objBg.scaleH;
+			RDP_TexRect(w0, w1);
+			if (FF <= 0)
+				stop = true;
+			else {
+				JJ = LL;
+				DD = DD + EE;
+				VV = *reinterpret_cast<u32*>(DMEM + 0x570);
+				CC = _SHIFTR(VV, 0, 16);
+				GG = *reinterpret_cast<u32*>(DMEM + 0x578);
+				F1_1 = 0;
+				step = 2;
+			}
+			break;
+		}
+	}
+	}
+
+	if (config.graphics2D.enableNativeResTexrects != 0) {
+		GraphicsDrawer & drawer = dwnd().getDrawer();
+		drawer.flush();
+		drawer.setBackgroundDrawingMode(false);
+	}
+}
+
+static
+void BGCopyNew(u32 _bgAddr)
+{
+	// Step 1
+	uObjBg objBg = *reinterpret_cast<const uObjBg*>(RDRAM + _bgAddr);
+	const u32 imagePtr = RSP_SegmentToPhysical(objBg.imagePtr);
+	gDP.otherMode.cycleType = G_CYC_COPY;
+	gDP.changed |= CHANGED_CYCLETYPE;
+	ValueKeeper<bool> otherMode(RSP.LLE, true);
+
+	// Step 2
+	s16 Aw = std::max(0, objBg.frameX + objBg.frameW - gDP.scissor.xl);
+	s16 Bw = std::min(0, objBg.frameX - gDP.scissor.xh);
+	s16 Cw = objBg.frameW + Bw - Aw;
+	if (Cw <= 0)
+		return;
+	s16 Dw = (((objBg.imageX * 0x2000) >> 16) & 0xFFFC) - Bw;
+	s16 Ew = objBg.frameX - Bw;
+
+	s16 Ah = std::max(0, objBg.frameY + objBg.frameH - gDP.scissor.yl);
+	s16 Bh = std::min(0, objBg.frameY - gDP.scissor.yh);
+	s16 Ch = objBg.frameH + Bh - Ah;
+	if (Ch <= 0)
+		return;
+	s16 Dh = (((objBg.imageY * 0x2000) >> 16) & 0xFFFC) - Bh;
+	s16 Eh = objBg.frameY - Bh;
+
+	s16 F = Dh - objBg.imageH;
+	s16 G = (F >= 0) ? F : Dh;
+	s16 H= (objBg.imageFlip != 0) ? Dw + Aw : Dw;
+
+	// Step 3
+	u32 I = (objBg.imageLoad == G_BGLT_LOADTILE) ? 0xFFFFFFFF : 0U;
+	u32 J = objBg.tmemW << 9;
+	u32 K = (G_SETTILE << 24) | 0x100000 | (J & I);
+	u32 L = (objBg.imageFmt << 2) | objBg.imageSiz;
+	L = (L << 0x13) | J;
+	u32 M = (objBg.imagePal << 0x14) | 0x0007C1F0;
+
+	runCommand(K, 0x27000000);
+	runCommand((G_SETTILESIZE<<24), 0);
+	runCommand(((G_SETTILE<<24) | L), M);
+
+	// Step 4
+	static const u32 aSize[] = {
+		0x003F0800,
+		0x10000080,
+		0x001F1000,
+		0x20000100,
+		0x000F2000,
+		0x40000200,
+		0x00074000,
+		0x80000400
+	};
+	const u16 * aSize16 = reinterpret_cast<const u16*>(aSize);
+	u16 imageSzIdx = objBg.imageSiz << 2;
+	u16 N0 = aSize16[(0 + imageSzIdx) ^ 1];
+	u16 N1 = aSize16[(1 + imageSzIdx) ^ 1];
+	u16 N2 = aSize16[(2 + imageSzIdx) ^ 1];
+	G = (G * 0x4000) >> 16;
+	u16 O = (N0 & H) + Cw;
+	u32 P = ((N1 * H) >> 16) + objBg.tmemSizeW * G;
+	u16 Q = (N2 * O) >> 16;
+	u32 R = (objBg.imageFlip != 0) ? (((1 - O) * 8) << 16) : (((N0 & H) * 8) << 16);
+	u32 S = ((P >> 1) << 3) + imagePtr;
+	u16 T = Ew + Cw - 1;
+
+	u16 A1 = objBg.imageH & 0xFFFC;
+	u16 A2 = G <<2;
+	u16 A3 = (N1 * H) >> 16;
+	u32 T0 = Ew << 0x0C;
+	u16 T1 = Eh;
+	u32 T2 = T << 0x0C;
+	s16 AT = Ch;
+	s16 U = A1 - A2;
+
+	if (config.graphics2D.enableNativeResTexrects != 0)
+		dwnd().getDrawer().setBackgroundDrawingMode(true);
+
+	u32 V, X, Y, Z, AA, w0, w1;
+	u16 S5, BB;
+	u32 step = 4;
+	bool stop = false;
+	while (!stop) {
+		switch (step) {
+		case 4:
+			if (U <= 0)
+				stop = true;
+			step = 5;
+		break;
+		case 5:
+			if (A3 > 0)
+				U -= 4;
+			if (U > AT)
+				U = AT;
+			V =  0xE4000000 | T2;
+			if (gs_s2dexversion == eVer1_7)
+				X = (objBg.imageLoad == G_BGLT_LOADTILE) ? (Q << 2) - 1 : objBg.tmemLoadSH;
+			else
+				X = (objBg.imageLoad == G_BGLT_LOADTILE) ? (Q << 2) : objBg.tmemLoadSH;
+			X = (X | 0x7000) << 0x0C;
+			Y = 0xFD100000 | ((objBg.tmemSizeW << 1) - 1);
+			AT -= U;
+			step = (U <= 0) ? 8 : 55;
+		break;
+		case 55:
+			if (gs_s2dexversion == eVer1_7)
+				Z = (objBg.imageLoad == G_BGLT_LOADTILE) ? (objBg.tmemSize << 0x10) | objBg.tmemLoadSH : objBg.tmemSize;
+			else
+				Z = objBg.tmemSize;
+			S5 = objBg.tmemH;
+			AA = X | objBg.tmemLoadTH;
+			step = 6;
+		break;
+		case 6:
+			U -= S5;
+			if (U < 0) {
+				Z += objBg.tmemSizeW * U;
+				S5 += U;
+				AA = (objBg.imageLoad == G_BGLT_LOADTILE) ? X | (S5 - 1) : (((Z - 2) | 0xE000) << 0x0B) | objBg.tmemLoadTH;
+			}
+			step = 7;
+			break;
+		case 7:
+			BB = T1 + S5 - 1;
+			runCommand(Y, S);
+			if (objBg.imageLoad == G_BGLT_LOADTILE)
+				runCommand((G_LOADTILE<<24), AA);
+			else
+				runCommand((G_LOADBLOCK<<24), AA);
+			w0 = V | BB;
+			w1 = T0 | T1;
+			RDP.w2 = R;
+			RDP.w3 = 0x10000400;
+			RDP_TexRect(w0, w1);
+			T1 = BB + 1;
+			S += Z;
+			if (U > 0)
+				step = 6;
+			else {
+				if (AT <= 0)
+					stop = true;
+				step = 8;
+			}
+			break;
+		case 8:
+			if (A3 > 0) {
+				A3 >>= 1;
+				runCommand(Y, S);
+				runCommand(((G_SETTILE<<24) | 0x35100000), 0x06000000);
+				runCommand((G_LOADBLOCK<<24), (0x06000000 | (((((objBg.tmemSizeW >> 1) - A3) << 2) - 1) << 12)));
+				runCommand(Y, imagePtr);
+				runCommand(((G_SETTILE << 24) | 0x35100000 | ((objBg.tmemSizeW >> 1) - A3)), 0x06000000);
+				runCommand((G_LOADBLOCK<<24), (0x06000000 | (((A3 << 2) - 1) << 12)));
+				w0 = V | T1;
+				w1 = T0 | T1;
+				RDP.w2 = R;
+				RDP.w3 = 0x10000400;
+				RDP_TexRect(w0, w1);
+				T1 += 4;
+				AT -= 4;
+				if (AT <= 0)
+					stop = true;
+			}
+			step = 9;
+			break;
+		case 9:
+			S = imagePtr + (A3 << 3);
+			U = AT;
+			AT = 0;
+			step = 55;
+			break;
+		}
+	}
+
+	if (config.graphics2D.enableNativeResTexrects != 0) {
+		GraphicsDrawer & drawer = dwnd().getDrawer();
+		drawer.flush();
+		drawer.setBackgroundDrawingMode(false);
+	}
+}
+
 void S2DEX_BG_1Cyc(u32 w0, u32 w1)
 {
-	gSPBgRect1Cyc(w1);
+	const u32 bgAddr = RSP_SegmentToPhysical(w1);
+	if (_useOldBgCode(bgAddr))
+		gSPBgRect1Cyc(bgAddr);
+	else
+		BG1CycNew(bgAddr);
 }
 
 void S2DEX_BG_Copy(u32 w0, u32 w1)
 {
-	gSPBgRectCopy(w1);
+	const u32 bgAddr = RSP_SegmentToPhysical(w1);
+	if (_useOldBgCode(bgAddr))
+		gSPBgRectCopy(bgAddr);
+	else
+		BGCopyNew(bgAddr);
 }
 
 void S2DEX_Obj_MoveMem(u32 w0, u32 w1)
@@ -914,7 +1578,7 @@ void S2DEX_Obj_MoveMem(u32 w0, u32 w1)
 
 void S2DEX_MoveWord(u32 w0, u32 w1)
 {
-	switch (_SHIFTR(w0, 16, 8))
+	switch (_SHIFTR(w0, 0, 8))
 	{
 	case G_MW_GENSTAT:
 		gSPSetStatus(_SHIFTR(w0, 0, 16), w1);
@@ -1014,7 +1678,6 @@ void S2DEX_Init()
 	resetObjMtx();
 
 	GBI.PCStackSize = 18;
-	gs_bVer1_3 = false;
 
 	//          GBI Command             Command Value			Command Function
 	GBI_SetGBI( G_SPNOOP,				F3D_SPNOOP,				F3D_SPNoOp );
@@ -1044,5 +1707,17 @@ void S2DEX_Init()
 void S2DEX_1_03_Init()
 {
 	S2DEX_Init();
-	gs_bVer1_3 = true;
+	gs_s2dexversion = eVer1_3;
+}
+
+void S2DEX_1_05_Init()
+{
+	S2DEX_Init();
+	gs_s2dexversion = eVer1_5;
+}
+
+void S2DEX_1_07_Init()
+{
+	S2DEX_Init();
+	gs_s2dexversion = eVer1_7;
 }
