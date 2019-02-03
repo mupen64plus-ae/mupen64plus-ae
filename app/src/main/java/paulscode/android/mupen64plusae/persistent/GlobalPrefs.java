@@ -341,6 +341,11 @@ public class GlobalPrefs
     static final String KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT = "touchscreenProfileDpadDefault";
     public static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     public static final String KEY_TOUCHSCREEN_SKIN_CUSTOM_PATH = "touchscreenCustomSkin";
+    public static final String CONTROLLER_PROFILE1 = "controllerProfile1";
+    public static final String CONTROLLER_PROFILE2 = "controllerProfile2";
+    public static final String CONTROLLER_PROFILE3 = "controllerProfile3";
+    public static final String CONTROLLER_PROFILE4 = "controllerProfile4";
+    public static final String PLAYER_MAP = "playerMap";
     // ... add more as needed
 
     // Shared preferences default values
@@ -618,16 +623,16 @@ public class GlobalPrefs
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
 
         // Controller profiles
-        controllerProfile1 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE1,
+        controllerProfile1 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE1,
                 getControllerProfileDefault(1),
                 GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile2 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE2,
+        controllerProfile2 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE2,
                 getControllerProfileDefault(2),
                 GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile3 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE3,
+        controllerProfile3 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE3,
                 getControllerProfileDefault(3),
                 GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
-        controllerProfile4 = loadControllerProfile( mPreferences, GamePrefs.CONTROLLER_PROFILE4,
+        controllerProfile4 = loadControllerProfile( mPreferences, CONTROLLER_PROFILE4,
                 getControllerProfileDefault(4),
                 GetControllerProfilesConfig(), appData.GetControllerProfilesConfig() );
 
@@ -790,13 +795,13 @@ public class GlobalPrefs
     {
         switch( player )
         {
-            case 2: return getString( GamePrefs.CONTROLLER_PROFILE2, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
-            case 3: return getString( GamePrefs.CONTROLLER_PROFILE3, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
-            case 4: return getString( GamePrefs.CONTROLLER_PROFILE4, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+            case 2: return getString( CONTROLLER_PROFILE2, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+            case 3: return getString( CONTROLLER_PROFILE3, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+            case 4: return getString( CONTROLLER_PROFILE4, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
             default: break;
         }
 
-        return getString( GamePrefs.CONTROLLER_PROFILE1, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
+        return getString( CONTROLLER_PROFILE1, DEFAULT_CONTROLLER_PROFILE_DEFAULT );
     }
 
     public void putEmulationProfileDefault( String value )

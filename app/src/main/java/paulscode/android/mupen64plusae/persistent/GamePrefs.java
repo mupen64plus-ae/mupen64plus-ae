@@ -293,7 +293,7 @@ public class GamePrefs
     private final SharedPreferences mPreferences;
 
     /** Profile keys */
-    static final String DISPLAY_RESOLUTION = "displayResolutionGame";
+    private static final String DISPLAY_RESOLUTION = "displayResolutionGame";
     static final String EMULATION_PROFILE = "emulationProfile";
     static final String TOUCHSCREEN_PROFILE = "touchscreenProfileGame";
     static final String CONTROLLER_PROFILE1 = "controllerProfile1Game";
@@ -406,7 +406,7 @@ public class GamePrefs
         String playerMapString = mPreferences.getString( PLAYER_MAP, "" );
 
         if( useDefaultPlayerMapping) {
-            playerMapString = globalPrefs.autoPlayerMapping ? "" : globalPrefs.getString("playerMap", "");
+            playerMapString = globalPrefs.autoPlayerMapping ? "" : globalPrefs.getString(GlobalPrefs.PLAYER_MAP, "");
             Log.i("GamePrefs", "Using default player mapping");
         }
 
@@ -488,7 +488,7 @@ public class GamePrefs
 
         useDefaultZoom = mPreferences.getBoolean( "useDefaultZoom", true );
         videoSurfaceZoom = useDefaultZoom ? mGlobalPrefs.videoSurfaceZoom :
-                mPreferences.getInt( "displayZoomSeek", 100 );
+                mPreferences.getInt( DISPLAY_ZOOM, 100 );
 
         // Touchscreen prefs
         isTouchscreenEnabled = touchscreenProfile != null && !touchscreenProfile.getName().equals(fpsOnlyTouchscreenProfile);

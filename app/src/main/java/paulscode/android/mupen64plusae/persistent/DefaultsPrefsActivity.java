@@ -132,10 +132,10 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
         final ProfilePreference emulationProfile = (ProfilePreference) findPreference(GlobalPrefs.KEY_EMULATION_PROFILE_DEFAULT);
         final ProfilePreference touchscreenProfile = (ProfilePreference) findPreference(GlobalPrefs.KEY_TOUCHSCREEN_PROFILE_DEFAULT);
         final ProfilePreference touchscreenDpadProfile = (ProfilePreference) findPreference(GlobalPrefs.KEY_TOUCHSCREEN_DPAD_PROFILE_DEFAULT);
-        final ProfilePreference controllerProfile1 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE1);
-        final ProfilePreference controllerProfile2 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE2);
-        final ProfilePreference controllerProfile3 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE3);
-        final ProfilePreference controllerProfile4 = (ProfilePreference) findPreference(GamePrefs.CONTROLLER_PROFILE4);
+        final ProfilePreference controllerProfile1 = (ProfilePreference) findPreference(GlobalPrefs.CONTROLLER_PROFILE1);
+        final ProfilePreference controllerProfile2 = (ProfilePreference) findPreference(GlobalPrefs.CONTROLLER_PROFILE2);
+        final ProfilePreference controllerProfile3 = (ProfilePreference) findPreference(GlobalPrefs.CONTROLLER_PROFILE3);
+        final ProfilePreference controllerProfile4 = (ProfilePreference) findPreference(GlobalPrefs.CONTROLLER_PROFILE4);
 
         if (emulationProfile != null)
         {
@@ -194,11 +194,11 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
         }
 
         // Enable/disable player map item as necessary
-        PrefUtil.enablePreference(this, GamePrefs.PLAYER_MAP,
+        PrefUtil.enablePreference(this, GlobalPrefs.PLAYER_MAP,
                 !mGlobalPrefs.autoPlayerMapping && !mGlobalPrefs.isControllerShared);
 
         // Define which buttons to show in player map dialog
-        final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GamePrefs.PLAYER_MAP);
+        final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
         if (playerPref != null)
         {
             // Check null in case preference has been removed
@@ -226,7 +226,7 @@ public class DefaultsPrefsActivity extends AppCompatPreferenceActivity implement
     @Override
     public void onDialogClosed(int inputCode, int hardwareId, int which)
     {
-        final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GamePrefs.PLAYER_MAP);
+        final PlayerMapPreference playerPref = (PlayerMapPreference) findPreference(GlobalPrefs.PLAYER_MAP);
         playerPref.onDialogClosed(inputCode, hardwareId, which);
     }
 

@@ -44,6 +44,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.profile.Profile;
 
+@SuppressWarnings("unused")
 public class ProfilePreference extends ListPreference implements OnPreferenceDialogListener
 {
     private static final boolean DEFAULT_ALLOW_DISABLE = false;
@@ -73,7 +74,7 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
     {
         if( !TextUtils.isEmpty( mManagerAction ) )
         {
-            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
+            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
                 context, R.layout.list_preference, getEntries());
             
             int currentIndex = findIndexOfValue(getCurrentValue(null));
@@ -107,20 +108,20 @@ public class ProfilePreference extends ListPreference implements OnPreferenceDia
 
     /**
      *
-     * @param configBuiltin
-     * @param configCustom
-     * @param allowDefaultProfile
+     * @param configBuiltin Built in configuration
+     * @param configCustom Custom configuration
+     * @param allowDefaultProfile Allow using a default profile
      * @param defaultValue This has dual use. If a global default is enabled, it's used for its value. Otherwise
      *                     it's used for the default value if one isn't defined
-     * @param exclusions
-     * @param showBuiltins
+     * @param exclusions Exclude These profiles
+     * @param showBuiltins Show built in profiles
      */
     public void populateProfiles( ConfigFile configBuiltin, ConfigFile configCustom, boolean allowDefaultProfile,
         String defaultValue, List<Profile> exclusions, boolean showBuiltins )
     {
         //ConfigFile configBuiltin = new ConfigFile( builtinPath );
         //ConfigFile configCustom = new ConfigFile( customPath );
-        List<Profile> profiles = new ArrayList<Profile>();
+        List<Profile> profiles = new ArrayList<>();
         if(showBuiltins)
         {
             profiles.addAll( Profile.getProfiles( configBuiltin, true ) );

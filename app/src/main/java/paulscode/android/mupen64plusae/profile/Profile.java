@@ -32,6 +32,7 @@ import android.text.TextUtils;
 /**
  * The base class for configuration profiles. Extend this class to encapsulate groups of settings.
  */
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Profile implements Comparable<Profile>
 {
     /** The name of the profile, displayed in the UI and used as a unique identifier. */
@@ -47,15 +48,15 @@ public class Profile implements Comparable<Profile>
      * intents and purposes are guaranteed to exist. Defaults should always reference built-in
      * profiles.
      */
-    public final boolean isBuiltin;
+    final boolean isBuiltin;
     
     private static final String KEY_COMMENT = "comment";
     
-    private final HashMap<String, String> data = new HashMap<String, String>();
+    private final HashMap<String, String> data = new HashMap<>();
     
     public static List<Profile> getProfiles( ConfigFile config, boolean isBuiltin )
     {
-        List<Profile> profiles = new ArrayList<Profile>();
+        List<Profile> profiles = new ArrayList<>();
         for( String name : config.keySet() )
             if( !ConfigFile.SECTIONLESS_NAME.equals( name ) )
                 profiles.add( new Profile( isBuiltin, config.get( name ) ) );
@@ -226,7 +227,7 @@ public class Profile implements Comparable<Profile>
      * @param config the {@link ConfigFile} to write to
      * @return true if the config file is non-null and the profile name is non-empty
      */
-    public boolean writeTo( ConfigFile config )
+    boolean writeTo( ConfigFile config )
     {
         if( config == null || TextUtils.isEmpty( name ) )
             return false;

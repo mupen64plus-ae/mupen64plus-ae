@@ -42,6 +42,7 @@ import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -225,8 +226,11 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
 
         // Sanity check to make sure resources are present
         try {
-            Drawable randomDrawable = getResources().getDrawable(R.drawable.ic_arrow_u);
-            Log.i("SplashActivity", "Resource found: " + randomDrawable.toString());
+            Drawable randomDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_arrow_u, null);
+
+            if (randomDrawable != null) {
+                Log.i("SplashActivity", "Resource found: " + randomDrawable.toString());
+            }
         } catch (android.content.res.Resources.NotFoundException e) {
             Log.e("SplashActivity", "Resource NOT found");
             Notifier.showToast(this, R.string.invalidInstall_message);
