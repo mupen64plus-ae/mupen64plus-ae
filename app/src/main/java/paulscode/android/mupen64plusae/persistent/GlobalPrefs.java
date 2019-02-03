@@ -456,7 +456,7 @@ public class GlobalPrefs
             touchscreenSkinPath = appData.touchscreenSkinsDir + touchscreenSkin;
 
         // Video prefs
-        displayResolution = getSafeInt( mPreferences, GamePrefs.DISPLAY_RESOLUTION, 480 );
+        displayResolution = getSafeInt( mPreferences, "displayResolution", 480 );
         videoSurfaceZoom = mPreferences.getInt( "displayZoomSeek", 100 );
         stretchScreen = mPreferences.getString( "displayScaling", "original" ).equals("stretch");
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode_v2", true );
@@ -971,34 +971,8 @@ public class GlobalPrefs
         }
 
         // Display prefs, default value is the global default
-        int tempVideoRenderWidth = 0;
-
-        switch( hResolution )
-        {
-            case 720:
-                tempVideoRenderWidth = 960;
-                break;
-            case 600:
-                tempVideoRenderWidth = 800;
-                break;
-            case 480:
-                tempVideoRenderWidth = 640;
-                break;
-            case 360:
-                tempVideoRenderWidth = 480;
-                break;
-            case 240:
-                tempVideoRenderWidth = 320;
-                break;
-            case 120:
-                tempVideoRenderWidth = 160;
-                break;
-            case 0:
-                tempVideoRenderWidth = videoRenderWidthOriginal;
-                break;
-            default:
-                break;
-        }
+        int tempVideoRenderWidth = hResolution == 0 ? videoRenderWidthOriginal :
+                (int)Math.round((float)hResolution*1.333333);
 
         boolean isPortrait = (displayOrientation != -1 &&
                 displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||

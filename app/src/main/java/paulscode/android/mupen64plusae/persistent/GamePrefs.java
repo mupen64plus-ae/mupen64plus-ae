@@ -293,15 +293,15 @@ public class GamePrefs
     private final SharedPreferences mPreferences;
 
     /** Profile keys */
-    static final String DISPLAY_RESOLUTION = "displayResolution";
+    static final String DISPLAY_RESOLUTION = "displayResolutionGame";
     static final String EMULATION_PROFILE = "emulationProfile";
-    static final String TOUCHSCREEN_PROFILE = "touchscreenProfile";
-    static final String CONTROLLER_PROFILE1 = "controllerProfile1";
-    static final String CONTROLLER_PROFILE2 = "controllerProfile2";
-    static final String CONTROLLER_PROFILE3 = "controllerProfile3";
-    static final String CONTROLLER_PROFILE4 = "controllerProfile4";
-    static final String PLAYER_MAP = "playerMapV2";
-    static final String DISPLAY_ZOOM = "displayZoomSeek";
+    static final String TOUCHSCREEN_PROFILE = "touchscreenProfileGame";
+    static final String CONTROLLER_PROFILE1 = "controllerProfile1Game";
+    static final String CONTROLLER_PROFILE2 = "controllerProfile2Game";
+    static final String CONTROLLER_PROFILE3 = "controllerProfile3Game";
+    static final String CONTROLLER_PROFILE4 = "controllerProfile4Game";
+    static final String PLAYER_MAP = "playerMapGame";
+    static final String DISPLAY_ZOOM = "displayZoomSeekGame";
     static final String PLAY_SHOW_CHEATS = "playShowCheats";
 
     /**
@@ -406,7 +406,7 @@ public class GamePrefs
         String playerMapString = mPreferences.getString( PLAYER_MAP, "" );
 
         if( useDefaultPlayerMapping) {
-            playerMapString = globalPrefs.autoPlayerMapping ? "" : globalPrefs.getString(PLAYER_MAP, "");
+            playerMapString = globalPrefs.autoPlayerMapping ? "" : globalPrefs.getString("playerMap", "");
             Log.i("GamePrefs", "Using default player mapping");
         }
 
@@ -469,7 +469,7 @@ public class GamePrefs
         boolean isAngrylionEnabled = videoPlugin.name.equals( "libmupen64plus-video-angrylion-rdp-plus.so" );
         angrylionPlusPrefs = new AngrylionPlusPrefs(context, emulationProfile);
 
-        final String scaling = mPreferences.getString( "displayScaling", "default" );
+        final String scaling = mPreferences.getString( "displayScalingGame", "default" );
 
         boolean stretch = scaling.equals("default") ? globalPrefs.stretchScreen : scaling.equals( "stretch" );
         boolean gliden64Widescreenhack = emulationProfile.get( "WidescreenHack", "False" ).equals("True") && isGliden64Enabled;
@@ -547,7 +547,7 @@ public class GamePrefs
 
         isTouchscreenHidden = !isTouchscreenEnabled || globalPrefs.touchscreenTransparency == 0;
 
-        int tmpTouchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldV2", -1 );
+        int tmpTouchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldGame", -1 );
 
         if(tmpTouchscreenAutoHold == -1)
         {

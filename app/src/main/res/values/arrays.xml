@@ -142,6 +142,9 @@
     <!-- Screen Resolution List -->
     <string-array name="displayResolution_entries" translatable="false">
         <item>@string/displayResolution_entryNative</item>
+        <item>@string/displayResolution_entry5760x4320</item>
+        <item>@string/displayResolution_entry2880x2160</item>
+        <item>@string/displayResolution_entry1440x1080</item>
         <item>@string/displayResolution_entry960x720</item>
         <item>@string/displayResolution_entry800x600</item>
         <item>@string/displayResolution_entry640x480</item>
@@ -151,6 +154,9 @@
     </string-array>
     <string-array name="displayResolution_values" translatable="false">
         <item>0</item>
+        <item>4320</item>
+        <item>2160</item>
+        <item>1080</item>
         <item>720</item>
         <item>600</item>
         <item>480</item>
@@ -164,6 +170,9 @@
     <string-array name="displayResolutionGame_entries" translatable="false">
         <item>@string/default_profile_title</item>
         <item>@string/displayResolution_entryNative</item>
+        <item>@string/displayResolution_entry5760x4320</item>
+        <item>@string/displayResolution_entry2880x2160</item>
+        <item>@string/displayResolution_entry1440x1080</item>
         <item>@string/displayResolution_entry960x720</item>
         <item>@string/displayResolution_entry800x600</item>
         <item>@string/displayResolution_entry640x480</item>
@@ -174,6 +183,9 @@
     <string-array name="displayResolutionGame_values" translatable="false">
         <item>-1</item>
         <item>0</item>
+        <item>4320</item>
+        <item>2160</item>
+        <item>1080</item>
         <item>720</item>
         <item>600</item>
         <item>480</item>

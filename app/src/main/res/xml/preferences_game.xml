@@ -8,7 +8,7 @@
         android:entries="@array/displayResolutionGame_entries"
         android:entryValues="@array/displayResolutionGame_values"
         android:icon="@drawable/ic_display"
-        android:key="displayResolution"
+        android:key="displayResolutionGame"
         android:summary="@string/selectedValue"
         android:title="@string/displayResolution_title" />
     <androidx.preference.CheckBoxPreference
@@ -20,7 +20,7 @@
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="100"
         android:icon="@drawable/ic_display"
-        android:key="displayZoomSeek"
+        android:key="displayZoomSeekGame"
         android:title="@string/displayZoom_title"
         mupen64:maximumValue="130"
         mupen64:minimumValue="100"
@@ -32,7 +32,7 @@
         android:entries="@array/displayScalingGame_entries"
         android:entryValues="@array/displayScalingGame_values"
         android:icon="@drawable/ic_display"
-        android:key="displayScaling"
+        android:key="displayScalingGame"
         android:summary="@string/selectedValue"
         android:title="@string/displayScaling_title" />
 
@@ -40,7 +40,7 @@
         android:defaultValue="@string/touchscreenAutoHoldGame_default"
         android:entries="@array/touchscreenAutoHoldGame_entries"
         android:entryValues="@array/touchscreenAutoHoldGame_values"
-        android:key="touchscreenAutoHoldV2"
+        android:key="touchscreenAutoHoldGame"
         android:summary="@string/selectedValue"
         android:icon="@drawable/ic_phone"
         android:title="@string/touchscreenAutoHold_title" />
@@ -84,7 +84,7 @@
         mupen64:managerAction=".profile.ManageEmulationProfilesActivity" />
     <paulscode.android.mupen64plusae.preference.ProfilePreference
         android:icon="@drawable/ic_phone"
-        android:key="touchscreenProfile"
+        android:key="touchscreenProfileGame"
         android:summary="@string/selectedValue"
         android:title="@string/touchscreenProfile_title"
         mupen64:allowDisable="true"
@@ -97,28 +97,28 @@
 
         <paulscode.android.mupen64plusae.preference.ProfilePreference
             android:icon="@drawable/ic_gamepad"
-            android:key="controllerProfile1"
+            android:key="controllerProfile1Game"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile1_title"
             mupen64:allowDisable="true"
             mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
         <paulscode.android.mupen64plusae.preference.ProfilePreference
             android:icon="@drawable/ic_gamepad"
-            android:key="controllerProfile2"
+            android:key="controllerProfile2Game"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile2_title"
             mupen64:allowDisable="true"
             mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
         <paulscode.android.mupen64plusae.preference.ProfilePreference
             android:icon="@drawable/ic_gamepad"
-            android:key="controllerProfile3"
+            android:key="controllerProfile3Game"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile3_title"
             mupen64:allowDisable="true"
             mupen64:managerAction=".profile.ManageControllerProfilesActivity" />
         <paulscode.android.mupen64plusae.preference.ProfilePreference
             android:icon="@drawable/ic_gamepad"
-            android:key="controllerProfile4"
+            android:key="controllerProfile4Game"
             android:summary="@string/selectedValue"
             android:title="@string/controllerProfile4_title"
             mupen64:allowDisable="true"
