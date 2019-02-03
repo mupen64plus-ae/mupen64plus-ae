@@ -8,7 +8,7 @@ import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
 
 public class GLideN64Prefs {
 
-    public static final int VERSION = 24;
+    public static final int VERSION = 25;
 
     /** Enable/Disable Fast Approximate Anti-Aliasing FXAA */
     public final boolean fxaa;
@@ -30,6 +30,12 @@ public class GLideN64Prefs {
     /** Enable hardware per-pixel lighting. */
     public final boolean enableHWLighting;
 
+    /** Do not use shaders to emulate N64 blending modes. Works faster on slow GPU. Can cause glitches. */
+    public final boolean enableLegacyBlending;
+
+    /** Enable writing of fragment depth. Some mobile GPUs do not support it, thus it made optional. Leave enabled. */
+    public final boolean enableFragmentDepthWrite;
+
     /** Make texrect coordinates continuous to avoid black lines between them
      * 0=Off
      * 1=Auto
@@ -39,11 +45,8 @@ public class GLideN64Prefs {
     /** Render 2D texrects in native resolution to fix misalignment between parts of 2D image */
     public final boolean enableNativeResTexrects;
 
-    /** Do not use shaders to emulate N64 blending modes. Works faster on slow GPU. Can cause glitches. */
-    public final boolean enableLegacyBlending;
-
-    /** Enable writing of fragment depth. Some mobile GPUs do not support it, thus it made optional. Leave enabled. */
-    public final boolean enableFragmentDepthWrite;
+    /** Render backgrounds mode (HLE only). (0=One piece (fast), 1=Stripped (precise)) */
+    public final int backgroundMode;
 
     /** Enable frame and|or depth buffer emulation. */
     public final boolean enableFBEmulation;
@@ -151,6 +154,7 @@ public class GLideN64Prefs {
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
         enableHWLighting = emulationProfile.get( "EnableHWLighting", "False" ).equals( "True" );
         correctTexrectCoords = getSafeInt( emulationProfile, "CorrectTexrectCoords", 0);
+        backgroundMode = getSafeInt( emulationProfile, "BackgroundsMode", 0);;
 
         enableLegacyBlending = emulationProfile.get( "EnableLegacyBlending", "True" ).equals( "True" );
         enableFragmentDepthWrite = emulationProfile.get( "EnableFragmentDepthWrite", "False" ).equals( "True" );
@@ -165,17 +169,9 @@ public class GLideN64Prefs {
 
         fxaa = emulationProfile.get( "FXAA", "False" ).equals( "True" );
 
-        if(enableCopyColorFromRDRAM && enableCopyColorToRDRAM != 0)
-        {
-            enableNativeResTexrects = false;
-            useNativeResolutionFactor = 1;
-        }
-        else
-        {
-            enableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "False" ).equals( "True" );
-            useNativeResolutionFactor = enableNativeResTexrects ?
-                    0 : getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);
-        }
+        enableNativeResTexrects = emulationProfile.get( "EnableNativeResTexrects", "False" ).equals( "True" );
+        useNativeResolutionFactor = enableNativeResTexrects ?
+                0 : getSafeInt( emulationProfile, "UseNativeResolutionFactor", 0);
 
         txFilterMode = getSafeInt( emulationProfile, "txFilterMode", 0);
         txEnhancementMode = enableNativeResTexrects ? 0 :getSafeInt( emulationProfile, "txEnhancementMode", 0);

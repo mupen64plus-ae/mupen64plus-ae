@@ -48,6 +48,7 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String CATEGORY_GLIDE64_ADVANCED = "categoryGlide64Advanced";
     private static final String CATEGORY_GLIDEN64_TEXTURE = "categoryGliden64Texture";
     private static final String CATEGORY_GLIDEN64_GENERAL = "categoryGliden64General";
+    private static final String CATEGORY_GLIDEN64_2D = "categoryGliden642d";
     private static final String CATEGORY_GLIDEN64_FRAME_BUFFER = "categoryGliden64FrameBuffer";
     private static final String CATEGORY_GLIDEN64_TEXTURE_FILTERING = "categoryGliden64TextureFiltering";
     private static final String CATEGORY_GLIDEN64_GAMMA = "categoryGliden64Gamma";
@@ -62,22 +63,6 @@ public class EmulationProfileActivity extends ProfileActivity
     private static final String LIBRICE_SO = "libmupen64plus-video-rice.so";
     private static final String LIBGLN64_SO = "libmupen64plus-video-gln64.so";
     private static final String LIBANGRYLION_SO = "libmupen64plus-video-angrylion-rdp-plus.so";
-
-    // Preference menu items
-    private PreferenceGroup mScreenRoot = null;
-    private PreferenceCategory mCategoryN64 = null;
-    private PreferenceCategory mCategoryRice = null;
-    private PreferenceCategory mCategoryGlide64 = null;
-    private PreferenceCategory mCategoryGlide64Advanced = null;
-    private PreferenceCategory mCategoryGliden64Texture = null;
-    private PreferenceCategory mCategoryGliden64General = null;
-    private PreferenceCategory mCategoryGliden64FrameBuffer = null;
-    private PreferenceCategory mCategoryGliden64TextureFiltering = null;
-    private PreferenceCategory mCategoryGliden64Gamma = null;
-    private PreferenceCategory mCategoryAngrylion = null;
-
-    private CompatListPreference mPreferenceRspPlugin = null;
-    private CompatListPreference mPreferenceVideoPlugin = null;
 
     private String mCurrentVideoPlugin = null;
     
@@ -126,22 +111,24 @@ public class EmulationProfileActivity extends ProfileActivity
 
     @Override
     protected void refreshViews()
-    {        
+    {
         // Get some menu items for use later
-        mScreenRoot = (PreferenceGroup) findPreference( SCREEN_ROOT );
-        mCategoryN64 = (PreferenceCategory) findPreference( CATEGORY_GLN64 );
-        mCategoryRice = (PreferenceCategory) findPreference( CATEGORY_RICE );
-        mCategoryGlide64 = (PreferenceCategory) findPreference( CATEGORY_GLIDE64 );
-        mCategoryGlide64Advanced = (PreferenceCategory) findPreference( CATEGORY_GLIDE64_ADVANCED);
-        mCategoryGliden64Texture = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE );
-        mCategoryGliden64General = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GENERAL );
-        mCategoryGliden64FrameBuffer = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_FRAME_BUFFER );
-        mCategoryGliden64TextureFiltering = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE_FILTERING );
-        mCategoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
-        mCategoryAngrylion = (PreferenceCategory) findPreference( CATEGORY_ANGRYLION );
+        PreferenceGroup screenRoot = (PreferenceGroup) findPreference( SCREEN_ROOT );
+        PreferenceCategory categoryN64 = (PreferenceCategory) findPreference( CATEGORY_GLN64 );
+        PreferenceCategory categoryRice = (PreferenceCategory) findPreference( CATEGORY_RICE );
+        PreferenceCategory categoryGlide64 = (PreferenceCategory) findPreference( CATEGORY_GLIDE64 );
+        PreferenceCategory categoryGlide64Advanced = (PreferenceCategory) findPreference( CATEGORY_GLIDE64_ADVANCED);
+        PreferenceCategory categoryGliden64Texture = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE );
+        PreferenceCategory categoryGliden64General = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GENERAL );
+        PreferenceCategory categoryGliden642d = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_2D );
+        PreferenceCategory categoryGliden64FrameBuffer = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_FRAME_BUFFER );
+        PreferenceCategory categoryGliden64TextureFiltering = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_TEXTURE_FILTERING );
+        PreferenceCategory categoryGliden64Gamma = (PreferenceCategory) findPreference( CATEGORY_GLIDEN64_GAMMA );
+        PreferenceCategory categoryAngrylion = (PreferenceCategory) findPreference( CATEGORY_ANGRYLION );
 
-        mPreferenceRspPlugin = (CompatListPreference) findPreference( RSP_PLUGIN );
-        mPreferenceVideoPlugin = (CompatListPreference) findPreference( VIDEO_PLUGIN );
+
+        CompatListPreference preferenceRspPlugin = (CompatListPreference) findPreference( RSP_PLUGIN );
+        CompatListPreference preferenceVideoPlugin = (CompatListPreference) findPreference( VIDEO_PLUGIN );
 
         // Get the current values
         String videoPlugin = mPrefs.getString( VIDEO_PLUGIN, null );
@@ -151,20 +138,20 @@ public class EmulationProfileActivity extends ProfileActivity
         //Remove or add options depending on GLES version
         if(openGlVersion.equals("2.0"))
         {
-            if(mPreferenceVideoPlugin != null) {
+            if(preferenceVideoPlugin != null) {
                 //Don't allow angrylion
-                ArrayList<CharSequence> videoEntriesArray = new ArrayList<CharSequence>(Arrays.asList(mPreferenceVideoPlugin.getEntries()));
-                ArrayList<CharSequence> videoValuesArray = new ArrayList<CharSequence>(Arrays.asList(mPreferenceVideoPlugin.getEntryValues()));
+                ArrayList<CharSequence> videoEntriesArray = new ArrayList<>(Arrays.asList(preferenceVideoPlugin.getEntries()));
+                ArrayList<CharSequence> videoValuesArray = new ArrayList<>(Arrays.asList(preferenceVideoPlugin.getEntryValues()));
 
                 int angryLionIndex = videoEntriesArray.indexOf(getText(R.string.videoPlugin_entryAngrylion));
                 if(angryLionIndex != -1)
                 {
                     videoEntriesArray.remove(angryLionIndex);
-                    videoValuesArray.remove(videoValuesArray.indexOf("libmupen64plus-video-angrylion-rdp-plus.so"));
+                    videoValuesArray.remove("libmupen64plus-video-angrylion-rdp-plus.so");
                 }
 
-                mPreferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[videoEntriesArray.size()]));
-                mPreferenceVideoPlugin.setEntryValues(videoValuesArray.toArray(new CharSequence[videoValuesArray.size()]));
+                preferenceVideoPlugin.setEntries(videoEntriesArray.toArray(new CharSequence[0]));
+                preferenceVideoPlugin.setEntryValues(videoValuesArray.toArray(new CharSequence[0]));
             }
         }
         
@@ -172,87 +159,89 @@ public class EmulationProfileActivity extends ProfileActivity
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
         
-        if(mCategoryN64 != null)
+        if(categoryN64 != null)
         {
             if( LIBGLN64_SO.equals( videoPlugin ) )
             {
-                mScreenRoot.addPreference( mCategoryN64 );
+                screenRoot.addPreference( categoryN64 );
             }
             else
             {
-                mScreenRoot.removePreference( mCategoryN64 );
+                screenRoot.removePreference( categoryN64 );
             }
         }
 
-        if(mCategoryRice != null)
+        if(categoryRice != null)
         {
             if( LIBRICE_SO.equals( videoPlugin ) )
             {
-                mScreenRoot.addPreference( mCategoryRice );
+                screenRoot.addPreference( categoryRice );
             }
             else
             {
-                mScreenRoot.removePreference( mCategoryRice );
+                screenRoot.removePreference( categoryRice );
             }
 
         }
 
-        if(mCategoryGlide64 != null &&
-            mCategoryGlide64 != null)
+        if(categoryGlide64 != null && categoryGlide64Advanced != null)
         {
             if( LIBGLIDE64_SO.equals( videoPlugin ) )
             {
-                mScreenRoot.addPreference( mCategoryGlide64 );
-                mScreenRoot.addPreference( mCategoryGlide64Advanced );
+                screenRoot.addPreference( categoryGlide64 );
+                screenRoot.addPreference( categoryGlide64Advanced );
             }
             else
             {
-                mScreenRoot.removePreference( mCategoryGlide64 );
-                mScreenRoot.removePreference( mCategoryGlide64Advanced );
+                screenRoot.removePreference( categoryGlide64 );
+                screenRoot.removePreference( categoryGlide64Advanced );
             }
         }
 
-        if(mCategoryAngrylion != null)
+        if(categoryAngrylion != null)
         {
             if( LIBANGRYLION_SO.equals( videoPlugin ) )
             {
-                mScreenRoot.addPreference( mCategoryAngrylion );
+                screenRoot.addPreference( categoryAngrylion );
             }
             else
             {
-                mScreenRoot.removePreference( mCategoryAngrylion );
+                screenRoot.removePreference( categoryAngrylion );
             }
         }
 
-        if(mCategoryGliden64Texture != null &&
-            mCategoryGliden64General != null &&
-            mCategoryGliden64FrameBuffer != null &&
-            mCategoryGliden64TextureFiltering != null &&
-            mCategoryGliden64Gamma != null)
+        if(categoryGliden64Texture != null &&
+            categoryGliden64General != null &&
+            categoryGliden64FrameBuffer != null &&
+            categoryGliden64TextureFiltering != null &&
+            categoryGliden64Gamma != null &&
+            categoryGliden642d != null)
         {
             if( LIBGLIDEN64_SO.equals( videoPlugin ) )
             {
-                mScreenRoot.addPreference( mCategoryGliden64Texture );
-                mScreenRoot.addPreference( mCategoryGliden64General );
-                mScreenRoot.addPreference( mCategoryGliden64FrameBuffer );
-                mScreenRoot.addPreference( mCategoryGliden64TextureFiltering );
-                mScreenRoot.addPreference( mCategoryGliden64Gamma );
+                screenRoot.addPreference( categoryGliden64Texture );
+                screenRoot.addPreference( categoryGliden64General );
+                screenRoot.addPreference( categoryGliden642d );
+                screenRoot.addPreference( categoryGliden64FrameBuffer );
+                screenRoot.addPreference( categoryGliden64TextureFiltering );
+                screenRoot.addPreference( categoryGliden64Gamma );
             }
             else
             {
-                mScreenRoot.removePreference( mCategoryGliden64Texture );
-                mScreenRoot.removePreference( mCategoryGliden64General );
-                mScreenRoot.removePreference( mCategoryGliden64FrameBuffer );
-                mScreenRoot.removePreference( mCategoryGliden64TextureFiltering );
-                mScreenRoot.removePreference( mCategoryGliden64Gamma );
+                screenRoot.removePreference( categoryGliden64Texture );
+                screenRoot.removePreference( categoryGliden64General );
+                screenRoot.removePreference( categoryGliden642d );
+                screenRoot.removePreference( categoryGliden64FrameBuffer );
+                screenRoot.removePreference( categoryGliden64TextureFiltering );
+                screenRoot.removePreference( categoryGliden64Gamma );
             }
         }
 
         //Limit RSP options based on plugin
-        if(mPreferenceRspPlugin != null)
+        if(preferenceRspPlugin != null)
         {
-            ArrayList<String> entries = new ArrayList<String>();
-            ArrayList<String> values = new ArrayList<String>();
+            ArrayList<String> entries = new ArrayList<>();
+            ArrayList<String> values = new ArrayList<>();
 
             if( LIBGLN64_SO.equals( videoPlugin ) || LIBRICE_SO.equals( videoPlugin ) || LIBGLIDE64_SO.equals( videoPlugin ))
             {
@@ -279,18 +268,18 @@ public class EmulationProfileActivity extends ProfileActivity
                 values.add("rsp-cxd4-lle");
             }
 
-            String[] entriesArray = entries.toArray(new String[entries.size()]);
-            String[] valuesArray = values.toArray(new String[values.size()]);
+            String[] entriesArray = entries.toArray(new String[0]);
+            String[] valuesArray = values.toArray(new String[0]);
 
-            mPreferenceRspPlugin.setEntries(entriesArray);
-            mPreferenceRspPlugin.setEntryValues(valuesArray);
+            preferenceRspPlugin.setEntries(entriesArray);
+            preferenceRspPlugin.setEntryValues(valuesArray);
 
             //Only update the selected option if the plugin changed
             if(mCurrentVideoPlugin != null && !mCurrentVideoPlugin.equals(videoPlugin))
             {
-                if(mPreferenceRspPlugin != null && mPreferenceRspPlugin.getEntryValues().length != 0)
+                if(preferenceRspPlugin.getEntryValues().length != 0)
                 {
-                    mPreferenceRspPlugin.setValue(mPreferenceRspPlugin.getEntryValues()[0].toString());
+                    preferenceRspPlugin.setValue(preferenceRspPlugin.getEntryValues()[0].toString());
                 }
 
                 mPrefs.edit().apply();

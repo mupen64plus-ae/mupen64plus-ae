@@ -437,18 +437,6 @@
             android:defaultValue="False"
             android:key="EnableHWLighting"
             android:title="@string/gliden64_enable_hw_lighting_title" />
-        <paulscode.android.mupen64plusae.preference.CompatListPreference
-            android:defaultValue="@string/gliden64_texrect_coords_default"
-            android:entries="@array/gliden64_texrect_coords_entries"
-            android:entryValues="@array/gliden64_texrect_coords_values"
-            android:key="CorrectTexrectCoords"
-            android:summary="@string/selectedValue"
-            android:title="@string/gliden64_correct_texrect_coords_title" />
-        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
-            android:defaultValue="False"
-            android:key="EnableNativeResTexrects"
-            android:summary="@string/gliden64_enable_native_res_texrects_summary"
-            android:title="@string/gliden64_enable_native_res_texrects_title" />
         <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
             android:defaultValue="True"
             android:key="EnableLegacyBlending"
@@ -459,6 +447,31 @@
             android:key="EnableFragmentDepthWrite"
             android:summary="@string/gliden64_enable_fragment_depth_write_summary"
             android:title="@string/gliden64_enable_fragment_depth_write_title" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+    android:key="categoryGliden642d"
+    android:title="@string/gliden64_category_2d_title" >
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="EnableNativeResTexrects"
+            android:summary="@string/gliden64_enable_native_res_texrects_summary"
+            android:title="@string/gliden64_enable_native_res_texrects_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_texrect_coords_default"
+            android:entries="@array/gliden64_texrect_coords_entries"
+            android:entryValues="@array/gliden64_texrect_coords_values"
+            android:key="CorrectTexrectCoords"
+            android:summary="@string/selectedValue"
+            android:title="@string/gliden64_correct_texrect_coords_title" />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            android:defaultValue="@string/gliden64_render_backgrounds_mode_default"
+            android:entries="@array/gliden64_render_backgrounds_mode_entries"
+            android:entryValues="@array/gliden64_render_backgrounds_mode_values"
+            android:key="BackgroundsMode"
+            android:summary="@string/selectedValue"
+            android:title="@string/gliden64_render_backgrounds_mode_title" />
+
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
