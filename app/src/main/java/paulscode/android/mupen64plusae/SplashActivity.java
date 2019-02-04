@@ -220,11 +220,22 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
         // Don't let the activity sleep in the middle of extraction
         getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
 
-        // Lay out the content
-        setContentView( R.layout.splash_activity );
+        try {
+            // Lay out the content
+            setContentView( R.layout.splash_activity );
+
+        // Sanity check to make sure resources are present, this can happen if app is not installed
+        // correctly
+        } catch (android.view.InflateException e) {
+            Log.e("SplashActivity", "Resource NOT found");
+            Notifier.showToast(this, R.string.invalidInstall_message);
+            return;
+        }
+
         mTextView = findViewById( R.id.mainText );
 
-        // Sanity check to make sure resources are present
+        // Sanity check to make sure resources are present, this can happen if app is not installed
+        // correctly
         try {
             Drawable randomDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_arrow_u, null);
 
