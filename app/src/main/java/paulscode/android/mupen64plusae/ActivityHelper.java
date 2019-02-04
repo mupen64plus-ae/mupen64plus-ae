@@ -65,6 +65,7 @@ import static paulscode.android.mupen64plusae.GalleryActivity.KEY_IS_LEANBACK;
 /**
  * Utility class that encapsulates and standardizes interactions between activities.
  */
+@SuppressWarnings("SameParameterValue")
 public class ActivityHelper
 {
     /**
@@ -153,10 +154,10 @@ public class ActivityHelper
         intent.setType( "text/plain" );
 
         //Put a limit on this to avoid android.os.TransactionTooLargeException exception
-        int limit = 1024*512-1000;
+        int limit = 1024*100;
         if(text.length() > limit)
         {
-            text = text.substring(text.length()-limit, text.length());
+            text = text.substring(text.length()-limit);
         }
 
         intent.putExtra( Intent.EXTRA_TEXT, text );
@@ -166,7 +167,14 @@ public class ActivityHelper
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        context.startActivity(intent);
+        try
+        {
+            context.startActivity(intent);
+        }
+        catch (java.lang.RuntimeException e)
+        {
+            Log.e("ActivityHelper", "Transaction too large");
+        }
     }
     
     public static void restartActivity( Activity activity )
