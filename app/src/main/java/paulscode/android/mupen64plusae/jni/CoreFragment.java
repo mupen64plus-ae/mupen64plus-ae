@@ -613,7 +613,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                         {
                             if( which == DialogInterface.BUTTON_POSITIVE )
                             {
-                                mCoreService.setSlot(value);
+                                if (mCoreService != null) {
+                                    mCoreService.setSlot(value);
+                                }
 
                                 if(mCoreEventListener != null)
                                 {
@@ -671,9 +673,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener
             }
             else
             {
-                mCoreService.saveState(mCurrentSaveStateFile.getName());
-
-                Notifier.showToast( getActivity(), R.string.toast_savingFile, mCurrentSaveStateFile.getName() );
+                if (mCoreService != null) {
+                    mCoreService.saveState(mCurrentSaveStateFile.getName());
+                    Notifier.showToast( getActivity(), R.string.toast_savingFile, mCurrentSaveStateFile.getName() );
+                }
 
                 if(mCoreEventListener != null)
                 {
@@ -746,7 +749,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
             Notifier.showToast( getActivity(), R.string.toast_loadingFile, file.getName() );
         }
 
-        mCoreService.loadState(file);
+        if (mCoreService != null) {
+            mCoreService.loadState(file);
+        }
     }
 
     public void autoSaveState( final String latestSave, boolean shutdownOnFinish )
@@ -923,7 +928,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
         if (id == SAVE_STATE_FILE_CONFIRM_DIALOG_ID)
         {
-            mCoreService.saveState(mCurrentSaveStateFile.getName());
+            if (mCoreService != null) {
+                mCoreService.saveState(mCurrentSaveStateFile.getName());
+            }
 
             if(getActivity() != null)
             {
