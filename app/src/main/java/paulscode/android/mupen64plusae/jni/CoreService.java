@@ -322,7 +322,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void updateControllerConfig(int player, boolean plugged, int value)
     {
-        if (!mUseRaphnetDevicesIfAvailable || !mRaphnetHandler.isAvailable())
+        if (!mUseRaphnetDevicesIfAvailable)
         {
             NativeInput.setConfig( player, plugged, value );
         }
@@ -350,14 +350,14 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY )
     {
-        if (!mUseRaphnetDevicesIfAvailable || !mRaphnetHandler.isAvailable()) {
+        if (!mUseRaphnetDevicesIfAvailable) {
             NativeInput.setState( controllerNum, buttons, axisX, axisY );
         }
     }
 
     void registerVibrator( int player, Vibrator vibrator )
     {
-        if (!mUseRaphnetDevicesIfAvailable || !mRaphnetHandler.isAvailable()) {
+        if (!mUseRaphnetDevicesIfAvailable) {
             NativeInput.registerVibrator( player, vibrator );
         }
     }
@@ -414,7 +414,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 Log.i("CoreService", "Using high priority mode");
             }
 
-            if (!mUseRaphnetDevicesIfAvailable || !mRaphnetHandler.isAvailable()) {
+            if (!mUseRaphnetDevicesIfAvailable) {
                 NativeInput.init();
                 NativeInput.setConfig( 0, mIsPlugged.get(0), mPakType.get(0) );
                 NativeInput.setConfig( 1, mIsPlugged.get(1), mPakType.get(1) );

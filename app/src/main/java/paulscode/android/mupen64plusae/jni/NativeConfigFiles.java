@@ -57,7 +57,7 @@ class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    static boolean syncConfigFiles(Context context, GamePrefs game, GlobalPrefs global, AppData appData)
+    static boolean syncConfigFiles(boolean useRaphnet, GamePrefs game, GlobalPrefs global, AppData appData)
     {
         //@formatter:off
 
@@ -180,7 +180,7 @@ class NativeConfigFiles
 
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + audioPluginString + '"' );                            // Filename of audio plugin
 
-        if (global.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(context)) {
+        if (useRaphnet) {
             mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLibRaphnet + '"' );
         } else {
             mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin

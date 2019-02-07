@@ -114,6 +114,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private String mCheatArgs = null;
     private boolean mIsRestarting = false;
     private String mSaveToLoad = null;
+    private boolean mUseRaphnetIfAvailable = false;
 
     private boolean mIsRunning = false;
     private CoreService mCoreService = null;
@@ -288,10 +289,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mRomCountryCode = romCountryCode;
         mRomArtPath = romArtPath;
         mRomLegacySave = romLegacySave;
+        mUseRaphnetIfAvailable = mGlobalPrefs.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(getContext());
 
         if(!mIsRunning)
         {
-            if(!NativeConfigFiles.syncConfigFiles( getContext(), mGamePrefs, mGlobalPrefs, mAppData ))
+            if(!NativeConfigFiles.syncConfigFiles( mUseRaphnetIfAvailable, mGamePrefs, mGlobalPrefs, mAppData ))
             {
                 if(getActivity() != null)
                 {
@@ -361,7 +363,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                 mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
                 mGamePrefs.isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
                 mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(), mAppData.libsDir,
-                mGlobalPrefs.useRaphnetDevicesIfAvailable);
+                mUseRaphnetIfAvailable);
     }
 
     private void actuallyStopCore()
