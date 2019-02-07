@@ -87,4 +87,10 @@
         android:summary="@string/inputMenuMappable_summary"
         android:title="@string/inputMenuMappable_title" />
 
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="useRaphnetAdapter"
+        android:summary="@string/inputUseRaphnetAdapter_summary"
+        android:title="@string/inputUseRaphnetAdapter_title" />
+
 </androidx.preference.PreferenceScreen>

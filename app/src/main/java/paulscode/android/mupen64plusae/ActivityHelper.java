@@ -106,6 +106,7 @@ public class ActivityHelper
         public static final String SAVE_TO_LOAD         = NAMESPACE + "SAVE_TO_LOAD";
         public static final String CORE_LIB             = NAMESPACE + "CORE_LIB";
         public static final String HIGH_PRIORITY_THREAD = NAMESPACE + "HIGH_PRIORITY_THREAD";
+        public static final String USE_RAPHNET_DEVICES  = NAMESPACE + "USE_RAPHNET_DEVICES";
         public static final String PAK_TYPE_ARRAY       = NAMESPACE + "PAK_TYPE_ARRAY";
         public static final String IS_PLUGGED_ARRAY     = NAMESPACE + "IS_PLUGGED_ARRAY";
         public static final String IS_FPS_LIMIT_ENABLED = NAMESPACE + "IS_FPS_LIMIT_ENABLED";
@@ -433,7 +434,8 @@ public class ActivityHelper
         String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
         String romLegacySave, String cheatOptions, boolean isRestarting, String saveToLoad, String coreLib,
         boolean useHighPriorityThread, ArrayList<Integer> pakTypes, boolean[] isPlugged, boolean isFrameLimiterEnabled,
-        String coreUserDataDir, String coreUserCacheDir, String coreUserConfigDir, String userSaveDir, String libsDir)
+        String coreUserDataDir, String coreUserCacheDir, String coreUserConfigDir, String userSaveDir, String libsDir,
+        boolean useRaphnetDevicesIfAvailable)
     {
         Intent intent = new Intent(context, CoreService.class);
         intent.putExtra(Keys.ROM_GOOD_NAME, romGoodName);
@@ -444,6 +446,7 @@ public class ActivityHelper
         intent.putExtra(Keys.SAVE_TO_LOAD, saveToLoad);
         intent.putExtra(Keys.CORE_LIB, coreLib);
         intent.putExtra(Keys.HIGH_PRIORITY_THREAD, useHighPriorityThread);
+        intent.putExtra(Keys.USE_RAPHNET_DEVICES, useRaphnetDevicesIfAvailable);
         intent.putIntegerArrayListExtra(Keys.PAK_TYPE_ARRAY, pakTypes);
         intent.putExtra(Keys.IS_PLUGGED_ARRAY, isPlugged);
         intent.putExtra(Keys.IS_FPS_LIMIT_ENABLED, isFrameLimiterEnabled);

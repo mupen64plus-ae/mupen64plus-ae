@@ -150,10 +150,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         Log.i("CoreFragment", "onActivityCreated");
 
         super.onActivityCreated(savedInstanceState);
-        
-        if(mCachedStartCore && getActivity() != null)
+
+        Activity gameActivity = getActivity();
+        if(mCachedStartCore && gameActivity != null)
         {
-            actuallyStartCore(getActivity());
+            actuallyStartCore(gameActivity);
             mCachedStartCore = false;
         }
 
@@ -290,7 +291,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
         if(!mIsRunning)
         {
-            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData ))
+            if(!NativeConfigFiles.syncConfigFiles( getContext(), mGamePrefs, mGlobalPrefs, mAppData ))
             {
                 if(getActivity() != null)
                 {
@@ -359,7 +360,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                 mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
                 mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
                 mGamePrefs.isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
-                mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(), mAppData.libsDir);
+                mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(), mAppData.libsDir,
+                mGlobalPrefs.useRaphnetDevicesIfAvailable);
     }
 
     private void actuallyStopCore()
@@ -378,7 +380,6 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                     public void run()
                     {
                         mCoreService = null;
-
                         if (getActivity() != null) {
                             ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
                         }

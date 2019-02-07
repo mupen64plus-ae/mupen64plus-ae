@@ -197,6 +197,8 @@
     <string name="inputBackMappable_summary">Permitir que las tecla de atrás sea asignada a controles, esto obligará el uso de la gestura para abrir el menu del juego</string>
     <string name="inputMenuMappable_title">Tecla de menú asignable</string>
     <string name="inputMenuMappable_summary">Permitir que las tecla de menú sea asignada a controles, esto obligará el uso de la gestura para abrir el menu del juego</string>
+    <string name="inputUseRaphnetAdapter_title">Usar adaptador de Raphnet en modo Raw the USB</string>
+    <string name="inputUseRaphnetAdapter_summary">Si se encuentra un adaptador de Raphnet, se utilizará sobre otros controladores en modo de acceso Raw USB.</string>
     <string name="displayImmersiveMode_title">Modo inmersivo</string>
     <string name="displayImmersiveMode_summary">Ocultar completamente barras de navegación y de estado</string>
     <string name="defaultsAutoPlayerMapping_title">Asignar jugadores automaticamente</string>
