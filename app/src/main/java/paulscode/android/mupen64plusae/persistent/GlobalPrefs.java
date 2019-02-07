@@ -335,6 +335,9 @@ public class GlobalPrefs
     /** True to use a high priority thread for the core */
     public final boolean useHighPriorityThread;
 
+    /** True if we should use Raphnet devices if available */
+    public final boolean useRaphnetDevicesIfAvailable;
+
     // Shared preferences keys and key templates
     static final String KEY_EMULATION_PROFILE_DEFAULT = "emulationProfileDefault";
     static final String KEY_TOUCHSCREEN_PROFILE_DEFAULT = "touchscreenProfileDefault";
@@ -648,6 +651,7 @@ public class GlobalPrefs
         showBuiltInControllerProfiles = mPreferences.getBoolean(ManageControllerProfilesActivity.SHOW_BUILT_IN_PREF_KEY, true);
 
         useHighPriorityThread = mPreferences.getBoolean( "useHighPriorityThread", false );
+        useRaphnetDevicesIfAvailable = mPreferences.getBoolean( "useRaphnetAdapter", false );
 
         supportedGlesVersion = AppData.getOpenGlEsVersion(context);
 

@@ -242,6 +242,8 @@
     <string name="inputBackMappable_summary">Allow back key to be mapped to controls, this will force the swipe gesture to be used for the in-game menu</string>
     <string name="inputMenuMappable_title">Mappable menu key</string>
     <string name="inputMenuMappable_summary">Allow menu key to be mapped to controls, this will force the swipe gesture to be used for the in-game menu</string>
+    <string name="inputUseRaphnetAdapter_title">Use Raphnet adapter raw USB access</string>
+    <string name="inputUseRaphnetAdapter_summary">If a Raphnet adapter is found, it will be used over other controllers in raw USB access mode.</string>
     <string name="displayImmersiveMode_title">Immersive mode</string>
     <string name="displayImmersiveMode_summary">Completely hide navigation and status bars</string>
     <string name="defaultsAutoPlayerMapping_title">Automatic player mapping</string>

@@ -64,6 +64,7 @@ dependencies {
     implementation project(':mupen64plus-rsp-cxd4')
     implementation project(':mupen64plus-rsp-hle')
     implementation project(':mupen64plus-input-android')
+    implementation project(':mupen64plus-input-raphnet')
     implementation project(':mupen64plus-video-rice')
     implementation project(':mupen64plus-video-angrylion-plus')
 }

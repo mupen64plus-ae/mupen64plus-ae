@@ -57,8 +57,8 @@ import static paulscode.android.mupen64plusae.jni.NativeExports.emuGetFramelimit
 import static paulscode.android.mupen64plusae.jni.NativeImports.removeOnStateCallbackListener;
 
 @SuppressWarnings("unused")
-public class CoreService extends Service implements NativeImports.OnFpsChangedListener
-{
+public class CoreService extends Service implements NativeImports.OnFpsChangedListener, RaphnetControllerHandler.DeviceReadyListener {
+
     interface CoreServiceListener
     {
         /**
@@ -97,6 +97,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
     private String mSaveToLoad = null;
     private String mCoreLib = null;
     private boolean mUseHighPriorityThread = false;
+    private boolean mUseRaphnetDevicesIfAvailable = false;
     private ArrayList<Integer> mPakType = null;
     private ArrayList<Boolean> mIsPlugged = null;
     private boolean mIsFrameLimiterEnabled = true;
@@ -120,6 +121,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     private final IBinder mBinder = new LocalBinder();
     private CoreServiceListener mListener = null;
+    private RaphnetControllerHandler mRaphnetHandler = null;
 
     /**
      * Last time we received an FPS changed callback. This is used to determine if the core
@@ -148,10 +150,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 if (quitMessage) {
 
                     //Stop the service immediately
-                    stopForeground(true);
-                    stopSelf();
-
-                    android.os.Process.killProcess(android.os.Process.myPid());
+                    forceExit();
                 }
             }
         }
@@ -322,7 +321,10 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void updateControllerConfig(int player, boolean plugged, int value)
     {
-        NativeInput.setConfig( player, plugged, value );
+        if (!mUseRaphnetDevicesIfAvailable || !mRaphnetHandler.isAvailable())
+        {
+            NativeInput.setConfig( player, plugged, value );
+        }
     }
 
     void advanceFrame()
@@ -347,12 +349,16 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY )
     {
-        NativeInput.setState( controllerNum, buttons, axisX, axisY );
+        if (!mUseRaphnetDevicesIfAvailable || !mRaphnetHandler.isAvailable()) {
+            NativeInput.setState( controllerNum, buttons, axisX, axisY );
+        }
     }
 
     void registerVibrator( int player, Vibrator vibrator )
     {
-        NativeInput.registerVibrator( player, vibrator );
+        if (!mUseRaphnetDevicesIfAvailable || !mRaphnetHandler.isAvailable()) {
+            NativeInput.registerVibrator( player, vibrator );
+        }
     }
 
     void restart()
@@ -407,12 +413,13 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
                 Log.i("CoreService", "Using high priority mode");
             }
 
-            // Initialize input-android plugin (even if we aren't going to use it)
-            NativeInput.init();
-            NativeInput.setConfig( 0, mIsPlugged.get(0), mPakType.get(0) );
-            NativeInput.setConfig( 1, mIsPlugged.get(1), mPakType.get(1) );
-            NativeInput.setConfig( 2, mIsPlugged.get(2), mPakType.get(2) );
-            NativeInput.setConfig( 3, mIsPlugged.get(3), mPakType.get(3) );
+            if (!mUseRaphnetDevicesIfAvailable || !mRaphnetHandler.isAvailable()) {
+                NativeInput.init();
+                NativeInput.setConfig( 0, mIsPlugged.get(0), mPakType.get(0) );
+                NativeInput.setConfig( 1, mIsPlugged.get(1), mPakType.get(1) );
+                NativeInput.setConfig( 2, mIsPlugged.get(2), mPakType.get(2) );
+                NativeInput.setConfig( 3, mIsPlugged.get(3), mPakType.get(3) );
+            }
 
             Log.i("CoreService", "Pak type=" + mPakType.get(0).toString());
 
@@ -464,18 +471,19 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             //thing.
             //NativeExports.unloadLibrariesIfLoaded();
 
-            //Stop the service
-            stopForeground(true);
-            stopSelf();
-
             mIsRunning = false;
 
-            android.os.Process.killProcess(android.os.Process.myPid());
+            //Stop the service
+
+            forceExit();
         }
     }
 
     @Override
     public void onCreate() {
+
+        Log.i("CoreService", "OnCreate");
+
         // Start up the thread running the service.  Note that we create a
         // separate thread because the service normally runs in the process's
         // main thread, which we don't want to block.  We also make it
@@ -574,6 +582,9 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Log.i("CoreService", "onStartCommand");
+
         if(intent != null)
         {
             Bundle extras = intent.getExtras();
@@ -589,6 +600,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             mSaveToLoad = extras.getString( ActivityHelper.Keys.SAVE_TO_LOAD );
             mCoreLib = extras.getString( ActivityHelper.Keys.CORE_LIB );
             mUseHighPriorityThread = extras.getBoolean( ActivityHelper.Keys.HIGH_PRIORITY_THREAD, false );
+            mUseRaphnetDevicesIfAvailable = extras.getBoolean( ActivityHelper.Keys.USE_RAPHNET_DEVICES, false );
 
             mPakType = extras.getIntegerArrayList(ActivityHelper.Keys.PAK_TYPE_ARRAY);
 
@@ -623,6 +635,12 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             NativeExports.loadLibrariesIfNotLoaded( libsDir, Build.VERSION.SDK_INT );
             NativeImports.addOnFpsChangedListener( CoreService.this, 15 );
 
+            mRaphnetHandler = new RaphnetControllerHandler(getBaseContext(), this);
+
+            if (mUseRaphnetDevicesIfAvailable) {
+                mRaphnetHandler.requestDeviceAccess();
+            }
+
             updateNotification();
         }
 
@@ -639,6 +657,15 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
         // Unregister since the activity is about to be closed.
         unregisterReceiver(mMessageReceiver);
+
+        forceExit();
+    }
+
+    public void forceExit()
+    {
+        if (mUseRaphnetDevicesIfAvailable) {
+            mRaphnetHandler.shutdownAccess();
+        }
 
         //Stop the service
         stopForeground(true);
@@ -660,8 +687,25 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         if(!mIsRunning)
         {
             mIsRunning = true;
-            // For each start request, send a message to start a job and deliver the
-            // start ID so we know which request we're stopping when we finish the job
+
+            // Don't start yet unless the Raphnet device is ready or we are not using a
+            // Raphnet device
+            if (!mUseRaphnetDevicesIfAvailable || mRaphnetHandler.isReady()) {
+                // For each start request, send a message to start a job and deliver the
+                // start ID so we know which request we're stopping when we finish the job
+                Message msg = mServiceHandler.obtainMessage();
+                msg.arg1 = mStartId;
+                mServiceHandler.sendMessage(msg);
+            }
+        }
+    }
+
+    @Override
+    public void onDeviceReady() {
+
+        // Raphnet device is ready, start if we have been requested to start running
+        if(mIsRunning)
+        {
             Message msg = mServiceHandler.obtainMessage();
             msg.arg1 = mStartId;
             mServiceHandler.sendMessage(msg);
@@ -683,11 +727,8 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             {
                 Log.e("CoreService", "Killing Core due to no response");
 
-                //Stop the service
-                stopForeground(true);
-                stopSelf();
 
-                android.os.Process.killProcess(android.os.Process.myPid());
+                forceExit();
             }
 
             // Call shutdown if it has not been done already
@@ -709,12 +750,5 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         {
             NativeExports.emuPause();
         }
-    }
-
-    public void forceExit()
-    {
-        //Stop the service
-        stopForeground(true);
-        stopSelf();
     }
 }

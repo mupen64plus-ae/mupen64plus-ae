@@ -1,4 +1,4 @@
-/**
+/*
  * Mupen64PlusAE, an N64 emulator for the Android platform
  *
  * Copyright (C) 2013 Paul Lamb
@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.jni;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -56,7 +57,7 @@ class NativeConfigFiles
     /**
      * Populates the core configuration files with the user preferences.
      */
-    static boolean syncConfigFiles( GamePrefs game, GlobalPrefs global, AppData appData)
+    static boolean syncConfigFiles(Context context, GamePrefs game, GlobalPrefs global, AppData appData)
     {
         //@formatter:off
 
@@ -178,7 +179,13 @@ class NativeConfigFiles
         }
 
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + audioPluginString + '"' );                            // Filename of audio plugin
-        mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin
+
+        if (global.useRaphnetDevicesIfAvailable && RaphnetControllerHandler.raphnetDevicesPresent(context)) {
+            mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLibRaphnet + '"' );
+        } else {
+            mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + appData.inputLib + '"' );                                   // Filename of input plugin
+        }
+
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + game.rspPluginPath + '"' );                                       // Filename of RSP plugin
 
         mupen64plus_cfg.put( "rsp-cxd4", "Version", "1" );

@@ -1,0 +1,16 @@
+apply from: '../build_common/native_common.gradle'
+
+android {
+
+    packagingOptions {
+        exclude 'lib/x86/libc++_shared.so'
+        exclude 'lib/x86_64/libc++_shared.so'
+        exclude 'lib/armeabi-v7a/libc++_shared.so'
+        exclude 'lib/arm64-v8a/libc++_shared.so'
+
+        exclude 'lib/x86/libSDL2.so'
+        exclude 'lib/x86_64/libSDL2.so'
+        exclude 'lib/armeabi-v7a/libSDL2.so'
+        exclude 'lib/arm64-v8a/libSDL2.so'
+    }
+}

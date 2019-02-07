@@ -89,9 +89,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private static final String RESTART_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
     private static final String EXIT_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
 
-    public static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
-    public static final int RESET_CONFIRM_DIALOG_ID = 4;
-    public static final int EXIT_CONFIRM_DIALOG_ID = 5;
+    private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
+    private static final int RESET_CONFIRM_DIALOG_ID = 4;
+    private static final int EXIT_CONFIRM_DIALOG_ID = 5;
 
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;
@@ -130,7 +130,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private boolean mUseCustomSpeed = false;
     private int mCustomSpeed = DEFAULT_SPEED;
 
-    CoreEventListener mCoreEventListener = null;
+    private CoreEventListener mCoreEventListener = null;
 
     // this method is only called once for this fragment
     @Override
@@ -149,10 +149,11 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         Log.i("CoreFragment", "onActivityCreated");
 
         super.onActivityCreated(savedInstanceState);
-        
-        if(mCachedStartCore)
+
+        Activity gameActivity = getActivity();
+        if(mCachedStartCore && gameActivity != null)
         {
-            actuallyStartCore(getActivity());
+            actuallyStartCore(gameActivity);
             mCachedStartCore = false;
         }
 
@@ -288,7 +289,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
         if(!mIsRunning)
         {
-            if(!NativeConfigFiles.syncConfigFiles( mGamePrefs, mGlobalPrefs, mAppData ))
+            if(!NativeConfigFiles.syncConfigFiles( getContext(), mGamePrefs, mGlobalPrefs, mAppData ))
             {
                 if(getActivity() != null)
                 {
@@ -357,7 +358,8 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                 mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
                 mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
                 mGamePrefs.isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
-                mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(), mAppData.libsDir);
+                mGlobalPrefs.coreUserCacheDir, mGamePrefs.getCoreUserConfigDir(), mGamePrefs.getUserSaveDir(), mAppData.libsDir,
+                mGlobalPrefs.useRaphnetDevicesIfAvailable);
     }
 
     private void actuallyStopCore()
@@ -376,7 +378,12 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                     public void run()
                     {
                         mCoreService = null;
-                        ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
+
+                        Activity gameActivity = getActivity();
+
+                        if (gameActivity != null) {
+                            ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
+                        }
 
                     }
                 } );
@@ -650,7 +657,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
-    public void saveState( final String filename )
+    private void saveState( final String filename )
     {
         Log.i("CoreFragment", "saveState");
 
@@ -740,7 +747,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
-    public void loadState( File file )
+    private void loadState( File file )
     {
         Log.i("CoreFragment", "loadState");
 
@@ -865,7 +872,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         setCustomSpeed( mCustomSpeed - DELTA_SPEED );
     }
 
-    public void setCustomSpeed(int value)
+    private void setCustomSpeed(int value)
     {
         Log.i("CoreFragment", "setCustomSpeed");
 
