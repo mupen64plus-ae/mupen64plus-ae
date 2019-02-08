@@ -24,6 +24,7 @@
 #include <jni.h>
 #include <android/log.h>
 
+#include "gcn64.h"
 #include "m64p_plugin.h"
 
 // Internal macros
@@ -61,6 +62,8 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_RaphnetControlle
     DebugMessage(M64MSG_INFO, "init()");
 
     _jniClass = (jclass)(*env)->NewGlobalRef(env, cls);
+
+    gcn64_android_addDevice(vendorId, ProductId, usbFileDescriptor);
 }
 
 //*****************************************************************************
