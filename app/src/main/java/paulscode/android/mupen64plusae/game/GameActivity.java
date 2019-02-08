@@ -1042,7 +1042,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         //Only player 1 or keyboards can control menus
-        handled = handled || (!isPlayer1 && !isKeyboard);
+        handled = handled || (!isPlayer1 && !isKeyboard && !mGlobalPrefs.useRaphnetDevicesIfAvailable);
 
         if(!handled)
         {
