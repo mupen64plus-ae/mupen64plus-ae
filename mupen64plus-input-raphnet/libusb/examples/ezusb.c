@@ -133,7 +133,7 @@ static int ezusb_write(libusb_device_handle *device, const char *label,
 		LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
 		opcode, addr & 0xFFFF, addr >> 16,
 		(unsigned char*)data, (uint16_t)len, 1000);
-	if (status != (signed)len) {
+	if (status != len) {
 		if (status < 0)
 			logerror("%s: %s\n", label, libusb_error_name(status));
 		else
@@ -156,7 +156,7 @@ static int ezusb_read(libusb_device_handle *device, const char *label,
 		LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
 		opcode, addr & 0xFFFF, addr >> 16,
 		(unsigned char*)data, (uint16_t)len, 1000);
-	if (status != (signed)len) {
+	if (status != len) {
 		if (status < 0)
 			logerror("%s: %s\n", label, libusb_error_name(status));
 		else
@@ -299,7 +299,7 @@ static int parse_ihex(FILE *image, void *context,
 		/* Read the target offset (address up to 64KB) */
 		tmp = buf[7];
 		buf[7] = 0;
-		off = (unsigned int)strtoul(buf+3, NULL, 16);
+		off = (int)strtoul(buf+3, NULL, 16);
 		buf[7] = tmp;
 
 		/* Initialize data_addr */
@@ -442,11 +442,9 @@ static int parse_iic(FILE *image, void *context,
 	if (initial_pos < 0)
 		return -1;
 
-	if (fseek(image, 0L, SEEK_END) != 0)
-		return -1;
+	fseek(image, 0L, SEEK_END);
 	file_size = ftell(image);
-	if (fseek(image, initial_pos, SEEK_SET) != 0)
-		return -1;
+	fseek(image, initial_pos, SEEK_SET);
 	for (;;) {
 		/* Ignore the trailing reset IIC data (5 bytes) */
 		if (ftell(image) >= (file_size - 5))
@@ -635,8 +633,7 @@ static int fx3_load_ram(libusb_device_handle *device, const char *path)
 		if (dLength == 0)
 			break; // done
 
-		// coverity[tainted_data]
-		dImageBuf = (uint32_t*)calloc(dLength, sizeof(uint32_t));
+		dImageBuf = calloc(dLength, sizeof(uint32_t));
 		if (dImageBuf == NULL) {
 			logerror("could not allocate buffer for image chunk\n");
 			ret = -4;
@@ -816,10 +813,9 @@ int ezusb_load_ram(libusb_device_handle *device, const char *path, int fx_type, 
 		}
 	}
 
-	if (verbose && (ctx.count != 0)) {
+	if (verbose)
 		logerror("... WROTE: %d bytes, %d segments, avg %d\n",
-			(int)ctx.total, (int)ctx.count, (int)(ctx.total/ctx.count));
-	}
+		(int)ctx.total, (int)ctx.count, (int)(ctx.total/ctx.count));
 
 	/* if required, reset the CPU so it runs what we just uploaded */
 	if (cpucs_addr && !ezusb_cpucs(device, cpucs_addr, true))

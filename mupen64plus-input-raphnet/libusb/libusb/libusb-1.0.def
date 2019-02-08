@@ -1,7 +1,5 @@
 LIBRARY "libusb-1.0.dll"
 EXPORTS
-  libusb_alloc_streams
-  libusb_alloc_streams@16 = libusb_alloc_streams
   libusb_alloc_transfer
   libusb_alloc_transfer@4 = libusb_alloc_transfer
   libusb_attach_kernel_driver
@@ -20,10 +18,6 @@ EXPORTS
   libusb_control_transfer@32 = libusb_control_transfer
   libusb_detach_kernel_driver
   libusb_detach_kernel_driver@8 = libusb_detach_kernel_driver
-  libusb_dev_mem_alloc
-  libusb_dev_mem_alloc@8 = libusb_dev_mem_alloc
-  libusb_dev_mem_free
-  libusb_dev_mem_free@12 = libusb_dev_mem_free
   libusb_error_name
   libusb_error_name@4 = libusb_error_name
   libusb_event_handler_active
@@ -40,14 +34,10 @@ EXPORTS
   libusb_free_container_id_descriptor@4 = libusb_free_container_id_descriptor
   libusb_free_device_list
   libusb_free_device_list@8 = libusb_free_device_list
-  libusb_free_pollfds
-  libusb_free_pollfds@4 = libusb_free_pollfds
   libusb_free_ss_endpoint_companion_descriptor
   libusb_free_ss_endpoint_companion_descriptor@4 = libusb_free_ss_endpoint_companion_descriptor
   libusb_free_ss_usb_device_capability_descriptor
   libusb_free_ss_usb_device_capability_descriptor@4 = libusb_free_ss_usb_device_capability_descriptor
-  libusb_free_streams
-  libusb_free_streams@12 = libusb_free_streams
   libusb_free_transfer
   libusb_free_transfer@4 = libusb_free_transfer
   libusb_free_usb_2_0_extension_descriptor
@@ -120,8 +110,6 @@ EXPORTS
   libusb_hotplug_register_callback@36 = libusb_hotplug_register_callback
   libusb_init
   libusb_init@4 = libusb_init
-  libusb_interrupt_event_handler
-  libusb_interrupt_event_handler@4 = libusb_interrupt_event_handler
   libusb_interrupt_transfer
   libusb_interrupt_transfer@24 = libusb_interrupt_transfer
   libusb_kernel_driver_active
@@ -148,12 +136,8 @@ EXPORTS
   libusb_set_configuration@8 = libusb_set_configuration
   libusb_set_debug
   libusb_set_debug@8 = libusb_set_debug
-  libusb_set_log_cb
-  libusb_set_log_cb@12 = libusb_set_log_cb
   libusb_set_interface_alt_setting
   libusb_set_interface_alt_setting@12 = libusb_set_interface_alt_setting
-  libusb_set_option
-  _libusb_set_option = libusb_set_option
   libusb_set_pollfd_notifiers
   libusb_set_pollfd_notifiers@16 = libusb_set_pollfd_notifiers
   libusb_setlocale
@@ -162,10 +146,6 @@ EXPORTS
   libusb_strerror@4 = libusb_strerror
   libusb_submit_transfer
   libusb_submit_transfer@4 = libusb_submit_transfer
-  libusb_transfer_get_stream_id
-  libusb_transfer_get_stream_id@4 = libusb_transfer_get_stream_id
-  libusb_transfer_set_stream_id
-  libusb_transfer_set_stream_id@8 = libusb_transfer_set_stream_id
   libusb_try_lock_events
   libusb_try_lock_events@4 = libusb_try_lock_events
   libusb_unlock_event_waiters

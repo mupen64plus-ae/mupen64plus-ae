@@ -81,10 +81,9 @@ struct usbfs_iso_packet_desc {
 	unsigned int status;
 };
 
+#define MAX_ISO_BUFFER_LENGTH		32768
 #define MAX_BULK_BUFFER_LENGTH		16384
 #define MAX_CTRL_BUFFER_LENGTH		4096
-
-#define MAX_ISO_PACKETS_PER_URB		128
 
 struct usbfs_urb {
 	unsigned char type;
@@ -95,10 +94,7 @@ struct usbfs_urb {
 	int buffer_length;
 	int actual_length;
 	int start_frame;
-	union {
-		int number_of_packets;	/* Only used for isoc urbs */
-		unsigned int stream_id;	/* Only used with bulk streams */
-	};
+	int number_of_packets;
 	int error_count;
 	unsigned int signr;
 	void *usercontext;
@@ -126,7 +122,6 @@ struct usbfs_hub_portinfo {
 #define USBFS_CAP_BULK_CONTINUATION	0x02
 #define USBFS_CAP_NO_PACKET_SIZE_LIM	0x04
 #define USBFS_CAP_BULK_SCATTER_GATHER	0x08
-#define USBFS_CAP_REAP_AFTER_DISCONNECT	0x10
 
 #define USBFS_DISCONNECT_CLAIM_IF_DRIVER	0x01
 #define USBFS_DISCONNECT_CLAIM_EXCEPT_DRIVER	0x02
@@ -135,12 +130,6 @@ struct usbfs_disconnect_claim {
 	unsigned int interface;
 	unsigned int flags;
 	char driver[USBFS_MAXDRIVERNAME + 1];
-};
-
-struct usbfs_streams {
-	unsigned int num_streams; /* Not used by USBDEVFS_FREE_STREAMS */
-	unsigned int num_eps;
-	unsigned char eps[0];
 };
 
 #define IOCTL_USBFS_CONTROL	_IOWR('U', 0, struct usbfs_ctrltransfer)
@@ -166,8 +155,6 @@ struct usbfs_streams {
 #define IOCTL_USBFS_RELEASE_PORT	_IOR('U', 25, unsigned int)
 #define IOCTL_USBFS_GET_CAPABILITIES	_IOR('U', 26, __u32)
 #define IOCTL_USBFS_DISCONNECT_CLAIM	_IOR('U', 27, struct usbfs_disconnect_claim)
-#define IOCTL_USBFS_ALLOC_STREAMS	_IOR('U', 28, struct usbfs_streams)
-#define IOCTL_USBFS_FREE_STREAMS	_IOR('U', 29, struct usbfs_streams)
 
 extern usbi_mutex_static_t linux_hotplug_lock;
 
@@ -183,11 +170,11 @@ void linux_netlink_hotplug_poll(void);
 #endif
 
 void linux_hotplug_enumerate(uint8_t busnum, uint8_t devaddr, const char *sys_name);
-void linux_device_disconnected(uint8_t busnum, uint8_t devaddr);
+void linux_device_disconnected(uint8_t busnum, uint8_t devaddr, const char *sys_name);
 
 int linux_get_device_address (struct libusb_context *ctx, int detached,
 	uint8_t *busnum, uint8_t *devaddr, const char *dev_node,
-	const char *sys_name, int fd);
+	const char *sys_name);
 int linux_enumerate_device(struct libusb_context *ctx,
 	uint8_t busnum, uint8_t devaddr, const char *sysfs_dir);
 
