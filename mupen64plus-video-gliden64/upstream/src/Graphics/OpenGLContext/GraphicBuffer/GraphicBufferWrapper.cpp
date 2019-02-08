@@ -76,7 +76,7 @@ void GraphicBufferWrapper::unlock() {
 	if (m_private) {
 		m_privateGraphicBuffer->unlock();
 	} else {
-		AndroidHardwareBufferCompat::GetInstance().Unlock(m_publicGraphicBuffer, NULL);
+		AndroidHardwareBufferCompat::GetInstance().Unlock(m_publicGraphicBuffer, nullptr);
 	}
 
 }
@@ -89,8 +89,6 @@ EGLClientBuffer GraphicBufferWrapper::getClientBuffer() {
 	} else {
 		clientBuffer = eglGetNativeClientBufferANDROID(m_publicGraphicBuffer);
 	}
-
-	LOG(LOG_ERROR, "USING API=%d", m_private);
 
 	return clientBuffer;
 }

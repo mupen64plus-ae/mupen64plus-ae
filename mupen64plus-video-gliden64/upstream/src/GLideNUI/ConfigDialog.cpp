@@ -126,6 +126,7 @@ void ConfigDialog::_init()
 		ui->blnrStandardRadioButton->setChecked(true);
 		break;
 	}
+	ui->halosRemovalCheckBox->setChecked(config.texture.enableHalosRemoval != 0);
 
 	switch (config.texture.screenShotFormat) {
 	case 0:
@@ -406,6 +407,8 @@ void ConfigDialog::accept()
 		config.texture.bilinearMode = BILINEAR_STANDARD;
 	else if (ui->blnr3PointRadioButton->isChecked())
 		config.texture.bilinearMode = BILINEAR_3POINT;
+
+	config.texture.enableHalosRemoval = ui->halosRemovalCheckBox->isChecked() ? 1 : 0;
 
 	if (ui->pngRadioButton->isChecked())
 		config.texture.screenShotFormat = 0;
