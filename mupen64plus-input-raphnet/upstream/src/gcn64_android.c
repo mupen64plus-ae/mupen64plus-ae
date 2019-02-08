@@ -89,12 +89,51 @@ static struct supported_adapter supported_adapters[] = {
 	{ }, // terminator
 };
 
+static int getInterfaceToUseForVidPid(int vid, int pid)
+{
+	struct supported_adapter *adap = supported_adapters;
+
+	for (adap = supported_adapters; adap->vid; adap++) {
+		if ((adap->vid == vid) && ((adap->pid == pid))) {
+			return adap->if_number;
+		}
+	}
+
+	return -1;
+}
+
+static char isProductIdHandled(unsigned short pid, int interface_number, struct gcn64_adapter_caps *caps)
+{
+	int i;
+
+	for (i=0; supported_adapters[i].vid; i++) {
+		if (pid == supported_adapters[i].pid) {
+			if (interface_number == supported_adapters[i].if_number) {
+				if (caps) {
+					memcpy(caps, &supported_adapters[i].caps, sizeof (struct gcn64_adapter_caps));
+				}
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+
 // This is called before gcn64_init
 int gcn64_android_addDevice(int vid, int pid, int fd)
 {
+	int interface;
 
 	if (s_n_devices >= MAX_GCN64_DEVICES) {
 		fprintf(stderr, "Cannot add device (no space left)\n");
+		return -1;
+	}
+
+	interface = getInterfaceToUseForVidPid(vid, pid);
+	if (interface < 0) {
+		printf("Rejecting device %04x:%04x (not supported)\n", vid, pid);
 		return -1;
 	}
 
@@ -102,8 +141,8 @@ int gcn64_android_addDevice(int vid, int pid, int fd)
 	s_devices[s_n_devices].vid = vid;
 	s_devices[s_n_devices].pid = pid;
 	s_devices[s_n_devices].fd = fd;
-	s_devices[s_n_devices].interface = 2; // TODO
-	printf("Added device %04x:%04x with fd %d at index %d\n", vid, pid, fd, s_n_devices);
+	s_devices[s_n_devices].interface = interface;
+	printf("Added device %04x:%04x(%d) with fd %d at index %d\n", vid, pid, interface, fd, s_n_devices);
 	s_n_devices++;
 
 	return 0;
@@ -143,24 +182,6 @@ int gcn64_init(int verbose)
 void gcn64_shutdown(void)
 {
 	libusb_exit(s_libusb_context);
-}
-
-static char isProductIdHandled(unsigned short pid, int interface_number, struct gcn64_adapter_caps *caps)
-{
-	int i;
-
-	for (i=0; supported_adapters[i].vid; i++) {
-		if (pid == supported_adapters[i].pid) {
-			if (interface_number == supported_adapters[i].if_number) {
-				if (caps) {
-					memcpy(caps, &supported_adapters[i].caps, sizeof (struct gcn64_adapter_caps));
-				}
-				return 1;
-			}
-		}
-	}
-
-	return 0;
 }
 
 struct gcn64_list_ctx *gcn64_allocListCtx(void)
@@ -217,7 +238,6 @@ struct gcn64_info *gcn64_listDevices(struct gcn64_info *info, struct gcn64_list_
 
 	d = &s_devices[ctx->index];
 
-	// TODO : Interface?
 	if (isProductIdHandled(d->pid, d->interface, &caps))
 	{
 		memset(info, 0, sizeof(struct gcn64_info)); // Clear all fields
@@ -263,8 +283,18 @@ gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev)
 	memcpy(&hdl->caps, &dev->caps, sizeof(hdl->caps));
 
 	res = libusb_open(s_devices[dev->index].dev, &hdl->device_handle);
-	if (res < 0) {
+	if (res) {
 		fprintf(stderr, "libusb_open failed : %s\n", libusb_strerror(res));
+		free(hdl);
+		return NULL;
+	}
+
+	libusb_set_auto_detach_kernel_driver(hdl->device_handle, 1);
+
+	res = libusb_claim_interface(hdl->device_handle, hdl->interface);
+	if (res) {
+		fprintf(stderr, "failed to claim interface : %s\n", libusb_strerror(res));
+		libusb_close(hdl->device_handle);
 		free(hdl);
 		return NULL;
 	}
@@ -329,6 +359,10 @@ gcn64_hdl_t gcn64_openBy(struct gcn64_info *dev, unsigned char flags)
 void gcn64_closeDevice(gcn64_hdl_t hdl)
 {
 	if (hdl) {
+		if (hdl->device_handle) {
+			libusb_release_interface(hdl->device_handle, hdl->interface);
+			libusb_close(hdl->device_handle);
+		}
 		free(hdl);
 	}
 }
