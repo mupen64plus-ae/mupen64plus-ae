@@ -170,8 +170,13 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 byte countryCode = extras.getByte(ActivityHelper.Keys.ROM_COUNTRY_CODE);
                 String artPath = extras.getString(ActivityHelper.Keys.ROM_ART_PATH);
                 String goodName = extras.getString(ActivityHelper.Keys.ROM_GOOD_NAME);
+                String displayName = extras.getString(ActivityHelper.Keys.ROM_DISPLAY_NAME);
 
-                launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, false );
+                if (displayName == null) {
+                    displayName = goodName;
+                }
+
+                launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, displayName, false );
 
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
                 getIntent().removeExtra(ActivityHelper.Keys.ZIP_PATH );
@@ -181,6 +186,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_COUNTRY_CODE);
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_ART_PATH);
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_GOOD_NAME);
+                getIntent().removeExtra(ActivityHelper.Keys.ROM_DISPLAY_NAME);
             }
         } else {
             Intent intent = new Intent(CoreService.SERVICE_EVENT);
@@ -360,7 +366,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             if( sideBarMd5 != null )
             {
                 mSelectedItem = new GalleryItem(getApplicationContext(), sideBarMd5, null, null,
-                        CountryCode.DEMO, null, null, null, null, 0, 0.0f);
+                        CountryCode.DEMO, null, null, null, null, null, 0, 0.0f);
             }
 
             final String query = savedInstanceState.getString( STATE_QUERY );
@@ -567,7 +573,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 final RomDatabase.RomDetail detail = database.lookupByMd5WithFallback( computedMd5, finalRomPath, header.crc, header.countryCode );
                 String artPath = mGlobalPrefs.coverArtDir + "/" + detail.artName;
                 launchGameActivity( finalRomPath, null, computedMd5, header.crc, header.name,
-                        header.countryCode.getValue(), artPath, detail.goodName, false );
+                        header.countryCode.getValue(), artPath, detail.goodName, detail.goodName, false );
             }
         }
 
@@ -672,14 +678,14 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 launchGameActivity( item.romFile.getAbsolutePath(),
                         item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
                         item.md5, item.crc, item.headerName,
-                        item.countryCode.getValue(), item.artPath, item.goodName, false );
+                        item.countryCode.getValue(), item.artPath, item.goodName, item.displayName, false );
                 break;
             case R.id.menuItem_start:
                 launchGameActivity( item.romFile.getAbsolutePath(),
                         item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
                         item.md5, item.crc,
                         item.headerName, item.countryCode.getValue(), item.artPath,
-                        item.goodName, true );
+                        item.goodName, item.displayName, true );
                 break;
             case R.id.menuItem_settings:
             {
@@ -694,7 +700,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     romLegacySaveFileName = item.romFile.getName();
                 }
                 ActivityHelper.startGamePrefsActivity( GalleryActivity.this, item.romFile.getAbsolutePath(),
-                        item.md5, item.crc, item.headerName, item.goodName, item.countryCode.getValue(),
+                        item.md5, item.crc, item.headerName, item.goodName, item.displayName, item.countryCode.getValue(),
                         romLegacySaveFileName);
                 break;
 
@@ -750,7 +756,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
 
         // Set the game title
-        mGameSidebar.setTitle(item.goodName);
+        mGameSidebar.setTitle(item.displayName);
 
         // If there are no saves for this game, disable the resume
         // option
@@ -802,7 +808,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         launchGameActivity( item.romFile.getAbsolutePath(),
             item.zipFile == null ? null : item.zipFile.getAbsolutePath(),
             item.md5, item.crc, item.headerName, item.countryCode.getValue(),
-            item.artPath, item.goodName, false );
+            item.artPath, item.goodName, item.displayName, false );
         return true;
     }
 
@@ -984,7 +990,8 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
     }
 
     public void launchGameActivity( String romPath, String zipPath, String romMd5, String romCrc,
-            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting)
+            String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, String romDisplayName,
+            boolean isRestarting)
     {
         Log.i( "GalleryActivity", "launchGameActivity" );
 
@@ -1048,7 +1055,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         {
             // Launch the game activity
             ActivityHelper.startGameActivity(this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
+                    romArtPath, romGoodName, romDisplayName, romLegacySaveFileName, isRestarting);
         }
         else
         {
@@ -1058,7 +1065,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
             }
 
             mExtractRomFragment.ExtractRom(zipPath, mGlobalPrefs.unzippedRomsDir, romPath, romMd5, romCrc,
-                    romHeaderName, romCountryCode, romArtPath, romGoodName, romLegacySaveFileName,
+                    romHeaderName, romCountryCode, romArtPath, romGoodName, romDisplayName, romLegacySaveFileName,
                     isRestarting);
         }
     }

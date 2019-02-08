@@ -91,6 +91,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
 
     // Startup info - used internally
     private String mRomGoodName = null;
+    private String mRomDisplayName = null;
     private String mRomPath = null;
     private String mCheatOptions = null;
     private boolean mIsRestarting = false;
@@ -142,7 +143,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             if (!mIsShuttingDown && mIsRunning) {
                 if (resumeMessage) {
                     ActivityHelper.startGameActivity( getBaseContext(), mRomPath, mRomMd5, mRomCrc,
-                            mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mLegacySaveName, mIsRestarting);
+                            mRomHeaderName, mRomCountryCode, mArtPath, mRomGoodName, mRomDisplayName, mLegacySaveName, mIsRestarting);
                 }
 
                 if (quitMessage) {
@@ -502,7 +503,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_V2,
-                mRomGoodName, NotificationManager.IMPORTANCE_LOW);
+                mRomDisplayName, NotificationManager.IMPORTANCE_LOW);
         channel.enableVibration(false);
         channel.setSound(null,null);
 
@@ -525,6 +526,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_COUNTRY_CODE, mRomCountryCode );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_ART_PATH, mArtPath );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_GOOD_NAME, mRomGoodName );
+        notificationIntent.putExtra( ActivityHelper.Keys.ROM_DISPLAY_NAME, mRomDisplayName );
         notificationIntent.putExtra( ActivityHelper.Keys.ROM_LEGACY_SAVE, mLegacySaveName );
         notificationIntent.putExtra( ActivityHelper.Keys.DO_RESTART, mIsRestarting );
         notificationIntent.putExtra( ActivityHelper.Keys.EXIT_GAME, false );
@@ -545,7 +547,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
         initChannels(getBaseContext());
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_V2)
                 .setSmallIcon(R.drawable.icon)
-                .setContentTitle(mRomGoodName)
+                .setContentTitle(mRomDisplayName)
                 .setContentIntent(pendingIntent);
 
         if(mIsShuttingDown)
@@ -583,6 +585,7 @@ public class CoreService extends Service implements NativeImports.OnFpsChangedLi
             }
 
             mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+            mRomDisplayName  = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
             mRomPath = extras.getString( ActivityHelper.Keys.ROM_PATH );
             mCheatOptions = extras.getString( ActivityHelper.Keys.CHEAT_ARGS );
             mIsRestarting = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );

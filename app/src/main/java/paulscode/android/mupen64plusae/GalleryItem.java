@@ -22,6 +22,8 @@ package paulscode.android.mupen64plusae;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -44,6 +46,7 @@ import java.util.List;
 import paulscode.android.mupen64plusae.task.LoadBitmapTask;
 import paulscode.android.mupen64plusae.util.CountryCode;
 
+@SuppressWarnings("WeakerAccess")
 public class GalleryItem
 {
     public final String md5;
@@ -51,6 +54,7 @@ public class GalleryItem
     public final String headerName;
     public final CountryCode countryCode;
     public final String goodName;
+    public final String displayName;
     public final String artPath;
     public final int lastPlayed;
     public final File romFile;
@@ -60,15 +64,16 @@ public class GalleryItem
     public BitmapDrawable artBitmap;
     public final float scale;
     
-    public GalleryItem(Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName, String romPath,
-                       String zipPath, String artPath, int lastPlayed, float scale )
+    public GalleryItem(Context context, String md5, String crc, String headerName, CountryCode countryCode, String goodName,
+                       String displayName, String romPath, String zipPath, String artPath, int lastPlayed, float scale )
     {
         this.md5 = md5;
         this.crc = crc;
         this.headerName = headerName;
         this.countryCode = countryCode;
         this.goodName = goodName;
-        this.context = new WeakReference<>(context);;
+        this.displayName = displayName;
+        this.context = new WeakReference<>(context);
         this.artPath = artPath;
         this.artBitmap = null;
         this.lastPlayed = lastPlayed;
@@ -82,6 +87,7 @@ public class GalleryItem
     GalleryItem( Context context, String headingName)
     {
         this.goodName = headingName;
+        this.displayName = headingName;
         this.context = new WeakReference<>(context);
         this.isHeading = true;
         this.md5 = "";
@@ -110,12 +116,13 @@ public class GalleryItem
     {
         artBitmap = null;
     }
-    
+
+    @NonNull
     @Override
     public String toString()
     {
         if( !TextUtils.isEmpty( goodName ) )
-            return goodName;
+            return displayName;
         else if( romFile != null && !TextUtils.isEmpty( romFile.getName() ) )
             return romFile.getName();
         else
@@ -167,6 +174,7 @@ public class GalleryItem
             view.setOnLongClickListener( this );
         }
         
+        @NonNull
         @Override
         public String toString()
         {
@@ -177,7 +185,7 @@ public class GalleryItem
         public void onClick( View view )
         {
             Context tempContext = mContext.get();
-            if ( tempContext != null && tempContext instanceof GalleryActivity )
+            if ( tempContext instanceof GalleryActivity )
             {
                 GalleryActivity activity = (GalleryActivity) tempContext;
                 activity.onGalleryItemClick( item );
@@ -189,7 +197,7 @@ public class GalleryItem
         {
             Context tempContext = mContext.get();
 
-            if ( tempContext != null && tempContext instanceof GalleryActivity )
+            if ( tempContext instanceof GalleryActivity )
             {
                 GalleryActivity activity = (GalleryActivity) tempContext;
                 return activity.onGalleryItemLongClick( item );
@@ -227,7 +235,7 @@ public class GalleryItem
             return mObjects.get( position ).isHeading ? 1 : 0;
         }
         
-        public void onBindViewHolder( ViewHolder holder, int position )
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position )
         {
             // Clear the now-offscreen bitmap to conserve memory, also cancel any tasks reading the bitmap
             if( holder.item != null )
@@ -295,23 +303,20 @@ public class GalleryItem
             }
         }
         
-        public ViewHolder onCreateViewHolder( ViewGroup parent, int viewType )
+        @NonNull
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType )
         {
             Context tempContext = mContext.get();
+            LayoutInflater inflater = (LayoutInflater) tempContext
+                    .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
-            if (tempContext != null) {
-                LayoutInflater inflater = (LayoutInflater) tempContext
-                        .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-
-                if (inflater != null ) {
-                    View view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
-                    return new ViewHolder( mContext, view );
-                } else {
-                    return null;
-                }
+            View view;
+            if (inflater != null) {
+                view = inflater.inflate( R.layout.gallery_item_adapter, parent, false );
             } else {
-                return null;
+                view = new View(mContext.get(), null);
             }
+            return new ViewHolder( mContext, view );
         }
     }
 }

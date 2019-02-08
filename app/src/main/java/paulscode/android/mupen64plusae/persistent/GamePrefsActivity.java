@@ -88,6 +88,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
     private String mRomCrc = null;
     private String mRomHeaderName = null;
     private String mRomGoodName = null;
+    private String mRomDisplayName = null;
     private String mLegacySaveName = null;
     private byte mRomCountryCode = 0;
     private RomDetail mRomDetail = null;
@@ -137,6 +138,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mRomCrc = extras.getString( ActivityHelper.Keys.ROM_CRC );
         mRomHeaderName = extras.getString( ActivityHelper.Keys.ROM_HEADER_NAME );
         mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+        mRomDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
         mLegacySaveName = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
         mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
 
@@ -193,7 +195,7 @@ public class GamePrefsActivity extends AppCompatPreferenceActivity implements On
         mControllerProfile4 = (ProfilePreference) findPreference( GamePrefs.CONTROLLER_PROFILE4 );
 
         // Set some game-specific strings
-        setTitle( mRomDetail.goodName );
+        setTitle( mRomDisplayName );
 
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_WIKI, this );

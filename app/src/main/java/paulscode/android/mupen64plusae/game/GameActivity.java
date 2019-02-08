@@ -157,6 +157,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private String mRomMd5 = null;
     private String mRomCrc = null;
     private String mRomGoodName = null;
+    private String mRomDisplayName = null;
     private String mRomHeaderName = null;
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
@@ -275,6 +276,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mRomCountryCode = extras.getByte( ActivityHelper.Keys.ROM_COUNTRY_CODE );
         mRomArtPath = extras.getString( ActivityHelper.Keys.ROM_ART_PATH );
         mRomGoodName = extras.getString( ActivityHelper.Keys.ROM_GOOD_NAME );
+        mRomDisplayName = extras.getString( ActivityHelper.Keys.ROM_DISPLAY_NAME );
         mRomLegacySave = extras.getString( ActivityHelper.Keys.ROM_LEGACY_SAVE );
         mDoRestart = extras.getBoolean( ActivityHelper.Keys.DO_RESTART, false );
         if( TextUtils.isEmpty( mRomPath ) || TextUtils.isEmpty( mRomMd5 ) )
@@ -342,7 +344,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         if (!TextUtils.isEmpty(mRomArtPath) && new File(mRomArtPath).exists())
             mGameSidebar.setImage(new BitmapDrawable(this.getResources(), mRomArtPath));
 
-        mGameSidebar.setTitle(mRomGoodName);
+        mGameSidebar.setTitle(mRomDisplayName);
 
         // Handle events from the side bar
         mGameSidebar.setActionHandler(this, R.menu.game_drawer);
@@ -876,7 +878,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
 
             if (!mCoreFragment.IsInProgress()) {
                 final String latestSave = mGameDataManager.getLatestAutoSave();
-                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomPath,
+                mCoreFragment.startCore(mAppData, mGlobalPrefs, mGamePrefs, mRomGoodName, mRomDisplayName, mRomPath,
                         mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
                         mGamePrefs.getCheatArgs(), mDoRestart, latestSave);
             }

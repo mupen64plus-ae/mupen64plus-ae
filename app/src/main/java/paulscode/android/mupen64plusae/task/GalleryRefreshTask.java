@@ -134,15 +134,16 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
      * Create a GallaryItem using a config file, md5, and good name
      * @param config Config file
      * @param md5 MD5 in config
-     * @param goodName ROM goodname to use
+     * @param displayName Text to display for this ROM
      * @return A gallery item if one was created successfully.
      */
-    private GalleryItem createGalleryItem(final ConfigFile config, String md5, String goodName)
+    private GalleryItem createGalleryItem(final ConfigFile config, String md5, String displayName)
     {
         GalleryItem item = null;
         final String romPath = config.get( md5, "romPath" );
         String zipPath = config.get( md5, "zipPath" );
         final String artFullPath = config.get( md5, "artPath" );
+        final String goodName = config.get( md5, "goodName" );;
 
         //We get the file name to support the old gallery format
         String artPath = !TextUtils.isEmpty(artFullPath) ? new File(artFullPath).getName() : null;
@@ -170,7 +171,7 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
 
             if (crc != null && headerName != null && countryCodeString != null)
             {
-                item = new GalleryItem(mContext.get(), md5, crc, headerName, countryCode, goodName, romPath,
+                item = new GalleryItem(mContext.get(), md5, crc, headerName, countryCode, goodName, displayName, romPath,
                         zipPath, artPath, lastPlayed, mGlobalPrefs.coverArtScale);
             }
         }
@@ -195,16 +196,22 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
         for ( final String md5 : mConfig.keySet() ) {
             if ( !ConfigFile.SECTIONLESS_NAME.equals( md5 ) ) {
                 final ConfigFile.ConfigSection section = mConfig.get( md5 );
-                String goodName;
-                if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
-                    goodName = section.get( "goodName" );
-                else
-                    goodName = section.get( "baseName" );
+
+                String displayName;
+
+                if (mGlobalPrefs.sortByRomName) {
+                    if( mGlobalPrefs.isFullNameShown || !section.keySet().contains( "baseName" ) )
+                        displayName = section.get( "goodName" );
+                    else
+                        displayName = section.get( "baseName" );
+                } else {
+                    displayName = new File(section.get("romPath")).getName();
+                }
 
                 boolean matchesSearch = true;
-                if ( searches != null && searches.length > 0 && goodName != null) {
+                if ( searches != null && searches.length > 0 && displayName != null) {
                     // Make sure the ROM name contains every token in the query
-                    final String lowerName = goodName.toLowerCase( Locale.US );
+                    final String lowerName = displayName.toLowerCase( Locale.US );
                     for ( final String search : searches ) {
                         if ( search.length() > 0 && !lowerName.contains( search ) ) {
                             matchesSearch = false;
@@ -213,8 +220,8 @@ public class GalleryRefreshTask extends AsyncTask<Void, Void, String>
                     }
                 }
 
-                if ( matchesSearch && goodName != null) {
-                    GalleryItem item = createGalleryItem(mConfig, md5, goodName);
+                if ( matchesSearch && displayName != null) {
+                    GalleryItem item = createGalleryItem(mConfig, md5, displayName);
 
                     if (item != null && (mGlobalPrefs.getAllowedCountryCodes().contains(item.countryCode) ||
                             searches != null)) {

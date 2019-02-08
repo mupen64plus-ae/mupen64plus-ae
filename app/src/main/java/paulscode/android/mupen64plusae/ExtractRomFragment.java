@@ -33,8 +33,8 @@ import org.mupen64plusae.v3.alpha.R;
 import paulscode.android.mupen64plusae.dialog.ProgressDialog;
 import paulscode.android.mupen64plusae.task.ExtractRomService;
 import paulscode.android.mupen64plusae.task.ExtractRomService.LocalBinder;
-import paulscode.android.mupen64plusae.util.Notifier;
 
+@SuppressWarnings("unused")
 public class ExtractRomFragment extends Fragment implements ExtractRomService.ExtractRomsListener
 {    
     //Progress dialog for extracting ROMs
@@ -56,6 +56,7 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
     private byte mRomCountryCode = 0;
     private String mRomArtPath = null;
     private String mRomGoodName = null;
+    private String mRomDisplayName = null;
     private String mRomLegacySaveFileName = null;
     private boolean mIsRestarting = false;
     
@@ -83,7 +84,7 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
             mProgress.show();
         }
         
-        if(mCachedExtractRom)
+        if(mCachedExtractRom && getActivity() != null)
         {
             actuallyExtractRom(getActivity());
             mCachedExtractRom = false;
@@ -112,7 +113,7 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
     @Override
     public void onDestroy()
     {        
-        if(mServiceConnection != null && mInProgress)
+        if(mServiceConnection != null && mInProgress && getActivity() != null)
         {
             ActivityHelper.stopExtractRomService(getActivity().getApplicationContext(), mServiceConnection);
         }
@@ -130,7 +131,7 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
     {
         // Launch the game activity
         ActivityHelper.startGameActivity(getActivity(), mRomPath, mMd5, mRomCrc, mRomHeaderName, mRomCountryCode,
-                mRomArtPath, mRomGoodName, mRomLegacySaveFileName, mIsRestarting);
+                mRomArtPath, mRomGoodName, mRomDisplayName, mRomLegacySaveFileName, mIsRestarting);
     }
     
     @Override
@@ -155,9 +156,9 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
         return mProgress;
     }
 
-    public void ExtractRom( String romZipPath, String romExtractPath, String romPath, String md5,
+    void ExtractRom( String romZipPath, String romExtractPath, String romPath, String md5,
        String romCrc, String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName,
-       String romLegacySaveFileName, boolean isRestarting)
+       String romDisplayName, String romLegacySaveFileName, boolean isRestarting)
     {
         mRomZipPath = romZipPath;
         mRomExtractPath = romExtractPath;
@@ -168,6 +169,7 @@ public class ExtractRomFragment extends Fragment implements ExtractRomService.Ex
         mRomCountryCode = romCountryCode;
         mRomArtPath = romArtPath;
         mRomGoodName = romGoodName;
+        mRomDisplayName = romDisplayName;
         mRomLegacySaveFileName = romLegacySaveFileName;
         mIsRestarting = isRestarting;
         

@@ -89,9 +89,9 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private static final String RESTART_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
     private static final String EXIT_CONFIRM_DIALOG_STATE = "RESTART_CONFIRM_DIALOG_STATE";
 
-    public static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
-    public static final int RESET_CONFIRM_DIALOG_ID = 4;
-    public static final int EXIT_CONFIRM_DIALOG_ID = 5;
+    private static final int SAVE_STATE_FILE_CONFIRM_DIALOG_ID = 3;
+    private static final int RESET_CONFIRM_DIALOG_ID = 4;
+    private static final int EXIT_CONFIRM_DIALOG_ID = 5;
 
     //Service connection for the progress dialog
     private ServiceConnection mServiceConnection;
@@ -103,6 +103,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private GlobalPrefs mGlobalPrefs = null;
     private GamePrefs mGamePrefs = null;
     private String mRomGoodName = null;
+    private String mRomDisplayName = null;
     private String mRomPath = null;
     private String mRomMd5 = null;
     private String mRomCrc = null;
@@ -130,7 +131,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
     private boolean mUseCustomSpeed = false;
     private int mCustomSpeed = DEFAULT_SPEED;
 
-    CoreEventListener mCoreEventListener = null;
+    private CoreEventListener mCoreEventListener = null;
 
     // this method is only called once for this fragment
     @Override
@@ -150,7 +151,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
         super.onActivityCreated(savedInstanceState);
         
-        if(mCachedStartCore)
+        if(mCachedStartCore && getActivity() != null)
         {
             actuallyStartCore(getActivity());
             mCachedStartCore = false;
@@ -265,7 +266,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mCoreEventListener = coreEventListener;
     }
 
-    public void startCore( AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName,
+    public void startCore( AppData appData, GlobalPrefs globalPrefs, GamePrefs gamePrefs, String romGoodName, String romDisplayName,
         String romPath, String romMd5, String romCrc, String romHeaderName, byte romCountryCode, String romArtPath,
         String romLegacySave, String cheatArgs, boolean isRestarting, String saveToLoad)
     {
@@ -275,6 +276,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         mGlobalPrefs = globalPrefs;
         mGamePrefs = gamePrefs;
         mRomGoodName = romGoodName;
+        mRomDisplayName = romDisplayName;
         mRomPath = romPath;
         mCheatArgs = cheatArgs;
         mIsRestarting = isRestarting;
@@ -353,7 +355,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
 
 
         // Start the core
-        ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomPath,
+        ActivityHelper.startCoreService(activity.getApplicationContext(), mServiceConnection, mRomGoodName, mRomDisplayName, mRomPath,
                 mRomMd5, mRomCrc, mRomHeaderName, mRomCountryCode, mRomArtPath, mRomLegacySave,
                 mCheatArgs, mIsRestarting, mSaveToLoad, mAppData.coreLib, mGlobalPrefs.useHighPriorityThread, pakTypes,
                 mGamePrefs.isPlugged, mGlobalPrefs.isFramelimiterEnabled, mGlobalPrefs.coreUserDataDir,
@@ -376,7 +378,10 @@ public class CoreFragment extends Fragment implements CoreServiceListener
                     public void run()
                     {
                         mCoreService = null;
-                        ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
+
+                        if (getActivity() != null) {
+                            ActivityHelper.stopCoreService(getActivity().getApplicationContext(), mServiceConnection);
+                        }
 
                     }
                 } );
@@ -650,7 +655,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
-    public void saveState( final String filename )
+    private void saveState( final String filename )
     {
         Log.i("CoreFragment", "saveState");
 
@@ -740,7 +745,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         }
     }
 
-    public void loadState( File file )
+    private void loadState( File file )
     {
         Log.i("CoreFragment", "loadState");
 
@@ -865,7 +870,7 @@ public class CoreFragment extends Fragment implements CoreServiceListener
         setCustomSpeed( mCustomSpeed - DELTA_SPEED );
     }
 
-    public void setCustomSpeed(int value)
+    private void setCustomSpeed(int value)
     {
         Log.i("CoreFragment", "setCustomSpeed");
 
