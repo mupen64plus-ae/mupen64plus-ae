@@ -143,8 +143,11 @@
     <string-array name="displayResolution_entries" translatable="false">
         <item>@string/displayResolution_entryNative</item>
         <item>@string/displayResolution_entry5760x4320</item>
+        <item>@string/displayResolution_entry5120x3840</item>
+        <item>@string/displayResolution_entry4320x3240</item>
         <item>@string/displayResolution_entry3840x2880</item>
         <item>@string/displayResolution_entry2880x2160</item>
+        <item>@string/displayResolution_entry2160x1620</item>
         <item>@string/displayResolution_entry1920x1440</item>
         <item>@string/displayResolution_entry1440x1080</item>
         <item>@string/displayResolution_entry960x720</item>
@@ -157,8 +160,11 @@
     <string-array name="displayResolution_values" translatable="false">
         <item>0</item>
         <item>4320</item>
+        <item>3840</item>
+        <item>3240</item>
         <item>2880</item>
         <item>2160</item>
+        <item>1620</item>
         <item>1440</item>
         <item>1080</item>
         <item>720</item>
@@ -175,8 +181,11 @@
         <item>@string/default_profile_title</item>
         <item>@string/displayResolution_entryNative</item>
         <item>@string/displayResolution_entry5760x4320</item>
+        <item>@string/displayResolution_entry5120x3840</item>
+        <item>@string/displayResolution_entry4320x3240</item>
         <item>@string/displayResolution_entry3840x2880</item>
         <item>@string/displayResolution_entry2880x2160</item>
+        <item>@string/displayResolution_entry2160x1620</item>
         <item>@string/displayResolution_entry1920x1440</item>
         <item>@string/displayResolution_entry1440x1080</item>
         <item>@string/displayResolution_entry960x720</item>
@@ -190,8 +199,11 @@
         <item>-1</item>
         <item>0</item>
         <item>4320</item>
+        <item>3840</item>
+        <item>3240</item>
         <item>2880</item>
         <item>2160</item>
+        <item>1620</item>
         <item>1440</item>
         <item>1080</item>
         <item>720</item>

@@ -316,8 +316,11 @@
     <string name="displayResolution_title">Rendered resolution</string>
     <string name="displayResolution_entryNative">Native (highest quality)</string>
     <string name="displayResolution_entry5760x4320">5760 x 4320</string>
+    <string name="displayResolution_entry5120x3840">5120 x 3840</string>
+    <string name="displayResolution_entry4320x3240">4320 x 3240</string>
     <string name="displayResolution_entry3840x2880">3840 x 2880</string>
     <string name="displayResolution_entry2880x2160">2880 x 2160</string>
+    <string name="displayResolution_entry2160x1620">2160 x 1620</string>
     <string name="displayResolution_entry1920x1440">1920 x 1440</string>
     <string name="displayResolution_entry1440x1080">1440 x 1080</string>
     <string name="displayResolution_entry960x720">960 x 720</string>
