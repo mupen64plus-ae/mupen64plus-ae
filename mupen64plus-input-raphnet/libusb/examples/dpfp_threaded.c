@@ -1,7 +1,6 @@
 /*
  * libusb example program to manipulate U.are.U 4000B fingerprint scanner.
  * Copyright © 2007 Daniel Drake <dsd@gentoo.org>
- * Copyright © 2016 Nathan Hjelm <hjelmn@mac.com>
  *
  * Basic image capture program only, does not consider the powerup quirks or
  * the fact that image encryption may be enabled. Not expected to work
@@ -24,12 +23,10 @@
 
 #include <errno.h>
 #include <pthread.h>
-#include <semaphore.h>
 #include <signal.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
 
 #include "libusb.h"
 
@@ -39,7 +36,6 @@
 #define CTRL_OUT		(LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_ENDPOINT_OUT)
 #define USB_RQ			0x04
 #define INTR_LENGTH		64
-#define SEM_NAME                "/org.libusb.example.dpfp_threaded"
 
 enum {
 	MODE_INIT = 0x00,
@@ -68,23 +64,22 @@ static unsigned char irqbuf[INTR_LENGTH];
 static struct libusb_transfer *img_transfer = NULL;
 static struct libusb_transfer *irq_transfer = NULL;
 static int img_idx = 0;
-static volatile sig_atomic_t do_exit = 0;
+static int do_exit = 0;
 
 static pthread_t poll_thread;
-static sem_t *exit_sem;
+static pthread_cond_t exit_cond = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t exit_cond_lock = PTHREAD_MUTEX_INITIALIZER;
 
-static void request_exit(sig_atomic_t code)
+static void request_exit(int code)
 {
 	do_exit = code;
-	sem_post(exit_sem);
+	pthread_cond_signal(&exit_cond);
 }
 
 static void *poll_thread_main(void *arg)
 {
 	int r = 0;
 	printf("poll thread running\n");
-
-	(void)arg;
 
 	while (!do_exit) {
 		struct timeval tv = { 1, 0 };
@@ -443,8 +438,6 @@ static int alloc_transfers(void)
 
 static void sighandler(int signum)
 {
-	(void)signum;
-
 	request_exit(1);
 }
 
@@ -452,15 +445,6 @@ int main(void)
 {
 	struct sigaction sigact;
 	int r = 1;
-
-	exit_sem = sem_open (SEM_NAME, O_CREAT, 0);
-	if (!exit_sem) {
-		fprintf(stderr, "failed to initialise semaphore error %d", errno);
-		exit(1);
-	}
-
-	/* only using this semaphore in this process so go ahead and unlink it now */
-	sem_unlink (SEM_NAME);
 
 	r = libusb_init(NULL);
 	if (r < 0) {
@@ -516,8 +500,11 @@ int main(void)
 		goto out_deinit;
 	}
 
-	while (!do_exit)
-		sem_wait(exit_sem);
+	while (!do_exit) {
+		pthread_mutex_lock(&exit_cond_lock);
+		pthread_cond_wait(&exit_cond, &exit_cond_lock);
+		pthread_mutex_unlock(&exit_cond_lock);
+	}
 
 	printf("shutting down...\n");
 	pthread_join(poll_thread, NULL);

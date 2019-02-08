@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <assert.h>
 #include <ctype.h>
@@ -39,6 +39,7 @@
 #include <unistd.h>
 #include <libudev.h>
 
+#include "libusb.h"
 #include "libusbi.h"
 #include "linux_usbfs.h"
 
@@ -60,7 +61,7 @@ int linux_udev_start_event_monitor(void)
 	udev_ctx = udev_new();
 	if (!udev_ctx) {
 		usbi_err(NULL, "could not create udev context");
-		goto err;
+		return LIBUSB_ERROR_OTHER;
 	}
 
 	udev_monitor = udev_monitor_new_from_netlink(udev_ctx, "udev");
@@ -69,7 +70,7 @@ int linux_udev_start_event_monitor(void)
 		goto err_free_ctx;
 	}
 
-	r = udev_monitor_filter_add_match_subsystem_devtype(udev_monitor, "usb", "usb_device");
+	r = udev_monitor_filter_add_match_subsystem_devtype(udev_monitor, "usb", 0);
 	if (r) {
 		usbi_err(NULL, "could not initialize udev monitor filter for \"usb\" subsystem");
 		goto err_free_monitor;
@@ -82,33 +83,17 @@ int linux_udev_start_event_monitor(void)
 
 	udev_monitor_fd = udev_monitor_get_fd(udev_monitor);
 
-#if defined(FD_CLOEXEC)
-	/* Make sure the udev file descriptor is marked as CLOEXEC */
-	r = fcntl(udev_monitor_fd, F_GETFD);
-	if (r == -1) {
-		usbi_err(NULL, "geting udev monitor fd flags (%d)", errno);
-		goto err_free_monitor;
-	}
-	if (!(r & FD_CLOEXEC)) {
-		if (fcntl(udev_monitor_fd, F_SETFD, r | FD_CLOEXEC) == -1) {
-			usbi_err(NULL, "setting udev monitor fd flags (%d)", errno);
-			goto err_free_monitor;
-		}
-	}
-#endif
-
 	/* Some older versions of udev are not non-blocking by default,
 	 * so make sure this is set */
 	r = fcntl(udev_monitor_fd, F_GETFL);
 	if (r == -1) {
-		usbi_err(NULL, "getting udev monitor fd status flags (%d)", errno);
+		usbi_err(NULL, "getting udev monitor fd flags (%d)", errno);
 		goto err_free_monitor;
 	}
-	if (!(r & O_NONBLOCK)) {
-		if (fcntl(udev_monitor_fd, F_SETFL, r | O_NONBLOCK) == -1) {
-			usbi_err(NULL, "setting udev monitor fd status flags (%d)", errno);
-			goto err_free_monitor;
-		}
+	r = fcntl(udev_monitor_fd, F_SETFL, r | O_NONBLOCK);
+	if (r) {
+		usbi_err(NULL, "setting udev monitor fd flags (%d)", errno);
+		goto err_free_monitor;
 	}
 
 	r = usbi_pipe(udev_control_pipe);
@@ -134,7 +119,6 @@ err_free_monitor:
 	udev_monitor_fd = -1;
 err_free_ctx:
 	udev_unref(udev_ctx);
-err:
 	udev_ctx = NULL;
 	return LIBUSB_ERROR_OTHER;
 }
@@ -150,7 +134,7 @@ int linux_udev_stop_event_monitor(void)
 
 	/* Write some dummy data to the control pipe and
 	 * wait for the thread to exit */
-	r = write(udev_control_pipe[1], &dummy, sizeof(dummy));
+	r = usbi_write(udev_control_pipe[1], &dummy, sizeof(dummy));
 	if (r <= 0) {
 		usbi_warn(NULL, "udev control pipe signal failed");
 	}
@@ -178,7 +162,6 @@ static void *linux_udev_event_thread_main(void *arg)
 {
 	char dummy;
 	int r;
-	ssize_t nb;
 	struct udev_device* udev_dev;
 	struct pollfd fds[] = {
 		{.fd = udev_control_pipe[0],
@@ -189,15 +172,11 @@ static void *linux_udev_event_thread_main(void *arg)
 
 	usbi_dbg("udev event thread entering.");
 
-	while ((r = poll(fds, 2, -1)) >= 0 || errno == EINTR) {
-		if (r < 0) {
-			/* temporary failure */
-			continue;
-		}
+	while (poll(fds, 2, -1) >= 0) {
 		if (fds[0].revents & POLLIN) {
 			/* activity on control pipe, read the byte and exit */
-			nb = read(udev_control_pipe[0], &dummy, sizeof(dummy));
-			if (nb <= 0) {
+			r = usbi_read(udev_control_pipe[0], &dummy, sizeof(dummy));
+			if (r <= 0) {
 				usbi_warn(NULL, "udev control pipe read failed");
 			}
 			break;
@@ -232,7 +211,7 @@ static int udev_device_info(struct libusb_context *ctx, int detached,
 	}
 
 	return linux_get_device_address(ctx, detached, busnum, devaddr,
-					dev_node, *sys_name, -1);
+					dev_node, *sys_name);
 }
 
 static void udev_hotplug_event(struct udev_device* udev_dev)
@@ -261,7 +240,7 @@ static void udev_hotplug_event(struct udev_device* udev_dev)
 		if (strncmp(udev_action, "add", 3) == 0) {
 			linux_hotplug_enumerate(busnum, devaddr, sys_name);
 		} else if (detached) {
-			linux_device_disconnected(busnum, devaddr);
+			linux_device_disconnected(busnum, devaddr, sys_name);
 		} else {
 			usbi_err(NULL, "ignoring udev action %s", udev_action);
 		}
@@ -287,11 +266,9 @@ int linux_udev_scan_devices(struct libusb_context *ctx)
 	}
 
 	udev_enumerate_add_match_subsystem(enumerator, "usb");
-	udev_enumerate_add_match_property(enumerator, "DEVTYPE", "usb_device");
 	udev_enumerate_scan_devices(enumerator);
 	devices = udev_enumerate_get_list_entry(enumerator);
 
-	entry = NULL;
 	udev_list_entry_foreach(entry, devices) {
 		const char *path = udev_list_entry_get_name(entry);
 		uint8_t busnum = 0, devaddr = 0;
