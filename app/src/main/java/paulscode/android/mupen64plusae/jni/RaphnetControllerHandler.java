@@ -54,8 +54,6 @@ class RaphnetControllerHandler
 
     private static final String ACTION_USB_PERMISSION = "org.mupen64plusae.v3.alpha.USB_PERMISSION";
     private static final int RAPHNET_VENDOR_ID = 0x289b;
-    private static final int RAPHNET_PRODUCT_ID = 100;
-    private static final int RAPHNET_INTERFACE = 0;
 
     private Context mContext;
     private boolean mIsReady = false;
@@ -63,7 +61,6 @@ class RaphnetControllerHandler
     private DeviceReadyListener mDeviceReadyListener;
     private UsbManager mUsbManager;
     private UsbDeviceConnection mDeviceConnection;
-    private UsbInterface mUsbInterface;
     private boolean isConnected = false;
 
     /**
@@ -93,9 +90,7 @@ class RaphnetControllerHandler
                         if(device != null){
                             Log.d("RaphnetController", "permission granted for device " + device);
 
-                            mUsbInterface = device.getInterface(RAPHNET_INTERFACE);
                             mDeviceConnection = mUsbManager.openDevice(device);
-                            mDeviceConnection.claimInterface(mUsbInterface, true);
                             init(mDeviceConnection.getFileDescriptor(), device.getVendorId(), device.getProductId());
                             isConnected = true;
                         }
@@ -115,7 +110,6 @@ class RaphnetControllerHandler
 
                     if (isConnected) {
                         isConnected = false;
-                        mDeviceConnection.releaseInterface(mUsbInterface);
                         mDeviceConnection.close();
                     }
                 }
@@ -158,7 +152,6 @@ class RaphnetControllerHandler
     {
         if (isConnected) {
             isConnected = false;
-            mDeviceConnection.releaseInterface(mUsbInterface);
             mDeviceConnection.close();
         }
 
