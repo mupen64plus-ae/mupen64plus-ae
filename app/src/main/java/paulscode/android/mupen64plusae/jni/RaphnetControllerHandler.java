@@ -53,7 +53,7 @@ class RaphnetControllerHandler
     }
 
     private static final String ACTION_USB_PERMISSION = "org.mupen64plusae.v3.alpha.USB_PERMISSION";
-    private static final int RAPHNET_VENDOR_ID = 10395;
+    private static final int RAPHNET_VENDOR_ID = 0x289b;
     private static final int RAPHNET_PRODUCT_ID = 100;
     private static final int RAPHNET_INTERFACE = 0;
 
@@ -64,14 +64,13 @@ class RaphnetControllerHandler
     private UsbManager mUsbManager;
     private UsbDeviceConnection mDeviceConnection;
     private UsbInterface mUsbInterface;
-    private UsbEndpoint mDeviceEndPoint;
     private boolean isConnected = false;
 
     /**
      * Initialize input-raphnet plugin.
      * @param fileDiscriptor USB file discriptor
      */
-    static native void init(int fileDiscriptor);
+    static native void init(int fileDiscriptor, int vendorId, int productId);
 
     RaphnetControllerHandler(Context context, DeviceReadyListener deviceReadyListener) {
         mContext = context;
@@ -95,10 +94,9 @@ class RaphnetControllerHandler
                             Log.d("RaphnetController", "permission granted for device " + device);
 
                             mUsbInterface = device.getInterface(RAPHNET_INTERFACE);
-                            mDeviceEndPoint = mUsbInterface.getEndpoint(0);
                             mDeviceConnection = mUsbManager.openDevice(device);
                             mDeviceConnection.claimInterface(mUsbInterface, true);
-                            init(mDeviceConnection.getFileDescriptor());
+                            init(mDeviceConnection.getFileDescriptor(), device.getVendorId(), device.getProductId());
                             isConnected = true;
                         }
                     }
@@ -112,7 +110,7 @@ class RaphnetControllerHandler
 
             if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                if (device != null && device.getVendorId() == RAPHNET_VENDOR_ID && device.getProductId() == RAPHNET_PRODUCT_ID) {
+                if (device != null && device.getVendorId() == RAPHNET_VENDOR_ID) {
                     Log.d("RaphnetController", "Device detached " + device);
 
                     if (isConnected) {
@@ -137,7 +135,7 @@ class RaphnetControllerHandler
 
                 for (UsbDevice device : deviceList.values()) {
 
-                    if (device.getVendorId() == RAPHNET_VENDOR_ID && device.getProductId() == RAPHNET_PRODUCT_ID) {
+                    if (device.getVendorId() == RAPHNET_VENDOR_ID) {
                         mUsbManager.requestPermission(device, permissionIntent);
                         mDevicesFound = true;
                     }
@@ -178,7 +176,7 @@ class RaphnetControllerHandler
             Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
             while(deviceIterator.hasNext() && !deviceFound){
                 UsbDevice device = deviceIterator.next();
-                deviceFound = device.getVendorId() == RAPHNET_VENDOR_ID && device.getProductId() == RAPHNET_PRODUCT_ID;
+                deviceFound = device.getVendorId() == RAPHNET_VENDOR_ID;
             }
         }
 
