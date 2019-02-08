@@ -367,7 +367,12 @@ static const char *find_usbfs_path(void) {
 	if (ret != NULL)
 		usbi_dbg("found usbfs at %s", ret);
 
-	return ret;
+	// Use this as a last resort
+    if (ret == NULL) {
+        ret = "/dev/bus/usb";
+    }
+
+    return ret;
 }
 
 /* the monotonic clock is not usable on all systems (e.g. embedded ones often
@@ -423,11 +428,15 @@ static int op_init2(struct libusb_context *ctx, const char *usbfs) {	// XXX
 	int r;
 
 	ENTER();
+	LOGE("op_init2: 1 %s", usbfs);
+
 	if (!usbfs || !strlen(usbfs)) {
 		usbfs_path = find_usbfs_path();
 	} else {
 		usbfs_path = usbfs;
 	}
+	LOGE("op_init2: 2 %s", usbfs_path);
+
 	if (UNLIKELY(!usbfs_path)) {
 		LOGE("could not find usbfs");
 		usbi_err(ctx, "could not find usbfs");
