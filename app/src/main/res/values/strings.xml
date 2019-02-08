@@ -401,6 +401,8 @@
     <string name="gliden64_bilinear_mode_title">Bilinear filtering mode</string>
     <string name="gliden64_bilinear_mode_entry_n64_3point">N64 3-point</string>
     <string name="gliden64_bilinear_mode_entry_standard">Standard</string>
+    <string name="gliden64_enable_halos_removal_title">Remove halos around filtered textures</string>
+    <string name="gliden64_enable_halos_removal_summary">This can clean up odd colors around text but it can break other textures.</string>
     <string name="gliden64_max_anisotropic_filtering_title">Max level of anisotropic filtering</string>
     <string name="gliden64_category_general_title">General</string>
     <string name="gliden64_widescreen_hack_title">Widescreen hack</string>

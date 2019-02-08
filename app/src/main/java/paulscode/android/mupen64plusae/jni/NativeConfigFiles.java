@@ -259,7 +259,8 @@ class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetFactor", String.valueOf( global.videoPolygonOffset ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "PolygonOffsetUnits", String.valueOf( global.videoPolygonOffset ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "FXAA", boolToTF( game.glideN64Prefs.fxaa ));
-        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bilinearMode", String.valueOf( game.glideN64Prefs.bilinearMode ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "bilinearMode", boolToTF( game.glideN64Prefs.bilinearMode ) );
+        putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "enableHalosRemoval", boolToTF( game.glideN64Prefs.enableHalosRemoval ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "MaxAnisotropy", String.valueOf( game.glideN64Prefs.maxAnisotropy ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableNoise", boolToTF( game.glideN64Prefs.enableNoise ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableLOD", boolToTF( game.glideN64Prefs.enableLOD ) );

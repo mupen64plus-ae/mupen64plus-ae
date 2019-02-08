@@ -408,6 +408,11 @@
             android:key="bilinearMode"
             android:summary="@string/selectedValue"
             android:title="@string/gliden64_bilinear_mode_title" />
+        <paulscode.android.mupen64plusae.preference.StringCheckBoxPreference
+            android:defaultValue="False"
+            android:key="enableHalosRemoval"
+            android:title="@string/gliden64_enable_halos_removal_title"
+            android:summary="@string/gliden64_enable_halos_removal_summary" />
         <paulscode.android.mupen64plusae.preference.SeekBarPreference
             android:defaultValue="0"
             android:key="MaxAnisotropy"

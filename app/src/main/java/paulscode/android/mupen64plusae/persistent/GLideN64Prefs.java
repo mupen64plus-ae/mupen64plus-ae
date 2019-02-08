@@ -8,15 +8,18 @@ import static paulscode.android.mupen64plusae.persistent.GamePrefs.getSafeInt;
 
 public class GLideN64Prefs {
 
-    public static final int VERSION = 25;
+    public static final int VERSION = 26;
 
     /** Enable/Disable Fast Approximate Anti-Aliasing FXAA */
     public final boolean fxaa;
 
     /** Bilinear filtering mode (
-     * 0=N64 3point
-     * 1=standard) */
-    public final int bilinearMode;
+     * False=N64 3point
+     * True=standard) */
+    public final boolean bilinearMode;
+
+    /** Remove halos around filtered textures. */
+    public final boolean enableHalosRemoval;
 
     /** Max level of Anisotropic Filtering, 0 for off */
     public final int maxAnisotropy;
@@ -148,7 +151,8 @@ public class GLideN64Prefs {
     GLideN64Prefs(Context context, final Profile emulationProfile)
     {
         String glesVersion = AppData.getOpenGlEsVersion(context);
-        bilinearMode = getSafeInt( emulationProfile, "bilinearMode", 0);
+        bilinearMode = emulationProfile.get( "bilinearMode", "True" ).equals( "True" );
+        enableHalosRemoval = emulationProfile.get( "enableHalosRemoval", "True" ).equals( "True" );
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);
         enableNoise = emulationProfile.get( "EnableNoise", "True" ).equals( "True" );
         enableLOD = emulationProfile.get( "EnableLOD", "True" ).equals( "True" );
