@@ -1145,7 +1145,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
                 mGlobalPrefs.unmappableKeyCodes );
         final MogaProvider mogaProvider = new MogaProvider( mMogaController );
-        mAxisProvider = new AxisProvider();
+        mAxisProvider = new AxisProvider(inputSource);
 
         // Request focus for proper listening
         inputSource.requestFocus();
