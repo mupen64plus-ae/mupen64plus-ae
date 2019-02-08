@@ -3,13 +3,13 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
-LOCAL_SHARED_LIBRARIES := libhidapi
+LOCAL_SHARED_LIBRARIES := libusb1.0
 
 LOCAL_SRC_FILES := plugin.c \
 	plugin_front.c \
 	plugin_back.c \
 	gcn64lib.c \
-	gcn64.c \
+	gcn64_android.c \
 	hexdump.c \
 	osal_dynamiclib_unix.c
 
