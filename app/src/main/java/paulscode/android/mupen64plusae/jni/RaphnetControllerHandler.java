@@ -29,11 +29,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
-import android.hardware.usb.UsbEndpoint;
-import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -56,12 +55,12 @@ class RaphnetControllerHandler
     private static final int RAPHNET_VENDOR_ID = 0x289b;
 
     private Context mContext;
-    private boolean mIsReady = false;
     private boolean mDevicesFound = false;
     private DeviceReadyListener mDeviceReadyListener;
     private UsbManager mUsbManager;
     private UsbDeviceConnection mDeviceConnection;
-    private boolean isConnected = false;
+    private boolean mIsConnected = false;
+    private ArrayList<UsbDevice> mWaitingOnConnection = new ArrayList<>();
 
     /**
      * Initialize input-raphnet plugin.
@@ -79,8 +78,6 @@ class RaphnetControllerHandler
 
         public void onReceive(Context context, Intent intent) {
 
-            mIsReady = true;
-
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
@@ -92,15 +89,18 @@ class RaphnetControllerHandler
 
                             mDeviceConnection = mUsbManager.openDevice(device);
                             init(mDeviceConnection.getFileDescriptor(), device.getVendorId(), device.getProductId());
-                            isConnected = true;
+                            mIsConnected = true;
                         }
-                    }
-                    else {
+                    } else {
                         Log.d("RaphnetController", "permission denied for device " + device);
                     }
+
+                    mWaitingOnConnection.remove(device);
                 }
 
-                mDeviceReadyListener.onDeviceReady();
+                if (mWaitingOnConnection.isEmpty()) {
+                    mDeviceReadyListener.onDeviceReady();
+                }
             }
 
             if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
@@ -108,8 +108,8 @@ class RaphnetControllerHandler
                 if (device != null && device.getVendorId() == RAPHNET_VENDOR_ID) {
                     Log.d("RaphnetController", "Device detached " + device);
 
-                    if (isConnected) {
-                        isConnected = false;
+                    if (mIsConnected) {
+                        mIsConnected = false;
                         mDeviceConnection.close();
                     }
                 }
@@ -131,6 +131,7 @@ class RaphnetControllerHandler
 
                     if (device.getVendorId() == RAPHNET_VENDOR_ID) {
                         mUsbManager.requestPermission(device, permissionIntent);
+                        mWaitingOnConnection.add(device);
                         mDevicesFound = true;
                     }
                 }
@@ -140,7 +141,7 @@ class RaphnetControllerHandler
 
     boolean isReady()
     {
-        return mIsReady || !mDevicesFound;
+        return mWaitingOnConnection.isEmpty() || !mDevicesFound;
     }
 
     boolean isAvailable()
@@ -150,8 +151,8 @@ class RaphnetControllerHandler
 
     void shutdownAccess()
     {
-        if (isConnected) {
-            isConnected = false;
+        if (mIsConnected) {
+            mIsConnected = false;
             mDeviceConnection.close();
         }
 
