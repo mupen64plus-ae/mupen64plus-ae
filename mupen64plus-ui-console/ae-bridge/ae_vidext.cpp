@@ -23,8 +23,8 @@ bool new_surface = false;
 int FPSRecalcPeriod = 0;
 uint32_t frameCount = 0;
 int64_t oldTime;
-int vsync = 1;
-int oldVsync = 1;
+int vsync = 0;
+int oldVsync = 0;
 bool isPaused = false;
 
 EGLint const defaultAttributeList[] = {
