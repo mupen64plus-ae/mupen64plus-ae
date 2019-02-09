@@ -477,12 +477,13 @@ public class GamePrefs
         //Stretch screen if the GLideN64 wide screen hack is enabled and the current video plugin is GLideN64
         final int hResolution = getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
 
-        videoSurfaceWidth = globalPrefs.getSurfaceResolutionWidth(gliden64Widescreenhack || stretch);
-        videoSurfaceHeight = globalPrefs.getSurfaceResolutionHeight(false, gliden64Widescreenhack);
+        globalPrefs.determineResolutionData(context, gliden64Widescreenhack || stretch);
+        videoSurfaceWidth = globalPrefs.getSurfaceResolutionWidth();
+        videoSurfaceHeight = globalPrefs.getSurfaceResolutionHeight();
 
         //Angrylion only supports 640x480
         videoRenderWidth = isAngrylionEnabled ? 640 : globalPrefs.getResolutionWidth(gliden64Widescreenhack, hResolution);
-        videoRenderHeight = isAngrylionEnabled ? 480 : globalPrefs.getResolutionHeight(gliden64Widescreenhack, hResolution);
+        videoRenderHeight = isAngrylionEnabled ? 480 : globalPrefs.getResolutionHeight(hResolution);
 
         Log.i("GamePrefs", "render_width=" + videoRenderWidth + " render_height=" + videoRenderHeight);
 
