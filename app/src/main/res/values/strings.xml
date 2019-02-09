@@ -187,6 +187,8 @@
     <string name="actionRestart_summary">Recommended if cheats are used</string>
     <string name="actionRemove_title">Remove</string>
     <string name="actionRemove_summary">Remove from library</string>
+    <string name="actionCreateShortcut_title">Create shortcut</string>
+    <string name="actionCreateShortcut_summary">Add a shortcut to this ROM in the default app launcher</string>
     <string name="actionWiki_title">Wiki</string>
     <string name="actionWiki_summary">Community help for this game</string>
     <string name="actionReloadAssets_title">Reload app resources</string>

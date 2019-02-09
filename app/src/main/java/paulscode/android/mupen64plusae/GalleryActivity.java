@@ -24,7 +24,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
+
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -665,6 +671,38 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         }
     }
 
+    private void createGameShortcut(GalleryItem item)
+    {
+        if (ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+
+            Intent gameIntent = new Intent(this, SplashActivity.class);
+            gameIntent.putExtra(GalleryActivity.KEY_IS_LEANBACK, true);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_PATH, item.romFile != null ? item.romFile.getAbsolutePath() : null);
+            gameIntent.putExtra(ActivityHelper.Keys.ZIP_PATH, item.zipFile != null ? item.zipFile.getAbsolutePath() : null);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_MD5, item.md5);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_CRC, item.crc);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_HEADER_NAME, item.headerName);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_COUNTRY_CODE, (int) item.countryCode.getValue());
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_ART_PATH, item.artPath);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_GOOD_NAME, item.goodName);
+            gameIntent.putExtra(ActivityHelper.Keys.ROM_DISPLAY_NAME, item.displayName);
+            gameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            gameIntent.setAction("LOCATION_SHORTCUT");
+
+            Bitmap bitmap = item.artBitmap.getBitmap();
+            int dimension = Math.min(bitmap.getWidth(), bitmap.getHeight());
+            Bitmap croppedBitmap = ThumbnailUtils.extractThumbnail(bitmap, dimension, dimension);
+
+            IconCompat icon = IconCompat.createWithBitmap(croppedBitmap);
+            ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, item.md5)
+                    .setIcon(icon)
+                    .setIntent(gameIntent)
+                    .setShortLabel(item.displayName)
+                    .build();
+            ShortcutManagerCompat.requestPinShortcut(this, shortcut, null);
+        }
+    }
+
     @Override
     public void onGameSidebarAction(MenuItem menuItem)
     {
@@ -715,7 +753,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
 
                 final FragmentManager fm = getSupportFragmentManager();
                 confirmationDialog.show(fm, STATE_REMOVE_FROM_LIBRARY_DIALOG);
+                break;
             }
+            case R.id.menuItem_createShortcut:
+                createGameShortcut(item);
+                break;
             default:
         }
     }
@@ -758,8 +800,11 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
         // Set the game title
         mGameSidebar.setTitle(item.displayName);
 
-        // If there are no saves for this game, disable the resume
-        // option
+
+        // Restore the menu
+        mGameSidebar.setActionHandler(GalleryActivity.this, R.menu.gallery_game_drawer);
+
+        // If there are no saves for this game, disable the resume option
 
         final String autoSavePath = GamePrefs.getGameDataPath(mSelectedItem.md5, mSelectedItem.headerName,
                 mSelectedItem.countryCode.toString(), mAppData) + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
@@ -780,15 +825,16 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                 (secondAlternateAllFilesInSavePath != null && secondAlternateAllFilesInSavePath.length != 0)) &&
                 mGlobalPrefs.maxAutoSaves > 0;
 
-        if (visible)
-        {
-            // Restore the menu
-            mGameSidebar.setActionHandler(GalleryActivity.this, R.menu.gallery_game_drawer);
-        }
-        else
+        if (!visible)
         {
             // Disable the action handler
             mGameSidebar.getMenu().removeItem(R.id.menuItem_resume);
+            mGameSidebar.reload();
+        }
+
+        if (!AppData.IS_OREO)
+        {
+            mGameSidebar.getMenu().removeItem(R.id.menuItem_createShortcut);
             mGameSidebar.reload();
         }
 

@@ -145,6 +145,8 @@
     <string name="actionRestart_summary">Recomendado si se aplican cheats</string>
     <string name="actionRemove_title">Eliminar</string>
     <string name="actionRemove_summary">Eliminar de la librería</string>
+    <string name="actionCreateShortcut_title">Crear acesso directo</string>
+    <string name="actionCreateShortcut_summary">Agrega un acceso directo a este ROM en el lanzador de aplicaciones predeterminado.</string>
     <string name="actionWiki_title">Wiki</string>
     <string name="actionWiki_summary">Ayuda comunitaria para este juego</string>
     <string name="actionReloadAssets_title">Recargar los recursos de la aplicación</string>

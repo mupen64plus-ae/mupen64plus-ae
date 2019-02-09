@@ -20,5 +20,10 @@
         android:icon="@drawable/ic_storage"
         android:title="@string/actionRemove_title"
         android:titleCondensed="@string/actionRemove_summary"/>
+    <item
+        android:id="@+id/menuItem_createShortcut"
+        android:icon="@drawable/ic_storage"
+        android:title="@string/actionCreateShortcut_title"
+        android:titleCondensed="@string/actionCreateShortcut_summary"/>
 
 </menu>
