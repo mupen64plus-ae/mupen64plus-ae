@@ -182,7 +182,7 @@ public class GalleryActivity extends AppCompatActivity implements GameSidebarAct
                     displayName = goodName;
                 }
 
-                launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, displayName, false );
+                launchGameActivity( romPath, zipPath,  md5, crc, headerName, countryCode, artPath, goodName, displayName, true );
 
                 getIntent().removeExtra(ActivityHelper.Keys.ROM_PATH);
                 getIntent().removeExtra(ActivityHelper.Keys.ZIP_PATH );
