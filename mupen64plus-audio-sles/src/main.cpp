@@ -50,10 +50,7 @@
 
 typedef struct slesState {
     int value;
-    int limit;
     int errors;
-    int totalBuffersProcessed;
-
 } slesState;
 
 /* Default start-time size of primary buffer (in equivalent output samples).
@@ -103,8 +100,6 @@ static unsigned char **secondaryBuffers = nullptr;
 static int SecondaryBufferSize = DEFAULT_SECONDARY_BUFFER_SIZE;
 /** Time stretched audio enabled */
 static int TimeStretchEnabled = true;
-/* Index of the next secondary buffer available */
-static int secondaryBufferIndex = 0;
 /* Number of secondary buffers */
 static unsigned int SecondaryBufferNbr = SECONDARY_BUFFER_NBR;
 /* Audio frequency, this is usually obtained from the game, but for compatibility we set default value */
@@ -122,7 +117,8 @@ static int OutputFreq;
 /* Indicate that the audio plugin failed to initialize, so the emulator can keep running without sound */
 static int critical_failure = 0;
 
-void processAudio(const unsigned char *buffer, unsigned int length);
+void processAudio(const int16_t* buffer, unsigned int samples);
+void processAudioNoStretch(const int16_t* buffer, unsigned int samples);
 
 static void audioConsumerStretch();
 
@@ -199,8 +195,6 @@ static void CloseAudio() {
 
     int i = 0;
 
-    secondaryBufferIndex = 0;
-
     /* Delete Primary buffer */
     if (primaryBuffer != nullptr) {
         primaryBufferBytes = 0;
@@ -249,7 +243,7 @@ static void CloseAudio() {
 }
 
 static void CreatePrimaryBuffer() {
-    auto primaryBytes = (unsigned int) (PrimaryBufferSize * N64_SAMPLE_BYTES);
+    auto primaryBytes = (unsigned int) (PrimaryBufferSize * SLES_SAMPLE_BYTES);
 
     DebugMessage(M64MSG_VERBOSE, "Allocating memory for primary audio buffer: %i bytes.",
                  primaryBytes);
@@ -354,9 +348,8 @@ static void InitializeAudio(int freq) {
     /* Create secondary buffers */
     CreateSecondaryBuffers();
 
-    state.value = state.limit = SecondaryBufferNbr;
-    state.totalBuffersProcessed = 0;
     state.errors = 0;
+    state.value = SecondaryBufferNbr;
 
     /* Engine object */
     SLresult result = slCreateEngine(&engineObject, 0, nullptr, 0, nullptr, nullptr);
@@ -390,8 +383,7 @@ static void InitializeAudio(int freq) {
         return;
     }
 
-    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
-                                                       SecondaryBufferNbr * 2};
+    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, SecondaryBufferNbr};
 
 #ifdef FP_ENABLED
 
@@ -632,7 +624,7 @@ PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersi
 
 /* ----------- Audio Functions ------------- */
 EXPORT void CALL AiDacrateChanged(int SystemType) {
-    int f = GameFreq;
+    int f;
 
     if (!l_PluginInit)
         return;
@@ -648,7 +640,7 @@ EXPORT void CALL AiDacrateChanged(int SystemType) {
             f = 48628316 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
         default:
-            f = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
+            f = GameFreq;
             break;
     }
 
@@ -693,7 +685,6 @@ EXPORT void CALL AiLenChanged(void) {
         totalElapsedSamples = 0;
         hasBeenReset = true;
         totalElapsedSamples = 0;
-        state.totalBuffersProcessed = 0;
     }
 
     lastSpeedFactor = speed_factor;
@@ -703,11 +694,12 @@ EXPORT void CALL AiLenChanged(void) {
 
     //Add data to the queue
     auto theQueueData = new QueueData;
-    theQueueData->data = new unsigned char[LenReg];
-    theQueueData->length = LenReg;
+    theQueueData->data = new int16_t[LenReg/sizeof(int16_t)];
+    theQueueData->samples = LenReg/N64_SAMPLE_BYTES;
     std::chrono::duration<double> timeSinceStart = currentTime - gameStartTime;
     theQueueData->timeSinceStart = timeSinceStart.count();
-    std::copy(inputAudio, inputAudio + LenReg, theQueueData->data);
+
+    std::copy(inputAudio, inputAudio + LenReg, reinterpret_cast<unsigned char*>(theQueueData->data));
     audioConsumerQueue.push(theQueueData);
 
     //Calculate total ellapsed game time
@@ -768,11 +760,6 @@ EXPORT void CALL AiLenChanged(void) {
     }
 }
 
-double TimeDiff(struct timespec *currTime, struct timespec *prevTime) {
-    return ((double) currTime->tv_sec + ((double) currTime->tv_nsec) / 1.0e9) -
-           ((double) prevTime->tv_sec + ((double) prevTime->tv_nsec) / 1.0e9);
-}
-
 float GetAverageTime(const double *feedTimes, int numTimes) {
     float sum = 0;
     for (int index = 0; index < numTimes; ++index) {
@@ -803,7 +790,7 @@ void audioConsumerStretch() {
     double bufferMultiplier = ((double) OutputFreq / DEFAULT_FREQUENCY) *
                               ((double) DEFAULT_SECONDARY_BUFFER_SIZE / SecondaryBufferSize);
 
-    int bufferLimit = state.limit - 20;
+    int bufferLimit = SecondaryBufferNbr - 20;
     int maxQueueSize = (int) ((TargetSecondaryBuffers + 30.0) * bufferMultiplier);
     if (maxQueueSize > bufferLimit) {
         maxQueueSize = bufferLimit;
@@ -839,24 +826,25 @@ void audioConsumerStretch() {
     double averageFeedTime = defaultSampleLength;
 
     while (!shutdownThread) {
-        int slesQueueLength = state.limit - state.value;
+
+        SLAndroidSimpleBufferQueueState slesState;
+        (*bufferQueue)->GetState(bufferQueue, &slesState);
+        int slesQueueLength = slesState.count;
 
         ranDry = slesQueueLength < minQueueSize;
 
         QueueData* currQueueData;
 
         if (audioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
-            int threadQueueLength = audioConsumerQueue.size();
 
-            unsigned int dataLength = currQueueData->length;
             double temp = averageGameTime / averageFeedTime;
 
-            if (state.totalBuffersProcessed < state.limit) {
+            if (slesState.index < SecondaryBufferNbr) {
 
                 speedFactor = static_cast<double>(speed_factor) / 100.0;
                 soundTouch.setTempo(speedFactor);
 
-                processAudio(currQueueData->data, dataLength);
+                processAudio(currQueueData->data, currQueueData->samples);
 
             } else {
 
@@ -865,7 +853,7 @@ void audioConsumerStretch() {
                     drainQueue = true;
                     currAdjustment = temp +
                                      (float) (slesQueueLength - minQueueSize) /
-                                     (float) (state.limit - minQueueSize) *
+                                     (float) (SecondaryBufferNbr - minQueueSize) *
                                      maxSpeedUpRate;
                 }
                     //Device can't keep up with the game
@@ -889,10 +877,8 @@ void audioConsumerStretch() {
                     soundTouch.setTempo(slowAdjustment);
                 }
 
-                processAudio(currQueueData->data, dataLength);
+                processAudio(currQueueData->data, currQueueData->samples);
             }
-
-            ++state.totalBuffersProcessed;
 
             //Useful logging
             //if(slesQueueLength == 0)
@@ -911,7 +897,7 @@ void audioConsumerStretch() {
             feedTimes[feedTimeIndex] = timeDiff;
             averageFeedTime = GetAverageTime(feedTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
-            gameTimes[feedTimeIndex] = (float)dataLength / (float)N64_SAMPLE_BYTES / (float)GameFreq;
+            gameTimes[feedTimeIndex] = (float)currQueueData->samples / (float)GameFreq;
             averageGameTime = GetAverageTime(gameTimes, feedTimesSet ? feedTimeWindowSize : (feedTimeIndex + 1));
 
             ++feedTimeIndex;
@@ -934,30 +920,13 @@ void audioConsumerStretch() {
 
 
 void audioConsumerNoStretch() {
-    soundTouch.setSampleRate(GameFreq);
-    soundTouch.setChannels(2);
-    soundTouch.setSetting(SETTING_USE_QUICKSEEK, 1);
-    soundTouch.setSetting(SETTING_USE_AA_FILTER, 1);
-    double speedFactor = static_cast<double>(speed_factor) / 100.0;
-    soundTouch.setTempo(speedFactor);
-
-    soundTouch.setRate((double) GameFreq / (double) OutputFreq);
     QueueData* currQueueData = nullptr;
-
-    int lastSpeedFactor = speed_factor;
 
     while (!shutdownThread)
     {
         if (audioConsumerQueue.tryPop(currQueueData, std::chrono::milliseconds(1000))) {
-            unsigned int dataLength = currQueueData->length;
 
-            if (lastSpeedFactor != speed_factor)
-            {
-                lastSpeedFactor = speed_factor;
-                soundTouch.setTempo(static_cast<double>(speed_factor) / 100.0);
-            }
-
-            processAudio(currQueueData->data, dataLength);
+            processAudioNoStretch(currQueueData->data, currQueueData->samples);
 
             delete [] currQueueData->data;
             delete currQueueData;
@@ -973,57 +942,70 @@ void queueCallback(SLAndroidSimpleBufferQueueItf caller, void *context) {
     SLresult result = (*bufferQueue)->GetState(bufferQueue, &st);
 
     if (result == SL_RESULT_SUCCESS) {
-        state->value = state->limit - st.count;
+        state->value = SecondaryBufferNbr - st.count;
     }
 }
 
-void processAudio(const unsigned char *buffer, unsigned int length) {
-    if (length < primaryBufferBytes) {
-        unsigned int i;
+void convertBufferToSlesBuffer(const int16_t* inputBuffer, unsigned int inputSamples, unsigned char* outputBuffer, int& outputBufferStart)
+{
+    if (inputSamples*SLES_SAMPLE_BYTES < primaryBufferBytes) {
 
-        for (i = 0; i < length; i += 4) {
+#ifndef FP_ENABLED
+        auto outputBufferType = reinterpret_cast<int16_t*>(outputBuffer);
+        int outputStart = outputBufferStart/sizeof(int16_t);
+        for (int sampleIndex = 0; sampleIndex < inputSamples; ++sampleIndex) {
+            int bufferIndex = sampleIndex*2;
             if (SwapChannels == 0) {
-                /* Left channel */
-                primaryBuffer[i] = buffer[i + 2];
-                primaryBuffer[i + 1] = buffer[i + 3];
-
-                /* Right channel */
-                primaryBuffer[i + 2] = buffer[i];
-                primaryBuffer[i + 3] = buffer[i + 1];
+                // Left channel
+                outputBufferType[outputStart + bufferIndex] = inputBuffer[bufferIndex + 1];
+                // Right channel
+                outputBufferType[outputStart + bufferIndex + 1] = inputBuffer[bufferIndex];
             } else {
-                /* Left channel */
-                primaryBuffer[i] = buffer[i];
-                primaryBuffer[i + 1] = buffer[i + 1];
-
-                /* Right channel */
-                primaryBuffer[i + 2] = buffer[i + 2];
-                primaryBuffer[i + 3] = buffer[i + 3];
+                // Left channel
+                outputBufferType[outputStart + bufferIndex] = inputBuffer[bufferIndex];
+                // Right channel
+                outputBufferType[outputStart + bufferIndex + 1] = inputBuffer[bufferIndex + 1];
             }
         }
+#else
+        auto outputBufferType = reinterpret_cast<float*>(outputBuffer);
+        int outputStart = outputBufferStart/sizeof(float);
+        for (int sampleIndex = 0; sampleIndex < inputSamples; ++sampleIndex) {
+            int bufferIndex = sampleIndex*2;
+            if (SwapChannels == 0) {
+                // Left channel
+                outputBufferType[outputStart + bufferIndex] = static_cast<float>(inputBuffer[bufferIndex + 1])/32767.0;
+                // Right channel
+                outputBufferType[outputStart + bufferIndex + 1] = static_cast<float>(inputBuffer[bufferIndex])/32767.0;
+            } else {
+                // Left channel
+                outputBufferType[outputStart + bufferIndex] = static_cast<float>(inputBuffer[bufferIndex])/32767.0;
+                // Right channel
+                outputBufferType[outputStart + bufferIndex + 1] = static_cast<float>(inputBuffer[bufferIndex + 1])/32767.0;
+            }
+        }
+#endif
+
+        outputBufferStart += inputSamples*SLES_SAMPLE_BYTES;
     } else
         DebugMessage(M64MSG_WARNING, "processAudio(): Audio primary buffer overflow.");
 
-#ifdef FP_ENABLED
-    int numSamples = length/sizeof(int16_t);
-    int16_t* primaryBufferShort = reinterpret_cast<int16_t*>(primaryBuffer);
-    float primaryBufferFloat[numSamples];
 
-    for(int index = 0; index < numSamples; ++index)
-    {
-       primaryBufferFloat[index] = static_cast<float>(primaryBufferShort[index])/32767.0;
-    }
+}
 
-    soundTouch.putSamples(reinterpret_cast<SAMPLETYPE*>(primaryBufferFloat), length/N64_SAMPLE_BYTES);
+void processAudio(const int16_t* buffer, unsigned int samples) {
 
-#else
-    soundTouch.putSamples(reinterpret_cast<SAMPLETYPE*>(primaryBuffer), length / N64_SAMPLE_BYTES);
-#endif
+    int primaryBufferEnd = 0;
+    convertBufferToSlesBuffer(buffer, samples, primaryBuffer, primaryBufferEnd);
+
+    soundTouch.putSamples(reinterpret_cast<SAMPLETYPE*>(primaryBuffer), samples);
 
     unsigned int outSamples = 0;
+    static int secondaryBufferIndex = 0;
 
     do {
         outSamples = soundTouch.receiveSamples(reinterpret_cast<SAMPLETYPE*>(secondaryBuffers[secondaryBufferIndex]),
-                static_cast<unsigned int>(SecondaryBufferSize));
+                                               static_cast<unsigned int>(SecondaryBufferSize));
 
         if (outSamples != 0 && state.value > 0) {
             SLresult result = (*bufferQueue)->Enqueue(bufferQueue,
@@ -1034,12 +1016,72 @@ void processAudio(const unsigned char *buffer, unsigned int length) {
                 state.errors++;
             }
 
-            secondaryBufferIndex++;
-
-            if (secondaryBufferIndex > (SecondaryBufferNbr - 1))
-                secondaryBufferIndex = 0;
+            secondaryBufferIndex = (secondaryBufferIndex + 1)%SecondaryBufferNbr;
         }
     } while (outSamples != 0);
+}
+
+static int resample(unsigned char *input, int oldsamplerate, unsigned char *output, int output_needed, int newsamplerate)
+{
+    int *psrc = (int*)input;
+    int *pdest = (int*)output;
+    int i = 0, j = 0;
+
+    if (newsamplerate >= oldsamplerate)
+    {
+        int sldf = oldsamplerate;
+        int const2 = 2*sldf;
+        int dldf = newsamplerate;
+        int const1 = const2 - 2*dldf;
+        int criteria = const2 - dldf;
+        for (i = 0; i < output_needed/4; i++)
+        {
+            pdest[i] = psrc[j];
+            if(criteria >= 0)
+            {
+                ++j;
+                criteria += const1;
+            }
+            else criteria += const2;
+        }
+        return j * 4; //number of bytes consumed
+    }
+    // newsamplerate < oldsamplerate, this only happens when speed_factor > 1
+    for (i = 0; i < output_needed/4; i++)
+    {
+        j = i * oldsamplerate / newsamplerate;
+        pdest[i] = psrc[j];
+    }
+    return j * 4; //number of bytes consumed
+}
+
+
+void processAudioNoStretch(const int16_t* buffer, unsigned int samples)
+{
+    static const int secondaryBufferBytes = SecondaryBufferSize*SLES_SAMPLE_BYTES;
+
+    static int primaryBufferPos = 0;
+
+    convertBufferToSlesBuffer(buffer, samples, primaryBuffer, primaryBufferPos);
+
+    int newsamplerate = OutputFreq * 100 / speed_factor;
+    int oldsamplerate = GameFreq;
+    static int secondaryBufferIndex = 0;
+
+//    while (primaryBufferPos >= secondaryBufferBytes)
+    while (primaryBufferPos >= ((secondaryBufferBytes * oldsamplerate) / newsamplerate))
+    {
+        int input_used = resample(primaryBuffer, oldsamplerate, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes, newsamplerate);
+        //int input_used = secondaryBufferBytes;
+        //std::copy_n(primaryBuffer, secondaryBufferBytes, secondaryBuffers[secondaryBufferIndex]);
+        (*bufferQueue)->Enqueue(bufferQueue, secondaryBuffers[secondaryBufferIndex], secondaryBufferBytes);
+
+        DebugMessage(M64MSG_ERROR, "input_used=%d primaryBufferPos=%d", input_used, primaryBufferPos);
+        memmove(primaryBuffer, &primaryBuffer[input_used], primaryBufferPos - input_used);
+        primaryBufferPos -= input_used;
+
+        secondaryBufferIndex = (secondaryBufferIndex + 1)%SecondaryBufferNbr;
+    }
 }
 
 EXPORT int CALL InitiateAudio(AUDIO_INFO Audio_Info) {
